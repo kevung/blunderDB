@@ -4,9 +4,11 @@ Backgammon position and match database software
 ## Roadmap
 
 import position/match in sqlite db (0.txt; 1.xg)
-  via files
+  via files (txt, xg)
   via clipboard
-export position/match in (0.txt)
+export position/match
+  via files
+  via clipboard (xgid, raw)
 tag position/matchs (cataegories)
 notes commentaries
 filter by selector:
