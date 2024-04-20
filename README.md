@@ -30,6 +30,13 @@ unique executable
 
 possibility to send positions to commun database
 
+## Database representation
+
+Tables
+  match: id, game_id, player1_score, player2_score
+  position: id, checker distribution, points, cube, score,
+    prev pos (foreign key), next pos (foreign key)
+
 ## Inspirations
 
 Zotero capabilities
