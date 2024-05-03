@@ -1,2 +1,2 @@
-test.db
+*.db
 __pycache__
