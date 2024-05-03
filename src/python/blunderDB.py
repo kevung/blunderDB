@@ -1,63 +1,94 @@
-import re
+import sqlite3
 
+__NAME__ = "blunderDB"
+__VERSION__ = "0.1.0"
+__DBNAME__ = "blunder.db"
 
-def extract_metadata(text):
-    metadata = {}
-    metadata_pattern = re.compile(r'; \[([\w\s]+)\s"([\w\s\d\.:]+)"\]')
-
-    matches = metadata_pattern.findall(text)
-
-    for match in matches:
-        metadata[match[0]] = match[1]
-
-    return metadata
-
-def extract_match_points(text):
-    match_points = None
-    metadata_pattern = re.compile(r'(\d+) point match', re.IGNORECASE)
-
-    match = metadata_pattern.search(text)
-
-    if match:
-        match_points = int(match.group(1))
-
-    return match_points
-
-def parse_game_data(text):
-    games_data = []
-    game_pattern = re.compile(r'Game\s+(\d+)\s+Jab34\s+:\s+(\d+)\s+postmanpat\s+:\s+(\d+)(.*?)Game\s+\d+', re.DOTALL)
-    moves_pattern = re.compile(r'(\d+)\)\s+(.*?)\s+(\d+): (.*?)\s+(\d+): (.*?)\n', re.DOTALL)
-
-    games = game_pattern.findall(text)
-
-    for game in games:
-        game_number = game[0]
-        player1_score = game[1]
-        player2_score = game[2]
-        moves_data = game[3]
-
-        moves = moves_pattern.findall(moves_data)
-        game_moves = [(move[1].strip(), move[3].strip(), move[5].strip()) for move in moves]
-        games_data.append({
-            "game_number": game_number,
-            "player1_score": player1_score,
-            "player2_score": player2_score,
-            "moves": game_moves
-        })
-
-    return games_data
+def add_column_if_not_exists(table_name, column_name, column_type):
+    pass
 
 def main():
-    with open("./share/match_example1.txt", "r") as file:
-        data = file.read()
+    print("blunderDB, version ", __VERSION__)
 
-    games_data = parse_game_data(data)
+    conn = sqlite3.connect(__DBNAME__)
+    c = conn.cursor()
 
-    for game_data in games_data:
-        print(f"Game {game_data['game_number']}:")
-        print(f"Jab34: {game_data['player1_score']}  postmanpat: {game_data['player2_score']}")
-        for move_number, player1_move, player2_move in game_data['moves']:
-            print(f"  {move_number}: Jab34 {player1_move}  postmanpat {player2_move}")
+    c.execute("""CREATE TABLE IF NOT EXISTS Metadata (
+        program_name TEXT(20),
+        program_version TEXT(8),
+        owner TEXT(20)
+        )""")
+
+    c.execute("SELECT COUNT(*) FROM Metadata")
+    if c.fetchone()[0] == 0:
+        c.execute("""INSERT INTO Metadata ('program_name', 'program_version')
+                  VALUES(\"%s\", \"%s\") """ % (__NAME__, __VERSION__) )
+
+    c.execute("""CREATE TABLE IF NOT EXISTS Player (
+        id INTEGER PRIMARY KEY,
+        name TEXT(20)
+        )""")
+
+    c.execute("""CREATE TABLE IF NOT EXISTS Tag (
+        id INTEGER PRIMARY KEY,
+        name TEXT(20)
+        )""")
+
+    c.execute("""CREATE TABLE IF NOT EXISTS TagList (
+        id INTEGER PRIMARY KEY,
+        tag_id INTEGER,
+        FOREIGN KEY (tag_id) REFERENCES Tag(id)
+        )""")
+
+
+    c.execute("""CREATE TABLE IF NOT EXISTS Position (
+        id INTEGER PRIMARY KEY,
+        p1 INTEGER,
+        p2 INTEGER,
+        p3 INTEGER,
+        p4 INTEGER,
+        p5 INTEGER,
+        p6 INTEGER,
+        p7 INTEGER,
+        p8 INTEGER,
+        p9 INTEGER,
+        p11 INTEGER,
+        p12 INTEGER,
+        p13 INTEGER,
+        p14 INTEGER,
+        p15 INTEGER,
+        p16 INTEGER,
+        p17 INTEGER,
+        p18 INTEGER,
+        p19 INTEGER,
+        p20 INTEGER,
+        p21 INTEGER,
+        p22 INTEGER,
+        p23 INTEGER,
+        p24 INTEGER,
+        bar_player1 INTEGER,
+        bar_player2 INTEGER,
+        die_1 INTEGER,
+        die_2 INTEGER,
+        cube INTEGER,
+        score_player1 INTEGER,
+        score_player2 INTEGER,
+        crawford INTEGER,
+        jacoby INTEGER,
+        beaver INTEGER,
+        player1_id INTEGER,
+        player2_id INTEGER,
+        player_on_roll INTEGER,
+        taglist_id INTEGER,
+        comment TEXT(200),
+        date TEXT,
+        FOREIGN KEY (player1_id) REFERENCES Player(id),
+        FOREIGN KEY (player2_id) REFERENCES Player(id),
+        FOREIGN KEY (taglist_id) REFERENCES TagList(id)
+        )""")
+
+    conn.commit()
+    conn.close()
 
 if __name__ == "__main__":
     main()
