@@ -87,6 +87,33 @@ def main():
         FOREIGN KEY (taglist_id) REFERENCES TagList(id)
         )""")
 
+    c.execute("""CREATE TABLE IF NOT EXISTS Game (
+        id INTEGER PRIMARY KEY,
+        move_player1 TEXT,
+        move_player2 TEXT
+        )""")
+
+    c.execute("""CREATE TABLE IF NOT EXISTS GameList (
+        id INTEGER PRIMARY KEY,
+        game_id INTEGER,
+        score_player1 INTEGER,
+        score_player2 INTEGER,
+        FOREIGN KEY (game_id) REFERENCES Game(id)
+        )""")
+
+    c.execute("""CREATE TABLE IF NOT EXISTS Match (
+        id INTEGER PRIMARY KEY,
+        player1_id INTEGER,
+        player2_id INTEGER,
+        match_length INTEGER,
+        event_name TEXT(20),
+        event_date TEXT,
+        gamelist_id INTEGER,
+        FOREIGN KEY (player1_id) REFERENCES Player(id),
+        FOREIGN KEY (player2_id) REFERENCES Player(id),
+        FOREIGN KEY (gamelist_id) REFERENCES GameList(id)
+        )""")
+
     conn.commit()
     conn.close()
 
