@@ -16,7 +16,8 @@ def main():
     c.execute("""CREATE TABLE IF NOT EXISTS Metadata (
         program_name TEXT(20),
         program_version TEXT(8),
-        owner TEXT(20)
+        owner TEXT(20),
+        last_modified TEXT(10)
         )""")
 
     c.execute("SELECT COUNT(*) FROM Metadata")
@@ -26,20 +27,14 @@ def main():
 
     c.execute("""CREATE TABLE IF NOT EXISTS Player (
         id INTEGER PRIMARY KEY,
-        name TEXT(20)
+        name TEXT(20),
+        comment TEXT
         )""")
 
     c.execute("""CREATE TABLE IF NOT EXISTS Tag (
         id INTEGER PRIMARY KEY,
         name TEXT(20)
         )""")
-
-    c.execute("""CREATE TABLE IF NOT EXISTS TagList (
-        id INTEGER PRIMARY KEY,
-        tag_id INTEGER,
-        FOREIGN KEY (tag_id) REFERENCES Tag(id)
-        )""")
-
 
     c.execute("""CREATE TABLE IF NOT EXISTS Position (
         id INTEGER PRIMARY KEY,
@@ -52,6 +47,7 @@ def main():
         p7 INTEGER,
         p8 INTEGER,
         p9 INTEGER,
+        p10 INTEGER,
         p11 INTEGER,
         p12 INTEGER,
         p13 INTEGER,
@@ -79,13 +75,21 @@ def main():
         player1_id INTEGER,
         player2_id INTEGER,
         player_on_roll INTEGER,
-        taglist_id INTEGER,
         comment TEXT(200),
         date TEXT,
         FOREIGN KEY (player1_id) REFERENCES Player(id),
-        FOREIGN KEY (player2_id) REFERENCES Player(id),
-        FOREIGN KEY (taglist_id) REFERENCES TagList(id)
+        FOREIGN KEY (player2_id) REFERENCES Player(id)
         )""")
+
+    c.execute("""CREATE TABLE IF NOT EXISTS PositionTagMapping (
+    position_id INTEGER,
+    tag_id INTEGER,
+    FOREIGN KEY (position_id) REFERENCES Position(id),
+    FOREIGN KEY (tag_id) REFERENCES Tag(id)
+            )""")
+
+    c.execute("""CREATE TABLE IF NOT EXISTS Move (
+            )""")
 
     c.execute("""CREATE TABLE IF NOT EXISTS Game (
         id INTEGER PRIMARY KEY,
