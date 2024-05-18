@@ -2,6 +2,7 @@
 
 #define DEFAULT_WIDTH  800
 #define DEFAULT_HEIGHT 600
+#define DEFAULT_NAME "blunderDB"
 
 static void
 activate (GtkApplication* app,
@@ -10,7 +11,7 @@ activate (GtkApplication* app,
   GtkWidget *window;
 
   window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW (window), "blunderDB");
+  gtk_window_set_title (GTK_WINDOW (window), DEFAULT_NAME);
   gtk_window_set_default_size (GTK_WINDOW (window), DEFAULT_WIDTH, DEFAULT_HEIGHT);
   gtk_widget_show_all (window);
 }
