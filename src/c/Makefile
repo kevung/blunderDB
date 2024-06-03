@@ -3,8 +3,8 @@ include ./iup/Makefile
 
 all:
 
-SRC = hello-world.c
-EXE = hello-world.exe
+SRC = blunderDB.c
+EXE = blunderDB.exe
 
 WINDOWS_LIBS = -lgdi32 -lcomdlg32 -lcomctl32 -luuid -loleaut32 -lole32
 
