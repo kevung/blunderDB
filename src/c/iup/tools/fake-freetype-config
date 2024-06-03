@@ -1,0 +1,8 @@
+#!/bin/sh
+
+if [ x"$1" = "x--libs" ] ; then
+    echo "-lfreetype -lz"
+    exit 0
+fi
+
+echo ""

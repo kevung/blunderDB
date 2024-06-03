@@ -1,0 +1,8 @@
+/output/*
+/deps/*
+!/deps/*.sha256sum
+*.a
+*.o
+/demo/hello-world
+/demo/hello-world.exe
+/tmp/*

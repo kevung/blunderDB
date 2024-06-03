@@ -1,0 +1,18 @@
+diff --git a/src/libtiff/tiffiop.h b/src/libtiff/tiffiop.h
+index 481c41f..9a07d93 100755
+--- a/src/libtiff/tiffiop.h
++++ b/src/libtiff/tiffiop.h
+@@ -59,13 +59,6 @@ extern void *lfind(const void *, const void *, size_t *, size_t,
+ */
+ #endif
+ 
+-#ifdef WIN32
+-#define snprintf _snprintf
+-#if _MSC_VER >= 1900 /* IMLIB vc14 */
+-#undef snprintf
+-#endif
+-#endif
+-
+ #if !defined(HAVE_SNPRINTF) && !defined(HAVE__SNPRINTF)
+ #undef snprintf
+ #define snprintf _TIFF_snprintf_f
