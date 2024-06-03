@@ -1792,7 +1792,7 @@ libim-all:
 
 libcd-all:
 
-libiup-all:
+# libiup-all:
 
 ifneq (,$(findstring mingw32,$(TARGET))) #begin windows
 zlib-all: $(LIBZLIB)
@@ -1828,31 +1828,31 @@ libcd-all: \
 	$(LIBCDPDF) \
 	$(LIBCDLUAIM)
 
-libiup-all: \
-	$(LIBIUP) \
-	$(LIBIUPCD) \
-	$(LIBIUPCONTROLS) \
-	$(LIBIUPGL) \
-	$(LIBIUPGLCONTROLS) \
-	$(LIBIUP_PLOT) \
-	$(LIBIUP_MGLPLOT) \
-	$(LIBIUP_SCINTILLA) \
-	$(LIBIUPIM) \
-	$(LIBIUPIMGLIB) \
-	$(LIBIUPOLE) \
-	$(LIBIUPTUIO) \
-	$(LIBIUPLUA) \
-	$(LIBIUPLUACD) \
-	$(LIBIUPLUACONTROLS) \
-	$(LIBIUPLUAGL) \
-	$(LIBIUPLUAGLCONTROLS) \
-	$(LIBIUPLUA_PLOT) \
-	$(LIBIUPLUA_MGLPLOT) \
-	$(LIBIUPLUA_SCINTILLA) \
-	$(LIBIUPLUAIM) \
-	$(LIBIUPLUAIMGLIB) \
-	$(LIBIUPLUATUIO) \
-	$(LIBIUPLUAOLE)
+# libiup-all: \
+# 	$(LIBIUP) \
+# 	$(LIBIUPCD) \
+# 	$(LIBIUPCONTROLS) \
+# 	$(LIBIUPGL) \
+# 	$(LIBIUPGLCONTROLS) \
+# 	$(LIBIUP_PLOT) \
+# 	$(LIBIUP_MGLPLOT) \
+# 	$(LIBIUP_SCINTILLA) \
+# 	$(LIBIUPIM) \
+# 	$(LIBIUPIMGLIB) \
+# 	$(LIBIUPOLE) \
+# 	$(LIBIUPTUIO) \
+# 	$(LIBIUPLUA) \
+# 	$(LIBIUPLUACD) \
+# 	$(LIBIUPLUACONTROLS) \
+# 	$(LIBIUPLUAGL) \
+# 	$(LIBIUPLUAGLCONTROLS) \
+# 	$(LIBIUPLUA_PLOT) \
+# 	$(LIBIUPLUA_MGLPLOT) \
+# 	$(LIBIUPLUA_SCINTILLA) \
+# 	$(LIBIUPLUAIM) \
+# 	$(LIBIUPLUAIMGLIB) \
+# 	$(LIBIUPLUATUIO) \
+# 	$(LIBIUPLUAOLE)
 endif
 
 ifneq (,$(findstring linux,$(TARGET))) #begin linux
@@ -1878,25 +1878,25 @@ libcd-all: \
 	$(LIBCDLUACONTEXTPLUS) \
 	$(LIBCDLUAIM)
 
-libiup-all: \
-	$(LIBIUP) \
-	$(LIBIUPCD) \
-	$(LIBIUPCONTROLS) \
-	$(LIBIUPGL) \
-	$(LIBIUPGLCONTROLS) \
-	$(LIBIUP_PLOT) \
-	$(LIBIUPIM) \
-	$(LIBIUPIMGLIB) \
-	$(LIBIUPTUIO) \
-	$(LIBIUPLUA) \
-	$(LIBIUPLUACD) \
-	$(LIBIUPLUACONTROLS) \
-	$(LIBIUPLUAGL) \
-	$(LIBIUPLUAGLCONTROLS) \
-	$(LIBIUPLUA_PLOT) \
-	$(LIBIUPLUAIM) \
-	$(LIBIUPLUAIMGLIB) \
-	$(LIBIUPLUATUIO)
+# libiup-all: \
+# 	$(LIBIUP) \
+# 	$(LIBIUPCD) \
+# 	$(LIBIUPCONTROLS) \
+# 	$(LIBIUPGL) \
+# 	$(LIBIUPGLCONTROLS) \
+# 	$(LIBIUP_PLOT) \
+# 	$(LIBIUPIM) \
+# 	$(LIBIUPIMGLIB) \
+# 	$(LIBIUPTUIO) \
+# 	$(LIBIUPLUA) \
+# 	$(LIBIUPLUACD) \
+# 	$(LIBIUPLUACONTROLS) \
+# 	$(LIBIUPLUAGL) \
+# 	$(LIBIUPLUAGLCONTROLS) \
+# 	$(LIBIUPLUA_PLOT) \
+# 	$(LIBIUPLUAIM) \
+# 	$(LIBIUPLUAIMGLIB) \
+# 	$(LIBIUPLUATUIO)
 endif
 
 zlib: $(LIBZLIB)
