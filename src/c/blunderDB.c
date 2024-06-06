@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <iup.h>
+#include <iupdraw.h>
 
 /************************ Interface ***********************/
 
