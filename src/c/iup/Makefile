@@ -1792,7 +1792,7 @@ libim-all:
 
 libcd-all:
 
-# libiup-all:
+libiup-all:
 
 ifneq (,$(findstring mingw32,$(TARGET))) #begin windows
 zlib-all: $(LIBZLIB)
@@ -1801,7 +1801,7 @@ freetype-all: $(LIBFREETYPE)
 
 ftgl-all: $(LIBFTGL)
 
-lua-all: $(LIBLUA)
+# lua-all: $(LIBLUA)
 
 libim-all: \
 	$(LIBIM) \
@@ -1820,27 +1820,27 @@ libcd-all: \
 	$(LIBCDGL) \
 	$(LIBCDIM) \
 	$(LIBCDCONTEXTPLUS) \
-	$(LIBCDLUA) \
-	$(LIBCDLUAGL) \
-	$(LIBCDLUACONTEXTPLUS) \
 	$(LIBCD_PDFLIB) \
-	$(LIBCDLUAPDF) \
-	$(LIBCDPDF) \
-	$(LIBCDLUAIM)
+	$(LIBCDPDF)
+	# $(LIBCDLUAGL) \
+	# $(LIBCDLUACONTEXTPLUS) \
+	# $(LIBCDLUAPDF) \
+	# $(LIBCDLUA) \
+	# $(LIBCDLUAIM)
 
-# libiup-all: \
-# 	$(LIBIUP) \
-# 	$(LIBIUPCD) \
-# 	$(LIBIUPCONTROLS) \
-# 	$(LIBIUPGL) \
-# 	$(LIBIUPGLCONTROLS) \
-# 	$(LIBIUP_PLOT) \
-# 	$(LIBIUP_MGLPLOT) \
-# 	$(LIBIUP_SCINTILLA) \
-# 	$(LIBIUPIM) \
-# 	$(LIBIUPIMGLIB) \
-# 	$(LIBIUPOLE) \
-# 	$(LIBIUPTUIO) \
+libiup-all: \
+	$(LIBIUP) \
+	$(LIBIUPCD) \
+	$(LIBIUPCONTROLS) \
+	$(LIBIUPGL) \
+	$(LIBIUPGLCONTROLS) \
+	$(LIBIUP_PLOT) \
+	$(LIBIUP_MGLPLOT) \
+	$(LIBIUP_SCINTILLA) \
+	$(LIBIUPIM) \
+	$(LIBIUPIMGLIB) \
+	$(LIBIUPOLE) \
+	$(LIBIUPTUIO)
 # 	$(LIBIUPLUA) \
 # 	$(LIBIUPLUACD) \
 # 	$(LIBIUPLUACONTROLS) \
@@ -1878,16 +1878,16 @@ libcd-all: \
 	$(LIBCDLUACONTEXTPLUS) \
 	$(LIBCDLUAIM)
 
-# libiup-all: \
-# 	$(LIBIUP) \
-# 	$(LIBIUPCD) \
-# 	$(LIBIUPCONTROLS) \
-# 	$(LIBIUPGL) \
-# 	$(LIBIUPGLCONTROLS) \
-# 	$(LIBIUP_PLOT) \
-# 	$(LIBIUPIM) \
-# 	$(LIBIUPIMGLIB) \
-# 	$(LIBIUPTUIO) \
+libiup-all: \
+	$(LIBIUP) \
+	$(LIBIUPCD) \
+	$(LIBIUPCONTROLS) \
+	$(LIBIUPGL) \
+	$(LIBIUPGLCONTROLS) \
+	$(LIBIUP_PLOT) \
+	$(LIBIUPIM) \
+	$(LIBIUPIMGLIB) \
+	$(LIBIUPTUIO)
 # 	$(LIBIUPLUA) \
 # 	$(LIBIUPLUACD) \
 # 	$(LIBIUPLUACONTROLS) \
