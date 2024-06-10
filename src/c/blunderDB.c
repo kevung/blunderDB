@@ -1,6 +1,11 @@
 #include <stdlib.h>
 #include <iup.h>
 #include <iupdraw.h>
+#include <cd.h>
+#include <cdiup.h>
+
+cdCanvas *winCanvas = NULL;
+cdCanvas *curCanvas = NULL;
 
 /************************ Interface ***********************/
 
@@ -33,7 +38,8 @@ int main(int argc, char **argv)
 
   IupOpen(&argc, &argv);
 
-  canvas = IupCanvas(NULL);
+  /* canvas = IupCanvas(NULL); */
+  canvas = cdCreateCanvas(CD_IUP, NULL);
   IupSetAttribute(canvas, "NAME", "CANVAS");
   IupSetAttribute(canvas, "EXPAND", "YES");
 
