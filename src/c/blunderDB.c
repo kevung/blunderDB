@@ -12,20 +12,26 @@ cdCanvas *curCanvas = NULL;
 #define DEFAULT_SIZE "400x300"
 
 
-static int canvas_action(Ihandle *ih)
+static int canvas_action(Ihandle* ih)
 {
     int i, w, h;
+    cdCanvas *canvas;
 
-    IupDrawBegin(ih);
+    canvas = cdCreateCanvas(CD_IUP, ih);
+    cdCanvasGetSize(canvas, &w, &h, NULL, NULL);
 
-    IupDrawGetSize(ih, &w, &h);
+    cdCanvasBackground(canvas, CD_BLUE);
+    cdCanvasClear(canvas);
 
-    IupSetAttribute(ih, "DRAWCOLOR", "252 186 3");
-    IupSetAttribute(ih, "DRAWSTYLE", "FILL");
-    IupDrawRectangle(ih, 0, 0, w-1, h-1);
+    cdCanvasLineWidth(canvas, 3);
+    cdCanvasLineStyle(canvas, CD_CONTINUOUS);
+    cdCanvasForeground(canvas, cdEncodeAlpha(CD_DARK_MAGENTA, 128));
+    cdCanvasRect(canvas, 100, 200, 100, 200);
 
+    cdCanvasSetAttribute(canvas, "DRAWCOLOR", "252 186 3");
 
-    IupDrawEnd(ih);
+    cdCanvasFlush(canvas);
+
     return IUP_DEFAULT;
 }
 
@@ -38,8 +44,7 @@ int main(int argc, char **argv)
 
   IupOpen(&argc, &argv);
 
-  /* canvas = IupCanvas(NULL); */
-  canvas = cdCreateCanvas(CD_IUP, NULL);
+  canvas = IupCanvas(NULL);
   IupSetAttribute(canvas, "NAME", "CANVAS");
   IupSetAttribute(canvas, "EXPAND", "YES");
 
@@ -48,7 +53,7 @@ int main(int argc, char **argv)
   IupSetAttribute(vbox, "GAP", "10");
 
   dlg = IupDialog(vbox);
-  IupSetAttribute(dlg, "TITLE", "BlunderDB");
+  IupSetAttribute(dlg, "TITLE", "blunderDB");
   IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
 
   /* Registers callbacks */
