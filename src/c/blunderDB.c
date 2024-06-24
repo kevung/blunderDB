@@ -3,6 +3,7 @@
 #include <iupdraw.h>
 #include <cd.h>
 #include <cdiup.h>
+#include <sqlite3.h>
 
 cdCanvas *winCanvas = NULL;
 cdCanvas *curCanvas = NULL;
@@ -45,6 +46,10 @@ static int item_new_action_cb(void)
 /************************ Main ****************************/
 int main(int argc, char **argv)
 {
+  sqlite3 *db = NULL;
+  int erg = 0;
+  char *errMsg = NULL;
+
   Ihandle *dlg, *hbox, *vbox, *label;
   Ihandle *text;
   Ihandle *menu, *submenu_file, *submenu_edit,
