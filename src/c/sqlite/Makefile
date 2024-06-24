@@ -31,4 +31,4 @@ $(SQLITE_TARGET): $(SQLITE_SRC)
 
 
 clean:
-	rm -f $(SQLITE_TARGET)
+	rm -f $(SQLITE_TARGET) $(SQLITE_TARGET_LIB)
