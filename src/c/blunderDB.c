@@ -28,6 +28,20 @@ int db_create(const char* filename)
     rc = sqlite3_open(filename, &db);
 
     if(rc) {
+        printf("Can't create database: %s\n", sqlite3_errmsg(db));
+        return rc;
+    } else {
+        printf("Created database successfully\n");
+    }
+
+    return 0;
+}
+
+int db_open(const char* filename)
+{
+    rc = sqlite3_open(filename, &db);
+
+    if(rc) {
         printf("Can't open database: %s\n", sqlite3_errmsg(db));
         return rc;
     } else {
@@ -138,8 +152,6 @@ static int item_new_action_cb(void)
     IupSetAttribute(filedlg, "EXTFILTER",
             "Blunder Database (.db)|*.db|All Files|*.*|");
     IupSetAttribute(filedlg, "EXTDEFAULT", ".db");
-    /* IupSetAttribute(filedlg, "FILTER", "*.db"); */
-    /* IupSetAttribute(filedlg, "FILTERINFO", "Blunder Database (.db)"); */
     IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
     
     switch(IupGetInt(filedlg, "STATUS"))
@@ -165,6 +177,44 @@ static int item_new_action_cb(void)
     return IUP_DEFAULT;
 }
 
+static int item_open_action_cb(void)
+{
+    Ihandle *filedlg;
+
+    filedlg = IupFileDlg();
+    IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
+    IupSetAttribute(filedlg, "TITLE", "Open Database");
+    IupSetAttribute(filedlg, "EXTFILTER",
+            "Blunder Database (.db)|*.db|All Files|*.*|");
+    IupSetAttribute(filedlg, "EXTDEFAULT", ".db");
+    IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+    
+    switch(IupGetInt(filedlg, "STATUS"))
+    {
+        case 1: // new file
+            printf("Database does not exist.");
+            break;
+        case 0 : // file already exists
+            const char *db_filename = IupGetAttribute(filedlg, "VALUE");
+            int result = db_open(db_filename);
+            if (result != 0) {
+                printf("Database opening failed\n");
+                return result;
+            }
+            printf("Database opened successfully\n");
+            break; 
+
+        case -1 : 
+            printf("IupFileDlg","Operation Canceled");
+            return 1;
+            break; 
+    }
+
+    IupDestroy(filedlg);
+    return IUP_DEFAULT;
+
+}
+
 int item_close_action_cb()
 {
     // verify if db is saved with is_db_saved before quitting.
@@ -181,7 +231,6 @@ int main(int argc, char **argv)
   IupOpen(&argc, &argv);
   IupSetLanguage("ENGLISH");
 
-  /* item_open = IupItem("Open", NULL); */
   /* item_recent = IupItem("Recent", NULL); */
   /* item_import = IupItem("Import...", NULL); */
   /* item_import_wizard = IupItem("Import Wizard", NULL); */
@@ -272,8 +321,9 @@ int main(int argc, char **argv)
 
   /* Define menus */
   item_new = IupItem("New", NULL);
+  item_open = IupItem("Open", NULL);
   item_close = IupItem("Close", NULL);
-  menu_file = IupMenu(item_new, item_close, NULL);
+  menu_file = IupMenu(item_new, item_open, item_close, NULL);
   submenu_file = IupSubmenu("File", menu_file);
   menu = IupMenu(submenu_file, NULL);
   IupSetHandle("menu", menu);
@@ -296,6 +346,7 @@ int main(int argc, char **argv)
 
   /* Registers callbacks */
   IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
+  IupSetCallback(item_open, "ACTION", (Icallback) item_open_action_cb);
   IupSetCallback(item_close, "ACTION", (Icallback) item_close_action_cb);
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
