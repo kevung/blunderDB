@@ -157,6 +157,7 @@ int main(int argc, char **argv)
   Ihandle *canvas;
 
   IupOpen(&argc, &argv);
+  IupSetLanguage("ENGLISH");
 
   text = IupText(NULL);
   IupSetAttributes(text, "VALUE = \"This text is here a sample\", EXPAND = YES");
