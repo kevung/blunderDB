@@ -19,6 +19,12 @@ int rc;
 
 int db_create(const char* filename)
 {
+    if (remove(filename) == 0) {
+        printf("Existing database file removed successfully\n");
+    } else {
+        printf("No existing database file to remove, or failed to remove\n");
+    }
+
     rc = sqlite3_open(filename, &db);
 
     if(rc) {
@@ -140,11 +146,6 @@ static int item_new_action_cb(void)
         case 1: // new file
         case 0 : // file already exists
             const char *db_filename = IupGetAttribute(filedlg, "VALUE");
-            if (remove(db_filename) == 0) {
-                printf("Existing database file removed successfully\n");
-            } else {
-                printf("No existing database file to remove, or failed to remove\n");
-            }
             int result = db_create(db_filename);
             if (result != 0) {
                 printf("Database creation failed\n");
