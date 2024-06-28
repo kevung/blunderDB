@@ -1,12 +1,34 @@
 #include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 #include <iup.h>
 #include <iupdraw.h>
 #include <cd.h>
 #include <cdiup.h>
 #include <sqlite3.h>
 
+char db_file[10240];
 cdCanvas *winCanvas = NULL;
 cdCanvas *curCanvas = NULL;
+
+/************************ Database ***********************/
+sqlite3 *db = NULL;
+
+int db_create(const char* filename)
+{
+    int rc;
+    rc = sqlite3_open(filename, &db);
+
+    if(rc) {
+        printf("Can't open database: %s\n", sqlite3_errmsg(db));
+        return rc;
+    } else {
+        printf("Opened database successfully\n");
+    }
+
+    sqlite3_close(db);
+    return 0;
+}
 
 /************************ Interface ***********************/
 
@@ -38,7 +60,44 @@ static int canvas_action_cb(Ihandle* ih)
 
 static int item_new_action_cb(void)
 {
-    IupMessage("New position!", "Bye");
+
+    Ihandle *filedlg;
+
+    filedlg = IupFileDlg();
+    IupSetAttribute(filedlg, "DIALOGTYPE", "SAVE");
+    IupSetAttribute(filedlg, "TITLE", "New Database");
+    IupSetAttribute(filedlg, "EXTFILTER",
+            "Blunder Database (.db)|*.db|All Files|*.*|");
+    IupSetAttribute(filedlg, "EXTDEFAULT", ".db");
+    /* IupSetAttribute(filedlg, "FILTER", "*.db"); */
+    /* IupSetAttribute(filedlg, "FILTERINFO", "Blunder Database (.db)"); */
+    IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+    
+    switch(IupGetInt(filedlg, "STATUS"))
+    {
+        case 1: // new file
+        case 0 : // file already exists
+            const char *db_filename = IupGetAttribute(filedlg, "VALUE");
+            if (remove(db_filename) == 0) {
+                printf("Existing database file removed successfully\n");
+            } else {
+                printf("No existing database file to remove, or failed to remove\n");
+            }
+            int result = db_create(db_filename);
+            if (result != 0) {
+                printf("Database creation failed\n");
+                return result;
+            }
+            printf("Database created successfully\n");
+            break; 
+
+        case -1 : 
+            printf("IupFileDlg","Operation Canceled");
+            return 1;
+            break; 
+    }
+
+    IupDestroy(filedlg);
     return IUP_DEFAULT;
 }
 
@@ -46,8 +105,6 @@ static int item_new_action_cb(void)
 /************************ Main ****************************/
 int main(int argc, char **argv)
 {
-  sqlite3 *db = NULL;
-  int erg = 0;
   char *errMsg = NULL;
 
   Ihandle *dlg, *hbox, *vbox, *label;
