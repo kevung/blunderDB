@@ -155,13 +155,8 @@ static int item_new_action_cb(void)
 /************************ Main ****************************/
 int main(int argc, char **argv)
 {
-  char *errMsg = NULL;
-
   IupOpen(&argc, &argv);
   IupSetLanguage("ENGLISH");
-
-  text = IupText(NULL);
-  IupSetAttributes(text, "VALUE = \"This text is here a sample\", EXPAND = YES");
 
   /* item_new = IupItem("New", NULL); */
   /* item_open = IupItem("Open", NULL); */
@@ -254,27 +249,31 @@ int main(int argc, char **argv)
   /*         submenu_match, submenu_search, submenu_tool, submenu_help, */
   /*         NULL); */
 
+  /* Define menus */
   item_new = IupItem("New", NULL);
   menu_file = IupMenu(item_new, NULL);
   submenu_file = IupSubmenu("File", menu_file);
   menu = IupMenu(submenu_file, NULL);
   IupSetHandle("menu", menu);
-  IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
 
+  /* Define main canvas */
   canvas = IupCanvas(NULL);
   IupSetAttribute(canvas, "NAME", "CANVAS");
   IupSetAttribute(canvas, "EXPAND", "YES");
 
+  /* General layout */
   vbox = IupVbox(canvas, NULL);
   IupSetAttribute(vbox, "NMARGIN", "10x10");
   IupSetAttribute(vbox, "GAP", "10");
 
+  /* Main Windows */
   dlg = IupDialog(vbox);
   IupSetAttribute(dlg, "TITLE", "blunderDB");
   IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
   IupSetAttribute(dlg, "MENU", "menu");
 
   /* Registers callbacks */
+  IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
 
