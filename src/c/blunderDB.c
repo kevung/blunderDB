@@ -34,6 +34,56 @@ int db_create(const char* filename)
 
 #define DEFAULT_SIZE "800x600"
 
+Ihandle *dlg, *hbox, *vbox, *label;
+Ihandle *text;
+Ihandle *menu, *submenu_file, *submenu_edit,
+        *submenu_position, *submenu_match,
+        *submenu_search, *submenu_tool,
+        *submenu_help;
+
+Ihandle *menu_file;
+Ihandle *item_new, *item_open, *item_recent, *item_close;
+Ihandle *item_import, *item_import_wizard;
+Ihandle *item_save, *item_saveas;
+Ihandle *item_export;
+Ihandle *item_properties;
+Ihandle *item_exit;
+
+Ihandle *menu_edit;
+Ihandle *item_undo, *item_redo, *item_copy, *item_cut, *item_paste;
+Ihandle *item_editmode;
+
+Ihandle *menu_position;
+Ihandle *item_next_position, *item_prev_position,
+        *item_new_position,
+        *item_import_position, *item_import_position_bybatch;
+Ihandle *item_new_collection;
+Ihandle *item_delete_collection;
+Ihandle *item_add_collection;
+
+Ihandle *menu_match;
+Ihandle *item_import_match, *item_import_match_bybatch, 
+        *item_match_library;
+
+Ihandle *menu_search;
+Ihandle *item_search_blunder, *item_search_structure,
+        *item_search_dice, *item_search_cube, *item_search_score,
+        *item_search_player, *item_search_engine;
+Ihandle *item_searchmode;
+
+Ihandle *menu_tool;
+Ihandle *item_find_position_without_analysis;
+Ihandle *item_preferences;
+
+Ihandle *menu_help;
+Ihandle *item_manual, *item_userguide, *item_tips, *item_cmdmode;
+Ihandle *item_keyboard;
+Ihandle *item_getinvolved, *item_donate;
+Ihandle *item_about;
+
+Ihandle *canvas;
+
+
 
 static int canvas_action_cb(Ihandle* ih)
 {
@@ -106,55 +156,6 @@ static int item_new_action_cb(void)
 int main(int argc, char **argv)
 {
   char *errMsg = NULL;
-
-  Ihandle *dlg, *hbox, *vbox, *label;
-  Ihandle *text;
-  Ihandle *menu, *submenu_file, *submenu_edit,
-          *submenu_position, *submenu_match,
-          *submenu_search, *submenu_tool,
-          *submenu_help;
-
-  Ihandle *menu_file;
-  Ihandle *item_new, *item_open, *item_recent, *item_close;
-  Ihandle *item_import, *item_import_wizard;
-  Ihandle *item_save, *item_saveas;
-  Ihandle *item_export;
-  Ihandle *item_properties;
-  Ihandle *item_exit;
-
-  Ihandle *menu_edit;
-  Ihandle *item_undo, *item_redo, *item_copy, *item_cut, *item_paste;
-  Ihandle *item_editmode;
-
-  Ihandle *menu_position;
-  Ihandle *item_next_position, *item_prev_position,
-          *item_new_position,
-          *item_import_position, *item_import_position_bybatch;
-  Ihandle *item_new_collection;
-  Ihandle *item_delete_collection;
-  Ihandle *item_add_collection;
-
-  Ihandle *menu_match;
-  Ihandle *item_import_match, *item_import_match_bybatch, 
-          *item_match_library;
-
-  Ihandle *menu_search;
-  Ihandle *item_search_blunder, *item_search_structure,
-          *item_search_dice, *item_search_cube, *item_search_score,
-          *item_search_player, *item_search_engine;
-  Ihandle *item_searchmode;
-
-  Ihandle *menu_tool;
-  Ihandle *item_find_position_without_analysis;
-  Ihandle *item_preferences;
-
-  Ihandle *menu_help;
-  Ihandle *item_manual, *item_userguide, *item_tips, *item_cmdmode;
-  Ihandle *item_keyboard;
-  Ihandle *item_getinvolved, *item_donate;
-  Ihandle *item_about;
-
-  Ihandle *canvas;
 
   IupOpen(&argc, &argv);
   IupSetLanguage("ENGLISH");
