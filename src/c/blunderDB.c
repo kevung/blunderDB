@@ -35,13 +35,14 @@ int db_create(const char* filename)
     }
 
     return 0;
+
 }
 
 int db_close(sqlite3 *db)
 {
     rc = sqlite3_close(db);
     if (rc != SQLITE_OK) {
-        printf("Can't close database: %s\n", sqlite3_errmsg(db));
+        printf("Can't close database. Maybe already closed. Err: %s\n", sqlite3_errmsg(db));
     } else {
         printf("Closed database successfully\n");
     }
