@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,10 +14,11 @@ cdCanvas *curCanvas = NULL;
 
 /************************ Database ***********************/
 sqlite3 *db = NULL;
+bool is_db_saved = true;
+int rc;
 
 int db_create(const char* filename)
 {
-    int rc;
     rc = sqlite3_open(filename, &db);
 
     if(rc) {
@@ -26,8 +28,18 @@ int db_create(const char* filename)
         printf("Opened database successfully\n");
     }
 
-    sqlite3_close(db);
     return 0;
+}
+
+int db_close(sqlite3 *db)
+{
+    rc = sqlite3_close(db);
+    if (rc != SQLITE_OK) {
+        printf("Can't close database: %s\n", sqlite3_errmsg(db));
+    } else {
+        printf("Closed database successfully\n");
+    }
+
 }
 
 /************************ Interface ***********************/
@@ -151,6 +163,15 @@ static int item_new_action_cb(void)
     return IUP_DEFAULT;
 }
 
+int item_close_action_cb()
+{
+    // verify if db is saved with is_db_saved before quitting.
+
+    db_close(db);
+    IupClose();
+    return EXIT_SUCCESS;
+}
+
 
 /************************ Main ****************************/
 int main(int argc, char **argv)
@@ -158,10 +179,8 @@ int main(int argc, char **argv)
   IupOpen(&argc, &argv);
   IupSetLanguage("ENGLISH");
 
-  /* item_new = IupItem("New", NULL); */
   /* item_open = IupItem("Open", NULL); */
   /* item_recent = IupItem("Recent", NULL); */
-  /* item_close = IupItem("Close", NULL); */
   /* item_import = IupItem("Import...", NULL); */
   /* item_import_wizard = IupItem("Import Wizard", NULL); */
   /* item_save = IupItem("Save", NULL); */
@@ -251,7 +270,8 @@ int main(int argc, char **argv)
 
   /* Define menus */
   item_new = IupItem("New", NULL);
-  menu_file = IupMenu(item_new, NULL);
+  item_close = IupItem("Close", NULL);
+  menu_file = IupMenu(item_new, item_close, NULL);
   submenu_file = IupSubmenu("File", menu_file);
   menu = IupMenu(submenu_file, NULL);
   IupSetHandle("menu", menu);
@@ -274,6 +294,7 @@ int main(int argc, char **argv)
 
   /* Registers callbacks */
   IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
+  IupSetCallback(item_close, "ACTION", (Icallback) item_close_action_cb);
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
 
@@ -281,6 +302,7 @@ int main(int argc, char **argv)
 
   IupMainLoop();
 
+  db_close(db);
   IupClose();
   return EXIT_SUCCESS;
 }
