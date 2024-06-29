@@ -323,7 +323,8 @@ int main(int argc, char **argv)
   item_new = IupItem("&New\tCtrl+N", NULL);
   item_open = IupItem("&Open\tCtrl+O", NULL);
   item_exit = IupItem("E&xit\tCtrl+Q", NULL);
-  menu_file = IupMenu(item_new, item_open, item_exit, NULL);
+  menu_file = IupMenu(item_new, item_open,
+          IupSeparator(), item_exit, NULL);
   submenu_file = IupSubmenu("&File", menu_file);
   menu = IupMenu(submenu_file, NULL);
   IupSetHandle("menu", menu);
