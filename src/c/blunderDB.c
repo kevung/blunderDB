@@ -320,11 +320,11 @@ int main(int argc, char **argv)
   /*         NULL); */
 
   /* Define menus */
-  item_new = IupItem("New", NULL);
-  item_open = IupItem("Open", NULL);
-  item_close = IupItem("Close", NULL);
+  item_new = IupItem("&New\tCtrl+N", NULL);
+  item_open = IupItem("&Open\tCtrl+O", NULL);
+  item_close = IupItem("&Close\tCtrl+Q", NULL);
   menu_file = IupMenu(item_new, item_open, item_close, NULL);
-  submenu_file = IupSubmenu("File", menu_file);
+  submenu_file = IupSubmenu("&File", menu_file);
   menu = IupMenu(submenu_file, NULL);
   IupSetHandle("menu", menu);
 
@@ -345,6 +345,9 @@ int main(int argc, char **argv)
   IupSetAttribute(dlg, "MENU", "menu");
 
   /* Registers callbacks */
+  IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
+  IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
+  IupSetCallback(dlg, "K_cQ", (Icallback) item_close_action_cb);
   IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
   IupSetCallback(item_open, "ACTION", (Icallback) item_open_action_cb);
   IupSetCallback(item_close, "ACTION", (Icallback) item_close_action_cb);
