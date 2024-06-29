@@ -116,6 +116,13 @@ Ihandle *item_about;
 
 Ihandle *canvas;
 
+static int canvas_action_cb(Ihandle* ih);
+static int item_new_action_cb(void);
+static int item_open_action_cb(void);
+static int item_save_action_cb(void);
+static int item_exit_action_cb();
+void error_callback(void);
+
 
 
 static int canvas_action_cb(Ihandle* ih)
@@ -177,6 +184,7 @@ static int item_new_action_cb(void)
     return IUP_DEFAULT;
 }
 
+
 static int item_open_action_cb(void)
 {
     Ihandle *filedlg;
@@ -215,7 +223,13 @@ static int item_open_action_cb(void)
 
 }
 
-int item_exit_action_cb()
+static int item_save_action_cb(void)
+{
+    error_callback();
+}
+
+
+static int item_exit_action_cb()
 {
     // verify if db is saved with is_db_saved before quitting.
 
@@ -224,6 +238,10 @@ int item_exit_action_cb()
     return EXIT_SUCCESS;
 }
 
+void error_callback(void)
+{
+    IupMessage("Callback Error", "Functionality not implemented yet!");
+}
 
 /************************ Main ****************************/
 int main(int argc, char **argv)
@@ -234,8 +252,6 @@ int main(int argc, char **argv)
   /* item_recent = IupItem("Recent", NULL); */
   /* item_import = IupItem("Import...", NULL); */
   /* item_import_wizard = IupItem("Import Wizard", NULL); */
-  /* item_save = IupItem("Save", NULL); */
-  /* item_saveas = IupItem("Save As...", NULL); */
   /* item_export = IupItem("Export...", NULL); */
   /* item_properties = IupItem("Properties", NULL); */
   /* item_exit = IupItem("Exit", "item_exit_act"); */
@@ -322,8 +338,11 @@ int main(int argc, char **argv)
   /* Define menus */
   item_new = IupItem("&New\tCtrl+N", NULL);
   item_open = IupItem("&Open\tCtrl+O", NULL);
+  item_save = IupItem("&Save", NULL);
+  /* item_saveas = IupItem("Save &As...", NULL); */
   item_exit = IupItem("E&xit\tCtrl+Q", NULL);
   menu_file = IupMenu(item_new, item_open,
+          IupSeparator(), item_save,
           IupSeparator(), item_exit, NULL);
   submenu_file = IupSubmenu("&File", menu_file);
   menu = IupMenu(submenu_file, NULL);
@@ -348,9 +367,11 @@ int main(int argc, char **argv)
   /* Registers callbacks */
   IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
   IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
+  IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
   IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
   IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
   IupSetCallback(item_open, "ACTION", (Icallback) item_open_action_cb);
+  IupSetCallback(item_save, "ACTION", (Icallback) item_save_action_cb);
   IupSetCallback(item_exit, "ACTION", (Icallback) item_exit_action_cb);
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
