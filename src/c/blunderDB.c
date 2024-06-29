@@ -16,6 +16,80 @@ cdCanvas *curCanvas = NULL;
 sqlite3 *db = NULL;
 bool is_db_saved = true;
 int rc;
+char *errMsg = 0;
+
+const char *sql_collection =
+"CREATE TABLE collection ("
+"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+"name TEXT,"
+"position_list_id INTEGR,"
+"FOREIGN KEY(position_list_id) REFERENCES position_list(id)"
+");";
+
+const char *sql_position_list =
+"CREATE TABLE position_list ("
+"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+"position_id INTEGER,"
+"FOREIGN KEY(position_id) REFERENCES position(id)"
+");";
+
+const char *sql_player = 
+"CREATE TABLE player ("
+"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+"name TEXT"
+");";
+
+
+const char *sql_position =
+"CREATE TABLE position ("
+"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+"p0 INTEGER,"
+"p1 INTEGER,"
+"p2 INTEGER,"
+"p3 INTEGER,"
+"p4 INTEGER,"
+"p5 INTEGER,"
+"p6 INTEGER,"
+"p7 INTEGER,"
+"p8 INTEGER,"
+"p9 INTEGER,"
+"p10 INTEGER,"
+"p11 INTEGER,"
+"p12 INTEGER,"
+"p13 INTEGER,"
+"p14 INTEGER,"
+"p15 INTEGER,"
+"p16 INTEGER,"
+"p17 INTEGER,"
+"p18 INTEGER,"
+"p19 INTEGER,"
+"p20 INTEGER,"
+"p21 INTEGER,"
+"p22 INTEGER,"
+"p23 INTEGER,"
+"p24 INTEGER,"
+"p25 INTEGER,"
+"player1_id INTEGER,"
+"player2_id INTEGER,"
+"player1_score INTEGER,"
+"player2_score INTEGER,"
+"cube_position INTEGER,"
+"comment TEXT,"
+"FOREIGN KEY(player1_id) REFERENCES player(id),"
+"FOREIGN KEY(player2_id) REFERENCES player(id)"
+");";
+
+;
+
+void execute_sql(sqlite3 *db, const char *sql)
+{
+    rc = sqlite3_exec(db, sql, 0, 0, &errMsg);
+    if(rc != SQLITE_OK) {
+        printf("SQL error: %s\n", errMsg);
+    } else {
+        printf("SQL executed successfully\n");
+    }
+}
 
 int db_create(const char* filename)
 {
@@ -26,6 +100,7 @@ int db_create(const char* filename)
     }
 
     rc = sqlite3_open(filename, &db);
+    printf("%s\n", sql_position);
 
     if(rc) {
         printf("Can't create database: %s\n", sqlite3_errmsg(db));
@@ -33,6 +108,18 @@ int db_create(const char* filename)
     } else {
         printf("Created database successfully\n");
     }
+
+    printf("Try to create player table.\n");
+    execute_sql(db, sql_player);
+
+    printf("Try to create position table.\n");
+    execute_sql(db, sql_position);
+
+    printf("Try to create position_list table.\n");
+    execute_sql(db, sql_position_list);
+
+    printf("Try to create collection table.\n");
+    execute_sql(db, sql_collection);
 
     return 0;
 }
