@@ -75,7 +75,7 @@ Ihandle *menu, *submenu_file, *submenu_edit,
         *submenu_help;
 
 Ihandle *menu_file;
-Ihandle *item_new, *item_open, *item_recent, *item_close;
+Ihandle *item_new, *item_open, *item_recent, *item_exit;
 Ihandle *item_import, *item_import_wizard;
 Ihandle *item_save, *item_saveas;
 Ihandle *item_export;
@@ -215,7 +215,7 @@ static int item_open_action_cb(void)
 
 }
 
-int item_close_action_cb()
+int item_exit_action_cb()
 {
     // verify if db is saved with is_db_saved before quitting.
 
@@ -239,7 +239,7 @@ int main(int argc, char **argv)
   /* item_export = IupItem("Export...", NULL); */
   /* item_properties = IupItem("Properties", NULL); */
   /* item_exit = IupItem("Exit", "item_exit_act"); */
-  /* menu_file = IupMenu(item_new, item_open, item_recent, item_close, */
+  /* menu_file = IupMenu(item_new, item_open, item_recent, item_exit, */
   /*         IupSeparator(), item_save, item_saveas, */ 
   /*         IupSeparator(), item_import, item_import_wizard, */ 
   /*         IupSeparator(), item_export, */ 
@@ -322,8 +322,8 @@ int main(int argc, char **argv)
   /* Define menus */
   item_new = IupItem("&New\tCtrl+N", NULL);
   item_open = IupItem("&Open\tCtrl+O", NULL);
-  item_close = IupItem("&Close\tCtrl+Q", NULL);
-  menu_file = IupMenu(item_new, item_open, item_close, NULL);
+  item_exit = IupItem("E&xit\tCtrl+Q", NULL);
+  menu_file = IupMenu(item_new, item_open, item_exit, NULL);
   submenu_file = IupSubmenu("&File", menu_file);
   menu = IupMenu(submenu_file, NULL);
   IupSetHandle("menu", menu);
@@ -347,10 +347,10 @@ int main(int argc, char **argv)
   /* Registers callbacks */
   IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
   IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
-  IupSetCallback(dlg, "K_cQ", (Icallback) item_close_action_cb);
+  IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
   IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
   IupSetCallback(item_open, "ACTION", (Icallback) item_open_action_cb);
-  IupSetCallback(item_close, "ACTION", (Icallback) item_close_action_cb);
+  IupSetCallback(item_exit, "ACTION", (Icallback) item_exit_action_cb);
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
 
