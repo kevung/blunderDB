@@ -163,7 +163,7 @@ Ihandle *menu, *submenu_file, *submenu_edit,
 
 Ihandle *menu_file;
 Ihandle *item_new, *item_open, *item_recent, *item_exit;
-Ihandle *item_import, *item_import_wizard;
+Ihandle *item_import;
 Ihandle *item_save, *item_saveas;
 Ihandle *item_export;
 Ihandle *item_properties;
@@ -206,8 +206,14 @@ Ihandle *canvas;
 static int canvas_action_cb(Ihandle* ih);
 static int item_new_action_cb(void);
 static int item_open_action_cb(void);
+static int item_recent_action_cb(void);
 static int item_save_action_cb(void);
+static int item_saveas_action_cb(void);
+static int item_import_action_cb(void);
+static int item_export_action_cb(void);
+static int item_properties_action_cb(void);
 static int item_exit_action_cb();
+static int item_undo_action_cb();
 void error_callback(void);
 
 
@@ -310,11 +316,36 @@ static int item_open_action_cb(void)
 
 }
 
+static int item_recent_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_import_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_export_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_properties_action_cb(void)
+{
+    error_callback();
+}
+
+
 static int item_save_action_cb(void)
 {
     error_callback();
 }
 
+static int item_saveas_action_cb(void)
+{
+    error_callback();
+}
 
 static int item_exit_action_cb()
 {
@@ -323,6 +354,11 @@ static int item_exit_action_cb()
     db_close(db);
     IupClose();
     return EXIT_SUCCESS;
+}
+
+static int item_undo_action_cb(void)
+{
+    error_callback();
 }
 
 void error_callback(void)
@@ -336,103 +372,98 @@ int main(int argc, char **argv)
   IupOpen(&argc, &argv);
   IupSetLanguage("ENGLISH");
 
-  /* item_recent = IupItem("Recent", NULL); */
-  /* item_import = IupItem("Import...", NULL); */
-  /* item_import_wizard = IupItem("Import Wizard", NULL); */
-  /* item_export = IupItem("Export...", NULL); */
-  /* item_properties = IupItem("Properties", NULL); */
-  /* item_exit = IupItem("Exit", "item_exit_act"); */
-  /* menu_file = IupMenu(item_new, item_open, item_recent, item_exit, */
-  /*         IupSeparator(), item_save, item_saveas, */ 
-  /*         IupSeparator(), item_import, item_import_wizard, */ 
-  /*         IupSeparator(), item_export, */ 
-  /*         IupSeparator(), item_properties, */
-  /*         IupSeparator, item_exit, NULL); */
-
-  /* item_undo = IupItem("Undo", NULL); */
-  /* item_redo = IupItem("Redo", NULL); */
-  /* item_copy = IupItem("Copy", NULL); */
-  /* item_cut = IupItem("Cut", NULL); */
-  /* item_paste = IupItem("Paste", NULL); */
-  /* item_editmode = IupItem("Edit Mode", NULL); */
-  /* menu_edit = IupMenu(item_undo, item_redo, */
-  /*         item_copy, item_cut, item_paste, */
-  /*         IupSeparator(), item_editmode, NULL); */
-
-  /* item_next_position = IupItem("Next Position", NULL); */
-  /* item_prev_position = IupItem("Previous Position", NULL); */
-  /* item_new_position = IupItem("New Position", NULL); */
-  /* item_import_position = IupItem("Import", NULL); */
-  /* item_import_position_bybatch = IupItem("Import by Batch", NULL); */
-  /* item_new_collection = IupItem("New Library", NULL); */
-  /* item_delete_collection = IupItem("Delete Library", NULL); */
-  /* item_add_collection = IupItem("Add to Library", NULL); */
-  /* menu_position = IupMenu(item_next_position, item_prev_position, */ 
-  /*         item_new_position, item_import_position, */
-  /*         item_import_position_bybatch, IupSeparator(), */
-  /*         item_new_collection, item_delete_collection, */
-  /*         item_add_collection, NULL); */
-
-  /* item_import_match = IupItem("Import Match", NULL); */
-  /* item_import_match_bybatch = IupItem("Import Matches by Batch", */
-  /*         NULL); */
-  /* item_match_library = IupItem("Match Library", NULL); */
-  /* menu_match = IupMenu(item_import_match, item_import_match_bybatch, */
-  /*         item_match_library, NULL); */
-
-  /* item_search_blunder = IupItem("by Blunder", NULL); */
-  /* item_search_structure = IupItem("by Dice", NULL); */
-  /* item_search_cube = IupItem("by Cube Decision", NULL); */
-  /* item_search_score = IupItem("by Score", NULL); */
-  /* item_search_player = IupItem("by Player", NULL); */
-  /* item_search_engine = IupItem("Search Engine", NULL); */
-  /* item_searchmode = IupItem("Search Mode", NULL); */
-  /* menu_search = IupMenu(item_search_blunder, */
-  /*         item_search_structure, item_search_cube, */
-  /*         item_search_score, item_search_player, */
-  /*         item_search_engine, IupSeparator(), */
-  /*         item_searchmode, NULL); */
-
-  /* item_find_position_without_analysis = IupItem("Find Positions without Analysis", NULL); */
-  /* item_preferences = IupItem("Preferences", NULL); */
-  /* menu_tool = IupMenu(item_find_position_without_analysis, */
-  /*         IupSeparator(), item_preferences, NULL); */
-
-  /* item_manual = IupItem("Help Manual", NULL); */
-  /* item_userguide = IupItem("User Guide", NULL); */
-  /* item_tips = IupItem("Tips", NULL); */
-  /* item_cmdmode = IupItem("Command Mode Help", NULL); */
-  /* item_keyboard = IupItem("Keyboard shortcuts", NULL); */
-  /* item_getinvolved = IupItem("Get Involved", NULL); */
-  /* item_donate = IupItem("Donate to blunderDB", NULL); */
-  /* item_about = IupItem("About", NULL); */
-  /* menu_help = IupMenu(item_manual, item_userguide, */
-  /*         item_tips, item_cmdmode, item_keyboard, */
-  /*         IupSeparator(), item_getinvolved, item_donate, */
-  /*         IupSeparator(), item_about, NULL); */
-
-  /* submenu_file = IupSubmenu("File", menu_file); */
-  /* submenu_edit = IupSubmenu("Edit", menu_edit); */
-  /* submenu_position = IupSubmenu("Positions", menu_position); */
-  /* submenu_match = IupSubmenu("Matches", menu_match); */
-  /* submenu_search = IupSubmenu("Search", menu_search); */
-  /* submenu_help = IupSubmenu("Help", menu_help); */
-
-  /* menu = IupMenu(submenu_file, submenu_edit, submenu_position, */
-  /*         submenu_match, submenu_search, submenu_tool, submenu_help, */
-  /*         NULL); */
-
   /* Define menus */
   item_new = IupItem("&New\tCtrl+N", NULL);
   item_open = IupItem("&Open\tCtrl+O", NULL);
+  item_recent = IupItem("Recent D&atabase", NULL);
   item_save = IupItem("&Save", NULL);
-  /* item_saveas = IupItem("Save &As...", NULL); */
+  item_saveas = IupItem("Save &As...", NULL);
+  item_import = IupItem("&Import...", NULL);
+  item_export = IupItem("&Export...", NULL);
+  item_properties = IupItem("&Properties...", NULL);
   item_exit = IupItem("E&xit\tCtrl+Q", NULL);
-  menu_file = IupMenu(item_new, item_open,
-          IupSeparator(), item_save,
+  menu_file = IupMenu(item_new, item_open, item_recent,
+          IupSeparator(), item_import,
+          IupSeparator(), item_export,
+          IupSeparator(), item_save, item_saveas,
+          IupSeparator(), item_properties,
           IupSeparator(), item_exit, NULL);
   submenu_file = IupSubmenu("&File", menu_file);
-  menu = IupMenu(submenu_file, NULL);
+
+  item_undo = IupItem("&Undo\tCtrl-Z", NULL);
+  item_redo = IupItem("&Redo\tCtrl-Y", NULL);
+  item_copy = IupItem("Co&py\tCtrl-C", NULL);
+  item_cut = IupItem("Cu&t\tCtrl-X", NULL);
+  item_paste = IupItem("Pa&ste\tCtrl-V", NULL);
+  item_editmode = IupItem("&Edit Mode\tCtrl-E", NULL);
+  menu_edit = IupMenu(item_undo, item_redo,
+          item_copy, item_cut, item_paste,
+          IupSeparator(), item_editmode, NULL);
+  submenu_edit = IupSubmenu("&Edit", menu_edit);
+
+  item_next_position = IupItem("Next Position", NULL);
+  item_prev_position = IupItem("Previous Position", NULL);
+  item_new_position = IupItem("New Position", NULL);
+  item_import_position = IupItem("Import", NULL);
+  item_import_position_bybatch = IupItem("Import by Batch", NULL);
+  item_new_collection = IupItem("New Library", NULL);
+  item_delete_collection = IupItem("Delete Library", NULL);
+  item_add_collection = IupItem("Add to Library", NULL);
+  menu_position = IupMenu(item_next_position, item_prev_position, 
+          item_new_position, item_import_position,
+          item_import_position_bybatch, IupSeparator(),
+          item_new_collection, item_delete_collection,
+          item_add_collection, NULL);
+  submenu_position = IupSubmenu("&Positions", menu_position);
+
+  item_import_match = IupItem("Import Match", NULL);
+  item_import_match_bybatch = IupItem("Import Matches by Batch",
+          NULL);
+  item_match_library = IupItem("Match Library", NULL);
+  menu_match = IupMenu(item_import_match, item_import_match_bybatch,
+          item_match_library, NULL);
+  submenu_match = IupSubmenu("&Matches", menu_match);
+
+  item_search_blunder = IupItem("by &Blunder", NULL);
+  item_search_structure = IupItem("by &Dice", NULL);
+  item_search_cube = IupItem("by &Cube Decision", NULL);
+  item_search_score = IupItem("by &Score", NULL);
+  item_search_player = IupItem("by &Player", NULL);
+  item_search_engine = IupItem("Search &Engine", NULL);
+  item_searchmode = IupItem("Search &Mode", NULL);
+  menu_search = IupMenu(item_search_blunder,
+          item_search_structure, item_search_cube,
+          item_search_score, item_search_player,
+          item_search_engine, IupSeparator(),
+          item_searchmode, NULL);
+  submenu_search = IupSubmenu("&Search", menu_search);
+
+  item_find_position_without_analysis = IupItem("&Find Positions without Analysis", NULL);
+  item_preferences = IupItem("&Preferences", NULL);
+  menu_tool = IupMenu(item_find_position_without_analysis,
+          IupSeparator(), item_preferences, NULL);
+  submenu_tool = IupSubmenu("&Tools", menu_tool);
+
+  item_manual = IupItem("Help &Manual", NULL);
+  item_userguide = IupItem("&User Guide", NULL);
+  item_tips = IupItem("&Tips", NULL);
+  item_cmdmode = IupItem("&Command Mode Help", NULL);
+  item_keyboard = IupItem("&Keyboard shortcuts", NULL);
+  item_getinvolved = IupItem("Get &Involved", NULL);
+  item_donate = IupItem("&Donate to blunderDB", NULL);
+  item_about = IupItem("&About", NULL);
+  menu_help = IupMenu(item_manual, item_userguide,
+          item_tips, item_cmdmode, item_keyboard,
+          IupSeparator(), item_getinvolved, item_donate,
+          IupSeparator(), item_about, NULL);
+  submenu_help = IupSubmenu("&Help", menu_help);
+
+  menu = IupMenu(submenu_file, submenu_edit, submenu_position,
+          submenu_match, submenu_search, submenu_tool, submenu_help,
+          NULL);
+
+  /* menu = IupMenu(submenu_file, NULL); */
+
   IupSetHandle("menu", menu);
 
   /* Define main canvas */
@@ -456,10 +487,17 @@ int main(int argc, char **argv)
   IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
   IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
   IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
+  IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
   IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
   IupSetCallback(item_open, "ACTION", (Icallback) item_open_action_cb);
+  IupSetCallback(item_recent, "ACTION", (Icallback) item_recent_action_cb);
+  IupSetCallback(item_import, "ACTION", (Icallback) item_import_action_cb);
+  IupSetCallback(item_export, "ACTION", (Icallback) item_export_action_cb);
+  IupSetCallback(item_properties, "ACTION", (Icallback) item_properties_action_cb);
   IupSetCallback(item_save, "ACTION", (Icallback) item_save_action_cb);
+  IupSetCallback(item_saveas, "ACTION", (Icallback) item_saveas_action_cb);
   IupSetCallback(item_exit, "ACTION", (Icallback) item_exit_action_cb);
+  IupSetCallback(item_undo, "ACTION", (Icallback) item_undo_action_cb);
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
 
