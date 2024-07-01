@@ -591,7 +591,7 @@ int main(int argc, char **argv)
   item_saveas = IupItem("Save &As...", NULL);
   item_import = IupItem("&Import...", NULL);
   item_export = IupItem("&Export...", NULL);
-  item_properties = IupItem("&Properties...", NULL);
+  item_properties = IupItem("Database &Metadata...", NULL);
   item_exit = IupItem("E&xit\tCtrl+Q", NULL);
   menu_file = IupMenu(item_new, item_open, item_recent,
           IupSeparator(), item_import,
