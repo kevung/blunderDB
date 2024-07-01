@@ -206,6 +206,7 @@ Ihandle *btn_new, *btn_open, *btn_save, *btn_close, *btn_properties;
 Ihandle *btn_cut, *btn_copy, *btn_paste;
 Ihandle *btn_undo, *btn_redo;
 Ihandle *btn_prev, *btn_next;
+Ihandle *btn_blunder, *btn_dice, *btn_cube, *btn_score, *btn_player;
 Ihandle *btn_preferences;
 Ihandle *btn_manual;
 
@@ -722,6 +723,21 @@ int main(int argc, char **argv)
   IupSetAttribute(btn_next, "IMAGE", "IUP_ArrowRight");
   IupSetAttribute(btn_next, "FLAT", "Yes");
   IupSetAttribute(btn_next, "CANFOCUS", "No");
+  btn_blunder = IupButton("Blunder", NULL);
+  IupSetAttribute(btn_blunder, "FLAT", "Yes");
+  IupSetAttribute(btn_blunder, "CANFOCUS", "No");
+  btn_dice = IupButton("Dice", NULL);
+  IupSetAttribute(btn_dice, "FLAT", "Yes");
+  IupSetAttribute(btn_dice, "CANFOCUS", "No");
+  btn_cube = IupButton("Cube", NULL);
+  IupSetAttribute(btn_cube, "FLAT", "Yes");
+  IupSetAttribute(btn_cube, "CANFOCUS", "No");
+  btn_score = IupButton("Score", NULL);
+  IupSetAttribute(btn_score, "FLAT", "Yes");
+  IupSetAttribute(btn_score, "CANFOCUS", "No");
+  btn_player = IupButton("Player", NULL);
+  IupSetAttribute(btn_player, "FLAT", "Yes");
+  IupSetAttribute(btn_player, "CANFOCUS", "No");
   btn_preferences = IupButton(NULL, NULL);
   IupSetAttribute(btn_preferences, "IMAGE", "IUP_ToolsSettings");
   IupSetAttribute(btn_preferences, "FLAT", "Yes");
@@ -738,6 +754,8 @@ int main(int argc, char **argv)
           btn_undo, btn_redo,
           IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
           btn_prev, btn_next,
+          IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+          btn_blunder, btn_dice, btn_cube, btn_score, btn_player,
           IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
           btn_preferences,
           IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
