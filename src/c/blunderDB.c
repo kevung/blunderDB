@@ -410,7 +410,7 @@ int main(int argc, char **argv)
   item_delete_collection = IupItem("Delete Library", NULL);
   item_add_collection = IupItem("Add to Library", NULL);
   menu_position = IupMenu(item_next_position, item_prev_position, 
-          item_new_position, item_import_position,
+          item_new_position, IupSeparator(), item_import_position, 
           item_import_position_bybatch, IupSeparator(),
           item_new_collection, item_delete_collection,
           item_add_collection, NULL);
