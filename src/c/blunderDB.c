@@ -661,8 +661,6 @@ int main(int argc, char **argv)
           submenu_match, submenu_search, submenu_tool, submenu_help,
           NULL);
 
-  /* menu = IupMenu(submenu_file, NULL); */
-
   IupSetHandle("menu", menu);
 
   /* Define main canvas */
