@@ -404,8 +404,8 @@ int main(int argc, char **argv)
   item_next_position = IupItem("Next Position", NULL);
   item_prev_position = IupItem("Previous Position", NULL);
   item_new_position = IupItem("New Position", NULL);
-  item_import_position = IupItem("Import", NULL);
-  item_import_position_bybatch = IupItem("Import by Batch", NULL);
+  item_import_position = IupItem("Import Position", NULL);
+  item_import_position_bybatch = IupItem("Import Positions by Batch", NULL);
   item_new_collection = IupItem("New Library", NULL);
   item_delete_collection = IupItem("Delete Library", NULL);
   item_add_collection = IupItem("Add to Library", NULL);
