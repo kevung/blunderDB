@@ -201,6 +201,13 @@ Ihandle *item_keyboard;
 Ihandle *item_getinvolved, *item_donate;
 Ihandle *item_about;
 
+Ihandle *toolbar_hb;
+Ihandle *btn_new, *btn_open, *btn_save, *btn_close, *btn_properties;
+Ihandle *btn_cut, *btn_copy, *btn_paste;
+Ihandle *btn_undo, *btn_redo;
+Ihandle *btn_prev, *btn_next;
+Ihandle *btn_preferences;
+
 Ihandle *canvas;
 
 static int canvas_action_cb(Ihandle* ih);
@@ -569,6 +576,7 @@ void error_callback(void)
 int main(int argc, char **argv)
 {
   IupOpen(&argc, &argv);
+  IupImageLibOpen();
   IupSetLanguage("ENGLISH");
 
   /* Define menus */
@@ -663,13 +671,82 @@ int main(int argc, char **argv)
 
   IupSetHandle("menu", menu);
 
+  /* Define toolbar */
+
+  btn_new = IupButton(NULL, NULL);
+  IupSetAttribute(btn_new, "IMAGE", "IUP_FileNew");
+  IupSetAttribute(btn_new, "FLAT", "Yes");
+  IupSetAttribute(btn_new, "CANFOCUS", "No");
+  btn_open = IupButton(NULL, NULL);
+  IupSetAttribute(btn_open, "IMAGE", "IUP_FileOpen");
+  IupSetAttribute(btn_open, "FLAT", "Yes");
+  IupSetAttribute(btn_open, "CANFOCUS", "No");
+  btn_save = IupButton(NULL, NULL);
+  IupSetAttribute(btn_save, "IMAGE", "IUP_FileSave");
+  IupSetAttribute(btn_save, "FLAT", "Yes");
+  IupSetAttribute(btn_save, "CANFOCUS", "No");
+  btn_close = IupButton(NULL, NULL);
+  IupSetAttribute(btn_close, "IMAGE", "IUP_FileClose");
+  IupSetAttribute(btn_close, "FLAT", "Yes");
+  IupSetAttribute(btn_close, "CANFOCUS", "No");
+  btn_properties = IupButton(NULL, NULL);
+  IupSetAttribute(btn_properties, "IMAGE", "IUP_FileProperties");
+  IupSetAttribute(btn_properties, "FLAT", "Yes");
+  IupSetAttribute(btn_properties, "CANFOCUS", "No");
+  btn_cut = IupButton(NULL, NULL);
+  IupSetAttribute(btn_cut, "IMAGE", "IUP_EditCut");
+  IupSetAttribute(btn_cut, "FLAT", "Yes");
+  IupSetAttribute(btn_cut, "CANFOCUS", "No");
+  btn_copy = IupButton(NULL, NULL);
+  IupSetAttribute(btn_copy, "IMAGE", "IUP_EditCopy");
+  IupSetAttribute(btn_copy, "FLAT", "Yes");
+  IupSetAttribute(btn_copy, "CANFOCUS", "No");
+  btn_paste = IupButton(NULL, NULL);
+  IupSetAttribute(btn_paste, "IMAGE", "IUP_EditPaste");
+  IupSetAttribute(btn_paste, "FLAT", "Yes");
+  IupSetAttribute(btn_paste, "CANFOCUS", "No");
+  btn_undo = IupButton(NULL, NULL);
+  IupSetAttribute(btn_undo, "IMAGE", "IUP_EditUndo");
+  IupSetAttribute(btn_undo, "FLAT", "Yes");
+  IupSetAttribute(btn_undo, "CANFOCUS", "No");
+  btn_redo = IupButton(NULL, NULL);
+  IupSetAttribute(btn_redo, "IMAGE", "IUP_EditRedo");
+  IupSetAttribute(btn_redo, "FLAT", "Yes");
+  IupSetAttribute(btn_redo, "CANFOCUS", "No");
+  btn_prev = IupButton(NULL, NULL);
+  IupSetAttribute(btn_prev, "IMAGE", "IUP_ArrowLeft");
+  IupSetAttribute(btn_prev, "FLAT", "Yes");
+  IupSetAttribute(btn_prev, "CANFOCUS", "No");
+  btn_next = IupButton(NULL, NULL);
+  IupSetAttribute(btn_next, "IMAGE", "IUP_ArrowRight");
+  IupSetAttribute(btn_next, "FLAT", "Yes");
+  IupSetAttribute(btn_next, "CANFOCUS", "No");
+  btn_preferences = IupButton(NULL, NULL);
+  IupSetAttribute(btn_preferences, "IMAGE", "IUP_ToolsSettings");
+  IupSetAttribute(btn_preferences, "FLAT", "Yes");
+  IupSetAttribute(btn_preferences, "CANFOCUS", "No");
+  toolbar_hb = IupHbox(
+          btn_new, btn_open, btn_save, btn_close, btn_properties,
+          IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+          btn_cut, btn_copy, btn_paste,
+          IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+          btn_undo, btn_redo,
+          IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+          btn_prev, btn_next,
+          IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+          btn_preferences,
+          NULL);
+  IupSetAttribute(toolbar_hb, "MARGIN", "5x5");
+  IupSetAttribute(toolbar_hb, "GAP", "2");
+
+
   /* Define main canvas */
   canvas = IupCanvas(NULL);
   IupSetAttribute(canvas, "NAME", "CANVAS");
   IupSetAttribute(canvas, "EXPAND", "YES");
 
   /* General layout */
-  vbox = IupVbox(canvas, NULL);
+  vbox = IupVbox(toolbar_hb, canvas, NULL);
   IupSetAttribute(vbox, "NMARGIN", "10x10");
   IupSetAttribute(vbox, "GAP", "10");
 
@@ -686,22 +763,34 @@ int main(int argc, char **argv)
   IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
   IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
   IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
+  IupSetCallback(btn_new, "ACTION", (Icallback) item_new_action_cb);
   IupSetCallback(item_open, "ACTION", (Icallback) item_open_action_cb);
+  IupSetCallback(btn_open, "ACTION", (Icallback) item_open_action_cb);
   IupSetCallback(item_recent, "ACTION", (Icallback) item_recent_action_cb);
   IupSetCallback(item_import, "ACTION", (Icallback) item_import_action_cb);
   IupSetCallback(item_export, "ACTION", (Icallback) item_export_action_cb);
   IupSetCallback(item_save, "ACTION", (Icallback) item_save_action_cb);
+  IupSetCallback(btn_save, "ACTION", (Icallback) item_save_action_cb);
   IupSetCallback(item_saveas, "ACTION", (Icallback) item_saveas_action_cb);
   IupSetCallback(item_properties, "ACTION", (Icallback) item_properties_action_cb);
+  IupSetCallback(btn_properties, "ACTION", (Icallback) item_properties_action_cb);
   IupSetCallback(item_exit, "ACTION", (Icallback) item_exit_action_cb);
+  IupSetCallback(btn_close, "ACTION", (Icallback) item_exit_action_cb);
   IupSetCallback(item_undo, "ACTION", (Icallback) item_undo_action_cb);
+  IupSetCallback(btn_undo, "ACTION", (Icallback) item_undo_action_cb);
   IupSetCallback(item_redo, "ACTION", (Icallback) item_redo_action_cb);
-  IupSetCallback(item_copy, "ACTION", (Icallback) item_copy_action_cb);
+  IupSetCallback(btn_redo, "ACTION", (Icallback) item_redo_action_cb);
   IupSetCallback(item_cut, "ACTION", (Icallback) item_cut_action_cb);
+  IupSetCallback(btn_cut, "ACTION", (Icallback) item_cut_action_cb);
+  IupSetCallback(item_copy, "ACTION", (Icallback) item_copy_action_cb);
+  IupSetCallback(btn_copy, "ACTION", (Icallback) item_copy_action_cb);
   IupSetCallback(item_paste, "ACTION", (Icallback) item_paste_action_cb);
+  IupSetCallback(btn_paste, "ACTION", (Icallback) item_paste_action_cb);
   IupSetCallback(item_editmode, "ACTION", (Icallback) item_editmode_action_cb);
   IupSetCallback(item_next_position, "ACTION", (Icallback) item_nextposition_action_cb);
+  IupSetCallback(btn_next, "ACTION", (Icallback) item_nextposition_action_cb);
   IupSetCallback(item_prev_position, "ACTION", (Icallback) item_prevposition_action_cb);
+  IupSetCallback(btn_prev, "ACTION", (Icallback) item_prevposition_action_cb);
   IupSetCallback(item_new_position, "ACTION", (Icallback) item_newposition_action_cb);
   IupSetCallback(item_import_position, "ACTION", (Icallback) item_importposition_action_cb);
   IupSetCallback(item_import_position_bybatch, "ACTION", (Icallback) item_importpositionbybatch_action_cb);
@@ -720,6 +809,7 @@ int main(int argc, char **argv)
   IupSetCallback(item_searchmode, "ACTION", (Icallback) item_searchmode_action_cb);
   IupSetCallback(item_find_position_without_analysis, "ACTION", (Icallback) item_findpositionwithoutanalysis_action_cb);
   IupSetCallback(item_preferences, "ACTION", (Icallback) item_preferences_action_cb);
+  IupSetCallback(btn_preferences, "ACTION", (Icallback) item_preferences_action_cb);
   IupSetCallback(item_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
   IupSetCallback(item_userguide, "ACTION", (Icallback) item_userguide_action_cb);
   IupSetCallback(item_tips, "ACTION", (Icallback) item_tips_action_cb);
