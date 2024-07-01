@@ -774,7 +774,7 @@ int main(int argc, char **argv)
   IupSetAttribute(canvas, "EXPAND", "YES");
 
   /* Define status bar */
-  lbl_statusbar = IupLabel("EDIT MODE");
+  lbl_statusbar = IupLabel("NORMAL MODE");
   IupSetAttribute(lbl_statusbar, "NAME", "STATUSBAR");
   IupSetAttribute(lbl_statusbar, "EXPAND", "HORIZONTAL");
   IupSetAttribute(lbl_statusbar, "PADDIND", "10x5");
