@@ -212,6 +212,8 @@ Ihandle *btn_manual;
 
 Ihandle *canvas;
 
+Ihandle *lbl_statusbar;
+
 static int canvas_action_cb(Ihandle* ih);
 static int item_new_action_cb(void);
 static int item_open_action_cb(void);
@@ -771,8 +773,14 @@ int main(int argc, char **argv)
   IupSetAttribute(canvas, "NAME", "CANVAS");
   IupSetAttribute(canvas, "EXPAND", "YES");
 
+  /* Define status bar */
+  lbl_statusbar = IupLabel("EDIT MODE");
+  IupSetAttribute(lbl_statusbar, "NAME", "STATUSBAR");
+  IupSetAttribute(lbl_statusbar, "EXPAND", "HORIZONTAL");
+  IupSetAttribute(lbl_statusbar, "PADDIND", "10x5");
+
   /* General layout */
-  vbox = IupVbox(toolbar_hb, canvas, NULL);
+  vbox = IupVbox(toolbar_hb, canvas, lbl_statusbar, NULL);
   IupSetAttribute(vbox, "NMARGIN", "10x10");
   IupSetAttribute(vbox, "GAP", "10");
 
