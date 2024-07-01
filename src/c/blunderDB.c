@@ -18,8 +18,8 @@ bool is_db_saved = true;
 int rc;
 char *errMsg = 0;
 
-const char *sql_collection =
-"CREATE TABLE collection ("
+const char *sql_library =
+"CREATE TABLE library ("
 "id INTEGER PRIMARY KEY AUTOINCREMENT,"
 "name TEXT,"
 "position_list_id INTEGR,"
@@ -118,8 +118,8 @@ int db_create(const char* filename)
     printf("Try to create position_list table.\n");
     execute_sql(db, sql_position_list);
 
-    printf("Try to create collection table.\n");
-    execute_sql(db, sql_collection);
+    printf("Try to create library table.\n");
+    execute_sql(db, sql_library);
 
     return 0;
 }
@@ -177,9 +177,9 @@ Ihandle *menu_position;
 Ihandle *item_next_position, *item_prev_position,
         *item_new_position,
         *item_import_position, *item_import_position_bybatch;
-Ihandle *item_new_collection;
-Ihandle *item_delete_collection;
-Ihandle *item_add_collection;
+Ihandle *item_new_library;
+Ihandle *item_delete_library;
+Ihandle *item_add_library;
 
 Ihandle *menu_match;
 Ihandle *item_import_match, *item_import_match_bybatch, 
@@ -214,6 +214,39 @@ static int item_export_action_cb(void);
 static int item_properties_action_cb(void);
 static int item_exit_action_cb();
 static int item_undo_action_cb();
+static int item_redo_action_cb();
+static int item_copy_action_cb();
+static int item_cut_action_cb();
+static int item_paste_action_cb();
+static int item_editmode_action_cb();
+static int item_nextposition_action_cb();
+static int item_prevposition_action_cb();
+static int item_newposition_action_cb();
+static int item_importposition_action_cb();
+static int item_importpositionbybatch_action_cb();
+static int item_newlibrary_action_cb();
+static int item_deletelibrary_action_cb();
+static int item_addtolibrary_action_cb();
+static int item_importmatch_action_cb();
+static int item_importmatchbybatch_action_cb();
+static int item_matchlibrary_action_cb();
+static int item_searchblunder_action_cb();
+static int item_searchdice_action_cb();
+static int item_searchcubedecision_action_cb();
+static int item_searchscore_action_cb();
+static int item_searchplayer_action_cb();
+static int item_searchengine_action_cb();
+static int item_searchmode_action_cb();
+static int item_findpositionwithoutanalysis_action_cb();
+static int item_preferences_action_cb();
+static int item_helpmanual_action_cb();
+static int item_userguide_action_cb();
+static int item_tips_action_cb();
+static int item_commandmodehelp_action_cb();
+static int item_keyboardshortcuts_action_cb();
+static int item_getinvolved_action_cb();
+static int item_donatetoblunderdb_action_cb();
+static int item_about_action_cb();
 void error_callback(void);
 
 
@@ -361,6 +394,172 @@ static int item_undo_action_cb(void)
     error_callback();
 }
 
+static int item_redo_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_copy_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_cut_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_paste_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_editmode_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_nextposition_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_prevposition_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_newposition_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_importposition_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_importpositionbybatch_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_newlibrary_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_deletelibrary_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_addtolibrary_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_importmatch_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_importmatchbybatch_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_matchlibrary_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_searchblunder_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_searchdice_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_searchcubedecision_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_searchscore_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_searchplayer_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_searchengine_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_searchmode_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_findpositionwithoutanalysis_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_preferences_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_helpmanual_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_userguide_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_tips_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_commandmodehelp_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_keyboardshortcuts_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_getinvolved_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_donate_action_cb(void)
+{
+    error_callback();
+}
+
+static int item_about_action_cb(void)
+{
+    error_callback();
+}
+
+
 void error_callback(void)
 {
     IupMessage("Callback Error", "Functionality not implemented yet!");
@@ -373,10 +572,10 @@ int main(int argc, char **argv)
   IupSetLanguage("ENGLISH");
 
   /* Define menus */
-  item_new = IupItem("&New\tCtrl+N", NULL);
-  item_open = IupItem("&Open\tCtrl+O", NULL);
+  item_new = IupItem("&New Database\tCtrl+N", NULL);
+  item_open = IupItem("&Open Database\tCtrl+O", NULL);
   item_recent = IupItem("Recent D&atabase", NULL);
-  item_save = IupItem("&Save", NULL);
+  item_save = IupItem("&Save Database", NULL);
   item_saveas = IupItem("Save &As...", NULL);
   item_import = IupItem("&Import...", NULL);
   item_export = IupItem("&Export...", NULL);
@@ -401,38 +600,38 @@ int main(int argc, char **argv)
           IupSeparator(), item_editmode, NULL);
   submenu_edit = IupSubmenu("&Edit", menu_edit);
 
-  item_next_position = IupItem("Next Position", NULL);
-  item_prev_position = IupItem("Previous Position", NULL);
-  item_new_position = IupItem("New Position", NULL);
-  item_import_position = IupItem("Import Position", NULL);
-  item_import_position_bybatch = IupItem("Import Positions by Batch", NULL);
-  item_new_collection = IupItem("New Library", NULL);
-  item_delete_collection = IupItem("Delete Library", NULL);
-  item_add_collection = IupItem("Add to Library", NULL);
+  item_next_position = IupItem("Ne&xt Position", NULL);
+  item_prev_position = IupItem("Pre&vious Position", NULL);
+  item_new_position = IupItem("Ne&w Position", NULL);
+  item_import_position = IupItem("&Import Position", NULL);
+  item_import_position_bybatch = IupItem("Import Positions by &Batch", NULL);
+  item_new_library = IupItem("New &Library", NULL);
+  item_delete_library = IupItem("&Delete Library", NULL);
+  item_add_library = IupItem("&Add to Library", NULL);
   menu_position = IupMenu(item_next_position, item_prev_position, 
           item_new_position, IupSeparator(), item_import_position, 
           item_import_position_bybatch, IupSeparator(),
-          item_new_collection, item_delete_collection,
-          item_add_collection, NULL);
+          item_new_library, item_delete_library,
+          item_add_library, NULL);
   submenu_position = IupSubmenu("&Positions", menu_position);
 
-  item_import_match = IupItem("Import Match", NULL);
-  item_import_match_bybatch = IupItem("Import Matches by Batch",
+  item_import_match = IupItem("&Import Match", NULL);
+  item_import_match_bybatch = IupItem("Import Matches by &Batch",
           NULL);
-  item_match_library = IupItem("Match Library", NULL);
+  item_match_library = IupItem("Match &Library", NULL);
   menu_match = IupMenu(item_import_match, item_import_match_bybatch,
           item_match_library, NULL);
   submenu_match = IupSubmenu("&Matches", menu_match);
 
   item_search_blunder = IupItem("by &Blunder", NULL);
-  item_search_structure = IupItem("by &Dice", NULL);
+  item_search_dice = IupItem("by &Dice", NULL);
   item_search_cube = IupItem("by &Cube Decision", NULL);
   item_search_score = IupItem("by &Score", NULL);
   item_search_player = IupItem("by &Player", NULL);
   item_search_engine = IupItem("Search &Engine", NULL);
   item_searchmode = IupItem("Search &Mode", NULL);
   menu_search = IupMenu(item_search_blunder,
-          item_search_structure, item_search_cube,
+          item_search_dice, item_search_cube,
           item_search_score, item_search_player,
           item_search_engine, IupSeparator(),
           item_searchmode, NULL);
@@ -493,11 +692,44 @@ int main(int argc, char **argv)
   IupSetCallback(item_recent, "ACTION", (Icallback) item_recent_action_cb);
   IupSetCallback(item_import, "ACTION", (Icallback) item_import_action_cb);
   IupSetCallback(item_export, "ACTION", (Icallback) item_export_action_cb);
-  IupSetCallback(item_properties, "ACTION", (Icallback) item_properties_action_cb);
   IupSetCallback(item_save, "ACTION", (Icallback) item_save_action_cb);
   IupSetCallback(item_saveas, "ACTION", (Icallback) item_saveas_action_cb);
+  IupSetCallback(item_properties, "ACTION", (Icallback) item_properties_action_cb);
   IupSetCallback(item_exit, "ACTION", (Icallback) item_exit_action_cb);
   IupSetCallback(item_undo, "ACTION", (Icallback) item_undo_action_cb);
+  IupSetCallback(item_redo, "ACTION", (Icallback) item_redo_action_cb);
+  IupSetCallback(item_copy, "ACTION", (Icallback) item_copy_action_cb);
+  IupSetCallback(item_cut, "ACTION", (Icallback) item_cut_action_cb);
+  IupSetCallback(item_paste, "ACTION", (Icallback) item_paste_action_cb);
+  IupSetCallback(item_editmode, "ACTION", (Icallback) item_editmode_action_cb);
+  IupSetCallback(item_next_position, "ACTION", (Icallback) item_nextposition_action_cb);
+  IupSetCallback(item_prev_position, "ACTION", (Icallback) item_prevposition_action_cb);
+  IupSetCallback(item_new_position, "ACTION", (Icallback) item_newposition_action_cb);
+  IupSetCallback(item_import_position, "ACTION", (Icallback) item_importposition_action_cb);
+  IupSetCallback(item_import_position_bybatch, "ACTION", (Icallback) item_importpositionbybatch_action_cb);
+  IupSetCallback(item_new_library, "ACTION", (Icallback) item_newlibrary_action_cb);
+  IupSetCallback(item_delete_library, "ACTION", (Icallback) item_deletelibrary_action_cb);
+  IupSetCallback(item_add_library, "ACTION", (Icallback) item_addtolibrary_action_cb);
+  IupSetCallback(item_import_match, "ACTION", (Icallback) item_importmatch_action_cb);
+  IupSetCallback(item_import_match_bybatch, "ACTION", (Icallback) item_importmatchbybatch_action_cb);
+  IupSetCallback(item_match_library, "ACTION", (Icallback) item_matchlibrary_action_cb);
+  IupSetCallback(item_search_blunder, "ACTION", (Icallback) item_searchblunder_action_cb);
+  IupSetCallback(item_search_dice, "ACTION", (Icallback) item_searchdice_action_cb);
+  IupSetCallback(item_search_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
+  IupSetCallback(item_search_score, "ACTION", (Icallback) item_searchscore_action_cb);
+  IupSetCallback(item_search_player, "ACTION", (Icallback) item_searchplayer_action_cb);
+  IupSetCallback(item_search_engine, "ACTION", (Icallback) item_searchengine_action_cb);
+  IupSetCallback(item_searchmode, "ACTION", (Icallback) item_searchmode_action_cb);
+  IupSetCallback(item_find_position_without_analysis, "ACTION", (Icallback) item_findpositionwithoutanalysis_action_cb);
+  IupSetCallback(item_preferences, "ACTION", (Icallback) item_preferences_action_cb);
+  IupSetCallback(item_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
+  IupSetCallback(item_userguide, "ACTION", (Icallback) item_userguide_action_cb);
+  IupSetCallback(item_tips, "ACTION", (Icallback) item_tips_action_cb);
+  IupSetCallback(item_cmdmode, "ACTION", (Icallback) item_commandmodehelp_action_cb);
+  IupSetCallback(item_keyboard, "ACTION", (Icallback) item_keyboardshortcuts_action_cb);
+  IupSetCallback(item_getinvolved, "ACTION", (Icallback) item_getinvolved_action_cb);
+  IupSetCallback(item_donate, "ACTION", (Icallback) item_donate_action_cb);
+  IupSetCallback(item_about, "ACTION", (Icallback) item_about_action_cb);
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
 
