@@ -835,10 +835,15 @@ int main(int argc, char **argv)
   IupSetCallback(item_import_match_bybatch, "ACTION", (Icallback) item_importmatchbybatch_action_cb);
   IupSetCallback(item_match_library, "ACTION", (Icallback) item_matchlibrary_action_cb);
   IupSetCallback(item_search_blunder, "ACTION", (Icallback) item_searchblunder_action_cb);
+  IupSetCallback(btn_blunder, "ACTION", (Icallback) item_searchblunder_action_cb);
   IupSetCallback(item_search_dice, "ACTION", (Icallback) item_searchdice_action_cb);
+  IupSetCallback(btn_dice, "ACTION", (Icallback) item_searchdice_action_cb);
   IupSetCallback(item_search_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
+  IupSetCallback(btn_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
   IupSetCallback(item_search_score, "ACTION", (Icallback) item_searchscore_action_cb);
+  IupSetCallback(btn_score, "ACTION", (Icallback) item_searchscore_action_cb);
   IupSetCallback(item_search_player, "ACTION", (Icallback) item_searchplayer_action_cb);
+  IupSetCallback(btn_player, "ACTION", (Icallback) item_searchplayer_action_cb);
   IupSetCallback(item_search_engine, "ACTION", (Icallback) item_searchengine_action_cb);
   IupSetCallback(item_searchmode, "ACTION", (Icallback) item_searchmode_action_cb);
   IupSetCallback(item_find_position_without_analysis, "ACTION", (Icallback) item_findpositionwithoutanalysis_action_cb);
