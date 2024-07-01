@@ -207,6 +207,7 @@ Ihandle *btn_cut, *btn_copy, *btn_paste;
 Ihandle *btn_undo, *btn_redo;
 Ihandle *btn_prev, *btn_next;
 Ihandle *btn_preferences;
+Ihandle *btn_manual;
 
 Ihandle *canvas;
 
@@ -725,6 +726,10 @@ int main(int argc, char **argv)
   IupSetAttribute(btn_preferences, "IMAGE", "IUP_ToolsSettings");
   IupSetAttribute(btn_preferences, "FLAT", "Yes");
   IupSetAttribute(btn_preferences, "CANFOCUS", "No");
+  btn_manual = IupButton(NULL, NULL);
+  IupSetAttribute(btn_manual, "IMAGE", "IUP_MessageHelp");
+  IupSetAttribute(btn_manual, "FLAT", "Yes");
+  IupSetAttribute(btn_manual, "CANFOCUS", "No");
   toolbar_hb = IupHbox(
           btn_new, btn_open, btn_save, btn_close, btn_properties,
           IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
@@ -735,6 +740,8 @@ int main(int argc, char **argv)
           btn_prev, btn_next,
           IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
           btn_preferences,
+          IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+          btn_manual,
           NULL);
   IupSetAttribute(toolbar_hb, "MARGIN", "5x5");
   IupSetAttribute(toolbar_hb, "GAP", "2");
@@ -811,6 +818,7 @@ int main(int argc, char **argv)
   IupSetCallback(item_preferences, "ACTION", (Icallback) item_preferences_action_cb);
   IupSetCallback(btn_preferences, "ACTION", (Icallback) item_preferences_action_cb);
   IupSetCallback(item_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
+  IupSetCallback(btn_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
   IupSetCallback(item_userguide, "ACTION", (Icallback) item_userguide_action_cb);
   IupSetCallback(item_tips, "ACTION", (Icallback) item_tips_action_cb);
   IupSetCallback(item_cmdmode, "ACTION", (Icallback) item_commandmodehelp_action_cb);
