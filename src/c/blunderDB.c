@@ -761,6 +761,7 @@ int main(int argc, char **argv)
           IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
           btn_manual,
           NULL);
+  IupSetAttribute(toolbar_hb, "NAME", "TOOLBAR");
   IupSetAttribute(toolbar_hb, "MARGIN", "5x5");
   IupSetAttribute(toolbar_hb, "GAP", "2");
 
