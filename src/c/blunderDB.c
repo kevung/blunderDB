@@ -160,7 +160,7 @@ Ihandle *hsplit;
 Ihandle *tabs;
 Ihandle *text;
 
-Ihandle *menu, *toolbar, *statusbar;
+Ihandle *menu, *toolbar, *canvas, *statusbar;
 
 Ihandle *vsplit_position;
 
@@ -582,6 +582,17 @@ static Ihandle* create_statusbar(void)
     return ih;
 }
 
+static Ihandle* create_canvas(void)
+{
+    Ihandle *ih;
+    ih = IupCanvas(NULL);
+    IupSetAttribute(ih, "NAME", "CANVAS");
+    IupSetAttribute(ih, "EXPAND", "YES");
+    IupSetCallback(ih, "ACTION", (Icallback)canvas_action_cb);
+
+    return ih;
+}
+
 /*************** Keyboard Shortcuts ***********************/
 
 static void set_keyboard_shortcuts(Ihandle *ih)
@@ -919,12 +930,10 @@ int main(int argc, char **argv)
 
   menu = create_menus();
   toolbar = create_toolbar();
+  canvas = create_canvas();
   statusbar = create_statusbar();
 
   /* Define main canvas */
-  canvas = IupCanvas(NULL);
-  IupSetAttribute(canvas, "NAME", "CANVAS");
-  IupSetAttribute(canvas, "EXPAND", "YES");
 
   /* Analysis layout */
   lbl_analysis = IupLabel("ANALYSIS HERE");
@@ -975,8 +984,6 @@ int main(int argc, char **argv)
   IupSetAttribute(dlg, "MENU", "menu");
 
   set_keyboard_shortcuts(dlg);
-
-  IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
 
   IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
