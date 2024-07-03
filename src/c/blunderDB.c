@@ -630,12 +630,21 @@ static Ihandle* create_matchlibrary(void)
 static Ihandle* create_panels(void)
 {
     Ihandle *ih, *search, *edit, *matchlib;
+    Ihandle *tab1, *tab2, *tab3, *tab4;
+    Ihandle *tab;
 
     search = create_search();
-    edit = create_search();
-    matchlib = create_matchlibrary();
+    IupSetAttribute(search, "TABTITLE", "Search Position");
 
-    ih = search;
+    /* edit = create_edit(); */
+    edit = create_search();
+    IupSetAttribute(edit, "TABTITLE", "Edit Position");
+
+    /* matchlib = create_matchlibrary(); */
+    matchlib = create_search();
+    IupSetAttribute(matchlib, "TABTITLE", "Match library");
+
+    ih = IupTabs(search, edit, matchlib, NULL);
 
     return ih;
 }
