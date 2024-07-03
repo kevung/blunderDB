@@ -160,8 +160,7 @@ Ihandle *hsplit;
 Ihandle *tabs;
 Ihandle *text;
 
-Ihandle *menu;
-Ihandle *toolbar;
+Ihandle *menu, *toolbar, *statusbar;
 
 Ihandle *vsplit_position;
 
@@ -172,8 +171,6 @@ Ihandle *exp_analysis;
 
 Ihandle *lbl_search;
 Ihandle *cell_searchresult;
-
-Ihandle *lbl_statusbar;
 
 static int canvas_action_cb(Ihandle* ih);
 static int item_new_action_cb(void);
@@ -412,7 +409,7 @@ static Ihandle* create_menus(void)
 
 static Ihandle* create_toolbar(void)
 {
-    Ihandle* ih;
+    Ihandle *ih;
     Ihandle *btn_new, *btn_open, *btn_save, *btn_close, *btn_properties;
     Ihandle *btn_cut, *btn_copy, *btn_paste;
     Ihandle *btn_undo, *btn_redo;
@@ -572,6 +569,19 @@ static Ihandle* create_toolbar(void)
 
     return ih;
 }
+
+static Ihandle* create_statusbar(void)
+{
+    Ihandle *ih;
+
+    ih = IupLabel("NORMAL MODE");
+    IupSetAttribute(ih, "NAME", "STATUSBAR");
+    IupSetAttribute(ih, "EXPAND", "HORIZONTAL");
+    IupSetAttribute(ih, "PADDIND", "10x5");
+
+    return ih;
+}
+
 
 /************************ Callbacks ***********************/
 
@@ -899,6 +909,7 @@ int main(int argc, char **argv)
 
   menu = create_menus();
   toolbar = create_toolbar();
+  statusbar = create_statusbar();
 
   /* Define main canvas */
   canvas = IupCanvas(NULL);
@@ -934,10 +945,6 @@ int main(int argc, char **argv)
 
 
   /* Define status bar */
-  lbl_statusbar = IupLabel("NORMAL MODE");
-  IupSetAttribute(lbl_statusbar, "NAME", "STATUSBAR");
-  IupSetAttribute(lbl_statusbar, "EXPAND", "HORIZONTAL");
-  IupSetAttribute(lbl_statusbar, "PADDIND", "10x5");
 
 
   /* General layout */
@@ -946,7 +953,7 @@ int main(int argc, char **argv)
   IupSetAttribute(hsplit, "VALUE", "800");
   IupSetAttribute(hsplit, "MINMAX", "500:1000");
 
-  vbox = IupVbox(toolbar, hsplit, lbl_statusbar, NULL);
+  vbox = IupVbox(toolbar, hsplit, statusbar, NULL);
   /* vbox = IupVbox(toolbar_hb, canvas, lbl_statusbar, NULL); */
   IupSetAttribute(vbox, "NMARGIN", "10x10");
   IupSetAttribute(vbox, "GAP", "10");
