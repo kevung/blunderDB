@@ -9,15 +9,13 @@
 #include <cdiup.h>
 #include <sqlite3.h>
 
-char db_file[10240];
-cdCanvas *winCanvas = NULL;
-cdCanvas *curCanvas = NULL;
-
 /************************ Database ***********************/
+
 sqlite3 *db = NULL;
 bool is_db_saved = true;
 int rc;
 char *errMsg = 0;
+char db_file[10240];
 
 const char *sql_library =
 "CREATE TABLE library ("
@@ -151,26 +149,7 @@ int db_close(sqlite3 *db)
 
 }
 
-/************************ Interface ***********************/
-
-#define DEFAULT_SIZE "800x600"
-
-Ihandle *dlg, *hbox, *vbox, *label;
-Ihandle *hsplit;
-Ihandle *tabs;
-Ihandle *text;
-
-Ihandle *menu, *toolbar, *canvas, *statusbar;
-
-Ihandle *vsplit_position;
-
-Ihandle *canvas;
-
-Ihandle *lbl_analysis;
-Ihandle *exp_analysis;
-
-Ihandle *lbl_search;
-Ihandle *cell_searchresult;
+/************************ Prototypes **********************/
 
 static int canvas_action_cb(Ihandle* ih);
 static int item_new_action_cb(void);
@@ -217,6 +196,16 @@ static int item_getinvolved_action_cb();
 static int item_donate_action_cb();
 static int item_about_action_cb();
 void error_callback(void);
+
+/************************ Interface ***********************/
+
+#define DEFAULT_SIZE "800x600"
+
+cdCanvas *winCanvas = NULL;
+cdCanvas *curCanvas = NULL;
+
+Ihandle *dlg, *menu, *toolbar, *position, *panels, *statusbar;
+Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
 
 static Ihandle* create_menus(void)
 {
@@ -593,6 +582,79 @@ static Ihandle* create_canvas(void)
     return ih;
 }
 
+static Ihandle* create_analysis(void)
+{
+    Ihandle *ih;
+
+    ih = IupLabel("ANALYSIS HERE");
+    IupSetAttribute(ih, "ORIENTATION", "VERTICAL");
+
+    /* IupSetAttribute(exp_analysis, "ORIENTATION", "VERTICAL"); */
+    /* IupSetAttribute(exp_analysis, "TITLE", "MyMenu"); */
+    /* IupSetAttribute(exp_analysis, "STATE", "CLOSE"); */
+    /* IupSetAttribute(exp_analysis, "GAP", "2"); */
+
+    return ih;
+}
+
+static Ihandle* create_search(void)
+{
+    Ihandle *ih;
+    ih = IupCells();
+    IupSetAttribute(ih, "BOXED", "YES");
+
+    return ih;
+}
+
+static Ihandle* create_edit(void)
+{
+    Ihandle *ih;
+
+    return ih;
+}
+
+static Ihandle* create_library(void)
+{
+    Ihandle *ih;
+
+    return ih;
+}
+
+static Ihandle* create_matchlibrary(void)
+{
+    Ihandle *ih;
+
+    return ih;
+}
+
+static Ihandle* create_panels(void)
+{
+    Ihandle *ih, *search, *edit, *matchlib;
+
+    search = create_search();
+    edit = create_search();
+    matchlib = create_matchlibrary();
+
+    ih = search;
+
+    return ih;
+}
+
+static Ihandle* create_position(void)
+{
+
+    Ihandle *ih, *spl, *canvas, *analysis;
+
+    canvas = create_canvas();
+    analysis = create_analysis();
+    ih = IupSplit(canvas, analysis);
+    IupSetAttribute(ih, "ORIENTATION", "VERTICAL");
+    IupSetAttribute(ih, "VALUE", "1000");
+    /* IupSetAttribute(spl, "MINMAX", "0:1000"); */
+
+    return ih;
+}
+
 /*************** Keyboard Shortcuts ***********************/
 
 static void set_keyboard_shortcuts(Ihandle *ih)
@@ -930,54 +992,19 @@ int main(int argc, char **argv)
 
   menu = create_menus();
   toolbar = create_toolbar();
-  canvas = create_canvas();
+  position = create_position();
+  panels = create_panels();
   statusbar = create_statusbar();
 
-  /* Define main canvas */
+  spl = IupSplit(position, panels);
+  IupSetAttribute(spl, "ORIENTATION", "HORIZONTAL");
+  IupSetAttribute(spl, "VALUE", "800");
+  IupSetAttribute(spl, "MINMAX", "500:1000");
 
-  /* Analysis layout */
-  lbl_analysis = IupLabel("ANALYSIS HERE");
-  IupSetAttribute(lbl_analysis, "ORIENTATION", "VERTICAL");
-
-  /* exp_analysis = IupExpander(lbl_analysis); */
-  /* IupSetAttribute(exp_analysis, "ORIENTATION", "VERTICAL"); */
-  /* IupSetAttribute(exp_analysis, "TITLE", "MyMenu"); */
-  /* IupSetAttribute(exp_analysis, "STATE", "CLOSE"); */
-  /* IupSetAttribute(exp_analysis, "GAP", "2"); */
-
-  /* Position layout */
-  vsplit_position = IupSplit(canvas, lbl_analysis);
-  IupSetAttribute(vsplit_position, "ORIENTATION", "VERTICAL");
-  IupSetAttribute(vsplit_position, "VALUE", "1000");
-  IupSetAttribute(vsplit_position, "MINMAX", "0:1000");
-
-  /* vsplit_position = IupHbox(canvas, exp_analysis, NULL); */
-
-
-  /* Search layout */
-  cell_searchresult = IupCells();
-  IupSetAttribute(cell_searchresult, "BOXED", "YES");
-
-  /* EditMode layout */
-
-  /* Match library */
-
-
-  /* Define status bar */
-
-
-  /* General layout */
-  hsplit = IupSplit(vsplit_position, cell_searchresult);
-  IupSetAttribute(hsplit, "ORIENTATION", "HORIZONTAL");
-  IupSetAttribute(hsplit, "VALUE", "800");
-  IupSetAttribute(hsplit, "MINMAX", "500:1000");
-
-  vbox = IupVbox(toolbar, hsplit, statusbar, NULL);
-  /* vbox = IupVbox(toolbar_hb, canvas, lbl_statusbar, NULL); */
+  vbox = IupVbox(toolbar, spl, statusbar, NULL);
   IupSetAttribute(vbox, "NMARGIN", "10x10");
   IupSetAttribute(vbox, "GAP", "10");
 
-  /* Main Windows */
   dlg = IupDialog(vbox);
   IupSetAttribute(dlg, "TITLE", "blunderDB");
   IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
@@ -985,12 +1012,12 @@ int main(int argc, char **argv)
 
   set_keyboard_shortcuts(dlg);
 
-
   IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
 
   IupMainLoop();
 
   db_close(db);
   IupClose();
+
   return EXIT_SUCCESS;
 }
