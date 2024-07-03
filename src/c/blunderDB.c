@@ -582,6 +582,16 @@ static Ihandle* create_statusbar(void)
     return ih;
 }
 
+/*************** Keyboard Shortcuts ***********************/
+
+static void set_keyboard_shortcuts(Ihandle *ih)
+{
+    IupSetCallback(ih, "K_cN", (Icallback) item_new_action_cb);
+    IupSetCallback(ih, "K_cO", (Icallback) item_open_action_cb);
+    IupSetCallback(ih, "K_cS", (Icallback) item_save_action_cb);
+    IupSetCallback(ih, "K_cQ", (Icallback) item_exit_action_cb);
+    IupSetCallback(ih, "K_cZ", (Icallback) item_undo_action_cb);
+}
 
 /************************ Callbacks ***********************/
 
@@ -964,12 +974,7 @@ int main(int argc, char **argv)
   IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
   IupSetAttribute(dlg, "MENU", "menu");
 
-  /* Registers callbacks */
-  IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
-  IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
-  IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
-  IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
-  IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
+  set_keyboard_shortcuts(dlg);
 
   IupSetCallback(canvas, "ACTION", (Icallback)canvas_action_cb);
 
