@@ -195,7 +195,7 @@ static int item_keyboardshortcuts_action_cb(void);
 static int item_getinvolved_action_cb(void);
 static int item_donate_action_cb(void);
 static int item_about_action_cb(void);
-static int config_recent_cb(Ihandle* ih);
+static int panel_edit_visible_cb();
 void error_callback(void);
 
 /************************ Interface ***********************/
@@ -206,6 +206,7 @@ cdCanvas *winCanvas = NULL;
 cdCanvas *curCanvas = NULL;
 
 Ihandle *dlg, *menu, *toolbar, *position, *panels, *statusbar;
+Ihandle *edit, *analysis, *canvas;
 Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
 
 static Ihandle* create_menus(void)
@@ -589,6 +590,7 @@ static Ihandle* create_analysis(void)
 
     ih = IupLabel("ANALYSIS HERE");
     IupSetAttribute(ih, "ORIENTATION", "VERTICAL");
+    IupSetAttribute(ih, "VISIBLE", "NO");
 
     /* IupSetAttribute(exp_analysis, "ORIENTATION", "VERTICAL"); */
     /* IupSetAttribute(exp_analysis, "TITLE", "MyMenu"); */
@@ -611,6 +613,12 @@ static Ihandle* create_edit(void)
 {
     Ihandle *ih;
 
+    ih = IupLabel("Edit Panel");
+    IupSetAttribute(ih, "NAME", "EDIT");
+    IupSetAttribute(ih, "EXPAND", "YES");
+    IupSetAttribute(ih, "VISIBLE", "NO");
+
+    IupSetCallback(ih, "K_cE", (Icallback) panel_edit_visible_cb);
     return ih;
 }
 
@@ -653,13 +661,14 @@ static Ihandle* create_panels(void)
 static Ihandle* create_position(void)
 {
 
-    Ihandle *ih, *spl, *canvas, *analysis;
+    Ihandle *ih, *spl;
 
     canvas = create_canvas();
     analysis = create_analysis();
-    ih = IupSplit(canvas, analysis);
-    IupSetAttribute(ih, "ORIENTATION", "VERTICAL");
-    IupSetAttribute(ih, "VALUE", "1000");
+    edit = create_edit();
+    ih = IupHbox(analysis, edit, canvas, NULL);
+    /* IupSetAttribute(ih, "ORIENTATION", "VERTICAL"); */
+    /* IupSetAttribute(ih, "VALUE", "0"); */
     /* IupSetAttribute(spl, "MINMAX", "0:1000"); */
 
     return ih;
@@ -667,13 +676,14 @@ static Ihandle* create_position(void)
 
 /*************** Keyboard Shortcuts ***********************/
 
-static void set_keyboard_shortcuts(Ihandle *ih)
+static void set_keyboard_shortcuts()
 {
-    IupSetCallback(ih, "K_cN", (Icallback) item_new_action_cb);
-    IupSetCallback(ih, "K_cO", (Icallback) item_open_action_cb);
-    IupSetCallback(ih, "K_cS", (Icallback) item_save_action_cb);
-    IupSetCallback(ih, "K_cQ", (Icallback) item_exit_action_cb);
-    IupSetCallback(ih, "K_cZ", (Icallback) item_undo_action_cb);
+    IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
+    IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
+    IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
+    IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
+    IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
+    IupSetCallback(dlg, "K_cE", (Icallback) panel_edit_visible_cb);
 }
 
 /************************ Callbacks ***********************/
@@ -986,6 +996,23 @@ static int item_about_action_cb(void)
     error_callback();
 }
 
+static int panel_edit_visible_cb()
+{
+    char* att = IupGetAttribute(edit, "VISIBLE");
+
+    if(strcmp(att,"NO")==0)
+    {
+        printf("make Edit panel VISIBLE\n");
+        IupSetAttribute(edit, "VISIBLE", "YES");
+    } else if (strcmp(att, "YES")==0) {
+        printf("make Edit panel HIDDEN\n");
+        IupSetAttribute(edit, "VISIBLE", "NO");
+    } else {
+        printf("panel_edit_visible_cb: Impossible case.\n");
+    }
+
+    return IUP_DEFAULT;
+}
 
 void error_callback(void)
 {
@@ -1020,7 +1047,7 @@ int main(int argc, char **argv)
   IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
   IupSetAttribute(dlg, "MENU", "menu");
 
-  set_keyboard_shortcuts(dlg);
+  set_keyboard_shortcuts();
 
   IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
 
