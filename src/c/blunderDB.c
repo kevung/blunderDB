@@ -195,7 +195,9 @@ static int item_keyboardshortcuts_action_cb(void);
 static int item_getinvolved_action_cb(void);
 static int item_donate_action_cb(void);
 static int item_about_action_cb(void);
-static int panel_edit_visible_cb();
+static int toggle_visibility_cb(Ihandle* ih);
+static int toggle_analysis_visibility_cb();
+static int toggle_edit_visibility_cb();
 void error_callback(void);
 
 /************************ Interface ***********************/
@@ -589,9 +591,9 @@ static Ihandle* create_analysis(void)
     Ihandle *ih;
 
     ih = IupLabel("ANALYSIS HERE");
-    IupSetAttribute(ih, "ORIENTATION", "VERTICAL");
     IupSetAttribute(ih, "VISIBLE", "NO");
-
+    IupSetAttribute(ih, "FLOATING", "YES");
+    /* IupSetAttribute(ih, "ORIENTATION", "VERTICAL"); */
     /* IupSetAttribute(exp_analysis, "ORIENTATION", "VERTICAL"); */
     /* IupSetAttribute(exp_analysis, "TITLE", "MyMenu"); */
     /* IupSetAttribute(exp_analysis, "STATE", "CLOSE"); */
@@ -617,8 +619,8 @@ static Ihandle* create_edit(void)
     IupSetAttribute(ih, "NAME", "EDIT");
     IupSetAttribute(ih, "EXPAND", "YES");
     IupSetAttribute(ih, "VISIBLE", "NO");
+    IupSetAttribute(ih, "FLOATING", "YES");
 
-    IupSetCallback(ih, "K_cE", (Icallback) panel_edit_visible_cb);
     return ih;
 }
 
@@ -667,6 +669,7 @@ static Ihandle* create_position(void)
     analysis = create_analysis();
     edit = create_edit();
     ih = IupHbox(analysis, edit, canvas, NULL);
+    /* ih = IupHbox(edit, canvas, NULL); */
     /* IupSetAttribute(ih, "ORIENTATION", "VERTICAL"); */
     /* IupSetAttribute(ih, "VALUE", "0"); */
     /* IupSetAttribute(spl, "MINMAX", "0:1000"); */
@@ -683,7 +686,8 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
-    IupSetCallback(dlg, "K_cE", (Icallback) panel_edit_visible_cb);
+    IupSetCallback(dlg, "K_cE", (Icallback) toggle_edit_visibility_cb);
+    IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
 }
 
 /************************ Callbacks ***********************/
@@ -996,21 +1000,34 @@ static int item_about_action_cb(void)
     error_callback();
 }
 
-static int panel_edit_visible_cb()
+static int toggle_edit_visibility_cb()
 {
-    char* att = IupGetAttribute(edit, "VISIBLE");
+    toggle_visibility_cb(edit);
+}
+
+static int toggle_analysis_visibility_cb()
+{
+    toggle_visibility_cb(analysis);
+}
+
+static int toggle_visibility_cb(Ihandle* ih)
+{
+    char* att = IupGetAttribute(ih, "VISIBLE");
 
     if(strcmp(att,"NO")==0)
     {
-        printf("make Edit panel VISIBLE\n");
-        IupSetAttribute(edit, "VISIBLE", "YES");
+        printf("display panel\n");
+        IupSetAttribute(ih, "VISIBLE", "YES");
+        IupSetAttribute(ih, "FLOATING", "NO");
     } else if (strcmp(att, "YES")==0) {
-        printf("make Edit panel HIDDEN\n");
-        IupSetAttribute(edit, "VISIBLE", "NO");
+        printf("hide panel\n");
+        IupSetAttribute(ih, "VISIBLE", "NO");
+        IupSetAttribute(ih, "FLOATING", "YES");
     } else {
-        printf("panel_edit_visible_cb: Impossible case.\n");
+        printf("panel_ih_visible_cb: Impossible case.\n");
     }
 
+    IupRefresh(ih);
     return IUP_DEFAULT;
 }
 
