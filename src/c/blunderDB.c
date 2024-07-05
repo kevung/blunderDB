@@ -195,21 +195,28 @@ static int item_keyboardshortcuts_action_cb(void);
 static int item_getinvolved_action_cb(void);
 static int item_donate_action_cb(void);
 static int item_about_action_cb(void);
+static int set_visibility_off(Ihandle* ih);
+static int set_visibility_on(Ihandle* ih);
 static int toggle_visibility_cb(Ihandle* ih);
 static int toggle_analysis_visibility_cb();
 static int toggle_edit_visibility_cb();
+static int toggle_searches_visibility_cb();
 void error_callback(void);
 
 /************************ Interface ***********************/
 
 #define DEFAULT_SIZE "800x600"
+#define DEFAULT_SPLIT_VALUE "800"
+#define DEFAULT_SPLIT_MINMAX "800:2000"
 
 cdCanvas *winCanvas = NULL;
 cdCanvas *curCanvas = NULL;
 
-Ihandle *dlg, *menu, *toolbar, *position, *panels, *statusbar;
-Ihandle *edit, *analysis, *canvas;
+Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
+Ihandle *edit, *analysis, *canvas, *search, *matchlib;
+Ihandle *search1, *search2, *search3;
 Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
+bool is_searches_visible = false;
 
 static Ihandle* create_menus(void)
 {
@@ -638,24 +645,20 @@ static Ihandle* create_matchlibrary(void)
     return ih;
 }
 
-static Ihandle* create_panels(void)
+static Ihandle* create_searches(void)
 {
-    Ihandle *ih, *search, *edit, *matchlib;
-    Ihandle *tab1, *tab2, *tab3, *tab4;
-    Ihandle *tab;
+    Ihandle *ih;
 
-    search = create_search();
-    IupSetAttribute(search, "TABTITLE", "Search Position");
+    search1 = create_search();
+    IupSetAttribute(search1, "TABTITLE", "Search1 Position");
 
-    /* edit = create_edit(); */
-    edit = create_search();
-    IupSetAttribute(edit, "TABTITLE", "Edit Position");
+    search2 = create_search();
+    IupSetAttribute(search2, "TABTITLE", "search2 Position");
 
-    /* matchlib = create_matchlibrary(); */
-    matchlib = create_search();
-    IupSetAttribute(matchlib, "TABTITLE", "Match library");
+    search3 = create_search();
+    IupSetAttribute(search3, "TABTITLE", "search3 Position");
 
-    ih = IupTabs(search, edit, matchlib, NULL);
+    ih = IupTabs(search1, search2, search3, NULL);
 
     return ih;
 }
@@ -688,6 +691,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
     IupSetCallback(dlg, "K_cE", (Icallback) toggle_edit_visibility_cb);
     IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
+    IupSetCallback(dlg, "K_cF", (Icallback) toggle_searches_visibility_cb);
 }
 
 /************************ Callbacks ***********************/
@@ -700,7 +704,7 @@ static int canvas_action_cb(Ihandle* ih)
     canvas = cdCreateCanvas(CD_IUP, ih);
     cdCanvasGetSize(canvas, &w, &h, NULL, NULL);
 
-    cdCanvasBackground(canvas, CD_BLUE);
+    cdCanvasBackground(canvas, CD_WHITE);
     cdCanvasClear(canvas);
 
     cdCanvasLineWidth(canvas, 3);
@@ -1000,6 +1004,20 @@ static int item_about_action_cb(void)
     error_callback();
 }
 
+static int set_visibility_off(Ihandle* ih)
+{
+    IupSetAttribute(ih, "VISIBLE", "NO");
+    IupSetAttribute(ih, "FLOATING", "YES");
+    return IUP_DEFAULT;
+}
+
+static int set_visibility_on(Ihandle* ih)
+{
+    IupSetAttribute(ih, "VISIBLE", "YES");
+    IupSetAttribute(ih, "FLOATING", "NO");
+    return IUP_DEFAULT;
+}
+
 static int toggle_edit_visibility_cb()
 {
     toggle_visibility_cb(edit);
@@ -1010,8 +1028,44 @@ static int toggle_analysis_visibility_cb()
     toggle_visibility_cb(analysis);
 }
 
+static int toggle_searches_visibility_cb()
+{
+
+    /* IupUnmap(split); */
+    /* IupDetach(split); */
+    /* IupAppend(vbox, canvas); */
+    /* /1* IupReparent(canvas, vbox, statusbar); *1/ */
+    /* /1* IupMap(canvas); *1/ */
+    /* IupMap(canvas); */
+    /* IupMap(vbox); */
+    /* IupMap(dlg); */
+    /* IupRefresh(dlg); */
+
+    toggle_visibility_cb(searches);
+
+    char* att = IupGetAttribute(searches, "VISIBLE");
+    if(strcmp(att,"NO") == 0)
+    {
+        IupSetAttribute(split, "VALUE", "1000");
+    } else if (strcmp(att,"YES") == 0)
+    {
+        IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
+    }
+    IupRefresh(dlg);
+}
+
 static int toggle_visibility_cb(Ihandle* ih)
 {
+    /* Ihandle *child; */
+
+    /* int n = IupGetChildCount(ih); */
+    /* printf("children: %i\n", n); */
+    /* for(int i=0; i<n; i++) */
+    /* { */
+    /*     toggle_visibility_cb(IupGetChild(ih, i)); */
+    /* } */
+
+
     char* att = IupGetAttribute(ih, "VISIBLE");
 
     if(strcmp(att,"NO")==0)
@@ -1047,15 +1101,16 @@ int main(int argc, char **argv)
   menu = create_menus();
   toolbar = create_toolbar();
   position = create_position();
-  panels = create_panels();
+  searches = create_searches();
   statusbar = create_statusbar();
 
-  spl = IupSplit(position, panels);
-  IupSetAttribute(spl, "ORIENTATION", "HORIZONTAL");
-  IupSetAttribute(spl, "VALUE", "800");
-  IupSetAttribute(spl, "MINMAX", "500:1000");
+  split = IupSplit(position, searches);
+  IupSetAttribute(split, "ORIENTATION", "HORIZONTAL");
+  IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
+  /* IupSetAttribute(split, "MINMAX", DEFAULT_SPLIT_MINMAX); */
+  /* IupSetAttribute(split, "AUTOHIDE", "YES"); */
 
-  vbox = IupVbox(toolbar, spl, statusbar, NULL);
+  vbox = IupVbox(toolbar, split, statusbar, NULL);
   IupSetAttribute(vbox, "NMARGIN", "10x10");
   IupSetAttribute(vbox, "GAP", "10");
 
