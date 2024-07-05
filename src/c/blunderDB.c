@@ -11,8 +11,6 @@
 
 /************************** Data *************************/
 
-/* points: 1->24 */
-
 typedef struct
 {
     int checker[26];
@@ -57,7 +55,7 @@ const POSITION POS_VOID = {
     .is_take = 0,
 };
 
-void print_pos(const POSITION* p)
+void pos_print(const POSITION* p)
 {
     printf("checker:\n");
     for(int i=0; i<26; i++)
