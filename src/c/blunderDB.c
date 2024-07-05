@@ -9,6 +9,70 @@
 #include <cdiup.h>
 #include <sqlite3.h>
 
+/************************** Data *************************/
+
+/* points: 1->24 */
+
+typedef struct
+{
+    int checker[26];
+    int cube;
+    int is_crawford;
+    int p1_score;
+    int p2_score;
+    int dice[2];
+    int is_double;
+    int is_take;
+} POSITION;
+
+const POSITION pos_default = {
+    .checker = {0,
+        -2, 0, 0, 0, 0, 5,
+        0, 3, 0, 0, 0, -5,
+        5, 0, 0, 0, -3, 0,
+        -5, 0, 0, 0, 0, 2,
+        0},
+    .cube = 0,
+    .is_crawford = 0,
+    .p1_score = 0,
+    .p2_score = 0,
+    .dice = {0, 0},
+    .is_double = 0,
+    .is_take = 0,
+};
+
+const POSITION pos_void = {
+    .checker = {0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0,
+        0},
+    .cube = 0,
+    .is_crawford = 0,
+    .p1_score = 0,
+    .p2_score = 0,
+    .dice = {0, 0},
+    .is_double = 0,
+    .is_take = 0,
+};
+
+void print_pos(const POSITION* p)
+{
+    printf("checker:\n");
+    for(int i=0; i<26; i++)
+    {
+        printf("%i: %i\n", i, p->checker[i]);
+    }
+    printf("cube: %i\n", p->cube);
+    printf("is_crawford: %i\n", p->is_crawford);
+    printf("p1_score: %i\n", p->p1_score);
+    printf("p2_score: %i\n", p->p2_score);
+    printf("dice: %i, %i\n", p->dice[0], p->dice[1]);
+    printf("is_double: %i\n", p->is_double);
+    printf("is_take: %i\n", p->is_take);
+}
+
 /************************ Database ***********************/
 
 sqlite3 *db = NULL;
@@ -1097,6 +1161,8 @@ int main(int argc, char **argv)
   IupControlsOpen();
   IupImageLibOpen();
   IupSetLanguage("ENGLISH");
+
+  print_pos(&pos_default);
 
   menu = create_menus();
   toolbar = create_toolbar();
