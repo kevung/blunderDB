@@ -25,7 +25,7 @@ typedef struct
     int is_take;
 } POSITION;
 
-const POSITION pos_default = {
+const POSITION POS_DEFAULT = {
     .checker = {0,
         -2, 0, 0, 0, 0, 5,
         0, 3, 0, 0, 0, -5,
@@ -41,7 +41,7 @@ const POSITION pos_default = {
     .is_take = 0,
 };
 
-const POSITION pos_void = {
+const POSITION POS_VOID = {
     .checker = {0,
         0, 0, 0, 0, 0,
         0, 0, 0, 0, 0,
@@ -1161,8 +1161,6 @@ int main(int argc, char **argv)
   IupControlsOpen();
   IupImageLibOpen();
   IupSetLanguage("ENGLISH");
-
-  print_pos(&pos_default);
 
   menu = create_menus();
   toolbar = create_toolbar();
