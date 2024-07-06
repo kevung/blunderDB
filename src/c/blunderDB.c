@@ -72,7 +72,43 @@ void pos_print(const POSITION* p)
     printf("dice: %i, %i\n", p->dice[0], p->dice[1]);
     printf("is_double: %i\n", p->is_double);
     printf("is_take: %i\n", p->is_take);
+    printf("is_on_roll: %i\n", p->is_on_roll);
 }
+
+char* pos_to_str(const POSITION* p)
+{
+    char p1[27] = "yabcdefghijklmnopqrstuvwxyz";
+    char p2[27] = "YABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char p1_score[2];
+    char p2_score[2];
+    char _d[2];
+    char* c = malloc(100 * sizeof(char));
+    sprintf(p1_score, "%d", p->dice[0]);
+    sprintf(p2_score, "%d", p->dice[1]);
+    snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
+    strcat(c, ":");
+    int a;
+    for(int i=26; i>=0; i--)
+    {
+        a = p->checker[i];
+        if(i==26) a = p->cube;
+        if(a>0) {
+            _d[0] = p1[i];
+            _d[1] = '\0';
+            strcat(c, _d);
+            sprintf(_d, "%d", a);
+            strcat(c, _d);
+        } else if (a<0) {
+            _d[0] = p2[i];
+            _d[1] = '\0';
+            strcat(c, _d);
+            sprintf(_d, "%d", -a);
+            strcat(c, _d);
+        }
+    }
+    return c;
+}
+
 
 /************************ Database ***********************/
 
@@ -1162,6 +1198,10 @@ int main(int argc, char **argv)
   IupControlsOpen();
   IupImageLibOpen();
   IupSetLanguage("ENGLISH");
+
+  char* ctest;
+  ctest= pos_to_str(&POS_DEFAULT);
+  printf("ctest: %s\n", ctest);
 
   menu = create_menus();
   toolbar = create_toolbar();
