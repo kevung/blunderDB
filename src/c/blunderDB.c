@@ -21,6 +21,7 @@ typedef struct
     int dice[2];
     int is_double;
     int is_take;
+    int is_on_roll;
 } POSITION;
 
 const POSITION POS_DEFAULT = {
@@ -37,6 +38,7 @@ const POSITION POS_DEFAULT = {
     .dice = {0, 0},
     .is_double = 0,
     .is_take = 0,
+    .is_on_roll = 0,
 };
 
 const POSITION POS_VOID = {
@@ -53,6 +55,7 @@ const POSITION POS_VOID = {
     .dice = {0, 0},
     .is_double = 0,
     .is_take = 0,
+    .is_on_roll = 0,
 };
 
 void pos_print(const POSITION* p)
