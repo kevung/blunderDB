@@ -43,10 +43,10 @@ const POSITION POS_DEFAULT = {
 
 const POSITION POS_VOID = {
     .checker = {0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0,
         0},
     .cube = 0,
     .is_crawford = 0,
