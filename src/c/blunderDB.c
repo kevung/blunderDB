@@ -84,8 +84,8 @@ char* pos_to_str(const POSITION* p)
     char _d[2];
     char* c = malloc(100 * sizeof(char));
     memcpy(c, "\0", 1);
-    sprintf(p1_score, "%d", p->dice[0]);
-    sprintf(p2_score, "%d", p->dice[1]);
+    sprintf(p1_score, "%d", p->p1_score);
+    sprintf(p2_score, "%d", p->p2_score);
     snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
     strcat(c, ":");
     int a;
