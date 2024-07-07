@@ -128,53 +128,41 @@ char* pos_to_str_paren(const POSITION* p)
     snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
     strcat(c, ":");
     int a, a_abs;
+
+    /* put into string checkers and points */
+    void f(int a, char* spare, char* point, char *d)
+    {
+        switch (a)
+        {
+            case 1:
+                strcat(spare, d);
+                sprintf(d, "%d", a);
+                strcat(spare, d);
+                break;
+            case 2:
+                strcat(point, d);
+                break;
+            default:
+                strcat(point, d);
+                strcat(spare, d);
+                sprintf(d, "%d", a-2);
+                strcat(spare, d);
+                break;
+        }
+    }
+
     for(int i=26; i>=0; i--)
     {
         a = p->checker[i];
         if(i==26) a = p->cube;
-        a_abs = abs(a);
         if(a>0) {
             _d[0] = p1[i];
             _d[1] = '\0';
-            switch (a)
-            {
-                case 1:
-                    strcat(c_spare, _d);
-                    sprintf(_d, "%d", a);
-                    strcat(c_spare, _d);
-                    break;
-                case 2:
-                    strcat(c_point, _d);
-                    break;
-                default:
-                    strcat(c_point, _d);
-                    strcat(c_spare, _d);
-                    sprintf(_d, "%d", a-2);
-                    strcat(c_spare, _d);
-                    break;
-
-            }
+            f(a, c_spare, c_point, _d);
         } else if (a<0) {
             _d[0] = p2[i];
             _d[1] = '\0';
-            switch (a_abs)
-            {
-                case 1:
-                    strcat(c_spare, _d);
-                    sprintf(_d, "%d", a);
-                    strcat(c_spare, _d);
-                    break;
-                case 2:
-                    strcat(c_point, _d);
-                    break;
-                default:
-                    strcat(c_point, _d);
-                    strcat(c_spare, _d);
-                    sprintf(_d, "%d", a_abs-2);
-                    strcat(c_spare, _d);
-                    break;
-
-            }
+            f(-a, c_spare, c_point, _d);
         }
     }
     strcat(c, "(");
