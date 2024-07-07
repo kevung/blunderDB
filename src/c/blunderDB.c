@@ -127,7 +127,7 @@ char* pos_to_str_paren(const POSITION* p)
     sprintf(p2_score, "%d", p->dice[1]);
     snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
     strcat(c, ":");
-    int a, a_abs;
+    int a;
 
     /* put into string checkers and points */
     void f(int a, char* spare, char* point, char *d)
@@ -171,6 +171,11 @@ char* pos_to_str_paren(const POSITION* p)
     strcat(c, c_spare);
     return c;
 }
+
+/* void str_to_pos(const char* c, POSITION* pos) */
+/* { */
+/*     int i; */
+/* } */
 
 
 /************************ Database ***********************/
@@ -310,7 +315,7 @@ int db_close(sqlite3 *db)
     } else {
         printf("Closed database successfully\n");
     }
-
+    return rc;
 }
 
 /************************ Prototypes **********************/
@@ -910,7 +915,7 @@ static int item_new_action_cb(void)
             break; 
 
         case -1 : 
-            printf("IupFileDlg","Operation Canceled");
+            printf("IupFileDlg: Operation Canceled\n");
             return 1;
             break; 
     }
@@ -948,7 +953,7 @@ static int item_open_action_cb(void)
             break; 
 
         case -1 : 
-            printf("IupFileDlg","Operation Canceled");
+            printf("IupFileDlg: Operation Canceled");
             return 1;
             break; 
     }
@@ -961,32 +966,38 @@ static int item_open_action_cb(void)
 static int item_recent_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_import_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_export_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_properties_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 
 static int item_save_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_saveas_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_exit_action_cb()
@@ -1001,171 +1012,206 @@ static int item_exit_action_cb()
 static int item_undo_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_redo_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_copy_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_cut_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_paste_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_editmode_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_nextposition_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_prevposition_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_newposition_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_importposition_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_importpositionbybatch_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_newlibrary_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_deletelibrary_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_addtolibrary_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_importmatch_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_importmatchbybatch_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_matchlibrary_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_searchblunder_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_searchdice_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_searchcubedecision_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_searchscore_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_searchplayer_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_searchengine_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_searchmode_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_findpositionwithoutanalysis_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_preferences_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_helpmanual_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_userguide_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_tips_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_commandmodehelp_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_keyboardshortcuts_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_getinvolved_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_donate_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
 }
 
 static int item_about_action_cb(void)
 {
     error_callback();
+    return IUP_DEFAULT;
+    
 }
 
 static int set_visibility_off(Ihandle* ih)
@@ -1185,11 +1231,13 @@ static int set_visibility_on(Ihandle* ih)
 static int toggle_edit_visibility_cb()
 {
     toggle_visibility_cb(edit);
+    return IUP_DEFAULT;
 }
 
 static int toggle_analysis_visibility_cb()
 {
     toggle_visibility_cb(analysis);
+    return IUP_DEFAULT;
 }
 
 static int toggle_searches_visibility_cb()
@@ -1216,6 +1264,7 @@ static int toggle_searches_visibility_cb()
         IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
     }
     IupRefresh(dlg);
+    return IUP_DEFAULT;
 }
 
 static int toggle_visibility_cb(Ihandle* ih)
