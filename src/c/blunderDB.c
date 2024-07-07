@@ -83,6 +83,7 @@ char* pos_to_str(const POSITION* p)
     char p2_score[2];
     char _d[2];
     char* c = malloc(100 * sizeof(char));
+    memcpy(c, "\0", 1);
     sprintf(p1_score, "%d", p->dice[0]);
     sprintf(p2_score, "%d", p->dice[1]);
     snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
@@ -106,6 +107,80 @@ char* pos_to_str(const POSITION* p)
             strcat(c, _d);
         }
     }
+    return c;
+}
+
+char* pos_to_str_paren(const POSITION* p)
+{
+    char p1[27] = "yabcdefghijklmnopqrstuvwxyz";
+    char p2[27] = "YABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char p1_score[2];
+    char p2_score[2];
+    char _d[2];
+    char* c = malloc(100 * sizeof(char));
+    char* c_spare = malloc(50 * sizeof(char));
+    char* c_point = malloc(50 * sizeof(char));
+    memcpy(c, "\0", 1);
+    memcpy(c_spare, "\0", 1);
+    memcpy(c_point, "\0", 1);
+    sprintf(p1_score, "%d", p->dice[0]);
+    sprintf(p2_score, "%d", p->dice[1]);
+    snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
+    strcat(c, ":");
+    int a, a_abs;
+    for(int i=26; i>=0; i--)
+    {
+        a = p->checker[i];
+        if(i==26) a = p->cube;
+        a_abs = abs(a);
+        if(a>0) {
+            _d[0] = p1[i];
+            _d[1] = '\0';
+            switch (a)
+            {
+                case 1:
+                    strcat(c_spare, _d);
+                    sprintf(_d, "%d", a);
+                    strcat(c_spare, _d);
+                    break;
+                case 2:
+                    strcat(c_point, _d);
+                    break;
+                default:
+                    strcat(c_point, _d);
+                    strcat(c_spare, _d);
+                    sprintf(_d, "%d", a-2);
+                    strcat(c_spare, _d);
+                    break;
+
+            }
+        } else if (a<0) {
+            _d[0] = p2[i];
+            _d[1] = '\0';
+            switch (a_abs)
+            {
+                case 1:
+                    strcat(c_spare, _d);
+                    sprintf(_d, "%d", a);
+                    strcat(c_spare, _d);
+                    break;
+                case 2:
+                    strcat(c_point, _d);
+                    break;
+                default:
+                    strcat(c_point, _d);
+                    strcat(c_spare, _d);
+                    sprintf(_d, "%d", a_abs-2);
+                    strcat(c_spare, _d);
+                    break;
+
+            }
+        }
+    }
+    strcat(c, "(");
+    strcat(c, c_point);
+    strcat(c, ")");
+    strcat(c, c_spare);
     return c;
 }
 
@@ -1202,6 +1277,8 @@ int main(int argc, char **argv)
   char* ctest;
   ctest= pos_to_str(&POS_DEFAULT);
   printf("ctest: %s\n", ctest);
+  ctest= pos_to_str_paren(&POS_DEFAULT);
+  printf("ctest2: %s\n", ctest);
 
   menu = create_menus();
   toolbar = create_toolbar();
