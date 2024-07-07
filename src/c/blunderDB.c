@@ -169,6 +169,8 @@ char* pos_to_str_paren(const POSITION* p)
     strcat(c, c_point);
     strcat(c, ")");
     strcat(c, c_spare);
+    free(c_point);
+    free(c_spare);
     return c;
 }
 
