@@ -250,27 +250,44 @@ int str_to_pos(const char* s, POSITION* pos)
         }
         else if (isalpha(s[i])) {
             i_point = char_in_string(tolower(s[i]), p1);
+            if(s[i]=='Y') i_point = 0; //p2 bar
             if(paren_open==1) {
                 if(islower(s[i])) pos->checker[i_point] += 2;  
                 if(isupper(s[i])) pos->checker[i_point] -= 2;  
                 i_point = -1; //reset
             } else if (paren_open==0) {
                 if(s[i+1]!='\0' && isalpha(s[i+1])) {
-                    if(islower(s[i])) pos->checker[i_point] += 1;  
-                    if(isupper(s[i])) pos->checker[i_point] -= 1;  
-                    i_point = -1; //reset
+                    if(s[i]!='z' && s[i]!='Z') {
+                        if(islower(s[i])) pos->checker[i_point] += 1;  
+                        if(isupper(s[i])) pos->checker[i_point] -= 1;  
+                        i_point = -1; //reset
+                    } else {
+                        if(islower(s[i])) pos->cube += 1;  
+                        if(isupper(s[i])) pos->cube -= 1;  
+                        i_point = -1; //reset
+                    }
                 }
             } else { return 0; } //error
         } else if (isdigit(s[i])) {
             if(paren_open==1) { return 0; }
             else if(paren_open==0) {
                 if(isalpha(s[i-1]) && !(isdigit(s[i+1]))) {
-                    if(islower(s[i-1])) pos->checker[i_point] += (s[i] -'0');  
-                    if(isupper(s[i-1])) pos->checker[i_point] -= (s[i] -'0');  
+                    if(s[i]!='z' && s[i]!='Z') {
+                        if(islower(s[i-1])) pos->checker[i_point] += (s[i] -'0');  
+                        if(isupper(s[i-1])) pos->checker[i_point] -= (s[i] -'0');  
+                    } else {
+                        if(islower(s[i])) pos->cube += (s[i] -'0');  
+                        if(isupper(s[i])) pos->cube -= (s[i] -'0');  
+                    }
                 }
                 if(isalpha(s[i-1]) && isdigit(s[i+1])) {
-                    if(islower(s[i-1])) pos->checker[i_point] += 10*(s[i]-'0')+(s[i+1]-'0');  
-                    if(isupper(s[i-1])) pos->checker[i_point] -= 10*(s[i]-'0')+(s[i+1]-'0');  
+                    if(s[i]!='z' && s[i]!='Z') {
+                        if(islower(s[i-1])) pos->checker[i_point] += 10*(s[i]-'0')+(s[i+1]-'0');  
+                        if(isupper(s[i-1])) pos->checker[i_point] -= 10*(s[i]-'0')+(s[i+1]-'0');  
+                    } else {
+                        if(islower(s[i])) pos->cube += (s[i] -'0');  
+                        if(isupper(s[i])) pos->cube -= (s[i] -'0');  
+                    }
                 }
             } else { return 0; }
         } else { return 0; }
@@ -1421,9 +1438,8 @@ int main(int argc, char **argv)
 
   POSITION pos = POS_VOID;
   POSITION* pos_ptr = &pos;
-  pos.cube = 50;
   /* pos_print(pos_ptr); */
-  char* ctest = "31,12:(aX)F3";
+  char* ctest = "31,12:Z11y1(aX)F3(mnl)O4Y3";
   printf("pos: %s\n", ctest);
   str_to_pos(ctest, pos_ptr);
   pos_print(pos_ptr);
