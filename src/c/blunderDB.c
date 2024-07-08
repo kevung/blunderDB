@@ -238,6 +238,7 @@ int str_to_pos(const char* s, POSITION* pos)
     }
     /* detect checkers */
     int paren_open = 0;
+    int hyphen_index = -1;
     int i_point = -1; // point to fill with checkers
     for(int i=i_score+1; i<len; i++)
     {
@@ -246,7 +247,13 @@ int str_to_pos(const char* s, POSITION* pos)
         {
             if(s[i]=='(') { paren_open = 1; printf("paren on\n"); }
             else if(s[i]==')') { paren_open = 0; printf("paren off\n");}
-            else { return 0; } //error
+            else if(s[i]=='-') {
+                if(isalpha(s[i-1]) && isalpha(s[i+1])
+                        && ((islower(s[i-1]) && islower(s[i+1]))
+                            || (isupper(s[i-1]) && isupper(s[i+1])))) 
+                { hyphen_index = i; printf("hyphen on\n"); }
+                else { return 0; } //error
+            } else { return 0; } //error
         }
         else if (isalpha(s[i])) {
             i_point = char_in_string(tolower(s[i]), p1);
@@ -254,12 +261,44 @@ int str_to_pos(const char* s, POSITION* pos)
             if(paren_open==1) {
                 if(islower(s[i])) pos->checker[i_point] += 2;  
                 if(isupper(s[i])) pos->checker[i_point] -= 2;  
+                if(hyphen_index > -1) {
+                    int upper_point = i_point;
+                    int lower_point = char_in_string(tolower(s[i-2]), p1);
+                    printf("openpar: up, low: %i %i\n", upper_point, lower_point);
+                    if(upper_point<lower_point) {
+                        int _i = lower_point;
+                        lower_point = upper_point; 
+                        upper_point = _i; 
+                        printf("openpar: up, low: %i %i\n", upper_point, lower_point);
+                    }
+                    for(int k=lower_point+1; k<upper_point; k++) {
+                        if(islower(s[i])) pos->checker[k] += 2;  
+                        if(isupper(s[i])) pos->checker[k] -= 2;  
+                    }
+                    hyphen_index = -1; //reset
+                }
                 i_point = -1; //reset
             } else if (paren_open==0) {
-                if(s[i+1]!='\0' && isalpha(s[i+1])) {
+                if(s[i+1]!='\0' && (!isdigit(s[i+1]))) {
                     if(s[i]!='z' && s[i]!='Z') {
                         if(islower(s[i])) pos->checker[i_point] += 1;  
                         if(isupper(s[i])) pos->checker[i_point] -= 1;  
+                        if(hyphen_index > -1) {
+                            int upper_point = i_point;
+                            int lower_point = char_in_string(tolower(s[i-2]), p1);
+                            printf("closepar: up, low: %i %i\n", upper_point, lower_point);
+                            if(upper_point<lower_point) {
+                                int _i = lower_point;
+                                lower_point = upper_point; 
+                                upper_point = _i;
+                                printf("closepar: up, low: %i %i\n", upper_point, lower_point);
+                            }
+                            for(int k=lower_point+1; k<upper_point; k++) {
+                                if(islower(s[i])) pos->checker[k] += 1;  
+                                if(isupper(s[i])) pos->checker[k] -= 1;  
+                            }
+                            hyphen_index = -1; //reset
+                        }
                         i_point = -1; //reset
                     } else {
                         if(islower(s[i])) pos->cube += 1;  
@@ -1439,7 +1478,7 @@ int main(int argc, char **argv)
   POSITION pos = POS_VOID;
   POSITION* pos_ptr = &pos;
   /* pos_print(pos_ptr); */
-  char* ctest = "31,12:Z11y1(aX)F3(mnl)O4Y3";
+  char* ctest = "31,12:Z11y1(e-aX)F3(mnl)t-pO4Y3";
   printf("pos: %s\n", ctest);
   str_to_pos(ctest, pos_ptr);
   pos_print(pos_ptr);
