@@ -8,6 +8,7 @@
 #include <iupcontrols.h>
 #include <cd.h>
 #include <cdiup.h>
+#include <wd.h>
 #include <sqlite3.h>
 
 /************************** Data *************************/
@@ -465,9 +466,22 @@ int db_close(sqlite3 *db)
     return rc;
 }
 
+/************************ Drawing *************************/
+
+cdCanvas *cdv = NULL;
+cdCanvas *db_cdv = NULL;
+
+/* #define CANVAS_WIDTH 15.0 */
+/* #define CANVAS_HEIGHT 15.0 */
+
 /************************ Prototypes **********************/
 
+/* static int dlg_resize_cb(Ihandle* ih); */
 static int canvas_action_cb(Ihandle* ih);
+static int canvas_dropfiles_cb(Ihandle* ih);
+static int canvas_motion_cb(Ihandle* ih);
+static int canvas_wheel_cb(Ihandle* ih);
+static int canvas_resize_cb(Ihandle* ih);
 static int item_new_action_cb(void);
 static int item_open_action_cb(void);
 static int item_recent_action_cb(void);
@@ -524,9 +538,6 @@ void error_callback(void);
 #define DEFAULT_SIZE "800x600"
 #define DEFAULT_SPLIT_VALUE "800"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
-
-cdCanvas *winCanvas = NULL;
-cdCanvas *curCanvas = NULL;
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *edit, *analysis, *canvas, *search, *matchlib;
@@ -902,9 +913,20 @@ static Ihandle* create_canvas(void)
 {
     Ihandle *ih;
     ih = IupCanvas(NULL);
+    cdv = cdCreateCanvas(CD_IUP, ih);
     IupSetAttribute(ih, "NAME", "CANVAS");
+    /* IupSetAttribute(ih, "SIZE", "300x200"); */
+    /* IupSetAttribute(ih, "MINSIZE", "600x200"); */
+    /* IupSetAttribute(ih, "MAXSIZE", "600x300"); */
+    IupSetAttribute(ih, "BGCOLOR", "255 255 255");
+    IupSetAttribute(ih, "BORDER", "YES");
+    /* IupSetAttribute(ih, "DRAWSIZE", "200x300"); */
     IupSetAttribute(ih, "EXPAND", "YES");
     IupSetCallback(ih, "ACTION", (Icallback)canvas_action_cb);
+    IupSetCallback(ih, "DROPFILES_CB", (Icallback)canvas_dropfiles_cb);
+    IupSetCallback(ih, "MOTION_CB", (Icallback)canvas_motion_cb);
+    IupSetCallback(ih, "WHEEL_CB", (Icallback)canvas_wheel_cb);
+    /* IupSetCallback(ih, "RESIZE_CB", (Icallback)canvas_resize_cb); */
 
     return ih;
 }
@@ -1015,23 +1037,62 @@ static void set_keyboard_shortcuts()
 static int canvas_action_cb(Ihandle* ih)
 {
     int i, w, h;
-    cdCanvas *canvas;
+    cdv = cdCreateCanvas(CD_IUP, ih);
+    cdCanvasGetSize(cdv, &w, &h, NULL, NULL);
+    printf("canvas: %i, %i\n", w, h);
+    cdCanvasBackground(cdv, CD_WHITE);
+    cdCanvasClear(cdv);
 
-    canvas = cdCreateCanvas(CD_IUP, ih);
-    cdCanvasGetSize(canvas, &w, &h, NULL, NULL);
+    wdCanvasViewport(cdv, 0, w-1, 0, h-1);
+    if (w>h) {
+        wdCanvasWindow(cdv, 0, (double)w/(double)h, 0, 1);
+    } else {
+        wdCanvasWindow(cdv, 0, 1, 0, (double)h/(double)w);
+    }
 
-    cdCanvasBackground(canvas, CD_WHITE);
-    cdCanvasClear(canvas);
+    cdCanvasForeground(cdv, CD_RED);
+    wdCanvasBox(cdv, 0.2, 1.3, 0.4, 0.5);
+    /* cdCanvasForeground(canvas, CD_RED); */
 
-    cdCanvasLineWidth(canvas, 3);
-    cdCanvasLineStyle(canvas, CD_CONTINUOUS);
-    cdCanvasForeground(canvas, cdEncodeAlpha(CD_DARK_MAGENTA, 128));
-    cdCanvasRect(canvas, 100, 200, 100, 200);
+    /* cdCanvasOrigin(canvas, w/2, h/2); */
+    /* cdCanvasLineWidth(canvas, 3); */
+    /* cdCanvasLineStyle(canvas, CD_CONTINUOUS); */
+    /* cdCanvasForeground(canvas, cdEncodeAlpha(CD_DARK_MAGENTA, 128)); */
+    /* cdCanvasRect(canvas, 100, 200, 100, 200); */
+    /* cdCanvasSetAttribute(canvas, "DRAWCOLOR", "252 186 3"); */
 
-    cdCanvasSetAttribute(canvas, "DRAWCOLOR", "252 186 3");
+    cdCanvasFlush(cdv);
 
-    cdCanvasFlush(canvas);
+    return IUP_DEFAULT;
+}
 
+static int canvas_dropfiles_cb(Ihandle* ih)
+{
+    error_callback();
+    return IUP_DEFAULT;
+}
+
+static int canvas_motion_cb(Ihandle* ih)
+{
+    /* error_callback(); */
+    return IUP_DEFAULT;
+}
+
+static int canvas_wheel_cb(Ihandle* ih)
+{
+    error_callback();
+    return IUP_DEFAULT;
+}
+
+/* static int dlg_resize_cb(Ihandle* ih) */
+/* { */
+/*     IupRefresh(ih); */
+/*     return IUP_DEFAULT; */
+/* } */
+
+static int canvas_resize_cb(Ihandle* ih)
+{
+    cdCanvasActivate(cdv);
     return IUP_DEFAULT;
 }
 
@@ -1496,6 +1557,7 @@ int main(int argc, char **argv)
   IupSetAttribute(dlg, "SHRINK", "YES");
   IupSetAttribute(dlg, "MENU", "menu");
 
+  /* IupSetCallback(dlg, "RESIZE_CB", (Icallback)dlg_resize_cb); */
   set_keyboard_shortcuts();
 
   IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
