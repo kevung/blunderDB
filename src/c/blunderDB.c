@@ -1,3 +1,4 @@
+#include <ctype.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -57,6 +58,15 @@ const POSITION POS_VOID = {
     .is_take = 0,
     .is_on_roll = 0,
 };
+
+int char_in_string(char c, char* s)
+{
+    int index;
+    char *e;
+    e = strchr(s, c);
+    index = (int) (e - s);
+    return index;
+}
 
 void pos_print(const POSITION* p)
 {
@@ -123,8 +133,8 @@ char* pos_to_str_paren(const POSITION* p)
     memcpy(c, "\0", 1);
     memcpy(c_spare, "\0", 1);
     memcpy(c_point, "\0", 1);
-    sprintf(p1_score, "%d", p->dice[0]);
-    sprintf(p2_score, "%d", p->dice[1]);
+    sprintf(p1_score, "%d", p->p1_score);
+    sprintf(p2_score, "%d", p->p2_score);
     snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
     strcat(c, ":");
     int a;
@@ -174,10 +184,95 @@ char* pos_to_str_paren(const POSITION* p)
     return c;
 }
 
-/* void str_to_pos(const char* c, POSITION* pos) */
-/* { */
-/*     int i; */
-/* } */
+int str_to_pos(const char* s, POSITION* pos)
+{
+    char p1[27] = "yabcdefghijklmnopqrstuvwxyz";
+    char p2[27] = "YABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    int has_score, i_score = 0;
+    char s_p1_score[5], s_p2_score[5];
+    s_p1_score[0] = '\0';
+    s_p2_score[0] = '\0';
+    int i, j = 0;
+    int len = strlen(s);
+    printf("len: %i\n", len);
+    /* detect score */
+    for(int i=0; i<len; i++)
+    {
+        if(s[i]==':') {
+            has_score = 1;
+            i_score = i;
+            printf("ii: %i\n", i);
+            break;
+        }
+    }
+    if(has_score)
+    {
+        j=0;
+        /* find , to delimit scores */
+        for(int i=0; i<i_score; i++)
+        {
+            if(s[i]==',') {
+                j=i;
+                break;
+            }
+        }
+        for(int i=0; i<j; i++)
+        {
+            if(!isdigit(s[i])) return 0; //fail
+            s_p1_score[i] = s[i];
+            s_p1_score[i+1] = '\0';
+        }
+        for(int i=j+1; i<i_score; i++)
+        {
+            if(!isdigit(s[i])) return 0; //fail
+            s_p2_score[i-j-1] = s[i];
+            s_p2_score[i-j] = '\0';
+        }
+        pos->p1_score = atoi(s_p1_score);
+        pos->p2_score = atoi(s_p2_score);
+        printf("oo: %s %s\n", s_p1_score, s_p2_score);
+    }
+    /* detect checkers */
+    int paren_open = 0;
+    int i_point = -1; // point to fill with checkers
+    for(int i=i_score+1; i<len; i++)
+    {
+        printf("s: %c\n", s[i]);
+        if(!isalnum(s[i]))
+        {
+            if(s[i]=='(') { paren_open = 1; printf("paren on\n"); }
+            else if(s[i]==')') { paren_open = 0; printf("paren off\n");}
+            else { return 0; } //error
+        }
+        else if (isalpha(s[i])) {
+            i_point = char_in_string(tolower(s[i]), p1);
+            if(paren_open==1) {
+                if(islower(s[i])) pos->checker[i_point] += 2;  
+                if(isupper(s[i])) pos->checker[i_point] -= 2;  
+                i_point = -1; //reset
+            } else if (paren_open==0) {
+                if(s[i+1]!='\0' && isalpha(s[i+1])) {
+                    if(islower(s[i])) pos->checker[i_point] += 1;  
+                    if(isupper(s[i])) pos->checker[i_point] -= 1;  
+                    i_point = -1; //reset
+                }
+            } else { return 0; } //error
+        } else if (isdigit(s[i])) {
+            if(paren_open==1) { return 0; }
+            else if(paren_open==0) {
+                if(isalpha(s[i-1]) && !(isdigit(s[i+1]))) {
+                    if(islower(s[i-1])) pos->checker[i_point] += (s[i] -'0');  
+                    if(isupper(s[i-1])) pos->checker[i_point] -= (s[i] -'0');  
+                }
+                if(isalpha(s[i-1]) && isdigit(s[i+1])) {
+                    if(islower(s[i-1])) pos->checker[i_point] += 10*(s[i]-'0')+(s[i+1]-'0');  
+                    if(isupper(s[i-1])) pos->checker[i_point] -= 10*(s[i]-'0')+(s[i+1]-'0');  
+                }
+            } else { return 0; }
+        } else { return 0; }
+    }
+    return 1; //success
+}
 
 
 /************************ Database ***********************/
@@ -1313,11 +1408,22 @@ int main(int argc, char **argv)
   IupImageLibOpen();
   IupSetLanguage("ENGLISH");
 
-  char* ctest;
-  ctest= pos_to_str(&POS_DEFAULT);
-  printf("ctest: %s\n", ctest);
-  ctest= pos_to_str_paren(&POS_DEFAULT);
-  printf("ctest2: %s\n", ctest);
+  /* char* ctest; */
+  /* ctest= pos_to_str(&POS_DEFAULT); */
+  /* printf("ctest: %s\n", ctest); */
+  /* ctest= pos_to_str_paren(&POS_DEFAULT); */
+  /* printf("ctest2: %s\n", ctest); */
+  /* free(ctest); */
+
+  POSITION pos = POS_VOID;
+  POSITION* pos_ptr = &pos;
+  pos.cube = 50;
+  /* pos_print(pos_ptr); */
+  char* ctest = "31,12:(aX)F3";
+  printf("pos: %s\n", ctest);
+  str_to_pos(ctest, pos_ptr);
+  pos_print(pos_ptr);
+
 
   menu = create_menus();
   toolbar = create_toolbar();
