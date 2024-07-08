@@ -206,14 +206,12 @@ int str_to_pos(const char* s, POSITION* pos)
     s_p2_score[0] = '\0';
     int i, j = 0;
     int len = strlen(s);
-    printf("len: %i\n", len);
     /* detect score */
     for(int i=0; i<len; i++)
     {
         if(s[i]==':') {
             has_score = 1;
             i_score = i;
-            printf("ii: %i\n", i);
             break;
         }
     }
@@ -242,24 +240,20 @@ int str_to_pos(const char* s, POSITION* pos)
         }
         pos->p1_score = atoi(s_p1_score);
         pos->p2_score = atoi(s_p2_score);
-        printf("oo: %s %s\n", s_p1_score, s_p2_score);
     }
     /* detect checkers */
     int paren_open = 0;
     int hyphen_index = -1;
     int i_point = -1; // point to fill with checkers
-    for(int i=i_score+1; i<len; i++)
-    {
-        printf("s: %c\n", s[i]);
-        if(!isalnum(s[i]))
-        {
-            if(s[i]=='(') { paren_open = 1; printf("paren on\n"); }
-            else if(s[i]==')') { paren_open = 0; printf("paren off\n");}
+    for(int i=i_score+1; i<len; i++) {
+        if(!isalnum(s[i])) {
+            if(s[i]=='(') { paren_open = 1; }
+            else if(s[i]==')') { paren_open = 0; }
             else if(s[i]=='-') {
                 if(isalpha(s[i-1]) && isalpha(s[i+1])
                         && ((islower(s[i-1]) && islower(s[i+1]))
                             || (isupper(s[i-1]) && isupper(s[i+1])))) 
-                { hyphen_index = i; printf("hyphen on\n"); }
+                { hyphen_index = i; }
                 else { return 0; } //error
             } else { return 0; } //error
         }
@@ -272,11 +266,7 @@ int str_to_pos(const char* s, POSITION* pos)
                 if(hyphen_index > -1) {
                     int upper_point = i_point;
                     int lower_point = char_in_string(tolower(s[i-2]), p1);
-                    printf("openpar: up, low: %i %i\n", upper_point, lower_point);
-                    if(upper_point<lower_point) {
-                        int_swap(&upper_point, &lower_point);
-                        printf("openpar: up, low: %i %i\n", upper_point, lower_point);
-                    }
+                    if(upper_point<lower_point) int_swap(&upper_point, &lower_point);
                     for(int k=lower_point+1; k<upper_point; k++) {
                         if(islower(s[i])) pos->checker[k] += 2;  
                         if(isupper(s[i])) pos->checker[k] -= 2;  
@@ -292,11 +282,7 @@ int str_to_pos(const char* s, POSITION* pos)
                         if(hyphen_index > -1) {
                             int upper_point = i_point;
                             int lower_point = char_in_string(tolower(s[i-2]), p1);
-                            printf("closepar: up, low: %i %i\n", upper_point, lower_point);
-                            if(upper_point<lower_point) {
-                                int_swap(&upper_point, &lower_point);
-                                printf("closepar: up, low: %i %i\n", upper_point, lower_point);
-                            }
+                            if(upper_point<lower_point) int_swap(&upper_point, &lower_point);
                             for(int k=lower_point+1; k<upper_point; k++) {
                                 if(islower(s[i])) pos->checker[k] += 1;  
                                 if(isupper(s[i])) pos->checker[k] -= 1;  
@@ -1507,6 +1493,7 @@ int main(int argc, char **argv)
   dlg = IupDialog(vbox);
   IupSetAttribute(dlg, "TITLE", "blunderDB");
   IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
+  IupSetAttribute(dlg, "SHRINK", "YES");
   IupSetAttribute(dlg, "MENU", "menu");
 
   set_keyboard_shortcuts();
