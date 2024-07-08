@@ -62,7 +62,7 @@ const POSITION POS_VOID = {
     .is_on_roll = 0,
 };
 
-int char_in_string(char c, char* s)
+int char_in_string(const char c, const char* s)
 {
     int index;
     char *e;
