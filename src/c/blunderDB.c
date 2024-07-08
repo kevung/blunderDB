@@ -88,6 +88,14 @@ void pos_print(const POSITION* p)
     printf("is_on_roll: %i\n", p->is_on_roll);
 }
 
+void int_swap(int* i, int* j)
+{
+    int t;
+    t = *i;
+    *i = *j;
+    *j = t;
+}
+
 char* pos_to_str(const POSITION* p)
 {
     const char p1[27] = P1_POINT_LABEL;
@@ -266,9 +274,7 @@ int str_to_pos(const char* s, POSITION* pos)
                     int lower_point = char_in_string(tolower(s[i-2]), p1);
                     printf("openpar: up, low: %i %i\n", upper_point, lower_point);
                     if(upper_point<lower_point) {
-                        int _i = lower_point;
-                        lower_point = upper_point; 
-                        upper_point = _i; 
+                        int_swap(&upper_point, &lower_point);
                         printf("openpar: up, low: %i %i\n", upper_point, lower_point);
                     }
                     for(int k=lower_point+1; k<upper_point; k++) {
@@ -288,9 +294,7 @@ int str_to_pos(const char* s, POSITION* pos)
                             int lower_point = char_in_string(tolower(s[i-2]), p1);
                             printf("closepar: up, low: %i %i\n", upper_point, lower_point);
                             if(upper_point<lower_point) {
-                                int _i = lower_point;
-                                lower_point = upper_point; 
-                                upper_point = _i;
+                                int_swap(&upper_point, &lower_point);
                                 printf("closepar: up, low: %i %i\n", upper_point, lower_point);
                             }
                             for(int k=lower_point+1; k<upper_point; k++) {
