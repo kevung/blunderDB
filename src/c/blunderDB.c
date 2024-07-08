@@ -12,6 +12,9 @@
 
 /************************** Data *************************/
 
+#define P1_POINT_LABEL "*abcdefghijklmnopqrstuvwxyz"
+#define P2_POINT_LABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
+
 typedef struct
 {
     int checker[26];
@@ -87,8 +90,8 @@ void pos_print(const POSITION* p)
 
 char* pos_to_str(const POSITION* p)
 {
-    char p1[27] = "yabcdefghijklmnopqrstuvwxyz";
-    char p2[27] = "YABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char p1[27] = P1_POINT_LABEL;
+    const char p2[27] = P2_POINT_LABEL;
     char p1_score[2];
     char p2_score[2];
     char _d[2];
@@ -122,8 +125,8 @@ char* pos_to_str(const POSITION* p)
 
 char* pos_to_str_paren(const POSITION* p)
 {
-    char p1[27] = "yabcdefghijklmnopqrstuvwxyz";
-    char p2[27] = "YABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char p1[27] = P1_POINT_LABEL;
+    const char p2[27] = P2_POINT_LABEL;
     char p1_score[2];
     char p2_score[2];
     char _d[2];
@@ -184,10 +187,11 @@ char* pos_to_str_paren(const POSITION* p)
     return c;
 }
 
+
 int str_to_pos(const char* s, POSITION* pos)
 {
-    char p1[27] = "yabcdefghijklmnopqrstuvwxyz";
-    char p2[27] = "YABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const char p1[27] = P1_POINT_LABEL;
+    const char p2[27] = P2_POINT_LABEL;
     int has_score, i_score = 0;
     char s_p1_score[5], s_p2_score[5];
     s_p1_score[0] = '\0';
