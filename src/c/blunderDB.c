@@ -555,6 +555,35 @@ void draw_cube(cdCanvas *cv, int value){
     wdCanvasText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text);
 }
 
+void draw_board(cdCanvas* cv) {
+    for(int i=0; i<3; i++){
+        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
+        double y = BOARD_YORIG;
+        draw_triangle(cv, x, y, 1);
+        draw_triangle(cv, x+POINT_SIZE, -y, -1);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1);
+    }
+
+    cdCanvasHatch(cv, CD_HORIZONTAL);
+    for(int i=0; i<3; i++){
+        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
+        double y = BOARD_YORIG +BOARD_HEIGHT;
+        draw_triangle(cv, x, y, -1);
+        draw_triangle(cv, x+POINT_SIZE, -y, 1);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1);
+    }
+
+    cdCanvasForeground(cv, BOARD_COLOR);
+    cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
+    wdCanvasRect(cv, -BOARD_WIDTH/2, BOARD_WIDTH/2,
+            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
+    cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
+    wdCanvasRect(cv, -BAR_WIDTH/2, BAR_WIDTH/2,
+            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
+}
 
 /************************ Prototypes **********************/
 
@@ -1131,35 +1160,8 @@ static int canvas_action_cb(Ihandle* ih)
     double wd_w = (double) w* wd_h/(double) h;
     wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
 
-    for(int i=0; i<3; i++){
-        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
-        double y = BOARD_YORIG;
-        draw_triangle(cdv, x, y, 1);
-        draw_triangle(cdv, x+POINT_SIZE, -y, -1);
-        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1);
-        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1);
-    }
 
-    cdCanvasHatch(cdv, CD_HORIZONTAL);
-    for(int i=0; i<3; i++){
-        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
-        double y = BOARD_YORIG +BOARD_HEIGHT;
-        draw_triangle(cdv, x, y, -1);
-        draw_triangle(cdv, x+POINT_SIZE, -y, 1);
-        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
-        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1);
-    }
-
-    cdCanvasForeground(cdv, BOARD_COLOR);
-    cdCanvasLineWidth(cdv, BOARD_LINEWIDTH);
-    cdCanvasLineStyle(cdv, CD_CONTINUOUS);
-    wdCanvasRect(cdv, -BOARD_WIDTH/2, BOARD_WIDTH/2,
-            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
-    cdCanvasLineWidth(cdv, BOARD_LINEWIDTH);
-    wdCanvasRect(cdv, -BAR_WIDTH/2, BAR_WIDTH/2,
-            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
-
-
+    draw_board(cdv);
     draw_cube(cdv, -2);
 
     cdCanvasFlush(cdv);
