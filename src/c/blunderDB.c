@@ -468,19 +468,6 @@ int db_close(sqlite3 *db)
 
 /************************ Drawing *************************/
 
-/* #define CHECKER_SIZE 1.0 */
-/* #define BAR_WIDTH CHECKER_SIZE */
-/* #define BOARD_WIDTH 12*CHECKER_SIZE+BAR_WIDTH */
-/* #define BOARD_HEIGHT 11*CHECKER_SIZE */
-/* #define BOARD_XORIG -BOARD_WIDTH/2 */
-/* #define BOARD_YORIG -BOARD_HEIGHT/2 */
-/* #define TRIANGLE1_COLOR CD_BLUE */
-/* #define TRIANGLE1_STYLE CD_SOLID */
-/* #define TRIANGLE2_COLOR CD_GREEN */
-/* #define TRIANGLE2_STYLE CD_HATCHED */
-/* #define CUBE_SIZE CHECKER_SIZE */
-/* #define BOARD_COLOR CD_RED */
-
 #define BOARD_WIDTH 13.
 #define BOARD_HEIGHT 11.
 #define POINT_SIZE BOARD_WIDTH/13
@@ -488,11 +475,14 @@ int db_close(sqlite3 *db)
 #define BAR_WIDTH CHECKER_SIZE
 #define BOARD_XORIG -BOARD_WIDTH/2
 #define BOARD_YORIG -BOARD_HEIGHT/2
-#define CUBE_SIZE CHECKER_SIZE
 #define BOARD_COLOR CD_BLACK
 #define BOARD_LINEWIDTH 5
 #define TRIANGLE_LINEWIDTH 2
 #define TRIANGLE_LINECOLOR CD_BLACK
+#define CUBE_LINEWIDTH 5
+#define CUBE_TEXTLINEWIDTH 3
+#define CUBE_LINECOLOR CD_BLACK
+#define CUBE_SIZE 1.1*CHECKER_SIZE
 
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
@@ -513,6 +503,56 @@ void drawTriangle(cdCanvas *cv, double x, double y, double up){
     wdCanvasVertex(cdv, x+POINT_SIZE, y);
     wdCanvasVertex(cdv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
     cdCanvasEnd(cdv);
+}
+
+char* cubeText(int value) {
+    switch(value) {
+        case 0:
+            return "1";
+        case 1:
+            return "2";
+        case 2:
+            return "4";
+        case 3:
+            return "8";
+        case 4:
+            return "16";
+        case 5:
+            return "32";
+        case 6:
+            return "64";
+        case 7:
+            return "128";
+        case 8:
+            return "256";
+        case 9:
+            return "512";
+        case 10:
+            return "1024";
+        default:
+            return "?";
+    }
+}
+
+void drawCube(cdCanvas *cv, int value){
+    char* text = cubeText(abs(value));
+    double x = -BOARD_WIDTH/2 -1.5*POINT_SIZE;
+    double y = 0;
+    if(value>0) y = -BOARD_HEIGHT/2;
+    if(value<0) y = BOARD_HEIGHT/2 - CUBE_SIZE;
+    cdCanvasForeground(cv, CUBE_LINECOLOR);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
+    cdCanvasLineWidth(cv, CUBE_LINEWIDTH);
+    cdCanvasLineJoin(cv, CD_ROUND);
+    wdCanvasRect(cv, x, x+CUBE_SIZE, y, y+CUBE_SIZE);
+    printf("cube: %s\n", cubeText(abs(value)));
+    cdCanvasLineWidth(cv, CUBE_TEXTLINEWIDTH);
+    /* cdCanvasTextAlignment(cv, CD_CENTER); */
+    /* wdCanvasVectorTextSize(cv, CUBE_SIZE, CUBE_SIZE, text); */
+    /* wdCanvasVectorText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text); */
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, "Times", CD_BOLD, 28);
+    wdCanvasText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text);
 }
 
 
@@ -1118,6 +1158,9 @@ static int canvas_action_cb(Ihandle* ih)
     cdCanvasLineWidth(cdv, BOARD_LINEWIDTH);
     wdCanvasRect(cdv, -BAR_WIDTH/2, BAR_WIDTH/2,
             -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
+
+
+    drawCube(cdv, -2);
 
     cdCanvasFlush(cdv);
 
