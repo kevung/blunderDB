@@ -485,6 +485,10 @@ int db_close(sqlite3 *db)
 #define CUBE_FONT "Times"
 #define CUBE_FONTSIZE 28
 #define CUBE_STYLE CD_PLAIN
+#define POINTNUMBER_FONT "Times"
+#define POINTNUMBER_FONTSIZE 20
+#define POINTNUMBER_STYLE CD_PLAIN
+#define POINTNUMBER_LINECOLOR CD_BLACK
 
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
@@ -547,11 +551,7 @@ void draw_cube(cdCanvas *cv, int value){
     cdCanvasLineWidth(cv, CUBE_LINEWIDTH);
     cdCanvasLineJoin(cv, CD_ROUND);
     wdCanvasRect(cv, x, x+CUBE_SIZE, y, y+CUBE_SIZE);
-    printf("cube: %s\n", cubeText(abs(value)));
     cdCanvasLineWidth(cv, CUBE_TEXTLINEWIDTH);
-    /* cdCanvasTextAlignment(cv, CD_CENTER); */
-    /* wdCanvasVectorTextSize(cv, CUBE_SIZE, CUBE_SIZE, text); */
-    /* wdCanvasVectorText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text); */
     cdCanvasTextAlignment(cv, CD_CENTER);
     cdCanvasFont(cv, CUBE_FONT, CUBE_STYLE, CUBE_FONTSIZE);
     wdCanvasText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text);
@@ -585,6 +585,82 @@ void draw_board(cdCanvas* cv) {
     cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
     wdCanvasRect(cv, -BAR_WIDTH/2, BAR_WIDTH/2,
             -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
+}
+
+void draw_pointnumber(cdCanvas* cv, int orientation) {
+    double x, y;
+    char t[3];
+    cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
+    if(orientation>0) {
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=1; i<7; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=7; i<13; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=13; i<19; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=19; i<25; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+    } else {
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=1; i<7; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=7; i<13; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=13; i<19; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=19; i<25; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+    }
 }
 
 /************************ Prototypes **********************/
@@ -1165,6 +1241,7 @@ static int canvas_action_cb(Ihandle* ih)
 
     draw_board(cdv);
     draw_cube(cdv, -2);
+    draw_pointnumber(cdv, 1);
 
     cdCanvasFlush(cdv);
 
