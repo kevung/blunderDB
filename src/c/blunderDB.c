@@ -468,11 +468,53 @@ int db_close(sqlite3 *db)
 
 /************************ Drawing *************************/
 
+/* #define CHECKER_SIZE 1.0 */
+/* #define BAR_WIDTH CHECKER_SIZE */
+/* #define BOARD_WIDTH 12*CHECKER_SIZE+BAR_WIDTH */
+/* #define BOARD_HEIGHT 11*CHECKER_SIZE */
+/* #define BOARD_XORIG -BOARD_WIDTH/2 */
+/* #define BOARD_YORIG -BOARD_HEIGHT/2 */
+/* #define TRIANGLE1_COLOR CD_BLUE */
+/* #define TRIANGLE1_STYLE CD_SOLID */
+/* #define TRIANGLE2_COLOR CD_GREEN */
+/* #define TRIANGLE2_STYLE CD_HATCHED */
+/* #define CUBE_SIZE CHECKER_SIZE */
+/* #define BOARD_COLOR CD_RED */
+
+#define BOARD_WIDTH 13.
+#define BOARD_HEIGHT 11.
+#define POINT_SIZE BOARD_WIDTH/13
+#define CHECKER_SIZE POINT_SIZE
+#define BAR_WIDTH CHECKER_SIZE
+#define BOARD_XORIG -BOARD_WIDTH/2
+#define BOARD_YORIG -BOARD_HEIGHT/2
+#define CUBE_SIZE CHECKER_SIZE
+#define BOARD_COLOR CD_BLACK
+#define BOARD_LINEWIDTH 5
+#define TRIANGLE_LINEWIDTH 2
+#define TRIANGLE_LINECOLOR CD_BLACK
+
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
 
-/* #define CANVAS_WIDTH 15.0 */
-/* #define CANVAS_HEIGHT 15.0 */
+void drawTriangle(cdCanvas *cv, double x, double y, double up){
+    cdCanvasForeground(cdv, CD_WHITE);
+    cdCanvasBegin(cdv, CD_FILL);
+    wdCanvasVertex(cdv, x, y);
+    wdCanvasVertex(cdv, x+POINT_SIZE, y);
+    wdCanvasVertex(cdv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
+    cdCanvasEnd(cdv);
+
+    cdCanvasLineWidth(cdv, TRIANGLE_LINEWIDTH);
+    cdCanvasForeground(cdv, TRIANGLE_LINECOLOR);
+    cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+    cdCanvasBegin(cdv, CD_CLOSED_LINES);
+    wdCanvasVertex(cdv, x, y);
+    wdCanvasVertex(cdv, x+POINT_SIZE, y);
+    wdCanvasVertex(cdv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
+    cdCanvasEnd(cdv);
+}
+
 
 /************************ Prototypes **********************/
 
@@ -1044,22 +1086,38 @@ static int canvas_action_cb(Ihandle* ih)
     cdCanvasClear(cdv);
 
     wdCanvasViewport(cdv, 0, w-1, 0, h-1);
-    if (w>h) {
-        wdCanvasWindow(cdv, 0, (double)w/(double)h, 0, 1);
-    } else {
-        wdCanvasWindow(cdv, 0, 1, 0, (double)h/(double)w);
+
+    double wd_h = BOARD_HEIGHT;
+    double wd_w = (double) w* wd_h/(double) h;
+    wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
+
+    for(int i=0; i<3; i++){
+        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
+        double y = BOARD_YORIG;
+        drawTriangle(cdv, x, y, 1);
+        drawTriangle(cdv, x+POINT_SIZE, -y, -1);
+        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1);
+        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1);
     }
 
-    cdCanvasForeground(cdv, CD_RED);
-    wdCanvasBox(cdv, 0.2, 1.3, 0.4, 0.5);
-    /* cdCanvasForeground(canvas, CD_RED); */
+    cdCanvasHatch(cdv, CD_HORIZONTAL);
+    for(int i=0; i<3; i++){
+        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
+        double y = BOARD_YORIG +BOARD_HEIGHT;
+        drawTriangle(cdv, x, y, -1);
+        drawTriangle(cdv, x+POINT_SIZE, -y, 1);
+        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
+        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1);
+    }
 
-    /* cdCanvasOrigin(canvas, w/2, h/2); */
-    /* cdCanvasLineWidth(canvas, 3); */
-    /* cdCanvasLineStyle(canvas, CD_CONTINUOUS); */
-    /* cdCanvasForeground(canvas, cdEncodeAlpha(CD_DARK_MAGENTA, 128)); */
-    /* cdCanvasRect(canvas, 100, 200, 100, 200); */
-    /* cdCanvasSetAttribute(canvas, "DRAWCOLOR", "252 186 3"); */
+    cdCanvasForeground(cdv, BOARD_COLOR);
+    cdCanvasLineWidth(cdv, BOARD_LINEWIDTH);
+    cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+    wdCanvasRect(cdv, -BOARD_WIDTH/2, BOARD_WIDTH/2,
+            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
+    cdCanvasLineWidth(cdv, BOARD_LINEWIDTH);
+    wdCanvasRect(cdv, -BAR_WIDTH/2, BAR_WIDTH/2,
+            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
 
     cdCanvasFlush(cdv);
 
