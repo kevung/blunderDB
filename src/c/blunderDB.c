@@ -485,6 +485,10 @@ int db_close(sqlite3 *db)
 #define CUBE_FONT "Times"
 #define CUBE_FONTSIZE 28
 #define CUBE_STYLE CD_PLAIN
+#define CUBE_XPOS -BOARD_WIDTH/2 -1.5*POINT_SIZE
+#define CUBE_YPOS_CENTER 0
+#define CUBE_YPOS_UP BOARD_HEIGHT/2 - CUBE_SIZE
+#define CUBE_YPOS_DOWN -BOARD_HEIGHT/2
 #define POINTNUMBER_FONT "Times"
 #define POINTNUMBER_FONTSIZE 20
 #define POINTNUMBER_STYLE CD_PLAIN
@@ -542,10 +546,10 @@ char* cubeText(int value) {
 
 void draw_cube(cdCanvas *cv, int value){
     char* text = cubeText(abs(value));
-    double x = -BOARD_WIDTH/2 -1.5*POINT_SIZE;
-    double y = 0;
-    if(value>0) y = -BOARD_HEIGHT/2;
-    if(value<0) y = BOARD_HEIGHT/2 - CUBE_SIZE;
+    double x = CUBE_XPOS;
+    double y = CUBE_YPOS_CENTER;
+    if(value>0) y = CUBE_YPOS_DOWN;
+    if(value<0) y = CUBE_YPOS_UP;
     cdCanvasForeground(cv, CUBE_LINECOLOR);
     cdCanvasLineStyle(cv, CD_CONTINUOUS);
     cdCanvasLineWidth(cv, CUBE_LINEWIDTH);
