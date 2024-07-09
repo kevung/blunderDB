@@ -470,6 +470,7 @@ int db_close(sqlite3 *db)
 
 #define BOARD_WIDTH 13.
 #define BOARD_HEIGHT 11.
+#define BOARD_WITH_DECORATIONS_HEIGHT BOARD_HEIGHT+2*POINT_SIZE
 #define POINT_SIZE BOARD_WIDTH/13
 #define CHECKER_SIZE POINT_SIZE
 #define BAR_WIDTH CHECKER_SIZE
@@ -1156,7 +1157,7 @@ static int canvas_action_cb(Ihandle* ih)
 
     wdCanvasViewport(cdv, 0, w-1, 0, h-1);
 
-    double wd_h = BOARD_HEIGHT;
+    double wd_h = BOARD_WITH_DECORATIONS_HEIGHT;
     double wd_w = (double) w* wd_h/(double) h;
     wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
 
