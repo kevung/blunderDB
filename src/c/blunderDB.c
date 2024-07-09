@@ -487,7 +487,7 @@ int db_close(sqlite3 *db)
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
 
-void drawTriangle(cdCanvas *cv, double x, double y, double up){
+void draw_triangle(cdCanvas *cv, double x, double y, double up){
     cdCanvasForeground(cdv, CD_WHITE);
     cdCanvasBegin(cdv, CD_FILL);
     wdCanvasVertex(cdv, x, y);
@@ -534,7 +534,7 @@ char* cubeText(int value) {
     }
 }
 
-void drawCube(cdCanvas *cv, int value){
+void draw_cube(cdCanvas *cv, int value){
     char* text = cubeText(abs(value));
     double x = -BOARD_WIDTH/2 -1.5*POINT_SIZE;
     double y = 0;
@@ -1134,20 +1134,20 @@ static int canvas_action_cb(Ihandle* ih)
     for(int i=0; i<3; i++){
         double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
         double y = BOARD_YORIG;
-        drawTriangle(cdv, x, y, 1);
-        drawTriangle(cdv, x+POINT_SIZE, -y, -1);
-        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1);
-        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1);
+        draw_triangle(cdv, x, y, 1);
+        draw_triangle(cdv, x+POINT_SIZE, -y, -1);
+        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1);
+        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1);
     }
 
     cdCanvasHatch(cdv, CD_HORIZONTAL);
     for(int i=0; i<3; i++){
         double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
         double y = BOARD_YORIG +BOARD_HEIGHT;
-        drawTriangle(cdv, x, y, -1);
-        drawTriangle(cdv, x+POINT_SIZE, -y, 1);
-        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
-        drawTriangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1);
+        draw_triangle(cdv, x, y, -1);
+        draw_triangle(cdv, x+POINT_SIZE, -y, 1);
+        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
+        draw_triangle(cdv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1);
     }
 
     cdCanvasForeground(cdv, BOARD_COLOR);
@@ -1160,7 +1160,7 @@ static int canvas_action_cb(Ihandle* ih)
             -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
 
 
-    drawCube(cdv, -2);
+    draw_cube(cdv, -2);
 
     cdCanvasFlush(cdv);
 
