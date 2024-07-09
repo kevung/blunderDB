@@ -474,8 +474,6 @@ int db_close(sqlite3 *db)
 #define POINT_SIZE BOARD_WIDTH/13
 #define CHECKER_SIZE POINT_SIZE
 #define BAR_WIDTH CHECKER_SIZE
-#define BOARD_XORIG -BOARD_WIDTH/2
-#define BOARD_YORIG -BOARD_HEIGHT/2
 #define BOARD_COLOR CD_BLACK
 #define BOARD_LINEWIDTH 5
 #define TRIANGLE_LINEWIDTH 2
@@ -484,6 +482,9 @@ int db_close(sqlite3 *db)
 #define CUBE_TEXTLINEWIDTH 3
 #define CUBE_LINECOLOR CD_BLACK
 #define CUBE_SIZE 1.1*CHECKER_SIZE
+#define CUBE_FONT "Times"
+#define CUBE_FONTSIZE 28
+#define CUBE_STYLE CD_PLAIN
 
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
@@ -552,14 +553,14 @@ void draw_cube(cdCanvas *cv, int value){
     /* wdCanvasVectorTextSize(cv, CUBE_SIZE, CUBE_SIZE, text); */
     /* wdCanvasVectorText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text); */
     cdCanvasTextAlignment(cv, CD_CENTER);
-    cdCanvasFont(cv, "Times", CD_BOLD, 28);
+    cdCanvasFont(cv, CUBE_FONT, CUBE_STYLE, CUBE_FONTSIZE);
     wdCanvasText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text);
 }
 
 void draw_board(cdCanvas* cv) {
     for(int i=0; i<3; i++){
-        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
-        double y = BOARD_YORIG;
+        double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
+        double y = -BOARD_HEIGHT/2;
         draw_triangle(cv, x, y, 1);
         draw_triangle(cv, x+POINT_SIZE, -y, -1);
         draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1);
@@ -568,8 +569,8 @@ void draw_board(cdCanvas* cv) {
 
     cdCanvasHatch(cv, CD_HORIZONTAL);
     for(int i=0; i<3; i++){
-        double x = BOARD_XORIG +((double) i)*2*POINT_SIZE;
-        double y = BOARD_YORIG +BOARD_HEIGHT;
+        double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
+        double y = -BOARD_HEIGHT/2 +BOARD_HEIGHT;
         draw_triangle(cv, x, y, -1);
         draw_triangle(cv, x+POINT_SIZE, -y, 1);
         draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
