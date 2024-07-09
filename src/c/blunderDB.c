@@ -667,6 +667,94 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
     }
 }
 
+void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
+    const char p1[27] = P1_POINT_LABEL;
+    double x, y;
+    char t[2];
+    cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
+    t[1] = '\0';
+
+    wdCanvasText(cv, 0, 0, "y");
+
+    if(cubevalue>0) {
+        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_DOWN+CUBE_SIZE/2, "z");
+    } else if(cubevalue<0) {
+        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_UP+CUBE_SIZE/2, "z");
+    } else {
+        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_CENTER+CUBE_SIZE/2, "z");
+    }
+
+    if(orientation>0) {
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=1; i<7; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=7; i<13; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=13; i<19; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=19; i<25; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+    } else {
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=1; i<7; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        for(int i=7; i<13; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=13; i<19; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        for(int i=19; i<25; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+    }
+}
 /************************ Prototypes **********************/
 
 /* static int dlg_resize_cb(Ihandle* ih); */
@@ -1243,9 +1331,11 @@ static int canvas_action_cb(Ihandle* ih)
     wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
 
 
+    int _cube = -1;
     draw_board(cdv);
-    draw_cube(cdv, -2);
-    draw_pointnumber(cdv, 1);
+    draw_cube(cdv, _cube);
+    /* draw_pointnumber(cdv, 1); */
+    draw_pointletter(cdv, -1, _cube);
 
     cdCanvasFlush(cdv);
 
