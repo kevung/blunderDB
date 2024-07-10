@@ -483,7 +483,7 @@ int db_close(sqlite3 *db)
 #define CUBE_LINECOLOR CD_BLACK
 #define CUBE_SIZE 1.1*CHECKER_SIZE
 #define CUBE_FONT "Times"
-#define CUBE_FONTSIZE 28
+#define CUBE_FONTSIZE 30
 #define CUBE_STYLE CD_PLAIN
 #define CUBE_XPOS -BOARD_WIDTH/2 -1.5*POINT_SIZE
 #define CUBE_YPOS_CENTER 0
@@ -1408,7 +1408,7 @@ static int canvas_action_cb(Ihandle* ih)
     wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
 
 
-    int _cube = 1;
+    int _cube = -6;
     int _orig = 1;
     draw_board(cdv);
     draw_cube(cdv, _cube);
