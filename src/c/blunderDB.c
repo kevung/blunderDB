@@ -496,7 +496,7 @@ int db_close(sqlite3 *db)
 #define POINTNUMBER_YPOS_UP BOARD_HEIGHT/2+POINT_SIZE/2
 #define POINTNUMBER_YPOS_DOWN -(POINTNUMBER_YPOS_UP)
 #define SCORE_XPOS BOARD_WIDTH/2+1.7*POINT_SIZE
-#define SCORE_YPOS_UP BOARD_HEIGHT/2+0.3*POINT_SIZE
+#define SCORE_YPOS_UP BOARD_HEIGHT/2+0.1*POINT_SIZE
 #define SCORE_YPOS_DOWN -(SCORE_YPOS_UP)
 #define SCORE_FONT "Times"
 #define SCORE_FONTSIZE 20
@@ -791,7 +791,7 @@ void draw_score(cdCanvas* cv, int score, int crawford, int player){
     sprintf(t, "%d", score);
     strcat(t, " away");
     if(score==1 && crawford==1) strcat(t, "\ncrawford");
-    if(score==1 && crawford!=1) strcat(t, "\npost crawford");
+    if(score==1 && crawford!=1) strcat(t, "\npost\ncrawford");
     if(player>0) {
         wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_DOWN, t);
     } else {
