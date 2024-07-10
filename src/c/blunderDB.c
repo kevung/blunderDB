@@ -495,9 +495,13 @@ int db_close(sqlite3 *db)
 #define POINTNUMBER_LINECOLOR CD_BLACK
 #define POINTNUMBER_YPOS_UP BOARD_HEIGHT/2+POINT_SIZE/2
 #define POINTNUMBER_YPOS_DOWN -(POINTNUMBER_YPOS_UP)
-#define SCORE_XPOS
-#define SCORE_YPOS_UP
-#define SCORE_YPOS_DOWN
+#define SCORE_XPOS BOARD_WIDTH/2+1.5*POINT_SIZE
+#define SCORE_YPOS_UP BOARD_HEIGHT/2
+#define SCORE_YPOS_DOWN -(SCORE_YPOS_UP)
+#define SCORE_FONT "Times"
+#define SCORE_FONTSIZE 15
+#define SCORE_STYLE CD_PLAIN
+#define SCORE_LINECOLOR CD_BLACK
 
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
@@ -760,6 +764,23 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
         }
     }
 }
+
+void draw_score(cdCanvas* cv, int score, int crawford, int player){
+    char t[20];
+    cdCanvasForeground(cv, SCORE_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, SCORE_FONT, SCORE_STYLE, SCORE_FONTSIZE);
+    sprintf(t, "%d", score);
+    strcat(t, " away");
+    if(score==1 && crawford==1) strcat(t, "\ncrawford");
+    if(score==1 && crawford!=1) strcat(t, "\npost crawford");
+    if(player>0) {
+        wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_DOWN, t);
+    } else {
+        wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_UP, t);
+    }
+}
+
 /************************ Prototypes **********************/
 
 /* static int dlg_resize_cb(Ihandle* ih); */
@@ -1342,6 +1363,8 @@ static int canvas_action_cb(Ihandle* ih)
     draw_cube(cdv, _cube);
     draw_pointnumber(cdv, _orig);
     /* draw_pointletter(cdv, _orig, _cube); */
+    draw_score(cdv, 1, 1, 1);
+    draw_score(cdv, 5, 0, -1);
 
     cdCanvasFlush(cdv);
 
