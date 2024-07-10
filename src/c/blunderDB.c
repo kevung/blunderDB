@@ -610,6 +610,7 @@ void draw_board(cdCanvas* cv) {
         draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
         draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1);
     }
+    cdCanvasInteriorStyle(cv, CD_SOLID);
 
     cdCanvasForeground(cv, BOARD_COLOR);
     cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
