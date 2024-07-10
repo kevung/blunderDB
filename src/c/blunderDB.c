@@ -474,9 +474,14 @@ int db_close(sqlite3 *db)
 #define BOARD_WIDTH 13.
 #define BOARD_HEIGHT 11.
 #define BOARD_WITH_DECORATIONS_HEIGHT BOARD_HEIGHT+2*POINT_SIZE
+#define BOARD_DIRECTION -1
 #define POINT_SIZE BOARD_WIDTH/13
-#define CHECKER_SIZE POINT_SIZE
-#define BAR_WIDTH CHECKER_SIZE
+#define CHECKER_SIZE 0.95*POINT_SIZE
+#define CHECKER_LINECOLOR CD_BLACK
+#define CHECKER_LINEWIDTH 3
+#define CHECKER1_COLOR CD_BLACK
+#define CHECKER2_COLOR CD_WHITE
+#define BAR_WIDTH POINT_SIZE
 #define BOARD_COLOR CD_BLACK
 #define BOARD_LINEWIDTH 5
 #define TRIANGLE_LINEWIDTH 2
@@ -484,7 +489,7 @@ int db_close(sqlite3 *db)
 #define CUBE_LINEWIDTH 5
 #define CUBE_TEXTLINEWIDTH 3
 #define CUBE_LINECOLOR CD_BLACK
-#define CUBE_SIZE 1.1*CHECKER_SIZE
+#define CUBE_SIZE 1.1*POINT_SIZE
 #define CUBE_FONT "Times"
 #define CUBE_FONTSIZE 30
 #define CUBE_STYLE CD_PLAIN
@@ -508,7 +513,7 @@ int db_close(sqlite3 *db)
 #define SCORE_STYLE CD_BOLD
 #define SCORE_LINECOLOR CD_BLACK
 #define CHECKEROFF_XPOS BOARD_WIDTH/2+POINT_SIZE
-#define CHECKEROFF_YPOS_UP 3*CHECKER_SIZE
+#define CHECKEROFF_YPOS_UP 3*POINT_SIZE
 #define CHECKEROFF_YPOS_DOWN -(CHECKEROFF_YPOS_UP)
 #define CHECKEROFF_FONT "Times"
 #define CHECKEROFF_FONTSIZE 15
@@ -836,6 +841,86 @@ void draw_pipcount(cdCanvas* cv, int pip, int player){
         wdCanvasText(cv, PIPCOUNT_XPOS, PIPCOUNT_YPOS_UP, t);
     }
 }
+
+/* ATTENTION TRAITER LE CAS SI PLUS DE 6 CHECKERS */
+void draw_checker(cdCanvas* cv, POSITION* p, int dir) {
+    double xc, yc, eps;
+
+    if(BOARD_DIRECTION==1) eps = 1;
+    if(BOARD_DIRECTION!=1) eps = -1;
+
+    cdCanvasForeground(cdv, CHECKER_LINECOLOR);
+    cdCanvasLineWidth(cdv, CHECKER_LINEWIDTH);
+    cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+
+    void draw_checker_samepoint(double xc, double yc, int point, double dir) {
+        double _yc = yc;
+        for(int k=0; k<abs(p->checker[point]); k++) {
+            if(p->checker[point]>0) {
+                cdCanvasForeground(cdv, CHECKER1_COLOR);
+            } else {
+                cdCanvasForeground(cdv, CHECKER2_COLOR);
+            }
+            wdCanvasSector(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            cdCanvasForeground(cdv, CHECKER_LINECOLOR);
+            cdCanvasLineWidth(cdv, CHECKER_LINEWIDTH);
+            cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+            wdCanvasArc(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            _yc += dir*CHECKER_SIZE;
+        }
+    }
+
+    void draw_checker_onbar(int player) {
+        int i, color; double dir, xc, yc; xc=0;
+        if(player>0) {dir=1; i=25; color=CHECKER1_COLOR;}
+        if(player<=0) {dir=-1; i=0; color=CHECKER2_COLOR;}
+        yc=dir*0.5*POINT_SIZE;
+        for(int k=0; k<abs(p->checker[25]); k++) {
+            cdCanvasForeground(cdv, color);
+            wdCanvasSector(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            cdCanvasForeground(cdv, CHECKER_LINECOLOR);
+            cdCanvasLineWidth(cdv, CHECKER_LINEWIDTH);
+            cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+            wdCanvasArc(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            yc += dir*CHECKER_SIZE;
+        }
+    }
+
+    draw_checker_onbar(1);
+    draw_checker_onbar(-1);
+
+    xc = eps*(BOARD_WIDTH/2 -0.5*POINT_SIZE);
+    for(int i=24; i>=19; i--) {
+        yc = BOARD_HEIGHT/2 -0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, -1);
+        xc -= eps*POINT_SIZE;
+    }
+
+    xc = eps*-POINT_SIZE;
+    for(int i=18; i>=13; i--) {
+        yc = BOARD_HEIGHT/2 -0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, -1);
+        xc -= eps*POINT_SIZE;
+    }
+
+    xc = eps*(-BOARD_WIDTH/2+POINT_SIZE/2);
+    for(int i=12; i>=7; i--) {
+        yc = -BOARD_HEIGHT/2 +0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, 1);
+        xc += eps*POINT_SIZE;
+    }
+
+    xc = eps*POINT_SIZE;
+    for(int i=6; i>=1; i--) {
+        yc = -BOARD_HEIGHT/2 +0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, 1);
+        xc += eps*POINT_SIZE;
+    }
+
+}
+
+
+
 /************************ Prototypes **********************/
 
 /* static int dlg_resize_cb(Ihandle* ih); */
@@ -1413,15 +1498,15 @@ static int canvas_action_cb(Ihandle* ih)
 
 
     int _cube = -6;
-    int _orig = 1;
     draw_board(cdv);
+    draw_checker(cdv, pos_ptr, BOARD_DIRECTION);
     draw_cube(cdv, _cube);
-    draw_pointnumber(cdv, _orig);
-    /* draw_pointletter(cdv, _orig, _cube); */
+    draw_checkeroff(cdv, 4, 1, BOARD_DIRECTION);
+    draw_checkeroff(cdv, 6, -1, BOARD_DIRECTION);
+    draw_pointnumber(cdv, BOARD_DIRECTION);
+    /* draw_pointletter(cdv, BOARD_DIRECTION, _cube); */
     draw_score(cdv, 1, -1, 1);
     draw_score(cdv, 5, 0, -1);
-    draw_checkeroff(cdv, 4, 1, _orig);
-    draw_checkeroff(cdv, 6, -1, _orig);
     draw_pipcount(cdv, 167, 1);
     draw_pipcount(cdv, 132, -2);
 
@@ -1881,6 +1966,10 @@ int main(int argc, char **argv)
 
   pos = POS_DEFAULT;
   pos_ptr = &pos;
+
+  /* str_to_pos("(a-f)", pos_ptr); */
+  pos_ptr->checker[25] = 3;
+  pos_ptr->checker[0] = -4;
 
   /* char* ctest; */
   /* ctest= pos_to_str(&POS_DEFAULT); */
