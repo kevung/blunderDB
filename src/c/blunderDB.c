@@ -63,6 +63,9 @@ const POSITION POS_VOID = {
     .is_on_roll = 0,
 };
 
+POSITION pos;
+POSITION *pos_ptr;
+
 int char_in_string(const char c, const char* s)
 {
     int index;
@@ -1874,10 +1877,9 @@ void error_callback(void)
 /************************ Main ****************************/
 int main(int argc, char **argv)
 {
-  IupOpen(&argc, &argv);
-  IupControlsOpen();
-  IupImageLibOpen();
-  IupSetLanguage("ENGLISH");
+
+  pos = POS_DEFAULT;
+  pos_ptr = &pos;
 
   /* char* ctest; */
   /* ctest= pos_to_str(&POS_DEFAULT); */
@@ -1886,14 +1888,17 @@ int main(int argc, char **argv)
   /* printf("ctest2: %s\n", ctest); */
   /* free(ctest); */
 
-  POSITION pos = POS_VOID;
-  POSITION* pos_ptr = &pos;
+  /* /1* pos_print(pos_ptr); *1/ */
+  /* char* ctest = "31,12:Z11y1(e-aX)F3(mnl)t-pO4Y3"; */
+  /* printf("pos: %s\n", ctest); */
+  /* str_to_pos(ctest, pos_ptr); */
   /* pos_print(pos_ptr); */
-  char* ctest = "31,12:Z11y1(e-aX)F3(mnl)t-pO4Y3";
-  printf("pos: %s\n", ctest);
-  str_to_pos(ctest, pos_ptr);
-  pos_print(pos_ptr);
 
+
+  IupOpen(&argc, &argv);
+  IupControlsOpen();
+  IupImageLibOpen();
+  IupSetLanguage("ENGLISH");
 
   menu = create_menus();
   toolbar = create_toolbar();
