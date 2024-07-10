@@ -493,6 +493,11 @@ int db_close(sqlite3 *db)
 #define POINTNUMBER_FONTSIZE 20
 #define POINTNUMBER_STYLE CD_PLAIN
 #define POINTNUMBER_LINECOLOR CD_BLACK
+#define POINTNUMBER_YPOS_UP BOARD_HEIGHT/2+POINT_SIZE/2
+#define POINTNUMBER_YPOS_DOWN -(POINTNUMBER_YPOS_UP)
+#define SCORE_XPOS
+#define SCORE_YPOS_UP
+#define SCORE_YPOS_DOWN
 
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
@@ -600,7 +605,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
     if(orientation>0) {
 
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -608,7 +613,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
         }
 
         x = -POINT_SIZE;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -616,7 +621,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
         }
 
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -624,7 +629,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
         }
 
         x = POINT_SIZE;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -634,7 +639,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
     } else {
 
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -642,7 +647,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
         }
 
         x = POINT_SIZE;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -650,7 +655,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
         }
 
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -658,7 +663,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
         }
 
         x = -POINT_SIZE;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
             sprintf(t, "%d", i);
             wdCanvasText(cv, x, y, t);
@@ -689,7 +694,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
     if(orientation>0) {
 
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -697,7 +702,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
         }
 
         x = -POINT_SIZE;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -705,7 +710,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
         }
 
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -713,7 +718,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
         }
 
         x = POINT_SIZE;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -723,7 +728,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
     } else {
 
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -731,7 +736,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
         }
 
         x = POINT_SIZE;
-        y = -BOARD_HEIGHT/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -739,7 +744,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
         }
 
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -747,7 +752,7 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
         }
 
         x = -POINT_SIZE;
-        y = BOARD_HEIGHT/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
             t[0] = p1[i];
             wdCanvasText(cv, x, y, t);
@@ -1331,11 +1336,12 @@ static int canvas_action_cb(Ihandle* ih)
     wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
 
 
-    int _cube = -1;
+    int _cube = 1;
+    int _orig = -1;
     draw_board(cdv);
     draw_cube(cdv, _cube);
-    /* draw_pointnumber(cdv, 1); */
-    draw_pointletter(cdv, -1, _cube);
+    draw_pointnumber(cdv, _orig);
+    /* draw_pointletter(cdv, _orig, _cube); */
 
     cdCanvasFlush(cdv);
 
