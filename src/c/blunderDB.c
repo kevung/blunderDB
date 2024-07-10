@@ -512,6 +512,14 @@ int db_close(sqlite3 *db)
 /* #define CHECKEROFF_STYLE CD_PLAIN */
 #define CHECKEROFF_STYLE CD_ITALIC
 #define CHECKEROFF_LINECOLOR CD_BLACK
+#define PIPCOUNT_XPOS -BOARD_WIDTH/2-2.0*POINT_SIZE
+#define PIPCOUNT_YPOS_UP POINTNUMBER_YPOS_UP
+#define PIPCOUNT_YPOS_DOWN -(PIPCOUNT_YPOS_UP)
+#define PIPCOUNT_FONT "Times"
+#define PIPCOUNT_FONTSIZE 15
+/* #define PIPCOUNT_STYLE CD_PLAIN */
+#define PIPCOUNT_STYLE CD_PLAIN
+#define PIPCOUNT_LINECOLOR CD_BLACK
 
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
@@ -809,6 +817,21 @@ void draw_checkeroff(cdCanvas* cv, int nb_off, int player, int orientation){
     }
 }
 
+void draw_pipcount(cdCanvas* cv, int pip, int player){
+    char t[10], t2[5];
+    cdCanvasForeground(cv, PIPCOUNT_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, PIPCOUNT_FONT, PIPCOUNT_STYLE, PIPCOUNT_FONTSIZE);
+    t[0] = '\0';
+    strcat(t, "pip: ");
+    sprintf(t2, "%d", pip);
+    strcat(t, t2);
+    if(player>0) {
+        wdCanvasText(cv, PIPCOUNT_XPOS, PIPCOUNT_YPOS_DOWN, t);
+    } else {
+        wdCanvasText(cv, PIPCOUNT_XPOS, PIPCOUNT_YPOS_UP, t);
+    }
+}
 /************************ Prototypes **********************/
 
 /* static int dlg_resize_cb(Ihandle* ih); */
@@ -1391,10 +1414,12 @@ static int canvas_action_cb(Ihandle* ih)
     draw_cube(cdv, _cube);
     draw_pointnumber(cdv, _orig);
     /* draw_pointletter(cdv, _orig, _cube); */
-    draw_score(cdv, 1, 1, 1);
+    draw_score(cdv, 1, -1, 1);
     draw_score(cdv, 5, 0, -1);
     draw_checkeroff(cdv, 4, 1, _orig);
     draw_checkeroff(cdv, 6, -1, _orig);
+    draw_pipcount(cdv, 167, 1);
+    draw_pipcount(cdv, 132, -2);
 
     cdCanvasFlush(cdv);
 
