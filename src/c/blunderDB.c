@@ -504,6 +504,14 @@ int db_close(sqlite3 *db)
 /* #define SCORE_STYLE CD_ITALIC */
 #define SCORE_STYLE CD_BOLD
 #define SCORE_LINECOLOR CD_BLACK
+#define CHECKEROFF_XPOS BOARD_WIDTH/2+POINT_SIZE
+#define CHECKEROFF_YPOS_UP 3*CHECKER_SIZE
+#define CHECKEROFF_YPOS_DOWN -(CHECKEROFF_YPOS_UP)
+#define CHECKEROFF_FONT "Times"
+#define CHECKEROFF_FONTSIZE 15
+/* #define CHECKEROFF_STYLE CD_PLAIN */
+#define CHECKEROFF_STYLE CD_ITALIC
+#define CHECKEROFF_LINECOLOR CD_BLACK
 
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
@@ -780,6 +788,24 @@ void draw_score(cdCanvas* cv, int score, int crawford, int player){
         wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_DOWN, t);
     } else {
         wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_UP, t);
+    }
+}
+
+void draw_checkeroff(cdCanvas* cv, int nb_off, int player, int orientation){
+    char t[20], t2[3];
+    cdCanvasForeground(cv, CHECKEROFF_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, CHECKEROFF_FONT, CHECKEROFF_STYLE, CHECKEROFF_FONTSIZE);
+    t[0] = '('; t[1] = '\0';
+    sprintf(t2, "%d", nb_off);
+    strcat(t, t2);
+    strcat(t, " OFF)");
+    double x = CHECKEROFF_XPOS;
+    if(orientation<1) x = -x;
+    if(player>0) {
+        wdCanvasText(cv, x, CHECKEROFF_YPOS_DOWN, t);
+    } else {
+        wdCanvasText(cv, x, CHECKEROFF_YPOS_UP, t);
     }
 }
 
@@ -1360,13 +1386,15 @@ static int canvas_action_cb(Ihandle* ih)
 
 
     int _cube = 1;
-    int _orig = -1;
+    int _orig = 1;
     draw_board(cdv);
     draw_cube(cdv, _cube);
     draw_pointnumber(cdv, _orig);
     /* draw_pointletter(cdv, _orig, _cube); */
     draw_score(cdv, 1, 1, 1);
     draw_score(cdv, 5, 0, -1);
+    draw_checkeroff(cdv, 4, 1, _orig);
+    draw_checkeroff(cdv, 6, -1, _orig);
 
     cdCanvasFlush(cdv);
 
