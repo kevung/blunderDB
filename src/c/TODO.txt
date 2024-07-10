@@ -1,0 +1,5 @@
+copy pos 
+copy collection
+export pos
+parse xg
+
