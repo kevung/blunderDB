@@ -559,22 +559,41 @@ int db_close(sqlite3 *db)
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
 
-void draw_triangle(cdCanvas *cv, double x, double y, double up, int long color){
-    cdCanvasForeground(cdv, color);
-    cdCanvasBegin(cdv, CD_FILL);
-    wdCanvasVertex(cdv, x, y);
-    wdCanvasVertex(cdv, x+POINT_SIZE, y);
-    wdCanvasVertex(cdv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
-    cdCanvasEnd(cdv);
+typedef struct {
+    int button;
+    int pressed;
+    int x;
+    int y;
+    char* status;
+} MOUSE;
 
-    cdCanvasLineWidth(cdv, TRIANGLE_LINEWIDTH);
-    cdCanvasForeground(cdv, TRIANGLE_LINECOLOR);
-    cdCanvasLineStyle(cdv, CD_CONTINUOUS);
-    cdCanvasBegin(cdv, CD_CLOSED_LINES);
-    wdCanvasVertex(cdv, x, y);
-    wdCanvasVertex(cdv, x+POINT_SIZE, y);
-    wdCanvasVertex(cdv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
-    cdCanvasEnd(cdv);
+void mouse_print(MOUSE m){
+    printf("mouse_print()\n");
+    printf("button: %i\n", m.button);
+    printf("pressed: %i\n", m.pressed);
+    printf("x: %i\n", m.x);
+    printf("y: %i\n", m.y);
+    printf("status: %s\n", m.status);
+}
+
+MOUSE mouse;
+
+void draw_triangle(cdCanvas *cv, double x, double y, double up, int long color){
+    cdCanvasForeground(cv, color);
+    cdCanvasBegin(cv, CD_FILL);
+    wdCanvasVertex(cv, x, y);
+    wdCanvasVertex(cv, x+POINT_SIZE, y);
+    wdCanvasVertex(cv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
+    cdCanvasEnd(cv);
+
+    cdCanvasLineWidth(cv, TRIANGLE_LINEWIDTH);
+    cdCanvasForeground(cv, TRIANGLE_LINECOLOR);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
+    cdCanvasBegin(cv, CD_CLOSED_LINES);
+    wdCanvasVertex(cv, x, y);
+    wdCanvasVertex(cv, x+POINT_SIZE, y);
+    wdCanvasVertex(cv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
+    cdCanvasEnd(cv);
 }
 
 char* cubeText(int value) {
@@ -880,22 +899,22 @@ void draw_checker(cdCanvas* cv, POSITION* p, int dir) {
     if(BOARD_DIRECTION==1) eps = 1;
     if(BOARD_DIRECTION!=1) eps = -1;
 
-    cdCanvasForeground(cdv, CHECKER_LINECOLOR);
-    cdCanvasLineWidth(cdv, CHECKER_LINEWIDTH);
-    cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+    cdCanvasForeground(cv, CHECKER_LINECOLOR);
+    cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
 
     void draw_checker_samepoint(double xc, double yc, int point, double dir) {
         double _yc = yc;
         for(int k=0; k<abs(p->checker[point]); k++) {
             if(p->checker[point]>0) {
-                cdCanvasForeground(cdv, CHECKER1_COLOR);
+                cdCanvasForeground(cv, CHECKER1_COLOR);
             } else {
-                cdCanvasForeground(cdv, CHECKER2_COLOR);
+                cdCanvasForeground(cv, CHECKER2_COLOR);
             }
             wdCanvasSector(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
-            cdCanvasForeground(cdv, CHECKER_LINECOLOR);
-            cdCanvasLineWidth(cdv, CHECKER_LINEWIDTH);
-            cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+            cdCanvasForeground(cv, CHECKER_LINECOLOR);
+            cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
+            cdCanvasLineStyle(cv, CD_CONTINUOUS);
             wdCanvasArc(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
             _yc += dir*CHECKER_SIZE;
         }
@@ -907,11 +926,11 @@ void draw_checker(cdCanvas* cv, POSITION* p, int dir) {
         if(player<=0) {dir=-1; i=0; color=CHECKER2_COLOR;}
         yc=dir*0.5*POINT_SIZE;
         for(int k=0; k<abs(p->checker[25]); k++) {
-            cdCanvasForeground(cdv, color);
+            cdCanvasForeground(cv, color);
             wdCanvasSector(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
-            cdCanvasForeground(cdv, CHECKER_LINECOLOR);
-            cdCanvasLineWidth(cdv, CHECKER_LINEWIDTH);
-            cdCanvasLineStyle(cdv, CD_CONTINUOUS);
+            cdCanvasForeground(cv, CHECKER_LINECOLOR);
+            cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
+            cdCanvasLineStyle(cv, CD_CONTINUOUS);
             wdCanvasArc(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
             yc += dir*CHECKER_SIZE;
         }
