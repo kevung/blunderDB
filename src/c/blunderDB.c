@@ -967,11 +967,47 @@ void draw_checker(cdCanvas* cv, POSITION* p, int dir) {
 
 }
 
+void draw_canvas(cdCanvas* cv) {
+    int i, w, h;
+    int pip1=0, pip2=0;
+    int off1=0, off2=0;
+    /* cv = cdCreateCanvas(CD_IUP, ih); */
+    cdCanvasActivate(cv);
+    cdCanvasGetSize(cv, &w, &h, NULL, NULL);
+    printf("canvas: %i, %i\n", w, h);
+    cdCanvasBackground(cv, CD_WHITE);
+    cdCanvasClear(cv);
+
+    wdCanvasViewport(cv, 0, w-1, 0, h-1);
+
+    double wd_h = BOARD_WITH_DECORATIONS_HEIGHT;
+    double wd_w = (double) w* wd_h/(double) h;
+    wdCanvasWindow(cv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
+
+    compute_pipcount(pos_ptr, &pip1, &pip2);
+    compute_checkeroff(pos_ptr, &off1, &off2);
+
+    draw_board(cv);
+    draw_checker(cv, pos_ptr, BOARD_DIRECTION);
+    draw_cube(cv, pos_ptr->cube);
+    draw_checkeroff(cv, off1, PLAYER1, BOARD_DIRECTION);
+    draw_checkeroff(cv, off2, PLAYER2, BOARD_DIRECTION);
+    draw_pointnumber(cv, BOARD_DIRECTION);
+    /* draw_pointletter(cv, BOARD_DIRECTION, pos_ptr->cube); */
+    draw_score(cv, pos_ptr->p1_score, pos_ptr->is_crawford, PLAYER1);
+    draw_score(cv, pos_ptr->p2_score, pos_ptr->is_crawford, PLAYER2);
+    draw_pipcount(cv, pip1, PLAYER1);
+    draw_pipcount(cv, pip2, PLAYER2);
+
+    cdCanvasFlush(cv);
+}
+
 
 
 /************************ Prototypes **********************/
 
 /* static int dlg_resize_cb(Ihandle*); */
+static int canvas_map_cb(Ihandle*);
 static int canvas_action_cb(Ihandle*);
 static int canvas_dropfiles_cb(Ihandle*);
 static int canvas_motion_cb(Ihandle*);
@@ -1031,7 +1067,9 @@ void error_callback(void);
 
 /************************ Interface ***********************/
 
-#define DEFAULT_SIZE "800x600"
+/* #define DEFAULT_SIZE "960x540" */
+#define DEFAULT_SIZE "864x486"
+/* #define DEFAULT_SIZE "800x450" */
 #define DEFAULT_SPLIT_VALUE "800"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 
@@ -1417,10 +1455,12 @@ static Ihandle* create_canvas(void)
     IupSetAttribute(ih, "BORDER", "YES");
     /* IupSetAttribute(ih, "DRAWSIZE", "200x300"); */
     IupSetAttribute(ih, "EXPAND", "YES");
+    IupSetCallback(ih, "MAP_CB", (Icallback)canvas_map_cb);
     IupSetCallback(ih, "ACTION", (Icallback)canvas_action_cb);
-    IupSetCallback(ih, "DROPFILES_CB", (Icallback)canvas_dropfiles_cb);
-    IupSetCallback(ih, "MOTION_CB", (Icallback)canvas_motion_cb);
-    IupSetCallback(ih, "WHEEL_CB", (Icallback)canvas_wheel_cb);
+    /* IupSetCallback(ih, "DROPFILES_CB", (Icallback)canvas_dropfiles_cb); */
+    /* IupSetCallback(ih, "MOTION_CB", (Icallback)canvas_motion_cb); */
+    /* IupSetCallback(ih, "WHEEL_CB", (Icallback)canvas_wheel_cb); */
+    /* IupSetCallback(ih, "BUTTON_CB", (Icallback)canvas_button_cb); */
     /* IupSetCallback(ih, "RESIZE_CB", (Icallback)canvas_resize_cb); */
 
     return ih;
@@ -1496,23 +1536,6 @@ static Ihandle* create_searches(void)
     return ih;
 }
 
-static Ihandle* create_position(void)
-{
-
-    Ihandle *ih, *spl;
-
-    canvas = create_canvas();
-    analysis = create_analysis();
-    edit = create_edit();
-    ih = IupHbox(analysis, edit, canvas, NULL);
-    /* ih = IupHbox(edit, canvas, NULL); */
-    /* IupSetAttribute(ih, "ORIENTATION", "VERTICAL"); */
-    /* IupSetAttribute(ih, "VALUE", "0"); */
-    /* IupSetAttribute(spl, "MINMAX", "0:1000"); */
-
-    return ih;
-}
-
 /*************** Keyboard Shortcuts ***********************/
 
 static void set_keyboard_shortcuts()
@@ -1529,40 +1552,15 @@ static void set_keyboard_shortcuts()
 
 /************************ Callbacks ***********************/
 
+static int canvas_map_cb(Ihandle* ih)
+{
+    cdv = cdCreateCanvas(CD_IUP, canvas);
+    return IUP_DEFAULT;
+}
+
 static int canvas_action_cb(Ihandle* ih)
 {
-    int i, w, h;
-    int pip1=0, pip2=0;
-    int off1=0, off2=0;
-    cdv = cdCreateCanvas(CD_IUP, ih);
-    cdCanvasGetSize(cdv, &w, &h, NULL, NULL);
-    printf("canvas: %i, %i\n", w, h);
-    cdCanvasBackground(cdv, CD_WHITE);
-    cdCanvasClear(cdv);
-
-    wdCanvasViewport(cdv, 0, w-1, 0, h-1);
-
-    double wd_h = BOARD_WITH_DECORATIONS_HEIGHT;
-    double wd_w = (double) w* wd_h/(double) h;
-    wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
-
-    compute_pipcount(pos_ptr, &pip1, &pip2);
-    compute_checkeroff(pos_ptr, &off1, &off2);
-
-    draw_board(cdv);
-    draw_checker(cdv, pos_ptr, BOARD_DIRECTION);
-    draw_cube(cdv, pos_ptr->cube);
-    draw_checkeroff(cdv, off1, PLAYER1, BOARD_DIRECTION);
-    draw_checkeroff(cdv, off2, PLAYER2, BOARD_DIRECTION);
-    draw_pointnumber(cdv, BOARD_DIRECTION);
-    /* draw_pointletter(cdv, BOARD_DIRECTION, pos_ptr->cube); */
-    draw_score(cdv, pos_ptr->p1_score, pos_ptr->is_crawford, PLAYER1);
-    draw_score(cdv, pos_ptr->p2_score, pos_ptr->is_crawford, PLAYER2);
-    draw_pipcount(cdv, pip1, PLAYER1);
-    draw_pipcount(cdv, pip2, PLAYER2);
-
-    cdCanvasFlush(cdv);
-
+    draw_canvas(cdv);
     return IUP_DEFAULT;
 }
 
@@ -1581,6 +1579,31 @@ static int canvas_motion_cb(Ihandle* ih)
 static int canvas_wheel_cb(Ihandle* ih)
 {
     error_callback();
+    return IUP_DEFAULT;
+}
+
+static int canvas_button_cb(Ihandle* ih, int button, int pressed, int x, int y, char* status)
+{
+    int i, w, h;
+    double xw=0, yw=0;
+    double xmin, xmax, ymin, ymax;
+    /* cdCanvasGetSize(cdv, &w, &h, NULL, NULL); */
+    /* wdCanvasViewport(cdv, 0, w-1, 0, h-1); */
+    /* double wd_h = BOARD_WITH_DECORATIONS_HEIGHT; */
+    /* double wd_w = (double) w* wd_h/(double) h; */
+    /* wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2); */
+
+    wdCanvasGetWindow(cdv, &xmin, &xmax, &ymin, &ymax);
+    printf("window: %%d %d %d %d\n", xmin, xmax, ymin, ymax);
+    wdCanvas2World(x, y, &xw, &yw);
+    printf("xw: %d\nyw: %d\n", xw, yw);
+
+    mouse.button = button;
+    mouse.pressed = pressed;
+    mouse.x = x;
+    mouse.y = y;
+    mouse.status = status;
+    mouse_print(mouse);
     return IUP_DEFAULT;
 }
 
@@ -2019,65 +2042,63 @@ int main(int argc, char **argv)
     pos = POS_DEFAULT;
     pos_ptr = &pos;
 
-    err = str_to_pos("(a-f)", pos_ptr);
-    err = str_to_pos("(f-a)", pos_ptr);
-    err = str_to_pos("31,12:Z2y1(e-aX)F3(mnl)t-pO4Y3", pos_ptr);
-    err = str_to_pos("(SUmLhgfDc)AS2m2TWQRgf2", pos_ptr);
-    printf("str2pos err: %i\n", err);
+    /* err = str_to_pos("(a-f)", pos_ptr); */
+    /* err = str_to_pos("(f-a)", pos_ptr); */
+    /* err = str_to_pos("31,12:Z2y1(e-aX)F3(mnl)t-pO4Y3", pos_ptr); */
+    /* err = str_to_pos("(SUmLhgfDc)AS2m2TWQRgf2", pos_ptr); */
+    /* printf("str2pos err: %i\n", err); */
     /* pos_print(pos_ptr); */
     /* pos_ptr->checker[25] = 3; */
-  /* pos_ptr->checker[0] = -4; */
+    /* pos_ptr->checker[0] = -4; */
 
-  /* char* ctest; */
-  /* ctest= pos_to_str(&POS_DEFAULT); */
-  /* printf("ctest: %s\n", ctest); */
-  /* ctest= pos_to_str_paren(&POS_DEFAULT); */
-  /* printf("ctest2: %s\n", ctest); */
-  /* free(ctest); */
+    /* char* ctest; */
+    /* ctest= pos_to_str(&POS_DEFAULT); */
+    /* printf("ctest: %s\n", ctest); */
+    /* ctest= pos_to_str_paren(&POS_DEFAULT); */
+    /* printf("ctest2: %s\n", ctest); */
+    /* free(ctest); */
 
-  /* /1* pos_print(pos_ptr); *1/ */
-  /* char* ctest = "31,12:Z11y1(e-aX)F3(mnl)t-pO4Y3"; */
-  /* printf("pos: %s\n", ctest); */
-  /* str_to_pos(ctest, pos_ptr); */
-  /* pos_print(pos_ptr); */
+    IupOpen(&argc, &argv);
+    IupControlsOpen();
+    IupImageLibOpen();
+    IupSetLanguage("ENGLISH");
 
+    menu = create_menus();
+    toolbar = create_toolbar();
 
-  IupOpen(&argc, &argv);
-  IupControlsOpen();
-  IupImageLibOpen();
-  IupSetLanguage("ENGLISH");
+    canvas = create_canvas();
+    analysis = create_analysis();
+    edit = create_edit();
+    position = IupHbox(analysis, edit, canvas, NULL);
 
-  menu = create_menus();
-  toolbar = create_toolbar();
-  position = create_position();
-  searches = create_searches();
-  statusbar = create_statusbar();
+    searches = create_searches();
+    statusbar = create_statusbar();
 
-  split = IupSplit(position, searches);
-  IupSetAttribute(split, "ORIENTATION", "HORIZONTAL");
-  IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
-  /* IupSetAttribute(split, "MINMAX", DEFAULT_SPLIT_MINMAX); */
-  /* IupSetAttribute(split, "AUTOHIDE", "YES"); */
+    split = IupSplit(position, searches);
+    IupSetAttribute(split, "ORIENTATION", "HORIZONTAL");
+    IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
+    /* IupSetAttribute(split, "MINMAX", DEFAULT_SPLIT_MINMAX); */
+    /* IupSetAttribute(split, "AUTOHIDE", "YES"); */
 
-  vbox = IupVbox(toolbar, split, statusbar, NULL);
-  IupSetAttribute(vbox, "NMARGIN", "10x10");
-  IupSetAttribute(vbox, "GAP", "10");
+    vbox = IupVbox(toolbar, split, statusbar, NULL);
+    IupSetAttribute(vbox, "NMARGIN", "10x10");
+    IupSetAttribute(vbox, "GAP", "10");
 
-  dlg = IupDialog(vbox);
-  IupSetAttribute(dlg, "TITLE", "blunderDB");
-  IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
-  IupSetAttribute(dlg, "SHRINK", "YES");
-  IupSetAttribute(dlg, "MENU", "menu");
+    dlg = IupDialog(vbox);
+    IupSetAttribute(dlg, "TITLE", "blunderDB");
+    IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
+    IupSetAttribute(dlg, "SHRINK", "YES");
+    IupSetAttribute(dlg, "MENU", "menu");
 
-  /* IupSetCallback(dlg, "RESIZE_CB", (Icallback)dlg_resize_cb); */
-  set_keyboard_shortcuts();
+    set_keyboard_shortcuts();
 
-  IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
+    IupShowXY(dlg, IUP_CENTER, IUP_CENTER);
 
-  IupMainLoop();
+    IupMainLoop();
 
-  db_close(db);
-  IupClose();
+    cdKillCanvas(cdv);
+    db_close(db);
+    IupClose();
 
-  return EXIT_SUCCESS;
+    return EXIT_SUCCESS;
 }
