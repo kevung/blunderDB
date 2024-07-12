@@ -1965,13 +1965,18 @@ void error_callback(void)
 /************************ Main ****************************/
 int main(int argc, char **argv)
 {
+    int err;
 
-  pos = POS_DEFAULT;
-  pos_ptr = &pos;
+    pos = POS_DEFAULT;
+    pos_ptr = &pos;
 
-  /* str_to_pos("(a-f)", pos_ptr); */
-  pos_ptr->checker[25] = 3;
-  pos_ptr->checker[0] = -4;
+    err = str_to_pos("31,12:Z11y1(e-aX)F3(mnl)t-pO4Y3", pos_ptr);
+    err = str_to_pos("(a-f)", pos_ptr);
+    err = str_to_pos("(f-a)", pos_ptr);
+    printf("str2pos err: %i\n", err);
+    /* pos_print(pos_ptr); */
+    /* pos_ptr->checker[25] = 3; */
+  /* pos_ptr->checker[0] = -4; */
 
   /* char* ctest; */
   /* ctest= pos_to_str(&POS_DEFAULT); */
