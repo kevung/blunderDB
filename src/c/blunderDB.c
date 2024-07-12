@@ -204,12 +204,14 @@ int str_to_pos(const char* s, POSITION* pos)
 {
     const char p1[27] = P1_POINT_LABEL;
     const char p2[27] = P2_POINT_LABEL;
-    int has_score = 0, i_score = 0;
+    // i_score index symbol ":". If none, -1 so i_score+1=0.
+    int has_score = 0, i_score = -1;
     char s_p1_score[5], s_p2_score[5];
     s_p1_score[0] = '\0';
     s_p2_score[0] = '\0';
     int i, j = 0;
     int len = strlen(s);
+    *pos = POS_VOID;
     /* detect score */
     for(int i=0; i<len; i++)
     {
