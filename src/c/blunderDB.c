@@ -332,6 +332,18 @@ int str_to_pos(const char* s, POSITION* pos)
     return 1; //success
 }
 
+void compute_pipcount(POSITION* pos, int* pip1, int* pip2){
+    *pip1 = 0; *pip2 = 0;
+    for(int i=0; i<26; i++){
+        if(pos->checker[i]>0) {
+            *pip1 += i*(pos->checker[i]);
+        } else {
+            *pip2 += (25-i)*abs(pos->checker[i]);
+        }
+    }
+    printf("pip1: %i\n", *pip1);
+    printf("pip2: %i\n", *pip2);
+}
 
 /************************ Database ***********************/
 
