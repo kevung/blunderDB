@@ -1531,10 +1531,9 @@ static int canvas_action_cb(Ihandle* ih)
     draw_checkeroff(cdv, off1, PLAYER1, BOARD_DIRECTION);
     draw_checkeroff(cdv, off2, PLAYER2, BOARD_DIRECTION);
     draw_pointnumber(cdv, BOARD_DIRECTION);
-    printf("toto\n");
     /* draw_pointletter(cdv, BOARD_DIRECTION, pos_ptr->cube); */
-    draw_score(cdv, pos_ptr->p1_score, -1, PLAYER1);
-    draw_score(cdv, 5, pos_ptr->p2_score, PLAYER2);
+    draw_score(cdv, pos_ptr->p1_score, pos_ptr->is_crawford, PLAYER1);
+    draw_score(cdv, pos_ptr->p2_score, pos_ptr->is_crawford, PLAYER2);
     draw_pipcount(cdv, pip1, PLAYER1);
     draw_pipcount(cdv, pip2, PLAYER2);
 
@@ -1996,9 +1995,10 @@ int main(int argc, char **argv)
     pos = POS_DEFAULT;
     pos_ptr = &pos;
 
-    err = str_to_pos("31,12:Z11y1(e-aX)F3(mnl)t-pO4Y3", pos_ptr);
     err = str_to_pos("(a-f)", pos_ptr);
     err = str_to_pos("(f-a)", pos_ptr);
+    err = str_to_pos("31,12:Z2y1(e-aX)F3(mnl)t-pO4Y3", pos_ptr);
+    err = str_to_pos("(SUmLhgfDc)AS2m2TWQRgf2", pos_ptr);
     printf("str2pos err: %i\n", err);
     /* pos_print(pos_ptr); */
     /* pos_ptr->checker[25] = 3; */
