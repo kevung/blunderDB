@@ -973,12 +973,13 @@ void draw_checker(cdCanvas* cv, POSITION* p, int dir) {
 
 /************************ Prototypes **********************/
 
-/* static int dlg_resize_cb(Ihandle* ih); */
-static int canvas_action_cb(Ihandle* ih);
-static int canvas_dropfiles_cb(Ihandle* ih);
-static int canvas_motion_cb(Ihandle* ih);
-static int canvas_wheel_cb(Ihandle* ih);
-static int canvas_resize_cb(Ihandle* ih);
+/* static int dlg_resize_cb(Ihandle*); */
+static int canvas_action_cb(Ihandle*);
+static int canvas_dropfiles_cb(Ihandle*);
+static int canvas_motion_cb(Ihandle*);
+static int canvas_wheel_cb(Ihandle*);
+static int canvas_button_cb(Ihandle*, int, int, int, int, char*);
+static int canvas_resize_cb(Ihandle*);
 static int item_new_action_cb(void);
 static int item_open_action_cb(void);
 static int item_recent_action_cb(void);
@@ -1022,9 +1023,9 @@ static int item_keyboardshortcuts_action_cb(void);
 static int item_getinvolved_action_cb(void);
 static int item_donate_action_cb(void);
 static int item_about_action_cb(void);
-static int set_visibility_off(Ihandle* ih);
-static int set_visibility_on(Ihandle* ih);
-static int toggle_visibility_cb(Ihandle* ih);
+static int set_visibility_off(Ihandle*);
+static int set_visibility_on(Ihandle*);
+static int toggle_visibility_cb(Ihandle*);
 static int toggle_analysis_visibility_cb();
 static int toggle_edit_visibility_cb();
 static int toggle_searches_visibility_cb();
