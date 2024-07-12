@@ -341,8 +341,6 @@ void compute_pipcount(POSITION* pos, int* pip1, int* pip2){
             *pip2 += (25-i)*abs(pos->checker[i]);
         }
     }
-    printf("pip1: %i\n", *pip1);
-    printf("pip2: %i\n", *pip2);
 }
 
 void compute_checkeroff(POSITION* pos, int* off1, int* off2){
