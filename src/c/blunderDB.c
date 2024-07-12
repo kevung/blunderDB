@@ -345,6 +345,14 @@ void compute_pipcount(POSITION* pos, int* pip1, int* pip2){
     printf("pip2: %i\n", *pip2);
 }
 
+void compute_checkeroff(POSITION* pos, int* off1, int* off2){
+    *off1 = 15; *off2 = 15;
+    for(int i=0; i<26; i++){
+        if(pos->checker[i]>0) *off1 -= abs(pos->checker[i]);
+        if(pos->checker[i]<0) *off2 -= abs(pos->checker[i]);
+    }
+}
+
 /************************ Database ***********************/
 
 sqlite3 *db = NULL;
@@ -1501,6 +1509,7 @@ static int canvas_action_cb(Ihandle* ih)
 {
     int i, w, h;
     int pip1=0, pip2=0;
+    int off1=0, off2=0;
     cdv = cdCreateCanvas(CD_IUP, ih);
     cdCanvasGetSize(cdv, &w, &h, NULL, NULL);
     printf("canvas: %i, %i\n", w, h);
@@ -1514,12 +1523,13 @@ static int canvas_action_cb(Ihandle* ih)
     wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
 
     compute_pipcount(pos_ptr, &pip1, &pip2);
+    compute_checkeroff(pos_ptr, &off1, &off2);
 
     draw_board(cdv);
     draw_checker(cdv, pos_ptr, BOARD_DIRECTION);
     draw_cube(cdv, pos_ptr->cube);
-    draw_checkeroff(cdv, 4, PLAYER1, BOARD_DIRECTION);
-    draw_checkeroff(cdv, 6, PLAYER2, BOARD_DIRECTION);
+    draw_checkeroff(cdv, off1, PLAYER1, BOARD_DIRECTION);
+    draw_checkeroff(cdv, off2, PLAYER2, BOARD_DIRECTION);
     draw_pointnumber(cdv, BOARD_DIRECTION);
     printf("toto\n");
     /* draw_pointletter(cdv, BOARD_DIRECTION, pos_ptr->cube); */
