@@ -1500,6 +1500,7 @@ static void set_keyboard_shortcuts()
 static int canvas_action_cb(Ihandle* ih)
 {
     int i, w, h;
+    int pip1=0, pip2=0;
     cdv = cdCreateCanvas(CD_IUP, ih);
     cdCanvasGetSize(cdv, &w, &h, NULL, NULL);
     printf("canvas: %i, %i\n", w, h);
@@ -1512,19 +1513,20 @@ static int canvas_action_cb(Ihandle* ih)
     double wd_w = (double) w* wd_h/(double) h;
     wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
 
+    compute_pipcount(pos_ptr, &pip1, &pip2);
 
-    int _cube = -6;
     draw_board(cdv);
     draw_checker(cdv, pos_ptr, BOARD_DIRECTION);
-    draw_cube(cdv, _cube);
-    draw_checkeroff(cdv, 4, 1, BOARD_DIRECTION);
-    draw_checkeroff(cdv, 6, -1, BOARD_DIRECTION);
+    draw_cube(cdv, pos_ptr->cube);
+    draw_checkeroff(cdv, 4, PLAYER1, BOARD_DIRECTION);
+    draw_checkeroff(cdv, 6, PLAYER2, BOARD_DIRECTION);
     draw_pointnumber(cdv, BOARD_DIRECTION);
-    /* draw_pointletter(cdv, BOARD_DIRECTION, _cube); */
-    draw_score(cdv, 1, -1, 1);
-    draw_score(cdv, 5, 0, -1);
-    draw_pipcount(cdv, 167, 1);
-    draw_pipcount(cdv, 132, -2);
+    printf("toto\n");
+    /* draw_pointletter(cdv, BOARD_DIRECTION, pos_ptr->cube); */
+    draw_score(cdv, pos_ptr->p1_score, -1, PLAYER1);
+    draw_score(cdv, 5, pos_ptr->p2_score, PLAYER2);
+    draw_pipcount(cdv, pip1, PLAYER1);
+    draw_pipcount(cdv, pip2, PLAYER2);
 
     cdCanvasFlush(cdv);
 
