@@ -507,9 +507,12 @@ int db_close(sqlite3 *db)
 #define CHECKER2_COLOR CD_WHITE
 #define BAR_WIDTH POINT_SIZE
 #define BOARD_COLOR CD_BLACK
-#define BOARD_LINEWIDTH 5
+#define BOARD_LINEWIDTH 6
 #define TRIANGLE_LINEWIDTH 2
 #define TRIANGLE_LINECOLOR CD_BLACK
+#define TRIANGLE1_COLOR CD_WHITE
+#define TRIANGLE2_COLOR 0xd0d0d0
+#define TRIANGLE2_HATCH 0
 #define CUBE_LINEWIDTH 5
 #define CUBE_TEXTLINEWIDTH 3
 #define CUBE_LINECOLOR CD_BLACK
@@ -556,8 +559,8 @@ int db_close(sqlite3 *db)
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
 
-void draw_triangle(cdCanvas *cv, double x, double y, double up){
-    cdCanvasForeground(cdv, CD_WHITE);
+void draw_triangle(cdCanvas *cv, double x, double y, double up, int long color){
+    cdCanvasForeground(cdv, color);
     cdCanvasBegin(cdv, CD_FILL);
     wdCanvasVertex(cdv, x, y);
     wdCanvasVertex(cdv, x+POINT_SIZE, y);
@@ -624,22 +627,26 @@ void draw_board(cdCanvas* cv) {
     for(int i=0; i<3; i++){
         double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
         double y = -BOARD_HEIGHT/2;
-        draw_triangle(cv, x, y, 1);
-        draw_triangle(cv, x+POINT_SIZE, -y, -1);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1);
+        cdCanvasForeground(cv, TRIANGLE1_COLOR);
+        draw_triangle(cv, x, y, 1, TRIANGLE1_COLOR);
+        draw_triangle(cv, x+POINT_SIZE, -y, -1, TRIANGLE1_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1, TRIANGLE1_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1,
+                TRIANGLE1_COLOR);
     }
 
-    cdCanvasHatch(cv, CD_HORIZONTAL);
+    if(TRIANGLE2_HATCH) cdCanvasHatch(cv, CD_HORIZONTAL);
     for(int i=0; i<3; i++){
         double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
         double y = -BOARD_HEIGHT/2 +BOARD_HEIGHT;
-        draw_triangle(cv, x, y, -1);
-        draw_triangle(cv, x+POINT_SIZE, -y, 1);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1);
+        cdCanvasForeground(cv, TRIANGLE2_COLOR);
+        draw_triangle(cv, x, y, -1, TRIANGLE2_COLOR);
+        draw_triangle(cv, x+POINT_SIZE, -y, 1, TRIANGLE2_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1, TRIANGLE2_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1,
+                TRIANGLE2_COLOR);
     }
-    cdCanvasInteriorStyle(cv, CD_SOLID);
+    if(TRIANGLE2_HATCH) cdCanvasInteriorStyle(cv, CD_SOLID);
 
     cdCanvasForeground(cv, BOARD_COLOR);
     cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
