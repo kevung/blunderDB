@@ -1410,7 +1410,6 @@ static Ihandle* create_canvas(void)
 {
     Ihandle *ih;
     ih = IupCanvas(NULL);
-    cdv = cdCreateCanvas(CD_IUP, ih);
     IupSetAttribute(ih, "NAME", "CANVAS");
     /* IupSetAttribute(ih, "SIZE", "300x200"); */
     /* IupSetAttribute(ih, "MINSIZE", "600x200"); */
