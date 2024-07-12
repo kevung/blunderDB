@@ -13,8 +13,10 @@
 
 /************************** Data *************************/
 
-#define P1_POINT_LABEL "*abcdefghijklmnopqrstuvwxyz"
-#define P2_POINT_LABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
+#define PLAYER1 1
+#define PLAYER2 -1
+#define PLAYER1_POINTLABEL "*abcdefghijklmnopqrstuvwxyz"
+#define PLAYER2_POINTLABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
 
 typedef struct
 {
@@ -102,8 +104,8 @@ void int_swap(int* i, int* j)
 
 char* pos_to_str(const POSITION* p)
 {
-    const char p1[27] = P1_POINT_LABEL;
-    const char p2[27] = P2_POINT_LABEL;
+    const char p1[27] = PLAYER1_POINTLABEL;
+    const char p2[27] = PLAYER2_POINTLABEL;
     char p1_score[2];
     char p2_score[2];
     char _d[2];
@@ -137,8 +139,8 @@ char* pos_to_str(const POSITION* p)
 
 char* pos_to_str_paren(const POSITION* p)
 {
-    const char p1[27] = P1_POINT_LABEL;
-    const char p2[27] = P2_POINT_LABEL;
+    const char p1[27] = PLAYER1_POINTLABEL;
+    const char p2[27] = PLAYER2_POINTLABEL;
     char p1_score[2];
     char p2_score[2];
     char _d[2];
@@ -202,8 +204,8 @@ char* pos_to_str_paren(const POSITION* p)
 
 int str_to_pos(const char* s, POSITION* pos)
 {
-    const char p1[27] = P1_POINT_LABEL;
-    const char p2[27] = P2_POINT_LABEL;
+    const char p1[27] = PLAYER1_POINTLABEL;
+    const char p2[27] = PLAYER2_POINTLABEL;
     // i_score index symbol ":". If none, -1 so i_score+1=0.
     int has_score = 0, i_score = -1;
     char s_p1_score[5], s_p2_score[5];
@@ -706,7 +708,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
 }
 
 void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
-    const char p1[27] = P1_POINT_LABEL;
+    const char p1[27] = PLAYER1_POINTLABEL;
     double x, y;
     char t[2];
     cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
