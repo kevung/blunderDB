@@ -1,5 +1,7 @@
 #include <ctype.h>
 #include <stdbool.h>
+#include <math.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -67,6 +69,7 @@ const POSITION POS_VOID = {
 
 POSITION pos;
 POSITION *pos_ptr;
+bool is_pointletter_active = false;
 
 int char_in_string(const char c, const char* s)
 {
@@ -993,8 +996,11 @@ void draw_canvas(cdCanvas* cv) {
     draw_cube(cv, pos_ptr->cube);
     draw_checkeroff(cv, off1, PLAYER1, BOARD_DIRECTION);
     draw_checkeroff(cv, off2, PLAYER2, BOARD_DIRECTION);
-    draw_pointnumber(cv, BOARD_DIRECTION);
-    /* draw_pointletter(cv, BOARD_DIRECTION, pos_ptr->cube); */
+    if(is_pointletter_active) {
+        draw_pointletter(cv, BOARD_DIRECTION, pos_ptr->cube);
+    } else {
+        draw_pointnumber(cv, BOARD_DIRECTION);
+    }
     draw_score(cv, pos_ptr->p1_score, pos_ptr->is_crawford, PLAYER1);
     draw_score(cv, pos_ptr->p2_score, pos_ptr->is_crawford, PLAYER2);
     draw_pipcount(cv, pip1, PLAYER1);
