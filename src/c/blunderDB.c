@@ -973,7 +973,6 @@ void draw_canvas(cdCanvas* cv) {
     int i, w, h;
     int pip1=0, pip2=0;
     int off1=0, off2=0;
-    /* cv = cdCreateCanvas(CD_IUP, ih); */
     cdCanvasActivate(cv);
     cdCanvasGetSize(cv, &w, &h, NULL, NULL);
     printf("canvas: %i, %i\n", w, h);
