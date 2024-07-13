@@ -565,7 +565,7 @@ typedef struct {
     char* status;
 } MOUSE;
 
-void mouse_print(MOUSE m){
+void mouse_print(const MOUSE m){
     printf("mouse_print()\n");
     printf("button: %i\n", m.button);
     printf("pressed: %i\n", m.pressed);
@@ -576,7 +576,7 @@ void mouse_print(MOUSE m){
 
 MOUSE mouse;
 
-void draw_triangle(cdCanvas *cv, double x, double y, double up, int long color){
+void draw_triangle(cdCanvas *cv, const double x, const double y, const double up, const int long color){
     cdCanvasForeground(cv, color);
     cdCanvasBegin(cv, CD_FILL);
     wdCanvasVertex(cv, x, y);
@@ -594,7 +594,7 @@ void draw_triangle(cdCanvas *cv, double x, double y, double up, int long color){
     cdCanvasEnd(cv);
 }
 
-char* cubeText(int value) {
+char* cubeText(const int value) {
     switch(value) {
         case 0:
             return "1";
@@ -623,7 +623,7 @@ char* cubeText(int value) {
     }
 }
 
-void draw_cube(cdCanvas *cv, int value){
+void draw_cube(cdCanvas *cv, const int value){
     char* text = cubeText(abs(value));
     double x = CUBE_XPOS;
     double y = CUBE_YPOS_CENTER;
@@ -675,7 +675,7 @@ void draw_board(cdCanvas* cv) {
             -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
 }
 
-void draw_pointnumber(cdCanvas* cv, int orientation) {
+void draw_pointnumber(cdCanvas* cv, const int orientation) {
     double x, y;
     char t[3];
     cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
