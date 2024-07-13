@@ -1988,20 +1988,8 @@ static int toggle_searches_visibility_cb()
 
 static int toggle_visibility_cb(Ihandle* ih)
 {
-    /* Ihandle *child; */
-
-    /* int n = IupGetChildCount(ih); */
-    /* printf("children: %i\n", n); */
-    /* for(int i=0; i<n; i++) */
-    /* { */
-    /*     toggle_visibility_cb(IupGetChild(ih, i)); */
-    /* } */
-
-
     char* att = IupGetAttribute(ih, "VISIBLE");
-
-    if(strcmp(att,"NO")==0)
-    {
+    if(strcmp(att,"NO")==0) {
         printf("display panel\n");
         IupSetAttribute(ih, "VISIBLE", "YES");
         IupSetAttribute(ih, "FLOATING", "NO");
@@ -2012,7 +2000,6 @@ static int toggle_visibility_cb(Ihandle* ih)
     } else {
         printf("panel_ih_visible_cb: Impossible case.\n");
     }
-
     IupRefresh(ih);
     return IUP_DEFAULT;
 }
