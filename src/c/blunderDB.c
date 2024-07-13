@@ -891,7 +891,7 @@ void draw_pipcount(cdCanvas* cv, int pip, int player){
 }
 
 /* ATTENTION TRAITER LE CAS SI PLUS DE 6 CHECKERS */
-void draw_checker(cdCanvas* cv, POSITION* p, int dir) {
+void draw_checker(cdCanvas* cv, const POSITION* p, int dir) {
     double xc, yc, eps;
 
     if(BOARD_DIRECTION==1) eps = 1;
