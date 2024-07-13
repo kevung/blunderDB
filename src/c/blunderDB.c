@@ -751,7 +751,7 @@ void draw_pointnumber(cdCanvas* cv, int orientation) {
     }
 }
 
-void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
+void draw_pointletter(cdCanvas* cv, const int orientation, const int cubevalue) {
     const char p1[27] = PLAYER1_POINTLABEL;
     double x, y;
     char t[2];
