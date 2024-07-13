@@ -922,7 +922,7 @@ void draw_checker(cdCanvas* cv, POSITION* p, int dir) {
         int i, color; double dir, xc, yc; xc=0;
         if(player>0) {dir=1; i=25; color=CHECKER1_COLOR;}
         if(player<=0) {dir=-1; i=0; color=CHECKER2_COLOR;}
-        yc=dir*0.5*POINT_SIZE;
+        yc=dir*1.0*POINT_SIZE;
         for(int k=0; k<abs(p->checker[25]); k++) {
             cdCanvasForeground(cv, color);
             wdCanvasSector(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
