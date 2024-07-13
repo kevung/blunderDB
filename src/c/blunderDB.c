@@ -840,7 +840,8 @@ void draw_pointletter(cdCanvas* cv, int orientation, int cubevalue) {
     }
 }
 
-void draw_score(cdCanvas* cv, int score, int crawford, int player){
+void draw_score(cdCanvas* cv, const int score, const int crawford,
+        const int player){
     char t[20];
     cdCanvasForeground(cv, SCORE_LINECOLOR);
     cdCanvasTextAlignment(cv, CD_CENTER);
