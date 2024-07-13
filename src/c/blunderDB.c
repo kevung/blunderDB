@@ -1070,7 +1070,7 @@ void error_callback(void);
 /* #define DEFAULT_SIZE "960x540" */
 #define DEFAULT_SIZE "864x486"
 /* #define DEFAULT_SIZE "800x450" */
-#define DEFAULT_SPLIT_VALUE "800"
+#define DEFAULT_SPLIT_VALUE "1000"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
@@ -1457,11 +1457,11 @@ static Ihandle* create_canvas(void)
     IupSetAttribute(ih, "EXPAND", "YES");
     IupSetCallback(ih, "MAP_CB", (Icallback)canvas_map_cb);
     IupSetCallback(ih, "ACTION", (Icallback)canvas_action_cb);
-    /* IupSetCallback(ih, "DROPFILES_CB", (Icallback)canvas_dropfiles_cb); */
-    /* IupSetCallback(ih, "MOTION_CB", (Icallback)canvas_motion_cb); */
-    /* IupSetCallback(ih, "WHEEL_CB", (Icallback)canvas_wheel_cb); */
-    /* IupSetCallback(ih, "BUTTON_CB", (Icallback)canvas_button_cb); */
-    /* IupSetCallback(ih, "RESIZE_CB", (Icallback)canvas_resize_cb); */
+    IupSetCallback(ih, "DROPFILES_CB", (Icallback)canvas_dropfiles_cb);
+    IupSetCallback(ih, "MOTION_CB", (Icallback)canvas_motion_cb);
+    IupSetCallback(ih, "WHEEL_CB", (Icallback)canvas_wheel_cb);
+    IupSetCallback(ih, "BUTTON_CB", (Icallback)canvas_button_cb);
+    IupSetCallback(ih, "RESIZE_CB", (Icallback)canvas_resize_cb);
 
     return ih;
 }
@@ -1532,6 +1532,8 @@ static Ihandle* create_searches(void)
     IupSetAttribute(search3, "TABTITLE", "search3 Position");
 
     ih = IupTabs(search1, search2, search3, NULL);
+    IupSetAttribute(ih, "VISIBLE", "NO");
+    IupSetAttribute(ih, "FLOATING", "YES");
 
     return ih;
 }
@@ -1992,7 +1994,7 @@ static int toggle_searches_visibility_cb()
         IupSetAttribute(split, "VALUE", "1000");
     } else if (strcmp(att,"YES") == 0)
     {
-        IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
+        IupSetAttribute(split, "VALUE", "700");
     }
     IupRefresh(dlg);
     return IUP_DEFAULT;
