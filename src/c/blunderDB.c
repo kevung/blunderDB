@@ -1070,7 +1070,7 @@ void error_callback(void);
 /* #define DEFAULT_SIZE "960x540" */
 #define DEFAULT_SIZE "864x486"
 /* #define DEFAULT_SIZE "800x450" */
-#define DEFAULT_SPLIT_VALUE "1000"
+#define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
@@ -1975,26 +1975,12 @@ static int toggle_analysis_visibility_cb()
 
 static int toggle_searches_visibility_cb()
 {
-
-    /* IupUnmap(split); */
-    /* IupDetach(split); */
-    /* IupAppend(vbox, canvas); */
-    /* /1* IupReparent(canvas, vbox, statusbar); *1/ */
-    /* /1* IupMap(canvas); *1/ */
-    /* IupMap(canvas); */
-    /* IupMap(vbox); */
-    /* IupMap(dlg); */
-    /* IupRefresh(dlg); */
-
     toggle_visibility_cb(searches);
-
     char* att = IupGetAttribute(searches, "VISIBLE");
-    if(strcmp(att,"NO") == 0)
-    {
+    if(strcmp(att,"NO") == 0) {
         IupSetAttribute(split, "VALUE", "1000");
-    } else if (strcmp(att,"YES") == 0)
-    {
-        IupSetAttribute(split, "VALUE", "700");
+    } else if (strcmp(att,"YES") == 0) {
+        IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
     }
     IupRefresh(dlg);
     return IUP_DEFAULT;
@@ -2078,7 +2064,7 @@ int main(int argc, char **argv)
 
     split = IupSplit(position, searches);
     IupSetAttribute(split, "ORIENTATION", "HORIZONTAL");
-    IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
+    IupSetAttribute(split, "VALUE", "1000");
     /* IupSetAttribute(split, "MINMAX", DEFAULT_SPLIT_MINMAX); */
     /* IupSetAttribute(split, "AUTOHIDE", "YES"); */
 
