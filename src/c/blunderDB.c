@@ -856,7 +856,7 @@ void draw_score(cdCanvas* cv, int score, int crawford, int player){
     }
 }
 
-void draw_checkeroff(cdCanvas* cv, int nb_off, int player, int orientation){
+void draw_checkeroff(cdCanvas* cv, const int nb_off, const int player, const int orientation){
     char t[20], t2[3];
     cdCanvasForeground(cv, CHECKEROFF_LINECOLOR);
     cdCanvasTextAlignment(cv, CD_CENTER);
