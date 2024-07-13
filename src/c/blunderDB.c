@@ -892,7 +892,7 @@ void draw_pipcount(cdCanvas* cv, const int pip, const int player){
 }
 
 /* ATTENTION TRAITER LE CAS SI PLUS DE 6 CHECKERS */
-void draw_checker(cdCanvas* cv, const POSITION* p, int dir) {
+void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
     double xc, yc, eps;
 
     if(BOARD_DIRECTION==1) eps = 1;
@@ -902,7 +902,8 @@ void draw_checker(cdCanvas* cv, const POSITION* p, int dir) {
     cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
     cdCanvasLineStyle(cv, CD_CONTINUOUS);
 
-    void draw_checker_samepoint(double xc, double yc, int point, double dir) {
+    void draw_checker_samepoint(const double xc, const double yc,
+            const int point, const double dir) {
         double _yc = yc;
         for(int k=0; k<abs(p->checker[point]); k++) {
             if(p->checker[point]>0) {
@@ -919,7 +920,7 @@ void draw_checker(cdCanvas* cv, const POSITION* p, int dir) {
         }
     }
 
-    void draw_checker_onbar(int player) {
+    void draw_checker_onbar(const int player) {
         int i, color; double dir, xc, yc; xc=0;
         if(player>0) {dir=1; i=25; color=CHECKER1_COLOR;}
         if(player<=0) {dir=-1; i=0; color=CHECKER2_COLOR;}
