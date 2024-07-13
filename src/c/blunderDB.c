@@ -1009,6 +1009,7 @@ void draw_canvas(cdCanvas* cv) {
 
 /* static int dlg_resize_cb(Ihandle*); */
 static int canvas_map_cb(Ihandle*);
+static int canvas_unmap_cb(Ihandle*);
 static int canvas_action_cb(Ihandle*);
 static int canvas_dropfiles_cb(Ihandle*);
 static int canvas_motion_cb(Ihandle*);
@@ -1457,6 +1458,7 @@ static Ihandle* create_canvas(void)
     /* IupSetAttribute(ih, "DRAWSIZE", "200x300"); */
     IupSetAttribute(ih, "EXPAND", "YES");
     IupSetCallback(ih, "MAP_CB", (Icallback)canvas_map_cb);
+    IupSetCallback(ih, "UNMAP_CB", (Icallback)canvas_unmap_cb);
     IupSetCallback(ih, "ACTION", (Icallback)canvas_action_cb);
     IupSetCallback(ih, "DROPFILES_CB", (Icallback)canvas_dropfiles_cb);
     IupSetCallback(ih, "MOTION_CB", (Icallback)canvas_motion_cb);
@@ -1558,6 +1560,12 @@ static void set_keyboard_shortcuts()
 static int canvas_map_cb(Ihandle* ih)
 {
     cdv = cdCreateCanvas(CD_IUP, canvas);
+    return IUP_DEFAULT;
+}
+
+static int canvas_unmap_cb(Ihandle* ih)
+{
+    cdKillCanvas(cdv);
     return IUP_DEFAULT;
 }
 
@@ -2072,7 +2080,6 @@ int main(int argc, char **argv)
 
     IupMainLoop();
 
-    cdKillCanvas(cdv);
     db_close(db);
     IupClose();
 
