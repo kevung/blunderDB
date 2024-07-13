@@ -922,10 +922,10 @@ void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
 
     void draw_checker_onbar(const int player) {
         int i, color; double dir, xc, yc; xc=0;
-        if(player>0) {dir=1; i=25; color=CHECKER1_COLOR;}
-        if(player<=0) {dir=-1; i=0; color=CHECKER2_COLOR;}
-        yc=dir*1.0*POINT_SIZE;
-        for(int k=0; k<abs(p->checker[25]); k++) {
+        if(player==PLAYER1) {dir=1.0; i=25; color=CHECKER1_COLOR;}
+        if(player==PLAYER2) {dir=-1.0; i=0; color=CHECKER2_COLOR;}
+        yc=dir*POINT_SIZE;
+        for(int k=0; k<abs(p->checker[i]); k++) {
             cdCanvasForeground(cv, color);
             wdCanvasSector(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
             cdCanvasForeground(cv, CHECKER_LINECOLOR);
@@ -936,8 +936,8 @@ void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
         }
     }
 
-    draw_checker_onbar(1);
-    draw_checker_onbar(-1);
+    draw_checker_onbar(PLAYER1);
+    draw_checker_onbar(PLAYER2);
 
     xc = eps*(BOARD_WIDTH/2 -0.5*POINT_SIZE);
     for(int i=24; i>=19; i--) {
