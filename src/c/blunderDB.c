@@ -874,7 +874,7 @@ void draw_checkeroff(cdCanvas* cv, int nb_off, int player, int orientation){
     }
 }
 
-void draw_pipcount(cdCanvas* cv, int pip, int player){
+void draw_pipcount(cdCanvas* cv, const int pip, const int player){
     char t[10], t2[5];
     cdCanvasForeground(cv, PIPCOUNT_LINECOLOR);
     cdCanvasTextAlignment(cv, CD_CENTER);
