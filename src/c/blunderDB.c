@@ -934,7 +934,6 @@ void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
         int n=abs(p->checker[point]);
         if(n<=5) q=n;
         if(n>5) q=5;
-        printf("xc: %f\n", xc);
         for(int k=0; k<q; k++) {
             if(p->checker[point]>0) {
                 cdCanvasForeground(cv, CHECKER1_COLOR);
@@ -976,9 +975,11 @@ void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
             wdCanvasArc(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
             yc += dir*CHECKER_SIZE;
         }
-        if(player==PLAYER1) cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
-        if(player==PLAYER2) cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
-        draw_number_checkers(xc, dir*(POINT_SIZE+4.*CHECKER_SIZE), n);
+        if(n>5) {
+            if(player==PLAYER1) cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
+            if(player==PLAYER2) cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
+            draw_number_checkers(xc, dir*(POINT_SIZE+4.*CHECKER_SIZE), n);
+        }
     }
 
     draw_checker_onbar(PLAYER1);
@@ -1739,16 +1740,22 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     if(!pressed){
         if(is_in_board && !is_on_bar) {
             i=find_point_index(ix, iy); 
-            pos_ptr->checker[i] = fill_point(iy);
+            if(abs(iy)==1 && abs(pos_ptr->checker[i])>=5) {
+                pos_ptr->checker[i] += player;
+            } else { pos_ptr->checker[i] = fill_point(iy); }
         } else if(is_on_bar) {
             if(is_in_up) {
                 if(!is_in_uplabel) {
-                    pos_ptr->checker[25] = (-iy);
+                    if(abs(iy)==5 && abs(pos_ptr->checker[25])>=5) {
+                        pos_ptr->checker[25] -= 1;
+                    } else { pos_ptr->checker[25] = (-iy); }
                 } else {pos_ptr->checker[25] = 0; }
             } else if(is_in_down) {
                 if(!is_in_downlabel) {
-                    pos_ptr->checker[0] = (-iy);
-                } else {pos_ptr->checker[0] = 0; }
+                    if(abs(iy)==5 && abs(pos_ptr->checker[0])>=5) {
+                        pos_ptr->checker[0] += 1;
+                    } else { pos_ptr->checker[0] = (-iy); }
+                } else { pos_ptr->checker[0] = 0; }
             } else if(is_in_center) {
                 pos_ptr->checker[25] = 0;
                 pos_ptr->checker[0] = 0;
@@ -2213,8 +2220,8 @@ int main(int argc, char **argv)
 {
     int err;
 
-    /* pos = POS_DEFAULT; */
-    pos = POS_VOID;
+    pos = POS_DEFAULT;
+    /* pos = POS_VOID; */
     pos_ptr = &pos;
 
     /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
@@ -2226,9 +2233,7 @@ int main(int argc, char **argv)
     /* err = str_to_pos("(SUmLhgfDc)AS2m2TWQRgf2", pos_ptr); */
     /* printf("str2pos err: %i\n", err); */
     /* pos_print(pos_ptr); */
-    pos_ptr->checker[0] = -6;
-    pos_ptr->checker[1] = 9;
-    pos_ptr->checker[25] = 8;
+    /* pos_ptr->checker[25] = 8; */
 
     /* char* ctest; */
     /* ctest= pos_to_str(&POS_DEFAULT); */
