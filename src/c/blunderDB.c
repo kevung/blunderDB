@@ -1611,14 +1611,18 @@ static int canvas_wheel_cb(Ihandle* ih)
 static int canvas_button_cb(Ihandle* ih, const int button,
         const int pressed, const int x, const int y, char* status)
 {
-    double xw, yw;
-    int y2;
-    int dir, player, ix, iy, i;
+    double xw, yw, xwp, ywp;
+    int y2, y2p;
+    int dir, player, ix, iy, ixp, iyp, i, ip, i1, i2, iyn;
+    bool mouse_hold;
     bool is_in_left, is_in_right, is_in_up, is_in_down, is_on_bar, is_in_center;
+    bool is_in_left2, is_in_right2, is_in_up2, is_in_down2;
     bool is_in_uplabel, is_in_downlabel, is_in_board; 
     bool is_in_cube, is_cube_in_center, is_cube_up, is_cube_down, 
          is_in_cube_positions;
     bool is_on_score1, is_on_score2;
+
+    mouse_hold=false;
 
     if(BOARD_DIRECTION==1) dir=1;
     if(BOARD_DIRECTION!=1) dir=-1;
@@ -1630,6 +1634,21 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     iy = round(yw/POINT_SIZE);
     printf("ix: %i\niy: %i\n", ix, iy);
 
+    // for previous mouse state if clicked
+    if(mouse.pressed==1) {
+        y2p = cdCanvasInvertYAxis(cdv, mouse.y);
+        wdCanvasCanvas2World(cdv, mouse.x, y2p, &xwp, &ywp);
+        ixp = round(xwp/POINT_SIZE);
+        iyp = round(ywp/POINT_SIZE);
+        /* printf("PREVIOUS MOUSE STATE CLICKED\n"); */
+        /* printf("ixp: %i\niyp: %i\n", ixp, iyp); */
+        is_in_left2 = ixp<0 && ixp>=-6;
+        is_in_up2 = iyp>0 && iyp<=6;
+        is_in_down2 = iyp<0 && iyp>=-6;
+        is_in_right2 = ixp>0 && ixp<=6;
+        if(ix!=ixp || iy!=iyp ) mouse_hold=true;
+    }
+
     // labels (number or point) are in the board
     is_in_board = abs(ix)<=6 && abs(iy)<=6;
     is_in_uplabel = is_in_board && iy==6;
@@ -1638,7 +1657,7 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     is_in_up = iy>0 && iy<=6;
     is_in_down = iy<0 && iy>=-6;
     is_in_right = ix>0 && ix<=6;
-    is_on_bar = ix==0;
+    is_on_bar = is_in_board && ix==0;
     is_in_center = ix==0 && iy==0;
     is_cube_in_center = (xw>=CUBE_XPOS) && (xw<=CUBE_XPOS+CUBE_SIZE)
         && (yw>=CUBE_YPOS_CENTER) && (yw<=CUBE_YPOS_CENTER+CUBE_SIZE);
@@ -1662,26 +1681,25 @@ static int canvas_button_cb(Ihandle* ih, const int button,
         return player*(6-abs(n)); }
 
     if(!pressed){
-        if(is_in_left) {
-            if(is_in_up) {
-                if(BOARD_DIRECTION==1) i=19+ix;
-                if(BOARD_DIRECTION!=1) i=18-ix;
-                pos_ptr->checker[i] = fill_point(iy);
-            } else if(is_in_down) {
-                if(BOARD_DIRECTION==1) i=6-ix;
-                if(BOARD_DIRECTION!=1) i=7+ix;
-                pos_ptr->checker[i] = fill_point(iy);
-            }
-        } else if(is_in_right) {
-            if(is_in_up) {
-                if(BOARD_DIRECTION==1) i=18+ix;
-                if(BOARD_DIRECTION!=1) i=19-ix;
-                pos_ptr->checker[i] = fill_point(iy);
-            } else if(is_in_down) {
-                if(BOARD_DIRECTION==1) i=7-ix;
-                if(BOARD_DIRECTION!=1) i=6+ix;
-                pos_ptr->checker[i] = fill_point(iy);
-            }
+        if(is_in_board && !is_on_bar) {
+            if(is_in_left) {
+                if(is_in_up) {
+                    if(BOARD_DIRECTION==1) i=19+ix;
+                    if(BOARD_DIRECTION!=1) i=18-ix;
+                } else if(is_in_down) {
+                    if(BOARD_DIRECTION==1) i=6-ix;
+                    if(BOARD_DIRECTION!=1) i=7+ix;
+                }
+            } else if(is_in_right) {
+                if(is_in_up) {
+                    if(BOARD_DIRECTION==1) i=18+ix;
+                    if(BOARD_DIRECTION!=1) i=19-ix;
+                } else if(is_in_down) {
+                    if(BOARD_DIRECTION==1) i=7-ix;
+                    if(BOARD_DIRECTION!=1) i=6+ix;
+                }
+            } 
+            pos_ptr->checker[i] = fill_point(iy);
         } else if(is_on_bar) {
             if(is_in_up) {
                 if(!is_in_uplabel) {
@@ -1696,7 +1714,33 @@ static int canvas_button_cb(Ihandle* ih, const int button,
                 pos_ptr->checker[0] = 0;
             } else { printf("ERROR! Cas impossible!\n"); }
         }
-        /* pos_print(pos_ptr); */
+    }
+
+    if(mouse_hold){
+        if(is_in_left2) {
+            if(is_in_up2) {
+                if(BOARD_DIRECTION==1) ip=19+ixp;
+                if(BOARD_DIRECTION!=1) ip=18-ixp;
+            } else if(is_in_down2) {
+                if(BOARD_DIRECTION==1) ip=6-ixp;
+                if(BOARD_DIRECTION!=1) ip=7+ixp;
+            }
+        } else if(is_in_right2) {
+            if(is_in_up2) {
+                if(BOARD_DIRECTION==1) ip=18+ixp;
+                if(BOARD_DIRECTION!=1) ip=19-ixp;
+            } else if(is_in_down) {
+                if(BOARD_DIRECTION==1) ip=7-ixp;
+                if(BOARD_DIRECTION!=1) ip=6+ixp;
+            }
+        }
+        i1=fmin(i,ip);
+        i2=fmax(i,ip);
+        iyn=fmin(abs(iy), abs(iyp));
+        if(iyn==0) iyn=1;
+        for(int k=i1; k<=i2; k++) {
+            pos_ptr->checker[k] = fill_point(iyn);
+        }
     }
 
     if(!pressed){
