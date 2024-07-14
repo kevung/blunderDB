@@ -1811,7 +1811,6 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     mouse.y = y;
     mouse.status = status;
     mouse_print(mouse);
-    /* printf("ix: %i\niy: %i\n", ix, iy); */
     return IUP_DEFAULT;
 }
 
