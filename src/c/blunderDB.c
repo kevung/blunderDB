@@ -24,8 +24,7 @@ typedef struct
 {
     int checker[26];
     int cube;
-    int is_crawford;
-    int p1_score;
+    int p1_score; // 2=2-away; 1=crawford; 0=postcrawford; -1=unlimited;
     int p2_score;
     int dice[2];
     int is_double;
@@ -41,9 +40,8 @@ const POSITION POS_DEFAULT = {
         -5, 0, 0, 0, 0, 2,
         0},
     .cube = 0,
-    .is_crawford = 0,
-    .p1_score = 0,
-    .p2_score = 0,
+    .p1_score = -1,
+    .p2_score = -1,
     .dice = {0, 0},
     .is_double = 0,
     .is_take = 0,
@@ -58,9 +56,8 @@ const POSITION POS_VOID = {
         0, 0, 0, 0, 0, 0,
         0},
     .cube = 0,
-    .is_crawford = 0,
-    .p1_score = 0,
-    .p2_score = 0,
+    .p1_score = -1,
+    .p2_score = -1,
     .dice = {0, 0},
     .is_double = 0,
     .is_take = 0,
@@ -88,7 +85,6 @@ void pos_print(const POSITION* p)
         printf("%i: %i\n", i, p->checker[i]);
     }
     printf("cube: %i\n", p->cube);
-    printf("is_crawford: %i\n", p->is_crawford);
     printf("p1_score: %i\n", p->p1_score);
     printf("p2_score: %i\n", p->p2_score);
     printf("dice: %i, %i\n", p->dice[0], p->dice[1]);
@@ -239,13 +235,13 @@ int str_to_pos(const char* s, POSITION* pos)
         }
         for(int i=0; i<j; i++)
         {
-            if(!isdigit(s[i])) return 0; //fail
+            if(!isdigit(s[i]) && s[i]!='-') return 0; //fail
             s_p1_score[i] = s[i];
             s_p1_score[i+1] = '\0';
         }
         for(int i=j+1; i<i_score; i++)
         {
-            if(!isdigit(s[i])) return 0; //fail
+            if(!isdigit(s[i]) && s[i]!='-') return 0; //fail
             s_p2_score[i-j-1] = s[i];
             s_p2_score[i-j] = '\0';
         }
@@ -843,16 +839,24 @@ void draw_pointletter(cdCanvas* cv, const int orientation, const int cubevalue) 
     }
 }
 
-void draw_score(cdCanvas* cv, const int score, const int crawford,
-        const int player){
+void draw_score(cdCanvas* cv, const int score, const int player){
     char t[20];
     cdCanvasForeground(cv, SCORE_LINECOLOR);
     cdCanvasTextAlignment(cv, CD_CENTER);
     cdCanvasFont(cv, SCORE_FONT, SCORE_STYLE, SCORE_FONTSIZE);
-    sprintf(t, "%d", score);
-    strcat(t, " away");
-    if(score==1 && crawford==1) strcat(t, "\ncrawford");
-    if(score==1 && crawford!=1) strcat(t, "\npost\ncrawford");
+    if(score>=2) {
+        sprintf(t, "%d", score);
+        strcat(t, " away");
+    } else if(score==1) {
+        t[0] = '\0';
+        strcat(t, "\ncrawford");
+    } else if(score==0) {
+        t[0] = '\0';
+        strcat(t, "\npost\ncrawford");
+    } else {
+        t[0] = '\0';
+        strcat(t, "unlimited");
+    }
     if(player>0) {
         wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_DOWN, t);
     } else {
@@ -1001,8 +1005,8 @@ void draw_canvas(cdCanvas* cv) {
     } else {
         draw_pointnumber(cv, BOARD_DIRECTION);
     }
-    draw_score(cv, pos_ptr->p1_score, pos_ptr->is_crawford, PLAYER1);
-    draw_score(cv, pos_ptr->p2_score, pos_ptr->is_crawford, PLAYER2);
+    draw_score(cv, pos_ptr->p1_score, PLAYER1);
+    draw_score(cv, pos_ptr->p2_score, PLAYER2);
     draw_pipcount(cv, pip1, PLAYER1);
     draw_pipcount(cv, pip2, PLAYER2);
 
@@ -1020,7 +1024,8 @@ static int canvas_action_cb(Ihandle*);
 static int canvas_dropfiles_cb(Ihandle*);
 static int canvas_motion_cb(Ihandle*);
 static int canvas_wheel_cb(Ihandle*);
-static int canvas_button_cb(Ihandle*, int, int, int, int, char*);
+static int canvas_button_cb(Ihandle*, const int, const int,
+        const int, const int, char*);
 static int canvas_resize_cb(Ihandle*);
 static int item_new_action_cb(void);
 static int item_open_action_cb(void);
@@ -1549,6 +1554,7 @@ static Ihandle* create_searches(void)
 
 /*************** Keyboard Shortcuts ***********************/
 
+// FAIRE CAS PLUS DE 5 CHECKERS SUR POINT OU BAR !!!!
 static void set_keyboard_shortcuts()
 {
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
@@ -1599,21 +1605,129 @@ static int canvas_wheel_cb(Ihandle* ih)
     return IUP_DEFAULT;
 }
 
-static int canvas_button_cb(Ihandle* ih, int button, int pressed, int x, int y, char* status)
+static int canvas_button_cb(Ihandle* ih, const int button,
+        const int pressed, const int x, const int y, char* status)
 {
-    int i, w, h;
-    double xw=0, yw=0;
-    double xmin, xmax, ymin, ymax;
-    /* cdCanvasGetSize(cdv, &w, &h, NULL, NULL); */
-    /* wdCanvasViewport(cdv, 0, w-1, 0, h-1); */
-    /* double wd_h = BOARD_WITH_DECORATIONS_HEIGHT; */
-    /* double wd_w = (double) w* wd_h/(double) h; */
-    /* wdCanvasWindow(cdv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2); */
+    double xw, yw;
+    int y2;
+    int dir, player, ix, iy, i;
+    bool is_in_left, is_in_right, is_in_up, is_in_down, is_on_bar, is_in_center;
+    bool is_in_uplabel, is_in_downlabel, is_in_board; 
+    bool is_in_cube, is_cube_in_center, is_cube_up, is_cube_down, 
+         is_in_cube_positions;
+    bool is_on_score1, is_on_score2;
 
-    wdCanvasGetWindow(cdv, &xmin, &xmax, &ymin, &ymax);
-    printf("window: %%d %d %d %d\n", xmin, xmax, ymin, ymax);
-    wdCanvas2World(x, y, &xw, &yw);
-    printf("xw: %d\nyw: %d\n", xw, yw);
+    if(BOARD_DIRECTION==1) dir=1;
+    if(BOARD_DIRECTION!=1) dir=-1;
+
+    // canvas and world have inverted y axis...
+    y2 = cdCanvasInvertYAxis(cdv, y);
+    wdCanvasCanvas2World(cdv, x, y2, &xw, &yw);
+    ix = round(xw/POINT_SIZE);
+    iy = round(yw/POINT_SIZE);
+    printf("ix: %i\niy: %i\n", ix, iy);
+
+    // labels (number or point) are in the board
+    is_in_board = abs(ix)<=6 && abs(iy)<=6;
+    is_in_uplabel = is_in_board && iy==6;
+    is_in_downlabel = is_in_board && iy==-6;
+    is_in_left = ix<0 && ix>=-6;
+    is_in_up = iy>0 && iy<=6;
+    is_in_down = iy<0 && iy>=-6;
+    is_in_right = ix>0 && ix<=6;
+    is_on_bar = ix==0;
+    is_in_center = ix==0 && iy==0;
+    is_cube_in_center = (xw>=CUBE_XPOS) && (xw<=CUBE_XPOS+CUBE_SIZE)
+        && (yw>=CUBE_YPOS_CENTER) && (yw<=CUBE_YPOS_CENTER+CUBE_SIZE);
+    is_cube_down = (xw>=CUBE_XPOS) && (xw<=CUBE_XPOS+CUBE_SIZE)
+        && (yw>=CUBE_YPOS_DOWN) && (yw<=CUBE_YPOS_DOWN+CUBE_SIZE);
+    is_cube_up = (xw>=CUBE_XPOS) && (xw<=CUBE_XPOS+CUBE_SIZE)
+        && (yw>=CUBE_YPOS_UP) && (yw<=CUBE_YPOS_UP+CUBE_SIZE);
+    is_in_cube_positions = is_cube_in_center || is_cube_down || is_cube_up;
+    is_in_cube = is_cube_in_center;
+    if(pos_ptr->cube>0) is_in_cube = is_cube_down;
+    if(pos_ptr->cube<0) is_in_cube = is_cube_up;
+    is_on_score1 = (xw>=SCORE_XPOS-.5*POINT_SIZE) &&
+        (yw<=SCORE_YPOS_DOWN+1.5*POINT_SIZE);
+    is_on_score2 = (xw>=SCORE_XPOS-1.*POINT_SIZE) &&
+        (yw>=SCORE_YPOS_UP-1.*POINT_SIZE);
+
+    if(button==IUP_BUTTON1) player=1;
+    if(button==IUP_BUTTON3) player=-1;
+
+    int fill_point(const int n) {
+        return player*(6-abs(n)); }
+
+    if(!pressed){
+        if(is_in_left) {
+            if(is_in_up) {
+                if(BOARD_DIRECTION==1) i=19+ix;
+                if(BOARD_DIRECTION!=1) i=18-ix;
+                pos_ptr->checker[i] = fill_point(iy);
+            } else if(is_in_down) {
+                if(BOARD_DIRECTION==1) i=6-ix;
+                if(BOARD_DIRECTION!=1) i=7+ix;
+                pos_ptr->checker[i] = fill_point(iy);
+            }
+        } else if(is_in_right) {
+            if(is_in_up) {
+                if(BOARD_DIRECTION==1) i=18+ix;
+                if(BOARD_DIRECTION!=1) i=19-ix;
+                pos_ptr->checker[i] = fill_point(iy);
+            } else if(is_in_down) {
+                if(BOARD_DIRECTION==1) i=7-ix;
+                if(BOARD_DIRECTION!=1) i=6+ix;
+                pos_ptr->checker[i] = fill_point(iy);
+            }
+        } else if(is_on_bar) {
+            if(is_in_up) {
+                if(!is_in_uplabel) {
+                    pos_ptr->checker[25] = (-iy);
+                } else {pos_ptr->checker[25] = 0; }
+            } else if(is_in_down) {
+                if(!is_in_downlabel) {
+                    pos_ptr->checker[0] = (-iy);
+                } else {pos_ptr->checker[0] = 0; }
+            } else if(is_in_center) {
+                pos_ptr->checker[25] = 0;
+                pos_ptr->checker[0] = 0;
+            } else { printf("ERROR! Cas impossible!\n"); }
+        }
+        /* pos_print(pos_ptr); */
+    }
+
+    if(!pressed){
+        if(is_in_cube && button==IUP_BUTTON1)
+            pos_ptr->cube +=1;
+        if(is_in_cube && button==IUP_BUTTON3)
+            pos_ptr->cube -=1;
+    }
+
+    if(!pressed){
+        if(is_on_score1) {
+            if(button==IUP_BUTTON1) pos_ptr->p1_score -=1;
+            if(button==IUP_BUTTON3) pos_ptr->p1_score +=1;
+            if(pos_ptr->p1_score<-1) pos_ptr->p1_score=-1;
+        }
+        if(is_on_score2) {
+            if(button==IUP_BUTTON1) pos_ptr->p2_score -=1;
+            if(button==IUP_BUTTON3) pos_ptr->p2_score +=1;
+            if(pos_ptr->p2_score<-1) pos_ptr->p2_score=-1;
+        }
+    }
+
+    if(iup_isdouble(status)){
+        if(!is_in_board && !is_on_score1 && !is_on_score2
+                && !is_in_cube_positions) {
+            for(int i=0; i<26; i++) {
+                pos_ptr->checker[i]=0;
+            }
+        }
+    }
+
+
+
+    if(!pressed) draw_canvas(cdv);
 
     mouse.button = button;
     mouse.pressed = pressed;
@@ -1621,6 +1735,7 @@ static int canvas_button_cb(Ihandle* ih, int button, int pressed, int x, int y, 
     mouse.y = y;
     mouse.status = status;
     mouse_print(mouse);
+    /* printf("ix: %i\niy: %i\n", ix, iy); */
     return IUP_DEFAULT;
 }
 
@@ -2032,6 +2147,9 @@ int main(int argc, char **argv)
     pos = POS_DEFAULT;
     pos_ptr = &pos;
 
+    /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
+    /* err = str_to_pos("0,3:(a-f)", pos_ptr); */
+    /* err = str_to_pos("1,3:(a-f)", pos_ptr); */
     /* err = str_to_pos("(a-f)", pos_ptr); */
     /* err = str_to_pos("(f-a)", pos_ptr); */
     /* err = str_to_pos("31,12:Z2y1(e-aX)F3(mnl)t-pO4Y3", pos_ptr); */
