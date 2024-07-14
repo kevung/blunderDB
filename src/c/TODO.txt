@@ -1,5 +1,14 @@
-copy pos 
-copy collection
-export pos
-parse xg
+1. Implémenter le dessin si >5 checkers.
+2. Implémenter la saisie de >5 checkers sur point ou la barre. [canvas_button_cb]
+3. Vérifier str_to_pos, str_to_pos_paren, pos_to_str fonctionne à crawford, postcrawford, unlimited.
+
+Plus tard:
+
+- Enregistrement d'une position.
+- Recherche d'une position.
+- Copier/Coller/Glissé une position.
+- Import d'un match.
+- Gestion des collections. (création, renommage, suppresion, copie)
+- Export des positions et matchs en txt.
+- Parsage des fichiers XG.
 
