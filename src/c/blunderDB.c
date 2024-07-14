@@ -101,6 +101,7 @@ void int_swap(int* i, int* j)
     *j = t;
 }
 
+// BUG? Check if it work for crawford, post-crawford, unlimited scores
 char* pos_to_str(const POSITION* p)
 {
     const char p1[27] = PLAYER1_POINTLABEL;
@@ -136,6 +137,7 @@ char* pos_to_str(const POSITION* p)
     return c;
 }
 
+// BUG? Check if it work for crawford, post-crawford, unlimited scores
 char* pos_to_str_paren(const POSITION* p)
 {
     const char p1[27] = PLAYER1_POINTLABEL;
@@ -201,6 +203,7 @@ char* pos_to_str_paren(const POSITION* p)
 }
 
 
+// BUG? Check if it work for crawford, post-crawford, unlimited scores
 int str_to_pos(const char* s, POSITION* pos)
 {
     const char p1[27] = PLAYER1_POINTLABEL;
