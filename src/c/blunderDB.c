@@ -505,6 +505,12 @@ int db_close(sqlite3 *db)
 #define CHECKER_LINEWIDTH 3
 #define CHECKER1_COLOR CD_BLACK
 #define CHECKER2_COLOR CD_WHITE
+#define CHECKER1_TEXTCOLOR CD_WHITE
+#define CHECKER2_TEXTCOLOR CD_BLACK
+#define CHECKER_TEXTLINEWIDTH 3
+#define CHECKER_FONT "Times"
+#define CHECKER_FONTSIZE 20
+#define CHECKER_STYLE CD_PLAIN
 #define BAR_WIDTH POINT_SIZE
 #define BOARD_COLOR CD_BLACK
 #define BOARD_LINEWIDTH 6
@@ -912,10 +918,24 @@ void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
     cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
     cdCanvasLineStyle(cv, CD_CONTINUOUS);
 
+    void draw_number_checkers(const double x, const double y, const int i) {
+        char text[3];
+        text[0]='\0';
+        sprintf(text, "%d", i);
+        cdCanvasLineWidth(cv, CHECKER_TEXTLINEWIDTH);
+        cdCanvasTextAlignment(cv, CD_CENTER);
+        cdCanvasFont(cv, CHECKER_FONT, CHECKER_STYLE, CHECKER_FONTSIZE);
+        wdCanvasText(cv, x, y, text);
+    }
+
     void draw_checker_samepoint(const double xc, const double yc,
             const int point, const double dir) {
-        double _yc = yc;
-        for(int k=0; k<abs(p->checker[point]); k++) {
+        double _yc = yc; int q;
+        int n=abs(p->checker[point]);
+        if(n<=5) q=n;
+        if(n>5) q=5;
+        printf("xc: %f\n", xc);
+        for(int k=0; k<q; k++) {
             if(p->checker[point]>0) {
                 cdCanvasForeground(cv, CHECKER1_COLOR);
             } else {
@@ -928,14 +948,26 @@ void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
             wdCanvasArc(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
             _yc += dir*CHECKER_SIZE;
         }
+        if(n>5) {
+            if(p->checker[point]>0) {
+                cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
+            } else {
+                cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
+            }
+            draw_number_checkers(xc, yc+dir*4.*CHECKER_SIZE, n);
+        }
     }
 
     void draw_checker_onbar(const int player) {
         int i, color; double dir, xc, yc; xc=0;
+        int n, q;
         if(player==PLAYER1) {dir=1.0; i=25; color=CHECKER1_COLOR;}
         if(player==PLAYER2) {dir=-1.0; i=0; color=CHECKER2_COLOR;}
+        n=abs(p->checker[i]); 
+        if(n<=5) q=n;
+        if(n>5) q=5;
         yc=dir*POINT_SIZE;
-        for(int k=0; k<abs(p->checker[i]); k++) {
+        for(int k=0; k<q; k++) {
             cdCanvasForeground(cv, color);
             wdCanvasSector(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
             cdCanvasForeground(cv, CHECKER_LINECOLOR);
@@ -944,6 +976,9 @@ void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
             wdCanvasArc(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
             yc += dir*CHECKER_SIZE;
         }
+        if(player==PLAYER1) cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
+        if(player==PLAYER2) cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
+        draw_number_checkers(xc, dir*(POINT_SIZE+4.*CHECKER_SIZE), n);
     }
 
     draw_checker_onbar(PLAYER1);
@@ -2178,7 +2213,8 @@ int main(int argc, char **argv)
 {
     int err;
 
-    pos = POS_DEFAULT;
+    /* pos = POS_DEFAULT; */
+    pos = POS_VOID;
     pos_ptr = &pos;
 
     /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
@@ -2190,8 +2226,9 @@ int main(int argc, char **argv)
     /* err = str_to_pos("(SUmLhgfDc)AS2m2TWQRgf2", pos_ptr); */
     /* printf("str2pos err: %i\n", err); */
     /* pos_print(pos_ptr); */
-    /* pos_ptr->checker[25] = 3; */
-    /* pos_ptr->checker[0] = -4; */
+    pos_ptr->checker[0] = -6;
+    pos_ptr->checker[1] = 9;
+    pos_ptr->checker[25] = 8;
 
     /* char* ctest; */
     /* ctest= pos_to_str(&POS_DEFAULT); */
