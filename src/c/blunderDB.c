@@ -1229,7 +1229,7 @@ static Ihandle* create_menus(void)
     item_copy = IupItem("Co&py\tCtrl-C", NULL);
     item_cut = IupItem("Cu&t\tCtrl-X", NULL);
     item_paste = IupItem("Pa&ste\tCtrl-V", NULL);
-    item_editmode = IupItem("&Edit Mode\tCtrl-E", NULL);
+    item_editmode = IupItem("&Edit Mode\tTab", NULL);
     menu_edit = IupMenu(item_undo, item_redo,
             item_copy, item_cut, item_paste,
             IupSeparator(), item_editmode, NULL);
@@ -1434,7 +1434,7 @@ static Ihandle* create_toolbar(void)
     btn_edit = IupButton("Edit", NULL);
     IupSetAttribute(btn_edit, "FLAT", "Yes");
     IupSetAttribute(btn_edit, "CANFOCUS", "No");
-    IupSetAttribute(btn_edit, "TIP", "Edit Mode (Ctrl+E)");
+    IupSetAttribute(btn_edit, "TIP", "Edit Mode\tTab");
 
     btn_search = IupButton("Search", NULL);
     IupSetAttribute(btn_search, "FLAT", "Yes");
@@ -1657,7 +1657,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
-    IupSetCallback(dlg, "K_cE", (Icallback) toggle_editmode_cb);
+    IupSetCallback(dlg, "K_TAB", (Icallback) toggle_editmode_cb);
     IupSetCallback(dlg, "K_cF", (Icallback) toggle_searchmode_cb);
     IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_searches_visibility_cb);
