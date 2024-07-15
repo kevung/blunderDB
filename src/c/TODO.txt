@@ -1,4 +1,3 @@
-1. Vérifier str_to_pos, str_to_pos_paren, pos_to_str fonctionne à crawford, postcrawford, unlimited.
 
 Plus tard:
 

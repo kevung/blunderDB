@@ -40,8 +40,8 @@ const POSITION POS_DEFAULT = {
         -5, 0, 0, 0, 0, 2,
         0},
     .cube = 0,
-    .p1_score = -1,
-    .p2_score = -1,
+    .p1_score = -2,
+    .p2_score = -2,
     .dice = {0, 0},
     .is_double = 0,
     .is_take = 0,
@@ -106,14 +106,17 @@ char* pos_to_str(const POSITION* p)
 {
     const char p1[27] = PLAYER1_POINTLABEL;
     const char p2[27] = PLAYER2_POINTLABEL;
-    char p1_score[2];
-    char p2_score[2];
+    char p1_score[10];
+    char p2_score[10];
     char _d[2];
     char* c = malloc(100 * sizeof(char));
     memcpy(c, "\0", 1);
     sprintf(p1_score, "%d", p->p1_score);
     sprintf(p2_score, "%d", p->p2_score);
-    snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
+    printf("p1_score: %s\np2_score: %s\n", p1_score, p2_score);
+    strcat(c, p1_score);
+    strcat(c, ",");
+    strcat(c, p2_score);
     strcat(c, ":");
     int a;
     for(int i=26; i>=0; i--)
@@ -142,8 +145,8 @@ char* pos_to_str_paren(const POSITION* p)
 {
     const char p1[27] = PLAYER1_POINTLABEL;
     const char p2[27] = PLAYER2_POINTLABEL;
-    char p1_score[2];
-    char p2_score[2];
+    char p1_score[10];
+    char p2_score[10];
     char _d[2];
     char* c = malloc(100 * sizeof(char));
     char* c_spare = malloc(50 * sizeof(char));
@@ -153,7 +156,9 @@ char* pos_to_str_paren(const POSITION* p)
     memcpy(c_point, "\0", 1);
     sprintf(p1_score, "%d", p->p1_score);
     sprintf(p2_score, "%d", p->p2_score);
-    snprintf(c, sizeof(c), "%s,%s", p1_score, p2_score);
+    strcat(c, p1_score);
+    strcat(c, ",");
+    strcat(c, p2_score);
     strcat(c, ":");
     int a;
 
@@ -2245,12 +2250,12 @@ int main(int argc, char **argv)
     /* pos_print(pos_ptr); */
     /* pos_ptr->checker[24] = 25; */
 
-    /* char* ctest; */
-    /* ctest= pos_to_str(&POS_DEFAULT); */
-    /* printf("ctest: %s\n", ctest); */
-    /* ctest= pos_to_str_paren(&POS_DEFAULT); */
-    /* printf("ctest2: %s\n", ctest); */
-    /* free(ctest); */
+    char* ctest;
+    ctest= pos_to_str(&POS_DEFAULT);
+    printf("ctest: %s\n", ctest);
+    ctest= pos_to_str_paren(&POS_DEFAULT);
+    printf("ctest2: %s\n", ctest);
+    free(ctest);
 
     IupOpen(&argc, &argv);
     IupControlsOpen();
