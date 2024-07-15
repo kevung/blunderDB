@@ -1758,14 +1758,14 @@ static int canvas_button_cb(Ihandle* ih, const int button,
             if(is_in_up) {
                 if(!is_in_uplabel) {
                     if(abs(iy)==5 && abs(pos_ptr->checker[25])>=5) {
-                        pos_ptr->checker[25] -= 1;
-                    } else { pos_ptr->checker[25] = (-iy); }
+                        pos_ptr->checker[25] += 1;
+                    } else { pos_ptr->checker[25] = iy; }
                 } else {pos_ptr->checker[25] = 0; }
             } else if(is_in_down) {
                 if(!is_in_downlabel) {
                     if(abs(iy)==5 && abs(pos_ptr->checker[0])>=5) {
-                        pos_ptr->checker[0] += 1;
-                    } else { pos_ptr->checker[0] = (-iy); }
+                        pos_ptr->checker[0] -= 1;
+                    } else { pos_ptr->checker[0] = iy; }
                 } else { pos_ptr->checker[0] = 0; }
             } else if(is_in_center) {
                 pos_ptr->checker[25] = 0;
