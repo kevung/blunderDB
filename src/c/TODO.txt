@@ -1,3 +1,5 @@
+- Bug : course fausse quand homme à la barre
+- Bug : nombre checker off faux quand homme à la barre
 3. Vérifier str_to_pos, str_to_pos_paren, pos_to_str fonctionne à crawford, postcrawford, unlimited.
 
 Plus tard:
