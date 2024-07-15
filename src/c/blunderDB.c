@@ -1120,6 +1120,8 @@ static int set_visibility_on(Ihandle*);
 static int toggle_visibility_cb(Ihandle*);
 static int toggle_analysis_visibility_cb();
 static int toggle_edit_visibility_cb();
+static int toggle_edit_mode_cb();
+static int toggle_search_mode_cb();
 static int toggle_searches_visibility_cb();
 void error_callback(void);
 
@@ -1131,11 +1133,30 @@ void error_callback(void);
 #define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 
+enum mode { NORMAL, EDIT, SEARCH };
+typedef enum mode mode_t;
+mode_t mode_active = NORMAL;
+
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *edit, *analysis, *canvas, *search, *matchlib;
 Ihandle *search1, *search2, *search3;
+Ihandle *sb_mode; // sb=statusbar
 Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
 bool is_searches_visible = false;
+
+char* mode_to_str(const int mode) {
+    char s[20]; s[0]='\0';
+    switch(mode) {
+        case NORMAL:
+            return "NORMAL";
+        case EDIT:
+            return "EDIT";
+        case SEARCH:
+            return "SEARCH";
+        default:
+            return "UNKNOWN";
+    }
+}
 
 static Ihandle* create_menus(void)
 {
@@ -1493,7 +1514,15 @@ static Ihandle* create_statusbar(void)
 {
     Ihandle *ih;
 
-    ih = IupLabel("NORMAL MODE");
+    char text[100];
+
+    text[0] = '\0';
+    strcat(text, mode_to_str(mode_active));
+    sb_mode = IupLabel(text);
+
+    ih = IupHbox(sb_mode,
+            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+            NULL);
     IupSetAttribute(ih, "NAME", "STATUSBAR");
     IupSetAttribute(ih, "EXPAND", "HORIZONTAL");
     IupSetAttribute(ih, "PADDIND", "10x5");
@@ -1607,9 +1636,10 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
-    IupSetCallback(dlg, "K_cE", (Icallback) toggle_edit_visibility_cb);
+    IupSetCallback(dlg, "K_cE", (Icallback) toggle_edit_mode_cb);
+    IupSetCallback(dlg, "K_cF", (Icallback) toggle_search_mode_cb);
     IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
-    IupSetCallback(dlg, "K_cF", (Icallback) toggle_searches_visibility_cb);
+    IupSetCallback(dlg, "K_cL", (Icallback) toggle_searches_visibility_cb);
 }
 
 /************************ Callbacks ***********************/
@@ -2184,7 +2214,38 @@ static int set_visibility_on(Ihandle* ih)
 
 static int toggle_edit_visibility_cb()
 {
+    if(mode_active != EDIT) {
+        mode_active=EDIT;
+    } else { mode_active=NORMAL; }
     toggle_visibility_cb(edit);
+    printf("Edit toggle: %s\n", mode_to_str(mode_active));
+    IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
+    printf(IupGetAttribute(sb_mode, "TITLE"));
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
+}
+
+static int toggle_edit_mode_cb()
+{
+    if(mode_active != EDIT) {
+        mode_active=EDIT;
+    } else { mode_active=NORMAL; }
+    printf("Edit toggle: %s\n", mode_to_str(mode_active));
+    IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
+    printf(IupGetAttribute(sb_mode, "TITLE"));
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
+}
+
+static int toggle_search_mode_cb()
+{
+    if(mode_active != SEARCH) {
+        mode_active=SEARCH;
+    } else { mode_active=NORMAL; }
+    printf("Search toggle: %s\n", mode_to_str(mode_active));
+    IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
+    printf(IupGetAttribute(sb_mode, "TITLE"));
+    IupRefresh(dlg);
     return IUP_DEFAULT;
 }
 
