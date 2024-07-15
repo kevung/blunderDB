@@ -1694,6 +1694,8 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     bool is_on_score1, is_on_score2;
     bool is_in_board2, is_on_bar2, is_in_center2, is_on_point2;
 
+    if(mode_active!=EDIT) return IUP_DEFAULT;
+
     mouse_hold=false;
 
     if(BOARD_DIRECTION==1) dir=1;
