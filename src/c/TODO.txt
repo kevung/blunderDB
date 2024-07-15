@@ -54,7 +54,7 @@ Ctrl-G: info on collection (number of position; which collection the position is
 
 Edit mode
 =========
-keyboad shortcuts to edit position
+keyboard shortcuts to edit position
 Toggle number/letter point
 
 Match mode
@@ -69,3 +69,9 @@ Statusbar: mode, collection, hash of position.
 1 file = collection
 1 file = blunders
 1 file = match
+
+
+Inspirations
+============
+Vim
+Why
