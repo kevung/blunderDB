@@ -1120,8 +1120,8 @@ static int set_visibility_on(Ihandle*);
 static int toggle_visibility_cb(Ihandle*);
 static int toggle_analysis_visibility_cb();
 static int toggle_edit_visibility_cb();
-static int toggle_edit_mode_cb();
-static int toggle_search_mode_cb();
+static int toggle_editmode_cb();
+static int toggle_searchmode_cb();
 static int toggle_searches_visibility_cb();
 void error_callback(void);
 
@@ -1354,6 +1354,7 @@ static Ihandle* create_toolbar(void)
     Ihandle *btn_cut, *btn_copy, *btn_paste;
     Ihandle *btn_undo, *btn_redo;
     Ihandle *btn_prev, *btn_next;
+    Ihandle *btn_edit, *btn_search, *btn_list;
     Ihandle *btn_blunder, *btn_dice, *btn_cube, *btn_score, *btn_player;
     Ihandle *btn_preferences;
     Ihandle *btn_manual;
@@ -1430,6 +1431,21 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_next, "CANFOCUS", "No");
     IupSetAttribute(btn_next, "TIP", "Next Position");
 
+    btn_edit = IupButton("Edit", NULL);
+    IupSetAttribute(btn_edit, "FLAT", "Yes");
+    IupSetAttribute(btn_edit, "CANFOCUS", "No");
+    IupSetAttribute(btn_edit, "TIP", "Edit Mode (Ctrl+E)");
+
+    btn_search = IupButton("Search", NULL);
+    IupSetAttribute(btn_search, "FLAT", "Yes");
+    IupSetAttribute(btn_search, "CANFOCUS", "No");
+    IupSetAttribute(btn_search, "TIP", "Search Mode (Ctrl+F)");
+
+    btn_list = IupButton("List", NULL);
+    IupSetAttribute(btn_list, "FLAT", "Yes");
+    IupSetAttribute(btn_list, "CANFOCUS", "No");
+    IupSetAttribute(btn_list, "TIP", "List of positions (Ctrl+L)");
+
     btn_blunder = IupButton("Blunder", NULL);
     IupSetAttribute(btn_blunder, "FLAT", "Yes");
     IupSetAttribute(btn_blunder, "CANFOCUS", "No");
@@ -1476,6 +1492,8 @@ static Ihandle* create_toolbar(void)
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_prev, btn_next,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+            btn_edit, btn_search, btn_list,
+            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_blunder, btn_dice, btn_cube, btn_score, btn_player,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_preferences,
@@ -1499,6 +1517,9 @@ static Ihandle* create_toolbar(void)
     IupSetCallback(btn_paste, "ACTION", (Icallback) item_paste_action_cb);
     IupSetCallback(btn_next, "ACTION", (Icallback) item_nextposition_action_cb);
     IupSetCallback(btn_prev, "ACTION", (Icallback) item_prevposition_action_cb);
+    IupSetCallback(btn_edit, "ACTION", (Icallback) item_editmode_action_cb);
+    IupSetCallback(btn_search, "ACTION", (Icallback) item_searchmode_action_cb);
+    IupSetCallback(btn_list, "ACTION", (Icallback) toggle_searches_visibility_cb);
     IupSetCallback(btn_blunder, "ACTION", (Icallback) item_searchblunder_action_cb);
     IupSetCallback(btn_dice, "ACTION", (Icallback) item_searchdice_action_cb);
     IupSetCallback(btn_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
@@ -1636,8 +1657,8 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
-    IupSetCallback(dlg, "K_cE", (Icallback) toggle_edit_mode_cb);
-    IupSetCallback(dlg, "K_cF", (Icallback) toggle_search_mode_cb);
+    IupSetCallback(dlg, "K_cE", (Icallback) toggle_editmode_cb);
+    IupSetCallback(dlg, "K_cF", (Icallback) toggle_searchmode_cb);
     IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_searches_visibility_cb);
 }
@@ -2027,7 +2048,7 @@ static int item_paste_action_cb(void)
 
 static int item_editmode_action_cb(void)
 {
-    error_callback();
+    toggle_editmode_cb();
     return IUP_DEFAULT;
 }
 
@@ -2135,7 +2156,7 @@ static int item_searchengine_action_cb(void)
 
 static int item_searchmode_action_cb(void)
 {
-    error_callback();
+    toggle_searchmode_cb();
     return IUP_DEFAULT;
 }
 
@@ -2227,7 +2248,7 @@ static int toggle_edit_visibility_cb()
     return IUP_DEFAULT;
 }
 
-static int toggle_edit_mode_cb()
+static int toggle_editmode_cb()
 {
     if(mode_active != EDIT) {
         mode_active=EDIT;
@@ -2239,7 +2260,7 @@ static int toggle_edit_mode_cb()
     return IUP_DEFAULT;
 }
 
-static int toggle_search_mode_cb()
+static int toggle_searchmode_cb()
 {
     if(mode_active != SEARCH) {
         mode_active=SEARCH;
