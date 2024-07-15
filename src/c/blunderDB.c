@@ -1653,10 +1653,11 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     int dir, player, ix, iy, ixp, iyp, i, ip, i1, i2, iyn;
     bool mouse_hold;
     bool is_in_left, is_in_right, is_in_up, is_in_down, is_on_bar, is_in_center;
-    bool is_in_uplabel, is_in_downlabel, is_in_board; 
+    bool is_in_uplabel, is_in_downlabel, is_in_board, is_on_point; 
     bool is_in_cube, is_cube_in_center, is_cube_up, is_cube_down, 
          is_in_cube_positions;
     bool is_on_score1, is_on_score2;
+    bool is_in_board2, is_on_bar2, is_in_center2, is_on_point2;
 
     mouse_hold=false;
 
@@ -1670,17 +1671,6 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     iy = round(yw/POINT_SIZE);
     printf("ix: %i\niy: %i\n", ix, iy);
 
-    // for previous mouse state if clicked
-    if(mouse.pressed==1) {
-        y2p = cdCanvasInvertYAxis(cdv, mouse.y);
-        wdCanvasCanvas2World(cdv, mouse.x, y2p, &xwp, &ywp);
-        ixp = round(xwp/POINT_SIZE);
-        iyp = round(ywp/POINT_SIZE);
-        /* printf("PREVIOUS MOUSE STATE CLICKED\n"); */
-        /* printf("ixp: %i\niyp: %i\n", ixp, iyp); */
-        if(ix!=ixp || iy!=iyp ) mouse_hold=true;
-    }
-
     // labels (number or point) are in the board
     is_in_board = abs(ix)<=6 && abs(iy)<=6;
     is_in_uplabel = is_in_board && iy==6;
@@ -1690,6 +1680,7 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     is_in_down = iy<0 && iy>=-6;
     is_in_right = ix>0 && ix<=6;
     is_on_bar = is_in_board && ix==0;
+    is_on_point = is_in_board && !is_on_bar && iy!=0;
     is_in_center = ix==0 && iy==0;
     is_cube_in_center = (xw>=CUBE_XPOS) && (xw<=CUBE_XPOS+CUBE_SIZE)
         && (yw>=CUBE_YPOS_CENTER) && (yw<=CUBE_YPOS_CENTER+CUBE_SIZE);
@@ -1705,6 +1696,25 @@ static int canvas_button_cb(Ihandle* ih, const int button,
         (yw<=SCORE_YPOS_DOWN+1.5*POINT_SIZE);
     is_on_score2 = (xw>=SCORE_XPOS-1.*POINT_SIZE) &&
         (yw>=SCORE_YPOS_UP-1.*POINT_SIZE);
+
+    // for previous mouse state if clicked
+    if(mouse.pressed==1) {
+        y2p = cdCanvasInvertYAxis(cdv, mouse.y);
+        wdCanvasCanvas2World(cdv, mouse.x, y2p, &xwp, &ywp);
+        ixp = round(xwp/POINT_SIZE);
+        iyp = round(ywp/POINT_SIZE);
+        is_in_board2 = abs(ixp)<=6 && abs(iyp)<=6;
+        is_on_bar2 = is_in_board2 && ixp==0;
+        is_on_point2 = is_in_board2 && !is_on_bar2 && iyp!=0;
+        if((ix!=ixp || iy!=iyp) && is_on_point && is_on_point2) mouse_hold=true;
+
+        /* printf("is_in_board: %i\n", is_in_board); */
+        /* printf("is_in_board2: %i\n", is_in_board2); */
+        /* printf("is_on_point: %i\n", is_on_point); */
+        /* printf("is_on_point2: %i\n", is_on_point2); */
+    }
+
+
 
     if(button==IUP_BUTTON1) player=1;
     if(button==IUP_BUTTON3) player=-1;
