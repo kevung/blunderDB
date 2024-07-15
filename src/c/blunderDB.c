@@ -1738,7 +1738,7 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     is_in_down = iy<0 && iy>=-6;
     is_in_right = ix>0 && ix<=6;
     is_on_bar = is_in_board && ix==0;
-    is_on_point = is_in_board && !is_on_bar && iy!=0;
+    is_on_point = is_in_board && ix!=0 && iy!=0;
     is_in_center = ix==0 && iy==0;
     is_cube_in_center = (xw>=CUBE_XPOS) && (xw<=CUBE_XPOS+CUBE_SIZE)
         && (yw>=CUBE_YPOS_CENTER) && (yw<=CUBE_YPOS_CENTER+CUBE_SIZE);
@@ -1763,7 +1763,7 @@ static int canvas_button_cb(Ihandle* ih, const int button,
         iyp = round(ywp/POINT_SIZE);
         is_in_board2 = abs(ixp)<=6 && abs(iyp)<=6;
         is_on_bar2 = is_in_board2 && ixp==0;
-        is_on_point2 = is_in_board2 && !is_on_bar2 && iyp!=0;
+        is_on_point2 = is_in_board2 && ixp!=0 && iyp!=0;
         if((ix!=ixp || iy!=iyp) && is_on_point && is_on_point2) mouse_hold=true;
 
         /* printf("is_in_board: %i\n", is_in_board); */
@@ -1807,7 +1807,7 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     }
 
     if(!pressed){
-        if(is_in_board && !is_on_bar) {
+        if(is_on_point) {
             i=find_point_index(ix, iy); 
             if(abs(iy)==1 && abs(pos_ptr->checker[i])>=5) {
                 pos_ptr->checker[i] += player;
