@@ -9,3 +9,63 @@ Plus tard:
 - Export des positions et matchs en txt.
 - Parsage des fichiers XG.
 
+
+
+Modes: Normal, Edit, Match
+VIM MODE
+
+1;pos;analyse
+2;pos;analyse
+3;pos;analyse
+4;pos;analyse
+
+Normal mode
+===========
+Space: `:`: toggle command mode
+tab: toggle edit mode
+m: mark. 'a register a (jump between position)
+gg: first pos
+G: last pos
+h: left: prev analysis
+j: down: scroll up: next pos
+k: up: scroll down: prev pos
+l: right: next analysis
+yy: copy pos
+p: paste pos
+dd: delete pos
+u: undo
+Ctrl-R: redo
+/: search score:pos;comment
+/.: search current edited position
+:e my-collection :open collection (cursor on last open position)
+:ls : list collection
+Ctrl-I: next jump
+Ctrl-O: prev jump
+Ctrl-G: info on collection (number of position; which collection the position is)
+:m open match where the current 
+:b<min>,<max> :b<max>,<min> :b<min>,100000 search position with blunders size
+:set analysis=off
+:w<collection> add/save position to collection (or current collection by default 'main')
+:d<collection> delete collection (but does not delete the positions)
+:help
+:find-position-without-analysis
+:export-collection-to-folder <path> (without Path, open a dialog)
+:? about
+
+Edit mode
+=========
+keyboad shortcuts to edit position
+Toggle number/letter point
+
+Match mode
+==========
+h: left: prev game
+j: down: scroll up: next pos
+k: up: scroll down: prev pos
+l: right: next game
+
+Statusbar: mode, collection, hash of position.
+1 line = 1 position
+1 file = collection
+1 file = blunders
+1 file = match
