@@ -1264,7 +1264,7 @@ static Ihandle* create_menus(void)
     item_search_score = IupItem("by &Score", NULL);
     item_search_player = IupItem("by &Player", NULL);
     item_search_engine = IupItem("Search &Engine", NULL);
-    item_searchmode = IupItem("Search &Mode", NULL);
+    item_searchmode = IupItem("Search &Mode\tCtrl+F", NULL);
     menu_search = IupMenu(item_search_blunder,
             item_search_dice, item_search_cube,
             item_search_score, item_search_player,
