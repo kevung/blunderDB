@@ -874,8 +874,9 @@ void draw_score(cdCanvas* cv, const int score, const int player){
 }
 
 void draw_checkeroff(cdCanvas* cv, const int nb_off, const int player, const int orientation){
-    char t[20], t2[3];
+    char t[20], t2[10];
     cdCanvasForeground(cv, CHECKEROFF_LINECOLOR);
+    if(nb_off<0) cdCanvasForeground(cv, CD_RED);
     cdCanvasTextAlignment(cv, CD_CENTER);
     cdCanvasFont(cv, CHECKEROFF_FONT, CHECKEROFF_STYLE, CHECKEROFF_FONTSIZE);
     t[0] = '('; t[1] = '\0';
@@ -2232,7 +2233,7 @@ int main(int argc, char **argv)
     /* err = str_to_pos("(SUmLhgfDc)AS2m2TWQRgf2", pos_ptr); */
     /* printf("str2pos err: %i\n", err); */
     /* pos_print(pos_ptr); */
-    /* pos_ptr->checker[25] = 8; */
+    /* pos_ptr->checker[24] = 25; */
 
     /* char* ctest; */
     /* ctest= pos_to_str(&POS_DEFAULT); */
