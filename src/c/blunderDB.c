@@ -1145,7 +1145,7 @@ enum mode { NORMAL, EDIT, SEARCH, MATCH };
 typedef enum mode mode_t;
 mode_t mode_active = NORMAL;
 
-bool make_point=false;
+bool make_point=true;
 bool is_score_to_fill=false;
 bool is_point_to_fill=false;
 bool is_cube_to_fill=false;
