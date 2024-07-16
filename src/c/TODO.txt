@@ -1,5 +1,5 @@
-Raccourcis claviers
-- Checkers on bar.
+- Checkers on bar. Raccourcis claviers ne fonctionnent pas.
+- Changer logique clavier pour le score. Au lieu de "3[" (3away pour joueur1), faire "[3" pour être cohérent des autres raccourcis.
 
 Plus tard:
 
