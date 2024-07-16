@@ -1141,7 +1141,7 @@ static int esc_cb(Ihandle*, int);
 #define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 
-enum mode { NORMAL, EDIT, SEARCH, MATCH };
+enum mode { NORMAL, EDIT, CMD, SEARCH, MATCH };
 typedef enum mode mode_t;
 mode_t mode_active = NORMAL;
 
