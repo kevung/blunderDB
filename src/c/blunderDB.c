@@ -1131,6 +1131,7 @@ static int parentleft_cb(Ihandle*, int);
 static int parentright_cb(Ihandle*, int);
 static int backspace_cb(Ihandle*, int);
 static int cr_cb(Ihandle*, int);
+static int esc_cb(Ihandle*, int);
 
 // END Prototypes
 
@@ -1672,6 +1673,7 @@ static void set_keyboard_shortcuts()
 {
 
     IupSetCallback(dlg, "K_TAB", (Icallback) toggle_editmode_cb);
+    IupSetCallback(dlg, "K_ESC", (Icallback) esc_cb);
     IupSetCallback(dlg, "K_minus", (Icallback) minus_cb);
     IupSetCallback(dlg, "K_bracketleft", (Icallback) bracketleft_cb);
     IupSetCallback(dlg, "K_bracketright", (Icallback) bracketright_cb);
@@ -2486,6 +2488,24 @@ static int cr_cb(Ihandle* ih, int c){
         case EDIT:
             make_point=!make_point;
             key_m=-1;
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int esc_cb(Ihandle* ih, int c){
+    printf("\nesc_cb\n");
+    switch(mode_active) {
+        case EDIT:
+            make_point=false;
+            is_score_to_fill=false;
+            is_point_to_fill=false;
+            is_cube_to_fill=false;
+            key_m=-1;
+            sign_m=1;
+            for(int i=0;i<4;i++) digit_m[i]='\0';
             break;
         default:
             break;
