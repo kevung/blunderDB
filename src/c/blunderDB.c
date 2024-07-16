@@ -1672,6 +1672,14 @@ static void set_keyboard_shortcuts()
 {
 
     IupSetCallback(dlg, "K_TAB", (Icallback) toggle_editmode_cb);
+    IupSetCallback(dlg, "K_minus", (Icallback) minus_cb);
+    IupSetCallback(dlg, "K_bracketleft", (Icallback) bracketleft_cb);
+    IupSetCallback(dlg, "K_bracketright", (Icallback) bracketright_cb);
+    IupSetCallback(dlg, "K_parentleft", (Icallback) parentleft_cb);
+    IupSetCallback(dlg, "K_parentright", (Icallback) parentright_cb);
+    IupSetCallback(dlg, "K_CR", (Icallback) cr_cb);
+    IupSetCallback(dlg, "K_BS", (Icallback) backspace_cb);
+
 
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
     IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
@@ -1746,14 +1754,6 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_8", (Icallback) digit_cb);
     IupSetCallback(dlg, "K_9", (Icallback) digit_cb);
     IupSetCallback(dlg, "K_0", (Icallback) digit_cb);
-
-    IupSetCallback(dlg, "K_minus", (Icallback) minus_cb);
-    IupSetCallback(dlg, "K_bracketleft", (Icallback) bracketleft_cb);
-    IupSetCallback(dlg, "K_bracketright", (Icallback) bracketright_cb);
-    IupSetCallback(dlg, "K_parentleft", (Icallback) parentleft_cb);
-    IupSetCallback(dlg, "K_parentright", (Icallback) parentright_cb);
-    IupSetCallback(dlg, "K_CR", (Icallback) cr_cb);
-    IupSetCallback(dlg, "K_BS", (Icallback) backspace_cb);
 
 }
 
