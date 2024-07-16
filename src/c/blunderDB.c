@@ -2563,7 +2563,7 @@ static int letter_cb(Ihandle* ih, int c){
                     }
                 } else {
                     for(int k=i1; k<=i2; k++) {
-                        pos_ptr->checker[k]=sign_m;
+                        pos_ptr->checker[k]+=sign_m;
                     }
                 }
                 draw_canvas(cdv);
