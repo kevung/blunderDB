@@ -2571,6 +2571,7 @@ static int letter_cb(Ihandle* ih, int c){
             is_cube_to_fill=true;
             if(islower(c)) *sign=1;
             if(isupper(c)) *sign=-1;
+            key_m=c;
         }
     }
 
@@ -2644,10 +2645,16 @@ static int digit_cb(Ihandle* ih, int c){
                 }
             } else if(isalpha(key_m)) {
                 printf("alpha\n");
+                if(tolower(key_m)!='z'){
                 pos_ptr->checker[point_m]+=sign_m*n;
                 if(n==0) pos_ptr->checker[point_m]=0;
                 draw_canvas(cdv);
                 is_point_to_fill=false;
+                } else {
+                    pos_ptr->cube=sign_m*n;
+                    is_cube_to_fill=false;
+                    draw_canvas(cdv);
+                }
                 key_m=-1;
             }
             break;

@@ -1,5 +1,4 @@
 Raccourcis claviers
-- Cube 
 - Checkers on bar.
 
 Plus tard:
