@@ -2598,10 +2598,6 @@ static int digit_cb(Ihandle* ih, int c){
                 printf("digit\n");
                 digit_m[1]=c;
                 key_m=c;
-            } else if(key_m==',') {
-                printf("comma\n");
-                key_m=c;
-                digit_m[0]=c;
             } else if(key_m=='-') {
                 printf("minus\n");
                 if(is_point_to_fill) {
