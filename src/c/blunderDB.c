@@ -1136,7 +1136,8 @@ static int esc_cb(Ihandle*, int);
 /************************ Interface ***********************/
 
 /* #define DEFAULT_SIZE "960x540" */
-#define DEFAULT_SIZE "864x486"
+/* #define DEFAULT_SIZE "864x486" */
+#define DEFAULT_SIZE "800x486"
 /* #define DEFAULT_SIZE "800x450" */
 #define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
