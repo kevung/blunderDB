@@ -1058,6 +1058,7 @@ void draw_canvas(cdCanvas* cv) {
 
 
 /************************ Prototypes **********************/
+// BEGIN Prototypes
 
 /* static int dlg_resize_cb(Ihandle*); */
 static int canvas_map_cb(Ihandle*);
@@ -1121,6 +1122,17 @@ static int toggle_editmode_cb();
 static int toggle_searchmode_cb();
 static int toggle_searches_visibility_cb();
 void error_callback(void);
+static int letter_cb(Ihandle*, int);
+static int digit_cb(Ihandle*, int);
+static int minus_cb(Ihandle*, int);
+static int bracketleft_cb(Ihandle*, int);
+static int bracketright_cb(Ihandle*, int);
+static int parentleft_cb(Ihandle*, int);
+static int parentright_cb(Ihandle*, int);
+static int backspace_cb(Ihandle*, int);
+static int cr_cb(Ihandle*, int);
+
+// END Prototypes
 
 /************************ Interface ***********************/
 
@@ -1130,9 +1142,19 @@ void error_callback(void);
 #define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 
-enum mode { NORMAL, EDIT, SEARCH };
+enum mode { NORMAL, EDIT, SEARCH, MATCH };
 typedef enum mode mode_t;
 mode_t mode_active = NORMAL;
+
+bool make_point=false;
+bool is_score_to_fill=false;
+bool is_point_to_fill=false;
+bool is_cube_to_fill=false;
+int point_m, point_m2;
+int key_m=-1;
+int sign_m=1;
+char digit_m[4];
+
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *edit, *analysis, *canvas, *search, *matchlib;
@@ -1646,21 +1668,97 @@ static Ihandle* create_searches(void)
 
 /*************** Keyboard Shortcuts ***********************/
 
-// FAIRE CAS PLUS DE 5 CHECKERS SUR POINT OU BAR !!!!
 static void set_keyboard_shortcuts()
 {
+
+    IupSetCallback(dlg, "K_TAB", (Icallback) toggle_editmode_cb);
+
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
     IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
-    IupSetCallback(dlg, "K_TAB", (Icallback) toggle_editmode_cb);
     IupSetCallback(dlg, "K_cF", (Icallback) toggle_searchmode_cb);
     IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_searches_visibility_cb);
+
+    IupSetCallback(dlg, "K_a", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_b", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_c", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_d", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_e", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_f", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_g", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_h", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_i", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_j", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_k", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_l", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_m", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_n", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_o", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_p", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_q", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_r", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_s", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_t", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_u", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_v", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_w", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_x", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_y", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_z", (Icallback) letter_cb);
+
+    IupSetCallback(dlg, "K_A", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_B", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_C", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_D", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_E", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_F", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_G", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_H", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_I", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_J", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_K", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_L", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_M", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_N", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_O", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_P", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_Q", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_R", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_S", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_T", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_U", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_V", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_W", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_X", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_Y", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_Z", (Icallback) letter_cb);
+
+    IupSetCallback(dlg, "K_1", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_2", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_3", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_4", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_5", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_6", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_7", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_8", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_9", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_0", (Icallback) digit_cb);
+
+    IupSetCallback(dlg, "K_minus", (Icallback) minus_cb);
+    IupSetCallback(dlg, "K_bracketleft", (Icallback) bracketleft_cb);
+    IupSetCallback(dlg, "K_bracketright", (Icallback) bracketright_cb);
+    IupSetCallback(dlg, "K_parentleft", (Icallback) parentleft_cb);
+    IupSetCallback(dlg, "K_parentright", (Icallback) parentright_cb);
+    IupSetCallback(dlg, "K_CR", (Icallback) cr_cb);
+    IupSetCallback(dlg, "K_BS", (Icallback) backspace_cb);
+
 }
 
 /************************ Callbacks ***********************/
+// BEGIN Callbacks
 
 static int canvas_map_cb(Ihandle* ih)
 {
@@ -2249,7 +2347,13 @@ static int toggle_editmode_cb()
 {
     if(mode_active != EDIT) {
         mode_active=EDIT;
-    } else { mode_active=NORMAL; }
+        is_pointletter_active=true;
+        draw_canvas(cdv);
+    } else {
+        mode_active=NORMAL;
+        is_pointletter_active=false;
+        draw_canvas(cdv);
+    }
     printf("Edit toggle: %s\n", mode_to_str(mode_active));
     IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
     printf(IupGetAttribute(sb_mode, "TITLE"));
@@ -2311,15 +2415,240 @@ void error_callback(void)
     IupMessage("Callback Error", "Functionality not implemented yet!");
 }
 
+static int minus_cb(Ihandle* ih, int c){
+    printf("\nminus_cb\n");
+    printf("key_m %c\n", key_m);
+    switch (mode_active) {
+        case EDIT:
+            if(key_m==-1){
+                is_score_to_fill=true;
+                digit_m[0]='-';
+                key_m=c;
+            } else if(isalpha(key_m)){
+                is_point_to_fill=true;
+                key_m=c;
+            }
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int bracketleft_cb(Ihandle* ih, const int c){
+    printf("\nbracketleft_cb\n");
+    printf("key_m %c\n", key_m);
+    switch (mode_active) {
+        case EDIT:
+            if(isdigit(key_m)){
+                digit_m[2]='\0';
+                int i = atoi(digit_m);
+                printf("p1_score i: %i\n", i);
+                pos_ptr->p1_score = i;
+                draw_canvas(cdv);
+            }
+            key_m=-1;
+            is_score_to_fill=false;
+            for(int i=0; i<4; i++) digit_m[i]='\0';
+            printf("digit_m %s\n", digit_m);
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int bracketright_cb(Ihandle* ih, int c){
+    printf("\nbracketright_cb\n");
+    switch (mode_active) {
+        case EDIT:
+            printf("key_m %c\n", key_m);
+            if(isdigit(key_m)){
+                digit_m[2]='\0';
+                int i = atoi(digit_m);
+                printf("p2_score i: %i\n", i);
+                pos_ptr->p2_score = i;
+                draw_canvas(cdv);
+            }
+            key_m=-1;
+            is_score_to_fill=false;
+            for(int i=0; i<4; i++) digit_m[i]='\0';
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int cr_cb(Ihandle* ih, int c){
+    printf("\ncr_cb\n");
+    switch(mode_active) {
+        case EDIT:
+            make_point=!make_point;
+            key_m=-1;
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int parentleft_cb(Ihandle* ih, int c){
+    printf("\nparentleft_cb\n");
+    switch(mode_active) {
+        case EDIT:
+            make_point=true;
+            key_m=-1;
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int parentright_cb(Ihandle* ih, int c){
+    printf("\nparentright_cb\n");
+    switch(mode_active) {
+        case EDIT:
+            make_point=true;
+            key_m=-1;
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+static int backspace_cb(Ihandle* ih, int c){
+    switch(mode_active) {
+        case(EDIT):
+            for(int i=0; i<26; i++) pos_ptr->checker[i]=0;
+            draw_canvas(cdv);
+            key_m=-1;
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int letter_cb(Ihandle* ih, int c){
+    printf("letter_cb %c\n", c);
+
+    void f(const char c, int* i, int* sign){
+        if(tolower(c)!='z') { //point
+            is_point_to_fill=true;
+            is_cube_to_fill=false;
+            key_m=c;
+            if(islower(c)) {
+                *i=char_in_string(c,PLAYER1_POINTLABEL);
+                *sign=1;
+            } else {
+                *i=char_in_string(c,PLAYER2_POINTLABEL);
+                *sign=-1;
+            }
+        } else { //cube
+            is_point_to_fill=false;
+            is_cube_to_fill=true;
+            if(islower(c)) *sign=1;
+            if(isupper(c)) *sign=-1;
+        }
+    }
+
+    switch (mode_active) {
+        case EDIT:
+            printf("key_m %c\n", key_m);
+            if(key_m==-1) {
+                f(c, &point_m, &sign_m);
+                printf("point_m %i\n", point_m);
+                printf("sign_m %i\n", sign_m);
+            } else if(isalpha(key_m)) {
+                pos_ptr->checker[point_m]=sign_m;
+                draw_canvas(cdv);
+                is_point_to_fill=false;
+                f(c, &point_m, &sign_m);
+            } else if(key_m=='-'){
+                f(c, &point_m2, &sign_m);
+                int i1=fmin(point_m, point_m2);
+                int i2=fmax(point_m, point_m2);
+                if(make_point) {
+                    for(int k=i1; k<=i2; k++) {
+                        pos_ptr->checker[k]=sign_m*2;
+                    }
+                } else {
+                    for(int k=i1; k<=i2; k++) {
+                        pos_ptr->checker[k]=sign_m;
+                    }
+                }
+                draw_canvas(cdv);
+                is_point_to_fill=false;
+                key_m=-1;
+            }
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int digit_cb(Ihandle* ih, int c){
+    printf("\ndigit_cb %c\n", c);
+    int i; int n; char s[2]; s[0]=c; s[1]='\0';
+    n = atoi(s);
+    switch (mode_active) {
+        case EDIT:
+            printf("key_m %c\n", key_m);
+            if(key_m==-1) {
+                printf("-1\n");
+                is_score_to_fill=true;
+                digit_m[0]=c;
+                key_m=c;
+            } else if(isdigit(key_m)) {
+                printf("digit\n");
+                digit_m[1]=c;
+                key_m=c;
+            } else if(key_m==',') {
+                printf("comma\n");
+                key_m=c;
+                digit_m[0]=c;
+            } else if(key_m=='-') {
+                printf("minus\n");
+                if(is_point_to_fill) {
+                    pos_ptr->checker[point_m]-=sign_m*n;
+                    is_point_to_fill=false;
+                    key_m=-1;
+                    draw_canvas(cdv);
+                } else if(is_score_to_fill) {
+                    digit_m[0]='-';
+                    digit_m[1]=c;
+                    key_m=c;
+                }
+            } else if(isalpha(key_m)) {
+                printf("alpha\n");
+                pos_ptr->checker[point_m]+=sign_m*n;
+                if(n==0) pos_ptr->checker[point_m]=0;
+                draw_canvas(cdv);
+                is_point_to_fill=false;
+                key_m=-1;
+            }
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+// END Callbacks
+
 /************************ Main ****************************/
 int main(int argc, char **argv)
 {
-    int err;
-
+    // initialization
     pos = POS_DEFAULT;
     /* pos = POS_VOID; */
     pos_ptr = &pos;
+    /* digit_m[0]='\0'; */
 
+    int err;
     /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
     /* err = str_to_pos("0,3:(a-f)", pos_ptr); */
     /* err = str_to_pos("1,3:(a-f)", pos_ptr); */
