@@ -2553,11 +2553,6 @@ static int letter_cb(Ihandle* ih, int c){
                 f(c, &point_m, &sign_m);
                 printf("point_m %i\n", point_m);
                 printf("sign_m %i\n", sign_m);
-            } else if(isalpha(key_m)) {
-                pos_ptr->checker[point_m]=sign_m;
-                draw_canvas(cdv);
-                is_point_to_fill=false;
-                f(c, &point_m, &sign_m);
             } else if(key_m=='-'){
                 f(c, &point_m2, &sign_m);
                 int i1=fmin(point_m, point_m2);
