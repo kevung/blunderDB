@@ -1127,8 +1127,6 @@ static int digit_cb(Ihandle*, int);
 static int minus_cb(Ihandle*, int);
 static int bracketleft_cb(Ihandle*, int);
 static int bracketright_cb(Ihandle*, int);
-static int parentleft_cb(Ihandle*, int);
-static int parentright_cb(Ihandle*, int);
 static int backspace_cb(Ihandle*, int);
 static int cr_cb(Ihandle*, int);
 static int esc_cb(Ihandle*, int);
@@ -1677,8 +1675,6 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_minus", (Icallback) minus_cb);
     IupSetCallback(dlg, "K_bracketleft", (Icallback) bracketleft_cb);
     IupSetCallback(dlg, "K_bracketright", (Icallback) bracketright_cb);
-    IupSetCallback(dlg, "K_parentleft", (Icallback) parentleft_cb);
-    IupSetCallback(dlg, "K_parentright", (Icallback) parentright_cb);
     IupSetCallback(dlg, "K_CR", (Icallback) cr_cb);
     IupSetCallback(dlg, "K_BS", (Icallback) backspace_cb);
 
@@ -2513,31 +2509,6 @@ static int esc_cb(Ihandle* ih, int c){
     return IUP_DEFAULT;
 }
 
-static int parentleft_cb(Ihandle* ih, int c){
-    printf("\nparentleft_cb\n");
-    switch(mode_active) {
-        case EDIT:
-            make_point=true;
-            key_m=-1;
-            break;
-        default:
-            break;
-    }
-    return IUP_DEFAULT;
-}
-
-static int parentright_cb(Ihandle* ih, int c){
-    printf("\nparentright_cb\n");
-    switch(mode_active) {
-        case EDIT:
-            make_point=true;
-            key_m=-1;
-            break;
-        default:
-            break;
-    }
-    return IUP_DEFAULT;
-}
 static int backspace_cb(Ihandle* ih, int c){
     switch(mode_active) {
         case(EDIT):
