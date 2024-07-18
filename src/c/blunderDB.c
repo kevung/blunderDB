@@ -13,7 +13,99 @@
 #include <wd.h>
 #include <sqlite3.h>
 
+/* Main sections: */
+/* - Prototypes, */ 
+/* - Data, */
+/* - Database, */
+/* - Drawing, */
+/* - Interface, */
+/* - Keyboard Shortcuts, */ 
+/* - Callbacks */
+
+/************************ Prototypes **********************/
+// BEGIN Prototypes
+
+/* static int dlg_resize_cb(Ihandle*); */
+static int canvas_map_cb(Ihandle*);
+static int canvas_unmap_cb(Ihandle*);
+static int canvas_action_cb(Ihandle*);
+static int canvas_dropfiles_cb(Ihandle*);
+static int canvas_motion_cb(Ihandle*);
+static int canvas_wheel_cb(Ihandle*);
+static int canvas_button_cb(Ihandle*, const int, const int,
+        const int, const int, char*);
+static int canvas_resize_cb(Ihandle*);
+static int item_new_action_cb(void);
+static int item_open_action_cb(void);
+static int item_recent_action_cb(void);
+static int item_save_action_cb(void);
+static int item_saveas_action_cb(void);
+static int item_import_action_cb(void);
+static int item_export_action_cb(void);
+static int item_properties_action_cb(void);
+static int item_exit_action_cb(void);
+static int item_undo_action_cb(void);
+static int item_redo_action_cb(void);
+static int item_copy_action_cb(void);
+static int item_cut_action_cb(void);
+static int item_paste_action_cb(void);
+static int item_editmode_action_cb(void);
+static int item_nextposition_action_cb(void);
+static int item_prevposition_action_cb(void);
+static int item_newposition_action_cb(void);
+static int item_importposition_action_cb(void);
+static int item_importpositionbybatch_action_cb(void);
+static int item_newlibrary_action_cb(void);
+static int item_deletelibrary_action_cb(void);
+static int item_addtolibrary_action_cb(void);
+static int item_importmatch_action_cb(void);
+static int item_importmatchbybatch_action_cb(void);
+static int item_matchlibrary_action_cb(void);
+static int item_searchblunder_action_cb(void);
+static int item_searchdice_action_cb(void);
+static int item_searchcubedecision_action_cb(void);
+static int item_searchscore_action_cb(void);
+static int item_searchplayer_action_cb(void);
+static int item_searchengine_action_cb(void);
+static int item_searchmode_action_cb(void);
+static int item_findpositionwithoutanalysis_action_cb(void);
+static int item_preferences_action_cb(void);
+static int item_helpmanual_action_cb(void);
+static int item_userguide_action_cb(void);
+static int item_tips_action_cb(void);
+static int item_commandmodehelp_action_cb(void);
+static int item_keyboardshortcuts_action_cb(void);
+static int item_getinvolved_action_cb(void);
+static int item_donate_action_cb(void);
+static int item_about_action_cb(void);
+static int set_visibility_off(Ihandle*);
+static int set_visibility_on(Ihandle*);
+static int toggle_visibility_cb(Ihandle*);
+static int toggle_analysis_visibility_cb();
+static int toggle_edit_visibility_cb();
+static int toggle_editmode_cb();
+static int toggle_cmdmode_cb();
+static int toggle_searchmode_cb();
+static int toggle_searches_visibility_cb();
+void error_callback(void);
+static int letter_cb(Ihandle*, int);
+static int digit_cb(Ihandle*, int);
+static int minus_cb(Ihandle*, int);
+static int bracketleft_cb(Ihandle*, int);
+static int bracketright_cb(Ihandle*, int);
+static int backspace_cb(Ihandle*, int);
+static int space_cb(Ihandle*, int);
+static int cr_cb(Ihandle*, int);
+static int esc_cb(Ihandle*, int);
+static int update_sb_msg(const char*);
+
+// END Prototypes
+
+
+
 /************************** Data *************************/
+
+/* BEGIN Data */
 
 #define PLAYER1 1
 #define PLAYER2 -1
@@ -1055,87 +1147,12 @@ void draw_canvas(cdCanvas* cv) {
     cdCanvasFlush(cv);
 }
 
+/* END Drawing */
 
-
-/************************ Prototypes **********************/
-// BEGIN Prototypes
-
-/* static int dlg_resize_cb(Ihandle*); */
-static int canvas_map_cb(Ihandle*);
-static int canvas_unmap_cb(Ihandle*);
-static int canvas_action_cb(Ihandle*);
-static int canvas_dropfiles_cb(Ihandle*);
-static int canvas_motion_cb(Ihandle*);
-static int canvas_wheel_cb(Ihandle*);
-static int canvas_button_cb(Ihandle*, const int, const int,
-        const int, const int, char*);
-static int canvas_resize_cb(Ihandle*);
-static int item_new_action_cb(void);
-static int item_open_action_cb(void);
-static int item_recent_action_cb(void);
-static int item_save_action_cb(void);
-static int item_saveas_action_cb(void);
-static int item_import_action_cb(void);
-static int item_export_action_cb(void);
-static int item_properties_action_cb(void);
-static int item_exit_action_cb(void);
-static int item_undo_action_cb(void);
-static int item_redo_action_cb(void);
-static int item_copy_action_cb(void);
-static int item_cut_action_cb(void);
-static int item_paste_action_cb(void);
-static int item_editmode_action_cb(void);
-static int item_nextposition_action_cb(void);
-static int item_prevposition_action_cb(void);
-static int item_newposition_action_cb(void);
-static int item_importposition_action_cb(void);
-static int item_importpositionbybatch_action_cb(void);
-static int item_newlibrary_action_cb(void);
-static int item_deletelibrary_action_cb(void);
-static int item_addtolibrary_action_cb(void);
-static int item_importmatch_action_cb(void);
-static int item_importmatchbybatch_action_cb(void);
-static int item_matchlibrary_action_cb(void);
-static int item_searchblunder_action_cb(void);
-static int item_searchdice_action_cb(void);
-static int item_searchcubedecision_action_cb(void);
-static int item_searchscore_action_cb(void);
-static int item_searchplayer_action_cb(void);
-static int item_searchengine_action_cb(void);
-static int item_searchmode_action_cb(void);
-static int item_findpositionwithoutanalysis_action_cb(void);
-static int item_preferences_action_cb(void);
-static int item_helpmanual_action_cb(void);
-static int item_userguide_action_cb(void);
-static int item_tips_action_cb(void);
-static int item_commandmodehelp_action_cb(void);
-static int item_keyboardshortcuts_action_cb(void);
-static int item_getinvolved_action_cb(void);
-static int item_donate_action_cb(void);
-static int item_about_action_cb(void);
-static int set_visibility_off(Ihandle*);
-static int set_visibility_on(Ihandle*);
-static int toggle_visibility_cb(Ihandle*);
-static int toggle_analysis_visibility_cb();
-static int toggle_edit_visibility_cb();
-static int toggle_editmode_cb();
-static int toggle_cmdmode_cb();
-static int toggle_searchmode_cb();
-static int toggle_searches_visibility_cb();
-void error_callback(void);
-static int letter_cb(Ihandle*, int);
-static int digit_cb(Ihandle*, int);
-static int minus_cb(Ihandle*, int);
-static int bracketleft_cb(Ihandle*, int);
-static int bracketright_cb(Ihandle*, int);
-static int backspace_cb(Ihandle*, int);
-static int space_cb(Ihandle*, int);
-static int cr_cb(Ihandle*, int);
-static int esc_cb(Ihandle*, int);
-
-// END Prototypes
 
 /************************ Interface ***********************/
+
+/* BEGIN Interface */
 
 /* #define DEFAULT_SIZE "960x540" */
 #define DEFAULT_SIZE "864x486"
@@ -1692,7 +1709,10 @@ static Ihandle* create_searches(void)
     return ih;
 }
 
+/* END Interface */
+
 /*************** Keyboard Shortcuts ***********************/
+/* BEGIN Keyboard Shortcuts */
 
 static void set_keyboard_shortcuts()
 {
@@ -1782,6 +1802,8 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_0", (Icallback) digit_cb);
 
 }
+
+/* END Keyboard Shortcuts */
 
 /************************ Callbacks ***********************/
 // BEGIN Callbacks
