@@ -447,7 +447,10 @@ void compute_checkeroff(POSITION* pos, int* off1, int* off2){
     }
 }
 
+/* END Data */
+
 /************************ Database ***********************/
+/* BEGIN Database */
 
 sqlite3 *db = NULL;
 bool is_db_saved = true;
@@ -587,7 +590,67 @@ int db_close(sqlite3 *db)
     return rc;
 }
 
+int db_insert_position(sqlite3 *db, const POSITION *p){
+    printf("\ndb_insert_position\n");
+    if(db==NULL) {
+        update_sb_msg("ERR: No database opened.");
+        return 0;
+    }
+    char _s[4]; //for(int i=0;i<4;i++) _s[i]='\0';
+    char sql_add_position[1000];
+    sql_add_position[0]='\0';
+    strcat(sql_add_position, "INSERT INTO position ");
+    strcat(sql_add_position, "(p0, p1, p2, p3, p4, p5, ");
+    strcat(sql_add_position, "p6, p7, p8, p9, p10, p11, ");
+    strcat(sql_add_position, "p12, p13, p14, p15, p16, p17, ");
+    strcat(sql_add_position, "p18, p19, p20, p21, p22, p23, ");
+    strcat(sql_add_position, "p24, p25, ");
+    strcat(sql_add_position, "player1_score, player2_score, ");
+    strcat(sql_add_position, "cube_position) ");
+    strcat(sql_add_position, "VALUES ");
+    strcat(sql_add_position, "(");
+    for(int i=0;i<26;i++){
+        sprintf(_s, "%d", p->checker[i]);
+        strcat(sql_add_position, _s);
+        strcat(sql_add_position, ", ");
+    }
+    sprintf(_s, "%d, %d, %d",
+            p->p1_score, p->p2_score, p->cube);
+    strcat(sql_add_position, _s);
+    strcat(sql_add_position, ") ");
+    strcat(sql_add_position, ";");
+    printf("Try to add new position.\n");
+    execute_sql(db, sql_add_position); 
+    update_sb_msg("Written position to database.");
+    return 1;
+}
+
+
+int db_update_position(sqlite3* db, const POSITION *cos){
+    return 1;
+}
+
+int db_select_position(sqlite3* db, POSITION *pos){
+    return 1;
+}
+
+int db_delete_position(sqlite3* db, POSITION *pos){
+    return 1;
+}
+
+int parse_cmdline(const char* cmdtext){
+    printf("\nparse_cmdline\n");
+    if(strncmp(cmdtext, ":w", 2)==0){
+        printf(":w\n");
+        db_insert_position(db, pos_ptr);
+    }
+    return 1;
+}
+/* END Database */
+
 /************************ Drawing *************************/
+
+/* BEGIN Drawing */
 
 #define BOARD_WIDTH 13.
 #define BOARD_HEIGHT 11.
