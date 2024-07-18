@@ -1242,7 +1242,7 @@ char *cmdtext;
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *cmdline, *edit, *analysis, *canvas, *search, *matchlib;
 Ihandle *search1, *search2, *search3;
-Ihandle *sb_mode; // sb=statusbar
+Ihandle *sb_mode, *sb_msg; // sb=statusbar
 Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
 bool is_searches_visible = false;
 
@@ -1665,8 +1665,20 @@ static Ihandle* create_statusbar(void)
     text[0] = '\0';
     strcat(text, mode_to_str(mode_active));
     sb_mode = IupLabel(text);
+    sb_msg = IupLabel("Message bar.");
+
+    IupSetAttribute(sb_mode, "NAME", "SB_MSG");
+    IupSetAttribute(sb_mode, "CANFOCUS", "NO");
+    IupSetAttribute(sb_mode, "FONTSIZE", "10");
+
+    IupSetAttribute(sb_msg, "NAME", "SB_MSG");
+    IupSetAttribute(sb_msg, "EXPAND", "HORIZONTAL");
+    IupSetAttribute(sb_msg, "CANFOCUS", "NO");
+    IupSetAttribute(sb_msg, "FONTSIZE", "10");
 
     ih = IupHbox(sb_mode,
+            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+            sb_msg,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             NULL);
     IupSetAttribute(ih, "NAME", "STATUSBAR");
@@ -1674,6 +1686,12 @@ static Ihandle* create_statusbar(void)
     IupSetAttribute(ih, "PADDIND", "10x5");
 
     return ih;
+}
+
+static int update_sb_msg(const char* msg_new){
+    IupSetAttribute(sb_msg, "TITLE", msg_new);
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
 }
 
 static Ihandle* create_canvas(void)
@@ -2121,9 +2139,11 @@ static int item_new_action_cb(void)
             const char *db_filename = IupGetAttribute(filedlg, "VALUE");
             int result = db_create(db_filename);
             if (result != 0) {
+                update_sb_msg("Database creation failed.");
                 printf("Database creation failed\n");
                 return result;
             }
+            update_sb_msg("Database created successfully.");
             printf("Database created successfully\n");
             break; 
 
@@ -2159,9 +2179,11 @@ static int item_open_action_cb(void)
             const char *db_filename = IupGetAttribute(filedlg, "VALUE");
             int result = db_open(db_filename);
             if (result != 0) {
+                update_sb_msg("Database opening failed.");
                 printf("Database opening failed\n");
                 return result;
             }
+            update_sb_msg("Database opened successfully.");
             printf("Database opened successfully\n");
             break; 
 
