@@ -2496,6 +2496,7 @@ static int toggle_cmdmode_cb()
         cmdtext = IupGetAttribute(cmdline, "VALUE");
         IupSetAttribute(cmdline, "VALUE", "");
         draw_canvas(cdv);
+        parse_cmdline(cmdtext);
     }
     IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
     IupRefresh(dlg);
