@@ -1119,6 +1119,7 @@ static int toggle_visibility_cb(Ihandle*);
 static int toggle_analysis_visibility_cb();
 static int toggle_edit_visibility_cb();
 static int toggle_editmode_cb();
+static int toggle_cmdmode_cb();
 static int toggle_searchmode_cb();
 static int toggle_searches_visibility_cb();
 void error_callback(void);
@@ -1128,6 +1129,7 @@ static int minus_cb(Ihandle*, int);
 static int bracketleft_cb(Ihandle*, int);
 static int bracketright_cb(Ihandle*, int);
 static int backspace_cb(Ihandle*, int);
+static int space_cb(Ihandle*, int);
 static int cr_cb(Ihandle*, int);
 static int esc_cb(Ihandle*, int);
 
@@ -1136,8 +1138,8 @@ static int esc_cb(Ihandle*, int);
 /************************ Interface ***********************/
 
 /* #define DEFAULT_SIZE "960x540" */
-/* #define DEFAULT_SIZE "864x486" */
-#define DEFAULT_SIZE "800x486"
+#define DEFAULT_SIZE "864x486"
+/* #define DEFAULT_SIZE "800x486" */
 /* #define DEFAULT_SIZE "800x450" */
 #define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
@@ -1155,9 +1157,10 @@ int key_m=-1;
 int sign_m=1;
 char digit_m[4];
 
+char *cmdtext;
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
-Ihandle *edit, *analysis, *canvas, *search, *matchlib;
+Ihandle *cmdline, *edit, *analysis, *canvas, *search, *matchlib;
 Ihandle *search1, *search2, *search3;
 Ihandle *sb_mode; // sb=statusbar
 Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
@@ -1170,8 +1173,12 @@ char* mode_to_str(const int mode) {
             return "NORMAL";
         case EDIT:
             return "EDIT";
+        case CMD:
+            return "COMMAND";
         case SEARCH:
             return "SEARCH";
+        case MATCH:
+            return "MATCH";
         default:
             return "UNKNOWN";
     }
@@ -1550,6 +1557,25 @@ static Ihandle* create_toolbar(void)
     return ih;
 }
 
+static Ihandle* create_cmdline(void)
+{
+    Ihandle* ih;
+    Ihandle* formattag;
+    ih = IupText(NULL);
+    IupSetAttribute(ih, "NAME", "CMDLINE");
+    IupSetAttribute(ih, "EXPAND", "HORIZONTAL");
+    IupSetAttribute(ih, "BORDER", "YES");
+    IupSetAttribute(ih, "SIZE", "x10");
+    IupSetAttribute(ih, "FONTSIZE", "12");
+    IupSetAttribute(ih, "CANFOCUS", "YES");
+    IupSetAttribute(ih, "CHANGECASE", "UPPER");
+    /* IupSetAttribute(ih, "NC", "82"); */
+
+    IupSetAttribute(ih, "VISIBLE", "NO");
+    IupSetAttribute(ih, "FLOATING", "YES");
+    return ih;
+}
+
 static Ihandle* create_statusbar(void)
 {
     Ihandle *ih;
@@ -1678,6 +1704,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_bracketright", (Icallback) bracketright_cb);
     IupSetCallback(dlg, "K_CR", (Icallback) cr_cb);
     IupSetCallback(dlg, "K_BS", (Icallback) backspace_cb);
+    IupSetCallback(dlg, "K_SP", (Icallback) space_cb);
 
 
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
@@ -2315,20 +2342,6 @@ static int item_about_action_cb(void)
     
 }
 
-static int set_visibility_off(Ihandle* ih)
-{
-    IupSetAttribute(ih, "VISIBLE", "NO");
-    IupSetAttribute(ih, "FLOATING", "YES");
-    return IUP_DEFAULT;
-}
-
-static int set_visibility_on(Ihandle* ih)
-{
-    IupSetAttribute(ih, "VISIBLE", "YES");
-    IupSetAttribute(ih, "FLOATING", "NO");
-    return IUP_DEFAULT;
-}
-
 static int toggle_edit_visibility_cb()
 {
     if(mode_active != EDIT) {
@@ -2348,6 +2361,7 @@ static int toggle_editmode_cb()
         mode_active=EDIT;
         is_pointletter_active=true;
         draw_canvas(cdv);
+        set_visibility_off(cmdline);
     } else {
         mode_active=NORMAL;
         is_pointletter_active=false;
@@ -2356,6 +2370,27 @@ static int toggle_editmode_cb()
     printf("Edit toggle: %s\n", mode_to_str(mode_active));
     IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
     printf(IupGetAttribute(sb_mode, "TITLE"));
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
+}
+
+static int toggle_cmdmode_cb()
+{
+    if(mode_active != CMD){
+        mode_active=CMD;
+        set_visibility_on(cmdline);
+        IupSetAttribute(cmdline, "INSERT", ":");
+        draw_canvas(cdv);
+        IupSetFocus(cmdline);
+    } else {
+        mode_active=NORMAL;
+        set_visibility_off(cmdline);
+        /* for(int i=0;i<100;i++) cmdtext[i]='\0'; */
+        cmdtext = IupGetAttribute(cmdline, "VALUE");
+        IupSetAttribute(cmdline, "VALUE", "");
+        draw_canvas(cdv);
+    }
+    IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
     IupRefresh(dlg);
     return IUP_DEFAULT;
 }
@@ -2388,6 +2423,20 @@ static int toggle_searches_visibility_cb()
         IupSetAttribute(split, "VALUE", DEFAULT_SPLIT_VALUE);
     }
     IupRefresh(dlg);
+    return IUP_DEFAULT;
+}
+
+static int set_visibility_on(Ihandle* ih){
+    IupSetAttribute(ih, "VISIBLE", "YES");
+    IupSetAttribute(ih, "FLOATING", "NO");
+    IupRefresh(ih);
+    return IUP_DEFAULT;
+}
+
+static int set_visibility_off(Ihandle* ih){
+    IupSetAttribute(ih, "VISIBLE", "NO");
+    IupSetAttribute(ih, "FLOATING", "YES");
+    IupRefresh(ih);
     return IUP_DEFAULT;
 }
 
@@ -2486,6 +2535,11 @@ static int cr_cb(Ihandle* ih, int c){
             make_point=!make_point;
             key_m=-1;
             break;
+        case CMD:
+            toggle_cmdmode_cb();
+            break;
+        case NORMAL:
+            break;
         default:
             break;
     }
@@ -2516,6 +2570,18 @@ static int backspace_cb(Ihandle* ih, int c){
             for(int i=0; i<26; i++) pos_ptr->checker[i]=0;
             draw_canvas(cdv);
             key_m=-1;
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int space_cb(Ihandle* ih, int c){
+    switch(mode_active) {
+        case(NORMAL):
+        case(EDIT):
+            toggle_cmdmode_cb(cmdline);
             break;
         default:
             break;
@@ -2672,6 +2738,7 @@ int main(int argc, char **argv)
 
     searches = create_searches();
     statusbar = create_statusbar();
+    cmdline = create_cmdline();
 
     split = IupSplit(position, searches);
     IupSetAttribute(split, "ORIENTATION", "HORIZONTAL");
@@ -2679,7 +2746,7 @@ int main(int argc, char **argv)
     /* IupSetAttribute(split, "MINMAX", DEFAULT_SPLIT_MINMAX); */
     /* IupSetAttribute(split, "AUTOHIDE", "YES"); */
 
-    vbox = IupVbox(toolbar, split, statusbar, NULL);
+    vbox = IupVbox(toolbar, split, statusbar, cmdline, NULL);
     IupSetAttribute(vbox, "NMARGIN", "10x10");
     IupSetAttribute(vbox, "GAP", "10");
 
