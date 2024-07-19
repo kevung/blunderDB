@@ -2194,7 +2194,9 @@ static int item_new_action_cb(void)
                 printf("Database creation failed\n");
                 return result;
             }
+            /* int result = db_open(db_filename); */
             update_sb_msg(msg_info_db_created);
+            draw_canvas(cdv);
             printf("Database created successfully\n");
             break; 
 
