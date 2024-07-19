@@ -17,8 +17,8 @@
 /* - Prototypes, */ 
 /* - Data, */
 /* - Database, */
-/* - Drawing, */
 /* - Interface, */
+/* - Drawing, */
 /* - Keyboard Shortcuts, */ 
 /* - Callbacks */
 
@@ -638,579 +638,8 @@ int db_delete_position(sqlite3* db, POSITION *pos){
     return 1;
 }
 
-int parse_cmdline(const char* cmdtext){
-    printf("\nparse_cmdline\n");
-    if(strncmp(cmdtext, ":w", 2)==0){
-        printf(":w\n");
-        db_insert_position(db, pos_ptr);
-    }
-    return 1;
-}
 /* END Database */
 
-/************************ Drawing *************************/
-
-/* BEGIN Drawing */
-
-#define BOARD_WIDTH 13.
-#define BOARD_HEIGHT 11.
-#define BOARD_WITH_DECORATIONS_HEIGHT (BOARD_HEIGHT+2.*POINT_SIZE)
-#define BOARD_DIRECTION 1
-#define POINT_SIZE (BOARD_WIDTH/13.)
-#define CHECKER_SIZE (0.95*POINT_SIZE)
-#define CHECKER_LINECOLOR CD_BLACK
-#define CHECKER_LINEWIDTH 3
-#define CHECKER1_COLOR CD_BLACK
-#define CHECKER2_COLOR CD_WHITE
-#define CHECKER1_TEXTCOLOR CD_WHITE
-#define CHECKER2_TEXTCOLOR CD_BLACK
-#define CHECKER_TEXTLINEWIDTH 3
-#define CHECKER_FONT "Times"
-#define CHECKER_FONTSIZE 20
-#define CHECKER_STYLE CD_PLAIN
-#define BAR_WIDTH POINT_SIZE
-#define BOARD_COLOR CD_BLACK
-#define BOARD_LINEWIDTH 6
-#define TRIANGLE_LINEWIDTH 2
-#define TRIANGLE_LINECOLOR CD_BLACK
-#define TRIANGLE1_COLOR CD_WHITE
-#define TRIANGLE2_COLOR 0xd0d0d0
-#define TRIANGLE2_HATCH 0
-#define CUBE_LINEWIDTH 5
-#define CUBE_TEXTLINEWIDTH 3
-#define CUBE_LINECOLOR CD_BLACK
-#define CUBE_SIZE (1.1*POINT_SIZE)
-#define CUBE_FONT "Times"
-#define CUBE_FONTSIZE 30
-#define CUBE_STYLE CD_PLAIN
-#define CUBE_XPOS (-BOARD_WIDTH/2. -1.5*POINT_SIZE)
-#define CUBE_YPOS_CENTER 0.
-#define CUBE_YPOS_UP (BOARD_HEIGHT/2. - CUBE_SIZE)
-#define CUBE_YPOS_DOWN (-BOARD_HEIGHT/2.)
-#define POINTNUMBER_FONT "Times"
-#define POINTNUMBER_FONTSIZE 20
-#define POINTNUMBER_STYLE CD_PLAIN
-#define POINTNUMBER_LINECOLOR CD_BLACK
-#define POINTNUMBER_YPOS_UP (BOARD_HEIGHT/2.+POINT_SIZE/2.)
-#define POINTNUMBER_YPOS_DOWN -(POINTNUMBER_YPOS_UP)
-#define SCORE_XPOS (BOARD_WIDTH/2.+1.7*POINT_SIZE)
-#define SCORE_YPOS_UP (BOARD_HEIGHT/2.+0.1*POINT_SIZE)
-#define SCORE_YPOS_DOWN (-SCORE_YPOS_UP)
-#define SCORE_FONT "Times"
-#define SCORE_FONTSIZE 20
-/* #define SCORE_STYLE CD_PLAIN */
-/* #define SCORE_STYLE CD_ITALIC */
-#define SCORE_STYLE CD_BOLD
-#define SCORE_LINECOLOR CD_BLACK
-#define CHECKEROFF_XPOS (BOARD_WIDTH/2.+POINT_SIZE)
-#define CHECKEROFF_YPOS_UP (3.*POINT_SIZE)
-#define CHECKEROFF_YPOS_DOWN (-CHECKEROFF_YPOS_UP)
-#define CHECKEROFF_FONT "Times"
-#define CHECKEROFF_FONTSIZE 15
-/* #define CHECKEROFF_STYLE CD_PLAIN */
-#define CHECKEROFF_STYLE CD_ITALIC
-#define CHECKEROFF_LINECOLOR CD_BLACK
-#define PIPCOUNT_XPOS (-BOARD_WIDTH/2.-2.0*POINT_SIZE)
-#define PIPCOUNT_YPOS_UP POINTNUMBER_YPOS_UP
-#define PIPCOUNT_YPOS_DOWN (-PIPCOUNT_YPOS_UP)
-#define PIPCOUNT_FONT "Times"
-#define PIPCOUNT_FONTSIZE 15
-/* #define PIPCOUNT_STYLE CD_PLAIN */
-#define PIPCOUNT_STYLE CD_PLAIN
-#define PIPCOUNT_LINECOLOR CD_BLACK
-
-cdCanvas *cdv = NULL;
-cdCanvas *db_cdv = NULL;
-
-typedef struct {
-    int button;
-    int pressed;
-    int x;
-    int y;
-    char* status;
-} MOUSE;
-
-void mouse_print(const MOUSE m){
-    printf("mouse_print()\n");
-    printf("button: %i\n", m.button);
-    printf("pressed: %i\n", m.pressed);
-    printf("x: %i\n", m.x);
-    printf("y: %i\n", m.y);
-    printf("status: %s\n", m.status);
-}
-
-MOUSE mouse;
-
-void draw_triangle(cdCanvas *cv, const double x, const double y, const double up, const int long color){
-    cdCanvasForeground(cv, color);
-    cdCanvasBegin(cv, CD_FILL);
-    wdCanvasVertex(cv, x, y);
-    wdCanvasVertex(cv, x+POINT_SIZE, y);
-    wdCanvasVertex(cv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
-    cdCanvasEnd(cv);
-
-    cdCanvasLineWidth(cv, TRIANGLE_LINEWIDTH);
-    cdCanvasForeground(cv, TRIANGLE_LINECOLOR);
-    cdCanvasLineStyle(cv, CD_CONTINUOUS);
-    cdCanvasBegin(cv, CD_CLOSED_LINES);
-    wdCanvasVertex(cv, x, y);
-    wdCanvasVertex(cv, x+POINT_SIZE, y);
-    wdCanvasVertex(cv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
-    cdCanvasEnd(cv);
-}
-
-char* cubeText(const int value) {
-    switch(value) {
-        case 0:
-            return "1";
-        case 1:
-            return "2";
-        case 2:
-            return "4";
-        case 3:
-            return "8";
-        case 4:
-            return "16";
-        case 5:
-            return "32";
-        case 6:
-            return "64";
-        case 7:
-            return "128";
-        case 8:
-            return "256";
-        case 9:
-            return "512";
-        case 10:
-            return "1024";
-        default:
-            return "?";
-    }
-}
-
-void draw_cube(cdCanvas *cv, const int value){
-    char* text = cubeText(abs(value));
-    double x = CUBE_XPOS;
-    double y = CUBE_YPOS_CENTER;
-    if(value>0) y = CUBE_YPOS_DOWN;
-    if(value<0) y = CUBE_YPOS_UP;
-    cdCanvasForeground(cv, CUBE_LINECOLOR);
-    cdCanvasLineStyle(cv, CD_CONTINUOUS);
-    cdCanvasLineWidth(cv, CUBE_LINEWIDTH);
-    cdCanvasLineJoin(cv, CD_ROUND);
-    wdCanvasRect(cv, x, x+CUBE_SIZE, y, y+CUBE_SIZE);
-    cdCanvasLineWidth(cv, CUBE_TEXTLINEWIDTH);
-    cdCanvasTextAlignment(cv, CD_CENTER);
-    cdCanvasFont(cv, CUBE_FONT, CUBE_STYLE, CUBE_FONTSIZE);
-    wdCanvasText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text);
-}
-
-void draw_board(cdCanvas* cv) {
-    for(int i=0; i<3; i++){
-        double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
-        double y = -BOARD_HEIGHT/2;
-        cdCanvasForeground(cv, TRIANGLE1_COLOR);
-        draw_triangle(cv, x, y, 1, TRIANGLE1_COLOR);
-        draw_triangle(cv, x+POINT_SIZE, -y, -1, TRIANGLE1_COLOR);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1, TRIANGLE1_COLOR);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1,
-                TRIANGLE1_COLOR);
-    }
-
-    if(TRIANGLE2_HATCH) cdCanvasHatch(cv, CD_HORIZONTAL);
-    for(int i=0; i<3; i++){
-        double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
-        double y = -BOARD_HEIGHT/2 +BOARD_HEIGHT;
-        cdCanvasForeground(cv, TRIANGLE2_COLOR);
-        draw_triangle(cv, x, y, -1, TRIANGLE2_COLOR);
-        draw_triangle(cv, x+POINT_SIZE, -y, 1, TRIANGLE2_COLOR);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1, TRIANGLE2_COLOR);
-        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1,
-                TRIANGLE2_COLOR);
-    }
-    if(TRIANGLE2_HATCH) cdCanvasInteriorStyle(cv, CD_SOLID);
-
-    cdCanvasForeground(cv, BOARD_COLOR);
-    cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
-    cdCanvasLineStyle(cv, CD_CONTINUOUS);
-    wdCanvasRect(cv, -BOARD_WIDTH/2, BOARD_WIDTH/2,
-            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
-    cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
-    wdCanvasRect(cv, -BAR_WIDTH/2, BAR_WIDTH/2,
-            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
-}
-
-void draw_pointnumber(cdCanvas* cv, const int orientation) {
-    double x, y;
-    char t[3];
-    cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
-    cdCanvasTextAlignment(cv, CD_CENTER);
-    cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
-    if(orientation>0) {
-
-        x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=1; i<7; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-
-        x = -POINT_SIZE;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=7; i<13; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-
-        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=13; i<19; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-        x = POINT_SIZE;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=19; i<25; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-    } else {
-
-        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=1; i<7; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-        x = POINT_SIZE;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=7; i<13; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-        x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=13; i<19; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-
-        x = -POINT_SIZE;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=19; i<25; i++){
-            sprintf(t, "%d", i);
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-    }
-}
-
-void draw_pointletter(cdCanvas* cv, const int orientation, const int cubevalue) {
-    const char p1[27] = PLAYER1_POINTLABEL;
-    double x, y;
-    char t[2];
-    cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
-    cdCanvasTextAlignment(cv, CD_CENTER);
-    cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
-    t[1] = '\0';
-
-    wdCanvasText(cv, 0, 0, "y");
-
-    if(cubevalue>0) {
-        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_DOWN+CUBE_SIZE/2, "z");
-    } else if(cubevalue<0) {
-        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_UP+CUBE_SIZE/2, "z");
-    } else {
-        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_CENTER+CUBE_SIZE/2, "z");
-    }
-
-    if(orientation>0) {
-
-        x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=1; i<7; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-
-        x = -POINT_SIZE;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=7; i<13; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-
-        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=13; i<19; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-        x = POINT_SIZE;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=19; i<25; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-    } else {
-
-        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=1; i<7; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-        x = POINT_SIZE;
-        y = POINTNUMBER_YPOS_DOWN;
-        for(int i=7; i<13; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x += POINT_SIZE;
-        }
-
-        x = BOARD_WIDTH/2 -POINT_SIZE/2;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=13; i<19; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-
-        x = -POINT_SIZE;
-        y = POINTNUMBER_YPOS_UP;
-        for(int i=19; i<25; i++){
-            t[0] = p1[i];
-            wdCanvasText(cv, x, y, t);
-            x -= POINT_SIZE;
-        }
-    }
-}
-
-void draw_score(cdCanvas* cv, const int score, const int player){
-    char t[20];
-    cdCanvasForeground(cv, SCORE_LINECOLOR);
-    cdCanvasTextAlignment(cv, CD_CENTER);
-    cdCanvasFont(cv, SCORE_FONT, SCORE_STYLE, SCORE_FONTSIZE);
-    if(score>=2) {
-        sprintf(t, "%d", score);
-        strcat(t, " away");
-    } else if(score==1) {
-        t[0] = '\0';
-        strcat(t, "\ncrawford");
-    } else if(score==0) {
-        t[0] = '\0';
-        strcat(t, "\npost\ncrawford");
-    } else {
-        t[0] = '\0';
-        strcat(t, "unlimited");
-    }
-    if(player>0) {
-        wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_DOWN, t);
-    } else {
-        wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_UP, t);
-    }
-}
-
-void draw_checkeroff(cdCanvas* cv, const int nb_off, const int player, const int orientation){
-    char t[20], t2[10];
-    cdCanvasForeground(cv, CHECKEROFF_LINECOLOR);
-    if(nb_off<0) cdCanvasForeground(cv, CD_RED);
-    cdCanvasTextAlignment(cv, CD_CENTER);
-    cdCanvasFont(cv, CHECKEROFF_FONT, CHECKEROFF_STYLE, CHECKEROFF_FONTSIZE);
-    t[0] = '('; t[1] = '\0';
-    sprintf(t2, "%d", nb_off);
-    strcat(t, t2);
-    strcat(t, " OFF)");
-    double x = CHECKEROFF_XPOS;
-    if(orientation<1) x = -x;
-    if(player>0) {
-        wdCanvasText(cv, x, CHECKEROFF_YPOS_DOWN, t);
-    } else {
-        wdCanvasText(cv, x, CHECKEROFF_YPOS_UP, t);
-    }
-}
-
-void draw_pipcount(cdCanvas* cv, const int pip, const int player){
-    char t[10], t2[5];
-    cdCanvasForeground(cv, PIPCOUNT_LINECOLOR);
-    cdCanvasTextAlignment(cv, CD_CENTER);
-    cdCanvasFont(cv, PIPCOUNT_FONT, PIPCOUNT_STYLE, PIPCOUNT_FONTSIZE);
-    t[0] = '\0';
-    strcat(t, "pip: ");
-    sprintf(t2, "%d", pip);
-    strcat(t, t2);
-    if(player>0) {
-        wdCanvasText(cv, PIPCOUNT_XPOS, PIPCOUNT_YPOS_DOWN, t);
-    } else {
-        wdCanvasText(cv, PIPCOUNT_XPOS, PIPCOUNT_YPOS_UP, t);
-    }
-}
-
-/* ATTENTION TRAITER LE CAS SI PLUS DE 6 CHECKERS */
-void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
-    double xc, yc, eps;
-
-    if(BOARD_DIRECTION==1) eps = 1;
-    if(BOARD_DIRECTION!=1) eps = -1;
-
-    cdCanvasForeground(cv, CHECKER_LINECOLOR);
-    cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
-    cdCanvasLineStyle(cv, CD_CONTINUOUS);
-
-    void draw_number_checkers(const double x, const double y, const int i) {
-        char text[3];
-        text[0]='\0';
-        sprintf(text, "%d", i);
-        cdCanvasLineWidth(cv, CHECKER_TEXTLINEWIDTH);
-        cdCanvasTextAlignment(cv, CD_CENTER);
-        cdCanvasFont(cv, CHECKER_FONT, CHECKER_STYLE, CHECKER_FONTSIZE);
-        wdCanvasText(cv, x, y, text);
-    }
-
-    void draw_checker_samepoint(const double xc, const double yc,
-            const int point, const double dir) {
-        double _yc = yc; int q;
-        int n=abs(p->checker[point]);
-        if(n<=5) q=n;
-        if(n>5) q=5;
-        for(int k=0; k<q; k++) {
-            if(p->checker[point]>0) {
-                cdCanvasForeground(cv, CHECKER1_COLOR);
-            } else {
-                cdCanvasForeground(cv, CHECKER2_COLOR);
-            }
-            wdCanvasSector(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
-            cdCanvasForeground(cv, CHECKER_LINECOLOR);
-            cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
-            cdCanvasLineStyle(cv, CD_CONTINUOUS);
-            wdCanvasArc(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
-            _yc += dir*CHECKER_SIZE;
-        }
-        if(n>5) {
-            if(p->checker[point]>0) {
-                cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
-            } else {
-                cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
-            }
-            draw_number_checkers(xc, yc+dir*4.*CHECKER_SIZE, n);
-        }
-    }
-
-    void draw_checker_onbar(const int player) {
-        int i, color; double dir, xc, yc; xc=0;
-        int n, q;
-        if(player==PLAYER1) {dir=1.0; i=25; color=CHECKER1_COLOR;}
-        if(player==PLAYER2) {dir=-1.0; i=0; color=CHECKER2_COLOR;}
-        n=abs(p->checker[i]); 
-        if(n<=5) q=n;
-        if(n>5) q=5;
-        yc=dir*POINT_SIZE;
-        for(int k=0; k<q; k++) {
-            cdCanvasForeground(cv, color);
-            wdCanvasSector(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
-            cdCanvasForeground(cv, CHECKER_LINECOLOR);
-            cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
-            cdCanvasLineStyle(cv, CD_CONTINUOUS);
-            wdCanvasArc(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
-            yc += dir*CHECKER_SIZE;
-        }
-        if(n>5) {
-            if(player==PLAYER1) cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
-            if(player==PLAYER2) cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
-            draw_number_checkers(xc, dir*(POINT_SIZE+4.*CHECKER_SIZE), n);
-        }
-    }
-
-    draw_checker_onbar(PLAYER1);
-    draw_checker_onbar(PLAYER2);
-
-    xc = eps*(BOARD_WIDTH/2 -0.5*POINT_SIZE);
-    for(int i=24; i>=19; i--) {
-        yc = BOARD_HEIGHT/2 -0.5*CHECKER_SIZE;
-        draw_checker_samepoint(xc, yc, i, -1);
-        xc -= eps*POINT_SIZE;
-    }
-
-    xc = eps*-POINT_SIZE;
-    for(int i=18; i>=13; i--) {
-        yc = BOARD_HEIGHT/2 -0.5*CHECKER_SIZE;
-        draw_checker_samepoint(xc, yc, i, -1);
-        xc -= eps*POINT_SIZE;
-    }
-
-    xc = eps*(-BOARD_WIDTH/2+POINT_SIZE/2);
-    for(int i=12; i>=7; i--) {
-        yc = -BOARD_HEIGHT/2 +0.5*CHECKER_SIZE;
-        draw_checker_samepoint(xc, yc, i, 1);
-        xc += eps*POINT_SIZE;
-    }
-
-    xc = eps*POINT_SIZE;
-    for(int i=6; i>=1; i--) {
-        yc = -BOARD_HEIGHT/2 +0.5*CHECKER_SIZE;
-        draw_checker_samepoint(xc, yc, i, 1);
-        xc += eps*POINT_SIZE;
-    }
-
-}
-
-void draw_canvas(cdCanvas* cv) {
-    int i, w, h;
-    int pip1=0, pip2=0;
-    int off1=0, off2=0;
-    cdCanvasActivate(cv);
-    cdCanvasGetSize(cv, &w, &h, NULL, NULL);
-    printf("canvas: %i, %i\n", w, h);
-    cdCanvasBackground(cv, CD_WHITE);
-    cdCanvasClear(cv);
-
-    wdCanvasViewport(cv, 0, w-1, 0, h-1);
-
-    double wd_h = BOARD_WITH_DECORATIONS_HEIGHT;
-    double wd_w = (double) w* wd_h/(double) h;
-    wdCanvasWindow(cv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
-
-    compute_pipcount(pos_ptr, &pip1, &pip2);
-    compute_checkeroff(pos_ptr, &off1, &off2);
-
-    draw_board(cv);
-    draw_checker(cv, pos_ptr, BOARD_DIRECTION);
-    draw_cube(cv, pos_ptr->cube);
-    draw_checkeroff(cv, off1, PLAYER1, BOARD_DIRECTION);
-    draw_checkeroff(cv, off2, PLAYER2, BOARD_DIRECTION);
-    if(is_pointletter_active) {
-        draw_pointletter(cv, BOARD_DIRECTION, pos_ptr->cube);
-    } else {
-        draw_pointnumber(cv, BOARD_DIRECTION);
-    }
-    draw_score(cv, pos_ptr->p1_score, PLAYER1);
-    draw_score(cv, pos_ptr->p2_score, PLAYER2);
-    draw_pipcount(cv, pip1, PLAYER1);
-    draw_pipcount(cv, pip2, PLAYER2);
-
-    cdCanvasFlush(cv);
-}
-
-/* END Drawing */
 
 
 /************************ Interface ***********************/
@@ -1238,6 +667,13 @@ int sign_m=1;
 char digit_m[4];
 
 char *cmdtext;
+
+const char* msg_err_no_database_opened =
+"ERR: No database opened.";
+const char* msg_info_position_written = 
+"Position written to database.";
+const char* msg_info_no_database_loaded =
+"No database loaded.";
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *cmdline, *edit, *analysis, *canvas, *search, *matchlib;
@@ -1790,7 +1226,598 @@ static Ihandle* create_searches(void)
     return ih;
 }
 
+int parse_cmdline(const char* cmdtext){
+    printf("\nparse_cmdline\n");
+
+    if(strncmp(cmdtext, ":w", 2)==0){
+        printf(":w\n");
+        if(db==NULL) {
+            update_sb_msg(msg_err_no_database_opened);
+            return 0;
+        } else {
+            db_insert_position(db, pos_ptr);
+            update_sb_msg(msg_info_position_written);
+        }
+    /* } else if(strncmp(cmdtext, ":q", 2)==0){ */
+    /*     item_exit_action_cb(); */
+    }
+    return 1;
+}
+
+
+
 /* END Interface */
+
+/************************ Drawing *************************/
+
+/* BEGIN Drawing */
+
+#define BOARD_WIDTH 13.
+#define BOARD_HEIGHT 11.
+#define BOARD_WITH_DECORATIONS_HEIGHT (BOARD_HEIGHT+2.*POINT_SIZE)
+#define BOARD_DIRECTION 1
+#define POINT_SIZE (BOARD_WIDTH/13.)
+#define CHECKER_SIZE (0.95*POINT_SIZE)
+#define CHECKER_LINECOLOR CD_BLACK
+#define CHECKER_LINEWIDTH 3
+#define CHECKER1_COLOR CD_BLACK
+#define CHECKER2_COLOR CD_WHITE
+#define CHECKER1_TEXTCOLOR CD_WHITE
+#define CHECKER2_TEXTCOLOR CD_BLACK
+#define CHECKER_TEXTLINEWIDTH 3
+#define CHECKER_FONT "Times"
+#define CHECKER_FONTSIZE 20
+#define CHECKER_STYLE CD_PLAIN
+#define BAR_WIDTH POINT_SIZE
+#define BOARD_COLOR CD_BLACK
+#define BOARD_LINEWIDTH 6
+#define TRIANGLE_LINEWIDTH 2
+#define TRIANGLE_LINECOLOR CD_BLACK
+#define TRIANGLE1_COLOR CD_WHITE
+#define TRIANGLE2_COLOR 0xd0d0d0
+#define TRIANGLE2_HATCH 0
+#define CUBE_LINEWIDTH 5
+#define CUBE_TEXTLINEWIDTH 3
+#define CUBE_LINECOLOR CD_BLACK
+#define CUBE_SIZE (1.1*POINT_SIZE)
+#define CUBE_FONT "Times"
+#define CUBE_FONTSIZE 30
+#define CUBE_STYLE CD_PLAIN
+#define CUBE_XPOS (-BOARD_WIDTH/2. -1.5*POINT_SIZE)
+#define CUBE_YPOS_CENTER 0.
+#define CUBE_YPOS_UP (BOARD_HEIGHT/2. - CUBE_SIZE)
+#define CUBE_YPOS_DOWN (-BOARD_HEIGHT/2.)
+#define POINTNUMBER_FONT "Times"
+#define POINTNUMBER_FONTSIZE 20
+#define POINTNUMBER_STYLE CD_PLAIN
+#define POINTNUMBER_LINECOLOR CD_BLACK
+#define POINTNUMBER_YPOS_UP (BOARD_HEIGHT/2.+POINT_SIZE/2.)
+#define POINTNUMBER_YPOS_DOWN -(POINTNUMBER_YPOS_UP)
+#define SCORE_XPOS (BOARD_WIDTH/2.+1.7*POINT_SIZE)
+#define SCORE_YPOS_UP (BOARD_HEIGHT/2.+0.1*POINT_SIZE)
+#define SCORE_YPOS_DOWN (-SCORE_YPOS_UP)
+#define SCORE_FONT "Times"
+#define SCORE_FONTSIZE 20
+/* #define SCORE_STYLE CD_PLAIN */
+/* #define SCORE_STYLE CD_ITALIC */
+#define SCORE_STYLE CD_BOLD
+#define SCORE_LINECOLOR CD_BLACK
+#define CHECKEROFF_XPOS (BOARD_WIDTH/2.+POINT_SIZE)
+#define CHECKEROFF_YPOS_UP (3.*POINT_SIZE)
+#define CHECKEROFF_YPOS_DOWN (-CHECKEROFF_YPOS_UP)
+#define CHECKEROFF_FONT "Times"
+#define CHECKEROFF_FONTSIZE 15
+/* #define CHECKEROFF_STYLE CD_PLAIN */
+#define CHECKEROFF_STYLE CD_ITALIC
+#define CHECKEROFF_LINECOLOR CD_BLACK
+#define PIPCOUNT_XPOS (-BOARD_WIDTH/2.-2.0*POINT_SIZE)
+#define PIPCOUNT_YPOS_UP POINTNUMBER_YPOS_UP
+#define PIPCOUNT_YPOS_DOWN (-PIPCOUNT_YPOS_UP)
+#define PIPCOUNT_FONT "Times"
+#define PIPCOUNT_FONTSIZE 15
+/* #define PIPCOUNT_STYLE CD_PLAIN */
+#define PIPCOUNT_STYLE CD_PLAIN
+#define PIPCOUNT_LINECOLOR CD_BLACK
+
+cdCanvas *cdv = NULL;
+cdCanvas *db_cdv = NULL;
+
+typedef struct {
+    int button;
+    int pressed;
+    int x;
+    int y;
+    char* status;
+} MOUSE;
+
+void mouse_print(const MOUSE m){
+    printf("mouse_print()\n");
+    printf("button: %i\n", m.button);
+    printf("pressed: %i\n", m.pressed);
+    printf("x: %i\n", m.x);
+    printf("y: %i\n", m.y);
+    printf("status: %s\n", m.status);
+}
+
+MOUSE mouse;
+
+void draw_triangle(cdCanvas *cv, const double x, const double y, const double up, const int long color){
+    cdCanvasForeground(cv, color);
+    cdCanvasBegin(cv, CD_FILL);
+    wdCanvasVertex(cv, x, y);
+    wdCanvasVertex(cv, x+POINT_SIZE, y);
+    wdCanvasVertex(cv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
+    cdCanvasEnd(cv);
+
+    cdCanvasLineWidth(cv, TRIANGLE_LINEWIDTH);
+    cdCanvasForeground(cv, TRIANGLE_LINECOLOR);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
+    cdCanvasBegin(cv, CD_CLOSED_LINES);
+    wdCanvasVertex(cv, x, y);
+    wdCanvasVertex(cv, x+POINT_SIZE, y);
+    wdCanvasVertex(cv, x+POINT_SIZE/2, y + ((double) up)*5*POINT_SIZE);
+    cdCanvasEnd(cv);
+}
+
+char* cubeText(const int value) {
+    switch(value) {
+        case 0:
+            return "1";
+        case 1:
+            return "2";
+        case 2:
+            return "4";
+        case 3:
+            return "8";
+        case 4:
+            return "16";
+        case 5:
+            return "32";
+        case 6:
+            return "64";
+        case 7:
+            return "128";
+        case 8:
+            return "256";
+        case 9:
+            return "512";
+        case 10:
+            return "1024";
+        default:
+            return "?";
+    }
+}
+
+void draw_cube(cdCanvas *cv, const int value){
+    char* text = cubeText(abs(value));
+    double x = CUBE_XPOS;
+    double y = CUBE_YPOS_CENTER;
+    if(value>0) y = CUBE_YPOS_DOWN;
+    if(value<0) y = CUBE_YPOS_UP;
+    cdCanvasForeground(cv, CUBE_LINECOLOR);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
+    cdCanvasLineWidth(cv, CUBE_LINEWIDTH);
+    cdCanvasLineJoin(cv, CD_ROUND);
+    wdCanvasRect(cv, x, x+CUBE_SIZE, y, y+CUBE_SIZE);
+    cdCanvasLineWidth(cv, CUBE_TEXTLINEWIDTH);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, CUBE_FONT, CUBE_STYLE, CUBE_FONTSIZE);
+    wdCanvasText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text);
+}
+
+void draw_board(cdCanvas* cv) {
+    for(int i=0; i<3; i++){
+        double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
+        double y = -BOARD_HEIGHT/2;
+        cdCanvasForeground(cv, TRIANGLE1_COLOR);
+        draw_triangle(cv, x, y, 1, TRIANGLE1_COLOR);
+        draw_triangle(cv, x+POINT_SIZE, -y, -1, TRIANGLE1_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, 1, TRIANGLE1_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, -1,
+                TRIANGLE1_COLOR);
+    }
+
+    if(TRIANGLE2_HATCH) cdCanvasHatch(cv, CD_HORIZONTAL);
+    for(int i=0; i<3; i++){
+        double x = -BOARD_WIDTH/2 +((double) i)*2*POINT_SIZE;
+        double y = -BOARD_HEIGHT/2 +BOARD_HEIGHT;
+        cdCanvasForeground(cv, TRIANGLE2_COLOR);
+        draw_triangle(cv, x, y, -1, TRIANGLE2_COLOR);
+        draw_triangle(cv, x+POINT_SIZE, -y, 1, TRIANGLE2_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2, y, -1, TRIANGLE2_COLOR);
+        draw_triangle(cv, x+(BOARD_WIDTH+BAR_WIDTH)/2+POINT_SIZE, -y, 1,
+                TRIANGLE2_COLOR);
+    }
+    if(TRIANGLE2_HATCH) cdCanvasInteriorStyle(cv, CD_SOLID);
+
+    cdCanvasForeground(cv, BOARD_COLOR);
+    cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
+    wdCanvasRect(cv, -BOARD_WIDTH/2, BOARD_WIDTH/2,
+            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
+    cdCanvasLineWidth(cv, BOARD_LINEWIDTH);
+    wdCanvasRect(cv, -BAR_WIDTH/2, BAR_WIDTH/2,
+            -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
+}
+
+void draw_pointnumber(cdCanvas* cv, const int orientation) {
+    double x, y;
+    char t[3];
+    cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
+    if(orientation>0) {
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=1; i<7; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=7; i<13; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=13; i<19; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=19; i<25; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+    } else {
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=1; i<7; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=7; i<13; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=13; i<19; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=19; i<25; i++){
+            sprintf(t, "%d", i);
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+    }
+}
+
+void draw_pointletter(cdCanvas* cv, const int orientation, const int cubevalue) {
+    const char p1[27] = PLAYER1_POINTLABEL;
+    double x, y;
+    char t[2];
+    cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
+    t[1] = '\0';
+
+    wdCanvasText(cv, 0, 0, "y");
+
+    if(cubevalue>0) {
+        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_DOWN+CUBE_SIZE/2, "z");
+    } else if(cubevalue<0) {
+        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_UP+CUBE_SIZE/2, "z");
+    } else {
+        wdCanvasText(cv, CUBE_XPOS -.5*POINT_SIZE, CUBE_YPOS_CENTER+CUBE_SIZE/2, "z");
+    }
+
+    if(orientation>0) {
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=1; i<7; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=7; i<13; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=13; i<19; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=19; i<25; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+    } else {
+
+        x = -BOARD_WIDTH/2 +POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=1; i<7; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = POINT_SIZE;
+        y = POINTNUMBER_YPOS_DOWN;
+        for(int i=7; i<13; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x += POINT_SIZE;
+        }
+
+        x = BOARD_WIDTH/2 -POINT_SIZE/2;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=13; i<19; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+
+        x = -POINT_SIZE;
+        y = POINTNUMBER_YPOS_UP;
+        for(int i=19; i<25; i++){
+            t[0] = p1[i];
+            wdCanvasText(cv, x, y, t);
+            x -= POINT_SIZE;
+        }
+    }
+}
+
+void draw_score(cdCanvas* cv, const int score, const int player){
+    char t[20];
+    cdCanvasForeground(cv, SCORE_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, SCORE_FONT, SCORE_STYLE, SCORE_FONTSIZE);
+    if(score>=2) {
+        sprintf(t, "%d", score);
+        strcat(t, " away");
+    } else if(score==1) {
+        t[0] = '\0';
+        strcat(t, "\ncrawford");
+    } else if(score==0) {
+        t[0] = '\0';
+        strcat(t, "\npost\ncrawford");
+    } else {
+        t[0] = '\0';
+        strcat(t, "unlimited");
+    }
+    if(player>0) {
+        wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_DOWN, t);
+    } else {
+        wdCanvasText(cv, SCORE_XPOS, SCORE_YPOS_UP, t);
+    }
+}
+
+void draw_checkeroff(cdCanvas* cv, const int nb_off, const int player, const int orientation){
+    char t[20], t2[10];
+    cdCanvasForeground(cv, CHECKEROFF_LINECOLOR);
+    if(nb_off<0) cdCanvasForeground(cv, CD_RED);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, CHECKEROFF_FONT, CHECKEROFF_STYLE, CHECKEROFF_FONTSIZE);
+    t[0] = '('; t[1] = '\0';
+    sprintf(t2, "%d", nb_off);
+    strcat(t, t2);
+    strcat(t, " OFF)");
+    double x = CHECKEROFF_XPOS;
+    if(orientation<1) x = -x;
+    if(player>0) {
+        wdCanvasText(cv, x, CHECKEROFF_YPOS_DOWN, t);
+    } else {
+        wdCanvasText(cv, x, CHECKEROFF_YPOS_UP, t);
+    }
+}
+
+void draw_pipcount(cdCanvas* cv, const int pip, const int player){
+    char t[10], t2[5];
+    cdCanvasForeground(cv, PIPCOUNT_LINECOLOR);
+    cdCanvasTextAlignment(cv, CD_CENTER);
+    cdCanvasFont(cv, PIPCOUNT_FONT, PIPCOUNT_STYLE, PIPCOUNT_FONTSIZE);
+    t[0] = '\0';
+    strcat(t, "pip: ");
+    sprintf(t2, "%d", pip);
+    strcat(t, t2);
+    if(player>0) {
+        wdCanvasText(cv, PIPCOUNT_XPOS, PIPCOUNT_YPOS_DOWN, t);
+    } else {
+        wdCanvasText(cv, PIPCOUNT_XPOS, PIPCOUNT_YPOS_UP, t);
+    }
+}
+
+/* ATTENTION TRAITER LE CAS SI PLUS DE 6 CHECKERS */
+void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
+    double xc, yc, eps;
+
+    if(BOARD_DIRECTION==1) eps = 1;
+    if(BOARD_DIRECTION!=1) eps = -1;
+
+    cdCanvasForeground(cv, CHECKER_LINECOLOR);
+    cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
+    cdCanvasLineStyle(cv, CD_CONTINUOUS);
+
+    void draw_number_checkers(const double x, const double y, const int i) {
+        char text[3];
+        text[0]='\0';
+        sprintf(text, "%d", i);
+        cdCanvasLineWidth(cv, CHECKER_TEXTLINEWIDTH);
+        cdCanvasTextAlignment(cv, CD_CENTER);
+        cdCanvasFont(cv, CHECKER_FONT, CHECKER_STYLE, CHECKER_FONTSIZE);
+        wdCanvasText(cv, x, y, text);
+    }
+
+    void draw_checker_samepoint(const double xc, const double yc,
+            const int point, const double dir) {
+        double _yc = yc; int q;
+        int n=abs(p->checker[point]);
+        if(n<=5) q=n;
+        if(n>5) q=5;
+        for(int k=0; k<q; k++) {
+            if(p->checker[point]>0) {
+                cdCanvasForeground(cv, CHECKER1_COLOR);
+            } else {
+                cdCanvasForeground(cv, CHECKER2_COLOR);
+            }
+            wdCanvasSector(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            cdCanvasForeground(cv, CHECKER_LINECOLOR);
+            cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
+            cdCanvasLineStyle(cv, CD_CONTINUOUS);
+            wdCanvasArc(cv, xc, _yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            _yc += dir*CHECKER_SIZE;
+        }
+        if(n>5) {
+            if(p->checker[point]>0) {
+                cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
+            } else {
+                cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
+            }
+            draw_number_checkers(xc, yc+dir*4.*CHECKER_SIZE, n);
+        }
+    }
+
+    void draw_checker_onbar(const int player) {
+        int i, color; double dir, xc, yc; xc=0;
+        int n, q;
+        if(player==PLAYER1) {dir=1.0; i=25; color=CHECKER1_COLOR;}
+        if(player==PLAYER2) {dir=-1.0; i=0; color=CHECKER2_COLOR;}
+        n=abs(p->checker[i]); 
+        if(n<=5) q=n;
+        if(n>5) q=5;
+        yc=dir*POINT_SIZE;
+        for(int k=0; k<q; k++) {
+            cdCanvasForeground(cv, color);
+            wdCanvasSector(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            cdCanvasForeground(cv, CHECKER_LINECOLOR);
+            cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
+            cdCanvasLineStyle(cv, CD_CONTINUOUS);
+            wdCanvasArc(cv, xc, yc, CHECKER_SIZE, CHECKER_SIZE, 0, 360);
+            yc += dir*CHECKER_SIZE;
+        }
+        if(n>5) {
+            if(player==PLAYER1) cdCanvasForeground(cv, CHECKER1_TEXTCOLOR);
+            if(player==PLAYER2) cdCanvasForeground(cv, CHECKER2_TEXTCOLOR);
+            draw_number_checkers(xc, dir*(POINT_SIZE+4.*CHECKER_SIZE), n);
+        }
+    }
+
+    draw_checker_onbar(PLAYER1);
+    draw_checker_onbar(PLAYER2);
+
+    xc = eps*(BOARD_WIDTH/2 -0.5*POINT_SIZE);
+    for(int i=24; i>=19; i--) {
+        yc = BOARD_HEIGHT/2 -0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, -1);
+        xc -= eps*POINT_SIZE;
+    }
+
+    xc = eps*-POINT_SIZE;
+    for(int i=18; i>=13; i--) {
+        yc = BOARD_HEIGHT/2 -0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, -1);
+        xc -= eps*POINT_SIZE;
+    }
+
+    xc = eps*(-BOARD_WIDTH/2+POINT_SIZE/2);
+    for(int i=12; i>=7; i--) {
+        yc = -BOARD_HEIGHT/2 +0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, 1);
+        xc += eps*POINT_SIZE;
+    }
+
+    xc = eps*POINT_SIZE;
+    for(int i=6; i>=1; i--) {
+        yc = -BOARD_HEIGHT/2 +0.5*CHECKER_SIZE;
+        draw_checker_samepoint(xc, yc, i, 1);
+        xc += eps*POINT_SIZE;
+    }
+
+}
+
+void draw_canvas(cdCanvas* cv) {
+    int i, w, h;
+    int pip1=0, pip2=0;
+    int off1=0, off2=0;
+
+    if(db==NULL){
+        update_sb_msg(msg_info_no_database_loaded);
+        return;
+    }
+
+    cdCanvasActivate(cv);
+    cdCanvasGetSize(cv, &w, &h, NULL, NULL);
+    printf("canvas: %i, %i\n", w, h);
+    cdCanvasBackground(cv, CD_WHITE);
+    cdCanvasClear(cv);
+
+    wdCanvasViewport(cv, 0, w-1, 0, h-1);
+
+    double wd_h = BOARD_WITH_DECORATIONS_HEIGHT;
+    double wd_w = (double) w* wd_h/(double) h;
+    wdCanvasWindow(cv, -wd_w/2, wd_w/2, -wd_h/2, wd_h/2);
+
+    compute_pipcount(pos_ptr, &pip1, &pip2);
+    compute_checkeroff(pos_ptr, &off1, &off2);
+
+    draw_board(cv);
+    draw_checker(cv, pos_ptr, BOARD_DIRECTION);
+    draw_cube(cv, pos_ptr->cube);
+    draw_checkeroff(cv, off1, PLAYER1, BOARD_DIRECTION);
+    draw_checkeroff(cv, off2, PLAYER2, BOARD_DIRECTION);
+    if(is_pointletter_active) {
+        draw_pointletter(cv, BOARD_DIRECTION, pos_ptr->cube);
+    } else {
+        draw_pointnumber(cv, BOARD_DIRECTION);
+    }
+    draw_score(cv, pos_ptr->p1_score, PLAYER1);
+    draw_score(cv, pos_ptr->p2_score, PLAYER2);
+    draw_pipcount(cv, pip1, PLAYER1);
+    draw_pipcount(cv, pip2, PLAYER2);
+
+    cdCanvasFlush(cv);
+}
+
+/* END Drawing */
+
 
 /*************** Keyboard Shortcuts ***********************/
 /* BEGIN Keyboard Shortcuts */
@@ -2474,9 +2501,7 @@ static int toggle_editmode_cb()
         is_pointletter_active=false;
         draw_canvas(cdv);
     }
-    printf("Edit toggle: %s\n", mode_to_str(mode_active));
     IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
-    printf(IupGetAttribute(sb_mode, "TITLE"));
     IupRefresh(dlg);
     return IUP_DEFAULT;
 }
@@ -2803,6 +2828,8 @@ static int digit_cb(Ihandle* ih, int c){
 
 // END Callbacks
 
+
+
 /************************ Main ****************************/
 int main(int argc, char **argv)
 {
@@ -2824,12 +2851,12 @@ int main(int argc, char **argv)
     /* pos_print(pos_ptr); */
     /* pos_ptr->checker[24] = 25; */
 
-    char* ctest;
-    ctest= pos_to_str(&POS_DEFAULT);
-    printf("ctest: %s\n", ctest);
-    ctest= pos_to_str_paren(&POS_DEFAULT);
-    printf("ctest2: %s\n", ctest);
-    free(ctest);
+    /* char* ctest; */
+    /* ctest= pos_to_str(&POS_DEFAULT); */
+    /* printf("ctest: %s\n", ctest); */
+    /* ctest= pos_to_str_paren(&POS_DEFAULT); */
+    /* printf("ctest2: %s\n", ctest); */
+    /* free(ctest); */
 
     IupOpen(&argc, &argv);
     IupControlsOpen();
