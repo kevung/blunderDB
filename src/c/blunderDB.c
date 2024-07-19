@@ -592,10 +592,6 @@ int db_close(sqlite3 *db)
 
 int db_insert_position(sqlite3 *db, const POSITION *p){
     printf("\ndb_insert_position\n");
-    if(db==NULL) {
-        update_sb_msg("ERR: No database opened.");
-        return 0;
-    }
     char _s[4]; //for(int i=0;i<4;i++) _s[i]='\0';
     char sql_add_position[1000];
     sql_add_position[0]='\0';
@@ -621,7 +617,6 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
     strcat(sql_add_position, ";");
     printf("Try to add new position.\n");
     execute_sql(db, sql_add_position); 
-    update_sb_msg("Written position to database.");
     return 1;
 }
 
@@ -668,12 +663,20 @@ char digit_m[4];
 
 char *cmdtext;
 
-const char* msg_err_no_database_opened =
+const char* msg_err_failed_to_create_db =
+"Failed to create database.";
+const char* msg_err_no_db_opened =
 "ERR: No database opened.";
+const char* msg_err_failed_to_open_db =
+"Failed to open database.";
 const char* msg_info_position_written = 
 "Position written to database.";
-const char* msg_info_no_database_loaded =
+const char* msg_info_no_db_loaded =
 "No database loaded.";
+const char* msg_info_db_created =
+"Database created.";
+const char* msg_info_db_loaded =
+"Database loaded.";
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *cmdline, *edit, *analysis, *canvas, *search, *matchlib;
@@ -1232,7 +1235,7 @@ int parse_cmdline(const char* cmdtext){
     if(strncmp(cmdtext, ":w", 2)==0){
         printf(":w\n");
         if(db==NULL) {
-            update_sb_msg(msg_err_no_database_opened);
+            update_sb_msg(msg_err_no_db_opened);
             return 0;
         } else {
             db_insert_position(db, pos_ptr);
@@ -1779,7 +1782,7 @@ void draw_canvas(cdCanvas* cv) {
     int off1=0, off2=0;
 
     if(db==NULL){
-        update_sb_msg(msg_info_no_database_loaded);
+        update_sb_msg(msg_info_no_db_loaded);
         return;
     }
 
@@ -2166,11 +2169,11 @@ static int item_new_action_cb(void)
             const char *db_filename = IupGetAttribute(filedlg, "VALUE");
             int result = db_create(db_filename);
             if (result != 0) {
-                update_sb_msg("Database creation failed.");
+                update_sb_msg(msg_err_failed_to_create_db);
                 printf("Database creation failed\n");
                 return result;
             }
-            update_sb_msg("Database created successfully.");
+            update_sb_msg(msg_info_db_created);
             printf("Database created successfully\n");
             break; 
 
@@ -2206,11 +2209,11 @@ static int item_open_action_cb(void)
             const char *db_filename = IupGetAttribute(filedlg, "VALUE");
             int result = db_open(db_filename);
             if (result != 0) {
-                update_sb_msg("Database opening failed.");
+                update_sb_msg(msg_err_failed_to_open_db);
                 printf("Database opening failed\n");
                 return result;
             }
-            update_sb_msg("Database opened successfully.");
+            update_sb_msg(msg_info_db_loaded);
             printf("Database opened successfully\n");
             break; 
 
@@ -2491,6 +2494,11 @@ static int toggle_edit_visibility_cb()
 
 static int toggle_editmode_cb()
 {
+    if(db==NULL){
+        update_sb_msg(msg_info_no_db_loaded);
+        return IUP_DEFAULT;
+    }
+
     if(mode_active != EDIT) {
         mode_active=EDIT;
         is_pointletter_active=true;
