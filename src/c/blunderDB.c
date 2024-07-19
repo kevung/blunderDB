@@ -112,6 +112,8 @@ static int update_sb_msg(const char*);
 #define PLAYER1_POINTLABEL "*abcdefghijklmnopqrstuvwxyz"
 #define PLAYER2_POINTLABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
 
+char hash[50];
+
 typedef struct
 {
     int checker[26];
@@ -191,6 +193,19 @@ void int_swap(int* i, int* j)
     t = *i;
     *i = *j;
     *j = t;
+}
+
+int convert_charp_to_array(const char *c, char *c_array, const int n_array){
+    int n=strlen(c);
+    if(n_array<=n) {
+        printf("err: array no big enough for string conversion.\n");
+        return 0;
+    }
+    for(int i=0; i<=n; i++){
+        c_array[i]=c[i];
+    }
+    c_array[n+1]='\0';
+    return 1;
 }
 
 char* pos_to_str(const POSITION* p)
@@ -514,6 +529,7 @@ const char *sql_position =
 "player1_score INTEGER,"
 "player2_score INTEGER,"
 "cube_position INTEGER,"
+"hash TEXT,"
 "comment TEXT,"
 "FOREIGN KEY(player1_id) REFERENCES player(id),"
 "FOREIGN KEY(player2_id) REFERENCES player(id)"
@@ -592,8 +608,11 @@ int db_close(sqlite3 *db)
 
 int db_insert_position(sqlite3 *db, const POSITION *p){
     printf("\ndb_insert_position\n");
-    char _s[4]; //for(int i=0;i<4;i++) _s[i]='\0';
+    char _s[4]; char *h;
     char sql_add_position[1000];
+    h=pos_to_str(p);
+    convert_charp_to_array(h, hash, 50);
+    printf("hash: %s\n", hash);
     sql_add_position[0]='\0';
     strcat(sql_add_position, "INSERT INTO position ");
     strcat(sql_add_position, "(p0, p1, p2, p3, p4, p5, ");
@@ -601,7 +620,7 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
     strcat(sql_add_position, "p12, p13, p14, p15, p16, p17, ");
     strcat(sql_add_position, "p18, p19, p20, p21, p22, p23, ");
     strcat(sql_add_position, "p24, p25, ");
-    strcat(sql_add_position, "player1_score, player2_score, ");
+    strcat(sql_add_position, "player1_score, player2_score, hash, ");
     strcat(sql_add_position, "cube_position) ");
     strcat(sql_add_position, "VALUES ");
     strcat(sql_add_position, "(");
@@ -613,8 +632,10 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
     sprintf(_s, "%d, %d, %d",
             p->p1_score, p->p2_score, p->cube);
     strcat(sql_add_position, _s);
-    strcat(sql_add_position, ") ");
-    strcat(sql_add_position, ";");
+    strcat(sql_add_position, ", \"");
+    strcat(sql_add_position, hash);
+    strcat(sql_add_position, "\");");
+    printf("sql insert: %s\n", sql_add_position);
     printf("Try to add new position.\n");
     execute_sql(db, sql_add_position); 
     return 1;

@@ -1,7 +1,10 @@
 Plus tard:
 
-- Enregistrement d'une position.
 - Recherche d'une position.
+- Detecter si position existe deja
+- Supprimer les doublons
+- Recalculer les hash de l'ensemble de la base de données
+(mettre dans un panneau de config de maintenance).
 - Copier/Coller/Glissé une position.
 - Import d'un match.
 - Gestion des collections. (création, renommage, suppresion, copie)
