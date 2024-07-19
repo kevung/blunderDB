@@ -2224,6 +2224,9 @@ static int item_open_action_cb(void)
     }
 
     IupDestroy(filedlg);
+
+    draw_canvas(cdv);
+
     return IUP_DEFAULT;
 
 }
