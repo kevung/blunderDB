@@ -2270,9 +2270,7 @@ static int item_saveas_action_cb(void)
 
 static int item_exit_action_cb()
 {
-    // verify if db is saved with is_db_saved before quitting.
-
-    db_close(db);
+    if(db!=NULL) db_close(db);
     IupClose();
     return EXIT_SUCCESS;
 }
@@ -2908,7 +2906,7 @@ int main(int argc, char **argv)
 
     IupMainLoop();
 
-    db_close(db);
+    if(db!=NULL) db_close(db);
     IupClose();
 
     return EXIT_SUCCESS;
