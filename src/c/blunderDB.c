@@ -90,7 +90,7 @@ static int toggle_searches_visibility_cb();
 void error_callback(void);
 static int j_cb(Ihandle*, int);
 static int k_cb(Ihandle*, int);
-static int letter_cb(Ihandle*, int);
+static int editmode_letter_cb(Ihandle*, int);
 static int digit_cb(Ihandle*, int);
 static int minus_cb(Ihandle*, int);
 static int bracketleft_cb(Ihandle*, int);
@@ -1965,59 +1965,59 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_searches_visibility_cb);
 
-    IupSetCallback(dlg, "K_a", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_b", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_c", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_d", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_e", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_f", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_g", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_h", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_i", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_a", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_b", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_c", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_d", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_e", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_f", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_g", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_h", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_i", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_j", (Icallback) j_cb);
     IupSetCallback(dlg, "K_k", (Icallback) k_cb);
-    IupSetCallback(dlg, "K_l", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_m", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_n", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_o", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_p", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_q", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_r", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_s", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_t", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_u", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_v", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_w", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_x", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_y", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_z", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_l", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_m", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_n", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_o", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_p", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_q", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_r", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_s", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_t", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_u", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_v", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_w", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_x", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_y", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_z", (Icallback) editmode_letter_cb);
 
-    IupSetCallback(dlg, "K_A", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_B", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_C", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_D", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_E", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_F", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_G", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_H", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_I", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_J", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_K", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_L", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_M", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_N", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_O", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_P", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_Q", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_R", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_S", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_T", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_U", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_V", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_W", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_X", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_Y", (Icallback) letter_cb);
-    IupSetCallback(dlg, "K_Z", (Icallback) letter_cb);
+    IupSetCallback(dlg, "K_A", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_B", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_C", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_D", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_E", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_F", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_G", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_H", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_I", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_J", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_K", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_L", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_M", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_N", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_O", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_P", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_Q", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_R", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_S", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_T", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_U", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_V", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_W", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_X", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_Y", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_Z", (Icallback) editmode_letter_cb);
 
     IupSetCallback(dlg, "K_1", (Icallback) digit_cb);
     IupSetCallback(dlg, "K_2", (Icallback) digit_cb);
@@ -2914,7 +2914,7 @@ static int j_cb(Ihandle* ih, int c){
             goto_next_position_cb();
             break;
         case(EDIT):
-            letter_cb(ih, c);
+            editmode_letter_cb(ih, c);
             break;
         default:
             break;
@@ -2928,7 +2928,7 @@ static int k_cb(Ihandle* ih, int c){
             goto_prev_position_cb();
             break;
         case(EDIT):
-            letter_cb(ih, c);
+            editmode_letter_cb(ih, c);
             break;
         default:
             break;
@@ -2936,8 +2936,9 @@ static int k_cb(Ihandle* ih, int c){
     return IUP_DEFAULT;
 }
 
-static int letter_cb(Ihandle* ih, int c){
-    printf("letter_cb %c\n", c);
+static int editmode_letter_cb(Ihandle* ih, int c){
+    printf("editmode_letter_cb %c\n", c);
+    if(mode_active!=EDIT) return 0;
 
     void f(const char c, int* i, int* sign){
         if(tolower(c)!='z') { //point
@@ -2960,34 +2961,29 @@ static int letter_cb(Ihandle* ih, int c){
         }
     }
 
-    switch (mode_active) {
-        case EDIT:
-            printf("key_m %c\n", key_m);
-            if(key_m==-1) {
-                f(c, &point_m, &sign_m);
-                printf("point_m %i\n", point_m);
-                printf("sign_m %i\n", sign_m);
-            } else if(key_m=='-'){
-                f(c, &point_m2, &sign_m);
-                int i1=fmin(point_m, point_m2);
-                int i2=fmax(point_m, point_m2);
-                if(make_point) {
-                    for(int k=i1; k<=i2; k++) {
-                        pos_ptr->checker[k]=sign_m*2;
-                    }
-                } else {
-                    for(int k=i1; k<=i2; k++) {
-                        pos_ptr->checker[k]+=sign_m;
-                    }
-                }
-                draw_canvas(cdv);
-                is_point_to_fill=false;
-                key_m=-1;
+    printf("key_m %c\n", key_m);
+    if(key_m==-1) {
+        f(c, &point_m, &sign_m);
+        printf("point_m %i\n", point_m);
+        printf("sign_m %i\n", sign_m);
+    } else if(key_m=='-'){
+        f(c, &point_m2, &sign_m);
+        int i1=fmin(point_m, point_m2);
+        int i2=fmax(point_m, point_m2);
+        if(make_point) {
+            for(int k=i1; k<=i2; k++) {
+                pos_ptr->checker[k]=sign_m*2;
             }
-            break;
-        default:
-            break;
+        } else {
+            for(int k=i1; k<=i2; k++) {
+                pos_ptr->checker[k]+=sign_m;
+            }
+        }
+        draw_canvas(cdv);
+        is_point_to_fill=false;
+        key_m=-1;
     }
+
     return IUP_DEFAULT;
 }
 
