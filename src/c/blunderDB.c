@@ -1387,7 +1387,9 @@ int parse_cmdline(const char* cmdtext){
         printf(":w!\n");
         int id=pos_list_id[pos_index];
         db_update_position(db, &id, pos_ptr);
+        mode_active=NORMAL;
         update_sb_msg(msg_info_position_updated);
+        update_sb_mode();
     } else if(strncmp(cmdtext, ":w", 2)==0){
         printf(":w\n");
         db_insert_position(db, pos_ptr);
