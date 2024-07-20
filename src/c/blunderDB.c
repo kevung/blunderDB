@@ -2506,7 +2506,12 @@ static int item_prevposition_action_cb(void)
 
 static int item_newposition_action_cb(void)
 {
-    error_callback();
+    db_insert_position(db, pos_ptr);
+    update_sb_msg(msg_info_position_written);
+    toggle_editmode_cb();
+    db_select_position(db, &pos_nb,
+            pos_list_id, pos_list);
+    goto_last_position_cb();
     return IUP_DEFAULT;
 }
 
