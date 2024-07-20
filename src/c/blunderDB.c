@@ -1365,13 +1365,16 @@ int parse_cmdline(const char* cmdtext){
         db_select_position(db, &pos_nb,
                 pos_list_id, pos_list);
         goto_last_position_cb();
+    } else if(strncmp(cmdtext, ":w!" 3)==0){
+        printf(":w!\n");
     } else if(strncmp(cmdtext, ":e", 2)==0){
+        printf(":e\n");
         db_select_position(db, &pos_nb,
                 pos_list_id, pos_list);
         goto_first_position_cb();
     } else if(strncmp(cmdtext, ":d", 2)==0){
+        printf(":d\n");
         int id = pos_list_id[pos_index];
-        printf("id: %i\n:", id);
         db_delete_position(db, &id);
     }
     return 1;
