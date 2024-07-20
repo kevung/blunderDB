@@ -2891,6 +2891,7 @@ static int goto_last_position_cb(){
 }
 
 static int left_cb(Ihandle* ih, int c){
+    printf("\nleft_cb\n");
     switch(mode_active) {
         case(NORMAL):
             goto_prev_position_cb();
@@ -2904,6 +2905,7 @@ static int left_cb(Ihandle* ih, int c){
 }
 
 static int right_cb(Ihandle* ih, int c){
+    printf("\nright_cb\n");
     switch(mode_active) {
         case(NORMAL):
             goto_next_position_cb();
