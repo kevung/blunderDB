@@ -90,6 +90,7 @@ static int toggle_searches_visibility_cb();
 void error_callback(void);
 static int j_cb(Ihandle*, int);
 static int k_cb(Ihandle*, int);
+static int G_cb(Ihandle*, int);
 static int editmode_letter_cb(Ihandle*, int);
 static int digit_cb(Ihandle*, int);
 static int minus_cb(Ihandle*, int);
@@ -2001,7 +2002,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_D", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_E", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_F", (Icallback) editmode_letter_cb);
-    IupSetCallback(dlg, "K_G", (Icallback) editmode_letter_cb);
+    IupSetCallback(dlg, "K_G", (Icallback) G_cb);
     IupSetCallback(dlg, "K_H", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_I", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_J", (Icallback) editmode_letter_cb);
@@ -2929,6 +2930,20 @@ static int k_cb(Ihandle* ih, int c){
     switch(mode_active) {
         case(NORMAL):
             goto_prev_position_cb();
+            break;
+        case(EDIT):
+            editmode_letter_cb(ih, c);
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int G_cb(Ihandle* ih, int c){
+    switch(mode_active) {
+        case(NORMAL):
+            goto_last_position_cb();
             break;
         case(EDIT):
             editmode_letter_cb(ih, c);
