@@ -31,7 +31,7 @@ static int canvas_unmap_cb(Ihandle*);
 static int canvas_action_cb(Ihandle*);
 static int canvas_dropfiles_cb(Ihandle*);
 static int canvas_motion_cb(Ihandle*);
-static int canvas_wheel_cb(Ihandle*);
+static int canvas_wheel_cb(Ihandle*, float, int, int, char*);
 static int canvas_button_cb(Ihandle*, const int, const int,
         const int, const int, char*);
 static int canvas_resize_cb(Ihandle*);
@@ -2116,9 +2116,18 @@ static int canvas_motion_cb(Ihandle* ih)
     return IUP_DEFAULT;
 }
 
-static int canvas_wheel_cb(Ihandle* ih)
+static int canvas_wheel_cb(Ihandle* ih, float delta,
+        int x, int y, char *status)
 {
-    error_callback();
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return 0;
+    }
+    if(delta>0){
+        goto_prev_position_cb();
+    } else {
+        goto_next_position_cb();
+    }
     return IUP_DEFAULT;
 }
 
