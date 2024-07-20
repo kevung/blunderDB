@@ -101,7 +101,7 @@ static int left_cb(Ihandle*, int);
 static int right_cb(Ihandle*, int);
 static int update_sb_mode(void);
 static int update_sb_msg(const char*);
-static int update_sb_library(const char*);
+static int update_sb_lib();
 static int goto_first_position_cb(void);
 static int goto_prev_position_cb(void);
 static int goto_next_position_cb(void);
@@ -729,10 +729,14 @@ int db_delete_position(sqlite3* db, POSITION *pos){
 /* #define DEFAULT_SIZE "800x450" */
 #define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
+#define SB_DEFAULT_FONTSIZE "10" //sb=statusbar
 
 enum mode { NORMAL, EDIT, CMD, SEARCH, MATCH };
 typedef enum mode mode_t;
 mode_t mode_active = NORMAL;
+
+char* lib_list[1000]; //list of libraries
+int lib_index; //active library
 
 bool make_point=true;
 bool is_score_to_fill=false;
@@ -755,6 +759,8 @@ const char* msg_err_failed_to_open_db =
 "Failed to open database.";
 const char* msg_info_position_written = 
 "Position written to database.";
+const char* msg_info_no_position =
+"No positions.";
 const char* msg_info_no_db_loaded =
 "No database loaded.";
 const char* msg_info_db_created =
@@ -765,7 +771,7 @@ const char* msg_info_db_loaded =
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *cmdline, *edit, *analysis, *canvas, *search, *matchlib;
 Ihandle *search1, *search2, *search3;
-Ihandle *sb_mode, *sb_msg; // sb=statusbar
+Ihandle *sb_mode, *sb_lib, *sb_msg; // sb=statusbar
 Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
 bool is_searches_visible = false;
 
@@ -1184,22 +1190,28 @@ static Ihandle* create_statusbar(void)
     Ihandle *ih;
 
     char text[100];
-
     text[0] = '\0';
     strcat(text, mode_to_str(mode_active));
     sb_mode = IupLabel(text);
-    sb_msg = IupLabel("Message bar.");
-
-    IupSetAttribute(sb_mode, "NAME", "SB_MSG");
+    IupSetAttribute(sb_mode, "NAME", "SB_MODE");
     IupSetAttribute(sb_mode, "CANFOCUS", "NO");
-    IupSetAttribute(sb_mode, "FONTSIZE", "10");
+    IupSetAttribute(sb_mode, "FONTSIZE", SB_DEFAULT_FONTSIZE);
 
+    sb_lib = IupLabel(msg_info_no_position);
+    IupSetAttribute(sb_lib, "NAME", "SB_LIB");
+    IupSetAttribute(sb_lib, "CANFOCUS", "NO");
+    /* IupSetAttribute(sb_mode, "SIZE", "40x10"); */
+    IupSetAttribute(sb_lib, "FONTSIZE", SB_DEFAULT_FONTSIZE);
+
+    sb_msg = IupLabel("MSG INFO");
     IupSetAttribute(sb_msg, "NAME", "SB_MSG");
     IupSetAttribute(sb_msg, "EXPAND", "HORIZONTAL");
     IupSetAttribute(sb_msg, "CANFOCUS", "NO");
-    IupSetAttribute(sb_msg, "FONTSIZE", "10");
+    IupSetAttribute(sb_msg, "FONTSIZE", SB_DEFAULT_FONTSIZE);
 
     ih = IupHbox(sb_mode,
+            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
+            sb_lib,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             sb_msg,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
@@ -1219,6 +1231,14 @@ static int update_sb_mode(){
 
 static int update_sb_msg(const char* msg_new){
     IupSetAttribute(sb_msg, "TITLE", msg_new);
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
+}
+
+static int update_sb_lib(){
+    sprintf(_c, "%s : %i/%i pos.", lib_list[lib_index],
+            pos_index+1, pos_nb);
+    IupSetAttribute(sb_lib, "TITLE", _c);
     IupRefresh(dlg);
     return IUP_DEFAULT;
 }
@@ -2311,6 +2331,10 @@ static int item_open_action_cb(void)
                 printf("Database opening failed\n");
                 return result;
             }
+            db_select_position(db, &pos_nb,
+                    pos_list_id, pos_list);
+            goto_first_position_cb();
+            update_sb_lib();
             update_sb_msg(msg_info_db_loaded);
             printf("Database opened successfully\n");
             break; 
@@ -2828,9 +2852,7 @@ static int space_cb(Ihandle* ih, int c){
 
 int refresh_position(){
     draw_canvas(cdv);
-    sprintf(_c, "%s : %i/%i pos.", lib_list[lib_index],
-            pos_index+1, pos_nb);
-    update_sb_library(_c);
+    update_sb_lib();
     return 1;
 }
 
@@ -3002,6 +3024,8 @@ int main(int argc, char **argv)
     pos_next_ptr = &pos;
     pos_nb = 0;
     pos_index = 0;
+    lib_list[0]="main";
+    lib_index=0;
 
     int err;
     /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
