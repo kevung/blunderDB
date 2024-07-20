@@ -716,7 +716,15 @@ int db_select_position(sqlite3* db, int* pos_nb,
     return 1;
 }
 
-int db_delete_position(sqlite3* db, POSITION *pos){
+int db_delete_position(sqlite3* db, const int* id){
+    printf("\ndb_delete_position\n");
+    char sql[100];
+    sql[0]='\0';
+    sprintf(sql, "DELETE FROM position WHERE id = %d;", *id);
+    execute_sql(db, sql);
+    db_select_position(db, &pos_nb,
+            pos_list_id, pos_list);
+    goto_last_position_cb();
     return 1;
 }
 
@@ -1346,27 +1354,25 @@ static Ihandle* create_searches(void)
 
 int parse_cmdline(const char* cmdtext){
     printf("\nparse_cmdline\n");
-
+    if(db==NULL) {
+        update_sb_msg(msg_err_no_db_opened);
+        return 0;
+    }
     if(strncmp(cmdtext, ":w", 2)==0){
         printf(":w\n");
-        if(db==NULL) {
-            update_sb_msg(msg_err_no_db_opened);
-            return 0;
-        } else {
-            db_insert_position(db, pos_ptr);
-            update_sb_msg(msg_info_position_written);
-            db_select_position(db, &pos_nb,
-                    pos_list_id, pos_list);
-            goto_last_position_cb();
-        }
+        db_insert_position(db, pos_ptr);
+        update_sb_msg(msg_info_position_written);
+        db_select_position(db, &pos_nb,
+                pos_list_id, pos_list);
+        goto_last_position_cb();
     } else if(strncmp(cmdtext, ":e", 2)==0){
-        if(db==NULL){
-            update_sb_msg(msg_err_no_db_opened);
-            return 0;
-        }
         db_select_position(db, &pos_nb,
                 pos_list_id, pos_list);
         goto_first_position_cb();
+    } else if(strncmp(cmdtext, ":d", 2)==0){
+        int id = pos_list_id[pos_index];
+        printf("id: %i\n:", id);
+        db_delete_position(db, &id);
     }
     return 1;
 }
