@@ -102,6 +102,8 @@ static int cr_cb(Ihandle*, int);
 static int esc_cb(Ihandle*, int);
 static int left_cb(Ihandle*, int);
 static int right_cb(Ihandle*, int);
+static int pgup_cb(Ihandle*, int);
+static int pgdn_cb(Ihandle*, int);
 static int update_sb_mode(void);
 static int update_sb_msg(const char*);
 static int update_sb_lib();
@@ -1958,6 +1960,8 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_SP", (Icallback) space_cb);
     IupSetCallback(dlg, "K_LEFT", (Icallback) left_cb);
     IupSetCallback(dlg, "K_RIGHT", (Icallback) right_cb);
+    IupSetCallback(dlg, "K_PGUP", (Icallback) pgup_cb);
+    IupSetCallback(dlg, "K_PGDN", (Icallback) pgdn_cb);
 
 
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
@@ -2903,6 +2907,34 @@ static int right_cb(Ihandle* ih, int c){
     switch(mode_active) {
         case(NORMAL):
             goto_next_position_cb();
+            break;
+        case(EDIT):
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int pgup_cb(Ihandle* ih, int c){
+    printf("\npgup_cb\n");
+    switch(mode_active) {
+        case(NORMAL):
+            goto_first_position_cb();
+            break;
+        case(EDIT):
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int pgdn_cb(Ihandle* ih, int c){
+    printf("\npgdn_cb\n");
+    switch(mode_active) {
+        case(NORMAL):
+            goto_last_position_cb();
             break;
         case(EDIT):
             break;
