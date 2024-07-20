@@ -97,7 +97,15 @@ static int backspace_cb(Ihandle*, int);
 static int space_cb(Ihandle*, int);
 static int cr_cb(Ihandle*, int);
 static int esc_cb(Ihandle*, int);
+static int left_cb(Ihandle*, int);
+static int right_cb(Ihandle*, int);
+static int update_sb_mode(void);
 static int update_sb_msg(const char*);
+static int update_sb_library(const char*);
+static int goto_first_position_cb(void);
+static int goto_prev_position_cb(void);
+static int goto_next_position_cb(void);
+static int goto_last_position_cb(void);
 
 // END Prototypes
 
