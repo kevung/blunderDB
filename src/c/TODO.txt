@@ -3,6 +3,7 @@ Plus tard:
 - Recherche d'une position.
 - Detecter si position existe deja
 - Supprimer les doublons
+- Supprimer une position. Supprimer toutes les positions.
 - Recalculer les hash de l'ensemble de la base de données
 (mettre dans un panneau de config de maintenance).
 - Copier/Coller/Glissé une position.
