@@ -2486,13 +2486,21 @@ static int item_editmode_action_cb(void)
 
 static int item_nextposition_action_cb(void)
 {
-    error_callback();
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return 0;
+    }
+    goto_next_position_cb();
     return IUP_DEFAULT;
 }
 
 static int item_prevposition_action_cb(void)
 {
-    error_callback();
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return 0;
+    }
+    goto_prev_position_cb();
     return IUP_DEFAULT;
 }
 
