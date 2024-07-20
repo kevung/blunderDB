@@ -1156,6 +1156,12 @@ static Ihandle* create_statusbar(void)
     return ih;
 }
 
+static int update_sb_mode(){
+    IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
+}
+
 static int update_sb_msg(const char* msg_new){
     IupSetAttribute(sb_msg, "TITLE", msg_new);
     IupRefresh(dlg);
@@ -2517,10 +2523,7 @@ static int toggle_edit_visibility_cb()
         mode_active=EDIT;
     } else { mode_active=NORMAL; }
     toggle_visibility_cb(edit);
-    printf("Edit toggle: %s\n", mode_to_str(mode_active));
-    IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
-    printf(IupGetAttribute(sb_mode, "TITLE"));
-    IupRefresh(dlg);
+    update_sb_mode();
     return IUP_DEFAULT;
 }
 
