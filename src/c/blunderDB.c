@@ -682,7 +682,34 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
 }
 
 
-int db_update_position(sqlite3* db, const POSITION *cos){
+int db_update_position(sqlite3* db, int* id, const POSITION* p){
+    char sql[8000]; char *h;
+    char t[30];
+    sql[0]='\0'; t[0]='\0';
+    h=pos_to_str(p);
+    convert_charp_to_array(h, hash, 50);
+    printf("hash: %s\n", hash);
+    strcat(sql, "UPDATE position SET ");
+    for(int i=0; i<26; i++){
+        sprintf(t, "p%i = %i, ", i, p->checker[i]);
+        printf("t: %s\n", t);
+        strcat(sql, t);
+    }
+    sprintf(t, "player1_score = %d, ", p->p1_score);
+    printf("t: %s\n", t);
+    strcat(sql, t);
+    sprintf(t, "player2_score = %d, ", p->p2_score);
+    printf("t: %s\n", t);
+    strcat(sql, t);
+    sprintf(t, "cube_position = %d  ", p->cube);
+    printf("t: %s\n", t);
+    strcat(sql, t);
+    /* sprintf(t, "hash = \"%s\" ", hash); */
+    /* strcat(sql, t); */
+    sprintf(t, "WHERE id = %d", *id);
+    strcat(sql, t);
+    printf("sql: %s\n", sql);
+    execute_sql(db, sql); 
     return 1;
 }
 
@@ -772,6 +799,8 @@ const char* msg_err_failed_to_open_db =
 "Failed to open database.";
 const char* msg_info_position_written = 
 "Position written to database.";
+const char* msg_info_position_updated = 
+"Position updated.";
 const char* msg_info_no_position =
 "No positions.";
 const char* msg_info_no_db_loaded =
@@ -1358,15 +1387,18 @@ int parse_cmdline(const char* cmdtext){
         update_sb_msg(msg_err_no_db_opened);
         return 0;
     }
-    if(strncmp(cmdtext, ":w", 2)==0){
+    if(strncmp(cmdtext, ":w!", 3)==0){
+        printf(":w!\n");
+        int id=pos_list_id[pos_index];
+        db_update_position(db, &id, pos_ptr);
+        update_sb_msg(msg_info_position_updated);
+    } else if(strncmp(cmdtext, ":w", 2)==0){
         printf(":w\n");
         db_insert_position(db, pos_ptr);
         update_sb_msg(msg_info_position_written);
         db_select_position(db, &pos_nb,
                 pos_list_id, pos_list);
         goto_last_position_cb();
-    } else if(strncmp(cmdtext, ":w!" 3)==0){
-        printf(":w!\n");
     } else if(strncmp(cmdtext, ":e", 2)==0){
         printf(":e\n");
         db_select_position(db, &pos_nb,
