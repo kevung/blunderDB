@@ -167,8 +167,12 @@ const POSITION POS_VOID = {
 };
 
 POSITION pos;
-POSITION *pos_ptr;
+POSITION *pos_ptr, *pos_prev_ptr, *pos_next_ptr;
 bool is_pointletter_active = false;
+
+POSITION pos_list[10000];
+int pos_list_id[10000];
+int pos_nb, pos_index;
 
 int char_in_string(const char c, const char* s)
 {
@@ -470,12 +474,35 @@ void compute_checkeroff(POSITION* pos, int* off1, int* off2){
     }
 }
 
+void get_prev_position(){
+    if(pos_index==0) return;
+    pos_index-=1;
+    pos_ptr=&pos_list[pos_index];
+}
+
+void get_next_position(){
+    if(pos_index==pos_nb-1) return;
+    pos_index+=1;
+    pos_ptr=&pos_list[pos_index];
+}
+
+void get_first_position(){
+    pos_index=0;
+    pos_ptr=&pos_list[pos_index];
+}
+
+void get_last_position(){
+    pos_index=pos_nb-1;
+    pos_ptr=&pos_list[pos_index];
+}
+
 /* END Data */
 
 /************************ Database ***********************/
 /* BEGIN Database */
 
 sqlite3 *db = NULL;
+sqlite3_stmt *stmt;
 bool is_db_saved = true;
 int rc;
 char *errMsg = 0;
@@ -628,8 +655,8 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
     strcat(sql_add_position, "p12, p13, p14, p15, p16, p17, ");
     strcat(sql_add_position, "p18, p19, p20, p21, p22, p23, ");
     strcat(sql_add_position, "p24, p25, ");
-    strcat(sql_add_position, "player1_score, player2_score, hash, ");
-    strcat(sql_add_position, "cube_position) ");
+    strcat(sql_add_position, "player1_score, player2_score, ");
+    strcat(sql_add_position, "cube_position, hash) ");
     strcat(sql_add_position, "VALUES ");
     strcat(sql_add_position, "(");
     for(int i=0;i<26;i++){
@@ -654,7 +681,33 @@ int db_update_position(sqlite3* db, const POSITION *cos){
     return 1;
 }
 
-int db_select_position(sqlite3* db, POSITION *pos){
+int db_select_position(sqlite3* db, int* pos_nb,
+        int* pos_list_id, POSITION* pos_list){
+    printf("\ndb_select_position\n");
+    const char *sql = "SELECT * FROM position;";
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+
+    *pos_nb=0;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        pos_list_id[*pos_nb]=sqlite3_column_int(stmt,0);
+        for(int i=0;i<26;i++){
+            pos_list[*pos_nb].checker[i]=sqlite3_column_int(stmt,i+1);
+        }
+        pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,29);
+        pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,30);
+        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,31);
+        const char *hash=sqlite3_column_text(stmt,32);
+        *pos_nb+=1;
+    }
+    if(rc!=SQLITE_DONE){
+        printf("Failed to execute statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    sqlite3_finalize(stmt);
     return 1;
 }
 
@@ -691,6 +744,8 @@ int sign_m=1;
 char digit_m[4];
 
 char *cmdtext;
+
+char _c[100];
 
 const char* msg_err_failed_to_create_db =
 "Failed to create database.";
@@ -1276,13 +1331,17 @@ int parse_cmdline(const char* cmdtext){
             db_insert_position(db, pos_ptr);
             update_sb_msg(msg_info_position_written);
         }
-    /* } else if(strncmp(cmdtext, ":q", 2)==0){ */
-    /*     item_exit_action_cb(); */
+    } else if(strncmp(cmdtext, ":e", 2)==0){
+        if(db==NULL){
+            update_sb_msg(msg_err_no_db_opened);
+            return 0;
+        }
+        db_select_position(db, &pos_nb,
+                pos_list_id, pos_list);
+        goto_first_position_cb();
     }
     return 1;
 }
-
-
 
 /* END Interface */
 
@@ -1871,6 +1930,8 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_CR", (Icallback) cr_cb);
     IupSetCallback(dlg, "K_BS", (Icallback) backspace_cb);
     IupSetCallback(dlg, "K_SP", (Icallback) space_cb);
+    IupSetCallback(dlg, "K_LEFT", (Icallback) left_cb);
+    IupSetCallback(dlg, "K_RIGHT", (Icallback) right_cb);
 
 
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
@@ -2765,6 +2826,64 @@ static int space_cb(Ihandle* ih, int c){
     return IUP_DEFAULT;
 }
 
+int refresh_position(){
+    draw_canvas(cdv);
+    sprintf(_c, "%s : %i/%i pos.", lib_list[lib_index],
+            pos_index+1, pos_nb);
+    update_sb_library(_c);
+    return 1;
+}
+
+static int goto_first_position_cb(){
+    get_first_position();
+    refresh_position();
+    return 1;
+}
+
+static int goto_prev_position_cb(){
+    get_prev_position();
+    refresh_position();
+    return 1;
+}
+
+static int goto_next_position_cb(){
+    get_next_position();
+    refresh_position();
+    return 1;
+}
+
+static int goto_last_position_cb(){
+    get_last_position();
+    refresh_position();
+    return 1;
+}
+
+static int left_cb(Ihandle* ih, int c){
+    switch(mode_active) {
+        case(NORMAL):
+            goto_prev_position_cb();
+            break;
+        case(EDIT):
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
+static int right_cb(Ihandle* ih, int c){
+    switch(mode_active) {
+        case(NORMAL):
+            goto_next_position_cb();
+            break;
+        case(EDIT):
+            break;
+        default:
+            break;
+    }
+    return IUP_DEFAULT;
+}
+
 static int letter_cb(Ihandle* ih, int c){
     printf("letter_cb %c\n", c);
 
@@ -2878,9 +2997,11 @@ int main(int argc, char **argv)
 {
     // initialization
     pos = POS_DEFAULT;
-    /* pos = POS_VOID; */
     pos_ptr = &pos;
-    /* digit_m[0]='\0'; */
+    pos_prev_ptr = &pos;
+    pos_next_ptr = &pos;
+    pos_nb = 0;
+    pos_index = 0;
 
     int err;
     /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
