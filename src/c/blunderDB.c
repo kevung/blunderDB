@@ -688,25 +688,21 @@ int db_update_position(sqlite3* db, int* id, const POSITION* p){
     sql[0]='\0'; t[0]='\0';
     h=pos_to_str(p);
     convert_charp_to_array(h, hash, 50);
-    printf("hash: %s\n", hash);
     strcat(sql, "UPDATE position SET ");
     for(int i=0; i<26; i++){
         sprintf(t, "p%i = %i, ", i, p->checker[i]);
-        printf("t: %s\n", t);
         strcat(sql, t);
     }
     sprintf(t, "player1_score = %d, ", p->p1_score);
-    printf("t: %s\n", t);
     strcat(sql, t);
     sprintf(t, "player2_score = %d, ", p->p2_score);
-    printf("t: %s\n", t);
     strcat(sql, t);
-    sprintf(t, "cube_position = %d  ", p->cube);
-    printf("t: %s\n", t);
+    sprintf(t, "cube_position = %d,  ", p->cube);
     strcat(sql, t);
-    /* sprintf(t, "hash = \"%s\" ", hash); */
-    /* strcat(sql, t); */
-    sprintf(t, "WHERE id = %d", *id);
+    strcat(sql, "hash = \"");
+    strcat(sql, hash);
+    strcat(sql, "\" ");
+    sprintf(t, "WHERE id = %d;", *id);
     strcat(sql, t);
     printf("sql: %s\n", sql);
     execute_sql(db, sql); 
