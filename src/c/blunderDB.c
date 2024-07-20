@@ -1352,6 +1352,9 @@ int parse_cmdline(const char* cmdtext){
         } else {
             db_insert_position(db, pos_ptr);
             update_sb_msg(msg_info_position_written);
+            db_select_position(db, &pos_nb,
+                    pos_list_id, pos_list);
+            goto_last_position_cb();
         }
     } else if(strncmp(cmdtext, ":e", 2)==0){
         if(db==NULL){
