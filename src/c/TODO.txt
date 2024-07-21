@@ -1,12 +1,13 @@
 Plus tard:
 
-- Supprimer une position de librairies. Demander confirmation ou :d! pour supprimer.
 - Recherche d'une position.
+- Supprimer une position de librairies. Demander confirmation ou :d! pour supprimer.
 - Copier/Coller/Glissé une position.
 - Import d'un match.
 - Gestion des collections. (création, renommage, suppresion, copie)
 - Export des positions et matchs en txt.
 - Parsage des fichiers XG.
+- Implémenter les menus et boutons.
 
 
 
