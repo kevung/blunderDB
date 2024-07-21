@@ -1480,10 +1480,14 @@ int parse_cmdline(const char* cmdtext){
         db_select_position(db, &pos_nb,
                 pos_list_id, pos_list);
         goto_first_position_cb();
+    } else if(strncmp(cmdtext, ":d!", 3)==0){
+        printf(":d!\n");
+        int id = pos_list_id[pos_index];
+        db_delete_position(db, &id);
     } else if(strncmp(cmdtext, ":d", 2)==0){
         printf(":d\n");
         int id = pos_list_id[pos_index];
-        db_delete_position(db, &id);
+        printf("Should implement removing position from library");
     }
     return 1;
 }
