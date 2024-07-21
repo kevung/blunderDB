@@ -766,6 +766,69 @@ int db_select_position(sqlite3* db, int* pos_nb,
     return 1;
 }
 
+int db_select_specific_position(sqlite3* db, const POSITION* p,
+        const bool force_cube, const bool force_score,
+        const bool criteria_blunder, const int bmin, const int bmax,
+        const bool criteria_pipcount, const int pmin, const int pmax,
+        const bool criteria_checkeroff, const int omin, const int omax,
+        int* p_nb, int* p_list_id, POSITION* p_list){
+    printf("\ndb_select_specific_position\n");
+    // add constraints due to blunder, pipcount, checkeroff
+    char sql[10000], t[10000];
+    sql[0]='\0'; t[0]='\0';
+    strcat(sql, "SELECT * FROM position WHERE 1=1 ");
+    for(int i=0;i<26;i++){
+        if(p->checker[i]>0){
+            strcat(sql, "and ");
+            sprintf(t, "p%i >= %i ", i, p->checker[i]);
+            strcat(sql, t);
+        } else if(p->checker[i]<0){
+            strcat(sql, "and ");
+            sprintf(t, "p%i <= %i ", i, p->checker[i]);
+            strcat(sql, t);
+        }
+    }
+    printf("force_score: %i\nforce_cube: %i\n", force_score, force_cube);
+    if(force_score){
+        printf("\nforce_score\n");
+        sprintf(t, "and player1_score = %i and player2_score = %i ",
+                p->p1_score, p->p2_score);
+        strcat(sql, t);
+    }
+    if(force_cube){
+        printf("\nforce_cube\n");
+        sprintf(t, "and cube_position = %i ", p->cube);
+        strcat(sql, t);
+    }
+    strcat(sql, ";");
+    printf("sql: %s\n", sql);
+
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+
+    *p_nb=0;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        p_list_id[*p_nb]=sqlite3_column_int(stmt,0);
+        for(int i=0;i<26;i++){
+            p_list[*p_nb].checker[i]=sqlite3_column_int(stmt,i+1);
+        }
+        p_list[*p_nb].p1_score=sqlite3_column_int(stmt,29);
+        p_list[*p_nb].p2_score=sqlite3_column_int(stmt,30);
+        p_list[*p_nb].cube=sqlite3_column_int(stmt,31);
+        const char *hash=sqlite3_column_text(stmt,32);
+        *p_nb+=1;
+    }
+    if(rc!=SQLITE_DONE){
+        printf("Failed to execute statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    sqlite3_finalize(stmt);
+    return 1;
+}
+
 int db_delete_position(sqlite3* db, const int* id){
     printf("\ndb_delete_position\n");
     char sql[100];
@@ -1500,6 +1563,36 @@ int parse_cmdline(char* cmdtext){
         printf(":d\n");
         int id = pos_list_id[pos_index];
         printf("Should implement removing position from library");
+    } else if(strncmp(cmdtoken[0], ":s", 2)==0){
+        printf(":s\n");
+        bool force_cube=false;
+        bool force_score=false;
+        bool criteria_blunder=false;
+        bool criteria_pipcount=false;
+        bool criteria_checkeroff=false;
+        int bmin=0, bmax=0;
+        int pmin=0, pmax=0;
+        int omin=0, omax=0;
+        for(int i=1;i<token_nb;i++){
+            printf("tok %i %s\n",i,cmdtoken[i]); 
+            if(strncmp(cmdtoken[i],"c",1)==0
+                    || strncmp(cmdtoken[i],"cu",2)==0
+                    || strncmp(cmdtoken[i],"cube",4)==0){
+                force_cube=true;
+            } else if(strncmp(cmdtoken[i],"s",1)==0
+                    || strncmp(cmdtoken[i],"sc",2)==0
+                    || strncmp(cmdtoken[i],"score",5)==0){
+                force_score=true;
+            }
+        }
+        printf("force_score: %i\nforce_cube: %i\n", force_score, force_cube);
+        db_select_specific_position(db, pos_ptr,
+                force_cube, force_score,
+                criteria_blunder, bmin, bmax,
+                criteria_pipcount, pmin, pmax,
+                criteria_checkeroff, omin, omax,
+                &pos_nb, pos_list_id, pos_list);
+        goto_first_position_cb();
     }
     return 1;
 }
