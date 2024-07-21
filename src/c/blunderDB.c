@@ -177,6 +177,7 @@ POSITION pos;
 POSITION *pos_ptr, *pos_prev_ptr, *pos_next_ptr;
 bool is_pointletter_active = false;
 
+POSITION pos_buffer;
 POSITION pos_list[POSITION_MEMORY_MAX];
 int pos_list_id[POSITION_MEMORY_MAX];
 int pos_nb, pos_index;
@@ -194,6 +195,17 @@ int char_in_string(const char c, const char* s)
     e = strchr(s, c);
     index = (int) (e - s);
     return index;
+}
+
+void copy_position(POSITION* a, POSITION* b){
+    for(int i=0;i<26;i++) b->checker[i]=a->checker[i];
+    b->cube=a->cube;
+    b->p1_score=a->p1_score;
+    b->p2_score=a->p2_score;
+    for(int i=0;i<2;i++) b->dice[i]=a->dice[i];
+    b->is_double=a->is_double;
+    b->is_take=a->is_take;
+    b->is_on_roll=a->is_on_roll;
 }
 
 void pos_print(const POSITION* p)
@@ -2759,6 +2771,8 @@ static int toggle_editmode_cb()
     if(mode_active != EDIT) {
         mode_active=EDIT;
         is_pointletter_active=true;
+        copy_position(pos_ptr, &pos_buffer);
+        pos_ptr=&pos_buffer;
         draw_canvas(cdv);
         set_visibility_off(cmdline);
     } else {
