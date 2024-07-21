@@ -57,6 +57,12 @@ Edit mode
 keyboard shortcuts to edit position
 Toggle number/letter point
 
+Search Filters
+==============
+b<max> b<min>,<max> blunders
+p<max> p<min>,<max> pipcount
+o<min> checkeroff
+
 Match mode
 ==========
 h: left: prev game
@@ -75,3 +81,4 @@ Inspirations
 ============
 Vim
 Why
+
