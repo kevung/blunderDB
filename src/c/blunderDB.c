@@ -1500,10 +1500,6 @@ static Ihandle* create_searches(void)
 
 int parse_cmdline(char* cmdtext){
     printf("\nparse_cmdline\n");
-    if(db==NULL) {
-        update_sb_msg(msg_err_no_db_opened);
-        return 0;
-    }
     token_nb=0;
     char *c = strtok(cmdtext, " ");
     while(c!=NULL){
@@ -1513,6 +1509,16 @@ int parse_cmdline(char* cmdtext){
     }
     for(int i=0;i<token_nb;i++){
         printf("token %i: %s\n",i,cmdtoken[i]);
+    }
+
+    if(strncmp(cmdtoken[0], ":o", 2)==0){
+        printf("\n:o\n");
+        item_open_action_cb();
+    }
+
+    if(db==NULL) {
+        update_sb_msg(msg_err_no_db_opened);
+        return 0;
     }
     if(strncmp(cmdtoken[0], ":w!", 3)==0){
         printf(":w!\n");
