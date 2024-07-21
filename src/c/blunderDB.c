@@ -1514,6 +1514,9 @@ int parse_cmdline(char* cmdtext){
     if(strncmp(cmdtoken[0], ":o", 2)==0){
         printf("\n:o\n");
         item_open_action_cb();
+    } else if(strncmp(cmdtoken[0], ":q", 2)==0){
+        printf("\n:q\n");
+        item_exit_action_cb();
     }
 
     if(db==NULL) {
@@ -2644,7 +2647,7 @@ static int item_saveas_action_cb(void)
 static int item_exit_action_cb()
 {
     if(db!=NULL) db_close(db);
-    IupClose();
+    IupExitLoop();
     return EXIT_SUCCESS;
 }
 
