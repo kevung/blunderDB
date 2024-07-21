@@ -111,6 +111,7 @@ static int goto_first_position_cb(void);
 static int goto_prev_position_cb(void);
 static int goto_next_position_cb(void);
 static int goto_last_position_cb(void);
+static int goto_position_cb(int*);
 
 // END Prototypes
 
@@ -124,6 +125,7 @@ static int goto_last_position_cb(void);
 #define PLAYER2 -1
 #define PLAYER1_POINTLABEL "*abcdefghijklmnopqrstuvwxyz"
 #define PLAYER2_POINTLABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
+#define POSITION_MEMORY_MAX 10000
 
 char hash[50];
 
@@ -175,10 +177,16 @@ POSITION pos;
 POSITION *pos_ptr, *pos_prev_ptr, *pos_next_ptr;
 bool is_pointletter_active = false;
 
-POSITION pos_list[10000];
-int pos_list_id[10000];
+POSITION pos_list[POSITION_MEMORY_MAX];
+int pos_list_id[POSITION_MEMORY_MAX];
 int pos_nb, pos_index;
 
+int find_index_from_int(int v, int* a, int nb){
+    for(int i=0;i<nb;i++){
+        if(a[i]==v) return i;
+    }
+    return 0;
+}
 int char_in_string(const char c, const char* s)
 {
     int index;
@@ -501,6 +509,13 @@ void get_last_position(){
     pos_ptr=&pos_list[pos_index];
 }
 
+int get_position(int* id){
+    pos_index=find_index_from_int(*id, pos_list_id,
+            POSITION_MEMORY_MAX );
+    pos_ptr=&pos_list[pos_index];
+    return 1;
+}
+
 /* END Data */
 
 /************************ Database ***********************/
@@ -683,8 +698,8 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
 
 
 int db_update_position(sqlite3* db, int* id, const POSITION* p){
-    char sql[8000]; char *h;
-    char t[30];
+    char sql[10000]; char *h;
+    char t[10000];
     sql[0]='\0'; t[0]='\0';
     h=pos_to_str(p);
     convert_charp_to_array(h, hash, 50);
@@ -751,6 +766,33 @@ int db_delete_position(sqlite3* db, const int* id){
     return 1;
 }
 
+int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int* nb, int* id)
+{
+    printf("\ndb_find_identical_position\n");
+    char sql[10000]; char *h;
+    char t[10000];
+    sql[0]='\0'; t[0]='\0';
+    h=pos_to_str(p);
+    convert_charp_to_array(h, hash, 50);
+    strcat(sql, "SELECT id FROM position WHERE ");
+    sprintf(t, "hash = \"%s\";", hash);
+    strcat(sql, t);
+    printf("sql: %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    *nb=0;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        id[*nb]=sqlite3_column_int(stmt,0);
+        *nb+=1;
+        *exist=true;
+    }
+    /* execute_sql(db, sql); */ 
+    return 1;
+}
+
 /* END Database */
 
 
@@ -797,6 +839,8 @@ const char* msg_info_position_written =
 "Position written to database.";
 const char* msg_info_position_updated = 
 "Position updated.";
+const char* msg_info_position_already_exists = 
+"Position already exists in database.";
 const char* msg_info_no_position =
 "No positions.";
 const char* msg_info_no_db_loaded =
@@ -1385,18 +1429,40 @@ int parse_cmdline(const char* cmdtext){
     }
     if(strncmp(cmdtext, ":w!", 3)==0){
         printf(":w!\n");
-        int id=pos_list_id[pos_index];
-        db_update_position(db, &id, pos_ptr);
-        mode_active=NORMAL;
-        update_sb_msg(msg_info_position_updated);
-        update_sb_mode();
+        bool exist=false;
+        int nb=0;
+        int _id[1000];
+        db_find_identical_position(db, pos_ptr, &exist, &nb, _id);
+        if(exist){
+            goto_position_cb(&_id[0]);
+            update_sb_msg(msg_info_position_already_exists);
+            printf("Position already exists. nb: %i\n", nb);
+            for(int i=0;i<nb;i++) printf("_id[%i]: %i\n",i, _id[i]);
+        } else {
+            int id=pos_list_id[pos_index];
+            db_update_position(db, &id, pos_ptr);
+            mode_active=NORMAL;
+            update_sb_msg(msg_info_position_updated);
+            update_sb_mode();
+        }
     } else if(strncmp(cmdtext, ":w", 2)==0){
         printf(":w\n");
-        db_insert_position(db, pos_ptr);
-        update_sb_msg(msg_info_position_written);
-        db_select_position(db, &pos_nb,
-                pos_list_id, pos_list);
-        goto_last_position_cb();
+        bool exist=false;
+        int nb=0;
+        int _id[1000];
+        db_find_identical_position(db, pos_ptr, &exist, &nb, _id);
+        if(exist){
+            goto_position_cb(&_id[0]);
+            update_sb_msg(msg_info_position_already_exists);
+            printf("Position already exists. nb: %i\n", nb);
+            for(int i=0;i<nb;i++) printf("_id: %i\n", _id[i]);
+        } else {
+            db_insert_position(db, pos_ptr);
+            update_sb_msg(msg_info_position_written);
+            db_select_position(db, &pos_nb,
+                    pos_list_id, pos_list);
+            goto_last_position_cb();
+        }
     } else if(strncmp(cmdtext, ":e", 2)==0){
         printf(":e\n");
         db_select_position(db, &pos_nb,
@@ -2951,6 +3017,11 @@ static int goto_last_position_cb(){
     return 1;
 }
 
+static int goto_position_cb(int* id){
+    get_position(id);
+    refresh_position();
+    return 1;
+}
 static int left_cb(Ihandle* ih, int c){
     printf("\nleft_cb\n");
     switch(mode_active) {
