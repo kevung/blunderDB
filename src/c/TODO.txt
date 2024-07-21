@@ -1,6 +1,6 @@
 Plus tard:
 
-- Recherche d'une position.
+- Ajouter filtres blunders, checkeroff, pipcount difference.
 - Supprimer une position de librairies. Demander confirmation ou :d! pour supprimer.
 - Copier/Coller/Glissé une position.
 - Import d'un match.
