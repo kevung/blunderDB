@@ -838,6 +838,8 @@ int sign_m=1;
 char digit_m[4];
 
 char *cmdtext;
+char* cmdtoken[100];
+int token_nb;
 
 char _c[100];
 
@@ -1433,13 +1435,23 @@ static Ihandle* create_searches(void)
     return ih;
 }
 
-int parse_cmdline(const char* cmdtext){
+int parse_cmdline(char* cmdtext){
     printf("\nparse_cmdline\n");
     if(db==NULL) {
         update_sb_msg(msg_err_no_db_opened);
         return 0;
     }
-    if(strncmp(cmdtext, ":w!", 3)==0){
+    token_nb=0;
+    char *c = strtok(cmdtext, " ");
+    while(c!=NULL){
+        cmdtoken[token_nb]=c;
+        token_nb+=1;
+        c=strtok(NULL, " ");
+    }
+    for(int i=0;i<token_nb;i++){
+        printf("token %i: %s\n",i,cmdtoken[i]);
+    }
+    if(strncmp(cmdtoken[0], ":w!", 3)==0){
         printf(":w!\n");
         bool exist=false;
         int nb=0;
@@ -1457,7 +1469,7 @@ int parse_cmdline(const char* cmdtext){
             update_sb_msg(msg_info_position_updated);
             update_sb_mode();
         }
-    } else if(strncmp(cmdtext, ":w", 2)==0){
+    } else if(strncmp(cmdtoken[0], ":w", 2)==0){
         printf(":w\n");
         bool exist=false;
         int nb=0;
@@ -1475,16 +1487,16 @@ int parse_cmdline(const char* cmdtext){
                     pos_list_id, pos_list);
             goto_last_position_cb();
         }
-    } else if(strncmp(cmdtext, ":e", 2)==0){
+    } else if(strncmp(cmdtoken[0], ":e", 2)==0){
         printf(":e\n");
         db_select_position(db, &pos_nb,
                 pos_list_id, pos_list);
         goto_first_position_cb();
-    } else if(strncmp(cmdtext, ":d!", 3)==0){
+    } else if(strncmp(cmdtoken[0], ":d!", 3)==0){
         printf(":d!\n");
         int id = pos_list_id[pos_index];
         db_delete_position(db, &id);
-    } else if(strncmp(cmdtext, ":d", 2)==0){
+    } else if(strncmp(cmdtoken[0], ":d", 2)==0){
         printf(":d\n");
         int id = pos_list_id[pos_index];
         printf("Should implement removing position from library");
