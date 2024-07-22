@@ -112,6 +112,8 @@ static int goto_prev_position_cb(void);
 static int goto_next_position_cb(void);
 static int goto_last_position_cb(void);
 static int goto_position_cb(int*);
+static int board_direction_left_cb(void);
+static int board_direction_right_cb(void);
 
 // END Prototypes
 
@@ -1845,6 +1847,8 @@ int parse_cmdline(char* cmdtext){
 cdCanvas *cdv = NULL;
 cdCanvas *db_cdv = NULL;
 
+int board_direction = BOARD_DIRECTION;
+
 typedef struct {
     int button;
     int pressed;
@@ -2192,8 +2196,8 @@ void draw_pipcount(cdCanvas* cv, const int pip, const int player){
 void draw_checker(cdCanvas* cv, const POSITION* p, const int dir) {
     double xc, yc, eps;
 
-    if(BOARD_DIRECTION==1) eps = 1;
-    if(BOARD_DIRECTION!=1) eps = -1;
+    if(board_direction==1) eps = 1;
+    if(board_direction!=1) eps = -1;
 
     cdCanvasForeground(cv, CHECKER_LINECOLOR);
     cdCanvasLineWidth(cv, CHECKER_LINEWIDTH);
@@ -2322,14 +2326,14 @@ void draw_canvas(cdCanvas* cv) {
     compute_checkeroff(pos_ptr, &off1, &off2);
 
     draw_board(cv);
-    draw_checker(cv, pos_ptr, BOARD_DIRECTION);
+    draw_checker(cv, pos_ptr, board_direction);
     draw_cube(cv, pos_ptr->cube);
-    draw_checkeroff(cv, off1, PLAYER1, BOARD_DIRECTION);
-    draw_checkeroff(cv, off2, PLAYER2, BOARD_DIRECTION);
+    draw_checkeroff(cv, off1, PLAYER1, board_direction);
+    draw_checkeroff(cv, off2, PLAYER2, board_direction);
     if(is_pointletter_active) {
-        draw_pointletter(cv, BOARD_DIRECTION, pos_ptr->cube);
+        draw_pointletter(cv, board_direction, pos_ptr->cube);
     } else {
-        draw_pointnumber(cv, BOARD_DIRECTION);
+        draw_pointnumber(cv, board_direction);
     }
     draw_score(cv, pos_ptr->p1_score, PLAYER1);
     draw_score(cv, pos_ptr->p2_score, PLAYER2);
@@ -2360,6 +2364,8 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_RIGHT", (Icallback) right_cb);
     IupSetCallback(dlg, "K_PGUP", (Icallback) pgup_cb);
     IupSetCallback(dlg, "K_PGDN", (Icallback) pgdn_cb);
+    IupSetCallback(dlg, "K_cLEFT", (Icallback) board_direction_left_cb);
+    IupSetCallback(dlg, "K_cRIGHT", (Icallback) board_direction_right_cb);
 
 
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
@@ -2506,8 +2512,8 @@ static int canvas_button_cb(Ihandle* ih, const int button,
 
     mouse_hold=false;
 
-    if(BOARD_DIRECTION==1) dir=1;
-    if(BOARD_DIRECTION!=1) dir=-1;
+    if(board_direction==1) dir=1;
+    if(board_direction!=1) dir=-1;
 
     // canvas and world have inverted y axis...
     y2 = cdCanvasInvertYAxis(cdv, y);
@@ -2575,19 +2581,19 @@ static int canvas_button_cb(Ihandle* ih, const int button,
         is_in_right = ix>0 && ix<=6;
         if(is_in_left) {
             if(is_in_up) {
-                if(BOARD_DIRECTION==1) i=19+ix;
-                if(BOARD_DIRECTION!=1) i=18-ix;
+                if(board_direction==1) i=19+ix;
+                if(board_direction!=1) i=18-ix;
             } else if(is_in_down) {
-                if(BOARD_DIRECTION==1) i=6-ix;
-                if(BOARD_DIRECTION!=1) i=7+ix;
+                if(board_direction==1) i=6-ix;
+                if(board_direction!=1) i=7+ix;
             }
         } else if(is_in_right) {
             if(is_in_up) {
-                if(BOARD_DIRECTION==1) i=18+ix;
-                if(BOARD_DIRECTION!=1) i=19-ix;
+                if(board_direction==1) i=18+ix;
+                if(board_direction!=1) i=19-ix;
             } else if(is_in_down) {
-                if(BOARD_DIRECTION==1) i=7-ix;
-                if(BOARD_DIRECTION!=1) i=6+ix;
+                if(board_direction==1) i=7-ix;
+                if(board_direction!=1) i=6+ix;
             }
         }
         return i;
@@ -3513,6 +3519,18 @@ static int digit_cb(Ihandle* ih, int c){
         default:
             break;
     }
+    return IUP_DEFAULT;
+}
+
+static int board_direction_left_cb(void){
+    board_direction = -BOARD_DIRECTION;
+    draw_canvas(cdv);
+    return IUP_DEFAULT;
+}
+
+static int board_direction_right_cb(void){
+    board_direction = BOARD_DIRECTION;
+    draw_canvas(cdv);
     return IUP_DEFAULT;
 }
 
