@@ -575,6 +575,41 @@ void filter_position_by_pipcount(int pmin, int pmax){
     printf("pos_nb: %i\n", pos_nb);
 }
 
+void filter_position_by_backchecker(int bc_player, int bc_num){
+    printf("\nfilter_position_by_backchecker\n");
+    int j=0;
+    for(int i=0;i<pos_nb;i++){
+        int _n=0;
+        printf("i %i\n",i);
+        pos_print(&pos_list[i]);
+        if(bc_player==PLAYER1){
+            for(int k=14;k<26;k++){
+                if(pos_list[i].checker[k]>0){
+                    _n+=pos_list[i].checker[k];
+                }
+            }
+        } else if(bc_player==PLAYER2){
+            for(int k=0;k<12;k++){
+                if(pos_list[i].checker[k]<0){
+                    _n+=abs(pos_list[i].checker[k]);
+                }
+            }
+        }
+        if(_n==bc_num){
+            pos_list_tmp[j]=pos_list[i];
+            pos_list_id_tmp[j]=pos_list_id[i];
+            j+=1;
+            printf("i pos pos_id: %i %i %i\n", i, pos_list[i], pos_list_id[i]);
+        }
+    }
+    for(int i=0;i<j;i++){
+        pos_list[i]=pos_list_tmp[i];
+        pos_list_id[i]=pos_list_id_tmp[i];
+    }
+    pos_nb=j;
+    printf("pos_nb: %i\n", pos_nb);
+}
+
 /* END Data */
 
 /************************ Database ***********************/
@@ -1629,9 +1664,12 @@ int parse_cmdline(char* cmdtext){
         bool criteria_blunder=false;
         bool criteria_pipcount=false;
         bool criteria_checkeroff=false;
+        bool criteria_backchecker1=false;
+        bool criteria_backchecker2=false;
         int bmin=0, bmax=0;
         int pmin=0, pmax=0;
         int omin=0;
+        int bc_num1, bc_num2; //backchecker
         for(int i=1;i<token_nb;i++){
             printf("tok %i %s\n",i,cmdtoken[i]); 
             if(strncmp(cmdtoken[i],"c",1)==0
@@ -1651,6 +1689,14 @@ int parse_cmdline(char* cmdtext){
                 if(pmax<pmin) int_swap(&pmax, &pmin);
                 criteria_pipcount=true;
                 printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
+            } else if(strncmp(cmdtoken[i],"k",1)==0){
+                sscanf(cmdtoken[i], "k%d", &bc_num1);
+                criteria_backchecker1=true;
+                printf("\ncriteria backchecker 1: %i\n", bc_num1);
+            } else if(strncmp(cmdtoken[i],"K",1)==0){
+                sscanf(cmdtoken[i], "K%d", &bc_num2);
+                criteria_backchecker2=true;
+                printf("\ncriteria backchecker : %i\n", bc_num2);
             }
         }
         db_select_specific_position(db, pos_ptr,
@@ -1659,6 +1705,8 @@ int parse_cmdline(char* cmdtext){
                 &pos_nb, pos_list_id, pos_list);
         if(criteria_checkeroff) filter_position_by_checkeroff(omin);
         if(criteria_pipcount) filter_position_by_pipcount(pmin,pmax);
+        if(criteria_backchecker1) filter_position_by_backchecker(PLAYER1,bc_num1);
+        if(criteria_backchecker2) filter_position_by_backchecker(PLAYER2,bc_num2);
         if(pos_nb==0){
             pos_list[0]=POS_DEFAULT;
             pos_list_id[0]=-1;
