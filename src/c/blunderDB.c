@@ -178,8 +178,10 @@ POSITION *pos_ptr, *pos_prev_ptr, *pos_next_ptr;
 bool is_pointletter_active = false;
 
 POSITION pos_buffer;
-POSITION pos_list[POSITION_MEMORY_MAX];
-int pos_list_id[POSITION_MEMORY_MAX];
+POSITION pos_list[POSITION_MEMORY_MAX],
+         pos_list_tmp[POSITION_MEMORY_MAX];
+int pos_list_id[POSITION_MEMORY_MAX],
+    pos_list_id_tmp[POSITION_MEMORY_MAX];
 int pos_nb, pos_index;
 
 int find_index_from_int(int v, int* a, int nb){
@@ -528,6 +530,27 @@ int get_position(int* id){
     return 1;
 }
 
+void filter_position_by_checkeroff(int omin){
+    printf("\nfilter_position_by_checkeroff\n");
+    int off1, off2;
+    int j=0;
+    for(int i=0;i<pos_nb;i++){
+        compute_checkeroff(&pos_list[i], &off1, &off2);
+        if((off1>=omin) || (off2>=omin)){
+            printf("j %i\n",j);
+            printf("i omin off1 off2: %i %i %i %i\n", i,omin,off1,off2);
+            pos_list_tmp[j]=pos_list[i];
+            pos_list_id_tmp[j]=pos_list_id[i];
+            j+=1;
+        }
+    }
+    for(int i=0;i<j;i++){
+            pos_list[i]=pos_list_tmp[i];
+            pos_list_id[i]=pos_list_id_tmp[i];
+    }
+    pos_nb=j;
+    printf("pos_nb: %i\n", pos_nb);
+}
 /* END Data */
 
 /************************ Database ***********************/
@@ -770,7 +793,6 @@ int db_select_specific_position(sqlite3* db, const POSITION* p,
         const bool force_cube, const bool force_score,
         const bool criteria_blunder, const int bmin, const int bmax,
         const bool criteria_pipcount, const int pmin, const int pmax,
-        const bool criteria_checkeroff, const int omin, const int omax,
         int* p_nb, int* p_list_id, POSITION* p_list){
     printf("\ndb_select_specific_position\n");
     // add constraints due to blunder, pipcount, checkeroff
@@ -1563,6 +1585,11 @@ int parse_cmdline(char* cmdtext){
         printf(":e\n");
         db_select_position(db, &pos_nb,
                 pos_list_id, pos_list);
+        if(pos_nb==0){
+            pos_list[0]=POS_DEFAULT;
+            pos_list_id[0]=-1;
+            pos_nb=1;
+        }
         goto_first_position_cb();
     } else if(strncmp(cmdtoken[0], ":d!", 3)==0){
         printf(":d!\n");
@@ -1581,7 +1608,7 @@ int parse_cmdline(char* cmdtext){
         bool criteria_checkeroff=false;
         int bmin=0, bmax=0;
         int pmin=0, pmax=0;
-        int omin=0, omax=0;
+        int omin=0;
         for(int i=1;i<token_nb;i++){
             printf("tok %i %s\n",i,cmdtoken[i]); 
             if(strncmp(cmdtoken[i],"c",1)==0
@@ -1592,15 +1619,23 @@ int parse_cmdline(char* cmdtext){
                     || strncmp(cmdtoken[i],"sc",2)==0
                     || strncmp(cmdtoken[i],"score",5)==0){
                 force_score=true;
+            } else if(strncmp(cmdtoken[i],"o",1)==0){
+                sscanf(cmdtoken[i], "o%d", &omin);
+                criteria_checkeroff=true;
+                printf("\ncriteria checkeroff: %i\n", omin);
             }
         }
-        printf("force_score: %i\nforce_cube: %i\n", force_score, force_cube);
         db_select_specific_position(db, pos_ptr,
                 force_cube, force_score,
                 criteria_blunder, bmin, bmax,
                 criteria_pipcount, pmin, pmax,
-                criteria_checkeroff, omin, omax,
                 &pos_nb, pos_list_id, pos_list);
+        if(criteria_checkeroff) filter_position_by_checkeroff(omin);
+        if(pos_nb==0){
+            pos_list[0]=POS_DEFAULT;
+            pos_list_id[0]=-1;
+            pos_nb=1;
+        }
         goto_first_position_cb();
     }
     return 1;
