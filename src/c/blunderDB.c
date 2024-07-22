@@ -658,17 +658,9 @@ char db_file[10240];
 const char *sql_library =
 "CREATE TABLE library ("
 "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-"name TEXT,"
-"position_list_id INTEGR,"
-"FOREIGN KEY(position_list_id) REFERENCES position_list(id)"
+"name TEXT"
 ");";
 
-const char *sql_position_list =
-"CREATE TABLE position_list ("
-"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-"position_id INTEGER,"
-"FOREIGN KEY(position_id) REFERENCES position(id)"
-");";
 
 const char *sql_player = 
 "CREATE TABLE player ("
@@ -717,7 +709,15 @@ const char *sql_position =
 "FOREIGN KEY(player2_id) REFERENCES player(id)"
 ");";
 
-;
+const char* sql_catalog =
+"CREATE TABLE catalog ("
+"position_id INTEGER,"
+"library_id INTEGER,"
+"FOREIGN KEY(position_id) REFERENCES position(id),"
+"FOREIGN KEY(library_id) REFERENCES library(id)"
+");";
+
+
 
 void execute_sql(sqlite3 *db, const char *sql)
 {
@@ -753,8 +753,8 @@ int db_create(const char* filename)
     printf("Try to create position table.\n");
     execute_sql(db, sql_position);
 
-    printf("Try to create position_list table.\n");
-    execute_sql(db, sql_position_list);
+    printf("Try to create catalog table.\n");
+    execute_sql(db, sql_catalog);
 
     printf("Try to create library table.\n");
     execute_sql(db, sql_library);
@@ -981,6 +981,97 @@ int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int*
     return 1;
 }
 
+bool db_is_valid_library_name(char *l){
+    printf("\ndb_is_valid_library_name\n");
+    int n=strlen(l);
+    for(int i=0;i<n;i++){
+        if(!isalnum(l[i])){
+            return false;
+        }
+    }
+    return true;
+}
+
+bool db_library_exists(sqlite3* db, const char *l){
+    char sql[10000], t[10000]; 
+    sql[0]='\0'; t[0]='\0';
+    strcat(sql, "SELECT id,name FROM library WHERE ");
+    sprintf(t, "name = \"%s\";", l);
+    strcat(sql, t);
+    printf("sql: %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    int id;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        id=sqlite3_column_int(stmt,0);
+        return true;
+    }
+    return false;
+}
+
+int db_get_library_id_from_name(sqlite3* db, const char *name,
+        int *id){
+    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
+    printf("\ndb_get_library_id_from_name\n");
+    /* strcat(sql, "SELECT id FROM library WHERE */
+    sprintf(sql, "SELECT id FROM library WHERE name = \"%s\";",
+            name);
+    printf("sql: %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        *id=sqlite3_column_int(stmt,0);
+    }
+    return 1;
+}
+
+
+int db_insert_position_to_library(sqlite3* db,
+        const int pos_id, const char *lib_name){
+    printf("\ndb_insert_position_to_library\n");
+    char sql[10000], t[10000]; int lib_id;
+    sql[0]='\0'; t[0]='\0';
+    db_get_library_id_from_name(db,lib_name,&lib_id);
+    strcat(sql, "INSERT INTO catalog ");
+    strcat(sql, "(position_id, library_id) ");
+    sprintf(t, "VALUES (%d, %d);", pos_id, lib_id); 
+    strcat(sql, t);
+    execute_sql(db, sql);
+    return 1;
+}
+
+int db_insert_library(sqlite3* db, const char *lib_name){
+    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
+    printf("\ndb_insert_library\n");
+    strcat(sql, "INSERT INTO library (name) ");
+    sprintf(t, "VALUES (\"%s\");", lib_name);
+    strcat(sql, t);
+    execute_sql(db, sql);
+    return 1;
+}
+
+bool db_is_position_in_library(sqlite3* db, int pos_id, char *lib_name){
+    printf("\ndb_is_position_in_library\n");
+    char sql[10000]; int lib_id;
+    db_get_library_id_from_name(db,lib_name,&lib_id);
+    sprintf(sql, "SELECT count(*) FROM catalog WHERE position_id = %i and library_id = %i;",
+            pos_id, lib_id);
+    printf("sql %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    int n=0;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        n=sqlite3_column_int(stmt,0);
+    }
+    printf("n: %i\n", n);
+    if(n>0) {return true;} else {return false;}
+}
+
 /* END Database */
 
 
@@ -1021,6 +1112,8 @@ char _c[100];
 
 const char* msg_err_failed_to_create_db =
 "Failed to create database.";
+const char* msg_err_invalid_library_name =
+"ERR: Invalid library name. It should contain only alphanumeric symbols.";
 const char* msg_err_no_db_opened =
 "ERR: No database opened.";
 const char* msg_err_failed_to_open_db =
@@ -1031,6 +1124,8 @@ const char* msg_info_position_updated =
 "Position updated.";
 const char* msg_info_position_already_exists = 
 "Position already exists in database.";
+const char* msg_info_position_added_to_library =
+"Position added to library.";
 const char* msg_info_no_position =
 "No positions.";
 const char* msg_info_no_db_loaded =
@@ -1674,6 +1769,30 @@ int parse_cmdline(char* cmdtext){
             db_select_position(db, &pos_nb,
                     pos_list_id, pos_list);
             goto_last_position_cb();
+        }
+        if(token_nb>1){
+            int pos_id = pos_list_id[pos_index];
+            for(int i=1;i<token_nb;i++){
+                char *l=cmdtoken[i];
+                if(!db_is_valid_library_name(l)){
+                    update_sb_msg(msg_err_invalid_library_name);
+                    return 0;
+                }
+                if(db_library_exists(db, l)){
+                    printf("library already exists!\n");
+                    printf("pos_id lib_name: %i %s\n", pos_id, l);
+                    if(!db_is_position_in_library(db,pos_id,l)){
+                        printf("position is not in library\n");
+                        db_insert_position_to_library(db,pos_id,l);
+                        update_sb_msg(msg_info_position_added_to_library);
+                    }
+                } else {
+                    printf("library does not exists\n");
+                    db_insert_library(db, l);
+                    db_insert_position_to_library(db,pos_id,l);
+                    update_sb_msg(msg_info_position_added_to_library);
+                }
+            }
         }
     } else if(strncmp(cmdtoken[0], ":e", 2)==0){
         printf(":e\n");
