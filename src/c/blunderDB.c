@@ -981,7 +981,7 @@ int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int*
     return 1;
 }
 
-bool db_is_valid_library_name(char *l){
+bool db_is_valid_library_name(const char *l){
     printf("\ndb_is_valid_library_name\n");
     int n=strlen(l);
     for(int i=0;i<n;i++){
@@ -1056,7 +1056,8 @@ int db_insert_library(sqlite3* db, const char *lib_name){
     return 1;
 }
 
-bool db_is_position_in_library(sqlite3* db, int pos_id, char *lib_name){
+bool db_is_position_in_library(sqlite3* db, int pos_id,
+        const char *lib_name){
     printf("\ndb_is_position_in_library\n");
     char sql[10000]; int lib_id;
     db_get_library_id_from_name(db,lib_name,&lib_id);
@@ -1706,6 +1707,29 @@ static Ihandle* create_searches(void)
     return ih;
 }
 
+int add_position_to_library(sqlite3* db, const int pos_id,
+        const char *l){
+    if(!db_is_valid_library_name(l)){
+        update_sb_msg(msg_err_invalid_library_name);
+        return 0;
+    }
+    if(db_library_exists(db, l)){
+        printf("library already exists!\n");
+        printf("pos_id lib_name: %i %s\n", pos_id, l);
+        if(!db_is_position_in_library(db,pos_id,l)){
+            printf("position is not in library\n");
+            db_insert_position_to_library(db,pos_id,l);
+            update_sb_msg(msg_info_position_added_to_library);
+        }
+    } else {
+        printf("library does not exists\n");
+        db_insert_library(db, l);
+        db_insert_position_to_library(db,pos_id,l);
+        update_sb_msg(msg_info_position_added_to_library);
+    }
+    return 1;
+}
+
 int parse_cmdline(char* cmdtext){
     printf("\nparse_cmdline\n");
     token_nb=0;
@@ -1752,6 +1776,14 @@ int parse_cmdline(char* cmdtext){
             update_sb_msg(msg_info_position_updated);
             update_sb_mode();
         }
+        if(token_nb>1){
+            int pos_id = pos_list_id[pos_index];
+            for(int i=1;i<token_nb;i++){
+                char *l=cmdtoken[i];
+                add_position_to_library(db,pos_id,l); 
+            }
+        }
+
     } else if(strncmp(cmdtoken[0], ":w", 2)==0){
         printf(":w\n");
         bool exist=false;
@@ -1774,24 +1806,7 @@ int parse_cmdline(char* cmdtext){
             int pos_id = pos_list_id[pos_index];
             for(int i=1;i<token_nb;i++){
                 char *l=cmdtoken[i];
-                if(!db_is_valid_library_name(l)){
-                    update_sb_msg(msg_err_invalid_library_name);
-                    return 0;
-                }
-                if(db_library_exists(db, l)){
-                    printf("library already exists!\n");
-                    printf("pos_id lib_name: %i %s\n", pos_id, l);
-                    if(!db_is_position_in_library(db,pos_id,l)){
-                        printf("position is not in library\n");
-                        db_insert_position_to_library(db,pos_id,l);
-                        update_sb_msg(msg_info_position_added_to_library);
-                    }
-                } else {
-                    printf("library does not exists\n");
-                    db_insert_library(db, l);
-                    db_insert_position_to_library(db,pos_id,l);
-                    update_sb_msg(msg_info_position_added_to_library);
-                }
+                add_position_to_library(db,pos_id,l); 
             }
         }
     } else if(strncmp(cmdtoken[0], ":e", 2)==0){
