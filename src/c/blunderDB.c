@@ -1761,6 +1761,8 @@ int add_position_to_library(sqlite3* db, const int pos_id,
     } else {
         printf("library does not exists\n");
         db_insert_library(db, l);
+        db_select_all_libraries(db, &lib_nb, lib_list_id,
+                lib_list);
         db_insert_position_to_library(db,pos_id,l);
         update_sb_msg(msg_info_position_added_to_library);
     }
