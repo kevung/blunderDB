@@ -1627,6 +1627,9 @@ int parse_cmdline(char* cmdtext){
     if(strncmp(cmdtoken[0], ":o", 2)==0){
         printf("\n:o\n");
         item_open_action_cb();
+    } else if(strncmp(cmdtoken[0], ":n", 2)==0){
+        printf("\n:n\n");
+        item_new_action_cb();
     } else if(strncmp(cmdtoken[0], ":q", 2)==0){
         printf("\n:q\n");
         item_exit_action_cb();
