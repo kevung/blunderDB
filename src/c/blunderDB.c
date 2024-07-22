@@ -647,6 +647,8 @@ void filter_position_by_checker_in_the_zone(int z_player, int z_num){
 
 /************************ Database ***********************/
 /* BEGIN Database */
+#define LIBRARIES_NUMBER_MAX 1000
+#define LIBRARY_NAME_MAX 50
 
 sqlite3 *db = NULL;
 sqlite3_stmt *stmt;
@@ -1073,6 +1075,39 @@ bool db_is_position_in_library(sqlite3* db, int pos_id,
     if(n>0) {return true;} else {return false;}
 }
 
+/* int db_select_all_libraries(sqlite3* db, int* lib_nb, */
+/*         int* lib_list_id, char* lib_list){ */
+
+int db_select_all_libraries(sqlite3* db,
+        int* lib_nb, int* lib_list_id,
+        char lib_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX]){
+    printf("\ndb_select_all_libraries\n");
+    char sql[10000];
+    sprintf(sql, "SELECT id,name FROM library");
+    printf("sql %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+        return 0;
+    }
+    *lib_nb=1;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        lib_list_id[*lib_nb]=sqlite3_column_int(stmt,0);
+        char *name=(char *)sqlite3_column_text(stmt,1);
+        lib_list[*lib_nb][0]='\0';
+        strcat(lib_list[*lib_nb], name);
+        *lib_nb+=1;
+    }
+    if(rc!=SQLITE_DONE){
+        printf("Failed to execute statement: %s\n",
+                sqlite3_errmsg(db));
+        return 0;
+    }
+    sqlite3_finalize(stmt);
+    return 1;
+}
+
 /* END Database */
 
 
@@ -1093,8 +1128,10 @@ enum mode { NORMAL, EDIT, CMD, SEARCH, MATCH };
 typedef enum mode mode_t;
 mode_t mode_active = NORMAL;
 
-char* lib_list[1000]; //list of libraries
+char lib_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX];
+int lib_list_id[LIBRARIES_NUMBER_MAX];
 int lib_index; //active library
+int lib_nb;
 
 bool make_point=true;
 bool is_score_to_fill=false;
@@ -1758,7 +1795,19 @@ int parse_cmdline(char* cmdtext){
         update_sb_msg(msg_err_no_db_opened);
         return 0;
     }
-    if(strncmp(cmdtoken[0], ":w!", 3)==0){
+    if(strncmp(cmdtoken[0], ":ls", 3)==0){
+        db_select_all_libraries(db, &lib_nb, lib_list_id,
+                lib_list);
+        char msg_lib[10000], t[100]; msg_lib[0]='\0'; t[0]='\0';
+        sprintf(msg_lib, "Available librairies: ");
+        for(int i=0;i<lib_nb;i++){
+            sprintf(t, "%s ", lib_list[i]);
+            strcat(msg_lib, t);
+        }
+        update_sb_msg(msg_lib);
+        for(int i=0;i<lib_nb;i++) printf("lib %i %s\n",
+                lib_list_id[i], lib_list[i]);
+    } else if(strncmp(cmdtoken[0], ":w!", 3)==0){
         printf(":w!\n");
         bool exist=false;
         int nb=0;
@@ -3685,8 +3734,9 @@ int main(int argc, char **argv)
     pos_next_ptr = &pos;
     pos_nb = 0;
     pos_index = 0;
-    lib_list[0]="main";
+    lib_list[0][0]='\0'; strcat(lib_list[0], "main");
     lib_index=0;
+    lib_nb=1;
 
     int err;
     /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
