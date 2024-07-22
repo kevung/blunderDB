@@ -1,6 +1,5 @@
 Plus tard:
 
-- FIx bug: point number do not are displayed again after edit (letter point)
 - Add shortcut to change board orientation (ctrl-left, ctrl-right)
 - Gestion des collections. (création, renommage, suppresion, copie)
 - Supprimer une position de librairies. Demander confirmation ou :d! pour supprimer.

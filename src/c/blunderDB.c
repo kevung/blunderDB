@@ -3077,6 +3077,7 @@ static int toggle_cmdmode_cb()
     } else {
         mode_active=NORMAL;
         set_visibility_off(cmdline);
+        is_pointletter_active=false;
         /* for(int i=0;i<100;i++) cmdtext[i]='\0'; */
         cmdtext = IupGetAttribute(cmdline, "VALUE");
         IupSetAttribute(cmdline, "VALUE", "");
