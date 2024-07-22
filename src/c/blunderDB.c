@@ -552,13 +552,14 @@ void filter_position_by_checkeroff(int omin){
     printf("pos_nb: %i\n", pos_nb);
 }
 
-void filter_position_by_pipcount(int pmin, int pmax){
+void filter_position_by_pipcount(int pmin, int pmax, bool is_absdiff){
     printf("\nfilter_position_by_pipcount\n");
     int pip1, pip2, diff;
     int j=0;
     for(int i=0;i<pos_nb;i++){
         compute_pipcount(&pos_list[i], &pip1, &pip2);
-        diff=abs(pip1-pip2);
+        if(is_absdiff) { diff=pip1-pip2;
+        } else { diff=abs(pip1-pip2); }
         if((diff>=pmin) && (diff<=pmax)){
             printf("j %i\n",j);
             printf("i diff pmin pmax: %i %i %i %i\n", i,diff,pmin,pmax);
@@ -1693,6 +1694,7 @@ int parse_cmdline(char* cmdtext){
         bool force_score=false;
         bool criteria_blunder=false;
         bool criteria_pipcount=false;
+        bool criteria_abspipcount=false;
         bool criteria_checkeroff=false;
         bool criteria_backchecker1=false;
         bool criteria_backchecker2=false;
@@ -1700,6 +1702,7 @@ int parse_cmdline(char* cmdtext){
         bool criteria_zone2=false;
         int bmin=0, bmax=0;
         int pmin=0, pmax=0;
+        int Pmin=0, Pmax=0;
         int omin=0;
         int bc_num1, bc_num2; //backchecker
         int z_num1, z_num2; //zone
@@ -1721,6 +1724,11 @@ int parse_cmdline(char* cmdtext){
                 sscanf(cmdtoken[i], "p%d,%d", &pmin, &pmax);
                 if(pmax<pmin) int_swap(&pmax, &pmin);
                 criteria_pipcount=true;
+                printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
+            } else if(strncmp(cmdtoken[i],"P",1)==0){
+                sscanf(cmdtoken[i], "P%d,%d", &Pmin, &Pmax);
+                if(Pmax<Pmin) int_swap(&Pmax, &Pmin);
+                criteria_abspipcount=true;
                 printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
             } else if(strncmp(cmdtoken[i],"k",1)==0){
                 sscanf(cmdtoken[i], "k%d", &bc_num1);
@@ -1745,7 +1753,8 @@ int parse_cmdline(char* cmdtext){
                 criteria_blunder, bmin, bmax,
                 &pos_nb, pos_list_id, pos_list);
         if(criteria_checkeroff) filter_position_by_checkeroff(omin);
-        if(criteria_pipcount) filter_position_by_pipcount(pmin,pmax);
+        if(criteria_pipcount) filter_position_by_pipcount(pmin,pmax,false);
+        if(criteria_abspipcount) filter_position_by_pipcount(Pmin,Pmax,true);
         if(criteria_backchecker1) filter_position_by_backchecker(PLAYER1,bc_num1);
         if(criteria_backchecker2) filter_position_by_backchecker(PLAYER2,bc_num2);
         if(criteria_zone1) filter_position_by_checker_in_the_zone(PLAYER1,z_num1);

@@ -1,6 +1,5 @@
 Plus tard:
 
-- Filtre absolut pipcount [P].
 - FIx bug: point number do not are displayed again after edit (letter point)
 - Add shortcut to change board orientation (ctrl-left, ctrl-right)
 - Gestion des collections. (création, renommage, suppresion, copie)
