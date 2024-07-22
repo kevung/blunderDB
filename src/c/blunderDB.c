@@ -1729,7 +1729,7 @@ int parse_cmdline(char* cmdtext){
                 sscanf(cmdtoken[i], "P%d,%d", &Pmin, &Pmax);
                 if(Pmax<Pmin) int_swap(&Pmax, &Pmin);
                 criteria_abspipcount=true;
-                printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
+                printf("\ncriteria absolut pipcount: %i %i\n", Pmin, Pmax);
             } else if(strncmp(cmdtoken[i],"k",1)==0){
                 sscanf(cmdtoken[i], "k%d", &bc_num1);
                 criteria_backchecker1=true;
