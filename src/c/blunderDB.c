@@ -580,8 +580,6 @@ void filter_position_by_backchecker(int bc_player, int bc_num){
     int j=0;
     for(int i=0;i<pos_nb;i++){
         int _n=0;
-        printf("i %i\n",i);
-        pos_print(&pos_list[i]);
         if(bc_player==PLAYER1){
             for(int k=14;k<26;k++){
                 if(pos_list[i].checker[k]>0){
