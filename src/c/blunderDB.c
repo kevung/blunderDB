@@ -1720,13 +1720,13 @@ int parse_cmdline(char* cmdtext){
                 sscanf(cmdtoken[i], "o%d", &omin);
                 criteria_checkeroff=true;
                 printf("\ncriteria checkeroff: %i\n", omin);
-            } else if(strncmp(cmdtoken[i],"p",1)==0){
-                sscanf(cmdtoken[i], "p%d,%d", &pmin, &pmax);
+            } else if(strncmp(cmdtoken[i],"P",1)==0){
+                sscanf(cmdtoken[i], "P%d,%d", &pmin, &pmax);
                 if(pmax<pmin) int_swap(&pmax, &pmin);
                 criteria_pipcount=true;
                 printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
-            } else if(strncmp(cmdtoken[i],"P",1)==0){
-                sscanf(cmdtoken[i], "P%d,%d", &Pmin, &Pmax);
+            } else if(strncmp(cmdtoken[i],"p",1)==0){
+                sscanf(cmdtoken[i], "p%d,%d", &Pmin, &Pmax);
                 if(Pmax<Pmin) int_swap(&Pmax, &Pmin);
                 criteria_abspipcount=true;
                 printf("\ncriteria absolut pipcount: %i %i\n", Pmin, Pmax);
