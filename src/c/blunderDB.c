@@ -551,6 +551,30 @@ void filter_position_by_checkeroff(int omin){
     pos_nb=j;
     printf("pos_nb: %i\n", pos_nb);
 }
+
+void filter_position_by_pipcount(int pmin, int pmax){
+    printf("\nfilter_position_by_pipcount\n");
+    int pip1, pip2, diff;
+    int j=0;
+    for(int i=0;i<pos_nb;i++){
+        compute_pipcount(&pos_list[i], &pip1, &pip2);
+        diff=abs(pip1-pip2);
+        if((diff>=pmin) && (diff<=pmax)){
+            printf("j %i\n",j);
+            printf("i diff pmin pmax: %i %i %i %i\n", i,diff,pmin,pmax);
+            pos_list_tmp[j]=pos_list[i];
+            pos_list_id_tmp[j]=pos_list_id[i];
+            j+=1;
+        }
+    }
+    for(int i=0;i<j;i++){
+            pos_list[i]=pos_list_tmp[i];
+            pos_list_id[i]=pos_list_id_tmp[i];
+    }
+    pos_nb=j;
+    printf("pos_nb: %i\n", pos_nb);
+}
+
 /* END Data */
 
 /************************ Database ***********************/
@@ -792,7 +816,6 @@ int db_select_position(sqlite3* db, int* pos_nb,
 int db_select_specific_position(sqlite3* db, const POSITION* p,
         const bool force_cube, const bool force_score,
         const bool criteria_blunder, const int bmin, const int bmax,
-        const bool criteria_pipcount, const int pmin, const int pmax,
         int* p_nb, int* p_list_id, POSITION* p_list){
     printf("\ndb_select_specific_position\n");
     // add constraints due to blunder, pipcount, checkeroff
@@ -1623,14 +1646,19 @@ int parse_cmdline(char* cmdtext){
                 sscanf(cmdtoken[i], "o%d", &omin);
                 criteria_checkeroff=true;
                 printf("\ncriteria checkeroff: %i\n", omin);
+            } else if(strncmp(cmdtoken[i],"p",1)==0){
+                sscanf(cmdtoken[i], "p%d,%d", &pmin, &pmax);
+                if(pmax<pmin) int_swap(&pmax, &pmin);
+                criteria_pipcount=true;
+                printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
             }
         }
         db_select_specific_position(db, pos_ptr,
                 force_cube, force_score,
                 criteria_blunder, bmin, bmax,
-                criteria_pipcount, pmin, pmax,
                 &pos_nb, pos_list_id, pos_list);
         if(criteria_checkeroff) filter_position_by_checkeroff(omin);
+        if(criteria_pipcount) filter_position_by_pipcount(pmin,pmax);
         if(pos_nb==0){
             pos_list[0]=POS_DEFAULT;
             pos_list_id[0]=-1;
