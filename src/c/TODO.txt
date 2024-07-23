@@ -1,6 +1,5 @@
 Plus tard:
 
-- Gestion des collections. (copie)
 - Supprimer une position de librairies. (:w -mylib)
 - Supprimer une position de la base de donnée. Demander confirmation? Supprimer d'abord de catalog, puis de position.
 - Export d'une collection avec toutes ses positions dans une archive zip
