@@ -1687,7 +1687,7 @@ static int update_sb_msg(const char* msg_new){
 }
 
 static int update_sb_lib(){
-    sprintf(_c, "%s : %i/%i pos.", lib_list[lib_index],
+    sprintf(_c, "%s : %i/%i", lib_list[lib_index],
             pos_index+1, pos_nb);
     IupSetAttribute(sb_lib, "TITLE", _c);
     IupRefresh(dlg);
