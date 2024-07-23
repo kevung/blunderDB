@@ -1124,9 +1124,6 @@ bool db_is_position_in_library(sqlite3* db, int pos_id,
     if(n>0) {return true;} else {return false;}
 }
 
-/* int db_select_all_libraries(sqlite3* db, int* lib_nb, */
-/*         int* lib_list_id, char* lib_list){ */
-
 int db_select_all_libraries(sqlite3* db,
         int* lib_nb, int* lib_list_id,
         char lib_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX]){
@@ -1914,8 +1911,21 @@ int parse_cmdline(char* cmdtext){
         if(token_nb>1){
             db_select_position_from_library(db, cmdtoken, token_nb,
                     &pos_nb, pos_list_id, pos_list);
+            if(token_nb=2){ //update display if only specific lib
+                char *l; l=cmdtoken[1]; int l_id;
+                if(db_library_exists(db,l)){
+                    db_get_library_id_from_name(db,l,&l_id);
+                    lib_index=find_index_from_int(l_id, lib_list_id, lib_nb);
+                    printf("lib_nb %i\n",lib_nb);
+                    for(int i=0;i<lib_nb;i++) printf("i lib %i %s\n",i,lib_list[i]);
+                    printf("lib_index lib_list %i %s\n",lib_index, lib_list[lib_index]);
+                    update_sb_lib();
+                }
+            }
         } else {
             db_select_position(db, &pos_nb, pos_list_id, pos_list);
+            lib_index=0;
+            update_sb_lib();
         }
         if(pos_nb==0){
             pos_list[0]=POS_DEFAULT;
@@ -2997,6 +3007,8 @@ static int item_open_action_cb(void)
             }
             db_select_position(db, &pos_nb,
                     pos_list_id, pos_list);
+            db_select_all_libraries(db, &lib_nb, lib_list_id,
+                    lib_list);
             goto_first_position_cb();
             update_sb_lib();
             update_sb_msg(msg_info_db_loaded);
