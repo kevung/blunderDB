@@ -643,6 +643,7 @@ void filter_position_by_checker_in_the_zone(int z_player, int z_num){
     pos_nb=j;
     printf("pos_nb: %i\n", pos_nb);
 }
+
 /* END Data */
 
 /************************ Database ***********************/
@@ -1153,6 +1154,24 @@ int db_select_all_libraries(sqlite3* db,
     sqlite3_finalize(stmt);
     return 1;
 }
+
+int db_delete_library(sqlite3* db, const char* name){
+    printf("\ndb_delete_library\n");
+    if(!db_library_exists(db, name)) return 0;
+    int id;
+    printf("lib %s exists.\n",name);
+    db_get_library_id_from_name(db, name, &id);
+    printf("lib id %i\n",id);
+    char sql[10000]; sql[0]='\0';
+    sprintf(sql,"DELETE FROM catalog WHERE library_id = %i;",id);
+    printf("sql %s\n",sql);
+    execute_sql(db,sql);
+    sprintf(sql,"DELETE FROM library WHERE id = %i;",id);
+    printf("sql %s\n",sql);
+    execute_sql(db,sql);
+    return 1;
+}
+
 
 /* END Database */
 
@@ -1855,6 +1874,26 @@ int parse_cmdline(char* cmdtext){
         update_sb_msg(msg_lib);
         for(int i=0;i<lib_nb;i++) printf("lib %i %s\n",
                 lib_list_id[i], lib_list[i]);
+    } else if(strncmp(cmdtoken[0], ":d", 2)==0){
+        printf("\n:d\n");
+        char *lname;
+        if(token_nb==1){
+            printf("token_nb lib_index lib_list: %i %i %s\n",token_nb,lib_index,lib_list[lib_index]);
+            lname=lib_list[lib_index];
+            db_delete_library(db,lname);
+        } else {
+            for(int i=1;i<token_nb;i++){
+                lname=cmdtoken[i];
+                printf("lname %s\n",lname);
+                db_delete_library(db,lname);
+            }
+        }
+        db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
+        lib_index=LIBRARIES_NUMBER_MAX-1; //main lib
+        update_sb_lib();
+        char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
+        update_sb_msg(t);
+        goto_first_position_cb();
     } else if(strncmp(cmdtoken[0], ":w!", 3)==0){
         printf(":w!\n");
         bool exist=false;
