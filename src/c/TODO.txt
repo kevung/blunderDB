@@ -2,6 +2,7 @@ Plus tard:
 
 - Gestion des collections. (renommage, suppresion, copie)
 - Supprimer une position de librairies. Demander confirmation ou :d! pour supprimer.
+- Export d'une collection avec toutes ses positions dans une archive zip
 - Copier/Coller/Glissé une position.
 - Export des positions et matchs en txt.
 - Ajouter filtre blunders.
