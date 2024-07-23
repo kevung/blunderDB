@@ -1912,18 +1912,24 @@ int parse_cmdline(char* cmdtext){
             printf("token_nb lib_index lib_list: %i %i %s\n",token_nb,lib_index,lib_list[lib_index]);
             lname=lib_list[lib_index];
             db_delete_library(db,lname);
+            char t[100]; t[0]='\0'; sprintf(t, "%s has been deleted.",lname);
+            update_sb_msg(t);
         } else {
+            char t[100], t0[100]; t[0]='\0'; t0[0]='\0';
             for(int i=1;i<token_nb;i++){
                 lname=cmdtoken[i];
                 printf("lname %s\n",lname);
                 db_delete_library(db,lname);
+                sprintf(t0, "%s ",lname);
+                strcat(t,t0);
             }
+            if(token_nb==2) strcat(t,"has been deleted.");
+            if(token_nb>2) strcat(t,"have been deleted.");
+            update_sb_msg(t);
         }
         db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
         lib_index=LIBRARIES_NUMBER_MAX-1; //main lib
         update_sb_lib();
-        char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
-        update_sb_msg(t);
         goto_first_position_cb();
     } else if(strncmp(cmdtoken[0], ":mv", 3)==0){
         printf("\n:mv\n");
