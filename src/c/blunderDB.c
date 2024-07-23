@@ -1946,7 +1946,7 @@ int parse_cmdline(char* cmdtext){
             lname_new=cmdtoken[2];
             db_rename_library(db,lname_old,lname_new);
         }
-        char t[100]; t[0]='\0'; sprintf(t, "%s has been copied into %s.",lname_old,lname_new);
+        char t[100]; t[0]='\0'; sprintf(t, "%s has been renamed to %s.",lname_old,lname_new);
         update_sb_msg(t);
         db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
         update_sb_lib();
