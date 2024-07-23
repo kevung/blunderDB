@@ -239,7 +239,7 @@ void int_swap(int* i, int* j)
 int convert_charp_to_array(const char *c, char *c_array, const int n_array){
     int n=strlen(c);
     if(n_array<=n) {
-        printf("err: array no big enough for string conversion.\n");
+        printf("ERR: array no big enough for string conversion.\n");
         return 0;
     }
     for(int i=0; i<=n; i++){
@@ -783,7 +783,7 @@ int db_close(sqlite3 *db)
 {
     rc = sqlite3_close(db);
     if (rc != SQLITE_OK) {
-        printf("Can't close database. Maybe already closed. Err: %s\n", sqlite3_errmsg(db));
+        printf("Can't close database. Maybe already closed. ERR: %s\n", sqlite3_errmsg(db));
     } else {
         printf("Closed database successfully\n");
     }
@@ -857,6 +857,106 @@ int db_select_position(sqlite3* db, int* pos_nb,
         int* pos_list_id, POSITION* pos_list){
     printf("\ndb_select_position\n");
     const char *sql = "SELECT * FROM position;";
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+
+    *pos_nb=0;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        pos_list_id[*pos_nb]=sqlite3_column_int(stmt,0);
+        for(int i=0;i<26;i++){
+            pos_list[*pos_nb].checker[i]=sqlite3_column_int(stmt,i+1);
+        }
+        pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,29);
+        pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,30);
+        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,31);
+        const char *hash=sqlite3_column_text(stmt,32);
+        *pos_nb+=1;
+    }
+    if(rc!=SQLITE_DONE){
+        printf("Failed to execute statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    sqlite3_finalize(stmt);
+    return 1;
+}
+
+int db_get_library_id_from_name(sqlite3* db, const char *name,
+        int *id){
+    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
+    printf("\ndb_get_library_id_from_name\n");
+    /* strcat(sql, "SELECT id FROM library WHERE */
+    sprintf(sql, "SELECT id FROM library WHERE name = \"%s\";",
+            name);
+    printf("sql: %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        *id=sqlite3_column_int(stmt,0);
+    }
+    return 1;
+}
+
+
+
+bool db_library_exists(sqlite3* db, const char *l){
+    char sql[10000], t[10000]; 
+    sql[0]='\0'; t[0]='\0';
+    strcat(sql, "SELECT id,name FROM library WHERE ");
+    sprintf(t, "name = \"%s\";", l);
+    strcat(sql, t);
+    printf("sql: %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    int id;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        id=sqlite3_column_int(stmt,0);
+        return true;
+    }
+    return false;
+}
+
+bool db_is_valid_library_name(const char *l){
+    printf("\ndb_is_valid_library_name\n");
+    int n=strlen(l);
+    for(int i=0;i<n;i++){
+        if(!isalnum(l[i])){
+            return false;
+        }
+    }
+    return true;
+}
+
+int db_select_position_from_library(sqlite3* db, char** cmdtoken,
+        int token_nb, int* pos_nb, int* pos_list_id, POSITION* pos_list){
+    printf("\ndb_select_position_from_library\n");
+    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
+    /* strcat(sql,"SELECT DISTINCT * FROM position p "); */
+    strcat(sql,"SELECT DISTINCT p.* FROM position p ");
+    strcat(sql,"INNER JOIN catalog c ON p.id=c.position_id ");
+    strcat(sql,"WHERE 1=0 ");
+    char *l;
+    for(int k=1;k<token_nb;k++){
+        l=cmdtoken[k]; int l_id;
+        if(!db_is_valid_library_name(l)){
+            continue;
+        }
+        if(db_library_exists(db,l)){
+            db_get_library_id_from_name(db,l,&l_id);
+            sprintf(t, "or c.library_id = %d ", l_id); 
+            strcat(sql, t);
+        }
+    }
+    strcat(sql,";");
+    printf("sql %s\n", sql);
     int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if(rc!=SQLITE_OK){
         printf("Failed to prepare statement: %s\n",
@@ -982,57 +1082,6 @@ int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int*
     /* execute_sql(db, sql); */ 
     return 1;
 }
-
-bool db_is_valid_library_name(const char *l){
-    printf("\ndb_is_valid_library_name\n");
-    int n=strlen(l);
-    for(int i=0;i<n;i++){
-        if(!isalnum(l[i])){
-            return false;
-        }
-    }
-    return true;
-}
-
-bool db_library_exists(sqlite3* db, const char *l){
-    char sql[10000], t[10000]; 
-    sql[0]='\0'; t[0]='\0';
-    strcat(sql, "SELECT id,name FROM library WHERE ");
-    sprintf(t, "name = \"%s\";", l);
-    strcat(sql, t);
-    printf("sql: %s\n", sql);
-    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-    if(rc!=SQLITE_OK){
-        printf("Failed to prepare statement: %s\n",
-                sqlite3_errmsg(db));
-    }
-    int id;
-    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
-        id=sqlite3_column_int(stmt,0);
-        return true;
-    }
-    return false;
-}
-
-int db_get_library_id_from_name(sqlite3* db, const char *name,
-        int *id){
-    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
-    printf("\ndb_get_library_id_from_name\n");
-    /* strcat(sql, "SELECT id FROM library WHERE */
-    sprintf(sql, "SELECT id FROM library WHERE name = \"%s\";",
-            name);
-    printf("sql: %s\n", sql);
-    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
-    if(rc!=SQLITE_OK){
-        printf("Failed to prepare statement: %s\n",
-                sqlite3_errmsg(db));
-    }
-    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
-        *id=sqlite3_column_int(stmt,0);
-    }
-    return 1;
-}
-
 
 int db_insert_position_to_library(sqlite3* db,
         const int pos_id, const char *lib_name){
@@ -1862,8 +1911,12 @@ int parse_cmdline(char* cmdtext){
         }
     } else if(strncmp(cmdtoken[0], ":e", 2)==0){
         printf(":e\n");
-        db_select_position(db, &pos_nb,
-                pos_list_id, pos_list);
+        if(token_nb>1){
+            db_select_position_from_library(db, cmdtoken, token_nb,
+                    &pos_nb, pos_list_id, pos_list);
+        } else {
+            db_select_position(db, &pos_nb, pos_list_id, pos_list);
+        }
         if(pos_nb==0){
             pos_list[0]=POS_DEFAULT;
             pos_list_id[0]=-1;
@@ -3739,25 +3792,6 @@ int main(int argc, char **argv)
     lib_list[0][0]='\0'; strcat(lib_list[0], "main");
     lib_index=0;
     lib_nb=1;
-
-    int err;
-    /* err = str_to_pos("-1,-1:(a-f)", pos_ptr); */
-    /* err = str_to_pos("0,3:(a-f)", pos_ptr); */
-    /* err = str_to_pos("1,3:(a-f)", pos_ptr); */
-    /* err = str_to_pos("(a-f)", pos_ptr); */
-    /* err = str_to_pos("(f-a)", pos_ptr); */
-    /* err = str_to_pos("31,12:Z2y1(e-aX)F3(mnl)t-pO4Y3", pos_ptr); */
-    /* err = str_to_pos("(SUmLhgfDc)AS2m2TWQRgf2", pos_ptr); */
-    /* printf("str2pos err: %i\n", err); */
-    /* pos_print(pos_ptr); */
-    /* pos_ptr->checker[24] = 25; */
-
-    /* char* ctest; */
-    /* ctest= pos_to_str(&POS_DEFAULT); */
-    /* printf("ctest: %s\n", ctest); */
-    /* ctest= pos_to_str_paren(&POS_DEFAULT); */
-    /* printf("ctest2: %s\n", ctest); */
-    /* free(ctest); */
 
     IupOpen(&argc, &argv);
     IupControlsOpen();
