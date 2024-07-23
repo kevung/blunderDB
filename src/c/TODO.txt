@@ -1,6 +1,6 @@
 Plus tard:
 
-- Gestion des collections. (création, renommage, suppresion, copie)
+- Gestion des collections. (renommage, suppresion, copie)
 - Supprimer une position de librairies. Demander confirmation ou :d! pour supprimer.
 - Copier/Coller/Glissé une position.
 - Export des positions et matchs en txt.
