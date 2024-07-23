@@ -928,8 +928,11 @@ bool db_library_exists(sqlite3* db, const char *l){
 bool db_is_valid_library_name(const char *l){
     printf("\ndb_is_valid_library_name\n");
     int n=strlen(l);
+    if(l[0]=='-') return false;
     for(int i=0;i<n;i++){
-        if(!isalnum(l[i])){
+        if(!isalnum(l[i])
+                && l[i]!='-'
+                && l[i]!='_'){
             return false;
         }
     }
@@ -1216,7 +1219,7 @@ char _c[100];
 const char* msg_err_failed_to_create_db =
 "Failed to create database.";
 const char* msg_err_invalid_library_name =
-"ERR: Invalid library name. It should contain only alphanumeric symbols.";
+"ERR: Invalid library name. It must not start with \"-\" and contain only: alphanumeric symbols, \"-\", \"_\".";
 const char* msg_err_no_db_opened =
 "ERR: No database opened.";
 const char* msg_err_failed_to_open_db =
