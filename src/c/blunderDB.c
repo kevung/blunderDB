@@ -1204,6 +1204,33 @@ int db_copy_library(sqlite3* db, const char* old, const char* new){
     return 1;
 }
 
+int db_get_libraries_related_to_position(sqlite3* db,
+        const int* pos_id, int* lname_nb,
+        char lname_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX]){
+    printf("\ndb_get_libraries_related_to_position\n");
+    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
+    strcat(sql,"SELECT name FROM library l ");
+    strcat(sql,"INNER JOIN catalog c ON l.id=c.library_id ");
+    sprintf(t,"WHERE c.position_id=%d ;",*pos_id);
+    strcat(sql,t);
+    printf("sql %s\n",sql);
+    *lname_nb=0;
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        char *name=(char *)sqlite3_column_text(stmt,0);
+        lname_list[*lname_nb][0]='\0';
+        strcat(lname_list[*lname_nb],name);
+        *lname_nb+=1;
+    }
+    sqlite3_finalize(stmt);
+    return 1;
+}
+
+int db_remove_position_from_libraries(sqlite3* db,
+        int* pos_id){
+    return 1;
+}
+
 /* END Database */
 
 
@@ -1905,6 +1932,19 @@ int parse_cmdline(char* cmdtext){
         update_sb_msg(msg_lib);
         for(int i=0;i<lib_nb;i++) printf("lib %i %s\n",
                 lib_list_id[i], lib_list[i]);
+    } else if(strncmp(cmdtoken[0], ":LS", 3)==0){
+        printf("\n:LS\n");
+        char lname_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX];
+        int lname_nb;
+        db_get_libraries_related_to_position(db,
+                &pos_list_id[pos_index], &lname_nb, lname_list);
+        char msg_lib[10000]; char t[100]; msg_lib[0]='\0';t[0]='\0';
+        strcat(msg_lib,"This position belongs to:");
+        for(int i=0;i<lname_nb;i++){
+            sprintf(t," %s",lname_list[i]);
+            strcat(msg_lib,t);
+        }
+        update_sb_msg(msg_lib);
     } else if(strncmp(cmdtoken[0], ":d", 2)==0){
         printf("\n:d\n");
         char *lname;
@@ -2074,9 +2114,10 @@ int parse_cmdline(char* cmdtext){
             pos_nb=1;
         }
         goto_first_position_cb();
-    } else if(strncmp(cmdtoken[0], ":d!", 3)==0){
-        printf(":d!\n");
+    } else if(strncmp(cmdtoken[0], ":D", 2)==0){
+        printf("\n:D\n");
         int id = pos_list_id[pos_index];
+        db_remove_position_from_libraries(db,&id);
         db_delete_position(db, &id);
     } else if(strncmp(cmdtoken[0], ":d", 2)==0){
         printf(":d\n");
