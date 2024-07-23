@@ -1923,6 +1923,11 @@ int parse_cmdline(char* cmdtext){
                     update_sb_lib();
                     char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
                     update_sb_msg(t);
+                } else {
+                    db_select_position(db, &pos_nb, pos_list_id, pos_list);
+                    lib_index=LIBRARIES_NUMBER_MAX-1;
+                    update_sb_lib();
+                    char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
                 }
             } else {
                 lib_index=LIBRARIES_NUMBER_MAX-2;
