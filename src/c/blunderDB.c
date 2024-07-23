@@ -1911,7 +1911,7 @@ int parse_cmdline(char* cmdtext){
         if(token_nb>1){
             db_select_position_from_library(db, cmdtoken, token_nb,
                     &pos_nb, pos_list_id, pos_list);
-            if(token_nb=2){ //update display if only specific lib
+            if(token_nb==2){ //update display if only specific lib
                 char *l; l=cmdtoken[1]; int l_id;
                 if(db_library_exists(db,l)){
                     db_get_library_id_from_name(db,l,&l_id);
