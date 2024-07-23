@@ -1186,6 +1186,24 @@ int db_rename_library(sqlite3* db, const char* old, const char* new){
     return 1;
 }
 
+int db_copy_library(sqlite3* db, const char* old, const char* new){
+    printf("\ndb_copy_library\n");
+    printf("old new %s %s\n", old, new);
+    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0'; int old_id, new_id;
+    if(!db_library_exists(db,new)) db_delete_library(db,new);
+    db_insert_library(db,new);
+    db_get_library_id_from_name(db,old,&old_id);
+    db_get_library_id_from_name(db,new,&new_id);
+    //copier tous les registrer existants
+    strcat(sql,"INSERT INTO catalog (position_id, library_id) SELECT  ");
+    sprintf(t,"position_id,\"%d\" FROM catalog WHERE library_id = %d;",
+            new_id, old_id);
+    strcat(sql,t);
+    printf("sql %s\n",sql);
+    execute_sql(db,sql);
+    return 1;
+}
+
 /* END Database */
 
 
@@ -1922,8 +1940,33 @@ int parse_cmdline(char* cmdtext){
             lname_new=cmdtoken[2];
             db_rename_library(db,lname_old,lname_new);
         }
-        char t[100]; t[0]='\0'; sprintf(t, "%s renamed %s.",lname_old,lname_new);
+        char t[100]; t[0]='\0'; sprintf(t, "%s has been copied into %s.",lname_old,lname_new);
         update_sb_msg(t);
+        db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
+        update_sb_lib();
+    } else if(strncmp(cmdtoken[0], ":cp", 3)==0){
+        printf("\n:cp\n");
+        char *lname_old, *lname_new;
+        if(token_nb==1) return 1; //invalid syntax
+        if(token_nb==2){ //rename current lib
+            lname_old=lib_list[lib_index];
+            lname_new=cmdtoken[1];
+            db_copy_library(db,lname_old,lname_new);
+            char t[100]; t[0]='\0'; sprintf(t, "%s has been copied into %s.",lname_old,lname_new);
+            update_sb_msg(t);
+        } else if(token_nb>=3){
+            lname_old=cmdtoken[1];
+            char t[1000], t0[1000]; t[0]='\0'; t0[0]='\0';
+            sprintf(t, "%s has been copied into",lname_old);
+            for(int i=2;i<token_nb;i++){
+                lname_new=cmdtoken[i];
+                db_copy_library(db,lname_old,lname_new);
+                sprintf(t0," %s",lname_new);
+                strcat(t,t0);
+                update_sb_msg(t);
+            }
+            strcat(t, ".");
+        }
         db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
         update_sb_lib();
     } else if(strncmp(cmdtoken[0], ":w!", 3)==0){
