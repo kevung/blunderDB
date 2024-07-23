@@ -1175,6 +1175,16 @@ int db_delete_library(sqlite3* db, const char* name){
     return 1;
 }
 
+int db_rename_library(sqlite3* db, const char* old, const char* new){
+    printf("\ndb_rename_library\n");
+    printf("old new %s %s\n", old, new);
+    char sql[10000]; sql[0]='\0';
+    sprintf(sql, "UPDATE library SET name = \"%s\" WHERE name = \"%s\";",
+            new, old);
+    printf("sql %s\n",sql);
+    execute_sql(db,sql);
+    return 1;
+}
 
 /* END Database */
 
@@ -1897,6 +1907,25 @@ int parse_cmdline(char* cmdtext){
         char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
         update_sb_msg(t);
         goto_first_position_cb();
+    } else if(strncmp(cmdtoken[0], ":mv", 3)==0){
+        printf("\n:mv\n");
+        if(lib_index==LIBRARIES_NUMBER_MAX-1) return 1; //main, nothing to do
+        if(token_nb==1 || token_nb>3) return 1; //invalid syntax
+
+        char *lname_old, *lname_new;
+        if(token_nb==2){ //rename current lib
+            lname_old=lib_list[lib_index];
+            lname_new=cmdtoken[1];
+            db_rename_library(db,lname_old,lname_new);
+        } else if(token_nb==3){
+            lname_old=cmdtoken[1];
+            lname_new=cmdtoken[2];
+            db_rename_library(db,lname_old,lname_new);
+        }
+        char t[100]; t[0]='\0'; sprintf(t, "%s renamed %s.",lname_old,lname_new);
+        update_sb_msg(t);
+        db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
+        update_sb_lib();
     } else if(strncmp(cmdtoken[0], ":w!", 3)==0){
         printf(":w!\n");
         bool exist=false;
