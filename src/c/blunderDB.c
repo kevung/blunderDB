@@ -1137,7 +1137,7 @@ int db_select_all_libraries(sqlite3* db,
                 sqlite3_errmsg(db));
         return 0;
     }
-    *lib_nb=1;
+    *lib_nb=0;
     while((rc=sqlite3_step(stmt))==SQLITE_ROW){
         lib_list_id[*lib_nb]=sqlite3_column_int(stmt,0);
         char *name=(char *)sqlite3_column_text(stmt,1);
@@ -1847,7 +1847,7 @@ int parse_cmdline(char* cmdtext){
         db_select_all_libraries(db, &lib_nb, lib_list_id,
                 lib_list);
         char msg_lib[10000], t[100]; msg_lib[0]='\0'; t[0]='\0';
-        sprintf(msg_lib, "Available librairies: ");
+        sprintf(msg_lib, "Librairies: ");
         for(int i=0;i<lib_nb;i++){
             sprintf(t, "%s ", lib_list[i]);
             strcat(msg_lib, t);
@@ -1908,6 +1908,7 @@ int parse_cmdline(char* cmdtext){
         }
     } else if(strncmp(cmdtoken[0], ":e", 2)==0){
         printf(":e\n");
+        printf("token_nb %i\n",token_nb);
         if(token_nb>1){
             db_select_position_from_library(db, cmdtoken, token_nb,
                     &pos_nb, pos_list_id, pos_list);
@@ -1920,12 +1921,20 @@ int parse_cmdline(char* cmdtext){
                     for(int i=0;i<lib_nb;i++) printf("i lib %i %s\n",i,lib_list[i]);
                     printf("lib_index lib_list %i %s\n",lib_index, lib_list[lib_index]);
                     update_sb_lib();
+                    char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
+                    update_sb_msg(t);
                 }
+            } else {
+                lib_index=LIBRARIES_NUMBER_MAX-2;
+                update_sb_lib();
+                char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
             }
         } else {
             db_select_position(db, &pos_nb, pos_list_id, pos_list);
-            lib_index=0;
+            lib_index=LIBRARIES_NUMBER_MAX-1;
             update_sb_lib();
+            char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
+            update_sb_msg(t);
         }
         if(pos_nb==0){
             pos_list[0]=POS_DEFAULT;
@@ -3801,8 +3810,11 @@ int main(int argc, char **argv)
     pos_next_ptr = &pos;
     pos_nb = 0;
     pos_index = 0;
-    lib_list[0][0]='\0'; strcat(lib_list[0], "main");
-    lib_index=0;
+    lib_list[LIBRARIES_NUMBER_MAX-2][0]='\0';
+    strcat(lib_list[LIBRARIES_NUMBER_MAX-2], "mix");
+    lib_list[LIBRARIES_NUMBER_MAX-1][0]='\0';
+    strcat(lib_list[LIBRARIES_NUMBER_MAX-1], "main");
+    lib_index=LIBRARIES_NUMBER_MAX-1;
     lib_nb=1;
 
     IupOpen(&argc, &argv);
