@@ -1933,17 +1933,23 @@ int parse_cmdline(char* cmdtext){
         goto_first_position_cb();
     } else if(strncmp(cmdtoken[0], ":mv", 3)==0){
         printf("\n:mv\n");
-        if(lib_index==LIBRARIES_NUMBER_MAX-1) return 1; //main, nothing to do
         if(token_nb==1 || token_nb>3) return 1; //invalid syntax
-
         char *lname_old, *lname_new;
         if(token_nb==2){ //rename current lib
+            if(lib_index==LIBRARIES_NUMBER_MAX-1 ||
+                    lib_index==LIBRARIES_NUMBER_MAX-2) return 1; //main/mix, nothing to do
             lname_old=lib_list[lib_index];
             lname_new=cmdtoken[1];
             db_rename_library(db,lname_old,lname_new);
         } else if(token_nb==3){
+            printf("token_nb old new: %i  %s %s\n",token_nb, lname_old, lname_new);
             lname_old=cmdtoken[1];
             lname_new=cmdtoken[2];
+            if(!db_library_exists(db,lname_old)){
+                char t[100]; t[0]='\0'; sprintf(t, "%s does not exists.",lname_old);
+                update_sb_msg(t);
+                return 1;
+            }
             db_rename_library(db,lname_old,lname_new);
         }
         char t[100]; t[0]='\0'; sprintf(t, "%s has been renamed to %s.",lname_old,lname_new);
