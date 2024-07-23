@@ -1954,16 +1954,17 @@ int parse_cmdline(char* cmdtext){
         printf("\n:cp\n");
         char *lname_old, *lname_new;
         if(token_nb==1) return 1; //invalid syntax
-        if(token_nb==2){ //rename current lib
+        if(token_nb==2){
             lname_old=lib_list[lib_index];
             lname_new=cmdtoken[1];
             db_copy_library(db,lname_old,lname_new);
-            char t[100]; t[0]='\0'; sprintf(t, "%s has been copied into %s.",lname_old,lname_new);
+            char t[100]; t[0]='\0'; sprintf(t, "%s has been duplicated, New copy: %s.",lname_old,lname_new);
             update_sb_msg(t);
         } else if(token_nb>=3){
             lname_old=cmdtoken[1];
             char t[1000], t0[1000]; t[0]='\0'; t0[0]='\0';
-            sprintf(t, "%s has been copied into",lname_old);
+            if(token_nb==3) sprintf(t, "%s has been duplicated. New copy:",lname_old);
+            if(token_nb>3) sprintf(t, "%s has been duplicated. New copies:",lname_old);
             for(int i=2;i<token_nb;i++){
                 lname_new=cmdtoken[i];
                 db_copy_library(db,lname_old,lname_new);
