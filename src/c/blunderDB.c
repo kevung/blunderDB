@@ -3302,7 +3302,7 @@ static int item_open_action_cb(void)
             int result = db_open(db_filename);
             if (result != 0) {
                 update_sb_msg(msg_err_failed_to_open_db);
-                printf("Database opening failed\n");
+                printf("%s\n",msg_err_failed_to_open_db);
                 return result;
             }
             db_select_position(db, &pos_nb,
@@ -3312,7 +3312,7 @@ static int item_open_action_cb(void)
             goto_first_position_cb();
             update_sb_lib();
             update_sb_msg(msg_info_db_loaded);
-            printf("Database opened successfully\n");
+            printf("%s\n",msg_info_db_loaded);
             break; 
 
         case -1 : 
