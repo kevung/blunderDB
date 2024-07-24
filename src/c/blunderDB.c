@@ -127,7 +127,7 @@ static int board_direction_right_cb(void);
 #define PLAYER2 -1
 #define PLAYER1_POINTLABEL "*abcdefghijklmnopqrstuvwxyz"
 #define PLAYER2_POINTLABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
-#define POSITION_MEMORY_MAX 10000
+#define POSITION_NUMBER_MAX 10000
 
 char hash[50];
 
@@ -180,10 +180,10 @@ POSITION *pos_ptr, *pos_prev_ptr, *pos_next_ptr;
 bool is_pointletter_active = false;
 
 POSITION pos_buffer;
-POSITION pos_list[POSITION_MEMORY_MAX],
-         pos_list_tmp[POSITION_MEMORY_MAX];
-int pos_list_id[POSITION_MEMORY_MAX],
-    pos_list_id_tmp[POSITION_MEMORY_MAX];
+POSITION pos_list[POSITION_NUMBER_MAX],
+         pos_list_tmp[POSITION_NUMBER_MAX];
+int pos_list_id[POSITION_NUMBER_MAX],
+    pos_list_id_tmp[POSITION_NUMBER_MAX];
 int pos_nb, pos_index;
 
 int find_index_from_int(int v, int* a, int nb){
@@ -527,7 +527,7 @@ void get_last_position(){
 
 int get_position(int* id){
     pos_index=find_index_from_int(*id, pos_list_id,
-            POSITION_MEMORY_MAX );
+            POSITION_NUMBER_MAX );
     pos_ptr=&pos_list[pos_index];
     return 1;
 }
@@ -939,7 +939,7 @@ bool db_is_valid_library_name(const char *l){
     return true;
 }
 
-int db_select_position_from_library(sqlite3* db, char** cmdtoken,
+int db_select_position_from_libraries(sqlite3* db, char** cmdtoken,
         int token_nb, int* pos_nb, int* pos_list_id, POSITION* pos_list){
     printf("\ndb_select_position_from_library\n");
     char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
@@ -1128,10 +1128,10 @@ bool db_is_position_in_library(sqlite3* db, int pos_id,
     if(n>0) {return true;} else {return false;}
 }
 
-int db_select_all_libraries(sqlite3* db,
+int db_select_libraries(sqlite3* db,
         int* lib_nb, int* lib_list_id,
         char lib_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX]){
-    printf("\ndb_select_all_libraries\n");
+    printf("\ndb_select_libraries\n");
     char sql[10000];
     sprintf(sql, "SELECT id,name FROM library");
     printf("sql %s\n", sql);
@@ -1205,13 +1205,13 @@ int db_copy_library(sqlite3* db, const char* old, const char* new){
 }
 
 int db_get_libraries_related_to_position(sqlite3* db,
-        const int* pos_id, int* lname_nb,
+        const int pos_id, int* lname_nb,
         char lname_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX]){
     printf("\ndb_get_libraries_related_to_position\n");
     char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0';
     strcat(sql,"SELECT name FROM library l ");
     strcat(sql,"INNER JOIN catalog c ON l.id=c.library_id ");
-    sprintf(t,"WHERE c.position_id=%d ;",*pos_id);
+    sprintf(t,"WHERE c.position_id=%d ;",pos_id);
     strcat(sql,t);
     printf("sql %s\n",sql);
     *lname_nb=0;
@@ -1226,8 +1226,56 @@ int db_get_libraries_related_to_position(sqlite3* db,
     return 1;
 }
 
+int db_select_position_from_library(sqlite3* db,
+        const char* lname, int pid_list[POSITION_NUMBER_MAX], int* pid_nb){
+    printf("\ndb_select_position_from_library\n");
+    char sql[10000], t[10000]; sql[0]='\0'; t[0]='\0'; int lid;
+    db_get_library_id_from_name(db,lname,&lid);
+    strcat(sql,"SELECT id FROM position p ");
+    strcat(sql,"INNER JOIN catalog c ON p.id=c.position_id ");
+    sprintf(t,"WHERE c.library_id=%d ;",lid);
+    strcat(sql,t);
+    printf("sql %s\n",sql);
+    *pid_nb=0;
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        pid_list[*pid_nb]=sqlite3_column_int(stmt,0);
+        *pid_nb+=1;
+    }
+    sqlite3_finalize(stmt);
+    printf("pid_nb %i\n",pid_nb);
+    return 1;
+}
+
+int db_remove_position_from_library(sqlite3* db,
+        const int pos_id, const char* l){
+    printf("\ndb_remove_position_from_library\n");
+    int lid; char sql[10000], t[100]; sql[0]='\0'; t[0]='\0';
+    db_get_library_id_from_name(db,l,&lid);
+    strcat(sql, "DELETE FROM catalog WHERE ");
+    sprintf(t, "library_id = %i and position_id = %i ;",lid, pos_id);
+    strcat(sql,t);
+    printf("sql %s\n",sql); 
+    execute_sql(db,sql);
+    return 1;
+}
+
 int db_remove_position_from_libraries(sqlite3* db,
-        int* pos_id){
+        const int pid){
+    printf("\ndb_remove_position_from_libraries\n");
+    int lname_nb; char lname_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX];
+    db_get_libraries_related_to_position(db, pid, &lname_nb, lname_list);
+    for(int i=0;i<lname_nb;i++){
+        db_remove_position_from_library(db,pid,lname_list[i]);
+    }
+    return 1;
+}
+
+int db_delete_library_if_void(sqlite3* db, const char* l){
+    printf("\ndb_delete_library_if_void\n");
+    int pid_nb; int pid_list[POSITION_NUMBER_MAX];
+    db_select_position_from_library(db, l, pid_list, &pid_nb);
+    if(pid_nb==0) db_delete_library(db,l);
     return 1;
 }
 
@@ -1287,8 +1335,12 @@ const char* msg_info_position_already_exists =
 "Position already exists in database.";
 const char* msg_info_position_added_to_library =
 "Position added to library.";
+const char* msg_info_position_removed_from_library =
+"Position removed from library.";
 const char* msg_info_no_position =
 "No positions.";
+const char* msg_info_library_does_not_exist =
+"Library does not exist.";
 const char* msg_info_no_db_loaded =
 "No database loaded.";
 const char* msg_info_db_created =
@@ -1868,7 +1920,7 @@ static Ihandle* create_searches(void)
 }
 
 int add_position_to_library(sqlite3* db, const int pos_id,
-        const char *l){
+        const char* l){
     if(!db_is_valid_library_name(l)){
         update_sb_msg(msg_err_invalid_library_name);
         return 0;
@@ -1884,13 +1936,38 @@ int add_position_to_library(sqlite3* db, const int pos_id,
     } else {
         printf("library does not exists\n");
         db_insert_library(db, l);
-        db_select_all_libraries(db, &lib_nb, lib_list_id,
+        db_select_libraries(db, &lib_nb, lib_list_id,
                 lib_list);
         db_insert_position_to_library(db,pos_id,l);
         update_sb_msg(msg_info_position_added_to_library);
     }
     return 1;
 }
+
+int delete_position_from_library(sqlite3* db, const int pos_id,
+        const char* l){
+    if(!db_is_valid_library_name(l)){
+        update_sb_msg(msg_err_invalid_library_name);
+        return 0;
+    }
+    if(db_library_exists(db, l)){
+        printf("library exists\n");
+        printf("pos_id lib_name: %i %s\n", pos_id, l);
+        if(db_is_position_in_library(db,pos_id,l)){
+            printf("position is in library\n");
+            db_remove_position_from_library(db,pos_id,l);
+            update_sb_msg(msg_info_position_removed_from_library);
+        }
+        db_delete_library_if_void(db,l);
+        db_select_libraries(db, &lib_nb, lib_list_id, lib_list);
+        db_select_position(db, &pos_nb, pos_list_id, pos_list);
+        goto_last_position_cb();
+        lib_index=LIBRARIES_NUMBER_MAX-1; //main lib
+        update_sb_lib();
+    }
+    return 1;
+}
+
 
 int parse_cmdline(char* cmdtext){
     printf("\nparse_cmdline\n");
@@ -1921,7 +1998,7 @@ int parse_cmdline(char* cmdtext){
         return 0;
     }
     if(strncmp(cmdtoken[0], ":ls", 3)==0){
-        db_select_all_libraries(db, &lib_nb, lib_list_id,
+        db_select_libraries(db, &lib_nb, lib_list_id,
                 lib_list);
         char msg_lib[10000], t[100]; msg_lib[0]='\0'; t[0]='\0';
         sprintf(msg_lib, "Librairies: ");
@@ -1937,7 +2014,7 @@ int parse_cmdline(char* cmdtext){
         char lname_list[LIBRARIES_NUMBER_MAX][LIBRARY_NAME_MAX];
         int lname_nb;
         db_get_libraries_related_to_position(db,
-                &pos_list_id[pos_index], &lname_nb, lname_list);
+                pos_list_id[pos_index], &lname_nb, lname_list);
         char msg_lib[10000]; char t[100]; msg_lib[0]='\0';t[0]='\0';
         strcat(msg_lib,"This position belongs to:");
         for(int i=0;i<lname_nb;i++){
@@ -1967,7 +2044,7 @@ int parse_cmdline(char* cmdtext){
             if(token_nb>2) strcat(t,"have been deleted.");
             update_sb_msg(t);
         }
-        db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
+        db_select_libraries(db, &lib_nb, lib_list_id, lib_list);
         lib_index=LIBRARIES_NUMBER_MAX-1; //main lib
         update_sb_lib();
         goto_first_position_cb();
@@ -1994,7 +2071,7 @@ int parse_cmdline(char* cmdtext){
         }
         char t[100]; t[0]='\0'; sprintf(t, "%s has been renamed to %s.",lname_old,lname_new);
         update_sb_msg(t);
-        db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
+        db_select_libraries(db, &lib_nb, lib_list_id, lib_list);
         update_sb_lib();
     } else if(strncmp(cmdtoken[0], ":cp", 3)==0){
         printf("\n:cp\n");
@@ -2020,7 +2097,7 @@ int parse_cmdline(char* cmdtext){
             }
             strcat(t, ".");
         }
-        db_select_all_libraries(db, &lib_nb, lib_list_id, lib_list);
+        db_select_libraries(db, &lib_nb, lib_list_id, lib_list);
         update_sb_lib();
     } else if(strncmp(cmdtoken[0], ":w!", 3)==0){
         printf(":w!\n");
@@ -2067,17 +2144,36 @@ int parse_cmdline(char* cmdtext){
             goto_last_position_cb();
         }
         if(token_nb>1){
+            char t[10000], t0[1000]; t[0]='\0'; t0[0]='\0';
+            strcat(t, "The position has been");
             int pos_id = pos_list_id[pos_index];
             for(int i=1;i<token_nb;i++){
                 char *l=cmdtoken[i];
-                add_position_to_library(db,pos_id,l); 
+                if(l[0]!='-'){
+                    add_position_to_library(db,pos_id,l); 
+                    sprintf(t0," added to %s", l);
+                } else if(strcmp(l,"-")==0
+                        && lib_index!=LIBRARIES_NUMBER_MAX-1
+                        && lib_index!=LIBRARIES_NUMBER_MAX-2){
+                    char l2[LIBRARY_NAME_MAX]; l2[0]='\0';
+                    strcat(l2, lib_list[lib_index]);
+                    delete_position_from_library(db,pos_id,l2);
+                    sprintf(t0," removed from %s",l2);
+                } else {
+                    l++;
+                    delete_position_from_library(db,pos_id,l);
+                    sprintf(t0," removed from %s",l);
+                }
+                strcat(t,t0);
+                if(i==token_nb-1) {strcat(t,".");} else {strcat(t,",");} 
             }
+            update_sb_msg(t);
         }
     } else if(strncmp(cmdtoken[0], ":e", 2)==0){
         printf(":e\n");
         printf("token_nb %i\n",token_nb);
         if(token_nb>1){
-            db_select_position_from_library(db, cmdtoken, token_nb,
+            db_select_position_from_libraries(db, cmdtoken, token_nb,
                     &pos_nb, pos_list_id, pos_list);
             if(token_nb==2){ //update display if only specific lib
                 char *l; l=cmdtoken[1]; int l_id;
@@ -2117,12 +2213,8 @@ int parse_cmdline(char* cmdtext){
     } else if(strncmp(cmdtoken[0], ":D", 2)==0){
         printf("\n:D\n");
         int id = pos_list_id[pos_index];
-        db_remove_position_from_libraries(db,&id);
+        db_remove_position_from_libraries(db,id);
         db_delete_position(db, &id);
-    } else if(strncmp(cmdtoken[0], ":d", 2)==0){
-        printf(":d\n");
-        int id = pos_list_id[pos_index];
-        printf("Should implement removing position from library");
     } else if(strncmp(cmdtoken[0], ":s", 2)==0){
         printf(":s\n");
         bool force_cube=false;
@@ -3189,7 +3281,7 @@ static int item_open_action_cb(void)
             }
             db_select_position(db, &pos_nb,
                     pos_list_id, pos_list);
-            db_select_all_libraries(db, &lib_nb, lib_list_id,
+            db_select_libraries(db, &lib_nb, lib_list_id,
                     lib_list);
             goto_first_position_cb();
             update_sb_lib();
