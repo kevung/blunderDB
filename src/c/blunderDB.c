@@ -1342,14 +1342,16 @@ int token_nb;
 
 char _c[100];
 
+const char* msg_err_failed_to_import_pos =
+"ERR: Failed to import position.";
 const char* msg_err_failed_to_create_db =
-"Failed to create database.";
+"ERR: Failed to create database.";
 const char* msg_err_invalid_library_name =
 "ERR: Invalid library name. It must not start with \"-\" and contain only: alphanumeric symbols, \"-\", \"_\".";
 const char* msg_err_no_db_opened =
 "ERR: No database opened.";
 const char* msg_err_failed_to_open_db =
-"Failed to open database.";
+"ERR: Failed to open database.";
 const char* msg_info_position_written = 
 "Position written to database.";
 const char* msg_info_position_updated = 
