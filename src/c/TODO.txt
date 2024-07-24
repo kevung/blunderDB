@@ -9,6 +9,17 @@ Plus tard:
 - Implémenter les menus et boutons.
 - Parsage des fichiers XG.
 
+ATTENTION:
+
+- Quand une analyse est liée à une position, cette dernière ne doit pas pouvoir
+  être modifiée/mise-à-jour. Autrement, il serait possible de modifier une
+  position sans changer son analyse (incoherent!). Ajouter un champ dans
+  position pour empêcher la modification et impacter sur la commande :w!.
+
+- Quand une position est importée au format texte, X est toujours le joueur qui
+  a le trait ou la décision. A prendre en compte dans l'importation des matchs,
+  pour en ajoutant une analyse le cas échéant, inverser la ou les positions
+  concernées.
 
 
 Modes: Normal, Edit, Match
