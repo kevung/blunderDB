@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 #include <string.h>
 #include <iup.h>
 #include <iupdraw.h>
@@ -644,7 +645,29 @@ void filter_position_by_checker_in_the_zone(int z_player, int z_num){
     printf("pos_nb: %i\n", pos_nb);
 }
 
+FILE *open_input(const char *filename){
+    FILE *f;
+    errno=0;
+    if(filename==NULL) filename='\0';
+    f=fopen(filename,"r");
+    if(f==NULL)
+        fprintf(stderr,
+                "open_input(\"%s\") failed: %s\n",
+                filename,strerror(errno));
+    return f;
+}
+
+int close_file(FILE *f){
+    int s=0;
+    if(f==NULL) return 0;
+    errno=0;
+    s=fclose(f);
+    if(s==EOF) perror("Close failed");
+    return s;
+}
+
 /* END Data */
+
 
 /************************ Database ***********************/
 /* BEGIN Database */
