@@ -1,6 +1,8 @@
 Plus tard:
 
 - Importer une position (txt depuis XG). N'importe quelle langue (fr, en)
+    - Parsage checker move (cas pas de choix, comme gala)
+    - Parsage décision de cube
 - Copier/Coller/Glissé une position.
 - Ajouter filtre blunders, equité, chances de gain, gammon, backgammon (moi et advseraire)
 - Import d'un match.
@@ -21,6 +23,10 @@ ATTENTION:
   pour en ajoutant une analyse le cas échéant, inverser la ou les positions
   concernées.
 
+- Quand une position est importée au format texte, le coup joué par l
+  utilisateur n'est pas indiqué dans le fichier texte/clipboard. Seule la
+  transcription du match permet de faire la correspondance et de connaître le
+  joué par le joueur et lier cela à l'analyse.
 
 Modes: Normal, Edit, Match
 VIM MODE
