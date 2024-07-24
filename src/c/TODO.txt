@@ -1,5 +1,6 @@
 Plus tard:
 
+- Importer une position (txt depuis XG). N'importe quelle langue (fr, en)
 - Copier/Coller/Glissé une position.
 - Ajouter filtre blunders.
 - Import d'un match.
