@@ -1331,6 +1331,8 @@ const char* msg_info_position_written =
 "Position written to database.";
 const char* msg_info_position_updated = 
 "Position updated.";
+const char* msg_info_position_deleted = 
+"Position deleted.";
 const char* msg_info_position_already_exists = 
 "Position already exists in database.";
 const char* msg_info_position_added_to_library =
@@ -2215,6 +2217,7 @@ int parse_cmdline(char* cmdtext){
         int id = pos_list_id[pos_index];
         db_remove_position_from_libraries(db,id);
         db_delete_position(db, &id);
+        update_sb_msg(msg_info_position_deleted);
     } else if(strncmp(cmdtoken[0], ":s", 2)==0){
         printf(":s\n");
         bool force_cube=false;
