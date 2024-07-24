@@ -1,10 +1,11 @@
 Plus tard:
 
-- Importer une position (txt depuis XG). N'importe quelle langue (fr, en)
+- Importer une position (txt depuis XG).
+    - Parsage en anglais et en français
     - Parsage checker move (cas pas de choix, comme gala)
     - Parsage décision de cube
-- Copier/Coller/Glissé une position.
-- Ajouter filtre blunders, equité, chances de gain, gammon, backgammon (moi et advseraire)
+- Copier/Coller/Glissé une position. depuis clipboard
+- Ajouter filtres blunders, equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Import d'un match.
 - Export des positions et matchs en txt.
 - Export d'une collection avec toutes ses positions dans une archive zip
