@@ -2,7 +2,7 @@ Plus tard:
 
 - Importer une position (txt depuis XG). N'importe quelle langue (fr, en)
 - Copier/Coller/Glissé une position.
-- Ajouter filtre blunders.
+- Ajouter filtre blunders, equité, chances de gain, gammon, backgammon (moi et advseraire)
 - Import d'un match.
 - Export des positions et matchs en txt.
 - Export d'une collection avec toutes ses positions dans une archive zip
