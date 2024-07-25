@@ -1540,12 +1540,12 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     METADATA m;
     char line[256], _t[256];
     int p1_abs_score,p2_abs_score,match_point_nb;
-    int cube_value, cube_owner;
+    int cube_value, cube_owner, roll;
 
-    void parse_checker_analysis(char *l, const int ca_index, CHECKER_ANALYSIS *a)
+    void parse_checker_analysis(char *l, CHECKER_ANALYSIS *a)
     {
             l+=7;
-            strncpy(a[ca_index]->depth,l,12);
+            strncpy(a->depth,l,12);
             l+=12;
             strncpy(_t,l,29);
             int i=0; char* token[10];
@@ -1554,25 +1554,25 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
                 token[i]=c; i+=1;
                 c=strtok(NULL, " ");
             }
-            a[ca_index]->move1[0]='\0'; strcat(a[ca_index]->move1,token[0]);
+            a->move1[0]='\0'; strcat(a->move1,token[0]);
             if(i>=2){
-                a[ca_index]->move2[0]='\0';
-                strcat(a[ca_index]->move2,token[1]);
+                a->move2[0]='\0';
+                strcat(a->move2,token[1]);
             }
             if(i>=3){
-                a[ca_index]->move3[0]='\0';
-                strcat(a[ca_index]->move3,token[2]);
+                a->move3[0]='\0';
+                strcat(a->move3,token[2]);
             }
             if(i>=4){
-                a[ca_index]->move4[0]='\0';
-                strcat(a[ca_index]->move4,token[3]);
+                a->move4[0]='\0';
+                strcat(a->move4,token[3]);
             }
 
             strncpy(_t,l,18);
             if(strstr(_t,"(")==NULL){
-                sscanf("eq:%lf",&a[ca_index]->equity);
+                sscanf(_t,"eq:%lf",&a->equity);
             } else {
-                sscanf("eq:%lf (%lf)",&a[ca_index]->equity);
+                sscanf(_t,"eq:%lf (%lf)",&a->equity);
             }
     }
 
@@ -1609,33 +1609,33 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
         } else if(strncmp(l,"Player Winning Chances",22)==0){
             l+=26;
             strncpy(_t,l,30);
-            sscanf("%lf%% (G:%lf%% B:%lf%%)",&d->p1_w,&d->p1_g,&d->p1_b);
+            sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p1_w,&d->p1_g,&d->p1_b);
         } else if(strncmp(l,"Opponent Winning Chances",24)==0){
             l+=26;
             strncpy(_t,l,30);
-            sscanf("%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
+            sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
         } else if(strncmp(l,"Cubeless Equities",17)==0){
             l+=19;
             strncpy(_t,l,32);
-            sscanf("No Double=%lf, Double=%lf",
+            sscanf(_t,"No Double=%lf, Double=%lf",
                     &d->cubeless_equity_nd,&d->cubeless_equity_d);
         } else if(strncmp(l,"       No double",16)==0){
             if(strstr(l,"(")==NULL){
-                sscanf("       No double:     %lf",&d->cubeful_equity_nd);
+                sscanf(_t,"       No double:     %lf",&d->cubeful_equity_nd);
             } else {
-                sscanf("       No double:     %lf (%lf)",&d->cubeful_equity_nd);
+                sscanf(_t,"       No double:     %lf (%lf)",&d->cubeful_equity_nd);
             }
         } else if(strncmp(l,"       Double/Take",18)==0){
             if(strstr(l,"(")==NULL){
-                sscanf("       Double/Take:   %lf",&d->cubeful_equity_dt);
+                sscanf(_t,"       Double/Take:   %lf",&d->cubeful_equity_dt);
             } else {
-                sscanf("       Double/Take:   %lf (%lf)",&d->cubeful_equity_dt);
+                sscanf(_t,"       Double/Take:   %lf (%lf)",&d->cubeful_equity_dt);
             }
         } else if(strncmp(l,"       Double/Pass",18)==0){
             if(strstr(l,"(")==NULL){
-                sscanf("       Double/Pass:   %lf",&d->cubeful_equity_dp);
+                sscanf(l,"       Double/Pass:   %lf",&d->cubeful_equity_dp);
             } else {
-                sscanf("       Double/Pass:   %lf (%lf)",&d->cubeful_equity_dp);
+                sscanf(l,"       Double/Pass:   %lf (%lf)",&d->cubeful_equity_dp);
             }
         } else if(strncmp(l,"Best Cube action",16)==0){
             if(strstr(l,"No double / Take")!=NULL) d->best_cube_action=0;
@@ -1645,35 +1645,35 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
             if(strstr(l,"Too good to double / Take")!=NULL) d->best_cube_action=4;
         } else if(strncmp(l,"Percentage of wrong pass",24)==0){
             l+=67;
-            sscanf("%lf%%",&d->percentage_wrong_pass_make_good_double);
+            sscanf(l,"%lf%%",&d->percentage_wrong_pass_make_good_double);
         } else if(strncmp(l,"eXtreme",7)==0){
             strncpy(m->misc,l,47);
             m->misc[47]='\0';
         } else if(strncmp(l,"    1.",6)==0){
-            ca_index=0; parse_checker_analysis(l,ca_index,&a);
-        } else if(strncmp(l,"    2.",6)==0){
-            ca_index=1; parse_checker_analysis(l,ca_index,&a);
-        } else if(strncmp(l,"    3.",6)==0){
-            ca_index=2; parse_checker_analysis(l,ca_index,&a);
-        } else if(strncmp(l,"    4.",6)==0){
-            ca_index=3; parse_checker_analysis(l,ca_index,&a);
+            ca_index=0; parse_checker_analysis(l,&a[ca_index]);
+        } else if(strncmp(l,"    2.",6)==0){                 
+            ca_index=1; parse_checker_analysis(l,&a[ca_index]);
+        } else if(strncmp(l,"    3.",6)==0){                 
+            ca_index=2; parse_checker_analysis(l,&a[ca_index]);
+        } else if(strncmp(l,"    4.",6)==0){                 
+            ca_index=3; parse_checker_analysis(l,&a[ca_index]);
         } else if(strncmp(l,"    5.",6)==0){
-            ca_index=4; parse_checker_analysis(l,ca_index,&a);
+            ca_index=4; parse_checker_analysis(l,&a[ca_index]);
         } else if(strncmp(l,"      Player",12)==0){
             l+=16;
             strncpy(_t,l,30);
-            sscanf("%lf%% (G:%lf%% B:%lf%%)",
-                    a[ca_index]->p1_w,&a[ca_index]->p1_g,&a[ca_index]->p1_b);
+            sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
+                    &a[ca_index].p1_w,&a[ca_index].p1_g,&a[ca_index].p1_b);
         } else if(strncmp(l,"      Opponent",14)==0){
             l+=16;
             strncpy(_t,l,30);
-            sscanf("%lf%% (G:%lf%% B:%lf%%)",
-                    a[ca_index]->p2_w,&a[ca_index]->p2_g,&a[ca_index]->p2_b);
+            sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
+                    &a[ca_index].p2_w,&a[ca_index].p2_g,&a[ca_index].p2_b);
         }
     }
 
     while(fgets(line,sizeof(line),f)){
-        parse_line(line,&p,&a,&d,&m);
+        parse_line(line,&p,a,&d,&m);
     }
 
     p.p1_score=match_point_nb-p1_abs_score;
@@ -1681,17 +1681,21 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     p.cube=cube_owner*((int)log2(cube_value));
     p.dice[0]=roll/10;
     p.dice[1]=(int) fmod((double)roll,10.); // -lm?
-    convert_xgid_to_position(m->xgid,&p);
+    convert_xgid_to_position(m.xgid,&p);
 
     pos_print(&p);
-    if(p.cube_action==0) checker_analysis_print(&a);
+        if(p.cube_action==0){
+            for(int i=0;i<5;i++)
+                checker_analysis_print(&a[i]);
+        }
     if(p.cube_action==1) cube_analysis_print(&d);
 
     db_insert_position(db,&p);
     int pid=db_last_insert_id(db,"position");
     db_insert_metadata(db,&pid,&m);
     if(p.cube_action==0){
-        db_insert_checker_analysis(db,&pid,&a);
+        for(int i=0;i<5;i++)
+            db_insert_checker_analysis(db,&pid,&a[i]);
     } else if (p.cube_action==1){
         db_insert_cube_analysis(db,&pid,&d);
     }
