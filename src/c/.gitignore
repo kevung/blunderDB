@@ -2,3 +2,6 @@ blunderDB
 tmp
 *.exe
 *.db
+*.txt
+tags
+
