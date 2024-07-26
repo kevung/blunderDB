@@ -785,34 +785,36 @@ int close_file(FILE *f){
 
 void convert_xgid_to_position(const char *l, POSITION *p){
     char t[100]; char* token[10]; int i;
-    const char *f1="-abcdefghiklmnopqrstuvwxyz";
-    const char *f2="-ABCDEFGHIKLMNOPQRSTUVWXYZ";
+    const char *f1="-ABCDEFGHIKLMNOPQRSTUVWXYZ";
+    const char *f2="-abcdefghiklmnopqrstuvwxyz";
     l+5; strncpy(t,l,55);
     char *c = strtok(t, ":");
     i=0; while(c!=NULL){
         token[i]=c; i+=1;
         c=strtok(NULL, ":");
     }
-    char _checker[27];
-    strcpy(_checker,token[0]);
-    for(int i=0;i<26;i++){
-        int k=25-i;
-        if(_checker[i]=='-'){
-            p->checker[k]=0;
-        } else if(islower(_checker[i])){
-            int n=char_in_string(_checker[i],f1);
-            p->checker[k]=n;
-        } else if(isupper(_checker[i])){
-            int n=char_in_string(_checker[i],f2);
-            p->checker[k]=-n;
-        }
-    }
-    int cube_value=atoi(token[1]);
-    int cube_owner=atoi(token[2]); //0 middle 1=p1 -1=p2
-    p->cube=cube_value*cube_owner;
     int p1_sign=atoi(token[3]); //in theory, -1 means opponent.
                                 //but in blunderDB, p1 is player downside.
                                 //this is important for match import
+    char _checker[27];
+    strcpy(_checker,token[0]);
+    for(int i=0;i<26;i++){
+        int k;
+        if(p1_sign==1) k=i;
+        if(p1_sign==-1) k=25-i;
+        if(_checker[i]=='-'){
+            p->checker[k]=0;
+        } else if(isupper(_checker[i])){
+            int n=char_in_string(_checker[i],f1);
+            p->checker[k]=n*p1_sign;
+        } else if(islower(_checker[i])){
+            int n=char_in_string(_checker[i],f2);
+            p->checker[k]=-n*p1_sign;
+        }
+    }
+    int cube_value=atoi(token[1]);
+    int cube_owner=atoi(token[2])*p1_sign; //0 middle 1=p1 -1=p2
+    p->cube=cube_value*cube_owner;
     int roll=atoi(token[4]);
     if(roll==0) p->cube_action=1;
     p->dice[0]=roll/10;
@@ -1780,7 +1782,6 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
         parse_line(line,&p,&ca_index,a,&d,&m);
     }
 
-    position_print(&p);
     if(p.cube_action==0){
         for(int i=0;i<5;i++)
             checker_analysis_print(&a[i]);
@@ -1789,6 +1790,7 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     metadata_print(&m);
 
     convert_xgid_to_position(m.xgid,&p);
+    position_print(&p);
 
     int pid;
     db_find_identical_position(db, &p, &exist, &nb, _id);
