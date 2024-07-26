@@ -130,7 +130,7 @@ static int board_direction_right_cb(void);
 #define PLAYER2_POINTLABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
 #define POSITION_NUMBER_MAX 10000
 
-char hash[50];
+char hash[1000];
 
 typedef struct
 {
@@ -1055,7 +1055,7 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
     char _s[4]; char *h;
     char sql_add_position[1000];
     h=pos_to_str(p);
-    convert_charp_to_array(h, hash, 50);
+    convert_charp_to_array(h, hash, 1000);
     printf("hash: %s\n", hash);
     sql_add_position[0]='\0';
     strcat(sql_add_position, "INSERT INTO position ");
@@ -1143,7 +1143,7 @@ int db_update_position(sqlite3* db, int* id, const POSITION* p){
     char t[10000];
     sql[0]='\0'; t[0]='\0';
     h=pos_to_str(p);
-    convert_charp_to_array(h, hash, 50);
+    convert_charp_to_array(h, hash, 1000);
     strcat(sql, "UPDATE position SET ");
     for(int i=0; i<26; i++){
         sprintf(t, "p%i = %i, ", i, p->checker[i]);
@@ -1378,7 +1378,7 @@ int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int*
     char t[10000];
     sql[0]='\0'; t[0]='\0';
     h=pos_to_str(p);
-    convert_charp_to_array(h, hash, 50);
+    convert_charp_to_array(h, hash, 1000);
     strcat(sql, "SELECT id FROM position WHERE ");
     sprintf(t, "hash = \"%s\";", hash);
     strcat(sql, t);
