@@ -292,8 +292,8 @@ void copy_position(POSITION* a, POSITION* b){
     b->cube_action=a->cube_action;
 }
 
-void pos_print(const POSITION* p) {
-    printf("\npos_print\n");
+void position_print(const POSITION* p) {
+    printf("\nposition_print\n");
     printf("checker:\n");
     for(int i=0; i<26; i++)
     {
@@ -1773,8 +1773,6 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     for(int i=0;i<5;i++) a[i]=CA_VOID;
     d=D_VOID;
     m=M_VOID;
-    cube_analysis_print(&d);
-    metadata_print(&m);
 
     // marche pas pour les blancs, les cubes
     while(fgets(line,sizeof(line),f)){
@@ -1782,10 +1780,7 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
         parse_line(line,&p,&ca_index,a,&d,&m);
     }
 
-    metadata_print(&m);
-    printf("POSTMANPAT\n");
-
-    pos_print(&p);
+    position_print(&p);
     if(p.cube_action==0){
         for(int i=0;i<5;i++)
             checker_analysis_print(&a[i]);
