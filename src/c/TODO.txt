@@ -3,15 +3,12 @@ Plus tard:
 - Importer une position (txt depuis XG).
     - Parsage en anglais et en français
     - Parsage checker move (cas pas de choix, comme gala)
-    - Parsage décision de cube
-    !! marche pas pour les blancs, les cubes
     - Afficher les dés à jouer ou le cube sur la posiiton.
-    - Attention inversion des joueurs en fonction de checkers...
-    P1 doit être en bas.
+    !!! checker analysis: traiter cas No Move suite à gala
 
+- Import d'un match.
 - Copier/Coller/Glissé une position. depuis clipboard
 - Ajouter filtres blunders, equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
-- Import d'un match.
 - Export des positions et matchs en txt.
 - Add bdid (BlunderDB id) to export position from 1 BlunderDB instance to another.
 - Export d'une collection avec toutes ses positions dans une archive zip
