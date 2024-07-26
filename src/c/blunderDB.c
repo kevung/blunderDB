@@ -173,6 +173,7 @@ typedef struct
     double cubeful_equity_nd; //no double
     double cubeful_equity_dt; //double take
     double cubeful_equity_dp; //double pass
+    double error;
     int best_cube_action; // 0=nd 1=dt 2=dp 3=tgp 4=tgt
     double percentage_wrong_pass_make_good_double;
 } CUBE_ANALYSIS;
@@ -948,6 +949,7 @@ const char* sql_cube_analysis =
 "cubeful_equity_nd REAL,"
 "cubeful_equity_dt REAL,"
 "cubeful_equity_dp REAL,"
+"error REAL,"
 "best_cube_action INTEGER,"
 "percentage_wrong_pass_make_good_double REAL,"
 "FOREIGN KEY(position_id) REFERENCES position(id)"
@@ -1121,13 +1123,14 @@ int db_insert_cube_analysis(sqlite3 *db, const int *pid,
     strcat(sql,"INSERT INTO cube_analysis ");
     strcat(sql,"(position_id,depth,p1_w,p1_g,p1_b,p2_w,p2_g,p2_b,");
     strcat(sql,"cubeless_equity_nd,cubeless_equity_d,");
-    strcat(sql,"cubeful_equity_nd,cubeful_equity_dt,cubeful_equity_dp,");
+    strcat(sql,"cubeful_equity_nd,cubeful_equity_dt,cubeful_equity_dp,error,");
     strcat(sql,"best_cube_action,percentage_wrong_pass_make_good_double) ");
     strcat(sql,"VALUES (");
     sprintf(t,"%d,\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f);",
             *pid,a->depth,a->p1_w,a->p1_g,a->p1_b,a->p2_w,a->p2_g,a->p2_b,
             a->cubeless_equity_nd,a->cubeless_equity_d,
             a->cubeful_equity_nd,a->cubeful_equity_dt,a->cubeful_equity_dp,
+            a->error,
             a->best_cube_action,a->percentage_wrong_pass_make_good_double);
     strcat(sql,t);
     printf("sql %s\n",sql);
@@ -1642,8 +1645,10 @@ void parse_line(const char *line, POSITION *p,
     if(l) strcpy(l,line);
 
     printf("l: %s\n",l);
-    if(strstr(l,"XGID")!=NULL){
-        l+=3; //skip invisible character introduced by Windows.
+    char *_ptr=strstr(l,"XGID");
+    if(_ptr!=NULL){
+        /* l+=3; //skip invisible character introduced by Windows. */
+        l=_ptr;
         sscanf(l,"XGID=%s",m->xgid);
     } else if(strncmp(l,"X:",2)==0){
         sscanf(l,"X:%s   O:%s",m->p1_name,m->p2_name);
@@ -1687,22 +1692,32 @@ void parse_line(const char *line, POSITION *p,
         sscanf(_t,"No Double=%lf, Double=%lf",
                 &d->cubeless_equity_nd,&d->cubeless_equity_d);
     } else if(strncmp(l,"       No double",16)==0){
+        l+=22;
         if(strstr(l,"(")==NULL){
-            sscanf(_t,"       No double:     %lf",&d->cubeful_equity_nd);
+            strncpy(_t,l,6);
+            sscanf(_t,"%lf",&d->cubeful_equity_nd);
         } else {
-            sscanf(_t,"       No double:     %lf (%lf)",&d->cubeful_equity_nd);
+            strncpy(_t,l,15);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error);
         }
     } else if(strncmp(l,"       Double/Take",18)==0){
+        l+=22;
         if(strstr(l,"(")==NULL){
+            strncpy(_t,l,6);
             sscanf(_t,"       Double/Take:   %lf",&d->cubeful_equity_dt);
         } else {
-            sscanf(_t,"       Double/Take:   %lf (%lf)",&d->cubeful_equity_dt);
+            strncpy(_t,l,15);
+            sscanf(_t,"       Double/Take:   %lf (%lf)",&d->cubeful_equity_dt,&d->error);
         }
     } else if(strncmp(l,"       Double/Pass",18)==0){
+        l+=22;
         if(strstr(l,"(")==NULL){
-            sscanf(l,"       Double/Pass:   %lf",&d->cubeful_equity_dp);
+            strncpy(_t,l,6);
+            sscanf(_t,"%lf",&d->cubeful_equity_dp);
         } else {
-            sscanf(l,"       Double/Pass:   %lf (%lf)",&d->cubeful_equity_dp);
+            strncpy(_t,l,15);
+            printf("_t: %s\n");
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error);
         }
     } else if(strncmp(l,"Best Cube action",16)==0){
         if(strstr(l,"No double / Take")!=NULL) d->best_cube_action=0;
@@ -1758,13 +1773,17 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     for(int i=0;i<5;i++) a[i]=CA_VOID;
     d=D_VOID;
     m=M_VOID;
+    cube_analysis_print(&d);
+    metadata_print(&m);
 
+    // marche pas pour les blancs, les cubes
     while(fgets(line,sizeof(line),f)){
         line[strcspn(line,"\r\n")]=0; //delete \n end of line
         parse_line(line,&p,&ca_index,a,&d,&m);
     }
 
-    convert_xgid_to_position(m.xgid,&p);
+    metadata_print(&m);
+    printf("POSTMANPAT\n");
 
     pos_print(&p);
     if(p.cube_action==0){
@@ -1774,6 +1793,7 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     if(p.cube_action==1) cube_analysis_print(&d);
     metadata_print(&m);
 
+    convert_xgid_to_position(m.xgid,&p);
 
     int pid;
     db_find_identical_position(db, &p, &exist, &nb, _id);
