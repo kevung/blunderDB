@@ -1,17 +1,17 @@
 Plus tard:
 
 - Afficher les analyses de cube, checkers
-- Ajouter la fonction pour inverser une position. (Ctrl-Up/Ctrl-Down)
-- Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
-- Import d'un match.
 - Ajouter filtres blunders, equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
+- Filtre taille prime, hommes à la barre
+- Ajouter la fonction pour inverser une position. (Ctrl-Up/Ctrl-Down)
+- Implémenter les menus et boutons.
+- Import d'un match.
 - Export des positions et matchs en txt.
 - Add bdid (BlunderDB id) to export position from 1 BlunderDB instance to another.
 - Export d'une collection avec toutes ses positions dans une archive zip
-- Implémenter les menus et boutons.
 - Parsage des fichiers XG.
-- Filtre taille prime, hommes à la barre
 - Corriger bug parsage des noms de joueurs, notamment en français.
+- Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
 
 ? Utilité de player_id dans POSITION?
 
