@@ -1410,12 +1410,13 @@ int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int*
     sql[0]='\0'; t[0]='\0';
     h=pos_to_str(p);
     convert_charp_to_array(h, hash, 1000);
+    *exist=false;
     strcat(sql, "SELECT id FROM position WHERE 1=1 ");
     for(int i=0;i<26;i++){
-        sprintf(t, "and p%i = %i ",i, p->checker[i]);
+        sprintf(t, "and p%i=%i ",i, p->checker[i]);
         strcat(sql, t);
     }
-    sprintf(t, "and player1_score = %i and player2_score = %i ",
+    sprintf(t, "and player1_score=%i and player2_score=%i ",
             p->p1_score, p->p2_score);
     strcat(sql, t);
     sprintf(t, "and ((dice1=%i and dice2=%i) or (dice1=%i and dice2=%i)) ",
@@ -1834,9 +1835,12 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     int pid;
     db_find_identical_position(db, &p, &exist, &nb, _id);
     if(!exist){
+        printf("position does not exist\n");
         db_insert_position(db,&p);
         pid=db_last_insert_id(db,"position");
-    } else { pid=_id[0]; }
+    } else { pid=_id[0]; 
+        printf("position does exist\n");
+    }
     db_insert_metadata(db,&pid,&m);
     if(p.cube_action==0){
         for(int i=0;i<5;i++)
@@ -1845,7 +1849,7 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
         db_insert_cube_analysis(db,&pid,&d);
     }
 
-    return 1;
+    return pid;
 }
 
 /* END Database */
@@ -4083,13 +4087,9 @@ static int item_import_action_cb(void)
                     update_sb_msg(msg_err_failed_to_import_pos);
                     printf("%s\n",msg_err_failed_to_import_pos);
                 }
-                int rc=db_import_position_from_file(db,f);
-                if(rc==0){
-                    update_sb_msg(msg_err_failed_to_import_pos);
-                    break;
-                }
+                int pid=db_import_position_from_file(db,f);
                 db_select_position(db,&pos_nb,pos_list_id,pos_list);
-                goto_last_position_cb();
+                goto_position_cb(&pid);
                 switch_to_library("main",&lib_index);
                 update_sb_msg(msg_info_position_imported);
             break;
