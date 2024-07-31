@@ -30,7 +30,7 @@
 static int canvas_map_cb(Ihandle*);
 static int canvas_unmap_cb(Ihandle*);
 static int canvas_action_cb(Ihandle*);
-static int canvas_dropfiles_cb(Ihandle*);
+static int canvas_dropfiles_cb(Ihandle*, const char*, int, int, int);
 static int canvas_motion_cb(Ihandle*);
 static int canvas_wheel_cb(Ihandle*, float, int, int, char*);
 static int canvas_button_cb(Ihandle*, const int, const int,
@@ -3680,9 +3680,21 @@ static int canvas_action_cb(Ihandle* ih)
     return IUP_DEFAULT;
 }
 
-static int canvas_dropfiles_cb(Ihandle* ih)
+static int canvas_dropfiles_cb(Ihandle* ih, const char* filename,
+        int num, int x, int y)
 {
-    error_callback();
+    printf("\ncanvas_dropfiles_cb\n");
+    printf("filename: %s\n", filename);
+    FILE *f=open_input(filename);
+    if(f==NULL){
+        update_sb_msg(msg_err_failed_to_import_pos);
+        printf("%s\n",msg_err_failed_to_import_pos);
+    }
+    int pid=db_import_position_from_file(db,f);
+    db_select_position(db,&pos_nb,pos_list_id,pos_list);
+    goto_position_cb(&pid);
+    switch_to_library("main",&lib_index);
+    update_sb_msg(msg_info_position_imported);
     return IUP_DEFAULT;
 }
 

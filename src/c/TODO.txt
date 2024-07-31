@@ -2,13 +2,13 @@ Plus tard:
 
 - Importer une position (txt depuis XG).
     - Parsage en anglais et en français
+- Copier/Coller/Glissé une position. depuis clipboard
 - Ajouter la fonction pour inverser une position.
 - Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
 
 ? Utilité de player_id dans POSITION?
 
 - Import d'un match.
-- Copier/Coller/Glissé une position. depuis clipboard
 - Ajouter filtres blunders, equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Export des positions et matchs en txt.
 - Add bdid (BlunderDB id) to export position from 1 BlunderDB instance to another.
