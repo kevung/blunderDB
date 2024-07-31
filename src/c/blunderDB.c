@@ -1410,9 +1410,20 @@ int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int*
     sql[0]='\0'; t[0]='\0';
     h=pos_to_str(p);
     convert_charp_to_array(h, hash, 1000);
-    strcat(sql, "SELECT id FROM position WHERE ");
-    sprintf(t, "hash = \"%s\";", hash);
+    strcat(sql, "SELECT id FROM position WHERE 1=1 ");
+    for(int i=0;i<26;i++){
+        sprintf(t, "and p%i = %i ",i, p->checker[i]);
+        strcat(sql, t);
+    }
+    sprintf(t, "and player1_score = %i and player2_score = %i ",
+            p->p1_score, p->p2_score);
     strcat(sql, t);
+    sprintf(t, "and ((dice1=%i and dice2=%i) or (dice1=%i and dice2=%i)) ",
+            p->dice[0],p->dice[1],p->dice[1],p->dice[0]);
+    strcat(sql,t);
+    sprintf(t,"and cube_position=%i and player_on_roll=%i and cube_action=%i;",
+            p->cube, p->player_on_roll, p->cube_action);
+    strcat(sql,t);
     printf("sql: %s\n", sql);
     int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
     if(rc!=SQLITE_OK){
