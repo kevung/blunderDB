@@ -1680,9 +1680,19 @@ void parse_checker_analysis(char *l, CHECKER_ANALYSIS *a)
 // TO DO FRENCH PARSING IN THE SAME FUNCTION parse_line
 void parse_line(const char *line, POSITION *p,
         int *index, CHECKER_ANALYSIS *a, CUBE_ANALYSIS *d,
-        METADATA *m){
+        METADATA *m,
+        bool *has_xgid, bool *has_playername, bool *has_score,
+        bool *has_cube,
+        bool *has_dice_action, bool *has_cube_action,
+        bool *has_analysis1,
+        bool *has_checker_p1wins, bool *has_checker_p2wins,
+        bool *has_cube_p1wins, bool *has_cube_p2wins,
+        bool *has_cubeless_eq, bool *has_cubeful_nd,
+        bool *has_cubeful_dt, bool *has_cubeful_dp,
+        bool *has_best_cube_action
+        ){
     int p1_abs_score, p2_abs_score, match_point_nb,
-        cube_value, roll;
+    cube_value, roll;
     char _t[LINE_LENGTHMAX]; _t[0]='\0';
     char *l = malloc(strlen(line)+1);
     if(l) strcpy(l,line);
@@ -1693,31 +1703,39 @@ void parse_line(const char *line, POSITION *p,
         /* l+=3; //skip invisible character introduced by Windows. */
         l=_ptr;
         sscanf(l,"XGID=%s",m->xgid);
+        *has_xgid=true;
     } else if(strncmp(l,"X:",2)==0){
         sscanf(l,"X:%s   O:%s",m->p1_name,m->p2_name);
+        *has_playername=true;
     } else if(strncmp(l,"Score is",8)==0){
         sscanf(l,"Score is X:%d O:%d %d pt.(s) match.",
                 &p1_abs_score,&p2_abs_score,&match_point_nb);
         p->p1_score=match_point_nb-p1_abs_score;
         p->p2_score=match_point_nb-p2_abs_score;
+        *has_score=true;
     } else if(strncmp(l,"Cube: 1",7)==0
             && strstr(l,"own cube")==NULL){
         p->cube=0;
+        *has_cube=true;
     } else if(strncmp(l,"Cube:",5)==0
             && strstr(l,"O own cube")!=NULL){
         sscanf(l,"Cube: %d, O own cube",&cube_value);
         p->cube=-1*((int)log2(cube_value));
+        *has_cube=true;
     } else if(strncmp(l,"Cube:",5)==0
             && strstr(l,"X own cube")!=NULL){
         sscanf(l,"Cube: %d, X own cube",&cube_value);
         p->cube=(int)log2(cube_value);
+        *has_cube=true;
     } else if(strncmp(l,"X to play",9)==0){
         sscanf(l,"X to play %d",&roll);
         p->cube_action=0;
         p->dice[0]=roll/10;
         p->dice[1]=(int) fmod((double)roll,10.); // -lm?
+        *has_dice_action=true;
     } else if(strncmp(l,"X on roll, cube action",22)==0){
         p->cube_action=1;
+        *has_cube_action=true;
     } else if(strncmp(l,"Analyzed in",11)==0){
         l+=12;
         strncpy(d->depth,l,15);
@@ -1725,15 +1743,18 @@ void parse_line(const char *line, POSITION *p,
         l+=26;
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p1_w,&d->p1_g,&d->p1_b);
+        *has_cube_p1wins=true;
     } else if(strncmp(l,"Opponent Winning Chances",24)==0){
         l+=26;
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
+        *has_cube_p2wins=true;
     } else if(strncmp(l,"Cubeless Equities",17)==0){
         l+=19;
         strncpy(_t,l,32);
         sscanf(_t,"No Double=%lf, Double=%lf",
                 &d->cubeless_equity_nd,&d->cubeless_equity_d);
+        *has_cubeless_eq=true;
     } else if(strncmp(l,"       No double",16)==0){
         l+=22;
         if(strstr(l,"(")==NULL){
@@ -1743,6 +1764,7 @@ void parse_line(const char *line, POSITION *p,
             strncpy(_t,l,15);
             sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error);
         }
+        *has_cubeful_nd=true;
     } else if(strncmp(l,"       Double/Take",18)==0){
         l+=22;
         if(strstr(l,"(")==NULL){
@@ -1752,6 +1774,7 @@ void parse_line(const char *line, POSITION *p,
             strncpy(_t,l,15);
             sscanf(_t,"       Double/Take:   %lf (%lf)",&d->cubeful_equity_dt,&d->error);
         }
+        *has_cubeful_dt=true;
     } else if(strncmp(l,"       Double/Pass",18)==0){
         l+=22;
         if(strstr(l,"(")==NULL){
@@ -1762,12 +1785,14 @@ void parse_line(const char *line, POSITION *p,
             printf("_t: %s\n");
             sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error);
         }
+        *has_cubeful_dp=true;
     } else if(strncmp(l,"Best Cube action",16)==0){
         if(strstr(l,"No double / Take")!=NULL) d->best_cube_action=0;
         if(strstr(l,"Double / Take")!=NULL) d->best_cube_action=1;
         if(strstr(l,"Double / Pass")!=NULL) d->best_cube_action=2;
         if(strstr(l,"Too good to double / Pass")!=NULL) d->best_cube_action=3;
         if(strstr(l,"Too good to double / Take")!=NULL) d->best_cube_action=4;
+        *has_best_cube_action=true;
     } else if(strncmp(l,"Percentage of wrong pass",24)==0){
         l+=67;
         sscanf(l,"%lf%%",&d->percentage_wrong_pass_make_good_double);
@@ -1776,6 +1801,7 @@ void parse_line(const char *line, POSITION *p,
         m->misc[47]='\0';
     } else if(strncmp(l,"    1.",6)==0){
         *index=0; parse_checker_analysis(l,&a[*index]);
+        *has_analysis1=true;
     } else if(strncmp(l,"    2.",6)==0){                 
         *index=1; parse_checker_analysis(l,&a[*index]);
     } else if(strncmp(l,"    3.",6)==0){                 
@@ -1789,11 +1815,13 @@ void parse_line(const char *line, POSITION *p,
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
                 &a[*index].p1_w,&a[*index].p1_g,&a[*index].p1_b);
+        *has_checker_p1wins=true;
     } else if(strncmp(l,"      Opponent",14)==0){
         l+=16;
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
                 &a[*index].p2_w,&a[*index].p2_g,&a[*index].p2_b);
+        *has_checker_p2wins=true;
     }
 
     free(l);
@@ -1801,7 +1829,7 @@ void parse_line(const char *line, POSITION *p,
 
 
 int db_import_position_from_lines(sqlite3* db,
-        char lines[LINE_NBMAX][LINE_LENGTHMAX], int line_nb){
+        char lines[LINE_NBMAX][LINE_LENGTHMAX], int line_nb, int* pid){
     printf("\ndb_import_position_from_lines\n");
     POSITION p;
     CHECKER_ANALYSIS a[5]; int ca_index=0;
@@ -1811,15 +1839,88 @@ int db_import_position_from_lines(sqlite3* db,
     int cube_value, cube_owner, roll;
     bool exist;
     int nb, _id[1000];
+    bool has_xgid, has_playername, has_score,
+         has_cube,
+         has_dice_action, has_cube_action,
+         has_analysis1, 
+         has_checker_p1wins, has_checker_p2wins,
+         has_cube_p1wins, has_cube_p2wins,
+         has_cubeless_eq, has_cubeful_nd,
+         has_cubeful_dt, has_cubeful_dp,
+         has_best_cube_action;
+    bool has_valid_position, has_valid_checker_analysis,
+         has_valid_cube_analysis, is_valid_position_file;
 
     p=POS_VOID;
     for(int i=0;i<5;i++) a[i]=CA_VOID;
     d=D_VOID;
     m=M_VOID;
 
+    has_xgid=false;
+    has_playername=false;
+    has_score=false;
+    has_cube=false;
+    has_dice_action=false;
+    has_cube_action=false;
+
+    has_analysis1=false;
+    has_checker_p1wins=false;
+    has_checker_p2wins=false;
+
+    has_cube_p1wins=false;
+    has_cube_p2wins=false;
+    has_cubeless_eq=false;
+    has_cubeful_nd=false;
+    has_cubeful_dt=false;
+    has_cubeful_dp=false;
+    has_best_cube_action=false;
+
     for(int i=0;i<line_nb;i++){
-        parse_line(lines[i],&p,&ca_index,a,&d,&m);
+        parse_line(lines[i],&p,&ca_index,a,&d,&m,
+                &has_xgid, &has_playername, &has_score,
+                &has_cube,
+                &has_dice_action, &has_cube_action,
+                &has_analysis1,
+                &has_checker_p1wins, &has_checker_p2wins,
+                &has_cube_p1wins, &has_cube_p2wins,
+                &has_cubeless_eq, &has_cubeful_nd,
+                &has_cubeful_dt, &has_cubeful_dp,
+                &has_best_cube_action
+                );
     }
+
+    has_valid_position = has_xgid && has_playername
+        && has_score && has_cube 
+        && (has_dice_action || has_cube_action);
+
+    printf("has_xgid: %i\n", has_xgid);
+    printf("has_playername: %i\n", has_playername);
+    printf("has_score: %i\n", has_score);
+    printf("has_cube: %i\n", has_cube);
+    printf("has_dice_action: %i\n", has_dice_action);
+    printf("has_cube_action: %i\n", has_cube_action);
+    printf("has_best_cube_action: %i\n", has_best_cube_action);
+
+    has_valid_checker_analysis = has_analysis1 
+        && has_checker_p1wins && has_checker_p2wins;
+
+    has_valid_cube_analysis = has_cube_p1wins
+        && has_cube_p2wins && has_cubeless_eq
+        && has_cubeful_nd && has_cubeful_dt && has_cubeful_dp
+        && has_best_cube_action;
+
+    is_valid_position_file = has_valid_position &&
+        (has_valid_checker_analysis || has_valid_cube_analysis);
+
+    printf("is_valid_position_file: %i\n", is_valid_position_file);
+    printf("has_valid_position: %i\n", has_valid_position);
+    printf("has_valid_checker_analysis: %i\n", has_valid_checker_analysis);
+    printf("has_valid_cube_analysis: %i\n", has_valid_cube_analysis);
+
+    if(!is_valid_position_file) return 0;
+
+    // checker if all information are gathered and position is valid
+    // has_dice_action or has_cube_action. disfonction de cas
 
     if(p.cube_action==0){
         for(int i=0;i<5;i++)
@@ -1831,27 +1932,27 @@ int db_import_position_from_lines(sqlite3* db,
     convert_xgid_to_position(m.xgid,&p);
     position_print(&p);
 
-    int pid;
     db_find_identical_position(db, &p, &exist, &nb, _id);
     if(!exist){
         printf("position does not exist\n");
         db_insert_position(db,&p);
-        pid=db_last_insert_id(db,"position");
-    } else { pid=_id[0]; 
+        *pid=db_last_insert_id(db,"position");
+    } else { *pid=_id[0]; 
         printf("position does exist\n");
     }
-    db_insert_metadata(db,&pid,&m);
+    db_insert_metadata(db,pid,&m);
     if(p.cube_action==0){
         for(int i=0;i<5;i++)
-            db_insert_checker_analysis(db,&pid,&a[i]);
+            db_insert_checker_analysis(db,pid,&a[i]);
     } else if (p.cube_action==1){
-        db_insert_cube_analysis(db,&pid,&d);
+        db_insert_cube_analysis(db,pid,&d);
     }
 
-    return pid;
+    //return bool;
+    return 1;
 }
 
-int db_import_position_from_file(sqlite3* db, FILE* f){
+int db_import_position_from_file(sqlite3* db, FILE* f, int* pid){
     printf("\ndb_import_position_from_file\n");
     char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
     nb=0;
@@ -1861,7 +1962,7 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
         nb+=1;
         lines[nb][0]='\0';
     }
-    return db_import_position_from_lines(db,lines,nb);
+    return db_import_position_from_lines(db,lines,nb,pid);
 }
 
 /* END Database */
@@ -3703,11 +3804,16 @@ static int canvas_dropfiles_cb(Ihandle* ih, const char* filename,
         update_sb_msg(msg_err_failed_to_import_pos);
         printf("%s\n",msg_err_failed_to_import_pos);
     }
-    int pid=db_import_position_from_file(db,f);
-    db_select_position(db,&pos_nb,pos_list_id,pos_list);
-    goto_position_cb(&pid);
-    switch_to_library("main",&lib_index);
-    update_sb_msg(msg_info_position_imported);
+    int pid;
+    int rc=db_import_position_from_file(db,f,&pid);
+    if(rc){
+        db_select_position(db,&pos_nb,pos_list_id,pos_list);
+        goto_position_cb(&pid);
+        switch_to_library("main",&lib_index);
+        update_sb_msg(msg_info_position_imported);
+    }else{
+        update_sb_msg(msg_err_failed_to_import_pos);
+    }
     return IUP_DEFAULT;
 }
 
@@ -4113,11 +4219,16 @@ static int item_import_action_cb(void)
                 update_sb_msg(msg_err_failed_to_import_pos);
                 printf("%s\n",msg_err_failed_to_import_pos);
             }
-            int pid=db_import_position_from_file(db,f);
-            db_select_position(db,&pos_nb,pos_list_id,pos_list);
-            goto_position_cb(&pid);
-            switch_to_library("main",&lib_index);
-            update_sb_msg(msg_info_position_imported);
+            int pid;
+            int rc=db_import_position_from_file(db,f,&pid);
+            if(rc){
+                db_select_position(db,&pos_nb,pos_list_id,pos_list);
+                goto_position_cb(&pid);
+                switch_to_library("main",&lib_index);
+                update_sb_msg(msg_info_position_imported);
+            } else{
+                update_sb_msg(msg_err_failed_to_import_pos);
+            }
             break;
         case -1:
             printf("IupFileDlg: Operation Canceled");
@@ -4203,11 +4314,16 @@ static int item_paste_action_cb(void)
     for(int j=0;j<i;j++){
         printf("tok %i: %s\n",j,token[j]);
     }
-    int pid=db_import_position_from_lines(db,token,i);
+    int pid;
+    int rc=db_import_position_from_lines(db,token,i,&pid);
+    if(rc){
     db_select_position(db,&pos_nb,pos_list_id,pos_list);
     goto_position_cb(&pid);
     switch_to_library("main",&lib_index);
     update_sb_msg(msg_info_position_imported);
+    } else{
+        update_sb_msg(msg_err_failed_to_import_pos);
+    }
 
     return IUP_DEFAULT;
 }
