@@ -17,6 +17,7 @@ Plus tard:
 - Export d'une collection avec toutes ses positions dans une archive zip
 - Implémenter les menus et boutons.
 - Parsage des fichiers XG.
+- Filtre taille prime, hommes `a la barre
 
 ATTENTION:
 

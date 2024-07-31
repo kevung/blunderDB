@@ -140,6 +140,7 @@ typedef struct
     int p2_score;
     int dice[2];
     int cube_action; //1=yes 0=no (hence roll action)
+    int player_on_roll; //PLAYER1 or PLAYER2
 } POSITION;
 
 typedef struct
@@ -197,8 +198,9 @@ const POSITION POS_DEFAULT = {
     .cube = 0,
     .p1_score = -1,
     .p2_score = -1,
-    .dice = {0, 0},
+    .dice = {3, 1},
     .cube_action = 0,
+    .player_on_roll = PLAYER1,
 };
 
 const POSITION POS_VOID = {
@@ -211,8 +213,9 @@ const POSITION POS_VOID = {
     .cube = 0,
     .p1_score = -1,
     .p2_score = -1,
-    .dice = {0, 0},
+    .dice = {3, 1},
     .cube_action = 0,
+    .player_on_roll = PLAYER1,
 };
 
 const METADATA M_VOID = {
@@ -288,6 +291,10 @@ void copy_position(POSITION* a, POSITION* b){
     b->cube=a->cube;
     b->p1_score=a->p1_score;
     b->p2_score=a->p2_score;
+    b->dice[0]=a->dice[0];
+    b->dice[1]=a->dice[1];
+    b->cube_action=a->cube_action;
+    b->player_on_roll=a->player_on_roll;
     for(int i=0;i<2;i++) b->dice[i]=a->dice[i];
     b->cube_action=a->cube_action;
 }
@@ -304,6 +311,7 @@ void position_print(const POSITION* p) {
     printf("p2_score: %i\n", p->p2_score);
     printf("dice: %i, %i\n", p->dice[0], p->dice[1]);
     printf("cube_action: %i\n", p->cube_action);
+    printf("player_on_roll: %i\n", p->player_on_roll);
 }
 
 void cube_analysis_print(const CUBE_ANALYSIS* d){
@@ -631,6 +639,8 @@ void get_next_position(){
     if(pos_index==pos_nb-1) return;
     pos_index+=1;
     pos_ptr=&pos_list[pos_index];
+    printf("get_next_position\n");
+    position_print(pos_ptr);
 }
 
 void get_first_position(){
@@ -891,7 +901,11 @@ const char *sql_position =
 "player2_id INTEGER,"
 "player1_score INTEGER,"
 "player2_score INTEGER,"
+"dice1 INTEGER,"
+"dice2 INTEGER,"
 "cube_position INTEGER,"
+"player_on_roll INTEGER,"
+"cube_action INTEGER,"
 "hash TEXT,"
 "comment TEXT,"
 "FOREIGN KEY(player1_id) REFERENCES player(id),"
@@ -1067,7 +1081,9 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
     strcat(sql_add_position, "p18, p19, p20, p21, p22, p23, ");
     strcat(sql_add_position, "p24, p25, ");
     strcat(sql_add_position, "player1_score, player2_score, ");
-    strcat(sql_add_position, "cube_position, hash) ");
+    strcat(sql_add_position, "dice1, dice2, ");
+    strcat(sql_add_position, "cube_position, player_on_roll, cube_action, ");
+    strcat(sql_add_position, "hash) ");
     strcat(sql_add_position, "VALUES ");
     strcat(sql_add_position, "(");
     for(int i=0;i<26;i++){
@@ -1075,8 +1091,9 @@ int db_insert_position(sqlite3 *db, const POSITION *p){
         strcat(sql_add_position, _s);
         strcat(sql_add_position, ", ");
     }
-    sprintf(_s, "%d, %d, %d",
-            p->p1_score, p->p2_score, p->cube);
+    sprintf(_s, "%d, %d, %d, %d, %d, %d, %d",
+            p->p1_score, p->p2_score, p->dice[0], p->dice[1],
+            p->cube, p->player_on_roll, p->cube_action);
     strcat(sql_add_position, _s);
     strcat(sql_add_position, ", \"");
     strcat(sql_add_position, hash);
@@ -1185,8 +1202,12 @@ int db_select_position(sqlite3* db, int* pos_nb,
         }
         pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,29);
         pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,30);
-        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,31);
-        const char *hash=sqlite3_column_text(stmt,32);
+        pos_list[*pos_nb].dice[0]=sqlite3_column_int(stmt,31);
+        pos_list[*pos_nb].dice[1]=sqlite3_column_int(stmt,32);
+        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,33);
+        pos_list[*pos_nb].player_on_roll=sqlite3_column_int(stmt,34);
+        pos_list[*pos_nb].cube_action=sqlite3_column_int(stmt,35);
+        const char *hash=sqlite3_column_text(stmt,36);
         *pos_nb+=1;
     }
     if(rc!=SQLITE_DONE){
@@ -1288,8 +1309,12 @@ int db_select_position_from_libraries(sqlite3* db, char** cmdtoken,
         }
         pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,29);
         pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,30);
-        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,31);
-        const char *hash=sqlite3_column_text(stmt,32);
+        pos_list[*pos_nb].dice[0]=sqlite3_column_int(stmt,31);
+        pos_list[*pos_nb].dice[1]=sqlite3_column_int(stmt,32);
+        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,33);
+        pos_list[*pos_nb].player_on_roll=sqlite3_column_int(stmt,34);
+        pos_list[*pos_nb].cube_action=sqlite3_column_int(stmt,35);
+        const char *hash=sqlite3_column_text(stmt,36);
         *pos_nb+=1;
     }
     if(rc!=SQLITE_DONE){
@@ -1349,8 +1374,12 @@ int db_select_specific_position(sqlite3* db, const POSITION* p,
         }
         p_list[*p_nb].p1_score=sqlite3_column_int(stmt,29);
         p_list[*p_nb].p2_score=sqlite3_column_int(stmt,30);
-        p_list[*p_nb].cube=sqlite3_column_int(stmt,31);
-        const char *hash=sqlite3_column_text(stmt,32);
+        p_list[*p_nb].dice[0]=sqlite3_column_int(stmt,31);
+        p_list[*p_nb].dice[1]=sqlite3_column_int(stmt,32);
+        p_list[*p_nb].cube=sqlite3_column_int(stmt,33);
+        p_list[*p_nb].player_on_roll=sqlite3_column_int(stmt,34);
+        p_list[*p_nb].cube_action=sqlite3_column_int(stmt,35);
+        const char *hash=sqlite3_column_text(stmt,36);
         *p_nb+=1;
     }
     if(rc!=SQLITE_DONE){
@@ -2874,6 +2903,23 @@ int parse_cmdline(char* cmdtext){
 #define TRIANGLE1_COLOR CD_WHITE
 #define TRIANGLE2_COLOR 0xd0d0d0
 #define TRIANGLE2_HATCH 0
+#define DICE_SIZE (POINT_SIZE)
+#define DICE_POINTSIZE 2
+#define DICE_XPOS (BOARD_WIDTH/2. +1.3*POINT_SIZE)
+#define DICE_GAP (0.2*POINT_SIZE)
+#define DICE1_XPOS (DICE_XPOS-0.5*DICE_SIZE-0.5*DICE_GAP)
+#define DICE2_XPOS (DICE_XPOS+0.5*DICE_SIZE+0.5*DICE_GAP)
+#define DICE_ROLL_YPOS_UP (0.25*BOARD_HEIGHT/2.)
+#define DICE_ROLL_YPOS_DOWN (-DICE_ROLL_YPOS_UP)
+#define DICE_CUBE_YPOS_UP (0.75*BOARD_HEIGHT/2.)
+#define DICE_CUBE_YPOS_DOWN (-DICE_CUBE_YPOS_UP)
+#define DICE_ROTATION_ANGLE 20.
+#define DICE_LINECOLOR CD_BLACK
+#define DICE_LINEWIDTH 1
+#define DICE1_COLOR CD_BLACK
+#define DICE2_COLOR CD_BLUE
+#define DICE1_POINT_COLOR CD_BLUE
+#define DICE2_POINT_COLOR CD_BLACK
 #define CUBE_LINEWIDTH 5
 #define CUBE_TEXTLINEWIDTH 3
 #define CUBE_LINECOLOR CD_BLACK
@@ -3003,6 +3049,81 @@ void draw_cube(cdCanvas *cv, const int value){
     cdCanvasTextAlignment(cv, CD_CENTER);
     cdCanvasFont(cv, CUBE_FONT, CUBE_STYLE, CUBE_FONTSIZE);
     wdCanvasText(cv, x+CUBE_SIZE/2, y+CUBE_SIZE/2, text);
+}
+
+void draw_dice(cdCanvas *cv, const int *dice, const int player_on_roll,
+        const int cube_action){
+    double dice1_x, dice2_x;
+
+    void draw_singledie(cdCanvas *cv, const int die,
+            const double x, const double y){
+        cdCanvasForeground(cv, DICE_LINECOLOR);
+        cdCanvasLineStyle(cv, CD_CONTINUOUS);
+        wdCanvasLineWidth(cv, DICE_LINEWIDTH);
+        cdCanvasMarkType(cv, CD_CIRCLE);
+        wdCanvasMarkSize(cv, DICE_POINTSIZE);
+        wdCanvasRect(cv,x-0.5*DICE_SIZE,x+0.5*DICE_SIZE,
+                y-0.5*DICE_SIZE,y+0.5*DICE_SIZE);
+        if(pos_ptr->cube_action==1) return;
+        switch(die){
+            case 1:
+                wdCanvasMark(cv,x,y);
+                break;
+            case 2:
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                break;
+            case 3:
+                wdCanvasMark(cv,x,y);
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                break;
+            case 4:
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                break;
+            case 5:
+                wdCanvasMark(cv,x,y);
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                break;
+            case 6:
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y);
+                wdCanvasMark(cv,x-0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y-0.3*DICE_SIZE);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y);
+                wdCanvasMark(cv,x+0.3*DICE_SIZE,y+0.3*DICE_SIZE);
+                break;
+            default:
+                break;
+        }
+    }
+
+    //la couleur du dé est fonction du joueur
+    dice1_x = DICE1_XPOS;
+    dice2_x = DICE2_XPOS;
+    if(cube_action==1){
+        if(player_on_roll==PLAYER1){
+            draw_singledie(cv,dice[0],dice1_x, DICE_CUBE_YPOS_DOWN);
+            draw_singledie(cv,dice[1],dice2_x, DICE_CUBE_YPOS_DOWN);
+        } else if(player_on_roll==PLAYER2){
+            draw_singledie(cv,dice[0],dice1_x, DICE_CUBE_YPOS_UP);
+            draw_singledie(cv,dice[1],dice2_x, DICE_CUBE_YPOS_UP);
+        }
+    } else{
+        if(player_on_roll==PLAYER1){
+            draw_singledie(cv,dice[0],dice1_x, DICE_ROLL_YPOS_DOWN);
+            draw_singledie(cv,dice[1],dice2_x, DICE_ROLL_YPOS_DOWN);
+        } else if(player_on_roll==PLAYER2){
+            draw_singledie(cv,dice[0],dice1_x, DICE_ROLL_YPOS_UP);
+            draw_singledie(cv,dice[1],dice2_x, DICE_ROLL_YPOS_UP);
+        }
+    }
 }
 
 void draw_board(cdCanvas* cv) {
@@ -3401,6 +3522,8 @@ void draw_canvas(cdCanvas* cv) {
     draw_board(cv);
     draw_checker(cv, pos_ptr, board_direction);
     draw_cube(cv, pos_ptr->cube);
+    draw_dice(cv,pos_ptr->dice,pos_ptr->player_on_roll,
+            pos_ptr->cube_action);
     draw_checkeroff(cv, off1, PLAYER1, board_direction);
     draw_checkeroff(cv, off2, PLAYER2, board_direction);
     if(is_pointletter_active) {
@@ -3580,6 +3703,9 @@ static int canvas_button_cb(Ihandle* ih, const int button,
          is_in_cube_positions;
     bool is_on_score1, is_on_score2;
     bool is_in_board2, is_on_bar2, is_in_center2, is_on_point2;
+    bool is_in_player1_dice1, is_in_player1_dice2, is_in_player1_roll;
+    bool is_in_player2_dice1, is_in_player2_dice2, is_in_player2_roll;
+    bool is_in_dice_positions;
 
     if(mode_active!=EDIT) return IUP_DEFAULT;
 
@@ -3617,9 +3743,37 @@ static int canvas_button_cb(Ihandle* ih, const int button,
     if(pos_ptr->cube>0) is_in_cube = is_cube_down;
     if(pos_ptr->cube<0) is_in_cube = is_cube_up;
     is_on_score1 = (xw>=SCORE_XPOS-.5*POINT_SIZE) &&
-        (yw<=SCORE_YPOS_DOWN+1.5*POINT_SIZE);
+        (yw<=SCORE_YPOS_DOWN+0.5*POINT_SIZE);
     is_on_score2 = (xw>=SCORE_XPOS-1.*POINT_SIZE) &&
-        (yw>=SCORE_YPOS_UP-1.*POINT_SIZE);
+        (yw>=SCORE_YPOS_UP-0.5*POINT_SIZE);
+    is_in_player1_dice1 = (xw>=DICE1_XPOS-0.5*DICE_SIZE) &&
+        (xw<=DICE1_XPOS+0.5*DICE_SIZE) &&
+        (yw>=DICE_ROLL_YPOS_DOWN-0.5*DICE_SIZE) &&
+        (yw<=DICE_ROLL_YPOS_DOWN+0.5*DICE_SIZE);
+    is_in_player1_dice2 = (xw>=DICE2_XPOS-0.5*DICE_SIZE) &&
+        (xw<=DICE2_XPOS+0.5*DICE_SIZE) &&
+        (yw>=DICE_ROLL_YPOS_DOWN-0.5*DICE_SIZE) &&
+        (yw<=DICE_ROLL_YPOS_DOWN+0.5*DICE_SIZE);
+    is_in_player2_dice1 = (xw>=DICE1_XPOS-0.5*DICE_SIZE) &&
+        (xw<=DICE1_XPOS+0.5*DICE_SIZE) &&
+        (yw>=DICE_ROLL_YPOS_UP-0.5*DICE_SIZE) &&
+        (yw<=DICE_ROLL_YPOS_UP+0.5*DICE_SIZE);
+    is_in_player2_dice2 = (xw>=DICE2_XPOS-0.5*DICE_SIZE) &&
+        (xw<=DICE2_XPOS+0.5*DICE_SIZE) &&
+        (yw>=DICE_ROLL_YPOS_UP-0.5*DICE_SIZE) &&
+        (yw<=DICE_ROLL_YPOS_UP+0.5*DICE_SIZE);
+    is_in_player1_roll = (xw>=DICE1_XPOS-0.5*DICE_SIZE) &&
+        (xw<=DICE2_XPOS+0.5*DICE_SIZE) &&
+        (yw>=DICE_CUBE_YPOS_DOWN-1.0*POINT_SIZE) &&
+        (yw<=DICE_CUBE_YPOS_DOWN+0.5*POINT_SIZE);
+    is_in_player2_roll = (xw>=DICE1_XPOS-0.5*DICE_SIZE) &&
+        (xw<=DICE2_XPOS+0.5*DICE_SIZE) &&
+        (yw>=DICE_CUBE_YPOS_UP-1.0*POINT_SIZE) &&
+        (yw<=DICE_CUBE_YPOS_UP+0.5*POINT_SIZE);
+    is_in_dice_positions = is_in_player1_dice1 ||
+        is_in_player1_dice2 || is_in_player1_roll ||
+        is_in_player2_dice1 || is_in_player2_dice2 ||
+        is_in_player2_roll;
 
     // for previous mouse state if clicked
     if(mouse.pressed==1) {
@@ -3631,11 +3785,6 @@ static int canvas_button_cb(Ihandle* ih, const int button,
         is_on_bar2 = is_in_board2 && ixp==0;
         is_on_point2 = is_in_board2 && ixp!=0 && iyp!=0;
         if((ix!=ixp || iy!=iyp) && is_on_point && is_on_point2) mouse_hold=true;
-
-        /* printf("is_in_board: %i\n", is_in_board); */
-        /* printf("is_in_board2: %i\n", is_in_board2); */
-        /* printf("is_on_point: %i\n", is_on_point); */
-        /* printf("is_on_point2: %i\n", is_on_point2); */
     }
 
 
@@ -3698,6 +3847,45 @@ static int canvas_button_cb(Ihandle* ih, const int button,
         }
     }
 
+    if(!pressed){
+        if(is_in_player1_roll){
+            pos_ptr->cube_action=1;
+            pos_ptr->player_on_roll=PLAYER1;
+        } else if(is_in_player2_roll){
+            pos_ptr->cube_action=1;
+            pos_ptr->player_on_roll=PLAYER2;
+        } else if(is_in_player1_dice1){
+            pos_ptr->cube_action=0;
+            pos_ptr->player_on_roll=PLAYER1;
+            if(button==IUP_BUTTON1)pos_ptr->dice[0]+=1;
+            if(button==IUP_BUTTON3)pos_ptr->dice[0]-=1;
+            if(pos_ptr->dice[0]>6) pos_ptr->dice[0]=6;
+            if(pos_ptr->dice[0]<1) pos_ptr->dice[0]=1;
+        } else if(is_in_player1_dice2){
+            pos_ptr->cube_action=0;
+            pos_ptr->player_on_roll=PLAYER1;
+            if(button==IUP_BUTTON1)pos_ptr->dice[1]+=1;
+            if(button==IUP_BUTTON3)pos_ptr->dice[1]-=1;
+            if(pos_ptr->dice[1]>6) pos_ptr->dice[1]=6;
+            if(pos_ptr->dice[1]<1) pos_ptr->dice[1]=1;
+        } else if(is_in_player2_dice1){
+            pos_ptr->cube_action=0;
+            pos_ptr->player_on_roll=PLAYER2;
+            if(button==IUP_BUTTON1)pos_ptr->dice[0]+=1;
+            if(button==IUP_BUTTON3)pos_ptr->dice[0]-=1;
+            if(pos_ptr->dice[0]>6) pos_ptr->dice[0]=6;
+            if(pos_ptr->dice[0]<1) pos_ptr->dice[0]=1;
+        } else if(is_in_player2_dice2){
+            pos_ptr->cube_action=0;
+            pos_ptr->player_on_roll=PLAYER2;
+            if(button==IUP_BUTTON1)pos_ptr->dice[1]+=1;
+            if(button==IUP_BUTTON3)pos_ptr->dice[1]-=1;
+            if(pos_ptr->dice[1]>6) pos_ptr->dice[1]=6;
+            if(pos_ptr->dice[1]<1) pos_ptr->dice[1]=1;
+        }
+    }
+    printf("dice: %i %i\n", pos_ptr->dice[0], pos_ptr->dice[1]);
+
     if(mouse_hold){
         ip=find_point_index(ixp, iyp);
         i1=fmin(i,ip);
@@ -3731,7 +3919,7 @@ static int canvas_button_cb(Ihandle* ih, const int button,
 
     if(iup_isdouble(status)){
         if(!is_in_board && !is_on_score1 && !is_on_score2
-                && !is_in_cube_positions) {
+                && !is_in_cube_positions && !is_in_dice_positions) {
             for(int i=0; i<26; i++) {
                 pos_ptr->checker[i]=0;
             }
