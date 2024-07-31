@@ -2,11 +2,9 @@ Plus tard:
 
 - Importer une position (txt depuis XG).
     - Parsage en anglais et en français
-    - Parsage checker move (cas pas de choix, comme gala)
     - Afficher les dés à jouer ou le cube sur la posiiton. Permettre l'édition de la position en mode EDIT (button_cb)
 - Ajouter la fonction pour inverser une position.
 - Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
-En effet db_find_identical_position utilise le hash.
 
 ? Utilité de player_id dans POSITION?
 
