@@ -1677,7 +1677,6 @@ void parse_checker_analysis(char *l, CHECKER_ANALYSIS *a)
     printf("error: %f\n",a->error);
 }
 
-// TO DO FRENCH PARSING IN THE SAME FUNCTION parse_line
 void parse_line(const char *line, POSITION *p,
         int *index, CHECKER_ANALYSIS *a, CUBE_ANALYSIS *d,
         METADATA *m,
@@ -1698,13 +1697,13 @@ void parse_line(const char *line, POSITION *p,
     if(l) strcpy(l,line);
 
     printf("l: %s\n",l);
+
     char *_ptr=strstr(l,"XGID");
     if(_ptr!=NULL){
-        /* l+=3; //skip invisible character introduced by Windows. */
         l=_ptr;
         sscanf(l,"XGID=%s",m->xgid);
         *has_xgid=true;
-    } else if(strncmp(l,"X:",2)==0){
+    } else if(strncmp(l,"X:",2)==0 && strstr(l,"O:")!=0){
         sscanf(l,"X:%s   O:%s",m->p1_name,m->p2_name);
         *has_playername=true;
     } else if(strncmp(l,"Score is",8)==0){
@@ -1713,8 +1712,18 @@ void parse_line(const char *line, POSITION *p,
         p->p1_score=match_point_nb-p1_abs_score;
         p->p2_score=match_point_nb-p2_abs_score;
         *has_score=true;
+    } else if(strncmp(l,"Le score est",12)==0){
+        sscanf(l,"Le score est X:%d O:%d match en %d pt(s)",
+                &p1_abs_score,&p2_abs_score,&match_point_nb);
+        p->p1_score=match_point_nb-p1_abs_score;
+        p->p2_score=match_point_nb-p2_abs_score;
+        *has_score=true;
     } else if(strncmp(l,"Cube: 1",7)==0
             && strstr(l,"own cube")==NULL){
+        p->cube=0;
+        *has_cube=true;
+    } else if(strncmp(l,"Videau: 1",9)==0
+            && strstr(l,"a le videau")==NULL){
         p->cube=0;
         *has_cube=true;
     } else if(strncmp(l,"Cube:",5)==0
@@ -1722,9 +1731,19 @@ void parse_line(const char *line, POSITION *p,
         sscanf(l,"Cube: %d, O own cube",&cube_value);
         p->cube=-1*((int)log2(cube_value));
         *has_cube=true;
+    } else if(strncmp(l,"Videau:",7)==0
+            && strstr(l,"O a le videau")!=NULL){
+        sscanf(l,"Videau: %d, O a le videau",&cube_value);
+        p->cube=-1*((int)log2(cube_value));
+        *has_cube=true;
     } else if(strncmp(l,"Cube:",5)==0
             && strstr(l,"X own cube")!=NULL){
         sscanf(l,"Cube: %d, X own cube",&cube_value);
+        p->cube=(int)log2(cube_value);
+        *has_cube=true;
+    } else if(strncmp(l,"Videau:",7)==0
+            && strstr(l,"X a le videau")!=NULL){
+        sscanf(l,"Videau: %d, X a le videau",&cube_value);
         p->cube=(int)log2(cube_value);
         *has_cube=true;
     } else if(strncmp(l,"X to play",9)==0){
@@ -1733,13 +1752,25 @@ void parse_line(const char *line, POSITION *p,
         p->dice[0]=roll/10;
         p->dice[1]=(int) fmod((double)roll,10.); // -lm?
         *has_dice_action=true;
-    } else if(strncmp(l,"X on roll, cube action",22)==0){
+    } else if(strstr(l,"jouer")!=0){
+        l+=10;
+        sscanf(l,"%d",&roll);
+        p->cube_action=0;
+        p->dice[0]=roll/10;
+        p->dice[1]=(int) fmod((double)roll,10.); // -lm?
+        *has_dice_action=true;
+    } else if(strncmp(l,"X on roll, cube action",22)==0
+            || strstr(l,"lance ou double")!=NULL){
         p->cube_action=1;
         *has_cube_action=true;
     } else if(strncmp(l,"Analyzed in",11)==0){
         l+=12;
         strncpy(d->depth,l,15);
-    } else if(strncmp(l,"Player Winning Chances",22)==0){
+    } else if(strstr(l,"Analys")!=0){
+        l+=13;
+        strncpy(d->depth,l,15);
+    } else if(strncmp(l,"Player Winning Chances",22)==0
+            || strncmp(l,"Chance de gain du joueur",24)==0){
         l+=26;
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p1_w,&d->p1_g,&d->p1_b);
@@ -1749,13 +1780,25 @@ void parse_line(const char *line, POSITION *p,
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
         *has_cube_p2wins=true;
+    } else if(strncmp(l,"Chance de gain de l'adversaire",30)==0){
+        l+=32;
+        strncpy(_t,l,30);
+        sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
+        *has_cube_p2wins=true;
     } else if(strncmp(l,"Cubeless Equities",17)==0){
         l+=19;
         strncpy(_t,l,32);
-        sscanf(_t,"No Double=%lf, Double=%lf",
+        sscanf(_t,"No double=%lf, Double=%lf",
                 &d->cubeless_equity_nd,&d->cubeless_equity_d);
         *has_cubeless_eq=true;
-    } else if(strncmp(l,"       No double",16)==0){
+    } else if(strstr(l,"sans videau")!=0){
+        l+=21;
+        strncpy(_t,l,32);
+        sscanf(_t,"Pas de double=%lf, Double=%lf",
+                &d->cubeless_equity_nd,&d->cubeless_equity_d);
+        *has_cubeless_eq=true;
+    } else if(strncmp(l,"       No double",16)==0
+            || strncmp(l,"       Pas de double",20)==0){
         l+=22;
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
@@ -1765,24 +1808,58 @@ void parse_line(const char *line, POSITION *p,
             sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error);
         }
         *has_cubeful_nd=true;
-    } else if(strncmp(l,"       Double/Take",18)==0){
+    } else if(strncmp(l,"       No redouble",18)==0
+            || strncmp(l,"       Pas de redouble",22)==0){
+        l+=24;
+        if(strstr(l,"(")==NULL){
+            strncpy(_t,l,6);
+            sscanf(_t,"%lf",&d->cubeful_equity_nd);
+        } else {
+            strncpy(_t,l,15);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error);
+        }
+        *has_cubeful_nd=true;
+    } else if(strncmp(l,"       Double/Take",18)==0
+            || strncmp(l,"       Double/Prend",19)==0){
         l+=22;
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
-            sscanf(_t,"       Double/Take:   %lf",&d->cubeful_equity_dt);
+            sscanf(_t,"%lf",&d->cubeful_equity_dt);
         } else {
             strncpy(_t,l,15);
-            sscanf(_t,"       Double/Take:   %lf (%lf)",&d->cubeful_equity_dt,&d->error);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dt,&d->error);
         }
         *has_cubeful_dt=true;
-    } else if(strncmp(l,"       Double/Pass",18)==0){
+    } else if(strncmp(l,"       Redouble/Take",20)==0
+            || strncmp(l,"       Redouble/Prend",21)==0){
+        l+=24;
+        if(strstr(l,"(")==NULL){
+            strncpy(_t,l,6);
+            sscanf(_t,"%lf",&d->cubeful_equity_dt);
+        } else {
+            strncpy(_t,l,15);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dt,&d->error);
+        }
+        *has_cubeful_dt=true;
+    } else if(strncmp(l,"       Double/Pass",18)==0
+            || strncmp(l,"       Double/Passe",19)==0){
         l+=22;
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
             sscanf(_t,"%lf",&d->cubeful_equity_dp);
         } else {
             strncpy(_t,l,15);
-            printf("_t: %s\n");
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error);
+        }
+        *has_cubeful_dp=true;
+    } else if(strncmp(l,"       Redouble/Pass",20)==0
+            || strncmp(l,"       Redouble/Passe",21)==0){
+        l+=24;
+        if(strstr(l,"(")==NULL){
+            strncpy(_t,l,6);
+            sscanf(_t,"%lf",&d->cubeful_equity_dp);
+        } else {
+            strncpy(_t,l,15);
             sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error);
         }
         *has_cubeful_dp=true;
@@ -1790,11 +1867,25 @@ void parse_line(const char *line, POSITION *p,
         if(strstr(l,"No double / Take")!=NULL) d->best_cube_action=0;
         if(strstr(l,"Double / Take")!=NULL) d->best_cube_action=1;
         if(strstr(l,"Double / Pass")!=NULL) d->best_cube_action=2;
+        if(strstr(l,"Redouble / Take")!=NULL) d->best_cube_action=1;
+        if(strstr(l,"Redouble / Pass")!=NULL) d->best_cube_action=2;
         if(strstr(l,"Too good to double / Pass")!=NULL) d->best_cube_action=3;
         if(strstr(l,"Too good to double / Take")!=NULL) d->best_cube_action=4;
         *has_best_cube_action=true;
-    } else if(strncmp(l,"Percentage of wrong pass",24)==0){
+    } else if(strncmp(l,"Meilleur action du videau",25)==0){
+        if(strstr(l,"Pas de double / Prend")!=NULL) d->best_cube_action=0;
+        if(strstr(l,"Double / Prend")!=NULL) d->best_cube_action=1;
+        if(strstr(l,"Double / Passe")!=NULL) d->best_cube_action=2;
+        if(strstr(l,"Redouble / Prend")!=NULL) d->best_cube_action=1;
+        if(strstr(l,"Redouble / Passe")!=NULL) d->best_cube_action=2;
+        if(strstr(l,"Trop bon pour doubler / Passe")!=NULL) d->best_cube_action=3;
+        if(strstr(l,"Trop bon pour doubler / Prend")!=NULL) d->best_cube_action=4;
+        *has_best_cube_action=true;
+    } else if(strncmp(l,"Percentage of wrong take",24)==0){
         l+=67;
+        sscanf(l,"%lf%%",&d->percentage_wrong_pass_make_good_double);
+    } else if(strncmp(l,"Pourcentage de prises incorrectes",33)==0){
+        l+=78;
         sscanf(l,"%lf%%",&d->percentage_wrong_pass_make_good_double);
     } else if(strncmp(l,"eXtreme",7)==0){
         strncpy(m->misc,l,47);
@@ -1816,8 +1907,20 @@ void parse_line(const char *line, POSITION *p,
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
                 &a[*index].p1_w,&a[*index].p1_g,&a[*index].p1_b);
         *has_checker_p1wins=true;
+    } else if(strncmp(l,"      Joueur",12)==0){
+        l+=18;
+        strncpy(_t,l,30);
+        sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
+                &a[*index].p1_w,&a[*index].p1_g,&a[*index].p1_b);
+        *has_checker_p1wins=true;
     } else if(strncmp(l,"      Opponent",14)==0){
         l+=16;
+        strncpy(_t,l,30);
+        sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
+                &a[*index].p2_w,&a[*index].p2_g,&a[*index].p2_b);
+        *has_checker_p2wins=true;
+    } else if(strncmp(l,"      Adversaire",16)==0){
+        l+=18;
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",
                 &a[*index].p2_w,&a[*index].p2_g,&a[*index].p2_b);
@@ -1900,6 +2003,12 @@ int db_import_position_from_lines(sqlite3* db,
     printf("has_dice_action: %i\n", has_dice_action);
     printf("has_cube_action: %i\n", has_cube_action);
     printf("has_best_cube_action: %i\n", has_best_cube_action);
+    printf("has_cube_p1wins: %i\n", has_cube_p1wins);
+    printf("has_cube_p2wins: %i\n", has_cube_p2wins);
+    printf("has_cubeless_eq: %i\n", has_cubeless_eq);
+    printf("has_cubeful_nd: %i\n", has_cubeful_nd);
+    printf("has_cubeful_dt: %i\n", has_cubeful_dt);
+    printf("has_cubeful_dp: %i\n", has_cubeful_dp);
 
     has_valid_checker_analysis = has_analysis1 
         && has_checker_p1wins && has_checker_p2wins;

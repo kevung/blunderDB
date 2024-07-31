@@ -1,12 +1,8 @@
 Plus tard:
 
-- Importer une position (txt depuis XG).
-    - Parsage en anglais et en français
+- Afficher les analyses de cube, checkers
 - Ajouter la fonction pour inverser une position. (Ctrl-Up/Ctrl-Down)
 - Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
-
-? Utilité de player_id dans POSITION?
-
 - Import d'un match.
 - Ajouter filtres blunders, equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Export des positions et matchs en txt.
@@ -14,7 +10,10 @@ Plus tard:
 - Export d'une collection avec toutes ses positions dans une archive zip
 - Implémenter les menus et boutons.
 - Parsage des fichiers XG.
-- Filtre taille prime, hommes `a la barre
+- Filtre taille prime, hommes à la barre
+- Corriger bug parsage des noms de joueurs, notamment en français.
+
+? Utilité de player_id dans POSITION?
 
 ATTENTION:
 
