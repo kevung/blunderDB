@@ -2,7 +2,6 @@ Plus tard:
 
 - Importer une position (txt depuis XG).
     - Parsage en anglais et en français
-    - Afficher les dés à jouer ou le cube sur la posiiton. Permettre l'édition de la position en mode EDIT (button_cb)
 - Ajouter la fonction pour inverser une position.
 - Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
 
