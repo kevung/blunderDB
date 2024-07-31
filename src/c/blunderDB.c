@@ -93,7 +93,7 @@ static int j_cb(Ihandle*, int);
 static int k_cb(Ihandle*, int);
 static int G_cb(Ihandle*, int);
 static int editmode_letter_cb(Ihandle*, int);
-static int digit_cb(Ihandle*, int);
+static int editmode_digit_cb(Ihandle*, int);
 static int minus_cb(Ihandle*, int);
 static int bracketleft_cb(Ihandle*, int);
 static int bracketright_cb(Ihandle*, int);
@@ -3644,16 +3644,16 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_Y", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_Z", (Icallback) editmode_letter_cb);
 
-    IupSetCallback(dlg, "K_1", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_2", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_3", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_4", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_5", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_6", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_7", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_8", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_9", (Icallback) digit_cb);
-    IupSetCallback(dlg, "K_0", (Icallback) digit_cb);
+    IupSetCallback(dlg, "K_1", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_2", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_3", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_4", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_5", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_6", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_7", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_8", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_9", (Icallback) editmode_digit_cb);
+    IupSetCallback(dlg, "K_0", (Icallback) editmode_digit_cb);
 
 }
 
@@ -4798,8 +4798,8 @@ static int editmode_letter_cb(Ihandle* ih, int c){
     return IUP_DEFAULT;
 }
 
-static int digit_cb(Ihandle* ih, int c){
-    printf("\ndigit_cb %c\n", c);
+static int editmode_digit_cb(Ihandle* ih, int c){
+    printf("\neditmode_digit_cb %c\n", c);
     int i; int n; char s[2]; s[0]=c; s[1]='\0';
     n = atoi(s);
     switch (mode_active) {
