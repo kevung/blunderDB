@@ -1425,7 +1425,6 @@ int db_find_identical_position(sqlite3* db, const POSITION* p, bool* exist, int*
         *nb+=1;
         *exist=true;
     }
-    /* execute_sql(db, sql); */ 
     return 1;
 }
 
@@ -2624,6 +2623,9 @@ int parse_cmdline(char* cmdtext){
         lib_index=LIBRARIES_NUMBER_MAX-1; //main lib
         update_sb_lib();
         goto_first_position_cb();
+    } else if(strncmp(cmdtoken[0], ":i", 2)==0){
+        printf("\n:i\n");
+        item_import_action_cb();
     } else if(strncmp(cmdtoken[0], ":mv", 3)==0){
         printf("\n:mv\n");
         if(token_nb==1 || token_nb>3) return 1; //invalid syntax
