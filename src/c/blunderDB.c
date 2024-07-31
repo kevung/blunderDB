@@ -68,7 +68,6 @@ static int item_searchcubedecision_action_cb(void);
 static int item_searchscore_action_cb(void);
 static int item_searchplayer_action_cb(void);
 static int item_searchengine_action_cb(void);
-static int item_searchmode_action_cb(void);
 static int item_findpositionwithoutanalysis_action_cb(void);
 static int item_preferences_action_cb(void);
 static int item_helpmanual_action_cb(void);
@@ -83,11 +82,8 @@ static int set_visibility_off(Ihandle*);
 static int set_visibility_on(Ihandle*);
 static int toggle_visibility_cb(Ihandle*);
 static int toggle_analysis_visibility_cb();
-static int toggle_edit_visibility_cb();
 static int toggle_editmode_cb();
 static int toggle_cmdmode_cb();
-static int toggle_searchmode_cb();
-static int toggle_searches_visibility_cb();
 void error_callback(void);
 static int j_cb(Ihandle*, int);
 static int k_cb(Ihandle*, int);
@@ -115,6 +111,7 @@ static int goto_last_position_cb(void);
 static int goto_position_cb(int*);
 static int board_direction_left_cb(void);
 static int board_direction_right_cb(void);
+static int checker_analysis_action_cb(Ihandle*);
 
 // END Prototypes
 
@@ -639,8 +636,6 @@ void get_next_position(){
     if(pos_index==pos_nb-1) return;
     pos_index+=1;
     pos_ptr=&pos_list[pos_index];
-    printf("get_next_position\n");
-    position_print(pos_ptr);
 }
 
 void get_first_position(){
@@ -2089,8 +2084,9 @@ int db_import_position_from_file(sqlite3* db, FILE* f, int* pid){
 #define DEFAULT_SPLIT_VALUE "700"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 #define SB_DEFAULT_FONTSIZE "10" //sb=statusbar
+#define ANALYSIS_MULTILINE_MAX 10000
 
-enum mode { NORMAL, EDIT, CMD, SEARCH, MATCH };
+enum mode { NORMAL, EDIT, CMD, MATCH };
 typedef enum mode mode_t;
 mode_t mode_active = NORMAL;
 
@@ -2150,7 +2146,8 @@ const char* msg_info_db_loaded =
 "Database loaded.";
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
-Ihandle *cmdline, *edit, *analysis, *canvas, *search, *matchlib;
+Ihandle *cmdline, *analysis, *checker_analysis, *cube_analysis;
+Ihandle *canvas, *search, *matchlib;
 Ihandle *search1, *search2, *search3;
 Ihandle *sb_mode, *sb_lib, *sb_msg; // sb=statusbar
 Ihandle *hbox, *vbox, *lbl, *hspl, *vspl, *spl, *tabs, *txt;
@@ -2165,8 +2162,6 @@ char* mode_to_str(const int mode) {
             return "EDIT";
         case CMD:
             return "COMMAND";
-        case SEARCH:
-            return "SEARCH";
         case MATCH:
             return "MATCH";
         default:
@@ -2346,7 +2341,6 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_search_score, "ACTION", (Icallback) item_searchscore_action_cb);
     IupSetCallback(item_search_player, "ACTION", (Icallback) item_searchplayer_action_cb);
     IupSetCallback(item_search_engine, "ACTION", (Icallback) item_searchengine_action_cb);
-    IupSetCallback(item_searchmode, "ACTION", (Icallback) item_searchmode_action_cb);
     IupSetCallback(item_find_position_without_analysis, "ACTION", (Icallback) item_findpositionwithoutanalysis_action_cb);
     IupSetCallback(item_preferences, "ACTION", (Icallback) item_preferences_action_cb);
     IupSetCallback(item_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
@@ -2370,7 +2364,7 @@ static Ihandle* create_toolbar(void)
     Ihandle *btn_cut, *btn_copy, *btn_paste;
     Ihandle *btn_undo, *btn_redo;
     Ihandle *btn_prev, *btn_next;
-    Ihandle *btn_edit, *btn_search, *btn_list;
+    Ihandle *btn_edit, *btn_analysis;
     Ihandle *btn_blunder, *btn_dice, *btn_cube, *btn_score, *btn_player;
     Ihandle *btn_preferences;
     Ihandle *btn_manual;
@@ -2452,15 +2446,10 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_edit, "CANFOCUS", "No");
     IupSetAttribute(btn_edit, "TIP", "Edit Mode\tTab");
 
-    btn_search = IupButton("Search", NULL);
-    IupSetAttribute(btn_search, "FLAT", "Yes");
-    IupSetAttribute(btn_search, "CANFOCUS", "No");
-    IupSetAttribute(btn_search, "TIP", "Search Mode (Ctrl+F)");
-
-    btn_list = IupButton("List", NULL);
-    IupSetAttribute(btn_list, "FLAT", "Yes");
-    IupSetAttribute(btn_list, "CANFOCUS", "No");
-    IupSetAttribute(btn_list, "TIP", "List of positions (Ctrl+L)");
+    btn_analysis = IupButton("Analysis", NULL);
+    IupSetAttribute(btn_analysis, "FLAT", "Yes");
+    IupSetAttribute(btn_analysis, "CANFOCUS", "No");
+    IupSetAttribute(btn_analysis, "TIP", "Analysis (Ctrl+L)");
 
     btn_blunder = IupButton("Blunder", NULL);
     IupSetAttribute(btn_blunder, "FLAT", "Yes");
@@ -2508,7 +2497,7 @@ static Ihandle* create_toolbar(void)
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_prev, btn_next,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_edit, btn_search, btn_list,
+            btn_edit, btn_analysis,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_blunder, btn_dice, btn_cube, btn_score, btn_player,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
@@ -2534,8 +2523,7 @@ static Ihandle* create_toolbar(void)
     IupSetCallback(btn_next, "ACTION", (Icallback) item_nextposition_action_cb);
     IupSetCallback(btn_prev, "ACTION", (Icallback) item_prevposition_action_cb);
     IupSetCallback(btn_edit, "ACTION", (Icallback) item_editmode_action_cb);
-    IupSetCallback(btn_search, "ACTION", (Icallback) item_searchmode_action_cb);
-    IupSetCallback(btn_list, "ACTION", (Icallback) toggle_searches_visibility_cb);
+    IupSetCallback(btn_analysis, "ACTION", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(btn_blunder, "ACTION", (Icallback) item_searchblunder_action_cb);
     IupSetCallback(btn_dice, "ACTION", (Icallback) item_searchdice_action_cb);
     IupSetCallback(btn_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
@@ -2663,15 +2651,29 @@ static Ihandle* create_analysis(void)
 {
     Ihandle *ih;
 
-    ih = IupLabel("ANALYSIS HERE");
+    checker_analysis=IupText(NULL);
+    IupSetAttribute(checker_analysis, "NAME", "CHECKER_ANALYSIS");
+    IupSetAttribute(checker_analysis, "EXPAND", "YES");
+    IupSetAttribute(checker_analysis, "BORDER", "NO");
+    IupSetAttribute(checker_analysis, "FONTSIZE", "12");
+    IupSetAttribute(checker_analysis, "MULTILINE", "YES");
+    IupSetAttribute(checker_analysis, "READONLY", "YES");
+    IupSetAttribute(checker_analysis, "AUTOHIDE", "YES");
+    IupSetAttribute(checker_analysis, "TABTITLE", "Checker");
+
+    cube_analysis=IupText(NULL);
+    IupSetAttribute(cube_analysis, "NAME", "CUBE_ANALYSIS");
+    IupSetAttribute(cube_analysis, "EXPAND", "YES");
+    IupSetAttribute(cube_analysis, "BORDER", "NO");
+    IupSetAttribute(cube_analysis, "FONTSIZE", "12");
+    IupSetAttribute(cube_analysis, "MULTILINE", "YES");
+    IupSetAttribute(cube_analysis, "READONLY", "YES");
+    IupSetAttribute(cube_analysis, "AUTOHIDE", "YES");
+    IupSetAttribute(cube_analysis, "TABTITLE", "Cube");
+
+    ih = IupTabs(checker_analysis, cube_analysis, NULL);
     IupSetAttribute(ih, "VISIBLE", "NO");
     IupSetAttribute(ih, "FLOATING", "YES");
-    /* IupSetAttribute(ih, "ORIENTATION", "VERTICAL"); */
-    /* IupSetAttribute(exp_analysis, "ORIENTATION", "VERTICAL"); */
-    /* IupSetAttribute(exp_analysis, "TITLE", "MyMenu"); */
-    /* IupSetAttribute(exp_analysis, "STATE", "CLOSE"); */
-    /* IupSetAttribute(exp_analysis, "GAP", "2"); */
-
     return ih;
 }
 
@@ -2680,19 +2682,6 @@ static Ihandle* create_search(void)
     Ihandle *ih;
     ih = IupCells();
     IupSetAttribute(ih, "BOXED", "YES");
-
-    return ih;
-}
-
-static Ihandle* create_edit(void)
-{
-    Ihandle *ih;
-
-    ih = IupLabel("Edit Panel");
-    IupSetAttribute(ih, "NAME", "EDIT");
-    IupSetAttribute(ih, "EXPAND", "YES");
-    IupSetAttribute(ih, "VISIBLE", "NO");
-    IupSetAttribute(ih, "FLOATING", "YES");
 
     return ih;
 }
@@ -3110,6 +3099,26 @@ int parse_cmdline(char* cmdtext){
         goto_first_position_cb();
     }
     return 1;
+}
+
+int update_checker_analysis(const int pid){
+    printf("\nupdate_checker_analysis\n");
+    char txt[ANALYSIS_MULTILINE_MAX]; txt[0]='\0';
+    sprintf(txt, "[Checker] Position id: %d\n", pid);
+    printf("txt: %s\n", txt);
+    IupSetAttribute(checker_analysis, "VALUE", txt);
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
+}
+
+int update_cube_analysis(const int pid){
+    printf("\nupdate_cube_analysis\n");
+    char txt[ANALYSIS_MULTILINE_MAX]; txt[0]='\0';
+    sprintf(txt, "[Cube] Position id: %d\n", pid);
+    printf("txt: %s\n", txt);
+    IupSetAttribute(cube_analysis, "VALUE", txt);
+    IupRefresh(dlg);
+    return IUP_DEFAULT;
 }
 
 /* END Interface */
@@ -3808,9 +3817,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
-    IupSetCallback(dlg, "K_cF", (Icallback) toggle_searchmode_cb);
-    IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
-    IupSetCallback(dlg, "K_cL", (Icallback) toggle_searches_visibility_cb);
+    IupSetCallback(dlg, "K_cL", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cV", (Icallback) item_paste_action_cb);
 
     IupSetCallback(dlg, "K_a", (Icallback) editmode_letter_cb);
@@ -4558,12 +4565,6 @@ static int item_searchengine_action_cb(void)
     return IUP_DEFAULT;
 }
 
-static int item_searchmode_action_cb(void)
-{
-    toggle_searchmode_cb();
-    return IUP_DEFAULT;
-}
-
 static int item_findpositionwithoutanalysis_action_cb(void)
 {
     error_callback();
@@ -4625,16 +4626,6 @@ static int item_about_action_cb(void)
     
 }
 
-static int toggle_edit_visibility_cb()
-{
-    if(mode_active != EDIT) {
-        mode_active=EDIT;
-    } else { mode_active=NORMAL; }
-    toggle_visibility_cb(edit);
-    update_sb_mode();
-    return IUP_DEFAULT;
-}
-
 static int toggle_editmode_cb()
 {
     if(db==NULL){
@@ -4682,28 +4673,14 @@ static int toggle_cmdmode_cb()
     return IUP_DEFAULT;
 }
 
-static int toggle_searchmode_cb()
-{
-    if(mode_active != SEARCH) {
-        mode_active=SEARCH;
-    } else { mode_active=NORMAL; }
-    printf("Search toggle: %s\n", mode_to_str(mode_active));
-    IupSetAttribute(sb_mode, "TITLE", mode_to_str(mode_active));
-    printf(IupGetAttribute(sb_mode, "TITLE"));
-    IupRefresh(dlg);
-    return IUP_DEFAULT;
-}
-
 static int toggle_analysis_visibility_cb()
 {
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
     toggle_visibility_cb(analysis);
-    return IUP_DEFAULT;
-}
-
-static int toggle_searches_visibility_cb()
-{
-    toggle_visibility_cb(searches);
-    char* att = IupGetAttribute(searches, "VISIBLE");
+    char* att = IupGetAttribute(analysis, "VISIBLE");
     if(strcmp(att,"NO") == 0) {
         IupSetAttribute(split, "VALUE", "1000");
     } else if (strcmp(att,"YES") == 0) {
@@ -4734,7 +4711,7 @@ static int toggle_visibility_cb(Ihandle* ih)
         printf("display panel\n");
         IupSetAttribute(ih, "VISIBLE", "YES");
         IupSetAttribute(ih, "FLOATING", "NO");
-    } else if (strcmp(att, "YES")==0) {
+    } else if(strcmp(att, "YES")==0) {
         printf("hide panel\n");
         IupSetAttribute(ih, "VISIBLE", "NO");
         IupSetAttribute(ih, "FLOATING", "YES");
@@ -4879,6 +4856,8 @@ static int space_cb(Ihandle* ih, int c){
 int refresh_position(){
     draw_canvas(cdv);
     update_sb_lib();
+    update_checker_analysis(pos_list_id[pos_index]);
+    update_cube_analysis(pos_list_id[pos_index]);
     return 1;
 }
 
@@ -5152,14 +5131,12 @@ int main(int argc, char **argv)
 
     canvas = create_canvas();
     analysis = create_analysis();
-    edit = create_edit();
-    position = IupHbox(analysis, edit, canvas, NULL);
+    position = IupHbox(canvas, NULL);
 
-    searches = create_searches();
     statusbar = create_statusbar();
     cmdline = create_cmdline();
 
-    split = IupSplit(position, searches);
+    split = IupSplit(position, analysis);
     IupSetAttribute(split, "ORIENTATION", "HORIZONTAL");
     IupSetAttribute(split, "VALUE", "1000");
     /* IupSetAttribute(split, "MINMAX", DEFAULT_SPLIT_MINMAX); */
