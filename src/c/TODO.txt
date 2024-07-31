@@ -2,7 +2,7 @@ Plus tard:
 
 - Importer une position (txt depuis XG).
     - Parsage en anglais et en français
-- Copier/Coller/Glissé une position. depuis clipboard
+- Copier/Coller une position. depuis clipboard
 - Ajouter la fonction pour inverser une position.
 - Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
 

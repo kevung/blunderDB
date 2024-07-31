@@ -845,7 +845,8 @@ void convert_xgid_to_position(const char *l, POSITION *p){
 /* BEGIN Database */
 #define LIBRARIES_NUMBER_MAX 1000
 #define LIBRARY_NAME_MAX 50
-#define LINE_MAX 256
+#define LINE_NBMAX 1000
+#define LINE_LENGTHMAX 256
 
 sqlite3 *db = NULL;
 sqlite3_stmt *stmt;
@@ -1634,7 +1635,7 @@ int db_delete_library_if_void(sqlite3* db, const char* l){
 
 void parse_checker_analysis(char *l, CHECKER_ANALYSIS *a)
 {
-    char _t[LINE_MAX]; _t[0]='\0';
+    char _t[LINE_LENGTHMAX]; _t[0]='\0';
     int n=strlen(l);
     printf("l: %s\n",l);
     printf("len l: %i\n",n);
@@ -1682,7 +1683,7 @@ void parse_line(const char *line, POSITION *p,
         METADATA *m){
     int p1_abs_score, p2_abs_score, match_point_nb,
         cube_value, roll;
-    char _t[LINE_MAX]; _t[0]='\0';
+    char _t[LINE_LENGTHMAX]; _t[0]='\0';
     char *l = malloc(strlen(line)+1);
     if(l) strcpy(l,line);
 
@@ -1799,27 +1800,25 @@ void parse_line(const char *line, POSITION *p,
 }
 
 
-int db_import_position_from_file(sqlite3* db, FILE* f){
+int db_import_position_from_lines(sqlite3* db,
+        char lines[LINE_NBMAX][LINE_LENGTHMAX], int line_nb){
+    printf("\ndb_import_position_from_lines\n");
     POSITION p;
     CHECKER_ANALYSIS a[5]; int ca_index=0;
     CUBE_ANALYSIS d;
     METADATA m;
-    char line[LINE_MAX], _t[LINE_MAX];
     int p1_abs_score,p2_abs_score,match_point_nb;
     int cube_value, cube_owner, roll;
     bool exist;
     int nb, _id[1000];
 
-    line[0]='\0';
     p=POS_VOID;
     for(int i=0;i<5;i++) a[i]=CA_VOID;
     d=D_VOID;
     m=M_VOID;
 
-    // marche pas pour les blancs, les cubes
-    while(fgets(line,sizeof(line),f)){
-        line[strcspn(line,"\r\n")]=0; //delete \n end of line
-        parse_line(line,&p,&ca_index,a,&d,&m);
+    for(int i=0;i<line_nb;i++){
+        parse_line(lines[i],&p,&ca_index,a,&d,&m);
     }
 
     if(p.cube_action==0){
@@ -1850,6 +1849,19 @@ int db_import_position_from_file(sqlite3* db, FILE* f){
     }
 
     return pid;
+}
+
+int db_import_position_from_file(sqlite3* db, FILE* f){
+    printf("\ndb_import_position_from_file\n");
+    char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
+    nb=0;
+    lines[nb][0]='\0';
+    while(fgets(lines[nb],sizeof(lines[nb]),f)){
+        lines[nb][strcspn(lines[nb],"\r\n")]=0; //delete \n end of line
+        nb+=1;
+        lines[nb][0]='\0';
+    }
+    return db_import_position_from_lines(db,lines,nb);
 }
 
 /* END Database */
@@ -3589,6 +3601,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cF", (Icallback) toggle_searchmode_cb);
     IupSetCallback(dlg, "K_cI", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_searches_visibility_cb);
+    IupSetCallback(dlg, "K_cV", (Icallback) item_paste_action_cb);
 
     IupSetCallback(dlg, "K_a", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_b", (Icallback) editmode_letter_cb);
@@ -4075,6 +4088,7 @@ static int item_recent_action_cb(void)
 
 static int item_import_action_cb(void)
 {
+    printf("\nitem_import_action_cb\n");
     if(db==NULL){
         update_sb_msg(msg_err_no_db_opened);
         return IUP_DEFAULT;
@@ -4093,17 +4107,17 @@ static int item_import_action_cb(void)
             printf("Database does not exist.");
             break;
         case 0: //file already exists
-                const char *p_filename=IupGetAttribute(filedlg,"VALUE");
-                FILE *f=open_input(p_filename);
-                if(f==NULL){
-                    update_sb_msg(msg_err_failed_to_import_pos);
-                    printf("%s\n",msg_err_failed_to_import_pos);
-                }
-                int pid=db_import_position_from_file(db,f);
-                db_select_position(db,&pos_nb,pos_list_id,pos_list);
-                goto_position_cb(&pid);
-                switch_to_library("main",&lib_index);
-                update_sb_msg(msg_info_position_imported);
+            const char *p_filename=IupGetAttribute(filedlg,"VALUE");
+            FILE *f=open_input(p_filename);
+            if(f==NULL){
+                update_sb_msg(msg_err_failed_to_import_pos);
+                printf("%s\n",msg_err_failed_to_import_pos);
+            }
+            int pid=db_import_position_from_file(db,f);
+            db_select_position(db,&pos_nb,pos_list_id,pos_list);
+            goto_position_cb(&pid);
+            switch_to_library("main",&lib_index);
+            update_sb_msg(msg_info_position_imported);
             break;
         case -1:
             printf("IupFileDlg: Operation Canceled");
@@ -4171,7 +4185,30 @@ static int item_cut_action_cb(void)
 
 static int item_paste_action_cb(void)
 {
-    error_callback();
+    printf("\nitem_paste_action_cb\n");
+    Ihandle* clipboard=IupClipboard();
+    Ihandle* text=IupText(NULL);
+    IupSetAttribute(text, "VALUE", IupGetAttribute(clipboard, "TEXT"));
+    IupDestroy(clipboard);
+    char* ctext=IupGetAttribute(text,"VALUE");
+    printf("clipboard\n%s\n",ctext);
+
+    char token[LINE_NBMAX][LINE_LENGTHMAX]; int i;
+    char *c = strtok(ctext, "\n");
+    token[0][0]='\0'; i=0; while(c!=NULL){
+        strcat(token[i],c); i+=1;
+        c=strtok(NULL, "\n");
+        token[i][0]='\0';
+    }
+    for(int j=0;j<i;j++){
+        printf("tok %i: %s\n",j,token[j]);
+    }
+    int pid=db_import_position_from_lines(db,token,i);
+    db_select_position(db,&pos_nb,pos_list_id,pos_list);
+    goto_position_cb(&pid);
+    switch_to_library("main",&lib_index);
+    update_sb_msg(msg_info_position_imported);
+
     return IUP_DEFAULT;
 }
 
