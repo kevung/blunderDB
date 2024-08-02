@@ -2126,9 +2126,9 @@ int db_select_checker_analysis(sqlite3* db, int pid,
 /* BEGIN Interface */
 
 /* #define DEFAULT_SIZE "960x540" */
-#define DEFAULT_SIZE "864x486"
+/* #define DEFAULT_SIZE "864x486" */
 /* #define DEFAULT_SIZE "800x486" */
-/* #define DEFAULT_SIZE "800x450" */
+#define DEFAULT_SIZE "800x440"
 #define DEFAULT_SPLIT_VALUE "745"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 #define SB_DEFAULT_FONTSIZE "10" //sb=statusbar
