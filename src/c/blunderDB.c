@@ -126,6 +126,7 @@ static int checker_analysis_action_cb(Ihandle*);
 #define PLAYER1_POINTLABEL "*abcdefghijklmnopqrstuvwxyz"
 #define PLAYER2_POINTLABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
 #define POSITION_NUMBER_MAX 10000
+#define CHECKER_ANALYSIS_NUMBER_MAX 100
 
 char hash[1000];
 
@@ -267,6 +268,14 @@ POSITION pos_list[POSITION_NUMBER_MAX],
 int pos_list_id[POSITION_NUMBER_MAX],
     pos_list_id_tmp[POSITION_NUMBER_MAX];
 int pos_nb, pos_index;
+
+CHECKER_ANALYSIS ca[CHECKER_ANALYSIS_NUMBER_MAX]; //checker analysis
+CHECKER_ANALYSIS *ca_ptr;
+int ca_nb; int ca_index=0;
+
+CUBE_ANALYSIS da; //double analysis
+CUBE_ANALYSIS *da_ptr;
+int da_nb; int da_index=0;
 
 int find_index_from_int(int v, int* a, int nb){
     for(int i=0;i<nb;i++){
@@ -2069,6 +2078,45 @@ int db_import_position_from_file(sqlite3* db, FILE* f, int* pid){
     return db_import_position_from_lines(db,lines,nb,pid);
 }
 
+int db_select_checker_analysis(sqlite3* db, int pid,
+        CHECKER_ANALYSIS* ca, int *ca_nb){
+    printf("\ndb_select_checker_analysis\n");
+    char sql[10000]; sql[0]='\0';
+    int i=0;
+    sprintf(sql,"SELECT * FROM checker_analysis WHERE position_id=%d;",pid);
+    printf("sql %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    *ca_nb=0;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        ca[*ca_nb].depth[0]='\0';
+        strcat(ca[*ca_nb].depth, sqlite3_column_text(stmt,1));
+        ca[*ca_nb].move1[0]='\0';
+        strcat(ca[*ca_nb].move1, sqlite3_column_text(stmt,2));
+        ca[*ca_nb].move2[0]='\0';
+        strcat(ca[*ca_nb].move2, sqlite3_column_text(stmt,3));
+        ca[*ca_nb].move3[0]='\0';
+        strcat(ca[*ca_nb].move3, sqlite3_column_text(stmt,4));
+        ca[*ca_nb].move4[0]='\0';
+        strcat(ca[*ca_nb].move4, sqlite3_column_text(stmt,5));
+        ca[*ca_nb].equity=sqlite3_column_double(stmt,6);
+        ca[*ca_nb].error=sqlite3_column_double(stmt,7);
+        ca[*ca_nb].p1_w=sqlite3_column_double(stmt,8);
+        ca[*ca_nb].p1_g=sqlite3_column_double(stmt,9);
+        ca[*ca_nb].p1_b=sqlite3_column_double(stmt,10);
+        ca[*ca_nb].p2_w=sqlite3_column_double(stmt,11);
+        ca[*ca_nb].p2_g=sqlite3_column_double(stmt,12);
+        ca[*ca_nb].p2_b=sqlite3_column_double(stmt,13);
+        *ca_nb+=1;
+    }
+    sqlite3_finalize(stmt);
+    printf("ca_nb %i\n",*ca_nb);
+    return 1;
+}
+
 /* END Database */
 
 
@@ -2081,7 +2129,7 @@ int db_import_position_from_file(sqlite3* db, FILE* f, int* pid){
 #define DEFAULT_SIZE "864x486"
 /* #define DEFAULT_SIZE "800x486" */
 /* #define DEFAULT_SIZE "800x450" */
-#define DEFAULT_SPLIT_VALUE "700"
+#define DEFAULT_SPLIT_VALUE "745"
 #define DEFAULT_SPLIT_MINMAX "800:2000"
 #define SB_DEFAULT_FONTSIZE "10" //sb=statusbar
 #define ANALYSIS_MULTILINE_MAX 10000
@@ -2656,7 +2704,10 @@ static Ihandle* create_analysis(void)
     IupSetAttribute(checker_analysis, "EXPAND", "YES");
     IupSetAttribute(checker_analysis, "BORDER", "NO");
     IupSetAttribute(checker_analysis, "FONTSIZE", "12");
+    /* IupSetAttribute(checker_analysis, "FONT", "Courier Prime, 13"); */
+    IupSetAttribute(checker_analysis, "FONT", "Nimbus Mono PS, 12");
     IupSetAttribute(checker_analysis, "MULTILINE", "YES");
+    IupSetAttribute(checker_analysis, "ALIGNMENT", "ALEFT");
     IupSetAttribute(checker_analysis, "READONLY", "YES");
     IupSetAttribute(checker_analysis, "AUTOHIDE", "YES");
     IupSetAttribute(checker_analysis, "TABTITLE", "Checker");
@@ -3104,7 +3155,21 @@ int parse_cmdline(char* cmdtext){
 int update_checker_analysis(const int pid){
     printf("\nupdate_checker_analysis\n");
     char txt[ANALYSIS_MULTILINE_MAX]; txt[0]='\0';
-    sprintf(txt, "[Checker] Position id: %d\n", pid);
+    char t[1000]; t[0]='\0';
+    char t1[1000]; t1[0]='\0';
+    db_select_checker_analysis(db,pid,ca,&ca_nb);
+    printf("ca_nb: %i\n", ca_nb);
+    for(int i=0;i<ca_nb;i++){
+        sprintf(t1,"%s %s %s %s",
+                ca[i].move1,ca[i].move2,ca[i].move3,ca[i].move4);
+        sprintf(t,"%-18s  %+6.3f %+6.3f   ",t1,ca[i].equity,ca[i].error);
+        strcat(txt,t);
+        sprintf(t,"P: %5.2f %5.2f %5.2f  O: %5.2f %5.2f %5.2f   %-11s\n",
+                ca[i].p1_w,ca[i].p1_g,ca[i].p1_b,
+                ca[i].p2_w,ca[i].p2_g,ca[i].p2_b,
+                ca[i].depth);
+        strcat(txt,t);
+    }
     printf("txt: %s\n", txt);
     IupSetAttribute(checker_analysis, "VALUE", txt);
     IupRefresh(dlg);
@@ -5120,6 +5185,12 @@ int main(int argc, char **argv)
     strcat(lib_list[LIBRARIES_NUMBER_MAX-1], "main");
     lib_index=LIBRARIES_NUMBER_MAX-1;
     lib_nb=1;
+    ca[0]=CA_VOID;
+    ca_index=0;
+    ca_ptr = &ca[0];
+    da=D_VOID;
+    da_ptr=&da;
+
 
     IupOpen(&argc, &argv);
     IupControlsOpen();
