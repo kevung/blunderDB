@@ -2438,7 +2438,7 @@ static Ihandle* create_menus(void)
     item_find_position_without_analysis = IupItem("&Find Positions without Analysis", NULL);
     item_preferences = IupItem("&Preferences", NULL);
     menu_tool = IupMenu(item_find_position_without_analysis,
-            IupSeparator(), item_preferences, NULL);
+            IupSeparator(), NULL);
     submenu_tool = IupSubmenu("&Tools", menu_tool);
 
     item_manual = IupItem("Help &Manual", NULL);
@@ -2511,9 +2511,8 @@ static Ihandle* create_menus(void)
 static Ihandle* create_toolbar(void)
 {
     Ihandle *ih;
-    Ihandle *btn_new, *btn_open, *btn_save, *btn_close, *btn_properties;
-    Ihandle *btn_cut, *btn_copy, *btn_paste;
-    Ihandle *btn_undo, *btn_redo;
+    Ihandle *btn_new, *btn_open, *btn_properties;
+    Ihandle *btn_copy, *btn_paste;
     Ihandle *btn_prev, *btn_next;
     Ihandle *btn_edit, *btn_analysis;
     Ihandle *btn_blunder, *btn_dice, *btn_cube, *btn_score;
@@ -2532,29 +2531,11 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_open, "CANFOCUS", "No");
     IupSetAttribute(btn_open, "TIP", "Open Database");
 
-    btn_save = IupButton(NULL, NULL);
-    IupSetAttribute(btn_save, "IMAGE", "IUP_FileSave");
-    IupSetAttribute(btn_save, "FLAT", "Yes");
-    IupSetAttribute(btn_save, "CANFOCUS", "No");
-    IupSetAttribute(btn_save, "TIP", "Save Database");
-
-    btn_close = IupButton(NULL, NULL);
-    IupSetAttribute(btn_close, "IMAGE", "IUP_FileClose");
-    IupSetAttribute(btn_close, "FLAT", "Yes");
-    IupSetAttribute(btn_close, "CANFOCUS", "No");
-    IupSetAttribute(btn_close, "TIP", "Close Database");
-
     btn_properties = IupButton(NULL, NULL);
     IupSetAttribute(btn_properties, "IMAGE", "IUP_FileProperties");
     IupSetAttribute(btn_properties, "FLAT", "Yes");
     IupSetAttribute(btn_properties, "CANFOCUS", "No");
     IupSetAttribute(btn_properties, "TIP", "Database Metadata");
-
-    btn_cut = IupButton(NULL, NULL);
-    IupSetAttribute(btn_cut, "IMAGE", "IUP_EditCut");
-    IupSetAttribute(btn_cut, "FLAT", "Yes");
-    IupSetAttribute(btn_cut, "CANFOCUS", "No");
-    IupSetAttribute(btn_cut, "TIP", "Cut Position");
 
     btn_copy = IupButton(NULL, NULL);
     IupSetAttribute(btn_copy, "IMAGE", "IUP_EditCopy");
@@ -2567,18 +2548,6 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_paste, "FLAT", "Yes");
     IupSetAttribute(btn_paste, "CANFOCUS", "No");
     IupSetAttribute(btn_paste, "TIP", "Paste Position");
-
-    btn_undo = IupButton(NULL, NULL);
-    IupSetAttribute(btn_undo, "IMAGE", "IUP_EditUndo");
-    IupSetAttribute(btn_undo, "FLAT", "Yes");
-    IupSetAttribute(btn_undo, "CANFOCUS", "No");
-    IupSetAttribute(btn_undo, "TIP", "Undo");
-
-    btn_redo = IupButton(NULL, NULL);
-    IupSetAttribute(btn_redo, "IMAGE", "IUP_EditRedo");
-    IupSetAttribute(btn_redo, "FLAT", "Yes");
-    IupSetAttribute(btn_redo, "CANFOCUS", "No");
-    IupSetAttribute(btn_redo, "TIP", "Redo");
 
     btn_prev = IupButton(NULL, NULL);
     IupSetAttribute(btn_prev, "IMAGE", "IUP_ArrowLeft");
@@ -2635,19 +2604,15 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_manual, "TIP", "Help Manual");
 
     ih = IupHbox(
-            btn_new, btn_open, btn_save, btn_close, btn_properties,
+            btn_new, btn_open, btn_properties,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_cut, btn_copy, btn_paste,
-            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_undo, btn_redo,
+            btn_copy, btn_paste,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_prev, btn_next,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_edit, btn_analysis,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_blunder, btn_dice, btn_cube, btn_score,
-            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_preferences,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_manual,
             NULL);
@@ -2658,12 +2623,7 @@ static Ihandle* create_toolbar(void)
 
     IupSetCallback(btn_new, "ACTION", (Icallback) item_new_action_cb);
     IupSetCallback(btn_open, "ACTION", (Icallback) item_open_action_cb);
-    IupSetCallback(btn_save, "ACTION", (Icallback) item_save_action_cb);
     IupSetCallback(btn_properties, "ACTION", (Icallback) item_properties_action_cb);
-    IupSetCallback(btn_close, "ACTION", (Icallback) item_exit_action_cb);
-    IupSetCallback(btn_undo, "ACTION", (Icallback) item_undo_action_cb);
-    IupSetCallback(btn_redo, "ACTION", (Icallback) item_redo_action_cb);
-    IupSetCallback(btn_cut, "ACTION", (Icallback) item_cut_action_cb);
     IupSetCallback(btn_copy, "ACTION", (Icallback) item_copy_action_cb);
     IupSetCallback(btn_paste, "ACTION", (Icallback) item_paste_action_cb);
     IupSetCallback(btn_next, "ACTION", (Icallback) item_nextposition_action_cb);

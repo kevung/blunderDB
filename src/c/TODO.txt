@@ -4,6 +4,7 @@ Plus tard:
 - Filtre taille prime, hommes à la barre
 - Ajouter la fonction pour inverser une position. (Ctrl-Up/Ctrl-Down)
 - Implémenter les menus et boutons.
+- Add table for database metadata info (name, owner)
 - Ajouter copier de position pour export dans XG.
 - Import d'un match.
 - Export des positions et matchs en txt.
