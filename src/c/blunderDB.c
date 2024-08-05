@@ -1368,12 +1368,16 @@ int db_select_position_from_libraries(sqlite3* db, char** cmdtoken,
 int db_select_specific_position(sqlite3* db, const POSITION* p,
         const bool force_cube, const bool force_score,
         const bool criteria_blunder, const int bmin, const int bmax,
+        const bool criteria_equity, const int emin, const int emax,
         int* p_nb, int* p_list_id, POSITION* p_list){
     printf("\ndb_select_specific_position\n");
     // add constraints due to blunder, pipcount, checkeroff
     char sql[10000], t[10000];
     sql[0]='\0'; t[0]='\0';
-    strcat(sql, "SELECT * FROM position WHERE 1=1 ");
+    strcat(sql, "SELECT DISTINCT p.* FROM position p ");
+    strcat(sql, "LEFT JOIN checker_analysis ca ON p.id=ca.position_id ");
+    strcat(sql, "LEFT JOIN cube_analysis d ON p.id=d.position_id ");
+    strcat(sql, "WHERE 1=1 ");
     for(int i=0;i<26;i++){
         if(p->checker[i]>0){
             strcat(sql, "and ");
@@ -1405,6 +1409,19 @@ int db_select_specific_position(sqlite3* db, const POSITION* p,
         //Can be implemented after match support.
         //Must be a join on multiple tables:
         //moves, cube_analysis, checker_analysis
+    }
+    if(criteria_equity){
+        printf("\ncriteria_equity\n");
+        //idem as criteria_blunder
+        //must be applied to the move actually played.
+        //modification ca.equity necessary
+        strcat(sql, "and (");
+        sprintf(t,"(ca.equity>=%lf and ca.equity<=%lf) ",
+                ((double)emin)/1000., ((double)emax)/1000.);
+        strcat(sql,t);
+        sprintf(t,"or (d.cubeful_equity_nd>=%lf and d.cubeful_equity_nd<=%lf))",
+                ((double)emin)/1000., ((double)emax)/1000.);
+        strcat(sql,t);
     }
     strcat(sql, ";");
     printf("sql: %s\n", sql);
@@ -3146,12 +3163,14 @@ int parse_cmdline(char* cmdtext){
         bool criteria_backchecker2=false;
         bool criteria_zone1=false;
         bool criteria_zone2=false;
+        bool criteria_equity=false;
         int bmin=0, bmax=0;
         int pmin=0, pmax=0;
         int Pmin=0, Pmax=0;
         int omin=0;
         int bc_num1, bc_num2; //backchecker
         int z_num1, z_num2; //zone
+        int emin=0, emax=0;
         for(int i=1;i<token_nb;i++){
             printf("tok %i %s\n",i,cmdtoken[i]); 
             if(strncmp(cmdtoken[i],"c",1)==0
@@ -3209,11 +3228,29 @@ int parse_cmdline(char* cmdtext){
                     if(bmax<bmin) int_swap(&bmax, &bmin);
                     printf("\ncriteria blunder min max: %d %d\n",bmin,bmax);
                 }
+            } else if(strncmp(cmdtoken[i],"e",1)==0){
+                if(strncmp(cmdtoken[i],"e<",2)==0){
+                    criteria_equity=true;
+                    sscanf(cmdtoken[i], "e<%d", &emax);
+                    emin=-10000;
+                    printf("\ncriteria equity max: %d\n",emax);
+                }else if(strncmp(cmdtoken[i],"e>",2)==0){
+                    criteria_equity=true;
+                    sscanf(cmdtoken[i], "e>%d", &emin);
+                    emax=10000;
+                    printf("\ncriteria equity min: %d\n",emin);
+                }else if(strstr(cmdtoken[i],",")!=0){
+                    criteria_equity=true;
+                    sscanf(cmdtoken[i], "e%d,%d", &emin, &emax);
+                    if(emax<emin) int_swap(&emax, &emin);
+                    printf("\ncriteria equity min max: %d %d\n",emin,emax);
+                }
             }
         }
         db_select_specific_position(db, pos_ptr,
                 force_cube, force_score,
                 criteria_blunder, bmin, bmax,
+                criteria_equity, emin, emax,
                 &pos_nb, pos_list_id, pos_list);
         if(criteria_checkeroff) filter_position_by_checkeroff(omin);
         if(criteria_pipcount) filter_position_by_pipcount(pmin,pmax,false);
