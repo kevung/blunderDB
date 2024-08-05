@@ -2384,7 +2384,6 @@ static Ihandle* create_menus(void)
     menu_file = IupMenu(item_new, item_open,
             IupSeparator(), item_import,
             IupSeparator(), item_export,
-            IupSeparator(), item_save, item_saveas,
             IupSeparator(), item_properties,
             IupSeparator(), item_exit, NULL);
     submenu_file = IupSubmenu("&File", menu_file);
@@ -2458,7 +2457,7 @@ static Ihandle* create_menus(void)
     submenu_help = IupSubmenu("&Help", menu_help);
 
     menu = IupMenu(submenu_file, submenu_edit, submenu_position,
-            submenu_match, submenu_search, submenu_tool, submenu_help,
+            submenu_search, submenu_tool, submenu_help,
             NULL);
 
     IupSetHandle("menu", menu);
