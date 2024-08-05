@@ -172,7 +172,9 @@ typedef struct
     double cubeful_equity_nd; //no double
     double cubeful_equity_dt; //double take
     double cubeful_equity_dp; //double pass
-    double error;
+    double error_nd;
+    double error_dt;
+    double error_dp;
     int best_cube_action; // 0=nd 1=dt 2=dp 3=tgp 4=tgt
     double percentage_wrong_pass_make_good_double;
 } CUBE_ANALYSIS;
@@ -253,6 +255,9 @@ const CUBE_ANALYSIS D_VOID = {
     .cubeful_equity_nd=0,
     .cubeful_equity_dt=0,
     .cubeful_equity_dp=0,
+    .error_nd=0,
+    .error_dt=0,
+    .error_dp=0,
     .best_cube_action=0,
     .percentage_wrong_pass_make_good_double=0,
 };
@@ -334,6 +339,9 @@ void cube_analysis_print(const CUBE_ANALYSIS* d){
     printf("cubeful_equity_nd: %f\n",d->cubeful_equity_nd);
     printf("cubeful_equity_dt: %f\n",d->cubeful_equity_dt);
     printf("cubeful_equity_dp: %f\n",d->cubeful_equity_dp);
+    printf("error_nd: %f\n",d->error_nd);
+    printf("error_dt: %f\n",d->error_dt);
+    printf("error_dp: %f\n",d->error_dp);
     printf("best_cube_action: %i\n",d->best_cube_action);
     printf("percentage_wrong_pass_make_good_double: %f\n",d->percentage_wrong_pass_make_good_double);
 }
@@ -970,7 +978,9 @@ const char* sql_cube_analysis =
 "cubeful_equity_nd REAL,"
 "cubeful_equity_dt REAL,"
 "cubeful_equity_dp REAL,"
-"error REAL,"
+"error_nd REAL,"
+"error_dt REAL,"
+"error_dp REAL,"
 "best_cube_action INTEGER,"
 "percentage_wrong_pass_make_good_double REAL,"
 "FOREIGN KEY(position_id) REFERENCES position(id)"
@@ -1123,6 +1133,15 @@ int db_insert_metadata(sqlite3 *db, const int *pid, const METADATA *m){
     return 1;
 }
 
+int db_delete_if_exist_metadata(sqlite3* db, int pid){
+    printf("\ndb_delete_if_exist_metadata\n");
+    char sql[10000]; sql[0]='\0';
+    sprintf(sql,"DELETE FROM metadata WHERE position_id=%d;",pid);
+    printf("sql %s\n",sql);
+    execute_sql(db,sql);
+    return 1;
+}
+
 int db_insert_checker_analysis(sqlite3 *db, const int *pid,
         const CHECKER_ANALYSIS *a){
     printf("\ndb_insert_checker_analysis\n");
@@ -1140,6 +1159,16 @@ int db_insert_checker_analysis(sqlite3 *db, const int *pid,
     return 1;
 }
 
+int db_delete_if_exist_checker_analysis(sqlite3* db, int pid){
+    printf("\ndb_delete_if_exist_checker_analysis\n");
+    char sql[10000]; sql[0]='\0';
+    sprintf(sql,"DELETE FROM checker_analysis WHERE position_id=%d;",pid);
+    printf("sql %s\n",sql);
+    execute_sql(db,sql);
+    return 1;
+}
+
+
 int db_insert_cube_analysis(sqlite3 *db, const int *pid,
         const CUBE_ANALYSIS *a){
     printf("\ndb_insert_cube_analysis\n");
@@ -1147,20 +1176,31 @@ int db_insert_cube_analysis(sqlite3 *db, const int *pid,
     strcat(sql,"INSERT INTO cube_analysis ");
     strcat(sql,"(position_id,depth,p1_w,p1_g,p1_b,p2_w,p2_g,p2_b,");
     strcat(sql,"cubeless_equity_nd,cubeless_equity_d,");
-    strcat(sql,"cubeful_equity_nd,cubeful_equity_dt,cubeful_equity_dp,error,");
+    strcat(sql,"cubeful_equity_nd,cubeful_equity_dt,cubeful_equity_dp,");
+    strcat(sql,"error_nd,error_dt,error_dp,");
     strcat(sql,"best_cube_action,percentage_wrong_pass_make_good_double) ");
     strcat(sql,"VALUES (");
-    sprintf(t,"%d,\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f);",
+    sprintf(t,"%d,\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f);",
             *pid,a->depth,a->p1_w,a->p1_g,a->p1_b,a->p2_w,a->p2_g,a->p2_b,
             a->cubeless_equity_nd,a->cubeless_equity_d,
             a->cubeful_equity_nd,a->cubeful_equity_dt,a->cubeful_equity_dp,
-            a->error,
+            a->error_nd,a->error_dt,a->error_dp,
             a->best_cube_action,a->percentage_wrong_pass_make_good_double);
     strcat(sql,t);
     printf("sql %s\n",sql);
     execute_sql(db,sql);
     return 1;
 }
+
+int db_delete_if_exist_cube_analysis(sqlite3* db, int pid){
+    printf("\ndb_delete_if_exist_cube_analysis\n");
+    char sql[10000]; sql[0]='\0';
+    sprintf(sql,"DELETE FROM cube_analysis WHERE position_id=%d;",pid);
+    printf("sql %s\n",sql);
+    execute_sql(db,sql);
+    return 1;
+}
+
 
 int db_update_position(sqlite3* db, int* id, const POSITION* p){
     char sql[10000]; char *h;
@@ -1807,9 +1847,10 @@ void parse_line(const char *line, POSITION *p,
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
             sscanf(_t,"%lf",&d->cubeful_equity_nd);
+            d->error_nd=0;
         } else {
             strncpy(_t,l,15);
-            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error_nd);
         }
         *has_cubeful_nd=true;
     } else if(strncmp(l,"       No redouble",18)==0
@@ -1818,9 +1859,10 @@ void parse_line(const char *line, POSITION *p,
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
             sscanf(_t,"%lf",&d->cubeful_equity_nd);
+            d->error_nd=0;
         } else {
             strncpy(_t,l,15);
-            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_nd,&d->error_nd);
         }
         *has_cubeful_nd=true;
     } else if(strncmp(l,"       Double/Take",18)==0
@@ -1829,9 +1871,10 @@ void parse_line(const char *line, POSITION *p,
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
             sscanf(_t,"%lf",&d->cubeful_equity_dt);
+            d->error_dt=0;
         } else {
             strncpy(_t,l,15);
-            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dt,&d->error);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dt,&d->error_dt);
         }
         *has_cubeful_dt=true;
     } else if(strncmp(l,"       Redouble/Take",20)==0
@@ -1840,9 +1883,10 @@ void parse_line(const char *line, POSITION *p,
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
             sscanf(_t,"%lf",&d->cubeful_equity_dt);
+            d->error_dt=0;
         } else {
             strncpy(_t,l,15);
-            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dt,&d->error);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dt,&d->error_dt);
         }
         *has_cubeful_dt=true;
     } else if(strncmp(l,"       Double/Pass",18)==0
@@ -1851,9 +1895,10 @@ void parse_line(const char *line, POSITION *p,
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
             sscanf(_t,"%lf",&d->cubeful_equity_dp);
+            d->error_dp=0;
         } else {
             strncpy(_t,l,15);
-            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error_dp);
         }
         *has_cubeful_dp=true;
     } else if(strncmp(l,"       Redouble/Pass",20)==0
@@ -1862,9 +1907,10 @@ void parse_line(const char *line, POSITION *p,
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
             sscanf(_t,"%lf",&d->cubeful_equity_dp);
+            d->error_dp=0;
         } else {
             strncpy(_t,l,15);
-            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error);
+            sscanf(_t,"%lf (%lf)",&d->cubeful_equity_dp,&d->error_dp);
         }
         *has_cubeful_dp=true;
     } else if(strncmp(l,"Best Cube action",16)==0){
@@ -2053,11 +2099,14 @@ int db_import_position_from_lines(sqlite3* db,
     } else { *pid=_id[0]; 
         printf("position does exist\n");
     }
+    db_delete_if_exist_metadata(db,*pid);
     db_insert_metadata(db,pid,&m);
     if(p.cube_action==0){
+        db_delete_if_exist_checker_analysis(db,*pid);
         for(int i=0;i<5;i++)
             db_insert_checker_analysis(db,pid,&a[i]);
     } else if (p.cube_action==1){
+        db_delete_if_exist_cube_analysis(db,*pid);
         db_insert_cube_analysis(db,pid,&d);
     }
 
@@ -2117,6 +2166,45 @@ int db_select_checker_analysis(sqlite3* db, int pid,
     return 1;
 }
 
+int db_select_cube_analysis(sqlite3* db, int pid,
+        CUBE_ANALYSIS* da, int *da_nb){
+    printf("\ndb_select_cube_analysis\n");
+    char sql[10000]; sql[0]='\0';
+    int i=0;
+    sprintf(sql,"SELECT * FROM cube_analysis WHERE position_id=%d;",pid);
+    printf("sql %s\n", sql);
+    int rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    if(rc!=SQLITE_OK){
+        printf("Failed to prepare statement: %s\n",
+                sqlite3_errmsg(db));
+    }
+    *da_nb=0;
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        da->depth[0]='\0';
+        strcat(da->depth, sqlite3_column_text(stmt,1));
+        da->p1_w=sqlite3_column_double(stmt,2);
+        da->p1_g=sqlite3_column_double(stmt,3);
+        da->p1_b=sqlite3_column_double(stmt,4);
+        da->p2_w=sqlite3_column_double(stmt,5);
+        da->p2_g=sqlite3_column_double(stmt,6);
+        da->p2_b=sqlite3_column_double(stmt,7);
+        da->cubeless_equity_nd=sqlite3_column_double(stmt,8);
+        da->cubeless_equity_d=sqlite3_column_double(stmt,9);
+        da->cubeful_equity_nd=sqlite3_column_double(stmt,10);
+        da->cubeful_equity_dt=sqlite3_column_double(stmt,11);
+        da->cubeful_equity_dp=sqlite3_column_double(stmt,12);
+        da->error_nd=sqlite3_column_double(stmt,13);
+        da->error_dt=sqlite3_column_double(stmt,14);
+        da->error_dp=sqlite3_column_double(stmt,15);
+        da->best_cube_action=sqlite3_column_int(stmt,16);
+        da->percentage_wrong_pass_make_good_double=
+            sqlite3_column_double(stmt,17);
+        *da_nb+=1;
+    }
+    sqlite3_finalize(stmt);
+    printf("da_nb %i\n",*da_nb);
+    return 1;
+}
 /* END Database */
 
 
@@ -2704,8 +2792,7 @@ static Ihandle* create_analysis(void)
     IupSetAttribute(checker_analysis, "EXPAND", "YES");
     IupSetAttribute(checker_analysis, "BORDER", "NO");
     IupSetAttribute(checker_analysis, "FONTSIZE", "12");
-    /* IupSetAttribute(checker_analysis, "FONT", "Courier Prime, 13"); */
-    IupSetAttribute(checker_analysis, "FONT", "Nimbus Mono PS, 12");
+    IupSetAttribute(checker_analysis, "FONT", "Nimbus Mono PS, 10");
     IupSetAttribute(checker_analysis, "MULTILINE", "YES");
     IupSetAttribute(checker_analysis, "ALIGNMENT", "ALEFT");
     IupSetAttribute(checker_analysis, "READONLY", "YES");
@@ -2717,6 +2804,7 @@ static Ihandle* create_analysis(void)
     IupSetAttribute(cube_analysis, "EXPAND", "YES");
     IupSetAttribute(cube_analysis, "BORDER", "NO");
     IupSetAttribute(cube_analysis, "FONTSIZE", "12");
+    IupSetAttribute(cube_analysis, "FONT", "Nimbus Mono PS, 10");
     IupSetAttribute(cube_analysis, "MULTILINE", "YES");
     IupSetAttribute(cube_analysis, "READONLY", "YES");
     IupSetAttribute(cube_analysis, "AUTOHIDE", "YES");
@@ -3179,7 +3267,44 @@ int update_checker_analysis(const int pid){
 int update_cube_analysis(const int pid){
     printf("\nupdate_cube_analysis\n");
     char txt[ANALYSIS_MULTILINE_MAX]; txt[0]='\0';
-    sprintf(txt, "[Cube] Position id: %d\n", pid);
+    char t[1000]; t[0]='\0';
+    /* char t1[1000]; t1[0]='\0'; */
+    db_select_cube_analysis(db,pid,&da,&da_nb);
+    printf("da_nb: %i\n", da_nb);
+    cube_analysis_print(&da);
+
+    sprintf(t,"P: %5.2f  %5.2f  %5.2f  O: %5.2f  %5.2f  %5.2f\n",
+            da.p1_w,da.p1_g,da.p1_b,
+            da.p2_w,da.p2_g,da.p2_b
+            );
+    strcat(txt,t);
+    if(pos_ptr->cube==0){
+    sprintf(t,"Cubeless Equities:     No Double: %+6.3f    Double: %+6.3f\n",
+            da.cubeless_equity_nd, da.cubeless_equity_d); 
+    }else{
+    sprintf(t,"Cubeless Equities:   No Redouble: %+6.3f    Double: %+6.3f\n",
+            da.cubeless_equity_nd, da.cubeless_equity_d); 
+    }
+    strcat(txt,t);
+    sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+            "Cubeful Equities:","No double",da.cubeful_equity_nd,da.error_nd);
+    strcat(txt,t);
+    if(pos_ptr->cube==0){
+        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+                "","Double/Take",da.cubeful_equity_dt,da.error_dt);
+        strcat(txt,t);
+        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+                "","Double/Pass",da.cubeful_equity_dp,da.error_dp);
+        strcat(txt,t);
+    }else{
+        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+                "","Redouble/Take",da.cubeful_equity_dt,da.error_dt);
+        strcat(txt,t);
+        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+                "","Redouble/Pass",da.cubeful_equity_dp,da.error_dp);
+        strcat(txt,t);
+    }
+
     printf("txt: %s\n", txt);
     IupSetAttribute(cube_analysis, "VALUE", txt);
     IupRefresh(dlg);
