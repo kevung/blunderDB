@@ -2205,6 +2205,27 @@ int db_select_cube_analysis(sqlite3* db, int pid,
     printf("da_nb %i\n",*da_nb);
     return 1;
 }
+
+int db_analysis_exist(sqlite3* db, int pid){
+    printf("ńdb_analysis_exist\n");
+    int exists=0;
+    char sql[10000]; sql[0]='\0';
+    int i=0; int rc;
+    sprintf(sql,"SELECT * FROM cube_analysis WHERE position_id=%d;",pid);
+    printf("sql %s\n", sql);
+    rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        return 1;
+    }
+    sprintf(sql,"SELECT * FROM checker_analysis WHERE position_id=%d;",pid);
+    printf("sql %s\n", sql);
+    rc=sqlite3_prepare_v2(db, sql, -1, &stmt, NULL);
+    while((rc=sqlite3_step(stmt))==SQLITE_ROW){
+        return 1;
+    }
+    sqlite3_finalize(stmt);
+    return 0;
+}
 /* END Database */
 
 
@@ -2256,6 +2277,8 @@ const char* msg_err_no_db_opened =
 "ERR: No database opened.";
 const char* msg_err_failed_to_open_db =
 "ERR: Failed to open database.";
+const char* msg_err_cannot_update_position_with_analysis =
+"ERR: Position with analysis cannot be updated.";
 const char* msg_info_position_written = 
 "Position written to database.";
 const char* msg_info_position_updated = 
@@ -3042,10 +3065,19 @@ int parse_cmdline(char* cmdtext){
             for(int i=0;i<nb;i++) printf("_id[%i]: %i\n",i, _id[i]);
         } else {
             int id=pos_list_id[pos_index];
-            db_update_position(db, &id, pos_ptr);
-            mode_active=NORMAL;
-            update_sb_msg(msg_info_position_updated);
-            update_sb_mode();
+            if(db_analysis_exist(db,id)){
+                goto_position_cb(&id);
+                mode_active=NORMAL;
+                update_sb_msg(msg_err_cannot_update_position_with_analysis);
+                update_sb_mode();
+            } else {
+                db_update_position(db, &id, pos_ptr);
+                db_select_position(db, &pos_nb,
+                        pos_list_id, pos_list);
+                mode_active=NORMAL;
+                update_sb_msg(msg_info_position_updated);
+                update_sb_mode();
+            }
         }
         if(token_nb>1){
             int pos_id = pos_list_id[pos_index];
@@ -3258,8 +3290,11 @@ int update_cube_analysis(const int pid){
     /* char t1[1000]; t1[0]='\0'; */
     db_select_cube_analysis(db,pid,&da,&da_nb);
     printf("da_nb: %i\n", da_nb);
-    cube_analysis_print(&da);
-
+    if(da_nb==0){
+        IupSetAttribute(analysis, "VALUE", txt);
+        IupRefresh(dlg);
+        return IUP_DEFAULT;
+    }
     sprintf(t,"P: %5.2f  %5.2f  %5.2f  O: %5.2f  %5.2f  %5.2f\n",
             da.p1_w,da.p1_g,da.p1_b,
             da.p2_w,da.p2_g,da.p2_b
