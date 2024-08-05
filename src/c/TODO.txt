@@ -14,8 +14,6 @@ Plus tard:
 - Corriger bug parsage des noms de joueurs, notamment en français.
 - Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
 
-? Utilité de player_id dans POSITION?
-
 ATTENTION:
 
 - Quand une position est importée au format texte, X est toujours le joueur qui
