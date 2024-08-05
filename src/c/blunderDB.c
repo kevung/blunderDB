@@ -1792,7 +1792,7 @@ void parse_line(const char *line, POSITION *p,
     } else if(strncmp(l,"Cubeless Equities",17)==0){
         l+=19;
         strncpy(_t,l,32);
-        sscanf(_t,"No double=%lf, Double=%lf",
+        sscanf(_t,"No Double=%lf, Double=%lf",
                 &d->cubeless_equity_nd,&d->cubeless_equity_d);
         *has_cubeless_eq=true;
     } else if(strstr(l,"sans videau")!=0){
