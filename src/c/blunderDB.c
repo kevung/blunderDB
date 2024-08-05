@@ -920,7 +920,7 @@ const char *sql_position =
 "player_on_roll INTEGER,"
 "cube_action INTEGER,"
 "hash TEXT,"
-"comment TEXT,"
+"comment TEXT"
 ");";
 
 const char* sql_catalog =
