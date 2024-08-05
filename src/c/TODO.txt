@@ -1,7 +1,7 @@
 Plus tard:
 
 - Ajouter filtres equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
-- Filtre taille prime, hommes à la barre
+- Filtre taille prime
 - Implement search all positions without analysis
 - Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
 - Add table for database metadata info (name, owner)
