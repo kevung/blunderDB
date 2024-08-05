@@ -874,13 +874,6 @@ const char *sql_library =
 ");";
 
 
-const char *sql_player = 
-"CREATE TABLE player ("
-"id INTEGER PRIMARY KEY AUTOINCREMENT,"
-"name TEXT"
-");";
-
-
 const char *sql_position =
 "CREATE TABLE position ("
 "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -910,8 +903,6 @@ const char *sql_position =
 "p23 INTEGER,"
 "p24 INTEGER,"
 "p25 INTEGER,"
-"player1_id INTEGER,"
-"player2_id INTEGER,"
 "player1_score INTEGER,"
 "player2_score INTEGER,"
 "dice1 INTEGER,"
@@ -921,8 +912,6 @@ const char *sql_position =
 "cube_action INTEGER,"
 "hash TEXT,"
 "comment TEXT,"
-"FOREIGN KEY(player1_id) REFERENCES player(id),"
-"FOREIGN KEY(player2_id) REFERENCES player(id)"
 ");";
 
 const char* sql_catalog =
@@ -1013,9 +1002,6 @@ int db_create(const char* filename)
     } else {
         printf("Created database successfully\n");
     }
-
-    printf("Try to create player table.\n");
-    execute_sql(db, sql_player);
 
     printf("Try to create position table.\n");
     execute_sql(db, sql_position);
