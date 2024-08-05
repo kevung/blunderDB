@@ -2787,30 +2787,17 @@ static Ihandle* create_analysis(void)
 {
     Ihandle *ih;
 
-    checker_analysis=IupText(NULL);
-    IupSetAttribute(checker_analysis, "NAME", "CHECKER_ANALYSIS");
-    IupSetAttribute(checker_analysis, "EXPAND", "YES");
-    IupSetAttribute(checker_analysis, "BORDER", "NO");
-    IupSetAttribute(checker_analysis, "FONTSIZE", "12");
-    IupSetAttribute(checker_analysis, "FONT", "Nimbus Mono PS, 10");
-    IupSetAttribute(checker_analysis, "MULTILINE", "YES");
-    IupSetAttribute(checker_analysis, "ALIGNMENT", "ALEFT");
-    IupSetAttribute(checker_analysis, "READONLY", "YES");
-    IupSetAttribute(checker_analysis, "AUTOHIDE", "YES");
-    IupSetAttribute(checker_analysis, "TABTITLE", "Checker");
+    ih=IupText(NULL);
+    IupSetAttribute(ih, "NAME", "CHECKER_ANALYSIS");
+    IupSetAttribute(ih, "EXPAND", "YES");
+    IupSetAttribute(ih, "BORDER", "NO");
+    IupSetAttribute(ih, "FONTSIZE", "12");
+    IupSetAttribute(ih, "FONT", "Nimbus Mono PS, 10");
+    IupSetAttribute(ih, "MULTILINE", "YES");
+    IupSetAttribute(ih, "ALIGNMENT", "ALEFT");
+    IupSetAttribute(ih, "READONLY", "YES");
+    IupSetAttribute(ih, "AUTOHIDE", "YES");
 
-    cube_analysis=IupText(NULL);
-    IupSetAttribute(cube_analysis, "NAME", "CUBE_ANALYSIS");
-    IupSetAttribute(cube_analysis, "EXPAND", "YES");
-    IupSetAttribute(cube_analysis, "BORDER", "NO");
-    IupSetAttribute(cube_analysis, "FONTSIZE", "12");
-    IupSetAttribute(cube_analysis, "FONT", "Nimbus Mono PS, 10");
-    IupSetAttribute(cube_analysis, "MULTILINE", "YES");
-    IupSetAttribute(cube_analysis, "READONLY", "YES");
-    IupSetAttribute(cube_analysis, "AUTOHIDE", "YES");
-    IupSetAttribute(cube_analysis, "TABTITLE", "Cube");
-
-    ih = IupTabs(checker_analysis, cube_analysis, NULL);
     IupSetAttribute(ih, "VISIBLE", "NO");
     IupSetAttribute(ih, "FLOATING", "YES");
     return ih;
@@ -3259,7 +3246,7 @@ int update_checker_analysis(const int pid){
         strcat(txt,t);
     }
     printf("txt: %s\n", txt);
-    IupSetAttribute(checker_analysis, "VALUE", txt);
+    IupSetAttribute(analysis, "VALUE", txt);
     IupRefresh(dlg);
     return IUP_DEFAULT;
 }
@@ -3306,7 +3293,7 @@ int update_cube_analysis(const int pid){
     }
 
     printf("txt: %s\n", txt);
-    IupSetAttribute(cube_analysis, "VALUE", txt);
+    IupSetAttribute(analysis, "VALUE", txt);
     IupRefresh(dlg);
     return IUP_DEFAULT;
 }
@@ -5046,8 +5033,11 @@ static int space_cb(Ihandle* ih, int c){
 int refresh_position(){
     draw_canvas(cdv);
     update_sb_lib();
-    update_checker_analysis(pos_list_id[pos_index]);
-    update_cube_analysis(pos_list_id[pos_index]);
+    if(pos_list[pos_index].cube_action==0){
+        update_checker_analysis(pos_list_id[pos_index]);
+    } else {
+        update_cube_analysis(pos_list_id[pos_index]);
+    }
     return 1;
 }
 

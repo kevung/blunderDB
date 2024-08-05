@@ -1,12 +1,9 @@
 Plus tard:
 
-- Afficher les analyses de cube, checkers
 - Ajouter filtres blunders, equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Filtre taille prime, hommes à la barre
 - Ajouter la fonction pour inverser une position. (Ctrl-Up/Ctrl-Down)
-- Supprimer une ancienne analyse si elle existe. Au risque sinon d'avoir plusieurs analyses dans la base de données.
 - Ajouter un attribut dans la bdd pour rendre non modifiable une position importée (car sinon risque incohérence avec analyse)
-- Afficher un unique onglet analyse: checker si cube_action=0, cube si cube_action=1 (supprimer l'onglet)
 - Laisser glisser fichier base de données
 - Implémenter les menus et boutons.
 - Ajouter copier de position pour export dans XG.
