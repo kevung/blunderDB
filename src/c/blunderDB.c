@@ -2343,7 +2343,8 @@ static Ihandle* create_menus(void)
     Ihandle *item_editmode;
 
     Ihandle *menu_position;
-    Ihandle *item_next_position, *item_prev_position,
+    Ihandle *item_first_position, *item_last_position,
+            *item_next_position, *item_prev_position,
             *item_new_position,
             *item_import_position, *item_import_position_bybatch;
     Ihandle *item_new_library;
@@ -2399,6 +2400,8 @@ static Ihandle* create_menus(void)
             IupSeparator(), item_editmode, NULL);
     submenu_edit = IupSubmenu("&Edit", menu_edit);
 
+    item_first_position = IupItem("&First Position", NULL);
+    item_last_position = IupItem("La&st Position", NULL);
     item_next_position = IupItem("Ne&xt Position", NULL);
     item_prev_position = IupItem("Pre&vious Position", NULL);
     item_new_position = IupItem("Ne&w Position", NULL);
@@ -2407,7 +2410,8 @@ static Ihandle* create_menus(void)
     item_new_library = IupItem("New &Library", NULL);
     item_delete_library = IupItem("&Delete Library", NULL);
     item_add_library = IupItem("&Add to Library", NULL);
-    menu_position = IupMenu(item_next_position, item_prev_position, 
+    menu_position = IupMenu(item_first_position,
+            item_next_position, item_prev_position, item_last_position,
             item_new_position, IupSeparator(), item_import_position, 
             item_import_position_bybatch, IupSeparator(),
             item_new_library, item_delete_library,
@@ -2476,6 +2480,8 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_copy, "ACTION", (Icallback) item_copy_action_cb);
     IupSetCallback(item_paste, "ACTION", (Icallback) item_paste_action_cb);
     IupSetCallback(item_editmode, "ACTION", (Icallback) item_editmode_action_cb);
+    IupSetCallback(item_first_position, "ACTION", (Icallback) goto_first_position_cb);
+    IupSetCallback(item_last_position, "ACTION", (Icallback) goto_last_position_cb);
     IupSetCallback(item_next_position, "ACTION", (Icallback) item_nextposition_action_cb);
     IupSetCallback(item_prev_position, "ACTION", (Icallback) item_prevposition_action_cb);
     IupSetCallback(item_new_position, "ACTION", (Icallback) item_newposition_action_cb);
