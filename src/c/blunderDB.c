@@ -110,7 +110,9 @@ static int goto_position_cb(int*);
 static int board_direction_left_cb(void);
 static int board_direction_right_cb(void);
 static int checker_analysis_action_cb(Ihandle*);
-
+static int invert_position_cb(void);
+static int display_player_on_roll_up(void);
+static int display_player_on_roll_down(void);
 // END Prototypes
 
 
@@ -265,7 +267,7 @@ POSITION pos;
 POSITION *pos_ptr, *pos_prev_ptr, *pos_next_ptr;
 bool is_pointletter_active = false;
 
-POSITION pos_buffer;
+POSITION pos_buffer, pos_invert_pos;
 POSITION pos_list[POSITION_NUMBER_MAX],
          pos_list_tmp[POSITION_NUMBER_MAX];
 int pos_list_id[POSITION_NUMBER_MAX],
@@ -2393,8 +2395,7 @@ static Ihandle* create_menus(void)
     item_cut = IupItem("Cu&t\tCtrl-X", NULL);
     item_paste = IupItem("Pa&ste\tCtrl-V", NULL);
     item_editmode = IupItem("&Edit Mode\tTab", NULL);
-    menu_edit = IupMenu(item_undo, item_redo,
-            item_copy, item_cut, item_paste,
+    menu_edit = IupMenu( item_copy, item_paste,
             IupSeparator(), item_editmode, NULL);
     submenu_edit = IupSubmenu("&Edit", menu_edit);
 
@@ -3969,6 +3970,8 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_PGDN", (Icallback) pgdn_cb);
     IupSetCallback(dlg, "K_cLEFT", (Icallback) board_direction_left_cb);
     IupSetCallback(dlg, "K_cRIGHT", (Icallback) board_direction_right_cb);
+    IupSetCallback(dlg, "K_cUP", (Icallback) display_player_on_roll_up);
+    IupSetCallback(dlg, "K_cDOWN", (Icallback) display_player_on_roll_down);
 
 
     IupSetCallback(dlg, "K_cN", (Icallback) item_new_action_cb);
@@ -5267,6 +5270,33 @@ static int board_direction_right_cb(void){
     board_direction = BOARD_DIRECTION;
     draw_canvas(cdv);
     return IUP_DEFAULT;
+}
+
+static int invert_position_cb(){
+    printf("\ninvert_position\n");
+    copy_position(pos_ptr, &pos_buffer);
+    for(int i=0;i<26;i++){
+        pos_buffer.checker[i]=-pos_ptr->checker[25-i];
+    }
+    pos_buffer.cube*=-1;
+    pos_buffer.player_on_roll*=-1;
+    pos_buffer.p1_score=pos_ptr->p2_score;
+    pos_buffer.p2_score=pos_ptr->p1_score;
+    copy_position(&pos_buffer, &pos_invert_pos);
+    pos_ptr=&pos_invert_pos;
+    refresh_position();
+}
+
+static int display_player_on_roll_down(){
+    printf("\ndisplay_player_on_roll_down\n");
+    if(pos_ptr->player_on_roll==PLAYER2)
+        invert_position_cb();
+}
+
+static int display_player_on_roll_up(){
+    printf("\ndisplay_player_on_roll_up\n");
+    if(pos_ptr->player_on_roll==PLAYER1)
+        invert_position_cb();
 }
 
 // END Callbacks
