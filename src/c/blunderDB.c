@@ -38,7 +38,6 @@ static int canvas_button_cb(Ihandle*, const int, const int,
 static int canvas_resize_cb(Ihandle*);
 static int item_new_action_cb(void);
 static int item_open_action_cb(void);
-static int item_recent_action_cb(void);
 static int item_save_action_cb(void);
 static int item_saveas_action_cb(void);
 static int item_import_action_cb(void);
@@ -2331,7 +2330,7 @@ static Ihandle* create_menus(void)
             *submenu_help;
 
     Ihandle *menu_file;
-    Ihandle *item_new, *item_open, *item_recent;
+    Ihandle *item_new, *item_open;
     Ihandle *item_import;
     Ihandle *item_save, *item_saveas;
     Ihandle *item_export;
@@ -2374,14 +2373,13 @@ static Ihandle* create_menus(void)
 
     item_new = IupItem("&New Database\tCtrl+N", NULL);
     item_open = IupItem("&Open Database\tCtrl+O", NULL);
-    item_recent = IupItem("Recent D&atabase", NULL);
     item_save = IupItem("&Save Database", NULL);
     item_saveas = IupItem("Save &As...", NULL);
     item_import = IupItem("&Import...", NULL);
     item_export = IupItem("&Export...", NULL);
     item_properties = IupItem("Database &Metadata...", NULL);
     item_exit = IupItem("E&xit\tCtrl+Q", NULL);
-    menu_file = IupMenu(item_new, item_open, item_recent,
+    menu_file = IupMenu(item_new, item_open,
             IupSeparator(), item_import,
             IupSeparator(), item_export,
             IupSeparator(), item_save, item_saveas,
@@ -2466,7 +2464,6 @@ static Ihandle* create_menus(void)
 
     IupSetCallback(item_new, "ACTION", (Icallback) item_new_action_cb);
     IupSetCallback(item_open, "ACTION", (Icallback) item_open_action_cb);
-    IupSetCallback(item_recent, "ACTION", (Icallback) item_recent_action_cb);
     IupSetCallback(item_import, "ACTION", (Icallback) item_import_action_cb);
     IupSetCallback(item_export, "ACTION", (Icallback) item_export_action_cb);
     IupSetCallback(item_save, "ACTION", (Icallback) item_save_action_cb);
@@ -4483,12 +4480,6 @@ static int item_open_action_cb(void)
 
     return IUP_DEFAULT;
 
-}
-
-static int item_recent_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
 }
 
 static int item_import_action_cb(void)
