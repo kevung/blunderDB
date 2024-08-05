@@ -4138,7 +4138,11 @@ static int canvas_dropfiles_cb(Ihandle* ih, const char* filename,
         printf("%s\n",msg_info_db_loaded);
 
     } else if(has_extension(filename, "txt")){
-        FILE *f=open_input(filename);
+        if (db==NULL) {
+            update_sb_msg(msg_err_no_db_opened);
+            printf("%s\n",msg_err_no_db_opened);
+            return 0;
+        }FILE *f=open_input(filename);
         if(f==NULL){
             update_sb_msg(msg_err_failed_to_import_pos);
             printf("%s\n",msg_err_failed_to_import_pos);
