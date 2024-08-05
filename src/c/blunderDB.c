@@ -1240,14 +1240,14 @@ int db_select_position(sqlite3* db, int* pos_nb,
         for(int i=0;i<26;i++){
             pos_list[*pos_nb].checker[i]=sqlite3_column_int(stmt,i+1);
         }
-        pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,29);
-        pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,30);
-        pos_list[*pos_nb].dice[0]=sqlite3_column_int(stmt,31);
-        pos_list[*pos_nb].dice[1]=sqlite3_column_int(stmt,32);
-        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,33);
-        pos_list[*pos_nb].player_on_roll=sqlite3_column_int(stmt,34);
-        pos_list[*pos_nb].cube_action=sqlite3_column_int(stmt,35);
-        const char *hash=sqlite3_column_text(stmt,36);
+        pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,27);
+        pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,28);
+        pos_list[*pos_nb].dice[0]=sqlite3_column_int(stmt,29);
+        pos_list[*pos_nb].dice[1]=sqlite3_column_int(stmt,30);
+        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,31);
+        pos_list[*pos_nb].player_on_roll=sqlite3_column_int(stmt,32);
+        pos_list[*pos_nb].cube_action=sqlite3_column_int(stmt,33);
+        const char *hash=sqlite3_column_text(stmt,34);
         *pos_nb+=1;
     }
     if(rc!=SQLITE_DONE){
@@ -1347,14 +1347,14 @@ int db_select_position_from_libraries(sqlite3* db, char** cmdtoken,
         for(int i=0;i<26;i++){
             pos_list[*pos_nb].checker[i]=sqlite3_column_int(stmt,i+1);
         }
-        pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,29);
-        pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,30);
-        pos_list[*pos_nb].dice[0]=sqlite3_column_int(stmt,31);
-        pos_list[*pos_nb].dice[1]=sqlite3_column_int(stmt,32);
-        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,33);
-        pos_list[*pos_nb].player_on_roll=sqlite3_column_int(stmt,34);
-        pos_list[*pos_nb].cube_action=sqlite3_column_int(stmt,35);
-        const char *hash=sqlite3_column_text(stmt,36);
+        pos_list[*pos_nb].p1_score=sqlite3_column_int(stmt,27);
+        pos_list[*pos_nb].p2_score=sqlite3_column_int(stmt,28);
+        pos_list[*pos_nb].dice[0]=sqlite3_column_int(stmt,29);
+        pos_list[*pos_nb].dice[1]=sqlite3_column_int(stmt,30);
+        pos_list[*pos_nb].cube=sqlite3_column_int(stmt,31);
+        pos_list[*pos_nb].player_on_roll=sqlite3_column_int(stmt,32);
+        pos_list[*pos_nb].cube_action=sqlite3_column_int(stmt,33);
+        const char *hash=sqlite3_column_text(stmt,34);
         *pos_nb+=1;
     }
     if(rc!=SQLITE_DONE){
