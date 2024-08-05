@@ -1,6 +1,6 @@
 Plus tard:
 
-- Ajouter filtres blunders, equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
+- Ajouter filtres equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Filtre taille prime, hommes à la barre
 - Implement search all positions without analysis
 - Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
@@ -9,6 +9,7 @@ Plus tard:
 - Ecrire l'aide
 
 - Import d'un match.
+- Ajouter filtres blunders. Nécessite de connaître quel coup a été joué.
 - Export des positions et matchs en txt.
 - Add bdid (BlunderDB id) to export position from 1 BlunderDB instance to another.
 - Export d'une collection avec toutes ses positions dans une archive zip
