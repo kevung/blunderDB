@@ -2481,7 +2481,7 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_next_position, "ACTION", (Icallback) item_nextposition_action_cb);
     IupSetCallback(item_prev_position, "ACTION", (Icallback) item_prevposition_action_cb);
     IupSetCallback(item_new_position, "ACTION", (Icallback) item_newposition_action_cb);
-    IupSetCallback(item_import_position, "ACTION", (Icallback) item_importposition_action_cb);
+    IupSetCallback(item_import_position, "ACTION", (Icallback) item_import_action_cb);
     IupSetCallback(item_new_library, "ACTION", (Icallback) item_newlibrary_action_cb);
     IupSetCallback(item_delete_library, "ACTION", (Icallback) item_deletelibrary_action_cb);
     IupSetCallback(item_add_library, "ACTION", (Icallback) item_addtolibrary_action_cb);
@@ -4485,48 +4485,12 @@ static int item_open_action_cb(void)
 static int item_import_action_cb(void)
 {
     printf("\nitem_import_action_cb\n");
-    if(db==NULL){
-        update_sb_msg(msg_err_no_db_opened);
-        return IUP_DEFAULT;
-    }
-    Ihandle *filedlg;
-    filedlg=IupFileDlg();
-    IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
-    IupSetAttribute(filedlg, "TITLE", "Import Position");
-    IupSetAttribute(filedlg, "EXTFILTER",
-            "Position File (.txt)|*.txt|");
-    IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
-
-    switch(IupGetInt(filedlg, "STATUS"))
-    {
-        case 1: //new file
-            printf("Database does not exist.");
-            break;
-        case 0: //file already exists
-            const char *p_filename=IupGetAttribute(filedlg,"VALUE");
-            FILE *f=open_input(p_filename);
-            if(f==NULL){
-                update_sb_msg(msg_err_failed_to_import_pos);
-                printf("%s\n",msg_err_failed_to_import_pos);
-            }
-            int pid;
-            int rc=db_import_position_from_file(db,f,&pid);
-            if(rc){
-                db_select_position(db,&pos_nb,pos_list_id,pos_list);
-                goto_position_cb(&pid);
-                switch_to_library("main",&lib_index);
-                update_sb_msg(msg_info_position_imported);
-            } else{
-                update_sb_msg(msg_err_failed_to_import_pos);
-            }
-            break;
-        case -1:
-            printf("IupFileDlg: Operation Canceled");
-            return 1;
-            break;
-    }
+    //check if file is a position or a match
+    /* item_importmatch_action_cb(); */
+    item_importposition_action_cb();
     return IUP_DEFAULT;
 }
+
 
 static int item_export_action_cb(void)
 {
@@ -4657,7 +4621,47 @@ static int item_newposition_action_cb(void)
 
 static int item_importposition_action_cb(void)
 {
-    error_callback();
+    printf("\nitem_importposition_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+    Ihandle *filedlg;
+    filedlg=IupFileDlg();
+    IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
+    IupSetAttribute(filedlg, "TITLE", "Import Position");
+    IupSetAttribute(filedlg, "EXTFILTER",
+            "Position File (.txt)|*.txt|");
+    IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+
+    switch(IupGetInt(filedlg, "STATUS"))
+    {
+        case 1: //new file
+            printf("Position does not exist.");
+            break;
+        case 0: //file already exists
+            const char *p_filename=IupGetAttribute(filedlg,"VALUE");
+            FILE *f=open_input(p_filename);
+            if(f==NULL){
+                update_sb_msg(msg_err_failed_to_import_pos);
+                printf("%s\n",msg_err_failed_to_import_pos);
+            }
+            int pid;
+            int rc=db_import_position_from_file(db,f,&pid);
+            if(rc){
+                db_select_position(db,&pos_nb,pos_list_id,pos_list);
+                goto_position_cb(&pid);
+                switch_to_library("main",&lib_index);
+                update_sb_msg(msg_info_position_imported);
+            } else{
+                update_sb_msg(msg_err_failed_to_import_pos);
+            }
+            break;
+        case -1:
+            printf("IupFileDlg: Operation Canceled");
+            return 1;
+            break;
+    }
     return IUP_DEFAULT;
 }
 
