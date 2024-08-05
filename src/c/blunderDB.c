@@ -1397,6 +1397,15 @@ int db_select_specific_position(sqlite3* db, const POSITION* p,
         sprintf(t, "and cube_position = %i ", p->cube);
         strcat(sql, t);
     }
+    if(criteria_blunder){
+        printf("\ncriteria_blunder\n");
+        printf("TO BE IMPLEMENTED\n");
+        //impossible to filyer by blunder without
+        //knowing which move has been played.
+        //Can be implemented after match support.
+        //Must be a join on multiple tables:
+        //moves, cube_analysis, checker_analysis
+    }
     strcat(sql, ";");
     printf("sql: %s\n", sql);
 
@@ -3183,6 +3192,23 @@ int parse_cmdline(char* cmdtext){
                 sscanf(cmdtoken[i], "Z%d", &z_num2);
                 criteria_zone2=true;
                 printf("\ncriteria zone : %i\n", z_num2);
+            } else if(strncmp(cmdtoken[i],"b",1)==0){
+                if(strncmp(cmdtoken[i],"b<",2)==0){
+                    criteria_blunder=true;
+                    sscanf(cmdtoken[i], "b<%d", &bmax);
+                    bmin=-1;
+                    printf("\ncriteria blunder max: %d\n",bmax);
+                }else if(strncmp(cmdtoken[i],"b>",2)==0){
+                    criteria_blunder=true;
+                    sscanf(cmdtoken[i], "b>%d", &bmin);
+                    bmax=10000;
+                    printf("\ncriteria blunder min: %d\n",bmin);
+                }else if(strstr(cmdtoken[i],",")!=0){
+                    criteria_blunder=true;
+                    sscanf(cmdtoken[i], "b%d,%d", &bmin, &bmax);
+                    if(bmax<bmin) int_swap(&bmax, &bmin);
+                    printf("\ncriteria blunder min max: %d %d\n",bmin,bmax);
+                }
             }
         }
         db_select_specific_position(db, pos_ptr,
