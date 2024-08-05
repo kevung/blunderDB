@@ -2346,7 +2346,7 @@ static Ihandle* create_menus(void)
     Ihandle *item_first_position, *item_last_position,
             *item_next_position, *item_prev_position,
             *item_new_position,
-            *item_import_position, *item_import_position_bybatch;
+            *item_import_position;
     Ihandle *item_new_library;
     Ihandle *item_delete_library;
     Ihandle *item_add_library;
@@ -2406,14 +2406,13 @@ static Ihandle* create_menus(void)
     item_prev_position = IupItem("Pre&vious Position", NULL);
     item_new_position = IupItem("Ne&w Position", NULL);
     item_import_position = IupItem("&Import Position", NULL);
-    item_import_position_bybatch = IupItem("Import Positions by &Batch", NULL);
     item_new_library = IupItem("New &Library", NULL);
     item_delete_library = IupItem("&Delete Library", NULL);
     item_add_library = IupItem("&Add to Library", NULL);
     menu_position = IupMenu(item_first_position,
             item_next_position, item_prev_position, item_last_position,
             item_new_position, IupSeparator(), item_import_position, 
-            item_import_position_bybatch, IupSeparator(),
+            IupSeparator(),
             item_new_library, item_delete_library,
             item_add_library, NULL);
     submenu_position = IupSubmenu("&Positions", menu_position);
@@ -2486,7 +2485,6 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_prev_position, "ACTION", (Icallback) item_prevposition_action_cb);
     IupSetCallback(item_new_position, "ACTION", (Icallback) item_newposition_action_cb);
     IupSetCallback(item_import_position, "ACTION", (Icallback) item_importposition_action_cb);
-    IupSetCallback(item_import_position_bybatch, "ACTION", (Icallback) item_importpositionbybatch_action_cb);
     IupSetCallback(item_new_library, "ACTION", (Icallback) item_newlibrary_action_cb);
     IupSetCallback(item_delete_library, "ACTION", (Icallback) item_deletelibrary_action_cb);
     IupSetCallback(item_add_library, "ACTION", (Icallback) item_addtolibrary_action_cb);
@@ -4667,12 +4665,6 @@ static int item_newposition_action_cb(void)
 }
 
 static int item_importposition_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
-static int item_importpositionbybatch_action_cb(void)
 {
     error_callback();
     return IUP_DEFAULT;

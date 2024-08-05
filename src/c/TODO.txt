@@ -10,6 +10,7 @@ Plus tard:
 - Export des positions et matchs en txt.
 - Add bdid (BlunderDB id) to export position from 1 BlunderDB instance to another.
 - Export d'une collection avec toutes ses positions dans une archive zip
+- Import positions by batch (multiple txt)
 - Parsage des fichiers XG.
 - Corriger bug parsage des noms de joueurs, notamment en français.
 - Modifier le hash pour incorporer les dés, ou indiquer c'est une décision ce cube.
