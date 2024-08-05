@@ -850,6 +850,15 @@ void convert_xgid_to_position(const char *l, POSITION *p){
     p->p2_score=match_length-p2_score;
 }
 
+
+bool has_extension(const char *filename, const char *extension) {
+    const char *dot = strrchr(filename, '.');
+    if (!dot || dot == filename) {
+        return false; // No extension found
+    }
+    return strcmp(dot + 1, extension) == 0;
+}
+
 /* END Data */
 
 
@@ -4113,20 +4122,37 @@ static int canvas_dropfiles_cb(Ihandle* ih, const char* filename,
 {
     printf("\ncanvas_dropfiles_cb\n");
     printf("filename: %s\n", filename);
-    FILE *f=open_input(filename);
-    if(f==NULL){
-        update_sb_msg(msg_err_failed_to_import_pos);
-        printf("%s\n",msg_err_failed_to_import_pos);
-    }
-    int pid;
-    int rc=db_import_position_from_file(db,f,&pid);
-    if(rc){
-        db_select_position(db,&pos_nb,pos_list_id,pos_list);
-        goto_position_cb(&pid);
-        switch_to_library("main",&lib_index);
-        update_sb_msg(msg_info_position_imported);
-    }else{
-        update_sb_msg(msg_err_failed_to_import_pos);
+    if(has_extension(filename, "db")){
+        int result = db_open(filename);
+        if (result != 0) {
+            update_sb_msg(msg_err_failed_to_open_db);
+            printf("%s\n",msg_err_failed_to_open_db);
+            return result;
+        }
+        db_select_position(db, &pos_nb,
+                pos_list_id, pos_list);
+        db_select_libraries(db, &lib_nb, lib_list_id, lib_list);
+        goto_first_position_cb();
+        update_sb_lib();
+        update_sb_msg(msg_info_db_loaded);
+        printf("%s\n",msg_info_db_loaded);
+
+    } else if(has_extension(filename, "txt")){
+        FILE *f=open_input(filename);
+        if(f==NULL){
+            update_sb_msg(msg_err_failed_to_import_pos);
+            printf("%s\n",msg_err_failed_to_import_pos);
+        }
+        int pid;
+        int rc=db_import_position_from_file(db,f,&pid);
+        if(rc){
+            db_select_position(db,&pos_nb,pos_list_id,pos_list);
+            goto_position_cb(&pid);
+            switch_to_library("main",&lib_index);
+            update_sb_msg(msg_info_position_imported);
+        }else{
+            update_sb_msg(msg_err_failed_to_import_pos);
+        }
     }
     return IUP_DEFAULT;
 }
