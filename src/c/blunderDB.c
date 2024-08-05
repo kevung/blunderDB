@@ -66,7 +66,6 @@ static int item_searchblunder_action_cb(void);
 static int item_searchdice_action_cb(void);
 static int item_searchcubedecision_action_cb(void);
 static int item_searchscore_action_cb(void);
-static int item_searchplayer_action_cb(void);
 static int item_searchengine_action_cb(void);
 static int item_findpositionwithoutanalysis_action_cb(void);
 static int item_preferences_action_cb(void);
@@ -2358,7 +2357,7 @@ static Ihandle* create_menus(void)
     Ihandle *menu_search;
     Ihandle *item_search_blunder, *item_search_structure,
             *item_search_dice, *item_search_cube, *item_search_score,
-            *item_search_player, *item_search_engine;
+            *item_search_engine;
     Ihandle *item_searchmode;
 
     Ihandle *menu_tool;
@@ -2427,12 +2426,11 @@ static Ihandle* create_menus(void)
     item_search_dice = IupItem("by &Dice", NULL);
     item_search_cube = IupItem("by &Cube Decision", NULL);
     item_search_score = IupItem("by &Score", NULL);
-    item_search_player = IupItem("by &Player", NULL);
     item_search_engine = IupItem("Search &Engine", NULL);
     item_searchmode = IupItem("Search &Mode\tCtrl+F", NULL);
     menu_search = IupMenu(item_search_blunder,
             item_search_dice, item_search_cube,
-            item_search_score, item_search_player,
+            item_search_score, 
             item_search_engine, IupSeparator(),
             item_searchmode, NULL);
     submenu_search = IupSubmenu("&Search", menu_search);
@@ -2493,7 +2491,6 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_search_dice, "ACTION", (Icallback) item_searchdice_action_cb);
     IupSetCallback(item_search_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
     IupSetCallback(item_search_score, "ACTION", (Icallback) item_searchscore_action_cb);
-    IupSetCallback(item_search_player, "ACTION", (Icallback) item_searchplayer_action_cb);
     IupSetCallback(item_search_engine, "ACTION", (Icallback) item_searchengine_action_cb);
     IupSetCallback(item_find_position_without_analysis, "ACTION", (Icallback) item_findpositionwithoutanalysis_action_cb);
     IupSetCallback(item_preferences, "ACTION", (Icallback) item_preferences_action_cb);
@@ -2519,7 +2516,7 @@ static Ihandle* create_toolbar(void)
     Ihandle *btn_undo, *btn_redo;
     Ihandle *btn_prev, *btn_next;
     Ihandle *btn_edit, *btn_analysis;
-    Ihandle *btn_blunder, *btn_dice, *btn_cube, *btn_score, *btn_player;
+    Ihandle *btn_blunder, *btn_dice, *btn_cube, *btn_score;
     Ihandle *btn_preferences;
     Ihandle *btn_manual;
 
@@ -2625,11 +2622,6 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_score, "CANFOCUS", "No");
     IupSetAttribute(btn_score, "TIP", "Search by Score");
 
-    btn_player = IupButton("Player", NULL);
-    IupSetAttribute(btn_player, "FLAT", "Yes");
-    IupSetAttribute(btn_player, "CANFOCUS", "No");
-    IupSetAttribute(btn_player, "TIP", "Search by Player");
-
     btn_preferences = IupButton(NULL, NULL);
     IupSetAttribute(btn_preferences, "IMAGE", "IUP_ToolsSettings");
     IupSetAttribute(btn_preferences, "FLAT", "Yes");
@@ -2653,7 +2645,7 @@ static Ihandle* create_toolbar(void)
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_edit, btn_analysis,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_blunder, btn_dice, btn_cube, btn_score, btn_player,
+            btn_blunder, btn_dice, btn_cube, btn_score,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_preferences,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
@@ -2682,7 +2674,6 @@ static Ihandle* create_toolbar(void)
     IupSetCallback(btn_dice, "ACTION", (Icallback) item_searchdice_action_cb);
     IupSetCallback(btn_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
     IupSetCallback(btn_score, "ACTION", (Icallback) item_searchscore_action_cb);
-    IupSetCallback(btn_player, "ACTION", (Icallback) item_searchplayer_action_cb);
     IupSetCallback(btn_preferences, "ACTION", (Icallback) item_preferences_action_cb);
     IupSetCallback(btn_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
 
@@ -4776,12 +4767,6 @@ static int item_searchcubedecision_action_cb(void)
 }
 
 static int item_searchscore_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
-static int item_searchplayer_action_cb(void)
 {
     error_callback();
     return IUP_DEFAULT;
