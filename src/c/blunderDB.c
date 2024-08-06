@@ -61,10 +61,6 @@ static int item_addtolibrary_action_cb(void);
 static int item_importmatch_action_cb(void);
 static int item_importmatchbybatch_action_cb(void);
 static int item_matchlibrary_action_cb(void);
-static int item_searchblunder_action_cb(void);
-static int item_searchdice_action_cb(void);
-static int item_searchcubedecision_action_cb(void);
-static int item_searchscore_action_cb(void);
 static int item_searchengine_action_cb(void);
 static int item_findpositionwithoutanalysis_action_cb(void);
 static int item_preferences_action_cb(void);
@@ -2385,11 +2381,7 @@ static Ihandle* create_menus(void)
             *item_match_library;
 
     Ihandle *menu_search;
-    Ihandle *item_search_blunder, *item_search_structure,
-            *item_search_dice, *item_search_cube, *item_search_score,
-            *item_search_engine;
-    Ihandle *item_searchmode;
-
+    Ihandle *item_search_engine;
     Ihandle *menu_tool;
     Ihandle *item_find_position_without_analysis;
     Ihandle *item_preferences;
@@ -2411,8 +2403,6 @@ static Ihandle* create_menus(void)
     item_exit = IupItem("E&xit\tCtrl+Q", NULL);
     menu_file = IupMenu(item_new, item_open,
             IupSeparator(), item_import,
-            IupSeparator(), item_export,
-            IupSeparator(), item_properties,
             IupSeparator(), item_exit, NULL);
     submenu_file = IupSubmenu("&File", menu_file);
 
@@ -2451,17 +2441,8 @@ static Ihandle* create_menus(void)
             item_match_library, NULL);
     submenu_match = IupSubmenu("&Matches", menu_match);
 
-    item_search_blunder = IupItem("by &Blunder", NULL);
-    item_search_dice = IupItem("by &Dice", NULL);
-    item_search_cube = IupItem("by &Cube Decision", NULL);
-    item_search_score = IupItem("by &Score", NULL);
     item_search_engine = IupItem("Search &Engine", NULL);
-    item_searchmode = IupItem("Search &Mode\tCtrl+F", NULL);
-    menu_search = IupMenu(item_search_blunder,
-            item_search_dice, item_search_cube,
-            item_search_score, 
-            item_search_engine, IupSeparator(),
-            item_searchmode, NULL);
+    menu_search = IupMenu(item_search_engine, NULL);
     submenu_search = IupSubmenu("&Search", menu_search);
 
     item_find_position_without_analysis = IupItem("&Find Positions without Analysis", NULL);
@@ -2516,10 +2497,6 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_import_match, "ACTION", (Icallback) item_importmatch_action_cb);
     IupSetCallback(item_import_match_bybatch, "ACTION", (Icallback) item_importmatchbybatch_action_cb);
     IupSetCallback(item_match_library, "ACTION", (Icallback) item_matchlibrary_action_cb);
-    IupSetCallback(item_search_blunder, "ACTION", (Icallback) item_searchblunder_action_cb);
-    IupSetCallback(item_search_dice, "ACTION", (Icallback) item_searchdice_action_cb);
-    IupSetCallback(item_search_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
-    IupSetCallback(item_search_score, "ACTION", (Icallback) item_searchscore_action_cb);
     IupSetCallback(item_search_engine, "ACTION", (Icallback) item_searchengine_action_cb);
     IupSetCallback(item_find_position_without_analysis, "ACTION", (Icallback) item_findpositionwithoutanalysis_action_cb);
     IupSetCallback(item_preferences, "ACTION", (Icallback) item_preferences_action_cb);
@@ -2543,7 +2520,7 @@ static Ihandle* create_toolbar(void)
     Ihandle *btn_new, *btn_open, *btn_properties;
     Ihandle *btn_copy, *btn_paste;
     Ihandle *btn_prev, *btn_next;
-    Ihandle *btn_edit, *btn_analysis;
+    Ihandle *btn_edit, *btn_analysis, *btn_search;
     Ihandle *btn_blunder, *btn_dice, *btn_cube, *btn_score;
     Ihandle *btn_preferences;
     Ihandle *btn_manual;
@@ -2600,25 +2577,10 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_analysis, "CANFOCUS", "No");
     IupSetAttribute(btn_analysis, "TIP", "Analysis (Ctrl+L)");
 
-    btn_blunder = IupButton("Blunder", NULL);
-    IupSetAttribute(btn_blunder, "FLAT", "Yes");
-    IupSetAttribute(btn_blunder, "CANFOCUS", "No");
-    IupSetAttribute(btn_blunder, "TIP", "Search by Blunder");
-
-    btn_dice = IupButton("Dice", NULL);
-    IupSetAttribute(btn_dice, "FLAT", "Yes");
-    IupSetAttribute(btn_dice, "CANFOCUS", "No");
-    IupSetAttribute(btn_dice, "TIP", "Search by Dice");
-
-    btn_cube = IupButton("Cube", NULL);
-    IupSetAttribute(btn_cube, "FLAT", "Yes");
-    IupSetAttribute(btn_cube, "CANFOCUS", "No");
-    IupSetAttribute(btn_cube, "TIP", "Search by Cube");
-
-    btn_score = IupButton("Score", NULL);
-    IupSetAttribute(btn_score, "FLAT", "Yes");
-    IupSetAttribute(btn_score, "CANFOCUS", "No");
-    IupSetAttribute(btn_score, "TIP", "Search by Score");
+    btn_search = IupButton("Search", NULL);
+    IupSetAttribute(btn_search, "FLAT", "Yes");
+    IupSetAttribute(btn_search, "CANFOCUS", "No");
+    IupSetAttribute(btn_search, "TIP", "Search (Ctrl+F)");
 
     btn_preferences = IupButton(NULL, NULL);
     IupSetAttribute(btn_preferences, "IMAGE", "IUP_ToolsSettings");
@@ -2633,15 +2595,13 @@ static Ihandle* create_toolbar(void)
     IupSetAttribute(btn_manual, "TIP", "Help Manual");
 
     ih = IupHbox(
-            btn_new, btn_open, btn_properties,
+            btn_new, btn_open,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_copy, btn_paste,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_prev, btn_next,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_edit, btn_analysis,
-            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_blunder, btn_dice, btn_cube, btn_score,
+            btn_edit, btn_analysis, btn_search,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_manual,
             NULL);
@@ -2659,10 +2619,7 @@ static Ihandle* create_toolbar(void)
     IupSetCallback(btn_prev, "ACTION", (Icallback) item_prevposition_action_cb);
     IupSetCallback(btn_edit, "ACTION", (Icallback) item_editmode_action_cb);
     IupSetCallback(btn_analysis, "ACTION", (Icallback) toggle_analysis_visibility_cb);
-    IupSetCallback(btn_blunder, "ACTION", (Icallback) item_searchblunder_action_cb);
-    IupSetCallback(btn_dice, "ACTION", (Icallback) item_searchdice_action_cb);
-    IupSetCallback(btn_cube, "ACTION", (Icallback) item_searchcubedecision_action_cb);
-    IupSetCallback(btn_score, "ACTION", (Icallback) item_searchscore_action_cb);
+    IupSetCallback(btn_search, "ACTION", (Icallback) item_searchengine_action_cb);
     IupSetCallback(btn_preferences, "ACTION", (Icallback) item_preferences_action_cb);
     IupSetCallback(btn_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
 
@@ -4055,6 +4012,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cV", (Icallback) item_paste_action_cb);
+    IupSetCallback(dlg, "K_cF", (Icallback) item_searchengine_action_cb);
 
     IupSetCallback(dlg, "K_a", (Icallback) editmode_letter_cb);
     IupSetCallback(dlg, "K_b", (Icallback) editmode_letter_cb);
@@ -4773,30 +4731,6 @@ static int item_importmatchbybatch_action_cb(void)
 }
 
 static int item_matchlibrary_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
-static int item_searchblunder_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
-static int item_searchdice_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
-static int item_searchcubedecision_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
-static int item_searchscore_action_cb(void)
 {
     error_callback();
     return IUP_DEFAULT;
