@@ -1,6 +1,5 @@
 Plus tard:
 
-- Fix bug invert position qui ne change pas les numéros de points
 - Ajouter filtres equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Filtre taille prime
 - Implement search all positions without analysis

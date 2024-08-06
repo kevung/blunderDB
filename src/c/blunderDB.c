@@ -2273,6 +2273,8 @@ int lib_list_id[LIBRARIES_NUMBER_MAX];
 int lib_index; //active library
 int lib_nb;
 
+int is_pos_inverted=0;
+
 bool make_point=true;
 bool is_score_to_fill=false;
 bool is_point_to_fill=false;
@@ -3631,18 +3633,21 @@ void draw_board(cdCanvas* cv) {
             -BOARD_HEIGHT/2, BOARD_HEIGHT/2);
 }
 
-void draw_pointnumber(cdCanvas* cv, const int orientation) {
+void draw_pointnumber(cdCanvas* cv, const int orientation,
+        const bool is_pos_inverted) {
     double x, y;
     char t[3];
     cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
     cdCanvasTextAlignment(cv, CD_CENTER);
     cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
+    printf("is_pos_inverted %i\n",is_pos_inverted);
     if(orientation>0) {
 
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
         }
@@ -3650,7 +3655,8 @@ void draw_pointnumber(cdCanvas* cv, const int orientation) {
         x = -POINT_SIZE;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
         }
@@ -3658,7 +3664,8 @@ void draw_pointnumber(cdCanvas* cv, const int orientation) {
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
         y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
         }
@@ -3666,7 +3673,8 @@ void draw_pointnumber(cdCanvas* cv, const int orientation) {
         x = POINT_SIZE;
         y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
         }
@@ -3676,7 +3684,8 @@ void draw_pointnumber(cdCanvas* cv, const int orientation) {
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
         }
@@ -3684,7 +3693,8 @@ void draw_pointnumber(cdCanvas* cv, const int orientation) {
         x = POINT_SIZE;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
         }
@@ -3692,7 +3702,8 @@ void draw_pointnumber(cdCanvas* cv, const int orientation) {
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
         y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
         }
@@ -3700,7 +3711,8 @@ void draw_pointnumber(cdCanvas* cv, const int orientation) {
         x = -POINT_SIZE;
         y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
-            sprintf(t, "%d", i);
+            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
         }
@@ -3999,7 +4011,7 @@ void draw_canvas(cdCanvas* cv) {
     if(is_pointletter_active) {
         draw_pointletter(cv, board_direction, pos_ptr->cube);
     } else {
-        draw_pointnumber(cv, board_direction);
+        draw_pointnumber(cv, board_direction, is_pos_inverted);
     }
     draw_score(cv, pos_ptr->p1_score, PLAYER1);
     draw_score(cv, pos_ptr->p2_score, PLAYER2);
@@ -5346,19 +5358,24 @@ static int invert_position_cb(){
     pos_buffer.p2_score=pos_ptr->p1_score;
     copy_position(&pos_buffer, &pos_invert_pos);
     pos_ptr=&pos_invert_pos;
-    refresh_position();
 }
 
 static int display_player_on_roll_down(){
     printf("\ndisplay_player_on_roll_down\n");
-    if(pos_ptr->player_on_roll==PLAYER2)
+    if(pos_ptr->player_on_roll==PLAYER2){
         invert_position_cb();
+        is_pos_inverted=0;
+    }
+    refresh_position();
 }
 
 static int display_player_on_roll_up(){
     printf("\ndisplay_player_on_roll_up\n");
-    if(pos_ptr->player_on_roll==PLAYER1)
+    if(pos_ptr->player_on_roll==PLAYER1){
         invert_position_cb();
+        is_pos_inverted=1;
+    }
+    refresh_position();
 }
 
 // END Callbacks
