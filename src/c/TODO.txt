@@ -1,11 +1,14 @@
 Plus tard:
 
 - Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
+    - Implémenter search panel
+    - Implémenter add remove delete library panel
 - Ajouter copier de position pour export dans XG.
 - Ecrire l'aide
 - Implement search all positions without analysis
 
 - Import d'un match.
+- Implémenter menus des match (match library...)
 - Ajouter filtres blunders. Nécessite de connaître quel coup a été joué.
 - Ajouter filtres equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Export des positions et matchs en txt.
