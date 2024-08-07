@@ -5,12 +5,12 @@ Plus tard:
     - Implémenter search panel
     - Implémenter add remove delete library panel
 - Ecrire l'aide
-- Implement search all positions without analysis
 
 - Import d'un match.
-- Implémenter menus des match (match library...)
 - Ajouter filtres blunders. Nécessite de connaître quel coup a été joué.
 - Ajouter filtres equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
+- Implement search all positions without analysis
+- Implémenter menus des match (match library...)
 - Export des positions et matchs en txt.
 - Filtre taille prime
 - Add bdid (BlunderDB id) to export position from 1 BlunderDB instance to another.
