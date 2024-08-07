@@ -1798,13 +1798,13 @@ void parse_checker_analysis(char *l, CHECKER_ANALYSIS *a)
         strcat(a->move4,token[3]);
     }
 
-    l+=29;
+    l+=32;
     if(n<=60){
-        strncpy(_t,l,9);
-        sscanf(_t,"eq:%lf",&a->equity);
+        strncpy(_t,l,6);
+        sscanf(_t,"%lf",&a->equity);
     } else {
-        strncpy(_t,l,18);
-        sscanf(_t,"eq:%lf (%lf)",&a->equity,&a->error);
+        strncpy(_t,l,15);
+        sscanf(_t,"%lf (%lf)",&a->equity,&a->error);
     }
     printf("equity: %f\n",a->equity);
     printf("error: %f\n",a->error);
