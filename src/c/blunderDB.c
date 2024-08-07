@@ -1506,16 +1506,19 @@ int db_select_specific_position(sqlite3* db, const POSITION* p,
         for(int i=0;i<26;i++){
             p_list[*p_nb].checker[i]=sqlite3_column_int(stmt,i+1);
         }
-        p_list[*p_nb].p1_score=sqlite3_column_int(stmt,29);
-        p_list[*p_nb].p2_score=sqlite3_column_int(stmt,30);
-        p_list[*p_nb].dice[0]=sqlite3_column_int(stmt,31);
-        p_list[*p_nb].dice[1]=sqlite3_column_int(stmt,32);
-        p_list[*p_nb].cube=sqlite3_column_int(stmt,33);
-        p_list[*p_nb].player_on_roll=sqlite3_column_int(stmt,34);
-        p_list[*p_nb].cube_action=sqlite3_column_int(stmt,35);
-        const char *hash=sqlite3_column_text(stmt,36);
+        p_list[*p_nb].p1_score=sqlite3_column_int(stmt,27);
+        p_list[*p_nb].p2_score=sqlite3_column_int(stmt,28);
+        p_list[*p_nb].dice[0]=sqlite3_column_int(stmt,29);
+        p_list[*p_nb].dice[1]=sqlite3_column_int(stmt,30);
+        p_list[*p_nb].cube=sqlite3_column_int(stmt,31);
+        p_list[*p_nb].player_on_roll=sqlite3_column_int(stmt,32);
+        p_list[*p_nb].cube_action=sqlite3_column_int(stmt,33);
+        const char *hash=sqlite3_column_text(stmt,34);
+        printf("oooOOO %i\n",*p_nb);
+        position_print(&p_list[*p_nb]);
         *p_nb+=1;
     }
+
     if(rc!=SQLITE_DONE){
         printf("Failed to execute statement: %s\n",
                 sqlite3_errmsg(db));
@@ -3323,6 +3326,7 @@ int parse_cmdline(char* cmdtext){
             pos_list_id[0]=-1;
             pos_nb=1;
         }
+        printf("pos score 0: %i %i\n", pos_list[0].p1_score, pos_list[0].p2_score);
         goto_first_position_cb();
     }
     return 1;
