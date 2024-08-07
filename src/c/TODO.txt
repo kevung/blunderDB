@@ -4,6 +4,8 @@ Plus tard:
     - Implémenter search panel
     - Implémenter add remove delete library panel
 - Ecrire l'aide
+- Traiter les fichiers dont on arrive pas le parsage (tmp/error_parsing_*.txt)
+    - Je n'ai pas encore permis le parsage du beaver
 
 - Import d'un match.
 - Ajouter filtres blunders. Nécessite de connaître quel coup a été joué.
