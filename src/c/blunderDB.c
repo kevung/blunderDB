@@ -1514,8 +1514,6 @@ int db_select_specific_position(sqlite3* db, const POSITION* p,
         p_list[*p_nb].player_on_roll=sqlite3_column_int(stmt,32);
         p_list[*p_nb].cube_action=sqlite3_column_int(stmt,33);
         const char *hash=sqlite3_column_text(stmt,34);
-        printf("oooOOO %i\n",*p_nb);
-        position_print(&p_list[*p_nb]);
         *p_nb+=1;
     }
 
