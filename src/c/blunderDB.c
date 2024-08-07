@@ -1821,7 +1821,7 @@ void parse_line(const char *line, POSITION *p,
         bool *has_cube_p1wins, bool *has_cube_p2wins,
         bool *has_cubeless_eq, bool *has_cubeful_nd,
         bool *has_cubeful_dt, bool *has_cubeful_dp,
-        bool *has_best_cube_action
+        bool *has_best_cube_action, bool *lookfor_rollout_wins_nd
         ){
     int p1_abs_score, p2_abs_score, match_point_nb,
     cube_value, roll;
@@ -1902,6 +1902,33 @@ void parse_line(const char *line, POSITION *p,
     } else if(strstr(l,"Analys")!=0){
         l+=13;
         strncpy(d->depth,l,15);
+    } else if(strncmp(l,"No double",9)==0
+            || strncmp(l,"Pas de double",13)==0){
+        *lookfor_rollout_wins_nd=true;
+        printf("_rollout_wins_nd %i\n",*lookfor_rollout_wins_nd);
+    } else if((strncmp(l,"  Player Winning Chances",24)==0 
+            || strncmp(l,"  Chance de gain du joueur",26)==0)
+            && *lookfor_rollout_wins_nd){
+        printf("KOKOO\n");
+        l+=28;
+        strncpy(_t,l,30);
+        sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p1_w,&d->p1_g,&d->p1_b);
+        *has_cube_p1wins=true;
+    } else if(strncmp(l,"  Opponent Winning Chances",26)==0 && *lookfor_rollout_wins_nd){
+        printf("KIKII\n");
+        l+=28;
+        strncpy(_t,l,30);
+        sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
+        *has_cube_p2wins=true;
+        *lookfor_rollout_wins_nd=false;
+        printf("_rollout_wins_nd %i\n",*lookfor_rollout_wins_nd);
+    } else if(strncmp(l,"  Chance de gain de l'adversaire",32)==0
+            && *lookfor_rollout_wins_nd){
+        l+=34;
+        strncpy(_t,l,30);
+        sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
+        *has_cube_p2wins=true;
+        *lookfor_rollout_wins_nd=false;
     } else if(strncmp(l,"Player Winning Chances",22)==0
             || strncmp(l,"Chance de gain du joueur",24)==0){
         l+=26;
@@ -2092,6 +2119,7 @@ int db_import_position_from_lines(sqlite3* db,
          has_best_cube_action;
     bool has_valid_position, has_valid_checker_analysis,
          has_valid_cube_analysis, is_valid_position_file;
+    bool lookfor_rollout_wins_nd;
 
     p=POS_VOID;
     for(int i=0;i<5;i++) a[i]=CA_VOID;
@@ -2116,6 +2144,7 @@ int db_import_position_from_lines(sqlite3* db,
     has_cubeful_dt=false;
     has_cubeful_dp=false;
     has_best_cube_action=false;
+    lookfor_rollout_wins_nd=false;
 
     for(int i=0;i<line_nb;i++){
         parse_line(lines[i],&p,&ca_index,a,&d,&m,
@@ -2127,7 +2156,8 @@ int db_import_position_from_lines(sqlite3* db,
                 &has_cube_p1wins, &has_cube_p2wins,
                 &has_cubeless_eq, &has_cubeful_nd,
                 &has_cubeful_dt, &has_cubeful_dp,
-                &has_best_cube_action
+                &has_best_cube_action,
+                &lookfor_rollout_wins_nd
                 );
     }
 
