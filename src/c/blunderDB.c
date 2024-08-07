@@ -846,6 +846,78 @@ void convert_xgid_to_position(const char *l, POSITION *p){
     p->p2_score=match_length-p2_score;
 }
 
+void convert_position_to_xgid(const POSITION *p, char *l){
+    printf("\nconvert_position_to_xgid\n");
+    char t[100];t[0]='\0';
+    const char *f1="-ABCDEFGHIKLMNOPQRSTUVWXYZ";
+    const char *f2="-abcdefghiklmnopqrstuvwxyz";
+    /* strcat(l, "XGID=---a-bECC-AAcB----cbbb----:0:0:1:00:0:0:0:9:10"); */
+    strcat(l, "XGID=");
+    for(int i=0;i<26;i++){
+        int k=p->checker[i];
+        if(k>0){
+            sprintf(t,"%c",f1[k]);
+            strcat(l,t);
+        }else{
+            sprintf(t,"%c",f2[-k]);
+            strcat(l,t);
+        }
+    }
+    strcat(l,":");
+    sprintf(t,"%d",abs(p->cube));
+    strcat(l,t);
+    strcat(l,":");
+    if(p->cube==0){
+        strcat(l,"0");
+    }else if(p->cube>0){
+            strcat(l,"1");
+    }else if(p->cube<0){
+        strcat(l,"-1");
+    }
+    strcat(l,":");
+    sprintf(t,"%d",p->player_on_roll);
+    strcat(l,t);
+    strcat(l,":");
+    sprintf(t,"%d",p->dice[0]*10+p->dice[1]);
+    strcat(l,t);
+    strcat(l,":");
+    int match_length=(int) fmax((double)p->p1_score,(double)p->p2_score);
+    printf("match length %i\n",match_length);
+    if(p->p1_score==0){
+        sprintf(t,"%d",match_length-1);
+    }else if(p->p1_score==-1){
+        sprintf(t,"%d",0);
+    }else {
+        sprintf(t,"%d",match_length-(p->p1_score));
+    }
+    strcat(l,t);
+    strcat(l,":");
+    if(p->p2_score==0){
+        sprintf(t,"%d",match_length-1);
+    }else if(p->p2_score==-1){
+        sprintf(t,"%d",0);
+    }else{
+        sprintf(t,"%d", match_length-(p->p2_score));
+    }
+    strcat(l,t);
+    strcat(l,":");
+    if(p->p1_score<0||p->p2_score<0){
+        strcat(l,"3:0");
+    }else if(p->p1_score==1||p->p2_score==1){
+        strcat(l,"1");
+        strcat(l,":");
+        sprintf(t,"%d",match_length);
+        strcat(l,t);
+    } else {
+        strcat(l,"0");
+        strcat(l,":");
+        sprintf(t,"%d",match_length);
+        strcat(l,t);
+    }
+    strcat(l,":10");
+    printf("xgid: %s\n",l);
+}
+
 
 bool has_extension(const char *filename, const char *extension) {
     const char *dot = strrchr(filename, '.');
@@ -4012,6 +4084,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cV", (Icallback) item_paste_action_cb);
+    IupSetCallback(dlg, "K_cC", (Icallback) item_copy_action_cb);
     IupSetCallback(dlg, "K_cF", (Icallback) item_searchengine_action_cb);
 
     IupSetCallback(dlg, "K_a", (Icallback) editmode_letter_cb);
@@ -4573,7 +4646,14 @@ static int item_redo_action_cb(void)
 
 static int item_copy_action_cb(void)
 {
-    error_callback();
+    printf("\nitem_copy_action_cb\n");
+    Ihandle* clipboard=IupClipboard();
+    Ihandle* text=IupText(NULL);
+    char _xgid[1000];_xgid[0]='\0';
+    convert_position_to_xgid(pos_ptr,_xgid);
+    IupSetAttribute(text,"VALUE",_xgid);
+    IupSetAttribute(clipboard, "TEXT", IupGetAttribute(text,"VALUE"));
+    IupDestroy(clipboard);
     return IUP_DEFAULT;
 }
 

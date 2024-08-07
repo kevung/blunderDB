@@ -1,9 +1,10 @@
 Plus tard:
 
+- Add cube depth inanalysis
+- Fix bug cube avec rollout est pas parsée correctement. Vérifier pour checker
 - Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
     - Implémenter search panel
     - Implémenter add remove delete library panel
-- Ajouter copier de position pour export dans XG.
 - Ecrire l'aide
 - Implement search all positions without analysis
 
