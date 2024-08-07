@@ -1,5 +1,7 @@
 Plus tard:
 
+- Corriger bug de rechetche de position par score.
+    - Je pense que c'est du à player_on_roll qui contraint trop la recherche.
 - Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
     - Implémenter search panel
     - Implémenter add remove delete library panel
