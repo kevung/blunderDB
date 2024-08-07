@@ -2454,8 +2454,7 @@ static Ihandle* create_menus(void)
 
     Ihandle *menu, *submenu_file, *submenu_edit,
             *submenu_position, *submenu_match,
-            *submenu_search, *submenu_tool,
-            *submenu_help;
+            *submenu_tool, *submenu_help;
 
     Ihandle *menu_file;
     Ihandle *item_new, *item_open;
@@ -2482,10 +2481,9 @@ static Ihandle* create_menus(void)
     Ihandle *item_import_match, *item_import_match_bybatch, 
             *item_match_library;
 
-    Ihandle *menu_search;
     Ihandle *item_search_engine;
     Ihandle *menu_tool;
-    Ihandle *item_find_position_without_analysis;
+    Ihandle *item_analysis, *item_find_position_without_analysis;
     Ihandle *item_preferences;
 
     Ihandle *menu_help;
@@ -2518,10 +2516,10 @@ static Ihandle* create_menus(void)
             IupSeparator(), item_editmode, NULL);
     submenu_edit = IupSubmenu("&Edit", menu_edit);
 
-    item_first_position = IupItem("&First Position", NULL);
-    item_last_position = IupItem("La&st Position", NULL);
-    item_next_position = IupItem("Ne&xt Position", NULL);
-    item_prev_position = IupItem("Pre&vious Position", NULL);
+    item_first_position = IupItem("&First Position\tPg Up", NULL);
+    item_last_position = IupItem("La&st Position\tPg Down", NULL);
+    item_next_position = IupItem("Ne&xt Position\tj,Right", NULL);
+    item_prev_position = IupItem("Pre&vious Position\tk,Left", NULL);
     item_new_position = IupItem("Ne&w Position", NULL);
     item_import_position = IupItem("&Import Position", NULL);
     item_new_library = IupItem("New &Library", NULL);
@@ -2543,14 +2541,13 @@ static Ihandle* create_menus(void)
             item_match_library, NULL);
     submenu_match = IupSubmenu("&Matches", menu_match);
 
-    item_search_engine = IupItem("Search &Engine", NULL);
-    menu_search = IupMenu(item_search_engine, NULL);
-    submenu_search = IupSubmenu("&Search", menu_search);
 
+    item_analysis = IupItem("&Display Analysis\tCtrl-L", NULL);
     item_find_position_without_analysis = IupItem("&Find Positions without Analysis", NULL);
+    item_search_engine = IupItem("Search &Engine\tCtrl-F", NULL);
     item_preferences = IupItem("&Preferences", NULL);
-    menu_tool = IupMenu(item_find_position_without_analysis,
-            IupSeparator(), NULL);
+    menu_tool = IupMenu(item_analysis, item_find_position_without_analysis, IupSeparator(),
+            item_search_engine, NULL);
     submenu_tool = IupSubmenu("&Tools", menu_tool);
 
     item_manual = IupItem("Help &Manual", NULL);
@@ -2568,7 +2565,7 @@ static Ihandle* create_menus(void)
     submenu_help = IupSubmenu("&Help", menu_help);
 
     menu = IupMenu(submenu_file, submenu_edit, submenu_position,
-            submenu_search, submenu_tool, submenu_help,
+            submenu_tool, submenu_help,
             NULL);
 
     IupSetHandle("menu", menu);
@@ -2600,6 +2597,7 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_import_match_bybatch, "ACTION", (Icallback) item_importmatchbybatch_action_cb);
     IupSetCallback(item_match_library, "ACTION", (Icallback) item_matchlibrary_action_cb);
     IupSetCallback(item_search_engine, "ACTION", (Icallback) item_searchengine_action_cb);
+    IupSetCallback(item_analysis, "ACTION", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(item_find_position_without_analysis, "ACTION", (Icallback) item_findpositionwithoutanalysis_action_cb);
     IupSetCallback(item_preferences, "ACTION", (Icallback) item_preferences_action_cb);
     IupSetCallback(item_manual, "ACTION", (Icallback) item_helpmanual_action_cb);
