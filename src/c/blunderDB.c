@@ -3367,6 +3367,8 @@ int update_cube_analysis(const int pid){
                 "","Redouble/Pass",da.cubeful_equity_dp,da.error_dp);
         strcat(txt,t);
     }
+    sprintf(t,"Depth analysis: %s\n",da.depth);
+    strcat(txt,t);
 
     printf("txt: %s\n", txt);
     IupSetAttribute(analysis, "VALUE", txt);
