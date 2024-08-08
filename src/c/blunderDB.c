@@ -106,7 +106,6 @@ static int goto_position_cb(int*);
 static int board_direction_left_cb(void);
 static int board_direction_right_cb(void);
 static int checker_analysis_action_cb(Ihandle*);
-static int invert_position_cb(void);
 static int display_player_on_roll_up(void);
 static int display_player_on_roll_down(void);
 // END Prototypes
@@ -263,7 +262,7 @@ POSITION pos;
 POSITION *pos_ptr, *pos_prev_ptr, *pos_next_ptr;
 bool is_pointletter_active = false;
 
-POSITION pos_buffer, pos_invert_pos;
+POSITION pos_buffer;
 POSITION pos_list[POSITION_NUMBER_MAX],
          pos_list_tmp[POSITION_NUMBER_MAX];
 int pos_list_id[POSITION_NUMBER_MAX],
@@ -801,6 +800,19 @@ int close_file(FILE *f){
     return s;
 }
 
+static int invert_position(POSITION* p){
+    printf("\ninvert_position\n");
+    copy_position(p, &pos_buffer);
+    for(int i=0;i<26;i++){
+        pos_buffer.checker[i]=-p->checker[25-i];
+    }
+    pos_buffer.cube*=-1;
+    pos_buffer.player_on_roll*=-1;
+    pos_buffer.p1_score=p->p2_score;
+    pos_buffer.p2_score=p->p1_score;
+    copy_position(&pos_buffer, p);
+}
+
 void convert_xgid_to_position(const char *l, POSITION *p){
     char t[100]; char* token[10]; int i;
     const char *f1="-ABCDEFGHIKLMNOPQRSTUVWXYZ";
@@ -844,6 +856,7 @@ void convert_xgid_to_position(const char *l, POSITION *p){
     int match_length=atoi(token[8]);
     p->p1_score=match_length-p1_score;
     p->p2_score=match_length-p2_score;
+    if(p1_sign<0) invert_position(p);
 }
 
 void convert_position_to_xgid(const POSITION *p, char *l){
@@ -2369,8 +2382,6 @@ int lib_list_id[LIBRARIES_NUMBER_MAX];
 int lib_index; //active library
 int lib_nb;
 
-int is_pos_inverted=0;
-
 bool make_point=true;
 bool is_score_to_fill=false;
 bool is_point_to_fill=false;
@@ -3692,19 +3703,18 @@ void draw_board(cdCanvas* cv) {
 }
 
 void draw_pointnumber(cdCanvas* cv, const int orientation,
-        const bool is_pos_inverted) {
+        const int p_on_roll) {
     double x, y;
     char t[3];
     cdCanvasForeground(cv, POINTNUMBER_LINECOLOR);
     cdCanvasTextAlignment(cv, CD_CENTER);
     cdCanvasFont(cv, POINTNUMBER_FONT, POINTNUMBER_STYLE, POINTNUMBER_FONTSIZE);
-    printf("is_pos_inverted %i\n",is_pos_inverted);
     if(orientation>0) {
 
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
@@ -3713,7 +3723,7 @@ void draw_pointnumber(cdCanvas* cv, const int orientation,
         x = -POINT_SIZE;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
@@ -3722,7 +3732,7 @@ void draw_pointnumber(cdCanvas* cv, const int orientation,
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
         y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
@@ -3731,7 +3741,7 @@ void draw_pointnumber(cdCanvas* cv, const int orientation,
         x = POINT_SIZE;
         y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
@@ -3742,7 +3752,7 @@ void draw_pointnumber(cdCanvas* cv, const int orientation,
         x = -BOARD_WIDTH/2 +POINT_SIZE/2;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=1; i<7; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
@@ -3751,7 +3761,7 @@ void draw_pointnumber(cdCanvas* cv, const int orientation,
         x = POINT_SIZE;
         y = POINTNUMBER_YPOS_DOWN;
         for(int i=7; i<13; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x += POINT_SIZE;
@@ -3760,7 +3770,7 @@ void draw_pointnumber(cdCanvas* cv, const int orientation,
         x = BOARD_WIDTH/2 -POINT_SIZE/2;
         y = POINTNUMBER_YPOS_UP;
         for(int i=13; i<19; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
@@ -3769,7 +3779,7 @@ void draw_pointnumber(cdCanvas* cv, const int orientation,
         x = -POINT_SIZE;
         y = POINTNUMBER_YPOS_UP;
         for(int i=19; i<25; i++){
-            if(is_pos_inverted){ sprintf(t, "%d", 25-i);
+            if(p_on_roll==PLAYER2){ sprintf(t, "%d", 25-i);
             }else{ sprintf(t, "%d", i); }
             wdCanvasText(cv, x, y, t);
             x -= POINT_SIZE;
@@ -4069,7 +4079,8 @@ void draw_canvas(cdCanvas* cv) {
     if(is_pointletter_active) {
         draw_pointletter(cv, board_direction, pos_ptr->cube);
     } else {
-        draw_pointnumber(cv, board_direction, is_pos_inverted);
+        draw_pointnumber(cv, board_direction,
+                pos_ptr->player_on_roll);
     }
     draw_score(cv, pos_ptr->p1_score, PLAYER1);
     draw_score(cv, pos_ptr->p2_score, PLAYER2);
@@ -5389,25 +5400,10 @@ static int board_direction_right_cb(void){
     return IUP_DEFAULT;
 }
 
-static int invert_position_cb(){
-    printf("\ninvert_position\n");
-    copy_position(pos_ptr, &pos_buffer);
-    for(int i=0;i<26;i++){
-        pos_buffer.checker[i]=-pos_ptr->checker[25-i];
-    }
-    pos_buffer.cube*=-1;
-    pos_buffer.player_on_roll*=-1;
-    pos_buffer.p1_score=pos_ptr->p2_score;
-    pos_buffer.p2_score=pos_ptr->p1_score;
-    copy_position(&pos_buffer, &pos_invert_pos);
-    pos_ptr=&pos_invert_pos;
-}
-
 static int display_player_on_roll_down(){
     printf("\ndisplay_player_on_roll_down\n");
     if(pos_ptr->player_on_roll==PLAYER2){
-        invert_position_cb();
-        is_pos_inverted=0;
+        invert_position(pos_ptr);
     }
     refresh_position();
 }
@@ -5415,8 +5411,7 @@ static int display_player_on_roll_down(){
 static int display_player_on_roll_up(){
     printf("\ndisplay_player_on_roll_up\n");
     if(pos_ptr->player_on_roll==PLAYER1){
-        invert_position_cb();
-        is_pos_inverted=1;
+        invert_position(pos_ptr);
     }
     refresh_position();
 }
