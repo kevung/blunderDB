@@ -2483,6 +2483,8 @@ static Ihandle* create_menus(void)
 
     Ihandle *menu_edit;
     Ihandle *item_undo, *item_redo, *item_copy, *item_cut, *item_paste;
+    Ihandle *item_board_direction_right, *item_board_direction_left;
+    Ihandle *item_player_on_roll_down, *item_player_on_roll_up;
     Ihandle *item_editmode;
 
     Ihandle *menu_position;
@@ -2529,7 +2531,14 @@ static Ihandle* create_menus(void)
     item_cut = IupItem("Cu&t\tCtrl-X", NULL);
     item_paste = IupItem("Pa&ste\tCtrl-V", NULL);
     item_editmode = IupItem("&Edit Mode\tTab", NULL);
+    item_board_direction_right = IupItem("Bear-off on the &right\tCtrl-Right", NULL);
+    item_board_direction_left = IupItem("Bear-off on the &left\tCtrl-Left", NULL);
+    item_player_on_roll_down = IupItem("Player on roll &down\tCtrl-Down", NULL);
+    item_player_on_roll_up = IupItem("Player on roll &up\tCtrl-Up", NULL);
     menu_edit = IupMenu( item_copy, item_paste,
+            IupSeparator(), item_board_direction_right,
+            item_board_direction_left,
+            item_player_on_roll_down, item_player_on_roll_up,
             IupSeparator(), item_editmode, NULL);
     submenu_edit = IupSubmenu("&Edit", menu_edit);
 
@@ -2601,6 +2610,10 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_copy, "ACTION", (Icallback) item_copy_action_cb);
     IupSetCallback(item_paste, "ACTION", (Icallback) item_paste_action_cb);
     IupSetCallback(item_editmode, "ACTION", (Icallback) item_editmode_action_cb);
+    IupSetCallback(item_board_direction_left, "ACTION", (Icallback) board_direction_left_cb);
+    IupSetCallback(item_board_direction_right, "ACTION", (Icallback) board_direction_right_cb);
+    IupSetCallback(item_player_on_roll_up, "ACTION", (Icallback) display_player_on_roll_up);
+    IupSetCallback(item_player_on_roll_down, "ACTION", (Icallback) display_player_on_roll_down);
     IupSetCallback(item_first_position, "ACTION", (Icallback) goto_first_position_cb);
     IupSetCallback(item_last_position, "ACTION", (Icallback) goto_last_position_cb);
     IupSetCallback(item_next_position, "ACTION", (Icallback) item_nextposition_action_cb);
