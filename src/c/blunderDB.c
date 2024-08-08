@@ -172,6 +172,7 @@ typedef struct
     double error_dp;
     int best_cube_action; // 0=nd 1=dt 2=dp 3=tgp 4=tgt
     double percentage_wrong_pass_make_good_double;
+    int beaver;
 } CUBE_ANALYSIS;
 
 typedef struct
@@ -1061,6 +1062,7 @@ const char* sql_cube_analysis =
 "error_dp REAL,"
 "best_cube_action INTEGER,"
 "percentage_wrong_pass_make_good_double REAL,"
+"beaver INTEGER,"
 "FOREIGN KEY(position_id) REFERENCES position(id)"
 ");";
 
@@ -1253,14 +1255,15 @@ int db_insert_cube_analysis(sqlite3 *db, const int *pid,
     strcat(sql,"cubeless_equity_nd,cubeless_equity_d,");
     strcat(sql,"cubeful_equity_nd,cubeful_equity_dt,cubeful_equity_dp,");
     strcat(sql,"error_nd,error_dt,error_dp,");
-    strcat(sql,"best_cube_action,percentage_wrong_pass_make_good_double) ");
+    strcat(sql,"best_cube_action,percentage_wrong_pass_make_good_double,beaver) ");
     strcat(sql,"VALUES (");
-    sprintf(t,"%d,\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f);",
+    sprintf(t,"%d,\"%s\",%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%d,%f,%d);",
             *pid,a->depth,a->p1_w,a->p1_g,a->p1_b,a->p2_w,a->p2_g,a->p2_b,
             a->cubeless_equity_nd,a->cubeless_equity_d,
             a->cubeful_equity_nd,a->cubeful_equity_dt,a->cubeful_equity_dp,
             a->error_nd,a->error_dt,a->error_dp,
-            a->best_cube_action,a->percentage_wrong_pass_make_good_double);
+            a->best_cube_action,a->percentage_wrong_pass_make_good_double,
+            a->beaver);
     strcat(sql,t);
     printf("sql %s\n",sql);
     execute_sql(db,sql);
@@ -2007,7 +2010,11 @@ void parse_line(const char *line, POSITION *p,
         }
         *has_cubeful_dt=true;
     } else if(strncmp(l,"       Redouble/Take",20)==0
+            || strncmp(l,"       Redouble/Beaver",22)==0
             || strncmp(l,"       Redouble/Prend",21)==0){
+        if(strstr(l,"Beaver")!=0){
+            d->beaver=1;
+        }else{ d->beaver=0;}
         l+=24;
         if(strstr(l,"(")==NULL){
             strncpy(_t,l,6);
@@ -2329,6 +2336,7 @@ int db_select_cube_analysis(sqlite3* db, int pid,
         da->best_cube_action=sqlite3_column_int(stmt,16);
         da->percentage_wrong_pass_make_good_double=
             sqlite3_column_double(stmt,17);
+        da->beaver=sqlite3_column_int(stmt,18);
         *da_nb+=1;
     }
     sqlite3_finalize(stmt);
@@ -3387,21 +3395,26 @@ int update_cube_analysis(const int pid){
             da.cubeless_equity_nd, da.cubeless_equity_d); 
     }
     strcat(txt,t);
-    sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+    sprintf(t,"%17s   %15s    %+6.3f    %+6.3f\n",
             "Cubeful Equities:","No double",da.cubeful_equity_nd,da.error_nd);
     strcat(txt,t);
     if(pos_ptr->cube==0){
-        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+        sprintf(t,"%17s   %15s    %+6.3f    %+6.3f\n",
                 "","Double/Take",da.cubeful_equity_dt,da.error_dt);
         strcat(txt,t);
-        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+        sprintf(t,"%17s   %15s    %+6.3f    %+6.3f\n",
                 "","Double/Pass",da.cubeful_equity_dp,da.error_dp);
         strcat(txt,t);
     }else{
-        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
-                "","Redouble/Take",da.cubeful_equity_dt,da.error_dt);
+        if(da.beaver){
+            sprintf(t,"%17s   %15s    %+6.3f    %+6.3f\n",
+                    "","Redouble/Beaver",da.cubeful_equity_dt,da.error_dt);
+        }else{
+            sprintf(t,"%17s   %15s    %+6.3f    %+6.3f\n",
+                    "","Redouble/Take",da.cubeful_equity_dt,da.error_dt);
+        }
         strcat(txt,t);
-        sprintf(t,"%17s   %13s    %+6.3f    %+6.3f\n",
+        sprintf(t,"%17s   %15s    %+6.3f    %+6.3f\n",
                 "","Redouble/Pass",da.cubeful_equity_dp,da.error_dp);
         strcat(txt,t);
     }
