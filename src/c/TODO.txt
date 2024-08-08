@@ -1,5 +1,6 @@
 Plus tard:
 
+- Ajouter dans menu Edit: orientation du board à gauche, à droite, retourner le board (préciser les raccourcis)
 - Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
     - Implémenter search panel
     - Implémenter add remove delete library panel
