@@ -851,7 +851,6 @@ void convert_position_to_xgid(const POSITION *p, char *l){
     char t[100];t[0]='\0';
     const char *f1="-ABCDEFGHIKLMNOPQRSTUVWXYZ";
     const char *f2="-abcdefghiklmnopqrstuvwxyz";
-    /* strcat(l, "XGID=---a-bECC-AAcB----cbbb----:0:0:1:00:0:0:0:9:10"); */
     strcat(l, "XGID=");
     for(int i=0;i<26;i++){
         int k=p->checker[i];
@@ -2188,8 +2187,7 @@ int db_import_position_from_lines(sqlite3* db,
         && has_cubeful_nd && has_cubeful_dt && has_cubeful_dp
         && has_best_cube_action;
 
-    is_valid_position_file = has_valid_position &&
-        (has_valid_checker_analysis || has_valid_cube_analysis);
+    is_valid_position_file = has_valid_position;
 
     printf("is_valid_position_file: %i\n", is_valid_position_file);
     printf("has_valid_position: %i\n", has_valid_position);
@@ -2201,11 +2199,11 @@ int db_import_position_from_lines(sqlite3* db,
     // checker if all information are gathered and position is valid
     // has_dice_action or has_cube_action. disfonction de cas
 
-    if(p.cube_action==0){
+    if(has_valid_checker_analysis){
         for(int i=0;i<5;i++)
             checker_analysis_print(&a[i]);
     }
-    if(p.cube_action==1) cube_analysis_print(&d);
+    if(has_valid_cube_analysis) cube_analysis_print(&d);
     metadata_print(&m);
 
     convert_xgid_to_position(m.xgid,&p);
@@ -2221,16 +2219,15 @@ int db_import_position_from_lines(sqlite3* db,
     }
     db_delete_if_exist_metadata(db,*pid);
     db_insert_metadata(db,pid,&m);
-    if(p.cube_action==0){
+    if(has_valid_checker_analysis){
         db_delete_if_exist_checker_analysis(db,*pid);
         for(int i=0;i<5;i++)
             db_insert_checker_analysis(db,pid,&a[i]);
-    } else if (p.cube_action==1){
+    } else if (has_valid_cube_analysis){
         db_delete_if_exist_cube_analysis(db,*pid);
         db_insert_cube_analysis(db,pid,&d);
     }
 
-    //return bool;
     return 1;
 }
 
