@@ -293,7 +293,7 @@ int char_in_string(const char c, const char* s) {
     return index;
 }
 
-void copy_position(POSITION* a, POSITION* b){
+void copy_position(const POSITION* a, POSITION* b){
     for(int i=0;i<26;i++) b->checker[i]=a->checker[i];
     b->cube=a->cube;
     b->p1_score=a->p1_score;
@@ -1449,9 +1449,9 @@ int db_select_position_from_libraries(sqlite3* db, char** cmdtoken,
 }
 
 int db_select_specific_position(sqlite3* db, const POSITION* p,
-        const bool force_cube, const bool force_score,
-        const bool criteria_blunder, const int bmin, const int bmax,
-        const bool criteria_equity, const int emin, const int emax,
+        const int force_cube, const int force_score,
+        const int criteria_blunder, const int bmin, const int bmax,
+        const int criteria_equity, const int emin, const int emax,
         int* p_nb, int* p_list_id, POSITION* p_list){
     printf("\ndb_select_specific_position\n");
     // add constraints due to blunder, pipcount, checkeroff
@@ -3242,17 +3242,17 @@ int parse_cmdline(char* cmdtext){
         update_sb_msg(msg_info_position_deleted);
     } else if(strncmp(cmdtoken[0], ":s", 2)==0){
         printf(":s\n");
-        bool force_cube=false;
-        bool force_score=false;
-        bool criteria_blunder=false;
-        bool criteria_pipcount=false;
-        bool criteria_abspipcount=false;
-        bool criteria_checkeroff=false;
-        bool criteria_backchecker1=false;
-        bool criteria_backchecker2=false;
-        bool criteria_zone1=false;
-        bool criteria_zone2=false;
-        bool criteria_equity=false;
+        int force_cube=0;
+        int force_score=0;
+        int criteria_blunder=0;
+        int criteria_pipcount=0;
+        int criteria_abspipcount=0;
+        int criteria_checkeroff=0;
+        int criteria_backchecker1=0;
+        int criteria_backchecker2=0;
+        int criteria_zone1=0;
+        int criteria_zone2=0;
+        int criteria_equity=0;
         int bmin=0, bmax=0;
         int pmin=0, pmax=0;
         int Pmin=0, Pmax=0;
@@ -3265,71 +3265,71 @@ int parse_cmdline(char* cmdtext){
             if(strncmp(cmdtoken[i],"c",1)==0
                     || strncmp(cmdtoken[i],"cu",2)==0
                     || strncmp(cmdtoken[i],"cube",4)==0){
-                force_cube=true;
+                force_cube=1;
             } else if(strncmp(cmdtoken[i],"s",1)==0
                     || strncmp(cmdtoken[i],"sc",2)==0
                     || strncmp(cmdtoken[i],"score",5)==0){
-                force_score=true;
+                force_score=1;
             } else if(strncmp(cmdtoken[i],"o",1)==0){
                 sscanf(cmdtoken[i], "o%d", &omin);
-                criteria_checkeroff=true;
+                criteria_checkeroff=1;
                 printf("\ncriteria checkeroff: %i\n", omin);
             } else if(strncmp(cmdtoken[i],"P",1)==0){
                 sscanf(cmdtoken[i], "P%d,%d", &pmin, &pmax);
                 if(pmax<pmin) int_swap(&pmax, &pmin);
-                criteria_pipcount=true;
+                criteria_pipcount=1;
                 printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
             } else if(strncmp(cmdtoken[i],"p",1)==0){
                 sscanf(cmdtoken[i], "p%d,%d", &Pmin, &Pmax);
                 if(Pmax<Pmin) int_swap(&Pmax, &Pmin);
-                criteria_abspipcount=true;
+                criteria_abspipcount=1;
                 printf("\ncriteria absolut pipcount: %i %i\n", Pmin, Pmax);
             } else if(strncmp(cmdtoken[i],"k",1)==0){
                 sscanf(cmdtoken[i], "k%d", &bc_num1);
-                criteria_backchecker1=true;
+                criteria_backchecker1=1;
                 printf("\ncriteria backchecker 1: %i\n", bc_num1);
             } else if(strncmp(cmdtoken[i],"K",1)==0){
                 sscanf(cmdtoken[i], "K%d", &bc_num2);
-                criteria_backchecker2=true;
+                criteria_backchecker2=1;
                 printf("\ncriteria backchecker : %i\n", bc_num2);
             } else if(strncmp(cmdtoken[i],"z",1)==0){
                 sscanf(cmdtoken[i], "z%d", &z_num1);
-                criteria_zone1=true;
+                criteria_zone1=1;
                 printf("\ncriteria zone 1: %i\n", z_num1);
             } else if(strncmp(cmdtoken[i],"Z",1)==0){
                 sscanf(cmdtoken[i], "Z%d", &z_num2);
-                criteria_zone2=true;
+                criteria_zone2=1;
                 printf("\ncriteria zone : %i\n", z_num2);
             } else if(strncmp(cmdtoken[i],"b",1)==0){
                 if(strncmp(cmdtoken[i],"b<",2)==0){
-                    criteria_blunder=true;
+                    criteria_blunder=1;
                     sscanf(cmdtoken[i], "b<%d", &bmax);
                     bmin=-1;
                     printf("\ncriteria blunder max: %d\n",bmax);
                 }else if(strncmp(cmdtoken[i],"b>",2)==0){
-                    criteria_blunder=true;
+                    criteria_blunder=1;
                     sscanf(cmdtoken[i], "b>%d", &bmin);
                     bmax=10000;
                     printf("\ncriteria blunder min: %d\n",bmin);
                 }else if(strstr(cmdtoken[i],",")!=0){
-                    criteria_blunder=true;
+                    criteria_blunder=1;
                     sscanf(cmdtoken[i], "b%d,%d", &bmin, &bmax);
                     if(bmax<bmin) int_swap(&bmax, &bmin);
                     printf("\ncriteria blunder min max: %d %d\n",bmin,bmax);
                 }
             } else if(strncmp(cmdtoken[i],"e",1)==0){
                 if(strncmp(cmdtoken[i],"e<",2)==0){
-                    criteria_equity=true;
+                    criteria_equity=1;
                     sscanf(cmdtoken[i], "e<%d", &emax);
                     emin=-10000;
                     printf("\ncriteria equity max: %d\n",emax);
                 }else if(strncmp(cmdtoken[i],"e>",2)==0){
-                    criteria_equity=true;
+                    criteria_equity=1;
                     sscanf(cmdtoken[i], "e>%d", &emin);
                     emax=10000;
                     printf("\ncriteria equity min: %d\n",emin);
                 }else if(strstr(cmdtoken[i],",")!=0){
-                    criteria_equity=true;
+                    criteria_equity=1;
                     sscanf(cmdtoken[i], "e%d,%d", &emin, &emax);
                     if(emax<emin) int_swap(&emax, &emin);
                     printf("\ncriteria equity min max: %d %d\n",emin,emax);
@@ -3342,7 +3342,7 @@ int parse_cmdline(char* cmdtext){
                 criteria_equity, emin, emax,
                 &pos_nb, pos_list_id, pos_list);
         if(criteria_checkeroff) filter_position_by_checkeroff(omin);
-        if(criteria_pipcount) filter_position_by_pipcount(pmin,pmax,false);
+        if(criteria_pipcount) filter_position_by_pipcount(pmin,pmax,0);
         if(criteria_abspipcount) filter_position_by_pipcount(Pmin,Pmax,true);
         if(criteria_backchecker1) filter_position_by_backchecker(PLAYER1,bc_num1);
         if(criteria_backchecker2) filter_position_by_backchecker(PLAYER2,bc_num2);
@@ -3353,7 +3353,6 @@ int parse_cmdline(char* cmdtext){
             pos_list_id[0]=-1;
             pos_nb=1;
         }
-        printf("pos score 0: %i %i\n", pos_list[0].p1_score, pos_list[0].p2_score);
         goto_first_position_cb();
     }
     return 1;
@@ -4884,7 +4883,146 @@ static int item_matchlibrary_action_cb(void)
 
 static int item_searchengine_action_cb(void)
 {
-    error_callback();
+
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+
+    int force_cube=0;
+    int cube_owner=1;
+    int cube_value=1;
+    int force_score=0;
+    int score_type=1;
+    int score_player1=7;
+    int score_player2=7;
+    int criteria_abspipcount=0;
+    int Pmin=-30, Pmax=30;
+    int criteria_checkeroff=0;
+    int omin=0;
+    int criteria_backchecker1=0; int bc_num1=0;
+    int criteria_backchecker2=0; int bc_num2=0;
+    int criteria_zone1=0; int z_num1=0;
+    int criteria_zone2=0; int z_num2=0;
+    int criteria_blunder=0; int bmin=0; int bmax=1000;
+    int criteria_equity=0; int emin=-500; int emax=500;
+    if (!IupGetParam("Search Position", NULL, 0,
+                "Bt %u[, MyCancel ]\n"
+                "CUBE%b[,]\n"
+                "player%o|Center|Player 1|Player 2|\n"
+                "value%l|1|2|4|8|16|32|\n"
+                "%t\n"
+                "SCORE%b[,]\n"
+                "type %o|match|unlimited|\n"
+                "player 1 (away, 0=post-Crawford, 1=Crawford) %i[0,25]\n"
+                "player 2 (away, 0=post-Crawford, 1=Crawford) %i[0,25]\n"
+                "%t\n"
+                "PIPCOUNT%b[,]\n"
+                "min %i\n"
+                "max %i\n"
+                "%t\n"
+                "CHECKER OFF %b[,]\n"
+                "min %i[0,15]\n"
+                "%t\n"
+                "BACKCHECKER PLAYER 1 %b[,]\n"
+                "%i[0,15]\n"
+                "BACKCHECKER PLAYER 2 %b[,]\n"
+                "%i[0,15]\n"
+                "%t\n"
+                "CHECKERZONE PLAYER 1 %b[,]\n"
+                "%i[0,15]\n"
+                "CHECKERZONE PLAYER 2 %b[,]\n"
+                "%i[0,15]\n"
+                "%t\n"
+                "BLUNDER %b[,]\n"
+                "min%i\n"
+                "max%i\n"
+                "%t\n"
+                "EQUITY %b[,]\n"
+                "min%i\n"
+                "max%i\n"
+                "",
+                &force_cube,&cube_owner,&cube_value,
+                &force_score,&score_type,
+                &score_player1,&score_player2,
+                &criteria_abspipcount,&Pmin,&Pmax,
+                &criteria_checkeroff,&omin,
+                &criteria_backchecker1,&bc_num1,
+                &criteria_backchecker2,&bc_num2,
+                &criteria_zone1,&z_num1,
+                &criteria_zone2,&z_num2,
+                &criteria_blunder,&bmin,&bmax,
+                &criteria_equity,&emin,&emax,
+                NULL)){}
+                
+    printf("cube: active %i owner %i value %i\n",
+            force_cube,cube_owner,cube_value);
+    printf("score: active %i type %i p1_score %i p2_score %i\n",
+            force_score,score_type,score_player1,score_player2);
+    printf("pipcount: active %i min %i max %i\n",
+            criteria_abspipcount,Pmin,Pmax);
+    printf("backchecker1: active %i n %i\n",
+            criteria_backchecker1, bc_num1);
+    printf("backchecker2: active %i n %i\n",
+            criteria_backchecker2, bc_num2);
+    printf("checkeroff: active %i min %i\n",
+            criteria_checkeroff,omin);
+    printf("checkerzone1: active %i n %i\n",
+            criteria_zone1,z_num1);
+    printf("checkerzone2: active %i n %i\n",
+            criteria_zone2,z_num2);
+    printf("blunder: active %i min %i max %i\n",
+            criteria_blunder,bmin,bmax);
+    printf("equity: active %i min %i max %i\n",
+            criteria_equity,emin,emax);
+
+    copy_position(&POS_VOID,&pos_buffer);
+    pos_ptr=&pos_buffer;
+    if(force_cube){
+        switch(cube_owner){
+            case 0:
+                pos_ptr->cube=0;
+                break;
+            case 1:
+                pos_ptr->cube=cube_value;
+                break;
+            case 2:
+                pos_ptr->cube=-cube_value;
+                break;
+        }
+        printf("cube: %i\n", pos_ptr->cube);
+    }
+    if(force_score){
+        switch(score_type){
+            case 0:
+                pos_ptr->p1_score=score_player1;
+                pos_ptr->p2_score=score_player2;
+                break;
+            case 1:
+                pos_ptr->p1_score=-1;
+                pos_ptr->p2_score=-1;
+                break;
+        }
+    }
+    db_select_specific_position(db, pos_ptr,
+            force_cube, force_score,
+            criteria_blunder, bmin, bmax,
+            criteria_equity, emin, emax,
+            &pos_nb, pos_list_id, pos_list);
+    if(criteria_checkeroff) filter_position_by_checkeroff(omin);
+    if(criteria_abspipcount) filter_position_by_pipcount(Pmin,Pmax,true);
+    if(criteria_backchecker1) filter_position_by_backchecker(PLAYER1,bc_num1);
+    if(criteria_backchecker2) filter_position_by_backchecker(PLAYER2,bc_num2);
+    if(criteria_zone1) filter_position_by_checker_in_the_zone(PLAYER1,z_num1);
+    if(criteria_zone2) filter_position_by_checker_in_the_zone(PLAYER2,z_num2);
+    if(pos_nb==0){
+        pos_list[0]=POS_DEFAULT;
+        pos_list_id[0]=-1;
+        pos_nb=1;
+    }
+    goto_first_position_cb();
+
+
     return IUP_DEFAULT;
 }
 

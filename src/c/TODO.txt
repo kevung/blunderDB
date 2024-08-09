@@ -1,7 +1,6 @@
 Plus tard:
 
 - Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
-    - Implémenter search panel
     - Implémenter add remove delete library panel
 - Ecrire l'aide
 
