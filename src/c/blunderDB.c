@@ -4905,7 +4905,27 @@ static int item_newlibrary_action_cb(void)
 
 static int item_deletelibrary_action_cb(void)
 {
-    error_callback();
+    printf("\nitem_deletelibrary_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+    int ilib=0; char lname[LIBRARY_NAME_MAX];lname[0]='\0';
+    char s[10000];s[0]='\0';
+    char t[LIBRARY_NAME_MAX];t[0]='\0';
+    strcat(s,"name %l|");
+    for(int i=0;i<lib_nb;i++){
+        sprintf(t,"%s|",lib_list[i]);
+        strcat(s,t);
+    }
+    strcat(s,"\n");
+    if (!IupGetParam("Delete Library", NULL, 0,
+                s,&ilib)){}
+    printf("ilib %i %s\n", ilib, lib_list[ilib]);
+    strcat(lname,lib_list[ilib]);
+    db_delete_library(db,lname);
+    sprintf(t, "%s has been deleted.",lname);
+    update_sb_msg(t);
     return IUP_DEFAULT;
 }
 
