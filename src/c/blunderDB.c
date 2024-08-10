@@ -53,6 +53,7 @@ static int item_editmode_action_cb(void);
 static int item_nextposition_action_cb(void);
 static int item_prevposition_action_cb(void);
 static int item_newposition_action_cb(void);
+static int item_updateposition_action_cb(void);
 static int item_importposition_action_cb(void);
 static int item_importpositionbybatch_action_cb(void);
 static int item_newlibrary_action_cb(void);
@@ -2490,11 +2491,10 @@ static Ihandle* create_menus(void)
     Ihandle *menu_position;
     Ihandle *item_first_position, *item_last_position,
             *item_next_position, *item_prev_position,
-            *item_new_position,
+            *item_new_position, *item_update_position,
             *item_import_position;
-    Ihandle *item_new_library;
-    Ihandle *item_delete_library;
-    Ihandle *item_add_library;
+    Ihandle *item_new_library, *item_delete_library,
+            *item_add_library, *item_goto_library;
 
     Ihandle *menu_match;
     Ihandle *item_import_match, *item_import_match_bybatch, 
@@ -2547,16 +2547,18 @@ static Ihandle* create_menus(void)
     item_next_position = IupItem("Ne&xt Position\tj,Right", NULL);
     item_prev_position = IupItem("Pre&vious Position\tk,Left", NULL);
     item_new_position = IupItem("Ne&w Position", NULL);
+    item_update_position = IupItem("&Update Position", NULL);
     item_import_position = IupItem("&Import Position", NULL);
-    item_new_library = IupItem("New &Library", NULL);
+    /* item_new_library = IupItem("New &Library", NULL); */
+    item_add_library = IupItem("&Add Position to Library", NULL);
+    item_goto_library = IupItem("&Go to Library", NULL);
     item_delete_library = IupItem("&Delete Library", NULL);
-    item_add_library = IupItem("&Add to Library", NULL);
     menu_position = IupMenu(item_first_position,
             item_next_position, item_prev_position, item_last_position,
-            item_new_position, IupSeparator(), item_import_position, 
+            item_new_position, item_update_position, IupSeparator(), item_import_position, 
             IupSeparator(),
-            item_new_library, item_delete_library,
-            item_add_library, NULL);
+            item_add_library, item_goto_library, item_delete_library,
+            NULL);
     submenu_position = IupSubmenu("&Positions", menu_position);
 
     item_import_match = IupItem("&Import Match", NULL);
@@ -2619,6 +2621,7 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_next_position, "ACTION", (Icallback) item_nextposition_action_cb);
     IupSetCallback(item_prev_position, "ACTION", (Icallback) item_prevposition_action_cb);
     IupSetCallback(item_new_position, "ACTION", (Icallback) item_newposition_action_cb);
+    IupSetCallback(item_update_position, "ACTION", (Icallback) item_updateposition_action_cb);
     IupSetCallback(item_import_position, "ACTION", (Icallback) item_import_action_cb);
     IupSetCallback(item_new_library, "ACTION", (Icallback) item_newlibrary_action_cb);
     IupSetCallback(item_delete_library, "ACTION", (Icallback) item_deletelibrary_action_cb);
@@ -4790,12 +4793,54 @@ static int item_prevposition_action_cb(void)
 
 static int item_newposition_action_cb(void)
 {
-    db_insert_position(db, pos_ptr);
-    update_sb_msg(msg_info_position_written);
-    toggle_editmode_cb();
-    db_select_position(db, &pos_nb,
-            pos_list_id, pos_list);
-    goto_last_position_cb();
+    printf("\nitem_newlibrary_action_cb\n");
+    bool exist=false;
+    int nb=0;
+    int _id[1000];
+    db_find_identical_position(db, pos_ptr, &exist, &nb, _id);
+    if(exist){
+        goto_position_cb(&_id[0]);
+        update_sb_msg(msg_info_position_already_exists);
+        printf("Position already exists. nb: %i\n", nb);
+        for(int i=0;i<nb;i++) printf("_id: %i\n", _id[i]);
+    } else {
+        db_insert_position(db, pos_ptr);
+        update_sb_msg(msg_info_position_written);
+        db_select_position(db, &pos_nb,
+                pos_list_id, pos_list);
+        goto_last_position_cb();
+    }
+    return IUP_DEFAULT;
+}
+
+static int item_updateposition_action_cb(void)
+{
+    printf("\nitem_updateposition_action_cb\n");
+    bool exist=false;
+    int nb=0;
+    int _id[1000];
+    db_find_identical_position(db, pos_ptr, &exist, &nb, _id);
+    if(exist){
+        goto_position_cb(&_id[0]);
+        update_sb_msg(msg_info_position_already_exists);
+        printf("Position already exists. nb: %i\n", nb);
+        for(int i=0;i<nb;i++) printf("_id[%i]: %i\n",i, _id[i]);
+    } else {
+        int id=pos_list_id[pos_index];
+        if(db_analysis_exist(db,id)){
+            goto_position_cb(&id);
+            mode_active=NORMAL;
+            update_sb_msg(msg_err_cannot_update_position_with_analysis);
+            update_sb_mode();
+        } else {
+            db_update_position(db, &id, pos_ptr);
+            db_select_position(db, &pos_nb,
+                    pos_list_id, pos_list);
+            mode_active=NORMAL;
+            update_sb_msg(msg_info_position_updated);
+            update_sb_mode();
+        }
+    }
     return IUP_DEFAULT;
 }
 
