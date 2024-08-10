@@ -44,10 +44,7 @@ static int item_import_action_cb(void);
 static int item_export_action_cb(void);
 static int item_properties_action_cb(void);
 static int item_exit_action_cb(void);
-static int item_undo_action_cb(void);
-static int item_redo_action_cb(void);
 static int item_copy_action_cb(void);
-static int item_cut_action_cb(void);
 static int item_paste_action_cb(void);
 static int item_editmode_action_cb(void);
 static int item_nextposition_action_cb(void);
@@ -2606,9 +2603,6 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_saveas, "ACTION", (Icallback) item_saveas_action_cb);
     IupSetCallback(item_properties, "ACTION", (Icallback) item_properties_action_cb);
     IupSetCallback(item_exit, "ACTION", (Icallback) item_exit_action_cb);
-    IupSetCallback(item_undo, "ACTION", (Icallback) item_undo_action_cb);
-    IupSetCallback(item_redo, "ACTION", (Icallback) item_redo_action_cb);
-    IupSetCallback(item_cut, "ACTION", (Icallback) item_cut_action_cb);
     IupSetCallback(item_copy, "ACTION", (Icallback) item_copy_action_cb);
     IupSetCallback(item_paste, "ACTION", (Icallback) item_paste_action_cb);
     IupSetCallback(item_editmode, "ACTION", (Icallback) item_editmode_action_cb);
@@ -4149,7 +4143,6 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
-    IupSetCallback(dlg, "K_cZ", (Icallback) item_undo_action_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cV", (Icallback) item_paste_action_cb);
     IupSetCallback(dlg, "K_cC", (Icallback) item_copy_action_cb);
@@ -4700,21 +4693,13 @@ static int item_exit_action_cb()
     return EXIT_SUCCESS;
 }
 
-static int item_undo_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
-static int item_redo_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
 static int item_copy_action_cb(void)
 {
     printf("\nitem_copy_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
     Ihandle* clipboard=IupClipboard();
     Ihandle* text=IupText(NULL);
     char _xgid[1000];_xgid[0]='\0';
@@ -4725,15 +4710,13 @@ static int item_copy_action_cb(void)
     return IUP_DEFAULT;
 }
 
-static int item_cut_action_cb(void)
-{
-    error_callback();
-    return IUP_DEFAULT;
-}
-
 static int item_paste_action_cb(void)
 {
     printf("\nitem_paste_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
     Ihandle* clipboard=IupClipboard();
     Ihandle* text=IupText(NULL);
     IupSetAttribute(text, "VALUE", IupGetAttribute(clipboard, "TEXT"));
@@ -4767,6 +4750,10 @@ static int item_paste_action_cb(void)
 
 static int item_editmode_action_cb(void)
 {
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
     toggle_editmode_cb();
     return IUP_DEFAULT;
 }
@@ -4794,6 +4781,10 @@ static int item_prevposition_action_cb(void)
 static int item_newposition_action_cb(void)
 {
     printf("\nitem_newlibrary_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
     bool exist=false;
     int nb=0;
     int _id[1000];
@@ -4904,7 +4895,18 @@ static int item_deletelibrary_action_cb(void)
 
 static int item_addtolibrary_action_cb(void)
 {
-    error_callback();
+    printf("\nitem_addtolibrary_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+    char lname[100]; lname[0]='\0';
+    if (!IupGetParam("Add Position to Library", NULL, 0,
+                "name %s\n",
+                &lname)){}
+    printf("library name: %s\n",lname);
+    int pos_id = pos_list_id[pos_index];
+    add_position_to_library(db,pos_id,lname); 
     return IUP_DEFAULT;
 }
 
