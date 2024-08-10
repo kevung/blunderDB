@@ -56,6 +56,7 @@ static int item_importpositionbybatch_action_cb(void);
 static int item_newlibrary_action_cb(void);
 static int item_deletelibrary_action_cb(void);
 static int item_addtolibrary_action_cb(void);
+static int item_gotolibrary_action_cb(void);
 static int item_importmatch_action_cb(void);
 static int item_importmatchbybatch_action_cb(void);
 static int item_matchlibrary_action_cb(void);
@@ -1446,6 +1447,20 @@ int db_select_position_from_libraries(sqlite3* db, char** cmdtoken,
     return 1;
 }
 
+int db_select_position_from_specific_library(sqlite3* db,
+        const char* lname, int* pos_nb, int* pos_list_id, POSITION* pos_list){
+    printf("\ndb_select_position_from_specific_library\n");
+    char* cmdtoken[2];
+    cmdtoken[0]=":e";
+    cmdtoken[1]=(char*)lname;
+    printf("toot\n");
+    /* strcat(cmdtoken[1],lname); */
+    int token_nb=2;
+    db_select_position_from_libraries(db,cmdtoken,
+        token_nb,pos_nb,pos_list_id,pos_list);
+    return 1;
+}
+
 int db_select_specific_position(sqlite3* db, const POSITION* p,
         const int force_cube, const int force_score,
         const int criteria_blunder, const int bmin, const int bmax,
@@ -2620,6 +2635,7 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_new_library, "ACTION", (Icallback) item_newlibrary_action_cb);
     IupSetCallback(item_delete_library, "ACTION", (Icallback) item_deletelibrary_action_cb);
     IupSetCallback(item_add_library, "ACTION", (Icallback) item_addtolibrary_action_cb);
+    IupSetCallback(item_goto_library, "ACTION", (Icallback) item_gotolibrary_action_cb);
     IupSetCallback(item_import_match, "ACTION", (Icallback) item_importmatch_action_cb);
     IupSetCallback(item_import_match_bybatch, "ACTION", (Icallback) item_importmatchbybatch_action_cb);
     IupSetCallback(item_match_library, "ACTION", (Icallback) item_matchlibrary_action_cb);
@@ -4907,6 +4923,51 @@ static int item_addtolibrary_action_cb(void)
     printf("library name: %s\n",lname);
     int pos_id = pos_list_id[pos_index];
     add_position_to_library(db,pos_id,lname); 
+    return IUP_DEFAULT;
+}
+
+static int item_gotolibrary_action_cb(void)
+{
+    printf("\nitem_gotolibrary_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+    int ilib=0; char lname[LIBRARY_NAME_MAX];lname[0]='\0';
+    char s[10000];s[0]='\0';
+    char t[LIBRARY_NAME_MAX];t[0]='\0';
+    strcat(s,"name %l|");
+    for(int i=0;i<lib_nb;i++){
+        sprintf(t,"%s|",lib_list[i]);
+        strcat(s,t);
+    }
+    strcat(s,"\n");
+    if (!IupGetParam("Go To Library", NULL, 0,
+                s,&ilib)){}
+    printf("ilib %i %s\n", ilib, lib_list[ilib]);
+    strcat(lname,lib_list[ilib]);
+    db_select_position_from_specific_library(db, lname,
+            &pos_nb, pos_list_id, pos_list);
+    int l_id;
+    if(db_library_exists(db,lname)){
+        db_get_library_id_from_name(db,lname,&l_id);
+        lib_index=find_index_from_int(l_id, lib_list_id, lib_nb);
+        update_sb_lib();
+        char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
+        update_sb_msg(t);
+    } else {
+        db_select_position(db, &pos_nb, pos_list_id, pos_list);
+        lib_index=LIBRARIES_NUMBER_MAX-1; //main lib
+        update_sb_lib();
+        char t[100]; t[0]='\0'; sprintf(t, "Switched to %s.",lib_list[lib_index]);
+    }
+
+    if(pos_nb==0){ //if no position found in lib
+        pos_list[0]=POS_DEFAULT;
+        pos_list_id[0]=-1;
+        pos_nb=1;
+    }
+    goto_first_position_cb();
     return IUP_DEFAULT;
 }
 
