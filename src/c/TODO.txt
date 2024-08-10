@@ -1,9 +1,6 @@
+- Ecrire l'aide et les menus associés
+
 Plus tard:
-
-- Implémenter les menus et boutons. (notamment à partir des commandes de parse_cmd)
-    - Implémenter add remove delete library panel
-- Ecrire l'aide
-
 - Import d'un match.
 - Ajouter filtres blunders. Nécessite de connaître quel coup a été joué.
 - Ajouter filtres equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)

@@ -2377,6 +2377,8 @@ int db_analysis_exist(sqlite3* db, int pid){
     sqlite3_finalize(stmt);
     return 0;
 }
+
+
 /* END Database */
 
 
@@ -5156,7 +5158,30 @@ static int item_searchengine_action_cb(void)
 
 static int item_findpositionwithoutanalysis_action_cb(void)
 {
-    error_callback();
+    printf("\nitem_findpositionwithoutanalysis_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+    int j=0;
+    for(int i=0;i<pos_nb;i++){
+        if(!db_analysis_exist(db,pos_list_id[i])){
+            pos_list_tmp[j]=pos_list[i];
+            pos_list_id_tmp[j]=pos_list_id[i];
+            j+=1;
+        }
+    }
+    for(int i=0;i<j;i++){
+            pos_list[i]=pos_list_tmp[i];
+            pos_list_id[i]=pos_list_id_tmp[i];
+    }
+    pos_nb=j;
+    lib_index=LIBRARIES_NUMBER_MAX-2; //mix lib
+    update_sb_lib();
+    char t[100]; t[0]='\0';
+    sprintf(t, "Found %d position(s) without analysis.",pos_nb);
+    update_sb_msg(t);
+    goto_first_position_cb();
     return IUP_DEFAULT;
 }
 
