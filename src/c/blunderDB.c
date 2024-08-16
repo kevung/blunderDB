@@ -955,6 +955,7 @@ bool is_db_saved = true;
 int rc;
 char *errMsg = 0;
 char db_file[10240];
+int parse_from_file = 0;
 
 const char *sql_library =
 "CREATE TABLE library ("
@@ -1828,6 +1829,7 @@ void parse_checker_analysis(char *l, CHECKER_ANALYSIS *a)
     }
 
     l+=32;
+    if(parse_from_file) l+=1; //extra char from text file
     if(n<=60){
         strncpy(_t,l,6);
         sscanf(_t,"%lf",&a->equity);
@@ -1944,7 +1946,6 @@ void parse_line(const char *line, POSITION *p,
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p1_w,&d->p1_g,&d->p1_b);
         *has_cube_p1wins=true;
     } else if(strncmp(l,"  Opponent Winning Chances",26)==0 && *lookfor_rollout_wins_nd){
-        printf("KIKII\n");
         l+=28;
         strncpy(_t,l,30);
         sscanf(_t,"%lf%% (G:%lf%% B:%lf%%)",&d->p2_w,&d->p2_g,&d->p2_b);
@@ -4281,11 +4282,13 @@ static int canvas_dropfiles_cb(Ihandle* ih, const char* filename,
             update_sb_msg(msg_err_no_db_opened);
             printf("%s\n",msg_err_no_db_opened);
             return 0;
-        }FILE *f=open_input(filename);
+        }
+        FILE *f=open_input(filename);
         if(f==NULL){
             update_sb_msg(msg_err_failed_to_import_pos);
             printf("%s\n",msg_err_failed_to_import_pos);
         }
+        parse_from_file=1;
         int pid;
         int rc=db_import_position_from_file(db,f,&pid);
         if(rc){
@@ -4735,6 +4738,7 @@ static int item_paste_action_cb(void)
         update_sb_msg(msg_err_no_db_opened);
         return IUP_DEFAULT;
     }
+    parse_from_file=0;
     Ihandle* clipboard=IupClipboard();
     Ihandle* text=IupText(NULL);
     IupSetAttribute(text, "VALUE", IupGetAttribute(clipboard, "TEXT"));
@@ -4880,6 +4884,7 @@ static int item_importposition_action_cb(void)
                 update_sb_msg(msg_err_failed_to_import_pos);
                 printf("%s\n",msg_err_failed_to_import_pos);
             }
+            parse_from_file=1;
             int pid;
             int rc=db_import_position_from_file(db,f,&pid);
             if(rc){
