@@ -2531,7 +2531,7 @@ static Ihandle* create_menus(void)
     item_open = IupItem("&Open Database\tCtrl+O", NULL);
     item_save = IupItem("&Save Database", NULL);
     item_saveas = IupItem("Save &As...", NULL);
-    item_import = IupItem("&Import...", NULL);
+    item_import = IupItem("&Import...\tCtrl+I", NULL);
     item_export = IupItem("&Export...", NULL);
     item_properties = IupItem("Database &Metadata...", NULL);
     item_exit = IupItem("E&xit\tCtrl+Q", NULL);
@@ -4162,6 +4162,7 @@ static void set_keyboard_shortcuts()
     IupSetCallback(dlg, "K_cO", (Icallback) item_open_action_cb);
     IupSetCallback(dlg, "K_cS", (Icallback) item_save_action_cb);
     IupSetCallback(dlg, "K_cQ", (Icallback) item_exit_action_cb);
+    IupSetCallback(dlg, "K_cI", (Icallback) item_import_action_cb);
     IupSetCallback(dlg, "K_cL", (Icallback) toggle_analysis_visibility_cb);
     IupSetCallback(dlg, "K_cV", (Icallback) item_paste_action_cb);
     IupSetCallback(dlg, "K_cC", (Icallback) item_copy_action_cb);
