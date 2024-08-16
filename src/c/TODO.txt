@@ -1,8 +1,10 @@
+- Import d'un match. 
+  - Open via menu (dedicated or file>import)
+  - Dropfile
 - Ecrire l'aide et les menus associés
 - Fix bug: segfault when no position in database.
 
 Plus tard:
-- Import d'un match.
 - Ajouter filtres blunders. Nécessite de connaître quel coup a été joué.
 - Ajouter filtres equité, chances de gain, gammon, backgammon (moi et advseraire) (commande :s)
 - Implement search all positions without analysis
