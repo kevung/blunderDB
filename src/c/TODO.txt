@@ -1,4 +1,5 @@
 - Ecrire l'aide et les menus associés
+- Fix bug: segfault when no position in database.
 
 Plus tard:
 - Import d'un match.
