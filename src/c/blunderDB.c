@@ -121,6 +121,11 @@ static int display_player_on_roll_down(void);
 #define PLAYER2_POINTLABEL "YABCDEFGHIJKLMNOPQRSTUVWX*Z"
 #define POSITION_NUMBER_MAX 10000
 #define CHECKER_ANALYSIS_NUMBER_MAX 100
+#define LINE_NBMAX 1000
+#define LINE_LENGTHMAX 256
+
+enum txtfiletype { TXT_POSITION, TXT_MATCH, TXT_UNKNOWN };
+typedef enum txtfiletype txtfiletype_t;
 
 char hash[1000];
 
@@ -791,6 +796,25 @@ FILE *open_input(const char *filename){
     return f;
 }
 
+txtfiletype_t check_if_file_is_position_or_match(FILE *f){
+    printf("\ncheck_if_file_is_position_or_match\n");
+    char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
+    nb=0;
+    lines[nb][0]='\0';
+    while(fgets(lines[nb],sizeof(lines[nb]),f)){
+        lines[nb][strcspn(lines[nb],"\r\n")]=0; //delete \n end of line
+        nb+=1;
+        lines[nb][0]='\0';
+    }
+    for(int i=0;i<nb;i++){
+        printf("l:%s\n",lines[i]);
+        if(strstr(lines[i],"XGID=")!=0) return TXT_POSITION; 
+        if(strstr(lines[i],"point match")!=0) return TXT_MATCH;
+        if(strstr(lines[i],"Game")!=0) return TXT_MATCH;
+    }
+    return TXT_UNKNOWN;
+}
+
 int close_file(FILE *f){
     int s=0;
     if(f==NULL) return 0;
@@ -946,8 +970,6 @@ bool has_extension(const char *filename, const char *extension) {
 /* BEGIN Database */
 #define LIBRARIES_NUMBER_MAX 1000
 #define LIBRARY_NAME_MAX 50
-#define LINE_NBMAX 1000
-#define LINE_LENGTHMAX 256
 
 sqlite3 *db = NULL;
 sqlite3_stmt *stmt;
@@ -1066,6 +1088,49 @@ const char* sql_cube_analysis =
 "FOREIGN KEY(position_id) REFERENCES position(id)"
 ");";
 
+const char *sql_game =
+"CREATE TABLE game ("
+"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+"site TEXT,"
+"match_id TEXT,"
+"event TEXT,"
+"player1_name TEXT,"
+"player2_name TEXT,"
+"eventDate TEXT,"
+"eventTime TEXT,"
+"clockType TEXT,"
+"matchLength INTEGER,"
+"player1_score INTEGER,"
+"player2_score INTEGER,"
+"game_prev INTEGER," //begin of match->game_prev empty
+"game_next INTEGER," //end of match-<game_next empty
+"FOREIGN KEY(game_prev) REFERENCES game(id),"
+"FOREIGN KEY(game_next) REFERENCES game(id)"
+");";
+
+const char* sql_move =
+"CREATE TABLE move ("
+"id INTEGER PRIMARY KEY AUTOINCREMENT,"
+"game_id INTEGER,"
+"dice1 INTEGER,"
+"dice2 INTEGER,"
+"move1 TEXT,"
+"move2 TEXT,"
+"move3 TEXT,"
+"move4 TEXT,"
+"player_on_roll INTEGER,"
+"move_prev INTEGER," //begin of game->move_prev empty
+"move_next INTEGER," //end of game->move_next empty
+"position_id INTEGER,"
+"FOREIGN KEY(game_id) REFERENCES game(id),"
+"FOREIGN KEY(move_prev) REFERENCES move(id),"
+"FOREIGN KEY(move_next) REFERENCES move(id),"
+"FOREIGN KEY(position_id) REFERENCES position(id)"
+");";
+
+
+
+
 void execute_sql(sqlite3 *db, const char *sql)
 {
     rc = sqlite3_exec(db, sql, 0, 0, &errMsg);
@@ -1111,6 +1176,12 @@ int db_create(const char* filename)
 
     printf("Try to create cube_analysis table.\n");
     execute_sql(db, sql_cube_analysis);
+
+    printf("Try to create game table.\n");
+    execute_sql(db, sql_game);
+
+    printf("Try to create move table.\n");
+    execute_sql(db, sql_move);
 
     return 0;
 }
@@ -2278,6 +2349,23 @@ int db_import_position_from_file(sqlite3* db, FILE* f, int* pid){
     return db_import_position_from_lines(db,lines,nb,pid);
 }
 
+int db_import_match_from_file(sqlite3* db, FILE* f){
+    printf("\ndb_import_from_file\n");
+    char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
+    nb=0;
+    lines[nb][0]='\0';
+    while(fgets(lines[nb],sizeof(lines[nb]),f)){
+        lines[nb][strcspn(lines[nb],"\r\n")]=0; //delete \n end of line
+        nb+=1;
+        lines[nb][0]='\0';
+    }
+
+    for(int i=0;i<nb;i++){
+        parse_line_match(lines[i]);
+    }
+    return 1;
+}
+
 int db_select_checker_analysis(sqlite3* db, int pid,
         CHECKER_ANALYSIS* ca, int *ca_nb){
     printf("\ndb_select_checker_analysis\n");
@@ -2421,8 +2509,12 @@ int token_nb;
 
 char _c[100];
 
+const char* msg_err_not_pos_nor_match_file =
+"ERR: Text file is not a position nor a match.";
 const char* msg_err_failed_to_import_pos =
 "ERR: Failed to import position.";
+const char* msg_err_failed_to_import_match =
+"ERR: Failed to import match.";
 const char* msg_err_failed_to_create_db =
 "ERR: Failed to create database.";
 const char* msg_err_invalid_library_name =
@@ -2457,6 +2549,8 @@ const char* msg_info_db_created =
 "Database created.";
 const char* msg_info_db_loaded =
 "Database loaded.";
+const char* msg_info_match_imported =
+"Match imported.";
 
 Ihandle *dlg, *menu, *toolbar, *position, *split, *searches, *statusbar;
 Ihandle *cmdline, *analysis, *checker_analysis, *cube_analysis;
@@ -2608,7 +2702,7 @@ static Ihandle* create_menus(void)
     submenu_help = IupSubmenu("&Help", menu_help);
 
     menu = IupMenu(submenu_file, submenu_edit, submenu_position,
-            submenu_tool, submenu_help,
+            submenu_match, submenu_tool, submenu_help,
             NULL);
 
     IupSetHandle("menu", menu);
@@ -4290,6 +4384,7 @@ static int canvas_dropfiles_cb(Ihandle* ih, const char* filename,
             printf("%s\n",msg_err_failed_to_import_pos);
         }
         parse_from_file=1;
+        txtfiletype_t rc_txtft=check_if_file_is_position_or_match(f); //IMPORTANT ti implement if block
         int pid;
         int rc=db_import_position_from_file(db,f,&pid);
         if(rc){
@@ -4676,9 +4771,69 @@ static int item_open_action_cb(void)
 static int item_import_action_cb(void)
 {
     printf("\nitem_import_action_cb\n");
-    //check if file is a position or a match
-    /* item_importmatch_action_cb(); */
-    item_importposition_action_cb();
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+    Ihandle *filedlg;
+    filedlg=IupFileDlg();
+    IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
+    IupSetAttribute(filedlg, "TITLE", "Import Position or Match");
+    IupSetAttribute(filedlg, "EXTFILTER",
+            "Position File (.txt)|*.txt|");
+    IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+
+    switch(IupGetInt(filedlg, "STATUS"))
+    {
+        case 1: //new file
+            printf("Position or Match does not exist.");
+            break;
+        case 0: //file already exists
+            const char *p_filename=IupGetAttribute(filedlg,"VALUE");
+            FILE *f=open_input(p_filename);
+            if(f==NULL){
+                update_sb_msg(msg_err_failed_to_import_pos);
+                printf("%s\n",msg_err_failed_to_import_pos);
+            }
+            parse_from_file=1;
+            txtfiletype_t rc_txtft=check_if_file_is_position_or_match(f);
+            int rc;
+            switch(rc_txtft){
+                case TXT_POSITION:
+                    int pid;
+                    rc=db_import_position_from_file(db,f,&pid);
+                    if(rc){
+                        db_select_position(db,&pos_nb,pos_list_id,pos_list);
+                        goto_position_cb(&pid);
+                        switch_to_library("main",&lib_index);
+                        update_sb_msg(msg_info_position_imported);
+                    } else{
+                        update_sb_msg(msg_err_failed_to_import_pos);
+                    }
+                    break;
+                case TXT_MATCH:
+                    rc=db_import_match_from_file(db,f);
+                    if(rc){
+                        db_select_position(db,&pos_nb,pos_list_id,pos_list);
+                        goto_first_position_cb();
+                        switch_to_library("main",&lib_index);
+                        update_sb_msg(msg_info_match_imported);
+                    } else{
+                        update_sb_msg(msg_err_failed_to_import_match);
+                    }
+                    break;
+                default:
+                    update_sb_msg(msg_err_not_pos_nor_match_file);
+                    printf(msg_err_not_pos_nor_match_file);
+                    break;
+            }
+            break;
+        case -1:
+            printf("IupFileDlg: Operation Canceled");
+            return 1;
+            break;
+    }
+
     return IUP_DEFAULT;
 }
 
@@ -5001,7 +5156,48 @@ static int item_gotolibrary_action_cb(void)
 
 static int item_importmatch_action_cb(void)
 {
-    error_callback();
+    printf("\nitem_importmatch_action_cb\n");
+    if(db==NULL){
+        update_sb_msg(msg_err_no_db_opened);
+        return IUP_DEFAULT;
+    }
+    Ihandle *filedlg;
+    filedlg=IupFileDlg();
+    IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
+    IupSetAttribute(filedlg, "TITLE", "Import Match");
+    IupSetAttribute(filedlg, "EXTFILTER",
+            "Position File (.txt)|*.txt|");
+    IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
+
+    switch(IupGetInt(filedlg, "STATUS"))
+    {
+        case 1: //new file
+            printf("Match does not exist.");
+            break;
+        case 0: //file already exists
+            const char *p_filename=IupGetAttribute(filedlg,"VALUE");
+            FILE *f=open_input(p_filename);
+            if(f==NULL){
+                update_sb_msg(msg_err_failed_to_import_match);
+                printf("%s\n",msg_err_failed_to_import_match);
+            }
+            parse_from_file=1;
+            int pid;
+            int rc=db_import_position_from_file(db,f,&pid);
+            if(rc){
+                db_select_position(db,&pos_nb,pos_list_id,pos_list);
+                goto_position_cb(&pid);
+                switch_to_library("main",&lib_index);
+                update_sb_msg(msg_info_position_imported);
+            } else{
+                update_sb_msg(msg_err_failed_to_import_match);
+            }
+            break;
+        case -1:
+            printf("IupFileDlg: Operation Canceled");
+            return 1;
+            break;
+    }
     return IUP_DEFAULT;
 }
 
