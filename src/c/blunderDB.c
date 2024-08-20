@@ -188,6 +188,31 @@ typedef struct
     char misc[10000];
 } METADATA;
 
+typedef struct
+{
+    char site[30];
+    char match_id[30];
+    char event[200];
+    char player1_name[100];
+    char player2_name[100];
+    char eventDate[20];
+    char eventTime[20];
+    char clockType[20];
+    int matchLength;
+    int player1_score;
+    int player2_score;
+} GAME;
+
+typedef struct
+{
+    int dice[2];
+    char move1[10];
+    char move2[10];
+    char move3[10];
+    char move4[10];
+    int player_on_roll; //PLAYER1 or PLAYER2
+} MOVE;
+
 const POSITION POS_DEFAULT = {
     .checker = {0,
         -2, 0, 0, 0, 0, 5,
@@ -261,6 +286,30 @@ const CUBE_ANALYSIS D_VOID = {
     .best_cube_action=0,
     .percentage_wrong_pass_make_good_double=0,
 };
+
+const GAME G_VOID = {
+    .site={'\0'},
+    .match_id={'\0'},
+    .event={'\0'},
+    .player1_name={'\0'},
+    .player2_name={'\0'},
+    .eventDate={'\0'},
+    .eventTime={'\0'},
+    .clockType={'\0'},
+    .matchLength=0,
+    .player1_score=0,
+    .player2_score=0,
+};
+
+const MOVE MV_VOID = {
+    .dice={0,0},
+    .move1={'\0'},
+    .move2={'\0'},
+    .move3={'\0'},
+    .move4={'\0'},
+    .player_on_roll=0,
+};
+
 
 
 POSITION pos;
@@ -371,6 +420,32 @@ void metadata_print(const METADATA* m) {
     printf("comment:%s\n",m->comment);
     printf("misc:%s\n",m->misc);
 }
+
+void game_print(const GAME* m) {
+    printf("\ngame_print\n");
+    printf("site:%s\n",m->site);
+    printf("match_id:%s\n",m->match_id);
+    printf("event:%s\n",m->event);
+    printf("eventDate:%s\n",m->eventDate);
+    printf("eventTime:%s\n",m->eventTime);
+    printf("clockType:%s\n",m->clockType);
+    printf("player1_name:%s\n",m->player1_name);
+    printf("player2_name:%s\n",m->player2_name);
+    printf("matchLength:%i\n",m->matchLength);
+    printf("player1_score:%i\n",m->player1_score);
+    printf("player2_score:%i\n",m->player2_score);
+}
+
+void move_print(const MOVE* m) {
+    printf("\nmove_print\n");
+    printf("dice:%i %i\n",m->dice[0], m->dice[1]);
+    printf("move1:%s\n",m->move1);
+    printf("move2:%s\n",m->move2);
+    printf("move3:%s\n",m->move3);
+    printf("move4:%s\n",m->move4);
+    printf("player_on_roll:%i\n",m->player_on_roll);
+}
+
 
 void int_swap(int* i, int* j) {
     int t; t = *i; *i = *j; *j = t;
@@ -962,6 +1037,7 @@ bool has_extension(const char *filename, const char *extension) {
     }
     return strcmp(dot + 1, extension) == 0;
 }
+
 
 /* END Data */
 
@@ -2349,20 +2425,181 @@ int db_import_position_from_file(sqlite3* db, FILE* f, int* pid){
     return db_import_position_from_lines(db,lines,nb,pid);
 }
 
+int isBlankLine(const char *str) {
+    if (str == NULL || str[0] == '\0') {
+        return 1;
+    }
+    for (int i = 0; i < strlen(str); i++) {
+        if (!isspace((unsigned char)str[i])) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+void parse_match_move(char *s, MOVE *m){
+    printf("\nparse_match_move\n");
+    if(strstr(s,":")!=0){ //checker move
+                           //parse dice
+        int roll=0;
+        char _h[5]; _h[0]='\0';
+        strncpy(_h,s,2);
+        sscanf(_h,"%d",roll);
+        m->dice[0]=roll/10;
+        m->dice[1]=(int) fmod((double)roll,10.);
+        s+=3; //parse checker move
+        int _i=0; char* token[10];
+        char *c = strtok(s, " ");
+        while(c!=NULL){
+            token[_i]=c; _i+=1;
+            c=strtok(NULL, " ");
+        }
+        printf("parse checker play token nb: %i\n",_i);
+        for(int k=0;k<_i;k++) printf("tok i %s %i\n",token[k],k);
+        strcat(m->move1,token[0]);
+        if(_i>=2){
+            strcat(m->move2,token[1]);
+        }
+        if(_i>=3){
+            strcat(m->move3,token[2]);
+        }
+        if(_i>=4){
+            strcat(m->move4,token[3]);
+        }
+    } else if(strstr(s,"Doubles =>")!=0
+            || strstr(s,"Takes")!=0
+            || strstr(s, "Drops")!=0){ //cube move
+        strcat(m->move1, s);
+    }
+}
+
 int db_import_match_from_file(sqlite3* db, FILE* f){
     printf("\ndb_import_from_file\n");
     char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
-    nb=0;
-    lines[nb][0]='\0';
+    char _s[LINE_LENGTHMAX]; _s[0]='\0';
+    nb=0; lines[nb][0]='\0';
+    GAME games[50]; MOVE moves[50][1000];
+    int moves_per_game[50]; int move_nb=0;
+    int game_nb=0; int matchLength=0;
+    char site[100]; site[0]='\0';
+    char match_id[100]; match_id[0]='\0';
+    char event[100]; event[0]='\0';
+    char player1_name[100]; player1_name[0]='\0';
+    char player2_name[100]; player2_name[0]='\0';
+    char eventDate[100]; eventDate[0]='\0';
+    char eventTime[100]; eventTime[0]='\0';
+    char clockType[100]; clockType[0]='\0';
+    bool is_valid_match=false;
+    bool is_valid_game=false;
+    bool is_parsing_game=false;
+
+    for(int i=0;i<50;i++){
+        games[i]=G_VOID;
+        for(int j=0;j<1000;j++){
+            moves[i][j]=MV_VOID;
+        }
+    }
+
+
     while(fgets(lines[nb],sizeof(lines[nb]),f)){
         lines[nb][strcspn(lines[nb],"\r\n")]=0; //delete \n end of line
         nb+=1;
         lines[nb][0]='\0';
     }
 
+    char *l = malloc(LINE_LENGTHMAX+1);
+    char *_ptr;
     for(int i=0;i<nb;i++){
-        parse_line_match(lines[i]);
+        if(l) strcpy(l,lines[i]);
+
+        _ptr=strstr(l,"[Site");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[Site \"%s\"]",site);
+        }
+
+        _ptr=strstr(l,"[Match");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[Match ID \"%s\"]",match_id);
+        }
+
+        _ptr=strstr(l,"[Event");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[Event \"%s\"]",event);
+        }
+
+        _ptr=strstr(l,"[Player 1");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[Player 1 \"%s\"]",player1_name);
+        }
+
+        _ptr=strstr(l,"[Player 2");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[Player 2 \"%s\"]",player2_name);
+        }
+
+        _ptr=strstr(l,"[EventDate");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[EventDate \"%s\"]",eventDate);
+        }
+
+        _ptr=strstr(l,"[EventTime");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[EventTime \"%s\"]",eventTime);
+        }
+
+        _ptr=strstr(l,"[ClockType");
+        if(_ptr!=NULL){
+            l=_ptr;
+            sscanf(l,"[ClockType \"%s\"]",clockType);
+        }
+
+        _ptr=strstr(l,"point match");
+        if(_ptr!=NULL){
+            sscanf(l,"%d point match",matchLength);
+        }
+
+        _ptr=strstr(l,"Game");
+        if(_ptr!=NULL){
+            game_nb+=1;
+            move_nb=0;
+            is_parsing_game=true;
+        }
+
+        if(strncmp(l,"  ",2)==0 && isdigit(l[2])){
+            _ptr=strstr(l,") ");
+            l=_ptr+2; //move player1
+            strncpy(_s,l,30);
+            if(!isBlankLine(_s)){
+                parse_match_move(_s, &moves[game_nb-1][move_nb]);
+                moves[game_nb-1][move_nb].player_on_roll=PLAYER1;
+                move_nb+=1;
+            }
+            l+=35; //move player2
+           strncpy(_s,l,30);
+            if(!isBlankLine(_s)){
+                parse_match_move(_s, &moves[game_nb-1][move_nb]);
+                    moves[game_nb-1][move_nb].player_on_roll=PLAYER2;
+                move_nb+=1;
+            }
+        }
+
+        _ptr=strstr(l,"Wins");
+        if(_ptr!=NULL){
+            moves_per_game[game_nb-1]=move_nb;
+            is_parsing_game=false;
+        }
+
     }
+    free(l);
+    is_valid_match=false;
+
     return 1;
 }
 
@@ -2467,6 +2704,53 @@ int db_analysis_exist(sqlite3* db, int pid){
     return 0;
 }
 
+int db_insert_game(sqlite3 *db, const GAME *g,
+        const int id_prev, const int id_next){
+    printf("\ndb_insert_game\n");
+    char _s[100];
+    char sql[1000];
+    sql[0]='\0';
+    strcat(sql, "INSERT INTO game ");
+    strcat(sql, "(site, match_id, event, player1_name, player2_name, ");
+    strcat(sql, "eventDate, eventTime, clockType, matchLength, ");
+    strcat(sql, "player1_score, player2_score, game_prev, game_next) ");
+    strcat(sql, "VALUES ");
+    strcat(sql, "(");
+    sprintf(_s, "\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", ",
+            g->site, g->match_id, g->event, g->player1_name,
+            g->player2_name, g->eventDate, g->eventTime);
+    strcat(sql, _s);
+    sprintf(_s, "\"%s\", %d, %d, %d, %d, %d); ",
+            g->clockType, g->matchLength, g->player1_score,
+            g->player2_score, id_prev, id_next);
+    strcat(sql, _s);
+    printf("sql insert: %s\n", sql);
+    printf("Try to add new game.\n");
+    execute_sql(db, sql); 
+    return 1;
+}
+
+int db_insert_move(sqlite3 *db, const MOVE *g, const int game_id,
+        const int id_prev, const int id_next, const int position_id){
+    printf("\ndb_insert_move\n");
+    char _s[100];
+    char sql[1000];
+    sql[0]='\0';
+    strcat(sql, "INSERT INTO move ");
+    strcat(sql, "(game_id, dice1, dice2, move1, move2, move3, move4, ");
+    strcat(sql, "player_on_roll, move_prev, move_next, position_id) ");
+    strcat(sql, "VALUES ");
+    strcat(sql, "(");
+    sprintf(_s, "%d, %d, %d, \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, %d);",
+            game_id, g->dice[0], g->dice[1],
+            g->move1, g->move2, g->move3, g->move4,
+            g->player_on_roll, id_prev, id_next, position_id);
+    strcat(sql, _s);
+    printf("sql insert: %s\n", sql);
+    printf("Try to add new move.\n");
+    execute_sql(db, sql); 
+    return 1;
+}
 
 /* END Database */
 
