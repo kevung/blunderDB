@@ -5,7 +5,6 @@
   - Ne pas pouvoir modifier une position si issue d'un move.
   - Selection des matchs, supprimer des matchs
 - Ecrire l'aide et les menus associés
-- Fix bug: segfault when no position in database.
 
 Plus tard:
 - Ajouter filtres blunders. Nécessite de connaître quel coup a été joué.
