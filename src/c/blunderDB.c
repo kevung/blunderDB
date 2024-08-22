@@ -3631,9 +3631,11 @@ int parse_cmdline(char* cmdtext){
     } else if(strncmp(cmdtoken[0], ":D", 2)==0){
         printf("\n:D\n");
         int id = pos_list_id[pos_index];
-        db_remove_position_from_libraries(db,id);
-        db_delete_position(db, &id);
-        update_sb_msg(msg_info_position_deleted);
+        if(id!=1){ //cannot delete initial position
+            db_remove_position_from_libraries(db,id);
+            db_delete_position(db, &id);
+            update_sb_msg(msg_info_position_deleted);
+        }
     } else if(strncmp(cmdtoken[0], ":s", 2)==0){
         printf(":s\n");
         int force_cube=0;
