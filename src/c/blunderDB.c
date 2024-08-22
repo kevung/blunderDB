@@ -4988,6 +4988,10 @@ static int item_new_action_cb(void)
                 return result;
             }
             /* int result = db_open(db_filename); */
+            db_insert_position(db, &POS_DEFAULT);
+            db_select_position(db, &pos_nb,
+                    pos_list_id, pos_list);
+            goto_last_position_cb();
             update_sb_msg(msg_info_db_created);
             draw_canvas(cdv);
             printf("Database created successfully\n");
