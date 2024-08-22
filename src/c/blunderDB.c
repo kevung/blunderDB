@@ -1179,9 +1179,7 @@ const char *sql_game =
 "player1_score INTEGER,"
 "player2_score INTEGER,"
 "game_prev INTEGER," //begin of match->game_prev empty
-"game_next INTEGER," //end of match-<game_next empty
-"FOREIGN KEY(game_prev) REFERENCES game(id),"
-"FOREIGN KEY(game_next) REFERENCES game(id)"
+"game_next INTEGER" //end of match-<game_next empty
 ");";
 
 const char* sql_move =
@@ -1199,8 +1197,6 @@ const char* sql_move =
 "move_next INTEGER," //end of game->move_next empty
 "position_id INTEGER,"
 "FOREIGN KEY(game_id) REFERENCES game(id),"
-"FOREIGN KEY(move_prev) REFERENCES move(id),"
-"FOREIGN KEY(move_next) REFERENCES move(id),"
 "FOREIGN KEY(position_id) REFERENCES position(id)"
 ");";
 
@@ -1300,9 +1296,6 @@ int db_last_insert_id(sqlite3 *db, char *t){
     }
     sqlite3_finalize(stmt);
     return id;
-
-
-
 }
 
 int db_insert_position(sqlite3 *db, const POSITION *p){
@@ -2425,6 +2418,71 @@ int db_import_position_from_file(sqlite3* db, FILE* f, int* pid){
     return db_import_position_from_lines(db,lines,nb,pid);
 }
 
+int db_insert_game(sqlite3 *db, const GAME *g,
+        const int id_prev, const int id_next){
+    printf("\ndb_insert_game\n");
+    char _s[100];
+    char sql[1000];
+    sql[0]='\0';
+    strcat(sql, "INSERT INTO game ");
+    strcat(sql, "(site, match_id, event, player1_name, player2_name, ");
+    strcat(sql, "eventDate, eventTime, clockType, matchLength, ");
+    strcat(sql, "player1_score, player2_score, game_prev, game_next) ");
+    strcat(sql, "VALUES ");
+    strcat(sql, "(");
+    sprintf(_s, "\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", ",
+            g->site, g->match_id, g->event, g->player1_name,
+            g->player2_name, g->eventDate, g->eventTime);
+    strcat(sql, _s);
+    sprintf(_s, "\"%s\", %d, %d, %d, %d, %d); ",
+            g->clockType, g->matchLength, g->player1_score,
+            g->player2_score, id_prev, id_next);
+    strcat(sql, _s);
+    printf("sql insert: %s\n", sql);
+    printf("Try to add new game.\n");
+    execute_sql(db, sql); 
+    return 1;
+}
+
+int db_update_game_nextid(sqlite3* db, const int id, const int nextid){
+    printf("\ndb_update_game_nextid\n");
+    char sql[10000]; sql[0]='\0';
+    sprintf(sql, "UPDATE game SET game_next=%d WHERE id=%d;", nextid, id);
+    printf("sql: %s\n", sql);
+    execute_sql(db, sql); 
+    return 1;
+}
+
+int db_insert_move(sqlite3 *db, const MOVE *g, const int game_id,
+        const int id_prev, const int id_next, const int position_id){
+    printf("\ndb_insert_move\n");
+    char _s[100];
+    char sql[1000];
+    sql[0]='\0';
+    strcat(sql, "INSERT INTO move ");
+    strcat(sql, "(game_id, dice1, dice2, move1, move2, move3, move4, ");
+    strcat(sql, "player_on_roll, move_prev, move_next, position_id) ");
+    strcat(sql, "VALUES ");
+    strcat(sql, "(");
+    sprintf(_s, "%d, %d, %d, \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, %d);",
+            game_id, g->dice[0], g->dice[1],
+            g->move1, g->move2, g->move3, g->move4,
+            g->player_on_roll, id_prev, id_next, position_id);
+    strcat(sql, _s);
+    printf("sql insert: %s\n", sql);
+    printf("Try to add new move.\n");
+    execute_sql(db, sql); 
+    return 1;
+}
+
+int db_update_move_nextid(sqlite3* db, const int id, const int nextid){
+    printf("\ndb_update_move_nextid\n");
+    char sql[10000]; sql[0]='\0';
+    sprintf(sql, "UPDATE move SET move_next=%d WHERE id=%d;", nextid, id);
+    printf("sql: %s\n", sql);
+    execute_sql(db, sql); 
+    return 1;
+}
 int isBlankLine(const char *str) {
     if (str == NULL || str[0] == '\0') {
         return 1;
@@ -2470,6 +2528,58 @@ void parse_match_move(char *s, MOVE *m){
             || strstr(s,"Takes")!=0
             || strstr(s, "Drops")!=0){ //cube move
         strcat(m->move1, s);
+        m->dice[0]=3;
+        m->dice[1]=1;
+    }
+}
+
+void update_position_with_checkermove(POSITION *p,
+        const int on_roll, const char *m){
+    printf("\nupdate_position_with_checkermove\n");
+    int move_start, move_end;
+    bool is_hit=false; int move_checker_nb=1;
+    char s[100]; s[0]='\0';
+    strcpy(s,m);
+    int _i=0; char* token[10];
+    char *c = strtok(s, "/");
+    while(c!=NULL){
+        token[_i]=c; _i+=1;
+        c=strtok(NULL, "/");
+        }
+    //bar frappe, (2) (3) (4), off
+
+    if(strncmp(token[0],"bar",3)==0){
+        move_start=25;
+    }else{
+        sscanf(token[0],"%d",&move_start);
+    }
+    if(on_roll==PLAYER2) move_start=25-move_start;
+
+    if(strncmp(token[1],"off",3)!=0){
+        if(strstr(token[1],"*")==0 && strstr(token[1],"(")==0){
+            sscanf(token[1],"%d",&move_end);
+        } else if(strstr(token[1],"*")==0 && strstr(token[1],"(")!=0){
+            sscanf(token[1],"%d(%d)",&move_end,&move_checker_nb);
+        } else if(strstr(token[1],"*")!=0 && strstr(token[1],"(")==0){
+            sscanf(token[1],"%d*",&move_end);
+            is_hit=true;
+        } else if(strstr(token[1],"*")!=0 && strstr(token[1],"(")!=0){
+            sscanf(token[1],"%d*(%d)",&move_end,&move_checker_nb);
+            is_hit=true;
+        }
+        if(on_roll==PLAYER2) move_end=25-move_end;
+    }else{
+        move_end=-1;
+        if(strstr(token[1],"(")!=0){
+            sscanf(token[1],"off(%d)",&move_checker_nb);
+        }
+    }
+    p->checker[move_start]-= on_roll*move_checker_nb;
+    if(move_end>0) p->checker[move_end]+= on_roll*move_checker_nb;
+    if(is_hit){
+        p->checker[move_end]+= on_roll;
+        if(on_roll==PLAYER1) p->checker[0]-=1;
+        if(on_roll==PLAYER2) p->checker[25]+=1;
     }
 }
 
@@ -2478,7 +2588,7 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
     char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
     char _s[LINE_LENGTHMAX]; _s[0]='\0';
     nb=0; lines[nb][0]='\0';
-    GAME games[50]; MOVE moves[50][1000];
+    GAME games[50], g; MOVE moves[50][1000], m;
     int moves_per_game[50]; int move_nb=0;
     int game_nb=0; int matchLength=0;
     char site[100]; site[0]='\0';
@@ -2489,9 +2599,14 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
     char eventDate[100]; eventDate[0]='\0';
     char eventTime[100]; eventTime[0]='\0';
     char clockType[100]; clockType[0]='\0';
-    bool is_valid_match=false;
-    bool is_valid_game=false;
+    /* bool is_valid_match=false; */
+    /* bool is_valid_game=false; */
     bool is_parsing_game=false;
+    bool exist;
+    int pid; int _nb, _id[1000];
+    int mid, mid_prev, mid_next;
+    int gid, gid_prev, gid_next;
+    POSITION p;
 
     for(int i=0;i<50;i++){
         games[i]=G_VOID;
@@ -2598,7 +2713,81 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
 
     }
     free(l);
-    is_valid_match=false;
+
+    gid_prev=-1;
+    gid_next=-1;
+    db_insert_game(db,&games[0],gid_prev,gid_next);
+    for(int i=1;i<game_nb;i++){
+        g=games[i];
+        p=POS_DEFAULT;
+        p.p1_score=g.player1_score;
+        p.p2_score=g.player2_score;
+        gid_prev=db_last_insert_id(db,"game");
+        db_insert_game(db,&g,gid_prev,-1);
+        gid=db_last_insert_id(db,"game");
+        db_update_game_nextid(db,gid_prev,gid);
+        move_nb=moves_per_game[i];
+        mid_prev=-1;
+        mid_next=-1;
+        m=moves[i][0];
+        p.dice[0]=m.dice[0];
+        p.dice[1]=m.dice[1];
+        p.player_on_roll=m.player_on_roll;
+        p.cube_action=0;
+        db_find_identical_position(db, &p, &exist, &_nb, _id);
+        if(!exist){
+            db_insert_position(db,&p);
+            pid=db_last_insert_id(db,"position");
+        }else{ pid=_id[0]; }
+        db_insert_move(db,&m,gid,mid_prev, mid_next, pid);
+        for(int j=1;j<move_nb;j++){
+            if(strstr(m.move1,"Doubles")!=0){
+                p.cube_action=1;
+            }else if(strstr(m.move1,"Drops")!=0){
+                p.cube_action=1;
+            }else if(strstr(m.move1,"Takes")!=0){
+                p.cube_action=1;
+                p.cube+=1;
+                p.cube=abs(p.cube)*p.player_on_roll;
+            }else if(strstr(m.move1,"Cannot Move")!=0){
+                p.cube_action=0;
+            }else{
+                p.cube_action=0;
+                if(!isBlankLine(m.move1)){
+                    int _or=p.player_on_roll;
+                    update_position_with_checkermove(&p,_or,m.move1);
+                    if(!isBlankLine(m.move2)){
+                        update_position_with_checkermove(&p,_or,m.move2);
+                        if(!isBlankLine(m.move3)){
+                            update_position_with_checkermove(&p,_or,m.move3);
+                            if(!isBlankLine(m.move4)){
+                                update_position_with_checkermove(&p,_or,m.move4);
+                            }
+                        }
+                    }
+                }
+            }
+            m=moves[i][j];
+            p.dice[0]=m.dice[0];
+            p.dice[1]=m.dice[1];
+            p.player_on_roll=m.player_on_roll;
+            if(strstr(m.move1,"Doubles")!=0
+            || strstr(m.move1,"Drops")!=0
+            || strstr(m.move1,"Takes")!=0){
+                p.cube_action=1;
+            }
+
+            db_find_identical_position(db, &p, &exist, &nb, _id);
+            if(!exist){
+                db_insert_position(db,&p);
+                pid=db_last_insert_id(db,"position");
+            }else{ pid=_id[0]; }
+
+            db_insert_move(db,&m,gid,mid_prev, mid_next, pid);
+            mid=db_last_insert_id(db,"move");
+            db_update_move_nextid(db,mid_prev,mid);
+        }
+    }
 
     return 1;
 }
@@ -2702,54 +2891,6 @@ int db_analysis_exist(sqlite3* db, int pid){
     }
     sqlite3_finalize(stmt);
     return 0;
-}
-
-int db_insert_game(sqlite3 *db, const GAME *g,
-        const int id_prev, const int id_next){
-    printf("\ndb_insert_game\n");
-    char _s[100];
-    char sql[1000];
-    sql[0]='\0';
-    strcat(sql, "INSERT INTO game ");
-    strcat(sql, "(site, match_id, event, player1_name, player2_name, ");
-    strcat(sql, "eventDate, eventTime, clockType, matchLength, ");
-    strcat(sql, "player1_score, player2_score, game_prev, game_next) ");
-    strcat(sql, "VALUES ");
-    strcat(sql, "(");
-    sprintf(_s, "\"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", \"%s\", ",
-            g->site, g->match_id, g->event, g->player1_name,
-            g->player2_name, g->eventDate, g->eventTime);
-    strcat(sql, _s);
-    sprintf(_s, "\"%s\", %d, %d, %d, %d, %d); ",
-            g->clockType, g->matchLength, g->player1_score,
-            g->player2_score, id_prev, id_next);
-    strcat(sql, _s);
-    printf("sql insert: %s\n", sql);
-    printf("Try to add new game.\n");
-    execute_sql(db, sql); 
-    return 1;
-}
-
-int db_insert_move(sqlite3 *db, const MOVE *g, const int game_id,
-        const int id_prev, const int id_next, const int position_id){
-    printf("\ndb_insert_move\n");
-    char _s[100];
-    char sql[1000];
-    sql[0]='\0';
-    strcat(sql, "INSERT INTO move ");
-    strcat(sql, "(game_id, dice1, dice2, move1, move2, move3, move4, ");
-    strcat(sql, "player_on_roll, move_prev, move_next, position_id) ");
-    strcat(sql, "VALUES ");
-    strcat(sql, "(");
-    sprintf(_s, "%d, %d, %d, \"%s\", \"%s\", \"%s\", \"%s\", %d, %d, %d, %d);",
-            game_id, g->dice[0], g->dice[1],
-            g->move1, g->move2, g->move3, g->move4,
-            g->player_on_roll, id_prev, id_next, position_id);
-    strcat(sql, _s);
-    printf("sql insert: %s\n", sql);
-    printf("Try to add new move.\n");
-    execute_sql(db, sql); 
-    return 1;
 }
 
 /* END Database */
