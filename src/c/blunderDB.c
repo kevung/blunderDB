@@ -3339,7 +3339,6 @@ static Ihandle* create_statusbar(void)
             sb_lib,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             sb_msg,
-            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             NULL);
     IupSetAttribute(ih, "NAME", "STATUSBAR");
     IupSetAttribute(ih, "EXPAND", "HORIZONTAL");
