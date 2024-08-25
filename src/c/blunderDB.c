@@ -123,6 +123,8 @@ static int display_player_on_roll_down(void);
 #define CHECKER_ANALYSIS_NUMBER_MAX 100
 #define LINE_NBMAX 1000
 #define LINE_LENGTHMAX 256
+#define MOVE_NBMAX 300
+#define GAME_NBMAX 20
 
 enum txtfiletype { TXT_POSITION, TXT_MATCH, TXT_UNKNOWN };
 typedef enum txtfiletype txtfiletype_t;
@@ -2497,15 +2499,17 @@ int isBlankLine(const char *str) {
 
 void parse_match_move(char *s, MOVE *m){
     printf("\nparse_match_move\n");
-    if(strstr(s,":")!=0){ //checker move
-                           //parse dice
-        int roll=0;
-        char _h[5]; _h[0]='\0';
+    printf("s>%s\n",s);
+    if(strstr(s,":")!=0){
+        printf("parse dice\n");
+        char _h[5]; _h[2]='\0';
         strncpy(_h,s,2);
-        sscanf(_h,"%d",roll);
+        int roll=atoi(_h);
         m->dice[0]=roll/10;
         m->dice[1]=(int) fmod((double)roll,10.);
-        s+=3; //parse checker move
+        printf("dice: %i %i\n",m->dice[0],m->dice[1]);
+        printf("parse checker move\n");
+        s+=3;
         int _i=0; char* token[10];
         char *c = strtok(s, " ");
         while(c!=NULL){
@@ -2584,12 +2588,12 @@ void update_position_with_checkermove(POSITION *p,
 }
 
 int db_import_match_from_file(sqlite3* db, FILE* f){
-    printf("\ndb_import_from_file\n");
+    printf("\ndb_import_match_from_file\n");
     char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
     char _s[LINE_LENGTHMAX]; _s[0]='\0';
-    nb=0; lines[nb][0]='\0';
-    GAME games[50], g; MOVE moves[50][1000], m;
-    int moves_per_game[50]; int move_nb=0;
+    GAME games[GAME_NBMAX]; GAME g;
+    MOVE moves[GAME_NBMAX][MOVE_NBMAX]; MOVE m;
+    int moves_per_game[GAME_NBMAX]; int move_nb=0;
     int game_nb=0; int matchLength=0;
     char site[100]; site[0]='\0';
     char match_id[100]; match_id[0]='\0';
@@ -2599,8 +2603,8 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
     char eventDate[100]; eventDate[0]='\0';
     char eventTime[100]; eventTime[0]='\0';
     char clockType[100]; clockType[0]='\0';
-    /* bool is_valid_match=false; */
-    /* bool is_valid_game=false; */
+    bool is_valid_match=false;
+    bool is_valid_game=false;
     bool is_parsing_game=false;
     bool exist;
     int pid; int _nb, _id[1000];
@@ -2608,25 +2612,29 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
     int gid, gid_prev, gid_next;
     POSITION p;
 
-    for(int i=0;i<50;i++){
+    for(int i=0;i<GAME_NBMAX;i++){
         games[i]=G_VOID;
-        for(int j=0;j<1000;j++){
+        for(int j=0;j<MOVE_NBMAX;j++){
             moves[i][j]=MV_VOID;
         }
     }
 
-
+    nb=0; lines[nb][0]='\0';
+    rewind(f);
     while(fgets(lines[nb],sizeof(lines[nb]),f)){
         lines[nb][strcspn(lines[nb],"\r\n")]=0; //delete \n end of line
         nb+=1;
         lines[nb][0]='\0';
     }
 
+    printf("nb %i\n",nb);
+
     char *l = malloc(LINE_LENGTHMAX+1);
     char *_ptr;
     for(int i=0;i<nb;i++){
         if(l) strcpy(l,lines[i]);
 
+        printf("l>%s\n",l);
         _ptr=strstr(l,"[Site");
         if(_ptr!=NULL){
             l=_ptr;
@@ -2677,7 +2685,7 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
 
         _ptr=strstr(l,"point match");
         if(_ptr!=NULL){
-            sscanf(l,"%d point match",matchLength);
+            sscanf(l,"%d point match",&matchLength);
         }
 
         _ptr=strstr(l,"Game");
@@ -2685,23 +2693,39 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
             game_nb+=1;
             move_nb=0;
             is_parsing_game=true;
+            strcpy(games[game_nb-1].site, site);
+            strcpy(games[game_nb-1].match_id, match_id);
+            strcpy(games[game_nb-1].event, event);
+            strcpy(games[game_nb-1].player1_name, player1_name);
+            strcpy(games[game_nb-1].player2_name, player2_name);
+            strcpy(games[game_nb-1].eventDate, eventDate);
+            strcpy(games[game_nb-1].eventTime, eventTime);
+            strcpy(games[game_nb-1].clockType, clockType);
+            games[game_nb-1].matchLength=matchLength;
         }
+
+        // and need to parse game score!!
 
         if(strncmp(l,"  ",2)==0 && isdigit(l[2])){
             _ptr=strstr(l,") ");
+            char *l0 = l;
             l=_ptr+2; //move player1
             strncpy(_s,l,30);
-            if(!isBlankLine(_s)){
-                parse_match_move(_s, &moves[game_nb-1][move_nb]);
-                moves[game_nb-1][move_nb].player_on_roll=PLAYER1;
+            printf("\nmove left: %s$\n",_s);
+            if(!isBlankLine(_s) && strstr(_s,"Wins")==0){
                 move_nb+=1;
+                parse_match_move(_s, &moves[game_nb-1][move_nb-1]);
+                moves[game_nb-1][move_nb-1].player_on_roll=PLAYER1;
+                move_print(&moves[game_nb-1][move_nb-1]);
             }
-            l+=35; //move player2
+            l=l0+40; //move player2
            strncpy(_s,l,30);
-            if(!isBlankLine(_s)){
-                parse_match_move(_s, &moves[game_nb-1][move_nb]);
-                    moves[game_nb-1][move_nb].player_on_roll=PLAYER2;
+            printf("\nmove right: %s$\n",_s);
+            if(!isBlankLine(_s) && strstr(_s,"Wins")==0){
                 move_nb+=1;
+                parse_match_move(_s, &moves[game_nb-1][move_nb-1]);
+                    moves[game_nb-1][move_nb-1].player_on_roll=PLAYER2;
+                move_print(&moves[game_nb-1][move_nb-1]);
             }
         }
 
@@ -2714,11 +2738,15 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
     }
     free(l);
 
+    game_print(&games[0]);
+
     gid_prev=-1;
     gid_next=-1;
     db_insert_game(db,&games[0],gid_prev,gid_next);
     for(int i=1;i<game_nb;i++){
+        printf("game: %i %i\n",i, game_nb);
         g=games[i];
+        game_print(&g);
         p=POS_DEFAULT;
         p.p1_score=g.player1_score;
         p.p2_score=g.player2_score;
@@ -2730,6 +2758,7 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
         mid_prev=-1;
         mid_next=-1;
         m=moves[i][0];
+        move_print(&m);
         p.dice[0]=m.dice[0];
         p.dice[1]=m.dice[1];
         p.player_on_roll=m.player_on_roll;
@@ -2741,6 +2770,7 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
         }else{ pid=_id[0]; }
         db_insert_move(db,&m,gid,mid_prev, mid_next, pid);
         for(int j=1;j<move_nb;j++){
+            printf("move: %i %i\n",j,move_nb);
             if(strstr(m.move1,"Doubles")!=0){
                 p.cube_action=1;
             }else if(strstr(m.move1,"Drops")!=0){
@@ -2768,6 +2798,7 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
                 }
             }
             m=moves[i][j];
+            move_print(&m);
             p.dice[0]=m.dice[0];
             p.dice[1]=m.dice[1];
             p.player_on_roll=m.player_on_roll;
@@ -2777,6 +2808,7 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
                 p.cube_action=1;
             }
 
+            position_print(&p);
             db_find_identical_position(db, &p, &exist, &nb, _id);
             if(!exist){
                 db_insert_position(db,&p);
@@ -4811,15 +4843,35 @@ static int canvas_dropfiles_cb(Ihandle* ih, const char* filename,
         }
         parse_from_file=1;
         txtfiletype_t rc_txtft=check_if_file_is_position_or_match(f); //IMPORTANT ti implement if block
-        int pid;
-        int rc=db_import_position_from_file(db,f,&pid);
-        if(rc){
-            db_select_position(db,&pos_nb,pos_list_id,pos_list);
-            goto_position_cb(&pid);
-            switch_to_library("main",&lib_index);
-            update_sb_msg(msg_info_position_imported);
-        }else{
-            update_sb_msg(msg_err_failed_to_import_pos);
+        int rc;
+        switch(rc_txtft){
+            case TXT_POSITION:
+                int pid;
+                rc=db_import_position_from_file(db,f,&pid);
+                if(rc){
+                    db_select_position(db,&pos_nb,pos_list_id,pos_list);
+                    goto_position_cb(&pid);
+                    switch_to_library("main",&lib_index);
+                    update_sb_msg(msg_info_position_imported);
+                } else{
+                    update_sb_msg(msg_err_failed_to_import_pos);
+                }
+                break;
+            case TXT_MATCH:
+                rc=db_import_match_from_file(db,f);
+                if(rc){
+                    db_select_position(db,&pos_nb,pos_list_id,pos_list);
+                    goto_first_position_cb();
+                    switch_to_library("main",&lib_index);
+                    update_sb_msg(msg_info_match_imported);
+                } else{
+                    update_sb_msg(msg_err_failed_to_import_match);
+                }
+                break;
+            default:
+                update_sb_msg(msg_err_not_pos_nor_match_file);
+                printf(msg_err_not_pos_nor_match_file);
+                break;
         }
     }
     return IUP_DEFAULT;
@@ -5210,7 +5262,7 @@ static int item_import_action_cb(void)
     IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
     IupSetAttribute(filedlg, "TITLE", "Import Position or Match");
     IupSetAttribute(filedlg, "EXTFILTER",
-            "Position File (.txt)|*.txt|");
+            "Position or Match File (.txt)|*.txt|");
     IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
 
     switch(IupGetInt(filedlg, "STATUS"))
@@ -5230,6 +5282,7 @@ static int item_import_action_cb(void)
             int rc;
             switch(rc_txtft){
                 case TXT_POSITION:
+                    printf("Position file\n");
                     int pid;
                     rc=db_import_position_from_file(db,f,&pid);
                     if(rc){
@@ -5242,6 +5295,7 @@ static int item_import_action_cb(void)
                     }
                     break;
                 case TXT_MATCH:
+                    printf("Match file\n");
                     rc=db_import_match_from_file(db,f);
                     if(rc){
                         db_select_position(db,&pos_nb,pos_list_id,pos_list);
@@ -5612,13 +5666,12 @@ static int item_importmatch_action_cb(void)
                 printf("%s\n",msg_err_failed_to_import_match);
             }
             parse_from_file=1;
-            int pid;
-            int rc=db_import_position_from_file(db,f,&pid);
+            int rc=db_import_match_from_file(db,f);
             if(rc){
                 db_select_position(db,&pos_nb,pos_list_id,pos_list);
-                goto_position_cb(&pid);
+                goto_first_position_cb();
                 switch_to_library("main",&lib_index);
-                update_sb_msg(msg_info_position_imported);
+                update_sb_msg(msg_info_match_imported);
             } else{
                 update_sb_msg(msg_err_failed_to_import_match);
             }
