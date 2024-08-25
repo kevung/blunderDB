@@ -4,6 +4,9 @@
   - Que se passe t'il dans le parsing sur gala? double? abandon?
   - Ne pas pouvoir modifier une position si issue d'un move.
   - Selection des matchs, supprimer des matchs
+  - Displayer Take or Double decisions
+  - Definir comportement en debut et fin de game/move
+  - Raccourcis clavier move/game prev/next
 - Ecrire l'aide et les menus associés
 
 Plus tard:
