@@ -2589,6 +2589,7 @@ void update_position_with_checkermove(POSITION *p,
 
 int db_import_match_from_file(sqlite3* db, FILE* f){
     printf("\ndb_import_match_from_file\n");
+    char tmp1[1000], tmp2[1000]; tmp1[0]='\0'; tmp2[0]='\0';
     char lines[LINE_NBMAX][LINE_LENGTHMAX]; int nb;
     char _s[LINE_LENGTHMAX]; _s[0]='\0';
     GAME games[GAME_NBMAX]; GAME g;
@@ -2635,57 +2636,19 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
         if(l) strcpy(l,lines[i]);
 
         printf("l>%s\n",l);
-        _ptr=strstr(l,"[Site");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[Site \"%s\"]",site);
-        }
-
-        _ptr=strstr(l,"[Match");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[Match ID \"%s\"]",match_id);
-        }
-
-        _ptr=strstr(l,"[Event");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[Event \"%s\"]",event);
-        }
-
-        _ptr=strstr(l,"[Player 1");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[Player 1 \"%s\"]",player1_name);
-        }
-
-        _ptr=strstr(l,"[Player 2");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[Player 2 \"%s\"]",player2_name);
-        }
-
-        _ptr=strstr(l,"[EventDate");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[EventDate \"%s\"]",eventDate);
-        }
-
-        _ptr=strstr(l,"[EventTime");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[EventTime \"%s\"]",eventTime);
-        }
-
-        _ptr=strstr(l,"[ClockType");
-        if(_ptr!=NULL){
-            l=_ptr;
-            sscanf(l,"[ClockType \"%s\"]",clockType);
-        }
+        if (sscanf(l, "; [Site \"%[^\"]\"]", site)) continue;
+        if (sscanf(l, "; [Match ID \"%[^\"]\"]", match_id)) continue;
+        if (sscanf(l, "; [Event \"%[^\"]\"]", event)) continue;
+        if (sscanf(l, "; [Player 1 \"%[^\"]\"]", player1_name)) continue;
+        if (sscanf(l, "; [Player 2 \"%[^\"]\"]", player2_name)) continue;
+        if (sscanf(l, "; [EventDate \"%[^\"]\"]", eventDate)) continue;
+        if (sscanf(l, "; [EventTime \"%[^\"]\"]", eventTime)) continue;
+        if (sscanf(l, "; [ClockType \"%[^\"]\"]", clockType)) continue;
 
         _ptr=strstr(l,"point match");
         if(_ptr!=NULL){
             sscanf(l,"%d point match",&matchLength);
+            continue;
         }
 
         _ptr=strstr(l,"Game");
@@ -2702,9 +2665,62 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
             strcpy(games[game_nb-1].eventTime, eventTime);
             strcpy(games[game_nb-1].clockType, clockType);
             games[game_nb-1].matchLength=matchLength;
+            continue;
         }
 
         // and need to parse game score!!
+        if(strncmp(l," ",1)==0 && strstr(l,player1_name)!=0){
+            printf("SCORE LINE\n");
+            printf("game %i\n", game_nb);
+            tmp1[0]='\0'; tmp2[0]='\0';
+
+            printf("score1 score2 %i %i\n",
+                    games[game_nb-1].player1_score,
+                    games[game_nb-1].player2_score);
+
+            /* sprintf(tmp1, " %s : \%%d", player1_name); */
+            /* strcat(tmp2, tmp1); */
+            /* int ii=40-strlen(tmp2)+1; */
+            /* for(int q=0;q<ii;q++) strcat(tmp2," "); */
+            /* sprintf(tmp1, "%s : \%%d", player2_name); */
+            /* strcat(tmp2, tmp1); */
+            /* printf("ss: %s\n",tmp2); */
+            /* sscanf(l, tmp2, */
+            /*         &games[game_nb-1].player1_score, */
+            /*         &games[game_nb-1].player2_score); */
+
+            /* printf("tmp1: %s\n",tmp1); */
+            /* printf("tmp2: %s\n",tmp2); */
+
+            printf("aa\n");
+            printf(l);
+            printf("\n");
+            sscanf(l, " %s : %d %s : %d",
+                    tmp1,
+                    &games[game_nb-1].player1_score,
+                    tmp2,
+                    &games[game_nb-1].player2_score);
+            printf("bb\n");
+
+            /* sscanf(l, " %[^:] : %d %[^:] : %d", */
+            /*         &games[game_nb-1].player1_score, */
+            /*         &games[game_nb-1].player2_score); */
+
+            games[game_nb-1].player1_score=
+                matchLength-games[game_nb-1].player1_score;
+            games[game_nb-1].player2_score=
+                matchLength-games[game_nb-1].player2_score;
+
+            printf("score1 score2 %i %i\n",
+                    games[game_nb-1].player1_score,
+                    games[game_nb-1].player2_score);
+
+            printf("tmp1: %s\n",tmp1);
+            printf("tmp2: %s\n",tmp2);
+
+
+            /* continue; */
+        }
 
         if(strncmp(l,"  ",2)==0 && isdigit(l[2])){
             _ptr=strstr(l,") ");
@@ -2727,12 +2743,13 @@ int db_import_match_from_file(sqlite3* db, FILE* f){
                     moves[game_nb-1][move_nb-1].player_on_roll=PLAYER2;
                 move_print(&moves[game_nb-1][move_nb-1]);
             }
+            continue;
         }
 
-        _ptr=strstr(l,"Wins");
-        if(_ptr!=NULL){
+        if(strstr(l,"Wins")!=0){
             moves_per_game[game_nb-1]=move_nb;
             is_parsing_game=false;
+            continue;
         }
 
     }
