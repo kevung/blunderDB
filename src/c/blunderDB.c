@@ -3179,7 +3179,7 @@ static Ihandle* create_menus(void)
     submenu_help = IupSubmenu("&Help", menu_help);
 
     menu = IupMenu(submenu_file, submenu_edit, submenu_position,
-            submenu_match, submenu_tool, submenu_help,
+            submenu_tool, submenu_help,
             NULL);
 
     IupSetHandle("menu", menu);
@@ -3205,7 +3205,7 @@ static Ihandle* create_menus(void)
     IupSetCallback(item_prev_position, "ACTION", (Icallback) item_prevposition_action_cb);
     IupSetCallback(item_new_position, "ACTION", (Icallback) item_newposition_action_cb);
     IupSetCallback(item_update_position, "ACTION", (Icallback) item_updateposition_action_cb);
-    IupSetCallback(item_import_position, "ACTION", (Icallback) item_import_action_cb);
+    IupSetCallback(item_import_position, "ACTION", (Icallback) item_importposition_action_cb);
     IupSetCallback(item_new_library, "ACTION", (Icallback) item_newlibrary_action_cb);
     IupSetCallback(item_delete_library, "ACTION", (Icallback) item_deletelibrary_action_cb);
     IupSetCallback(item_add_library, "ACTION", (Icallback) item_addtolibrary_action_cb);
@@ -5270,76 +5270,82 @@ static int item_open_action_cb(void)
 
 }
 
+// tmp as long match import is not funcntional
 static int item_import_action_cb(void)
 {
-    printf("\nitem_import_action_cb\n");
-    if(db==NULL){
-        update_sb_msg(msg_err_no_db_opened);
-        return IUP_DEFAULT;
-    }
-    Ihandle *filedlg;
-    filedlg=IupFileDlg();
-    IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN");
-    IupSetAttribute(filedlg, "TITLE", "Import Position or Match");
-    IupSetAttribute(filedlg, "EXTFILTER",
-            "Position or Match File (.txt)|*.txt|");
-    IupPopup(filedlg, IUP_CENTER, IUP_CENTER);
-
-    switch(IupGetInt(filedlg, "STATUS"))
-    {
-        case 1: //new file
-            printf("Position or Match does not exist.");
-            break;
-        case 0: //file already exists
-            const char *p_filename=IupGetAttribute(filedlg,"VALUE");
-            FILE *f=open_input(p_filename);
-            if(f==NULL){
-                update_sb_msg(msg_err_failed_to_import_pos);
-                printf("%s\n",msg_err_failed_to_import_pos);
-            }
-            parse_from_file=1;
-            txtfiletype_t rc_txtft=check_if_file_is_position_or_match(f);
-            int rc;
-            switch(rc_txtft){
-                case TXT_POSITION:
-                    printf("Position file\n");
-                    int pid;
-                    rc=db_import_position_from_file(db,f,&pid);
-                    if(rc){
-                        db_select_position(db,&pos_nb,pos_list_id,pos_list);
-                        goto_position_cb(&pid);
-                        switch_to_library("main",&lib_index);
-                        update_sb_msg(msg_info_position_imported);
-                    } else{
-                        update_sb_msg(msg_err_failed_to_import_pos);
-                    }
-                    break;
-                case TXT_MATCH:
-                    printf("Match file\n");
-                    rc=db_import_match_from_file(db,f);
-                    if(rc){
-                        db_select_position(db,&pos_nb,pos_list_id,pos_list);
-                        goto_first_position_cb();
-                        switch_to_library("main",&lib_index);
-                        update_sb_msg(msg_info_match_imported);
-                    } else{
-                        update_sb_msg(msg_err_failed_to_import_match);
-                    }
-                    break;
-                default:
-                    update_sb_msg(msg_err_not_pos_nor_match_file);
-                    printf(msg_err_not_pos_nor_match_file);
-                    break;
-            }
-            break;
-        case -1:
-            printf("IupFileDlg: Operation Canceled");
-            return 1;
-            break;
-    }
-
-    return IUP_DEFAULT;
+    return item_importposition_action_cb();
 }
+
+/* static int item_import_action_cb(void) */
+/* { */
+/*     printf("\nitem_import_action_cb\n"); */
+/*     if(db==NULL){ */
+/*         update_sb_msg(msg_err_no_db_opened); */
+/*         return IUP_DEFAULT; */
+/*     } */
+/*     Ihandle *filedlg; */
+/*     filedlg=IupFileDlg(); */
+/*     IupSetAttribute(filedlg, "DIALOGTYPE", "OPEN"); */
+/*     IupSetAttribute(filedlg, "TITLE", "Import Position or Match"); */
+/*     IupSetAttribute(filedlg, "EXTFILTER", */
+/*             "Position or Match File (.txt)|*.txt|"); */
+/*     IupPopup(filedlg, IUP_CENTER, IUP_CENTER); */
+
+/*     switch(IupGetInt(filedlg, "STATUS")) */
+/*     { */
+/*         case 1: //new file */
+/*             printf("Position or Match does not exist."); */
+/*             break; */
+/*         case 0: //file already exists */
+/*             const char *p_filename=IupGetAttribute(filedlg,"VALUE"); */
+/*             FILE *f=open_input(p_filename); */
+/*             if(f==NULL){ */
+/*                 update_sb_msg(msg_err_failed_to_import_pos); */
+/*                 printf("%s\n",msg_err_failed_to_import_pos); */
+/*             } */
+/*             parse_from_file=1; */
+/*             txtfiletype_t rc_txtft=check_if_file_is_position_or_match(f); */
+/*             int rc; */
+/*             switch(rc_txtft){ */
+/*                 case TXT_POSITION: */
+/*                     printf("Position file\n"); */
+/*                     int pid; */
+/*                     rc=db_import_position_from_file(db,f,&pid); */
+/*                     if(rc){ */
+/*                         db_select_position(db,&pos_nb,pos_list_id,pos_list); */
+/*                         goto_position_cb(&pid); */
+/*                         switch_to_library("main",&lib_index); */
+/*                         update_sb_msg(msg_info_position_imported); */
+/*                     } else{ */
+/*                         update_sb_msg(msg_err_failed_to_import_pos); */
+/*                     } */
+/*                     break; */
+/*                 case TXT_MATCH: */
+/*                     printf("Match file\n"); */
+/*                     rc=db_import_match_from_file(db,f); */
+/*                     if(rc){ */
+/*                         db_select_position(db,&pos_nb,pos_list_id,pos_list); */
+/*                         goto_first_position_cb(); */
+/*                         switch_to_library("main",&lib_index); */
+/*                         update_sb_msg(msg_info_match_imported); */
+/*                     } else{ */
+/*                         update_sb_msg(msg_err_failed_to_import_match); */
+/*                     } */
+/*                     break; */
+/*                 default: */
+/*                     update_sb_msg(msg_err_not_pos_nor_match_file); */
+/*                     printf(msg_err_not_pos_nor_match_file); */
+/*                     break; */
+/*             } */
+/*             break; */
+/*         case -1: */
+/*             printf("IupFileDlg: Operation Canceled"); */
+/*             return 1; */
+/*             break; */
+/*     } */
+
+/*     return IUP_DEFAULT; */
+/* } */
 
 
 static int item_export_action_cb(void)
