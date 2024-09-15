@@ -14,6 +14,9 @@
 #include <wd.h>
 #include <sqlite3.h>
 
+#define VERSION "0.1.0"
+#define AUTHOR "Kevin UNGER <blunderdb@proton.me>\n alias postmanpat (Heroes)"
+
 /* Main sections: */
 /* - Prototypes, */ 
 /* - Data, */
@@ -5937,7 +5940,11 @@ static int item_donate_action_cb(void)
 
 static int item_about_action_cb(void)
 {
-    error_callback();
+    char s[1000];s[0]='\0';
+    char c[1000];c[0]='\0';
+    sprintf(c, "Author: %s\n Version: %s", AUTHOR, VERSION);
+    IupMessage("About", c);
+    /* IupMessage("About", "Author: Kevin UNGER <blunderdb@proton.me>\n aka postmanpat (Heroes, Galaxy)\n Version:"); */
     return IUP_DEFAULT;
     
 }
@@ -6488,7 +6495,9 @@ int main(int argc, char **argv)
     IupSetAttribute(vbox, "GAP", "10");
 
     dlg = IupDialog(vbox);
-    IupSetAttribute(dlg, "TITLE", "blunderDB");
+    char title_text[100]; title_text[0]='\0';
+    sprintf(title_text, "blunderDB (%s)", VERSION);
+    IupSetAttribute(dlg, "TITLE", title_text);
     IupSetAttribute(dlg, "SIZE", DEFAULT_SIZE);
     IupSetAttribute(dlg, "SHRINK", "YES");
     IupSetAttribute(dlg, "MENU", "menu");
