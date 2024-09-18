@@ -3867,6 +3867,16 @@ int parse_cmdline(char* cmdtext){
                 if(pmax<pmin) int_swap(&pmax, &pmin);
                 criteria_pipcount=1;
                 printf("\ncriteria pipcount: %i %i\n", pmin, pmax);
+            } else if(strncmp(cmdtoken[i],"p>",2)==0){
+                sscanf(cmdtoken[i], "p>%d", &Pmin);
+                Pmax=1000;
+                criteria_abspipcount=1;
+                printf("\ncriteria absolut pipcount: %i %i\n", Pmin, Pmax);
+            } else if(strncmp(cmdtoken[i],"p<",2)==0){
+                sscanf(cmdtoken[i], "p<%d", &Pmax);
+                Pmin=-1000;
+                criteria_abspipcount=1;
+                printf("\ncriteria absolut pipcount: %i %i\n", Pmin, Pmax);
             } else if(strncmp(cmdtoken[i],"p",1)==0){
                 sscanf(cmdtoken[i], "p%d,%d", &Pmin, &Pmax);
                 if(Pmax<Pmin) int_swap(&Pmax, &Pmin);
