@@ -13,14 +13,14 @@ La présente documentation est structurée de la manière suivante:
 
 * la **FAQ** fournit quelques réponses aux intérrogations les plus fréquentes.
 
-* la liste des **raccourcis** clavier permet une utilisation avancée de blunde
-
-* 
+* la liste des **commandes** ainsi que la liste des **raccourcis**
+  clavier permet une utilisation efficace de blunderDB.
 
 
 .. toctree::
    :maxdepth: 2
    :caption: Sommaire:
+   :numbered:
 
    manuel
    guide_utilisateur
