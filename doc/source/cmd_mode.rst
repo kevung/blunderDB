@@ -1,4 +1,4 @@
 .. _cmd_mode:
 
-Mode Commande
-=============
+Liste des requêtes
+==================
