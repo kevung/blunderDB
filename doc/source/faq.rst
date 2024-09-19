@@ -19,8 +19,8 @@ bibliothèques, l'utilisateur peut disposer à l'aide d'un unique fichier
 l'ensemble de ses positions de référence de manière structurée. Je
 souhaite que blunderDB facilite le partage de positions entre joueurs.
 
-Puis-je modifier, copier, partager blunderDB à ma guise?
---------------------------------------------------------
+Puis-je modifier, copier, partager blunderDB?
+---------------------------------------------
 
 Oui, tout à fait. blunderDB est sous licence MIT.
 
