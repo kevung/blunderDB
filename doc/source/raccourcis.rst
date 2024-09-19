@@ -45,8 +45,8 @@ Raccourcis modaux
    "TAB", "COMMAND", "Basculer en mode NORMAL."
    "ENTREE", "COMMAND", "Valider une requête."
 
-Edition de positions
---------------------
+Edition de position
+-------------------
 
 En mode EDIT, des lettres sont affichées au niveau de chaque point et du
 cube. Pour ajouter ou supprimer un ou plusieurs pions sur un point,
