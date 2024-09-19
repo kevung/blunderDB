@@ -14,10 +14,16 @@ positions. Les principales interactions possibles sont:
 
 * rechercher une ou plusieurs positions.
 
+Status bar
+librairie, nombre de position
+
+Affichage position, score, course, ...
+
 Modes
 -----
 
 NORMAL
+
 EDIT
 COMMAND
 
