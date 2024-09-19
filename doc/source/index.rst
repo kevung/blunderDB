@@ -41,6 +41,7 @@ Sommaire
 
 
 .. _contacts:
+
 Contacts
 ========
 
