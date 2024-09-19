@@ -30,8 +30,8 @@ Comment sauvegarder la base de données courante?
 La base de données est modifiée immédiatement la validation de la
 requête. Aucune opération de sauvegarde explicite est nécessaire.
 
-Dans quel format de données est sérialisée la base de données?
---------------------------------------------------------------
+Quel format de données utilise blunderDB?
+-----------------------------------------
 
 La base de données est un simple fichier Sqlite. En l'absence de
 blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite.
