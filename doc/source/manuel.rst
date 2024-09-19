@@ -13,3 +13,10 @@ positions. Les principales interactions possibles sont:
 * supprimer une position existante,
 
 * rechercher une ou plusieurs positions.
+
+Modes
+-----
+
+NORMAL
+EDIT
+COMMAND
