@@ -47,14 +47,20 @@ Contacts
 Auteur: Kévin Unger <blunderdb@proton.me>.
 Vous pouvez aussi me trouver sur Heroes sous le pseudo postmanpat.
 
-N'hésitez pas à écrire pour faire part de votre retour d'expérience.
-Tous les retours constructifs sont bienvenus.
+J'ai développé blunderDB initialement pour mon usage personnel afin de
+pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable
+d'avoir un retour surtout quand on a dépensé un paquet d'heures de
+conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour
+faire part de votre retour d'expérience. Tous les retours (constructifs)
+sont bienvenus.
 
 Voici plusieurs manières de réagir:
 
-* écrire un mail à blunderdb@proton.me
+* discuter avec moi, si on se retrouve dans un tournoi,
 
-* sur Github:
+* m'écrire un mail à blunderdb@proton.me,
+
+* sur Github,
 
   * ouvrir un ticket: https://github.com/kevung/blunderDB/issues
 
