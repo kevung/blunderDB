@@ -3,24 +3,6 @@
 Liste des requêtes
 ==================
 
-.. warning::
-   Dans la recherche de positions, par défaut, blunderDB prend en compte
-   la structure de pions courante, ignore la position du videau et du
-   score. Pour prendre en compte la position du videau ou du score, il
-   faut le mentionner explicitement dans la requête.
-
-.. note::
-   blunderDB considère qu'un pion arriéré (backchecker) est un pion
-   situé entre le point 24 et le point 14.
-
-.. note::
-   blunderDB considère que le nombre de pions dans la zone est le nombre
-   de pions situés entre le point 12 et le point 1.
-
-.. note::
-   Les paramètres pour filtrer des positions peuvent être arbitrairement
-   combinés.
-
 Opérations globales
 -------------------
 
@@ -74,6 +56,25 @@ Gérer les bibliothèques
 
 Rechercher des positions
 ------------------------
+
+.. warning::
+   Dans la recherche de positions, par défaut, blunderDB prend en compte
+   la structure de pions courante, ignore la position du videau et du
+   score. Pour prendre en compte la position du videau ou du score, il
+   faut le mentionner explicitement dans la requête.
+
+.. note::
+   blunderDB considère qu'un pion arriéré (backchecker) est un pion
+   situé entre le point 24 et le point 14.
+
+.. note::
+   blunderDB considère que le nombre de pions dans la zone est le nombre
+   de pions situés entre le point 12 et le point 1.
+
+.. tip::
+   Les paramètres pour filtrer des positions peuvent être arbitrairement
+   combinés.
+
 
 .. csv-table::
    :header: "Requête", "Action"

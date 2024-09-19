@@ -14,8 +14,14 @@ positions. Les principales interactions possibles sont:
 
 * rechercher une ou plusieurs positions.
 
+Les positions sont stockées dans une base de données représentée par un fichier
+*.db*.
+
 Status bar
 librairie, nombre de position
+
+rôle des requêtes
+raccourcis
 
 Affichage position, score, course, ...
 
@@ -26,6 +32,7 @@ NORMAL
 
 EDIT
 COMMAND
+rédiger une requête
 
 
 Afin d'interagir avec la base de données, l'utilisateur réalise des

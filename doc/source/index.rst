@@ -66,4 +66,11 @@ Voici plusieurs manières de réagir:
   * ouvrir un ticket: https://github.com/kevung/blunderDB/issues
 
   * pour des corrections de bugs ou des propositions d'amélioration,
-    créer une pull request .
+    créer une pull request.
+
+Remerciements
+=============
+
+Je dédie ce petit logiciel à ma compagne Anne-Claire et notre petite fille
+Perrine. Je tiens à remercier tout particulièrement quelques amis: Tristan
+Nico. 
