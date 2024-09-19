@@ -21,16 +21,27 @@ Liste des requêtes
    Les paramètres pour filtrer des positions peuvent être arbitrairement
    combinés.
 
+Opérations globales
+-------------------
+
 .. csv-table::
    :header: "Requête", "Action"
    :widths: 5, 20
-   :align: center
+   :align: left
 
    ":n", "Crée une nouvelle base de données."
    ":o", "Ouvre une base de données existante."
    ":q", "Ferme blunderDB."
+
+Interagir avec une position
+---------------------------
+
+.. csv-table::
+   :header: "Requête", "Action"
+   :widths: 5, 20
+   :align: left
+
    ":i", "Importe une position par fichier texte (txt)."
-   ":D", "Supprime la position courante."
    ":w", "Enregistre la position courante dans la bibliothèque
    courante."
    ":w!", "Après édition d'une position existante, modifie cette
@@ -41,6 +52,16 @@ Liste des requêtes
    *toto*."
    ":LS", "Liste les bibliothèques auxquelles la position courante
    appartient."
+   ":D", "Supprime la position courante."
+
+Gérer les bibliothèques
+-----------------------
+
+.. csv-table::
+   :header: "Requête", "Action"
+   :widths: 5, 20
+   :align: center
+
    ":e *toto*", "Ouvre la bibliothèque *toto*."
    ":mv *titi*", "Renomme la bibliothèque courante en *titi*."
    ":mv *toto* *titi*", "Renomme la bibliothèque *toto* en *titi*."
@@ -50,6 +71,15 @@ Liste des requêtes
    ":d", "Supprime la bibliothèque courante."
    ":d *toto*", "Supprime la bibliothèque *toto*."
    ":ls", "Liste les bibliothèques."
+
+Rechercher des positions
+------------------------
+
+.. csv-table::
+   :header: "Requête", "Action"
+   :widths: 5, 20
+   :align: center
+
    ":s cube ...
 
    :s cu ...
