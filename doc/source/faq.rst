@@ -3,6 +3,7 @@
 Foire aux questions
 ===================
 
+
 Quel est l'utilité de blunderDB?
 --------------------------------
 
@@ -36,10 +37,12 @@ catégories thématiques, et ensuite pouvoir poser des questions la base
 de données. Ce type de logiciel est tout à fait courant aux échecs,
 comme ChessBase.
 
+
 Puis-je modifier, copier, partager blunderDB?
 ---------------------------------------------
 
 Oui, tout à fait. blunderDB est sous licence MIT.
+
 
 Comment sauvegarder la base de données courante?
 ------------------------------------------------
@@ -47,11 +50,13 @@ Comment sauvegarder la base de données courante?
 La base de données est modifiée immédiatement la validation de la
 requête. Aucune opération de sauvegarde explicite est nécessaire.
 
+
 Quel format de données utilise blunderDB?
 -----------------------------------------
 
 La base de données est un simple fichier Sqlite. En l'absence de
 blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite.
+
 
 Quelles ont été les principes de conception de blunderDB?
 ---------------------------------------------------------
@@ -63,8 +68,10 @@ la sérialisation de la base de données, le format de fichiers doit être
 multi-plateforme et adapté pour contenir une base de données. Le format
 de fichier sqlite semblait tout indiqué.
 
+
 blunderDB fonctionne-t'il sous Linux?
 -------------------------------------
 
 Tout à fait. Il est exécutable avec Wine.
+
 
