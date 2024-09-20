@@ -67,3 +67,4 @@ blunderDB fonctionne-t'il sous Linux?
 -------------------------------------
 
 Tout à fait. Il est exécutable avec Wine.
+

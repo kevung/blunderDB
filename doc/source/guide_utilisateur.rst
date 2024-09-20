@@ -193,3 +193,4 @@ Pour rechercher des types de positions,
 
 Les positions affichées sont celles de la base de données ayant vérifié
 les critères de recherche entrés par l'utilisateur.
+
