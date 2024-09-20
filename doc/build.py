@@ -65,7 +65,7 @@ def create_archive(root_dir, build_folders):
     latest_commit = get_latest_commit()
     for l in LANG:
         print("archive for lang:", l)
-        project_name = os.path.basename(root_dir) +'_'+l
+        project_name = 'blunderdb_'+l
         project_build_dir = os.path.join(build_dir, project_name)
         build_folders_lang = [os.path.join(s,l) for s in build_folders]
 
