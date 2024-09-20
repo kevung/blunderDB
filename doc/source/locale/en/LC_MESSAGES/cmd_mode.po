@@ -1,0 +1,567 @@
+# Copyright (C) 2024, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+# SPDX-FileCopyrightText: 2024 Kévin Unger <kevin.unger@onera.fr>
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-20 14:20+0200\n"
+"PO-Revision-Date: 2024-09-20 15:22+0200\n"
+"Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
+"Language: en\n"
+"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+"X-Generator: Lokalize 23.08.5\n"
+
+#: ../../source/cmd_mode.rst:4
+msgid "Liste des requêtes"
+msgstr "List of queries"
+
+#: ../../source/cmd_mode.rst:7
+msgid "Opérations globales"
+msgstr "Global operations"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Requête"
+msgstr "Query"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Action"
+msgstr "Action"
+
+#: ../../source/cmd_mode.rst:1
+msgid ":n"
+msgstr ":n"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Crée une nouvelle base de données."
+msgstr "Create a new database."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":o"
+msgstr ":o"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre une base de données existante."
+msgstr "Open an existing database."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":q"
+msgstr ":q"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ferme blunderDB."
+msgstr "Close blunderDB."
+
+#: ../../source/cmd_mode.rst:19
+msgid "Interagir avec une position"
+msgstr "Interact with a position."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":i"
+msgstr ":i"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Importe une position par fichier texte (txt)."
+msgstr "Import a position via a text file (txt)."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":w"
+msgstr ":w"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Enregistre la position courante dans la bibliothèque courante."
+msgstr "Save the current position in the current library."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":w!"
+msgstr ":w!"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Après édition d'une position existante, modifie cette dernière dans la "
+"base de données."
+msgstr "After editing an existing position, modify it in the database."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":w *toto* *titi* ..."
+msgstr ":w *toto* *titi* ..."
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Enregistre la position courante dans les bibliothèques *toto*, *titi*, ..."
+msgstr "Save the current position in the libraries *toto*, *titi*, ..."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":w -*toto*"
+msgstr ":w -*toto*"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Retirer la position courante de la bibliothèque *toto*."
+msgstr "Remove the current position from the *toto* library."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":LS"
+msgstr ":LS"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Liste les bibliothèques auxquelles la position courante appartient."
+msgstr "List the libraries to which the current position belongs."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":D"
+msgstr ":D"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Supprime la position courante."
+msgstr "Delete the current position."
+
+#: ../../source/cmd_mode.rst:40
+msgid "Gérer les bibliothèques"
+msgstr "Manage the libraries."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":e *toto*"
+msgstr ":e *toto*"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la bibliothèque *toto*."
+msgstr "Open the *toto* library."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":mv *titi*"
+msgstr ":mv *titi*"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Renomme la bibliothèque courante en *titi*."
+msgstr "Rename the current library to *titi*."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":mv *toto* *titi*"
+msgstr ":mv *toto* *titi*"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Renomme la bibliothèque *toto* en *titi*."
+msgstr "Rename the *toto* library to *titi*."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":cp *titi*"
+msgstr ":cp *titi*"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Copie la bibliothèque courante dans la bibliothèque *titi*."
+msgstr "Copy the current library to the *titi* library."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":cp *toto* *titi*"
+msgstr ":cp *toto* *titi*"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Copie la bibliothèque *toto* dans *titi*."
+msgstr "Copy the *toto* library to *titi*."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":d"
+msgstr ":d"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Supprime la bibliothèque courante."
+msgstr "Delete the current library."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":d *toto*"
+msgstr ":d *toto*"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Supprime la bibliothèque *toto*."
+msgstr "Delete the *toto* library."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":ls"
+msgstr ":ls"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Liste les bibliothèques."
+msgstr "List the libraries."
+
+#: ../../source/cmd_mode.rst:61
+msgid "Rechercher des positions"
+msgstr "Search for positions."
+
+#: ../../source/cmd_mode.rst:64
+msgid ""
+"Dans la recherche de positions, par défaut, blunderDB prend en compte la "
+"structure de pions courante, ignore la position du videau et du score. "
+"Pour prendre en compte la position du videau ou du score, il faut le "
+"mentionner explicitement dans la requête."
+msgstr ""
+"In the position search, by default, blunderDB takes into account the current"
+" pawn structure, ignoring the position of the board and the score. To"
+" consider the board position or the score, it must be explicitly mentioned in"
+" the query."
+
+#: ../../source/cmd_mode.rst:70
+msgid ""
+"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
+"entre le point 24 et le point 14."
+msgstr ""
+"blunderDB considers that a backward pawn (backchecker) is a pawn located"
+" between point 24 and point 14."
+
+#: ../../source/cmd_mode.rst:74
+msgid ""
+"blunderDB considère que le nombre de pions dans la zone est le nombre de "
+"pions situés entre le point 12 et le point 1."
+msgstr ""
+"blunderDB considers that the number of pawns in the zone is the number of"
+" pawns located between point 12 and point 1."
+
+#: ../../source/cmd_mode.rst:78
+msgid ""
+"Les paramètres pour filtrer des positions peuvent être arbitrairement "
+"combinés."
+msgstr "The parameters for filtering positions can be combined arbitrarily."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s cube ..."
+msgstr ":s cube ..."
+
+#: ../../source/cmd_mode.rst:3
+msgid ":s cu ..."
+msgstr ":s cu ..."
+
+#: ../../source/cmd_mode.rst:5
+msgid ":s c ..."
+msgstr ":s c ..."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions vérifiant la configuration courante du cube."
+msgstr "Filter the positions that match the current cube configuration."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s score ..."
+msgstr ":s score ..."
+
+#: ../../source/cmd_mode.rst:3
+msgid ":s sc ..."
+msgstr ":s sc ..."
+
+#: ../../source/cmd_mode.rst:5
+msgid ":s s"
+msgstr ":s s"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions vérifiant le score courant."
+msgstr "Filter the positions that match the current score."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s o7"
+msgstr ":s o7"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions ayant au moins 7 pions sortis."
+msgstr "Filter the positions with at least 7 checkers off."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s p-20,30"
+msgstr ":s p-20,30"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 1 a entre 20 pips d'avance et 30 pips "
+"de retard de course."
+msgstr ""
+"Filter the positions where player 1 has between 20 pips ahead and 30 pips"
+" behind in the race."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s p<-10"
+msgstr ":s p-20,30"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 1 a au moins 10 pips d'avance."
+msgstr "Filter the positions where player 1 has at least 10 pips ahead."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s p>110"
+msgstr ":s p>110"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 1 a au moins 110 pips de retard."
+msgstr "Filter the positions where player 1 has at least 110 pips behind."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s P5,40"
+msgstr ":s P5,40"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions ayant une différence de course entre 5 et 40 pips."
+msgstr "Filter the positions with a race difference between 5 and 40 pips."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s k5"
+msgstr ":s k5"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 1 a 5 pions arriérés."
+msgstr "Filter the positions where player 1 has 5 backcheckers."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s K2"
+msgstr ":s K2"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 2 a 2 pions arriérés."
+msgstr "Filter the positions where player 2 has 2 backcheckers."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s z8"
+msgstr ":s z8"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 1 a 8 pions dans la zone."
+msgstr "Filter the positions where player 1 has 8 checkers in the zone."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s Z6"
+msgstr ":s Z6"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 2 a 6 pions dans la zone."
+msgstr "Filter the positions where player 2 has 6 checkers in the zone."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s e800,1200"
+msgstr ":s e800,1200"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 1 a une équité entre 800 et 1200."
+msgstr ""
+"Filter the positions where player 1 has an equity between 800 and 1200."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s e<200"
+msgstr ":s e<200"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 1 a une équité inférieure à 200."
+msgstr "Filter the positions where player 1 has an equity of less than 200."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s e>400"
+msgstr ":s e>400"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Filtre les positions où le joueur 1 a une équité supérieure à 400."
+msgstr "Filter the positions where player 1 has an equity greater than 400."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s w40,60"
+msgstr ":s w40,60"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de gains entre 40% et "
+"60%."
+msgstr ""
+"Filter the positions where player 1 has winning chances between 40% and 60%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s w<25"
+msgstr ":s w<25"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de gain inférieures à "
+"25."
+msgstr ""
+"Filter the positions where player 1 has winning chances of less than 25%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s w>68"
+msgstr ":s w>68"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de gain supérieures à "
+"68%."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s g14,22"
+msgstr ":s g14,22"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de gammon entre 14% et "
+"22%."
+msgstr ""
+"Filter the positions where player 1 has gammon chances between 14% and 22%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s g<27"
+msgstr ":s g<27"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de gammon inférieures à"
+" 27%."
+msgstr ""
+"Filter the positions where player 1 has gammon chances of less than 27%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s g>45"
+msgstr ":s g>45"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de gammon supérieures à"
+" 45%."
+msgstr ""
+"Filter the positions where player 1 has gammon chances greater than 45%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s bg4,8"
+msgstr ":s bg4,8"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de backgammon entre 4% "
+"et 8%."
+msgstr ""
+"Filter the positions where player 1 has backgammon chances between 4% and 8%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s bg<10"
+msgstr ":s bg<10"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de backgammon "
+"inférieures à 10%."
+msgstr ""
+"Filter the positions where player 1 has backgammon chances of less than 10%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s bg>5"
+msgstr ":s bg>5"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 1 a des chances de backgammon "
+"supérieures à 5%."
+msgstr ""
+"Filter the positions where player 1 has backgammon chances greater than 5%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s W40,60"
+msgstr ":s W40,60"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de gains entre 40% et "
+"60%."
+msgstr ""
+"Filter the positions where player 2 has winning chances between 40% and 60%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s W<25"
+msgstr ":s W<25"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de gain inférieures à "
+"25."
+msgstr ""
+"Filter the positions where player 2 has winning chances of less than 25%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s W>68"
+msgstr ":s W>68"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de gain supérieures à "
+"68%."
+msgstr ""
+"Filter the positions where player 2 has winning chances greater than 68%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s G14,22"
+msgstr ":s G14,22"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de gammon entre 14% et "
+"22%."
+msgstr ""
+"Filter the positions where player 2 has gammon chances between 14% and 22%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s G<27"
+msgstr ":s G<27"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de gammon inférieures à"
+" 27%."
+msgstr ""
+"Filter the positions where player 2 has gammon chances of less than 27%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s G>45"
+msgstr ":s G>45"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de gammon supérieures à"
+" 45%."
+msgstr ""
+"Filter the positions where player 2 has gammon chances greater than 45%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s BG4,8"
+msgstr ":s BG4,8"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de backgammon entre 4% "
+"et 8%."
+msgstr ""
+"Filter the positions where player 2 has backgammon chances between 4% and 8%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s BG<10"
+msgstr ":s BG<10"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de backgammon "
+"inférieures à 10%."
+msgstr ""
+"Filter the positions where player 2 has backgammon chances of less than 10%."
+
+#: ../../source/cmd_mode.rst:1
+msgid ":s BG>5"
+msgstr ":s BG>5"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Filtre les positions où le joueur 2 a des chances de backgammon "
+"supérieures à 5%."
+msgstr ""
+"Filter the positions where player 2 has backgammon chances greater than 5%."
+
+
