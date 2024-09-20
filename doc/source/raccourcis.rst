@@ -3,6 +3,8 @@
 Raccourcis clavier
 ==================
 
+.. _raccourcis_generaux:
+
 Raccourcis généraux
 -------------------
 
@@ -16,6 +18,8 @@ Raccourcis généraux
    "CTRL-Q", "Fermer blunderDB."
    "CTRL-I", "Importer une position par fichier texte (txt)."
    "CTRL-L", "Afficher/cacher l'analyse."
+
+.. _raccourcis_modaux:
 
 Raccourcis modaux
 -----------------

@@ -30,6 +30,8 @@ fichier *.db* et cliquer sur "Open".
 .. tip::
    Raccourcis clavier: *CTRL-O*. Requête: *:o*
 
+.. _guide_edit_position:
+
 Editer une position
 -------------------
 
