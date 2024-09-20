@@ -21,11 +21,15 @@ Pour ce faire, l'utilisateur bascule dans des modes dédiés pour la
 visualisation (mode NORMAL), l'édition de positions (mode EDIT),
 l'édition d'une requête pour filtrer des positions (mode COMMAND).
 
-Dans la suite du manuel, il est décrit:
+L'utilisateur peut ranger librement les positions en créant des
+*bibliothèques*. Une position peut être ajoutée à plusieurs
+bibliothèques en même temps.
 
-* l'interface graphique,
+Dans la suite du manuel, il est décrit l'interface graphique ainsi que
+les principaux modes de blunderDB.
 
-* les modes de blunderDB.
+.. note:: Le mécanisme de bibliothèques est analogue à un mécanisme de
+   *tags* qui permettrait d'étiqueter les positions.
 
 Description de l'IHM
 --------------------
