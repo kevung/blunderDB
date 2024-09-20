@@ -3172,10 +3172,11 @@ static Ihandle* create_menus(void)
     item_getinvolved = IupItem("Get &Involved", NULL);
     item_donate = IupItem("&Donate to blunderDB", NULL);
     item_about = IupItem("&About", NULL);
-    menu_help = IupMenu(item_manual, item_userguide,
-            item_tips, item_cmdmode, item_keyboard,
-            IupSeparator(), item_getinvolved, item_donate,
-            IupSeparator(), item_about, NULL);
+    /* menu_help = IupMenu(item_manual, item_userguide, */
+    /*         item_tips, item_cmdmode, item_keyboard, */
+    /*         IupSeparator(), item_getinvolved, item_donate, */
+    /*         IupSeparator(), item_about, NULL); */
+    menu_help = IupMenu(item_about, NULL);
     submenu_help = IupSubmenu("&Help", menu_help);
 
     menu = IupMenu(submenu_file, submenu_edit, submenu_position,
@@ -3319,8 +3320,6 @@ static Ihandle* create_toolbar(void)
             btn_prev, btn_next,
             IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
             btn_edit, btn_analysis, btn_search,
-            IupSetAttributes(IupLabel(NULL), "SEPARATOR=VERTICAL"),
-            btn_manual,
             NULL);
 
     IupSetAttribute(ih, "NAME", "TOOLBAR");
