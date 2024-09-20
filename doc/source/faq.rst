@@ -53,4 +53,17 @@ Quel format de données utilise blunderDB?
 La base de données est un simple fichier Sqlite. En l'absence de
 blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite.
 
+Quelles ont été les principes de conception de blunderDB?
+---------------------------------------------------------
 
+Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s'inspire
+du très puissant éditeur de texte Vim. Je souhaitais blunderDB léger et
+autonome d'où mon choix du langage C et de la bibliothèque GUI IUP. Pour
+la sérialisation de la base de données, le format de fichiers doit être
+multi-plateforme et adapté pour contenir une base de données. Le format
+de fichier sqlite semblait tout indiqué.
+
+blunderDB fonctionne-t'il sous Linux?
+-------------------------------------
+
+Tout à fait. Il est exécutable avec Wine.
