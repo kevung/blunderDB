@@ -71,6 +71,14 @@ Voici plusieurs manières de réagir:
 Remerciements
 =============
 
-Je dédie ce petit logiciel à ma compagne Anne-Claire et notre petite fille
-Perrine. Je tiens à remercier tout particulièrement quelques amis: Tristan
-Nico. 
+Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre
+fille Perrine. Je tiens à remercier tout particulièrement quelques amis:
+
+* *Tristan Remille*, de m'avoir initié au backgammon avec joie et
+  bienveillance; de montrer la Voie dans la compréhension de ce
+  merveilleux jeu; de continuer à m'encourager avec gentillesse et
+  patience face à mes piètres tentatives de mieux jouer.
+
+* *Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine
+  d'années dans de chouettes aventures, qui a choppé le virus du
+  backgammon, et avec lequel j'essaye de mieux jouer.
