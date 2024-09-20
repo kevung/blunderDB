@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-09-20 14:20+0200\n"
-"PO-Revision-Date: 2024-09-20 15:22+0200\n"
+"PO-Revision-Date: 2024-09-20 16:16+0200\n"
 "Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -61,7 +61,7 @@ msgstr "Close blunderDB."
 
 #: ../../source/cmd_mode.rst:19
 msgid "Interagir avec une position"
-msgstr "Interact with a position."
+msgstr "Interact with a position"
 
 #: ../../source/cmd_mode.rst:1
 msgid ":i"
@@ -124,7 +124,7 @@ msgstr "Delete the current position."
 
 #: ../../source/cmd_mode.rst:40
 msgid "Gérer les bibliothèques"
-msgstr "Manage the libraries."
+msgstr "Manage the libraries"
 
 #: ../../source/cmd_mode.rst:1
 msgid ":e *toto*"
@@ -192,7 +192,7 @@ msgstr "List the libraries."
 
 #: ../../source/cmd_mode.rst:61
 msgid "Rechercher des positions"
-msgstr "Search for positions."
+msgstr "Search for positions"
 
 #: ../../source/cmd_mode.rst:64
 msgid ""
