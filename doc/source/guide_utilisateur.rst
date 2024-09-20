@@ -170,4 +170,24 @@ Pour inverser l'orientation du board, appuyer sur *CTRL-HAUT* ou *CTRL-BAS*.
 Rechercher des positions selon des critères
 -------------------------------------------
 
+Pour rechercher des types de positions,
 
+* basculer en mode EDIT en appuyant sur *TAB*,
+
+* éditer la structure de position à rechercher. blunderDB va filtrer les
+  positions ayant *a minima* la structure de pions saisie. Dans le
+  doute, afin d'obtenir le maximum de résultats, effacer la position
+  en appuyant sur la touche *RETOUR ARRIERE*. Editer si besoin la
+  position du cube et le score.
+
+* basculer en mode COMMAND en appuyant sur *ESPACE*,
+
+* écrire *:s*, ajouter d'éventuels filtres supplémentaires (par exemple
+  *cube* ou *score* pour prendre respectivement en compte le cube et le
+  score. Voir :ref:`cmd_filter_pos` pour une liste exhaustive des
+  filtres disponibles).
+
+* valider la requête en appuyant sur *ENTREE*.
+
+Les positions affichées sont celles de la base de données ayant vérifié
+les critères de recherche entrés par l'utilisateur.
