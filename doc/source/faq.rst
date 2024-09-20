@@ -19,6 +19,23 @@ bibliothèques, l'utilisateur peut disposer à l'aide d'un unique fichier
 l'ensemble de ses positions de référence de manière structurée. Je
 souhaite que blunderDB facilite le partage de positions entre joueurs.
 
+
+Qu'est ce qui a motivé la création de blunderDB?
+------------------------------------------------
+
+J'avais l'habitude de stocker dans différents dossiers des positions
+intéressantes ou des blunders. Toutefois, je rencontrais des difficultés
+à retrouver des positions selon des critères n'ayant pas été prévus
+initialement par mon choix de catégories de thématiques. Par exemple, si
+les positions ont été triés selon le type de jeu (course, holding game,
+blitz, backgame, ...), comment récupérer toutes les positions à un
+certain score? ou à un niveau de cube donné? Enfin, certaines vieilles
+positions avaient tendance à tomber dans l'oubli. Je voulais un outil
+qui aggrège toutes mes positions et qui ne présuppose pas *a priori* de
+catégories thématiques, et ensuite pouvoir poser des questions la base
+de données. Ce type de logiciel est tout à fait courant aux échecs,
+comme ChessBase.
+
 Puis-je modifier, copier, partager blunderDB?
 ---------------------------------------------
 
