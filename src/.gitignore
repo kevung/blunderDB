@@ -4,4 +4,4 @@ tmp
 *.db
 *.txt
 tags
-
+*.log
