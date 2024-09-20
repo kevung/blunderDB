@@ -1,0 +1,165 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-09-20 14:20+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: ../../source/index.rst:4
+msgid "blunderDB"
+msgstr ""
+
+#: ../../source/index.rst:6
+msgid ""
+"blunderDB est un logiciel pour constituer des bases de données de "
+"positions. Sa force principale est de constituer un lieu unique où "
+"aggréger les positions qu'un joueur a pu rencontrer (en ligne, en "
+"tournoi) et de pouvoir réétudier ces positions en les filtrant selon "
+"différents filtres combinables arbitrairement."
+msgstr ""
+
+#: ../../source/index.rst:12
+msgid "La présente documentation est structurée de la manière suivante:"
+msgstr ""
+
+#: ../../source/index.rst:14
+msgid ""
+"le **manuel** décrit le fonctionnement général de blunderDB et la manière"
+" dont il doit être utilisé."
+msgstr ""
+
+#: ../../source/index.rst:17
+msgid ""
+"le **guide utilisateur** est une introduction pratique pour utiliser "
+"rapidement blunderDB."
+msgstr ""
+
+#: ../../source/index.rst:20
+msgid ""
+"la **FAQ** fournit quelques réponses aux intérrogations les plus "
+"fréquentes."
+msgstr ""
+
+#: ../../source/index.rst:22
+msgid ""
+"la liste des **commandes** ainsi que la liste des **raccourcis** clavier "
+"permet une utilisation efficace de blunderDB."
+msgstr ""
+
+#: ../../source/index.rst:26
+msgid "Historique des versions"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "Version"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "Date"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "Cause et/ou nature des évolutions"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "0.1.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "19/09/2024"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "Création."
+msgstr ""
+
+#: ../../source/index.rst:36
+msgid "Sommaire"
+msgstr ""
+
+#: ../../source/index.rst:52
+msgid "Contacts"
+msgstr ""
+
+#: ../../source/index.rst:54
+msgid ""
+"Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
+"sur Heroes sous le pseudo postmanpat."
+msgstr ""
+
+#: ../../source/index.rst:57
+msgid ""
+"J'ai développé blunderDB initialement pour mon usage personnel afin de "
+"pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
+"d'avoir un retour surtout quand on a dépensé un paquet d'heures de "
+"conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour "
+"faire part de votre retour d'expérience. Tous les retours (constructifs) "
+"sont bienvenus."
+msgstr ""
+
+#: ../../source/index.rst:64
+msgid "Voici plusieurs manières de réagir:"
+msgstr ""
+
+#: ../../source/index.rst:66
+msgid "discuter avec moi, si on se retrouve dans un tournoi,"
+msgstr ""
+
+#: ../../source/index.rst:68
+msgid "m'écrire un mail à blunderdb@proton.me,"
+msgstr ""
+
+#: ../../source/index.rst:70
+msgid "sur Github,"
+msgstr ""
+
+#: ../../source/index.rst:72
+msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
+msgstr ""
+
+#: ../../source/index.rst:74
+msgid ""
+"pour des corrections de bugs ou des propositions d'amélioration, créer "
+"une pull request."
+msgstr ""
+
+#: ../../source/index.rst:78
+msgid "Remerciements"
+msgstr ""
+
+#: ../../source/index.rst:80
+msgid ""
+"Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
+"fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
+msgstr ""
+
+#: ../../source/index.rst:83
+msgid ""
+"*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
+"bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
+" jeu; de continuer à m'encourager avec gentillesse et patience face à mes"
+" piètres tentatives de mieux jouer."
+msgstr ""
+
+#: ../../source/index.rst:88
+msgid ""
+"*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
+"d'années dans de chouettes aventures, qui a choppé le virus du "
+"backgammon, et avec lequel j'essaye de mieux jouer."
+msgstr ""
+
