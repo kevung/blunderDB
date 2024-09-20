@@ -54,6 +54,9 @@ Gérer les bibliothèques
    ":d *toto*", "Supprime la bibliothèque *toto*."
    ":ls", "Liste les bibliothèques."
 
+
+.. _cmd_filter_pos:
+
 Rechercher des positions
 ------------------------
 
