@@ -25,7 +25,7 @@ Dans la suite du manuel, il est décrit:
 
 * l'interface graphique,
 
-* les modes de fonctionnement.
+* les modes de blunderDB.
 
 Description de l'IHM
 --------------------
@@ -70,21 +70,61 @@ suivantes:
 
 * un message d'information.
 
-Modes d'utilisation
--------------------
+.. _mode_normal:
 
-NORMAL
+Le mode NORMAL
+--------------
 
-EDIT
-COMMAND
-rédiger une requête
+Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:
 
+* faire défiler les différentes positions de la bibliothèque courante,
 
-Afin d'interagir avec la base de données, l'utilisateur réalise des
-requêtes. Pour ce faire
-Le mode COMMAND est activé à l'aide de la touche ESPACE
+* afficher les informations d'analyse associées à une position.
 
-Le mode commande permet d'interagir avec la base de données courante via
-l'émission d'une requête. Après la validation de cette dernière, la base
-de données est immédiatement modifiée après la validation de la 
+.. tip:: Se référer à la section :ref:`raccourcis_modaux` pour les
+   raccourcis de navigation du mode NORMAL.
+
+.. _mode_edit:
+
+Le mode EDIT
+------------
+
+Le mode EDIT permet d'éditer une position en vue où bien de l'ajouter à
+la base de données, ou bien de définir le type de position à rechercher.
+Le mode EDIT est activé en appuyant sur la touche *TAB*.
+La distributions des pions, du videau, du score, du trait oeuvent être
+modifiés à l'aide de la souris (voir :ref:`guide_edit_position`) ou du clavier (voir
+:ref:`raccourcis_position`).
+
+.. tip:: Se référer à la section :ref:`raccourcis_modaux` pour les
+   raccourcis de navigation du mode EDIT.
+
+Le mode COMMAND
+---------------
+
+Le mode COMMAND permet à l'utilisateur d'émettre une requête à la base
+de données afin de:
+
+* ajouter une nouvelle position ou mettre à jour une position existante,
+
+* ajouter une position dans une bibliothèque,
+
+* renommer, copier, supprimer une bibliothèque,
+
+* lister les bibliothèques existantes,
+
+* rechercher des types de positions selon divers critères librement
+  combinables.
+
+Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur
+la touche *ESPACE*. Pour envoyer une requête et quitter le mode COMMAND,
+appuyer sur la touche *ENTREE*.
+
+blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve
+qu'elles soient valides et modifie immédiatement l'état de la base de données
+le cas échéant. Il n'y a pas d'actions de sauvegarde explicite de la part
+de l'utilisateur.
+
+.. tip:: Se référer à la section :ref:`raccourcis_modaux` pour les
+   raccourcis de navigation du mode COMMAND.
 
