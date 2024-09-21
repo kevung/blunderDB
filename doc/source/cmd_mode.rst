@@ -3,6 +3,8 @@
 Liste des requêtes
 ==================
 
+.. _cmd_global:
+
 Opérations globales
 -------------------
 
@@ -14,6 +16,8 @@ Opérations globales
    ":n", "Crée une nouvelle base de données."
    ":o", "Ouvre une base de données existante."
    ":q", "Ferme blunderDB."
+
+.. _cmd_position:
 
 Interagir avec une position
 ---------------------------
@@ -35,6 +39,8 @@ Interagir avec une position
    ":LS", "Liste les bibliothèques auxquelles la position courante
    appartient."
    ":D", "Supprime la position courante."
+
+.. _cmd_library:
 
 Gérer les bibliothèques
 -----------------------
