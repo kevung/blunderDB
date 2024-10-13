@@ -18,6 +18,10 @@
             stroke: 'black',
             linewidth: 2,
         },
+        label: {
+            size: 25,
+            distanceToBoard: 0.4
+        }
     };
 
     let two;
@@ -123,6 +127,53 @@
             }
             return quadrant;
         }
+
+        function createLabels(){
+            let labels = two.makeGroup();
+            for(let i=0; i<6; i++){
+                const x = boardOrigXpos+(6-i)*boardCheckerSize;
+                const y = boardOrigYpos+0.5*boardHeight
+                +boardCfg.label.distanceToBoard*boardCheckerSize;
+                const t = two.makeText((i+1).toString(), x, y);
+                t.size = boardCfg.label.size;
+                t.alignment = 'center';
+                t.baseline = 'top';
+                labels.add(t);
+            }
+            for(let i=6; i<12; i++){
+                const x = boardOrigXpos-(i-5)*boardCheckerSize;
+                const y = boardOrigYpos+0.5*boardHeight
+                    +boardCfg.label.distanceToBoard*boardCheckerSize;
+                const t = two.makeText((i+1).toString(), x, y);
+                t.size = boardCfg.label.size;
+                t.alignment = 'center';
+                t.baseline = 'top';
+                labels.add(t);
+            }
+            for(let i=12; i<18; i++){
+                const x = boardOrigXpos+(i-18)*boardCheckerSize;
+                const y = boardOrigYpos-0.5*boardHeight
+                    -boardCfg.label.distanceToBoard*boardCheckerSize;
+                const t = two.makeText((i+1).toString(), x, y);
+                t.size = boardCfg.label.size;
+                t.alignment = 'center';
+                t.baseline = 'middle';
+                labels.add(t);
+            }
+            for(let i=18; i<24; i++){
+                const x = boardOrigXpos+(i-17)*boardCheckerSize;
+                const y = boardOrigYpos-0.5*boardHeight
+                    -boardCfg.label.distanceToBoard*boardCheckerSize;
+                const t = two.makeText((i+1).toString(), x, y);
+                t.size = boardCfg.label.size;
+                t.alignment = 'center';
+                t.baseline = 'middle';
+                labels.add(t);
+            }
+            return labels;
+        }
+
+        const labels = createLabels();
 
         const quadrant4 = createQuadrant(
             boardOrigXpos+0.5*boardCheckerSize,
