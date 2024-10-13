@@ -2,13 +2,32 @@
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js'
 
+    let canvasCfg = {
+        aspectFactor: 0.63,
+    }
+
+    let boardCfg = {
+        widthFactor: 0.63,
+        orientation: 'right',
+        fill: 'white',
+        stroke: 'black',
+        linewidth: 3,
+        triangle: {
+            fill1: 'white',
+            fill2: 'rgb(208, 208, 208)',
+            stroke: 'black',
+            linewidth: 2,
+        },
+    };
+
     let two;
-    let width = window.innerWidth * 0.9;
-    let height = window.innerHeight * 0.8;
+    let width = window.innerWidth;
+    let height = canvasCfg.aspectFactor * width;
+
 
     function resizeBoard() {
-        width = window.innerWidth * 0.9;
-        height = window.innerHeight * 0.8;
+        width = window.innerWidth * 1.0;
+        height = canvasCfg.aspectFactor * width;
         two.width = width;
         two.height = height;
         two.renderer.setSize(width, height);
@@ -29,33 +48,105 @@
         window.removeEventListener('resize', resizeBoard);
     });
 
+
     function drawBoard() {
-        two.clear(); // Clear the board before re-drawing
+        two.clear();
 
-        const boardWidth = width;
-        const boardHeight = height;
+        const boardAspectFactor = 11./13.;
+        const boardWidth = boardCfg.widthFactor * width;
+        const boardHeight = boardAspectFactor * boardWidth;
+        const boardCheckerSize = boardHeight/11.;
+        const boardTriangleHeight = 5. * boardCheckerSize;
+        const boardTriangleWidth = 1.0 * boardCheckerSize;
+        const boardOrigXpos = width/2.;
+        const boardOrigYpos = height/2.;
 
-        // Draw background rectangle
-        const board = two.makeRectangle(boardWidth / 2, boardHeight / 2, boardWidth, boardHeight);
-        board.fill = '#D2B48C'; // Light brown color
-        board.stroke = 'black';
+        // draw board
+        const board = two.makeRectangle(boardOrigXpos, boardOrigYpos,
+            boardWidth, boardHeight);
+        board.fill = boardCfg.fill; // Light brown color
+        board.stroke = boardCfg.stroke;
+        board.linewidth = boardCfg.linewidth;
 
-        // Draw triangles for points
-        for (let i = 0; i < 24; i++) {
-            const isWhite = i % 2 === 0;
-            const triangleHeight = boardHeight / 2;
-            const triangleWidth = boardWidth / 12;
+        // draw bar
+        const bar = two.makeRectangle(boardOrigXpos, boardOrigYpos,
+            boardCheckerSize, boardHeight);
+        bar.fill = boardCfg.fill;
+        bar.stoke = boardCfg.stoke;
+        bar.linewidth = boardCfg.linewidth;
 
-            const triangle = two.makePolygon(
-                (i % 12) * triangleWidth + triangleWidth / 2,
-                i < 12 ? boardHeight - triangleHeight / 2 : triangleHeight / 2,
-                triangleWidth / 2,
-                triangleHeight,
-                3
-            );
+        function createTriangle(x, y, flip){
+            if(flip==false) { 
+                const triangle = two.makePath(
+                    x, y,
+                    x+boardCheckerSize, y,
+                    x+0.5*boardCheckerSize, y+5*boardCheckerSize);
+                triangle.stroke = boardCfg.triangle.stroke;
+                triangle.linewidth = boardCfg.triangle.linewidth;
+                return triangle;
 
-            triangle.fill = isWhite ? '#FFF' : '#000';
+            } else {
+                const triangle = two.makePath(
+                    x, y+boardTriangleHeight,
+                    x+boardCheckerSize, y+boardTriangleHeight,
+                    x+0.5*boardCheckerSize, y+boardTriangleHeight
+                    -5*boardCheckerSize);
+
+                triangle.stroke = boardCfg.triangle.stroke;
+                triangle.linewidth = boardCfg.triangle.linewidth;
+                return triangle;
+            }
         }
+
+        function createQuadrant(x, y, flip){
+            let quadrant = two.makeGroup();
+            for(let i=0; i<6; i++){
+                const offsetX = x +i*boardCheckerSize;
+                const offsetY = y;
+                const t = createTriangle(offsetX, offsetY, flip);
+                if(i % 2 == 1){
+                    t.fill = boardCfg.triangle.fill1;
+                } else {
+                    t.fill = boardCfg.triangle.fill2;
+                }
+
+                //invert color
+                if (flip){
+                    if(i % 2 == 1){
+                        t.fill = boardCfg.triangle.fill2;
+                    } else {
+                        t.fill = boardCfg.triangle.fill1;
+                    }
+                }
+
+                quadrant.add(t);
+            }
+            return quadrant;
+        }
+
+        const quadrant4 = createQuadrant(
+            boardOrigXpos+0.5*boardCheckerSize,
+            boardOrigYpos-boardTriangleHeight-0.5*boardCheckerSize,
+            false
+        );
+
+        const quadrant3 = createQuadrant(
+            boardOrigXpos-0.5*boardWidth,
+            boardOrigYpos-boardTriangleHeight-0.5*boardCheckerSize,
+            false
+        );
+
+        const quadrant2 = createQuadrant(
+            boardOrigXpos-0.5*boardWidth,
+            boardOrigYpos+0.5*boardCheckerSize,
+            true
+        );
+
+        const quadrant1 = createQuadrant(
+            boardOrigXpos+0.5*boardCheckerSize,
+            boardOrigYpos+0.5*boardCheckerSize,
+            true
+        );
 
         two.update();
     }
@@ -66,6 +157,17 @@
 <div id="backgammon-board">
 </div>
 </div>
+<p>Vars</p>
+<ul>
+    <li>width: {width}</li>
+    <li>height: {height}</li>
+    {#each Object.entries(canvasCfg) as [key, value]}
+        <li>canvasCfg.{key}: {value}</li>
+  {/each}
+    {#each Object.entries(boardCfg) as [key, value]}
+        <li>boardCfg.{key}: {value}</li>
+  {/each}
+</ul>
 
 <style>
 
