@@ -208,17 +208,6 @@
 <div id="backgammon-board">
 </div>
 </div>
-<p>Vars</p>
-<ul>
-    <li>width: {width}</li>
-    <li>height: {height}</li>
-    {#each Object.entries(canvasCfg) as [key, value]}
-        <li>canvasCfg.{key}: {value}</li>
-  {/each}
-    {#each Object.entries(boardCfg) as [key, value]}
-        <li>boardCfg.{key}: {value}</li>
-  {/each}
-</ul>
 
 <style>
 
