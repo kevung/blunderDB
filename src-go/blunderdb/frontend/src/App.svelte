@@ -15,6 +15,10 @@
         }
     }
 
+    function hideCommandText() {
+        showCommand = false;
+    }
+
     onMount(() => {
         window.addEventListener("keydown", handleKeyDown);
     });
@@ -27,7 +31,7 @@
 <main>
     <Board />
     {#if showCommand}
-        <Command />
+        <Command {hideCommandText} />
     {/if}
 </main>
 

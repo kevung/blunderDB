@@ -1,8 +1,15 @@
 <script>
     import { onMount } from 'svelte';
 
+    export let hideCommandText;
     let inputEl;
     let commandText = '';
+
+    function handleKeyDown(event) {
+        if(event.code === 'Backspace' && inputEl.value === '') {
+            hideCommandText();
+        }
+    }
 
     onMount(() => {
         inputEl.focus();
@@ -14,6 +21,7 @@
     bind:value={commandText}
     placeholder="enter your command"
     style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000;"
+    on:keydown={handleKeyDown}
 />
 
 <style>
