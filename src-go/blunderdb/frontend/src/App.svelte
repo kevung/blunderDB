@@ -7,7 +7,10 @@
 
     function handleKeyDown(event) {
         if (event.code === 'Space') {
-            showCommand = true;
+            if(!showCommand) {
+                event.preventDefault();
+                showCommand = true;
+            }
         } else if (event.code === 'Escape' || event.code === 'Enter') {
             showCommand = false;
         } else if(showCommand && event.ctrlKey && event.code === 'KeyC') {
