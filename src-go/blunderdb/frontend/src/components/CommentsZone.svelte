@@ -14,38 +14,43 @@
 </script>
 
 <div class="comments-zone">
-  <textarea
-    id="commentsTextArea"
-    rows="5"
-    cols="30"
-    bind:value={textAreaValue}
-    placeholder="Type your comments here..."
-  ></textarea>
-  <button on:click={hideCommentsZone}>Close</button>
+    <textarea
+        id="commentsTextArea"
+        rows="5"
+        cols="30"
+        bind:value={textAreaValue}
+        placeholder="Type your comments here..."
+    ></textarea>
+    <button on:click={hideCommentsZone}>Close</button>
 </div>
 
 <style>
 
-  textarea {
-    font-size: 20px;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    outline: none;
-    width: 100%;
-    resize: none;
-  }
+    textarea {
+        position: relative;
+        width: 100%; /* Full width */
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        box-sizing: border-box; /* Include padding and border in total width */
+        padding: 8px;
+        margin-top: 16px; /* Space between main content and comments zone */
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+        border-radius: 4px;
+        outline: none;
+        resize: none;
+        background-color: white; /* Ensure background is opaque */
+        font-size: 20px;
+    }
 
-  button {
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease, opacity 0.3s ease;
-  }
+    button {
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease, opacity 0.3s ease;
+    }
 
-  button:hover {
-    opacity: 0.7;
-  }
+    button:hover {
+        opacity: 0.7;
+    }
 
 </style>
 

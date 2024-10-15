@@ -29,11 +29,12 @@
 <style>
     input {
         width: 90%;
-        font-size: 25px;
-        padding: 1px;
-        border: 1px solid #ccc;
+        padding: 8px;
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
         border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         outline: none;
         background-color: white; /* Ensure background is opaque */
+        font-size: 21px;
     }
 </style>

@@ -41,7 +41,7 @@
     });
 </script>
 
-<main>
+<main class="main-container">
     <Board />
 
     {#if showCommand}
@@ -54,4 +54,12 @@
 </main>
 
 <style>
+    .main-container {
+        display: flex;
+        flex-direction: column; /* Stack children vertically */
+        align-items: stretch; /* Allow children to stretch to fill the width */
+        min-height: 100vh; /* Full height of the viewport */
+        padding: 16px; /* Add some padding */
+        box-sizing: border-box; /* Include padding in total height */
+    }
 </style>
