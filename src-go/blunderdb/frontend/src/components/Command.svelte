@@ -21,7 +21,7 @@
     type="text"
     bind:this={inputEl}
     bind:value={commandText}
-    placeholder="Type your command here."
+    placeholder=" Type your command here. "
     style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000;"
     on:keydown={handleKeyDown}
 />
