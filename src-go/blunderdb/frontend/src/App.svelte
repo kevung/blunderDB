@@ -46,7 +46,6 @@
 
     function closeCommandText() {
         showCommand = false;
-        commandText = '';
     }
 
     function hideCommentsZone() {
