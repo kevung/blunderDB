@@ -5,9 +5,14 @@
     import Command from './components/Command.svelte';
     import StatusBar from './components/StatusBar.svelte';
     import CommentsZone from './components/CommentsZone.svelte';
+
     let showCommand = false;
     let showCommentsZone = false;
-    let mode = "normal";
+
+    let mainArea;
+    let commentArea;
+
+    let mode = "NORMAL";
     let position = 0;
     let infoMessage = "";
 
@@ -23,7 +28,7 @@
             showCommand = false;
         } else if(event.ctrlKey && event.code == 'KeyP') {
             event.preventDefault();
-            showCommentsZone = !showCommentsZone;
+            toggleCommentZone();
             showCommand = false;
         }
 
@@ -38,12 +43,26 @@
         }
     }
 
-    function hideCommandText() {
+    function closeCommandText() {
         showCommand = false;
     }
 
     function hideCommentsZone() {
         showCommentsZone = false;
+        if (!showCommentsZone) {
+            mainArea.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+
+    function toggleCommentZone() {
+        showCommentsZone = !showCommentsZone;
+        if (showCommentsZone) {
+            setTimeout(() => {
+                commentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 0);
+        } else {
+            mainArea.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 
     onMount(() => {
@@ -55,18 +74,16 @@
     });
 </script>
 
-<main class="main-container">
+<main class="main-container" bind:this={mainArea}>
+
     <Board />
 
-    {#if showCommand}
-        <Command {hideCommandText} />
-    {/if}
+    <Command visible={showCommand} onClose={closeCommandText} />
 
-    <StatusBar {mode} {position} {infoMessage} />
+    <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
 
-    {#if showCommentsZone}
-        <CommentsZone {hideCommentsZone} />
-    {/if}
+    <CommentsZone bind:this={commentArea} visible={showCommentsZone} onClose={toggleCommentZone} />
+
 </main>
 
 <style>

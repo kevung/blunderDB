@@ -1,7 +1,7 @@
 <script>
   export let mode = "normal"; // Current mode
-  export let position = 0; // Current position
   export let infoMessage = ""; // Info message to display
+  export let position = 0; // Current position
 </script>
 
 <div class="status-bar">

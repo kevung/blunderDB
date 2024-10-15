@@ -1,28 +1,31 @@
 <script>
-  export let hideCommentsZone;
+    export let visible = false;
+    export let onClose;
 
-  let textAreaValue = '';
+    let textAreaValue = '';
 
-  import { onMount } from "svelte";
+    import { onMount } from "svelte";
 
-  onMount(() => {
-    const textAreaEl = document.getElementById('commentsTextArea');
-    if (textAreaEl) {
-      textAreaEl.focus();
-    }
-  });
+    onMount(() => {
+        const textAreaEl = document.getElementById('commentsTextArea');
+        if (textAreaEl) {
+            textAreaEl.focus();
+        }
+    });
 </script>
 
-<div class="comments-zone">
-    <textarea
-        id="commentsTextArea"
-        rows="5"
-        cols="30"
-        bind:value={textAreaValue}
-        placeholder="Type your comments here..."
-    ></textarea>
-    <button on:click={hideCommentsZone}>Close</button>
-</div>
+{#if visible}
+    <div class="comments-zone">
+        <textarea
+            id="commentsTextArea"
+            rows="5"
+            cols="30"
+            bind:value={textAreaValue}
+            placeholder="Type your comments here..."
+        ></textarea>
+        <button on:click={onClose}>Close</button>
+    </div>
+{/if}
 
 <style>
 
