@@ -3,9 +3,13 @@
     import { fade } from 'svelte/transition';
     import Board from './components/Board.svelte';
     import Command from './components/Command.svelte';
+    import StatusBar from './components/StatusBar.svelte';
     import CommentsZone from './components/CommentsZone.svelte';
     let showCommand = false;
     let showCommentsZone = false;
+    let mode = "normal";
+    let position = 0;
+    let infoMessage = "";
 
     function handleKeyDown(event) {
         if (event.code === 'Space') {
@@ -21,6 +25,16 @@
             event.preventDefault();
             showCommentsZone = !showCommentsZone;
             showCommand = false;
+        }
+
+        // Update the status bar based on the key pressed
+        if (showCommand) {
+            mode = "COMMAND"; // Set mode to edit when the TextLine is shown
+            position++; // Increment the position for demonstration
+            infoMessage = "A command is being entered..."; // Set info message
+        } else {
+            mode = "NORMAL"; // Reset mode to normal
+            infoMessage = ""; // Clear info message
         }
     }
 
@@ -47,6 +61,8 @@
     {#if showCommand}
         <Command {hideCommandText} />
     {/if}
+
+    <StatusBar {mode} {position} {infoMessage} />
 
     {#if showCommentsZone}
         <CommentsZone {hideCommentsZone} />
