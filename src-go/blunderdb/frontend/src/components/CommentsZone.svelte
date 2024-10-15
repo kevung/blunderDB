@@ -1,17 +1,19 @@
 <script>
     export let visible = false;
     export let onClose;
-
-    let textAreaValue = '';
+    export let text = '';
 
     import { onMount } from "svelte";
 
-    onMount(() => {
-        const textAreaEl = document.getElementById('commentsTextArea');
-        if (textAreaEl) {
-            textAreaEl.focus();
-        }
-    });
+    $: if (visible) {
+       setTimeout(() => {
+          const textAreaEl = document.getElementById('commentsTextArea');
+          if (textAreaEl) {
+             textAreaEl.focus();
+          }
+       }, 0);
+    }
+
 </script>
 
 {#if visible}
@@ -20,7 +22,7 @@
             id="commentsTextArea"
             rows="5"
             cols="30"
-            bind:value={textAreaValue}
+            bind:value={text}
             placeholder="Type your comments here..."
         ></textarea>
         <button on:click={onClose}>Close</button>

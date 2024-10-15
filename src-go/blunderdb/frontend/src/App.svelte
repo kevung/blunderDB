@@ -16,6 +16,7 @@
     let position = 0;
     let infoMessage = "";
     let commandText = '';
+    let commentText = '';
 
     function handleKeyDown(event) {
         if (event.code === 'Space') {
@@ -83,7 +84,7 @@
 
     <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
 
-    <CommentsZone bind:this={commentArea} visible={showCommentsZone} onClose={toggleCommentZone} />
+    <CommentsZone bind:this={commentArea} text={commentText} visible={showCommentsZone} onClose={toggleCommentZone} />
 
 </main>
 
