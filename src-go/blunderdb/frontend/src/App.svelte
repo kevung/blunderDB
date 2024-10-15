@@ -15,6 +15,7 @@
     let mode = "NORMAL";
     let position = 0;
     let infoMessage = "";
+    let commandText = '';
 
     function handleKeyDown(event) {
         if (event.code === 'Space') {
@@ -23,9 +24,9 @@
                 showCommand = true;
             }
         } else if (event.code === 'Escape' || event.code === 'Enter') {
-            showCommand = false;
+            closeCommandText();
         } else if(showCommand && event.ctrlKey && event.code === 'KeyC') {
-            showCommand = false;
+            closeCommandText();
         } else if(event.ctrlKey && event.code == 'KeyP') {
             event.preventDefault();
             toggleCommentZone();
@@ -45,6 +46,7 @@
 
     function closeCommandText() {
         showCommand = false;
+        commandText = '';
     }
 
     function hideCommentsZone() {
@@ -78,7 +80,7 @@
 
     <Board />
 
-    <Command visible={showCommand} onClose={closeCommandText} />
+    <Command visible={showCommand} onClose={closeCommandText} text={commandText} />
 
     <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
 

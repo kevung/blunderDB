@@ -3,8 +3,8 @@
 
     export let visible = false;
     export let onClose;
+    export let text = '';
     let inputEl;
-    let commandText = '';
 
     function handleKeyDown(event) {
         if(event.code === 'Backspace' && inputEl.value === '') {
@@ -14,7 +14,7 @@
 
     onMount(() => {
         inputEl.focus();
-        commandText = '';
+        text = '';
     });
 </script>
 
@@ -22,7 +22,7 @@
     <input
         type="text"
         bind:this={inputEl}
-        bind:value={commandText}
+        bind:value={text}
         placeholder=" Type your command here. "
         style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000;"
         on:keydown={handleKeyDown}
