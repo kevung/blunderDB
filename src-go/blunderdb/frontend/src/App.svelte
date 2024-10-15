@@ -3,11 +3,13 @@
     import { fade } from 'svelte/transition';
     import Board from './components/Board.svelte';
     import Command from './components/Command.svelte';
+    import CommentsZone from './components/CommentsZone.svelte';
     let showCommand = false;
+    let showCommentsZone = false;
 
     function handleKeyDown(event) {
         if (event.code === 'Space') {
-            if(!showCommand) {
+            if(!showCommand && !showCommentsZone) {
                 event.preventDefault();
                 showCommand = true;
             }
@@ -15,11 +17,19 @@
             showCommand = false;
         } else if(showCommand && event.ctrlKey && event.code === 'KeyC') {
             showCommand = false;
+        } else if(event.ctrlKey && event.code == 'KeyP') {
+            event.preventDefault();
+            showCommentsZone = !showCommentsZone;
+            showCommand = false;
         }
     }
 
     function hideCommandText() {
         showCommand = false;
+    }
+
+    function hideCommentsZone() {
+        showCommentsZone = false;
     }
 
     onMount(() => {
@@ -33,8 +43,13 @@
 
 <main>
     <Board />
+
     {#if showCommand}
         <Command {hideCommandText} />
+    {/if}
+
+    {#if showCommentsZone}
+        <CommentsZone {hideCommentsZone} />
     {/if}
 </main>
 
