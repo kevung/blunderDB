@@ -1,6 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
+    import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
     import Command from './components/Command.svelte';
     import StatusBar from './components/StatusBar.svelte';
@@ -50,6 +51,47 @@
         showCommand = false;
     }
 
+    function handleNewDatabase() {
+        console.log('New Database');
+    }
+
+    function handleOpenDatabase() {
+        console.log('Open Database');
+    }
+
+    function handleImportPosition() {
+        console.log('Import Position');
+    }
+
+    function handleCopyPosition() {
+        console.log('Copy Position');
+    }
+
+    function handlePastePosition() {
+        console.log('Paste Position');
+    }
+
+    function handlePreviousPosition() {
+        console.log('Previous Position');
+    }
+
+    function handleNextPosition() {
+        console.log('Next Position');
+    }
+
+    function handleSearch() {
+        console.log('Search');
+    }
+
+    function handleShowAnalysis() {
+        console.log('Show Analysis');
+    }
+
+    function handleAbout() {
+        console.log('About');
+    }
+
+
     function toggleCommentZone() {
         showCommentsZone = !showCommentsZone;
         if (showCommentsZone) {
@@ -71,6 +113,21 @@
 </script>
 
 <main class="main-container" bind:this={mainArea}>
+
+    <Toolbar 
+        onNewDatabase={handleNewDatabase}
+        onOpenDatabase={handleOpenDatabase}
+        onImportPosition={handleImportPosition}
+        onCopyPosition={handleCopyPosition}
+        onPastePosition={handlePastePosition}
+        onPreviousPosition={handlePreviousPosition}
+        onNextPosition={handleNextPosition}
+        onShowAnalysis={handleShowAnalysis}
+        onShowComment={toggleCommentZone}
+        onSearch={handleSearch}
+        onAbout={handleAbout}
+    />
+
     <div class="scrollable-content">
         <Board />
         <Command visible={showCommand} onClose={closeCommandText} text={commandText} />
