@@ -16,21 +16,21 @@
   .status-bar {
     display: flex;
     align-items: center; /* Center items vertically */
-    background-color: rgba(0, 0, 0, 0.09); /* Slightly dark background */
-    padding: 8px 12px; /* Padding for the status bar */
-    border-top: 1px solid rgba(0, 0, 0, 0.2); /* Top border */
+    background-color: #f0f0f0;
+    border-bottom: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    padding: 4px 0px; /* Padding for the status bar */
     position: fixed; /* Fixed position at the bottom */
     bottom: 0; /* Align to bottom */
     left: 0; /* Align to left */
     right: 0; /* Align to right */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Shadow for depth */
-    font-size: 16px; /* Font size */
+    font-size: 14px; /* Font size */
   }
 
   .mode {
-      width: 90px; /* Fixed width for mode */
+      width: 84px; /* Fixed width for mode */
       text-align: center;
-      margin-right: 8px; /* Space to the right */
+      justify-content: center;
   }
 
   .info-message {
@@ -42,13 +42,14 @@
   .position {
       width: 80px; /* Fixed width for position */
       text-align: center;
-      margin-left: 8px;
+      justify-content: center;
   }
 
   .separator {
       width: 1px; /* Width of the separator */
-      height: 24px; /* Height of the separator */
+      height: 20px; /* Height of the separator */
       background-color: rgba(0, 0, 0, 0.2); /* Light color for the separator */
+      margin: 0 0px;
   }
 
 </style>
