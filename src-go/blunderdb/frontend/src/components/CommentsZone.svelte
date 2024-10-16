@@ -31,31 +31,51 @@
 
 <style>
 
+    .comments-zone {
+        position: absolute;
+        bottom: 50px; /* Above the status bar */
+        left: 0;
+        right: 0;
+        max-height: 50vh; /* Limit height to half the viewport */
+        overflow-y: auto; /* Allow scrolling inside the comment zone */
+        overflow-x: hidden; /* Disable horizontal scrolling inside the comment zone */
+        background-color: rgba(0, 0, 0, 0);
+        padding: 16px;
+        box-sizing: border-box; /* Include padding in width */
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0);
+    }
+
     textarea {
         position: relative;
-        width: 100%; /* Full width */
+        width: 100%;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        box-sizing: border-box; /* Include padding and border in total width */
+        box-sizing: border-box; /* Include padding in width */
+        height: 150px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         padding: 8px;
-        margin-top: 16px; /* Space between main content and comments zone */
-        border: 1px solid rgba(0, 0, 0, 0.1); /* Subtle border */
+        margin-bottom: 16px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 4px;
         outline: none;
         resize: none;
         background-color: white; /* Ensure background is opaque */
-        font-size: 20px;
+        font-size: 16px;
     }
 
     button {
-        border: none;
+        margin-top: 8px;
+        padding: 8px 12px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 4px;
         cursor: pointer;
         transition: background-color 0.3s ease, opacity 0.3s ease;
     }
 
     button:hover {
-        opacity: 0.7;
+        opacity: 0.85;
     }
+
+
 
 </style>
 

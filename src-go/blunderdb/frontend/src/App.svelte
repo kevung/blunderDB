@@ -71,10 +71,10 @@
 </script>
 
 <main class="main-container" bind:this={mainArea}>
-
-    <Board />
-
-    <Command visible={showCommand} onClose={closeCommandText} text={commandText} />
+    <div class="scrollable-content">
+        <Board />
+        <Command visible={showCommand} onClose={closeCommandText} text={commandText} />
+    </div>
 
     <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
 
@@ -85,10 +85,36 @@
 <style>
     .main-container {
         display: flex;
-        flex-direction: column; /* Stack children vertically */
-        align-items: stretch; /* Allow children to stretch to fill the width */
-        min-height: 100vh; /* Full height of the viewport */
-        padding: 16px; /* Add some padding */
-        box-sizing: border-box; /* Include padding in total height */
+        flex-direction: column;
+        min-height: 100vh;
+        padding: 0; /* No padding so content fills entire viewport */
+        box-sizing: border-box;
+        position: relative;
+        overflow: hidden; /* Hide overflow initially */
     }
+
+    .scrollable-content {
+        flex-grow: 1;
+        overflow-y: auto; /* Allow vertical scrolling */
+        overflow-x: hidden; /* Disable horizontal scrolling */
+        padding: 16px; /* Add padding for content */
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .comments-zone {
+        position: absolute;
+        bottom: 50px; /* Adjust based on height of StatusBar */
+        left: 0;
+        right: 0;
+        max-height: 50vh; /* Limit height of comment zone */
+        overflow-y: auto; /* Scroll inside the comment zone if content exceeds max height */
+        overflow-x: hidden; /* Disable horizontal scrolling */
+        background: white;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        padding: 16px;
+        box-sizing: border-box;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
 </style>
