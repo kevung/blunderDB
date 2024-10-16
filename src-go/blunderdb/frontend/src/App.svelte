@@ -23,32 +23,19 @@
         if (event.code === 'Space') { // to open command line
             if(!showCommand && !showCommentsZone) {
                 event.preventDefault();
-                showCommand = true;
+                toggleCommandMode();
             }
         } else if ( // to close command line
             (showCommand && (event.code === 'Escape' || event.code === 'Enter')) 
             || (showCommand && event.ctrlKey && event.code === 'KeyC')
         ) {
-            closeCommandText();
+            toggleCommandMode();
         } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
             event.preventDefault();
             toggleCommentZone();
             showCommand = false;
         }
 
-        // Update the status bar based on the key pressed
-        if (showCommand) {
-            mode = "COMMAND"; // Set mode to edit when the TextLine is shown
-            position++; // Increment the position for demonstration
-            infoMessage = "A command is being entered..."; // Set info message
-        } else {
-            mode = "NORMAL"; // Reset mode to normal
-            infoMessage = ""; // Clear info message
-        }
-    }
-
-    function closeCommandText() {
-        showCommand = false;
     }
 
     function handleNewDatabase() {
@@ -57,6 +44,10 @@
 
     function handleOpenDatabase() {
         console.log('Open Database');
+    }
+
+    function handleExit() {
+        console.log('Exit blunderDB');
     }
 
     function handleImportPosition() {
@@ -71,6 +62,18 @@
         console.log('Paste Position');
     }
 
+    function handleAddPosition() {
+        console.log('Add Position');
+    }
+
+    function handleDeletePosition() {
+        console.log('Delete Position');
+    }
+
+    function handleFirstPosition() {
+        console.log('First Position');
+    }
+
     function handlePreviousPosition() {
         console.log('Previous Position');
     }
@@ -79,18 +82,39 @@
         console.log('Next Position');
     }
 
-    function handleSearch() {
-        console.log('Search');
+    function handleLastPosition() {
+        console.log('Last Position');
+    }
+
+    function handleFindPosition() {
+        console.log('Find Position');
     }
 
     function handleShowAnalysis() {
         console.log('Show Analysis');
     }
 
-    function handleAbout() {
-        console.log('About');
+    function handleHelp() {
+        console.log('Help');
     }
 
+
+    function toggleEditMode(){
+        if(mode !== "EDIT") {
+            mode = "EDIT";
+        } else {
+            mode = "NORMAL";
+        }
+    }
+
+    function toggleCommandMode(){
+        if(!showCommand) {
+            mode = "COMMAND";
+        } else {
+            mode = "NORMAL";
+        }
+        showCommand = !showCommand;
+    }
 
     function toggleCommentZone() {
         showCommentsZone = !showCommentsZone;
@@ -117,20 +141,27 @@
     <Toolbar 
         onNewDatabase={handleNewDatabase}
         onOpenDatabase={handleOpenDatabase}
+        onExit={handleExit}
         onImportPosition={handleImportPosition}
         onCopyPosition={handleCopyPosition}
         onPastePosition={handlePastePosition}
+        onAddPosition={handleAddPosition}
+        onDeletePosition={handleDeletePosition}
+        onFirstPosition={handleFirstPosition}
         onPreviousPosition={handlePreviousPosition}
         onNextPosition={handleNextPosition}
+        onLastPosition={handleLastPosition}
+        onToggleEditMode={toggleEditMode}
+        onToggleCommandMode={toggleCommandMode}
         onShowAnalysis={handleShowAnalysis}
         onShowComment={toggleCommentZone}
-        onSearch={handleSearch}
-        onAbout={handleAbout}
+        onFindPosition={handleFindPosition}
+        onHelp={handleHelp}
     />
 
     <div class="scrollable-content">
         <Board />
-        <Command visible={showCommand} onClose={closeCommandText} text={commandText} />
+        <Command visible={showCommand} onClose={toggleCommandMode} text={commandText} />
     </div>
 
     <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
