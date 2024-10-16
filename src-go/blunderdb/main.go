@@ -2,16 +2,40 @@ package main
 
 import (
 	"embed"
+    "log"
+    "fmt"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+
+    "blunderdb/backend"
 )
 
 //go:embed all:frontend/dist
 var assets embed.FS
 
 func main() {
+
+    db, errDb := backend.SetupDatabase()
+    if errDb != nil {
+        log.Fatal(errDb)
+    }
+
+    var gameState backend.GameState
+    gameState = backend.InitializeGameState()
+
+    backend.SaveGameState(db, gameState)
+
+    gameState2, _ := backend.LoadGameState(db, 1)
+    fmt.Printf("%+v\n", gameState2)
+
+    if gameState == *gameState2 {
+        fmt.Println("The game states are equal.")
+    } else {
+        fmt.Println("The game states are not equal.")
+    }
+
 	// Create an instance of the app structure
 	app := NewApp()
 
