@@ -19,7 +19,7 @@ func main() {
 	err := wails.Run(&options.App{
 		Title:  "blunderDB",
 		Width:  1024,
-		Height: 768,
+		Height: 728,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},
