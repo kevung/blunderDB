@@ -24,6 +24,7 @@
 
 {#if visible}
     <div class="comments-zone">
+        <div class="close-icon" on:click={onClose}>x</div>
         <textarea
             id="commentsTextArea"
             rows="5"
@@ -32,7 +33,6 @@
             placeholder="Type your comments here..."
             on:keydown={handleKeyDown}
         ></textarea>
-        <button on:click={onClose}>Close</button>
     </div>
 {/if}
 
@@ -52,6 +52,33 @@
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0);
     }
 
+    .close-icon {
+        position: absolute;
+        top: 8px;
+        right: 12px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #666;
+        cursor: pointer;
+        background-color: #d0d0d0; /* Same background as the comments zone */
+        border: 1px solid rgba(0, 0, 0, 0.1); /* Border to match */
+        width: 10px;
+        height: 16px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Add shadow for visibility */
+        border-radius: 2px; /* Make it circular */
+        padding: 4px 8px;
+        z-index: 10; /* Ensure it's on top of other content */
+        transition: background-color 0.3s ease, opacity 0.3s ease;
+    }
+
+    .close-icon:hover {
+        color: #000;
+        background-color: #f0f0f0; /* Slightly darker on hover */
+    }
+
     textarea {
         position: relative;
         width: 100%;
@@ -68,21 +95,6 @@
         background-color: white; /* Ensure background is opaque */
         font-size: 16px;
     }
-
-    button {
-        margin-top: 8px;
-        padding: 8px 12px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
-        cursor: pointer;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
-    }
-
-    button:hover {
-        opacity: 0.85;
-    }
-
-
 
 </style>
 
