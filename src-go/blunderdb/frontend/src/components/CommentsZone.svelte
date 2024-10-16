@@ -40,7 +40,7 @@
 
     .comments-zone {
         position: absolute;
-        bottom: 50px; /* Above the status bar */
+        bottom: 22px; /* Above the status bar */
         left: 0;
         right: 0;
         max-height: 50vh; /* Limit height to half the viewport */
@@ -85,7 +85,7 @@
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         box-sizing: border-box; /* Include padding in width */
         height: 150px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         padding: 8px;
         margin-bottom: 16px;
         border: 1px solid rgba(0, 0, 0, 0.1);
