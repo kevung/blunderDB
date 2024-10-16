@@ -19,16 +19,17 @@
     let commentText = '';
 
     function handleKeyDown(event) {
-        if (event.code === 'Space') {
+        if (event.code === 'Space') { // to open command line
             if(!showCommand && !showCommentsZone) {
                 event.preventDefault();
                 showCommand = true;
             }
-        } else if (event.code === 'Escape' || event.code === 'Enter') {
+        } else if ( // to close command line
+            (showCommand && (event.code === 'Escape' || event.code === 'Enter')) 
+            || (showCommand && event.ctrlKey && event.code === 'KeyC')
+        ) {
             closeCommandText();
-        } else if(showCommand && event.ctrlKey && event.code === 'KeyC') {
-            closeCommandText();
-        } else if(event.ctrlKey && event.code == 'KeyP') {
+        } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
             event.preventDefault();
             toggleCommentZone();
             showCommand = false;
@@ -47,13 +48,6 @@
 
     function closeCommandText() {
         showCommand = false;
-    }
-
-    function hideCommentsZone() {
-        showCommentsZone = false;
-        if (!showCommentsZone) {
-            mainArea.scrollIntoView({ behavior: 'smooth' });
-        }
     }
 
     function toggleCommentZone() {
