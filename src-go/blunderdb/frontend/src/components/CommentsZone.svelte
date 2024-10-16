@@ -5,6 +5,12 @@
 
     import { onMount } from "svelte";
 
+    function handleKeyDown(event) {
+        if (event.key === 'Escape') {
+            onClose();
+        }
+    }
+
     $: if (visible) {
        setTimeout(() => {
           const textAreaEl = document.getElementById('commentsTextArea');
@@ -24,6 +30,7 @@
             cols="30"
             bind:value={text}
             placeholder="Type your comments here..."
+            on:keydown={handleKeyDown}
         ></textarea>
         <button on:click={onClose}>Close</button>
     </div>
