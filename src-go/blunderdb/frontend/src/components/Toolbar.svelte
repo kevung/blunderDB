@@ -145,8 +145,8 @@
 <style>
     .toolbar {
         display: flex;
-        justify-content: space-between;
-        padding: 8px;
+        align-items: center;
+        padding: 4px;
         background-color: #f0f0f0;
         border-bottom: 1px solid #ccc;
     }
@@ -154,13 +154,21 @@
     .toolbar button {
         background: none;
         border: none;
-        padding: 10px;
+        padding: 4px;
+        margin: 0;
         cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .toolbar button:first-child {
+    margin-left: 4px; /* Add space to the left of the first button */
     }
 
     .toolbar button svg {
-        width: 24px;
-        height: 24px;
+        width: 20px;
+        height: 20px;
     }
 
     .toolbar button:focus {
@@ -174,7 +182,8 @@
     .separator {
     width: 1px;
     background-color: #ccc;
-    margin: 0 10px; /* Add some space between the icon groups */
+    margin: 0 8px; /* Add some space between the icon groups */
+    height: 20px;
     }
 
 </style>
