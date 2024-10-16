@@ -82,18 +82,16 @@
     textarea {
         position: relative;
         width: 100%;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         box-sizing: border-box; /* Include padding in width */
         height: 150px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         padding: 8px;
         margin-bottom: 16px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 4px;
+        border: 1px solid rgba(0, 0, 0, 0.2);
+        border-radius: 0px;
         outline: none;
         resize: none;
         background-color: white; /* Ensure background is opaque */
-        font-size: 16px;
+        font-size: 18px;
     }
 
 </style>
