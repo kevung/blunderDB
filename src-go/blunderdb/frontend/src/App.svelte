@@ -5,9 +5,12 @@
     import Board from './components/Board.svelte';
     import Command from './components/Command.svelte';
     import StatusBar from './components/StatusBar.svelte';
+    import AnalysisPanel from './components/AnalysisPanel.svelte';
     import CommentsZone from './components/CommentsZone.svelte';
 
     let showCommand = false;
+    let showAnalysis = false;
+    let analysisData = 'This is where your analysis data will be displayed.';
     let showCommentsZone = false;
 
     let mainArea;
@@ -116,6 +119,20 @@
         showCommand = !showCommand;
     }
 
+    function toggleAnalysisPanel() {
+        showAnalysis = !showAnalysis;
+        if (showAnalysis) {
+            setTimeout(() => {
+                document.querySelector('.analysis-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 0);
+        }
+        else {
+            setTimeout(() => {
+                mainArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 0);
+        }
+    }
+
     function toggleCommentZone() {
         showCommentsZone = !showCommentsZone;
         if (showCommentsZone) {
@@ -153,7 +170,7 @@
         onLastPosition={handleLastPosition}
         onToggleEditMode={toggleEditMode}
         onToggleCommandMode={toggleCommandMode}
-        onShowAnalysis={handleShowAnalysis}
+        onShowAnalysis={toggleAnalysisPanel}
         onShowComment={toggleCommentZone}
         onFindPosition={handleFindPosition}
         onHelp={handleHelp}
@@ -161,12 +178,19 @@
 
     <div class="scrollable-content">
         <Board />
-        <Command visible={showCommand} onClose={toggleCommandMode} text={commandText} />
+
+        <Command visible={showCommand} onClose={toggleCommandMode}
+            text={commandText} />
+
     </div>
 
-    <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
+    <CommentsZone bind:this={commentArea} text={commentText}
+        visible={showCommentsZone} onClose={toggleCommentZone} />
 
-    <CommentsZone bind:this={commentArea} text={commentText} visible={showCommentsZone} onClose={toggleCommentZone} />
+    <AnalysisPanel visible={showAnalysis} analysisData={analysisData}
+        onClose={toggleAnalysisPanel} /> 
+
+    <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
 
 </main>
 
