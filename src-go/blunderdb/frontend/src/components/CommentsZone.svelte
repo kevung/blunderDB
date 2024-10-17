@@ -86,7 +86,7 @@
         height: 150px;
         padding: 8px;
         margin-bottom: 16px;
-        border: 1px solid rgba(0, 0, 0, 0.2);
+        border: 1px solid rgba(0, 0, 0, 0.3);
         border-radius: 0px;
         outline: none;
         resize: none;
