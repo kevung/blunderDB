@@ -7,11 +7,13 @@
     import StatusBar from './components/StatusBar.svelte';
     import AnalysisPanel from './components/AnalysisPanel.svelte';
     import CommentsZone from './components/CommentsZone.svelte';
+    import HelpModal from './components/HelpModal.svelte';
 
     let showCommand = false;
     let showAnalysis = false;
-    let analysisData = 'This is where your analysis data will be displayed.';
+    let showHelp = false;  // Add state for help modal
     let showCommentsZone = false;
+
 
     let mainArea;
     let commentArea;
@@ -21,6 +23,7 @@
     let infoMessage = "";
     let commandText = '';
     let commentText = '';
+    let analysisData = 'This is where your analysis data will be displayed.';
 
     function handleKeyDown(event) {
         if (event.code === 'Space') { // to open command line
@@ -41,6 +44,9 @@
         } else if (event.ctrlKey && event.code === 'KeyL') { // Toggle analysis panel (Ctrl+L)
             event.preventDefault();
             toggleAnalysisPanel();
+        } else if (event.ctrlKey && event.code === 'KeyH') { // Ctrl+H for help
+            event.preventDefault();
+            toggleHelpModal();
         }
 
     }
@@ -155,6 +161,12 @@
     onDestroy(() => {
         window.removeEventListener("keydown", handleKeyDown);
     });
+
+
+    function toggleHelpModal() {
+        showHelp = !showHelp;
+    }
+
 </script>
 
 <main class="main-container" bind:this={mainArea}>
@@ -177,7 +189,7 @@
         onShowAnalysis={toggleAnalysisPanel}
         onShowComment={toggleCommentZone}
         onFindPosition={handleFindPosition}
-        onHelp={handleHelp}
+        onHelp={toggleHelpModal}
     />
 
     <div class="scrollable-content">
@@ -193,6 +205,8 @@
 
     <AnalysisPanel visible={showAnalysis} analysisData={analysisData}
         onClose={toggleAnalysisPanel} /> 
+
+    <HelpModal visible={showHelp} onClose={toggleHelpModal} />
 
     <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
 
