@@ -37,6 +37,10 @@
             event.preventDefault();
             toggleCommentZone();
             showCommand = false;
+
+        } else if (event.ctrlKey && event.code === 'KeyL') { // Toggle analysis panel (Ctrl+L)
+            event.preventDefault();
+            toggleAnalysisPanel();
         }
 
     }
