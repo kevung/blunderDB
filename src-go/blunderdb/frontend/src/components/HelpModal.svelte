@@ -141,7 +141,7 @@
     .modal-content {
         background-color: white;
         padding: 20px;
-        border-radius: 8px;
+        border-radius: 4px;
         width: 80%;
         height: 70%; /* Fix height to 70% of the viewport */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
