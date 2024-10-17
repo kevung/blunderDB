@@ -25,6 +25,7 @@
     left: 0; /* Align to left */
     right: 0; /* Align to right */
     font-size: 14px; /* Font size */
+    z-index: 10;
   }
 
   .mode {
