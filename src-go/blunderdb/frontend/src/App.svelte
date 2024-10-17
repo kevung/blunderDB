@@ -99,6 +99,10 @@
         console.log('Last Position');
     }
 
+    function handleGoToPosition() {
+        console.log('Go To Position');
+    }
+
     function handleFindPosition() {
         console.log('Find Position');
     }
@@ -185,6 +189,7 @@
         onPreviousPosition={handlePreviousPosition}
         onNextPosition={handleNextPosition}
         onLastPosition={handleLastPosition}
+        onGoToPosition={handleGoToPosition}
         onToggleEditMode={toggleEditMode}
         onToggleCommandMode={toggleCommandMode}
         onShowAnalysis={toggleAnalysisPanel}

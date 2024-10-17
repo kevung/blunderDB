@@ -11,6 +11,7 @@
     export let onPreviousPosition;
     export let onNextPosition;
     export let onLastPosition;
+    export let onGoToPosition;
     export let onToggleEditMode;
     export let onToggleCommandMode;
     export let onShowAnalysis;
@@ -97,6 +98,12 @@
     <button on:click|stopPropagation={onLastPosition} aria-label="Last Position" title="Last Position (End)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
+        </svg>
+    </button>
+
+    <button on:click|stopPropagation={onGoToPosition} aria-label="Go To Position" title="Go To Position">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
         </svg>
     </button>
 
