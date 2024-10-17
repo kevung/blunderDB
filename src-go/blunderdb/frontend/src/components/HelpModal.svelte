@@ -1,5 +1,9 @@
 <!-- HelpModal.svelte -->
 <script>
+
+    import { onMount, onDestroy } from 'svelte';
+    import { fade } from 'svelte/transition';
+
     export let visible = false;
     export let onClose;
 
@@ -16,6 +20,24 @@
         }
     }
 
+    // Close the modal when clicking outside of it
+    function handleClickOutside(event) {
+        const modalContent = document.getElementById('modalContent');
+        if (!modalContent.contains(event.target)) {
+            onClose(); // Close the help modal if the click is outside of it
+        }
+    }
+
+    onMount(() => {
+        window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('click', handleClickOutside);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('click', handleClickOutside);
+    });
+
     // Focus modal content when visible and listen for Esc key
     $: if (visible) {
         setTimeout(() => {
@@ -25,15 +47,17 @@
             }
         }, 0);
         window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('click', handleClickOutside);
     } else {
         window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('click', handleClickOutside);
     }
 
 </script>
 
 {#if visible}
-    <div class="modal-overlay" tabindex="0" id="helpModal">
-        <div class="modal-content">
+    <div class="modal-overlay" tabindex="0" id="helpModal" transition:fade={{ duration: 30 }}>
+        <div class="modal-content" id="modalContent">
             <div class="close-button" on:click={onClose}>×</div>
 
             <!-- Tabs -->
