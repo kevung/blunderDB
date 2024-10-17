@@ -164,6 +164,7 @@
 
 
     function toggleHelpModal() {
+        console.log('Help button clicked!');
         showHelp = !showHelp;
     }
 
@@ -189,7 +190,7 @@
         onShowAnalysis={toggleAnalysisPanel}
         onShowComment={toggleCommentZone}
         onFindPosition={handleFindPosition}
-        onHelp={toggleHelpModal}
+        onToggleHelp={toggleHelpModal}
     />
 
     <div class="scrollable-content">
