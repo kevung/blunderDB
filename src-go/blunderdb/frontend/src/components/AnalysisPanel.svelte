@@ -21,7 +21,7 @@
 
 {#if visible}
     <div class="analysis-panel" tabindex="0" id="analysisPanel" on:keydown={handleKeyDown}>
-        <div class="close-icon" on:click={onClose}>x</div>
+        <div class="close-icon" on:click={onClose}>×</div>
         <div class="analysis-content">
             <h3>Analysis</h3>
             <p>{analysisData}</p>
@@ -46,18 +46,13 @@
 
     .close-icon {
         position: absolute;
-        top: 8px;
-        right: 12px;
+        top: -6px;
+        right: 4px;
         font-size: 24px;
         font-weight: bold;
         color: #666;
         cursor: pointer;
         transition: background-color 0.3s ease, opacity 0.3s ease;
-    }
-
-    .close-icon:hover {
-        color: #000;
-        background-color: #f0f0f0;
     }
 
     .analysis-content {

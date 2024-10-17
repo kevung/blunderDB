@@ -152,11 +152,14 @@
 
     .close-button {
         position: absolute;
-        top: -5px;
-        right: 5px;
+        top: -8px;
+        right: 4px;
         font-size: 24px;
+        font-weight: bold;
+        color: #666;
         cursor: pointer;
         z-index: 10;
+        transition: background-color 0.3s ease, opacity 0.3s ease;
     }
 
     .tab-header {
