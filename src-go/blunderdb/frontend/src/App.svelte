@@ -1,6 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
+    import {SaveFileDialog, OpenFileDialog} from '../wailsjs/go/main/App.js';
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
     import Command from './components/Command.svelte';
@@ -18,6 +19,7 @@
     let mainArea;
     let commentArea;
 
+    let filePath;
     let mode = "NORMAL";
     let position = 0;
     let infoMessage = "";
@@ -31,6 +33,10 @@
                 event.preventDefault();
                 toggleCommandMode();
             }
+        } else if(event.ctrlKey && event.code == 'KeyN') { // to toggle comment zone
+            createNewDatabase();
+        } else if(event.ctrlKey && event.code == 'KeyO') { // to toggle comment zone
+            openDatabase();
         } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
             event.preventDefault();
             toggleCommentZone();
@@ -45,12 +51,45 @@
         }
     }
 
-    function handleNewDatabase() {
-        console.log('New Database');
+    async function saveFileDialog() {
+        console.log('saveFileDialog');
+        try {
+            filePath = await SaveFileDialog();
+            if (filePath) {
+                console.log('File selected:', filePath);
+                // Add your logic to handle the selected file
+            } else {
+                console.log('No file selected');
+            }
+        } catch (error) {
+            console.error('Error opening file dialog:', error);
+        }
     }
 
-    function handleOpenDatabase() {
-        console.log('Open Database');
+
+    async function openFileDialog() {
+        console.log('openFileDialog');
+        try {
+            filePath = await OpenFileDialog();
+            if (filePath) {
+                console.log('File selected:', filePath);
+                // Add your logic to handle the selected file
+            } else {
+                console.log('No file selected');
+            }
+        } catch (error) {
+            console.error('Error opening file dialog:', error);
+        }
+    }
+
+    function createNewDatabase() {
+        console.log('createNewDatabase');
+        saveFileDialog();
+    }
+
+    function openDatabase() {
+        console.log('openDatabase');
+        openFileDialog();
     }
 
     function handleExit() {
@@ -179,8 +218,8 @@
 <main class="main-container" bind:this={mainArea}>
 
     <Toolbar 
-        onNewDatabase={handleNewDatabase}
-        onOpenDatabase={handleOpenDatabase}
+        onNewDatabase={createNewDatabase}
+        onOpenDatabase={openDatabase}
         onExit={handleExit}
         onImportPosition={handleImportPosition}
         onCopyPosition={handleCopyPosition}
