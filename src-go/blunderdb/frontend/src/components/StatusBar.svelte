@@ -1,15 +1,16 @@
 <script>
   export let mode = "normal"; // Current mode
-  export let infoMessage = ""; // Info message to display
-  export let position = 0; // Current position
+  export let text = ""; // Info message to display
+  export let positionIndex = 0; // Current position
+  export let positionTotal = 0; // Total positions
 </script>
 
 <div class="status-bar">
   <span class="mode">{mode}</span>
   <div class="separator"></div>
-  <span class="info-message">{infoMessage}</span>
+  <span class="info-message">{text}</span>
   <div class="separator"></div>
-  <span class="position">{position}/1000</span>
+  <span class="position">{positionIndex} / {positionTotal}</span>
 </div>
 
 <style>

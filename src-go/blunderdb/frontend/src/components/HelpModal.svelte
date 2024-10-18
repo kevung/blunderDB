@@ -86,12 +86,12 @@
 
     onMount(() => {
         window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('click', handleClickOutside);
+        //window.addEventListener('click', handleClickOutside);
     });
 
     onDestroy(() => {
         window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('click', handleClickOutside);
+        //window.removeEventListener('click', handleClickOutside);
     });
 
     // Focus modal content when visible and listen for Esc key

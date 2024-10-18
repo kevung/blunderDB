@@ -13,7 +13,7 @@
 
     $: if (visible) {
        setTimeout(() => {
-          const textAreaEl = document.getElementById('commentsTextArea');
+          const textAreaEl = document.getElementById('commentTextArea');
           if (textAreaEl) {
              textAreaEl.focus();
           }
@@ -23,10 +23,10 @@
 </script>
 
 {#if visible}
-    <div class="comments-zone">
+    <div class="comment-panel">
         <div class="close-icon" on:click={onClose}>×</div>
         <textarea
-            id="commentsTextArea"
+            id="commentTextArea"
             rows="5"
             cols="30"
             bind:value={text}
@@ -38,7 +38,7 @@
 
 <style>
 
-    .comments-zone {
+    .comment-panel {
         position: absolute;
         bottom: 0; /* Above the status bar */
         left: 0;

@@ -1,32 +1,53 @@
 <script>
+    // svelte functions
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
-    import {SaveDatabaseDialog, OpenDatabaseDialog, OpenPositionDialog} from '../wailsjs/go/main/App.js';
+
+    // import backend functions
+    import {
+        SaveDatabaseDialog,
+        OpenDatabaseDialog,
+        OpenPositionDialog,
+    } from '../wailsjs/go/main/App.js';
+
+    // import stores
+    import {
+        newDatabasePathStore,
+        openDatabasePathStore,
+    } from './stores/databaseStore';
+
+    import {
+        importPositionPathStore,
+        pastePositionTextStore,
+        currentPositionStore,
+        listPositionStore,
+    } from './stores/positionStore';
+
+    import {
+        statusBarTextStore,
+        statusBarModeStore,
+        commandTextStore,
+        commentTextStore,
+        analysisDataStore,
+    } from './stores/uiStore';
+
+    // import components
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
-    import Command from './components/Command.svelte';
+    import CommandLine from './components/CommandLine.svelte';
     import StatusBar from './components/StatusBar.svelte';
     import AnalysisPanel from './components/AnalysisPanel.svelte';
-    import CommentsZone from './components/CommentsZone.svelte';
+    import CommentPanel from './components/CommentPanel.svelte';
     import HelpModal from './components/HelpModal.svelte';
 
     let showCommand = false;
     let showAnalysis = false;
     let showHelp = false;  // Add state for help modal
-    let showCommentsZone = false;
-
+    let showComment = false;
 
     let mainArea;
     let commentArea;
     let commandInput; // Reference for the command input element
-
-    let filePath;
-    let mode = "NORMAL";
-    let position = 0;
-    let infoMessage = "";
-    let commandText = '';
-    let commentText = '';
-    let analysisData = 'This is where your analysis data will be displayed.';
 
     function handleKeyDown(event) {
         if(event.ctrlKey && event.code == 'KeyN') {
@@ -47,10 +68,12 @@
         } else if (!event.ctrlKey && event.key === 'h') {
             firstPosition();
         } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
+            event.preventDefault();
             previousPosition();
         } else if (!event.ctrlKey && event.key === 'k') {
             previousPosition();
         } else if (!event.ctrlKey && event.key === 'ArrowRight') {
+            event.preventDefault();
             nextPosition();
         } else if (!event.ctrlKey && event.key === 'j') {
             nextPosition();
@@ -66,7 +89,7 @@
                 toggleEditMode();
             }
         } else if (!event.ctrlKey && event.code === 'Space') {
-            if(!showCommand && !showCommentsZone && !showHelp) {
+            if(!showCommand && !showComment && !showHelp) {
                 event.preventDefault();
                 toggleCommandMode();
             }
@@ -76,7 +99,7 @@
         } else if(event.ctrlKey && event.code == 'KeyP') {
             if(!showHelp && !showCommand) {
                 event.preventDefault();
-                toggleCommentZone();
+                toggleCommentPanel();
             }
         } else if (event.ctrlKey && event.code === 'KeyF') {
             findPosition();
@@ -92,10 +115,10 @@
     async function newDatabase() {
         console.log('newDatabase');
         try {
-            filePath = await SaveDatabaseDialog();
+            const filePath = await SaveDatabaseDialog();
             if (filePath) {
-                console.log('Database selected:', filePath);
-                // Add your logic to handle the selected file
+                newDatabasePathStore.set(filePath);
+                console.log('newDatabasePathStore:', $newDatabasePathStore);
             } else {
                 console.log('No file selected');
             }
@@ -107,10 +130,10 @@
     async function openDatabase() {
         console.log('openDatabase');
         try {
-            filePath = await OpenDatabaseDialog();
+            const filePath = await OpenDatabaseDialog();
             if (filePath) {
-                console.log('Database selected:', filePath);
-                // add your logic to handle the selected file
+                openDatabasePathStore.set(filePath);
+                console.log('openDatabasePathStore:', $openDatabasePathStore);
             } else {
                 console.log('No Database selected');
             }
@@ -126,10 +149,10 @@
     async function importPosition() {
         console.log('importPosition');
         try {
-            filePath = await OpenPositionDialog();
+            const filePath = await OpenPositionDialog();
             if (filePath) {
-                console.log('Position selected:', filePath);
-                // Add your logic to handle the selected file
+                importPositionPathStore.set(filePath);
+                console.log('importPositionPathStore:', $importPositionPathStore);
             } else {
                 console.log('No file selected');
             }
@@ -144,6 +167,15 @@
 
     function pastePosition() {
         console.log('pastePosition');
+        let promise = window.runtime.ClipboardGetText();
+        promise.then(
+            (result) => {
+                pastePositionTextStore.set(result);
+                console.log('pastePositionTextStore:', $pastePositionTextStore);
+            })
+            .catch((error) => {
+                console.error('Error pasting from clipboard:', error);
+            });
     }
 
     function addPosition() {
@@ -184,25 +216,25 @@
 
     function toggleEditMode(){
         console.log('toggleEditMode');
-        if(mode !== "EDIT") {
-            if(showCommentsZone){
-                toggleCommentZone();
+        if($statusBarModeStore !== "EDIT") {
+            if(showComment){
+                toggleCommentPanel();
             }
             if(showAnalysis){
                 toggleAnalysisPanel();
             }
-            mode = "EDIT";
+            statusBarModeStore.set('EDIT');
         } else {
-            mode = "NORMAL";
+            statusBarModeStore.set('NORMAL');
         }
     }
 
     function toggleCommandMode(){
         console.log('toggleCommandMode');
         if(!showCommand) {
-            mode = "COMMAND";
+            statusBarModeStore.set('COMMAND');
         } else {
-            mode = "NORMAL";
+            statusBarModeStore.set('NORMAL');
         }
         showCommand = !showCommand;
     }
@@ -210,12 +242,12 @@
     function toggleAnalysisPanel() {
         console.log('toggleAnalysisPanel');
 
-        if(mode === 'NORMAL') {
+        if($statusBarModeStore === 'NORMAL') {
             showAnalysis = !showAnalysis;
         }
 
         if (showAnalysis) {
-            showCommentsZone = false;
+            showComment = false;
             setTimeout(() => {
             //event.preventDefault();
                 document.querySelector('.analysis-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -228,21 +260,25 @@
         }
     }
 
-    function toggleCommentZone() {
-        console.log('toggleCommentZone');
+    function toggleCommentPanel() {
+        console.log('toggleCommentPanel');
 
-        if(mode === 'NORMAL'){
-            showCommentsZone = !showCommentsZone;
+        if($statusBarModeStore === 'NORMAL'){
+            showComment = !showComment;
         }
 
-        if (showCommentsZone) {
+        if (showComment) {
             showAnalysis = false;
             showCommand = false;
             setTimeout(() => {
-                commentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                commentArea.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start' });
             }, 0);
         } else {
-            mainArea.scrollIntoView({ behavior: 'smooth' });
+            mainArea.scrollIntoView({
+                behavior: 'smooth'
+            });
         }
     }
 
@@ -270,7 +306,7 @@
                         commandInput.focus();
                     }
 
-                } else if(showCommentsZone) {
+                } else if(showComment) {
                     const textAreaEl = document.getElementById('commentsTextArea');
                     if (textAreaEl) {
                         textAreaEl.focus();
@@ -303,33 +339,52 @@
         onToggleEditMode={toggleEditMode}
         onToggleCommandMode={toggleCommandMode}
         onShowAnalysis={toggleAnalysisPanel}
-        onShowComment={toggleCommentZone}
+        onShowComment={toggleCommentPanel}
         onFindPosition={findPosition}
         onToggleHelp={toggleHelpModal}
     />
 
     <div class="scrollable-content">
+
         <Board />
 
-        <Command visible={showCommand}
+        <CommandLine
+            visible={showCommand}
             onClose={toggleCommandMode}
-            text={commandText}
+            text={$commandTextStore}
             bind:this={commandInput}
         />
 
     </div>
 
     <div class="panel-container">
-        <CommentsZone bind:this={commentArea} text={commentText}
-            visible={showCommentsZone} onClose={toggleCommentZone} />
 
-        <AnalysisPanel visible={showAnalysis} analysisData={analysisData}
-            onClose={toggleAnalysisPanel} /> 
+        <CommentPanel
+            bind:this={commentArea}
+            text={$commentTextStore}
+            visible={showComment}
+            onClose={toggleCommentPanel}
+        />
+
+        <AnalysisPanel
+            visible={showAnalysis}
+            analysisData={$analysisDataStore}
+            onClose={toggleAnalysisPanel}
+        /> 
+
     </div>
 
-    <HelpModal visible={showHelp} onClose={toggleHelpModal} />
+    <HelpModal
+        visible={showHelp}
+        onClose={toggleHelpModal}
+    />
 
-    <StatusBar mode={mode} infoMessage={infoMessage} position={position}  />
+    <StatusBar
+        mode={$statusBarModeStore}
+        text={$statusBarTextStore}
+        positionIndex={$currentPositionStore}
+        positionTotal={$listPositionStore}
+    />
 
 </main>
 
