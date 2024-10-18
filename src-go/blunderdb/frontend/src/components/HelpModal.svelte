@@ -9,6 +9,7 @@
 
     let activeTab = "manual"; // Default active tab
     const tabs = ['manual', 'shortcuts', 'commands', 'about'];
+    let contentArea;
 
     function switchTab(tab) {
         activeTab = tab;
@@ -16,12 +17,35 @@
 
     // Close on Esc key
     function handleKeyDown(event) {
+
+        // Prevent default action and stop event propagation
+        event.preventDefault();
+        event.stopPropagation();
+
         if (event.key === 'Escape' && visible) {
             onClose();
         } else if (event.key === 'ArrowRight' && visible) {
             navigateTabs(1); // Move to the next tab
         } else if (event.key === 'ArrowLeft' && visible) {
             navigateTabs(-1); // Move to the previous tab
+        } else if (event.key === 'l' && visible) {
+            navigateTabs(1); // Move to the next tab
+        } else if (event.key === 'h' && visible) {
+            navigateTabs(-1); // Move to the previous tab
+        } else if (event.key === 'ArrowDown' && visible) {
+            scrollContent(1); // Scroll down
+        } else if (event.key === 'ArrowUp' && visible) {
+            scrollContent(-1); // Scroll up
+        } else if (event.key === 'j' && visible) {
+            scrollContent(1); // Scroll down
+        } else if (event.key === 'k' && visible) {
+            scrollContent(-1); // Scroll up
+        } else if (event.key === 'PageDown' && visible) {
+            scrollContent('bottom'); // Go to the bottom of the page
+        } else if (event.key === 'PageUp' && visible) {
+            scrollContent('top'); // Go to the top of the page
+        } else if (event.key === ' ' && visible) { // Space key
+            scrollContent('page'); // Scroll down by the height of the content
         }
     }
 
@@ -29,6 +53,25 @@
         const currentIndex = tabs.indexOf(activeTab);
         const newIndex = (currentIndex + direction + tabs.length) % tabs.length;
         switchTab(tabs[newIndex]);
+    }
+
+    
+    function scrollContent(direction) {
+        if (contentArea) {
+            const scrollAmount = 60; // Pixels to scroll per key press
+
+            if (direction === 1) { // Arrow down
+                contentArea.scrollTop += scrollAmount;
+            } else if (direction === -1) { // Arrow up
+                contentArea.scrollTop -= scrollAmount;
+            } else if (direction === 'bottom') { // PageDown
+                contentArea.scrollTop = contentArea.scrollHeight; // Go to bottom
+            } else if (direction === 'top') { // PageUp
+                contentArea.scrollTop = 0; // Go to top
+            } else if (direction === 'page') { // Space key
+                contentArea.scrollTop += contentArea.clientHeight; // Scroll down by the visible area height
+            }
+        }
     }
 
     // Close the modal when clicking outside of it
@@ -80,7 +123,7 @@
             </div>
 
             <!-- Tab Content -->
-            <div class="tab-content">
+            <div class="tab-content" bind:this={contentArea}>
                 {#if activeTab === 'manual'}
                     <h2>Manual</h2>
                     <p>Here is the user manual for blunderDB...</p>

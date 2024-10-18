@@ -29,7 +29,7 @@
 
     function handleKeyDown(event) {
         if (event.code === 'Space') { // to open command line
-            if(!showCommand && !showCommentsZone) {
+            if(!showCommand && !showCommentsZone && !showHelp) {
                 event.preventDefault();
                 toggleCommandMode();
             }
