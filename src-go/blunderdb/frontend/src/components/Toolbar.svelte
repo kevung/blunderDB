@@ -109,7 +109,7 @@
         </svg>
     </button>
 
-    <button on:click|stopPropagation={onGoToPosition} aria-label="Go To Position" title="Go To Position">
+    <button on:click|stopPropagation={onGoToPosition} aria-label="Go To Position" title="Go To Position (Ctrl-K)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
         </svg>
@@ -123,7 +123,7 @@
         </svg>
     </button>
 
-    <button on:click|stopPropagation={onToggleCommandMode} aria-label="Command Mode" title="Toggle Command Mode (Space)">
+    <button on:click|stopPropagation={onToggleCommandMode} aria-label="Command Mode" title="Switch To Command Mode (Space)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
   <path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
 </svg>
