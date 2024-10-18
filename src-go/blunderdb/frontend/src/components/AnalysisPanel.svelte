@@ -32,17 +32,21 @@
 <style>
     .analysis-panel {
         position: absolute;
+        width: 100%;
         bottom: 0;
         left: 0;
         right: 0;
         max-height: 50vh;
         min-height: 223px;
         overflow-y: auto;
-        background: white;
+        background-color: white;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 0px;
         padding: 25px;
         box-sizing: border-box;
         z-index: 5;
+        outline: none;
+        resize: none;
     }
 
     .close-icon {
