@@ -207,7 +207,7 @@
                         <tbody>
 
                             <tr>
-                                <td>Home</td>
+                                <td>PageUp, h</td>
                                 <td>First Position</td>
                             </tr>
 
@@ -222,7 +222,7 @@
                             </tr>
 
                             <tr>
-                                <td>End</td>
+                                <td>PageDown, l</td>
                                 <td>Last Position</td>
                             </tr>
 
