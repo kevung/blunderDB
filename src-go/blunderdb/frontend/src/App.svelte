@@ -18,6 +18,7 @@
 
     let mainArea;
     let commentArea;
+    let commandInput; // Reference for the command input element
 
     let filePath;
     let mode = "NORMAL";
@@ -233,6 +234,26 @@
     function toggleHelpModal() {
         console.log('Help button clicked!');
         showHelp = !showHelp;
+
+        // Focus the command input when closing the Help modal
+        if (!showHelp) {
+            setTimeout(() => {
+
+                if(showCommand) {
+                    const commandInput = document.querySelector('.command-input');
+                    if (commandInput) {
+                        commandInput.focus();
+                    }
+
+                } else if(showCommentsZone) {
+                    const textAreaEl = document.getElementById('commentsTextArea');
+                    if (textAreaEl) {
+                        textAreaEl.focus();
+                    }
+                }
+
+            }, 0);
+        }
     }
 
 </script>
@@ -265,8 +286,11 @@
     <div class="scrollable-content">
         <Board />
 
-        <Command visible={showCommand} onClose={toggleCommandMode}
-            text={commandText} />
+        <Command visible={showCommand}
+            onClose={toggleCommandMode}
+            text={commandText}
+            bind:this={commandInput}
+        />
 
     </div>
 

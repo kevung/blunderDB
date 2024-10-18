@@ -18,6 +18,11 @@
 
    }
 
+    // Focus the input when the component is visible
+    $: if (!visible) {
+        initialized = false;
+    }
+
     function handleKeyDown(event) {
         if(event.code === 'Backspace' && inputEl.value === '') {
             onClose();
@@ -30,10 +35,6 @@
         }
     }
 
-   $: if (!visible) {
-      initialized = false;
-   }
-
 </script>
 
 {#if visible}
@@ -41,6 +42,7 @@
          type="text"
          bind:this={inputEl}
          bind:value={text}
+         class="command-input"
          placeholder=" Type your command here. "
          on:keydown={handleKeyDown}
          />
