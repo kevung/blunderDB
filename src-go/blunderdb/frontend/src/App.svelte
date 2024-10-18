@@ -78,6 +78,10 @@
         console.log('Add Position');
     }
 
+    function handleUpdatePosition() {
+        console.log('Update Position');
+    }
+
     function handleDeletePosition() {
         console.log('Delete Position');
     }
@@ -187,6 +191,7 @@
         onCopyPosition={handleCopyPosition}
         onPastePosition={handlePastePosition}
         onAddPosition={handleAddPosition}
+        onUpdatePosition={handleUpdatePosition}
         onDeletePosition={handleDeletePosition}
         onFirstPosition={handleFirstPosition}
         onPreviousPosition={handlePreviousPosition}
