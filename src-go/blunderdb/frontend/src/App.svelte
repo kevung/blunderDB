@@ -40,15 +40,18 @@
     import CommentPanel from './components/CommentPanel.svelte';
     import HelpModal from './components/HelpModal.svelte';
 
+    // Visibility variables
     let showCommand = false;
     let showAnalysis = false;
-    let showHelp = false;  // Add state for help modal
+    let showHelp = false;
     let showComment = false;
 
+    // Reference for various elements.
     let mainArea;
     let commentArea;
-    let commandInput; // Reference for the command input element
+    let commandInput;
 
+    //Global shortcuts
     function handleKeyDown(event) {
         if(event.ctrlKey && event.code == 'KeyN') {
             newDatabase();
