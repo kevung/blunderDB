@@ -18,11 +18,17 @@
 
    }
 
-   function handleKeyDown(event) {
-      if(event.code === 'Backspace' && inputEl.value === '') {
-         onClose();
-      }
-   }
+    function handleKeyDown(event) {
+        if(event.code === 'Backspace' && inputEl.value === '') {
+            onClose();
+        } else if (event.code === 'Escape') {
+            onClose();
+        } else if (event.code === 'Enter') {
+            onClose();
+        } else if (event.ctrlKey && event.code === 'KeyC') {
+            onClose();
+        }
+    }
 
    $: if (!visible) {
       initialized = false;

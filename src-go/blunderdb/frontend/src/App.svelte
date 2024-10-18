@@ -31,11 +31,6 @@
                 event.preventDefault();
                 toggleCommandMode();
             }
-        } else if ( // to close command line
-            (showCommand && (event.code === 'Escape' || event.code === 'Enter')) 
-            || (showCommand && event.ctrlKey && event.code === 'KeyC')
-        ) {
-            toggleCommandMode();
         } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
             event.preventDefault();
             toggleCommentZone();
