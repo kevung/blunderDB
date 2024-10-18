@@ -44,8 +44,10 @@
         } else if(event.ctrlKey && event.code == 'KeyI') { // to toggle comment zone
             importPosition();
         } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
-            event.preventDefault();
-            toggleCommentZone();
+            if(!showHelp && !showCommand) {
+                event.preventDefault();
+                toggleCommentZone();
+            }
         } else if (event.ctrlKey && event.code === 'KeyL') { // Toggle analysis panel (Ctrl+L)
             event.preventDefault();
             toggleAnalysisPanel();
