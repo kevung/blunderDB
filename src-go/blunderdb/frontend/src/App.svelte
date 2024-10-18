@@ -39,8 +39,6 @@
         } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
             event.preventDefault();
             toggleCommentZone();
-            showCommand = false;
-
         } else if (event.ctrlKey && event.code === 'KeyL') { // Toggle analysis panel (Ctrl+L)
             event.preventDefault();
             toggleAnalysisPanel();
@@ -153,6 +151,7 @@
         showCommentsZone = !showCommentsZone;
         if (showCommentsZone) {
             showAnalysis = false;
+            showCommand = false;
             setTimeout(() => {
                 commentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 0);
