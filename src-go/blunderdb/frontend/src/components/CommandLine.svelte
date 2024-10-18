@@ -3,6 +3,7 @@
 
    export let visible = false;
    export let onClose;
+   export let onToggleHelp;
    export let text = '';
    let inputEl;
 
@@ -35,6 +36,8 @@
                 onClose();
             } else if (event.ctrlKey && event.code === 'KeyC') {
                 onClose();
+            } else if (event.ctrlKey && event.code === 'KeyH') {
+                onToggleHelp();
             }
         }
     }

@@ -108,10 +108,8 @@
         } else if (event.ctrlKey && event.code === 'KeyF') {
             findPosition();
         } else if (event.ctrlKey && event.code === 'KeyH') {
-            event.preventDefault();
             toggleHelpModal();
         } else if (!event.ctrlKey && event.key === '?') {
-            event.preventDefault();
             toggleHelpModal();
         }
     }
@@ -359,6 +357,7 @@
         <CommandLine
             visible={showCommand}
             onClose={toggleCommandMode}
+            onToggleHelp={toggleHelpModal}
             text={$commandTextStore}
             bind:this={commandInput}
         />
