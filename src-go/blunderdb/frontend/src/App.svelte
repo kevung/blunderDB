@@ -34,7 +34,9 @@
                 toggleCommandMode();
             }
         } else if(event.code === 'Tab') {
-            toggleEditMode();
+            if(!showHelp) {
+                toggleEditMode();
+            }
         } else if(event.ctrlKey && event.code == 'KeyN') { // to toggle comment zone
             newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') { // to toggle comment zone
