@@ -34,7 +34,7 @@
         } else if(event.ctrlKey && event.code == 'KeyO') {
             openDatabase();
         } else if (event.ctrlKey && event.code === 'KeyQ') {
-            handleExit();
+            exitApp();
         } else if(event.ctrlKey && event.code == 'KeyI') {
             importPosition();
         } else if(event.ctrlKey && event.code == 'KeyC') {
@@ -119,7 +119,7 @@
         }
     }
 
-    function handleExit() {
+    function exitApp() {
         window.runtime.Quit();
     }
 
@@ -288,7 +288,7 @@
     <Toolbar 
         onNewDatabase={newDatabase}
         onOpenDatabase={openDatabase}
-        onExit={handleExit}
+        onExit={exitApp}
         onImportPosition={importPosition}
         onCopyPosition={copyPosition}
         onPastePosition={pastePosition}
