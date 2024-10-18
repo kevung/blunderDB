@@ -49,7 +49,6 @@
 
     // Reference for various elements.
     let mainArea;
-    let commentArea;
     let commandInput;
 
     //Global shortcuts
@@ -254,12 +253,16 @@
             showComment = false;
             setTimeout(() => {
             //event.preventDefault();
-                document.querySelector('.analysis-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                document.querySelector('.analysis-panel').scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start' });
             }, 0);
         }
         else {
             setTimeout(() => {
-                mainArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                mainArea.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start' });
             }, 0);
         }
     }
@@ -275,7 +278,7 @@
             showAnalysis = false;
             showCommand = false;
             setTimeout(() => {
-                commentArea.scrollIntoView({
+                document.querySelector('.comment-panel').scrollIntoView({
                     behavior: 'smooth',
                     block: 'start' });
             }, 0);
@@ -364,7 +367,6 @@
     <div class="panel-container">
 
         <CommentPanel
-            bind:this={commentArea}
             text={$commentTextStore}
             visible={showComment}
             onClose={toggleCommentPanel}
