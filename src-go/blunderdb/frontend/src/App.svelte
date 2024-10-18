@@ -1,7 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
-    import {SaveFileDialog, OpenFileDialog} from '../wailsjs/go/main/App.js';
+    import {SaveDatabaseDialog, OpenDatabaseDialog, OpenPositionDialog} from '../wailsjs/go/main/App.js';
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
     import Command from './components/Command.svelte';
@@ -34,9 +34,11 @@
                 toggleCommandMode();
             }
         } else if(event.ctrlKey && event.code == 'KeyN') { // to toggle comment zone
-            createNewDatabase();
+            newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') { // to toggle comment zone
             openDatabase();
+        } else if(event.ctrlKey && event.code == 'KeyI') { // to toggle comment zone
+            importPosition();
         } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
             event.preventDefault();
             toggleCommentZone();
@@ -51,12 +53,58 @@
         }
     }
 
-    async function saveFileDialog() {
-        console.log('saveFileDialog');
+    //    async function saveDatabaseDialog() {
+    //        console.log('saveDatabaseDialog');
+    //        try {
+    //            filePath = await SaveDatabaseDialog();
+    //            if (filePath) {
+    //                console.log('Database selected:', filePath);
+    //                // Add your logic to handle the selected file
+    //            } else {
+    //                console.log('No file selected');
+    //            }
+    //        } catch (error) {
+    //            console.error('Error opening file dialog:', error);
+    //        }
+    //    }
+    //
+
+    //    async function openDatabaseDialog() {
+    //        console.log('openDatabaseDialog');
+    //        try {
+    //            filepath = await opendatabasedialog();
+    //            if (filepath) {
+    //                console.log('database selected:', filepath);
+    //                // add your logic to handle the selected file
+    //            } else {
+    //                console.log('no database selected');
+    //            }
+    //        } catch (error) {
+    //            console.error('error opening file dialog:', error);
+    //        }
+    //    }
+
+    // async function openPositionDialog() {
+    //     console.log('openPositionDialog');
+    //     try {
+    //         filePath = await OpenPositionDialog();
+    //         if (filePath) {
+    //             console.log('Position selected:', filePath);
+    //             // Add your logic to handle the selected file
+    //         } else {
+    //             console.log('No file selected');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error opening file dialog:', error);
+    //     }
+    // }
+
+    async function newDatabase() {
+        console.log('newDatabase');
         try {
-            filePath = await SaveFileDialog();
+            filePath = await SaveDatabaseDialog();
             if (filePath) {
-                console.log('File selected:', filePath);
+                console.log('Database selected:', filePath);
                 // Add your logic to handle the selected file
             } else {
                 console.log('No file selected');
@@ -66,38 +114,38 @@
         }
     }
 
-
-    async function openFileDialog() {
-        console.log('openFileDialog');
-        try {
-            filePath = await OpenFileDialog();
-            if (filePath) {
-                console.log('File selected:', filePath);
-                // Add your logic to handle the selected file
-            } else {
-                console.log('No file selected');
-            }
-        } catch (error) {
-            console.error('Error opening file dialog:', error);
-        }
-    }
-
-    function createNewDatabase() {
-        console.log('createNewDatabase');
-        saveFileDialog();
-    }
-
-    function openDatabase() {
+    async function openDatabase() {
         console.log('openDatabase');
-        openFileDialog();
+        try {
+            filePath = await OpenDatabaseDialog();
+            if (filePath) {
+                console.log('Database selected:', filePath);
+                // add your logic to handle the selected file
+            } else {
+                console.log('No Database selected');
+            }
+        } catch (error) {
+            console.error('Error opening file dialog:', error);
+        }
     }
 
     function handleExit() {
         window.runtime.Quit();
     }
 
-    function handleImportPosition() {
-        console.log('Import Position');
+    async function importPosition() {
+        console.log('importPosition');
+        try {
+            filePath = await OpenPositionDialog();
+            if (filePath) {
+                console.log('Position selected:', filePath);
+                // Add your logic to handle the selected file
+            } else {
+                console.log('No file selected');
+            }
+        } catch (error) {
+            console.error('Error opening file dialog:', error);
+        }
     }
 
     function handleCopyPosition() {
@@ -218,10 +266,10 @@
 <main class="main-container" bind:this={mainArea}>
 
     <Toolbar 
-        onNewDatabase={createNewDatabase}
+        onNewDatabase={newDatabase}
         onOpenDatabase={openDatabase}
         onExit={handleExit}
-        onImportPosition={handleImportPosition}
+        onImportPosition={importPosition}
         onCopyPosition={handleCopyPosition}
         onPastePosition={handlePastePosition}
         onAddPosition={handleAddPosition}

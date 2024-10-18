@@ -16,18 +16,25 @@ func NewApp() *App {
 	return &App{}
 }
 
-func (a *App) SaveFileDialog() (string, error) {
+func (a *App) SaveDatabaseDialog() (string, error) {
     return runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
-        Title:   "Create Database File",
+        Title:   "New Database File",
         Filters: []runtime.FileFilter{{DisplayName: "Database Files", Pattern: "*.db"}},
         CanCreateDirectories: true,
     })
 }
 
-func (a *App) OpenFileDialog() (string, error) {
+func (a *App) OpenDatabaseDialog() (string, error) {
     return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-        Title:   "Select a Database File",
+        Title:   "Open Database File",
         Filters: []runtime.FileFilter{{DisplayName: "Database Files", Pattern: "*.db"}},
+    })
+}
+
+func (a *App) OpenPositionDialog() (string, error) {
+    return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+        Title:   "Import Position File",
+        Filters: []runtime.FileFilter{{DisplayName: "Position Files", Pattern: "*.txt"}},
     })
 }
 
