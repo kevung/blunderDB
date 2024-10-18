@@ -108,10 +108,8 @@
         } else if (event.ctrlKey && event.code === 'KeyF') {
             findPosition();
         } else if (event.ctrlKey && event.code === 'KeyH') {
-            if(!showHelp){
-                event.preventDefault();
-                toggleHelpModal(); // toggle off is managed by HelpModal
-            }
+            event.preventDefault();
+            toggleHelpModal();
         } else if (!event.ctrlKey && event.key === '?') {
             event.preventDefault();
             toggleHelpModal();
