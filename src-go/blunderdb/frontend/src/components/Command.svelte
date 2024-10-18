@@ -24,14 +24,18 @@
     }
 
     function handleKeyDown(event) {
-        if(event.code === 'Backspace' && inputEl.value === '') {
-            onClose();
-        } else if (event.code === 'Escape') {
-            onClose();
-        } else if (event.code === 'Enter') {
-            onClose();
-        } else if (event.ctrlKey && event.code === 'KeyC') {
-            onClose();
+        event.stopPropagation();
+
+        if(visible) {
+            if(event.code === 'Backspace' && inputEl.value === '') {
+                onClose();
+            } else if (event.code === 'Escape') {
+                onClose();
+            } else if (event.code === 'Enter') {
+                onClose();
+            } else if (event.ctrlKey && event.code === 'KeyC') {
+                onClose();
+            }
         }
     }
 
