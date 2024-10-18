@@ -287,7 +287,7 @@
                             </tr>
 
                             <tr>
-                                <td>Ctrl + H</td>
+                                <td>Ctrl + H, ?</td>
                                 <td>Open Help</td>
                             </tr>
 

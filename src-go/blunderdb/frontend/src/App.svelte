@@ -83,6 +83,9 @@
         } else if (event.ctrlKey && event.code === 'KeyH') {
             event.preventDefault();
             toggleHelpModal();
+        } else if (!event.ctrlKey && event.key === '?') {
+            event.preventDefault();
+            toggleHelpModal();
         }
     }
 
