@@ -88,6 +88,9 @@
 
                 {#if activeTab === 'shortcuts'}
                     <h2>Shortcut Summary</h2>
+
+                    <h3>Database</h3>
+
                     <table>
                         <thead>
                             <tr>
@@ -95,34 +98,157 @@
                                 <th>Description</th>
                             </tr>
                         </thead>
+
                         <tbody>
+
+                            <tr>
+                                <td>Ctrl + N</td>
+                                <td>New Database</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + O</td>
+                                <td>Open Database</td>
+                            </tr>
+
                             <tr>
                                 <td>Ctrl + Q</td>
                                 <td>Exit blunderDB</td>
                             </tr>
-                            <tr>
-                                <td>Ctrl + H</td>
-                                <td>Toggle help modal</td>
-                            </tr>
-                            <tr>
-                                <td>Ctrl + L</td>
-                                <td>Toggle analysis panel</td>
-                            </tr>
-                            <tr>
-                                <td>Ctrl + P</td>
-                                <td>Toggle comment zone</td>
-                            </tr>
-                            <tr>
-                                <td>Space</td>
-                                <td>Open command line</td>
-                            </tr>
-                            <tr>
-                                <td>Escape</td>
-                                <td>Close command line or help modal</td>
-                            </tr>
-                            <!-- Add more shortcuts as needed -->
+
                         </tbody>
                     </table>
+
+                    <h3>Position</h3>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Ctrl + I</td>
+                                <td>Import Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + C</td>
+                                <td>Copy Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + V</td>
+                                <td>Paste Position</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <h3>Navigation</h3>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Home</td>
+                                <td>First Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Left, k</td>
+                                <td>Previous Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Right, j</td>
+                                <td>Next Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>End</td>
+                                <td>Last Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl-K</td>
+                                <td>Go To Position</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <h3>Modes</h3>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Tab</td>
+                                <td>Toggle Edit Mode</td>
+                            </tr>
+
+                            <tr>
+                                <td>Space</td>
+                                <td>Switch To Command Mode</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
+                    <h3>Tools</h3>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Ctrl + L</td>
+                                <td>Show Analysis</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + P</td>
+                                <td>Write Comments</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + F</td>
+                                <td>Find Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + H</td>
+                                <td>Open Help</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
                 {/if}
 
                 {#if activeTab === 'commands'}
@@ -208,14 +334,16 @@
     }
 
     table {
-        width: 100%;
+        margin: 0 auto;
+        width: 80%;
         border-collapse: collapse;
     }
 
     th, td {
         padding: 12px;
-        text-align: left;
+        text-align: center;
         border-bottom: 1px solid #ddd;
+        width: 50%;
     }
 
     th {
