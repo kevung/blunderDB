@@ -137,6 +137,7 @@
     function toggleAnalysisPanel() {
         showAnalysis = !showAnalysis;
         if (showAnalysis) {
+            showCommentsZone = false;
             setTimeout(() => {
                 document.querySelector('.analysis-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 0);
@@ -151,6 +152,7 @@
     function toggleCommentZone() {
         showCommentsZone = !showCommentsZone;
         if (showCommentsZone) {
+            showAnalysis = false;
             setTimeout(() => {
                 commentArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 0);
