@@ -53,6 +53,7 @@
 
     //Global shortcuts
     function handleKeyDown(event) {
+        event.stopPropagation();
         if(event.ctrlKey && event.code == 'KeyN') {
             newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') {
@@ -107,8 +108,10 @@
         } else if (event.ctrlKey && event.code === 'KeyF') {
             findPosition();
         } else if (event.ctrlKey && event.code === 'KeyH') {
-            event.preventDefault();
-            toggleHelpModal();
+            if(!showHelp){
+                event.preventDefault();
+                toggleHelpModal(); // toggle off is managed by HelpModal
+            }
         } else if (!event.ctrlKey && event.key === '?') {
             event.preventDefault();
             toggleHelpModal();
@@ -383,6 +386,7 @@
     <HelpModal
         visible={showHelp}
         onClose={toggleHelpModal}
+        handleGlobalKeydown={handleKeyDown}
     />
 
     <StatusBar

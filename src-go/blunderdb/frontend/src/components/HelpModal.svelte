@@ -6,6 +6,7 @@
 
     export let visible = false;
     export let onClose;
+    export let handleGlobalKeydown;
 
     let activeTab = "manual"; // Default active tab
     const tabs = ['manual', 'shortcuts', 'commands', 'about'];
@@ -14,6 +15,15 @@
     function switchTab(tab) {
         activeTab = tab;
     }
+
+    function activateGlobalShortcuts() {
+        window.addEventListener('keydown', handleGlobalKeydown);
+    }
+
+    function deactivateGlobalShortcuts() {
+        window.removeEventListener('keydown', handleGlobalKeydown);
+    }
+
 
     // Close on Esc key
     function handleKeyDown(event) {
@@ -25,27 +35,31 @@
             event.preventDefault();
             if (event.key === 'Escape') {
                 onClose();
-            } else if (event.key === 'ArrowRight') {
+            } else if (event.ctrlKey && event.code === 'KeyH') {
+                onClose();
+            } else if (!event.ctrlKey && event.key === '?') {
+                onClose();
+            } else if (!event.ctrlKey && event.key === 'ArrowRight') {
                 navigateTabs(1); // Move to the next tab
-            } else if (event.key === 'ArrowLeft') {
+            } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
                 navigateTabs(-1); // Move to the previous tab
-            } else if (event.key === 'l') {
+            } else if (!event.ctrlKey && event.key === 'l') {
                 navigateTabs(1); // Move to the next tab
-            } else if (event.key === 'h') {
+            } else if (!event.ctrlKey && event.key === 'h') {
                 navigateTabs(-1); // Move to the previous tab
-            } else if (event.key === 'ArrowDown') {
+            } else if (!event.ctrlKey && event.key === 'ArrowDown') {
                 scrollContent(1); // Scroll down
-            } else if (event.key === 'ArrowUp') {
+            } else if (!event.ctrlKey && event.key === 'ArrowUp') {
                 scrollContent(-1); // Scroll up
-            } else if (event.key === 'j') {
+            } else if (!event.ctrlKey && event.key === 'j') {
                 scrollContent(1); // Scroll down
-            } else if (event.key === 'k') {
+            } else if (!event.ctrlKey && event.key === 'k') {
                 scrollContent(-1); // Scroll up
-            } else if (event.key === 'PageDown') {
+            } else if (!event.ctrlKey && event.key === 'PageDown') {
                 scrollContent('bottom'); // Go to the bottom of the page
-            } else if (event.key === 'PageUp') {
+            } else if (!event.ctrlKey && event.key === 'PageUp') {
                 scrollContent('top'); // Go to the top of the page
-            } else if (event.key === ' ') { // Space key
+            } else if (!event.ctrlKey && event.key === ' ') { // Space key
                 scrollContent('page'); // Scroll down by the height of the content
             }
         }
@@ -86,12 +100,12 @@
 
     onMount(() => {
         window.addEventListener('keydown', handleKeyDown);
-        //window.addEventListener('click', handleClickOutside);
+        deactivateGlobalShortcuts();
     });
 
     onDestroy(() => {
         window.removeEventListener('keydown', handleKeyDown);
-        //window.removeEventListener('click', handleClickOutside);
+        activateGlobalShortcuts();
     });
 
     // Focus modal content when visible and listen for Esc key
@@ -104,9 +118,11 @@
         }, 0);
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('click', handleClickOutside);
+        deactivateGlobalShortcuts();
     } else {
         window.removeEventListener('keydown', handleKeyDown);
         window.removeEventListener('click', handleClickOutside);
+        activateGlobalShortcuts();
     }
 
 </script>
