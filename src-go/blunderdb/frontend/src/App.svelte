@@ -57,52 +57,6 @@
         }
     }
 
-    //    async function saveDatabaseDialog() {
-    //        console.log('saveDatabaseDialog');
-    //        try {
-    //            filePath = await SaveDatabaseDialog();
-    //            if (filePath) {
-    //                console.log('Database selected:', filePath);
-    //                // Add your logic to handle the selected file
-    //            } else {
-    //                console.log('No file selected');
-    //            }
-    //        } catch (error) {
-    //            console.error('Error opening file dialog:', error);
-    //        }
-    //    }
-    //
-
-    //    async function openDatabaseDialog() {
-    //        console.log('openDatabaseDialog');
-    //        try {
-    //            filepath = await opendatabasedialog();
-    //            if (filepath) {
-    //                console.log('database selected:', filepath);
-    //                // add your logic to handle the selected file
-    //            } else {
-    //                console.log('no database selected');
-    //            }
-    //        } catch (error) {
-    //            console.error('error opening file dialog:', error);
-    //        }
-    //    }
-
-    // async function openPositionDialog() {
-    //     console.log('openPositionDialog');
-    //     try {
-    //         filePath = await OpenPositionDialog();
-    //         if (filePath) {
-    //             console.log('Position selected:', filePath);
-    //             // Add your logic to handle the selected file
-    //         } else {
-    //             console.log('No file selected');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error opening file dialog:', error);
-    //     }
-    // }
-
     async function newDatabase() {
         console.log('newDatabase');
         try {
