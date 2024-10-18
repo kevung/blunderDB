@@ -19,33 +19,35 @@
     function handleKeyDown(event) {
 
         // Prevent default action and stop event propagation
-        event.preventDefault();
         event.stopPropagation();
 
-        if (event.key === 'Escape' && visible) {
-            onClose();
-        } else if (event.key === 'ArrowRight' && visible) {
-            navigateTabs(1); // Move to the next tab
-        } else if (event.key === 'ArrowLeft' && visible) {
-            navigateTabs(-1); // Move to the previous tab
-        } else if (event.key === 'l' && visible) {
-            navigateTabs(1); // Move to the next tab
-        } else if (event.key === 'h' && visible) {
-            navigateTabs(-1); // Move to the previous tab
-        } else if (event.key === 'ArrowDown' && visible) {
-            scrollContent(1); // Scroll down
-        } else if (event.key === 'ArrowUp' && visible) {
-            scrollContent(-1); // Scroll up
-        } else if (event.key === 'j' && visible) {
-            scrollContent(1); // Scroll down
-        } else if (event.key === 'k' && visible) {
-            scrollContent(-1); // Scroll up
-        } else if (event.key === 'PageDown' && visible) {
-            scrollContent('bottom'); // Go to the bottom of the page
-        } else if (event.key === 'PageUp' && visible) {
-            scrollContent('top'); // Go to the top of the page
-        } else if (event.key === ' ' && visible) { // Space key
-            scrollContent('page'); // Scroll down by the height of the content
+        if(visible) {
+            event.preventDefault();
+            if (event.key === 'Escape') {
+                onClose();
+            } else if (event.key === 'ArrowRight') {
+                navigateTabs(1); // Move to the next tab
+            } else if (event.key === 'ArrowLeft') {
+                navigateTabs(-1); // Move to the previous tab
+            } else if (event.key === 'l') {
+                navigateTabs(1); // Move to the next tab
+            } else if (event.key === 'h') {
+                navigateTabs(-1); // Move to the previous tab
+            } else if (event.key === 'ArrowDown') {
+                scrollContent(1); // Scroll down
+            } else if (event.key === 'ArrowUp') {
+                scrollContent(-1); // Scroll up
+            } else if (event.key === 'j') {
+                scrollContent(1); // Scroll down
+            } else if (event.key === 'k') {
+                scrollContent(-1); // Scroll up
+            } else if (event.key === 'PageDown') {
+                scrollContent('bottom'); // Go to the bottom of the page
+            } else if (event.key === 'PageUp') {
+                scrollContent('top'); // Go to the top of the page
+            } else if (event.key === ' ') { // Space key
+                scrollContent('page'); // Scroll down by the height of the content
+            }
         }
     }
 
