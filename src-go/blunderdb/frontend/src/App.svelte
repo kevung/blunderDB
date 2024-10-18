@@ -29,34 +29,60 @@
     let analysisData = 'This is where your analysis data will be displayed.';
 
     function handleKeyDown(event) {
-        if (event.code === 'Space') { // to open command line
+        if(event.ctrlKey && event.code == 'KeyN') {
+            newDatabase();
+        } else if(event.ctrlKey && event.code == 'KeyO') {
+            openDatabase();
+        } else if (event.ctrlKey && event.code === 'KeyQ') {
+            handleExit();
+        } else if(event.ctrlKey && event.code == 'KeyI') {
+            importPosition();
+        } else if(event.ctrlKey && event.code == 'KeyC') {
+            copyPosition();
+        } else if(event.ctrlKey && event.code == 'KeyV') {
+            pastePosition();
+        } else if (!event.ctrlKey && event.key === 'PageUp') {
+            event.preventDefault();
+            firstPosition();
+        } else if (!event.ctrlKey && event.key === 'h') {
+            firstPosition();
+        } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
+            previousPosition();
+        } else if (!event.ctrlKey && event.key === 'k') {
+            previousPosition();
+        } else if (!event.ctrlKey && event.key === 'ArrowRight') {
+            nextPosition();
+        } else if (!event.ctrlKey && event.key === 'j') {
+            nextPosition();
+        } else if (!event.ctrlKey && event.key === 'PageDown') {
+            event.preventDefault();
+            lastPosition();
+        } else if (!event.ctrlKey && event.key === 'l') {
+            lastPosition();
+        } else if(event.ctrlKey && event.code == 'KeyK') {
+            gotoPosition();
+        } else if(!event.ctrlKey && event.code === 'Tab') {
+            if(!showHelp) {
+                toggleEditMode();
+            }
+        } else if (!event.ctrlKey && event.code === 'Space') {
             if(!showCommand && !showCommentsZone && !showHelp) {
                 event.preventDefault();
                 toggleCommandMode();
             }
-        } else if(event.code === 'Tab') {
-            if(!showHelp) {
-                toggleEditMode();
-            }
-        } else if(event.ctrlKey && event.code == 'KeyN') { // to toggle comment zone
-            newDatabase();
-        } else if(event.ctrlKey && event.code == 'KeyO') { // to toggle comment zone
-            openDatabase();
-        } else if(event.ctrlKey && event.code == 'KeyI') { // to toggle comment zone
-            importPosition();
-        } else if(event.ctrlKey && event.code == 'KeyP') { // to toggle comment zone
+        } else if (event.ctrlKey && event.code === 'KeyL') {
+            event.preventDefault();
+            toggleAnalysisPanel();
+        } else if(event.ctrlKey && event.code == 'KeyP') {
             if(!showHelp && !showCommand) {
                 event.preventDefault();
                 toggleCommentZone();
             }
-        } else if (event.ctrlKey && event.code === 'KeyL') { // Toggle analysis panel (Ctrl+L)
-            event.preventDefault();
-            toggleAnalysisPanel();
-        } else if (event.ctrlKey && event.code === 'KeyH') { // Ctrl+H for help
+        } else if (event.ctrlKey && event.code === 'KeyF') {
+            findPosition();
+        } else if (event.ctrlKey && event.code === 'KeyH') {
             event.preventDefault();
             toggleHelpModal();
-        } else if (event.ctrlKey && event.code === 'KeyQ') { // Ctrl+Q for Exit
-            handleExit();
         }
     }
 
@@ -109,60 +135,52 @@
         }
     }
 
-    function handleCopyPosition() {
-        console.log('Copy Position');
+    function copyPosition() {
+        console.log('copyPosition');
     }
 
-    function handlePastePosition() {
-        console.log('Paste Position');
+    function pastePosition() {
+        console.log('pastePosition');
     }
 
-    function handleAddPosition() {
-        console.log('Add Position');
+    function addPosition() {
+        console.log('addPosition');
     }
 
-    function handleUpdatePosition() {
-        console.log('Update Position');
+    function updatePosition() {
+        console.log('updatePosition');
     }
 
-    function handleDeletePosition() {
-        console.log('Delete Position');
+    function deletePosition() {
+        console.log('deletePosition');
     }
 
-    function handleFirstPosition() {
-        console.log('First Position');
+    function firstPosition() {
+        console.log('firstPosition');
     }
 
-    function handlePreviousPosition() {
-        console.log('Previous Position');
+    function previousPosition() {
+        console.log('previousPosition');
     }
 
-    function handleNextPosition() {
-        console.log('Next Position');
+    function nextPosition() {
+        console.log('nextPosition');
     }
 
-    function handleLastPosition() {
-        console.log('Last Position');
+    function lastPosition() {
+        console.log('lastPosition');
     }
 
-    function handleGoToPosition() {
-        console.log('Go To Position');
+    function gotoPosition() {
+        console.log('gotoPosition');
     }
 
-    function handleFindPosition() {
-        console.log('Find Position');
+    function findPosition() {
+        console.log('findPosition');
     }
-
-    function handleShowAnalysis() {
-        console.log('Show Analysis');
-    }
-
-    function handleHelp() {
-        console.log('Help');
-    }
-
 
     function toggleEditMode(){
+        console.log('toggleEditMode');
         if(mode !== "EDIT") {
             if(showCommentsZone){
                 toggleCommentZone();
@@ -177,6 +195,7 @@
     }
 
     function toggleCommandMode(){
+        console.log('toggleCommandMode');
         if(!showCommand) {
             mode = "COMMAND";
         } else {
@@ -186,6 +205,7 @@
     }
 
     function toggleAnalysisPanel() {
+        console.log('toggleAnalysisPanel');
 
         if(mode === 'NORMAL') {
             showAnalysis = !showAnalysis;
@@ -194,6 +214,7 @@
         if (showAnalysis) {
             showCommentsZone = false;
             setTimeout(() => {
+            //event.preventDefault();
                 document.querySelector('.analysis-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }, 0);
         }
@@ -205,6 +226,7 @@
     }
 
     function toggleCommentZone() {
+        console.log('toggleCommentZone');
 
         if(mode === 'NORMAL'){
             showCommentsZone = !showCommentsZone;
@@ -265,21 +287,21 @@
         onOpenDatabase={openDatabase}
         onExit={handleExit}
         onImportPosition={importPosition}
-        onCopyPosition={handleCopyPosition}
-        onPastePosition={handlePastePosition}
-        onAddPosition={handleAddPosition}
-        onUpdatePosition={handleUpdatePosition}
-        onDeletePosition={handleDeletePosition}
-        onFirstPosition={handleFirstPosition}
-        onPreviousPosition={handlePreviousPosition}
-        onNextPosition={handleNextPosition}
-        onLastPosition={handleLastPosition}
-        onGoToPosition={handleGoToPosition}
+        onCopyPosition={copyPosition}
+        onPastePosition={pastePosition}
+        onAddPosition={addPosition}
+        onUpdatePosition={updatePosition}
+        onDeletePosition={deletePosition}
+        onFirstPosition={firstPosition}
+        onPreviousPosition={previousPosition}
+        onNextPosition={nextPosition}
+        onLastPosition={lastPosition}
+        onGoToPosition={gotoPosition}
         onToggleEditMode={toggleEditMode}
         onToggleCommandMode={toggleCommandMode}
         onShowAnalysis={toggleAnalysisPanel}
         onShowComment={toggleCommentZone}
-        onFindPosition={handleFindPosition}
+        onFindPosition={findPosition}
         onToggleHelp={toggleHelpModal}
     />
 
