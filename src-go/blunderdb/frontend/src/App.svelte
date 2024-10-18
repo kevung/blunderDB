@@ -33,6 +33,8 @@
                 event.preventDefault();
                 toggleCommandMode();
             }
+        } else if(event.code === 'Tab') {
+            toggleEditMode();
         } else if(event.ctrlKey && event.code == 'KeyN') { // to toggle comment zone
             newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') { // to toggle comment zone
@@ -203,6 +205,12 @@
 
     function toggleEditMode(){
         if(mode !== "EDIT") {
+            if(showCommentsZone){
+                toggleCommentZone();
+            }
+            if(showAnalysis){
+                toggleAnalysisPanel();
+            }
             mode = "EDIT";
         } else {
             mode = "NORMAL";
@@ -219,7 +227,11 @@
     }
 
     function toggleAnalysisPanel() {
-        showAnalysis = !showAnalysis;
+
+        if(mode === 'NORMAL') {
+            showAnalysis = !showAnalysis;
+        }
+
         if (showAnalysis) {
             showCommentsZone = false;
             setTimeout(() => {
@@ -234,7 +246,11 @@
     }
 
     function toggleCommentZone() {
-        showCommentsZone = !showCommentsZone;
+
+        if(mode === 'NORMAL'){
+            showCommentsZone = !showCommentsZone;
+        }
+
         if (showCommentsZone) {
             showAnalysis = false;
             showCommand = false;
