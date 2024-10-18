@@ -8,6 +8,7 @@
     export let onClose;
 
     let activeTab = "manual"; // Default active tab
+    const tabs = ['manual', 'shortcuts', 'commands', 'about'];
 
     function switchTab(tab) {
         activeTab = tab;
@@ -17,7 +18,17 @@
     function handleKeyDown(event) {
         if (event.key === 'Escape' && visible) {
             onClose();
+        } else if (event.key === 'ArrowRight' && visible) {
+            navigateTabs(1); // Move to the next tab
+        } else if (event.key === 'ArrowLeft' && visible) {
+            navigateTabs(-1); // Move to the previous tab
         }
+    }
+
+    function navigateTabs(direction) {
+        const currentIndex = tabs.indexOf(activeTab);
+        const newIndex = (currentIndex + direction + tabs.length) % tabs.length;
+        switchTab(tabs[newIndex]);
     }
 
     // Close the modal when clicking outside of it
