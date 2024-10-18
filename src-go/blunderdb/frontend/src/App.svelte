@@ -47,8 +47,9 @@
         } else if (event.ctrlKey && event.code === 'KeyH') { // Ctrl+H for help
             event.preventDefault();
             toggleHelpModal();
+        } else if (event.ctrlKey && event.code === 'KeyQ') { // Ctrl+Q for Exit
+            handleExit();
         }
-
     }
 
     function handleNewDatabase() {
@@ -60,7 +61,7 @@
     }
 
     function handleExit() {
-        console.log('Exit blunderDB');
+        window.runtime.Quit();
     }
 
     function handleImportPosition() {
@@ -159,6 +160,7 @@
     }
 
     onMount(() => {
+        console.log('Wails runtime:', window.runtime);
         window.addEventListener("keydown", handleKeyDown);
     });
 

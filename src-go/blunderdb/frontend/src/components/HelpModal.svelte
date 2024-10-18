@@ -86,6 +86,10 @@
                         </thead>
                         <tbody>
                             <tr>
+                                <td>Ctrl + Q</td>
+                                <td>Exit blunderDB</td>
+                            </tr>
+                            <tr>
                                 <td>Ctrl + H</td>
                                 <td>Toggle help modal</td>
                             </tr>
