@@ -36,10 +36,11 @@
         left: 0;
         right: 0;
         max-height: 50vh;
+        min-height: 223px;
         overflow-y: auto;
         background: white;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 16px;
+        padding: 25px;
         box-sizing: border-box;
         z-index: 5;
     }

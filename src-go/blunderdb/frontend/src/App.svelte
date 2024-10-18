@@ -208,11 +208,13 @@
 
     </div>
 
-    <CommentsZone bind:this={commentArea} text={commentText}
-        visible={showCommentsZone} onClose={toggleCommentZone} />
+    <div class="panel-container">
+        <CommentsZone bind:this={commentArea} text={commentText}
+            visible={showCommentsZone} onClose={toggleCommentZone} />
 
-    <AnalysisPanel visible={showAnalysis} analysisData={analysisData}
-        onClose={toggleAnalysisPanel} /> 
+        <AnalysisPanel visible={showAnalysis} analysisData={analysisData}
+            onClose={toggleAnalysisPanel} /> 
+    </div>
 
     <HelpModal visible={showHelp} onClose={toggleHelpModal} />
 
@@ -253,6 +255,12 @@
         padding: 16px;
         box-sizing: border-box;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .panel-container {
+        display: flex;
+        flex-direction: column; /* Or row, depending on layout */
+        height: 100%;
     }
 
 </style>

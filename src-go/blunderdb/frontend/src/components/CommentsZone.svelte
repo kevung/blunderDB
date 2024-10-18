@@ -44,6 +44,7 @@
         left: 0;
         right: 0;
         max-height: 50vh; /* Limit height to half the viewport */
+        min-height: 200px;
         overflow-y: auto; /* Allow scrolling inside the comment zone */
         overflow-x: hidden; /* Disable horizontal scrolling inside the comment zone */
         background-color: white;
