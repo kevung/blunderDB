@@ -13,7 +13,7 @@ func SetupDatabase() (*sql.DB, error) {
     }
 
     _, err = db.Exec(`
-        CREATE TABLE IF NOT EXISTS game_state (
+        CREATE TABLE IF NOT EXISTS position (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             state TEXT
         )
@@ -24,27 +24,27 @@ func SetupDatabase() (*sql.DB, error) {
     return db, nil
 }
 
-func SaveGameState(db *sql.DB, state GameState) error {
+func SavePosition(db *sql.DB, state Position) error {
     stateJSON, err := json.Marshal(state)
     if err != nil {
         return err
     }
 
-    _, err = db.Exec(`INSERT INTO game_state (state) VALUES (?)`,
+    _, err = db.Exec(`INSERT INTO position (state) VALUES (?)`,
         string(stateJSON))
     return err
 }
 
-func LoadGameState(db *sql.DB, id int) (*GameState, error) {
+func LoadPosition(db *sql.DB, id int) (*Position, error) {
     var stateJSON string
 
-    err := db.QueryRow(`SELECT state from game_state WHERE id = ?`, id).Scan(
+    err := db.QueryRow(`SELECT state from position WHERE id = ?`, id).Scan(
         &stateJSON)
     if err != nil {
         return nil, err
     }
 
-    var state GameState
+    var state Position
     err = json.Unmarshal([]byte(stateJSON), &state)
     if err != nil {
         return nil, err

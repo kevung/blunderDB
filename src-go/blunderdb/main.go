@@ -22,15 +22,15 @@ func main() {
         log.Fatal(errDb)
     }
 
-    var gameState backend.GameState
-    gameState = backend.InitializeGameState()
+    var position backend.Position
+    position = backend.InitializePosition()
 
-    backend.SaveGameState(db, gameState)
+    backend.SavePosition(db, position)
 
-    gameState2, _ := backend.LoadGameState(db, 1)
-    fmt.Printf("%+v\n", gameState2)
+    position2, _ := backend.LoadPosition(db, 1)
+    fmt.Printf("%+v\n", position2)
 
-    if gameState == *gameState2 {
+    if position == *position2 {
         fmt.Println("The game states are equal.")
     } else {
         fmt.Println("The game states are not equal.")

@@ -35,7 +35,7 @@ type Board struct {
     Bearoff [2]int `json:"bearoff"`
 }
 
-type GameState struct {
+type Position struct {
     Board Board `json:"board"`
     Cube Cube `json:"cube"`
     Dice [2]int `json:"dice"`
@@ -59,15 +59,15 @@ func initializeBoard() Board {
     return board
 }
 
-func InitializeGameState() GameState {
-    var gameState GameState
+func InitializePosition() Position {
+    var position Position
 
-    gameState.Board = initializeBoard()
-    gameState.Cube = Cube{None, 0}
-    gameState.Dice = [2]int{3, 1}
-    gameState.Score = [2]int{7, 7}
-    gameState.PlayerOnRoll = Black
-    gameState.DecisionType = CheckerAction
+    position.Board = initializeBoard()
+    position.Cube = Cube{None, 0}
+    position.Dice = [2]int{3, 1}
+    position.Score = [2]int{7, 7}
+    position.PlayerOnRoll = Black
+    position.DecisionType = CheckerAction
 
-    return gameState
+    return position
 }
