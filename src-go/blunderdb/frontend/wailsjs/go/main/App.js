@@ -13,3 +13,11 @@ export function OpenPositionDialog() {
 export function SaveDatabaseDialog() {
   return window['go']['main']['App']['SaveDatabaseDialog']();
 }
+
+export function SaveImportedPosition(arg1) {
+  return window['go']['main']['App']['SaveImportedPosition'](arg1);
+}
+
+export function ShowAlert(arg1) {
+  return window['go']['main']['App']['ShowAlert'](arg1);
+}

@@ -24,14 +24,13 @@ func SetupDatabase() (*sql.DB, error) {
     return db, nil
 }
 
-func SavePosition(db *sql.DB, state Position) error {
-    stateJSON, err := json.Marshal(state)
+func SavePosition(db *sql.DB, position Position) error {
+    positionJSON, err := json.Marshal(position)
     if err != nil {
         return err
     }
 
-    _, err = db.Exec(`INSERT INTO position (state) VALUES (?)`,
-        string(stateJSON))
+    _, err = db.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
     return err
 }
 

@@ -9,6 +9,8 @@
         SaveDatabaseDialog,
         OpenDatabaseDialog,
         OpenPositionDialog,
+        SaveImportedPosition,
+        ShowAlert,
     } from '../wailsjs/go/main/App.js';
 
     // import stores
@@ -148,19 +150,90 @@
         window.runtime.Quit();
     }
 
-    async function importPosition() {
-        console.log('importPosition');
+    export async function importPosition() {
         try {
-            const filePath = await OpenPositionDialog();
-            if (filePath) {
-                importPositionPathStore.set(filePath);
-                console.log('importPositionPathStore:', $importPositionPathStore);
-            } else {
-                console.log('No file selected');
+            const response = await OpenPositionDialog();
+
+            if (response.error) {
+                console.error("Error:", response.error);
+                return;
             }
+
+            console.log("File path:", response.file_path);
+            console.log("File content:", response.content);
+
+            // Now you can parse and use the file content
+            const importedPosition = parsePosition(response.content);
+            positionStore.set(importedPosition);
         } catch (error) {
-            console.error('Error opening file dialog:', error);
+            console.error("Error importing position:", error);
         }
+    }
+
+    function parsePosition(fileContent) {
+        // Split the file content into lines
+        const lines = fileContent.split('\n');
+
+        // Parse the XGID
+        const xgidLine = lines.find(line => line.startsWith("XGID="));
+        const xgid = xgidLine ? xgidLine.split('=')[1] : null;
+
+        console.log("xgidLine:", xgidLine);
+        console.log("xgid:", xgid);
+        if (!xgid) {
+            throw new Error("XGID not found in the file content.");
+        }
+
+        // XGID components: "-A-CCD-----a---a------dfc-:4:1:-1:33:1:0:0:9:10"
+        const [positionPart, dicePart, cubeOwner, cubeValue, playerOnRoll] = xgid.split(":");
+
+        // Decode board positions from the XGID
+        const board = { points: Array(26).fill({ checkers: 0, color: -1 }), bearoff: [0, 0] };
+
+        const pointEncoding = positionPart.slice(1);  // Remove initial '-'
+        const pointChars = pointEncoding.split('');
+
+        let pointIndex = 24;  // Start from the last point (24th)
+        pointChars.forEach(char => {
+            if (char >= 'A' && char <= 'Z') {
+                // O's checkers
+                const numCheckers = char.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+                board.points[pointIndex] = { checkers: numCheckers, color: 1 };  // O is 1
+            } else if (char >= 'a' && char <= 'z') {
+                // X's checkers
+                const numCheckers = char.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
+                board.points[pointIndex] = { checkers: numCheckers, color: 0 };  // X is 0
+            }
+            pointIndex--;
+        });
+
+        // Parse player on roll
+        const playerOnRollValue = parseInt(playerOnRoll) === 1 ? 1 : 0;  // 0 for X, 1 for O
+
+        // Parse dice
+        const diceValues = dicePart.split("").map(num => parseInt(num));
+        const dice = [diceValues[0], diceValues[1]];
+
+        // Parse cube information
+        const cube = {
+            owner: parseInt(cubeOwner),
+            value: parseInt(cubeValue)
+        };
+
+        // Parse score
+        const scoreLine = lines.find(line => line.includes("Score is") || line.includes("Le score est"));
+        const scoreMatch = scoreLine.match(/X:(\d+) O:(\d+)/);
+        const score = scoreMatch ? [parseInt(scoreMatch[1]), parseInt(scoreMatch[2])] : [0, 0];
+
+        // Return the structured Position object
+        return {
+            board: board,
+            cube: cube,
+            dice: dice,
+            score: score,
+            player_on_roll: playerOnRollValue,
+            decision_type: 0  // Assuming checker action by default
+        };
     }
 
     function copyPosition() {
