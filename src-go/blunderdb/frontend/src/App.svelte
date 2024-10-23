@@ -24,6 +24,7 @@
         pastePositionTextStore,
         currentPositionStore,
         listPositionStore,
+        positionStore,
     } from './stores/positionStore';
 
     import {
@@ -164,6 +165,7 @@
 
             // Now you can parse and use the file content
             const importedPosition = parsePosition(response.content);
+            console.log('importedPosition:', importedPosition);
             positionStore.set(importedPosition);
         } catch (error) {
             console.error("Error importing position:", error);
@@ -171,8 +173,18 @@
     }
 
     function parsePosition(fileContent) {
-        // Split the file content into lines
-        const lines = fileContent.split('\n');
+        if (!fileContent || fileContent.trim().length === 0) {
+            throw new Error("File is empty or invalid.");
+        }
+
+        // Normalize line endings for both Windows (\r\n) and old Mac (\r) to Unix (\n)
+        const normalizedContent = fileContent.replace(/\r\n|\r/g, '\n');
+
+        // Split the file content into lines and trim each line to remove excess whitespace
+        const lines = normalizedContent.split('\n').map(line => line.trim());
+
+        // Log each line for debugging (optional)
+        lines.forEach((line, index) => console.log(`Cleaned Line ${index}: "${line}"`));
 
         // Parse the XGID
         const xgidLine = lines.find(line => line.startsWith("XGID="));
@@ -180,12 +192,24 @@
 
         console.log("xgidLine:", xgidLine);
         console.log("xgid:", xgid);
+
         if (!xgid) {
             throw new Error("XGID not found in the file content.");
         }
 
         // XGID components: "-A-CCD-----a---a------dfc-:4:1:-1:33:1:0:0:9:10"
-        const [positionPart, dicePart, cubeOwner, cubeValue, playerOnRoll] = xgid.split(":");
+        const [
+            positionPart, 
+            cubeValue, 
+            cubeOwner, 
+            playerOnRoll, 
+            dicePart, 
+            score1, 
+            score2, 
+            isCrawford, 
+            matchLength, 
+            dummy
+        ] = xgid.split(":");
 
         // Decode board positions from the XGID
         const board = { points: Array(26).fill({ checkers: 0, color: -1 }), bearoff: [0, 0] };
@@ -193,26 +217,29 @@
         const pointEncoding = positionPart.slice(1);  // Remove initial '-'
         const pointChars = pointEncoding.split('');
 
+        // Parse player on roll
+        const playerOnRollValue = parseInt(playerOnRoll) === 1 ? 0 : 1;  // 0 for player1, 1 for player2
         let pointIndex = 24;  // Start from the last point (24th)
         pointChars.forEach(char => {
             if (char >= 'A' && char <= 'Z') {
                 // O's checkers
                 const numCheckers = char.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers, color: 1 };  // O is 1
+                board.points[pointIndex] = { checkers: numCheckers,
+                    color: playerOnRollValue === 0 ? 1 : 0 };  // O is player on top
             } else if (char >= 'a' && char <= 'z') {
                 // X's checkers
                 const numCheckers = char.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers, color: 0 };  // X is 0
+                board.points[pointIndex] = { checkers: numCheckers,
+                    color: playerOnRollValue === 0? 0 : 1 };  // X is player on bottom
             }
             pointIndex--;
         });
 
-        // Parse player on roll
-        const playerOnRollValue = parseInt(playerOnRoll) === 1 ? 1 : 0;  // 0 for X, 1 for O
-
         // Parse dice
         const diceValues = dicePart.split("").map(num => parseInt(num));
         const dice = [diceValues[0], diceValues[1]];
+        console.log('diceValues', diceValues);
+        console.log('dice', dice);
 
         // Parse cube information
         const cube = {
@@ -220,19 +247,55 @@
             value: parseInt(cubeValue)
         };
 
-        // Parse score
-        const scoreLine = lines.find(line => line.includes("Score is") || line.includes("Le score est"));
-        const scoreMatch = scoreLine.match(/X:(\d+) O:(\d+)/);
-        const score = scoreMatch ? [parseInt(scoreMatch[1]), parseInt(scoreMatch[2])] : [0, 0];
+        // Parse scores
+        const xScore = playerOnRollValue === 0 ? parseInt(score1) : parseInt(score2);
+        const oScore = playerOnRollValue === 0 ? parseInt(score2) : parseInt(score1);
+
+        // Parse match length
+        const matchLengthValue = parseInt(matchLength);
+
+        
+        // Determine away scores based on isCrawford
+        let awayScores;
+        if (parseInt(isCrawford) === 0) {
+            // If post-Crawford
+            awayScores = playerOnRollValue === 0 ? [
+                xScore === 1 ? 0 : matchLengthValue - xScore, // X's away score
+                oScore === 1 ? 0 : matchLengthValue - oScore  // O's away score
+            ] : [
+                oScore === 1 ? 0 : matchLengthValue - oScore, // O's away score
+                xScore === 1 ? 0 : matchLengthValue - xScore  // X's away score
+            ];
+        } else {
+            // Calculate away scores normally
+            awayScores = playerOnRollValue === 0 ? 
+                [matchLengthValue - xScore, matchLengthValue - oScore] : 
+                [matchLengthValue - oScore, matchLengthValue - xScore];
+        }
+
+        // Calculate bearoff counts
+        const xCheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 0 ? point.checkers : 0), 0);
+        const oCheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
+
+        const xBearoff = 15 - xCheckersOnBoard;
+        const oBearoff = 15 - oCheckersOnBoard;
+
+        // Store bearoff based on playerOnRollValue
+        board.bearoff = playerOnRollValue === 0 ? [xBearoff, oBearoff] : [oBearoff, xBearoff];
+
+        // Determine decision type
+        const decisionLine = lines.find(line => line.includes("to play") || line.includes("jouer"));
+        const decisionType = decisionLine ? 0 : 1; // 0 for checker decision, 1 for cube action
+
 
         // Return the structured Position object
         return {
             board: board,
             cube: cube,
             dice: dice,
-            score: score,
+            score: awayScores,
             player_on_roll: playerOnRollValue,
-            decision_type: 0  // Assuming checker action by default
+            decision_type: decisionType,  // Assuming checker action by default
         };
     }
 
