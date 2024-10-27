@@ -301,6 +301,9 @@
             (result) => {
                 pastePositionTextStore.set(result);
                 console.log('pastePositionTextStore:', $pastePositionTextStore);
+                const importedPosition = parsePosition(result);
+                console.log('importedPosition:', importedPosition);
+                positionStore.set(importedPosition);
             })
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
