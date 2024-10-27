@@ -281,6 +281,11 @@
             awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
         }
 
+        // if unlimited mode
+        if(matchLengthValue === 0) {
+            awayScores = [ -1, -1 ];
+        }
+
         // Calculate bearoff counts
         const player1CheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 0 ? point.checkers : 0), 0);
         const player2CheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
