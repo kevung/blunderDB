@@ -282,8 +282,8 @@
         }
 
         // if unlimited mode
-        let hasJacoby;
-        let hasBeaver;
+        let hasJacoby = 0;
+        let hasBeaver = 0;
         if(matchLengthValue === 0) {
             awayScores = [ -1, -1 ];
             console.log('isCrawford', parseInt(isCrawford));
