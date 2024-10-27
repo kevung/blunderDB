@@ -18,4 +18,6 @@ export const positionStore = writable({
     score: [0, 0],
     player_on_roll: -1,
     decision_type: 0,
+    has_jacoby: 0,
+    has_beaver: 0,
 });

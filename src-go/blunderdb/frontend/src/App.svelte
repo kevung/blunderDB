@@ -282,8 +282,29 @@
         }
 
         // if unlimited mode
+        let hasJacoby;
+        let hasBeaver;
         if(matchLengthValue === 0) {
             awayScores = [ -1, -1 ];
+            console.log('isCrawford', parseInt(isCrawford));
+            switch (parseInt(isCrawford)) {
+                case 1:
+                    hasJacoby = 1;
+                    hasBeaver = 0;
+                    break;
+                case 2:
+                    hasJacoby = 0;
+                    hasBeaver = 1;
+                    break;
+                case 3:
+                    hasJacoby = 1;
+                    hasBeaver = 1;
+                    break;
+                default:
+                    hasJacoby = 0;
+                    hasBeaver = 0;
+                    break;
+            }
         }
 
         // Calculate bearoff counts
@@ -310,6 +331,8 @@
             score: awayScores,
             player_on_roll: playerDownOnDiagramValue,
             decision_type: decisionType,  // Assuming checker action by default
+            has_jacoby: hasJacoby,
+            has_beaver: hasBeaver,
         };
     }
 
