@@ -237,10 +237,28 @@
         console.log('dice', dice);
 
         // Parse cube information
-        const cube = {
-            owner: parseInt(cubeOwner) === 1 ? 0 : 1,
-            value: parseInt(cubeValue)
-        };
+        let cube;
+        switch (parseInt(cubeOwner)) {
+            case 1:
+                cube = {
+                    owner: 0,
+                    value: parseInt(cubeValue)
+                };
+                break;
+            case -1:
+                cube = {
+                    owner: 1,
+                    value: parseInt(cubeValue)
+                };
+                break;
+            default:
+                cube = {
+                    owner: -1,
+                    value: parseInt(cubeValue)
+                };
+                break;
+
+        }
 
         // Parse scores
         const player1Score = parseInt(score1);
