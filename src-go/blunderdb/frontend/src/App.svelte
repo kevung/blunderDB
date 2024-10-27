@@ -202,7 +202,7 @@
             positionPart, 
             cubeValue, 
             cubeOwner, 
-            playerOnRoll, 
+            playerDownOnDiagram, 
             dicePart, 
             score1, 
             score2, 
@@ -214,25 +214,20 @@
         // Decode board positions from the XGID
         const board = { points: Array(26).fill({ checkers: 0, color: -1 }), bearoff: [0, 0] };
 
-        const pointEncoding = positionPart.slice(1);  // Remove initial '-'
-        const pointChars = pointEncoding.split('');
+        const pointChars = positionPart.split('');
 
         // Parse player on roll
-        const playerOnRollValue = parseInt(playerOnRoll) === 1 ? 0 : 1;  // 0 for player1, 1 for player2
-        let pointIndex = 24;  // Start from the last point (24th)
+        const playerDownOnDiagramValue = parseInt(playerDownOnDiagram) === 1 ? 0 : 1;  // 0 for player1, 1 for player2
+        let pointIndex = 0;  // Start from the last point (24th)
         pointChars.forEach(char => {
             if (char >= 'A' && char <= 'Z') {
-                // O's checkers
                 const numCheckers = char.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers,
-                    color: playerOnRollValue === 0 ? 1 : 0 };  // O is player on top
+                board.points[pointIndex] = { checkers: numCheckers, color: 0 };
             } else if (char >= 'a' && char <= 'z') {
-                // X's checkers
                 const numCheckers = char.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers,
-                    color: playerOnRollValue === 0? 0 : 1 };  // X is player on bottom
+                board.points[pointIndex] = { checkers: numCheckers, color: 1 };
             }
-            pointIndex--;
+            pointIndex++;
         });
 
         // Parse dice
@@ -243,13 +238,13 @@
 
         // Parse cube information
         const cube = {
-            owner: parseInt(cubeOwner),
+            owner: parseInt(cubeOwner) === 1 ? 0 : 1,
             value: parseInt(cubeValue)
         };
 
         // Parse scores
-        const xScore = playerOnRollValue === 0 ? parseInt(score1) : parseInt(score2);
-        const oScore = playerOnRollValue === 0 ? parseInt(score2) : parseInt(score1);
+        const player1Score = parseInt(score1);
+        const player2Score = parseInt(score2);
 
         // Parse match length
         const matchLengthValue = parseInt(matchLength);
@@ -259,29 +254,25 @@
         let awayScores;
         if (parseInt(isCrawford) === 0) {
             // If post-Crawford
-            awayScores = playerOnRollValue === 0 ? [
-                xScore === 1 ? 0 : matchLengthValue - xScore, // X's away score
-                oScore === 1 ? 0 : matchLengthValue - oScore  // O's away score
-            ] : [
-                oScore === 1 ? 0 : matchLengthValue - oScore, // O's away score
-                xScore === 1 ? 0 : matchLengthValue - xScore  // X's away score
+            awayScores = [
+                matchLengthValue - player1Score === 1 ? 0 : matchLengthValue - player1Score,
+                matchLengthValue - player2Score === 1 ? 0 : matchLengthValue - player2Score
             ];
         } else {
             // Calculate away scores normally
-            awayScores = playerOnRollValue === 0 ? 
-                [matchLengthValue - xScore, matchLengthValue - oScore] : 
-                [matchLengthValue - oScore, matchLengthValue - xScore];
+            awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
         }
 
         // Calculate bearoff counts
-        const xCheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 0 ? point.checkers : 0), 0);
-        const oCheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
+        const player1CheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 0 ? point.checkers : 0), 0);
+        const player2CheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
 
-        const xBearoff = 15 - xCheckersOnBoard;
-        const oBearoff = 15 - oCheckersOnBoard;
+        const player1Bearoff = 15 - player1CheckersOnBoard;
+        const player2Bearoff = 15 - player2CheckersOnBoard;
 
-        // Store bearoff based on playerOnRollValue
-        board.bearoff = playerOnRollValue === 0 ? [xBearoff, oBearoff] : [oBearoff, xBearoff];
+        // Store bearoff based on playerDownOnDiagramValue
+        // board.bearoff = playerDownOnDiagramValue === 0 ? [xBearoff, oBearoff] : [oBearoff, xBearoff];
+        board.bearoff = [player1Bearoff, player2Bearoff];
 
         // Determine decision type
         const decisionLine = lines.find(line => line.includes("to play") || line.includes("jouer"));
@@ -294,7 +285,7 @@
             cube: cube,
             dice: dice,
             score: awayScores,
-            player_on_roll: playerOnRollValue,
+            player_on_roll: playerDownOnDiagramValue,
             decision_type: decisionType,  // Assuming checker action by default
         };
     }
