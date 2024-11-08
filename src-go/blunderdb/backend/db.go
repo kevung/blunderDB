@@ -18,6 +18,17 @@ func SetupDatabase() (*sql.DB, error) {
             state TEXT
         )
     `)
+
+    _, err = db.Exec(`
+        CREATE TABLE IF NOT EXISTS analysis (
+            id INTEGER PRIMARY KEY,
+            position_id INTEGER,
+            data JSON,
+            FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+        )
+    `);
+
+
     if err != nil {
         return nil, err
     }

@@ -20,6 +20,16 @@ const (
     CubeAction
 )
 
+const (
+    NoDouble = iota
+    Double
+    ReDouble
+    TooGood
+    Take
+    Pass
+    Beaver
+)
+
 type Point struct {
     Checkers int `json:"checkers"`
     Color int `json:"color"`
@@ -43,6 +53,53 @@ type Position struct {
     PlayerOnRoll int `json:"player_on_roll"`
     DecisionType int `json:"decision_type"`
 }
+
+type DoublingCubeAnalysis struct {
+    PlayerWinChances         float64 `json:"playerWinChances"`
+    PlayerGammonChances      float64 `json:"playerGammonChances"`
+    PlayerBackgammonChances  float64 `json:"playerBackgammonChances"`
+    OpponentWinChances       float64 `json:"opponentWinChances"`
+    OpponentGammonChances    float64 `json:"opponentGammonChances"`
+    OpponentBackgammonChances float64 `json:"opponentBackgammonChances"`
+    CubelessNoDoubleEquity   float64 `json:"cubelessNoDoubleEquity"`
+    CubelessDoubleEquity     float64 `json:"cubelessDoubleEquity"`
+    CubefulNoDoubleEquity    float64 `json:"cubefulNoDoubleEquity"`
+    CubefulNoDoubleError     float64 `json:"cubefulNoDoubleError,omitempty"`
+    CubefulDoubleTakeEquity  float64 `json:"cubefulDoubleTakeEquity"`
+    CubefulDoubleTakeError   float64 `json:"cubefulDoubleTakeError"`
+    CubefulDoublePassEquity  float64 `json:"cubefulDoublePassEquity"`
+    CubefulDoublePassError   float64 `json:"cubefulDoublePassError"`
+}
+
+type CheckerMove struct {
+    Index                 int     `json:"index"`
+    AnalysisDepth         string  `json:"analysisDepth"`
+    Move                  string  `json:"move"`
+    Equity                float64 `json:"equity"`
+    EquityError           *float64 `json:"equityError,omitempty"`
+    PlayerWinChance       float64 `json:"playerWinChance"`
+    PlayerGammonChance    float64 `json:"playerGammonChance"`
+    PlayerBackgammonChance float64 `json:"playerBackgammonChance"`
+    OpponentWinChance     float64 `json:"opponentWinChance"`
+    OpponentGammonChance  float64 `json:"opponentGammonChance"`
+    OpponentBackgammonChance float64 `json:"opponentBackgammonChance"`
+}
+
+type CheckerAnalysis struct {
+    Moves []CheckerMove `json:"moves"`
+}
+
+type PositionAnalysis struct {
+    PositionID           int                    `json:"positionId"`
+    XGID                 string                 `json:"xgid"`
+    Player1              string                 `json:"player1"`
+    Player2              string                 `json:"player2"`
+    ExtremeGammonVersion string                 `json:"extremeGammonVersion"`
+    AnalysisType         string                 `json:"analysisType"`
+    DoublingCubeAnalysis *DoublingCubeAnalysis  `json:"doublingCubeAnalysis,omitempty"`
+    CheckerAnalysis      *CheckerAnalysis       `json:"checkerAnalysis,omitempty"`
+}
+
 
 func initializeBoard() Board {
     var board Board

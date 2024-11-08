@@ -28,6 +28,10 @@
     } from './stores/positionStore';
 
     import {
+        analysisStore,
+    } from './stores/analysisStore';
+
+    import {
         statusBarTextStore,
         statusBarModeStore,
         commandTextStore,
@@ -164,9 +168,11 @@
             console.log("File content:", response.content);
 
             // Now you can parse and use the file content
-            const importedPosition = parsePosition(response.content);
-            console.log('importedPosition:', importedPosition);
-            positionStore.set(importedPosition);
+            const {positionData, parsedAnalysis} = parsePosition(response.content);
+            console.log('positionData:', positionData);
+            console.log('parsedAnalysis:', parsedAnalysis);
+            positionStore.set(positionData);
+            analysisStore.set(parsedAnalysis);
         } catch (error) {
             console.error("Error importing position:", error);
         }
@@ -217,7 +223,6 @@
         const pointChars = positionPart.split('');
 
         // Parse player on roll
-        const playerDownOnDiagramValue = parseInt(playerDownOnDiagram) === 1 ? 0 : 1;  // 0 for player1, 1 for player2
         let pointIndex = 0;  // Start from the last point (24th)
         pointChars.forEach(char => {
             if (char >= 'A' && char <= 'Z') {
@@ -236,104 +241,115 @@
         console.log('diceValues', diceValues);
         console.log('dice', dice);
 
-        // Parse cube information
-        let cube;
-        switch (parseInt(cubeOwner)) {
-            case 1:
-                cube = {
-                    owner: 0,
-                    value: parseInt(cubeValue)
-                };
-                break;
-            case -1:
-                cube = {
-                    owner: 1,
-                    value: parseInt(cubeValue)
-                };
-                break;
-            default:
-                cube = {
-                    owner: -1,
-                    value: parseInt(cubeValue)
-                };
-                break;
-
-        }
-
-        // Parse scores
         const player1Score = parseInt(score1);
         const player2Score = parseInt(score2);
-
-        // Parse match length
         const matchLengthValue = parseInt(matchLength);
-
+        const playerOnRoll = parseInt(playerDownOnDiagram) === 1 ? 0 : 1;  // 0 for player1, 1 for player2
         
-        // Determine away scores based on isCrawford
-        let awayScores;
-        if (parseInt(isCrawford) === 0) {
-            // If post-Crawford
-            awayScores = [
-                matchLengthValue - player1Score === 1 ? 0 : matchLengthValue - player1Score,
-                matchLengthValue - player2Score === 1 ? 0 : matchLengthValue - player2Score
-            ];
-        } else {
-            // Calculate away scores normally
-            awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
-        }
+
 
         // if unlimited mode
-        let hasJacoby = 0;
-        let hasBeaver = 0;
-        if(matchLengthValue === 0) {
-            awayScores = [ -1, -1 ];
+        let hasJacoby = 0, hasBeaver = 0, awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
+        if (parseInt(isCrawford) === 0) {
+            awayScores = awayScores.map(score => score === 1 ? 0 : score);
+        }
+        if (matchLengthValue === 0) {
+            awayScores = [-1, -1];
             console.log('isCrawford', parseInt(isCrawford));
             switch (parseInt(isCrawford)) {
-                case 1:
-                    hasJacoby = 1;
-                    hasBeaver = 0;
-                    break;
-                case 2:
-                    hasJacoby = 0;
-                    hasBeaver = 1;
-                    break;
-                case 3:
-                    hasJacoby = 1;
-                    hasBeaver = 1;
-                    break;
-                default:
-                    hasJacoby = 0;
-                    hasBeaver = 0;
-                    break;
+                case 1: hasJacoby = 1; break;
+                case 2: hasBeaver = 1; break;
+                case 3: hasJacoby = 1; hasBeaver = 1; break;
             }
         }
 
-        // Calculate bearoff counts
-        const player1CheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 0 ? point.checkers : 0), 0);
-        const player2CheckersOnBoard = board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
-
-        const player1Bearoff = 15 - player1CheckersOnBoard;
-        const player2Bearoff = 15 - player2CheckersOnBoard;
-
-        // Store bearoff based on playerDownOnDiagramValue
-        // board.bearoff = playerDownOnDiagramValue === 0 ? [xBearoff, oBearoff] : [oBearoff, xBearoff];
+        const player1Bearoff = 15 - board.points.reduce((sum, point) => sum + (point.color === 0 ? point.checkers : 0), 0);
+        const player2Bearoff = 15 - board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
         board.bearoff = [player1Bearoff, player2Bearoff];
 
-        // Determine decision type
         const decisionLine = lines.find(line => line.includes("to play") || line.includes("jouer"));
         const decisionType = decisionLine ? 0 : 1; // 0 for checker decision, 1 for cube action
 
-
-        // Return the structured Position object
-        return {
+        const positionData = {
             board: board,
-            cube: cube,
+            cube: {
+                owner: parseInt(cubeOwner) === 1 ? 0 : parseInt(cubeOwner) === -1 ? 1 : -1,
+                value: parseInt(cubeValue)
+            },
             dice: dice,
             score: awayScores,
-            player_on_roll: playerDownOnDiagramValue,
-            decision_type: decisionType,  // Assuming checker action by default
+            player_on_roll: playerOnRoll,
+            decision_type: decisionType,
             has_jacoby: hasJacoby,
             has_beaver: hasBeaver,
         };
+
+        // Analysis Parsing
+        const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {} };
+
+        // Doubling Cube Analysis Parsing
+        if (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")) {
+            parsedAnalysis.analysisType = "DoublingCube";
+            const playerWinMatch = normalizedContent.match(/Player Winning Chances:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)/);
+            const opponentWinMatch = normalizedContent.match(/Opponent Winning Chances:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)/);
+            const cubelessMatch = normalizedContent.match(/Cubeless Equities: No Double=([\+\-\d.]+), Double=([\+\-\d.]+)/);
+            const cubefulNoDoubleMatch = normalizedContent.match(/No double:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/);
+            const cubefulDoubleTakeMatch = normalizedContent.match(/Double\/Take:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
+            const cubefulDoublePassMatch = normalizedContent.match(/Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
+
+            if (playerWinMatch) {
+                parsedAnalysis.doublingCubeAnalysis.playerWinChances = parseFloat(playerWinMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.playerGammonChances = parseFloat(playerWinMatch[2]);
+                parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances = parseFloat(playerWinMatch[3]);
+            }
+            if (opponentWinMatch) {
+                parsedAnalysis.doublingCubeAnalysis.opponentWinChances = parseFloat(opponentWinMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.opponentGammonChances = parseFloat(opponentWinMatch[2]);
+                parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances = parseFloat(opponentWinMatch[3]);
+            }
+            if (cubelessMatch) {
+                parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity = parseFloat(cubelessMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity = parseFloat(cubelessMatch[2]);
+            }
+            if (cubefulNoDoubleMatch) {
+                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity = parseFloat(cubefulNoDoubleMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError = cubefulNoDoubleMatch[2] ? parseFloat(cubefulNoDoubleMatch[2]) : null;
+            }
+            if (cubefulDoubleTakeMatch) {
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(cubefulDoubleTakeMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = parseFloat(cubefulDoubleTakeMatch[2]);
+            }
+            if (cubefulDoublePassMatch) {
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(cubefulDoublePassMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = parseFloat(cubefulDoublePassMatch[2]);
+            }
+
+        } else if (/\d\.\s+XG Roller/.test(normalizedContent)) {  // Checker Move Analysis Parsing
+            parsedAnalysis.analysisType = "CheckerMove";
+            const checkerMoveRegex = /(\d+)\.\s+([^\s]+)\s+([\d/ ]+)\s+eq:([+-]?\d+\.\d+)(?:\s+\(([+-]?\d+\.\d+)\))?\s+Player:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)\s+Opponent:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)/g;
+
+    console.log('normalizedContent', normalizedContent);
+    let checkerMatch;
+    while ((checkerMatch = checkerMoveRegex.exec(normalizedContent)) !== null && parsedAnalysis.checkerAnalysis.length < 5) {
+        console.log('checkerMatch', checkerMatch);
+        parsedAnalysis.checkerAnalysis.push({
+            index: parseInt(checkerMatch[1]),
+            analysisDepth: checkerMatch[2],
+            move: checkerMatch[3].trim(),
+            equity: parseFloat(checkerMatch[4]),
+            equityError: checkerMatch[5] ? parseFloat(checkerMatch[5]) : null,
+            playerWinChance: parseFloat(checkerMatch[6]),
+            playerGammonChance: parseFloat(checkerMatch[7]),
+            playerBackgammonChance: parseFloat(checkerMatch[8]),
+            opponentWinChance: parseFloat(checkerMatch[9]),
+            opponentGammonChance: parseFloat(checkerMatch[10]),
+            opponentBackgammonChance: parseFloat(checkerMatch[11]),
+        });
+    }
+        }
+
+        return { positionData, parsedAnalysis };
+
     }
 
     function copyPosition() {

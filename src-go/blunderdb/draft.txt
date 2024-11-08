@@ -1,0 +1,29 @@
+NoDouble
+Double
+ReDouble
+TooGood
+
+Take
+Pass
+Beaver
+
+
+- Detect analysis
+- Cube
+    - FR, EN
+
+                    Match Play      Unlimited
+                    Take    Pass    Beaver  
+        NoDouble
+        Double
+        ReDouble
+        TooGood
+- Checker
+    - FR, EN
+        - 5 analysis
+            - move
+            - wins rate
+            - equity
+            - error
+            - depth
+
