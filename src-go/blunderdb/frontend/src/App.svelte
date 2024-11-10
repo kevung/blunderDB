@@ -184,7 +184,12 @@
         }
 
         // Normalize line endings for both Windows (\r\n) and old Mac (\r) to Unix (\n)
-        const normalizedContent = fileContent.replace(/\r\n|\r/g, '\n');
+        //const normalizedContent = fileContent.replace(/\r\n|\r/g, '\n');
+        const normalizedContent = fileContent
+            .replace(/\r\n|\r/g, '\n') // Normalize line endings
+            .trim(); // Remove leading and trailing spaces
+        //.replace(/[^\S\r\n]+/g, ' ') // Convert multiple spaces to single spaces
+
 
         // Split the file content into lines and trim each line to remove excess whitespace
         const lines = normalizedContent.split('\n').map(line => line.trim());
@@ -324,28 +329,53 @@
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = parseFloat(cubefulDoublePassMatch[2]);
             }
 
-        } else if (/\d\.\s+XG Roller/.test(normalizedContent)) {  // Checker Move Analysis Parsing
+        } else if (/^\s*\d+\.\s+[A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*\s+[A-Za-z0-9\/\- ]+\s+eq:/gm.test(normalizedContent)) {
             parsedAnalysis.analysisType = "CheckerMove";
-            const checkerMoveRegex = /(\d+)\.\s+([^\s]+)\s+([\d/ ]+)\s+eq:([+-]?\d+\.\d+)(?:\s+\(([+-]?\d+\.\d+)\))?\s+Player:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)\s+Opponent:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)/g;
 
-    console.log('normalizedContent', normalizedContent);
-    let checkerMatch;
-    while ((checkerMatch = checkerMoveRegex.exec(normalizedContent)) !== null && parsedAnalysis.checkerAnalysis.length < 5) {
-        console.log('checkerMatch', checkerMatch);
-        parsedAnalysis.checkerAnalysis.push({
-            index: parseInt(checkerMatch[1]),
-            analysisDepth: checkerMatch[2],
-            move: checkerMatch[3].trim(),
-            equity: parseFloat(checkerMatch[4]),
-            equityError: checkerMatch[5] ? parseFloat(checkerMatch[5]) : null,
-            playerWinChance: parseFloat(checkerMatch[6]),
-            playerGammonChance: parseFloat(checkerMatch[7]),
-            playerBackgammonChance: parseFloat(checkerMatch[8]),
-            opponentWinChance: parseFloat(checkerMatch[9]),
-            opponentGammonChance: parseFloat(checkerMatch[10]),
-            opponentBackgammonChance: parseFloat(checkerMatch[11]),
-        });
-    }
+            const moveRegex = /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+eq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/gm;
+
+            let moveMatch;
+            let playerMatch;
+            let opponentMatch;
+
+            // Loop through all move lines in the normalized content
+            while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
+                // Extract the move details from moveRegex match
+                const moveDetails = {
+                    index: parseInt(moveMatch[1], 10), // Move number (e.g., 1)
+                    analysisDepth: moveMatch[2].trim(), // XG Roller++ or ply value
+                    move: moveMatch[3].trim(), // The move description (e.g., 20/15 10/8)
+                    equity: parseFloat(moveMatch[4]), // Equity value (e.g., -1.448)
+                    equityError: moveMatch[5] ? parseFloat(moveMatch[5]) : 0, // Optional equity change value (e.g., -0.038)
+                };
+
+                // Find the next lines for Player and Opponent information
+                const lineStart = moveMatch.index + moveMatch[0].length; // Position after the main move line
+                const remainingContent = normalizedContent.slice(lineStart);
+
+                // Check for Player and Opponent percentage details in the following lines
+                // This regex pattern ensures it matches Player and Opponent details on the next lines
+                const playerRegex = /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
+                const opponentRegex = /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
+
+                // Capture Player details
+                if ((playerMatch = playerRegex.exec(remainingContent)) !== null) {
+                    moveDetails.playerWinChance = parseFloat(playerMatch[1]);
+                    moveDetails.playerGammonChance = parseFloat(playerMatch[2]);
+                    moveDetails.playerBackgammonChance = parseFloat(playerMatch[3]);
+                }
+
+                // Capture Opponent details
+                if ((opponentMatch = opponentRegex.exec(remainingContent)) !== null) {
+                    moveDetails.opponentWinChance = parseFloat(opponentMatch[1]);
+                    moveDetails.opponentGammonChance = parseFloat(opponentMatch[2]);
+                    moveDetails.opponentBackgammonChance = parseFloat(opponentMatch[3]);
+                }
+
+                // Push the current move details into checkerAnalysis array
+                parsedAnalysis.checkerAnalysis.push(moveDetails);
+            }
+
         }
 
         return { positionData, parsedAnalysis };
