@@ -318,6 +318,10 @@
             // Best Cube action parsing
             const bestCubeActionMatch = normalizedContent.match(isFrench ? /Meilleur action du videau:\s*(.*)/ : /Best Cube action:\s*(.*)/);
 
+            const wrongPassPercentageMatch = normalizedContent.match(isFrench ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/);
+
+
+
             if (playerWinMatch) {
                 parsedAnalysis.doublingCubeAnalysis.playerWinChances = parseFloat(playerWinMatch[1]);
                 parsedAnalysis.doublingCubeAnalysis.playerGammonChances = parseFloat(playerWinMatch[2]);
@@ -346,6 +350,9 @@
             }
             if (bestCubeActionMatch) {
                 parsedAnalysis.doublingCubeAnalysis.bestCubeAction = bestCubeActionMatch[1].trim();
+            }
+            if (wrongPassPercentageMatch) {
+                parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage = parseFloat(wrongPassPercentageMatch[1]);
             }
 
 
