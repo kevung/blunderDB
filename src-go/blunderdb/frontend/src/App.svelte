@@ -188,7 +188,6 @@
         const normalizedContent = fileContent
             .replace(/\r\n|\r/g, '\n') // Normalize line endings
             .trim(); // Remove leading and trailing spaces
-        //.replace(/[^\S\r\n]+/g, ' ') // Convert multiple spaces to single spaces
 
 
         // Split the file content into lines and trim each line to remove excess whitespace
@@ -196,6 +195,10 @@
 
         // Log each line for debugging (optional)
         lines.forEach((line, index) => console.log(`Cleaned Line ${index}: "${line}"`));
+
+        // Detect if the file is in French or English by checking for French words
+        const isFrench = normalizedContent.includes("Joueur") || normalizedContent.includes("Adversaire");
+
 
         // Parse the XGID
         const xgidLine = lines.find(line => line.startsWith("XGID="));
@@ -272,7 +275,7 @@
         const player2Bearoff = 15 - board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
         board.bearoff = [player1Bearoff, player2Bearoff];
 
-        const decisionLine = lines.find(line => line.includes("to play") || line.includes("jouer"));
+        const decisionLine = lines.find(line => line.includes(isFrench ? "jouer" : "to play"));
         const decisionType = decisionLine ? 0 : 1; // 0 for checker decision, 1 for cube action
 
         const positionData = {
@@ -293,14 +296,15 @@
         const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {} };
 
         // Doubling Cube Analysis Parsing
-        if (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")) {
+        if (normalizedContent.includes(isFrench ? "Equité sans double" : "Cubeless Equities") || normalizedContent.includes(isFrench ? "Equité avec double" : "Cubeful Equities")) {
             parsedAnalysis.analysisType = "DoublingCube";
-            const playerWinMatch = normalizedContent.match(/Player Winning Chances:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)/);
-            const opponentWinMatch = normalizedContent.match(/Opponent Winning Chances:\s+([\d.]+)% \(G:([\d.]+)% B:([\d.]+)%\)/);
-            const cubelessMatch = normalizedContent.match(/Cubeless Equities: No Double=([\+\-\d.]+), Double=([\+\-\d.]+)/);
-            const cubefulNoDoubleMatch = normalizedContent.match(/No double:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/);
-            const cubefulDoubleTakeMatch = normalizedContent.match(/Double\/Take:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
-            const cubefulDoublePassMatch = normalizedContent.match(/Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
+            const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Joueur gagnant chances/ : /Player Winning Chances/));
+            const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Adversaire gagnant chances/ : /Opponent Winning Chances/));
+            const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equité sans double/ : /Cubeless Equities/));
+            const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double/ : /No double/));
+            const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Take:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
+            const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
+
 
             if (playerWinMatch) {
                 parsedAnalysis.doublingCubeAnalysis.playerWinChances = parseFloat(playerWinMatch[1]);
@@ -329,10 +333,13 @@
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = parseFloat(cubefulDoublePassMatch[2]);
             }
 
-        } else if (/^\s*\d+\.\s+[A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*\s+[A-Za-z0-9\/\- ]+\s+eq:/gm.test(normalizedContent)) {
+        } else if (/^\s*\d+\.\s+[A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*\s+[A-Za-z0-9\/\- ]+\s+/gm.test(normalizedContent)) {
             parsedAnalysis.analysisType = "CheckerMove";
 
-            const moveRegex = /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+eq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/gm;
+            // Checker Move Analysis Parsing for both English and French
+            const moveRegex = new RegExp(isFrench ? /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+éq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/ : 
+                /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+eq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/,
+                'gm');
 
             let moveMatch;
             let playerMatch;
@@ -355,8 +362,13 @@
 
                 // Check for Player and Opponent percentage details in the following lines
                 // This regex pattern ensures it matches Player and Opponent details on the next lines
-                const playerRegex = /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
-                const opponentRegex = /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
+                const playerRegex = isFrench
+                    ? /Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/  // French version
+                    : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;  // English version
+
+                const opponentRegex = isFrench
+                    ? /Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/  // French version
+                    : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;  // English version
 
                 // Capture Player details
                 if ((playerMatch = playerRegex.exec(remainingContent)) !== null) {
