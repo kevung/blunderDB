@@ -304,20 +304,16 @@
         ) {
             parsedAnalysis.analysisType = "DoublingCube";
 
-            // Player Winning Chances: 79.25% (G:57.02% B:8.79%)
             const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain du joueur:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
 
-            // Opponent Winning Chances: 20.75% (G:0.00% B:0.00%)
             const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain de l'adversaire:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
 
-            // Cubeless Equities: No Double=+1.286, Double=+1.405
             const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equités sans videau\s*:\s*Pas de double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/));
 
-            // Cubeful Equities: No double: +1.065
-            const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double\s*:\s*([\+\-\d.]+)/ : /No double\s*:\s*([\+\-\d.]+)/));
-
-            const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Take:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/));
-            const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/));
+            // Cubeful Equities with optional error margin for No Double, Double/Take, and Double/Pass
+            const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /No double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
+            const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Take:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
+            const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Pass:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
 
             // Best Cube action parsing
             const bestCubeActionMatch = normalizedContent.match(isFrench ? /Meilleur action du videau:\s*(.*)/ : /Best Cube action:\s*(.*)/);
