@@ -197,7 +197,9 @@
         lines.forEach((line, index) => console.log(`Cleaned Line ${index}: "${line}"`));
 
         // Detect if the file is in French or English by checking for French words
-        const isFrench = normalizedContent.includes("Joueur") || normalizedContent.includes("Adversaire");
+        const isFrench = normalizedContent.includes("Joueur")
+            || normalizedContent.includes("Adversaire")
+            || normalizedContent.includes("Videau");
 
 
         // Parse the XGID
@@ -296,17 +298,20 @@
         const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {} };
 
         // Doubling Cube Analysis Parsing
-        if (normalizedContent.includes(isFrench ? "Equités sans videau" : "Cubeless Equities") || normalizedContent.includes(isFrench ? "Equités avec videau" : "Cubeful Equities")) {
+        if (
+            (isFrench && (normalizedContent.includes("Equités sans videau") || normalizedContent.includes("Equités avec videau"))) ||
+            (!isFrench && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")))
+        ) {
             parsedAnalysis.analysisType = "DoublingCube";
 
             // Player Winning Chances: 79.25% (G:57.02% B:8.79%)
-            const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Joueur gagnant chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
+            const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain du joueur:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
 
             // Opponent Winning Chances: 20.75% (G:0.00% B:0.00%)
-            const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Adversaire gagnant chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
+            const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain de l'adversaire:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
 
             // Cubeless Equities: No Double=+1.286, Double=+1.405
-            const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equité sans double\s*:\s*Pas de double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/));
+            const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equités sans videau\s*:\s*Pas de double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/));
 
             // Cubeful Equities: No double: +1.065
             const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double\s*:\s*([\+\-\d.]+)/ : /No double\s*:\s*([\+\-\d.]+)/));
@@ -315,7 +320,7 @@
             const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/));
 
             // Best Cube action parsing
-            const bestCubeActionMatch = normalizedContent.match(/Best Cube action:\s*(.*)/);
+            const bestCubeActionMatch = normalizedContent.match(isFrench ? /Meilleur action du videau:\s*(.*)/ : /Best Cube action:\s*(.*)/);
 
             if (playerWinMatch) {
                 parsedAnalysis.doublingCubeAnalysis.playerWinChances = parseFloat(playerWinMatch[1]);
