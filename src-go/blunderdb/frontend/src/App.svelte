@@ -296,15 +296,26 @@
         const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {} };
 
         // Doubling Cube Analysis Parsing
-        if (normalizedContent.includes(isFrench ? "Equité sans double" : "Cubeless Equities") || normalizedContent.includes(isFrench ? "Equité avec double" : "Cubeful Equities")) {
+        if (normalizedContent.includes(isFrench ? "Equités sans videau" : "Cubeless Equities") || normalizedContent.includes(isFrench ? "Equités avec videau" : "Cubeful Equities")) {
             parsedAnalysis.analysisType = "DoublingCube";
-            const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Joueur gagnant chances/ : /Player Winning Chances/));
-            const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Adversaire gagnant chances/ : /Opponent Winning Chances/));
-            const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equité sans double/ : /Cubeless Equities/));
-            const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double/ : /No double/));
+
+            // Player Winning Chances: 79.25% (G:57.02% B:8.79%)
+            const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Joueur gagnant chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
+
+            // Opponent Winning Chances: 20.75% (G:0.00% B:0.00%)
+            const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Adversaire gagnant chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
+
+            // Cubeless Equities: No Double=+1.286, Double=+1.405
+            const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equité sans double\s*:\s*Pas de double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/));
+
+            // Cubeful Equities: No double: +1.065
+            const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double\s*:\s*([\+\-\d.]+)/ : /No double\s*:\s*([\+\-\d.]+)/));
+
             const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Take:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/));
             const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/));
 
+            // Best Cube action parsing
+            const bestCubeActionMatch = normalizedContent.match(/Best Cube action:\s*(.*)/);
 
             if (playerWinMatch) {
                 parsedAnalysis.doublingCubeAnalysis.playerWinChances = parseFloat(playerWinMatch[1]);
@@ -322,16 +333,21 @@
             }
             if (cubefulNoDoubleMatch) {
                 parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity = parseFloat(cubefulNoDoubleMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError = cubefulNoDoubleMatch[2] ? parseFloat(cubefulNoDoubleMatch[2]) : null;
+                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError = cubefulNoDoubleMatch[2] ? parseFloat(cubefulNoDoubleMatch[2]) : 0;
             }
             if (cubefulDoubleTakeMatch) {
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(cubefulDoubleTakeMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = parseFloat(cubefulDoubleTakeMatch[2]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = cubefulDoubleTakeMatch[2] ? parseFloat(cubefulDoubleTakeMatch[2]) : 0;
             }
             if (cubefulDoublePassMatch) {
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(cubefulDoublePassMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = parseFloat(cubefulDoublePassMatch[2]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = cubefulDoublePassMatch[2] ? parseFloat(cubefulDoublePassMatch[2]) : 0;
             }
+            if (bestCubeActionMatch) {
+                parsedAnalysis.doublingCubeAnalysis.bestCubeAction = bestCubeActionMatch[1].trim();
+            }
+
+
 
         } else if (/^\s*\d+\.\s+[A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*\s+[A-Za-z0-9\/\- ]+\s+/gm.test(normalizedContent)) {
             parsedAnalysis.analysisType = "CheckerMove";
