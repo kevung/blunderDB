@@ -302,8 +302,8 @@
             const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Adversaire gagnant chances/ : /Opponent Winning Chances/));
             const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equité sans double/ : /Cubeless Equities/));
             const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double/ : /No double/));
-            const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Take:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
-            const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/);
+            const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Take:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/));
+            const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/ : /Double\/Pass:\s+([\+\-\d.]+) \(([\+\-\d.]+)\)/));
 
 
             if (playerWinMatch) {
