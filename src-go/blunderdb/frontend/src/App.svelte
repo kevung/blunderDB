@@ -295,7 +295,13 @@
         };
 
         // Analysis Parsing
-        const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {} };
+        const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: "" };
+
+        const engineVersionMatch = normalizedContent.match(new RegExp(/eXtreme Gammon Version: .*/));  // For English version, match the full engine version line
+
+        if (engineVersionMatch) {
+            parsedAnalysis.analysisEngineVersion = engineVersionMatch[0]; // Store the whole line as-is
+        }
 
         // Doubling Cube Analysis Parsing
         if (
