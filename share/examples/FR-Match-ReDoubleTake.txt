@@ -1,0 +1,36 @@
+XGID=aBBBBBB----------------cd-:1:1:1:00:0:0:0:11:10
+
+X:Player 1   O:Player 2
+Le score est X:0 O:0 match en 11 pt(s)
+ +13-14-15-16-17-18------19-20-21-22-23-24-+
+ |                  |   |             O  O |
+ |                  |   |             O  O |
+ |                  |   |             O  O |
+ |                  |   |                O |
+ |                  |   |                  |
+ |                  |BAR|                  |
+ |                  | O |                  |
+ |                  |   |                  |
+ |                  |   |                  | +---+
+ |                  |   | X  X  X  X  X  X | | 2 |
+ |                  |   | X  X  X  X  X  X | +---+
+ +12-11-10--9--8--7-------6--5--4--3--2--1-+
+Course  X: 42  O: 35 X-O: 0-0/11
+Videau: 2, X a le videau
+X: lance ou double
+
+Analysé avec XG Roller++
+Chance de gain du joueur: 72.07% (G:0.00% B:0.00%)
+Chance de gain de l'adversaire: 27.93% (G:0.00% B:0.00%)
+
+Equités sans videau: Pas de double=+0.441, Double=+0.912
+
+Equités avec videau
+       Pas de redouble: +0.722 (-0.001)
+       Redouble/Prend:  +0.723
+       Redouble/Passe:  +1.000 (+0.277)
+
+Meilleur action du videau: Redouble / Prend
+
+eXtreme Gammon Version: 2.19.211.pre-release, TEM: Kazaross XG2
+
