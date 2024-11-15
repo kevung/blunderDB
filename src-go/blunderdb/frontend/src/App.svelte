@@ -389,9 +389,31 @@
             parsedAnalysis.analysisType = "CheckerMove";
 
             // Checker Move Analysis Parsing for both English and French
-            const moveRegex = new RegExp(isFrench ? /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+éq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/ : 
-                /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+eq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/,
-                'gm');
+
+            //const moveRegex = new RegExp(isFrench ? /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+éq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/ : 
+            //    /^ {4}(\d+)\.\s+([A-Za-z0-9\+\-]+(?:\s+[A-Za-z0-9\+\-]+)*)\s+([A-Za-z0-9\/\- ]+)\s+eq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/,
+            //    'gm');
+
+            //const moveRegex = new RegExp(
+            //isFrench
+            //    ? /^ {4}(\d{1,5})\.\s{1}([A-Za-z0-9\+\- ]{11})\s{1}([A-Za-z0-9\/Off\s\(\)0-9]{28})\s{1}éq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/ 
+            //    : /^ {4}(\d{1,5})\.\s{1}([A-Za-z0-9\+\- ]{11})\s{1}([A-Za-z0-9\/Off\s\(\)0-9]{28})\s{1}eq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/,
+            //'gm'
+            //);
+
+            //const moveRegex = new RegExp(
+            //    isFrench
+            //    ? /^ {4}(\d+)\.\s+([A-Za-z0-9\+\- ]+)\s+([A-Za-z0-9\/Off\s\(\)0-9]+)\s+éq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/ 
+            //    : /^ {4}(\d+)\.\s+([A-Za-z0-9\+\- ]+)\s+([A-Za-z0-9\/Off\s\(\)0-9]+)\s+eq:([-.\d]+)\s*(?:\((-?[-.\d]+)\))?/,
+            //    'gm'
+            //);
+
+            const moveRegex = new RegExp(
+                isFrench
+                ? /^ {4}(\d+)\.\s(.{11})(.{29})\séq:(.{6})\s(?:\((-?[-.\d]+)\))?/
+                : /^ {4}(\d+)\.\s(.{11})(.{29})\seq:(.{6})\s(?:\((-?[-.\d]+)\))?/,
+                'gm'
+            );
 
             let moveMatch;
             let playerMatch;
