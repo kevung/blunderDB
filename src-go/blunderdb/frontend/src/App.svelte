@@ -171,8 +171,6 @@
             const {positionData, parsedAnalysis} = parsePosition(response.content);
             positionStore.set(positionData);
             analysisStore.set(parsedAnalysis);
-            console.log('positionData:', positionData);
-            console.log('parsedAnalysis:', parsedAnalysis);
             console.log('positionStore:', $positionStore);
             console.log('analysisStore:', $analysisStore);
         } catch (error) {
