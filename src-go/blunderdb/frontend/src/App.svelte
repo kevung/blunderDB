@@ -169,10 +169,12 @@
 
             // Now you can parse and use the file content
             const {positionData, parsedAnalysis} = parsePosition(response.content);
-            console.log('positionData:', positionData);
-            console.log('parsedAnalysis:', parsedAnalysis);
             positionStore.set(positionData);
             analysisStore.set(parsedAnalysis);
+            console.log('positionData:', positionData);
+            console.log('parsedAnalysis:', parsedAnalysis);
+            console.log('positionStore:', $positionStore);
+            console.log('analysisStore:', $analysisStore);
         } catch (error) {
             console.error("Error importing position:", error);
         }
@@ -466,9 +468,11 @@
             (result) => {
                 pastePositionTextStore.set(result);
                 console.log('pastePositionTextStore:', $pastePositionTextStore);
-                const importedPosition = parsePosition(result);
-                console.log('importedPosition:', importedPosition);
-                positionStore.set(importedPosition);
+                const {positionData, parsedAnalysis} = parsePosition(result);
+                positionStore.set(positionData);
+                analysisStore.set(parsedAnalysis);
+                console.log('positionStore:', $positionStore);
+                console.log('analysisStore:', $analysisStore);
             })
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
