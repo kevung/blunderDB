@@ -2,13 +2,10 @@
     import { positionStore } from "../stores/positionStore";
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
+    import { get } from 'svelte/store';
 
     export let mode;
     
-    let position;
-    $: $positionStore = position;
-    
-
     let canvasCfg = {
         aspectFactor: 0.63,
     };
@@ -114,17 +111,22 @@
             console.log("checkerPoint:", checkerPoint);
             console.log("checkerCount:", checkerCount);
 
-            //update bearoff in positionStore
-            
-            // set positionStore with checkerPoint and checkerCount, 
-            // taking into account the positionStore structure 
-            // in positionStore.js
-            
-            position.board.points[checkerPoint].checkers = checkerCount;
-            position.board.points[checkerPoint].color = 0;
-            positionStore.set(position);
-            
-            console.log("positionStore:", $positionStore);
+            // Update bearoff in positionStore
+            positionStore.update(pos => {
+                pos.board.points = pos.board.points.map((point, index) => {
+                    if (index === checkerPoint) {
+                        return {
+                            ...point,
+                            checkers: checkerCount,
+                            color: 0
+                        };
+                    }
+                    return point;
+                });
+                return pos;
+            });
+
+            console.log("positionStore:", get(positionStore));
 
         }
     }
