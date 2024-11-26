@@ -649,7 +649,9 @@
 
     <div class="scrollable-content">
 
-        <Board />
+        <Board
+            mode={$statusBarModeStore}
+        />
 
         <CommandLine
             visible={showCommand}
