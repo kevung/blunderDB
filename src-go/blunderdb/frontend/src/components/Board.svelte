@@ -43,12 +43,15 @@
         console.log("x_mouse:", x_mouse);
         console.log("y_mouse:", y_mouse);
 
+        updateCheckerPosition(x_mouse, y_mouse);
+    }
+
+    function updateCheckerPosition(x_mouse, y_mouse) {
         const boardAspectFactor = 11 / 13;
         const boardWidth = boardCfg.widthFactor * width;
         const boardHeight = boardAspectFactor * boardWidth;
         const boardCheckerSize = boardHeight / 11;
         const boardTriangleHeight = 5 * boardCheckerSize;
-        const boardTriangleWidth = 1.0 * boardCheckerSize;
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
 
@@ -127,10 +130,8 @@
             });
 
             console.log("positionStore:", get(positionStore));
-
         }
     }
-
 
     function resizeBoard() {
         width = window.innerWidth * 1.0;
