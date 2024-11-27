@@ -114,7 +114,7 @@
             console.log("checkerPoint:", checkerPoint);
             console.log("checkerCount:", checkerCount);
 
-            // Update bearoff in positionStore
+            // Update the positionStore with the new checker count
             positionStore.update(pos => {
                 pos.board.points = pos.board.points.map((point, index) => {
                     if (index === checkerPoint) {
@@ -129,6 +129,25 @@
                 return pos;
             });
 
+            // Compute the number of checkers for each color
+            const position = get(positionStore);
+            const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
+            const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
+
+            console.log("position:", position);
+            console.log("Player 1 Checkers:", player1Checkers);
+            console.log("Player 2 Checkers:", player2Checkers);
+
+            position.board.bearoff[0] = 15 - player1Checkers;
+            position.board.bearoff[1] = 15 - player2Checkers;
+            console.log("Player 1 Bearoff:", position.board.bearoff[0]);
+            console.log("Player 2 Bearoff:", position.board.bearoff[1]);
+
+            // Update the positionStore with the new bearoff for both players
+            positionStore.update(pos => {
+                pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];
+                return pos;
+            });
             console.log("positionStore:", get(positionStore));
         }
     }
@@ -158,10 +177,6 @@
         canvas.removeEventListener("click", handleMouseClick);
         window.removeEventListener("resize", resizeBoard);
     });
-
-    //$: {
-    //    drawBoard(); // Called automatically when $positionStore changes
-    //}
 
     function drawBoard() {
         two.clear();
