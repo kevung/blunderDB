@@ -60,9 +60,9 @@
         const y = Math.round((y_mouse - boardOrigYpos) / boardCheckerSize);
 
         // check if x,y is inside the board
-        if (Math.abs(x) <= 6 && Math.abs(y) > 0 && Math.abs(y) <= 5) {
+        if (Math.abs(x) <= 6 && Math.abs(y) > 0 && Math.abs(y) <= 6) {
             let checkerCount = 0;
-            if (Math.abs(y) == 0) {
+            if (Math.abs(y) == 0 || Math.abs(y) == 6) {
                 checkerCount = 0;
             } else if (Math.abs(y) <= 5) {
                 if (x != 0) {
