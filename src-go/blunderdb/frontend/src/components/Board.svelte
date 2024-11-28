@@ -37,36 +37,72 @@
     let width = window.innerWidth;
     let height = canvasCfg.aspectFactor * width;
     let unsubscribe;
+    let isMouseDown = false;
+    let startMousePos = null;
 
-    function handleMouseClick(event) {
+    function handleMouseDown(event) {
         if (mode !== "EDIT") return;
 
+        isMouseDown = true;
         const rect = canvas.getBoundingClientRect();
-        const x_mouse = event.clientX - rect.left;
-        const y_mouse = event.clientY - rect.top;
-
-        console.log("x_mouse:", x_mouse);
-        console.log("y_mouse:", y_mouse);
-
-        updateCheckerPosition(x_mouse, y_mouse);
+        startMousePos = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
     }
 
-    function updateCheckerPosition(x_mouse, y_mouse) {
+    function handleMouseMove(event) {
+        if (mode !== "EDIT" || !isMouseDown) return;
+
+        const rect = canvas.getBoundingClientRect();
+        const currentMousePos = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
+
+        fillCheckersBetween(startMousePos, currentMousePos);
+    }
+
+    function handleMouseUp(event) {
+        if (mode !== "EDIT" || !isMouseDown) return;
+
+        isMouseDown = false;
+        const rect = canvas.getBoundingClientRect();
+        const endMousePos = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
+
+        fillCheckersBetween(startMousePos, endMousePos);
+    }
+
+    function fillCheckersBetween(startPos, endPos) {
+        const startChecker = getCheckerPointAndCount(startPos.x, startPos.y);
+        const endChecker = getCheckerPointAndCount(endPos.x, endPos.y);
+
+        const maxCheckers = Math.max(startChecker.checkerCount, endChecker.checkerCount);
+
+        const startPoint = Math.min(startChecker.checkerPoint, endChecker.checkerPoint);
+        const endPoint = Math.max(startChecker.checkerPoint, endChecker.checkerPoint);
+
+        for (let point = startPoint; point <= endPoint; point++) {
+            updateCheckerPositionByPoint(point, maxCheckers);
+        }
+    }
+
+    function getCheckerPointAndCount(x_mouse, y_mouse) {
         const boardAspectFactor = 11 / 13;
         const boardWidth = boardCfg.widthFactor * width;
         const boardHeight = boardAspectFactor * boardWidth;
         const boardCheckerSize = boardHeight / 11;
-        const boardTriangleHeight = 5 * boardCheckerSize;
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
 
-        // Translate canvas coordinates into logical board positions
         const x = Math.round((x_mouse - boardOrigXpos) / boardCheckerSize);
         const y = Math.round((y_mouse - boardOrigYpos) / boardCheckerSize);
 
-        // check if x,y is inside the board
+        let checkerCount = 0;
         if (Math.abs(x) <= 6 && Math.abs(y) > 0 && Math.abs(y) <= 6) {
-            let checkerCount = 0;
             if (Math.abs(y) == 0 || Math.abs(y) == 6) {
                 checkerCount = 0;
             } else if (Math.abs(y) <= 5) {
@@ -116,40 +152,38 @@
                 }
             }
 
-            console.log("checkerPoint:", checkerPoint);
-            console.log("checkerCount:", checkerCount);
-
-            // Update the positionStore with the new checker count
-            positionStore.update(pos => {
-                pos.board.points = pos.board.points.map((point, index) => {
-                    if (index === checkerPoint) {
-                        return {
-                            ...point,
-                            checkers: checkerCount,
-                            color: 0
-                        };
-                    }
-                    return point;
-                });
-                return pos;
-            });
-
-            // Compute the number of checkers for each color
-            const position = get(positionStore);
-            const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
-            const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
-            position.board.bearoff[0] = 15 - player1Checkers;
-            position.board.bearoff[1] = 15 - player2Checkers;
-                        
-            positionStore.update(pos => {
-                pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];
-                return pos;
-            });
-            console.log("positionStore:", get(positionStore));
-            
-            // Redraw the board immediately after updating the store
-            drawBoard();
+            return { checkerPoint, checkerCount };
         }
+        return { checkerPoint: 0, checkerCount: 0 };
+    }
+
+    function updateCheckerPositionByPoint(checkerPoint, checkerCount) {
+        positionStore.update(pos => {
+            pos.board.points = pos.board.points.map((point, index) => {
+                if (index === checkerPoint) {
+                    return {
+                        ...point,
+                        checkers: checkerCount,
+                        color: 0
+                    };
+                }
+                return point;
+            });
+            return pos;
+        });
+
+        const position = get(positionStore);
+        const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
+        const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
+        position.board.bearoff[0] = 15 - player1Checkers;
+        position.board.bearoff[1] = 15 - player2Checkers;
+
+        positionStore.update(pos => {
+            pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];
+            return pos;
+        });
+
+        drawBoard();
     }
 
     function resizeBoard() {
@@ -168,7 +202,9 @@
         const params = { width, height };
         two = new Two(params).appendTo(elem);
 
-        canvas.addEventListener("click", handleMouseClick);
+        canvas.addEventListener("mousedown", handleMouseDown);
+        canvas.addEventListener("mousemove", handleMouseMove);
+        canvas.addEventListener("mouseup", handleMouseUp);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -178,7 +214,9 @@
     });
 
     onDestroy(() => {
-        canvas.removeEventListener("click", handleMouseClick);
+        canvas.removeEventListener("mousedown", handleMouseDown);
+        canvas.removeEventListener("mousemove", handleMouseMove);
+        canvas.removeEventListener("mouseup", handleMouseUp);
         window.removeEventListener("resize", resizeBoard);
         if (unsubscribe) unsubscribe();
     });
