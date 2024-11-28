@@ -43,11 +43,27 @@
     function handleMouseDown(event) {
         if (mode !== "EDIT") return;
 
-        isMouseDown = true;
         const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        // Check if the click is in the middle of the bar
+        const boardOrigXpos = width / 2;
+        const boardOrigYpos = height / 2;
+        const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+        if (Math.abs(mouseX - boardOrigXpos) < boardCheckerSize / 2 && Math.abs(mouseY - boardOrigYpos) < boardCheckerSize / 2) {
+            positionStore.update(pos => {
+                pos.board.points[0].checkers = 0;
+                pos.board.points[25].checkers = 0;
+                return pos;
+            });
+            return;
+        }
+
+        isMouseDown = true;
         startMousePos = {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top,
+            x: mouseX,
+            y: mouseY,
             button: event.button
         };
     }
