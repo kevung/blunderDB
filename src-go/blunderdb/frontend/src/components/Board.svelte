@@ -214,6 +214,26 @@
         two.update();
     }
 
+    function handleDoubleClick(event) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        const boardOrigXpos = width / 2;
+        const boardOrigYpos = height / 2;
+        const boardWidth = boardCfg.widthFactor * width;
+        const boardHeight = (11 / 13) * boardWidth;
+
+        // Check if the click is outside of the board
+        if (mouseX < boardOrigXpos - boardWidth / 2 || mouseX > boardOrigXpos + boardWidth / 2 ||
+            mouseY < boardOrigYpos - boardHeight / 2 || mouseY > boardOrigYpos + boardHeight / 2) {
+            positionStore.update(pos => {
+                pos.board.points.forEach(point => point.checkers = 0);
+                return pos;
+            });
+        }
+    }
+
     onMount(() => {
         canvas = document.getElementById("backgammon-board");
         const elem = canvas;
@@ -224,6 +244,7 @@
         canvas.addEventListener("mousemove", handleMouseMove);
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("contextmenu", event => event.preventDefault());
+        canvas.addEventListener("dblclick", handleDoubleClick);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -238,6 +259,7 @@
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseup", handleMouseUp);
         canvas.removeEventListener("contextmenu", event => event.preventDefault());
+        canvas.removeEventListener("dblclick", handleDoubleClick);
         window.removeEventListener("resize", resizeBoard);
         if (unsubscribe) unsubscribe();
     });
