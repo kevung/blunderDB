@@ -182,8 +182,6 @@
             pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];
             return pos;
         });
-
-        drawBoard();
     }
 
     function resizeBoard() {
@@ -210,6 +208,7 @@
 
         unsubscribe = positionStore.subscribe(() => {
             drawBoard();
+            console.log("positionStore: ", get(positionStore));
         });
     });
 
