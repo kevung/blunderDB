@@ -47,7 +47,8 @@
         const rect = canvas.getBoundingClientRect();
         startMousePos = {
             x: event.clientX - rect.left,
-            y: event.clientY - rect.top
+            y: event.clientY - rect.top,
+            button: event.button
         };
     }
 
@@ -70,15 +71,16 @@
         const rect = canvas.getBoundingClientRect();
         const endMousePos = {
             x: event.clientX - rect.left,
-            y: event.clientY - rect.top
+            y: event.clientY - rect.top,
+            button: event.button
         };
 
         fillCheckersBetween(startMousePos, endMousePos);
     }
 
     function fillCheckersBetween(startPos, endPos) {
-        const startChecker = getCheckerPointAndCount(startPos.x, startPos.y);
-        const endChecker = getCheckerPointAndCount(endPos.x, endPos.y);
+        const startChecker = getCheckerPointAndCount(startPos.x, startPos.y, startPos.button);
+        const endChecker = getCheckerPointAndCount(endPos.x, endPos.y, endPos.button);
 
         const maxCheckers = Math.max(startChecker.checkerCount, endChecker.checkerCount);
 
@@ -86,11 +88,11 @@
         const endPoint = Math.max(startChecker.checkerPoint, endChecker.checkerPoint);
 
         for (let point = startPoint; point <= endPoint; point++) {
-            updateCheckerPositionByPoint(point, maxCheckers);
+            updateCheckerPositionByPoint(point, maxCheckers, startPos.button);
         }
     }
 
-    function getCheckerPointAndCount(x_mouse, y_mouse) {
+    function getCheckerPointAndCount(x_mouse, y_mouse, button) {
         const boardAspectFactor = 11 / 13;
         const boardWidth = boardCfg.widthFactor * width;
         const boardHeight = boardAspectFactor * boardWidth;
@@ -157,14 +159,16 @@
         return { checkerPoint: 0, checkerCount: 0 };
     }
 
-    function updateCheckerPositionByPoint(checkerPoint, checkerCount) {
+    function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {
+        const color = (checkerPoint === 0 || checkerPoint === 25) ? (checkerPoint === 0 ? 1 : 0) : (button === 2 ? 1 : 0);
+
         positionStore.update(pos => {
             pos.board.points = pos.board.points.map((point, index) => {
                 if (index === checkerPoint) {
                     return {
                         ...point,
                         checkers: checkerCount,
-                        color: 0
+                        color: color
                     };
                 }
                 return point;
@@ -203,6 +207,7 @@
         canvas.addEventListener("mousedown", handleMouseDown);
         canvas.addEventListener("mousemove", handleMouseMove);
         canvas.addEventListener("mouseup", handleMouseUp);
+        canvas.addEventListener("contextmenu", event => event.preventDefault());
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -216,6 +221,7 @@
         canvas.removeEventListener("mousedown", handleMouseDown);
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseup", handleMouseUp);
+        canvas.removeEventListener("contextmenu", event => event.preventDefault());
         window.removeEventListener("resize", resizeBoard);
         if (unsubscribe) unsubscribe();
     });
