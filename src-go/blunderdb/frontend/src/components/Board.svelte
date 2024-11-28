@@ -26,12 +26,17 @@
             size: 25,
             distanceToBoard: 0.4,
         },
+        checker: {
+            sizeFactor: 0.97,
+            colors: ["black", "white"]
+        }
     };
 
     let two;
     let canvas;
     let width = window.innerWidth;
     let height = canvasCfg.aspectFactor * width;
+    let unsubscribe;
 
     function handleMouseClick(event) {
         if (mode !== "EDIT") return;
@@ -141,6 +146,9 @@
                 return pos;
             });
             console.log("positionStore:", get(positionStore));
+            
+            // Redraw the board immediately after updating the store
+            drawBoard();
         }
     }
 
@@ -163,11 +171,16 @@
         canvas.addEventListener("click", handleMouseClick);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
+
+        unsubscribe = positionStore.subscribe(() => {
+            drawBoard();
+        });
     });
 
     onDestroy(() => {
         canvas.removeEventListener("click", handleMouseClick);
         window.removeEventListener("resize", resizeBoard);
+        if (unsubscribe) unsubscribe();
     });
 
     function drawBoard() {
@@ -312,6 +325,39 @@
             return labels;
         }
 
+        function drawCheckers() {
+            const position = get(positionStore);
+            position.board.points.forEach((point, index) => {
+                let x, yBase;
+                if (index === 0) {
+                    x = boardOrigXpos;
+                    yBase = boardOrigYpos + 0.5 * boardCheckerSize;
+                } else if (index === 25) {
+                    x = boardOrigXpos;
+                    yBase = boardOrigYpos - 0.5 * boardCheckerSize;
+                } else if (index <= 6) {
+                    x = boardOrigXpos + (7 - index) * boardCheckerSize;
+                    yBase = boardOrigYpos + 0.5 * boardHeight;
+                } else if (index <= 12) {
+                    x = boardOrigXpos - (index - 6) * boardCheckerSize;
+                    yBase = boardOrigYpos + 0.5 * boardHeight;
+                } else if (index <= 18) {
+                    x = boardOrigXpos - (19 - index) * boardCheckerSize;
+                    yBase = boardOrigYpos - 0.5 * boardHeight;
+                } else {
+                    x = boardOrigXpos + (index - 18) * boardCheckerSize;
+                    yBase = boardOrigYpos - 0.5 * boardHeight;
+                }
+                for (let i = 0; i < point.checkers; i++) {
+                    const y = yBase + (index !== 0 && index <= 12 || index === 25 ? -1 : 1) * (i + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                    const checker = two.makeCircle(x, y, boardCfg.checker.sizeFactor * boardCheckerSize / 2);
+                    checker.fill = boardCfg.checker.colors[point.color];
+                    checker.stroke = boardCfg.triangle.stroke;
+                    checker.linewidth = boardCfg.triangle.linewidth;
+                }
+            });
+        }
+
         const labels = createLabels();
 
         const quadrant4 = createQuadrant(
@@ -338,6 +384,7 @@
             true,
         );
 
+        drawCheckers();
         two.update();
     }
 </script>
