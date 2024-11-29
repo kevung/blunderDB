@@ -20,7 +20,7 @@
             fill1: "white",
             fill2: "rgb(208, 208, 208)",
             stroke: "black",
-            linewidth: 2,
+            linewidth: 1.3, // Changed linewidth to 1
         },
         label: {
             size: 25,
@@ -28,7 +28,8 @@
         },
         checker: {
             sizeFactor: 0.97,
-            colors: ["black", "white"]
+            colors: ["black", "white"],
+            linewidth: 2.5 // Added linewidth property and set to 2
         }
     };
 
@@ -414,7 +415,7 @@
                     const checker = two.makeCircle(x, y, boardCfg.checker.sizeFactor * boardCheckerSize / 2);
                     checker.fill = boardCfg.checker.colors[point.color];
                     checker.stroke = boardCfg.triangle.stroke;
-                    checker.linewidth = boardCfg.triangle.linewidth;
+                    checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
                 }
             });
 
@@ -428,7 +429,7 @@
                         const checker = two.makeCircle(x, y, boardCfg.checker.sizeFactor * boardCheckerSize / 2);
                         checker.fill = boardCfg.checker.colors[point.color];
                         checker.stroke = boardCfg.triangle.stroke;
-                        checker.linewidth = boardCfg.triangle.linewidth;
+                        checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
                     }
                 }
             });
@@ -650,7 +651,7 @@
         );
         bar.fill = boardCfg.fill;
         bar.stroke = boardCfg.stroke;
-        bar.linewidth = 4; // Changed linewidth to 4
+        bar.linewidth = 3.5; // Changed linewidth to 3.5
 
         drawCheckers();
         drawDoublingCube();
@@ -668,7 +669,7 @@
         );
         board.fill = "transparent"; // No fill to avoid covering other elements
         board.stroke = boardCfg.stroke;
-        board.linewidth = 4; // Changed linewidth to 4
+        board.linewidth = 3.5; // Changed linewidth to 3.5
         
         two.update();
     }
