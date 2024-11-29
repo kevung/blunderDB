@@ -498,14 +498,14 @@
             const pipCount2Ypos = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
 
             const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
-            pipCountText1Element.size = 15;
+            pipCountText1Element.size = 20;
             pipCountText1Element.alignment = "center";
             pipCountText1Element.baseline = "top";
 
             const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
-            pipCountText2Element.size = 15;
+            pipCountText2Element.size = 20;
             pipCountText2Element.alignment = "center";
-            pipCountText2Element.baseline = "bottom";
+            pipCountText2Element.baseline = "center";
         }
 
         function drawBearoff(bearoff1, bearoff2) {
