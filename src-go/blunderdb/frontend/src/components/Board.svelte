@@ -481,7 +481,10 @@
             return { pipCount1, pipCount2 };
         }
 
-        function drawPipCounts(pipCount1, pipCount2) {
+        function drawPipCounts() {
+
+            const { pipCount1, pipCount2 } = computePipCount();
+
             const boardOrigXpos = width / 2;
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
@@ -508,7 +511,9 @@
             pipCountText2Element.baseline = "bottom";
         }
 
-        function drawBearoff(bearoff1, bearoff2) {
+        function drawBearoff() {
+            const bearoff1 = get(positionStore).board.bearoff[0];
+            const bearoff2 = get(positionStore).board.bearoff[1];
             const boardOrigXpos = width / 2;
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
@@ -586,10 +591,9 @@
 
             const score1 = get(positionStore).score[0];
             const score2 = get(positionStore).score[1];
-            const bearoff1 = get(positionStore).board.bearoff[0];
-            const bearoff2 = get(positionStore).board.bearoff[1];
+            
 
-            const { pipCount1, pipCount2 } = computePipCount();
+            
 
             const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post-crawford" : score1 === -1 ? "unlimited" : `${score1} away`;
             const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post-crawford" : score2 === -1 ? "unlimited" : `${score2} away`;
@@ -612,9 +616,6 @@
             scoreText2Element.baseline = "middle";
             scoreText2Element.weight = "bold";
 
-            drawBearoff(bearoff1, bearoff2);
-            drawPipCounts(pipCount1, pipCount2);
-            drawDice();
         }
 
         const labels = createLabels();
@@ -657,6 +658,9 @@
         drawCheckers();
         drawDoublingCube();
         drawScores();
+        drawBearoff();        
+        drawPipCounts();
+        drawDice();
 
         // draw board outline on top to ensure consistent linewidth
         const board = two.makeRectangle(
