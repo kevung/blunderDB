@@ -445,8 +445,8 @@
             const doublingCubeTextValue = Math.pow(2, cubeValue);
 
             // draw doubling cube on the left side of the board with a small gap
-            const doublingCubeSize = boardCheckerSize;
-            const gap = 0.3 * boardCheckerSize;
+            const doublingCubeSize = 1.25 * boardCheckerSize;
+            const gap = 0.5 * boardCheckerSize;
             const doublingCubeXpos = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
             const doublingCubeYpos = boardOrigYpos;
             const doublingCube = two.makeRectangle(
@@ -457,9 +457,9 @@
             );
             doublingCube.fill = "white";
             doublingCube.stroke = "black";
-            doublingCube.linewidth = 5; // Further increased linewidth
+            doublingCube.linewidth = 3.5; // Further increased linewidth
             const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), doublingCubeXpos, doublingCubeYpos);
-            doublingCubeText.size = 30; // Checker size
+            doublingCubeText.size = 34; // Checker size
             doublingCubeText.alignment = "center";
             doublingCubeText.baseline = "middle";
             doublingCubeText.translation.set(doublingCubeXpos, doublingCubeYpos + 0.05 * doublingCubeSize); // Center the text
@@ -489,16 +489,16 @@
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
-            const gap = 1.0 * boardCheckerSize;
+            const gap = 1.4 * boardCheckerSize;
 
             const pipCountText1 = `pip: ${pipCount1}`;
             const pipCountText2 = `pip: ${pipCount2}`;
 
             const pipCount1Xpos = boardOrigXpos - boardWidth / 2 - gap;
-            const pipCount1Ypos = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
+            const pipCount1Ypos = boardOrigYpos + 0.5 * boardHeight + 0.3 * boardCheckerSize;
 
             const pipCount2Xpos = boardOrigXpos - boardWidth / 2 - gap;
-            const pipCount2Ypos = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
+            const pipCount2Ypos = boardOrigYpos - 0.5 * boardHeight - 0.3 * boardCheckerSize;
 
             const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
             pipCountText1Element.size = 20;
@@ -524,10 +524,10 @@
             const bearoffText2 = `(${bearoff2} OFF)`;
 
             const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
-            const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 2 * boardCheckerSize;
+            const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 4 * boardCheckerSize;
 
             const bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
-            const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 2 * boardCheckerSize;
+            const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 4 * boardCheckerSize;
 
             const bearoffText1Element = two.makeText(bearoffText1, bearoff1Xpos, bearoff1Ypos);
             bearoffText1Element.size = 20;
@@ -554,14 +554,14 @@
             const diceSize = 0.95 * boardCheckerSize;
 
             const diceXpos = boardOrigXpos + boardWidth / 2 + 3 * gap;
-            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 0.70 * boardTriangleHeight : boardOrigYpos - 0.5 * boardHeight + 0.70 * boardTriangleHeight;
+            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.0 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.0 * boardCheckerSize;
 
             dice.forEach((die, index) => {
                 const dieXpos = diceXpos + index * (diceSize + gap);
                 const dieElement = two.makeRectangle(dieXpos, diceYpos, diceSize, diceSize);
                 dieElement.fill = "white";
                 dieElement.stroke = "black";
-                dieElement.linewidth = 4;
+                dieElement.linewidth = 3.5;
 
                 if (decisionType === 0) {
                     // Draw dots for traditional dice
@@ -590,19 +590,16 @@
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
 
             const score1 = get(positionStore).score[0];
-            const score2 = get(positionStore).score[1];
-            
-
-            
+            const score2 = get(positionStore).score[1];         
 
             const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post-crawford" : score1 === -1 ? "unlimited" : `${score1} away`;
             const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post-crawford" : score2 === -1 ? "unlimited" : `${score2} away`;
 
-            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
-            const score1Ypos = boardOrigYpos + boardHeight / 2 - 0.5 * boardCheckerSize;
+            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.7 * boardCheckerSize;
+            const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.47 * boardCheckerSize;
 
-            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
-            const score2Ypos = boardOrigYpos - boardHeight / 2 + 0.5 * boardCheckerSize;
+            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.7 * boardCheckerSize;
+            const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.47 * boardCheckerSize;
 
             const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos);
             scoreText1Element.size = 25;
@@ -653,7 +650,7 @@
         );
         bar.fill = boardCfg.fill;
         bar.stroke = boardCfg.stroke;
-        bar.linewidth = 5; // Further increased linewidth
+        bar.linewidth = 4; // Changed linewidth to 4
 
         drawCheckers();
         drawDoublingCube();
@@ -671,7 +668,7 @@
         );
         board.fill = "transparent"; // No fill to avoid covering other elements
         board.stroke = boardCfg.stroke;
-        board.linewidth = 5; // Further increased linewidth
+        board.linewidth = 4; // Changed linewidth to 4
         
         two.update();
     }
