@@ -266,37 +266,6 @@
         if (unsubscribe) unsubscribe();
     });
 
-    function drawDoublingCube() {
-        const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardWidth = boardCfg.widthFactor * width;
-
-        // Get the value for the doubling cube
-        const cubeValue = get(positionStore).cube.value;
-        const doublingCubeTextValue = Math.pow(2, cubeValue);
-
-        // draw doubling cube on the left side of the board with a small gap
-        const doublingCubeSize = boardCheckerSize;
-        const gap = 0.3 * boardCheckerSize;
-        const doublingCubeXpos = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
-        const doublingCubeYpos = boardOrigYpos;
-        const doublingCube = two.makeRectangle(
-            doublingCubeXpos,
-            doublingCubeYpos,
-            doublingCubeSize,
-            doublingCubeSize,
-        );
-        doublingCube.fill = "white";
-        doublingCube.stroke = "black";
-        doublingCube.linewidth = 5; // Further increased linewidth
-        const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), doublingCubeXpos, doublingCubeYpos);
-        doublingCubeText.size = 30; // Checker size
-        doublingCubeText.alignment = "center";
-        doublingCubeText.baseline = "middle";
-        doublingCubeText.translation.set(doublingCubeXpos, doublingCubeYpos + 0.05 * doublingCubeSize); // Center the text
-    }
-
     function drawBoard() {
         two.clear();
 
@@ -463,6 +432,37 @@
                     }
                 }
             });
+        }
+
+        function drawDoublingCube() {
+            const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+            const boardOrigXpos = width / 2;
+            const boardOrigYpos = height / 2;
+            const boardWidth = boardCfg.widthFactor * width;
+
+            // Get the value for the doubling cube
+            const cubeValue = get(positionStore).cube.value;
+            const doublingCubeTextValue = Math.pow(2, cubeValue);
+
+            // draw doubling cube on the left side of the board with a small gap
+            const doublingCubeSize = boardCheckerSize;
+            const gap = 0.3 * boardCheckerSize;
+            const doublingCubeXpos = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
+            const doublingCubeYpos = boardOrigYpos;
+            const doublingCube = two.makeRectangle(
+                doublingCubeXpos,
+                doublingCubeYpos,
+                doublingCubeSize,
+                doublingCubeSize,
+            );
+            doublingCube.fill = "white";
+            doublingCube.stroke = "black";
+            doublingCube.linewidth = 5; // Further increased linewidth
+            const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), doublingCubeXpos, doublingCubeYpos);
+            doublingCubeText.size = 30; // Checker size
+            doublingCubeText.alignment = "center";
+            doublingCubeText.baseline = "middle";
+            doublingCubeText.translation.set(doublingCubeXpos, doublingCubeYpos + 0.05 * doublingCubeSize); // Center the text
         }
 
         const labels = createLabels();
