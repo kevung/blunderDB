@@ -266,6 +266,37 @@
         if (unsubscribe) unsubscribe();
     });
 
+    function drawDoublingCube() {
+        const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+        const boardOrigXpos = width / 2;
+        const boardOrigYpos = height / 2;
+        const boardWidth = boardCfg.widthFactor * width;
+
+        // Get the value for the doubling cube
+        const cubeValue = get(positionStore).cube.value;
+        const doublingCubeTextValue = Math.pow(2, cubeValue);
+
+        // draw doubling cube on the left side of the board with a small gap
+        const doublingCubeSize = boardCheckerSize;
+        const gap = 0.3 * boardCheckerSize;
+        const doublingCubeXpos = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
+        const doublingCubeYpos = boardOrigYpos;
+        const doublingCube = two.makeRectangle(
+            doublingCubeXpos,
+            doublingCubeYpos,
+            doublingCubeSize,
+            doublingCubeSize,
+        );
+        doublingCube.fill = "white";
+        doublingCube.stroke = "black";
+        doublingCube.linewidth = 5; // Further increased linewidth
+        const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), doublingCubeXpos, doublingCubeYpos);
+        doublingCubeText.size = 30; // Checker size
+        doublingCubeText.alignment = "center";
+        doublingCubeText.baseline = "middle";
+        doublingCubeText.translation.set(doublingCubeXpos, doublingCubeYpos + 0.05 * doublingCubeSize); // Center the text
+    }
+
     function drawBoard() {
         two.clear();
 
@@ -277,28 +308,6 @@
         const boardTriangleWidth = 1.0 * boardCheckerSize;
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
-
-        // draw board
-        const board = two.makeRectangle(
-            boardOrigXpos,
-            boardOrigYpos,
-            boardWidth,
-            boardHeight,
-        );
-        board.fill = boardCfg.fill; // Light brown color
-        board.stroke = boardCfg.stroke;
-        board.linewidth = boardCfg.linewidth;
-
-        // draw bar
-        const bar = two.makeRectangle(
-            boardOrigXpos,
-            boardOrigYpos,
-            boardCheckerSize,
-            boardHeight,
-        );
-        bar.fill = boardCfg.fill;
-        bar.stoke = boardCfg.stoke;
-        bar.linewidth = boardCfg.linewidth;
 
         function createTriangle(x, y, flip) {
             if (flip == false) {
@@ -439,6 +448,21 @@
                     checker.linewidth = boardCfg.triangle.linewidth;
                 }
             });
+
+            // Draw checkers on the bar above the bar
+            position.board.points.forEach((point, index) => {
+                if (index === 0 || index === 25) {
+                    let x = boardOrigXpos;
+                    let yBase = index === 0 ? boardOrigYpos + 0.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardCheckerSize;
+                    for (let i = 0; i < point.checkers; i++) {
+                        const y = yBase + (index === 0 ? 1 : -1) * (i + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                        const checker = two.makeCircle(x, y, boardCfg.checker.sizeFactor * boardCheckerSize / 2);
+                        checker.fill = boardCfg.checker.colors[point.color];
+                        checker.stroke = boardCfg.triangle.stroke;
+                        checker.linewidth = boardCfg.triangle.linewidth;
+                    }
+                }
+            });
         }
 
         const labels = createLabels();
@@ -467,7 +491,31 @@
             true,
         );
 
+        // draw bar first to ensure checkers on the bar are drawn above it
+        const bar = two.makeRectangle(
+            boardOrigXpos,
+            boardOrigYpos,
+            boardCheckerSize,
+            boardHeight,
+        );
+        bar.fill = boardCfg.fill;
+        bar.stroke = boardCfg.stroke;
+        bar.linewidth = 5; // Further increased linewidth
+
         drawCheckers();
+        drawDoublingCube();
+
+        // draw board outline on top to ensure consistent linewidth
+        const board = two.makeRectangle(
+            boardOrigXpos,
+            boardOrigYpos,
+            boardWidth,
+            boardHeight,
+        );
+        board.fill = "transparent"; // No fill to avoid covering other elements
+        board.stroke = boardCfg.stroke;
+        board.linewidth = 5; // Further increased linewidth
+        
         two.update();
     }
 </script>
