@@ -505,7 +505,7 @@
             const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
             pipCountText2Element.size = 20;
             pipCountText2Element.alignment = "center";
-            pipCountText2Element.baseline = "center";
+            pipCountText2Element.baseline = "bottom";
         }
 
         function drawBearoff(bearoff1, bearoff2) {
@@ -533,6 +533,49 @@
             bearoffText2Element.size = 20;
             bearoffText2Element.alignment = "center";
             bearoffText2Element.baseline = "middle";
+        }
+
+        function drawDice() {
+            const position = get(positionStore);
+            const playerOnRoll = position.player_on_roll;
+            const dice = position.dice;
+            const decisionType = position.decision_type;
+
+            const boardOrigXpos = width / 2;
+            const boardOrigYpos = height / 2;
+            const boardWidth = boardCfg.widthFactor * width;
+            const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+            const gap = 0.3 * boardCheckerSize;
+            const diceSize = 0.95 * boardCheckerSize;
+
+            const diceXpos = boardOrigXpos + boardWidth / 2 + 3 * gap;
+            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 0.70 * boardTriangleHeight : boardOrigYpos - 0.5 * boardHeight + 0.70 * boardTriangleHeight;
+
+            dice.forEach((die, index) => {
+                const dieXpos = diceXpos + index * (diceSize + gap);
+                const dieElement = two.makeRectangle(dieXpos, diceYpos, diceSize, diceSize);
+                dieElement.fill = "white";
+                dieElement.stroke = "black";
+                dieElement.linewidth = 4;
+
+                if (decisionType === 0) {
+                    // Draw dots for traditional dice
+                    const dotPositions = [
+                        [],
+                        [[0, 0]],
+                        [[-0.7, -0.7], [0.7, 0.7]],
+                        [[-0.7, -0.7], [0, 0], [0.7, 0.7]],
+                        [[-0.7, -0.7], [0.7, -0.7], [-0.7, 0.7], [0.7, 0.7]],
+                        [[-0.7, -0.7], [0.7, -0.7], [0, 0], [-0.7, 0.7], [0.7, 0.7]],
+                        [[-0.7, -0.7], [0.7, -0.7], [-0.7, 0], [0.7, 0], [-0.7, 0.7], [0.7, 0.7]]
+                    ];
+
+                    dotPositions[die].forEach(([dx, dy]) => {
+                        const dot = two.makeCircle(dieXpos + dx * diceSize / 3, diceYpos + dy * diceSize / 3, diceSize / 12);
+                        dot.fill = "black";
+                    });
+                }
+            });
         }
 
         function drawScores() {
@@ -571,6 +614,7 @@
 
             drawBearoff(bearoff1, bearoff2);
             drawPipCounts(pipCount1, pipCount2);
+            drawDice();
         }
 
         const labels = createLabels();
