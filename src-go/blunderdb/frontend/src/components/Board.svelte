@@ -470,18 +470,30 @@
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+            const gap = 1.0 * boardCheckerSize;
 
             const score1 = get(positionStore).score[0];
             const score2 = get(positionStore).score[1];
+            const bearoff1 = get(positionStore).board.bearoff[0];
+            const bearoff2 = get(positionStore).board.bearoff[1];
 
             const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post-crawford" : score1 === -1 ? "unlimited" : `${score1} away`;
             const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post-crawford" : score2 === -1 ? "unlimited" : `${score2} away`;
+
+            const bearoffText1 = `(${bearoff1} OFF)`;
+            const bearoffText2 = `(${bearoff2} OFF)`;
 
             const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
             const score1Ypos = boardOrigYpos + boardHeight / 2 - 0.5 * boardCheckerSize;
 
             const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
             const score2Ypos = boardOrigYpos - boardHeight / 2 + 0.5 * boardCheckerSize;
+
+            const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
+            const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 2 * boardCheckerSize;
+
+            const bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
+            const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 2 * boardCheckerSize;
 
             const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos);
             scoreText1Element.size = 25;
@@ -494,6 +506,16 @@
             scoreText2Element.alignment = "center";
             scoreText2Element.baseline = "middle";
             scoreText2Element.weight = "bold";
+
+            const bearoffText1Element = two.makeText(bearoffText1, bearoff1Xpos, bearoff1Ypos);
+            bearoffText1Element.size = 20;
+            bearoffText1Element.alignment = "center";
+            bearoffText1Element.baseline = "middle";
+
+            const bearoffText2Element = two.makeText(bearoffText2, bearoff2Xpos, bearoff2Ypos);
+            bearoffText2Element.size = 20;
+            bearoffText2Element.alignment = "center";
+            bearoffText2Element.baseline = "middle";
         }
 
         const labels = createLabels();
