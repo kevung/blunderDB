@@ -446,7 +446,7 @@
 
             // draw doubling cube on the left side of the board with a small gap
             const doublingCubeSize = 1.25 * boardCheckerSize;
-            const gap = 0.5 * boardCheckerSize;
+            const gap = 0.4 * boardCheckerSize;
             const doublingCubeXpos = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
             const doublingCubeYpos = boardOrigYpos;
             const doublingCube = two.makeRectangle(
@@ -501,12 +501,12 @@
             const pipCount2Ypos = boardOrigYpos - 0.5 * boardHeight - 0.3 * boardCheckerSize;
 
             const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
-            pipCountText1Element.size = 20;
+            pipCountText1Element.size = 22;
             pipCountText1Element.alignment = "center";
             pipCountText1Element.baseline = "top";
 
             const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
-            pipCountText2Element.size = 20;
+            pipCountText2Element.size = 22;
             pipCountText2Element.alignment = "center";
             pipCountText2Element.baseline = "bottom";
         }
@@ -518,16 +518,16 @@
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
-            const gap = 1.0 * boardCheckerSize;
+            const gap = 1.5 * boardCheckerSize;
 
             const bearoffText1 = `(${bearoff1} OFF)`;
             const bearoffText2 = `(${bearoff2} OFF)`;
 
             const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
-            const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 4 * boardCheckerSize;
+            const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 3.7 * boardCheckerSize;
 
             const bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
-            const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 4 * boardCheckerSize;
+            const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
 
             const bearoffText1Element = two.makeText(bearoffText1, bearoff1Xpos, bearoff1Ypos);
             bearoffText1Element.size = 20;
@@ -554,7 +554,7 @@
             const diceSize = 0.95 * boardCheckerSize;
 
             const diceXpos = boardOrigXpos + boardWidth / 2 + 3 * gap;
-            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.0 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.0 * boardCheckerSize;
+            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.3 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.3 * boardCheckerSize;
 
             dice.forEach((die, index) => {
                 const dieXpos = diceXpos + index * (diceSize + gap);
