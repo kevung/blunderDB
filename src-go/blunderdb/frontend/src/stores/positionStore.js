@@ -15,7 +15,7 @@ export const positionStore = writable({
         value: 0,
     },
     dice: [0, 0],
-    score: [0, 0],
+    score: [-1, -1],
     player_on_roll: -1,
     decision_type: 0,
     has_jacoby: 0,

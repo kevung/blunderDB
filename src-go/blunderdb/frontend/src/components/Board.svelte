@@ -465,6 +465,37 @@
             doublingCubeText.translation.set(doublingCubeXpos, doublingCubeYpos + 0.05 * doublingCubeSize); // Center the text
         }
 
+        function drawScores() {
+            const boardOrigXpos = width / 2;
+            const boardOrigYpos = height / 2;
+            const boardWidth = boardCfg.widthFactor * width;
+            const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+
+            const score1 = get(positionStore).score[0];
+            const score2 = get(positionStore).score[1];
+
+            const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post-crawford" : score1 === -1 ? "unlimited" : `${score1} away`;
+            const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post-crawford" : score2 === -1 ? "unlimited" : `${score2} away`;
+
+            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
+            const score1Ypos = boardOrigYpos + boardHeight / 2 - 0.5 * boardCheckerSize;
+
+            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
+            const score2Ypos = boardOrigYpos - boardHeight / 2 + 0.5 * boardCheckerSize;
+
+            const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos);
+            scoreText1Element.size = 25;
+            scoreText1Element.alignment = "center";
+            scoreText1Element.baseline = "middle";
+            scoreText1Element.weight = "bold";
+
+            const scoreText2Element = two.makeText(scoreText2, score2Xpos, score2Ypos);
+            scoreText2Element.size = 25;
+            scoreText2Element.alignment = "center";
+            scoreText2Element.baseline = "middle";
+            scoreText2Element.weight = "bold";
+        }
+
         const labels = createLabels();
 
         const quadrant4 = createQuadrant(
@@ -504,6 +535,7 @@
 
         drawCheckers();
         drawDoublingCube();
+        drawScores();
 
         // draw board outline on top to ensure consistent linewidth
         const board = two.makeRectangle(
