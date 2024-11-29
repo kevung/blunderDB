@@ -465,35 +465,97 @@
             doublingCubeText.translation.set(doublingCubeXpos, doublingCubeYpos + 0.05 * doublingCubeSize); // Center the text
         }
 
-        function drawScores() {
+        function computePipCount() {
+            const position = get(positionStore);
+            let pipCount1 = 0;
+            let pipCount2 = 0;
+
+            position.board.points.forEach((point, index) => {
+                if (point.color === 0) {
+                    pipCount1 += point.checkers * index;
+                } else if (point.color === 1) {
+                    pipCount2 += point.checkers * (25 - index);
+                }
+            });
+
+            return { pipCount1, pipCount2 };
+        }
+
+        function drawPipCounts(pipCount1, pipCount2) {
             const boardOrigXpos = width / 2;
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
             const gap = 1.0 * boardCheckerSize;
 
-            const score1 = get(positionStore).score[0];
-            const score2 = get(positionStore).score[1];
-            const bearoff1 = get(positionStore).board.bearoff[0];
-            const bearoff2 = get(positionStore).board.bearoff[1];
+            const pipCountText1 = `pip: ${pipCount1}`;
+            const pipCountText2 = `pip: ${pipCount2}`;
 
-            const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post-crawford" : score1 === -1 ? "unlimited" : `${score1} away`;
-            const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post-crawford" : score2 === -1 ? "unlimited" : `${score2} away`;
+            const pipCount1Xpos = boardOrigXpos - boardWidth / 2 - gap;
+            const pipCount1Ypos = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
+
+            const pipCount2Xpos = boardOrigXpos - boardWidth / 2 - gap;
+            const pipCount2Ypos = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
+
+            const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
+            pipCountText1Element.size = 15;
+            pipCountText1Element.alignment = "center";
+            pipCountText1Element.baseline = "top";
+
+            const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
+            pipCountText2Element.size = 15;
+            pipCountText2Element.alignment = "center";
+            pipCountText2Element.baseline = "bottom";
+        }
+
+        function drawBearoff(bearoff1, bearoff2) {
+            const boardOrigXpos = width / 2;
+            const boardOrigYpos = height / 2;
+            const boardWidth = boardCfg.widthFactor * width;
+            const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+            const gap = 1.0 * boardCheckerSize;
 
             const bearoffText1 = `(${bearoff1} OFF)`;
             const bearoffText2 = `(${bearoff2} OFF)`;
-
-            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
-            const score1Ypos = boardOrigYpos + boardHeight / 2 - 0.5 * boardCheckerSize;
-
-            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
-            const score2Ypos = boardOrigYpos - boardHeight / 2 + 0.5 * boardCheckerSize;
 
             const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
             const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 2 * boardCheckerSize;
 
             const bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
             const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 2 * boardCheckerSize;
+
+            const bearoffText1Element = two.makeText(bearoffText1, bearoff1Xpos, bearoff1Ypos);
+            bearoffText1Element.size = 20;
+            bearoffText1Element.alignment = "center";
+            bearoffText1Element.baseline = "middle";
+
+            const bearoffText2Element = two.makeText(bearoffText2, bearoff2Xpos, bearoff2Ypos);
+            bearoffText2Element.size = 20;
+            bearoffText2Element.alignment = "center";
+            bearoffText2Element.baseline = "middle";
+        }
+
+        function drawScores() {
+            const boardOrigXpos = width / 2;
+            const boardOrigYpos = height / 2;
+            const boardWidth = boardCfg.widthFactor * width;
+            const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+
+            const score1 = get(positionStore).score[0];
+            const score2 = get(positionStore).score[1];
+            const bearoff1 = get(positionStore).board.bearoff[0];
+            const bearoff2 = get(positionStore).board.bearoff[1];
+
+            const { pipCount1, pipCount2 } = computePipCount();
+
+            const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post-crawford" : score1 === -1 ? "unlimited" : `${score1} away`;
+            const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post-crawford" : score2 === -1 ? "unlimited" : `${score2} away`;
+
+            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
+            const score1Ypos = boardOrigYpos + boardHeight / 2 - 0.5 * boardCheckerSize;
+
+            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.5 * boardCheckerSize;
+            const score2Ypos = boardOrigYpos - boardHeight / 2 + 0.5 * boardCheckerSize;
 
             const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos);
             scoreText1Element.size = 25;
@@ -507,15 +569,8 @@
             scoreText2Element.baseline = "middle";
             scoreText2Element.weight = "bold";
 
-            const bearoffText1Element = two.makeText(bearoffText1, bearoff1Xpos, bearoff1Ypos);
-            bearoffText1Element.size = 20;
-            bearoffText1Element.alignment = "center";
-            bearoffText1Element.baseline = "middle";
-
-            const bearoffText2Element = two.makeText(bearoffText2, bearoff2Xpos, bearoff2Ypos);
-            bearoffText2Element.size = 20;
-            bearoffText2Element.alignment = "center";
-            bearoffText2Element.baseline = "middle";
+            drawBearoff(bearoff1, bearoff2);
+            drawPipCounts(pipCount1, pipCount2);
         }
 
         const labels = createLabels();
