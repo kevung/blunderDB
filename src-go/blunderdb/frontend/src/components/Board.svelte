@@ -275,7 +275,6 @@
         const boardHeight = boardAspectFactor * boardWidth;
         const boardCheckerSize = boardHeight / 11;
         const boardTriangleHeight = 5 * boardCheckerSize;
-        const boardTriangleWidth = 1.0 * boardCheckerSize;
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
 
@@ -669,7 +668,7 @@
         );
         board.fill = "transparent"; // No fill to avoid covering other elements
         board.stroke = boardCfg.stroke;
-        board.linewidth = 3.5; // Changed linewidth to 3.5
+        board.linewidth = 3.5;
         
         two.update();
     }
