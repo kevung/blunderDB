@@ -234,6 +234,7 @@
             mouseY < boardOrigYpos - boardHeight / 2 || mouseY > boardOrigYpos + boardHeight / 2) {
             positionStore.update(pos => {
                 pos.board.points.forEach(point => point.checkers = 0);
+                pos.board.bearoff = [15, 15]; // Reset bearoff
                 return pos;
             });
         }
