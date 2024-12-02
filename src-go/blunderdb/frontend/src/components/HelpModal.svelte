@@ -264,12 +264,12 @@
 
                             <tr>
                                 <td>Tab</td>
-                                <td>Toggle Edit Mode</td>
+                                <td>Edit Mode</td>
                             </tr>
 
                             <tr>
                                 <td>Space</td>
-                                <td>Switch To Command Mode</td>
+                                <td>Command Mode</td>
                             </tr>
 
                         </tbody>
