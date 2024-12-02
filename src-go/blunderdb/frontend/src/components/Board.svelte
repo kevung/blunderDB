@@ -13,13 +13,13 @@
     let boardCfg = {
         widthFactor: 0.75, // Increase widthFactor to make the board take up more space
         orientation: "right",
-        fill: "white",
-        stroke: "black",
+        fill: "#f0f0f0", // Light grey background
+        stroke: "#333333", // Dark grey border
         linewidth: 3,
         triangle: {
-            fill1: "white",
-            fill2: "rgb(208, 208, 208)",
-            stroke: "black",
+            fill1: "#d9d9d9", // Light grey
+            fill2: "#a6a6a6", // Slightly darker grey for balanced contrast
+            stroke: "#333333",
             linewidth: 1.3, // Changed linewidth to 1
         },
         label: {
@@ -28,7 +28,7 @@
         },
         checker: {
             sizeFactor: 0.97,
-            colors: ["black", "white"],
+            colors: ["#333333", "#ffffff"], // Dark grey and white checkers
             linewidth: 2.5 // Added linewidth property and set to 2
         }
     };
@@ -476,8 +476,8 @@
                 doublingCubeSize,
                 doublingCubeSize,
             );
-            doublingCube.fill = "white";
-            doublingCube.stroke = "black";
+            doublingCube.fill = "#ffffff"; // White doubling cube
+            doublingCube.stroke = "#333333"; // Dark grey border
             doublingCube.linewidth = 2.5; // Adjust linewidth accordingly
             const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), doublingCubeXpos, doublingCubeYpos);
             doublingCubeText.size = 34; // Checker size
@@ -580,8 +580,8 @@
             dice.forEach((die, index) => {
                 const dieXpos = diceXpos + index * (diceSize + gap);
                 const dieElement = two.makeRectangle(dieXpos, diceYpos, diceSize, diceSize);
-                dieElement.fill = "white";
-                dieElement.stroke = "black";
+                dieElement.fill = "#ffffff"; // White dice
+                dieElement.stroke = "#333333"; // Dark grey border
                 dieElement.linewidth = 2.5; // Adjust linewidth accordingly
 
                 if (decisionType === 0) {
