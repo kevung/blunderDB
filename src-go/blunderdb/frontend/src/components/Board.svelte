@@ -35,8 +35,8 @@
 
     let two;
     let canvas;
-    let width = window.innerWidth;
-    let height = canvasCfg.aspectFactor * width;
+    let width;
+    let height;
     let unsubscribe;
     let isMouseDown = false;
     let startMousePos = null;
@@ -206,8 +206,10 @@
     }
 
     function resizeBoard() {
-        width = window.innerWidth * 1.0;
-        height = canvasCfg.aspectFactor * width;
+        const actualWidth = canvas.clientWidth;
+        const actualHeight = actualWidth * canvasCfg.aspectFactor;
+        width = actualWidth;
+        height = actualHeight;
         two.width = width;
         two.height = height;
         two.renderer.setSize(width, height);
@@ -237,16 +239,30 @@
         }
     }
 
+    function logCanvasSize() {
+        const actualWidth = canvas.clientWidth;
+        const actualHeight = canvas.clientHeight;
+        console.log("Actual canvas width: ", actualWidth, "Actual canvas height: ", actualHeight);
+        console.log("Two.js width: ", two.width, "Two.js height: ", two.height);
+    }
+
     onMount(() => {
         canvas = document.getElementById("backgammon-board");
-        const elem = canvas;
-        const params = { width, height };
-        two = new Two(params).appendTo(elem);
+        const params = { width: window.innerWidth, height: window.innerHeight };
+        two = new Two(params).appendTo(canvas);
+
+        // Set the width and height based on the actual canvas dimensions after appending
+        const actualWidth = canvas.clientWidth;
+        const actualHeight = actualWidth * canvasCfg.aspectFactor;
+        width = actualWidth;
+        height = actualHeight;
+        two.width = width;
+        two.height = height;
+        two.renderer.setSize(width, height);
 
         canvas.addEventListener("mousedown", handleMouseDown);
         canvas.addEventListener("mousemove", handleMouseMove);
         canvas.addEventListener("mouseup", handleMouseUp);
-        canvas.addEventListener("contextmenu", event => event.preventDefault());
         canvas.addEventListener("dblclick", handleDoubleClick);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
@@ -255,15 +271,18 @@
             drawBoard();
             console.log("positionStore: ", get(positionStore));
         });
+
+        logCanvasSize();
+        window.addEventListener("resize", logCanvasSize);
     });
 
     onDestroy(() => {
         canvas.removeEventListener("mousedown", handleMouseDown);
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseup", handleMouseUp);
-        canvas.removeEventListener("contextmenu", event => event.preventDefault());
         canvas.removeEventListener("dblclick", handleDoubleClick);
         window.removeEventListener("resize", resizeBoard);
+        window.removeEventListener("resize", logCanvasSize);
         if (unsubscribe) unsubscribe();
     });
 
@@ -277,7 +296,9 @@
         const boardTriangleHeight = 5 * boardCheckerSize;
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
-
+        console.log("width: ", width, "height: ", height);
+        console.log("boardOrigXpos: ", boardOrigXpos, "boardOrigYpos: ", boardOrigYpos);
+        console.log("two.width: ", two.width, "two.height: ", two.height);
         function createTriangle(x, y, flip) {
             if (flip == false) {
                 const triangle = two.makePath(
@@ -682,6 +703,7 @@
     body,
     html {
         height: 100%;
+        width: 100%;
         margin: 0;
         display: flex;
         justify-content: center;
@@ -690,15 +712,18 @@
     }
 
     .canvas-container {
+        width: 100%;
+        height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin-bottom: 0px;
     }
 
     #backgammon-board {
         width: 100%;
-        height: 100%;
-        border: 2px solid #000;
+        height: auto;
+        box-sizing: border-box;
+        padding: 0;
+        border: none;
     }
 </style>
