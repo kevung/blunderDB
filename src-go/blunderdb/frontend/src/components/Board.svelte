@@ -727,7 +727,7 @@
         max-height: 100%; /* Ensure the board fits within the available height */
         box-sizing: border-box;
         padding: 0;
-        border: none;
+        border: 1px solid black; /* Add border for debugging */
         margin: 0; /* Remove margin */
     }
 </style>

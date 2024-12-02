@@ -715,7 +715,8 @@
         box-sizing: border-box;
         display: flex;
         justify-content: center; /* Center the board initially */
-        align-items: center; /* Center the board initially */
+        align-items: flex-start; /* Align items to the start to remove space */
+        margin-top: 0; /* Remove any margin on top */
     }
 
     .full-size-board {
@@ -724,6 +725,7 @@
         max-height: 100%; /* Ensure the board fits within the available height */
         margin: 0; /* Remove margin */
         padding: 0; /* Remove padding */
+        border: 1px solid black; /* Add border for debugging */
     }
 
     .comments-zone {
