@@ -264,6 +264,7 @@
         canvas.addEventListener("mousemove", handleMouseMove);
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("dblclick", handleDoubleClick);
+        canvas.addEventListener("contextmenu", (event) => event.preventDefault()); // Prevent contextual menu
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -281,6 +282,7 @@
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseup", handleMouseUp);
         canvas.removeEventListener("dblclick", handleDoubleClick);
+        canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         if (unsubscribe) unsubscribe();
