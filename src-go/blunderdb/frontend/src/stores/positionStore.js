@@ -8,7 +8,7 @@ export const listPositionStore = writable('5432'); // dedie a liste de positions
 export const positionStore = writable({
     board: {
         points: Array(26).fill({ checkers: 0, color: -1 }), // 24 points + 2 bars
-        bearoff: [0, 0],
+        bearoff: [15, 15],
     },
     cube: {
         owner: -1,
