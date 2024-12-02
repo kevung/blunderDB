@@ -515,21 +515,23 @@
             const pipCountText1 = `pip: ${pipCount1}`;
             const pipCountText2 = `pip: ${pipCount2}`;
 
-            const pipCount1Xpos = boardOrigXpos - boardWidth / 2 - gap;
-            const pipCount1Ypos = boardOrigYpos + 0.5 * boardHeight + 0.3 * boardCheckerSize;
+            const pipCount1Xpos = boardOrigXpos - boardWidth / 2 - 1.2 * boardCheckerSize;
+            const pipCount1Ypos = boardOrigYpos + boardHeight / 2 + 0.47 * boardCheckerSize;
 
-            const pipCount2Xpos = boardOrigXpos - boardWidth / 2 - gap;
-            const pipCount2Ypos = boardOrigYpos - 0.5 * boardHeight - 0.3 * boardCheckerSize;
+            const pipCount2Xpos = boardOrigXpos - boardWidth / 2 - 1.2 * boardCheckerSize;
+            const pipCount2Ypos = boardOrigYpos - boardHeight / 2 - 0.47 * boardCheckerSize;
 
             const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
             pipCountText1Element.size = 20;
             pipCountText1Element.alignment = "center";
-            pipCountText1Element.baseline = "top";
+            pipCountText1Element.baseline = "middle";
+            pipCountText1Element.weight = "bold";
 
             const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
             pipCountText2Element.size = 20;
             pipCountText2Element.alignment = "center";
-            pipCountText2Element.baseline = "bottom";
+            pipCountText2Element.baseline = "middle";
+            pipCountText2Element.weight = "bold";
         }
 
         function drawBearoff() {
@@ -539,7 +541,7 @@
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
-            const gap = 1.5 * boardCheckerSize;
+            const gap = 1.2 * boardCheckerSize;
 
             const bearoffText1 = `(${bearoff1} OFF)`;
             const bearoffText2 = `(${bearoff2} OFF)`;
@@ -575,7 +577,7 @@
             const diceSize = 0.95 * boardCheckerSize;
 
             const diceXpos = boardOrigXpos + boardWidth / 2 + 3 * gap;
-            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.3 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.3 * boardCheckerSize;
+            const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
 
             dice.forEach((die, index) => {
                 const dieXpos = diceXpos + index * (diceSize + gap);
@@ -616,10 +618,10 @@
             const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post" : score1 === -1 ? "unlimited" : `${score1} away`;
             const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post" : score2 === -1 ? "unlimited" : `${score2} away`;
 
-            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.7 * boardCheckerSize;
+            const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
             const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.47 * boardCheckerSize;
 
-            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.7 * boardCheckerSize;
+            const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
             const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.47 * boardCheckerSize;
 
             const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos - (score1 === 0 ? 10 : 0));
