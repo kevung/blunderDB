@@ -7,11 +7,11 @@
     export let mode;
     
     let canvasCfg = {
-        aspectFactor: 0.63,
+        aspectFactor: 0.72,
     };
 
     let boardCfg = {
-        widthFactor: 0.63,
+        widthFactor: 0.75, // Increase widthFactor to make the board take up more space
         orientation: "right",
         fill: "white",
         stroke: "black",
@@ -23,8 +23,8 @@
             linewidth: 1.3, // Changed linewidth to 1
         },
         label: {
-            size: 25,
-            distanceToBoard: 0.4,
+            size: 20,
+            distanceToBoard: 0.30,
         },
         checker: {
             sizeFactor: 0.97,
@@ -97,7 +97,7 @@
 
     function fillCheckersBetween(startPos, endPos) {
         const startChecker = getCheckerPointAndCount(startPos.x, startPos.y, startPos.button);
-        const endChecker = getCheckerPointAndCount(endPos.x, endPos.y, endPos.button);
+        const endChecker = getCheckerPointAndCount(endPos.x, endPos.y, startPos.button);
 
         const maxCheckers = Math.max(startChecker.checkerCount, endChecker.checkerCount);
 
@@ -466,8 +466,8 @@
             const doublingCubeTextValue = Math.pow(2, cubeValue);
 
             // draw doubling cube on the left side of the board with a small gap
-            const doublingCubeSize = 1.25 * boardCheckerSize;
-            const gap = 0.4 * boardCheckerSize;
+            const doublingCubeSize = 0.9 * boardCheckerSize; // Reduce the size of the doubling cube
+            const gap = 0.75 * boardCheckerSize;
             const doublingCubeXpos = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
             const doublingCubeYpos = boardOrigYpos;
             const doublingCube = two.makeRectangle(
@@ -478,7 +478,7 @@
             );
             doublingCube.fill = "white";
             doublingCube.stroke = "black";
-            doublingCube.linewidth = 3.5; // Further increased linewidth
+            doublingCube.linewidth = 2.5; // Adjust linewidth accordingly
             const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), doublingCubeXpos, doublingCubeYpos);
             doublingCubeText.size = 34; // Checker size
             doublingCubeText.alignment = "center";
@@ -503,32 +503,30 @@
         }
 
         function drawPipCounts() {
-
             const { pipCount1, pipCount2 } = computePipCount();
 
             const boardOrigXpos = width / 2;
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
-            const gap = 1.4 * boardCheckerSize;
 
             const pipCountText1 = `pip: ${pipCount1}`;
             const pipCountText2 = `pip: ${pipCount2}`;
 
             const pipCount1Xpos = boardOrigXpos - boardWidth / 2 - 1.2 * boardCheckerSize;
-            const pipCount1Ypos = boardOrigYpos + boardHeight / 2 + 0.47 * boardCheckerSize;
+            const pipCount1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize; // Align with score height
 
             const pipCount2Xpos = boardOrigXpos - boardWidth / 2 - 1.2 * boardCheckerSize;
-            const pipCount2Ypos = boardOrigYpos - boardHeight / 2 - 0.47 * boardCheckerSize;
+            const pipCount2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize; // Align with score height
 
             const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
-            pipCountText1Element.size = 20;
+            pipCountText1Element.size = 20; // Same size as score
             pipCountText1Element.alignment = "center";
             pipCountText1Element.baseline = "middle";
             pipCountText1Element.weight = "bold";
 
             const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
-            pipCountText2Element.size = 20;
+            pipCountText2Element.size = 20; // Same size as score
             pipCountText2Element.alignment = "center";
             pipCountText2Element.baseline = "middle";
             pipCountText2Element.weight = "bold";
@@ -573,10 +571,10 @@
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
-            const gap = 0.3 * boardCheckerSize;
-            const diceSize = 0.95 * boardCheckerSize;
+            const gap = 0.325 * boardCheckerSize; // Move the dice closer to the board
+            const diceSize = 0.7 * boardCheckerSize; // Reduce the size of the dice
 
-            const diceXpos = boardOrigXpos + boardWidth / 2 + 3 * gap;
+            const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * gap;
             const diceYpos = playerOnRoll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
 
             dice.forEach((die, index) => {
@@ -584,7 +582,7 @@
                 const dieElement = two.makeRectangle(dieXpos, diceYpos, diceSize, diceSize);
                 dieElement.fill = "white";
                 dieElement.stroke = "black";
-                dieElement.linewidth = 3.5;
+                dieElement.linewidth = 2.5; // Adjust linewidth accordingly
 
                 if (decisionType === 0) {
                     // Draw dots for traditional dice
@@ -619,10 +617,10 @@
             const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post" : score2 === -1 ? "unlimited" : `${score2} away`;
 
             const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-            const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.47 * boardCheckerSize;
+            const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize; // Move closer to the middle
 
             const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
-            const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.47 * boardCheckerSize;
+            const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize; // Move closer to the middle
 
             const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos - (score1 === 0 ? 10 : 0));
             scoreText1Element.size = 20;
