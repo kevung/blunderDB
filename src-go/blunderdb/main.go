@@ -41,7 +41,7 @@ func main() {
 
 	// Calculate the initial height based on the aspect factor
 	initialWidth := 960
-	aspectFactor := 0.7
+	aspectFactor := 0.6928
 	initialHeight := int(float64(initialWidth) * aspectFactor) // Adjust to have equal space above and below
 
 	// Create application with options
