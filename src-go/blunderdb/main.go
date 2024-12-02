@@ -2,14 +2,14 @@ package main
 
 import (
 	"embed"
-    "log"
-    "fmt"
+	"fmt"
+	"log"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 
-    "blunderdb/backend"
+	"blunderdb/backend"
 )
 
 //go:embed all:frontend/dist
@@ -17,33 +17,38 @@ var assets embed.FS
 
 func main() {
 
-    db, errDb := backend.SetupDatabase()
-    if errDb != nil {
-        log.Fatal(errDb)
-    }
+	db, errDb := backend.SetupDatabase()
+	if errDb != nil {
+		log.Fatal(errDb)
+	}
 
-    var position backend.Position
-    position = backend.InitializePosition()
+	var position backend.Position
+	position = backend.InitializePosition()
 
-    backend.SavePosition(db, position)
+	backend.SavePosition(db, position)
 
-    position2, _ := backend.LoadPosition(db, 1)
-    fmt.Printf("%+v\n", position2)
+	position2, _ := backend.LoadPosition(db, 1)
+	fmt.Printf("%+v\n", position2)
 
-    if position == *position2 {
-        fmt.Println("The game states are equal.")
-    } else {
-        fmt.Println("The game states are not equal.")
-    }
+	if position == *position2 {
+		fmt.Println("The game states are equal.")
+	} else {
+		fmt.Println("The game states are not equal.")
+	}
 
 	// Create an instance of the app structure
 	app := NewApp()
 
+	// Calculate the initial height based on the aspect factor
+	initialWidth := 960
+	aspectFactor := 0.7
+	initialHeight := int(float64(initialWidth) * aspectFactor) // Adjust to have equal space above and below
+
 	// Create application with options
 	err := wails.Run(&options.App{
 		Title:  "blunderDB",
-		Width:  1024,
-		Height: 754,
+		Width:  initialWidth,
+		Height: initialHeight,
 		AssetServer: &assetserver.Options{
 			Assets: assets,
 		},

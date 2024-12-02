@@ -651,6 +651,7 @@
 
         <Board
             mode={$statusBarModeStore}
+            class="full-size-board"
         />
 
         <CommandLine
@@ -709,9 +710,20 @@
         flex-grow: 1;
         overflow-y: auto; /* Allow vertical scrolling */
         overflow-x: hidden; /* Disable horizontal scrolling */
-        padding: 16px; /* Add padding for content */
+        padding: 0; /* Remove padding */
         width: 100%;
         box-sizing: border-box;
+        display: flex;
+        justify-content: center; /* Center the board initially */
+        align-items: center; /* Center the board initially */
+    }
+
+    .full-size-board {
+        width: 100%;
+        height: auto; /* Maintain aspect ratio */
+        max-height: 100%; /* Ensure the board fits within the available height */
+        margin: 0; /* Remove margin */
+        padding: 0; /* Remove padding */
     }
 
     .comments-zone {

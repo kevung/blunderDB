@@ -696,7 +696,7 @@
 </script>
 
 <div class="canvas-container">
-    <div id="backgammon-board"></div>
+    <div id="backgammon-board" class="full-size-board"></div>
 </div>
 
 <style>
@@ -717,13 +717,17 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        margin: 0; /* Remove margin */
+        padding: 0; /* Remove padding */
     }
 
     #backgammon-board {
         width: 100%;
-        height: auto;
+        height: auto; /* Maintain aspect ratio */
+        max-height: 100%; /* Ensure the board fits within the available height */
         box-sizing: border-box;
         padding: 0;
         border: none;
+        margin: 0; /* Remove margin */
     }
 </style>
