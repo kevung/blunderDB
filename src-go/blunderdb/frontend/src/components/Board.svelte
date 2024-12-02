@@ -40,6 +40,7 @@
     let unsubscribe;
     let isMouseDown = false;
     let startMousePos = null;
+    let cubePosition = { x: 0, y: 0 };
 
     function handleMouseDown(event) {
         if (mode !== "EDIT") return;
@@ -240,6 +241,43 @@
         }
     }
 
+    function handleDoublingCubeClick(event) {
+        if (mode !== "EDIT") return;
+
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        // Check if the click is within the doubling cube
+        if (mouseX >= cubePosition.x - cubePosition.size / 2 && mouseX <= cubePosition.x + cubePosition.size / 2 &&
+            mouseY >= cubePosition.y - cubePosition.size / 2 && mouseY <= cubePosition.y + cubePosition.size / 2) {
+            positionStore.update(pos => {
+                if (pos.cube.owner === -1) {
+                    pos.cube.value = Math.min(pos.cube.value + 1, 6);
+                    pos.cube.owner = event.button === 0 ? 0 : 1;
+                } else if (pos.cube.owner === 0) {
+                    if (event.button === 0) {
+                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
+                    } else if (event.button === 2) {
+                        pos.cube.value = Math.max(pos.cube.value - 1, 0);
+                    }
+                } else if (pos.cube.owner === 1) {
+                    if (event.button === 0) {
+                        pos.cube.value = Math.max(pos.cube.value - 1, 0);
+                    } else if (event.button === 2) {
+                        pos.cube.value = Math.min(pos.cube.value + 1, 6);
+                    }
+                }
+
+                if (pos.cube.value === 0) {
+                    pos.cube.owner = -1;
+                }
+
+                return pos;
+            });
+        }
+    }
+
     function logCanvasSize() {
         const actualWidth = canvas.clientWidth;
         const actualHeight = canvas.clientHeight;
@@ -266,6 +304,7 @@
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("dblclick", handleDoubleClick);
         canvas.addEventListener("contextmenu", (event) => event.preventDefault()); // Prevent contextual menu
+        canvas.addEventListener("mousedown", handleDoublingCubeClick);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -284,6 +323,7 @@
         canvas.removeEventListener("mouseup", handleMouseUp);
         canvas.removeEventListener("dblclick", handleDoubleClick);
         canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
+        canvas.removeEventListener("mousedown", handleDoublingCubeClick);
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         if (unsubscribe) unsubscribe();
@@ -465,28 +505,40 @@
             const boardWidth = boardCfg.widthFactor * width;
 
             // Get the value for the doubling cube
-            const cubeValue = get(positionStore).cube.value;
+            const position = get(positionStore);
+            const cubeValue = position.cube.value;
             const doublingCubeTextValue = Math.pow(2, cubeValue);
 
-            // draw doubling cube on the left side of the board with a small gap
+            // Determine the position of the doubling cube based on its owner
             const doublingCubeSize = 0.9 * boardCheckerSize; // Reduce the size of the doubling cube
             const gap = 0.75 * boardCheckerSize;
-            const doublingCubeXpos = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
-            const doublingCubeYpos = boardOrigYpos;
+
+            if (position.cube.owner === -1) {
+                cubePosition.x = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
+                cubePosition.y = boardOrigYpos;
+            } else if (position.cube.owner === 0) {
+                cubePosition.x = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
+                cubePosition.y = boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize;
+            } else if (position.cube.owner === 1) {
+                cubePosition.x = boardOrigXpos - boardWidth / 2 - doublingCubeSize / 2 - gap;
+                cubePosition.y = boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
+            }
+            cubePosition.size = doublingCubeSize;
+
             const doublingCube = two.makeRectangle(
-                doublingCubeXpos,
-                doublingCubeYpos,
+                cubePosition.x,
+                cubePosition.y,
                 doublingCubeSize,
                 doublingCubeSize,
             );
             doublingCube.fill = "#ffffff"; // White doubling cube
             doublingCube.stroke = "#333333"; // Dark grey border
             doublingCube.linewidth = 2.5; // Adjust linewidth accordingly
-            const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), doublingCubeXpos, doublingCubeYpos);
+            const doublingCubeText = two.makeText(doublingCubeTextValue.toString(), cubePosition.x, cubePosition.y);
             doublingCubeText.size = 34; // Checker size
             doublingCubeText.alignment = "center";
             doublingCubeText.baseline = "middle";
-            doublingCubeText.translation.set(doublingCubeXpos, doublingCubeYpos + 0.05 * doublingCubeSize); // Center the text
+            doublingCubeText.translation.set(cubePosition.x, cubePosition.y + 0.05 * doublingCubeSize); // Center the text
         }
 
         function computePipCount() {
