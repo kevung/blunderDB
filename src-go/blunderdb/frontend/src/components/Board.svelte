@@ -257,7 +257,7 @@
         width = actualWidth;
         height = actualHeight;
         two.width = width;
-        two.height = height;
+        two.height = actualHeight;
         two.renderer.setSize(width, height);
 
         canvas.addEventListener("mousedown", handleMouseDown);
@@ -522,12 +522,12 @@
             const pipCount2Ypos = boardOrigYpos - 0.5 * boardHeight - 0.3 * boardCheckerSize;
 
             const pipCountText1Element = two.makeText(pipCountText1, pipCount1Xpos, pipCount1Ypos);
-            pipCountText1Element.size = 22;
+            pipCountText1Element.size = 20;
             pipCountText1Element.alignment = "center";
             pipCountText1Element.baseline = "top";
 
             const pipCountText2Element = two.makeText(pipCountText2, pipCount2Xpos, pipCount2Ypos);
-            pipCountText2Element.size = 22;
+            pipCountText2Element.size = 20;
             pipCountText2Element.alignment = "center";
             pipCountText2Element.baseline = "bottom";
         }
@@ -613,8 +613,8 @@
             const score1 = get(positionStore).score[0];
             const score2 = get(positionStore).score[1];         
 
-            const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post-crawford" : score1 === -1 ? "unlimited" : `${score1} away`;
-            const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post-crawford" : score2 === -1 ? "unlimited" : `${score2} away`;
+            const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post" : score1 === -1 ? "unlimited" : `${score1} away`;
+            const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post" : score2 === -1 ? "unlimited" : `${score2} away`;
 
             const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.7 * boardCheckerSize;
             const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.47 * boardCheckerSize;
@@ -622,18 +622,31 @@
             const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.7 * boardCheckerSize;
             const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.47 * boardCheckerSize;
 
-            const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos);
-            scoreText1Element.size = 25;
+            const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos - (score1 === 0 ? 10 : 0));
+            scoreText1Element.size = 20;
             scoreText1Element.alignment = "center";
             scoreText1Element.baseline = "middle";
             scoreText1Element.weight = "bold";
+            if (score1 === 0) {
+                const scoreText1Element2 = two.makeText("crawford", score1Xpos, score1Ypos + 10);
+                scoreText1Element2.size = 20;
+                scoreText1Element2.alignment = "center";
+                scoreText1Element2.baseline = "middle";
+                scoreText1Element2.weight = "bold";
+            }
 
-            const scoreText2Element = two.makeText(scoreText2, score2Xpos, score2Ypos);
-            scoreText2Element.size = 25;
+            const scoreText2Element = two.makeText(scoreText2, score2Xpos, score2Ypos - (score2 === 0 ? 10 : 0));
+            scoreText2Element.size = 20;
             scoreText2Element.alignment = "center";
             scoreText2Element.baseline = "middle";
             scoreText2Element.weight = "bold";
-
+            if (score2 === 0) {
+                const scoreText2Element2 = two.makeText("crawford", score2Xpos, score2Ypos + 10);
+                scoreText2Element2.size = 20;
+                scoreText2Element2.alignment = "center";
+                scoreText2Element2.baseline = "middle";
+                scoreText2Element2.weight = "bold";
+            }
         }
 
         const labels = createLabels();
