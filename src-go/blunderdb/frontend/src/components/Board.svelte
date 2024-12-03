@@ -288,6 +288,45 @@
         }
     }
 
+    function handleRectangleClick(event) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        const boardOrigXpos = width / 2;
+        const boardOrigYpos = height / 2;
+        const boardWidth = boardCfg.widthFactor * width;
+        const boardHeight = (11 / 13) * boardWidth;
+        const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+        const gap = 1.2 * boardCheckerSize;
+
+        const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
+        const bearoff1Ypos = boardOrigYpos + boardHeight / 2 - 3.7 * boardCheckerSize;
+        const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
+
+        const bearoff2Xpos = boardOrigXpos + boardWidth / 2 + gap;
+        const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
+        const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
+
+        // Check if the click is inside the top player's rectangle
+        if (mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
+            mouseY >= Math.min(bearoff1Ypos, score1Ypos) && mouseY <= Math.max(bearoff1Ypos, score1Ypos)) {
+            positionStore.update(pos => {
+                pos.player_on_roll = 0;
+                return pos;
+            });
+        }
+
+        // Check if the click is inside the bottom player's rectangle
+        if (mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
+            mouseY >= Math.min(bearoff2Ypos, score2Ypos) && mouseY <= Math.max(bearoff2Ypos, score2Ypos)) {
+            positionStore.update(pos => {
+                pos.player_on_roll = 1;
+                return pos;
+            });
+        }
+    }
+
     function logCanvasSize() {
         const actualWidth = canvas.clientWidth;
         const actualHeight = canvas.clientHeight;
@@ -315,6 +354,7 @@
         canvas.addEventListener("dblclick", handleDoubleClick);
         canvas.addEventListener("contextmenu", (event) => event.preventDefault()); // Prevent contextual menu
         canvas.addEventListener("mousedown", handleDoublingCubeClick);
+        canvas.addEventListener("mousedown", handleRectangleClick);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -334,6 +374,7 @@
         canvas.removeEventListener("dblclick", handleDoubleClick);
         canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
         canvas.removeEventListener("mousedown", handleDoublingCubeClick);
+        canvas.removeEventListener("mousedown", handleRectangleClick);
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         if (unsubscribe) unsubscribe();
@@ -640,6 +681,21 @@
             bearoffText2Element.size = 20;
             bearoffText2Element.alignment = "center";
             bearoffText2Element.baseline = "middle";
+
+            // Define score positions
+            const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
+            const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
+
+            // Add transparent rectangles with red borders
+            const rectangle1 = two.makeRectangle(bearoff1Xpos, (bearoff1Ypos + score1Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff1Ypos - score1Ypos));
+            rectangle1.fill = "transparent";
+            rectangle1.stroke = "red";
+            rectangle1.linewidth = 2;
+
+            const rectangle2 = two.makeRectangle(bearoff2Xpos, (bearoff2Ypos + score2Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff2Ypos - score2Ypos));
+            rectangle2.fill = "transparent";
+            rectangle2.stroke = "red";
+            rectangle2.linewidth = 2;
         }
 
         function drawDice() {
