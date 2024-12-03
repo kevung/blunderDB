@@ -73,13 +73,7 @@
     function handleMouseMove(event) {
         if (mode !== "EDIT" || !isMouseDown) return;
 
-        const rect = canvas.getBoundingClientRect();
-        const currentMousePos = {
-            x: event.clientX - rect.left,
-            y: event.clientY - rect.top
-        };
-
-        fillCheckersBetween(startMousePos, currentMousePos);
+        // No longer dynamically filling checkers during mouse move
     }
 
     function handleMouseUp(event) {
