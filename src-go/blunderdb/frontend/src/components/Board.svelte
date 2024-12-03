@@ -177,11 +177,27 @@
         positionStore.update(pos => {
             pos.board.points = pos.board.points.map((point, index) => {
                 if (index === checkerPoint) {
-                    return {
-                        ...point,
-                        checkers: point.checkers >= 5 && point.color === color ? point.checkers + 1 : Math.min(checkerCount, 5),
-                        color: color
-                    };
+                    if (point.checkers >= 5 && point.color === color) {
+                        // Only add more checkers if clicked on the 5th checker
+                        if (checkerCount === 5) {
+                            return {
+                                ...point,
+                                checkers: point.checkers + 1
+                            };
+                        } else {
+                            return {
+                                ...point,
+                                checkers: Math.min(checkerCount, 5),
+                                color: color
+                            };
+                        }
+                    } else {
+                        return {
+                            ...point,
+                            checkers: Math.min(checkerCount, 5),
+                            color: color
+                        };
+                    }
                 }
                 return point;
             });
