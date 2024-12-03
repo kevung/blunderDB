@@ -185,7 +185,7 @@
                 if (index === checkerPoint) {
                     return {
                         ...point,
-                        checkers: checkerCount,
+                        checkers: point.checkers >= 5 && point.color === color ? point.checkers + 1 : Math.min(checkerCount, 5),
                         color: color
                     };
                 }
@@ -473,12 +473,20 @@
                     x = boardOrigXpos + (index - 18) * boardCheckerSize;
                     yBase = boardOrigYpos - 0.5 * boardHeight;
                 }
-                for (let i = 0; i < point.checkers; i++) {
+                const checkersToDraw = Math.min(point.checkers, 5);
+                for (let i = 0; i < checkersToDraw; i++) {
                     const y = yBase + (index !== 0 && index <= 12 || index === 25 ? -1 : 1) * (i + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
                     const checker = two.makeCircle(x, y, boardCfg.checker.sizeFactor * boardCheckerSize / 2);
                     checker.fill = boardCfg.checker.colors[point.color];
                     checker.stroke = boardCfg.triangle.stroke;
                     checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
+                    if (i === 4 && point.checkers > 5) {
+                        const text = two.makeText(point.checkers.toString(), x, y);
+                        text.size = 20;
+                        text.alignment = "center";
+                        text.baseline = "middle";
+                        text.fill = point.color === 0 ? "#ffffff" : "#333333"; // Contrast color
+                    }
                 }
             });
 
@@ -487,12 +495,20 @@
                 if (index === 0 || index === 25) {
                     let x = boardOrigXpos;
                     let yBase = index === 0 ? boardOrigYpos + 0.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardCheckerSize;
-                    for (let i = 0; i < point.checkers; i++) {
+                    const checkersToDraw = Math.min(point.checkers, 5);
+                    for (let i = 0; i < checkersToDraw; i++) {
                         const y = yBase + (index === 0 ? 1 : -1) * (i + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
                         const checker = two.makeCircle(x, y, boardCfg.checker.sizeFactor * boardCheckerSize / 2);
                         checker.fill = boardCfg.checker.colors[point.color];
                         checker.stroke = boardCfg.triangle.stroke;
                         checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
+                        if (i === 4 && point.checkers > 5) {
+                            const text = two.makeText(point.checkers.toString(), x, y);
+                            text.size = 20;
+                            text.alignment = "center";
+                            text.baseline = "middle";
+                            text.fill = point.color === 0 ? "#ffffff" : "#333333"; // Contrast color
+                        }
                     }
                 }
             });
