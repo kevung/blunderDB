@@ -160,11 +160,13 @@
             if (filePath) {
                 openDatabasePathStore.set(filePath);
                 console.log('openDatabasePathStore:', $openDatabasePathStore);
+                updateStatusBarMessage('Database opened successfully');
             } else {
                 console.log('No Database selected');
             }
         } catch (error) {
             console.error('Error opening file dialog:', error);
+            updateStatusBarMessage('Error opening database');
         }
     }
 
