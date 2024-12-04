@@ -17,8 +17,7 @@
 
     // import stores
     import {
-        newDatabasePathStore,
-        openDatabasePathStore,
+        databasePathStore,
     } from './stores/databaseStore';
 
     import {
@@ -140,8 +139,8 @@
         try {
             const filePath = await SaveDatabaseDialog();
             if (filePath) {
-                newDatabasePathStore.set(filePath);
-                console.log('newDatabasePathStore:', $newDatabasePathStore);
+                databasePathStore.set(filePath);
+                console.log('databasePathStore:', $databasePathStore);
                 await SetupDatabase(filePath);
                 updateStatusBarMessage('New database created successfully');
             } else {
@@ -158,8 +157,8 @@
         try {
             const filePath = await OpenDatabaseDialog();
             if (filePath) {
-                openDatabasePathStore.set(filePath);
-                console.log('openDatabasePathStore:', $openDatabasePathStore);
+                databasePathStore.set(filePath);
+                console.log('databasePathStore:', $databasePathStore);
                 updateStatusBarMessage('Database opened successfully');
             } else {
                 console.log('No Database selected');
