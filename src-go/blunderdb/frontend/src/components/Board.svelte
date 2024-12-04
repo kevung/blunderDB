@@ -398,6 +398,52 @@
         });
     }
 
+    function handleScoreClick(event) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        const boardOrigXpos = width / 2;
+        const boardOrigYpos = height / 2;
+        const boardWidth = boardCfg.widthFactor * width;
+        const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+        const boardHeight = (11 / 13) * boardWidth; // Define boardHeight
+
+        const score1Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
+        const score1Ypos = boardOrigYpos + boardHeight / 2 + 0.2 * boardCheckerSize;
+        const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
+        const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
+
+        const scoreWidth = 1.5 * boardCheckerSize;
+        const scoreHeight = 0.5 * boardCheckerSize;
+
+        // Check if the click is inside the top player's green rectangle
+        if (mouseX >= score1Xpos - scoreWidth / 2 && mouseX <= score1Xpos + scoreWidth / 2 &&
+            mouseY >= score1Ypos - scoreHeight / 2 && mouseY <= score1Ypos + scoreHeight / 2) {
+            positionStore.update(pos => {
+                if (event.button === 0) {
+                    pos.score[0] = Math.max(pos.score[0] - 1, -1); // Decrement score
+                } else if (event.button === 2) {
+                    pos.score[0] = Math.min(pos.score[0] + 1, 99); // Increment score, max 99
+                }
+                return pos;
+            });
+        }
+
+        // Check if the click is inside the bottom player's green rectangle
+        if (mouseX >= score2Xpos - scoreWidth / 2 && mouseX <= score2Xpos + scoreWidth / 2 &&
+            mouseY >= score2Ypos - scoreHeight / 2 && mouseY <= score2Ypos + scoreHeight / 2) {
+            positionStore.update(pos => {
+                if (event.button === 0) {
+                    pos.score[1] = Math.max(pos.score[1] - 1, -1); // Decrement score
+                } else if (event.button === 2) {
+                    pos.score[1] = Math.min(pos.score[1] + 1, 99); // Increment score, max 99
+                }
+                return pos;
+            });
+        }
+    }
+
     function logCanvasSize() {
         const actualWidth = canvas.clientWidth;
         const actualHeight = canvas.clientHeight;
@@ -428,6 +474,7 @@
         canvas.addEventListener("mousedown", handleDoublingCubeClick);
         canvas.addEventListener("mousedown", handleRectangleClick);
         canvas.addEventListener("mousedown", handleDiceClick);
+        canvas.addEventListener("mousedown", handleScoreClick);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -452,6 +499,7 @@
         canvas.removeEventListener("mousedown", handleDoublingCubeClick);
         canvas.removeEventListener("mousedown", handleRectangleClick);
         canvas.removeEventListener("mousedown", handleDiceClick);
+        canvas.removeEventListener("mousedown", handleScoreClick);
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         if (unsubscribe) unsubscribe();
@@ -840,6 +888,18 @@
             const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
             const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize; // Move closer to the middle
 
+            // Add transparent red rectangles behind the score text
+            const redRectangle1 = two.makeRectangle(score1Xpos, score1Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
+            redRectangle1.fill = "transparent";
+            redRectangle1.stroke = "red";
+            redRectangle1.linewidth = 2;
+
+            const redRectangle2 = two.makeRectangle(score2Xpos, score2Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
+            redRectangle2.fill = "transparent";
+            redRectangle2.stroke = "red";
+            redRectangle2.linewidth = 2;
+
+            // Add score text
             const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos - (score1 === 0 ? 10 : 0));
             scoreText1Element.size = 20;
             scoreText1Element.alignment = "center";
@@ -865,6 +925,17 @@
                 scoreText2Element2.baseline = "middle";
                 scoreText2Element2.weight = "bold";
             }
+
+            // Add transparent green rectangles on top of the score text
+            const greenRectangle1 = two.makeRectangle(score1Xpos, score1Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
+            greenRectangle1.fill = "transparent";
+            greenRectangle1.stroke = "green";
+            greenRectangle1.linewidth = 2;
+
+            const greenRectangle2 = two.makeRectangle(score2Xpos, score2Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
+            greenRectangle2.fill = "transparent";
+            greenRectangle2.stroke = "green";
+            greenRectangle2.linewidth = 2;
         }
 
         const labels = createLabels();
@@ -904,12 +975,12 @@
         bar.stroke = boardCfg.stroke;
         bar.linewidth = 3.5; // Changed linewidth to 3.5
 
-        drawCheckers();
         drawDoublingCube();
-        drawScores();
+        drawCheckers();
         drawBearoff();        
         drawPipCounts();
         drawDice();
+        drawScores();
 
         // draw board outline on top to ensure consistent linewidth
         const board = two.makeRectangle(
