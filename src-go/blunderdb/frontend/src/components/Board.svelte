@@ -293,6 +293,8 @@
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
 
+        console.log("Rectangle click detected at:", mouseX, mouseY); // Debug log
+
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
         const boardWidth = boardCfg.widthFactor * width;
@@ -311,9 +313,11 @@
         // Check if the click is inside the top player's rectangle
         if (mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
             mouseY >= Math.min(bearoff1Ypos, score1Ypos) && mouseY <= Math.max(bearoff1Ypos, score1Ypos)) {
+            console.log("Top player's rectangle clicked"); // Debug log
             positionStore.update(pos => {
                 pos.player_on_roll = 0;
                 pos.decision_type = 1; // Set decision type to doubling cube
+                console.log("Updated decision_type to 1 for top player"); // Debug log
                 return pos;
             });
         }
@@ -321,9 +325,11 @@
         // Check if the click is inside the bottom player's rectangle
         if (mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
             mouseY >= Math.min(bearoff2Ypos, score2Ypos) && mouseY <= Math.max(bearoff2Ypos, score2Ypos)) {
+            console.log("Bottom player's rectangle clicked"); // Debug log
             positionStore.update(pos => {
                 pos.player_on_roll = 1;
                 pos.decision_type = 1; // Set decision type to doubling cube
+                console.log("Updated decision_type to 1 for bottom player"); // Debug log
                 return pos;
             });
         }
@@ -340,9 +346,11 @@
         if ((mouseX >= rectangle1Xpos - rectangleWidth / 2 && mouseX <= rectangle1Xpos + rectangleWidth / 2 &&
             mouseY >= rectangle1Ypos - rectangleHeight1 / 2 && mouseY <= rectangle1Ypos + rectangleHeight1 / 2) ||
             (mouseX >= rectangle2Xpos - rectangleWidth / 2 && mouseX <= rectangle2Xpos + rectangleWidth / 2 &&
-            mouseY >= rectangle2Ypos - rectangleHeight2 / 2 && mouseY <= rectangleHeight2 / 2)) {
+            mouseY >= rectangle2Ypos - rectangleHeight2 / 2 && mouseY <= rectangle2Ypos + rectangleHeight2 / 2)) {
+            console.log("Red rectangle clicked"); // Debug log
             positionStore.update(pos => {
                 pos.decision_type = 1; // Set decision type to doubling cube
+                console.log("Updated decision_type to 1 for red rectangle"); // Debug log
                 return pos;
             });
         }
@@ -365,12 +373,14 @@
         const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * gap;
         const diceYpos = get(positionStore).player_on_roll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
 
+        let diceClicked = false;
+
         positionStore.update(pos => {
-            pos.decision_type = 0; // Set decision type to checker
             pos.dice.forEach((die, index) => {
                 const dieXpos = diceXpos + index * (diceSize + gap);
                 if (mouseX >= dieXpos - diceSize / 2 && mouseX <= dieXpos + diceSize / 2 &&
                     mouseY >= diceYpos - diceSize / 2 && mouseY <= diceYpos + diceSize / 2) {
+                    diceClicked = true;
                     if (event.button === 0) {
                         pos.dice[index] = (die % 6) + 1; // Left click to increase
                     } else if (event.button === 2) {
@@ -378,6 +388,11 @@
                     }
                 }
             });
+
+            if (diceClicked) {
+                pos.decision_type = 0; // Set decision type to checker only if dice are clicked
+            }
+
             console.log("Updated dice values:", pos.dice); // Debug log
             return pos;
         });
@@ -418,7 +433,9 @@
 
         unsubscribe = positionStore.subscribe(() => {
             drawBoard();
-            console.log("positionStore: ", get(positionStore));
+            const position = get(positionStore);
+            console.log("positionStore.subscribe - decision_type: ", position.decision_type); // Debug log
+            console.log("positionStore: ", position);
         });
 
         logCanvasSize();
@@ -453,6 +470,10 @@
         console.log("width: ", width, "height: ", height);
         console.log("boardOrigXpos: ", boardOrigXpos, "boardOrigYpos: ", boardOrigYpos);
         console.log("two.width: ", two.width, "two.height: ", two.height);
+
+        const position = get(positionStore);
+        console.log("drawBoard - decision_type: ", position.decision_type); // Debug log
+
         function createTriangle(x, y, flip) {
             if (flip == false) {
                 const triangle = two.makePath(
