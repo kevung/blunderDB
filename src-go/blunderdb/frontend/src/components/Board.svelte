@@ -469,8 +469,7 @@
         canvas.addEventListener("mousemove", handleMouseMove);
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("dblclick", handleDoubleClick);
-        // Remove the event listener that prevents the contextual menu
-        // canvas.addEventListener("contextmenu", (event) => event.preventDefault());
+        canvas.addEventListener("contextmenu", (event) => event.preventDefault());
         canvas.addEventListener("mousedown", handleDoublingCubeClick);
         canvas.addEventListener("mousedown", handleRectangleClick);
         canvas.addEventListener("mousedown", handleDiceClick);
@@ -494,8 +493,7 @@
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseup", handleMouseUp);
         canvas.removeEventListener("dblclick", handleDoubleClick);
-        // Remove the event listener that prevents the contextual menu
-        // canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
+        canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
         canvas.removeEventListener("mousedown", handleDoublingCubeClick);
         canvas.removeEventListener("mousedown", handleRectangleClick);
         canvas.removeEventListener("mousedown", handleDiceClick);
@@ -818,12 +816,12 @@
             // Add transparent rectangles with red borders
             const rectangle1 = two.makeRectangle(bearoff1Xpos, (bearoff1Ypos + score1Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff1Ypos - score1Ypos));
             rectangle1.fill = "transparent";
-            rectangle1.stroke = "red";
+            rectangle1.stroke = "transparent"; // Make border invisible
             rectangle1.linewidth = 2;
 
             const rectangle2 = two.makeRectangle(bearoff2Xpos, (bearoff2Ypos + score2Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff2Ypos - score2Ypos));
             rectangle2.fill = "transparent";
-            rectangle2.stroke = "red";
+            rectangle2.stroke = "transparent"; // Make border invisible
             rectangle2.linewidth = 2;
         }
 
@@ -891,12 +889,12 @@
             // Add transparent red rectangles behind the score text
             const redRectangle1 = two.makeRectangle(score1Xpos, score1Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
             redRectangle1.fill = "transparent";
-            redRectangle1.stroke = "red";
+            redRectangle1.stroke = "transparent"; // Make border invisible
             redRectangle1.linewidth = 2;
 
             const redRectangle2 = two.makeRectangle(score2Xpos, score2Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
             redRectangle2.fill = "transparent";
-            redRectangle2.stroke = "red";
+            redRectangle2.stroke = "transparent"; // Make border invisible
             redRectangle2.linewidth = 2;
 
             // Add score text
@@ -929,12 +927,12 @@
             // Add transparent green rectangles on top of the score text
             const greenRectangle1 = two.makeRectangle(score1Xpos, score1Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
             greenRectangle1.fill = "transparent";
-            greenRectangle1.stroke = "green";
+            greenRectangle1.stroke = "transparent"; // Make border invisible
             greenRectangle1.linewidth = 2;
 
             const greenRectangle2 = two.makeRectangle(score2Xpos, score2Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
             greenRectangle2.fill = "transparent";
-            greenRectangle2.stroke = "green";
+            greenRectangle2.stroke = "transparent"; // Make border invisible
             greenRectangle2.linewidth = 2;
         }
 
