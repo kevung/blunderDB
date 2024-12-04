@@ -8,6 +8,4 @@ export function OpenPositionDialog():Promise<main.FileDialogResponse>;
 
 export function SaveDatabaseDialog():Promise<string>;
 
-export function SaveImportedPosition(arg1:string):Promise<void>;
-
 export function ShowAlert(arg1:string):Promise<void>;

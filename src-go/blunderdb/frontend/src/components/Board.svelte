@@ -488,7 +488,6 @@
         canvas.addEventListener("mousemove", handleMouseMove);
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("dblclick", handleDoubleClick);
-        canvas.addEventListener("contextmenu", (event) => event.preventDefault());
         canvas.addEventListener("mousedown", handleDoublingCubeClick);
         canvas.addEventListener("mousedown", handleRectangleClick);
         canvas.addEventListener("mousedown", handleDiceClick);
@@ -513,7 +512,6 @@
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseup", handleMouseUp);
         canvas.removeEventListener("dblclick", handleDoubleClick);
-        canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
         canvas.removeEventListener("mousedown", handleDoublingCubeClick);
         canvas.removeEventListener("mousedown", handleRectangleClick);
         canvas.removeEventListener("mousedown", handleDiceClick);

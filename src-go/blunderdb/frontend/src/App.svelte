@@ -9,9 +9,11 @@
         SaveDatabaseDialog,
         OpenDatabaseDialog,
         OpenPositionDialog,
-        SaveImportedPosition,
         ShowAlert,
     } from '../wailsjs/go/main/App.js';
+    import {
+        SetupDatabase,
+    } from '../wailsjs/go/main/Database.js';
 
     // import stores
     import {
@@ -132,6 +134,7 @@
             if (filePath) {
                 newDatabasePathStore.set(filePath);
                 console.log('newDatabasePathStore:', $newDatabasePathStore);
+                await SetupDatabase(filePath);
             } else {
                 console.log('No file selected');
             }
