@@ -46,6 +46,69 @@ export namespace main {
 		    return a;
 		}
 	}
+	export class CheckerMove {
+	    index: number;
+	    analysisDepth: string;
+	    move: string;
+	    equity: number;
+	    equityError?: number;
+	    playerWinChance: number;
+	    playerGammonChance: number;
+	    playerBackgammonChance: number;
+	    opponentWinChance: number;
+	    opponentGammonChance: number;
+	    opponentBackgammonChance: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CheckerMove(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.index = source["index"];
+	        this.analysisDepth = source["analysisDepth"];
+	        this.move = source["move"];
+	        this.equity = source["equity"];
+	        this.equityError = source["equityError"];
+	        this.playerWinChance = source["playerWinChance"];
+	        this.playerGammonChance = source["playerGammonChance"];
+	        this.playerBackgammonChance = source["playerBackgammonChance"];
+	        this.opponentWinChance = source["opponentWinChance"];
+	        this.opponentGammonChance = source["opponentGammonChance"];
+	        this.opponentBackgammonChance = source["opponentBackgammonChance"];
+	    }
+	}
+	export class CheckerAnalysis {
+	    moves: CheckerMove[];
+	
+	    static createFrom(source: any = {}) {
+	        return new CheckerAnalysis(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.moves = this.convertValues(source["moves"], CheckerMove);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class Cube {
 	    owner: number;
 	    value: number;
@@ -58,6 +121,44 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.owner = source["owner"];
 	        this.value = source["value"];
+	    }
+	}
+	export class DoublingCubeAnalysis {
+	    playerWinChances: number;
+	    playerGammonChances: number;
+	    playerBackgammonChances: number;
+	    opponentWinChances: number;
+	    opponentGammonChances: number;
+	    opponentBackgammonChances: number;
+	    cubelessNoDoubleEquity: number;
+	    cubelessDoubleEquity: number;
+	    cubefulNoDoubleEquity: number;
+	    cubefulNoDoubleError?: number;
+	    cubefulDoubleTakeEquity: number;
+	    cubefulDoubleTakeError: number;
+	    cubefulDoublePassEquity: number;
+	    cubefulDoublePassError: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new DoublingCubeAnalysis(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.playerWinChances = source["playerWinChances"];
+	        this.playerGammonChances = source["playerGammonChances"];
+	        this.playerBackgammonChances = source["playerBackgammonChances"];
+	        this.opponentWinChances = source["opponentWinChances"];
+	        this.opponentGammonChances = source["opponentGammonChances"];
+	        this.opponentBackgammonChances = source["opponentBackgammonChances"];
+	        this.cubelessNoDoubleEquity = source["cubelessNoDoubleEquity"];
+	        this.cubelessDoubleEquity = source["cubelessDoubleEquity"];
+	        this.cubefulNoDoubleEquity = source["cubefulNoDoubleEquity"];
+	        this.cubefulNoDoubleError = source["cubefulNoDoubleError"];
+	        this.cubefulDoubleTakeEquity = source["cubefulDoubleTakeEquity"];
+	        this.cubefulDoubleTakeError = source["cubefulDoubleTakeError"];
+	        this.cubefulDoublePassEquity = source["cubefulDoublePassEquity"];
+	        this.cubefulDoublePassError = source["cubefulDoublePassError"];
 	    }
 	}
 	export class FileDialogResponse {
@@ -97,6 +198,50 @@ export namespace main {
 	        this.score = source["score"];
 	        this.player_on_roll = source["player_on_roll"];
 	        this.decision_type = source["decision_type"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class PositionAnalysis {
+	    positionId: number;
+	    xgid: string;
+	    player1: string;
+	    player2: string;
+	    extremeGammonVersion: string;
+	    analysisType: string;
+	    doublingCubeAnalysis?: DoublingCubeAnalysis;
+	    checkerAnalysis?: CheckerAnalysis;
+	
+	    static createFrom(source: any = {}) {
+	        return new PositionAnalysis(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.positionId = source["positionId"];
+	        this.xgid = source["xgid"];
+	        this.player1 = source["player1"];
+	        this.player2 = source["player2"];
+	        this.extremeGammonVersion = source["extremeGammonVersion"];
+	        this.analysisType = source["analysisType"];
+	        this.doublingCubeAnalysis = this.convertValues(source["doublingCubeAnalysis"], DoublingCubeAnalysis);
+	        this.checkerAnalysis = this.convertValues(source["checkerAnalysis"], CheckerAnalysis);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

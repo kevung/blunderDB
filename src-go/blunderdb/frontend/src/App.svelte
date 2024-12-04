@@ -13,6 +13,8 @@
     } from '../wailsjs/go/main/App.js';
     import {
         SetupDatabase,
+        SavePosition,
+        SaveAnalysis
     } from '../wailsjs/go/main/Database.js';
 
     // import stores
@@ -159,6 +161,7 @@
             if (filePath) {
                 databasePathStore.set(filePath);
                 console.log('databasePathStore:', $databasePathStore);
+                await SetupDatabase(filePath);
                 updateStatusBarMessage('Database opened successfully');
             } else {
                 console.log('No Database selected');
@@ -394,7 +397,7 @@
             }
             if (redoublePassMatch) {
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(redoublePassMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = redoublePassMatch[2] ? parseFloat(redoublePassMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = parseFloat(redoublePassMatch[2]) ? parseFloat(redoublePassMatch[2]) : 0;
             }
             if (bestCubeActionMatch) {
                 parsedAnalysis.doublingCubeAnalysis.bestCubeAction = bestCubeActionMatch[1].trim();
@@ -493,6 +496,39 @@
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
             });
+    }
+
+    async function saveCurrentPosition() {
+        console.log('saveCurrentPosition');
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
+
+        try {
+            const position = $positionStore;
+            const analysis = $analysisStore;
+
+            console.log('Position to save:', position);
+            console.log('Analysis to save:', analysis);
+
+            // Ensure checkerAnalysis is correctly structured
+            if (Array.isArray(analysis.checkerAnalysis)) {
+                analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
+            }
+
+            const positionID = await SavePosition(position);
+            console.log('Position saved with ID:', positionID);
+
+            await SaveAnalysis(positionID, analysis);
+            console.log('Analysis saved for position ID:', positionID);
+
+            updateStatusBarMessage('Position and analysis saved successfully');
+            statusBarModeStore.set('NORMAL');
+        } catch (error) {
+            console.error('Error saving position and analysis:', error);
+            updateStatusBarMessage('Error saving position and analysis');
+        }
     }
 
     function addPosition() {
@@ -649,7 +685,7 @@
         onImportPosition={importPosition}
         onCopyPosition={copyPosition}
         onPastePosition={pastePosition}
-        onAddPosition={addPosition}
+        onAddPosition={saveCurrentPosition}
         onUpdatePosition={updatePosition}
         onDeletePosition={deletePosition}
         onFirstPosition={firstPosition}
