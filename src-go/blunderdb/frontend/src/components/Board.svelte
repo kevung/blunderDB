@@ -289,6 +289,8 @@
     }
 
     function handleRectangleClick(event) {
+        if (mode !== "EDIT") return;
+
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
@@ -357,6 +359,8 @@
     }
 
     function handleDiceClick(event) {
+        if (mode !== "EDIT") return;
+
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
@@ -399,6 +403,8 @@
     }
 
     function handleScoreClick(event) {
+        if (mode !== "EDIT") return;
+
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
