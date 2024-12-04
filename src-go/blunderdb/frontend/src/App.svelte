@@ -127,6 +127,14 @@
         }
     }
 
+    // Function to update the status bar message temporarily
+    function updateStatusBarMessage(message, duration = 5000) {
+        statusBarTextStore.set(message);
+        setTimeout(() => {
+            statusBarTextStore.set('');
+        }, duration);
+    }
+
     async function newDatabase() {
         console.log('newDatabase');
         try {
@@ -135,11 +143,13 @@
                 newDatabasePathStore.set(filePath);
                 console.log('newDatabasePathStore:', $newDatabasePathStore);
                 await SetupDatabase(filePath);
+                updateStatusBarMessage('New database created successfully');
             } else {
                 console.log('No file selected');
             }
         } catch (error) {
             console.error('Error opening file dialog:', error);
+            updateStatusBarMessage('Error creating new database');
         }
     }
 
