@@ -313,6 +313,7 @@
             mouseY >= Math.min(bearoff1Ypos, score1Ypos) && mouseY <= Math.max(bearoff1Ypos, score1Ypos)) {
             positionStore.update(pos => {
                 pos.player_on_roll = 0;
+                pos.decision_type = 1; // Set decision type to doubling cube
                 return pos;
             });
         }
@@ -322,9 +323,64 @@
             mouseY >= Math.min(bearoff2Ypos, score2Ypos) && mouseY <= Math.max(bearoff2Ypos, score2Ypos)) {
             positionStore.update(pos => {
                 pos.player_on_roll = 1;
+                pos.decision_type = 1; // Set decision type to doubling cube
                 return pos;
             });
         }
+
+        // Check if the click is inside the red rectangle
+        const rectangle1Xpos = bearoff1Xpos;
+        const rectangle1Ypos = (bearoff1Ypos + score1Ypos) / 2;
+        const rectangle2Xpos = bearoff2Xpos;
+        const rectangle2Ypos = (bearoff2Ypos + score2Ypos) / 2;
+        const rectangleWidth = 1.5 * boardCheckerSize;
+        const rectangleHeight1 = Math.abs(bearoff1Ypos - score1Ypos);
+        const rectangleHeight2 = Math.abs(bearoff2Ypos - score2Ypos);
+
+        if ((mouseX >= rectangle1Xpos - rectangleWidth / 2 && mouseX <= rectangle1Xpos + rectangleWidth / 2 &&
+            mouseY >= rectangle1Ypos - rectangleHeight1 / 2 && mouseY <= rectangle1Ypos + rectangleHeight1 / 2) ||
+            (mouseX >= rectangle2Xpos - rectangleWidth / 2 && mouseX <= rectangle2Xpos + rectangleWidth / 2 &&
+            mouseY >= rectangle2Ypos - rectangleHeight2 / 2 && mouseY <= rectangleHeight2 / 2)) {
+            positionStore.update(pos => {
+                pos.decision_type = 1; // Set decision type to doubling cube
+                return pos;
+            });
+        }
+    }
+
+    function handleDiceClick(event) {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = event.clientX - rect.left;
+        const mouseY = event.clientY - rect.top;
+
+        const boardAspectFactor = 11 / 13;
+        const boardWidth = boardCfg.widthFactor * width;
+        const boardHeight = boardAspectFactor * boardWidth;
+        const boardCheckerSize = boardHeight / 11;
+        const boardOrigXpos = width / 2;
+        const boardOrigYpos = height / 2;
+        const gap = 0.325 * boardCheckerSize;
+        const diceSize = 0.7 * boardCheckerSize;
+
+        const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * gap;
+        const diceYpos = get(positionStore).player_on_roll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
+
+        positionStore.update(pos => {
+            pos.decision_type = 0; // Set decision type to checker
+            pos.dice.forEach((die, index) => {
+                const dieXpos = diceXpos + index * (diceSize + gap);
+                if (mouseX >= dieXpos - diceSize / 2 && mouseX <= dieXpos + diceSize / 2 &&
+                    mouseY >= diceYpos - diceSize / 2 && mouseY <= diceYpos + diceSize / 2) {
+                    if (event.button === 0) {
+                        pos.dice[index] = (die % 6) + 1; // Left click to increase
+                    } else if (event.button === 2) {
+                        pos.dice[index] = (die === 1 ? 6 : die - 1); // Right click to decrease
+                    }
+                }
+            });
+            console.log("Updated dice values:", pos.dice); // Debug log
+            return pos;
+        });
     }
 
     function logCanvasSize() {
@@ -352,9 +408,11 @@
         canvas.addEventListener("mousemove", handleMouseMove);
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("dblclick", handleDoubleClick);
-        canvas.addEventListener("contextmenu", (event) => event.preventDefault()); // Prevent contextual menu
+        // Remove the event listener that prevents the contextual menu
+        // canvas.addEventListener("contextmenu", (event) => event.preventDefault());
         canvas.addEventListener("mousedown", handleDoublingCubeClick);
         canvas.addEventListener("mousedown", handleRectangleClick);
+        canvas.addEventListener("mousedown", handleDiceClick);
         drawBoard();
         window.addEventListener("resize", resizeBoard);
 
@@ -372,9 +430,11 @@
         canvas.removeEventListener("mousemove", handleMouseMove);
         canvas.removeEventListener("mouseup", handleMouseUp);
         canvas.removeEventListener("dblclick", handleDoubleClick);
-        canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
+        // Remove the event listener that prevents the contextual menu
+        // canvas.removeEventListener("contextmenu", (event) => event.preventDefault());
         canvas.removeEventListener("mousedown", handleDoublingCubeClick);
         canvas.removeEventListener("mousedown", handleRectangleClick);
+        canvas.removeEventListener("mousedown", handleDiceClick);
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         if (unsubscribe) unsubscribe();
