@@ -178,3 +178,57 @@ func (d *Database) LoadAnalysis(positionID int) (*PositionAnalysis, error) {
 
 	return &analysis, nil
 }
+
+func (d *Database) LoadAllPositions() ([]Position, error) {
+	rows, err := d.db.Query(`SELECT state FROM position`)
+	if err != nil {
+		fmt.Println("Error loading positions:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var positions []Position
+	for rows.Next() {
+		var stateJSON string
+		if err := rows.Scan(&stateJSON); err != nil {
+			fmt.Println("Error scanning position:", err)
+			return nil, err
+		}
+
+		var position Position
+		if err := json.Unmarshal([]byte(stateJSON), &position); err != nil {
+			fmt.Println("Error unmarshalling position:", err)
+			return nil, err
+		}
+		positions = append(positions, position)
+	}
+
+	return positions, nil
+}
+
+func (d *Database) LoadAllAnalyses() ([]PositionAnalysis, error) {
+	rows, err := d.db.Query(`SELECT data FROM analysis`)
+	if err != nil {
+		fmt.Println("Error loading analyses:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var analyses []PositionAnalysis
+	for rows.Next() {
+		var analysisJSON string
+		if err := rows.Scan(&analysisJSON); err != nil {
+			fmt.Println("Error scanning analysis:", err)
+			return nil, err
+		}
+
+		var analysis PositionAnalysis
+		if err := json.Unmarshal([]byte(analysisJSON), &analysis); err != nil {
+			fmt.Println("Error unmarshalling analysis:", err)
+			return nil, err
+		}
+		analyses = append(analyses, analysis)
+	}
+
+	return analyses, nil
+}

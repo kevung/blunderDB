@@ -13,32 +13,9 @@ var assets embed.FS
 
 func main() {
 
-	/* 	db, errDb := backend.SetupDatabase()
-	   	if errDb != nil {
-	   		log.Fatal(errDb)
-	   	} */
-
 	// Create an instance of the app structure
 	app := NewApp()
 	db := NewDatabase()
-
-	// errDb := db.SetupDatabase("blunderdb.db")
-	// if errDb != nil {
-	// 	log.Fatal(errDb)
-	// }
-
-	// var position Position = InitializePosition()
-
-	// db.SavePosition(position)
-
-	// position2, _ := db.LoadPosition(1)
-	// fmt.Printf("%+v\n", position2)
-
-	// if position == *position2 {
-	// 	fmt.Println("The game states are equal.")
-	// } else {
-	// 	fmt.Println("The game states are not equal.")
-	// }
 
 	// Calculate the initial height based on the aspect factor
 	initialWidth := 960

@@ -15,7 +15,9 @@
     import {
         SetupDatabase,
         SavePosition,
-        SaveAnalysis
+        SaveAnalysis,
+        LoadAllPositions,
+        LoadAllAnalyses
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
@@ -63,6 +65,12 @@
     // Reference for various elements.
     let mainArea;
     let commandInput;
+
+    let positions = [];
+    let analyses = [];
+    let currentPositionIndex = 0;
+
+    let db;
 
     //Global shortcuts
     function handleKeyDown(event) {
@@ -182,6 +190,17 @@
                 updateStatusBarMessage('Database opened successfully');
                 const filename = getFilenameFromPath(filePath);
                 WindowSetTitle(`blunderDB - ${filename}`);
+
+                // Load positions and analyses
+                positions = await LoadAllPositions();
+                analyses = await LoadAllAnalyses();
+
+                // Update status bar and show the last position by default
+                if (positions.length > 0) {
+                    currentPositionIndex = positions.length - 1;
+                    updateStatusBar(currentPositionIndex, positions.length);
+                    showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                }
             } else {
                 console.log('No Database selected');
             }
@@ -412,7 +431,7 @@
             }
             if (redoubleTakeMatch) {
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(redoubleTakeMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = redoubleTakeMatch[2] ? parseFloat(redoubleTakeMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = parseFloat(redoubleTakeMatch[2]) ? parseFloat(redoubleTakeMatch[2]) : 0;
             }
             if (redoublePassMatch) {
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(redoublePassMatch[1]);
@@ -592,11 +611,19 @@
     }
 
     function previousPosition() {
-        console.log('previousPosition');
+        if (currentPositionIndex > 0) {
+            currentPositionIndex--;
+            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            updateStatusBar(currentPositionIndex, positions.length);
+        }
     }
 
     function nextPosition() {
-        console.log('nextPosition');
+        if (currentPositionIndex < positions.length - 1) {
+            currentPositionIndex++;
+            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            updateStatusBar(currentPositionIndex, positions.length);
+        }
     }
 
     function lastPosition() {
@@ -716,6 +743,18 @@
 
             }, 0);
         }
+    }
+
+    // Function to update the status bar
+    function updateStatusBar(currentIndex, total) {
+        currentPositionStore.set(currentIndex + 1);
+        listPositionStore.set(total);
+    }
+
+    // Function to show a specific position and analysis
+    function showPosition(position, analysis) {
+        positionStore.set(position);
+        analysisStore.set(analysis);
     }
 
 </script>
