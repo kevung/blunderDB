@@ -173,6 +173,7 @@
                 updateStatusBarMessage('New database created successfully');
                 const filename = getFilenameFromPath(filePath);
                 WindowSetTitle(`blunderDB - ${filename}`);
+                console.log(`New database created at ${filePath}`);
             } else {
                 console.log('No file selected');
             }
@@ -218,6 +219,10 @@
     }
 
     export async function importPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         try {
             const response = await OpenPositionDialog();
 
@@ -558,6 +563,10 @@
     }
 
     function copyPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('copyPosition');
         const position = $positionStore;
         const analysis = $analysisStore;
@@ -617,6 +626,10 @@
     }
 
     async function pastePosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('pastePosition');
         let promise = window.runtime.ClipboardGetText();
         promise.then(
@@ -660,6 +673,10 @@
     }
 
     async function saveCurrentPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('saveCurrentPosition');
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
@@ -709,6 +726,10 @@
     }
 
     async function deletePosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('deletePosition');
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
@@ -753,6 +774,10 @@
     }
 
     async function updatePosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('updatePosition');
         if ($statusBarModeStore !== 'EDIT') {
             updateStatusBarMessage('Update is only possible in edit mode');
@@ -820,6 +845,10 @@
     }
 
     function firstPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         if (positions.length > 0) {
             currentPositionIndex = 0;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
@@ -828,6 +857,10 @@
     }
 
     function previousPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         if (currentPositionIndex > 0) {
             currentPositionIndex--;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
@@ -836,6 +869,10 @@
     }
 
     function nextPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         if (currentPositionIndex < positions.length - 1) {
             currentPositionIndex++;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
@@ -844,6 +881,10 @@
     }
 
     function lastPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         if (positions.length > 0) {
             currentPositionIndex = positions.length - 1;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
@@ -852,6 +893,10 @@
     }
 
     function gotoPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         showGoToPositionModal = true;
     }
 
@@ -865,6 +910,10 @@
     }
 
     function findPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('findPosition');
     }
 
@@ -899,6 +948,10 @@
     }
 
     function toggleAnalysisPanel() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('toggleAnalysisPanel');
 
         if($statusBarModeStore === 'NORMAL') {
@@ -924,6 +977,10 @@
     }
 
     function toggleCommentPanel() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
         console.log('toggleCommentPanel');
 
         if($statusBarModeStore === 'NORMAL'){
