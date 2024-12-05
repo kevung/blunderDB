@@ -531,6 +531,7 @@
                     console.log('Analysis saved for position ID:', positionID);
 
                     updateStatusBarMessage('Pasted position and analysis saved successfully');
+                    statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
                 } catch (error) {
                     console.error('Error saving pasted position and analysis:', error);
                     updateStatusBarMessage('Error saving pasted position and analysis');
