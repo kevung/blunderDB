@@ -791,8 +791,8 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
-        if (showGoToPositionModal) {
-            return; // Prevent changing position when GoToPositionModal is open
+        if (showGoToPositionModal || $statusBarModeStore === 'EDIT') {
+            return; // Prevent changing position when GoToPositionModal is open or in edit mode
         }
         if (positions.length > 0) {
             if (event.deltaY < 0) {
