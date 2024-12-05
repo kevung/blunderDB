@@ -203,6 +203,7 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 		positions = append(positions, position)
 	}
 
+	fmt.Println("Loaded positions:", positions)
 	return positions, nil
 }
 
@@ -230,5 +231,6 @@ func (d *Database) LoadAllAnalyses() ([]PositionAnalysis, error) {
 		analyses = append(analyses, analysis)
 	}
 
+	fmt.Println("Loaded analyses:", analyses)
 	return analyses, nil
 }

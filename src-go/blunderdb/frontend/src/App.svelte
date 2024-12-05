@@ -390,8 +390,8 @@
             // Best Cube action parsing
             const bestCubeActionMatch = normalizedContent.match(isFrench ? /Meilleur action du videau:\s*(.*)/ : /Best Cube action:\s*(.*)/);
 
-            const wrongPassPercentageMatch = normalizedContent.match(isFrench ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/);
-            const wrongTakePercentageMatch = normalizedContent.match(isFrench ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/);
+            const wrongPassPercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/));
+            const wrongTakePercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/));
 
 
 
@@ -580,11 +580,27 @@
                 analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
             }
 
+            // Log the number of positions before adding
+            let initialPositions = await LoadAllPositions();
+            console.log('Number of positions before saving:', initialPositions.length);
+
             const positionID = await SavePosition(position);
             console.log('Position saved with ID:', positionID);
 
             await SaveAnalysis(positionID, analysis);
             console.log('Analysis saved for position ID:', positionID);
+
+            // Retrieve all positions and show the last one
+            positions = await LoadAllPositions();
+            console.log('Number of positions after saving:', positions.length);
+            analyses = await LoadAllAnalyses();
+            console.log('Loaded analyses:', analyses);
+
+            if (positions.length > 0) {
+                currentPositionIndex = positions.length - 1;
+                updateStatusBar(currentPositionIndex, positions.length);
+                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            }
 
             updateStatusBarMessage('Position and analysis saved successfully');
             statusBarModeStore.set('NORMAL');
@@ -592,10 +608,6 @@
             console.error('Error saving position and analysis:', error);
             updateStatusBarMessage('Error saving position and analysis');
         }
-    }
-
-    function addPosition() {
-        console.log('addPosition');
     }
 
     function updatePosition() {
@@ -776,7 +788,7 @@
         onImportPosition={importPosition}
         onCopyPosition={copyPosition}
         onPastePosition={pastePosition}
-        onAddPosition={saveCurrentPosition}
+        onSavePosition={saveCurrentPosition}
         onUpdatePosition={updatePosition}
         onDeletePosition={deletePosition}
         onFirstPosition={firstPosition}
@@ -893,5 +905,5 @@
         flex-direction: column; /* Or row, depending on layout */
         height: 100%;
     }
-
+    
 </style>
