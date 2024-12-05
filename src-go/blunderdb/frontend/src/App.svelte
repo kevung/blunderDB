@@ -870,6 +870,11 @@
 
     function toggleEditMode(){
         console.log('toggleEditMode');
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            statusBarModeStore.set('NORMAL');
+            return;
+        }
         if($statusBarModeStore !== "EDIT") {
             if(showComment){
                 toggleCommentPanel();
