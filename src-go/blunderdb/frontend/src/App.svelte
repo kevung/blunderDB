@@ -607,7 +607,11 @@
     }
 
     function firstPosition() {
-        console.log('firstPosition');
+        if (positions.length > 0) {
+            currentPositionIndex = 0;
+            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            updateStatusBar(currentPositionIndex, positions.length);
+        }
     }
 
     function previousPosition() {
@@ -627,7 +631,11 @@
     }
 
     function lastPosition() {
-        console.log('lastPosition');
+        if (positions.length > 0) {
+            currentPositionIndex = positions.length - 1;
+            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            updateStatusBar(currentPositionIndex, positions.length);
+        }
     }
 
     function gotoPosition() {
