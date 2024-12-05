@@ -785,8 +785,12 @@
 
     // Function to show a specific position and analysis
     function showPosition(position, analysis) {
-        positionStore.set(position);
-        analysisStore.set(analysis);
+        // Create a deep copy of the position data
+        const positionCopy = JSON.parse(JSON.stringify(position));
+        const analysisCopy = JSON.parse(JSON.stringify(analysis));
+        
+        positionStore.set(positionCopy);
+        analysisStore.set(analysisCopy);
     }
 
     // Function to handle mouse wheel events
