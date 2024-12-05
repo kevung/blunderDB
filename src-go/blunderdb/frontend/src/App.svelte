@@ -18,6 +18,8 @@
         SaveAnalysis
     } from '../wailsjs/go/main/Database.js';
 
+    import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
+
     // import stores
     import {
         databasePathStore,
@@ -137,6 +139,10 @@
         }, duration);
     }
 
+    function getFilenameFromPath(filePath) {
+        return filePath.split('/').pop();
+    }
+
     async function newDatabase() {
         console.log('newDatabase');
         try {
@@ -154,6 +160,8 @@
                 console.log('databasePathStore:', $databasePathStore);
                 await SetupDatabase(filePath);
                 updateStatusBarMessage('New database created successfully');
+                const filename = getFilenameFromPath(filePath);
+                WindowSetTitle(`blunderDB - ${filename}`);
             } else {
                 console.log('No file selected');
             }
@@ -172,6 +180,8 @@
                 console.log('databasePathStore:', $databasePathStore);
                 await SetupDatabase(filePath);
                 updateStatusBarMessage('Database opened successfully');
+                const filename = getFilenameFromPath(filePath);
+                WindowSetTitle(`blunderDB - ${filename}`);
             } else {
                 console.log('No Database selected');
             }
