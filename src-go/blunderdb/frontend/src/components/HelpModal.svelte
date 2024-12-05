@@ -250,6 +250,31 @@
                         </tbody>
                     </table>
 
+                    <h3>Display</h3>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            <tr>
+                                <td>Ctrl + ArrowLeft</td>
+                                <td>Set Board Orientation to Left</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + ArrowRight</td>
+                                <td>Set Board Orientation to Right</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+
                     <h3>Modes</h3>
 
                     <table>
