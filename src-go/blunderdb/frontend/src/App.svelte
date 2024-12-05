@@ -18,7 +18,9 @@
         SaveAnalysis,
         LoadAllPositions,
         LoadAllAnalyses,
-        DeletePosition
+        DeletePosition,
+        DeleteAnalysis,
+        UpdatePosition
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
@@ -750,8 +752,67 @@
         }
     }
 
-    function updatePosition() {
+    async function updatePosition() {
         console.log('updatePosition');
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
+
+        if (positions.length === 0) {
+            updateStatusBarMessage('No positions to update');
+            return;
+        }
+
+        try {
+            const position = $positionStore;
+            const analysis = $analysisStore;
+            const originalPosition = positions[currentPositionIndex];
+
+            console.log('Position to update:', position);
+            console.log('Analysis to update:', analysis);
+
+            // Ensure checkerAnalysis is correctly structured
+            if (Array.isArray(analysis.checkerAnalysis)) {
+                analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
+            }
+
+            const positionID = originalPosition.id;
+
+            // Check if the edited position is different from the original position
+            const positionJSON = JSON.stringify(position);
+            const originalPositionJSON = JSON.stringify(originalPosition);
+
+            if (positionJSON !== originalPositionJSON) {
+                // Delete the existing analysis if the position has changed
+                await DeleteAnalysis(positionID);
+                console.log('Analysis deleted for position ID:', positionID);
+            }
+
+            // Update the position in the database
+            await UpdatePosition(position);
+            console.log('Position updated with ID:', positionID);
+
+            // Update the analysis in the database
+            await SaveAnalysis(positionID, analysis);
+            console.log('Analysis updated for position ID:', positionID);
+
+            // Retrieve all positions and show the last one
+            positions = await LoadAllPositions();
+            analyses = await LoadAllAnalyses();
+
+            if (positions.length > 0) {
+                currentPositionIndex = positions.length - 1;
+                updateStatusBar(currentPositionIndex, positions.length);
+                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            }
+
+            updateStatusBarMessage('Position and analysis updated successfully');
+            statusBarModeStore.set('NORMAL');
+        } catch (error) {
+            console.error('Error updating position and analysis:', error);
+            updateStatusBarMessage('Error updating position and analysis');
+        }
     }
 
     function firstPosition() {

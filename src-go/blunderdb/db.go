@@ -72,39 +72,41 @@ func (d *Database) PositionExists(position Position) (int64, bool, error) {
 }
 
 func (d *Database) SavePosition(position Position) (int64, error) {
-	positionID, exists, err := d.PositionExists(position)
-	if err != nil {
-		fmt.Println("Error checking if position exists:", err)
-		return 0, err
-	}
-
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
 		return 0, err
 	}
 
-	if exists {
-		_, err = d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-		if err != nil {
-			fmt.Println("Error updating position:", err)
-			return 0, err
-		}
-	} else {
-		result, err := d.db.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
-		if err != nil {
-			fmt.Println("Error inserting position:", err)
-			return 0, err
-		}
+	result, err := d.db.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	if err != nil {
+		fmt.Println("Error inserting position:", err)
+		return 0, err
+	}
 
-		positionID, err = result.LastInsertId()
-		if err != nil {
-			fmt.Println("Error getting last insert ID:", err)
-			return 0, err
-		}
+	positionID, err := result.LastInsertId()
+	if err != nil {
+		fmt.Println("Error getting last insert ID:", err)
+		return 0, err
 	}
 
 	return positionID, nil
+}
+
+func (d *Database) UpdatePosition(position Position) error {
+	positionJSON, err := json.Marshal(position)
+	if err != nil {
+		fmt.Println("Error marshalling position:", err)
+		return err
+	}
+
+	_, err = d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), position.ID)
+	if err != nil {
+		fmt.Println("Error updating position:", err)
+		return err
+	}
+
+	return nil
 }
 
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
@@ -241,6 +243,15 @@ func (d *Database) DeletePosition(positionID int64) error {
 	_, err := d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
 	if err != nil {
 		fmt.Println("Error deleting position:", err)
+		return err
+	}
+	return nil
+}
+
+func (d *Database) DeleteAnalysis(positionID int64) error {
+	_, err := d.db.Exec(`DELETE FROM analysis WHERE position_id = ?`, positionID)
+	if err != nil {
+		fmt.Println("Error deleting analysis:", err)
 		return err
 	}
 	return nil
