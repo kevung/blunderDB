@@ -1,8 +1,8 @@
 <script>
   export let mode = "normal"; // Current mode
   export let text = ""; // Info message to display
-  export let positionIndex = 0; // Current position
-  export let positionTotal = 0; // Total positions
+  export let currentPosition = 0; // Current position
+  export let totalPositions = 0; // Total positions
 </script>
 
 <div class="status-bar">
@@ -10,7 +10,7 @@
   <div class="separator"></div>
   <span class="info-message">{text}</span>
   <div class="separator"></div>
-  <span class="position">{positionIndex} / {positionTotal}</span>
+  <span class="position">{totalPositions > 0 ? currentPosition + 1 : 0} / {totalPositions}</span>
 </div>
 
 <style>
@@ -51,7 +51,7 @@
       width: 1px; /* Width of the separator */
       height: 20px; /* Height of the separator */
       background-color: rgba(0, 0, 0, 0.2); /* Light color for the separator */
-      margin: 0 0px;
+      margin: 0 8px; /* Add some space between the separators */
   }
 
 </style>

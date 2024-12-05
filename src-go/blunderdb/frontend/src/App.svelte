@@ -30,8 +30,6 @@
     import {
         importPositionPathStore,
         pastePositionTextStore,
-        currentPositionStore,
-        listPositionStore,
         positionStore,
     } from './stores/positionStore';
 
@@ -68,10 +66,10 @@
     let mainArea;
     let commandInput;
 
+    let currentPositionIndex = 0;
+    let totalPositions = 0;
     let positions = [];
     let analyses = [];
-    let currentPositionIndex = 0;
-
     let db;
 
     //Global shortcuts
@@ -779,8 +777,8 @@
 
     // Function to update the status bar
     function updateStatusBar(currentIndex, total) {
-        currentPositionStore.set(currentIndex + 1);
-        listPositionStore.set(total);
+        currentPositionIndex = currentIndex;
+        totalPositions = total;
     }
 
     // Function to show a specific position and analysis
@@ -883,8 +881,8 @@
     <StatusBar
         mode={$statusBarModeStore}
         text={$statusBarTextStore}
-        positionIndex={$currentPositionStore}
-        positionTotal={$listPositionStore}
+        currentPosition={positions.length > 0 ? currentPositionIndex : 0}
+        totalPositions={positions.length}
     />
 
 </main>
