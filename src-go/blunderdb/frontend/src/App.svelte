@@ -10,6 +10,7 @@
         OpenDatabaseDialog,
         OpenPositionDialog,
         ShowAlert,
+        DeleteFile
     } from '../wailsjs/go/main/App.js';
     import {
         SetupDatabase,
@@ -141,6 +142,14 @@
         try {
             const filePath = await SaveDatabaseDialog();
             if (filePath) {
+                // Check if the file exists and delete it
+                try {
+                    await DeleteFile(filePath);
+                    console.log('Existing file deleted:', filePath);
+                } catch (error) {
+                    console.log('No existing file to delete or error deleting file:', error);
+                }
+
                 databasePathStore.set(filePath);
                 console.log('databasePathStore:', $databasePathStore);
                 await SetupDatabase(filePath);

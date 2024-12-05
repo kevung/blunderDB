@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"io/ioutil"
+	"os"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	// "fmt"
@@ -31,6 +32,14 @@ func (a *App) OpenDatabaseDialog() (string, error) {
 		Title:   "Open Database File",
 		Filters: []runtime.FileFilter{{DisplayName: "Database Files (*.db)", Pattern: "*.db"}},
 	})
+}
+
+func (a *App) DeleteFile(filePath string) error {
+	err := os.Remove(filePath)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 type FileDialogResponse struct {
