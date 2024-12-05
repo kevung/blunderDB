@@ -55,12 +55,14 @@
     import AnalysisPanel from './components/AnalysisPanel.svelte';
     import CommentPanel from './components/CommentPanel.svelte';
     import HelpModal from './components/HelpModal.svelte';
+    import GoToPositionModal from './components/GoToPositionModal.svelte';
 
     // Visibility variables
     let showCommand = false;
     let showAnalysis = false;
     let showHelp = false;
     let showComment = false;
+    let showGoToPositionModal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -651,7 +653,16 @@
     }
 
     function gotoPosition() {
-        console.log('gotoPosition');
+        showGoToPositionModal = true;
+    }
+
+    function handleGoToPosition(positionNumber) {
+        if (positionNumber > 0 && positionNumber <= positions.length) {
+            currentPositionIndex = positionNumber - 1;
+            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            updateStatusBar(currentPositionIndex, positions.length);
+        }
+        showGoToPositionModal = false;
     }
 
     function findPosition() {
@@ -780,6 +791,9 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
+        if (showGoToPositionModal) {
+            return; // Prevent changing position when GoToPositionModal is open
+        }
         if (positions.length > 0) {
             if (event.deltaY < 0) {
                 previousPosition();
@@ -848,6 +862,13 @@
         /> 
 
     </div>
+
+    <GoToPositionModal
+        visible={showGoToPositionModal}
+        onClose={() => showGoToPositionModal = false}
+        onGoToPosition={handleGoToPosition}
+        maxPositionNumber={positions.length}
+    />
 
     <HelpModal
         visible={showHelp}
