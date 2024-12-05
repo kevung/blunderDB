@@ -114,11 +114,31 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		return err
 	}
 
-	_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
-	if err != nil {
-		fmt.Println("Error inserting analysis:", err)
+	// Check if an analysis already exists for the given position ID
+	var existingID int64
+	err = d.db.QueryRow(`SELECT id FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error querying analysis:", err)
+		return err
 	}
-	return err
+
+	if existingID > 0 {
+		// Update the existing analysis
+		_, err = d.db.Exec(`UPDATE analysis SET data = ? WHERE id = ?`, string(analysisJSON), existingID)
+		if err != nil {
+			fmt.Println("Error updating analysis:", err)
+			return err
+		}
+	} else {
+		// Insert a new analysis
+		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		if err != nil {
+			fmt.Println("Error inserting analysis:", err)
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (d *Database) LoadPosition(id int) (*Position, error) {
