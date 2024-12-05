@@ -701,10 +701,6 @@
                 analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
             }
 
-            // Log the number of positions before adding
-            let initialPositions = await LoadAllPositions();
-            console.log('Number of positions before saving:', initialPositions.length);
-
             const positionID = await SavePosition(position);
             console.log('Position saved with ID:', positionID);
 
