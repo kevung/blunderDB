@@ -43,6 +43,7 @@
     let cubePosition = { x: 0, y: 0 };
 
     function handleMouseDown(event) {
+        event.preventDefault(); // Prevent text or element selection
         if (mode !== "EDIT") return;
 
         const rect = canvas.getBoundingClientRect();
@@ -71,13 +72,15 @@
     }
 
     function handleMouseMove(event) {
-        if (mode !== "EDIT" || !isMouseDown) return;
+        event.preventDefault(); // Prevent text or element selection
+        if (mode !== "EDIT") return;
 
         // No longer dynamically filling checkers during mouse move
     }
 
     function handleMouseUp(event) {
-        if (mode !== "EDIT" || !isMouseDown) return;
+        event.preventDefault(); // Prevent text or element selection
+        if (mode !== "EDIT") return;
 
         isMouseDown = false;
         const rect = canvas.getBoundingClientRect();
@@ -1107,5 +1110,6 @@
         padding: 0;
         border: 1px solid black; /* Add border for debugging */
         margin: 0; /* Remove margin */
+        user-select: none; /* Prevent text or element selection */
     }
 </style>
