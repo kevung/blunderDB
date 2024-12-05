@@ -499,18 +499,42 @@
         console.log('copyPosition');
     }
 
-    function pastePosition() {
+    async function pastePosition() {
         console.log('pastePosition');
         let promise = window.runtime.ClipboardGetText();
         promise.then(
-            (result) => {
+            async (result) => {
                 pastePositionTextStore.set(result);
                 console.log('pastePositionTextStore:', $pastePositionTextStore);
-                const {positionData, parsedAnalysis} = parsePosition(result);
+                const { positionData, parsedAnalysis } = parsePosition(result);
                 positionStore.set(positionData);
                 analysisStore.set(parsedAnalysis);
                 console.log('positionStore:', $positionStore);
                 console.log('analysisStore:', $analysisStore);
+
+                // Ensure checkerAnalysis is correctly structured
+                if (Array.isArray(parsedAnalysis.checkerAnalysis)) {
+                    parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
+                }
+
+                // Automatically save the pasted position and analysis to the database
+                if (!$databasePathStore) {
+                    updateStatusBarMessage('No database opened');
+                    return;
+                }
+
+                try {
+                    const positionID = await SavePosition(positionData);
+                    console.log('Position saved with ID:', positionID);
+
+                    await SaveAnalysis(positionID, parsedAnalysis);
+                    console.log('Analysis saved for position ID:', positionID);
+
+                    updateStatusBarMessage('Pasted position and analysis saved successfully');
+                } catch (error) {
+                    console.error('Error saving pasted position and analysis:', error);
+                    updateStatusBarMessage('Error saving pasted position and analysis');
+                }
             })
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
