@@ -514,8 +514,103 @@
 
     }
 
+    function generateXGID(position) {
+        const { board, cube, dice, score, player_on_roll, decision_type } = position;
+
+        // Encode board positions
+        let positionPart = '';
+        for (let i = 0; i < 24; i++) {
+            const point = board.points[i];
+            if (point.checkers > 0) {
+                const charCode = point.color === 0 ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
+                positionPart += String.fromCharCode(charCode + point.checkers - 1);
+            } else {
+                positionPart += '-';
+            }
+        }
+
+        // Encode cube value and owner
+        const cubeValue = cube.value;
+        const cubeOwner = cube.owner === 0 ? 1 : cube.owner === 1 ? -1 : 0;
+
+        // Encode dice
+        const dicePart = dice.join('');
+
+        // Encode score
+        const score1 = score[0];
+        const score2 = score[1];
+
+        // Encode Crawford status
+        const isCrawford = score1 === 1 || score2 === 1 ? 1 : 0;
+
+        // Encode match length (assuming unlimited if both scores are -1)
+        const matchLength = score1 === -1 && score2 === -1 ? 0 : Math.max(score1, score2);
+
+        // Encode dummy value (not used)
+        const dummy = 0;
+
+        // Combine all parts to form the XGID
+        const xgid = `${positionPart}:${cubeValue}:${cubeOwner}:${player_on_roll}:${dicePart}:${score1}:${score2}:${isCrawford}:${matchLength}:${dummy}`;
+        return xgid;
+    }
+
     function copyPosition() {
         console.log('copyPosition');
+        const position = $positionStore;
+        const analysis = $analysisStore;
+
+        // Generate XGID if not present in the analysis
+        const xgid = analysis.xgid || generateXGID(position);
+
+        // Construct the clipboard content
+        let clipboardContent = `XGID=${xgid}\n\n`;
+
+        // Add position details
+        clipboardContent += `Position:\n`;
+        clipboardContent += `Board: ${JSON.stringify(position.board)}\n`;
+        clipboardContent += `Cube: ${JSON.stringify(position.cube)}\n`;
+        clipboardContent += `Dice: ${position.dice.join(', ')}\n`;
+        clipboardContent += `Score: ${position.score.join(', ')}\n`;
+        clipboardContent += `Player on roll: ${position.player_on_roll}\n`;
+        clipboardContent += `Decision type: ${position.decision_type}\n\n`;
+
+        // Add analysis details
+        clipboardContent += `Analysis:\n`;
+        if (analysis.analysisType === "DoublingCube") {
+            clipboardContent += `Doubling Cube Analysis:\n`;
+            clipboardContent += `Player Win Chances: ${analysis.doublingCubeAnalysis.playerWinChances}%\n`;
+            clipboardContent += `Player Gammon Chances: ${analysis.doublingCubeAnalysis.playerGammonChances}%\n`;
+            clipboardContent += `Player Backgammon Chances: ${analysis.doublingCubeAnalysis.playerBackgammonChances}%\n`;
+            clipboardContent += `Opponent Win Chances: ${analysis.doublingCubeAnalysis.opponentWinChances}%\n`;
+            clipboardContent += `Opponent Gammon Chances: ${analysis.doublingCubeAnalysis.opponentGammonChances}%\n`;
+            clipboardContent += `Opponent Backgammon Chances: ${analysis.doublingCubeAnalysis.opponentBackgammonChances}%\n`;
+            clipboardContent += `Cubeless No Double Equity: ${analysis.doublingCubeAnalysis.cubelessNoDoubleEquity}\n`;
+            clipboardContent += `Cubeless Double Equity: ${analysis.doublingCubeAnalysis.cubelessDoubleEquity}\n`;
+            clipboardContent += `Cubeful No Double Equity: ${analysis.doublingCubeAnalysis.cubefulNoDoubleEquity}\n`;
+            clipboardContent += `Cubeful Double Take Equity: ${analysis.doublingCubeAnalysis.cubefulDoubleTakeEquity}\n`;
+            clipboardContent += `Cubeful Double Pass Equity: ${analysis.doublingCubeAnalysis.cubefulDoublePassEquity}\n`;
+        } else if (analysis.analysisType === "CheckerMove") {
+            clipboardContent += `Checker Move Analysis:\n`;
+            analysis.checkerAnalysis.moves.forEach(move => {
+                clipboardContent += `Move ${move.index}: ${move.move}\n`;
+                clipboardContent += `Equity: ${move.equity}\n`;
+                clipboardContent += `Player Win Chance: ${move.playerWinChance}%\n`;
+                clipboardContent += `Player Gammon Chance: ${move.playerGammonChance}%\n`;
+                clipboardContent += `Player Backgammon Chance: ${move.playerBackgammonChance}%\n`;
+                clipboardContent += `Opponent Win Chance: ${move.opponentWinChance}%\n`;
+                clipboardContent += `Opponent Gammon Chance: ${move.opponentGammonChance}%\n`;
+                clipboardContent += `Opponent Backgammon Chance: ${move.opponentBackgammonChance}%\n\n`;
+            });
+        }
+
+        // Copy to clipboard
+        navigator.clipboard.writeText(clipboardContent).then(() => {
+            console.log('Position and analysis copied to clipboard');
+            updateStatusBarMessage('Position and analysis copied to clipboard');
+        }).catch(err => {
+            console.error('Error copying to clipboard:', err);
+            updateStatusBarMessage('Error copying to clipboard');
+        });
     }
 
     async function pastePosition() {
