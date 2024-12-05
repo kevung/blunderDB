@@ -733,12 +733,13 @@
     onMount(() => {
         console.log('Wails runtime:', window.runtime);
         window.addEventListener("keydown", handleKeyDown);
+        mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
     });
 
     onDestroy(() => {
         window.removeEventListener("keydown", handleKeyDown);
+        mainArea.removeEventListener("wheel", handleWheel); // Remove wheel event listener from main container
     });
-
 
     function toggleHelpModal() {
         console.log('Help button clicked!');
@@ -775,6 +776,17 @@
     function showPosition(position, analysis) {
         positionStore.set(position);
         analysisStore.set(analysis);
+    }
+
+    // Function to handle mouse wheel events
+    function handleWheel(event) {
+        if (positions.length > 0) {
+            if (event.deltaY < 0) {
+                previousPosition();
+            } else if (event.deltaY > 0) {
+                nextPosition();
+            }
+        }
     }
 
 </script>
