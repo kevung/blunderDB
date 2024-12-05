@@ -17,7 +17,8 @@
         SavePosition,
         SaveAnalysis,
         LoadAllPositions,
-        LoadAllAnalyses
+        LoadAllAnalyses,
+        DeletePosition
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
@@ -705,12 +706,52 @@
         }
     }
 
-    function updatePosition() {
-        console.log('updatePosition');
+    async function deletePosition() {
+        console.log('deletePosition');
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
+
+        if ($statusBarModeStore !== 'NORMAL') {
+            updateStatusBarMessage('Cannot delete position in current mode');
+            return;
+        }
+
+        if (positions.length === 0) {
+            updateStatusBarMessage('No positions to delete');
+            return;
+        }
+
+        try {
+            const positionID = positions[currentPositionIndex].id;
+            await DeletePosition(positionID);
+            console.log('Position deleted with ID:', positionID);
+
+            // Retrieve all positions and show the last one
+            positions = await LoadAllPositions();
+            analyses = await LoadAllAnalyses();
+
+            if (positions.length > 0) {
+                currentPositionIndex = positions.length - 1;
+                updateStatusBar(currentPositionIndex, positions.length);
+                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            } else {
+                // Clear the stores if no positions are left
+                positionStore.set({});
+                analysisStore.set({});
+                updateStatusBar(0, 0);
+            }
+
+            updateStatusBarMessage('Position deleted successfully');
+        } catch (error) {
+            console.error('Error deleting position:', error);
+            updateStatusBarMessage('Error deleting position');
+        }
     }
 
-    function deletePosition() {
-        console.log('deletePosition');
+    function updatePosition() {
+        console.log('updatePosition');
     }
 
     function firstPosition() {

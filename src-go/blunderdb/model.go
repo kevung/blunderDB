@@ -46,6 +46,7 @@ type Board struct {
 }
 
 type Position struct {
+	ID           int64  `json:"id"` // Add ID field
 	Board        Board  `json:"board"`
 	Cube         Cube   `json:"cube"`
 	Dice         [2]int `json:"dice"`

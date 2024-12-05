@@ -179,6 +179,7 @@ export namespace main {
 	}
 	
 	export class Position {
+	    id: number;
 	    board: Board;
 	    cube: Cube;
 	    dice: number[];
@@ -192,6 +193,7 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
 	        this.board = this.convertValues(source["board"], Board);
 	        this.cube = this.convertValues(source["cube"], Cube);
 	        this.dice = source["dice"];

@@ -180,7 +180,7 @@ func (d *Database) LoadAnalysis(positionID int) (*PositionAnalysis, error) {
 }
 
 func (d *Database) LoadAllPositions() ([]Position, error) {
-	rows, err := d.db.Query(`SELECT state FROM position`)
+	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
 		return nil, err
@@ -189,8 +189,9 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 
 	var positions []Position
 	for rows.Next() {
+		var id int64
 		var stateJSON string
-		if err := rows.Scan(&stateJSON); err != nil {
+		if err := rows.Scan(&id, &stateJSON); err != nil {
 			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
@@ -200,6 +201,7 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 			fmt.Println("Error unmarshalling position:", err)
 			return nil, err
 		}
+		position.ID = id // Ensure the ID is set
 		positions = append(positions, position)
 	}
 
@@ -233,4 +235,13 @@ func (d *Database) LoadAllAnalyses() ([]PositionAnalysis, error) {
 
 	fmt.Println("Loaded analyses:", analyses)
 	return analyses, nil
+}
+
+func (d *Database) DeletePosition(positionID int64) error {
+	_, err := d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
+	if err != nil {
+		fmt.Println("Error deleting position:", err)
+		return err
+	}
+	return nil
 }
