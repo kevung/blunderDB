@@ -240,7 +240,15 @@ func (d *Database) LoadAllAnalyses() ([]PositionAnalysis, error) {
 }
 
 func (d *Database) DeletePosition(positionID int64) error {
-	_, err := d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
+	// Delete the associated analysis first
+	err := d.DeleteAnalysis(positionID)
+	if err != nil {
+		fmt.Println("Error deleting associated analysis:", err)
+		return err
+	}
+
+	// Delete the position
+	_, err = d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
 	if err != nil {
 		fmt.Println("Error deleting position:", err)
 		return err

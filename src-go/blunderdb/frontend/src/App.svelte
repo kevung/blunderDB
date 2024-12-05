@@ -728,7 +728,7 @@
         try {
             const positionID = positions[currentPositionIndex].id;
             await DeletePosition(positionID);
-            console.log('Position deleted with ID:', positionID);
+            console.log('Position and associated analysis deleted with ID:', positionID);
 
             // Retrieve all positions and show the last one
             positions = await LoadAllPositions();
@@ -745,10 +745,10 @@
                 updateStatusBar(0, 0);
             }
 
-            updateStatusBarMessage('Position deleted successfully');
+            updateStatusBarMessage('Position and associated analysis deleted successfully');
         } catch (error) {
-            console.error('Error deleting position:', error);
-            updateStatusBarMessage('Error deleting position');
+            console.error('Error deleting position and associated analysis:', error);
+            updateStatusBarMessage('Error deleting position and associated analysis');
         }
     }
 
