@@ -754,6 +754,10 @@
 
     async function updatePosition() {
         console.log('updatePosition');
+        if ($statusBarModeStore !== 'EDIT') {
+            updateStatusBarMessage('Update is only possible in edit mode');
+            return;
+        }
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
             return;
