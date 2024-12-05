@@ -207,6 +207,21 @@
                                 <td>Paste Position</td>
                             </tr>
 
+                            <tr>
+                                <td>Ctrl + S</td>
+                                <td>Save Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + U</td>
+                                <td>Update Position</td>
+                            </tr>
+
+                            <tr>
+                                <td>Del</td>
+                                <td>Delete Position</td>
+                            </tr>
+
                         </tbody>
                     </table>
 

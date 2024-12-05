@@ -90,6 +90,12 @@
             copyPosition();
         } else if(event.ctrlKey && event.code == 'KeyV') {
             pastePosition();
+        } else if(event.ctrlKey && event.code == 'KeyS') {
+            saveCurrentPosition();
+        } else if(event.ctrlKey && event.code == 'KeyU') {
+            updatePosition();
+        } else if(event.code === 'Delete') {
+            deletePosition();
         } else if (!event.ctrlKey && event.key === 'PageUp') {
             event.preventDefault();
             firstPosition();
