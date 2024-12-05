@@ -1,5 +1,5 @@
-<script>
-   import { onMount } from 'svelte';
+    <script>
+   import { onMount, onDestroy } from 'svelte';
 
    export let visible = false;
    export let onClose;
@@ -17,31 +17,41 @@
          inputEl?.focus();
       }, 0);
 
+      window.addEventListener('click', handleClickOutside);
    }
 
-    // Focus the input when the component is visible
-    $: if (!visible) {
-        initialized = false;
-    }
+   $: if (!visible) {
+      initialized = false;
+      window.removeEventListener('click', handleClickOutside);
+   }
 
-    function handleKeyDown(event) {
-        event.stopPropagation();
+   function handleKeyDown(event) {
+      event.stopPropagation();
 
-        if(visible) {
-            if(event.code === 'Backspace' && inputEl.value === '') {
-                onClose();
-            } else if (event.code === 'Escape') {
-                onClose();
-            } else if (event.code === 'Enter') {
-                onClose();
-            } else if (event.ctrlKey && event.code === 'KeyC') {
-                onClose();
-            } else if (event.ctrlKey && event.code === 'KeyH') {
-                onToggleHelp();
-            }
-        }
-    }
+      if(visible) {
+         if(event.code === 'Backspace' && inputEl.value === '') {
+            onClose();
+         } else if (event.code === 'Escape') {
+            onClose();
+         } else if (event.code === 'Enter') {
+            onClose();
+         } else if (event.ctrlKey && event.code === 'KeyC') {
+            onClose();
+         } else if (event.ctrlKey && event.code === 'KeyH') {
+            onToggleHelp();
+         }
+      }
+   }
 
+   function handleClickOutside(event) {
+      if (visible && !inputEl.contains(event.target)) {
+         onClose();
+      }
+   }
+
+   onDestroy(() => {
+      window.removeEventListener('click', handleClickOutside);
+   });
 </script>
 
 {#if visible}
