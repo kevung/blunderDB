@@ -832,6 +832,9 @@
                 console.log('Analysis deleted for position ID:', positionID);
             }
 
+            // Update the xgid in the analysis
+            analysis.xgid = generateXGID(position);
+
             // Update the position in the database
             await UpdatePosition(position);
             console.log('Position updated with ID:', positionID);
