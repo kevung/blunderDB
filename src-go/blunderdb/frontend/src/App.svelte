@@ -549,7 +549,7 @@
         const cubeOwner = cube.owner === 0 ? 1 : cube.owner === 1 ? -1 : 0;
 
         // Encode dice
-        const dicePart = dice.join('');
+        const dicePart = decision_type === 1 ? '00' : dice.join('');
 
         // Encode score
         const score1 = score[0];
@@ -564,8 +564,11 @@
         // Encode dummy value (not used)
         const dummy = 0;
 
+        // Correctly encode player on roll
+        const playerOnRoll = player_on_roll === 0 ? 1 : -1;
+
         // Combine all parts to form the XGID
-        const xgid = `${positionPart}:${cubeValue}:${cubeOwner}:${player_on_roll}:${dicePart}:${score1}:${score2}:${isCrawford}:${matchLength}:${dummy}`;
+        const xgid = `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${score1}:${score2}:${isCrawford}:${matchLength}:${dummy}`;
         return xgid;
     }
 
@@ -705,6 +708,11 @@
                 analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
             }
 
+            // Set dice to [0, 0] if decision type is doubling
+            if (position.decision_type === 1) {
+                position.dice = [0, 0];
+            }
+
             // Check if the position already exists
             const result = await PositionExists(position);
             if (result.exists) {
@@ -818,6 +826,11 @@
             // Ensure checkerAnalysis is correctly structured
             if (Array.isArray(analysis.checkerAnalysis)) {
                 analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
+            }
+
+            // Set dice to [0, 0] if decision type is doubling
+            if (position.decision_type === 1) {
+                position.dice = [0, 0];
             }
 
             const positionID = originalPosition.id;
