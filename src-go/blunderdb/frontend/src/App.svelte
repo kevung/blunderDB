@@ -551,15 +551,15 @@
         // Encode dice
         const dicePart = decision_type === 1 ? '00' : dice.join('');
 
-        // Encode score
-        const score1 = score[0];
-        const score2 = score[1];
+        // Compute minimal match length
+        const matchLength = score[0] === -1 || score[1] === -1 ? 0 : Math.max(score[0], score[1]);
+
+        // Deduce actual scores
+        const actualScore1 = score[0] === -1 ? 0 : matchLength - score[0];
+        const actualScore2 = score[1] === -1 ? 0 : matchLength - score[1];
 
         // Encode Crawford status
-        const isCrawford = score1 === 1 || score2 === 1 ? 1 : 0;
-
-        // Encode match length (assuming unlimited if both scores are -1)
-        const matchLength = score1 === -1 && score2 === -1 ? 0 : Math.max(score1, score2);
+        const isCrawford = score[0] === 1 || score[1] === 1 ? 1 : 0;
 
         // Encode dummy value (not used)
         const dummy = 0;
@@ -568,7 +568,7 @@
         const playerOnRoll = player_on_roll === 0 ? 1 : -1;
 
         // Combine all parts to form the XGID
-        const xgid = `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${score1}:${score2}:${isCrawford}:${matchLength}:${dummy}`;
+        const xgid = `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${actualScore1}:${actualScore2}:${isCrawford}:${matchLength}:${dummy}`;
         return xgid;
     }
 
