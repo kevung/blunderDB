@@ -346,6 +346,16 @@
         console.log('Position to save:', position);
         console.log('Analysis to save:', analysis);
 
+        // Reset all fields of analysis to initialized values
+        analysis.xgid = "";
+        analysis.analysisType = "";
+        analysis.checkerAnalysis = [];
+        analysis.doublingCubeAnalysis = {};
+        analysis.analysisEngineVersion = "";
+
+        // Generate XGID in analysis
+        analysis.xgid = generateXGID(position);
+
         await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
         statusBarModeStore.set('NORMAL');
     }
@@ -841,6 +851,13 @@
 
             console.log('Position to update:', position);
             console.log('Analysis to update:', analysis);
+
+            // Reset all fields of analysis to initialized values
+            analysis.xgid = "";
+            analysis.analysisType = "";
+            analysis.checkerAnalysis = [];
+            analysis.doublingCubeAnalysis = {};
+            analysis.analysisEngineVersion = "";
 
             // Ensure checkerAnalysis is correctly structured
             if (Array.isArray(analysis.checkerAnalysis)) {
