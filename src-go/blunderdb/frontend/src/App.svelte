@@ -654,12 +654,15 @@
                     parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
                 }
 
-                // Automatically save the pasted position and analysis to the database
-                if (!$databasePathStore) {
-                    updateStatusBarMessage('No database opened');
+                // Check if the position already exists
+                const positionExistsResult = await PositionExists(positionData);
+                if (positionExistsResult.exists) {
+                    console.log('Position already exists with ID:', positionExistsResult.id);
+                    updateStatusBarMessage('Position already exists');
                     return;
                 }
 
+                // Automatically save the pasted position and analysis to the database
                 try {
                     const positionID = await SavePosition(positionData);
                     console.log('Position saved with ID:', positionID);
