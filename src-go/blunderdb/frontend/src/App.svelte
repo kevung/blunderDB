@@ -235,7 +235,14 @@
         const positionExistsResult = await PositionExists(positionData);
         if (positionExistsResult.exists) {
             console.log('Position already exists with ID:', positionExistsResult.id);
-            updateStatusBarMessage('Position already exists');
+            try {
+                await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
+                console.log('Analysis updated for position ID:', positionExistsResult.id);
+                updateStatusBarMessage('Position already exists, analysis updated');
+            } catch (error) {
+                console.error('Error updating analysis:', error);
+                updateStatusBarMessage('Error updating analysis');
+            }
             return;
         }
 
