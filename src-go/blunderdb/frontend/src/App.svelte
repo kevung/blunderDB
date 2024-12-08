@@ -16,6 +16,7 @@
         SetupDatabase,
         SavePosition,
         SaveAnalysis,
+        PositionExists,
         LoadAllPositions,
         LoadAllAnalyses,
         DeletePosition,
@@ -699,6 +700,14 @@
             // Ensure checkerAnalysis is correctly structured
             if (Array.isArray(analysis.checkerAnalysis)) {
                 analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
+            }
+
+            // Check if the position already exists
+            const result = await PositionExists(position);
+            if (result.exists) {
+                console.log('Position already exists with ID:', result.id);
+                updateStatusBarMessage('Position already exists');
+                return;
             }
 
             const positionID = await SavePosition(position);

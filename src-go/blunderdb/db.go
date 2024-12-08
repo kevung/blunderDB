@@ -51,24 +51,28 @@ func (d *Database) SetupDatabase(path string) error {
 	return nil
 }
 
-func (d *Database) PositionExists(position Position) (int64, bool, error) {
-	positionJSON, err := json.Marshal(position)
+func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
+	// Create a copy of the position without the ID field
+	positionCopy := position
+	positionCopy.ID = 0
+
+	positionJSON, err := json.Marshal(positionCopy)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
-		return 0, false, err
+		return nil, err
 	}
 
 	var id int64
 	err = d.db.QueryRow(`SELECT id FROM position WHERE state = ?`, string(positionJSON)).Scan(&id)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return 0, false, nil
+			return map[string]interface{}{"id": 0, "exists": false}, nil
 		}
 		fmt.Println("Error querying position:", err)
-		return 0, false, err
+		return nil, err
 	}
 
-	return id, true, nil
+	return map[string]interface{}{"id": id, "exists": true}, nil
 }
 
 func (d *Database) SavePosition(position Position) (int64, error) {
