@@ -225,6 +225,45 @@
         window.runtime.Quit();
     }
 
+    async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage) {
+        // Ensure checkerAnalysis is correctly structured
+        if (Array.isArray(parsedAnalysis.checkerAnalysis)) {
+            parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
+        }
+
+        // Check if the position already exists
+        const positionExistsResult = await PositionExists(positionData);
+        if (positionExistsResult.exists) {
+            console.log('Position already exists with ID:', positionExistsResult.id);
+            updateStatusBarMessage('Position already exists');
+            return;
+        }
+
+        // Save the position and analysis to the database
+        try {
+            const positionID = await SavePosition(positionData);
+            console.log('Position saved with ID:', positionID);
+
+            await SaveAnalysis(positionID, parsedAnalysis);
+            console.log('Analysis saved for position ID:', positionID);
+
+            // Reload all positions and show the last one
+            positions = await LoadAllPositions();
+            analyses = await LoadAllAnalyses();
+
+            if (positions.length > 0) {
+                currentPositionIndex = positions.length - 1;
+                updateStatusBar(currentPositionIndex, positions.length);
+                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            }
+
+            updateStatusBarMessage(successMessage);
+        } catch (error) {
+            console.error('Error saving position and analysis:', error);
+            updateStatusBarMessage('Error saving position and analysis');
+        }
+    }
+
     export async function importPosition() {
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
@@ -248,45 +287,60 @@
             console.log('positionStore:', $positionStore);
             console.log('analysisStore:', $analysisStore);
 
-            // Ensure checkerAnalysis is correctly structured
-            if (!Array.isArray(parsedAnalysis.checkerAnalysis)) {
-                parsedAnalysis.checkerAnalysis = [];
-            }
-
-            // Check if the position already exists
-            const positionExistsResult = await PositionExists(positionData);
-            if (positionExistsResult.exists) {
-                console.log('Position already exists with ID:', positionExistsResult.id);
-                updateStatusBarMessage('Position already exists');
-                return;
-            }
-
-            // Save the imported position and analysis to the database
-            try {
-                const positionID = await SavePosition(positionData);
-                console.log('Position saved with ID:', positionID);
-
-                await SaveAnalysis(positionID, parsedAnalysis);
-                console.log('Analysis saved for position ID:', positionID);
-
-                // Reload all positions and show the last one
-                positions = await LoadAllPositions();
-                analyses = await LoadAllAnalyses();
-
-                if (positions.length > 0) {
-                    currentPositionIndex = positions.length - 1;
-                    updateStatusBar(currentPositionIndex, positions.length);
-                    showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-                }
-
-                updateStatusBarMessage('Imported position and analysis saved successfully');
-            } catch (error) {
-                console.error('Error saving imported position and analysis:', error);
-                updateStatusBarMessage('Error saving imported position and analysis');
-            }
+            await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
         } catch (error) {
             console.error("Error importing position:", error);
         }
+    }
+
+    async function pastePosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
+        console.log('pastePosition');
+        let promise = window.runtime.ClipboardGetText();
+        promise.then(
+            async (result) => {
+                pastePositionTextStore.set(result);
+                console.log('pastePositionTextStore:', $pastePositionTextStore);
+                const { positionData, parsedAnalysis } = parsePosition(result);
+                positionStore.set(positionData);
+                analysisStore.set(parsedAnalysis);
+                console.log('positionStore:', $positionStore);
+                console.log('analysisStore:', $analysisStore);
+
+                await savePositionAndAnalysis(positionData, parsedAnalysis, 'Pasted position and analysis saved successfully');
+                statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
+            })
+            .catch((error) => {
+                console.error('Error pasting from clipboard:', error);
+            });
+    }
+
+    async function saveCurrentPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
+        console.log('saveCurrentPosition');
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
+
+        const position = $positionStore;
+        const analysis = $analysisStore;
+
+        if (!isValidPosition(position)) {
+            return;
+        }
+
+        console.log('Position to save:', position);
+        console.log('Analysis to save:', analysis);
+
+        await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
+        statusBarModeStore.set('NORMAL');
     }
 
     function parsePosition(fileContent) {
@@ -672,66 +726,6 @@
         });
     }
 
-    async function pastePosition() {
-        if (!$databasePathStore) {
-            updateStatusBarMessage('No database opened');
-            return;
-        }
-        console.log('pastePosition');
-        let promise = window.runtime.ClipboardGetText();
-        promise.then(
-            async (result) => {
-                pastePositionTextStore.set(result);
-                console.log('pastePositionTextStore:', $pastePositionTextStore);
-                const { positionData, parsedAnalysis } = parsePosition(result);
-                positionStore.set(positionData);
-                analysisStore.set(parsedAnalysis);
-                console.log('positionStore:', $positionStore);
-                console.log('analysisStore:', $analysisStore);
-
-                // Ensure checkerAnalysis is correctly structured
-                if (Array.isArray(parsedAnalysis.checkerAnalysis)) {
-                    parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
-                }
-
-                // Check if the position already exists
-                const positionExistsResult = await PositionExists(positionData);
-                if (positionExistsResult.exists) {
-                    console.log('Position already exists with ID:', positionExistsResult.id);
-                    updateStatusBarMessage('Position already exists');
-                    return;
-                }
-
-                // Automatically save the pasted position and analysis to the database
-                try {
-                    const positionID = await SavePosition(positionData);
-                    console.log('Position saved with ID:', positionID);
-
-                    await SaveAnalysis(positionID, parsedAnalysis);
-                    console.log('Analysis saved for position ID:', positionID);
-
-                    // Reload all positions and show the last one
-                    positions = await LoadAllPositions();
-                    analyses = await LoadAllAnalyses();
-
-                    if (positions.length > 0) {
-                        currentPositionIndex = positions.length - 1;
-                        updateStatusBar(currentPositionIndex, positions.length);
-                        showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-                    }
-
-                    updateStatusBarMessage('Pasted position and analysis saved successfully');
-                    statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
-                } catch (error) {
-                    console.error('Error saving pasted position and analysis:', error);
-                    updateStatusBarMessage('Error saving pasted position and analysis');
-                }
-            })
-            .catch((error) => {
-                console.error('Error pasting from clipboard:', error);
-            });
-    }
-
     function isValidPosition(position) {
         const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
         const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
@@ -758,72 +752,6 @@
         }
 
         return true;
-    }
-
-    async function saveCurrentPosition() {
-        if (!$databasePathStore) {
-            updateStatusBarMessage('No database opened');
-            return;
-        }
-        console.log('saveCurrentPosition');
-        if (!$databasePathStore) {
-            updateStatusBarMessage('No database opened');
-            return;
-        }
-
-        const position = $positionStore;
-        const analysis = $analysisStore;
-
-        if (!isValidPosition(position)) {
-            return;
-        }
-
-        console.log('Position to save:', position);
-        console.log('Analysis to save:', analysis);
-
-        try {
-            // Ensure checkerAnalysis is correctly structured
-            if (Array.isArray(analysis.checkerAnalysis)) {
-                analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
-            }
-
-            // Set dice to [0, 0] if decision type is doubling
-            if (position.decision_type === 1) {
-                position.dice = [0, 0];
-            }
-
-            // Check if the position already exists
-            const result = await PositionExists(position);
-            if (result.exists) {
-                console.log('Position already exists with ID:', result.id);
-                updateStatusBarMessage('Position already exists');
-                return;
-            }
-
-            const positionID = await SavePosition(position);
-            console.log('Position saved with ID:', positionID);
-
-            await SaveAnalysis(positionID, analysis);
-            console.log('Analysis saved for position ID:', positionID);
-
-            // Retrieve all positions and show the last one
-            positions = await LoadAllPositions();
-            console.log('Number of positions after saving:', positions.length);
-            analyses = await LoadAllAnalyses();
-            console.log('Loaded analyses:', analyses);
-
-            if (positions.length > 0) {
-                currentPositionIndex = positions.length - 1;
-                updateStatusBar(currentPositionIndex, positions.length);
-                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-            }
-
-            updateStatusBarMessage('Position and analysis saved successfully');
-            statusBarModeStore.set('NORMAL');
-        } catch (error) {
-            console.error('Error saving position and analysis:', error);
-            updateStatusBarMessage('Error saving position and analysis');
-        }
     }
 
     async function deletePosition() {
