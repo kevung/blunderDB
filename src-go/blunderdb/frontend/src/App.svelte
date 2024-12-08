@@ -685,6 +685,34 @@
             });
     }
 
+    function isValidPosition(position) {
+        const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
+        const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
+
+        if (player1Checkers > 15) {
+            updateStatusBarMessage('Invalid position: Player 1 has more than 15 checkers');
+            return false;
+        }
+
+        if (player2Checkers > 15) {
+            updateStatusBarMessage('Invalid position: Player 2 has more than 15 checkers');
+            return false;
+        }
+
+        if (position.decision_type === 1) {
+            if (position.cube.owner !== position.player_on_roll && position.cube.owner !== -1) {
+                updateStatusBarMessage('Invalid position: Cube is not available for doubling');
+                return false;
+            }
+            if (position.score[position.player_on_roll] === 1) {
+                updateStatusBarMessage('Invalid position: Crawford rule prevents doubling');
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     async function saveCurrentPosition() {
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
@@ -696,13 +724,17 @@
             return;
         }
 
+        const position = $positionStore;
+        const analysis = $analysisStore;
+
+        if (!isValidPosition(position)) {
+            return;
+        }
+
+        console.log('Position to save:', position);
+        console.log('Analysis to save:', analysis);
+
         try {
-            const position = $positionStore;
-            const analysis = $analysisStore;
-
-            console.log('Position to save:', position);
-            console.log('Analysis to save:', analysis);
-
             // Ensure checkerAnalysis is correctly structured
             if (Array.isArray(analysis.checkerAnalysis)) {
                 analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
@@ -815,9 +847,14 @@
             return;
         }
 
+        const position = $positionStore;
+        const analysis = $analysisStore;
+
+        if (!isValidPosition(position)) {
+            return;
+        }
+
         try {
-            const position = $positionStore;
-            const analysis = $analysisStore;
             const originalPosition = positions[currentPositionIndex];
 
             console.log('Position to update:', position);
