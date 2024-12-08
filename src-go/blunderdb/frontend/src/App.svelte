@@ -242,11 +242,48 @@
             console.log("File content:", response.content);
 
             // Now you can parse and use the file content
-            const {positionData, parsedAnalysis} = parsePosition(response.content);
+            const { positionData, parsedAnalysis } = parsePosition(response.content);
             positionStore.set(positionData);
             analysisStore.set(parsedAnalysis);
             console.log('positionStore:', $positionStore);
             console.log('analysisStore:', $analysisStore);
+
+            // Ensure checkerAnalysis is correctly structured
+            if (!Array.isArray(parsedAnalysis.checkerAnalysis)) {
+                parsedAnalysis.checkerAnalysis = [];
+            }
+
+            // Check if the position already exists
+            const positionExistsResult = await PositionExists(positionData);
+            if (positionExistsResult.exists) {
+                console.log('Position already exists with ID:', positionExistsResult.id);
+                updateStatusBarMessage('Position already exists');
+                return;
+            }
+
+            // Save the imported position and analysis to the database
+            try {
+                const positionID = await SavePosition(positionData);
+                console.log('Position saved with ID:', positionID);
+
+                await SaveAnalysis(positionID, parsedAnalysis);
+                console.log('Analysis saved for position ID:', positionID);
+
+                // Reload all positions and show the last one
+                positions = await LoadAllPositions();
+                analyses = await LoadAllAnalyses();
+
+                if (positions.length > 0) {
+                    currentPositionIndex = positions.length - 1;
+                    updateStatusBar(currentPositionIndex, positions.length);
+                    showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                }
+
+                updateStatusBarMessage('Imported position and analysis saved successfully');
+            } catch (error) {
+                console.error('Error saving imported position and analysis:', error);
+                updateStatusBarMessage('Error saving imported position and analysis');
+            }
         } catch (error) {
             console.error("Error importing position:", error);
         }
@@ -672,6 +709,16 @@
 
                     await SaveAnalysis(positionID, parsedAnalysis);
                     console.log('Analysis saved for position ID:', positionID);
+
+                    // Reload all positions and show the last one
+                    positions = await LoadAllPositions();
+                    analyses = await LoadAllAnalyses();
+
+                    if (positions.length > 0) {
+                        currentPositionIndex = positions.length - 1;
+                        updateStatusBar(currentPositionIndex, positions.length);
+                        showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                    }
 
                     updateStatusBarMessage('Pasted position and analysis saved successfully');
                     statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
@@ -1113,6 +1160,11 @@
 
     // Function to show a specific position and analysis
     function showPosition(position, analysis) {
+        if (!position || !analysis) {
+            console.error('Invalid position or analysis:', position, analysis);
+            return;
+        }
+
         // Create a deep copy of the position data
         const positionCopy = JSON.parse(JSON.stringify(position));
         const analysisCopy = JSON.parse(JSON.stringify(analysis));
