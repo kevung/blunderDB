@@ -2,13 +2,21 @@
     export let visible = false;
     export let onClose;
     export let text = '';
+    export let currentPositionId;
 
     import { onMount } from "svelte";
+    import { commentTextStore } from '../stores/uiStore';
+    import { SaveComment } from '../../wailsjs/go/main/Database.js';
 
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             onClose();
         }
+    }
+
+    function handleClose() {
+        SaveComment(parseInt(currentPositionId), $commentTextStore); // Ensure position ID is an int64
+        onClose();
     }
 
     $: if (visible) {
@@ -19,17 +27,16 @@
           }
        }, 0);
     }
-
 </script>
 
 {#if visible}
     <div class="comment-panel">
-        <div class="close-icon" on:click={onClose}>×</div>
+        <div class="close-icon" on:click={handleClose}>×</div>
         <textarea
             id="commentTextArea"
             rows="5"
             cols="30"
-            bind:value={text}
+            bind:value={$commentTextStore}
             placeholder="Type your comments here..."
             on:keydown={handleKeyDown}
         ></textarea>

@@ -21,7 +21,9 @@
         LoadAllAnalyses,
         DeletePosition,
         DeleteAnalysis,
-        UpdatePosition
+        UpdatePosition,
+        LoadComment,
+        SaveComment
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
@@ -79,6 +81,16 @@
     //Global shortcuts
     function handleKeyDown(event) {
         event.stopPropagation();
+
+        // Prevent all shortcuts except toggleCommentPanel when comment panel is visible and focused
+        if (showComment && document.activeElement.id === 'commentTextArea') {
+            if (event.ctrlKey && event.code === 'KeyP') {
+                event.preventDefault();
+                toggleCommentPanel();
+            }
+            return;
+        }
+
         if(event.ctrlKey && event.code == 'KeyN') {
             newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') {
@@ -1047,9 +1059,16 @@
             updateStatusBarMessage('No database opened');
             return;
         }
+        if (!positions[currentPositionIndex]) {
+            updateStatusBarMessage('No current position to comment on');
+            return;
+        }
         console.log('toggleCommentPanel');
 
-        if($statusBarModeStore === 'NORMAL'){
+        if ($statusBarModeStore === 'NORMAL') {
+            if (showComment) {
+                SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore); // Ensure position ID is an int64
+            }
             showComment = !showComment;
         }
 
@@ -1059,7 +1078,8 @@
             setTimeout(() => {
                 document.querySelector('.comment-panel').scrollIntoView({
                     behavior: 'smooth',
-                    block: 'start' });
+                    block: 'start'
+                });
             }, 0);
         } else {
             mainArea.scrollIntoView({
@@ -1111,7 +1131,7 @@
     }
 
     // Function to show a specific position and analysis
-    function showPosition(position, analysis) {
+    async function showPosition(position, analysis) {
         if (!position || !analysis) {
             console.error('Invalid position or analysis:', position, analysis);
             return;
@@ -1123,6 +1143,10 @@
         
         positionStore.set(positionCopy);
         analysisStore.set(analysisCopy);
+
+        // Load the comment for the current position
+        const comment = await LoadComment(position.id);
+        commentTextStore.set(comment || '');
     }
 
     // Function to handle mouse wheel events
@@ -1189,6 +1213,7 @@
             text={$commentTextStore}
             visible={showComment}
             onClose={toggleCommentPanel}
+            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].id : null}
         />
 
         <AnalysisPanel

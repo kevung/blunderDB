@@ -48,6 +48,19 @@ func (d *Database) SetupDatabase(path string) error {
 		fmt.Println("Error creating analysis table:", err)
 		return err
 	}
+
+	_, err = d.db.Exec(`
+        CREATE TABLE IF NOT EXISTS comment (
+            id INTEGER PRIMARY KEY,
+            position_id INTEGER,
+            text TEXT,
+            FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+        )
+    `)
+	if err != nil {
+		fmt.Println("Error creating comment table:", err)
+		return err
+	}
 	return nil
 }
 
@@ -267,4 +280,47 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 		return err
 	}
 	return nil
+}
+
+// SaveComment saves a comment for a given position ID
+func (d *Database) SaveComment(positionID int64, text string) error {
+	// Check if a comment already exists for the given position ID
+	var existingID int64
+	err := d.db.QueryRow(`SELECT id FROM comment WHERE position_id = ?`, positionID).Scan(&existingID)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error querying comment:", err)
+		return err
+	}
+
+	if existingID > 0 {
+		// Update the existing comment
+		_, err = d.db.Exec(`UPDATE comment SET text = ? WHERE id = ?`, text, existingID)
+		if err != nil {
+			fmt.Println("Error updating comment:", err)
+			return err
+		}
+	} else {
+		// Insert a new comment
+		_, err = d.db.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, text)
+		if err != nil {
+			fmt.Println("Error inserting comment:", err)
+			return err
+		}
+	}
+
+	return nil
+}
+
+// LoadComment loads a comment for a given position ID
+func (d *Database) LoadComment(positionID int64) (string, error) {
+	var text string
+	err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, positionID).Scan(&text)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil // No comment found
+		}
+		fmt.Println("Error loading comment:", err)
+		return "", err
+	}
+	return text, nil
 }
