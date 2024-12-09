@@ -789,11 +789,6 @@
             return;
         }
         console.log('deletePosition');
-        if (!$databasePathStore) {
-            updateStatusBarMessage('No database opened');
-            return;
-        }
-
         if ($statusBarModeStore !== 'NORMAL') {
             updateStatusBarMessage('Cannot delete position in current mode');
             return;
@@ -831,11 +826,13 @@
                     has_beaver: 0,
                 });
                 console.log('Database is empty. Showing index position 0 on total number position equal to 0.');
+                updateStatusBar(0, 0); // Reset status bar to 0 / 0
             } else {
                 // Go to the last position
                 const lastPosition = positions[positions.length - 1];
                 positionStore.set(lastPosition);
                 console.log(`Showing index position ${positions.length - 1} on total number position equal to ${positions.length}.`);
+                updateStatusBar(positions.length - 1, positions.length);
             }
 
             updateStatusBarMessage('Position and associated analysis deleted successfully');
@@ -941,7 +938,7 @@
             updateStatusBarMessage('No database opened');
             return;
         }
-        if (positions.length > 0) {
+        if (positions && positions.length > 0) {
             currentPositionIndex = 0;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
             updateStatusBar(currentPositionIndex, positions.length);
@@ -953,7 +950,7 @@
             updateStatusBarMessage('No database opened');
             return;
         }
-        if (currentPositionIndex > 0) {
+        if (positions && currentPositionIndex > 0) {
             currentPositionIndex--;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
             updateStatusBar(currentPositionIndex, positions.length);
@@ -965,7 +962,7 @@
             updateStatusBarMessage('No database opened');
             return;
         }
-        if (currentPositionIndex < positions.length - 1) {
+        if (positions && currentPositionIndex < positions.length - 1) {
             currentPositionIndex++;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
             updateStatusBar(currentPositionIndex, positions.length);
@@ -977,7 +974,7 @@
             updateStatusBarMessage('No database opened');
             return;
         }
-        if (positions.length > 0) {
+        if (positions && positions.length > 0) {
             currentPositionIndex = positions.length - 1;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
             updateStatusBar(currentPositionIndex, positions.length);
@@ -993,7 +990,7 @@
     }
 
     function handleGoToPosition(positionNumber) {
-        if (positionNumber > 0 && positionNumber <= positions.length) {
+        if (positions && positionNumber > 0 && positionNumber <= positions.length) {
             currentPositionIndex = positionNumber - 1;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
             updateStatusBar(currentPositionIndex, positions.length);

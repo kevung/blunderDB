@@ -277,6 +277,18 @@ func (d *Database) DeletePosition(positionID int64) error {
 		fmt.Println("Error deleting position:", err)
 		return err
 	}
+
+	// Check if the database is empty
+	var count int
+	err = d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&count)
+	if err != nil {
+		fmt.Println("Error counting positions:", err)
+		return err
+	}
+	if count == 0 {
+		fmt.Println("Database is empty.")
+	}
+
 	return nil
 }
 
