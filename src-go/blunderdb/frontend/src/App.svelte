@@ -642,7 +642,7 @@
 
         // Encode board positions
         let positionPart = '';
-        for (let i = 0; i < 24; i++) {
+        for (let i = 0; i < 26; i++) {
             const point = board.points[i];
             if (point.checkers > 0) {
                 const charCode = point.color === 0 ? 'A'.charCodeAt(0) : 'a'.charCodeAt(0);
