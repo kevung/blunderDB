@@ -264,6 +264,13 @@ func (d *Database) DeletePosition(positionID int64) error {
 		return err
 	}
 
+	// Delete the associated comment
+	err = d.DeleteComment(positionID)
+	if err != nil {
+		fmt.Println("Error deleting associated comment:", err)
+		return err
+	}
+
 	// Delete the position
 	_, err = d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
 	if err != nil {
@@ -277,6 +284,15 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 	_, err := d.db.Exec(`DELETE FROM analysis WHERE position_id = ?`, positionID)
 	if err != nil {
 		fmt.Println("Error deleting analysis:", err)
+		return err
+	}
+	return nil
+}
+
+func (d *Database) DeleteComment(positionID int64) error {
+	_, err := d.db.Exec(`DELETE FROM comment WHERE position_id = ?`, positionID)
+	if err != nil {
+		fmt.Println("Error deleting comment:", err)
 		return err
 	}
 	return nil

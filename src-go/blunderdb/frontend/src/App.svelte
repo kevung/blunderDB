@@ -592,7 +592,7 @@
             const moveRegex = new RegExp(
                 isFrench
                 ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\séq:(.{6})\s(?:\((-?[-.\d]+)\))?/
-                : /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{6})\s(?:\((-?[-.\d]+)\))?/,
+                : /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{6})\s(?:\((-?[-.\d.]+)\))?/,
                 'gm'
             );
 
@@ -799,7 +799,7 @@
             return;
         }
 
-        if (positions.length === 0) {
+        if (!positions || positions.length === 0) {
             updateStatusBarMessage('No positions to delete');
             return;
         }
@@ -809,19 +809,33 @@
             await DeletePosition(positionID);
             console.log('Position and associated analysis deleted with ID:', positionID);
 
-            // Retrieve all positions and show the last one
+            // Load all positions from the database
             positions = await LoadAllPositions();
-            analyses = await LoadAllAnalyses();
 
-            if (positions.length > 0) {
-                currentPositionIndex = positions.length - 1;
-                updateStatusBar(currentPositionIndex, positions.length);
-                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+            if (!positions || positions.length === 0) {
+                // If no positions left, initialize positionStore to its initial value
+                positionStore.set({
+                    board: {
+                        points: Array(26).fill({ checkers: 0, color: -1 }), // 24 points + 2 bars
+                        bearoff: [15, 15],
+                    },
+                    cube: {
+                        owner: -1,
+                        value: 0,
+                    },
+                    dice: [3, 1],
+                    score: [-1, -1],
+                    player_on_roll: 0,
+                    decision_type: 0,
+                    has_jacoby: 0,
+                    has_beaver: 0,
+                });
+                console.log('Database is empty. Showing index position 0 on total number position equal to 0.');
             } else {
-                // Clear the stores if no positions are left
-                positionStore.set({});
-                analysisStore.set({});
-                updateStatusBar(0, 0);
+                // Go to the last position
+                const lastPosition = positions[positions.length - 1];
+                positionStore.set(lastPosition);
+                console.log(`Showing index position ${positions.length - 1} on total number position equal to ${positions.length}.`);
             }
 
             updateStatusBarMessage('Position and associated analysis deleted successfully');
@@ -1154,7 +1168,7 @@
         if (showGoToPositionModal || $statusBarModeStore === 'EDIT') {
             return; // Prevent changing position when GoToPositionModal is open or in edit mode
         }
-        if (positions.length > 0) {
+        if (positions && positions.length > 0) {
             if (event.deltaY < 0) {
                 previousPosition();
             } else if (event.deltaY > 0) {

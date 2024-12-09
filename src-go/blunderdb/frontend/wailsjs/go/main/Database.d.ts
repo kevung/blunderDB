@@ -4,6 +4,8 @@ import {main} from '../models';
 
 export function DeleteAnalysis(arg1:number):Promise<void>;
 
+export function DeleteComment(arg1:number):Promise<void>;
+
 export function DeletePosition(arg1:number):Promise<void>;
 
 export function LoadAllAnalyses():Promise<Array<main.PositionAnalysis>>;

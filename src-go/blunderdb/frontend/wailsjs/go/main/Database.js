@@ -6,6 +6,10 @@ export function DeleteAnalysis(arg1) {
   return window['go']['main']['Database']['DeleteAnalysis'](arg1);
 }
 
+export function DeleteComment(arg1) {
+  return window['go']['main']['Database']['DeleteComment'](arg1);
+}
+
 export function DeletePosition(arg1) {
   return window['go']['main']['Database']['DeletePosition'](arg1);
 }
