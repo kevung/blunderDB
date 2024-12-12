@@ -136,7 +136,7 @@
                             <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
                             <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
                             <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
-                            <td>{move.depthAnalysis}</td>
+                            <td>{move.analysisDepth}</td>
                         </tr>
                     {/each}
                 </table>
