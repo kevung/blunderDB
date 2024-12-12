@@ -523,7 +523,7 @@
 
 
             // Best Cube action parsing
-            const bestCubeActionMatch = normalizedContent.match(isFrench ? /Meilleur action du videau:\s*(.*)/ : /Best Cube action:\s*(.*)/);
+            const bestCubeActionMatch = normalizedContent.match(new RegExp(isFrench ? /Meilleur action du videau:\s*(.*)/ : /Best Cube action:\s*(.*)/));
 
             const wrongPassPercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/));
             const wrongTakePercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/));
