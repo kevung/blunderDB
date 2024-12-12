@@ -599,11 +599,14 @@
 
         function createLabels() {
             let labels = two.makeGroup();
+            const position = get(positionStore);
+            const flip = position.player_on_roll === 1;
+
             if (boardCfg.orientation === "right") {
                 for (let i = 0; i < 6; i++) {
                     const x = boardOrigXpos + (6 - i) * boardCheckerSize;
                     const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((i + 1).toString(), x, y);
+                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "top";
@@ -612,7 +615,7 @@
                 for (let i = 6; i < 12; i++) {
                     const x = boardOrigXpos - (i - 5) * boardCheckerSize;
                     const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((i + 1).toString(), x, y);
+                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "top";
@@ -621,7 +624,7 @@
                 for (let i = 12; i < 18; i++) {
                     const x = boardOrigXpos + (i - 18) * boardCheckerSize;
                     const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((i + 1).toString(), x, y);
+                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "middle";
@@ -630,7 +633,7 @@
                 for (let i = 18; i < 24; i++) {
                     const x = boardOrigXpos + (i - 17) * boardCheckerSize;
                     const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((i + 1).toString(), x, y);
+                    const t = two.makeText((flip ? 24 - i : i + 1).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "middle";
@@ -640,7 +643,7 @@
                 for (let i = 0; i < 6; i++) {
                     const x = boardOrigXpos - (6 - i) * boardCheckerSize;
                     const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((24 - i).toString(), x, y);
+                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "middle";
@@ -649,7 +652,7 @@
                 for (let i = 6; i < 12; i++) {
                     const x = boardOrigXpos + (i - 5) * boardCheckerSize;
                     const y = boardOrigYpos - 0.5 * boardHeight - boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((24 - i).toString(), x, y);
+                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "middle";
@@ -658,7 +661,7 @@
                 for (let i = 12; i < 18; i++) {
                     const x = boardOrigXpos - (i - 18) * boardCheckerSize;
                     const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((24 - i).toString(), x, y);
+                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "top";
@@ -667,7 +670,7 @@
                 for (let i = 18; i < 24; i++) {
                     const x = boardOrigXpos - (i - 17) * boardCheckerSize;
                     const y = boardOrigYpos + 0.5 * boardHeight + boardCfg.label.distanceToBoard * boardCheckerSize;
-                    const t = two.makeText((24 - i).toString(), x, y); // Adjust point numbers from 12 to 1
+                    const t = two.makeText((flip ? i + 1 : 24 - i).toString(), x, y);
                     t.size = boardCfg.label.size;
                     t.alignment = "center";
                     t.baseline = "top";
