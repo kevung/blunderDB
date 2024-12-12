@@ -1041,26 +1041,30 @@
             updateStatusBarMessage('No database opened');
             return;
         }
-        console.log('toggleAnalysisPanel');
+        console.log('toggleAnalysisPanel'); // Debugging log
 
-        if($statusBarModeStore === 'NORMAL') {
+        if ($statusBarModeStore === 'NORMAL') {
             showAnalysis = !showAnalysis;
+            console.log('showAnalysis:', showAnalysis); // Debugging log
         }
 
         if (showAnalysis) {
             showComment = false;
             setTimeout(() => {
-            //event.preventDefault();
-                document.querySelector('.analysis-panel').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start' });
+                const analysisPanel = document.querySelector('.analysis-panel');
+                if (analysisPanel) {
+                    analysisPanel.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }, 0);
-        }
-        else {
+        } else {
             setTimeout(() => {
                 mainArea.scrollIntoView({
                     behavior: 'smooth',
-                    block: 'start' });
+                    block: 'start'
+                });
             }, 0);
         }
     }
@@ -1155,6 +1159,8 @@
         positionStore.set(positionCopy);
         analysisStore.set(analysisCopy);
 
+        console.log('Analysis Data:', analysisCopy); // Debugging log
+
         // Load the comment for the current position
         const comment = await LoadComment(position.id);
         commentTextStore.set(comment || '');
@@ -1165,6 +1171,13 @@
         if (showGoToPositionModal || $statusBarModeStore === 'EDIT') {
             return; // Prevent changing position when GoToPositionModal is open or in edit mode
         }
+
+        // Prevent changing position when scrolling in the analysis panel
+        const analysisPanel = document.querySelector('.analysis-panel');
+        if (analysisPanel && analysisPanel.contains(event.target)) {
+            return;
+        }
+
         if (positions && positions.length > 0) {
             if (event.deltaY < 0) {
                 previousPosition();
@@ -1229,7 +1242,7 @@
 
         <AnalysisPanel
             visible={showAnalysis}
-            analysisData={$analysisDataStore}
+            analysisData={$analysisStore}
             onClose={toggleAnalysisPanel}
         /> 
 

@@ -1,14 +1,13 @@
 import { writable } from 'svelte/store';
 
-
 export const analysisStore = writable({
     positionId: null,
     player1: '',
     player2: '',
-    xgid: '', // The XGID string
-    analysisType: '', // Either "DoublingCube" or "CheckerMove"
-    analysisEngineVersion: '', // The version of the analysis engine (e.g., eXtreme Gammon)
-    checkerAnalysis: [], // Array to hold checker move analysis
+    xgid: '',
+    analysisType: '',
+    analysisEngineVersion: '',
+    checkerAnalysis: [],
     doublingCubeAnalysis: {
         analysisDepth: '',
         playerWinChances: 0,
