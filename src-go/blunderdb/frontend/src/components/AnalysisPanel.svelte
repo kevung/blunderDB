@@ -26,71 +26,92 @@
             }
         }, 0);
     }
+
+    function formatEquity(value) {
+        return value >= 0 ? `+${value.toFixed(3)}` : value.toFixed(3);
+    }
 </script>
 
 {#if visible}
     <div class="analysis-panel" tabindex="0" id="analysisPanel" on:keydown={handleKeyDown}>
         <div class="close-icon" on:click={onClose}>×</div>
         <div class="analysis-content">
-            {#if analysisData.analysisType === 'DoublingCube'}
-                <h4>Doubling Cube Analysis</h4>
-                <table>
-                    <tr>
-                        <th></th>
-                        <th>P</th>
-                        <th>O</th>
-                    </tr>
-                    <tr>
-                        <td>W</td>
-                        <td>{analysisData.doublingCubeAnalysis.playerWinChances}%</td>
-                        <td>{analysisData.doublingCubeAnalysis.opponentWinChances}%</td>
-                    </tr>
-                    <tr>
-                        <td>G</td>
-                        <td>{analysisData.doublingCubeAnalysis.playerGammonChances}%</td>
-                        <td>{analysisData.doublingCubeAnalysis.opponentGammonChances}%</td>
-                    </tr>
-                    <tr>
-                        <td>B</td>
-                        <td>{analysisData.doublingCubeAnalysis.playerBackgammonChances}%</td>
-                        <td>{analysisData.doublingCubeAnalysis.opponentBackgammonChances}%</td>
-                    </tr>
-                    <tr>
-                        <td>Cubeless No Double Equity</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.cubelessNoDoubleEquity}</td>
-                    </tr>
-                    <tr>
-                        <td>Cubeless Double Equity</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.cubelessDoubleEquity}</td>
-                    </tr>
-                    <tr>
-                        <td>Cubeful No Double Equity</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity} (Error: {analysisData.doublingCubeAnalysis.cubefulNoDoubleError})</td>
-                    </tr>
-                    <tr>
-                        <td>Cubeful Double Take Equity</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.cubefulDoubleTakeEquity} (Error: {analysisData.doublingCubeAnalysis.cubefulDoubleTakeError})</td>
-                    </tr>
-                    <tr>
-                        <td>Cubeful Double Pass Equity</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.cubefulDoublePassEquity} (Error: {analysisData.doublingCubeAnalysis.cubefulDoublePassError})</td>
-                    </tr>
-                    <tr>
-                        <td>Best Cube Action</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.bestCubeAction}</td>
-                    </tr>
-                    <tr>
-                        <td>Wrong Pass Percentage</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.wrongPassPercentage}%</td>
-                    </tr>
-                    <tr>
-                        <td>Wrong Take Percentage</td>
-                        <td colspan="2">{analysisData.doublingCubeAnalysis.wrongTakePercentage}%</td>
-                    </tr>
-                </table>
+            {#if analysisData.analysisType === 'DoublingCube' && analysisData.doublingCubeAnalysis}
+                <div class="tables-container">
+                    <table class="left-table">
+                        <tr>
+                            <th></th>
+                            <th>P</th>
+                            <th>O</th>
+                        </tr>
+                        <tr>
+                            <td>W</td>
+                            <td>{(analysisData.doublingCubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
+                            <td>{(analysisData.doublingCubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>G</td>
+                            <td>{(analysisData.doublingCubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
+                            <td>{(analysisData.doublingCubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>B</td>
+                            <td>{(analysisData.doublingCubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
+                            <td>{(analysisData.doublingCubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>ND Eq</td>
+                            <td colspan="2">{formatEquity(analysisData.doublingCubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
+                        </tr>
+                        <tr>
+                            <td>D Eq</td>
+                            <td colspan="2">{formatEquity(analysisData.doublingCubeAnalysis.cubelessDoubleEquity || 0)}</td>
+                        </tr>
+                    </table>
+                    <table class="right-table">
+                        <tr>
+                            <th>Decision</th>
+                            <th>Equity</th>
+                            <th>Error</th>
+                        </tr>
+                        <tr>
+                            <td>No Double</td>
+                            <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
+                            <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleError || 0)}</td>
+                        </tr>
+                        <tr>
+                            <td>Double/Take</td>
+                            <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
+                            <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeError || 0)}</td>
+                        </tr>
+                        <tr>
+                            <td>Double/Pass</td>
+                            <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassEquity || 0)}</td>
+                            <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassError || 0)}</td>
+                        </tr>
+                        <tr class="best-action-row">
+                            <td>Best Action</td>
+                            <td colspan="2">{analysisData.doublingCubeAnalysis.bestCubeAction}</td>
+                        </tr>
+                    </table>
+                    <table class="info-table">
+                        <tr>
+                            <th>XGID</th>
+                            <td>{analysisData.xgid}</td>
+                        </tr>
+                        <tr>
+                            <th>Engine Version</th>
+                            <td>{analysisData.analysisEngineVersion}</td>
+                        </tr>
+                        <tr>
+                            <th>Analysis Depth</th>
+                            <td>{analysisData.doublingCubeAnalysis.analysisDepth}</td>
+                        </tr>
+                    </table>
+                </div>
             {/if}
 
-            {#if analysisData.analysisType === 'CheckerMove'}
+            {#if analysisData.analysisType === 'CheckerMove' && analysisData.checkerAnalysis}
                 <table class="checker-table">
                     <tr>
                         <th>Move</th>
@@ -102,18 +123,20 @@
                         <th>O W</th>
                         <th>O G</th>
                         <th>O B</th>
+                        <th>Depth</th>
                     </tr>
                     {#each analysisData.checkerAnalysis.moves as move}
                         <tr>
                             <td>{move.move}</td>
-                            <td>{move.equity.toFixed(3)}</td>
-                            <td>{move.equityError.toFixed(3)}</td>
-                            <td>{move.playerWinChance.toFixed(2)}</td>
-                            <td>{move.playerGammonChance.toFixed(2)}</td>
-                            <td>{move.playerBackgammonChance.toFixed(2)}</td>
-                            <td>{move.opponentWinChance.toFixed(2)}</td>
-                            <td>{move.opponentGammonChance.toFixed(2)}</td>
-                            <td>{move.opponentBackgammonChance.toFixed(2)}</td>
+                            <td>{formatEquity(move.equity || 0)}</td>
+                            <td>{formatEquity(move.equityError || 0)}</td>
+                            <td>{(move.playerWinChance || 0).toFixed(2)}</td>
+                            <td>{(move.playerGammonChance || 0).toFixed(2)}</td>
+                            <td>{(move.playerBackgammonChance || 0).toFixed(2)}</td>
+                            <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
+                            <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
+                            <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
+                            <td>{move.depthAnalysis}</td>
                         </tr>
                     {/each}
                 </table>
@@ -134,7 +157,7 @@
         background-color: white;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         border-radius: 0px;
-        padding: 15px; /* Reduce padding to optimize space */
+        padding: 10px; /* Reduce padding to optimize space */
         box-sizing: border-box;
         z-index: 5;
         outline: none;
@@ -153,23 +176,45 @@
     }
 
     .analysis-content {
-        font-size: 14px; /* Reduce font size */
+        font-size: 12px; /* Reduce font size */
         color: black; /* Set text color */
     }
 
-    table {
-        width: 100%;
+    .tables-container {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .left-table, .right-table, .info-table {
+        width: 28%; /* Reduce width for the first and third tables */
         border-collapse: collapse;
-        margin-top: 10px;
+        font-size: 12px; /* Ensure same font size */
+    }
+
+    .left-table th:nth-child(1) {
+        width: 20px; /* Reduce width for the first column */
+    }
+
+    .right-table th:nth-child(1) {
+        width: 60px; /* Reduce width for the decision column */
+    }
+
+    .info-table th, .info-table td {
+        border: 1px solid #ddd;
+        padding: 2px; /* Reduce padding */
+        text-align: center;
     }
 
     .checker-table {
         margin: 0 auto; /* Center the table */
+        width: 100%;
+        font-size: 12px; /* Ensure same font size */
+        border-spacing: 0; /* Remove space between cells */
     }
 
     th, td {
         border: 1px solid #ddd;
-        padding: 0px; /* Reduce padding to make row height smaller */
+        padding: 2px; /* Reduce padding */
         text-align: center;
     }
 
@@ -183,6 +228,17 @@
 
     th:nth-child(n+2) {
         width: 60px; /* Fixed width for equity and percentage columns */
+    }
+
+    .best-action-row {
+        font-weight: bold;
+        color: #000000; /* Subtle color change for emphasis */
+    }
+
+    .best-action {
+        margin-top: 10px;
+        text-align: center;
+        width: 100%;
     }
 </style>
 
