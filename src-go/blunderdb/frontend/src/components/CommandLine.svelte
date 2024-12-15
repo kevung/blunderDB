@@ -7,6 +7,7 @@
    export let text = '';
    export let onNewDatabase;
    export let onOpenDatabase;
+   export let exitApp;
    let inputEl;
 
    let initialized = false;
@@ -41,6 +42,8 @@
                onNewDatabase();
             } else if (command === 'open' || command === 'op' || command === 'o') {
                onOpenDatabase();
+            } else if (command === 'quit' || command === 'q') {
+               exitApp();
             }
             onClose();
          } else if (event.ctrlKey && event.code === 'KeyC') {

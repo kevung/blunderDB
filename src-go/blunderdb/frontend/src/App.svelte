@@ -1229,6 +1229,7 @@
             bind:this={commandInput}
             onNewDatabase={newDatabase}
             onOpenDatabase={openDatabase}
+            exitApp={exitApp}
         />
 
     </div>

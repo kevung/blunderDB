@@ -369,6 +369,10 @@
                                 <td>open, op, o</td>
                                 <td>Open an existing database</td>
                             </tr>
+                            <tr>
+                                <td>quit, q</td>
+                                <td>Exit blunderDB</td>
+                            </tr>
                             <!-- Add more commands as needed -->
                         </tbody>
                     </table>
