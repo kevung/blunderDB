@@ -1227,6 +1227,8 @@
             onToggleHelp={toggleHelpModal}
             text={$commandTextStore}
             bind:this={commandInput}
+            onNewDatabase={newDatabase}
+            onOpenDatabase={openDatabase}
         />
 
     </div>

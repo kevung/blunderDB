@@ -354,7 +354,25 @@
 
                 {#if activeTab === 'commands'}
                     <h2>Command Line Summary</h2>
-                    <p>Summary of all command line commands...</p>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>new, ne, n</td>
+                                <td>Create a new database</td>
+                            </tr>
+                            <tr>
+                                <td>open, op, o</td>
+                                <td>Open an existing database</td>
+                            </tr>
+                            <!-- Add more commands as needed -->
+                        </tbody>
+                    </table>
                 {/if}
 
                 {#if activeTab === 'about'}

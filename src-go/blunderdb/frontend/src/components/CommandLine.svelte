@@ -1,10 +1,12 @@
-    <script>
+<script>
    import { onMount, onDestroy } from 'svelte';
 
    export let visible = false;
    export let onClose;
    export let onToggleHelp;
    export let text = '';
+   export let onNewDatabase;
+   export let onOpenDatabase;
    let inputEl;
 
    let initialized = false;
@@ -34,6 +36,12 @@
          } else if (event.code === 'Escape') {
             onClose();
          } else if (event.code === 'Enter') {
+            const command = inputEl.value.trim().toLowerCase();
+            if (command === 'new' || command === 'ne' || command === 'n') {
+               onNewDatabase();
+            } else if (command === 'open' || command === 'op' || command === 'o') {
+               onOpenDatabase();
+            }
             onClose();
          } else if (event.ctrlKey && event.code === 'KeyC') {
             onClose();
