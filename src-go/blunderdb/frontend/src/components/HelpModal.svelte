@@ -93,18 +93,20 @@
     // Close the modal when clicking outside of it
     function handleClickOutside(event) {
         const modalContent = document.getElementById('modalContent');
-        if (!modalContent.contains(event.target)) {
+        if (modalContent && !modalContent.contains(event.target)) {
             onClose(); // Close the help modal if the click is outside of it
         }
     }
 
     onMount(() => {
         window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('click', handleClickOutside); // Add click event listener
         deactivateGlobalShortcuts();
     });
 
     onDestroy(() => {
         window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('click', handleClickOutside); // Remove click event listener
         activateGlobalShortcuts();
     });
 
@@ -117,11 +119,11 @@
             }
         }, 0);
         window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('click', handleClickOutside);
+        window.addEventListener('click', handleClickOutside); // Add click event listener
         deactivateGlobalShortcuts();
     } else {
         window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('click', handleClickOutside);
+        window.removeEventListener('click', handleClickOutside); // Remove click event listener
         activateGlobalShortcuts();
     }
 
@@ -135,8 +137,8 @@
             <!-- Tabs -->
             <div class="tab-header">
                 <button class="{activeTab === 'manual' ? 'active' : ''}" on:click={() => switchTab('manual')}>Manual</button>
-                <button class="{activeTab === 'shortcuts' ? 'active' : ''}" on:click={() => switchTab('shortcuts')}>Shortcut Summary</button>
-                <button class="{activeTab === 'commands' ? 'active' : ''}" on:click={() => switchTab('commands')}>Command Line Summary</button>
+                <button class="{activeTab === 'shortcuts' ? 'active' : ''}" on:click={() => switchTab('shortcuts')}>Shortcut</button>
+                <button class="{activeTab === 'commands' ? 'active' : ''}" on:click={() => switchTab('commands')}>Command Line</button>
                 <button class="{activeTab === 'about' ? 'active' : ''}" on:click={() => switchTab('about')}>About</button>
             </div>
 
@@ -148,10 +150,7 @@
                 {/if}
 
                 {#if activeTab === 'shortcuts'}
-                    <h2>Shortcut Summary</h2>
-
                     <h3>Database</h3>
-
                     <table>
                         <thead>
                             <tr>
@@ -353,7 +352,7 @@
                 {/if}
 
                 {#if activeTab === 'commands'}
-                    <h2>Command Line Summary</h2>
+                    <h3>Database</h3>
                     <table>
                         <thead>
                             <tr>
@@ -373,6 +372,7 @@
                             <!-- Add more commands as needed -->
                         </tbody>
                     </table>
+                    <!-- Add more categories as needed -->
                 {/if}
 
                 {#if activeTab === 'about'}
@@ -400,7 +400,7 @@
 
     .modal-content {
         background-color: white;
-        padding: 20px;
+        padding: 0; /* Remove padding */
         border-radius: 4px;
         width: 80%;
         height: 70%; /* Fix height to 70% of the viewport */
@@ -424,18 +424,26 @@
 
     .tab-header {
         display: flex;
-        margin-bottom: 20px;
-        height: 50px;
+        margin-bottom: 0; /* Remove bottom margin */
+        height: auto; /* Adjust height */
+        padding: 0; /* Remove padding */
     }
 
     .tab-header button {
         flex: 1;
-        padding: 10px;
+        padding: 0; /* Remove padding */
         background-color: #eee;
         border: none;
         cursor: pointer;
         font-size: 16px;
         outline: none;
+        display: flex; /* Use flexbox */
+        justify-content: center; /* Center horizontally */
+        align-items: center; /* Center vertically */
+        text-align: center; /* Center text */
+        line-height: 35px; /* Ensure text is centered vertically */
+        height: 35px; /* Set a fixed height */
+        border-radius: 4px 4px 0 0; /* Add rounded corners to the top */
     }
 
     .tab-header button.active {
@@ -447,9 +455,9 @@
         flex-grow: 1;
         overflow-y: auto;
         border-top: 1px solid #ddd;
-        padding: 20px;
+        padding: 0; /* Remove padding */
         box-sizing: border-box;
-        min-height: 200px;
+        height: calc(100% - 50px); /* Adjust height to ensure uniform tab size */
     }
 
     table {
