@@ -96,16 +96,12 @@
                     </table>
                     <table class="info-table">
                         <tr>
-                            <th>XGID</th>
-                            <td>{analysisData.xgid}</td>
+                            <th>Analysis Depth</th>
+                            <td>{analysisData.doublingCubeAnalysis.analysisDepth}</td>
                         </tr>
                         <tr>
                             <th>Engine Version</th>
                             <td>{analysisData.analysisEngineVersion}</td>
-                        </tr>
-                        <tr>
-                            <th>Analysis Depth</th>
-                            <td>{analysisData.doublingCubeAnalysis.analysisDepth}</td>
                         </tr>
                     </table>
                 </div>
