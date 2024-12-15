@@ -124,6 +124,7 @@ export namespace main {
 	    }
 	}
 	export class DoublingCubeAnalysis {
+	    analysisDepth: string;
 	    playerWinChances: number;
 	    playerGammonChances: number;
 	    playerBackgammonChances: number;
@@ -133,11 +134,14 @@ export namespace main {
 	    cubelessNoDoubleEquity: number;
 	    cubelessDoubleEquity: number;
 	    cubefulNoDoubleEquity: number;
-	    cubefulNoDoubleError?: number;
+	    cubefulNoDoubleError: number;
 	    cubefulDoubleTakeEquity: number;
 	    cubefulDoubleTakeError: number;
 	    cubefulDoublePassEquity: number;
 	    cubefulDoublePassError: number;
+	    bestCubeAction: string;
+	    wrongPassPercentage: number;
+	    wrongTakePercentage: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new DoublingCubeAnalysis(source);
@@ -145,6 +149,7 @@ export namespace main {
 	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.analysisDepth = source["analysisDepth"];
 	        this.playerWinChances = source["playerWinChances"];
 	        this.playerGammonChances = source["playerGammonChances"];
 	        this.playerBackgammonChances = source["playerBackgammonChances"];
@@ -159,6 +164,9 @@ export namespace main {
 	        this.cubefulDoubleTakeError = source["cubefulDoubleTakeError"];
 	        this.cubefulDoublePassEquity = source["cubefulDoublePassEquity"];
 	        this.cubefulDoublePassError = source["cubefulDoublePassError"];
+	        this.bestCubeAction = source["bestCubeAction"];
+	        this.wrongPassPercentage = source["wrongPassPercentage"];
+	        this.wrongTakePercentage = source["wrongTakePercentage"];
 	    }
 	}
 	export class FileDialogResponse {
@@ -225,8 +233,8 @@ export namespace main {
 	    xgid: string;
 	    player1: string;
 	    player2: string;
-	    extremeGammonVersion: string;
 	    analysisType: string;
+	    analysisEngineVersion: string;
 	    doublingCubeAnalysis?: DoublingCubeAnalysis;
 	    checkerAnalysis?: CheckerAnalysis;
 	
@@ -240,8 +248,8 @@ export namespace main {
 	        this.xgid = source["xgid"];
 	        this.player1 = source["player1"];
 	        this.player2 = source["player2"];
-	        this.extremeGammonVersion = source["extremeGammonVersion"];
 	        this.analysisType = source["analysisType"];
+	        this.analysisEngineVersion = source["analysisEngineVersion"];
 	        this.doublingCubeAnalysis = this.convertValues(source["doublingCubeAnalysis"], DoublingCubeAnalysis);
 	        this.checkerAnalysis = this.convertValues(source["checkerAnalysis"], CheckerAnalysis);
 	    }

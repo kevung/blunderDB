@@ -2,12 +2,14 @@ import { writable } from 'svelte/store';
 
 export const analysisStore = writable({
     positionId: null,
+    xgid: '',
     player1: '',
     player2: '',
-    xgid: '',
     analysisType: '',
     analysisEngineVersion: '',
-    checkerAnalysis: [],
+    checkerAnalysis: {
+        moves: []
+    },
     doublingCubeAnalysis: {
         analysisDepth: '',
         playerWinChances: 0,

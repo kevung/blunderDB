@@ -56,6 +56,7 @@ type Position struct {
 }
 
 type DoublingCubeAnalysis struct {
+	AnalysisDepth             string  `json:"analysisDepth"`
 	PlayerWinChances          float64 `json:"playerWinChances"`
 	PlayerGammonChances       float64 `json:"playerGammonChances"`
 	PlayerBackgammonChances   float64 `json:"playerBackgammonChances"`
@@ -65,11 +66,14 @@ type DoublingCubeAnalysis struct {
 	CubelessNoDoubleEquity    float64 `json:"cubelessNoDoubleEquity"`
 	CubelessDoubleEquity      float64 `json:"cubelessDoubleEquity"`
 	CubefulNoDoubleEquity     float64 `json:"cubefulNoDoubleEquity"`
-	CubefulNoDoubleError      float64 `json:"cubefulNoDoubleError,omitempty"`
+	CubefulNoDoubleError      float64 `json:"cubefulNoDoubleError"`
 	CubefulDoubleTakeEquity   float64 `json:"cubefulDoubleTakeEquity"`
 	CubefulDoubleTakeError    float64 `json:"cubefulDoubleTakeError"`
 	CubefulDoublePassEquity   float64 `json:"cubefulDoublePassEquity"`
 	CubefulDoublePassError    float64 `json:"cubefulDoublePassError"`
+	BestCubeAction            string  `json:"bestCubeAction"`
+	WrongPassPercentage       float64 `json:"wrongPassPercentage"`
+	WrongTakePercentage       float64 `json:"wrongTakePercentage"`
 }
 
 type CheckerMove struct {
@@ -91,14 +95,14 @@ type CheckerAnalysis struct {
 }
 
 type PositionAnalysis struct {
-	PositionID           int                   `json:"positionId"`
-	XGID                 string                `json:"xgid"`
-	Player1              string                `json:"player1"`
-	Player2              string                `json:"player2"`
-	ExtremeGammonVersion string                `json:"extremeGammonVersion"`
-	AnalysisType         string                `json:"analysisType"`
-	DoublingCubeAnalysis *DoublingCubeAnalysis `json:"doublingCubeAnalysis,omitempty"`
-	CheckerAnalysis      *CheckerAnalysis      `json:"checkerAnalysis,omitempty"`
+	PositionID            int                   `json:"positionId"`
+	XGID                  string                `json:"xgid"`
+	Player1               string                `json:"player1"`
+	Player2               string                `json:"player2"`
+	AnalysisType          string                `json:"analysisType"`
+	AnalysisEngineVersion string                `json:"analysisEngineVersion"`
+	DoublingCubeAnalysis  *DoublingCubeAnalysis `json:"doublingCubeAnalysis,omitempty"`
+	CheckerAnalysis       *CheckerAnalysis      `json:"checkerAnalysis,omitempty"`
 }
 
 func initializeBoard() Board {
