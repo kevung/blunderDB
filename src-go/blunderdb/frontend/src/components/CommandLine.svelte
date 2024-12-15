@@ -7,6 +7,7 @@
    export let text = '';
    export let onNewDatabase;
    export let onOpenDatabase;
+   export let importPosition;
    export let exitApp;
    let inputEl;
 
@@ -42,6 +43,8 @@
                onNewDatabase();
             } else if (command === 'open' || command === 'op' || command === 'o') {
                onOpenDatabase();
+            } else if (command === 'import' || command === 'i') {
+               importPosition();
             } else if (command === 'quit' || command === 'q') {
                exitApp();
             }

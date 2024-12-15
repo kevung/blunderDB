@@ -373,7 +373,21 @@
                                 <td>quit, q</td>
                                 <td>Exit blunderDB</td>
                             </tr>
-                            <!-- Add more commands as needed -->
+                        </tbody>
+                    </table>
+                    <h3>Position</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>import, i</td>
+                                <td>Import a position</td>
+                            </tr>
                         </tbody>
                     </table>
                     <!-- Add more categories as needed -->
