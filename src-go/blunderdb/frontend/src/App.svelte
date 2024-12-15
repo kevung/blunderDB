@@ -1230,6 +1230,7 @@
             onNewDatabase={newDatabase}
             onOpenDatabase={openDatabase}
             importPosition={importPosition}
+            onSavePosition={saveCurrentPosition}
             exitApp={exitApp}
         />
 

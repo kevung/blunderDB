@@ -8,6 +8,7 @@
    export let onNewDatabase;
    export let onOpenDatabase;
    export let importPosition;
+   export let onSavePosition; // Update the attribute name
    export let exitApp;
    let inputEl;
 
@@ -45,6 +46,8 @@
                onOpenDatabase();
             } else if (command === 'import' || command === 'i') {
                importPosition();
+            } else if (command === 'write' || command === 'wr' || command === 'w') {
+               onSavePosition(); // Update the method call
             } else if (command === 'quit' || command === 'q') {
                exitApp();
             }

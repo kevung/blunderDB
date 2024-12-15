@@ -388,6 +388,10 @@
                                 <td>import, i</td>
                                 <td>Import a position</td>
                             </tr>
+                            <tr>
+                                <td>write, wr, w</td>
+                                <td>Save a position</td>
+                            </tr>
                         </tbody>
                     </table>
                     <!-- Add more categories as needed -->
