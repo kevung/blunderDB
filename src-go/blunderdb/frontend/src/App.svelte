@@ -107,7 +107,7 @@
             saveCurrentPosition();
         } else if(event.ctrlKey && event.code == 'KeyU') {
             updatePosition();
-        } else if(event.code === 'Delete') {
+        } else if (event.code === 'Delete') {
             deletePosition();
         } else if (!event.ctrlKey && event.key === 'PageUp') {
             event.preventDefault();
@@ -789,7 +789,7 @@
             return;
         }
         console.log('deletePosition');
-        if ($statusBarModeStore !== 'NORMAL') {
+        if ($statusBarModeStore !== 'NORMAL' && $statusBarModeStore !== 'COMMAND') {
             updateStatusBarMessage('Cannot delete position in current mode');
             return;
         }
@@ -1235,10 +1235,11 @@
                 statusBarModeStore.set('EDIT'); // Set mode to EDIT before updating
                 updatePosition();
             }}
+            onDeletePosition={deletePosition}
             exitApp={exitApp}
         />
 
-    </div>
+    </div> <!-- Close the scrollable-content div properly -->
 
     <div class="panel-container">
 

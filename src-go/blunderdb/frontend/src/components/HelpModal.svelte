@@ -396,6 +396,10 @@
                                 <td>write!, wr!, w!</td>
                                 <td>Update a position</td>
                             </tr>
+                            <tr>
+                                <td>delete, del, d</td>
+                                <td>Delete a position</td>
+                            </tr>
                         </tbody>
                     </table>
                     <!-- Add more categories as needed -->

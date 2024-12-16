@@ -10,6 +10,7 @@
    export let importPosition;
    export let onSavePosition; // Update the attribute name
    export let onUpdatePosition; // Add the new attribute
+   export let onDeletePosition; // Add the new attribute
    export let exitApp;
    let inputEl;
 
@@ -51,6 +52,8 @@
                onSavePosition(); // Update the method call
             } else if (command === 'write!' || command === 'wr!' || command === 'w!') {
                onUpdatePosition(); // Add the method call
+            } else if (command === 'delete' || command === 'del' || command === 'd') {
+               onDeletePosition(); // Add the method call
             } else if (command === 'quit' || command === 'q') {
                exitApp();
             }
