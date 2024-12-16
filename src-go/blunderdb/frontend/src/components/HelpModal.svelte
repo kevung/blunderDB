@@ -430,6 +430,10 @@
                                 <td>list, l</td>
                                 <td>Toggle analysis panel</td>
                             </tr>
+                            <tr>
+                                <td>comment, co</td>
+                                <td>Toggle comment panel</td>
+                            </tr>
                         </tbody>
                     </table>
                     <!-- Add more categories as needed -->

@@ -13,6 +13,7 @@
    export let onDeletePosition;
    export let onGoToPosition; // Add the new attribute
    export let onToggleAnalysis; // Add the new attribute
+   export let onToggleComment; // Add the new attribute
    export let exitApp;
    let inputEl;
 
@@ -44,28 +45,53 @@
             onClose();
          } else if (event.code === 'Enter') {
             const command = inputEl.value.trim().toLowerCase();
+            console.log('Command entered:', command); // Debugging log
             const match = command.match(/^(\d+)$/);
             if (match) {
                const positionNumber = parseInt(match[1], 10);
-               onGoToPosition(positionNumber);
+               onClose().then(() => {
+                  onGoToPosition(positionNumber);
+               });
             } else if (command === 'new' || command === 'ne' || command === 'n') {
-               onNewDatabase();
+               onClose().then(() => {
+                  onNewDatabase();
+               });
             } else if (command === 'open' || command === 'op' || command === 'o') {
-               onOpenDatabase();
+               onClose().then(() => {
+                  onOpenDatabase();
+               });
             } else if (command === 'import' || command === 'i') {
-               importPosition();
+               onClose().then(() => {
+                  importPosition();
+               });
             } else if (command === 'write' || command === 'wr' || command === 'w') {
-               onSavePosition();
+               onClose().then(() => {
+                  onSavePosition();
+               });
             } else if (command === 'write!' || command === 'wr!' || command === 'w!') {
-               onUpdatePosition();
+               onClose().then(() => {
+                  onUpdatePosition();
+               });
             } else if (command === 'delete' || command === 'del' || command === 'd') {
-               onDeletePosition();
+               onClose().then(() => {
+                  onDeletePosition();
+               });
             } else if (command === 'list' || command === 'l') {
-               onToggleAnalysis(); // Add the method call
+               onClose().then(() => {
+                  onToggleAnalysis();
+               });
+            } else if (command === 'comment' || command === 'co') {
+               console.log('Toggling comment panel'); // Debugging log
+               onClose().then(() => {
+                  onToggleComment();
+               });
             } else if (command === 'quit' || command === 'q') {
-               exitApp();
+               onClose().then(() => {
+                  exitApp();
+               });
+            } else {
+               onClose();
             }
-            onClose();
          } else if (event.ctrlKey && event.code === 'KeyC') {
             onClose();
          } else if (event.ctrlKey && event.code === 'KeyH') {

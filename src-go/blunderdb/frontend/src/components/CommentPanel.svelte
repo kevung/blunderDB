@@ -27,6 +27,8 @@
           }
        }, 0);
     }
+
+    $: console.log('CommentPanel visibility:', visible); // Debugging log
 </script>
 
 {#if visible}
@@ -44,7 +46,6 @@
 {/if}
 
 <style>
-
     .comment-panel {
         position: absolute;
         bottom: 0; /* Above the status bar */
@@ -86,6 +87,5 @@
         background-color: white; /* Ensure background is opaque */
         font-size: 18px;
     }
-
 </style>
 

@@ -1028,14 +1028,17 @@
         }
     }
 
-    function toggleCommandMode(){
+    function toggleCommandMode() {
         console.log('toggleCommandMode');
-        if(!showCommand) {
-            statusBarModeStore.set('COMMAND');
-        } else {
-            statusBarModeStore.set('NORMAL');
-        }
-        showCommand = !showCommand;
+        return new Promise((resolve) => {
+            if (!showCommand) {
+                statusBarModeStore.set('COMMAND');
+            } else {
+                statusBarModeStore.set('NORMAL');
+            }
+            showCommand = !showCommand;
+            resolve();
+        });
     }
 
     function toggleAnalysisPanel() {
@@ -1090,23 +1093,27 @@
             updateStatusBarMessage('No current position to comment on');
             return;
         }
-        console.log('toggleCommentPanel');
+        console.log('toggleCommentPanel called');
 
-        if ($statusBarModeStore === 'NORMAL') {
+        if ($statusBarModeStore === 'NORMAL' || $statusBarModeStore === 'COMMAND') {
             if (showComment) {
                 SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore); // Ensure position ID is an int64
             }
             showComment = !showComment;
+            console.log('showComment state:', showComment); // Debugging log
         }
 
         if (showComment) {
             showAnalysis = false;
             showCommand = false;
             setTimeout(() => {
-                document.querySelector('.comment-panel').scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
+                const commentPanel = document.querySelector('.comment-panel');
+                if (commentPanel) {
+                    commentPanel.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
             }, 0);
         } else {
             mainArea.scrollIntoView({
@@ -1250,6 +1257,7 @@
             onDeletePosition={deletePosition}
             onGoToPosition={handleGoToPosition}
             onToggleAnalysis={toggleAnalysisPanel}
+            onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
         />
 
