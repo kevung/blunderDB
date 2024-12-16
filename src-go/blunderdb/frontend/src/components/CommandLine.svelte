@@ -8,9 +8,10 @@
    export let onNewDatabase;
    export let onOpenDatabase;
    export let importPosition;
-   export let onSavePosition; // Update the attribute name
-   export let onUpdatePosition; // Add the new attribute
-   export let onDeletePosition; // Add the new attribute
+   export let onSavePosition;
+   export let onUpdatePosition;
+   export let onDeletePosition;
+   export let onGoToPosition; // Add the new attribute
    export let exitApp;
    let inputEl;
 
@@ -42,18 +43,24 @@
             onClose();
          } else if (event.code === 'Enter') {
             const command = inputEl.value.trim().toLowerCase();
-            if (command === 'new' || command === 'ne' || command === 'n') {
+            const match = command.match(/^(\d+)$/);
+            if (match) {
+               const positionNumber = parseInt(match[1], 10);
+               if (positionNumber > 0) {
+                  onGoToPosition(positionNumber);
+               }
+            } else if (command === 'new' || command === 'ne' || command === 'n') {
                onNewDatabase();
             } else if (command === 'open' || command === 'op' || command === 'o') {
                onOpenDatabase();
             } else if (command === 'import' || command === 'i') {
                importPosition();
             } else if (command === 'write' || command === 'wr' || command === 'w') {
-               onSavePosition(); // Update the method call
+               onSavePosition();
             } else if (command === 'write!' || command === 'wr!' || command === 'w!') {
-               onUpdatePosition(); // Add the method call
+               onUpdatePosition();
             } else if (command === 'delete' || command === 'del' || command === 'd') {
-               onDeletePosition(); // Add the method call
+               onDeletePosition();
             } else if (command === 'quit' || command === 'q') {
                exitApp();
             }

@@ -1236,6 +1236,7 @@
                 updatePosition();
             }}
             onDeletePosition={deletePosition}
+            onGoToPosition={handleGoToPosition}
             exitApp={exitApp}
         />
 

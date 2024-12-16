@@ -402,6 +402,21 @@
                             </tr>
                         </tbody>
                     </table>
+                    <h3>Navigation</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>[number]</td>
+                                <td>Go to a specific position by index</td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <!-- Add more categories as needed -->
                 {/if}
 
