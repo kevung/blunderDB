@@ -417,6 +417,21 @@
                             </tr>
                         </tbody>
                     </table>
+                    <h3>Tools</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>list, l</td>
+                                <td>Toggle analysis panel</td>
+                            </tr>
+                        </tbody>
+                    </table>
                     <!-- Add more categories as needed -->
                 {/if}
 

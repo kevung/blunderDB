@@ -1045,6 +1045,8 @@
         }
         console.log('toggleAnalysisPanel'); // Debugging log
 
+        statusBarModeStore.set('NORMAL'); // Ensure normal mode
+
         if ($statusBarModeStore === 'NORMAL') {
             showAnalysis = !showAnalysis;
             console.log('showAnalysis:', showAnalysis); // Debugging log
@@ -1239,6 +1241,7 @@
             }}
             onDeletePosition={deletePosition}
             onGoToPosition={handleGoToPosition}
+            onToggleAnalysis={toggleAnalysisPanel}
             exitApp={exitApp}
         />
 

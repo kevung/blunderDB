@@ -12,6 +12,7 @@
    export let onUpdatePosition;
    export let onDeletePosition;
    export let onGoToPosition; // Add the new attribute
+   export let onToggleAnalysis; // Add the new attribute
    export let exitApp;
    let inputEl;
 
@@ -59,6 +60,8 @@
                onUpdatePosition();
             } else if (command === 'delete' || command === 'del' || command === 'd') {
                onDeletePosition();
+            } else if (command === 'list' || command === 'l') {
+               onToggleAnalysis(); // Add the method call
             } else if (command === 'quit' || command === 'q') {
                exitApp();
             }
