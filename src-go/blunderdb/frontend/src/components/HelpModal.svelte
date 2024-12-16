@@ -428,11 +428,15 @@
                         <tbody>
                             <tr>
                                 <td>list, l</td>
-                                <td>Toggle analysis panel</td>
+                                <td>Show Analysis</td>
                             </tr>
                             <tr>
                                 <td>comment, co</td>
-                                <td>Toggle comment panel</td>
+                                <td>Write Comments</td>
+                            </tr>
+                            <tr>
+                                <td>help, he, h</td>
+                                <td>Open Help</td>
                             </tr>
                         </tbody>
                     </table>

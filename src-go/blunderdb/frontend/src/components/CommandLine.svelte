@@ -89,6 +89,10 @@
                onClose().then(() => {
                   exitApp();
                });
+            } else if (command === 'help' || command === 'he' || command === 'h') {
+               onClose().then(() => {
+                  onToggleHelp();
+               });
             } else {
                onClose();
             }
