@@ -994,6 +994,8 @@
             currentPositionIndex = positionNumber - 1;
             showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
             updateStatusBar(currentPositionIndex, positions.length);
+        } else {
+            updateStatusBarMessage(`Invalid position number: ${positionNumber}`);
         }
         showGoToPositionModal = false;
     }

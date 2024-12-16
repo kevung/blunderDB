@@ -46,9 +46,7 @@
             const match = command.match(/^(\d+)$/);
             if (match) {
                const positionNumber = parseInt(match[1], 10);
-               if (positionNumber > 0) {
-                  onGoToPosition(positionNumber);
-               }
+               onGoToPosition(positionNumber);
             } else if (command === 'new' || command === 'ne' || command === 'n') {
                onNewDatabase();
             } else if (command === 'open' || command === 'op' || command === 'o') {
