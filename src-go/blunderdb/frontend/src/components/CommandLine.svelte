@@ -1,5 +1,7 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
+   import { commentTextStore } from '../stores/uiStore'; // Import commentTextStore
+   import { SaveComment } from '../../wailsjs/go/main/Database.js'; // Import SaveComment
 
    export let visible = false;
    export let onClose;
@@ -15,6 +17,7 @@
    export let onToggleAnalysis; // Add the new attribute
    export let onToggleComment; // Add the new attribute
    export let exitApp;
+   export let currentPositionId; // Add the current position ID
    let inputEl;
 
    let initialized = false;
@@ -93,6 +96,11 @@
                onClose().then(() => {
                   onToggleHelp();
                });
+            } else if (command.startsWith('#')) {
+               const tags = Array.from(new Set(command.split(' ').map((tag, index) => index === 0 ? tag : `#${tag}`))).join(' ');
+               onClose().then(() => {
+                  insertTags(tags);
+               });
             } else {
                onClose();
             }
@@ -102,6 +110,24 @@
             onToggleHelp();
          }
       }
+   }
+
+   function insertTags(tags) {
+      commentTextStore.update(text => {
+         const existingTags = new Set(text.match(/#[^\s#]+/g) || []);
+         const newTags = tags.split(' ').filter(tag => !existingTags.has(tag));
+         const updatedText = `${newTags.join(' ')}\n${text}`;
+         setTimeout(() => {
+            const textAreaEl = document.getElementById('commentTextArea');
+            if (textAreaEl) {
+               textAreaEl.setSelectionRange(updatedText.length, updatedText.length);
+               textAreaEl.focus();
+            }
+         }, 0);
+         // Save the updated comment to the database
+         SaveComment(parseInt(currentPositionId), updatedText);
+         return updatedText;
+      });
    }
 
    function handleClickOutside(event) {

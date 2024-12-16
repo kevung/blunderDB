@@ -438,6 +438,10 @@
                                 <td>help, he, h</td>
                                 <td>Open Help</td>
                             </tr>
+                            <tr>
+                                <td>#tag1 tag2 ...</td>
+                                <td>Tag Position</td>
+                            </tr>
                         </tbody>
                     </table>
                     <!-- Add more categories as needed -->

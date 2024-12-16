@@ -1259,6 +1259,7 @@
             onToggleAnalysis={toggleAnalysisPanel}
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
+            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].id : null}
         />
 
     </div> <!-- Close the scrollable-content div properly -->
