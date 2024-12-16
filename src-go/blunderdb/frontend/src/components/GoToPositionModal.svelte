@@ -5,6 +5,7 @@
     export let onClose;
     export let onGoToPosition;
     export let maxPositionNumber = 0;
+    export let currentIndex = 0; // Add currentIndex prop
 
     let positionNumber = 0;
     let inputField;
@@ -26,12 +27,15 @@
 
     onMount(() => {
         if (visible && inputField) {
+            positionNumber = currentIndex; // Set positionNumber to currentIndex initially
             inputField.focus();
+            inputField.select(); // Select the text to allow direct replacement
         }
     });
 
     $: if (visible && inputField) {
         inputField.focus();
+        inputField.select(); // Select the text to allow direct replacement
     }
 </script>
 

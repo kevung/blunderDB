@@ -1302,6 +1302,7 @@
         onClose={() => showGoToPositionModal = false}
         onGoToPosition={handleGoToPosition}
         maxPositionNumber={positions.length}
+        currentIndex={currentPositionIndex + 1}
     />
 
     <HelpModal
