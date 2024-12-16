@@ -221,6 +221,11 @@
                                 <td>Delete Position</td>
                             </tr>
 
+                            <tr>
+                                <td>Backspace</td>
+                                <td>Reset board, cube, score, and dice</td>
+                            </tr>
+
                         </tbody>
                     </table>
 

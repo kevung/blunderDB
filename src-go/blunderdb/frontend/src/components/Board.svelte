@@ -473,6 +473,25 @@
         }
     }
 
+    function handleKeyDown(event) {
+        if (mode !== "EDIT") return;
+
+        if (event.key === "Backspace") {
+            event.preventDefault();
+            positionStore.update(pos => {
+                pos.board.points.forEach(point => point.checkers = 0);
+                pos.board.bearoff = [15, 15]; // Reset bearoff
+                pos.cube.value = 0; // Set cube in the middle
+                pos.cube.owner = -1; // Reset cube owner
+                pos.score = [7, 7]; // Reset score to 7 away for both players
+                pos.dice = [3, 1]; // Set dice to 3 and 1
+                pos.decision_type = 0; // Checker decision
+                pos.player_on_roll = 0; // Player on roll is below
+                return pos;
+            });
+        }
+    }
+
     onMount(() => {
         canvas = document.getElementById("backgammon-board");
         const params = { width: window.innerWidth, height: window.innerHeight };
@@ -498,6 +517,7 @@
         drawBoard();
         window.addEventListener("resize", resizeBoard);
         window.addEventListener("keydown", handleOrientationChange);
+        window.addEventListener("keydown", handleKeyDown);
 
         unsubscribe = positionStore.subscribe(() => {
             drawBoard();
@@ -522,6 +542,7 @@
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         window.removeEventListener("keydown", handleOrientationChange);
+        window.removeEventListener("keydown", handleKeyDown);
         if (unsubscribe) unsubscribe();
     });
 
