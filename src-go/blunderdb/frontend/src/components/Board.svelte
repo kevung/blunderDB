@@ -231,6 +231,20 @@
         two.update();
     }
 
+    function resetBoard() {
+        positionStore.update(pos => {
+            pos.board.points.forEach(point => point.checkers = 0);
+            pos.board.bearoff = [15, 15]; // Reset bearoff
+            pos.cube.value = 0; // Set cube in the middle
+            pos.cube.owner = -1; // Reset cube owner
+            pos.score = [7, 7]; // Reset score to 7 away for both players
+            pos.dice = [3, 1]; // Set dice to 3 and 1
+            pos.decision_type = 0; // Checker decision
+            pos.player_on_roll = 0; // Player on roll is below
+            return pos;
+        });
+    }
+
     function handleDoubleClick(event) {
         if (mode !== "EDIT") return;
 
@@ -246,11 +260,7 @@
         // Check if the click is outside of the board
         if (mouseX < boardOrigXpos - boardWidth / 2 || mouseX > boardOrigXpos + boardWidth / 2 ||
             mouseY < boardOrigYpos - boardHeight / 2 || mouseY > boardOrigYpos + boardHeight / 2) {
-            positionStore.update(pos => {
-                pos.board.points.forEach(point => point.checkers = 0);
-                pos.board.bearoff = [15, 15]; // Reset bearoff
-                return pos;
-            });
+            resetBoard();
         }
     }
 
@@ -478,17 +488,7 @@
 
         if (event.key === "Backspace") {
             event.preventDefault();
-            positionStore.update(pos => {
-                pos.board.points.forEach(point => point.checkers = 0);
-                pos.board.bearoff = [15, 15]; // Reset bearoff
-                pos.cube.value = 0; // Set cube in the middle
-                pos.cube.owner = -1; // Reset cube owner
-                pos.score = [7, 7]; // Reset score to 7 away for both players
-                pos.dice = [3, 1]; // Set dice to 3 and 1
-                pos.decision_type = 0; // Checker decision
-                pos.player_on_roll = 0; // Player on roll is below
-                return pos;
-            });
+            resetBoard();
         }
     }
 
