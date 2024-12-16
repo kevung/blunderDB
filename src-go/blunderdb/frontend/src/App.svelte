@@ -934,6 +934,10 @@
     }
 
     function firstPosition() {
+        if ($statusBarModeStore === 'EDIT') {
+            updateStatusBarMessage('Cannot browse positions in edit mode');
+            return;
+        }
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
             return;
@@ -946,6 +950,10 @@
     }
 
     function previousPosition() {
+        if ($statusBarModeStore === 'EDIT') {
+            updateStatusBarMessage('Cannot browse positions in edit mode');
+            return;
+        }
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
             return;
@@ -958,6 +966,10 @@
     }
 
     function nextPosition() {
+        if ($statusBarModeStore === 'EDIT') {
+            updateStatusBarMessage('Cannot browse positions in edit mode');
+            return;
+        }
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
             return;
@@ -970,6 +982,10 @@
     }
 
     function lastPosition() {
+        if ($statusBarModeStore === 'EDIT') {
+            updateStatusBarMessage('Cannot browse positions in edit mode');
+            return;
+        }
         if (!$databasePathStore) {
             updateStatusBarMessage('No database opened');
             return;
@@ -1270,7 +1286,7 @@
             text={$commentTextStore}
             visible={showComment}
             onClose={toggleCommentPanel}
-            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].id : null}
+            currentPositionId={positions.length > 0 ? currentPositionIndex : null}
         />
 
         <AnalysisPanel
