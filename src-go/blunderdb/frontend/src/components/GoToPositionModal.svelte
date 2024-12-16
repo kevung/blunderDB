@@ -42,6 +42,7 @@
 {#if visible}
 <div class="modal-overlay" on:click={onClose}>
     <div class="modal-content" on:click|stopPropagation>
+        <div class="close-button" on:click={onClose}>×</div>
         <h2>Go To Position</h2>
         <input type="number" bind:value={positionNumber} min="1" max={maxPositionNumber} placeholder="Enter position number" class="input-field" bind:this={inputField} on:keydown={handleKeyDown} />
         <div class="modal-buttons">
@@ -57,29 +58,43 @@
         position: fixed;
         top: 0;
         left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
         display: flex;
-        align-items: center;
         justify-content: center;
+        align-items: center;
         z-index: 1000;
     }
 
     .modal-content {
-        background: white;
+        background-color: white;
         padding: 10px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 4px;
+        width: 300px; /* Set a fixed width */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        position: relative;
+        display: flex;
+        flex-direction: column;
         text-align: center;
-        width: 250px;
-        font-size: 14px; /* Same font size as in AnalysisPanel */
+    }
+
+    .close-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 24px;
+        font-weight: bold;
+        color: #666;
+        cursor: pointer;
+        z-index: 10;
+        transition: background-color 0.3s ease, opacity 0.3s ease;
     }
 
     .input-field {
-        width: 40%; /* Make the input field smaller */
+        width: 80%; /* Adjust the width */
         padding: 8px;
-        margin: 8px 0;
+        margin: 8px auto; /* Center the input field */
         border: 1px solid #ccc;
         border-radius: 4px;
         box-sizing: border-box;
@@ -99,10 +114,11 @@
     }
 
     .modal-buttons button {
-        padding: 8px 16px;
+        padding: 8px 14px; /* Slightly increase padding */
         border: none;
         border-radius: 4px;
         cursor: pointer;
+        font-size: 15px; /* Slightly increase font size */
     }
 
     .primary-button {
