@@ -130,9 +130,9 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" tabindex="0" id="helpModal" transition:fade={{ duration: 30 }}>
+    <div class="modal-overlay" id="helpModal" transition:fade={{ duration: 30 }}>
         <div class="modal-content" id="modalContent">
-            <div class="close-button" on:click={onClose}>×</div>
+            <div class="close-button" on:click={onClose} on:keydown={handleKeyDown}>×</div>
 
             <!-- Tabs -->
             <div class="tab-header">
@@ -391,6 +391,10 @@
                             <tr>
                                 <td>write, wr, w</td>
                                 <td>Save a position</td>
+                            </tr>
+                            <tr>
+                                <td>write!, wr!, w!</td>
+                                <td>Update a position</td>
                             </tr>
                         </tbody>
                     </table>

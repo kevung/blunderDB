@@ -1231,6 +1231,10 @@
             onOpenDatabase={openDatabase}
             importPosition={importPosition}
             onSavePosition={saveCurrentPosition}
+            onUpdatePosition={() => {
+                statusBarModeStore.set('EDIT'); // Set mode to EDIT before updating
+                updatePosition();
+            }}
             exitApp={exitApp}
         />
 
