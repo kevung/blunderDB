@@ -1043,6 +1043,14 @@
             updateStatusBarMessage('No database opened');
             return;
         }
+        if ($statusBarModeStore === 'EDIT') {
+            updateStatusBarMessage('Cannot toggle analysis panel in edit mode');
+            return;
+        }
+        if (JSON.stringify($positionStore) !== JSON.stringify(positions[currentPositionIndex])) {
+            updateStatusBarMessage('Cannot toggle analysis panel with unsaved changes');
+            return;
+        }
         console.log('toggleAnalysisPanel'); // Debugging log
 
         statusBarModeStore.set('NORMAL'); // Ensure normal mode
