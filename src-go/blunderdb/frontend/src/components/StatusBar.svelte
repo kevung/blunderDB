@@ -2,23 +2,15 @@
   import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore, totalPositionsStore } from '../stores/uiStore';
   import { get } from 'svelte/store';
 
-  let mode = $statusBarModeStore;
-  let text = $statusBarTextStore;
-  let currentPosition = $currentPositionIndexStore;
-  let totalPositions = $totalPositionsStore;
-
-  $: mode = $statusBarModeStore;
-  $: text = $statusBarTextStore;
-  $: currentPosition = $currentPositionIndexStore;
-  $: totalPositions = $totalPositionsStore;
+  // No need for reactive statements here
 </script>
 
 <div class="status-bar">
-  <span class="mode">{mode}</span>
+  <span class="mode">{$statusBarModeStore}</span>
   <div class="separator"></div>
-  <span class="info-message">{text}</span>
+  <span class="info-message">{$statusBarTextStore}</span>
   <div class="separator"></div>
-  <span class="position">{totalPositions > 0 ? currentPosition + 1 : 0} / {totalPositions}</span>
+  <span class="position">{$totalPositionsStore > 0 ? $currentPositionIndexStore + 1 : 0} / {$totalPositionsStore}</span>
 </div>
 
 <style>
