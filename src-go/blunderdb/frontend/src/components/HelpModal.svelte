@@ -447,6 +447,14 @@
                                 <td>#tag1 tag2 ...</td>
                                 <td>Tag Position</td>
                             </tr>
+                            <tr>
+                                <td>s</td>
+                                <td>Search Positions with Filters</td>
+                            </tr>
+                            <tr>
+                                <td>e</td>
+                                <td>Load All Positions and Analyses</td>
+                            </tr>
                         </tbody>
                     </table>
                     <!-- Add more categories as needed -->
