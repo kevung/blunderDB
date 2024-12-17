@@ -10,3 +10,4 @@ export const commentTextStore = writable('');
 export const analysisDataStore = writable('This is where your analysis data will be displayed.');
 
 export const currentPositionIndexStore = writable(0); // Add current position index store
+export const totalPositionsStore = writable(0); // Add total positions store

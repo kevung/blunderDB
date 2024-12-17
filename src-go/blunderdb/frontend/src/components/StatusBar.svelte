@@ -1,8 +1,16 @@
 <script>
-  export let mode = "normal"; // Current mode
-  export let text = ""; // Info message to display
-  export let currentPosition = 0; // Current position
-  export let totalPositions = 0; // Total positions
+  import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore, totalPositionsStore } from '../stores/uiStore';
+  import { get } from 'svelte/store';
+
+  let mode = $statusBarModeStore;
+  let text = $statusBarTextStore;
+  let currentPosition = $currentPositionIndexStore;
+  let totalPositions = $totalPositionsStore;
+
+  $: mode = $statusBarModeStore;
+  $: text = $statusBarTextStore;
+  $: currentPosition = $currentPositionIndexStore;
+  $: totalPositions = $totalPositionsStore;
 </script>
 
 <div class="status-bar">

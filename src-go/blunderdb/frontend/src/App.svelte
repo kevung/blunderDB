@@ -54,6 +54,7 @@
         commandTextStore,
         commentTextStore,
         analysisDataStore,
+        totalPositionsStore
     } from './stores/uiStore';
 
     // import components
@@ -83,7 +84,10 @@
 
     // Subscribe to the stores
     let positions = [];
-    positionsStore.subscribe(value => positions = value);
+    positionsStore.subscribe(value => {
+        positions = value;
+        totalPositionsStore.set(positions.length);
+    });
 
     let analyses = [];
     analysesStore.subscribe(value => analyses = value);
@@ -1233,8 +1237,8 @@
 
     // Function to update the status bar
     function updateStatusBar(currentIndex, total) {
-        currentPositionIndex = currentIndex;
-        totalPositions = total;
+        currentPositionIndexStore.set(currentIndex);
+        totalPositionsStore.set(total);
     }
 
     // Function to show a specific position and analysis
@@ -1256,6 +1260,8 @@
         // Load the comment for the current position
         const comment = await LoadComment(position.id);
         commentTextStore.set(comment || '');
+
+        updateStatusBar(currentPositionIndex, positions.length);
     }
 
     // Function to handle mouse wheel events
@@ -1369,12 +1375,7 @@
         handleGlobalKeydown={handleKeyDown}
     />
 
-    <StatusBar
-        mode={$statusBarModeStore}
-        text={$statusBarTextStore}
-        currentPosition={positions.length > 0 ? currentPositionIndex : 0}
-        totalPositions={positions.length}
-    />
+    <StatusBar />
 
 </main>
 
