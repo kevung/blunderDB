@@ -1,7 +1,9 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { commentTextStore } from '../stores/uiStore'; // Import commentTextStore
-   import { SaveComment } from '../../wailsjs/go/main/Database.js'; // Import SaveComment
+   import { SaveComment, LoadAllPositions, LoadAllAnalyses } from '../../wailsjs/go/main/Database.js'; // Import SaveComment, LoadAllPositions and LoadAllAnalyses
+   import { positionsStore } from '../stores/positionStore'; // Import positionsStore
+   import { analysesStore } from '../stores/analysisStore'; // Import analysesStore
 
    export let visible = false;
    export let onClose;
@@ -22,6 +24,13 @@
    let inputEl;
 
    let initialized = false;
+
+   // Subscribe to the stores
+   let positions = [];
+   positionsStore.subscribe(value => positions = value);
+
+   let analyses = [];
+   analysesStore.subscribe(value => analyses = value);
 
    $: if (visible && !initialized) {
       text = '';
@@ -100,6 +109,16 @@
             } else if (command === 's') {
                onClose().then(() => {
                   onLoadPositionsByCheckerPosition();
+               });
+            } else if (command === 'e') {
+               onClose().then(async () => {
+                  positionsStore.set(await LoadAllPositions());
+                  analysesStore.set(await LoadAllAnalyses());
+                  if (positions.length > 0) {
+                     currentPositionIndex = positions.length - 1;
+                     updateStatusBar(currentPositionIndex, positions.length);
+                     showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                  }
                });
             } else if (command.startsWith('#')) {
                const tags = Array.from(new Set(command.split(' ').map((tag, index) => index === 0 ? tag : `#${tag}`))).join(' ');

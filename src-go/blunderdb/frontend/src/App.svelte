@@ -39,13 +39,16 @@
         importPositionPathStore,
         pastePositionTextStore,
         positionStore,
+        positionsStore // Import positionsStore
     } from './stores/positionStore';
 
     import {
         analysisStore,
+        analysesStore // Import analysesStore
     } from './stores/analysisStore';
 
     import {
+        currentPositionIndexStore, // Import currentPositionIndexStore
         statusBarTextStore,
         statusBarModeStore,
         commandTextStore,
@@ -76,9 +79,16 @@
 
     let currentPositionIndex = 0;
     let totalPositions = 0;
-    let positions = [];
-    let analyses = [];
     let db;
+
+    // Subscribe to the stores
+    let positions = [];
+    positionsStore.subscribe(value => positions = value);
+
+    let analyses = [];
+    analysesStore.subscribe(value => analyses = value);
+
+    currentPositionIndexStore.subscribe(value => currentPositionIndex = value);
 
     //Global shortcuts
     function handleKeyDown(event) {
@@ -217,8 +227,8 @@
                 WindowSetTitle(`blunderDB - ${filename}`);
 
                 // Load positions and analyses
-                positions = await LoadAllPositions();
-                analyses = await LoadAllAnalyses();
+                positionsStore.set(await LoadAllPositions());
+                analysesStore.set(await LoadAllAnalyses());
 
                 // Update status bar and show the last position by default
                 if (positions.length > 0) {
@@ -272,15 +282,14 @@
             console.log('Analysis saved for position ID:', positionID);
 
             // Reload all positions and show the last one
-            positions = await LoadAllPositions();
-            analyses = await LoadAllAnalyses();
+            positionsStore.set(await LoadAllPositions());
+            analysesStore.set(await LoadAllAnalyses());
 
             if (positions.length > 0) {
-                currentPositionIndex = positions.length - 1;
-                updateStatusBar(currentPositionIndex, positions.length);
-                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                currentPositionIndexStore.set(positions.length - 1);
+                updateStatusBar(positions.length - 1, positions.length);
+                showPosition(positions[positions.length - 1], analyses[positions.length - 1]);
             }
-
             updateStatusBarMessage(successMessage);
         } catch (error) {
             console.error('Error saving position and analysis:', error);
@@ -948,9 +957,9 @@
             return;
         }
         if (positions && positions.length > 0) {
-            currentPositionIndex = 0;
-            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-            updateStatusBar(currentPositionIndex, positions.length);
+            currentPositionIndexStore.set(0);
+            showPosition(positions[0], analyses[0]);
+            updateStatusBar(0, positions.length);
         }
     }
 
@@ -964,9 +973,16 @@
             return;
         }
         if (positions && currentPositionIndex > 0) {
-            currentPositionIndex--;
-            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-            updateStatusBar(currentPositionIndex, positions.length);
+            const prevPositionIndex = currentPositionIndex - 1;
+            const prevPosition = positions[prevPositionIndex];
+            const prevAnalysis = analyses[prevPositionIndex];
+            if (prevPosition && prevAnalysis) {
+                currentPositionIndexStore.set(prevPositionIndex);
+                showPosition(prevPosition, prevAnalysis);
+                updateStatusBar(prevPositionIndex, positions.length);
+            } else {
+                console.error('Invalid position or analysis:', prevPosition, prevAnalysis);
+            }
         }
     }
 
@@ -980,9 +996,16 @@
             return;
         }
         if (positions && currentPositionIndex < positions.length - 1) {
-            currentPositionIndex++;
-            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-            updateStatusBar(currentPositionIndex, positions.length);
+            const nextPositionIndex = currentPositionIndex + 1;
+            const nextPosition = positions[nextPositionIndex];
+            const nextAnalysis = analyses[nextPositionIndex];
+            if (nextPosition && nextAnalysis) {
+                currentPositionIndexStore.set(nextPositionIndex);
+                showPosition(nextPosition, nextAnalysis);
+                updateStatusBar(nextPositionIndex, positions.length);
+            } else {
+                console.error('Invalid position or analysis:', nextPosition, nextAnalysis);
+            }
         }
     }
 
@@ -996,9 +1019,9 @@
             return;
         }
         if (positions && positions.length > 0) {
-            currentPositionIndex = positions.length - 1;
-            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-            updateStatusBar(currentPositionIndex, positions.length);
+            currentPositionIndexStore.set(positions.length - 1);
+            showPosition(positions[positions.length - 1], analyses[positions.length - 1]);
+            updateStatusBar(positions.length - 1, positions.length);
         }
     }
 
@@ -1012,9 +1035,9 @@
 
     function handleGoToPosition(positionNumber) {
         if (positions && positionNumber > 0 && positionNumber <= positions.length) {
-            currentPositionIndex = positionNumber - 1;
-            showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
-            updateStatusBar(currentPositionIndex, positions.length);
+            currentPositionIndexStore.set(positionNumber - 1);
+            showPosition(positions[positionNumber - 1], analyses[positionNumber - 1]);
+            updateStatusBar(positionNumber - 1, positions.length);
         } else {
             updateStatusBarMessage(`Invalid position number: ${positionNumber}`);
         }

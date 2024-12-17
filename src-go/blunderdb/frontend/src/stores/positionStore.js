@@ -19,3 +19,4 @@ export const positionStore = writable({
     has_jacoby: 0,
     has_beaver: 0,
 });
+export const positionsStore = writable([]); // Add positions store
