@@ -88,7 +88,7 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 	return map[string]interface{}{"id": id, "exists": true}, nil
 }
 
-func (d *Database) SavePosition(position Position) (int64, error) {
+func (d *Database) SavePosition(position *Position) (int64, error) {
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
@@ -104,6 +104,21 @@ func (d *Database) SavePosition(position Position) (int64, error) {
 	positionID, err := result.LastInsertId()
 	if err != nil {
 		fmt.Println("Error getting last insert ID:", err)
+		return 0, err
+	}
+
+	position.ID = positionID // Update the position ID
+
+	// Update the state with the new ID
+	positionJSON, err = json.Marshal(position)
+	if err != nil {
+		fmt.Println("Error marshalling position with ID:", err)
+		return 0, err
+	}
+
+	_, err = d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
+	if err != nil {
+		fmt.Println("Error updating position with ID:", err)
 		return 0, err
 	}
 
@@ -127,6 +142,7 @@ func (d *Database) UpdatePosition(position Position) error {
 }
 
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
+	analysis.PositionID = int(positionID) // Ensure the positionID is set in the analysis
 	analysisJSON, err := json.Marshal(analysis)
 	if err != nil {
 		fmt.Println("Error marshalling analysis:", err)
@@ -179,11 +195,16 @@ func (d *Database) LoadPosition(id int) (*Position, error) {
 	return &state, nil
 }
 
-func (d *Database) LoadAnalysis(positionID int) (*PositionAnalysis, error) {
-	var analysisJSON string
+func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
+	fmt.Printf("Loading analysis for position ID: %d\n", positionID) // Add logging
 
+	var analysisJSON string
 	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisJSON)
 	if err != nil {
+		if err == sql.ErrNoRows {
+			fmt.Printf("No analysis found for position ID: %d\n", positionID) // Add logging
+			return nil, err
+		}
 		fmt.Println("Error loading analysis:", err)
 		return nil, err
 	}
@@ -210,13 +231,13 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 	for rows.Next() {
 		var id int64
 		var stateJSON string
-		if err := rows.Scan(&id, &stateJSON); err != nil {
+		if err = rows.Scan(&id, &stateJSON); err != nil {
 			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
 
 		var position Position
-		if err := json.Unmarshal([]byte(stateJSON), &position); err != nil {
+		if err = json.Unmarshal([]byte(stateJSON), &position); err != nil {
 			fmt.Println("Error unmarshalling position:", err)
 			return nil, err
 		}
@@ -239,13 +260,13 @@ func (d *Database) LoadAllAnalyses() ([]PositionAnalysis, error) {
 	var analyses []PositionAnalysis
 	for rows.Next() {
 		var analysisJSON string
-		if err := rows.Scan(&analysisJSON); err != nil {
+		if err = rows.Scan(&analysisJSON); err != nil { // Fix syntax error
 			fmt.Println("Error scanning analysis:", err)
 			return nil, err
 		}
 
 		var analysis PositionAnalysis
-		if err := json.Unmarshal([]byte(analysisJSON), &analysis); err != nil {
+		if err = json.Unmarshal([]byte(analysisJSON), &analysis); err != nil {
 			fmt.Println("Error unmarshalling analysis:", err)
 			return nil, err
 		}
@@ -351,4 +372,59 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 		return "", err
 	}
 	return text, nil
+}
+
+func (d *Database) LoadPositionsByCheckerPosition(filter Position) ([]Position, error) {
+	rows, err := d.db.Query(`SELECT id, state FROM position`)
+	if err != nil {
+		fmt.Println("Error loading positions:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var positions []Position
+	for rows.Next() {
+		var id int64
+		var stateJSON string
+		if err = rows.Scan(&id, &stateJSON); err != nil {
+			fmt.Println("Error scanning position:", err)
+			return nil, err
+		}
+
+		var position Position
+		if err = json.Unmarshal([]byte(stateJSON), &position); err != nil {
+			fmt.Println("Error unmarshalling position:", err)
+			return nil, err
+		}
+		position.ID = id // Ensure the ID is set
+
+		if position.MatchesCheckerPosition(filter) {
+			positions = append(positions, position)
+		} else {
+			fmt.Printf("Position ID %d does not match:\n", id)
+			for i := 0; i < len(position.Board.Points); i++ {
+				if filter.Board.Points[i].Checkers > 0 {
+					if position.Board.Points[i].Color != filter.Board.Points[i].Color || position.Board.Points[i].Checkers < filter.Board.Points[i].Checkers {
+						fmt.Printf("  Point %d: Position has %d %s checkers, filter requires %d %s checkers\n",
+							i, position.Board.Points[i].Checkers, colorName(position.Board.Points[i].Color),
+							filter.Board.Points[i].Checkers, colorName(filter.Board.Points[i].Color))
+					}
+				}
+			}
+		}
+	}
+
+	fmt.Println("Loaded positions by checker position:", positions)
+	return positions, nil
+}
+
+func colorName(color int) string {
+	switch color {
+	case Black:
+		return "Black"
+	case White:
+		return "White"
+	default:
+		return "None"
+	}
 }

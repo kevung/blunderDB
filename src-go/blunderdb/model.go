@@ -132,3 +132,14 @@ func InitializePosition() Position {
 
 	return position
 }
+
+func (p *Position) MatchesCheckerPosition(filter Position) bool {
+	for i := 0; i < len(p.Board.Points); i++ {
+		if filter.Board.Points[i].Checkers > 0 {
+			if p.Board.Points[i].Color != filter.Board.Points[i].Color || p.Board.Points[i].Checkers < filter.Board.Points[i].Checkers {
+				return false
+			}
+		}
+	}
+	return true
+}

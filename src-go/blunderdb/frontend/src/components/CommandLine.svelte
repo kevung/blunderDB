@@ -18,6 +18,7 @@
    export let onToggleComment; // Add the new attribute
    export let exitApp;
    export let currentPositionId; // Add the current position ID
+   export let onLoadPositionsByCheckerPosition; // Add the new attribute
    let inputEl;
 
    let initialized = false;
@@ -95,6 +96,10 @@
             } else if (command === 'help' || command === 'he' || command === 'h') {
                onClose().then(() => {
                   onToggleHelp();
+               });
+            } else if (command === 's') {
+               onClose().then(() => {
+                  onLoadPositionsByCheckerPosition();
                });
             } else if (command.startsWith('#')) {
                const tags = Array.from(new Set(command.split(' ').map((tag, index) => index === 0 ? tag : `#${tag}`))).join(' ');

@@ -23,7 +23,9 @@
         DeleteAnalysis,
         UpdatePosition,
         LoadComment,
-        SaveComment
+        SaveComment,
+        LoadAnalysis,
+        LoadPositionsByCheckerPosition
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
@@ -248,6 +250,7 @@
         if (positionExistsResult.exists) {
             console.log('Position already exists with ID:', positionExistsResult.id);
             try {
+                parsedAnalysis.positionId = positionExistsResult.id; // Ensure the position ID is set in the analysis
                 await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
                 console.log('Analysis updated for position ID:', positionExistsResult.id);
                 updateStatusBarMessage('Position already exists, analysis updated');
@@ -263,6 +266,8 @@
             const positionID = await SavePosition(positionData);
             console.log('Position saved with ID:', positionID);
 
+            positionData.ID = positionID; // Ensure the position ID is set in the position data
+            parsedAnalysis.positionId = positionID; // Ensure the position ID is set in the analysis
             await SaveAnalysis(positionID, parsedAnalysis);
             console.log('Analysis saved for position ID:', positionID);
 
@@ -1138,6 +1143,35 @@
         }
     }
 
+    async function loadPositionsByCheckerPosition() {
+        if (!$databasePathStore) {
+            updateStatusBarMessage('No database opened');
+            return;
+        }
+        console.log('loadPositionsByCheckerPosition');
+        try {
+            const currentPosition = $positionStore;
+
+            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition);
+            if (loadedPositions.length > 0) {
+                positions = loadedPositions; // Assign to global positions variable
+                analyses = await Promise.all(positions.map(position => {
+                    console.log(`Loading analysis for position ID: ${position.id}`); // Use ID instead of id
+                    return LoadAnalysis(position.id);
+                }));
+
+                currentPositionIndex = 0;
+                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                updateStatusBar(currentPositionIndex, positions.length);
+            } else {
+                updateStatusBarMessage('No matching positions found');
+            }
+        } catch (error) {
+            console.error('Error loading positions by checker position:', error);
+            updateStatusBarMessage('Error loading positions by checker position');
+        }
+    }
+
     onMount(() => {
         console.log('Wails runtime:', window.runtime);
         window.addEventListener("keydown", handleKeyDown);
@@ -1275,7 +1309,8 @@
             onToggleAnalysis={toggleAnalysisPanel}
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
-            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].id : null}
+            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].ID : null}
+            onLoadPositionsByCheckerPosition={loadPositionsByCheckerPosition}
         />
 
     </div> <!-- Close the scrollable-content div properly -->
