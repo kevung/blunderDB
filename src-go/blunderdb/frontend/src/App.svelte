@@ -280,7 +280,7 @@
             const positionID = await SavePosition(positionData);
             console.log('Position saved with ID:', positionID);
 
-            positionData.ID = positionID; // Ensure the position ID is set in the position data
+            positionData.id = positionID; // Ensure the position ID is set in the position data
             parsedAnalysis.positionId = positionID; // Ensure the position ID is set in the analysis
             await SaveAnalysis(positionID, parsedAnalysis);
             console.log('Analysis saved for position ID:', positionID);
@@ -1338,7 +1338,7 @@
             onToggleAnalysis={toggleAnalysisPanel}
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
-            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].ID : null}
+            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].id : null}
             onLoadPositionsByCheckerPosition={loadPositionsByCheckerPosition}
         />
 
