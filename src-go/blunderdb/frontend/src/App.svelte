@@ -965,8 +965,7 @@
             return;
         }
         if (positions && positions.length > 0) {
-            currentPositionIndex = 0;
-            currentPositionIndexStore.set(currentPositionIndex);
+            currentPositionIndexStore.set(0);
             totalPositionsStore.set(positions.length);
             showPosition(positions[0], analyses[0]);
         }
@@ -981,13 +980,12 @@
             updateStatusBarMessage('No database opened');
             return;
         }
-        if (positions && currentPositionIndex > 0) {
-            const prevPositionIndex = currentPositionIndex - 1;
+        if (positions && $currentPositionIndexStore > 0) {
+            const prevPositionIndex = $currentPositionIndexStore - 1;
             const prevPosition = positions[prevPositionIndex];
             const prevAnalysis = analyses[prevPositionIndex];
             if (prevPosition && prevAnalysis) {
-                currentPositionIndex = prevPositionIndex;
-                currentPositionIndexStore.set(currentPositionIndex);
+                currentPositionIndexStore.set(prevPositionIndex);
                 totalPositionsStore.set(positions.length);
                 showPosition(prevPosition, prevAnalysis);
             } else {
@@ -1005,13 +1003,12 @@
             updateStatusBarMessage('No database opened');
             return;
         }
-        if (positions && currentPositionIndex < positions.length - 1) {
-            const nextPositionIndex = currentPositionIndex + 1;
+        if (positions && $currentPositionIndexStore < positions.length - 1) {
+            const nextPositionIndex = $currentPositionIndexStore + 1;
             const nextPosition = positions[nextPositionIndex];
             const nextAnalysis = analyses[nextPositionIndex];
             if (nextPosition && nextAnalysis) {
-                currentPositionIndex = nextPositionIndex;
-                currentPositionIndexStore.set(currentPositionIndex);
+                currentPositionIndexStore.set(nextPositionIndex);
                 totalPositionsStore.set(positions.length);
                 showPosition(nextPosition, nextAnalysis);
             } else {
@@ -1030,8 +1027,7 @@
             return;
         }
         if (positions && positions.length > 0) {
-            currentPositionIndex = positions.length - 1;
-            currentPositionIndexStore.set(currentPositionIndex);
+            currentPositionIndexStore.set(positions.length - 1);
             totalPositionsStore.set(positions.length);
             showPosition(positions[positions.length - 1], analyses[positions.length - 1]);
         }
@@ -1047,8 +1043,7 @@
 
     function handleGoToPosition(positionNumber) {
         if (positions && positionNumber > 0 && positionNumber <= positions.length) {
-            currentPositionIndex = positionNumber - 1;
-            currentPositionIndexStore.set(currentPositionIndex);
+            currentPositionIndexStore.set(positionNumber - 1);
             totalPositionsStore.set(positions.length);
             showPosition(positions[positionNumber - 1], analyses[positionNumber - 1]);
         } else {
