@@ -983,8 +983,8 @@
         if (positions && $currentPositionIndexStore > 0) {
             const prevPositionIndex = $currentPositionIndexStore - 1;
             const prevPosition = positions[prevPositionIndex];
-            const prevAnalysis = analyses[prevPositionIndex];
-            if (prevPosition && prevAnalysis) {
+            const prevAnalysis = analyses[prevPositionIndex] || {};
+            if (prevPosition) {
                 currentPositionIndexStore.set(prevPositionIndex);
                 totalPositionsStore.set(positions.length);
                 showPosition(prevPosition, prevAnalysis);
@@ -1006,8 +1006,8 @@
         if (positions && $currentPositionIndexStore < positions.length - 1) {
             const nextPositionIndex = $currentPositionIndexStore + 1;
             const nextPosition = positions[nextPositionIndex];
-            const nextAnalysis = analyses[nextPositionIndex];
-            if (nextPosition && nextAnalysis) {
+            const nextAnalysis = analyses[nextPositionIndex] || {};
+            if (nextPosition) {
                 currentPositionIndexStore.set(nextPositionIndex);
                 totalPositionsStore.set(positions.length);
                 showPosition(nextPosition, nextAnalysis);
@@ -1029,7 +1029,7 @@
         if (positions && positions.length > 0) {
             currentPositionIndexStore.set(positions.length - 1);
             totalPositionsStore.set(positions.length);
-            showPosition(positions[positions.length - 1], analyses[positions.length - 1]);
+            showPosition(positions[positions.length - 1], analyses[positions.length - 1] || {});
         }
     }
 
@@ -1045,7 +1045,7 @@
         if (positions && positionNumber > 0 && positionNumber <= positions.length) {
             currentPositionIndexStore.set(positionNumber - 1);
             totalPositionsStore.set(positions.length);
-            showPosition(positions[positionNumber - 1], analyses[positionNumber - 1]);
+            showPosition(positions[positionNumber - 1], analyses[positionNumber - 1] || {});
         } else {
             updateStatusBarMessage(`Invalid position number: ${positionNumber}`);
         }
@@ -1240,17 +1240,17 @@
 
     // Function to show a specific position and analysis
     async function showPosition(position, analysis) {
-        if (!position || !analysis) {
-            console.error('Invalid position or analysis:', position, analysis);
+        if (!position) {
+            console.error('Invalid position:', position);
             return;
         }
 
         // Create a deep copy of the position data
         const positionCopy = JSON.parse(JSON.stringify(position));
-        const analysisCopy = JSON.parse(JSON.stringify(analysis));
+        const analysisCopy = analysis ? JSON.parse(JSON.stringify(analysis)) : null;
         
         positionStore.set(positionCopy);
-        analysisStore.set(analysisCopy);
+        analysisStore.set(analysisCopy || {});
 
         console.log('Analysis Data:', analysisCopy); // Debugging log
 
