@@ -1263,9 +1263,10 @@
             return; // Prevent changing position when GoToPositionModal is open or in edit mode
         }
 
-        // Prevent changing position when scrolling in the analysis panel
+        // Prevent changing position when scrolling in the analysis panel or comment panel
         const analysisPanel = document.querySelector('.analysis-panel');
-        if (analysisPanel && analysisPanel.contains(event.target)) {
+        const commentPanel = document.querySelector('.comment-panel');
+        if ((analysisPanel && analysisPanel.contains(event.target)) || (commentPanel && commentPanel.contains(event.target))) {
             return;
         }
 
