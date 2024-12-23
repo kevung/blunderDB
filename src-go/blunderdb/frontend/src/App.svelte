@@ -51,8 +51,7 @@
         statusBarModeStore,
         commandTextStore,
         commentTextStore,
-        analysisDataStore,
-        totalPositionsStore
+        analysisDataStore
     } from './stores/uiStore';
 
     // import components
@@ -84,7 +83,6 @@
     let positions = [];
     positionsStore.subscribe(value => {
         positions = value;
-        totalPositionsStore.set(positions.length);
     });
 
     currentPositionIndexStore.subscribe(async value => {
@@ -238,7 +236,6 @@
                 if (positions.length > 0) {
                     currentPositionIndex = positions.length - 1;
                     currentPositionIndexStore.set(currentPositionIndex);
-                    totalPositionsStore.set(positions.length);
                     showPosition(positions[currentPositionIndex]);
                 }
             } else {
@@ -292,7 +289,6 @@
 
             if (positions.length > 0) {
                 currentPositionIndexStore.set(positions.length - 1);
-                totalPositionsStore.set(positions.length);
                 showPosition(positions[positions.length - 1]);
             }
             updateStatusBarMessage(successMessage);
@@ -854,14 +850,12 @@
                 });
                 console.log('Database is empty. Showing index position 0 on total number position equal to 0.');
                 currentPositionIndexStore.set(0);
-                totalPositionsStore.set(0);
             } else {
                 // Go to the last position
                 const lastPosition = updatedPositions[updatedPositions.length - 1];
                 positionStore.set(lastPosition);
                 console.log(`Showing index position ${updatedPositions.length - 1} on total number position equal to ${updatedPositions.length}.`);
                 currentPositionIndexStore.set(updatedPositions.length - 1);
-                totalPositionsStore.set(updatedPositions.length);
             }
 
             updateStatusBarMessage('Position and associated analysis deleted successfully');
@@ -950,7 +944,6 @@
             if (positions.length > 0) {
                 currentPositionIndex = positions.length - 1;
                 currentPositionIndexStore.set(currentPositionIndex);
-                totalPositionsStore.set(positions.length);
                 showPosition(positions[currentPositionIndex]);
             }
 

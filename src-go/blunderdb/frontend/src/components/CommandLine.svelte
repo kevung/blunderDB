@@ -14,7 +14,6 @@
    export let onSavePosition;
    export let onUpdatePosition;
    export let onDeletePosition;
-   export let onGoToPosition; // Add the new attribute
    export let onToggleAnalysis; // Add the new attribute
    export let onToggleComment; // Add the new attribute
    export let exitApp;
