@@ -14,10 +14,6 @@ export function DeletePosition(arg1) {
   return window['go']['main']['Database']['DeletePosition'](arg1);
 }
 
-export function LoadAllAnalyses() {
-  return window['go']['main']['Database']['LoadAllAnalyses']();
-}
-
 export function LoadAllPositions() {
   return window['go']['main']['Database']['LoadAllPositions']();
 }

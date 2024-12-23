@@ -18,7 +18,6 @@
         SaveAnalysis,
         PositionExists,
         LoadAllPositions,
-        LoadAllAnalyses,
         DeletePosition,
         DeleteAnalysis,
         UpdatePosition,
@@ -44,7 +43,6 @@
 
     import {
         analysisStore,
-        analysesStore // Import analysesStore
     } from './stores/analysisStore';
 
     import {
@@ -88,9 +86,6 @@
         positions = value;
         totalPositionsStore.set(positions.length);
     });
-
-    let analyses = [];
-    analysesStore.subscribe(value => analyses = value);
 
     currentPositionIndexStore.subscribe(value => currentPositionIndex = value);
 
@@ -230,16 +225,15 @@
                 const filename = getFilenameFromPath(filePath);
                 WindowSetTitle(`blunderDB - ${filename}`);
 
-                // Load positions and analyses
+                // Load positions
                 positionsStore.set(await LoadAllPositions());
-                analysesStore.set(await LoadAllAnalyses());
 
                 // Update status bar and show the last position by default
                 if (positions.length > 0) {
                     currentPositionIndex = positions.length - 1;
                     currentPositionIndexStore.set(currentPositionIndex);
                     totalPositionsStore.set(positions.length);
-                    showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                    showPosition(positions[currentPositionIndex]);
                 }
             } else {
                 console.log('No Database selected');
@@ -288,12 +282,11 @@
 
             // Reload all positions and show the last one
             positionsStore.set(await LoadAllPositions());
-            analysesStore.set(await LoadAllAnalyses());
 
             if (positions.length > 0) {
                 currentPositionIndexStore.set(positions.length - 1);
                 totalPositionsStore.set(positions.length);
-                showPosition(positions[positions.length - 1], analyses[positions[positions.length - 1]]);
+                showPosition(positions[positions.length - 1]);
             }
             updateStatusBarMessage(successMessage);
         } catch (error) {
@@ -824,9 +817,10 @@
             console.log('Position and associated analysis deleted with ID:', positionID);
 
             // Load all positions from the database
-            positions = await LoadAllPositions();
+            const updatedPositions = await LoadAllPositions();
+            positionsStore.set(updatedPositions);
 
-            if (!positions || positions.length === 0) {
+            if (!updatedPositions || updatedPositions.length === 0) {
                 // If no positions left, initialize positionStore to its initial value
                 positionStore.set({
                     board: {
@@ -849,11 +843,11 @@
                 totalPositionsStore.set(0);
             } else {
                 // Go to the last position
-                const lastPosition = positions[positions.length - 1];
+                const lastPosition = updatedPositions[updatedPositions.length - 1];
                 positionStore.set(lastPosition);
-                console.log(`Showing index position ${positions.length - 1} on total number position equal to ${positions.length}.`);
-                currentPositionIndexStore.set(positions.length - 1);
-                totalPositionsStore.set(positions.length);
+                console.log(`Showing index position ${updatedPositions.length - 1} on total number position equal to ${updatedPositions.length}.`);
+                currentPositionIndexStore.set(updatedPositions.length - 1);
+                totalPositionsStore.set(updatedPositions.length);
             }
 
             updateStatusBarMessage('Position and associated analysis deleted successfully');
@@ -938,13 +932,12 @@
 
             // Retrieve all positions and show the last one
             positions = await LoadAllPositions();
-            analyses = await LoadAllAnalyses();
 
             if (positions.length > 0) {
                 currentPositionIndex = positions.length - 1;
                 currentPositionIndexStore.set(currentPositionIndex);
                 totalPositionsStore.set(positions.length);
-                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                showPosition(positions[currentPositionIndex]);
             }
 
             updateStatusBarMessage('Position and analysis updated successfully');
@@ -967,7 +960,7 @@
         if (positions && positions.length > 0) {
             currentPositionIndexStore.set(0);
             totalPositionsStore.set(positions.length);
-            showPosition(positions[0], analyses[0]);
+            showPosition(positions[0]);
         }
     }
 
@@ -983,11 +976,10 @@
         if (positions && $currentPositionIndexStore > 0) {
             const prevPositionIndex = $currentPositionIndexStore - 1;
             const prevPosition = positions[prevPositionIndex];
-            const prevAnalysis = analyses[prevPositionIndex] || {};
             if (prevPosition) {
                 currentPositionIndexStore.set(prevPositionIndex);
                 totalPositionsStore.set(positions.length);
-                showPosition(prevPosition, prevAnalysis);
+                showPosition(prevPosition);
             } else {
                 console.error('Invalid position or analysis:', prevPosition, prevAnalysis);
             }
@@ -1006,11 +998,10 @@
         if (positions && $currentPositionIndexStore < positions.length - 1) {
             const nextPositionIndex = $currentPositionIndexStore + 1;
             const nextPosition = positions[nextPositionIndex];
-            const nextAnalysis = analyses[nextPositionIndex] || {};
             if (nextPosition) {
                 currentPositionIndexStore.set(nextPositionIndex);
                 totalPositionsStore.set(positions.length);
-                showPosition(nextPosition, nextAnalysis);
+                showPosition(nextPosition);
             } else {
                 console.error('Invalid position or analysis:', nextPosition, nextAnalysis);
             }
@@ -1029,7 +1020,7 @@
         if (positions && positions.length > 0) {
             currentPositionIndexStore.set(positions.length - 1);
             totalPositionsStore.set(positions.length);
-            showPosition(positions[positions.length - 1], analyses[positions.length - 1] || {});
+            showPosition(positions[positions.length - 1]);
         }
     }
 
@@ -1045,7 +1036,7 @@
         if (positions && positionNumber > 0 && positionNumber <= positions.length) {
             currentPositionIndexStore.set(positionNumber - 1);
             totalPositionsStore.set(positions.length);
-            showPosition(positions[positionNumber - 1], analyses[positionNumber - 1] || {});
+            showPosition(positions[positionNumber - 1]);
         } else {
             updateStatusBarMessage(`Invalid position number: ${positionNumber}`);
         }
@@ -1185,14 +1176,9 @@
 
             const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition);
             if (loadedPositions.length > 0) {
-                positions = loadedPositions; // Assign to global positions variable
-                analyses = await Promise.all(positions.map(position => {
-                    console.log(`Loading analysis for position ID: ${position.id}`); // Use ID instead of id
-                    return LoadAnalysis(position.id);
-                }));
-
-                currentPositionIndex = 0;
-                showPosition(positions[currentPositionIndex], analyses[currentPositionIndex]);
+                positionsStore.set(loadedPositions); // Update positionsStore instead of positions array
+                currentPositionIndexStore.set(0);
+                showPosition(loadedPositions[0]);
             } else {
                 updateStatusBarMessage('No matching positions found');
             }
@@ -1239,7 +1225,7 @@
     }
 
     // Function to show a specific position and analysis
-    async function showPosition(position, analysis) {
+    async function showPosition(position) {
         if (!position) {
             console.error('Invalid position:', position);
             return;
@@ -1247,12 +1233,14 @@
 
         // Create a deep copy of the position data
         const positionCopy = JSON.parse(JSON.stringify(position));
-        const analysisCopy = analysis ? JSON.parse(JSON.stringify(analysis)) : null;
         
         positionStore.set(positionCopy);
-        analysisStore.set(analysisCopy || {});
 
-        console.log('Analysis Data:', analysisCopy); // Debugging log
+        // Load the analysis for the current position
+        const analysis = await LoadAnalysis(position.id);
+        analysisStore.set(analysis || {});
+
+        console.log('Analysis Data:', analysis); // Debugging log
 
         // Load the comment for the current position
         const comment = await LoadComment(position.id);

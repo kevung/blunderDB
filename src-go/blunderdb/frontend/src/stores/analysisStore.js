@@ -32,5 +32,4 @@ export const analysisStore = writable({
     },
 });
 
-export const analysesStore = writable([]); // Add analyses store
 

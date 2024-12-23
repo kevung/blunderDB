@@ -249,34 +249,6 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 	return positions, nil
 }
 
-func (d *Database) LoadAllAnalyses() ([]PositionAnalysis, error) {
-	rows, err := d.db.Query(`SELECT data FROM analysis`)
-	if err != nil {
-		fmt.Println("Error loading analyses:", err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	var analyses []PositionAnalysis
-	for rows.Next() {
-		var analysisJSON string
-		if err = rows.Scan(&analysisJSON); err != nil { // Fix syntax error
-			fmt.Println("Error scanning analysis:", err)
-			return nil, err
-		}
-
-		var analysis PositionAnalysis
-		if err = json.Unmarshal([]byte(analysisJSON), &analysis); err != nil {
-			fmt.Println("Error unmarshalling analysis:", err)
-			return nil, err
-		}
-		analyses = append(analyses, analysis)
-	}
-
-	fmt.Println("Loaded analyses:", analyses)
-	return analyses, nil
-}
-
 func (d *Database) DeletePosition(positionID int64) error {
 	// Delete the associated analysis first
 	err := d.DeleteAnalysis(positionID)

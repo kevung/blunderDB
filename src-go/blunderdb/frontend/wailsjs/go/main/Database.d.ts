@@ -8,8 +8,6 @@ export function DeleteComment(arg1:number):Promise<void>;
 
 export function DeletePosition(arg1:number):Promise<void>;
 
-export function LoadAllAnalyses():Promise<Array<main.PositionAnalysis>>;
-
 export function LoadAllPositions():Promise<Array<main.Position>>;
 
 export function LoadAnalysis(arg1:number):Promise<main.PositionAnalysis>;
