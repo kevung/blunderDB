@@ -143,17 +143,16 @@
 
 <style>
     .analysis-panel {
-        position: absolute;
+        position: fixed;
         width: 100%;
         bottom: 0;
         left: 0;
         right: 0;
-        height: 23vh; /* Reduce height */
+        height: 178px; /* Set a fixed height */
         overflow-y: auto;
         background-color: white;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
-        border-radius: 0px;
-        padding: 10px; /* Reduce padding to optimize space */
+        padding: 10px;
         box-sizing: border-box;
         z-index: 5;
         outline: none;
