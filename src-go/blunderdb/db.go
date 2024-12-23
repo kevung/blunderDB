@@ -65,7 +65,7 @@ func (d *Database) SetupDatabase(path string) error {
 }
 
 func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
-	// Create a copy of the position without the ID field
+	// Create a copy of the position without the ID field inside the state
 	positionCopy := position
 	positionCopy.ID = 0
 
@@ -75,17 +75,41 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 		return nil, err
 	}
 
-	var id int64
-	err = d.db.QueryRow(`SELECT id FROM position WHERE state = ?`, string(positionJSON)).Scan(&id)
+	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return map[string]interface{}{"id": 0, "exists": false}, nil
-		}
-		fmt.Println("Error querying position:", err)
+		fmt.Println("Error querying positions:", err)
 		return nil, err
 	}
+	defer rows.Close()
 
-	return map[string]interface{}{"id": id, "exists": true}, nil
+	for rows.Next() {
+		var stateJSON string
+		var positionID int64
+		if err = rows.Scan(&positionID, &stateJSON); err != nil {
+			fmt.Println("Error scanning position:", err)
+			return nil, err
+		}
+
+		var existingPosition Position
+		if err = json.Unmarshal([]byte(stateJSON), &existingPosition); err != nil {
+			fmt.Println("Error unmarshalling position:", err)
+			return nil, err
+		}
+
+		// Compare the positions excluding the ID field inside the state
+		existingPosition.ID = 0
+		existingPositionJSON, err := json.Marshal(existingPosition)
+		if err != nil {
+			fmt.Println("Error marshalling existing position:", err)
+			return nil, err
+		}
+
+		if string(positionJSON) == string(existingPositionJSON) {
+			return map[string]interface{}{"id": positionID, "exists": true}, nil
+		}
+	}
+
+	return map[string]interface{}{"id": 0, "exists": false}, nil
 }
 
 func (d *Database) SavePosition(position *Position) (int64, error) {

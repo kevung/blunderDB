@@ -226,7 +226,8 @@
                 WindowSetTitle(`blunderDB - ${filename}`);
 
                 // Load positions
-                positionsStore.set(await LoadAllPositions());
+                const positions = await LoadAllPositions();
+                positionsStore.set(Array.isArray(positions) ? positions : []);
 
                 // Update status bar and show the last position by default
                 if (positions.length > 0) {
@@ -281,7 +282,8 @@
             console.log('Analysis saved for position ID:', positionID);
 
             // Reload all positions and show the last one
-            positionsStore.set(await LoadAllPositions());
+            const positions = await LoadAllPositions();
+            positionsStore.set(Array.isArray(positions) ? positions : []);
 
             if (positions.length > 0) {
                 currentPositionIndexStore.set(positions.length - 1);
@@ -340,6 +342,13 @@
                 analysisStore.set(parsedAnalysis);
                 console.log('positionStore:', $positionStore);
                 console.log('analysisStore:', $analysisStore);
+
+                // Check if the position already exists
+                const positionExistsResult = await PositionExists(positionData);
+                if (positionExistsResult.exists) {
+                    updateStatusBarMessage('Position already exists');
+                    return;
+                }
 
                 await savePositionAndAnalysis(positionData, parsedAnalysis, 'Pasted position and analysis saved successfully');
                 statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
@@ -818,7 +827,7 @@
 
             // Load all positions from the database
             const updatedPositions = await LoadAllPositions();
-            positionsStore.set(updatedPositions);
+            positionsStore.set(Array.isArray(updatedPositions) ? updatedPositions : []);
 
             if (!updatedPositions || updatedPositions.length === 0) {
                 // If no positions left, initialize positionStore to its initial value
@@ -1175,8 +1184,9 @@
             const currentPosition = $positionStore;
 
             const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition);
+            positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
+
             if (loadedPositions.length > 0) {
-                positionsStore.set(loadedPositions); // Update positionsStore instead of positions array
                 currentPositionIndexStore.set(0);
                 showPosition(loadedPositions[0]);
             } else {
