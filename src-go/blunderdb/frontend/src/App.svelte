@@ -87,7 +87,12 @@
         totalPositionsStore.set(positions.length);
     });
 
-    currentPositionIndexStore.subscribe(value => currentPositionIndex = value);
+    currentPositionIndexStore.subscribe(async value => {
+        currentPositionIndex = value;
+        if (positions.length > 0 && currentPositionIndex >= 0 && currentPositionIndex < positions.length) {
+            await showPosition(positions[currentPositionIndex]);
+        }
+    });
 
     //Global shortcuts
     function handleKeyDown(event) {
@@ -968,8 +973,6 @@
         }
         if (positions && positions.length > 0) {
             currentPositionIndexStore.set(0);
-            totalPositionsStore.set(positions.length);
-            showPosition(positions[0]);
         }
     }
 
@@ -983,15 +986,7 @@
             return;
         }
         if (positions && $currentPositionIndexStore > 0) {
-            const prevPositionIndex = $currentPositionIndexStore - 1;
-            const prevPosition = positions[prevPositionIndex];
-            if (prevPosition) {
-                currentPositionIndexStore.set(prevPositionIndex);
-                totalPositionsStore.set(positions.length);
-                showPosition(prevPosition);
-            } else {
-                console.error('Invalid position or analysis:', prevPosition, prevAnalysis);
-            }
+            currentPositionIndexStore.set($currentPositionIndexStore - 1);
         }
     }
 
@@ -1005,15 +1000,7 @@
             return;
         }
         if (positions && $currentPositionIndexStore < positions.length - 1) {
-            const nextPositionIndex = $currentPositionIndexStore + 1;
-            const nextPosition = positions[nextPositionIndex];
-            if (nextPosition) {
-                currentPositionIndexStore.set(nextPositionIndex);
-                totalPositionsStore.set(positions.length);
-                showPosition(nextPosition);
-            } else {
-                console.error('Invalid position or analysis:', nextPosition, nextAnalysis);
-            }
+            currentPositionIndexStore.set($currentPositionIndexStore + 1);
         }
     }
 
@@ -1028,8 +1015,6 @@
         }
         if (positions && positions.length > 0) {
             currentPositionIndexStore.set(positions.length - 1);
-            totalPositionsStore.set(positions.length);
-            showPosition(positions[positions.length - 1]);
         }
     }
 
@@ -1039,17 +1024,6 @@
             return;
         }
         showGoToPositionModal = true;
-    }
-
-    function handleGoToPosition(positionNumber) {
-        if (positions && positionNumber > 0 && positionNumber <= positions.length) {
-            currentPositionIndexStore.set(positionNumber - 1);
-            totalPositionsStore.set(positions.length);
-            showPosition(positions[positionNumber - 1]);
-        } else {
-            updateStatusBarMessage(`Invalid position number: ${positionNumber}`);
-        }
-        showGoToPositionModal = false;
     }
 
     function findPosition() {
@@ -1328,7 +1302,7 @@
                 updatePosition();
             }}
             onDeletePosition={deletePosition}
-            onGoToPosition={handleGoToPosition}
+            onGoToPosition={gotoPosition}
             onToggleAnalysis={toggleAnalysisPanel}
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
@@ -1358,7 +1332,7 @@
     <GoToPositionModal
         visible={showGoToPositionModal}
         onClose={() => showGoToPositionModal = false}
-        onGoToPosition={handleGoToPosition}
+        onGoToPosition={(positionNumber) => currentPositionIndexStore.set(positionNumber - 1)}
         maxPositionNumber={positions.length}
         currentIndex={currentPositionIndex + 1}
     />

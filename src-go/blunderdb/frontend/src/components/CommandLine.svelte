@@ -1,6 +1,6 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore } from '../stores/uiStore'; // Import commentTextStore
+   import { commentTextStore, currentPositionIndexStore } from '../stores/uiStore'; // Import commentTextStore and currentPositionIndexStore
    import { SaveComment, LoadAllPositions } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore'; // Import positionsStore
 
@@ -59,7 +59,7 @@
             if (match) {
                const positionNumber = parseInt(match[1], 10);
                onClose().then(() => {
-                  onGoToPosition(positionNumber);
+                  currentPositionIndexStore.set(positionNumber - 1);
                });
             } else if (command === 'new' || command === 'ne' || command === 'n') {
                onClose().then(() => {
@@ -110,9 +110,7 @@
                onClose().then(async () => {
                   positionsStore.set(await LoadAllPositions());
                   if (positions.length > 0) {
-                     currentPositionIndex = positions.length - 1;
-                     updateStatusBar(currentPositionIndex, positions.length);
-                     showPosition(positions[currentPositionIndex]);
+                     currentPositionIndexStore.set(positions.length - 1);
                   }
                });
             } else if (command.startsWith('#')) {
