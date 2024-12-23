@@ -933,10 +933,6 @@
             const updatedPositions = await LoadAllPositions();
             positionsStore.set(Array.isArray(updatedPositions) ? updatedPositions : []);
 
-            if (updatedPositions.length > 0) {
-                currentPositionIndexStore.set(updatedPositions.length - 1);
-            }
-
             updateStatusBarMessage('Position and analysis updated successfully');
             statusBarModeStore.set('NORMAL');
         } catch (error) {
