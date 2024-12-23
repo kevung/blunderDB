@@ -220,26 +220,25 @@
         console.log('openDatabase');
         try {
             const filePath = await OpenDatabaseDialog();
-            if (filePath) {
-                databasePathStore.set(filePath);
-                console.log('databasePathStore:', $databasePathStore);
-                await SetupDatabase(filePath);
-                updateStatusBarMessage('Database opened successfully');
-                const filename = getFilenameFromPath(filePath);
-                WindowSetTitle(`blunderDB - ${filename}`);
-
-                // Load positions
-                const positions = await LoadAllPositions();
-                positionsStore.set(Array.isArray(positions) ? positions : []);
-
-                // Update status bar and show the last position by default
-                if (positions.length > 0) {
-                    currentPositionIndex = positions.length - 1;
-                    currentPositionIndexStore.set(currentPositionIndex);
-                    showPosition(positions[currentPositionIndex]);
-                }
-            } else {
+            if (!filePath) {
                 console.log('No Database selected');
+                return;
+            }
+
+            databasePathStore.set(filePath);
+            console.log('databasePathStore:', $databasePathStore);
+            await SetupDatabase(filePath);
+            updateStatusBarMessage('Database opened successfully');
+            const filename = getFilenameFromPath(filePath);
+            WindowSetTitle(`blunderDB - ${filename}`);
+
+            // Load positions
+            const positions = await LoadAllPositions();
+            positionsStore.set(Array.isArray(positions) ? positions : []);
+
+            // Update status bar and show the last position by default
+            if (positions.length > 0) {
+                currentPositionIndexStore.set(positions.length - 1);
             }
         } catch (error) {
             console.error('Error opening file dialog:', error);
@@ -289,7 +288,6 @@
 
             if (positions.length > 0) {
                 currentPositionIndexStore.set(positions.length - 1);
-                showPosition(positions[positions.length - 1]);
             }
             updateStatusBarMessage(successMessage);
         } catch (error) {
@@ -365,10 +363,6 @@
             return;
         }
         console.log('saveCurrentPosition');
-        if (!$databasePathStore) {
-            updateStatusBarMessage('No database opened');
-            return;
-        }
 
         const position = $positionStore;
         const analysis = $analysisStore;
@@ -381,14 +375,11 @@
         console.log('Analysis to save:', analysis);
 
         // Reset all fields of analysis to initialized values
-        analysis.xgid = "";
+        analysis.xgid = generateXGID(position);
         analysis.analysisType = "";
         analysis.checkerAnalysis = [];
         analysis.doublingCubeAnalysis = {};
         analysis.analysisEngineVersion = "";
-
-        // Generate XGID in analysis
-        analysis.xgid = generateXGID(position);
 
         await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
         statusBarModeStore.set('NORMAL');
@@ -938,13 +929,12 @@
             await SaveAnalysis(positionID, analysis);
             console.log('Analysis updated for position ID:', positionID);
 
-            // Retrieve all positions and show the last one
-            positions = await LoadAllPositions();
+            // Retrieve all positions and update the store
+            const updatedPositions = await LoadAllPositions();
+            positionsStore.set(Array.isArray(updatedPositions) ? updatedPositions : []);
 
-            if (positions.length > 0) {
-                currentPositionIndex = positions.length - 1;
-                currentPositionIndexStore.set(currentPositionIndex);
-                showPosition(positions[currentPositionIndex]);
+            if (updatedPositions.length > 0) {
+                currentPositionIndexStore.set(updatedPositions.length - 1);
             }
 
             updateStatusBarMessage('Position and analysis updated successfully');
@@ -1155,7 +1145,6 @@
 
             if (loadedPositions.length > 0) {
                 currentPositionIndexStore.set(0);
-                showPosition(loadedPositions[0]);
             } else {
                 updateStatusBarMessage('No matching positions found');
             }
