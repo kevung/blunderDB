@@ -370,7 +370,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool) ([]Position, error) {
+func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -394,13 +394,20 @@ func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube b
 		}
 		position.ID = id // Ensure the ID is set
 
-		if position.MatchesCheckerPosition(filter) && (!includeCube || position.MatchesCubePosition(filter)) {
+		if position.MatchesCheckerPosition(filter) &&
+			(!includeCube || position.MatchesCubePosition(filter)) &&
+			(!includeScore || position.MatchesScorePosition(filter)) {
 			positions = append(positions, position)
 		}
 	}
 
 	fmt.Println("Loaded positions by checker position:", positions)
 	return positions, nil
+}
+
+// Add MatchesScorePosition method to Position type
+func (p *Position) MatchesScorePosition(filter Position) bool {
+	return p.Score[0] == filter.Score[0] && p.Score[1] == filter.Score[1]
 }
 
 // Add MatchesCubePosition method to Position type

@@ -1119,16 +1119,16 @@
         }
     }
 
-    async function loadPositionsByFilters(filters, includeCube) {
+    async function loadPositionsByFilters(filters, includeCube, includeScore) {
         if (!$databasePathStore) {
             statusBarTextStore.set('No database opened');
             return;
         }
-        console.log('loadPositionsByFilters', filters, includeCube);
+        console.log('loadPositionsByFilters', filters, includeCube, includeScore);
         try {
             const currentPosition = $positionStore;
 
-            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube);
+            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube, includeScore);
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
             if (loadedPositions.length > 0) {
