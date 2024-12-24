@@ -1119,16 +1119,16 @@
         }
     }
 
-    async function loadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter) {
+    async function loadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter) {
         if (!$databasePathStore) {
             statusBarTextStore.set('No database opened');
             return;
         }
-        console.log('loadPositionsByFilters', filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter);
+        console.log('loadPositionsByFilters', filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter);
         try {
             const currentPosition = $positionStore;
 
-            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter);
+            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter);
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
             if (loadedPositions && loadedPositions.length > 0) {

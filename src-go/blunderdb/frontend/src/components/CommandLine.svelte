@@ -2,7 +2,7 @@
    import { onMount, onDestroy } from 'svelte';
    import { commentTextStore, currentPositionIndexStore } from '../stores/uiStore';
    import { SaveComment, LoadAllPositions } from '../../wailsjs/go/main/Database.js';
-   import { positionsStore, positionStore } from '../stores/positionStore';
+   import { positionsStore } from '../stores/positionStore';
 
    export let visible = false;
    export let onClose;
@@ -52,7 +52,7 @@
          } else if (event.code === 'Escape') {
             onClose();
          } else if (event.code === 'Enter') {
-            const command = inputEl.value.trim().toLowerCase();
+            const command = inputEl.value.trim();
             console.log('Command entered:', command); // Debugging log
             const match = command.match(/^(\d+)$/);
             if (match) {
@@ -130,8 +130,9 @@
                const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
                const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
                const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || filter.startsWith('b')));
+               const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
                onClose().then(() => {
-                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter);
+                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter);
                });
             } else {
                onClose();
