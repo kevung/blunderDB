@@ -126,8 +126,9 @@
                const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
                const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
                const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
+               const pipCountFilter = filters.find(filter => filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p'));
                onClose().then(() => {
-                  onLoadPositionsByFilters(filters, includeCube, includeScore);
+                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter);
                });
             } else {
                onClose();

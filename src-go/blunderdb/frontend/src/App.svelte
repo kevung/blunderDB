@@ -1119,19 +1119,19 @@
         }
     }
 
-    async function loadPositionsByFilters(filters, includeCube, includeScore) {
+    async function loadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter) {
         if (!$databasePathStore) {
             statusBarTextStore.set('No database opened');
             return;
         }
-        console.log('loadPositionsByFilters', filters, includeCube, includeScore);
+        console.log('loadPositionsByFilters', filters, includeCube, includeScore, pipCountFilter);
         try {
             const currentPosition = $positionStore;
 
-            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube, includeScore);
+            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube, includeScore, pipCountFilter);
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
-            if (loadedPositions.length > 0) {
+            if (loadedPositions && loadedPositions.length > 0) {
                 if ($currentPositionIndexStore === 0) {
                     currentPositionIndexStore.set(1); // Temporarily set to a different value to force redraw board
                 }

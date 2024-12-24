@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 
 	_ "modernc.org/sqlite"
 )
@@ -370,7 +372,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool) ([]Position, error) {
+func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool, pipCountFilter string) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -396,7 +398,8 @@ func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube b
 
 		if position.MatchesCheckerPosition(filter) &&
 			(!includeCube || position.MatchesCubePosition(filter)) &&
-			(!includeScore || position.MatchesScorePosition(filter)) {
+			(!includeScore || position.MatchesScorePosition(filter)) &&
+			(pipCountFilter == "" || position.MatchesPipCountFilter(pipCountFilter)) {
 			positions = append(positions, position)
 		}
 	}
@@ -413,6 +416,70 @@ func (p *Position) MatchesScorePosition(filter Position) bool {
 // Add MatchesCubePosition method to Position type
 func (p *Position) MatchesCubePosition(filter Position) bool {
 	return p.Cube.Value == filter.Cube.Value && p.Cube.Owner == filter.Cube.Owner
+}
+
+// Add MatchesPipCountFilter method to Position type
+func (p *Position) MatchesPipCountFilter(filter string) bool {
+	pipCountDiff := p.PipCountDifference()
+	player1PipCount, player2PipCount := p.ComputePipCounts()
+	fmt.Printf("Checking pip count filter: %s, Player 1 Pip Count: %d, Player 2 Pip Count: %d, Pip count difference: %d\n", filter, player1PipCount, player2PipCount, pipCountDiff)
+	if strings.HasPrefix(filter, "p>") {
+		value, err := strconv.Atoi(filter[2:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		return pipCountDiff >= value
+	} else if strings.HasPrefix(filter, "p<") {
+		value, err := strconv.Atoi(filter[2:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		return pipCountDiff <= value
+	} else if strings.HasPrefix(filter, "p") {
+		values := strings.Split(filter[1:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			return false
+		}
+		value1, err1 := strconv.Atoi(values[0])
+		value2, err2 := strconv.Atoi(values[1])
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return pipCountDiff >= minValue && pipCountDiff <= maxValue
+	}
+	return false
+}
+
+// Add PipCountDifference method to Position type
+func (p *Position) PipCountDifference() int {
+	player1PipCount, player2PipCount := p.ComputePipCounts()
+	return player1PipCount - player2PipCount
+}
+
+// Add ComputePipCounts method to Position type
+func (p *Position) ComputePipCounts() (int, int) {
+	player1PipCount := 0
+	player2PipCount := 0
+
+	for i, point := range p.Board.Points {
+		if point.Color == 0 {
+			player1PipCount += point.Checkers * i
+		} else if point.Color == 1 {
+			player2PipCount += point.Checkers * (25 - i)
+		}
+	}
+
+	return player1PipCount, player2PipCount
 }
 
 func colorName(color int) string {
