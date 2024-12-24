@@ -105,11 +105,6 @@
                onClose().then(() => {
                   onLoadPositionsByFilters([]);
                });
-            } else if (command.startsWith('filter ')) {
-               const filters = command.slice(7).split(' ').map(filter => filter.trim());
-               onClose().then(() => {
-                  onLoadPositionsByFilters(filters);
-               });
             } else if (command === 'e') {
                onClose().then(async () => {
                   positionsStore.set(await LoadAllPositions());
