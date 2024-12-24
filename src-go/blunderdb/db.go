@@ -372,7 +372,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool, pipCountFilter string) ([]Position, error) {
+func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -399,7 +399,8 @@ func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube b
 		if position.MatchesCheckerPosition(filter) &&
 			(!includeCube || position.MatchesCubePosition(filter)) &&
 			(!includeScore || position.MatchesScorePosition(filter)) &&
-			(pipCountFilter == "" || position.MatchesPipCountFilter(pipCountFilter)) {
+			(pipCountFilter == "" || position.MatchesPipCountFilter(pipCountFilter)) &&
+			(winRateFilter == "" || position.MatchesWinRate(winRateFilter, d)) {
 			positions = append(positions, position)
 		}
 	}
@@ -456,6 +457,63 @@ func (p *Position) MatchesPipCountFilter(filter string) bool {
 			maxValue = value1
 		}
 		return pipCountDiff >= minValue && pipCountDiff <= maxValue
+	}
+	return false
+}
+
+// Add MatchesWinRate method to Position type
+func (p *Position) MatchesWinRate(filter string, d *Database) bool {
+	analysis, err := d.LoadAnalysis(p.ID)
+	if err != nil || analysis == nil {
+		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
+		return false
+	}
+
+	var winRate float64
+	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
+		winRate = analysis.DoublingCubeAnalysis.PlayerWinChances
+		fmt.Printf("Position ID: %d, Doubling decision, Player 1 Win Rate: %f\n", p.ID, winRate)
+	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+		winRate = analysis.CheckerAnalysis.Moves[0].PlayerWinChance
+		fmt.Printf("Position ID: %d, Checker decision, Player 1 Win Rate: %f\n", p.ID, winRate)
+	} else {
+		fmt.Printf("Excluding position ID: %d due to no win rate found\n", p.ID)
+		return false
+	}
+
+	if strings.HasPrefix(filter, "w>") {
+		value, err := strconv.ParseFloat(filter[2:], 64)
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		return winRate >= value
+	} else if strings.HasPrefix(filter, "w<") {
+		value, err := strconv.ParseFloat(filter[2:], 64)
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		return winRate <= value
+	} else if strings.HasPrefix(filter, "w") {
+		values := strings.Split(filter[1:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			return false
+		}
+		value1, err1 := strconv.ParseFloat(values[0], 64)
+		value2, err2 := strconv.ParseFloat(values[1], 64)
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return winRate >= minValue && winRate <= maxValue
 	}
 	return false
 }

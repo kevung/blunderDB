@@ -127,8 +127,9 @@
                const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
                const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
                const pipCountFilter = filters.find(filter => filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p'));
+               const winRateFilter = filters.find(filter => filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w'));
                onClose().then(() => {
-                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter);
+                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter);
                });
             } else {
                onClose();
