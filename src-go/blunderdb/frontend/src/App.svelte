@@ -1119,26 +1119,29 @@
         }
     }
 
-    async function loadPositionsByCheckerPosition() {
+    async function loadPositionsByFilters(filters, includeCube) {
         if (!$databasePathStore) {
             statusBarTextStore.set('No database opened');
             return;
         }
-        console.log('loadPositionsByCheckerPosition');
+        console.log('loadPositionsByFilters', filters, includeCube);
         try {
             const currentPosition = $positionStore;
 
-            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition);
+            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube);
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
             if (loadedPositions.length > 0) {
-                currentPositionIndexStore.set(0);
+                if ($currentPositionIndexStore === 0) {
+                    currentPositionIndexStore.set(1); // Temporarily set to a different value to force redraw board
+                }
+                currentPositionIndexStore.set(0); // Ensure the first matching position is displayed
             } else {
                 statusBarTextStore.set('No matching positions found');
             }
         } catch (error) {
-            console.error('Error loading positions by checker position:', error);
-            statusBarTextStore.set('Error loading positions by checker position');
+            console.error('Error loading positions by filters:', error);
+            statusBarTextStore.set('Error loading positions by filters');
         }
     }
 
@@ -1277,7 +1280,7 @@
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
             currentPositionId={positions.length > 0 ? positions[currentPositionIndex].id : null}
-            onLoadPositionsByCheckerPosition={loadPositionsByCheckerPosition}
+            onLoadPositionsByFilters={loadPositionsByFilters}
         />
 
     </div> <!-- Close the scrollable-content div properly -->

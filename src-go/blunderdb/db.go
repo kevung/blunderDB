@@ -370,7 +370,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByCheckerPosition(filter Position) ([]Position, error) {
+func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -394,24 +394,18 @@ func (d *Database) LoadPositionsByCheckerPosition(filter Position) ([]Position, 
 		}
 		position.ID = id // Ensure the ID is set
 
-		if position.MatchesCheckerPosition(filter) {
+		if position.MatchesCheckerPosition(filter) && (!includeCube || position.MatchesCubePosition(filter)) {
 			positions = append(positions, position)
-		} else {
-			fmt.Printf("Position ID %d does not match:\n", id)
-			for i := 0; i < len(position.Board.Points); i++ {
-				if filter.Board.Points[i].Checkers > 0 {
-					if position.Board.Points[i].Color != filter.Board.Points[i].Color || position.Board.Points[i].Checkers < filter.Board.Points[i].Checkers {
-						fmt.Printf("  Point %d: Position has %d %s checkers, filter requires %d %s checkers\n",
-							i, position.Board.Points[i].Checkers, colorName(position.Board.Points[i].Color),
-							filter.Board.Points[i].Checkers, colorName(filter.Board.Points[i].Color))
-					}
-				}
-			}
 		}
 	}
 
 	fmt.Println("Loaded positions by checker position:", positions)
 	return positions, nil
+}
+
+// Add MatchesCubePosition method to Position type
+func (p *Position) MatchesCubePosition(filter Position) bool {
+	return p.Cube.Value == filter.Cube.Value && p.Cube.Owner == filter.Cube.Owner
 }
 
 func colorName(color int) string {

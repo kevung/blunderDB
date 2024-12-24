@@ -1,7 +1,7 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { commentTextStore, currentPositionIndexStore } from '../stores/uiStore'; // Import commentTextStore and currentPositionIndexStore
-   import { SaveComment, LoadAllPositions } from '../../wailsjs/go/main/Database.js';
+   import { SaveComment, LoadAllPositions, LoadPositionsByCheckerPosition } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore'; // Import positionsStore
 
    export let visible = false;
@@ -18,7 +18,7 @@
    export let onToggleComment; // Add the new attribute
    export let exitApp;
    export let currentPositionId; // Add the current position ID
-   export let onLoadPositionsByCheckerPosition; // Add the new attribute
+   export let onLoadPositionsByFilters; // Add the new attribute
    let inputEl;
 
    let initialized = false;
@@ -103,7 +103,12 @@
                });
             } else if (command === 's') {
                onClose().then(() => {
-                  onLoadPositionsByCheckerPosition();
+                  onLoadPositionsByFilters([]);
+               });
+            } else if (command.startsWith('filter ')) {
+               const filters = command.slice(7).split(' ').map(filter => filter.trim());
+               onClose().then(() => {
+                  onLoadPositionsByFilters(filters);
                });
             } else if (command === 'e') {
                onClose().then(async () => {
@@ -117,11 +122,15 @@
                onClose().then(() => {
                   insertTags(tags);
                });
+            } else if (command.startsWith('s')) {
+               const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
+               const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
+               onClose().then(() => {
+                  onLoadPositionsByFilters(filters, includeCube);
+               });
             } else {
                onClose();
             }
-         } else if (event.ctrlKey && event.code === 'KeyC') {
-            onClose();
          } else if (event.ctrlKey && event.code === 'KeyH') {
             onToggleHelp();
          }
