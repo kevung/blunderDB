@@ -457,7 +457,37 @@
                             </tr>
                         </tbody>
                     </table>
-                    <!-- Add more categories as needed -->
+                    <h3>Filters</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Filter</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>cube, cu, c, cub</td>
+                                <td>Take into account cube</td>
+                            </tr>
+                            <tr>
+                                <td>score, sco, sc, s</td>
+                                <td>Take into account score</td>
+                            </tr>
+                            <tr>
+                                <td>p>x</td>
+                                <td>Pip count difference greater than x</td>
+                            </tr>
+                            <tr>
+                                <td>p&lt;x</td>
+                                <td>Pip count difference less than x</td>
+                            </tr>
+                            <tr>
+                                <td>px,y</td>
+                                <td>Pip count difference between x and y</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 {/if}
 
                 {#if activeTab === 'about'}
