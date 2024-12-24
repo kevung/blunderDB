@@ -1,8 +1,8 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore } from '../stores/uiStore'; // Import commentTextStore and currentPositionIndexStore
-   import { SaveComment, LoadAllPositions, LoadPositionsByCheckerPosition } from '../../wailsjs/go/main/Database.js';
-   import { positionsStore } from '../stores/positionStore'; // Import positionsStore
+   import { commentTextStore, currentPositionIndexStore } from '../stores/uiStore';
+   import { SaveComment, LoadAllPositions } from '../../wailsjs/go/main/Database.js';
+   import { positionsStore, positionStore } from '../stores/positionStore';
 
    export let visible = false;
    export let onClose;
@@ -14,11 +14,11 @@
    export let onSavePosition;
    export let onUpdatePosition;
    export let onDeletePosition;
-   export let onToggleAnalysis; // Add the new attribute
-   export let onToggleComment; // Add the new attribute
+   export let onToggleAnalysis;
+   export let onToggleComment;
    export let exitApp;
-   export let currentPositionId; // Add the current position ID
-   export let onLoadPositionsByFilters; // Add the new attribute
+   export let currentPositionId;
+   export let onLoadPositionsByFilters; // Use the prop passed from App.svelte
    let inputEl;
 
    let initialized = false;
@@ -126,10 +126,11 @@
                const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
                const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
                const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
-               const pipCountFilter = filters.find(filter => filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p'));
-               const winRateFilter = filters.find(filter => filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w'));
+               const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
+               const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
+               const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
                onClose().then(() => {
-                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter);
+                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter);
                });
             } else {
                onClose();
