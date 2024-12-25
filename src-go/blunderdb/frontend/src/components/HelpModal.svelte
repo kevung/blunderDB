@@ -468,23 +468,167 @@
                         <tbody>
                             <tr>
                                 <td>cube, cu, c, cub</td>
-                                <td>Take into account cube</td>
+                                <td>Include cube in search</td>
                             </tr>
                             <tr>
                                 <td>score, sco, sc, s</td>
-                                <td>Take into account score</td>
+                                <td>Include score in search</td>
                             </tr>
                             <tr>
                                 <td>p>x</td>
-                                <td>Pip count difference greater than x</td>
+                                <td>Pip count &gt; x</td>
                             </tr>
                             <tr>
                                 <td>p&lt;x</td>
-                                <td>Pip count difference less than x</td>
+                                <td>Pip count &lt; x</td>
                             </tr>
                             <tr>
                                 <td>px,y</td>
-                                <td>Pip count difference between x and y</td>
+                                <td>Pip count between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>w>x</td>
+                                <td>Win rate &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>w&lt;x</td>
+                                <td>Win rate &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>wx,y</td>
+                                <td>Win rate between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>g>x</td>
+                                <td>Gammon rate &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>g&lt;x</td>
+                                <td>Gammon rate &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>gx,y</td>
+                                <td>Gammon rate between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>b>x</td>
+                                <td>Backgammon rate &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>b&lt;x</td>
+                                <td>Backgammon rate &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>bx,y</td>
+                                <td>Backgammon rate between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>W>x</td>
+                                <td>Opponent win rate &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>W&lt;x</td>
+                                <td>Opponent win rate &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Wx,y</td>
+                                <td>Opponent win rate between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>G>x</td>
+                                <td>Opponent gammon rate &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>G&lt;x</td>
+                                <td>Opponent gammon rate &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Gx,y</td>
+                                <td>Opponent gammon rate between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>B>x</td>
+                                <td>Opponent backgammon rate &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>B&lt;x</td>
+                                <td>Opponent backgammon rate &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Bx,y</td>
+                                <td>Opponent backgammon rate between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>o>x</td>
+                                <td>Player checkers off &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>o&lt;x</td>
+                                <td>Player checkers off &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>ox,y</td>
+                                <td>Player checkers off between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>O>x</td>
+                                <td>Opponent checkers off &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>O&lt;x</td>
+                                <td>Opponent checkers off &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Ox,y</td>
+                                <td>Opponent checkers off between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>k>x</td>
+                                <td>Player back checkers &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>k&lt;x</td>
+                                <td>Player back checkers &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>kx,y</td>
+                                <td>Player back checkers between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>K>x</td>
+                                <td>Opponent back checkers &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>K&lt;x</td>
+                                <td>Opponent back checkers &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Kx,y</td>
+                                <td>Opponent back checkers between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>z>x</td>
+                                <td>Player checkers in zone &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>z&lt;x</td>
+                                <td>Player checkers in zone &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>zx,y</td>
+                                <td>Player checkers in zone between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>Z>x</td>
+                                <td>Opponent checkers in zone &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Z&lt;x</td>
+                                <td>Opponent checkers in zone &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Zx,y</td>
+                                <td>Opponent checkers in zone between x and y</td>
                             </tr>
                         </tbody>
                     </table>
