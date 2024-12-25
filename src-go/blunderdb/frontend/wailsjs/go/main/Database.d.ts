@@ -16,7 +16,7 @@ export function LoadComment(arg1:number):Promise<string>;
 
 export function LoadPosition(arg1:number):Promise<main.Position>;
 
-export function LoadPositionsByCheckerPosition(arg1:main.Position,arg2:boolean,arg3:boolean,arg4:string,arg5:string,arg6:string,arg7:string,arg8:string,arg9:string,arg10:string,arg11:string,arg12:string,arg13:string,arg14:string,arg15:string):Promise<Array<main.Position>>;
+export function LoadPositionsByCheckerPosition(arg1:main.Position,arg2:boolean,arg3:boolean,arg4:string,arg5:string,arg6:string,arg7:string,arg8:string,arg9:string,arg10:string,arg11:string,arg12:string,arg13:string,arg14:string,arg15:string,arg16:string):Promise<Array<main.Position>>;
 
 export function PositionExists(arg1:main.Position):Promise<{[key: string]: any}>;
 
