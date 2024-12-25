@@ -34,6 +34,16 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Change directory
+        run: cd src-go/blunderdb
+
+      - name: Verify wails.json
+        run: |
+          if [ ! -f wails.json ]; then
+            echo "wails.json not found!"
+            exit 1
+          fi
+
       - name: Build wails
         uses: dAppServer/wails-build-action@v2.2
         id: build
