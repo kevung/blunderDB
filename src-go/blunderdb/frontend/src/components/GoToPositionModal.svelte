@@ -15,6 +15,7 @@
             positionNumber = maxPositionNumber;
         }
         onGoToPosition(positionNumber);
+        onClose(); // Close the modal after going to the position
     }
 
     function handleKeyDown(event) {
