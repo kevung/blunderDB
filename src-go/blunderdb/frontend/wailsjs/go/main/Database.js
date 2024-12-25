@@ -30,8 +30,8 @@ export function LoadPosition(arg1) {
   return window['go']['main']['Database']['LoadPosition'](arg1);
 }
 
-export function LoadPositionsByCheckerPosition(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14) {
-  return window['go']['main']['Database']['LoadPositionsByCheckerPosition'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
+export function LoadPositionsByCheckerPosition(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15) {
+  return window['go']['main']['Database']['LoadPositionsByCheckerPosition'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15);
 }
 
 export function PositionExists(arg1) {
