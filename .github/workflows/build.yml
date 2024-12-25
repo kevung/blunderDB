@@ -7,17 +7,13 @@ on:
   pull_request:
     branches:
       - main
-  tags:
-    - '*'  # Match any new tag
 
 env:
-  # Necessary for most environments as build failure can occur due to OOM issues
   NODE_OPTIONS: "--max-old-space-size=4096"
 
 jobs:
   build:
     strategy:
-    # Failure in one platform build won't impact the others
       fail-fast: false
       matrix:
         build:
