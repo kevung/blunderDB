@@ -35,7 +35,7 @@ jobs:
           submodules: recursive
 
       - name: Change directory
-        run: cd src-go/blunderdb
+        run: cd blunderDB/src-go/blunderdb
 
       - name: List directory contents
         run: pwd && ls -la
