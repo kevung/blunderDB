@@ -487,6 +487,18 @@
                                 <td>Pip count between x and y</td>
                             </tr>
                             <tr>
+                                <td>P>x</td>
+                                <td>Player absolute pip count &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>P&lt;x</td>
+                                <td>Player absolute pip count &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>Px,y</td>
+                                <td>Player absolute pip count between x and y</td>
+                            </tr>
+                            <tr>
                                 <td>w>x</td>
                                 <td>Win rate &gt; x</td>
                             </tr>
