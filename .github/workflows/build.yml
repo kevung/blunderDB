@@ -37,6 +37,9 @@ jobs:
       - name: Change directory
         run: cd src-go/blunderdb
 
+      - name: List directory contents
+        run: pwd && ls -la
+
       - name: Verify wails.json
         run: |
           if [ ! -f wails.json ]; then
