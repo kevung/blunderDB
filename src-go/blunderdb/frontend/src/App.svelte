@@ -9,7 +9,6 @@
         SaveDatabaseDialog,
         OpenDatabaseDialog,
         OpenPositionDialog,
-        ShowAlert,
         DeleteFile
     } from '../wailsjs/go/main/App.js';
     import {
@@ -1119,16 +1118,16 @@
         }
     }
 
-    async function loadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter) {
+    async function loadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter) {
         if (!$databasePathStore) {
             statusBarTextStore.set('No database opened');
             return;
         }
-        console.log('loadPositionsByFilters', filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter);
+        console.log('loadPositionsByFilters', filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter);
         try {
             const currentPosition = $positionStore;
 
-            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter);
+            const loadedPositions = await LoadPositionsByCheckerPosition(currentPosition, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter);
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
             if (loadedPositions && loadedPositions.length > 0) {
