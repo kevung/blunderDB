@@ -49,7 +49,6 @@ jobs:
 
       - name: Build wails
         uses: dAppServer/wails-build-action@v2.2
-        working-directory: ./src-go/blunderdb
         id: build
         with:
           build-name: ${{ matrix.build.name }}
