@@ -34,11 +34,13 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Change directory
+        run: cd blunderDB/src-go/blunderdb
+
       - name: List directory contents
         run: pwd && ls -la
 
       - name: Verify wails.json
-        working-directory: ./src-go/blunderdb
         run: |
           if [ ! -f wails.json ]; then
             echo "wails.json not found!"
