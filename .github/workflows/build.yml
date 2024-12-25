@@ -19,15 +19,12 @@ jobs:
         build:
           - name: 'blunderDB'
             platform:  'linux/amd64'
-            os: 'ubuntu-latest'
           - name: 'blunderDB'
             platform:  'windows/amd64'
-            os: 'windows-latest'
           - name: 'blunderDB'
             platform:  'darwin/universal'
-            os: 'macos-latest'
 
-    runs-on: ${{ matrix.build.os }}
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
