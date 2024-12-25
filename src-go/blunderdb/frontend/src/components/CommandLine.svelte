@@ -140,10 +140,15 @@
                if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
                   player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`; // Handle case where 'kx' means 'kx,x'
                }
+               let player2BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
+               if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
+                  player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`; // Handle case where 'Kx' means 'Kx,x'
+               }
                console.log('Filters:', filters); // Add logging
                console.log('player1BackCheckerFilter:', player1BackCheckerFilter); // Add logging
+               console.log('player2BackCheckerFilter:', player2BackCheckerFilter); // Add logging
                onClose().then(() => {
-                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter);
+                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter);
                });
             } else {
                onClose();

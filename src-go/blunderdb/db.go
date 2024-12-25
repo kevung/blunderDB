@@ -372,7 +372,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string) ([]Position, error) {
+func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -410,7 +410,8 @@ func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube b
 			(player2BackgammonRateFilter == "" || position.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
 			(player1CheckerOffFilter == "" || position.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
 			(player2CheckerOffFilter == "" || position.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
-			(player1BackCheckerFilter == "" || position.MatchesPlayer1BackChecker(player1BackCheckerFilter)) {
+			(player1BackCheckerFilter == "" || position.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
+			(player2BackCheckerFilter == "" || position.MatchesPlayer2BackChecker(player2BackCheckerFilter)) {
 			positions = append(positions, position)
 		}
 	}
@@ -953,6 +954,58 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 		values := strings.Split(filter[1:], ",")
 		if len(values) == 1 {
 			values = append(values, values[0]) // Handle case where 'kx' means 'kx,x'
+		}
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			return false
+		}
+		value1, err1 := strconv.Atoi(values[0])
+		value2, err2 := strconv.Atoi(values[1])
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return backCheckers >= minValue && backCheckers <= maxValue
+	}
+	return false
+}
+
+// Add MatchesPlayer2BackChecker method to Position type with logging
+func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
+	fmt.Printf("MatchesPlayer2BackChecker called with filter: %s\n", filter) // Add logging
+
+	backCheckers := 0
+	for i := 0; i <= 11; i++ {
+		if p.Board.Points[i].Color == 1 {
+			backCheckers += p.Board.Points[i].Checkers
+		}
+	}
+	fmt.Printf("Checking back checkers filter: %s, Player 2 Back Checkers: %d\n", filter, backCheckers)
+
+	if strings.HasPrefix(filter, "K>") {
+		value, err := strconv.Atoi(filter[2:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		return backCheckers >= value
+	} else if strings.HasPrefix(filter, "K<") {
+		value, err := strconv.Atoi(filter[2:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		return backCheckers <= value
+	} else if strings.HasPrefix(filter, "K") {
+		values := strings.Split(filter[1:], ",")
+		if len(values) == 1 {
+			values = append(values, values[0]) // Handle case where 'Kx' means 'Kx,x'
 		}
 		if len(values) != 2 {
 			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
