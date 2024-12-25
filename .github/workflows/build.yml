@@ -8,8 +8,7 @@ on:
     branches:
       - main
   tags:
-    # Match any new tag
-      - '*'
+    - '*'  # Match any new tag
 
 env:
   # Necessary for most environments as build failure can occur due to OOM issues
@@ -53,4 +52,4 @@ jobs:
           wails-build-webview2: download
           go-version: '1.20'
 
-          
+
