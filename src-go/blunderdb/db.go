@@ -372,7 +372,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string) ([]Position, error) {
+func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -413,13 +413,23 @@ func (d *Database) LoadPositionsByCheckerPosition(filter Position, includeCube b
 			(player1BackCheckerFilter == "" || position.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
 			(player2BackCheckerFilter == "" || position.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
 			(player1CheckerInZoneFilter == "" || position.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
-			(player2CheckerInZoneFilter == "" || position.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) {
+			(player2CheckerInZoneFilter == "" || position.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
+			(searchText == "" || position.MatchesSearchText(searchText, d)) {
 			positions = append(positions, position)
 		}
 	}
 
 	fmt.Println("Loaded positions by checker position:", positions)
 	return positions, nil
+}
+
+func (p *Position) MatchesSearchText(searchText string, d *Database) bool {
+	comment, err := d.LoadComment(p.ID)
+	if err != nil {
+		fmt.Printf("Error loading comment for position ID: %d, error: %v\n", p.ID, err)
+		return false
+	}
+	return strings.Contains(comment, searchText)
 }
 
 // Add MatchesPlayer1CheckerOff method to Position type
