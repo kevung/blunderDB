@@ -1,44 +1,16 @@
-# blunderDB
-Backgammon position and match database software
+# README
 
-## Roadmap
+## About
 
-import position/match in sqlite db (0.txt; 1.xg)
-  via files (txt, xg)
-  via clipboard
-export position/match
-  via files
-  via clipboard (xgid, raw)
-tag position/matchs (cataegories)
-notes commentaries
-filter by selector:
-  size blunder
-  points made
-  double decision
-  take decision
-  score
-  date
-  tag
+This is the official Wails Svelte template.
 
-gui
-  filter
-  tag
-  categories
-  preview position
+## Live Development
 
-unique executable
+To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
+server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
+and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
+to this in your browser, and you can call your Go code from devtools.
 
-possibility to send positions to commun database
+## Building
 
-## Database representation
-
-Tables
-  match: id, game_id, player1_score, player2_score
-  position: id, checker distribution, points, cube, score,
-    prev pos (foreign key), next pos (foreign key)
-
-## Inspirations
-
-Zotero capabilities
-
-
+To build a redistributable, production mode package, use `wails build`.
