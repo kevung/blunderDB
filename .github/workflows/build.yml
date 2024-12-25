@@ -54,6 +54,10 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
         shell: bash
 
+      - name: Install garble obfuscator
+        run: go install mvdan.cc/garble@latest
+        shell: bash
+      
       - name: Build App
         run: wails build --platform ${{matrix.build.platform}} -webview2 download -o ${{matrix.build.name}} -upx -obfuscated -clean
         shell: bash
