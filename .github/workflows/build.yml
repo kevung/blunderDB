@@ -1,57 +1,51 @@
-name: Build Wails Project
+name: Wails build
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+    tags:
+    # Match any new tag
+      - '*'
+
+env:
+  # Necessary for most environments as build failure can occur due to OOM issues
+  NODE_OPTIONS: "--max-old-space-size=4096"
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
     strategy:
+    # Failure in one platform build won't impact the others
+      fail-fast: false
       matrix:
-        os: [linux/amd64, windows/amd64, darwin/universal]
+        build:
+          - name: 'blunderDB'
+            platform:  'linux/amd64'
+            os: 'ubuntu-latest'
+          - name: 'blunderDB'
+            platform:  'windows/amd64'
+            os: 'windows-latest'
+          - name: 'blunderDB'
+            platform:  'darwin/universal'
+            os: 'macos-latest'
 
+    runs-on: ${{ matrix.build.os }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: '1.23.4'
+      - name: Build wails
+        uses: dAppServer/wails-build-action@v2.2
+        id: build
+        with:
+          build-name: ${{ matrix.build.name }}
+          build: true
+          nsis: false
+          sign: false
+          package: true
+          build-platform: ${{ matrix.build.platform }}        
+          wails-version: 'v2.9.2'
+          wails-build-webview2: download
+          go-version: '1.20'
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
-    - name: Install Wails
-      run: |
-        go install github.com/wailsapp/wails/v2/cmd/wails@latest
-
-    - name: Install frontend dependencies
-      run: |
-        cd src-go/blunderdb/frontend
-        npm install
-
-    - name: Build project
-      run: |
-        cd src-go/blunderdb
-        wails build -platform ${{ matrix.os }}
-
-    - name: Compress build
-      run: |
-        cd src-go/blunderdb/build/bin
-        tar -czf blunderdb-${{ matrix.os }}.tar.gz ./*
-      if: runner.os == 'Linux'
-
-    - name: Compress build (Windows)
-      run: |
-        cd src-go/blunderdb/build/bin
-        Compress-Archive -Path * -DestinationPath blunderdb-${{ matrix.os }}.zip
-      if: runner.os == 'Windows'
+          
