@@ -38,7 +38,7 @@ jobs:
         run: ls -la
 
       - name: Change directory
-        run: cd blunderDB/blunderDB/src-go/blunderdb
+        run: cd ./src-go/blunderdb
 
       - name: List directory contents
         run: pwd && ls -la
