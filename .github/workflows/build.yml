@@ -34,13 +34,11 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Change directory
-        run: cd blunderDB/src-go/blunderdb
-
       - name: List directory contents
         run: pwd && ls -la
 
       - name: Verify wails.json
+        working-directory: ./src-go/blunderdb
         run: |
           if [ ! -f wails.json ]; then
             echo "wails.json not found!"
@@ -49,6 +47,7 @@ jobs:
 
       - name: Build wails
         uses: dAppServer/wails-build-action@v2.2
+        working-directory: ./src-go/blunderdb
         id: build
         with:
           build-name: ${{ matrix.build.name }}
