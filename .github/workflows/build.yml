@@ -2,7 +2,12 @@ name: Wails build
 
 on:
   push:
-    tags:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  tags:
     # Match any new tag
       - '*'
 
