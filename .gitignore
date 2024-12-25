@@ -1,2 +1,6 @@
 src/__pycache__
 tmp
+build/bin/
+frontend/dist/
+frontend/node_modules/
+
