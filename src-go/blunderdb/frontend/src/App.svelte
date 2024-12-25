@@ -379,6 +379,9 @@
 
                 await savePositionAndAnalysis(positionData, parsedAnalysis, 'Pasted position and analysis saved successfully');
                 statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
+
+                // Mark the position as saved
+                positionsStore.set(await LoadAllPositions());
             })
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
