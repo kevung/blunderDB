@@ -1,0 +1,57 @@
+name: Build Wails Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.17'
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+
+    - name: Install Wails
+      run: |
+        go install github.com/wailsapp/wails/v2/cmd/wails@latest
+
+    - name: Install frontend dependencies
+      run: |
+        cd src-go/blunderdb/frontend
+        npm install
+
+    - name: Build project
+      run: |
+        cd src-go/blunderdb
+        wails build -platform ${{ matrix.os }}
+
+    - name: Compress build
+      run: |
+        cd src-go/blunderdb/build/bin
+        tar -czf blunderdb-${{ matrix.os }}.tar.gz ./*
+      if: runner.os == 'Linux'
+
+    - name: Compress build (Windows)
+      run: |
+        cd src-go/blunderdb/build/bin
+        Compress-Archive -Path * -DestinationPath blunderdb-${{ matrix.os }}.zip
+      if: runner.os == 'Windows'
