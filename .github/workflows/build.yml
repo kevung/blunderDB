@@ -99,7 +99,9 @@ jobs:
           pip install -r ./doc/requirements.txt
 
       - name: Build documentation
-        run: python ./doc/build.py
+        run: |
+        cd ./doc
+        python build.py
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
