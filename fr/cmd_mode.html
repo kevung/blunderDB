@@ -125,24 +125,19 @@
 <td><p>Importe une position par fichier texte (txt).</p></td>
 </tr>
 <tr class="row-odd"><td><p>:w</p></td>
-<td><p>Enregistre la position courante dans la bibliothèque
-courante.</p></td>
+<td><p>Enregistre la position courante dans la bibliothèque courante.</p></td>
 </tr>
 <tr class="row-even"><td><p>:w!</p></td>
-<td><p>Après édition d’une position existante, modifie cette
-dernière dans la base de données.</p></td>
+<td><p>Après édition d’une position existante, modifie cette dernière dans la base de données.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:w <em>toto</em> <em>titi</em> …</p></td>
-<td><p>Enregistre la position courante dans les bibliothèques
-<em>toto</em>, <em>titi</em>, …</p></td>
+<td><p>Enregistre la position courante dans les bibliothèques <em>toto</em>, <em>titi</em>, …</p></td>
 </tr>
 <tr class="row-even"><td><p>:w -<em>toto</em></p></td>
-<td><p>Retirer la position courante de la bibliothèque
-<em>toto</em>.</p></td>
+<td><p>Retirer la position courante de la bibliothèque <em>toto</em>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:LS</p></td>
-<td><p>Liste les bibliothèques auxquelles la position courante
-appartient.</p></td>
+<td><p>Liste les bibliothèques auxquelles la position courante appartient.</p></td>
 </tr>
 <tr class="row-even"><td><p>:D</p></td>
 <td><p>Supprime la position courante.</p></td>
@@ -173,8 +168,7 @@ appartient.</p></td>
 <td><p>Renomme la bibliothèque <em>toto</em> en <em>titi</em>.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:cp <em>titi</em></p></td>
-<td><p>Copie la bibliothèque courante dans la bibliothèque
-<em>titi</em>.</p></td>
+<td><p>Copie la bibliothèque courante dans la bibliothèque <em>titi</em>.</p></td>
 </tr>
 <tr class="row-even"><td><p>:cp <em>toto</em> <em>titi</em></p></td>
 <td><p>Copie la bibliothèque <em>toto</em> dans <em>titi</em>.</p></td>
@@ -226,37 +220,26 @@ combinés.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>:s cube …</p>
-<p>:s cu …</p>
-<p>:s c …</p>
-</td>
-<td><p>Filtre les positions vérifiant la configuration
-courante du cube.</p></td>
+<tr class="row-even"><td><p>:s cube</p></td>
+<td><p>Filtre les positions vérifiant la configuration courante du cube.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s score …</p>
-<p>:s sc …</p>
-<p>:s s</p>
-</td>
+<tr class="row-odd"><td><p>:s score</p></td>
 <td><p>Filtre les positions vérifiant le score courant.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s o7</p></td>
 <td><p>Filtre les positions ayant au moins 7 pions sortis.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s p-20,30</p></td>
-<td><p>Filtre les positions où le joueur 1 a entre 20 pips d’avance et
-30 pips de retard de course.</p></td>
+<td><p>Filtre les positions où le joueur 1 a entre 20 pips d’avance et 30 pips de retard de course.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s p&lt;-10</p></td>
-<td><p>Filtre les positions où le joueur 1 a au moins 10 pips
-d’avance.</p></td>
+<td><p>Filtre les positions où le joueur 1 a au moins 10 pips d’avance.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s p&gt;110</p></td>
-<td><p>Filtre les positions où le joueur 1 a au moins 110 pips
-de retard.</p></td>
+<td><p>Filtre les positions où le joueur 1 a au moins 110 pips de retard.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s P5,40</p></td>
-<td><p>Filtre les positions ayant une différence de course entre
-5 et 40 pips.</p></td>
+<td><p>Filtre les positions ayant une différence de course entre 5 et 40 pips.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s k5</p></td>
 <td><p>Filtre les positions où le joueur 1 a 5 pions arriérés.</p></td>
@@ -271,88 +254,67 @@ de retard.</p></td>
 <td><p>Filtre les positions où le joueur 2 a 6 pions dans la zone.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s e800,1200</p></td>
-<td><p>Filtre les positions où le joueur 1 a une équité
-entre 800 et 1200.</p></td>
+<td><p>Filtre les positions où le joueur 1 a une équité entre 800 et 1200.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s e&lt;200</p></td>
-<td><p>Filtre les positions où le joueur 1 a une équité
-inférieure à 200.</p></td>
+<td><p>Filtre les positions où le joueur 1 a une équité inférieure à 200.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s e&gt;400</p></td>
-<td><p>Filtre les positions où le joueur 1 a une équité
-supérieure à 400.</p></td>
+<td><p>Filtre les positions où le joueur 1 a une équité supérieure à 400.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s w40,60</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-gains entre 40% et 60%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de gains entre 40% et 60%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s w&lt;25</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-gain inférieures à 25.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de gain inférieures à 25.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s w&gt;68</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-gain supérieures à 68%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de gain supérieures à 68%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s g14,22</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-gammon entre 14% et 22%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de gammon entre 14% et 22%.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s g&lt;27</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-gammon inférieures à 27%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de gammon inférieures à 27%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s g&gt;45</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-gammon supérieures à 45%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de gammon supérieures à 45%.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s bg4,8</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-backgammon entre 4% et 8%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de backgammon entre 4% et 8%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s bg&lt;10</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-backgammon inférieures à 10%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de backgammon inférieures à 10%.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s bg&gt;5</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de
-backgammon supérieures à 5%.</p></td>
+<td><p>Filtre les positions où le joueur 1 a des chances de backgammon supérieures à 5%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s W40,60</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-gains entre 40% et 60%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de gains entre 40% et 60%.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s W&lt;25</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-gain inférieures à 25.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de gain inférieures à 25.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s W&gt;68</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-gain supérieures à 68%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de gain supérieures à 68%.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s G14,22</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-gammon entre 14% et 22%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de gammon entre 14% et 22%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s G&lt;27</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-gammon inférieures à 27%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de gammon inférieures à 27%.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s G&gt;45</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-gammon supérieures à 45%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de gammon supérieures à 45%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s BG4,8</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-backgammon entre 4% et 8%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de backgammon entre 4% et 8%.</p></td>
 </tr>
 <tr class="row-even"><td><p>:s BG&lt;10</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-backgammon inférieures à 10%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de backgammon inférieures à 10%.</p></td>
 </tr>
 <tr class="row-odd"><td><p>:s BG&gt;5</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de
-backgammon supérieures à 5%.</p></td>
+<td><p>Filtre les positions où le joueur 2 a des chances de backgammon supérieures à 5%.</p></td>
 </tr>
 </tbody>
 </table>

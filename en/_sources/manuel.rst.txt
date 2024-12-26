@@ -3,7 +3,7 @@
 Manuel
 ======
 
-blunderDB est un logiciel pour consistuer des bases de données de
+blunderDB est un logiciel pour constituer des bases de données de
 positions. Les positions sont stockées dans une base de données représentée par un fichier
 *.db*.
 
@@ -43,7 +43,7 @@ L'IHM de blunderDB est constituée de haut en bas par:
   positions de backgammon,
 
 * [en bas] la barre d'état, qui présente différentes informations sur la
-  base de donnnées ou la position courante.
+  base de données ou la position courante.
 
 La zone d'affichage principale met à disposition à l'utilisateur:
 
@@ -55,7 +55,7 @@ La zone d'affichage principale met à disposition à l'utilisateur:
 
 * le score de chaque joueur,
 
-* les dés à jouer. Si aucune valeur est affichée sur les dés, la
+* les dés à jouer. Si aucune valeur n'est affichée sur les dés, la
   position des dés indique quel joueur a le trait et que la position est
   une décision de cube.
 
@@ -64,11 +64,11 @@ suivantes:
 
 * le mode courant (NORMAL, EDIT, COMMAND),
 
-* le nom de la bibliothèque courante. Toutes les positions sont ajoutés
+* le nom de la bibliothèque courante. Toutes les positions sont ajoutées
   à la bibliothèque principale intitulée *main*,
 
 * l'index de la position courante, suivi du nombre de positions dans la
-  bibliothèque courante. Dans le cas de positions issus d'une recherche
+  bibliothèque courante. Dans le cas de positions issues d'une recherche
   par l'utilisateur, le nombre de positions correspond au nombre de
   positions filtrées,
 
@@ -93,10 +93,10 @@ Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:
 Le mode EDIT
 ------------
 
-Le mode EDIT permet d'éditer une position en vue où bien de l'ajouter à
-la base de données, ou bien de définir le type de position à rechercher.
+Le mode EDIT permet d'éditer une position en vue de l'ajouter à
+la base de données, ou de définir le type de position à rechercher.
 Le mode EDIT est activé en appuyant sur la touche *TAB*.
-La distributions des pions, du videau, du score, du trait oeuvent être
+La distribution des pions, du videau, du score, et du trait peuvent être
 modifiés à l'aide de la souris (voir :ref:`guide_edit_position`) ou du clavier (voir
 :ref:`raccourcis_position`).
 

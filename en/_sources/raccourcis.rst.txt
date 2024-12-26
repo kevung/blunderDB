@@ -18,6 +18,10 @@ Raccourcis généraux
    "CTRL-Q", "Fermer blunderDB."
    "CTRL-I", "Importer une position par fichier texte (txt)."
    "CTRL-L", "Afficher/cacher l'analyse."
+   "CTRL-P", "Afficher/cacher les commentaires."
+   "CTRL-F", "Rechercher une position."
+   "CTRL-H", "Afficher/cacher l'aide."
+   "?", "Afficher/cacher l'aide."
 
 .. _raccourcis_modaux:
 
@@ -29,9 +33,7 @@ Raccourcis modaux
    :widths: 5, 7, 20
    :align: center
 
-   "CTRL-C", "NORMAL", "Exporter une position dans le presse-papier en
-
-   vue d'un import dans XG."
+   "CTRL-C", "NORMAL", "Exporter une position dans le presse-papier en vue d'un import dans XG."
    "CTRL-V", "NORMAL", "Importer une position XG."
    "TAB", "NORMAL", "Basculer en mode EDIT."
    "ESPACE", "NORMAL", "Basculer en mode COMMAND."
@@ -39,16 +41,12 @@ Raccourcis modaux
    "k", "NORMAL", "Position précédente."
    "DROITE", "NORMAL", "Position suivante."
    "j", "NORMAL", "Position suivante."
-   "HOME", "NORMAL", "Première position."
-   "FIN", "NORMAL", "Dernière position."
-   "G", "NORMAL", "Dernière position."
-   "CTRL-GAUCHE", "NORMAL", "Bearoff à gauche."
-   "CTRL-DROITE", "NORMAL", "Bearoff à droite."
-   "CTRL-BAS", "NORMAL", "Positionner le joueur 1 en bas."
-   "CTRL-HAUT", "NORMAL", "Positionner le joueur 1 en haut."
+   "PageUp", "NORMAL", "Première position."
+   "PageDown", "NORMAL", "Dernière position."
+   "CTRL-GAUCHE", "NORMAL", "Orientation du board à gauche."
+   "CTRL-DROITE", "NORMAL", "Orientation du board à droite."
    "TAB", "EDIT", "Basculer en mode NORMAL."
    "ESPACE", "EDIT", "Basculer en mode COMMAND."
-   "ENTREE", "EDIT", "Alterner entre l'édition de portes ou de spares."
    "RETOUR ARRIERE", "EDIT", "Effacer la position courante."
    "TAB", "COMMAND", "Basculer en mode NORMAL."
    "ENTREE", "COMMAND", "Valider une requête."
