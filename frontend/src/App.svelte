@@ -80,6 +80,24 @@
     let positions = [];
     positionsStore.subscribe(value => {
         positions = value;
+        if (positions.length === 0) {
+            positionStore.set({
+                board: {
+                    points: Array(26).fill({ checkers: 0, color: -1 }),
+                    bearoff: [15, 15],
+                },
+                cube: {
+                    owner: -1,
+                    value: 0,
+                },
+                dice: [3, 1],
+                score: [-1, -1],
+                player_on_roll: 0,
+                decision_type: 0,
+                has_jacoby: 0,
+                has_beaver: 0,
+            });
+        }
     });
 
     currentPositionIndexStore.subscribe(async value => {
@@ -208,23 +226,6 @@
                 // Reset the display
                 currentPositionIndexStore.set(-1);
                 positionsStore.set([]);
-                positionStore.set({
-                    board: {
-                        points: Array(26).fill({ checkers: 0, color: -1 }),
-                        bearoff: [15, 15],
-                    },
-                    cube: {
-                        owner: -1,
-                        value: 0,
-                    },
-                    dice: [3, 1],
-                    score: [-1, -1],
-                    player_on_roll: 0,
-                    decision_type: 0,
-                    has_jacoby: 0,
-                    has_beaver: 0,
-                });
-                
             } else {
                 console.log('No file selected');
             }
@@ -259,22 +260,6 @@
                 currentPositionIndexStore.set(loadedPositions.length - 1);
             } else {
                 currentPositionIndexStore.set(-1);
-                positionStore.set({
-                    board: {
-                        points: Array(26).fill({ checkers: 0, color: -1 }),
-                        bearoff: [15, 15],
-                    },
-                    cube: {
-                        owner: -1,
-                        value: 0,
-                    },
-                    dice: [3, 1],
-                    score: [-1, -1],
-                        player_on_roll: 0,
-                        decision_type: 0,
-                        has_jacoby: 0,
-                        has_beaver: 0,
-                    });
             }
         } catch (error) {
             console.error('Error opening file dialog:', error);
