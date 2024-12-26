@@ -1,20 +1,33 @@
 <script>
     import { onMount } from 'svelte';
+    import { positionsStore } from '../stores/positionStore'; // Import positionsStore
+    import { currentPositionIndexStore } from '../stores/uiStore'; // Import currentPositionIndexStore
 
     export let visible = false;
     export let onClose;
-    export let onGoToPosition;
-    export let maxPositionNumber = 0;
-    export let currentIndex = 0; // Add currentIndex prop
 
     let positionNumber = 0;
     let inputField;
+    let maxPositionNumber = 0;
+    let currentIndex = 0;
+
+    // Subscribe to positionsStore to get the number of positions
+    positionsStore.subscribe(value => {
+        maxPositionNumber = value.length;
+    });
+
+    // Subscribe to currentPositionIndexStore to get the current index
+    currentPositionIndexStore.subscribe(value => {
+        currentIndex = value + 1; // Adjust for 1-based index
+    });
 
     function handleGoToPosition() {
-        if (positionNumber > maxPositionNumber) {
+        if (positionNumber < 1) {
+            positionNumber = 1;
+        } else if (positionNumber > maxPositionNumber) {
             positionNumber = maxPositionNumber;
         }
-        onGoToPosition(positionNumber);
+        currentPositionIndexStore.set(positionNumber - 1); // Set the store value directly
         onClose(); // Close the modal after going to the position
     }
 

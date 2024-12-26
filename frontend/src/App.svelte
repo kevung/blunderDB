@@ -1349,9 +1349,6 @@
     <GoToPositionModal
         visible={showGoToPositionModal}
         onClose={() => showGoToPositionModal = false}
-        onGoToPosition={(positionNumber) => currentPositionIndexStore.set(positionNumber - 1)}
-        maxPositionNumber={positions.length}
-        currentIndex={currentPositionIndex + 1}
     />
 
     <HelpModal
