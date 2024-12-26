@@ -1338,7 +1338,6 @@
                 updatePosition();
             }}
             onDeletePosition={deletePosition}
-            onGoToPosition={gotoPosition}
             onToggleAnalysis={toggleAnalysisPanel}
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
