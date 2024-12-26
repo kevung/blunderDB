@@ -372,7 +372,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string) ([]Position, error) {
+func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -415,7 +415,8 @@ func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, inc
 			(player1CheckerInZoneFilter == "" || position.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
 			(player2CheckerInZoneFilter == "" || position.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
 			(searchText == "" || position.MatchesSearchText(searchText, d)) &&
-			(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) {
+			(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
+			(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) {
 			positions = append(positions, position)
 		}
 	}
@@ -1187,6 +1188,70 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 			}
 			return player1PipCount >= minValue && player1PipCount <= maxValue
 		}
+	}
+	return false
+}
+
+// Add MatchesEquityFilter method to Position type with detailed logging
+func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
+	analysis, err := d.LoadAnalysis(p.ID)
+	if err != nil || analysis == nil {
+		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
+		return false
+	}
+
+	var equity float64
+	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
+		equity = analysis.DoublingCubeAnalysis.CubefulNoDoubleEquity
+		fmt.Printf("Position ID: %d, Doubling decision, Equity: %f\n", p.ID, equity)
+	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+		equity = analysis.CheckerAnalysis.Moves[0].Equity
+		fmt.Printf("Position ID: %d, Checker decision, Equity: %f\n", p.ID, equity)
+	} else {
+		fmt.Printf("Excluding position ID: %d due to no equity found\n", p.ID)
+		return false
+	}
+
+	if strings.HasPrefix(filter, "e>") {
+		value, err := strconv.ParseFloat(filter[2:], 64)
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		value /= 1000 // Convert millipoints to points
+		fmt.Printf("Equity filter condition: >, value: %f\n", value)
+		return equity >= value
+	} else if strings.HasPrefix(filter, "e<") {
+		value, err := strconv.ParseFloat(filter[2:], 64)
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			return false
+		}
+		value /= 1000 // Convert millipoints to points
+		fmt.Printf("Equity filter condition: <, value: %f\n", value)
+		return equity <= value
+	} else if strings.HasPrefix(filter, "e") {
+		values := strings.Split(filter[1:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			return false
+		}
+		value1, err1 := strconv.ParseFloat(values[0], 64)
+		value2, err2 := strconv.ParseFloat(values[1], 64)
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		value1 /= 1000 // Convert millipoints to points
+		value2 /= 1000 // Convert millipoints to points
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		fmt.Printf("Equity filter condition: BETWEEN, values: %f, %f\n", minValue, maxValue)
+		return equity >= minValue && equity <= maxValue
 	}
 	return false
 }
