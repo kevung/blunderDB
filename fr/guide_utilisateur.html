@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Guide utilisateur &mdash; Documentation blunderDB 0.1.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.jpg"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=897fae25"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="3. Liste des requêtes" href="cmd_mode.html" />
+    <link rel="prev" title="1. Manuel" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">1. Manuel</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Guide utilisateur</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">2.1. Créer une nouvelle base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">2.2. Ouvrir une base de donnée existante</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">2.3. Editer une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">2.4. Ajouter une position à la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-une-bibliotheque">2.5. Ajouter une position à une bibliothèque</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retirer-une-position-d-une-bibliotheque">2.6. Retirer une position d’une bibliothèque</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-la-position-de-la-base-de-donnees">2.7. Supprimer la position de la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">2.8. Import une position depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">2.9. Afficher l’analyse d’une position importée depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">2.10. Exporter une position vers XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">2.11. Visualiser les différentes positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">2.12. Rechercher des positions selon des critères</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">3. Liste des requêtes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">4. Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">5. Foire aux questions</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Guide utilisateur</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1><span class="section-number">2. </span>Guide utilisateur<a class="headerlink" href="#guide-utilisateur" title="Lien vers cette rubrique"></a></h1>
+<p>Ce guide est une introduction pratique à blunderDB pour une prise en main
+rapide.</p>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2><span class="section-number">2.1. </span>Créer une nouvelle base de données<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Pour créer une nouvelle base de données, cliquer sur « File », « New Database ».
+Choisir un chemin où enregistrer la base de données, ainsi qu’un nom et cliquer
+sur « Save ».</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>L’extension des bases de données blunderDB est <em>.db</em>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Raccourcis clavier: <em>CTRL-N</em>. Requête: <em>:n</em></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2><span class="section-number">2.2. </span>Ouvrir une base de donnée existante<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Lien vers cette rubrique"></a></h2>
+<p>Pour charger une base de données existante, cliquer sur « File », « Open
+Database ». Choisir le chemin où se trouve la base de données, choisir le
+fichier <em>.db</em> et cliquer sur « Open ».</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Raccourcis clavier: <em>CTRL-O</em>. Requête: <em>:o</em></p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2><span class="section-number">2.3. </span>Editer une position<a class="headerlink" href="#editer-une-position" title="Lien vers cette rubrique"></a></h2>
+<p>Pour éditer une position, basculer en mode EDIT à l’aide de la touche <em>TAB</em>.
+Editer la position à la souris:</p>
+<ul class="simple">
+<li><p>cliquer sur les points pour ajouter des pions. Le clic gauche attribue les
+pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour insérer
+une prime, cliquer sur le point de départ, maintenir le bouton appuyé,
+relacher sur le point d’arrivée. Cliquer sur la barre pour mettre des
+pions à la barre.</p></li>
+<li><p>pour effacer la position, double-clic sur une zone vide en dehors du board ou
+appuyer sur la touche <em>RETOUR ARRIERE</em>.</p></li>
+<li><p>pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour envoyer
+le cube vers le joueur 2, click droit sur le cube.</p></li>
+<li><p>pour éditer les dés, clic gauche pour augmenter la valeur d’un dé, clic droit
+pour augmenter la valeur d’un dé.</p></li>
+<li><p>pour indiquer le joueur qui a le trait, cliquer à l’emplacement prévu des dés
+à hauteur de sommet de point.</p></li>
+<li><p>pour éditer le score des joueurs, clic gauche pour augmenter le score, clic
+droit pour réduire le score.</p></li>
+</ul>
+<p>Une fois la position éditée, appuyer sur <em>TAB</em> pour rebasculer en mode NORMAL.</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>La saisie de la position avec la souris pour les pions se fait de la
+même manière que dans XG.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>La position peut être intégralement saisie uniquement par le clavier
+(voir <a class="reference internal" href="raccourcis.html#raccourcis-position"><span class="std std-ref">Edition de position au clavier</span></a>). Avec un peu d’entrainement, la saisie de
+position peut ainsi être très rapide.</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2><span class="section-number">2.4. </span>Ajouter une position à la base de données<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Pour enregistrer la position obtenue précédemment,</p>
+<ul class="simple">
+<li><p>basculer en mode COMMAND en appuyant sur <em>ESPACE</em>,</p></li>
+<li><p>taper la requête <em>:w</em>,</p></li>
+<li><p>valider la commande en appuyant sur <em>ENTREE</em>.</p></li>
+</ul>
+<p>Un message s’affiche dans la barre d’état indiquant
+« Position written to database. »</p>
+</section>
+<section id="ajouter-une-position-a-une-bibliotheque">
+<h2><span class="section-number">2.5. </span>Ajouter une position à une bibliothèque<a class="headerlink" href="#ajouter-une-position-a-une-bibliotheque" title="Lien vers cette rubrique"></a></h2>
+<p>Pour ajouter une position à une bibliothèque <em>toto</em>,</p>
+<ul class="simple">
+<li><p>basculer en mode COMMAND en appuyant sur <em>ESPACE</em>,</p></li>
+<li><p>taper <em>:w toto</em>,</p></li>
+<li><p>valider la commande en appuyant sur <em>ENTREE</em>.</p></li>
+</ul>
+<p>Un message s’affiche dans la barre d’état indiquant
+« The position has been added to toto. »</p>
+</section>
+<section id="retirer-une-position-d-une-bibliotheque">
+<h2><span class="section-number">2.6. </span>Retirer une position d’une bibliothèque<a class="headerlink" href="#retirer-une-position-d-une-bibliotheque" title="Lien vers cette rubrique"></a></h2>
+<p>Pour retirer la position précédente de la bibliothèque <em>toto</em>,</p>
+<ul class="simple">
+<li><p>basculer en mode COMMAND en appuyant sur <em>ESPACE</em>,</p></li>
+<li><p>taper <em>:w -toto</em>,</p></li>
+<li><p>valider la commande en appuyant sur <em>ENTREE</em>.</p></li>
+</ul>
+<p>Un message s’affiche dans la barre d’état indiquant
+« The position has been removed from toto. »</p>
+</section>
+<section id="supprimer-la-position-de-la-base-de-donnees">
+<h2><span class="section-number">2.7. </span>Supprimer la position de la base de données<a class="headerlink" href="#supprimer-la-position-de-la-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Pour supprimer définitivement la position de la base de données,</p>
+<ul class="simple">
+<li><p>basculer en mode COMMAND en appuyant sur <em>ESPACE</em>,</p></li>
+<li><p>taper <em>:D</em>,</p></li>
+<li><p>valider la commande en appuyant sur <em>ENTREE</em>.</p></li>
+</ul>
+<p>Un message s’affiche dans la barre d’état indiquant
+« Position deleted. »</p>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2><span class="section-number">2.8. </span>Import une position depuis XG<a class="headerlink" href="#import-une-position-depuis-xg" title="Lien vers cette rubrique"></a></h2>
+<p>Pour importer une position directement depuis XG,</p>
+<ul class="simple">
+<li><p>afficher dans XG la position à importer et appuyer <em>CTRL-C</em>,</p></li>
+<li><p>afficher blunderDB et appuyer <em>CTRL-V</em>.</p></li>
+</ul>
+<p>Un message s’affiche dans la barre d’état indiquant
+« Position imported. »</p>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2><span class="section-number">2.9. </span>Afficher l’analyse d’une position importée depuis XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Lien vers cette rubrique"></a></h2>
+<p>Si une position analysée par XG a été importée dans blunderDB, l’analyse de XG
+peut être affichée en appuyant <em>CTRL-L</em>.</p>
+<p>Si la position correspond à une décision de pions, les cinq meilleurs coups
+sont affichés sur des lignes distinctes. Pour chaque ligne, les informations
+fournies sont dans cet ordre, le coup de pion associé, l’équité normalisée,
+l’erreur en équité du coup, les chances de gain, gammon et backgammon du joueur
+1, les chances de gain, gammon et backgammon du joueur 2, le niveau d’analyse.</p>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2><span class="section-number">2.10. </span>Exporter une position vers XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Lien vers cette rubrique"></a></h2>
+<p>Pour exporter une position de blunderDB vers XG,</p>
+<ul class="simple">
+<li><p>afficher dans blunderDB la position à exporter et appuyter <em>CTRL-C</em>,</p></li>
+<li><p>afficher XG et appuyer <em>CTRL-V</em>.</p></li>
+</ul>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2><span class="section-number">2.11. </span>Visualiser les différentes positions<a class="headerlink" href="#visualiser-les-differentes-positions" title="Lien vers cette rubrique"></a></h2>
+<p>Pour visualiser les différentes positions de la bibliothèque courante, utiliser
+les touches <em>GAUCHE</em> et <em>DROITE</em>. La touche <em>HOME</em> permet d’aller à la première
+position. La touche <em>FIN</em> permet d’aller à la dernière position.</p>
+<p>Pour afficher le bearoff à gauche, appuyer <em>CTRL-GAUCHE</em>. Pour afficher le
+bearoff à droite, appuyer <em>CTRL-DROITE</em>.</p>
+<p>Pour inverser l’orientation du board, appuyer sur <em>CTRL-HAUT</em> ou <em>CTRL-BAS</em>.</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2><span class="section-number">2.12. </span>Rechercher des positions selon des critères<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Lien vers cette rubrique"></a></h2>
+<p>Pour rechercher des types de positions,</p>
+<ul class="simple">
+<li><p>basculer en mode EDIT en appuyant sur <em>TAB</em>,</p></li>
+<li><p>éditer la structure de position à rechercher. blunderDB va filtrer les
+positions ayant <em>a minima</em> la structure de pions saisie. Dans le
+doute, afin d’obtenir le maximum de résultats, effacer la position
+en appuyant sur la touche <em>RETOUR ARRIERE</em>. Editer si besoin la
+position du cube et le score.</p></li>
+<li><p>basculer en mode COMMAND en appuyant sur <em>ESPACE</em>,</p></li>
+<li><p>écrire <em>:s</em>, ajouter d’éventuels filtres supplémentaires (par exemple
+<em>cube</em> ou <em>score</em> pour prendre respectivement en compte le cube et le
+score. Voir <a class="reference internal" href="cmd_mode.html#cmd-filter-pos"><span class="std std-ref">Rechercher des positions</span></a> pour une liste exhaustive des
+filtres disponibles).</p></li>
+<li><p>valider la requête en appuyant sur <em>ENTREE</em>.</p></li>
+</ul>
+<p>Les positions affichées sont celles de la base de données ayant vérifié
+les critères de recherche entrés par l’utilisateur.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="1. Manuel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="3. Liste des requêtes" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
