@@ -1,13 +1,12 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore } from '../stores/uiStore';
+   import { commentTextStore, currentPositionIndexStore, commandTextStore } from '../stores/uiStore';
    import { SaveComment, LoadAllPositions } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
 
    export let visible = false;
    export let onClose;
    export let onToggleHelp;
-   export let text = '';
    export let onNewDatabase;
    export let onOpenDatabase;
    export let importPosition;
@@ -17,7 +16,6 @@
    export let onToggleAnalysis;
    export let onToggleComment;
    export let exitApp;
-   export let currentPositionId;
    export let onLoadPositionsByFilters; // Use the prop passed from App.svelte
    let inputEl;
 
@@ -28,7 +26,7 @@
    positionsStore.subscribe(value => positions = value);
 
    $: if (visible && !initialized) {
-      text = '';
+      commandTextStore.set('');
       initialized = true;
 
       setTimeout(() => {
@@ -187,7 +185,7 @@
             }
          }, 0);
          // Save the updated comment to the database
-         SaveComment(parseInt(currentPositionId), updatedText);
+         SaveComment(parseInt($currentPositionIndexStore), updatedText);
          return updatedText;
       });
    }
@@ -207,7 +205,7 @@
    <input
          type="text"
          bind:this={inputEl}
-         bind:value={text}
+         bind:value={$commandTextStore}
          class="command-input"
          placeholder=" Type your command here. "
          on:keydown={handleKeyDown}

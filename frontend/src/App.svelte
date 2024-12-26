@@ -1328,7 +1328,6 @@
             visible={showCommand}
             onClose={toggleCommandMode}
             onToggleHelp={toggleHelpModal}
-            text={$commandTextStore}
             bind:this={commandInput}
             onNewDatabase={newDatabase}
             onOpenDatabase={openDatabase}
@@ -1343,7 +1342,6 @@
             onToggleAnalysis={toggleAnalysisPanel}
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
-            currentPositionId={positions.length > 0 ? positions[currentPositionIndex].id : null}
             onLoadPositionsByFilters={loadPositionsByFilters}
         />
 
