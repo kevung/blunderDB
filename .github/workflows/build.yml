@@ -109,4 +109,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc/build/en
           publish_branch: gh-pages
+          keep_files: false  # This will clean the branch before deploying
 
