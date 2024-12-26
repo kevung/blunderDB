@@ -37,7 +37,11 @@ jobs:
 
       - name: Set outputs
         id: vars
-        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+        run: |
+          if [ -n "${GITHUB_REF##*refs/tags/*}" ]; then
+            echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          else
+            echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       # Setup and configure GoLang
       - name: Setup GoLang
@@ -64,7 +68,7 @@ jobs:
         shell: bash
 
       - name: Build App
-        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.sha_short }}${{matrix.build.ext}} -upx -clean
+        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.version }}${{matrix.build.ext}} -upx -clean
         shell: bash
         
       - name: Add Linux perms
@@ -74,7 +78,7 @@ jobs:
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.sha_short }}
+          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.version }}
           path: |
             */bin/
             *\bin\*
