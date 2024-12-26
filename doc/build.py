@@ -3,7 +3,7 @@ import shutil
 import subprocess
 import zipfile
 
-CREATE_ARCHIVE = True
+CREATE_ARCHIVE = False
 LANG = ['fr', 'en']
 
 
