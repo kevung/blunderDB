@@ -108,4 +108,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./doc/build/en
+          publish_branch: gh-pages
 
