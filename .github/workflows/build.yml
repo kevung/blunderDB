@@ -22,8 +22,10 @@ jobs:
         build:
           - name: 'blunderDB'
             platform:  'linux'
+            ext: ''
           - name: 'blunderDB.exe'
             platform:  'windows'
+            ext: '.exe'
 
 
     runs-on: ubuntu-latest
@@ -62,7 +64,7 @@ jobs:
         shell: bash
 
       - name: Build App
-        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.sha_short }} -upx -clean
+        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.sha_short }}${{matrix.build.ext}} -upx -clean
         shell: bash
         
       - name: Add Linux perms
