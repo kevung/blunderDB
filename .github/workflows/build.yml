@@ -18,9 +18,9 @@ jobs:
       matrix:
         build:
           - name: 'blunderDB'
-            platform:  'linux/amd64'
+            platform:  'linux'
           - name: 'blunderDB.exe'
-            platform:  'windows/amd64'
+            platform:  'windows'
 
 
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
         shell: bash
 
       - name: Build App
-        run: wails build --platform ${{matrix.build.platform}} -o ${{matrix.build.name}} -upx -clean
+        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{github.sha}} -upx -clean
         shell: bash
         
       - name: Add Linux perms
@@ -65,7 +65,7 @@ jobs:
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: Wails Build ${{runner.os}} ${{matrix.build.name}}
+          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{github.sha}}
           path: |
             */bin/
             *\bin\*
