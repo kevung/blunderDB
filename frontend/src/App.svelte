@@ -178,6 +178,15 @@
         return filePath.split('/').pop();
     }
 
+    const STATUSBAR_MESSAGE_DURATION = 5000; // Duration in milliseconds
+
+    function setStatusBarMessage(message) {
+        statusBarTextStore.set(message);
+        setTimeout(() => {
+            statusBarTextStore.set('');
+        }, STATUSBAR_MESSAGE_DURATION);
+    }
+
     async function newDatabase() {
         console.log('newDatabase');
         try {
@@ -194,7 +203,7 @@
                 databasePathStore.set(filePath);
                 console.log('databasePathStore:', $databasePathStore);
                 await SetupDatabase(filePath);
-                statusBarTextStore.set('New database created successfully');
+                setStatusBarMessage('New database created successfully');
                 const filename = getFilenameFromPath(filePath);
                 WindowSetTitle(`blunderDB - ${filename}`);
                 console.log(`New database created at ${filePath}`);
@@ -222,7 +231,7 @@
             }
         } catch (error) {
             console.error('Error opening file dialog:', error);
-            statusBarTextStore.set('Error creating new database');
+            setStatusBarMessage('Error creating new database');
         }
     }
 
@@ -238,7 +247,7 @@
             databasePathStore.set(filePath);
             console.log('databasePathStore:', $databasePathStore);
             await SetupDatabase(filePath);
-            statusBarTextStore.set('Database opened successfully');
+            setStatusBarMessage('Database opened successfully');
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
 
@@ -270,7 +279,7 @@
             }
         } catch (error) {
             console.error('Error opening file dialog:', error);
-            statusBarTextStore.set('Error opening database');
+            setStatusBarMessage('Error opening database');
         }
     }
 
@@ -292,10 +301,10 @@
                 parsedAnalysis.positionId = positionExistsResult.id; // Ensure the position ID is set in the analysis
                 await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
                 console.log('Analysis updated for position ID:', positionExistsResult.id);
-                statusBarTextStore.set('Position already exists, analysis updated');
+                setStatusBarMessage('Position already exists, analysis updated');
             } catch (error) {
                 console.error('Error updating analysis:', error);
-                statusBarTextStore.set('Error updating analysis');
+                setStatusBarMessage('Error updating analysis');
             }
             return;
         }
@@ -317,16 +326,16 @@
             if (positions.length > 0) {
                 currentPositionIndexStore.set(positions.length - 1);
             }
-            statusBarTextStore.set(successMessage);
+            setStatusBarMessage(successMessage);
         } catch (error) {
             console.error('Error saving position and analysis:', error);
-            statusBarTextStore.set('Error saving position and analysis');
+            setStatusBarMessage('Error saving position and analysis');
         }
     }
 
     export async function importPosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         try {
@@ -355,7 +364,7 @@
 
     async function pastePosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         console.log('pastePosition');
@@ -373,7 +382,7 @@
                 // Check if the position already exists
                 const positionExistsResult = await PositionExists(positionData);
                 if (positionExistsResult.exists) {
-                    statusBarTextStore.set('Position already exists');
+                    setStatusBarMessage('Position already exists');
                     return;
                 }
 
@@ -390,7 +399,7 @@
 
     async function saveCurrentPosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         console.log('saveCurrentPosition');
@@ -738,7 +747,7 @@
 
     function copyPosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         console.log('copyPosition');
@@ -792,10 +801,10 @@
         // Copy to clipboard
         navigator.clipboard.writeText(clipboardContent).then(() => {
             console.log('Position and analysis copied to clipboard');
-            statusBarTextStore.set('Position and analysis copied to clipboard');
+            setStatusBarMessage('Position and analysis copied to clipboard');
         }).catch(err => {
             console.error('Error copying to clipboard:', err);
-            statusBarTextStore.set('Error copying to clipboard');
+            setStatusBarMessage('Error copying to clipboard');
         });
     }
 
@@ -804,22 +813,22 @@
         const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
 
         if (player1Checkers > 15) {
-            statusBarTextStore.set('Invalid position: Player 1 has more than 15 checkers');
+            setStatusBarMessage('Invalid position: Player 1 has more than 15 checkers');
             return false;
         }
 
         if (player2Checkers > 15) {
-            statusBarTextStore.set('Invalid position: Player 2 has more than 15 checkers');
+            setStatusBarMessage('Invalid position: Player 2 has more than 15 checkers');
             return false;
         }
 
         if (position.decision_type === 1) {
             if (position.cube.owner !== position.player_on_roll && position.cube.owner !== -1) {
-                statusBarTextStore.set('Invalid position: Cube is not available for doubling');
+                setStatusBarMessage('Invalid position: Cube is not available for doubling');
                 return false;
             }
             if (position.score[position.player_on_roll] === 1) {
-                statusBarTextStore.set('Invalid position: Crawford rule prevents doubling');
+                setStatusBarMessage('Invalid position: Crawford rule prevents doubling');
                 return false;
             }
         }
@@ -829,17 +838,17 @@
 
     async function deletePosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         console.log('deletePosition');
         if ($statusBarModeStore !== 'NORMAL' && $statusBarModeStore !== 'COMMAND') {
-            statusBarTextStore.set('Cannot delete position in current mode');
+            setStatusBarMessage('Cannot delete position in current mode');
             return;
         }
 
         if (!positions || positions.length === 0) {
-            statusBarTextStore.set('No positions to delete');
+            setStatusBarMessage('No positions to delete');
             return;
         }
 
@@ -897,30 +906,30 @@
                 currentPositionIndexStore.set(updatedPositions.length - 1);
             }
 
-            statusBarTextStore.set('Position and associated analysis deleted successfully');
+            setStatusBarMessage('Position and associated analysis deleted successfully');
         } catch (error) {
             console.error('Error deleting position and associated analysis:', error);
-            statusBarTextStore.set('Error deleting position and associated analysis');
+            setStatusBarMessage('Error deleting position and associated analysis');
         }
     }
 
     async function updatePosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         console.log('updatePosition');
         if ($statusBarModeStore !== 'EDIT') {
-            statusBarTextStore.set('Update is only possible in edit mode');
+            setStatusBarMessage('Update is only possible in edit mode');
             return;
         }
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
 
         if (positions.length === 0) {
-            statusBarTextStore.set('No positions to update');
+            setStatusBarMessage('No positions to update');
             return;
         }
 
@@ -981,21 +990,21 @@
             const updatedPositions = await LoadAllPositions();
             positionsStore.set(Array.isArray(updatedPositions) ? updatedPositions : []);
 
-            statusBarTextStore.set('Position and analysis updated successfully');
+            setStatusBarMessage('Position and analysis updated successfully');
             statusBarModeStore.set('NORMAL');
         } catch (error) {
             console.error('Error updating position and analysis:', error);
-            statusBarTextStore.set('Error updating position and analysis');
+            setStatusBarMessage('Error updating position and analysis');
         }
     }
 
     function firstPosition() {
         if ($statusBarModeStore === 'EDIT') {
-            statusBarTextStore.set('Cannot browse positions in edit mode');
+            setStatusBarMessage('Cannot browse positions in edit mode');
             return;
         }
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         if (positions && positions.length > 0) {
@@ -1005,11 +1014,11 @@
 
     function previousPosition() {
         if ($statusBarModeStore === 'EDIT') {
-            statusBarTextStore.set('Cannot browse positions in edit mode');
+            setStatusBarMessage('Cannot browse positions in edit mode');
             return;
         }
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         if (positions && $currentPositionIndexStore > 0) {
@@ -1019,11 +1028,11 @@
 
     function nextPosition() {
         if ($statusBarModeStore === 'EDIT') {
-            statusBarTextStore.set('Cannot browse positions in edit mode');
+            setStatusBarMessage('Cannot browse positions in edit mode');
             return;
         }
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         if (positions && $currentPositionIndexStore < positions.length - 1) {
@@ -1033,11 +1042,11 @@
 
     function lastPosition() {
         if ($statusBarModeStore === 'EDIT') {
-            statusBarTextStore.set('Cannot browse positions in edit mode');
+            setStatusBarMessage('Cannot browse positions in edit mode');
             return;
         }
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         if (positions && positions.length > 0) {
@@ -1047,7 +1056,7 @@
 
     function gotoPosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         showGoToPositionModal = true;
@@ -1055,7 +1064,7 @@
 
     function findPosition() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         console.log('findPosition');
@@ -1064,7 +1073,7 @@
     function toggleEditMode(){
         console.log('toggleEditMode');
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             statusBarModeStore.set('NORMAL');
             return;
         }
@@ -1096,15 +1105,15 @@
 
     function toggleAnalysisPanel() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         if ($statusBarModeStore === 'EDIT') {
-            statusBarTextStore.set('Cannot toggle analysis panel in edit mode');
+            setStatusBarMessage('Cannot toggle analysis panel in edit mode');
             return;
         }
         if (JSON.stringify($positionStore) !== JSON.stringify(positions[currentPositionIndex])) {
-            statusBarTextStore.set('Cannot toggle analysis panel with unsaved changes');
+            setStatusBarMessage('Cannot toggle analysis panel with unsaved changes');
             return;
         }
         console.log('toggleAnalysisPanel'); // Debugging log
@@ -1139,11 +1148,11 @@
 
     function toggleCommentPanel() {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         if (!positions[currentPositionIndex]) {
-            statusBarTextStore.set('No current position to comment on');
+            setStatusBarMessage('No current position to comment on');
             return;
         }
         console.log('toggleCommentPanel called');
@@ -1177,7 +1186,7 @@
 
     async function loadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter) {
         if (!$databasePathStore) {
-            statusBarTextStore.set('No database opened');
+            setStatusBarMessage('No database opened');
             return;
         }
         console.log('loadPositionsByFilters', filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter);
@@ -1193,11 +1202,11 @@
                 }
                 currentPositionIndexStore.set(0); // Ensure the first matching position is displayed
             } else {
-                statusBarTextStore.set('No matching positions found');
+                setStatusBarMessage('No matching positions found');
             }
         } catch (error) {
             console.error('Error loading positions by filters:', error);
-            statusBarTextStore.set('Error loading positions by filters');
+            setStatusBarMessage('Error loading positions by filters');
         }
     }
 
