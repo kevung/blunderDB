@@ -55,7 +55,7 @@ jobs:
         shell: bash
 
       - name: Build App
-        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{github.sha}} -upx -clean
+        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{github.sha::6}} -upx -clean
         shell: bash
         
       - name: Add Linux perms
@@ -65,7 +65,7 @@ jobs:
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{github.sha}}
+          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{github.sha::6}}
           path: |
             */bin/
             *\bin\*
