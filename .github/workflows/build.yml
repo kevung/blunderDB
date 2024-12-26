@@ -38,7 +38,7 @@ jobs:
       - name: Set outputs
         id: vars
         run: |
-          if [ -n "${GITHUB_REF##*refs/tags/*}" ]; then
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
           else
             echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
