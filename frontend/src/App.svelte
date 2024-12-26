@@ -1334,10 +1334,8 @@
     <div class="panel-container">
 
         <CommentPanel
-            text={$commentTextStore}
             visible={showComment}
             onClose={toggleCommentPanel}
-            currentPositionId={positions.length > 0 ? currentPositionIndex : null}
         />
 
         <AnalysisPanel

@@ -1,11 +1,9 @@
 <script>
     export let visible = false;
     export let onClose;
-    export let text = '';
-    export let currentPositionId;
 
     import { onMount } from "svelte";
-    import { commentTextStore } from '../stores/uiStore';
+    import { commentTextStore, currentPositionIndexStore } from '../stores/uiStore';
     import { SaveComment } from '../../wailsjs/go/main/Database.js';
 
     function handleKeyDown(event) {
@@ -15,7 +13,7 @@
     }
 
     function handleClose() {
-        SaveComment(parseInt(currentPositionId), $commentTextStore); // Ensure position ID is an int64
+        SaveComment(parseInt($currentPositionIndexStore), $commentTextStore); // Ensure position ID is an int64
         onClose();
     }
 
