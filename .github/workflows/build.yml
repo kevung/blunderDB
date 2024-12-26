@@ -30,6 +30,10 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Set outputs
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       # Setup and configure GoLang
       - name: Setup GoLang
         uses: actions/setup-go@v4
@@ -55,7 +59,7 @@ jobs:
         shell: bash
 
       - name: Build App
-        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{github.sha::6}} -upx -clean
+        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.sha_short }} -upx -clean
         shell: bash
         
       - name: Add Linux perms
@@ -65,7 +69,7 @@ jobs:
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{github.sha::6}}
+          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.sha_short }}
           path: |
             */bin/
             *\bin\*
