@@ -42,6 +42,7 @@ jobs:
             echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
           else
             echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          fi
 
       # Setup and configure GoLang
       - name: Setup GoLang
