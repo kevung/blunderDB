@@ -75,8 +75,6 @@
     let commandInput;
 
     let currentPositionIndex = 0;
-    let totalPositions = 0;
-    let db;
 
     // Subscribe to the stores
     let positions = [];
@@ -207,25 +205,26 @@
                 const filename = getFilenameFromPath(filePath);
                 WindowSetTitle(`blunderDB - ${filename}`);
                 console.log(`New database created at ${filePath}`);
-                if (positions.length === 0) {
-                    currentPositionIndexStore.set(-1);
-                    positionStore.set({
-                        board: {
-                            points: Array(26).fill({ checkers: 0, color: -1 }),
-                            bearoff: [15, 15],
-                        },
-                        cube: {
-                            owner: -1,
-                            value: 0,
-                        },
-                        dice: [3, 1],
-                        score: [-1, -1],
-                        player_on_roll: 0,
-                        decision_type: 0,
-                        has_jacoby: 0,
-                        has_beaver: 0,
-                    });
-                }
+                // Reset the display
+                currentPositionIndexStore.set(-1);
+                positionsStore.set([]);
+                positionStore.set({
+                    board: {
+                        points: Array(26).fill({ checkers: 0, color: -1 }),
+                        bearoff: [15, 15],
+                    },
+                    cube: {
+                        owner: -1,
+                        value: 0,
+                    },
+                    dice: [3, 1],
+                    score: [-1, -1],
+                    player_on_roll: 0,
+                    decision_type: 0,
+                    has_jacoby: 0,
+                    has_beaver: 0,
+                });
+                
             } else {
                 console.log('No file selected');
             }
