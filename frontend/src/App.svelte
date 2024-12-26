@@ -1340,7 +1340,6 @@
 
         <AnalysisPanel
             visible={showAnalysis}
-            analysisData={$analysisStore}
             onClose={toggleAnalysisPanel}
         /> 
 

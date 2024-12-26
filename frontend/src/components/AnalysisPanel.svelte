@@ -1,7 +1,15 @@
 <script>
+    import { analysisStore } from '../stores/analysisStore'; // Import analysisStore
+
     export let visible = false;
     export let onClose;
-    export let analysisData = {};
+
+    let analysisData;
+
+    // Subscribe to analysisStore to get the analysis data
+    analysisStore.subscribe(value => {
+        analysisData = value;
+    });
 
     $: if (visible) {
         console.log('Panel is now visible');
