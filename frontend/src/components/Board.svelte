@@ -3,8 +3,12 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
+    import { statusBarModeStore } from '../stores/uiStore'; // Import statusBarModeStore
 
-    export let mode;
+    let mode;
+    statusBarModeStore.subscribe(value => {
+        mode = value;
+    });
     
     let canvasCfg = {
         aspectFactor: 0.72,

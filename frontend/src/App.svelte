@@ -1305,7 +1305,6 @@
     <div class="scrollable-content">
 
         <Board
-            mode={$statusBarModeStore}
             class="full-size-board"
         />
 
