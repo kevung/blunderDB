@@ -112,6 +112,10 @@ jobs:
           cd ./doc
           python build.py
 
+      - name: Create index.html for redirection
+        run: |
+          echo '<!DOCTYPE html><html><head><meta http-equiv="refresh" content="0; url=en/"></head><body></body></html>' > ./doc/build/index.html
+
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
