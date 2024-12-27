@@ -16,7 +16,8 @@
    export let onToggleAnalysis;
    export let onToggleComment;
    export let exitApp;
-   export let onLoadPositionsByFilters; // Use the prop passed from App.svelte
+   export let onLoadPositionsByFilters;
+   export let onLoadAllPositions;
    let inputEl;
 
    let initialized = false;
@@ -104,11 +105,8 @@
                   onLoadPositionsByFilters([]);
                });
             } else if (command === 'e') {
-               onClose().then(async () => {
-                  positionsStore.set(await LoadAllPositions());
-                  if (positions.length > 0) {
-                     currentPositionIndexStore.set(positions.length - 1);
-                  }
+               onClose().then(() => {
+                  onLoadAllPositions();
                });
             } else if (command.startsWith('#')) {
                const tags = Array.from(new Set(command.split(' ').map((tag, index) => index === 0 ? tag : `#${tag}`))).join(' ');

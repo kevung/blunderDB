@@ -271,6 +271,10 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 		positions = append(positions, position)
 	}
 
+	if len(positions) == 0 {
+		fmt.Println("No positions found, returning empty array.")
+	}
+
 	fmt.Println("Loaded positions:", positions)
 	return positions, nil
 }

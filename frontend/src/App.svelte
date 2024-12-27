@@ -79,7 +79,7 @@
     // Subscribe to the stores
     let positions = [];
     positionsStore.subscribe(value => {
-        positions = value;
+        positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
             positionStore.set({
                 board: {
@@ -1215,6 +1215,27 @@
         }
     }
 
+    async function loadAllPositions() {
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            return;
+        }
+        try {
+            const positions = await LoadAllPositions();
+            positionsStore.set(Array.isArray(positions) ? positions : []);
+            if (positions && positions.length > 0) {
+                currentPositionIndexStore.set(positions.length - 1);
+            } else {
+                currentPositionIndexStore.set(-1);
+                setStatusBarMessage('No positions found');
+                console.log('No positions found.');
+            }
+        } catch (error) {
+            console.error('Error loading all positions:', error);
+            setStatusBarMessage('Error loading all positions');
+        }
+    }
+
     onMount(() => {
         console.log('Wails runtime:', window.runtime);
         window.addEventListener("keydown", handleKeyDown);
@@ -1347,6 +1368,7 @@
             onToggleComment={toggleCommentPanel}
             exitApp={exitApp}
             onLoadPositionsByFilters={loadPositionsByFilters}
+            onLoadAllPositions={loadAllPositions}
         />
 
     </div> <!-- Close the scrollable-content div properly -->
