@@ -344,22 +344,8 @@
                 pastePositionTextStore.set(result);
                 console.log('pastePositionTextStore:', $pastePositionTextStore);
                 const { positionData, parsedAnalysis } = parsePosition(result);
-                positionStore.set(positionData);
-                analysisStore.set(parsedAnalysis);
-                console.log('positionStore:', $positionStore);
-                console.log('analysisStore:', $analysisStore);
-
-                // Check if the position already exists
-                const positionExistsResult = await PositionExists(positionData);
-                if (positionExistsResult.exists) {
-                    setStatusBarMessage('Position already exists');
-                    return;
-                }
-
                 await savePositionAndAnalysis(positionData, parsedAnalysis, 'Pasted position and analysis saved successfully');
-                statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
-
-                // Mark the position as saved
+                statusBarModeStore.set('NORMAL');
                 await loadAllPositions();
             })
             .catch((error) => {
