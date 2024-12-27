@@ -806,6 +806,16 @@
             return false;
         }
 
+        if (player1Checkers === 0) {
+            setStatusBarMessage('Invalid position: Player 1 has already borne off all checkers');
+            return false;
+        }
+
+        if (player2Checkers === 0) {
+            setStatusBarMessage('Invalid position: Player 2 has already borne off all checkers');
+            return false;
+        }
+
         if (position.decision_type === 1) {
             if (position.cube.owner !== position.player_on_roll && position.cube.owner !== -1) {
                 setStatusBarMessage('Invalid position: Cube is not available for doubling');
