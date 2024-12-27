@@ -1096,6 +1096,13 @@
             setStatusBarMessage('Cannot toggle analysis panel in edit mode');
             return;
         }
+
+        // Add logging to understand why the message is shown
+        console.log('Current position store:', $positionStore);
+        console.log('Current position index:', currentPositionIndex);
+        console.log('Positions:', positions);
+        console.log('Current position:', positions[currentPositionIndex]);
+
         if (JSON.stringify($positionStore) !== JSON.stringify(positions[currentPositionIndex])) {
             setStatusBarMessage('Cannot toggle analysis panel with unsaved changes');
             return;

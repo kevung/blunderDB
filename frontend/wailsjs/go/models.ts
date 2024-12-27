@@ -194,6 +194,8 @@ export namespace main {
 	    score: number[];
 	    player_on_roll: number;
 	    decision_type: number;
+	    has_jacoby: number;
+	    has_beaver: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Position(source);
@@ -208,6 +210,8 @@ export namespace main {
 	        this.score = source["score"];
 	        this.player_on_roll = source["player_on_roll"];
 	        this.decision_type = source["decision_type"];
+	        this.has_jacoby = source["has_jacoby"];
+	        this.has_beaver = source["has_beaver"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
