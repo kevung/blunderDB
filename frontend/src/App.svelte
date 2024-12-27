@@ -1071,6 +1071,10 @@
             statusBarModeStore.set('EDIT');
         } else {
             statusBarModeStore.set('NORMAL');
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
         }
     }
 
