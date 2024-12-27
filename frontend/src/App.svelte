@@ -224,8 +224,7 @@
                 WindowSetTitle(`blunderDB - ${filename}`);
                 console.log(`New database created at ${filePath}`);
                 // Reset the display
-                currentPositionIndexStore.set(-1);
-                positionsStore.set([]);
+                await loadAllPositions();
             } else {
                 console.log('No file selected');
             }
@@ -252,15 +251,7 @@
             WindowSetTitle(`blunderDB - ${filename}`);
 
             // Load positions
-            const loadedPositions = await LoadAllPositions();
-            positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
-
-            // Update status bar and show the last position by default
-            if (loadedPositions && loadedPositions.length > 0) {
-                currentPositionIndexStore.set(loadedPositions.length - 1);
-            } else {
-                currentPositionIndexStore.set(-1);
-            }
+            await loadAllPositions();
         } catch (error) {
             console.error('Error opening file dialog:', error);
             setStatusBarMessage('Error opening database');
@@ -304,12 +295,7 @@
             console.log('Analysis saved for position ID:', positionID);
 
             // Reload all positions and show the last one
-            const positions = await LoadAllPositions();
-            positionsStore.set(Array.isArray(positions) ? positions : []);
-
-            if (positions.length > 0) {
-                currentPositionIndexStore.set(positions.length - 1);
-            }
+            await loadAllPositions();
             setStatusBarMessage(successMessage);
         } catch (error) {
             console.error('Error saving position and analysis:', error);
@@ -374,7 +360,7 @@
                 statusBarModeStore.set('NORMAL'); // Set to normal mode after pasting
 
                 // Mark the position as saved
-                positionsStore.set(await LoadAllPositions());
+                await loadAllPositions();
             })
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
@@ -852,54 +838,7 @@
             console.log('Position and associated analysis deleted with ID:', positionID);
 
             // Load all positions from the database
-            const updatedPositions = await LoadAllPositions();
-            positionsStore.set(Array.isArray(updatedPositions) ? updatedPositions : []);
-
-            if (!updatedPositions || updatedPositions.length === 0) {
-                // If no positions left, initialize positionStore to its initial value
-                positionStore.set({
-                    board: {
-                        points: Array(26).fill({ checkers: 0, color: -1 }), // 24 points + 2 bars
-                        bearoff: [15, 15],
-                    },
-                    cube: {
-                        owner: -1,
-                        value: 0,
-                    },
-                    dice: [3, 1],
-                    score: [-1, -1],
-                    player_on_roll: 0,
-                    decision_type: 0,
-                    has_jacoby: 0,
-                    has_beaver: 0,
-                });
-                console.log('Database is empty. Showing index position 0 on total number position equal to 0.');
-                currentPositionIndexStore.set(0);
-                currentPositionIndexStore.set(-1);
-                positionStore.set({
-                    board: {
-                        points: Array(26).fill({ checkers: 0, color: -1 }),
-                        bearoff: [15, 15],
-                    },
-                    cube: {
-                        owner: -1,
-                        value: 0,
-                    },
-                    dice: [3, 1],
-                    score: [-1, -1],
-                    player_on_roll: 0,
-                    decision_type: 0,
-                    has_jacoby: 0,
-                    has_beaver: 0,
-                });
-            } else {
-                // Go to the last position
-                const lastPosition = updatedPositions[updatedPositions.length - 1];
-                positionStore.set(lastPosition);
-                console.log(`Showing index position ${updatedPositions.length - 1} on total number position equal to ${updatedPositions.length}.`);
-                currentPositionIndexStore.set(updatedPositions.length - 1);
-            }
-
+            await loadAllPositions();
             setStatusBarMessage('Position and associated analysis deleted successfully');
         } catch (error) {
             console.error('Error deleting position and associated analysis:', error);
@@ -980,10 +919,12 @@
             await SaveAnalysis(positionID, analysis);
             console.log('Analysis updated for position ID:', positionID);
 
-            // Retrieve all positions and update the store
-            const updatedPositions = await LoadAllPositions();
-            positionsStore.set(Array.isArray(updatedPositions) ? updatedPositions : []);
+            // Store the current index before loading all positions
+            const currentIndex = currentPositionIndex;
 
+            // Retrieve all positions and update the store
+            await loadAllPositions();
+            currentPositionIndexStore.set(currentIndex); // Ensure the current index remains the same
             setStatusBarMessage('Position and analysis updated successfully');
             statusBarModeStore.set('NORMAL');
         } catch (error) {
