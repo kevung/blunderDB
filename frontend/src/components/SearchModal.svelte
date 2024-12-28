@@ -47,65 +47,65 @@
     let backgammonRateRangeMin = ''; // Min value for backgammon rate range
     let backgammonRateRangeMax = ''; // Max value for backgammon rate range
 
-    let player2WinRateOption = 'min'; // Default option for player 2 win rate
-    let player2WinRateMin = ''; // Min value for player 2 win rate
-    let player2WinRateMax = ''; // Max value for player 2 win rate
-    let player2WinRateRangeMin = ''; // Min value for player 2 win rate range
-    let player2WinRateRangeMax = ''; // Max value for player 2 win rate range
+    let player2WinRateOption = 'min'; // Default option for opponent win rate
+    let player2WinRateMin = ''; // Min value for opponent win rate
+    let player2WinRateMax = ''; // Max value for opponent win rate
+    let player2WinRateRangeMin = ''; // Min value for opponent win rate range
+    let player2WinRateRangeMax = ''; // Max value for opponent win rate range
 
-    let player2GammonRateOption = 'min'; // Default option for player 2 gammon rate
-    let player2GammonRateMin = ''; // Min value for player 2 gammon rate
-    let player2GammonRateMax = ''; // Max value for player 2 gammon rate
-    let player2GammonRateRangeMin = ''; // Min value for player 2 gammon rate range
-    let player2GammonRateRangeMax = ''; // Max value for player 2 gammon rate range
+    let player2GammonRateOption = 'min'; // Default option for opponent gammon rate
+    let player2GammonRateMin = ''; // Min value for opponent gammon rate
+    let player2GammonRateMax = ''; // Max value for opponent gammon rate
+    let player2GammonRateRangeMin = ''; // Min value for opponent gammon rate range
+    let player2GammonRateRangeMax = ''; // Max value for opponent gammon rate range
 
-    let player2BackgammonRateOption = 'min'; // Default option for player 2 backgammon rate
-    let player2BackgammonRateMin = ''; // Min value for player 2 backgammon rate
-    let player2BackgammonRateMax = ''; // Max value for player 2 backgammon rate
-    let player2BackgammonRateRangeMin = ''; // Min value for player 2 backgammon rate range
-    let player2BackgammonRateRangeMax = ''; // Max value for player 2 backgammon rate range
+    let player2BackgammonRateOption = 'min'; // Default option for opponent backgammon rate
+    let player2BackgammonRateMin = ''; // Min value for opponent backgammon rate
+    let player2BackgammonRateMax = ''; // Max value for opponent backgammon rate
+    let player2BackgammonRateRangeMin = ''; // Min value for opponent backgammon rate range
+    let player2BackgammonRateRangeMax = ''; // Max value for opponent backgammon rate range
 
-    let player1CheckerOffOption = 'min'; // Default option for player 1 checker off
-    let player1CheckerOffMin = ''; // Min value for player 1 checker off
-    let player1CheckerOffMax = ''; // Max value for player 1 checker off
-    let player1CheckerOffRangeMin = ''; // Min value for player 1 checker off range
-    let player1CheckerOffRangeMax = ''; // Max value for player 1 checker off range
+    let player1CheckerOffOption = 'min'; // Default option for player checker off
+    let player1CheckerOffMin = ''; // Min value for player checker off
+    let player1CheckerOffMax = ''; // Max value for player checker off
+    let player1CheckerOffRangeMin = ''; // Min value for player checker off range
+    let player1CheckerOffRangeMax = ''; // Max value for player checker off range
 
-    let player2CheckerOffOption = 'min'; // Default option for player 2 checker off
-    let player2CheckerOffMin = ''; // Min value for player 2 checker off
-    let player2CheckerOffMax = ''; // Max value for player 2 checker off
-    let player2CheckerOffRangeMin = ''; // Min value for player 2 checker off range
-    let player2CheckerOffRangeMax = ''; // Max value for player 2 checker off range
+    let player2CheckerOffOption = 'min'; // Default option for opponent checker off
+    let player2CheckerOffMin = ''; // Min value for opponent checker off
+    let player2CheckerOffMax = ''; // Max value for opponent checker off
+    let player2CheckerOffRangeMin = ''; // Min value for opponent checker off range
+    let player2CheckerOffRangeMax = ''; // Max value for opponent checker off range
 
-    let player1BackCheckerOption = 'min'; // Default option for player 1 back checker
-    let player1BackCheckerMin = ''; // Min value for player 1 back checker
-    let player1BackCheckerMax = ''; // Max value for player 1 back checker
-    let player1BackCheckerRangeMin = ''; // Min value for player 1 back checker range
-    let player1BackCheckerRangeMax = ''; // Max value for player 1 back checker range
+    let player1BackCheckerOption = 'min'; // Default option for player back checker
+    let player1BackCheckerMin = ''; // Min value for player back checker
+    let player1BackCheckerMax = ''; // Max value for player back checker
+    let player1BackCheckerRangeMin = ''; // Min value for player back checker range
+    let player1BackCheckerRangeMax = ''; // Max value for player back checker range
 
-    let player2BackCheckerOption = 'min'; // Default option for player 2 back checker
-    let player2BackCheckerMin = ''; // Min value for player 2 back checker
-    let player2BackCheckerMax = ''; // Max value for player 2 back checker
-    let player2BackCheckerRangeMin = ''; // Min value for player 2 back checker range
-    let player2BackCheckerRangeMax = ''; // Max value for player 2 back checker range
+    let player2BackCheckerOption = 'min'; // Default option for opponent back checker
+    let player2BackCheckerMin = ''; // Min value for opponent back checker
+    let player2BackCheckerMax = ''; // Max value for opponent back checker
+    let player2BackCheckerRangeMin = ''; // Min value for opponent back checker range
+    let player2BackCheckerRangeMax = ''; // Max value for opponent back checker range
 
-    let player1CheckerInZoneOption = 'min'; // Default option for player 1 checker in zone
-    let player1CheckerInZoneMin = ''; // Min value for player 1 checker in zone
-    let player1CheckerInZoneMax = ''; // Max value for player 1 checker in zone
-    let player1CheckerInZoneRangeMin = ''; // Min value for player 1 checker in zone range
-    let player1CheckerInZoneRangeMax = ''; // Max value for player 1 checker in zone range
+    let player1CheckerInZoneOption = 'min'; // Default option for player checker in zone
+    let player1CheckerInZoneMin = ''; // Min value for player checker in zone
+    let player1CheckerInZoneMax = ''; // Max value for player checker in zone
+    let player1CheckerInZoneRangeMin = ''; // Min value for player checker in zone range
+    let player1CheckerInZoneRangeMax = ''; // Max value for player checker in zone range
 
-    let player2CheckerInZoneOption = 'min'; // Default option for player 2 checker in zone
-    let player2CheckerInZoneMin = ''; // Min value for player 2 checker in zone
-    let player2CheckerInZoneMax = ''; // Max value for player 2 checker in zone
-    let player2CheckerInZoneRangeMin = ''; // Min value for player 2 checker in zone range
-    let player2CheckerInZoneRangeMax = ''; // Max value for player 2 checker in zone range
+    let player2CheckerInZoneOption = 'min'; // Default option for opponent checker in zone
+    let player2CheckerInZoneMin = ''; // Min value for opponent checker in zone
+    let player2CheckerInZoneMax = ''; // Max value for opponent checker in zone
+    let player2CheckerInZoneRangeMin = ''; // Min value for opponent checker in zone range
+    let player2CheckerInZoneRangeMax = ''; // Max value for opponent checker in zone range
 
-    let player1AbsolutePipCountOption = 'min'; // Default option for player 1 absolute pip count
-    let player1AbsolutePipCountMin = ''; // Min value for player 1 absolute pip count
-    let player1AbsolutePipCountMax = ''; // Max value for player 1 absolute pip count
-    let player1AbsolutePipCountRangeMin = ''; // Min value for player 1 absolute pip count range
-    let player1AbsolutePipCountRangeMax = ''; // Max value for player 1 absolute pip count range
+    let player1AbsolutePipCountOption = 'min'; // Default option for player absolute pip count
+    let player1AbsolutePipCountMin = ''; // Min value for player absolute pip count
+    let player1AbsolutePipCountMax = ''; // Max value for player absolute pip count
+    let player1AbsolutePipCountRangeMin = ''; // Min value for player absolute pip count range
+    let player1AbsolutePipCountRangeMax = ''; // Max value for player absolute pip count range
 
     let equityOption = 'min'; // Default option for equity
     let equityMin = ''; // Min value for equity
@@ -117,21 +117,21 @@
         'Include Cube',
         'Include Score',
         'Pip Count',
-        'Win Rate Filter',
-        'Gammon Rate Filter',
-        'Backgammon Rate Filter',
-        'Player 2 Win Rate Filter',
-        'Player 2 Gammon Rate Filter',
-        'Player 2 Backgammon Rate Filter',
-        'Player 1 Checker Off Filter',
-        'Player 2 Checker Off Filter',
-        'Player 1 Back Checker Filter',
-        'Player 2 Back Checker Filter',
-        'Player 1 Checker In Zone Filter',
-        'Player 2 Checker In Zone Filter',
+        'Win Rate',
+        'Gammon Rate',
+        'Backgammon Rate',
+        'Opponent Win Rate',
+        'Opponent Gammon Rate',
+        'Opponent Backgammon Rate',
+        'Player Checker Off',
+        'Opponent Checker Off',
+        'Player Back Checker',
+        'Opponent Back Checker',
+        'Player Checker In Zone',
+        'Opponent Checker In Zone',
         'Search Text',
-        'Player 1 Absolute Pip Count Filter',
-        'Equity Filter'
+        'Player Absolute Pip Count',
+        'Equity (millipoints)'
     ];
 
     function addFilter() {
@@ -369,7 +369,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Win Rate Filter'}
+                    {#if filter === 'Win Rate'}
                         <div class="win-rate-options">
                             <label class="win-rate-option">
                                 <input type="radio" bind:group={winRateOption} value="min" /> Min
@@ -386,7 +386,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Gammon Rate Filter'}
+                    {#if filter === 'Gammon Rate'}
                         <div class="gammon-rate-options">
                             <label class="gammon-rate-option">
                                 <input type="radio" bind:group={gammonRateOption} value="min" /> Min
@@ -403,7 +403,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Backgammon Rate Filter'}
+                    {#if filter === 'Backgammon Rate'}
                         <div class="backgammon-rate-options">
                             <label class="backgammon-rate-option">
                                 <input type="radio" bind:group={backgammonRateOption} value="min" /> Min
@@ -420,58 +420,58 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 2 Win Rate Filter'}
-                        <div class="player2-win-rate-options">
-                            <label class="player2-win-rate-option">
+                    {#if filter === 'Opponent Win Rate'}
+                        <div class="opponent-win-rate-options">
+                            <label class="opponent-win-rate-option">
                                 <input type="radio" bind:group={player2WinRateOption} value="min" /> Min
                                 <input type="text" bind:value={player2WinRateMin} placeholder="Min" class="filter-input" />
                             </label>
-                            <label class="player2-win-rate-option">
+                            <label class="opponent-win-rate-option">
                                 <input type="radio" bind:group={player2WinRateOption} value="max" /> Max
                                 <input type="text" bind:value={player2WinRateMax} placeholder="Max" class="filter-input" />
                             </label>
-                            <label class="player2-win-rate-option">
+                            <label class="opponent-win-rate-option">
                                 <input type="radio" bind:group={player2WinRateOption} value="range" /> Range
                                 <input type="text" bind:value={player2WinRateRangeMin} placeholder="Min" class="filter-input" />
                                 <input type="text" bind:value={player2WinRateRangeMax} placeholder="Max" class="filter-input" />
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 2 Gammon Rate Filter'}
-                        <div class="player2-gammon-rate-options">
-                            <label class="player2-gammon-rate-option">
+                    {#if filter === 'Opponent Gammon Rate'}
+                        <div class="opponent-gammon-rate-options">
+                            <label class="opponent-gammon-rate-option">
                                 <input type="radio" bind:group={player2GammonRateOption} value="min" /> Min
                                 <input type="text" bind:value={player2GammonRateMin} placeholder="Min" class="filter-input" />
                             </label>
-                            <label class="player2-gammon-rate-option">
+                            <label class="opponent-gammon-rate-option">
                                 <input type="radio" bind:group={player2GammonRateOption} value="max" /> Max
                                 <input type="text" bind:value={player2GammonRateMax} placeholder="Max" class="filter-input" />
                             </label>
-                            <label class="player2-gammon-rate-option">
+                            <label class="opponent-gammon-rate-option">
                                 <input type="radio" bind:group={player2GammonRateOption} value="range" /> Range
                                 <input type="text" bind:value={player2GammonRateRangeMin} placeholder="Min" class="filter-input" />
                                 <input type="text" bind:value={player2GammonRateRangeMax} placeholder="Max" class="filter-input" />
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 2 Backgammon Rate Filter'}
-                        <div class="player2-backgammon-rate-options">
-                            <label class="player2-backgammon-rate-option">
+                    {#if filter === 'Opponent Backgammon Rate'}
+                        <div class="opponent-backgammon-rate-options">
+                            <label class="opponent-backgammon-rate-option">
                                 <input type="radio" bind:group={player2BackgammonRateOption} value="min" /> Min
                                 <input type="text" bind:value={player2BackgammonRateMin} placeholder="Min" class="filter-input" />
                             </label>
-                            <label class="player2-backgammon-rate-option">
+                            <label class="opponent-backgammon-rate-option">
                                 <input type="radio" bind:group={player2BackgammonRateOption} value="max" /> Max
                                 <input type="text" bind:value={player2BackgammonRateMax} placeholder="Max" class="filter-input" />
                             </label>
-                            <label class="player2-backgammon-rate-option">
+                            <label class="opponent-backgammon-rate-option">
                                 <input type="radio" bind:group={player2BackgammonRateOption} value="range" /> Range
                                 <input type="text" bind:value={player2BackgammonRateRangeMin} placeholder="Min" class="filter-input" />
                                 <input type="text" bind:value={player2BackgammonRateRangeMax} placeholder="Max" class="filter-input" />
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 1 Checker Off Filter'}
+                    {#if filter === 'Player Checker Off'}
                         <div class="player1-checker-off-options">
                             <label class="player1-checker-off-option">
                                 <input type="radio" bind:group={player1CheckerOffOption} value="min" /> Min
@@ -488,7 +488,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 2 Checker Off Filter'}
+                    {#if filter === 'Opponent Checker Off'}
                         <div class="player2-checker-off-options">
                             <label class="player2-checker-off-option">
                                 <input type="radio" bind:group={player2CheckerOffOption} value="min" /> Min
@@ -505,7 +505,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 1 Back Checker Filter'}
+                    {#if filter === 'Player Back Checker'}
                         <div class="player1-back-checker-options">
                             <label class="player1-back-checker-option">
                                 <input type="radio" bind:group={player1BackCheckerOption} value="min" /> Min
@@ -522,7 +522,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 2 Back Checker Filter'}
+                    {#if filter === 'Opponent Back Checker'}
                         <div class="player2-back-checker-options">
                             <label class="player2-back-checker-option">
                                 <input type="radio" bind:group={player2BackCheckerOption} value="min" /> Min
@@ -539,7 +539,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 1 Checker In Zone Filter'}
+                    {#if filter === 'Player Checker In Zone'}
                         <div class="player1-checker-in-zone-options">
                             <label class="player1-checker-in-zone-option">
                                 <input type="radio" bind:group={player1CheckerInZoneOption} value="min" /> Min
@@ -556,7 +556,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Player 2 Checker In Zone Filter'}
+                    {#if filter === 'Opponent Checker In Zone'}
                         <div class="player2-checker-in-zone-options">
                             <label class="player2-checker-in-zone-option">
                                 <input type="radio" bind:group={player2CheckerInZoneOption} value="min" /> Min
@@ -576,7 +576,7 @@
                     {#if filter === 'Search Text'}
                         <input type="text" bind:value={searchText} class="filter-input" />
                     {/if}
-                    {#if filter === 'Player 1 Absolute Pip Count Filter'}
+                    {#if filter === 'Player Absolute Pip Count'}
                         <div class="player1-absolute-pip-count-options">
                             <label class="player1-absolute-pip-count-option">
                                 <input type="radio" bind:group={player1AbsolutePipCountOption} value="min" /> Min
@@ -593,7 +593,7 @@
                             </label>
                         </div>
                     {/if}
-                    {#if filter === 'Equity Filter'}
+                    {#if filter === 'Equity (millipoints)'}
                         <div class="equity-options">
                             <label class="equity-option">
                                 <input type="radio" bind:group={equityOption} value="min" /> Min
@@ -743,13 +743,13 @@
         margin-top: 5px; /* Add margin to align below the dropdown */
     }
 
-    .pip-count-options, .win-rate-options, .gammon-rate-options, .backgammon-rate-options, .player2-win-rate-options, .player2-gammon-rate-options, .player2-backgammon-rate-options, .player1-checker-off-options, .player2-checker-off-options, .player1-back-checker-options, .player2-back-checker-options, .player1-checker-in-zone-options, .player2-checker-in-zone-options, .player1-absolute-pip-count-options, .equity-options {
+    .pip-count-options, .win-rate-options, .gammon-rate-options, .backgammon-rate-options, .opponent-win-rate-options, .opponent-gammon-rate-options, .opponent-backgammon-rate-options, .player1-checker-off-options, .player2-checker-off-options, .player1-back-checker-options, .player2-back-checker-options, .player1-checker-in-zone-options, .player2-checker-in-zone-options, .player1-absolute-pip-count-options, .equity-options {
         display: flex;
         flex-direction: column;
         gap: 5px;
     }
 
-    .pip-count-option, .win-rate-option, .gammon-rate-option, .backgammon-rate-option, .player2-win-rate-option, .player2-gammon-rate-option, .player2-backgammon-rate-option, .player1-checker-off-option, .player2-checker-off-option, .player1-back-checker-option, .player2-back-checker-option, .player1-checker-in-zone-option, .player2-checker-in-zone-option, .player1-absolute-pip-count-option, .equity-option {
+    .pip-count-option, .win-rate-option, .gammon-rate-option, .backgammon-rate-option, .opponent-win-rate-option, .opponent-gammon-rate-option, .opponent-backgammon-rate-option, .player1-checker-off-option, .player2-checker-off-option, .player1-back-checker-option, .player2-back-checker-option, .player1-checker-in-zone-option, .player2-checker-in-zone-option, .player1-absolute-pip-count-option, .equity-option {
         display: flex;
         align-items: center;
         gap: 10px; /* Add space between radio button and input */
