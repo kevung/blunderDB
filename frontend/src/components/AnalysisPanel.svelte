@@ -233,6 +233,34 @@
         width: 60px; /* Fixed width for equity and percentage columns */
     }
 
+    .checker-table th:nth-child(1),
+    .checker-table td:nth-child(1) {
+        border-right: 2px solid #ccc; /* More discreet border between move and equity columns */
+    }
+
+    .checker-table th:nth-child(3),
+    .checker-table td:nth-child(3) {
+        border-right: 2px solid #ccc; /* More discreet border between error and PW columns */
+    }
+
+    .checker-table th:nth-child(6),
+    .checker-table td:nth-child(6) {
+        border-right: 2px solid #ccc; /* More discreet border between PB and OW columns */
+    }
+
+    .checker-table th:nth-child(9),
+    .checker-table td:nth-child(9) {
+        border-right: 2px solid #ccc; /* More discreet border between OB and depth columns */
+    }
+
+    .checker-table tr:nth-child(even) {
+        background-color: #f9f9f9; /* Very discreet alternating row color */
+    }
+
+    .checker-table tr:nth-child(odd) {
+        background-color: #ffffff; /* Very discreet alternating row color */
+    }
+
     .best-action-row {
         font-weight: bold;
         color: #000000; /* Subtle color change for emphasis */
