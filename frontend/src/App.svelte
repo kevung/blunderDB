@@ -337,6 +337,10 @@
             setStatusBarMessage('No database opened');
             return;
         }
+        if ($statusBarModeStore === 'EDIT') {
+            setStatusBarMessage('Cannot paste position in edit mode');
+            return;
+        }
         console.log('pastePosition');
         let promise = window.runtime.ClipboardGetText();
         promise.then(
