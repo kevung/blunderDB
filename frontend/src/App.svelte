@@ -1046,16 +1046,6 @@
             return;
         }
 
-        // Add logging to understand why the message is shown
-        console.log('Current position store:', $positionStore);
-        console.log('Current position index:', currentPositionIndex);
-        console.log('Positions:', positions);
-        console.log('Current position:', positions[currentPositionIndex]);
-
-        if (JSON.stringify($positionStore) !== JSON.stringify(positions[currentPositionIndex])) {
-            setStatusBarMessage('Cannot toggle analysis panel with unsaved changes');
-            return;
-        }
         console.log('toggleAnalysisPanel'); // Debugging log
 
         statusBarModeStore.set('NORMAL'); // Ensure normal mode
