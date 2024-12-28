@@ -710,6 +710,10 @@
             setStatusBarMessage('No database opened');
             return;
         }
+        if ($statusBarModeStore === 'EDIT') {
+            setStatusBarMessage('Cannot copy position in edit mode');
+            return;
+        }
         console.log('copyPosition');
         const position = $positionStore;
         const analysis = $analysisStore;
