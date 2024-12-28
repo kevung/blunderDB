@@ -3,11 +3,15 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
-    import { statusBarModeStore } from '../stores/uiStore'; // Import statusBarModeStore
+    import { statusBarModeStore, showSearchModalStore } from '../stores/uiStore'; // Import showSearchModalStore
 
     let mode;
+    let showSearchModal = false;
     statusBarModeStore.subscribe(value => {
         mode = value;
+    });
+    showSearchModalStore.subscribe(value => {
+        showSearchModal = value;
     });
     
     let canvasCfg = {
@@ -488,9 +492,9 @@
     }
 
     function handleKeyDown(event) {
-        if (mode !== "EDIT") return;
+        if (mode !== "EDIT" || showSearchModal) return;
 
-        if (event.key === "Backspace") {
+        if (event.key === "Backspace" && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             event.preventDefault();
             resetBoard();
         }

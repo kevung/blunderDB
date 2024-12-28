@@ -50,7 +50,8 @@
         statusBarModeStore,
         commandTextStore,
         commentTextStore,
-        analysisDataStore
+        analysisDataStore,
+        showSearchModalStore // Import showSearchModalStore
     } from './stores/uiStore';
 
     // import components
@@ -62,6 +63,7 @@
     import CommentPanel from './components/CommentPanel.svelte';
     import HelpModal from './components/HelpModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
+    import SearchModal from './components/SearchModal.svelte'; // Import SearchModal component
 
     // Visibility variables
     let showCommand = false;
@@ -69,6 +71,7 @@
     let showHelp = false;
     let showComment = false;
     let showGoToPositionModal = false;
+    let showSearchModal = false; // Remove this line
 
     // Reference for various elements.
     let mainArea;
@@ -107,6 +110,10 @@
         }
     });
 
+    showSearchModalStore.subscribe(value => {
+        showSearchModal = value;
+    });
+
     //Global shortcuts
     function handleKeyDown(event) {
         event.stopPropagation();
@@ -116,6 +123,18 @@
             if (event.ctrlKey && event.code === 'KeyP') {
                 event.preventDefault();
                 toggleCommentPanel();
+            }
+            return;
+        }
+
+        // Prevent shortcuts when search modal is visible
+        if (showSearchModal) {
+            if (event.key === 'Escape') {
+                showSearchModalStore.set(false);
+            }
+            // Allow backspace to work inside input fields
+            if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+                event.preventDefault(); // Prevent backspace from erasing position
             }
             return;
         }
@@ -178,7 +197,11 @@
                 toggleCommentPanel();
             }
         } else if (event.ctrlKey && event.code === 'KeyF') {
-            findPosition();
+            if ($statusBarModeStore === 'EDIT') {
+                findPosition();
+            } else {
+                setStatusBarMessage('Search is only available in edit mode');
+            }
         } else if (event.ctrlKey && event.code === 'KeyH') {
             toggleHelpModal();
         } else if (!event.ctrlKey && event.key === '?') {
@@ -993,11 +1016,12 @@
     }
 
     function findPosition() {
+        console.log('findPosition');
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
         }
-        console.log('findPosition');
+        showSearchModalStore.set(true); // Show the search modal
     }
 
     function toggleEditMode(){
@@ -1223,8 +1247,8 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
-        if (showGoToPositionModal || $statusBarModeStore === 'EDIT') {
-            return; // Prevent changing position when GoToPositionModal is open or in edit mode
+        if (showGoToPositionModal || showSearchModal || $statusBarModeStore === 'EDIT') {
+            return; // Prevent changing position when GoToPositionModal or SearchModal is open or in edit mode
         }
 
         // Prevent changing position when scrolling in the analysis panel or comment panel
@@ -1316,6 +1340,11 @@
     <GoToPositionModal
         visible={showGoToPositionModal}
         onClose={() => showGoToPositionModal = false}
+    />
+
+    <SearchModal
+        visible={showSearchModal}
+        onClose={() => showSearchModalStore.set(false)}
     />
 
     <HelpModal
