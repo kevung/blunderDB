@@ -254,11 +254,11 @@
     }
 
     .checker-table tr:nth-child(even) {
-        background-color: #f9f9f9; /* Very discreet alternating row color */
+        background-color: #fdfdfd; /* More discreet alternating row color */
     }
 
     .checker-table tr:nth-child(odd) {
-        background-color: #ffffff; /* Very discreet alternating row color */
+        background-color: #ffffff; /* More discreet alternating row color */
     }
 
     .best-action-row {
