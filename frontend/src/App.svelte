@@ -277,6 +277,8 @@
                 await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
                 console.log('Analysis updated for position ID:', positionExistsResult.id);
                 setStatusBarMessage('Position already exists, analysis updated');
+                currentPositionIndexStore.set(-1); //force change to trigger re-render
+                currentPositionIndexStore.set(positions.findIndex(pos => pos.id === positionExistsResult.id)); // Set current position index to display the existing position
             } catch (error) {
                 console.error('Error updating analysis:', error);
                 setStatusBarMessage('Error updating analysis');
@@ -350,7 +352,6 @@
                 const { positionData, parsedAnalysis } = parsePosition(result);
                 await savePositionAndAnalysis(positionData, parsedAnalysis, 'Pasted position and analysis saved successfully');
                 statusBarModeStore.set('NORMAL');
-                await loadAllPositions();
             })
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
