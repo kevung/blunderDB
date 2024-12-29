@@ -356,16 +356,16 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={pipCountOption} value="min" /> Min
-                                        <input type="number" bind:value={pipCountMin} placeholder="Min" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={pipCountOption !== 'min'} />
+                                        <input type="number" bind:value={pipCountMin} placeholder="Min" class="filter-input" disabled={pipCountOption !== 'min'} />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={pipCountOption} value="max" /> Max
-                                        <input type="number" bind:value={pipCountMax} placeholder="Max" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={pipCountOption !== 'max'} />
+                                        <input type="number" bind:value={pipCountMax} placeholder="Max" class="filter-input" disabled={pipCountOption !== 'max'} />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={pipCountOption} value="range" /> Range
-                                        <input type="number" bind:value={pipCountRangeMin} placeholder="Min" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={pipCountOption !== 'range'} />
-                                        <input type="number" bind:value={pipCountRangeMax} placeholder="Max" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={pipCountOption !== 'range'} />
+                                        <input type="number" bind:value={pipCountRangeMin} placeholder="Min" class="filter-input" disabled={pipCountOption !== 'range'} />
+                                        <input type="number" bind:value={pipCountRangeMax} placeholder="Max" class="filter-input" disabled={pipCountOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>
@@ -394,16 +394,16 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={equityOption} value="min" /> Min
-                                        <input type="number" bind:value={equityMin} placeholder="Min" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={equityOption !== 'min'} />
+                                        <input type="number" bind:value={equityMin} placeholder="Min" class="filter-input" disabled={equityOption !== 'min'} />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={equityOption} value="max" /> Max
-                                        <input type="number" bind:value={equityMax} placeholder="Max" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={equityOption !== 'max'} />
+                                        <input type="number" bind:value={equityMax} placeholder="Max" class="filter-input" disabled={equityOption !== 'max'} />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={equityOption} value="range" /> Range
-                                        <input type="number" bind:value={equityRangeMin} placeholder="Min" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={equityOption !== 'range'} />
-                                        <input type="number" bind:value={equityRangeMax} placeholder="Max" class="filter-input" on:input={e => e.target.value = e.target.value.replace(/\D/g, '')} disabled={equityOption !== 'range'} />
+                                        <input type="number" bind:value={equityRangeMin} placeholder="Min" class="filter-input" disabled={equityOption !== 'range'} />
+                                        <input type="number" bind:value={equityRangeMax} placeholder="Max" class="filter-input" disabled={equityOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>
