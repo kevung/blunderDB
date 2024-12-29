@@ -219,7 +219,7 @@
 
     const STATUSBAR_MESSAGE_DURATION = 5000; // Duration in milliseconds
 
-    function setStatusBarMessage(message) {
+    export function setStatusBarMessage(message) {
         statusBarTextStore.set(message);
         setTimeout(() => {
             statusBarTextStore.set('');
