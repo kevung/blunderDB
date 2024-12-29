@@ -87,10 +87,15 @@
 
     .modal-content {
         background-color: white;
-        padding: 10px;
-        border-radius: 4px;
-        width: 300px; /* Set a fixed width */
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        padding: 1rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        width: 90%;
+        max-width: 300px; /* Decrease the max-width */
+        max-height: 80vh; /* Limit the height of the modal */
+        overflow-y: auto; /* Add vertical scrollbar if content exceeds max height */
+        padding-left: 1rem; /* Add left padding to make it symmetric */
         position: relative;
         display: flex;
         flex-direction: column;
@@ -101,7 +106,7 @@
         position: absolute;
         top: 8px;
         right: 8px;
-        font-size: 24px;
+        font-size: 1.5rem;
         font-weight: bold;
         color: #666;
         cursor: pointer;
@@ -116,6 +121,7 @@
         border: 1px solid #ccc;
         border-radius: 4px;
         box-sizing: border-box;
+        font-size: 18px; /* Set font size */
     }
 
     .input-field:focus {
