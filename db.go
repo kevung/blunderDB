@@ -1160,14 +1160,14 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
 			return false
 		}
-		return player1PipCount > value
+		return player1PipCount >= value
 	} else if strings.HasPrefix(filter, "P<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
 			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
 			return false
 		}
-		return player1PipCount < value
+		return player1PipCount <= value
 	} else if strings.HasPrefix(filter, "P") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) == 1 {
