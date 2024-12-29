@@ -1012,6 +1012,10 @@
             setStatusBarMessage('No database opened');
             return;
         }
+        if ($statusBarModeStore !== 'NORMAL') {
+            setStatusBarMessage('Cannot go to position in current mode');
+            return;
+        }
         showGoToPositionModal = true;
     }
 

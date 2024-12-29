@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { positionsStore } from '../stores/positionStore'; // Import positionsStore
-    import { currentPositionIndexStore } from '../stores/uiStore'; // Import currentPositionIndexStore
+    import { currentPositionIndexStore, statusBarModeStore } from '../stores/uiStore'; // Import currentPositionIndexStore and statusBarModeStore
 
     export let visible = false;
     export let onClose;
@@ -50,6 +50,10 @@
     $: if (visible && inputField) {
         inputField.focus();
         inputField.select(); // Select the text to allow direct replacement
+    }
+
+    $: if (visible && $statusBarModeStore !== 'NORMAL') {
+        onClose(); // Close the modal if not in normal mode
     }
 </script>
 
