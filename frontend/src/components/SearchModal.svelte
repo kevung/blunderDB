@@ -375,16 +375,16 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1AbsolutePipCountOption} value="min" /> Min
-                                        <input type="text" bind:value={player1AbsolutePipCountMin} placeholder="Min" class="filter-input" on:input={e => e.target.value = Math.max(0, Math.min(375, e.target.value.replace(/\D/g, '')))} disabled={player1AbsolutePipCountOption !== 'min'} />
+                                        <input type="number" bind:value={player1AbsolutePipCountMin} placeholder="Min" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'min'} />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1AbsolutePipCountOption} value="max" /> Max
-                                        <input type="text" bind:value={player1AbsolutePipCountMax} placeholder="Max" class="filter-input" on:input={e => e.target.value = Math.max(0, Math.min(375, e.target.value.replace(/\D/g, '')))} disabled={player1AbsolutePipCountOption !== 'max'} />
+                                        <input type="number" bind:value={player1AbsolutePipCountMax} placeholder="Max" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'max'} />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1AbsolutePipCountOption} value="range" /> Range
-                                        <input type="text" bind:value={player1AbsolutePipCountRangeMin} placeholder="Min" class="filter-input" on:input={e => e.target.value = Math.max(0, Math.min(375, e.target.value.replace(/\D/g, '')))} disabled={player1AbsolutePipCountOption !== 'range'} />
-                                        <input type="text" bind:value={player1AbsolutePipCountRangeMax} placeholder="Max" class="filter-input" on:input={e => e.target.value = Math.max(0, Math.min(375, e.target.value.replace(/\D/g, '')))} disabled={player1AbsolutePipCountOption !== 'range'} />
+                                        <input type="number" bind:value={player1AbsolutePipCountRangeMin} placeholder="Min" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'range'} />
+                                        <input type="number" bind:value={player1AbsolutePipCountRangeMax} placeholder="Max" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>
