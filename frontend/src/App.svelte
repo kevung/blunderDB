@@ -1349,6 +1349,7 @@
     <SearchModal
         visible={showSearchModal}
         onClose={() => showSearchModalStore.set(false)}
+        onLoadPositionsByFilters={loadPositionsByFilters}
     />
 
     <HelpModal

@@ -1,8 +1,10 @@
 <script>
     import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+    import { statusBarModeStore } from '../stores/uiStore';
 
     export let visible = false;
     export let onClose;
+    export let onLoadPositionsByFilters; // Add this line
 
     const dispatch = createEventDispatcher();
 
@@ -146,87 +148,71 @@
     }
 
     function handleSearch() {
-        dispatch('search', {
-            filters,
-            includeCube,
-            includeScore,
-            pipCountOption,
-            pipCountMin,
-            pipCountMax,
-            pipCountRangeMin,
-            pipCountRangeMax,
-            winRateOption,
-            winRateMin,
-            winRateMax,
-            winRateRangeMin,
-            winRateRangeMax,
-            gammonRateOption,
-            gammonRateMin,
-            gammonRateMax,
-            gammonRateRangeMin,
-            gammonRateRangeMax,
-            backgammonRateOption,
-            backgammonRateMin,
-            backgammonRateMax,
-            backgammonRateRangeMin,
-            backgammonRateRangeMax,
-            player2WinRateOption,
-            player2WinRateMin,
-            player2WinRateMax,
-            player2WinRateRangeMin,
-            player2WinRateRangeMax,
-            player2GammonRateOption,
-            player2GammonRateMin,
-            player2GammonRateMax,
-            player2GammonRateRangeMin,
-            player2GammonRateRangeMax,
-            player2BackgammonRateOption,
-            player2BackgammonRateMin,
-            player2BackgammonRateMax,
-            player2BackgammonRateRangeMin,
-            player2BackgammonRateRangeMax,
-            player1CheckerOffOption,
-            player1CheckerOffMin,
-            player1CheckerOffMax,
-            player1CheckerOffRangeMin,
-            player1CheckerOffRangeMax,
-            player2CheckerOffOption,
-            player2CheckerOffMin,
-            player2CheckerOffMax,
-            player2CheckerOffRangeMin,
-            player2CheckerOffRangeMax,
-            player1BackCheckerOption,
-            player1BackCheckerMin,
-            player1BackCheckerMax,
-            player1BackCheckerRangeMin,
-            player1BackCheckerRangeMax,
-            player2BackCheckerOption,
-            player2BackCheckerMin,
-            player2BackCheckerMax,
-            player2BackCheckerRangeMin,
-            player2BackCheckerRangeMax,
-            player1CheckerInZoneOption,
-            player1CheckerInZoneMin,
-            player1CheckerInZoneMax,
-            player1CheckerInZoneRangeMin,
-            player1CheckerInZoneRangeMax,
-            player2CheckerInZoneOption,
-            player2CheckerInZoneMin,
-            player2CheckerInZoneMax,
-            player2CheckerInZoneRangeMin,
-            player2CheckerInZoneRangeMax,
-            player1AbsolutePipCountOption,
-            player1AbsolutePipCountMin,
-            player1AbsolutePipCountMax,
-            player1AbsolutePipCountRangeMin,
-            player1AbsolutePipCountRangeMax,
-            equityOption,
-            equityMin,
-            equityMax,
-            equityRangeMin,
-            equityRangeMax,
-            searchText
+        const transformedFilters = filters.map(filter => {
+            switch (filter) {
+                case 'Include Cube':
+                    return 'cube';
+                case 'Include Score':
+                    return 'score';
+                case 'Pipcount Difference':
+                    return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
+                case 'Player Absolute Pipcount':
+                    return player1AbsolutePipCountOption === 'min' ? `P>${player1AbsolutePipCountMin}` : player1AbsolutePipCountOption === 'max' ? `P<${player1AbsolutePipCountMax}` : `P${player1AbsolutePipCountRangeMin},${player1AbsolutePipCountRangeMax}`;
+                case 'Equity (millipoints)':
+                    return equityOption === 'min' ? `e>${equityMin}` : equityOption === 'max' ? `e<${equityMax}` : `e${equityRangeMin},${equityRangeMax}`;
+                case 'Win Rate':
+                    return winRateOption === 'min' ? `w>${winRateMin}` : winRateOption === 'max' ? `w<${winRateMax}` : `w${winRateRangeMin},${winRateRangeMax}`;
+                case 'Gammon Rate':
+                    return gammonRateOption === 'min' ? `g>${gammonRateMin}` : gammonRateOption === 'max' ? `g<${gammonRateMax}` : `g${gammonRateRangeMin},${gammonRateRangeMax}`;
+                case 'Backgammon Rate':
+                    return backgammonRateOption === 'min' ? `b>${backgammonRateMin}` : backgammonRateOption === 'max' ? `b<${backgammonRateMax}` : `b${backgammonRateRangeMin},${backgammonRateRangeMax}`;
+                case 'Opponent Win Rate':
+                    return player2WinRateOption === 'min' ? `W>${player2WinRateMin}` : player2WinRateOption === 'max' ? `W<${player2WinRateMax}` : `W${player2WinRateRangeMin},${player2WinRateRangeMax}`;
+                case 'Opponent Gammon Rate':
+                    return player2GammonRateOption === 'min' ? `G>${player2GammonRateMin}` : player2GammonRateOption === 'max' ? `G<${player2GammonRateMax}` : `G${player2GammonRateRangeMin},${player2GammonRateRangeMax}`;
+                case 'Opponent Backgammon Rate':
+                    return player2BackgammonRateOption === 'min' ? `B>${player2BackgammonRateMin}` : player2BackgammonRateOption === 'max' ? `B<${player2BackgammonRateMax}` : `B${player2BackgammonRateRangeMin},${player2BackgammonRateRangeMax}`;
+                case 'Player Checker-Off':
+                    return player1CheckerOffOption === 'min' ? `o>${player1CheckerOffMin}` : player1CheckerOffOption === 'max' ? `o<${player1CheckerOffMax}` : `o${player1CheckerOffRangeMin},${player1CheckerOffRangeMax}`;
+                case 'Opponent Checker-Off':
+                    return player2CheckerOffOption === 'min' ? `O>${player2CheckerOffMin}` : player2CheckerOffOption === 'max' ? `O<${player2CheckerOffMax}` : `O${player2CheckerOffRangeMin},${player2CheckerOffRangeMax}`;
+                case 'Player Back Checker':
+                    return player1BackCheckerOption === 'min' ? `k>${player1BackCheckerMin}` : player1BackCheckerOption === 'max' ? `k<${player1BackCheckerMax}` : `k${player1BackCheckerRangeMin},${player1BackCheckerRangeMax}`;
+                case 'Opponent Back Checker':
+                    return player2BackCheckerOption === 'min' ? `K>${player2BackCheckerMin}` : player2BackCheckerOption === 'max' ? `K<${player2BackCheckerMax}` : `K${player2BackCheckerRangeMin},${player2BackCheckerRangeMax}`;
+                case 'Player Checker in the Zone':
+                    return player1CheckerInZoneOption === 'min' ? `z>${player1CheckerInZoneMin}` : player1CheckerInZoneOption === 'max' ? `z<${player1CheckerInZoneMax}` : `z${player1CheckerInZoneRangeMin},${player1CheckerInZoneRangeMax}`;
+                case 'Opponent Checker in the Zone':
+                    return player2CheckerInZoneOption === 'min' ? `Z>${player2CheckerInZoneMin}` : player2CheckerInZoneOption === 'max' ? `Z<${player2CheckerInZoneMax}` : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
+                case 'Search Text':
+                    return `"${searchText}"`;
+                default:
+                    return '';
+            }
         });
+
+        // Ensure 'Include Cube' filter is correctly handled
+        const includeCube = filters.includes('Include Cube');
+        const includeScore = filters.includes('Include Score');
+        const pipCountFilter = transformedFilters.find(filter => filter.startsWith('p'));
+        const winRateFilter = transformedFilters.find(filter => filter.startsWith('w'));
+        const gammonRateFilter = transformedFilters.find(filter => filter.startsWith('g'));
+        const backgammonRateFilter = transformedFilters.find(filter => filter.startsWith('b'));
+        const player2WinRateFilter = transformedFilters.find(filter => filter.startsWith('W'));
+        const player2GammonRateFilter = transformedFilters.find(filter => filter.startsWith('G'));
+        const player2BackgammonRateFilter = transformedFilters.find(filter => filter.startsWith('B'));
+        const player1CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('o'));
+        const player2CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('O'));
+        const player1BackCheckerFilter = transformedFilters.find(filter => filter.startsWith('k'));
+        const player2BackCheckerFilter = transformedFilters.find(filter => filter.startsWith('K'));
+        const player1CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('z'));
+        const player2CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('Z'));
+        const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
+        const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
+        const searchText = transformedFilters.find(filter => filter.startsWith('"'));
+
+        statusBarModeStore.set('NORMAL');
+        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter);
         onClose();
     }
 
