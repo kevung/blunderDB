@@ -297,7 +297,7 @@
     }
 
     .toolbar button:first-child {
-    margin-left: 4px; /* Add space to the left of the first button */
+        margin-left: 4px; /* Add space to the left of the first button */
     }
 
     .toolbar button svg {
@@ -313,11 +313,16 @@
         background-color: #e0e0e0;
     }
 
+    .toolbar button:disabled {
+        opacity: 0.5; /* Make disabled buttons paler */
+        cursor: not-allowed;
+    }
+
     .separator {
-    width: 1px;
-    background-color: #ccc;
-    margin: 0 8px; /* Add some space between the icon groups */
-    height: 20px;
+        width: 1px;
+        background-color: #ccc;
+        margin: 0 8px; /* Add some space between the icon groups */
+        height: 20px;
     }
 
 </style>
