@@ -185,7 +185,7 @@
                 case 'Opponent Checker in the Zone':
                     return player2CheckerInZoneOption === 'min' ? `Z>${player2CheckerInZoneMin}` : player2CheckerInZoneOption === 'max' ? `Z<${player2CheckerInZoneMax}` : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
                 case 'Search Text':
-                    return `"${searchText}"`;
+                    return searchText.split(';').map(text => text.trim()).join(' ');
                 default:
                     return '';
             }
@@ -209,10 +209,10 @@
         const player2CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('Z'));
         const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
-        const searchText = transformedFilters.find(filter => filter.startsWith('"'));
+        const searchTextFilter = searchText.split(';').map(text => text.trim()).join(' ');
 
         statusBarModeStore.set('NORMAL');
-        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter);
+        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextFilter, player1AbsolutePipCountFilter, equityFilter);
         onClose();
     }
 
