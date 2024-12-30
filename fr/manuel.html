@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>1. Manuel &mdash; Documentation blunderDB 0.1.0</title>
+  <title>2. Manuel &mdash; Documentation blunderDB 0.0.6</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,15 +14,15 @@
     <link rel="shortcut icon" href="_static/favicon.jpg"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=897fae25"></script>
+      <script src="_static/documentation_options.js?v=975bf0a8"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Recherche" href="search.html" />
-    <link rel="next" title="2. Guide utilisateur" href="guide_utilisateur.html" />
-    <link rel="prev" title="blunderDB" href="index.html" /> 
+    <link rel="next" title="3. Guide utilisateur" href="guide_utilisateur.html" />
+    <link rel="prev" title="1. Téléchargement et installation" href="telecharge_install.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,17 +45,18 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">1. Manuel</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description-de-l-ihm">1.1. Description de l’IHM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">1.2. Le mode NORMAL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-edit">1.3. Le mode EDIT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-command">1.4. Le mode COMMAND</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Manuel</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-ihm">2.1. Description de l’IHM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">2.2. Le mode NORMAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-edit">2.3. Le mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-command">2.4. Le mode COMMAND</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guide utilisateur</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">3. Liste des requêtes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">4. Raccourcis clavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">5. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">6. Foire aux questions</a></li>
 </ul>
 
         </div>
@@ -72,7 +73,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">1. </span>Manuel</li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Manuel</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -82,7 +83,7 @@
            <div itemprop="articleBody">
              
   <section id="manuel">
-<span id="id1"></span><h1><span class="section-number">1. </span>Manuel<a class="headerlink" href="#manuel" title="Lien vers cette rubrique"></a></h1>
+<span id="id1"></span><h1><span class="section-number">2. </span>Manuel<a class="headerlink" href="#manuel" title="Lien vers cette rubrique"></a></h1>
 <p>blunderDB est un logiciel pour constituer des bases de données de
 positions. Les positions sont stockées dans une base de données représentée par un fichier
 <em>.db</em>.</p>
@@ -93,21 +94,18 @@ positions. Les positions sont stockées dans une base de données représentée 
 <li><p>supprimer une position existante,</p></li>
 <li><p>rechercher une ou plusieurs positions.</p></li>
 </ul>
-<p>Pour ce faire, l’utilisateur bascule dans des modes dédiés pour la
-visualisation (mode NORMAL), l’édition de positions (mode EDIT),
-l’édition d’une requête pour filtrer des positions (mode COMMAND).</p>
-<p>L’utilisateur peut ranger librement les positions en créant des
-<em>bibliothèques</em>. Une position peut être ajoutée à plusieurs
-bibliothèques en même temps.</p>
+<p>Pour ce faire, l’utilisateur bascule dans des modes dédiés pour:</p>
+<ul class="simple">
+<li><p>la navigation et la visualisation de positions (mode NORMAL),</p></li>
+<li><p>l’édition de positions (mode EDIT),</p></li>
+<li><p>l’édition d’une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche).</p></li>
+</ul>
+<p>L’utilisateur peut étiqueter librement les positions à l’aide de tags et les
+annoter via des commentaires.</p>
 <p>Dans la suite du manuel, il est décrit l’interface graphique ainsi que
 les principaux modes de blunderDB.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>Le mécanisme de bibliothèques est analogue à un mécanisme de
-<em>tags</em> qui permettrait d’étiqueter les positions.</p>
-</div>
 <section id="description-de-l-ihm">
-<h2><span class="section-number">1.1. </span>Description de l’IHM<a class="headerlink" href="#description-de-l-ihm" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">2.1. </span>Description de l’IHM<a class="headerlink" href="#description-de-l-ihm" title="Lien vers cette rubrique"></a></h2>
 <p>L’IHM de blunderDB est constituée de haut en bas par:</p>
 <ul class="simple">
 <li><p>[en haut] la barre de menus, qui rassemble l’ensemble des principales
@@ -116,6 +114,16 @@ opérations réalisables sur la base de données,</p></li>
 positions de backgammon,</p></li>
 <li><p>[en bas] la barre d’état, qui présente différentes informations sur la
 base de données ou la position courante.</p></li>
+</ul>
+<p>Des panneaux peuvent être affichés pour:</p>
+<ul class="simple">
+<li><p>afficher les données d’analyse associées à la position courante issues d’eXtreme Gammon (XG),</p></li>
+<li><p>afficher, ajouter ou modifier des commentaires</p></li>
+</ul>
+<p>Des fenêtres modales peuvent s’afficher pour:</p>
+<ul class="simple">
+<li><p>[mode EDIT uniquement] paramétrer les filtres de recherche,</p></li>
+<li><p>afficher l’aide de blunderDB.</p></li>
 </ul>
 <p>La zone d’affichage principale met à disposition à l’utilisateur:</p>
 <ul class="simple">
@@ -131,54 +139,53 @@ une décision de cube.</p></li>
 suivantes:</p>
 <ul class="simple">
 <li><p>le mode courant (NORMAL, EDIT, COMMAND),</p></li>
-<li><p>le nom de la bibliothèque courante. Toutes les positions sont ajoutées
-à la bibliothèque principale intitulée <em>main</em>,</p></li>
+<li><p>un message d’information lié à une opération réalisée par l’utilisateur,</p></li>
 <li><p>l’index de la position courante, suivi du nombre de positions dans la
-bibliothèque courante. Dans le cas de positions issues d’une recherche
-par l’utilisateur, le nombre de positions correspond au nombre de
-positions filtrées,</p></li>
-<li><p>un message d’information.</p></li>
+bibliothèque courante.</p></li>
 </ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Dans le cas de positions issues d’une recherche par l’utilisateur, le
+nombre de positions indiqué dans la barre d’état correspond au nombre de
+positions filtrées.</p>
+</div>
 </section>
 <section id="le-mode-normal">
-<span id="mode-normal"></span><h2><span class="section-number">1.2. </span>Le mode NORMAL<a class="headerlink" href="#le-mode-normal" title="Lien vers cette rubrique"></a></h2>
+<span id="mode-normal"></span><h2><span class="section-number">2.2. </span>Le mode NORMAL<a class="headerlink" href="#le-mode-normal" title="Lien vers cette rubrique"></a></h2>
 <p>Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:</p>
 <ul class="simple">
 <li><p>faire défiler les différentes positions de la bibliothèque courante,</p></li>
-<li><p>afficher les informations d’analyse associées à une position.</p></li>
+<li><p>afficher les informations d’analyse associées à une position,</p></li>
+<li><p>afficher, ajouter et modifier les commentaires d’une position.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>Se référer à la section <a class="reference internal" href="raccourcis.html#raccourcis-modaux"><span class="std std-ref">Raccourcis modaux</span></a> pour les
-raccourcis de navigation du mode NORMAL.</p>
+<p>Se référer à la <a class="reference internal" href="raccourcis.html#raccourcis-normal"><span class="std std-numref">Section 5.2</span></a> pour les raccourcis
+du mode NORMAL.</p>
 </div>
 </section>
 <section id="le-mode-edit">
-<span id="mode-edit"></span><h2><span class="section-number">1.3. </span>Le mode EDIT<a class="headerlink" href="#le-mode-edit" title="Lien vers cette rubrique"></a></h2>
+<span id="mode-edit"></span><h2><span class="section-number">2.3. </span>Le mode EDIT<a class="headerlink" href="#le-mode-edit" title="Lien vers cette rubrique"></a></h2>
 <p>Le mode EDIT permet d’éditer une position en vue de l’ajouter à
 la base de données, ou de définir le type de position à rechercher.
 Le mode EDIT est activé en appuyant sur la touche <em>TAB</em>.
 La distribution des pions, du videau, du score, et du trait peuvent être
-modifiés à l’aide de la souris (voir <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Editer une position</span></a>) ou du clavier (voir
-<a class="reference internal" href="raccourcis.html#raccourcis-position"><span class="std std-ref">Edition de position au clavier</span></a>).</p>
+modifiés à l’aide de la souris (voir <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Editer une position</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>Se référer à la section <a class="reference internal" href="raccourcis.html#raccourcis-modaux"><span class="std std-ref">Raccourcis modaux</span></a> pour les
-raccourcis de navigation du mode EDIT.</p>
+<p>Se référer à la <a class="reference internal" href="raccourcis.html#raccourcis-edit"><span class="std std-numref">Section 5.3</span></a> pour les raccourcis du mode
+EDIT.</p>
 </div>
 </section>
 <section id="le-mode-command">
-<h2><span class="section-number">1.4. </span>Le mode COMMAND<a class="headerlink" href="#le-mode-command" title="Lien vers cette rubrique"></a></h2>
-<p>Le mode COMMAND permet à l’utilisateur d’émettre une requête à la base
-de données afin de:</p>
-<ul class="simple">
-<li><p>ajouter une nouvelle position ou mettre à jour une position existante,</p></li>
-<li><p>ajouter une position dans une bibliothèque,</p></li>
-<li><p>renommer, copier, supprimer une bibliothèque,</p></li>
-<li><p>lister les bibliothèques existantes,</p></li>
-<li><p>rechercher des types de positions selon divers critères librement
-combinables.</p></li>
-</ul>
+<span id="mode-command"></span><h2><span class="section-number">2.4. </span>Le mode COMMAND<a class="headerlink" href="#le-mode-command" title="Lien vers cette rubrique"></a></h2>
+<p>Le mode COMMAND permet de réaliser l’ensemble des fonctionalités de blunderDB
+disponibles à l’interface graphique: opérations générales sur la base de
+données, navigation de position, affichage de l’analyse et/ou des commentaires,
+recherche de positions selon des filtres… Après une première prise en main de
+l’interface, il est recommandé de progressivement utiliser ce mode qui permet
+une utilisation puissante et fluide de blunderDB, notamment pour les
+fonctionnalités de recherche de positions.</p>
 <p>Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur
 la touche <em>ESPACE</em>. Pour envoyer une requête et quitter le mode COMMAND,
 appuyer sur la touche <em>ENTREE</em>.</p>
@@ -188,8 +195,8 @@ le cas échéant. Il n’y a pas d’actions de sauvegarde explicite de la part
 de l’utilisateur.</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>Se référer à la section <a class="reference internal" href="raccourcis.html#raccourcis-modaux"><span class="std std-ref">Raccourcis modaux</span></a> pour les
-raccourcis de navigation du mode COMMAND.</p>
+<p>Se référer à la <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> pour la liste de commandes
+disponible en mode COMMAND.</p>
 </div>
 </section>
 </section>
@@ -198,8 +205,8 @@ raccourcis de navigation du mode COMMAND.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
-        <a href="index.html" class="btn btn-neutral float-left" title="blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
-        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="2. Guide utilisateur" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Téléchargement et installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="3. Guide utilisateur" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

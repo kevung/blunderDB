@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3. Liste des requêtes &mdash; Documentation blunderDB 0.1.0</title>
+  <title>4. Liste des commandes &mdash; Documentation blunderDB 0.0.6</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,15 +14,15 @@
     <link rel="shortcut icon" href="_static/favicon.jpg"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=897fae25"></script>
+      <script src="_static/documentation_options.js?v=975bf0a8"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Recherche" href="search.html" />
-    <link rel="next" title="4. Raccourcis clavier" href="raccourcis.html" />
-    <link rel="prev" title="2. Guide utilisateur" href="guide_utilisateur.html" /> 
+    <link rel="next" title="5. Raccourcis clavier" href="raccourcis.html" />
+    <link rel="prev" title="3. Guide utilisateur" href="guide_utilisateur.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -45,17 +45,18 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="manuel.html">1. Manuel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guide utilisateur</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Liste des requêtes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#operations-globales">3.1. Opérations globales</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#interagir-avec-une-position">3.2. Interagir avec une position</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#gerer-les-bibliotheques">3.3. Gérer les bibliothèques</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions">3.4. Rechercher des positions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Liste des commandes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Opérations globales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mode-normal">4.2. Mode NORMAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mode-edit">4.3. Mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Filtres de recherche</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">4. Raccourcis clavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">5. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">6. Foire aux questions</a></li>
 </ul>
 
         </div>
@@ -72,7 +73,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">3. </span>Liste des requêtes</li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Liste des commandes</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -81,118 +82,108 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="liste-des-requetes">
-<span id="cmd-mode"></span><h1><span class="section-number">3. </span>Liste des requêtes<a class="headerlink" href="#liste-des-requetes" title="Lien vers cette rubrique"></a></h1>
+  <section id="liste-des-commandes">
+<span id="cmd-mode"></span><h1><span class="section-number">4. </span>Liste des commandes<a class="headerlink" href="#liste-des-commandes" title="Lien vers cette rubrique"></a></h1>
 <section id="operations-globales">
-<span id="cmd-global"></span><h2><span class="section-number">3.1. </span>Opérations globales<a class="headerlink" href="#operations-globales" title="Lien vers cette rubrique"></a></h2>
+<span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Opérations globales<a class="headerlink" href="#operations-globales" title="Lien vers cette rubrique"></a></h2>
 <table class="docutils align-left">
 <colgroup>
-<col style="width: 20.0%" />
-<col style="width: 80.0%" />
+<col style="width: 7.0%" />
+<col style="width: 93.0%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Requête</p></th>
+<tr class="row-odd"><th class="head"><p>Commande</p></th>
 <th class="head"><p>Action</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>:n</p></td>
+<tr class="row-even"><td><p>new, ne, n</p></td>
 <td><p>Crée une nouvelle base de données.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:o</p></td>
+<tr class="row-odd"><td><p>open, op, o</p></td>
 <td><p>Ouvre une base de données existante.</p></td>
 </tr>
-<tr class="row-even"><td><p>:q</p></td>
+<tr class="row-even"><td><p>quit, q</p></td>
 <td><p>Ferme blunderDB.</p></td>
 </tr>
+<tr class="row-odd"><td><p>help, he, h</p></td>
+<td><p>Ouvre l’aide de blunderDB.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
-<section id="interagir-avec-une-position">
-<span id="cmd-position"></span><h2><span class="section-number">3.2. </span>Interagir avec une position<a class="headerlink" href="#interagir-avec-une-position" title="Lien vers cette rubrique"></a></h2>
+<section id="mode-normal">
+<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Mode NORMAL<a class="headerlink" href="#mode-normal" title="Lien vers cette rubrique"></a></h2>
 <table class="docutils align-left">
 <colgroup>
-<col style="width: 20.0%" />
-<col style="width: 80.0%" />
+<col style="width: 13.0%" />
+<col style="width: 87.0%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Requête</p></th>
+<tr class="row-odd"><th class="head"><p>Commande</p></th>
 <th class="head"><p>Action</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>:i</p></td>
+<tr class="row-even"><td><p>import, i</p></td>
 <td><p>Importe une position par fichier texte (txt).</p></td>
 </tr>
-<tr class="row-odd"><td><p>:w</p></td>
-<td><p>Enregistre la position courante dans la bibliothèque courante.</p></td>
-</tr>
-<tr class="row-even"><td><p>:w!</p></td>
-<td><p>Après édition d’une position existante, modifie cette dernière dans la base de données.</p></td>
-</tr>
-<tr class="row-odd"><td><p>:w <em>toto</em> <em>titi</em> …</p></td>
-<td><p>Enregistre la position courante dans les bibliothèques <em>toto</em>, <em>titi</em>, …</p></td>
-</tr>
-<tr class="row-even"><td><p>:w -<em>toto</em></p></td>
-<td><p>Retirer la position courante de la bibliothèque <em>toto</em>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>:LS</p></td>
-<td><p>Liste les bibliothèques auxquelles la position courante appartient.</p></td>
-</tr>
-<tr class="row-even"><td><p>:D</p></td>
+<tr class="row-odd"><td><p>delete, del, d</p></td>
 <td><p>Supprime la position courante.</p></td>
+</tr>
+<tr class="row-even"><td><p>[number]</p></td>
+<td><p>Aller à la position d’indice indiqué.</p></td>
+</tr>
+<tr class="row-odd"><td><p>list, l</p></td>
+<td><p>Afficher l’analyse de la position courante.</p></td>
+</tr>
+<tr class="row-even"><td><p>comment, co</p></td>
+<td><p>Afficher/écrire des commentaires.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
+<td><p>Etiqueter la position courante.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="gerer-les-bibliotheques">
-<span id="cmd-library"></span><h2><span class="section-number">3.3. </span>Gérer les bibliothèques<a class="headerlink" href="#gerer-les-bibliotheques" title="Lien vers cette rubrique"></a></h2>
-<table class="docutils align-center">
+<section id="mode-edit">
+<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Mode EDIT<a class="headerlink" href="#mode-edit" title="Lien vers cette rubrique"></a></h2>
+<table class="docutils align-left">
 <colgroup>
-<col style="width: 20.0%" />
-<col style="width: 80.0%" />
+<col style="width: 13.0%" />
+<col style="width: 87.0%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Requête</p></th>
+<tr class="row-odd"><th class="head"><p>Commande</p></th>
 <th class="head"><p>Action</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>:e <em>toto</em></p></td>
-<td><p>Ouvre la bibliothèque <em>toto</em>.</p></td>
+<tr class="row-even"><td><p>write, wr, w</p></td>
+<td><p>Enregistre la position courante.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:mv <em>titi</em></p></td>
-<td><p>Renomme la bibliothèque courante en <em>titi</em>.</p></td>
+<tr class="row-odd"><td><p>write!, wr!, w!</p></td>
+<td><p>Mettre à jour la position courante.</p></td>
 </tr>
-<tr class="row-even"><td><p>:mv <em>toto</em> <em>titi</em></p></td>
-<td><p>Renomme la bibliothèque <em>toto</em> en <em>titi</em>.</p></td>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Chercher des positions avec des filtres.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:cp <em>titi</em></p></td>
-<td><p>Copie la bibliothèque courante dans la bibliothèque <em>titi</em>.</p></td>
-</tr>
-<tr class="row-even"><td><p>:cp <em>toto</em> <em>titi</em></p></td>
-<td><p>Copie la bibliothèque <em>toto</em> dans <em>titi</em>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>:d</p></td>
-<td><p>Supprime la bibliothèque courante.</p></td>
-</tr>
-<tr class="row-even"><td><p>:d <em>toto</em></p></td>
-<td><p>Supprime la bibliothèque <em>toto</em>.</p></td>
-</tr>
-<tr class="row-odd"><td><p>:ls</p></td>
-<td><p>Liste les bibliothèques.</p></td>
+<tr class="row-odd"><td><p>e</p></td>
+<td><p>Charger toutes les positions de la base de données.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="rechercher-des-positions">
-<span id="cmd-filter-pos"></span><h2><span class="section-number">3.4. </span>Rechercher des positions<a class="headerlink" href="#rechercher-des-positions" title="Lien vers cette rubrique"></a></h2>
-<div class="admonition warning">
+<section id="filtres-de-recherche">
+<span id="cmd-filter"></span><h2><span class="section-number">4.4. </span>Filtres de recherche<a class="headerlink" href="#filtres-de-recherche" title="Lien vers cette rubrique"></a></h2>
+<p>Les filtres ci-dessous doivent être juxtaposés lors d’une recherche,
+c’est-à-dire après le début de commande <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p>
+<div class="admonition warning" id="cmd-filter-pos">
 <p class="admonition-title">Avertissement</p>
-<p>Dans la recherche de positions, par défaut, blunderDB prend en compte
-la structure de pions courante, ignore la position du videau et du
-score. Pour prendre en compte la position du videau ou du score, il
-faut le mentionner explicitement dans la requête.</p>
+<p>Dans la recherche de positions, par défaut, blunderDB prend en
+compte la structure de pions courante, ignore la position du videau, du
+score et des dés. Pour prendre en compte la position du videau, du score,
+des dés, il faut le mentionner explicitement dans la recherche.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -211,8 +202,8 @@ combinés.</p>
 </div>
 <table class="docutils align-center">
 <colgroup>
-<col style="width: 20.0%" />
-<col style="width: 80.0%" />
+<col style="width: 13.0%" />
+<col style="width: 87.0%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>Requête</p></th>
@@ -220,104 +211,160 @@ combinés.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>:s cube</p></td>
-<td><p>Filtre les positions vérifiant la configuration courante du cube.</p></td>
+<tr class="row-even"><td><p>cube, cub, cu, c</p></td>
+<td><p>La position vérifie la configuration du cube.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s score</p></td>
-<td><p>Filtre les positions vérifiant le score courant.</p></td>
+<tr class="row-odd"><td><p>score, sco, sc, s</p></td>
+<td><p>La position vérifie le score.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s o7</p></td>
-<td><p>Filtre les positions ayant au moins 7 pions sortis.</p></td>
+<tr class="row-even"><td><p>dice, dic, di, d</p></td>
+<td><p>La position vérifie les dés ou la décision de cube.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s p-20,30</p></td>
-<td><p>Filtre les positions où le joueur 1 a entre 20 pips d’avance et 30 pips de retard de course.</p></td>
+<tr class="row-odd"><td><p>p&gt;x</p></td>
+<td><p>Le joueur a au moins x pips de retard à la course.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s p&lt;-10</p></td>
-<td><p>Filtre les positions où le joueur 1 a au moins 10 pips d’avance.</p></td>
+<tr class="row-even"><td><p>p&lt;x</p></td>
+<td><p>Le joueur a au plus x pips de retard à la course.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s p&gt;110</p></td>
-<td><p>Filtre les positions où le joueur 1 a au moins 110 pips de retard.</p></td>
+<tr class="row-odd"><td><p>px,y</p></td>
+<td><p>Le joueur a entre x et y pips de retard à la course.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s P5,40</p></td>
-<td><p>Filtre les positions ayant une différence de course entre 5 et 40 pips.</p></td>
+<tr class="row-even"><td><p>P&gt;x</p></td>
+<td><p>Le joueur a une course au moins de x pips.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s k5</p></td>
-<td><p>Filtre les positions où le joueur 1 a 5 pions arriérés.</p></td>
+<tr class="row-odd"><td><p>P&lt;x</p></td>
+<td><p>Le joueur a une course au plus de x pips.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s K2</p></td>
-<td><p>Filtre les positions où le joueur 2 a 2 pions arriérés.</p></td>
+<tr class="row-even"><td><p>Px,y</p></td>
+<td><p>Le joueur a une course entre x et y pips.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s z8</p></td>
-<td><p>Filtre les positions où le joueur 1 a 8 pions dans la zone.</p></td>
+<tr class="row-odd"><td><p>e&gt;x</p></td>
+<td><p>L’équité (en millipoints) de la position est supérieure à x.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s Z6</p></td>
-<td><p>Filtre les positions où le joueur 2 a 6 pions dans la zone.</p></td>
+<tr class="row-even"><td><p>e&lt;x</p></td>
+<td><p>L’équité (en millipoints) de la position est inférieure à x.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s e800,1200</p></td>
-<td><p>Filtre les positions où le joueur 1 a une équité entre 800 et 1200.</p></td>
+<tr class="row-odd"><td><p>ex,y</p></td>
+<td><p>L’équité (en millipoints) de la position est comprise entre x et y.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s e&lt;200</p></td>
-<td><p>Filtre les positions où le joueur 1 a une équité inférieure à 200.</p></td>
+<tr class="row-even"><td><p>w&gt;x</p></td>
+<td><p>Le joueur a des chances de gain supérieures à x %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s e&gt;400</p></td>
-<td><p>Filtre les positions où le joueur 1 a une équité supérieure à 400.</p></td>
+<tr class="row-odd"><td><p>w&lt;x</p></td>
+<td><p>Le joueur a des chances de gain inférieures à x %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s w40,60</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de gains entre 40% et 60%.</p></td>
+<tr class="row-even"><td><p>wx,y</p></td>
+<td><p>Le joueur a des chances de gain comprises à x % et y %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s w&lt;25</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de gain inférieures à 25.</p></td>
+<tr class="row-odd"><td><p>g&gt;x</p></td>
+<td><p>Le joueur a des chances de gammon supérieures à x %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s w&gt;68</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de gain supérieures à 68%.</p></td>
+<tr class="row-even"><td><p>g&lt;x</p></td>
+<td><p>Le joueur a des chances de gammon inférieures à x %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s g14,22</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de gammon entre 14% et 22%.</p></td>
+<tr class="row-odd"><td><p>gx,y</p></td>
+<td><p>Le joueur a des chances de gammon comprises à x % et y %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s g&lt;27</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de gammon inférieures à 27%.</p></td>
+<tr class="row-even"><td><p>b&gt;x</p></td>
+<td><p>Le joueur a des chances de backgammon supérieures à x %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s g&gt;45</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de gammon supérieures à 45%.</p></td>
+<tr class="row-odd"><td><p>b&lt;x</p></td>
+<td><p>Le joueur a des chances de backgammon inférieures à x %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s bg4,8</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de backgammon entre 4% et 8%.</p></td>
+<tr class="row-even"><td><p>bx,y</p></td>
+<td><p>Le joueur a des chances de backgammon comprises à x % et y %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s bg&lt;10</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de backgammon inférieures à 10%.</p></td>
+<tr class="row-odd"><td><p>W&gt;x</p></td>
+<td><p>L’adversaire a des chances de gain supérieures à x %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s bg&gt;5</p></td>
-<td><p>Filtre les positions où le joueur 1 a des chances de backgammon supérieures à 5%.</p></td>
+<tr class="row-even"><td><p>W&lt;x</p></td>
+<td><p>L’adversaire a des chances de gain inférieures à x %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s W40,60</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de gains entre 40% et 60%.</p></td>
+<tr class="row-odd"><td><p>Wx,y</p></td>
+<td><p>L’adversaire a des chances de gain comprises à x % et y %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s W&lt;25</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de gain inférieures à 25.</p></td>
+<tr class="row-even"><td><p>G&gt;x</p></td>
+<td><p>L’adversaire a des chances de gammon supérieures à x %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s W&gt;68</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de gain supérieures à 68%.</p></td>
+<tr class="row-odd"><td><p>G&lt;x</p></td>
+<td><p>L’adversaire a des chances de gammon inférieures à x %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s G14,22</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de gammon entre 14% et 22%.</p></td>
+<tr class="row-even"><td><p>Gx,y</p></td>
+<td><p>L’adversaire a des chances de gammon comprises à x % et y %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s G&lt;27</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de gammon inférieures à 27%.</p></td>
+<tr class="row-odd"><td><p>B&gt;x</p></td>
+<td><p>L’adversaire a des chances de backgammon supérieures à x %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s G&gt;45</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de gammon supérieures à 45%.</p></td>
+<tr class="row-even"><td><p>B&lt;x</p></td>
+<td><p>L’adversaire a des chances de backgammon inférieures à x %.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s BG4,8</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de backgammon entre 4% et 8%.</p></td>
+<tr class="row-odd"><td><p>Bx,y</p></td>
+<td><p>L’adversaire a des chances de backgammon comprises à x % et y %.</p></td>
 </tr>
-<tr class="row-even"><td><p>:s BG&lt;10</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de backgammon inférieures à 10%.</p></td>
+<tr class="row-even"><td><p>o&gt;x</p></td>
+<td><p>Le joueur a au moins x pions sortis.</p></td>
 </tr>
-<tr class="row-odd"><td><p>:s BG&gt;5</p></td>
-<td><p>Filtre les positions où le joueur 2 a des chances de backgammon supérieures à 5%.</p></td>
+<tr class="row-odd"><td><p>o&lt;x</p></td>
+<td><p>Le joueur a au plus x pions sortis.</p></td>
+</tr>
+<tr class="row-even"><td><p>ox,y</p></td>
+<td><p>Le joueur a entre x et y pions sortis.</p></td>
+</tr>
+<tr class="row-odd"><td><p>O&gt;x</p></td>
+<td><p>L’adversaire a au moins x pions sortis.</p></td>
+</tr>
+<tr class="row-even"><td><p>O&lt;x</p></td>
+<td><p>L’adversaire a au plus x pions sortis.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ox,y</p></td>
+<td><p>L’adversaire a entre x et y pions sortis.</p></td>
+</tr>
+<tr class="row-even"><td><p>k&gt;x</p></td>
+<td><p>Le joueur a au moins x pions arriérés.</p></td>
+</tr>
+<tr class="row-odd"><td><p>k&lt;x</p></td>
+<td><p>Le joueur a au plus x pions arriérés.</p></td>
+</tr>
+<tr class="row-even"><td><p>kx,y</p></td>
+<td><p>Le joueur a entre x et y pions arriérés.</p></td>
+</tr>
+<tr class="row-odd"><td><p>K&gt;x</p></td>
+<td><p>L’adversaire a au moins x pions arriérés.</p></td>
+</tr>
+<tr class="row-even"><td><p>K&lt;x</p></td>
+<td><p>L’adversaire a au plus x pions arriérés.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Kx,y</p></td>
+<td><p>L’adversaire a entre x et y pions arriérés.</p></td>
+</tr>
+<tr class="row-even"><td><p>z&gt;x</p></td>
+<td><p>Le joueur a au moins x pions dans la zone.</p></td>
+</tr>
+<tr class="row-odd"><td><p>z&lt;x</p></td>
+<td><p>Le joueur a au plus x pions dans la zone.</p></td>
+</tr>
+<tr class="row-even"><td><p>zx,y</p></td>
+<td><p>Le joueur a entre x et y pions dans la zone.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Z&gt;x</p></td>
+<td><p>L’adversaire a au moins x pions dans la zone.</p></td>
+</tr>
+<tr class="row-even"><td><p>Z&lt;x</p></td>
+<td><p>L’adversaire a au plus x pions dans la zone.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Zx,y</p></td>
+<td><p>L’adversaire a entre x et y pions dans la zone.</p></td>
+</tr>
+<tr class="row-even"><td><p>“tag_ou_motcle”</p></td>
+<td><p>Les commentaires de la position contient le tag/mot-clé.</p></td>
 </tr>
 </tbody>
 </table>
+<p>Par exemple, la commande <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">s</span> <span class="pre">c</span> <span class="pre">p-20,-5</span> <span class="pre">w&gt;60</span> <span class="pre">z&gt;10</span> <span class="pre">K2,3</span></code> filtre toutes les
+positions en prenant en compte la structure des pions, le score et le cube
+de la position éditée où le joueur a entre 20 et 5 pips d’avance à la
+course, avec au moins 60% de chances de gain, au moins 10 pions dans la
+zone, et l’adversaire a entre 2 et 3 pions arriérés.</p>
 </section>
 </section>
 
@@ -325,8 +372,8 @@ combinés.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
-        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="2. Guide utilisateur" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
-        <a href="raccourcis.html" class="btn btn-neutral float-right" title="4. Raccourcis clavier" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="3. Guide utilisateur" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="raccourcis.html" class="btn btn-neutral float-right" title="5. Raccourcis clavier" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

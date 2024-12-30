@@ -3,24 +3,27 @@
 blunderDB
 =========
 
-blunderDB est un logiciel pour constituer des bases de données de
-positions. Sa force principale est de constituer un lieu unique où
-aggréger les positions qu'un joueur a pu rencontrer (en ligne, en
-tournoi) et de pouvoir réétudier ces positions en les filtrant selon
-différents filtres combinables arbitrairement.
+blunderDB est un logiciel pour constituer des bases de données de positions. Sa
+force principale est de constituer un lieu unique où aggréger les positions
+qu'un joueur a pu rencontrer (en ligne, en tournoi) et de pouvoir réétudier ces
+positions en les filtrant selon différents filtres combinables arbitrairement.
+blunderDB peut également être utilisé pour constituer des catalogues de
+positions de référence.
 
 La présente documentation est structurée de la manière suivante:
 
-* le **manuel** décrit le fonctionnement général de blunderDB et la manière
-  dont il doit être utilisé.
+* la section **téléchargement et installation** explique comment se procurer et
+  lancer blunderDB.
+
+* le **manuel** décrit le fonctionnement général de blunderDB.
 
 * le **guide utilisateur** est une introduction pratique pour utiliser
   rapidement blunderDB.
 
 * la liste des **commandes** ainsi que la liste des **raccourcis**
-  clavier permet une utilisation efficace de blunderDB.
+  clavier permettent une utilisation efficace de blunderDB.
 
-* la **FAQ** fournit quelques réponses aux intérrogations les plus fréquentes.
+* la **FAQ** fournit quelques réponses aux interrogations les plus fréquentes.
 
 Historique des versions
 =======================
@@ -30,7 +33,7 @@ Historique des versions
    :widths: 5, 7, 20
    :align: center
 
-   0.1.0, 19/09/2024, "Création."
+   0.1.0, xx/xx/2024, "Création."
 
 Sommaire
 ========
@@ -39,6 +42,7 @@ Sommaire
    :maxdepth: 2
    :numbered:
 
+   telecharge_install
    manuel
    guide_utilisateur
    cmd_mode

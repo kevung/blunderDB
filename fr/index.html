@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.1.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.0.6</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,14 +14,14 @@
     <link rel="shortcut icon" href="_static/favicon.jpg"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=897fae25"></script>
+      <script src="_static/documentation_options.js?v=975bf0a8"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Recherche" href="search.html" />
-    <link rel="next" title="1. Manuel" href="manuel.html" /> 
+    <link rel="next" title="1. Téléchargement et installation" href="telecharge_install.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,11 +44,12 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="manuel.html">1. Manuel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guide utilisateur</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">3. Liste des requêtes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">4. Raccourcis clavier</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">5. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">6. Foire aux questions</a></li>
 </ul>
 
         </div>
@@ -76,20 +77,22 @@
              
   <section id="blunderdb">
 <span id="index"></span><h1>blunderDB<a class="headerlink" href="#blunderdb" title="Lien vers cette rubrique"></a></h1>
-<p>blunderDB est un logiciel pour constituer des bases de données de
-positions. Sa force principale est de constituer un lieu unique où
-aggréger les positions qu’un joueur a pu rencontrer (en ligne, en
-tournoi) et de pouvoir réétudier ces positions en les filtrant selon
-différents filtres combinables arbitrairement.</p>
+<p>blunderDB est un logiciel pour constituer des bases de données de positions. Sa
+force principale est de constituer un lieu unique où aggréger les positions
+qu’un joueur a pu rencontrer (en ligne, en tournoi) et de pouvoir réétudier ces
+positions en les filtrant selon différents filtres combinables arbitrairement.
+blunderDB peut également être utilisé pour constituer des catalogues de
+positions de référence.</p>
 <p>La présente documentation est structurée de la manière suivante:</p>
 <ul class="simple">
-<li><p>le <strong>manuel</strong> décrit le fonctionnement général de blunderDB et la manière
-dont il doit être utilisé.</p></li>
+<li><p>la section <strong>téléchargement et installation</strong> explique comment se procurer et
+lancer blunderDB.</p></li>
+<li><p>le <strong>manuel</strong> décrit le fonctionnement général de blunderDB.</p></li>
 <li><p>le <strong>guide utilisateur</strong> est une introduction pratique pour utiliser
 rapidement blunderDB.</p></li>
 <li><p>la liste des <strong>commandes</strong> ainsi que la liste des <strong>raccourcis</strong>
-clavier permet une utilisation efficace de blunderDB.</p></li>
-<li><p>la <strong>FAQ</strong> fournit quelques réponses aux intérrogations les plus fréquentes.</p></li>
+clavier permettent une utilisation efficace de blunderDB.</p></li>
+<li><p>la <strong>FAQ</strong> fournit quelques réponses aux interrogations les plus fréquentes.</p></li>
 </ul>
 </section>
 <section id="historique-des-versions">
@@ -108,7 +111,7 @@ clavier permet une utilisation efficace de blunderDB.</p></li>
 </thead>
 <tbody>
 <tr class="row-even"><td><p>0.1.0</p></td>
-<td><p>19/09/2024</p></td>
+<td><p>xx/xx/2024</p></td>
 <td><p>Création.</p></td>
 </tr>
 </tbody>
@@ -118,49 +121,51 @@ clavier permet une utilisation efficace de blunderDB.</p></li>
 <h1>Sommaire<a class="headerlink" href="#sommaire" title="Lien vers cette rubrique"></a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="manuel.html">1. Manuel</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-ihm">1.1. Description de l’IHM</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-normal">1.2. Le mode NORMAL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-edit">1.3. Le mode EDIT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-command">1.4. Le mode COMMAND</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuel</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-ihm">2.1. Description de l’IHM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-normal">2.2. Le mode NORMAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-edit">2.3. Le mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-command">2.4. Le mode COMMAND</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">2. Guide utilisateur</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">2.1. Créer une nouvelle base de données</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">2.2. Ouvrir une base de donnée existante</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">2.3. Editer une position</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">2.4. Ajouter une position à la base de données</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-une-bibliotheque">2.5. Ajouter une position à une bibliothèque</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#retirer-une-position-d-une-bibliotheque">2.6. Retirer une position d’une bibliothèque</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-la-position-de-la-base-de-donnees">2.7. Supprimer la position de la base de données</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">2.8. Import une position depuis XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">2.9. Afficher l’analyse d’une position importée depuis XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">2.10. Exporter une position vers XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">2.11. Visualiser les différentes positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">2.12. Rechercher des positions selon des critères</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">3.1. Créer une nouvelle base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">3.2. Ouvrir une base de donnée existante</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">3.3. Editer une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">3.4. Ajouter une position à la base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">3.5. Etiqueter une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">3.6. Supprimer une position</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">3.7. Import une position depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.8. Afficher l’analyse d’une position importée depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.9. Exporter une position vers XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.10. Visualiser les différentes positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.11. Rechercher des positions selon des critères</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">3. Liste des requêtes</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">3.1. Opérations globales</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#interagir-avec-une-position">3.2. Interagir avec une position</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#gerer-les-bibliotheques">3.3. Gérer les bibliothèques</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#rechercher-des-positions">3.4. Rechercher des positions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Opérations globales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#mode-normal">4.2. Mode NORMAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#mode-edit">4.3. Mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Filtres de recherche</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">4. Raccourcis clavier</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#raccourcis-generaux">4.1. Raccourcis généraux</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#raccourcis-modaux">4.2. Raccourcis modaux</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#edition-de-position-au-clavier">4.3. Edition de position au clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#raccourcis-generaux">5.1. Raccourcis généraux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#raccourcis-du-mode-normal">5.2. Raccourcis du mode NORMAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#raccourcis-du-mode-edit">5.3. Raccourcis du mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#raccourcis-du-mode-command">5.4. Raccourcis du mode COMMAND</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">5. Foire aux questions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">5.1. Quel est l’utilité de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">5.2. Qu’est ce qui a motivé la création de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">5.3. Puis-je modifier, copier, partager blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">5.4. Comment sauvegarder la base de données courante?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">5.5. Quel format de données utilise blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">5.6. Quelles ont été les principes de conception de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-fonctionne-t-il-sous-linux">5.7. blunderDB fonctionne-t’il sous Linux?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">6. Foire aux questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">6.1. Quel est l’utilité de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">6.2. Qu’est ce qui a motivé la création de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">6.3. Comment sauvegarder la base de données courante?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">6.4. Puis-je modifier, copier, partager blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">6.5. Quel format de données utilise blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.6. Quelles ont été les principes de conception de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">6.7. Quel est l’architecture logicielle de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.8. Sur quelles plateformes blunderDB fonctionne-t’il?</a></li>
 </ul>
 </li>
 </ul>
@@ -208,7 +213,7 @@ backgammon, et avec lequel j’essaye de mieux jouer.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
-        <a href="manuel.html" class="btn btn-neutral float-right" title="1. Manuel" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="telecharge_install.html" class="btn btn-neutral float-right" title="1. Téléchargement et installation" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
