@@ -467,7 +467,7 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td>cube, cu, c, cub</td>
+                                <td>cube, cub, cu, c</td>
                                 <td>Include cube in search</td>
                             </tr>
                             <tr>
@@ -497,6 +497,18 @@
                             <tr>
                                 <td>Px,y</td>
                                 <td>Player absolute pip count between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>e>x</td>
+                                <td>Equity &gt; x (in millipoints)</td>
+                            </tr>
+                            <tr>
+                                <td>e&lt;x</td>
+                                <td>Equity &lt; x (in millipoints)</td>
+                            </tr>
+                            <tr>
+                                <td>ex,y</td>
+                                <td>Equity between x and y (in millipoints)</td>
                             </tr>
                             <tr>
                                 <td>w>x</td>
@@ -643,16 +655,8 @@
                                 <td>Opponent checkers in zone between x and y</td>
                             </tr>
                             <tr>
-                                <td>e>x</td>
-                                <td>Equity &gt; x (in millipoints)</td>
-                            </tr>
-                            <tr>
-                                <td>e&lt;x</td>
-                                <td>Equity &lt; x (in millipoints)</td>
-                            </tr>
-                            <tr>
-                                <td>ex,y</td>
-                                <td>Equity between x and y (in millipoints)</td>
+                                <td>s</td>
+                                <td>Search text</td>
                             </tr>
                         </tbody>
                     </table>
