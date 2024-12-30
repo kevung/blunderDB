@@ -10,7 +10,7 @@ Raccourcis généraux
 
 .. csv-table::
    :header: "Raccourci", "Action"
-   :widths: 3, 20
+   :widths: 7, 20
    :align: center
 
    "CTRL-N", "Créer une nouvelle base de données."
@@ -25,7 +25,7 @@ Raccourcis du mode NORMAL
 
 .. csv-table::
    :header: "Raccourci", "Action"
-   :widths: 3, 20
+   :widths: 7, 20
    :align: center
 
    "CTRL-I", "Importer une position par fichier texte (txt)."
@@ -51,7 +51,7 @@ Raccourcis du mode EDIT
 
 .. csv-table::
    :header: "Raccourci", "Action"
-   :widths: 3, 20
+   :widths: 7, 20
    :align: center
 
    "TAB", "Basculer en mode NORMAL."
@@ -68,7 +68,7 @@ Raccourcis du mode COMMAND
 
 .. csv-table::
    :header: "Raccourci", "Action"
-   :widths: 3, 20
+   :widths: 7, 20
    :align: center
 
    "ENTREE", "Exécuter une requête."

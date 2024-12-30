@@ -20,8 +20,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="3. User Manual" href="guide_utilisateur.html" />
-    <link rel="prev" title="1. Téléchargement et installation" href="telecharge_install.html" /> 
+    <link rel="next" title="3. User Guide" href="guide_utilisateur.html" />
+    <link rel="prev" title="1. Download and Installation" href="telecharge_install.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -44,7 +44,7 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. Manual</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#description-de-l-ihm">2.1. Description of the GUI</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">2.2. NORMAL mode</a></li>
@@ -52,8 +52,8 @@
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-command">2.4. COMMAND mode</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Manual</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">6. Frequently Asked Questions (FAQ)</a></li>
 </ul>
@@ -83,9 +83,7 @@
              
   <section id="manuel">
 <span id="id1"></span><h1><span class="section-number">2. </span>Manual<a class="headerlink" href="#manuel" title="Link to this heading"></a></h1>
-<p>blunderDB est un logiciel pour constituer des bases de données de
-positions. Les positions sont stockées dans une base de données représentée par un fichier
-<em>.db</em>.</p>
+<p>blunderDB is software for creating position databases. The positions are stored in a database represented by a <em>.db</em> file.</p>
 <p>The main interactions possible with blunderDB are:</p>
 <ul class="simple">
 <li><p>add a new position,</p></li>
@@ -93,14 +91,13 @@ positions. Les positions sont stockées dans une base de données représentée 
 <li><p>delete an existing position,</p></li>
 <li><p>search for one or more positions.</p></li>
 </ul>
-<p>Pour ce faire, l’utilisateur bascule dans des modes dédiés pour:</p>
+<p>To do this, the user switches to dedicated modes for:</p>
 <ul class="simple">
-<li><p>la navigation et la visualisation de positions (mode NORMAL),</p></li>
-<li><p>l’édition de positions (mode EDIT),</p></li>
-<li><p>l’édition d’une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche).</p></li>
+<li><p>navigation and viewing positions (NORMAL mode),</p></li>
+<li><p>editing positions (EDIT mode),</p></li>
+<li><p>editing a query to filter positions (COMMAND mode or search window).</p></li>
 </ul>
-<p>L’utilisateur peut étiqueter librement les positions à l’aide de tags et les
-annoter via des commentaires.</p>
+<p>The user can freely tag positions and annotate them with comments.</p>
 <p>In the following sections of the manual, the graphical interface and the main modes of blunderDB are described.</p>
 <section id="description-de-l-ihm">
 <h2><span class="section-number">2.1. </span>Description of the GUI<a class="headerlink" href="#description-de-l-ihm" title="Link to this heading"></a></h2>
@@ -108,18 +105,17 @@ annoter via des commentaires.</p>
 <ul class="simple">
 <li><p>[top] the menu bar, which gathers all the main operations that can be performed on the database,</p></li>
 <li><p>[in the middle] the main display area, which allows for displaying or editing backgammon positions,</p></li>
-<li><p>[en bas] la barre d’état, qui présente différentes informations sur la
-base de données ou la position courante.</p></li>
+<li><p>[at the bottom] the status bar, which provides various information about the database or the current position.</p></li>
 </ul>
-<p>Des panneaux peuvent être affichés pour:</p>
+<p>Panels can be displayed to:</p>
 <ul class="simple">
-<li><p>afficher les données d’analyse associées à la position courante issues d’eXtreme Gammon (XG),</p></li>
-<li><p>afficher, ajouter ou modifier des commentaires</p></li>
+<li><p>display the analysis data associated with the current position from eXtreme Gammon (XG),</p></li>
+<li><p>display, add, or modify comments</p></li>
 </ul>
-<p>Des fenêtres modales peuvent s’afficher pour:</p>
+<p>Modal windows can be displayed to:</p>
 <ul class="simple">
-<li><p>[mode EDIT uniquement] paramétrer les filtres de recherche,</p></li>
-<li><p>afficher l’aide de blunderDB.</p></li>
+<li><p>[EDIT mode only] set search filters,</p></li>
+<li><p>display the blunderDB help.</p></li>
 </ul>
 <p>The main display area provides the user with:</p>
 <ul class="simple">
@@ -127,22 +123,17 @@ base de données ou la position courante.</p></li>
 <li><p>the level and owner of the cube,</p></li>
 <li><p>the pip count of each player,</p></li>
 <li><p>the score of each player,</p></li>
-<li><p>les dés à jouer. Si aucune valeur n’est affichée sur les dés, la
-position des dés indique quel joueur a le trait et que la position est
-une décision de cube.</p></li>
+<li><p>the dice to play. If no values are displayed on the dice, the position of the dice indicates which player has the turn and that the position is a cube decision.</p></li>
 </ul>
 <p>The status bar is structured from left to right with the following information:</p>
 <ul class="simple">
 <li><p>the current mode (NORMAL, EDIT, COMMAND),</p></li>
-<li><p>un message d’information lié à une opération réalisée par l’utilisateur,</p></li>
-<li><p>l’index de la position courante, suivi du nombre de positions dans la
-bibliothèque courante.</p></li>
+<li><p>an informational message related to an operation performed by the user,</p></li>
+<li><p>the index of the current position, followed by the number of positions in the current library.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>Dans le cas de positions issues d’une recherche par l’utilisateur, le
-nombre de positions indiqué dans la barre d’état correspond au nombre de
-positions filtrées.</p>
+<p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
 </div>
 </section>
 <section id="le-mode-normal">
@@ -150,43 +141,30 @@ positions filtrées.</p>
 <p>NORMAL mode is the default mode of blunderDB. It is used for:</p>
 <ul class="simple">
 <li><p>scrolling through the different positions in the current library,</p></li>
-<li><p>afficher les informations d’analyse associées à une position,</p></li>
-<li><p>afficher, ajouter et modifier les commentaires d’une position.</p></li>
+<li><p>displaying the analysis information associated with a position.</p></li>
+<li><p>displaying, adding, and modifying comments on a position.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Se référer à la <a class="reference internal" href="raccourcis.html#raccourcis-normal"><span class="std std-numref">Section 5.2</span></a> pour les raccourcis
-du mode NORMAL.</p>
+<p>Refer to the section <a class="reference internal" href="raccourcis.html#raccourcis-normal"><span class="std std-numref">Section 5.2</span></a> for NORMAL mode shortcuts.</p>
 </div>
 </section>
 <section id="le-mode-edit">
 <span id="mode-edit"></span><h2><span class="section-number">2.3. </span>EDIT mode<a class="headerlink" href="#le-mode-edit" title="Link to this heading"></a></h2>
-<p>Le mode EDIT permet d’éditer une position en vue de l’ajouter à
-la base de données, ou de définir le type de position à rechercher.
-Le mode EDIT est activé en appuyant sur la touche <em>TAB</em>.
-La distribution des pions, du videau, du score, et du trait peuvent être
-modifiés à l’aide de la souris (voir <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Edit a position</span></a>).</p>
+<p>EDIT mode allows you to edit a position with the option to either add it to the database or define the type of position to search for. EDIT mode is activated by pressing the <em>TAB</em> key. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse (see <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Edit a position</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Se référer à la <a class="reference internal" href="raccourcis.html#raccourcis-edit"><span class="std std-numref">Section 5.3</span></a> pour les raccourcis du mode
-EDIT.</p>
+<p>Refer to the section <span class="xref std std-ref">raccourcis_modaux</span> for navigation shortcuts in EDIT mode.</p>
 </div>
 </section>
 <section id="le-mode-command">
 <span id="mode-command"></span><h2><span class="section-number">2.4. </span>COMMAND mode<a class="headerlink" href="#le-mode-command" title="Link to this heading"></a></h2>
-<p>Le mode COMMAND permet de réaliser l’ensemble des fonctionalités de blunderDB
-disponibles à l’interface graphique: opérations générales sur la base de
-données, navigation de position, affichage de l’analyse et/ou des commentaires,
-recherche de positions selon des filtres… Après une première prise en main de
-l’interface, il est recommandé de progressivement utiliser ce mode qui permet
-une utilisation puissante et fluide de blunderDB, notamment pour les
-fonctionnalités de recherche de positions.</p>
+<p>COMMAND mode allows you to perform all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions based on filters… After getting familiar with the interface, it is recommended to gradually use this mode for a powerful and smooth use of blunderDB, especially for position search functionalities.</p>
 <p>To switch to COMMAND mode from any other mode, press the <em>SPACE</em> key. To submit a query and exit COMMAND mode, press the <em>ENTER</em> key.</p>
 <p>blunderDB executes the queries sent by the user as long as they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required from the user.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Se référer à la <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> pour la liste de commandes
-disponible en mode COMMAND.</p>
+<p>Refer to the section <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-ref">List of commands</span></a> for the list of available commands in COMMAND mode.</p>
 </div>
 </section>
 </section>
@@ -195,8 +173,8 @@ disponible en mode COMMAND.</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Téléchargement et installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="3. User Manual" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Download and Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="3. User Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

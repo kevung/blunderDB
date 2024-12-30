@@ -43,20 +43,20 @@
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manual</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Manual</a></li>
-<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">6. Frequently Asked Questions (FAQ)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#quel-est-l-utilite-de-blunderdb">6.1. What is the purpose of blunderDB?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">6.2. What motivated the creation of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">6.3. How to back up the current database?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">6.3. How to save the state of the current database?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">6.4. Can I modify, copy, share blunderDB?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">6.5. What data format does blunderDB use?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.6. What were the design principles of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">6.7. Quel est l’architecture logicielle de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.8. Sur quelles plateformes blunderDB fonctionne-t’il?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">6.7. What is the purpose of blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.8. On which platforms does blunderDB run?</a></li>
 </ul>
 </li>
 </ul>
@@ -89,35 +89,20 @@
 <section id="quel-est-l-utilite-de-blunderdb">
 <h2><span class="section-number">6.1. </span>What is the purpose of blunderDB?<a class="headerlink" href="#quel-est-l-utilite-de-blunderdb" title="Link to this heading"></a></h2>
 <p>blunderDB allows users to create a personalized database of positions. Its strength lies in not presupposing any classification <em>a priori</em>. This gives users the freedom to query positions with great flexibility by combining various criteria (race, structure, cube, score, backward pawns, checkers in the zone, chances of winning/gammon/backgammon, etc.).</p>
-<p>Une autre utilisation commode de blunderDB est la constitution de catalogues de
-positions de référence. Avec la possibilité d’étiqueter des positions,
-l’utilisateur peut rassembler l’ensemble de ses positions de référence de
-manière structurée à l’aide d’un unique fichier. Je souhaite que blunderDB
-facilite le partage de positions entre joueurs.</p>
+<p>Another convenient use of blunderDB is the creation of reference position catalogs. With the ability to tag positions, users can organize all their reference positions in a structured way using a single file. I hope that blunderDB facilitates the sharing of positions between players.</p>
 </section>
 <section id="qu-est-ce-qui-a-motive-la-creation-de-blunderdb">
 <h2><span class="section-number">6.2. </span>What motivated the creation of blunderDB?<a class="headerlink" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb" title="Link to this heading"></a></h2>
-<p>J’avais l’habitude de stocker dans différents dossiers des positions
-intéressantes ou des blunders. Toutefois, je rencontrais des difficultés à
-retrouver des positions selon des critères n’ayant pas été prévus initialement
-par mon choix de catégories de thématiques. Par exemple, si les positions ont
-été triées selon le type de jeu (course, holding game, blitz, backgame, …),
-comment récupérer toutes les positions à un certain score? ou à un niveau de
-cube donné? Enfin, certaines vieilles positions avaient tendance à tomber dans
-l’oubli. Je voulais un outil qui aggrège toutes mes positions et qui ne
-présuppose pas <em>a priori</em> de catégories thématiques, et ensuite pouvoir poser
-des questions à la base de données. Avec cette approche souple, de nouveaux
-filtres peuvent être ajoutés sans casser l’organisation des positions. Ce type
-de logiciel est tout à fait courant aux échecs, comme ChessBase.</p>
+<p>I used to store interesting positions or blunders in different folders. However, I encountered difficulties in retrieving positions based on criteria that weren’t initially considered in my choice of thematic categories. For example, if the positions were sorted by type of game (race, holding game, blitz, backgame, etc.), how could I retrieve all positions at a certain score or at a given cube level? Additionally, some old positions tended to be forgotten. I wanted a tool that aggregates all my positions without presupposing thematic categories <em>a priori</em>, allowing me to ask questions of the database. This type of software is quite common in chess, like ChessBase.</p>
 </section>
 <section id="comment-sauvegarder-la-base-de-donnees-courante">
-<h2><span class="section-number">6.3. </span>How to back up the current database?<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.3. </span>How to save the state of the current database?<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Link to this heading"></a></h2>
 <p>La base de données est modifiée immédiatement après exécution des requêtes.
 Aucune opération de sauvegarde explicite est nécessaire.</p>
 </section>
 <section id="puis-je-modifier-copier-partager-blunderdb">
 <h2><span class="section-number">6.4. </span>Can I modify, copy, share blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Link to this heading"></a></h2>
-<p>Oui, tout à fait (et c’est même encouragé!). blunderDB est sous licence MIT.</p>
+<p>Yes, absolutely. blunderDB is licensed under the MIT license.</p>
 </section>
 <section id="quel-format-de-donnees-utilise-blunderdb">
 <h2><span class="section-number">6.5. </span>What data format does blunderDB use?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Link to this heading"></a></h2>
@@ -135,21 +120,17 @@ multi-plateforme et adapté pour contenir une base de données. Le format de
 fichier sqlite semblait tout indiqué.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
-<h2><span class="section-number">6.7. </span>Quel est l’architecture logicielle de blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.7. </span>What is the purpose of blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
 <ul class="simple">
-<li><p>Le backend est codé en <a class="reference external" href="https://go.dev/">Go</a>. Il est en charge de
-l’ensemble des opérations sur la base de données Sqlite qui stocke les
-positions.</p></li>
-<li><p>Le frontend est codé en <a class="reference external" href="https://svelte.dev/">Svelte</a>. Il est en charge du
-rendu de l’interface graphique et du board de Backgammon.</p></li>
-<li><p>L’application est encapsulée avec <a class="reference external" href="https://wails.io/">Wails</a>, permettant la
-production d’applications Desktop natives, déclinables sous Windows et Linux.</p></li>
-<li><p>La base de données est gérée par <a class="reference external" href="https://www.sqlite.org/">Sqlite</a>.</p></li>
+<li><p>The backend is coded in <a class="reference external" href="https://go.dev/">Go</a>. It is responsible for all operations on the SQLite database that stores the positions.</p></li>
+<li><p>The frontend is coded in <a class="reference external" href="https://svelte.dev/">Svelte</a>. It is responsible for rendering the graphical interface and the Backgammon board.</p></li>
+<li><p>The application is encapsulated with <a class="reference external" href="https://wails.io/">Wails</a>, enabling the production of native desktop applications that can run on both Windows and Linux.</p></li>
+<li><p>The database is managed by <a class="reference external" href="https://www.sqlite.org/">SQLite</a>.</p></li>
 </ul>
-<p>Pour plus d’informations, voir le <a class="reference external" href="https://github.com/kevung/blunderDB">dépôt Github de blunderDB</a>.</p>
+<p>For more information, see the <a class="reference external" href="https://github.com/kevung/blunderDB">blunderDB GitHub repository</a>.</p>
 </section>
 <section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
-<h2><span class="section-number">6.8. </span>Sur quelles plateformes blunderDB fonctionne-t’il?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.8. </span>On which platforms does blunderDB run?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
 <p>blunderDB fonctionne sur Windows et Linux.</p>
 </section>
 </section>
