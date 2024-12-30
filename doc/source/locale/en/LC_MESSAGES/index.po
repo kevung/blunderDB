@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-20 14:20+0200\n"
+"POT-Creation-Date: 2024-12-30 17:14+0100\n"
 "PO-Revision-Date: 2024-09-20 14:37+0200\n"
 "Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 23.08.5\n"
 
 #: ../../source/index.rst:4
 msgid "blunderDB"
@@ -29,48 +28,57 @@ msgid ""
 "positions. Sa force principale est de constituer un lieu unique où "
 "aggréger les positions qu'un joueur a pu rencontrer (en ligne, en "
 "tournoi) et de pouvoir réétudier ces positions en les filtrant selon "
-"différents filtres combinables arbitrairement."
+"différents filtres combinables arbitrairement. blunderDB peut également "
+"être utilisé pour constituer des catalogues de positions de référence."
 msgstr ""
-"blunderDB is software for creating position databases. Its main strength is"
-" to provide a single place where a player can aggregate the positions they"
-" have encountered (online, in tournaments) and be able to review these"
-" positions by filtering them with various filters that can be arbitrarily"
-" combined."
+"blunderDB is software for creating position databases. Its main strength "
+"is to provide a single place where a player can aggregate the positions "
+"they have encountered (online, in tournaments) and be able to review "
+"these positions by filtering them with various filters that can be "
+"arbitrarily combined. blunderDB can also be used to create catalogs of "
+"reference positions."
 
-#: ../../source/index.rst:12
+#: ../../source/index.rst:13
 msgid "La présente documentation est structurée de la manière suivante:"
 msgstr "The present documentation is structured as follows:"
 
-#: ../../source/index.rst:14
+#: ../../source/index.rst:15
 msgid ""
-"le **manuel** décrit le fonctionnement général de blunderDB et la manière"
-" dont il doit être utilisé."
+"la section **téléchargement et installation** explique comment se "
+"procurer et lancer blunderDB."
 msgstr ""
-"The **manual** describes the general functioning of blunderDB and how it"
-" should be used."
+"the **download and installation** section explains how to obtain and run "
+"blunderDB."
 
-#: ../../source/index.rst:17
+#: ../../source/index.rst:18
+msgid "le **manuel** décrit le fonctionnement général de blunderDB."
+msgstr ""
+"the **manual** describes the general functioning of blunderDB and how it "
+"should be used."
+
+#: ../../source/index.rst:20
 msgid ""
 "le **guide utilisateur** est une introduction pratique pour utiliser "
 "rapidement blunderDB."
 msgstr ""
-"The **user guide** is a practical introduction for quickly using blunderDB."
+"the **user guide** is a practical introduction for quickly using "
+"blunderDB."
 
-#: ../../source/index.rst:20
+#: ../../source/index.rst:23
 msgid ""
-"la **FAQ** fournit quelques réponses aux intérrogations les plus "
+"la liste des **commandes** ainsi que la liste des **raccourcis** clavier "
+"permettent une utilisation efficace de blunderDB."
+msgstr ""
+"the list of **commands** as well as the list of **keyboard shortcuts** "
+"enables efficient use of blunderDB."
+
+#: ../../source/index.rst:26
+msgid ""
+"la **FAQ** fournit quelques réponses aux interrogations les plus "
 "fréquentes."
 msgstr "The **FAQ** provides answers to the most frequently asked questions."
 
-#: ../../source/index.rst:22
-msgid ""
-"la liste des **commandes** ainsi que la liste des **raccourcis** clavier "
-"permet une utilisation efficace de blunderDB."
-msgstr ""
-"The list of **commands** as well as the list of **keyboard shortcuts**"
-" enables efficient use of blunderDB."
-
-#: ../../source/index.rst:26
+#: ../../source/index.rst:29
 msgid "Historique des versions"
 msgstr "Version history"
 
@@ -91,22 +99,22 @@ msgid "0.1.0"
 msgstr "0.1.0"
 
 #: ../../source/index.rst:1
-msgid "19/09/2024"
+msgid "xx/xx/2024"
 msgstr "September 19, 2024"
 
 #: ../../source/index.rst:1
 msgid "Création."
 msgstr "Creation."
 
-#: ../../source/index.rst:36
+#: ../../source/index.rst:39
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:52
+#: ../../source/index.rst:56
 msgid "Contacts"
 msgstr "Contacts"
 
-#: ../../source/index.rst:54
+#: ../../source/index.rst:58
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -114,7 +122,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:57
+#: ../../source/index.rst:61
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -123,70 +131,69 @@ msgid ""
 "faire part de votre retour d'expérience. Tous les retours (constructifs) "
 "sont bienvenus."
 msgstr ""
-"I initially developed blunderDB for my personal use to help detect patterns"
-" in my mistakes. However, it's very rewarding to receive feedback, especially"
-" after spending a lot of time on design, coding, and debugging. So feel free"
-" to reach out to share your experiences. All (constructive) feedback is"
-" welcome."
+"I initially developed blunderDB for my personal use to help detect "
+"patterns in my mistakes. However, it's very rewarding to receive "
+"feedback, especially after spending a lot of time on design, coding, and "
+"debugging. So feel free to reach out to share your experiences. All "
+"(constructive) feedback is welcome."
 
-#: ../../source/index.rst:64
+#: ../../source/index.rst:68
 msgid "Voici plusieurs manières de réagir:"
 msgstr "Here are several ways to respond:"
 
-#: ../../source/index.rst:66
+#: ../../source/index.rst:70
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:68
+#: ../../source/index.rst:72
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:70
+#: ../../source/index.rst:74
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:72
+#: ../../source/index.rst:76
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:74
+#: ../../source/index.rst:78
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:78
+#: ../../source/index.rst:82
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:80
+#: ../../source/index.rst:84
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
 msgstr ""
-"I dedicate this little software to my wife Anne-Claire and our dear daughter"
-" Perrine. I would especially like to thank a few friends:"
+"I dedicate this little software to my wife Anne-Claire and our dear "
+"daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:83
+#: ../../source/index.rst:87
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
 " jeu; de continuer à m'encourager avec gentillesse et patience face à mes"
 " piètres tentatives de mieux jouer."
 msgstr ""
-"*Tristan Remille*, for introducing me to backgammon with joy and kindness;"
-" for showing the way in understanding this wonderful game; and for continuing"
-" to encourage me with gentleness and patience in the face of my poor attempts"
-" to improve my play."
+"*Tristan Remille*, for introducing me to backgammon with joy and "
+"kindness; for showing the way in understanding this wonderful game; and "
+"for continuing to encourage me with gentleness and patience in the face "
+"of my poor attempts to improve my play."
 
-#: ../../source/index.rst:88
+#: ../../source/index.rst:92
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, qui a choppé le virus du "
 "backgammon, et avec lequel j'essaye de mieux jouer."
 msgstr ""
-"*Nicolas Harmand*, a cheerful companion for over a decade in great"
-" adventures, who has caught the backgammon bug, and with whom I’m trying to"
-" improve my play."
-
+"*Nicolas Harmand*, a cheerful companion for over a decade in great "
+"adventures, who has caught the backgammon bug, and with whom I’m trying "
+"to improve my play."
 

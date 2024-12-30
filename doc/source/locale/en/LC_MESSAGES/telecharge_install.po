@@ -1,0 +1,68 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-30 17:14+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: en\n"
+"Language-Team: en <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: ../../source/telecharge_install.rst:4
+msgid "Téléchargement et installation"
+msgstr "Download and Installation"
+
+#: ../../source/telecharge_install.rst:6
+msgid ""
+"blunderDB se présente comme un unique exécutable ne nécessitant aucune "
+"installation."
+msgstr ""
+"blunderDB is a single executable that requires no installation."
+
+#: ../../source/telecharge_install.rst:8
+msgid "La dernière version de blunderDB est disponible en licence MIT:"
+msgstr ""
+"The latest version of blunderDB is available under the MIT license:"
+
+#: ../../source/telecharge_install.rst:10
+msgid "pour Windows: |latest_windows_exe|"
+msgstr "for Windows: |latest_windows_exe|"
+
+#: ../../source/telecharge_install.rst:12
+msgid "pour Linux: |latest_linux_exe|"
+msgstr "for Linux: |latest_linux_exe|"
+
+#: ../../source/telecharge_install.rst:14
+msgid ""
+"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
+" de fortes chances que Webview2 soit déjà présent nativement sur votre "
+"système d'exploitation. Si ce n'est pas le cas, la première exécution de "
+"blunderDB proposera de le télécharger et de l'installer. Aucune "
+"manipulation de la part de l'utilisateur n'est attendue."
+msgstr ""
+"blunderDB uses Webview2 for rendering the graphical interface. It is "
+"likely that Webview2 is already present natively on your operating "
+"system. If not, the first execution of blunderDB will offer to download "
+"and install it. No user action is required."
+
+#: ../../source/telecharge_install.rst:20
+msgid ""
+"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+"exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
+"linux-x.y.z`` où x, y, z correspond à la version téléchargée."
+msgstr ""
+"On Linux, if blunderDB is not executable after downloading, run the "
+"command ``chmod +x ./blunderDB-linux-x.y.z`` in a terminal, where x, y, z"
+" corresponds to the downloaded version."
+

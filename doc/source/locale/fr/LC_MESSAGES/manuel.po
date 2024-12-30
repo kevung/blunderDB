@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-20 14:20+0200\n"
+"POT-Creation-Date: 2024-12-30 17:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -25,7 +25,7 @@ msgstr ""
 
 #: ../../source/manuel.rst:6
 msgid ""
-"blunderDB est un logiciel pour consistuer des bases de données de "
+"blunderDB est un logiciel pour constituer des bases de données de "
 "positions. Les positions sont stockées dans une base de données "
 "représentée par un fichier *.db*."
 msgstr ""
@@ -51,29 +51,33 @@ msgid "rechercher une ou plusieurs positions."
 msgstr ""
 
 #: ../../source/manuel.rst:20
-msgid ""
-"Pour ce faire, l'utilisateur bascule dans des modes dédiés pour la "
-"visualisation (mode NORMAL), l'édition de positions (mode EDIT), "
-"l'édition d'une requête pour filtrer des positions (mode COMMAND)."
+msgid "Pour ce faire, l'utilisateur bascule dans des modes dédiés pour:"
+msgstr ""
+
+#: ../../source/manuel.rst:22
+msgid "la navigation et la visualisation de positions (mode NORMAL),"
 msgstr ""
 
 #: ../../source/manuel.rst:24
+msgid "l'édition de positions (mode EDIT),"
+msgstr ""
+
+#: ../../source/manuel.rst:26
 msgid ""
-"L'utilisateur peut ranger librement les positions en créant des "
-"*bibliothèques*. Une position peut être ajoutée à plusieurs bibliothèques"
-" en même temps."
+"l'édition d'une requête pour filtrer des positions (mode COMMAND ou "
+"fenêtre de recherche)."
 msgstr ""
 
 #: ../../source/manuel.rst:28
 msgid ""
-"Dans la suite du manuel, il est décrit l'interface graphique ainsi que "
-"les principaux modes de blunderDB."
+"L'utilisateur peut étiqueter librement les positions à l'aide de tags et "
+"les annoter via des commentaires."
 msgstr ""
 
 #: ../../source/manuel.rst:31
 msgid ""
-"Le mécanisme de bibliothèques est analogue à un mécanisme de *tags* qui "
-"permettrait d'étiqueter les positions."
+"Dans la suite du manuel, il est décrit l'interface graphique ainsi que "
+"les principaux modes de blunderDB."
 msgstr ""
 
 #: ../../source/manuel.rst:35
@@ -99,146 +103,158 @@ msgstr ""
 #: ../../source/manuel.rst:45
 msgid ""
 "[en bas] la barre d'état, qui présente différentes informations sur la "
-"base de donnnées ou la position courante."
+"base de données ou la position courante."
 msgstr ""
 
 #: ../../source/manuel.rst:48
-msgid "La zone d'affichage principale met à disposition à l'utilisateur:"
+msgid "Des panneaux peuvent être affichés pour:"
 msgstr ""
 
 #: ../../source/manuel.rst:50
-msgid "un board afin d'afficher ou d'éditer une position de backgammon,"
+msgid ""
+"afficher les données d'analyse associées à la position courante issues "
+"d'eXtreme Gammon (XG),"
 msgstr ""
 
 #: ../../source/manuel.rst:52
-msgid "le niveau et le propriétaire du cube,"
+msgid "afficher, ajouter ou modifier des commentaires"
 msgstr ""
 
 #: ../../source/manuel.rst:54
-msgid "le compte de course de chaque joueur,"
+msgid "Des fenêtres modales peuvent s'afficher pour:"
 msgstr ""
 
 #: ../../source/manuel.rst:56
-msgid "le score de chaque joueur,"
+msgid "[mode EDIT uniquement] paramétrer les filtres de recherche,"
 msgstr ""
 
 #: ../../source/manuel.rst:58
-msgid ""
-"les dés à jouer. Si aucune valeur est affichée sur les dés, la position "
-"des dés indique quel joueur a le trait et que la position est une "
-"décision de cube."
+msgid "afficher l'aide de blunderDB."
+msgstr ""
+
+#: ../../source/manuel.rst:60
+msgid "La zone d'affichage principale met à disposition à l'utilisateur:"
 msgstr ""
 
 #: ../../source/manuel.rst:62
+msgid "un board afin d'afficher ou d'éditer une position de backgammon,"
+msgstr ""
+
+#: ../../source/manuel.rst:64
+msgid "le niveau et le propriétaire du cube,"
+msgstr ""
+
+#: ../../source/manuel.rst:66
+msgid "le compte de course de chaque joueur,"
+msgstr ""
+
+#: ../../source/manuel.rst:68
+msgid "le score de chaque joueur,"
+msgstr ""
+
+#: ../../source/manuel.rst:70
+msgid ""
+"les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position"
+" des dés indique quel joueur a le trait et que la position est une "
+"décision de cube."
+msgstr ""
+
+#: ../../source/manuel.rst:74
 msgid ""
 "La barre d'état est structurée de gauche à droite par les informations "
 "suivantes:"
 msgstr ""
 
-#: ../../source/manuel.rst:65
+#: ../../source/manuel.rst:77
 msgid "le mode courant (NORMAL, EDIT, COMMAND),"
 msgstr ""
 
-#: ../../source/manuel.rst:67
-msgid ""
-"le nom de la bibliothèque courante. Toutes les positions sont ajoutés à "
-"la bibliothèque principale intitulée *main*,"
+#: ../../source/manuel.rst:79
+msgid "un message d'information lié à une opération réalisée par l'utilisateur,"
 msgstr ""
 
-#: ../../source/manuel.rst:70
+#: ../../source/manuel.rst:81
 msgid ""
 "l'index de la position courante, suivi du nombre de positions dans la "
-"bibliothèque courante. Dans le cas de positions issus d'une recherche par"
-" l'utilisateur, le nombre de positions correspond au nombre de positions "
-"filtrées,"
-msgstr ""
-
-#: ../../source/manuel.rst:75
-msgid "un message d'information."
-msgstr ""
-
-#: ../../source/manuel.rst:80
-msgid "Le mode NORMAL"
-msgstr ""
-
-#: ../../source/manuel.rst:82
-msgid "Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:"
+"bibliothèque courante."
 msgstr ""
 
 #: ../../source/manuel.rst:84
+msgid ""
+"Dans le cas de positions issues d'une recherche par l'utilisateur, le "
+"nombre de positions indiqué dans la barre d'état correspond au nombre de "
+"positions filtrées."
+msgstr ""
+
+#: ../../source/manuel.rst:91
+msgid "Le mode NORMAL"
+msgstr ""
+
+#: ../../source/manuel.rst:93
+msgid "Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:"
+msgstr ""
+
+#: ../../source/manuel.rst:95
 msgid "faire défiler les différentes positions de la bibliothèque courante,"
 msgstr ""
 
-#: ../../source/manuel.rst:86
-msgid "afficher les informations d'analyse associées à une position."
+#: ../../source/manuel.rst:97
+msgid "afficher les informations d'analyse associées à une position,"
 msgstr ""
 
-#: ../../source/manuel.rst:88
+#: ../../source/manuel.rst:99
+msgid "afficher, ajouter et modifier les commentaires d'une position."
+msgstr ""
+
+#: ../../source/manuel.rst:101
 msgid ""
-"Se référer à la section :ref:`raccourcis_modaux` pour les raccourcis de "
-"navigation du mode NORMAL."
-msgstr ""
-
-#: ../../source/manuel.rst:94
-msgid "Le mode EDIT"
-msgstr ""
-
-#: ../../source/manuel.rst:96
-msgid ""
-"Le mode EDIT permet d'éditer une position en vue où bien de l'ajouter à "
-"la base de données, ou bien de définir le type de position à rechercher. "
-"Le mode EDIT est activé en appuyant sur la touche *TAB*. La distributions"
-" des pions, du videau, du score, du trait oeuvent être modifiés à l'aide "
-"de la souris (voir :ref:`guide_edit_position`) ou du clavier (voir "
-":ref:`raccourcis_position`)."
-msgstr ""
-
-#: ../../source/manuel.rst:103
-msgid ""
-"Se référer à la section :ref:`raccourcis_modaux` pour les raccourcis de "
-"navigation du mode EDIT."
+"Se référer à la :numref:`raccourcis_normal` pour les raccourcis du mode "
+"NORMAL."
 msgstr ""
 
 #: ../../source/manuel.rst:107
-msgid "Le mode COMMAND"
+msgid "Le mode EDIT"
 msgstr ""
 
 #: ../../source/manuel.rst:109
 msgid ""
-"Le mode COMMAND permet à l'utilisateur d'émettre une requête à la base de"
-" données afin de:"
+"Le mode EDIT permet d'éditer une position en vue de l'ajouter à la base "
+"de données, ou de définir le type de position à rechercher. Le mode EDIT "
+"est activé en appuyant sur la touche *TAB*. La distribution des pions, du"
+" videau, du score, et du trait peuvent être modifiés à l'aide de la "
+"souris (voir :ref:`guide_edit_position`)."
 msgstr ""
 
-#: ../../source/manuel.rst:112
-msgid "ajouter une nouvelle position ou mettre à jour une position existante,"
-msgstr ""
-
-#: ../../source/manuel.rst:114
-msgid "ajouter une position dans une bibliothèque,"
-msgstr ""
-
-#: ../../source/manuel.rst:116
-msgid "renommer, copier, supprimer une bibliothèque,"
-msgstr ""
-
-#: ../../source/manuel.rst:118
-msgid "lister les bibliothèques existantes,"
-msgstr ""
-
-#: ../../source/manuel.rst:120
+#: ../../source/manuel.rst:115
 msgid ""
-"rechercher des types de positions selon divers critères librement "
-"combinables."
+"Se référer à la :numref:`raccourcis_edit` pour les raccourcis du mode "
+"EDIT."
+msgstr ""
+
+#: ../../source/manuel.rst:121
+msgid "Le mode COMMAND"
 msgstr ""
 
 #: ../../source/manuel.rst:123
+msgid ""
+"Le mode COMMAND permet de réaliser l'ensemble des fonctionalités de "
+"blunderDB disponibles à l'interface graphique: opérations générales sur "
+"la base de données, navigation de position, affichage de l'analyse et/ou "
+"des commentaires, recherche de positions selon des filtres... Après une "
+"première prise en main de l'interface, il est recommandé de "
+"progressivement utiliser ce mode qui permet une utilisation puissante et "
+"fluide de blunderDB, notamment pour les fonctionnalités de recherche de "
+"positions."
+msgstr ""
+
+#: ../../source/manuel.rst:131
 msgid ""
 "Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur la"
 " touche *ESPACE*. Pour envoyer une requête et quitter le mode COMMAND, "
 "appuyer sur la touche *ENTREE*."
 msgstr ""
 
-#: ../../source/manuel.rst:127
+#: ../../source/manuel.rst:135
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -246,9 +262,132 @@ msgid ""
 " la part de l'utilisateur."
 msgstr ""
 
-#: ../../source/manuel.rst:132
+#: ../../source/manuel.rst:140
 msgid ""
-"Se référer à la section :ref:`raccourcis_modaux` pour les raccourcis de "
-"navigation du mode COMMAND."
+"Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
+"en mode COMMAND."
 msgstr ""
+
+#~ msgid ""
+#~ "blunderDB est un logiciel pour "
+#~ "consistuer des bases de données de "
+#~ "positions. Les positions sont stockées "
+#~ "dans une base de données représentée "
+#~ "par un fichier *.db*."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Pour ce faire, l'utilisateur bascule "
+#~ "dans des modes dédiés pour la "
+#~ "visualisation (mode NORMAL), l'édition de "
+#~ "positions (mode EDIT), l'édition d'une "
+#~ "requête pour filtrer des positions (mode"
+#~ " COMMAND)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "L'utilisateur peut ranger librement les "
+#~ "positions en créant des *bibliothèques*. "
+#~ "Une position peut être ajoutée à "
+#~ "plusieurs bibliothèques en même temps."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Le mécanisme de bibliothèques est "
+#~ "analogue à un mécanisme de *tags* "
+#~ "qui permettrait d'étiqueter les positions."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "[en bas] la barre d'état, qui "
+#~ "présente différentes informations sur la "
+#~ "base de donnnées ou la position "
+#~ "courante."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "les dés à jouer. Si aucune valeur"
+#~ " est affichée sur les dés, la "
+#~ "position des dés indique quel joueur "
+#~ "a le trait et que la position "
+#~ "est une décision de cube."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "le nom de la bibliothèque courante. "
+#~ "Toutes les positions sont ajoutés à "
+#~ "la bibliothèque principale intitulée *main*,"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "l'index de la position courante, suivi"
+#~ " du nombre de positions dans la "
+#~ "bibliothèque courante. Dans le cas de"
+#~ " positions issus d'une recherche par "
+#~ "l'utilisateur, le nombre de positions "
+#~ "correspond au nombre de positions "
+#~ "filtrées,"
+#~ msgstr ""
+
+#~ msgid "un message d'information."
+#~ msgstr ""
+
+#~ msgid "afficher les informations d'analyse associées à une position."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Se référer à la section "
+#~ ":ref:`raccourcis_modaux` pour les raccourcis "
+#~ "de navigation du mode NORMAL."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Le mode EDIT permet d'éditer une "
+#~ "position en vue où bien de "
+#~ "l'ajouter à la base de données, ou"
+#~ " bien de définir le type de "
+#~ "position à rechercher. Le mode EDIT "
+#~ "est activé en appuyant sur la "
+#~ "touche *TAB*. La distributions des "
+#~ "pions, du videau, du score, du "
+#~ "trait oeuvent être modifiés à l'aide "
+#~ "de la souris (voir :ref:`guide_edit_position`)"
+#~ " ou du clavier (voir "
+#~ ":ref:`raccourcis_position`)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Se référer à la section "
+#~ ":ref:`raccourcis_modaux` pour les raccourcis "
+#~ "de navigation du mode EDIT."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Le mode COMMAND permet à l'utilisateur"
+#~ " d'émettre une requête à la base "
+#~ "de données afin de:"
+#~ msgstr ""
+
+#~ msgid "ajouter une nouvelle position ou mettre à jour une position existante,"
+#~ msgstr ""
+
+#~ msgid "ajouter une position dans une bibliothèque,"
+#~ msgstr ""
+
+#~ msgid "renommer, copier, supprimer une bibliothèque,"
+#~ msgstr ""
+
+#~ msgid "lister les bibliothèques existantes,"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "rechercher des types de positions selon"
+#~ " divers critères librement combinables."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Se référer à la section "
+#~ ":ref:`raccourcis_modaux` pour les raccourcis "
+#~ "de navigation du mode COMMAND."
+#~ msgstr ""
 

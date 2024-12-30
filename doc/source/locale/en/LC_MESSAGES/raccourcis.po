@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-20 14:20+0200\n"
+"POT-Creation-Date: 2024-12-30 17:14+0100\n"
 "PO-Revision-Date: 2024-09-20 16:08+0200\n"
 "Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 23.08.5\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
@@ -60,6 +59,19 @@ msgid "Fermer blunderDB."
 msgstr "Close blunderDB."
 
 #: ../../source/raccourcis.rst:1
+#, fuzzy
+msgid "CTRL-H, ?"
+msgstr "CTRL-V"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher l'aide."
+msgstr "Show/hide the help."
+
+#: ../../source/raccourcis.rst:24
+msgid "Raccourcis du mode NORMAL"
+msgstr "NORMAL mode shortcuts"
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-I"
 msgstr "CTRL-I"
 
@@ -68,36 +80,12 @@ msgid "Importer une position par fichier texte (txt)."
 msgstr "Import a position from a text file (txt)."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-L"
-msgstr "CTRL-L"
-
-#: ../../source/raccourcis.rst:1
-msgid "Afficher/cacher l'analyse."
-msgstr "Show/hide the analysis."
-
-#: ../../source/raccourcis.rst:25
-msgid "Raccourcis modaux"
-msgstr "Modal shortcuts"
-
-#: ../../source/raccourcis.rst:1
-msgid "Mode activé"
-msgstr "Mode activated"
-
-#: ../../source/raccourcis.rst:1
 msgid "CTRL-C"
 msgstr "CTRL-C"
 
 #: ../../source/raccourcis.rst:1
-msgid "NORMAL"
-msgstr "NORMAL"
-
-#: ../../source/raccourcis.rst:1
-msgid "Exporter une position dans le presse-papier en"
-msgstr "Export a position to the clipboard in"
-
-#: ../../source/raccourcis.rst:3
-msgid "vue d'un import dans XG."
-msgstr "order to import in XG."
+msgid "Exporter une position dans le presse-papier en vue d'un import dans XG."
+msgstr "Export a position to the clipboard for import into XG."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-V"
@@ -106,6 +94,14 @@ msgstr "CTRL-V"
 #: ../../source/raccourcis.rst:1
 msgid "Importer une position XG."
 msgstr "Import an XG position."
+
+#: ../../source/raccourcis.rst:1
+msgid "Del"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer la position courante."
+msgstr "Delete the current position."
 
 #: ../../source/raccourcis.rst:1
 msgid "TAB"
@@ -124,7 +120,15 @@ msgid "Basculer en mode COMMAND."
 msgstr "Switch to COMMAND mode."
 
 #: ../../source/raccourcis.rst:1
-msgid "GAUCHE"
+msgid "PageUp, h"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Première position."
+msgstr "First position."
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, k"
 msgstr "LEFT"
 
 #: ../../source/raccourcis.rst:1
@@ -132,11 +136,7 @@ msgid "Position précédente."
 msgstr "Previous position."
 
 #: ../../source/raccourcis.rst:1
-msgid "k"
-msgstr "k"
-
-#: ../../source/raccourcis.rst:1
-msgid "DROITE"
+msgid "DROITE, j"
 msgstr "RIGHT"
 
 #: ../../source/raccourcis.rst:1
@@ -144,76 +144,60 @@ msgid "Position suivante."
 msgstr "Next position."
 
 #: ../../source/raccourcis.rst:1
-msgid "j"
-msgstr "j"
-
-#: ../../source/raccourcis.rst:1
-msgid "HOME"
-msgstr "HOME"
-
-#: ../../source/raccourcis.rst:1
-msgid "Première position."
-msgstr "First position."
-
-#: ../../source/raccourcis.rst:1
-msgid "FIN"
-msgstr "END"
+msgid "PageDown, l"
+msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Dernière position."
 msgstr "Last position."
 
 #: ../../source/raccourcis.rst:1
-msgid "G"
-msgstr "G"
-
-#: ../../source/raccourcis.rst:1
 msgid "CTRL-GAUCHE"
 msgstr "CTRL-LEFT"
 
 #: ../../source/raccourcis.rst:1
-msgid "Bearoff à gauche."
-msgstr "Bearoff on the left."
+msgid "Orientation du board à gauche."
+msgstr "Board orientation to the left."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-DROITE"
 msgstr "CTRL-RIGHT"
 
 #: ../../source/raccourcis.rst:1
-msgid "Bearoff à droite."
-msgstr "Bearoff on the right."
+msgid "Orientation du board à droite."
+msgstr "Board orientation to the right."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-BAS"
-msgstr "CTRL-DOWN"
+msgid "CTRL-K"
+msgstr "CTRL-K"
 
 #: ../../source/raccourcis.rst:1
-msgid "Positionner le joueur 1 en bas."
-msgstr "Position Player 1 at the bottom."
+msgid "Afficher la fenêtre de navigation de positions."
+msgstr "Show the position navigation window."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-HAUT"
-msgstr "CTRL-UP"
+msgid "CTRL-L"
+msgstr "CTRL-L"
 
 #: ../../source/raccourcis.rst:1
-msgid "Positionner le joueur 1 en haut."
-msgstr "Position Player 1 at the top."
+msgid "Afficher/cacher l'analyse."
+msgstr "Show/hide the analysis."
 
 #: ../../source/raccourcis.rst:1
-msgid "EDIT"
-msgstr "EDIT"
+msgid "CTRL-P"
+msgstr "CTRL-P"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher les commentaires."
+msgstr "Show/hide the comments."
+
+#: ../../source/raccourcis.rst:50
+msgid "Raccourcis du mode EDIT"
+msgstr "EDIT mode shortcuts"
 
 #: ../../source/raccourcis.rst:1
 msgid "Basculer en mode NORMAL."
 msgstr "Switch to NORMAL mode."
-
-#: ../../source/raccourcis.rst:1
-msgid "ENTREE"
-msgstr "ENTER"
-
-#: ../../source/raccourcis.rst:1
-msgid "Alterner entre l'édition de portes ou de spares."
-msgstr "Toggle between editing points or spare checkers."
 
 #: ../../source/raccourcis.rst:1
 msgid "RETOUR ARRIERE"
@@ -224,42 +208,152 @@ msgid "Effacer la position courante."
 msgstr "Clear the current position."
 
 #: ../../source/raccourcis.rst:1
-msgid "COMMAND"
-msgstr "COMMAND"
+msgid "CTRL-S"
+msgstr "CTRL-S"
 
 #: ../../source/raccourcis.rst:1
-msgid "Valider une requête."
-msgstr "Confirm a request."
+msgid "Ajouter une position."
+msgstr "Add a position."
 
-#: ../../source/raccourcis.rst:59
-msgid "Edition de position au clavier"
-msgstr "Position editing via keyboard"
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-U"
+msgstr "CTRL-U"
 
-#: ../../source/raccourcis.rst:61
-msgid ""
-"En mode EDIT, des lettres sont affichées au niveau de chaque point et du "
-"cube. Pour ajouter ou supprimer un ou plusieurs pions sur un point, taper"
-" la lettre du point correspondante suivi du nombre de pions à ajouter. Si"
-" la lettre est entrée en minuscule, les pions sont du joueur du bas. Si "
-"la lettre est entrée en majuscule, les pions édités sont du joueur du "
-"haut. Pour retirer des pions, précéder le nombre d'un signe \"-\". "
-"L'ajout de prime ou de succession de spare est réalisée en indiquant la "
-"lettre du premier point, un tiret \"-\", puis la lettre du dernier point."
-" Pour changer le score, entrer un nombre correspondant au score away du "
-"joueur en bas, une virgule \",\", puis entrer un nombre correspondant au "
-"score away du joueur en haut. Pour annuler une entrée, appuyer sur "
-"\"ESC\"."
-msgstr ""
-"In EDIT mode, letters are displayed for each point and the cube. To add or"
-" remove one or more checkers on a point, type the corresponding letter of the"
-" point followed by the number of checkers to add. If the letter is entered in"
-" lowercase, the checkers belong to the bottom player. If the letter is"
-" entered in uppercase, the edited checkers belong to the top player. To"
-" remove checkers, precede the number with a minus sign '-'. Adding a prime or"
-" a sequence of spares is done by indicating the letter of the first point, a"
-" dash '-', and then the letter of the last point. To change the score, enter"
-" a number corresponding to the away score of the bottom player, a comma ',',"
-" and then enter a number corresponding to the away score of the top player."
-" To cancel an entry, press 'ESC'."
+#: ../../source/raccourcis.rst:1
+msgid "Mettre à jour une position."
+msgstr "Update a position."
 
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-F"
+msgstr "CTRL-F"
+
+#: ../../source/raccourcis.rst:1
+msgid "Rechercher une position."
+msgstr "Search for a position."
+
+#: ../../source/raccourcis.rst:67
+msgid "Raccourcis du mode COMMAND"
+msgstr "COMMAND mode shortcuts"
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE"
+msgstr "ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter une requête."
+msgstr "Execute a query."
+
+#: ../../source/raccourcis.rst:1
+msgid "ESC"
+msgstr "ESC"
+
+#: ../../source/raccourcis.rst:1
+msgid "Quitter le mode COMMAND."
+msgstr "Exit COMMAND mode."
+
+#: ../../source/raccourcis.rst:1
+msgid "Effacer la commande. Si vide, fermer le mode COMMAND"
+msgstr "Clear the command. If empty, close COMMAND mode."
+
+#~ msgid "Mode activé"
+#~ msgstr "Mode activated"
+
+#~ msgid "NORMAL"
+#~ msgstr "NORMAL"
+
+#~ msgid "vue d'un import dans XG."
+#~ msgstr "order to import in XG."
+
+#~ msgid "k"
+#~ msgstr "k"
+
+#~ msgid "j"
+#~ msgstr "j"
+
+#~ msgid "HOME"
+#~ msgstr "HOME"
+
+#~ msgid "FIN"
+#~ msgstr "END"
+
+#~ msgid "G"
+#~ msgstr "G"
+
+#~ msgid "Bearoff à gauche."
+#~ msgstr "Bearoff on the left."
+
+#~ msgid "Bearoff à droite."
+#~ msgstr "Bearoff on the right."
+
+#~ msgid "Positionner le joueur 1 en bas."
+#~ msgstr "Position Player 1 at the bottom."
+
+#~ msgid "CTRL-HAUT"
+#~ msgstr "CTRL-UP"
+
+#~ msgid "Positionner le joueur 1 en haut."
+#~ msgstr "Position Player 1 at the top."
+
+#~ msgid "EDIT"
+#~ msgstr "EDIT"
+
+#~ msgid "Alterner entre l'édition de portes ou de spares."
+#~ msgstr "Toggle between editing points or spare checkers."
+
+#~ msgid "COMMAND"
+#~ msgstr "COMMAND"
+
+#~ msgid "Edition de position au clavier"
+#~ msgstr "Position editing via keyboard"
+
+#~ msgid ""
+#~ "En mode EDIT, des lettres sont "
+#~ "affichées au niveau de chaque point "
+#~ "et du cube. Pour ajouter ou "
+#~ "supprimer un ou plusieurs pions sur "
+#~ "un point, taper la lettre du point"
+#~ " correspondante suivi du nombre de "
+#~ "pions à ajouter. Si la lettre est"
+#~ " entrée en minuscule, les pions sont"
+#~ " du joueur du bas. Si la lettre"
+#~ " est entrée en majuscule, les pions"
+#~ " édités sont du joueur du haut. "
+#~ "Pour retirer des pions, précéder le "
+#~ "nombre d'un signe \"-\". L'ajout de "
+#~ "prime ou de succession de spare "
+#~ "est réalisée en indiquant la lettre "
+#~ "du premier point, un tiret \"-\", "
+#~ "puis la lettre du dernier point. "
+#~ "Pour changer le score, entrer un "
+#~ "nombre correspondant au score away du"
+#~ " joueur en bas, une virgule \",\","
+#~ " puis entrer un nombre correspondant "
+#~ "au score away du joueur en haut."
+#~ " Pour annuler une entrée, appuyer sur"
+#~ " \"ESC\"."
+#~ msgstr ""
+#~ "In EDIT mode, letters are displayed "
+#~ "for each point and the cube. To"
+#~ " add or remove one or more "
+#~ "checkers on a point, type the "
+#~ "corresponding letter of the point "
+#~ "followed by the number of checkers "
+#~ "to add. If the letter is entered"
+#~ " in lowercase, the checkers belong to"
+#~ " the bottom player. If the letter "
+#~ "is entered in uppercase, the edited "
+#~ "checkers belong to the top player. "
+#~ "To remove checkers, precede the number"
+#~ " with a minus sign '-'. Adding "
+#~ "a prime or a sequence of spares"
+#~ " is done by indicating the letter "
+#~ "of the first point, a dash '-',"
+#~ " and then the letter of the "
+#~ "last point. To change the score, "
+#~ "enter a number corresponding to the "
+#~ "away score of the bottom player, a"
+#~ " comma ',', and then enter a "
+#~ "number corresponding to the away score"
+#~ " of the top player. To cancel "
+#~ "an entry, press 'ESC'."
 

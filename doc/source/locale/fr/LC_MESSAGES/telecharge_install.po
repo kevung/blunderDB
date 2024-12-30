@@ -1,0 +1,59 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-12-30 17:14+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: ../../source/telecharge_install.rst:4
+msgid "Téléchargement et installation"
+msgstr ""
+
+#: ../../source/telecharge_install.rst:6
+msgid ""
+"blunderDB se présente comme un unique exécutable ne nécessitant aucune "
+"installation."
+msgstr ""
+
+#: ../../source/telecharge_install.rst:8
+msgid "La dernière version de blunderDB est disponible en licence MIT:"
+msgstr ""
+
+#: ../../source/telecharge_install.rst:10
+msgid "pour Windows: |latest_windows_exe|"
+msgstr ""
+
+#: ../../source/telecharge_install.rst:12
+msgid "pour Linux: |latest_linux_exe|"
+msgstr ""
+
+#: ../../source/telecharge_install.rst:14
+msgid ""
+"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
+" de fortes chances que Webview2 soit déjà présent nativement sur votre "
+"système d'exploitation. Si ce n'est pas le cas, la première exécution de "
+"blunderDB proposera de le télécharger et de l'installer. Aucune "
+"manipulation de la part de l'utilisateur n'est attendue."
+msgstr ""
+
+#: ../../source/telecharge_install.rst:20
+msgid ""
+"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+"exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
+"linux-x.y.z`` où x, y, z correspond à la version téléchargée."
+msgstr ""
+

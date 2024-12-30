@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-20 14:20+0200\n"
+"POT-Creation-Date: 2024-12-30 17:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -23,11 +23,11 @@ msgstr ""
 msgid "Foire aux questions"
 msgstr ""
 
-#: ../../source/faq.rst:7
+#: ../../source/faq.rst:8
 msgid "Quel est l'utilité de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:9
+#: ../../source/faq.rst:10
 msgid ""
 "blunderDB permet de constituer une base de données personalisée de "
 "positions. Sa force est de ne présupposer aucune classification *a "
@@ -37,82 +37,191 @@ msgid ""
 "chances de gain/gammon/backgammon, ...)."
 msgstr ""
 
-#: ../../source/faq.rst:16
+#: ../../source/faq.rst:17
 msgid ""
 "Une autre utilisation commode de blunderDB est la constitution de "
-"catalogues de positions de référence. Avec la possibilité de créer des "
-"bibliothèques, l'utilisateur peut disposer à l'aide d'un unique fichier "
-"l'ensemble de ses positions de référence de manière structurée. Je "
-"souhaite que blunderDB facilite le partage de positions entre joueurs."
+"catalogues de positions de référence. Avec la possibilité d'étiqueter des"
+" positions, l'utilisateur peut rassembler l'ensemble de ses positions de "
+"référence de manière structurée à l'aide d'un unique fichier. Je souhaite"
+" que blunderDB facilite le partage de positions entre joueurs."
 msgstr ""
 
-#: ../../source/faq.rst:24
+#: ../../source/faq.rst:25
 msgid "Qu'est ce qui a motivé la création de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:26
+#: ../../source/faq.rst:27
 msgid ""
 "J'avais l'habitude de stocker dans différents dossiers des positions "
 "intéressantes ou des blunders. Toutefois, je rencontrais des difficultés "
 "à retrouver des positions selon des critères n'ayant pas été prévus "
 "initialement par mon choix de catégories de thématiques. Par exemple, si "
-"les positions ont été triés selon le type de jeu (course, holding game, "
+"les positions ont été triées selon le type de jeu (course, holding game, "
 "blitz, backgame, ...), comment récupérer toutes les positions à un "
 "certain score? ou à un niveau de cube donné? Enfin, certaines vieilles "
 "positions avaient tendance à tomber dans l'oubli. Je voulais un outil qui"
 " aggrège toutes mes positions et qui ne présuppose pas *a priori* de "
-"catégories thématiques, et ensuite pouvoir poser des questions la base de"
-" données. Ce type de logiciel est tout à fait courant aux échecs, comme "
-"ChessBase."
+"catégories thématiques, et ensuite pouvoir poser des questions à la base "
+"de données. Avec cette approche souple, de nouveaux filtres peuvent être "
+"ajoutés sans casser l'organisation des positions. Ce type de logiciel est"
+" tout à fait courant aux échecs, comme ChessBase."
 msgstr ""
 
-#: ../../source/faq.rst:40
-msgid "Puis-je modifier, copier, partager blunderDB?"
-msgstr ""
-
-#: ../../source/faq.rst:42
-msgid "Oui, tout à fait. blunderDB est sous licence MIT."
-msgstr ""
-
-#: ../../source/faq.rst:45
+#: ../../source/faq.rst:41
 msgid "Comment sauvegarder la base de données courante?"
 msgstr ""
 
-#: ../../source/faq.rst:47
+#: ../../source/faq.rst:43
 msgid ""
-"La base de données est modifiée immédiatement la validation de la "
-"requête. Aucune opération de sauvegarde explicite est nécessaire."
+"La base de données est modifiée immédiatement après exécution des "
+"requêtes. Aucune opération de sauvegarde explicite est nécessaire."
 msgstr ""
 
-#: ../../source/faq.rst:51
+#: ../../source/faq.rst:48
+msgid "Puis-je modifier, copier, partager blunderDB?"
+msgstr ""
+
+#: ../../source/faq.rst:50
+msgid ""
+"Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
+"MIT."
+msgstr ""
+
+#: ../../source/faq.rst:54
 msgid "Quel format de données utilise blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:53
+#: ../../source/faq.rst:56
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
 msgstr ""
 
-#: ../../source/faq.rst:57
+#: ../../source/faq.rst:61
 msgid "Quelles ont été les principes de conception de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:59
+#: ../../source/faq.rst:63
 msgid ""
 "Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s'inspire du"
-" très puissant éditeur de texte Vim. Je souhaitais blunderDB léger et "
-"autonome d'où mon choix du langage C et de la bibliothèque GUI IUP. Pour "
-"la sérialisation de la base de données, le format de fichiers doit être "
-"multi-plateforme et adapté pour contenir une base de données. Le format "
-"de fichier sqlite semblait tout indiqué."
+" très puissant éditeur de texte `Vim "
+"<https://en.wikipedia.org/wiki/Vim_(text_editor)>`_. Je souhaitais "
+"blunderDB léger, autonome, sans installation et disponible pour "
+"différentes plateformes, d'où mon choix du langage Go et de la "
+"bibliothèque Svelte. Pour la sérialisation de la base de données, le "
+"format de fichiers doit être multi-plateforme et adapté pour contenir une"
+" base de données. Le format de fichier sqlite semblait tout indiqué."
 msgstr ""
 
-#: ../../source/faq.rst:67
-msgid "blunderDB fonctionne-t'il sous Linux?"
+#: ../../source/faq.rst:74
+msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:69
-msgid "Tout à fait. Il est exécutable avec Wine."
+#: ../../source/faq.rst:76
+msgid ""
+"Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
+"l'ensemble des opérations sur la base de données Sqlite qui stocke les "
+"positions."
 msgstr ""
+
+#: ../../source/faq.rst:80
+msgid ""
+"Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
+" du rendu de l'interface graphique et du board de Backgammon."
+msgstr ""
+
+#: ../../source/faq.rst:83
+msgid ""
+"L'application est encapsulée avec `Wails <https://wails.io/>`_, "
+"permettant la production d'applications Desktop natives, déclinables sous"
+" Windows et Linux."
+msgstr ""
+
+#: ../../source/faq.rst:86
+msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
+msgstr ""
+
+#: ../../source/faq.rst:88
+msgid ""
+"Pour plus d'informations, voir le `dépôt Github de blunderDB "
+"<https://github.com/kevung/blunderDB>`_."
+msgstr ""
+
+#: ../../source/faq.rst:91
+msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
+msgstr ""
+
+#: ../../source/faq.rst:93
+msgid "blunderDB fonctionne sur Windows et Linux."
+msgstr ""
+
+#~ msgid ""
+#~ "Une autre utilisation commode de "
+#~ "blunderDB est la constitution de "
+#~ "catalogues de positions de référence. "
+#~ "Avec la possibilité de créer des "
+#~ "bibliothèques, l'utilisateur peut disposer à"
+#~ " l'aide d'un unique fichier l'ensemble "
+#~ "de ses positions de référence de "
+#~ "manière structurée. Je souhaite que "
+#~ "blunderDB facilite le partage de "
+#~ "positions entre joueurs."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "J'avais l'habitude de stocker dans "
+#~ "différents dossiers des positions "
+#~ "intéressantes ou des blunders. Toutefois, "
+#~ "je rencontrais des difficultés à "
+#~ "retrouver des positions selon des "
+#~ "critères n'ayant pas été prévus "
+#~ "initialement par mon choix de catégories"
+#~ " de thématiques. Par exemple, si les"
+#~ " positions ont été triés selon le "
+#~ "type de jeu (course, holding game, "
+#~ "blitz, backgame, ...), comment récupérer "
+#~ "toutes les positions à un certain "
+#~ "score? ou à un niveau de cube "
+#~ "donné? Enfin, certaines vieilles positions "
+#~ "avaient tendance à tomber dans l'oubli."
+#~ " Je voulais un outil qui aggrège "
+#~ "toutes mes positions et qui ne "
+#~ "présuppose pas *a priori* de catégories"
+#~ " thématiques, et ensuite pouvoir poser "
+#~ "des questions la base de données. "
+#~ "Ce type de logiciel est tout à "
+#~ "fait courant aux échecs, comme "
+#~ "ChessBase."
+#~ msgstr ""
+
+#~ msgid "Oui, tout à fait. blunderDB est sous licence MIT."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "La base de données est modifiée "
+#~ "immédiatement la validation de la "
+#~ "requête. Aucune opération de sauvegarde "
+#~ "explicite est nécessaire."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Le fonctionnement modal de blunderDB "
+#~ "(NORMAL, EDIT, COMMAND) s'inspire du "
+#~ "très puissant éditeur de texte Vim. "
+#~ "Je souhaitais blunderDB léger et "
+#~ "autonome d'où mon choix du langage "
+#~ "C et de la bibliothèque GUI IUP."
+#~ " Pour la sérialisation de la base "
+#~ "de données, le format de fichiers "
+#~ "doit être multi-plateforme et adapté "
+#~ "pour contenir une base de données. "
+#~ "Le format de fichier sqlite semblait "
+#~ "tout indiqué."
+#~ msgstr ""
+
+#~ msgid "blunderDB fonctionne-t'il sous Linux?"
+#~ msgstr ""
+
+#~ msgid "Tout à fait. Il est exécutable avec Wine."
+#~ msgstr ""
 

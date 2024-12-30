@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-20 14:20+0200\n"
+"POT-Creation-Date: 2024-12-30 17:14+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -35,9 +35,9 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:12
 msgid ""
-"Pour créer une nouvelle base de données, cliquer sur \"File\", \"New "
-"Database\". Choisir un chemin où enregistrer la base de données, ainsi "
-"qu'un nom et cliquer sur \"Save\"."
+"Pour créer une nouvelle base de données, cliquer dans la barre d'outils "
+"sur le bouton \"New Database\". Choisir un chemin où enregistrer la base "
+"de données, ainsi qu'un nom et cliquer sur \"Save\"."
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:17
@@ -45,7 +45,7 @@ msgid "L'extension des bases de données blunderDB est *.db*."
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:20
-msgid "Raccourcis clavier: *CTRL-N*. Requête: *:n*"
+msgid "Raccourcis clavier: *CTRL-N*. Commande: ``n``"
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:24
@@ -54,13 +54,13 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:26
 msgid ""
-"Pour charger une base de données existante, cliquer sur \"File\", \"Open "
-"Database\". Choisir le chemin où se trouve la base de données, choisir le"
-" fichier *.db* et cliquer sur \"Open\"."
+"Pour charger une base de données existante, cliquer dans la barre "
+"d'outils sur le bouton \"Open Database\". Choisir le chemin où se trouve "
+"la base de données, choisir le fichier *.db* et cliquer sur \"Open\"."
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:31
-msgid "Raccourcis clavier: *CTRL-O*. Requête: *:o*"
+msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:36
@@ -96,14 +96,15 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:53
 msgid ""
-"pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
-"droit pour augmenter la valeur d'un dé."
+"pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des"
+" dés."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:56
+#: ../../source/guide_utilisateur.rst:55
 msgid ""
-"pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des"
-" dés à hauteur de sommet de point."
+"pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
+"droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela"
+" signifie que la position est une décision de cube."
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:59
@@ -114,167 +115,124 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:62
 msgid ""
-"Une fois la position éditée, appuyer sur *TAB* pour rebasculer en mode "
-"NORMAL."
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:64
-msgid ""
 "La saisie de la position avec la souris pour les pions se fait de la même"
 " manière que dans XG."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:67
-msgid ""
-"La position peut être intégralement saisie uniquement par le clavier "
-"(voir :ref:`raccourcis_position`). Avec un peu d'entrainement, la saisie "
-"de position peut ainsi être très rapide."
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:72
+#: ../../source/guide_utilisateur.rst:66
 msgid "Ajouter une position à la base de données"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:74
-msgid "Pour enregistrer la position obtenue précédemment,"
+#: ../../source/guide_utilisateur.rst:68
+msgid ""
+"Après l'édition de la position précédente, blunderDB est dans le mode "
+"EDIT."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:76 ../../source/guide_utilisateur.rst:90
-#: ../../source/guide_utilisateur.rst:104
-#: ../../source/guide_utilisateur.rst:118
-#: ../../source/guide_utilisateur.rst:185
-msgid "basculer en mode COMMAND en appuyant sur *ESPACE*,"
+#: ../../source/guide_utilisateur.rst:70
+msgid ""
+"Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou "
+"appuiyer dans la barre d'outils sur le bouton \"Save Position\"."
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:73
+msgid "Depuis le mode EDIT, basculer en mode COMMAND et exécuter: ``w``"
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:76
+msgid "Etiqueter une position"
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:78
-msgid "taper la requête *:w*,"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:80 ../../source/guide_utilisateur.rst:94
-#: ../../source/guide_utilisateur.rst:108
-#: ../../source/guide_utilisateur.rst:122
-msgid "valider la commande en appuyant sur *ENTREE*."
+msgid ""
+"Pour ajouter un tag *toto* à la position courante, basculer en mode "
+"COMMAND en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande "
+"en appuyant sur *ENTREE*."
 msgstr ""
 
 #: ../../source/guide_utilisateur.rst:82
+msgid "Supprimer une position"
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:84
 msgid ""
-"Un message s'affiche dans la barre d'état indiquant \"Position written to"
-" database.\""
+"Pour supprimer la position courante de la base de données, faire *Del* ou"
+" clicker dans la barre d'outils sur le bouton \"Delete Position\""
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:86
-msgid "Ajouter une position à une bibliothèque"
+#: ../../source/guide_utilisateur.rst:87
+msgid "En mode COMMAND, exécuter ``d``."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:88
-msgid "Pour ajouter une position à une bibliothèque *toto*,"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:92
-msgid "taper *:w toto*,"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:96
+#: ../../source/guide_utilisateur.rst:89
 msgid ""
-"Un message s'affiche dans la barre d'état indiquant \"The position has "
-"been added to toto.\""
+"La suppression de la position est définitive et ne nécessite aucune "
+"confirmation de la part de l'utilisateur."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:100
-msgid "Retirer une position d'une bibliothèque"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:102
-msgid "Pour retirer la position précédente de la bibliothèque *toto*,"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:106
-msgid "taper *:w -toto*,"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:110
-msgid ""
-"Un message s'affiche dans la barre d'état indiquant \"The position has "
-"been removed from toto.\""
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:114
-msgid "Supprimer la position de la base de données"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:116
-msgid "Pour supprimer définitivement la position de la base de données,"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:120
-msgid "taper *:D*,"
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:124
-msgid "Un message s'affiche dans la barre d'état indiquant \"Position deleted.\""
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:128
+#: ../../source/guide_utilisateur.rst:93
 msgid "Import une position depuis XG"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:130
+#: ../../source/guide_utilisateur.rst:95
 msgid "Pour importer une position directement depuis XG,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:132
+#: ../../source/guide_utilisateur.rst:97
 msgid "afficher dans XG la position à importer et appuyer *CTRL-C*,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:134
+#: ../../source/guide_utilisateur.rst:99
 msgid "afficher blunderDB et appuyer *CTRL-V*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:136
-msgid "Un message s'affiche dans la barre d'état indiquant \"Position imported.\""
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:140
+#: ../../source/guide_utilisateur.rst:102
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:142
+#: ../../source/guide_utilisateur.rst:104
 msgid ""
 "Si une position analysée par XG a été importée dans blunderDB, l'analyse "
 "de XG peut être affichée en appuyant *CTRL-L*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:145
+#: ../../source/guide_utilisateur.rst:107
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
 "informations fournies sont dans cet ordre, le coup de pion associé, "
 "l'équité normalisée, l'erreur en équité du coup, les chances de gain, "
-"gammon et backgammon du joueur 1, les chances de gain, gammon et "
-"backgammon du joueur 2, le niveau d'analyse."
+"gammon et backgammon du joueur, les chances de gain, gammon et backgammon"
+" de l'adversaire, le niveau d'analyse."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:152
+#: ../../source/guide_utilisateur.rst:114
+msgid ""
+"Si la position correspond à une décision de cube, le coût de chaque "
+"décision est affiché ainsi que les chances de gain de la position."
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:118
 msgid "Exporter une position vers XG"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:154
+#: ../../source/guide_utilisateur.rst:120
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:156
+#: ../../source/guide_utilisateur.rst:122
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:158
+#: ../../source/guide_utilisateur.rst:124
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:161
+#: ../../source/guide_utilisateur.rst:127
 msgid "Visualiser les différentes positions"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:163
+#: ../../source/guide_utilisateur.rst:129
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -282,31 +240,25 @@ msgid ""
 "dernière position."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:167
+#: ../../source/guide_utilisateur.rst:133
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:170
-msgid ""
-"Pour inverser l'orientation du board, appuyer sur *CTRL-HAUT* ou *CTRL-"
-"BAS*."
-msgstr ""
-
-#: ../../source/guide_utilisateur.rst:173
+#: ../../source/guide_utilisateur.rst:137
 msgid "Rechercher des positions selon des critères"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:175
+#: ../../source/guide_utilisateur.rst:139
 msgid "Pour rechercher des types de positions,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:177
+#: ../../source/guide_utilisateur.rst:141
 msgid "basculer en mode EDIT en appuyant sur *TAB*,"
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:179
+#: ../../source/guide_utilisateur.rst:143
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -315,21 +267,190 @@ msgid ""
 "le score."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:187
+#: ../../source/guide_utilisateur.rst:149
+msgid "Méthode 1 (simple):"
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:151
+msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:153
+msgid "Ajouter et paramétrer les filtres de recherche"
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:155
+msgid "Valider en cliquant sur \"Search\"."
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:157
+msgid "Méthode 2 (avancée):"
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:160
+msgid "basculer en mode COMMAND en appuyant sur *ESPACE*,"
+msgstr ""
+
+#: ../../source/guide_utilisateur.rst:162
 msgid ""
-"écrire *:s*, ajouter d'éventuels filtres supplémentaires (par exemple "
+"écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
 "score. Voir :ref:`cmd_filter_pos` pour une liste exhaustive des filtres "
 "disponibles)."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:192
+#: ../../source/guide_utilisateur.rst:167
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr ""
 
-#: ../../source/guide_utilisateur.rst:194
+#: ../../source/guide_utilisateur.rst:169
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
 msgstr ""
+
+#~ msgid ""
+#~ "Pour créer une nouvelle base de "
+#~ "données, cliquer sur \"File\", \"New "
+#~ "Database\". Choisir un chemin où "
+#~ "enregistrer la base de données, ainsi"
+#~ " qu'un nom et cliquer sur \"Save\"."
+#~ msgstr ""
+
+#~ msgid "Raccourcis clavier: *CTRL-N*. Requête: *:n*"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Pour charger une base de données "
+#~ "existante, cliquer sur \"File\", \"Open "
+#~ "Database\". Choisir le chemin où se "
+#~ "trouve la base de données, choisir "
+#~ "le fichier *.db* et cliquer sur "
+#~ "\"Open\"."
+#~ msgstr ""
+
+#~ msgid "Raccourcis clavier: *CTRL-O*. Requête: *:o*"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "pour éditer les dés, clic gauche "
+#~ "pour augmenter la valeur d'un dé, "
+#~ "clic droit pour augmenter la valeur "
+#~ "d'un dé."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "pour indiquer le joueur qui a le"
+#~ " trait, cliquer à l'emplacement prévu "
+#~ "des dés à hauteur de sommet de "
+#~ "point."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Une fois la position éditée, appuyer "
+#~ "sur *TAB* pour rebasculer en mode "
+#~ "NORMAL."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "La position peut être intégralement "
+#~ "saisie uniquement par le clavier (voir"
+#~ " :ref:`raccourcis_position`). Avec un peu "
+#~ "d'entrainement, la saisie de position "
+#~ "peut ainsi être très rapide."
+#~ msgstr ""
+
+#~ msgid "Pour enregistrer la position obtenue précédemment,"
+#~ msgstr ""
+
+#~ msgid "taper la requête *:w*,"
+#~ msgstr ""
+
+#~ msgid "valider la commande en appuyant sur *ENTREE*."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Un message s'affiche dans la barre "
+#~ "d'état indiquant \"Position written to "
+#~ "database.\""
+#~ msgstr ""
+
+#~ msgid "Ajouter une position à une bibliothèque"
+#~ msgstr ""
+
+#~ msgid "Pour ajouter une position à une bibliothèque *toto*,"
+#~ msgstr ""
+
+#~ msgid "taper *:w toto*,"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Un message s'affiche dans la barre "
+#~ "d'état indiquant \"The position has been"
+#~ " added to toto.\""
+#~ msgstr ""
+
+#~ msgid "Retirer une position d'une bibliothèque"
+#~ msgstr ""
+
+#~ msgid "Pour retirer la position précédente de la bibliothèque *toto*,"
+#~ msgstr ""
+
+#~ msgid "taper *:w -toto*,"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Un message s'affiche dans la barre "
+#~ "d'état indiquant \"The position has been"
+#~ " removed from toto.\""
+#~ msgstr ""
+
+#~ msgid "Supprimer la position de la base de données"
+#~ msgstr ""
+
+#~ msgid "Pour supprimer définitivement la position de la base de données,"
+#~ msgstr ""
+
+#~ msgid "taper *:D*,"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Un message s'affiche dans la barre "
+#~ "d'état indiquant \"Position deleted.\""
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Un message s'affiche dans la barre "
+#~ "d'état indiquant \"Position imported.\""
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Si la position correspond à une "
+#~ "décision de pions, les cinq meilleurs"
+#~ " coups sont affichés sur des lignes"
+#~ " distinctes. Pour chaque ligne, les "
+#~ "informations fournies sont dans cet "
+#~ "ordre, le coup de pion associé, "
+#~ "l'équité normalisée, l'erreur en équité "
+#~ "du coup, les chances de gain, "
+#~ "gammon et backgammon du joueur 1, "
+#~ "les chances de gain, gammon et "
+#~ "backgammon du joueur 2, le niveau "
+#~ "d'analyse."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Pour inverser l'orientation du board, "
+#~ "appuyer sur *CTRL-HAUT* ou *CTRL-"
+#~ "BAS*."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "écrire *:s*, ajouter d'éventuels filtres "
+#~ "supplémentaires (par exemple *cube* ou "
+#~ "*score* pour prendre respectivement en "
+#~ "compte le cube et le score. Voir"
+#~ " :ref:`cmd_filter_pos` pour une liste "
+#~ "exhaustive des filtres disponibles)."
+#~ msgstr ""
 
