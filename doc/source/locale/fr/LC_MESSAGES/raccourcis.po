@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 17:14+0100\n"
+"POT-Creation-Date: 2024-12-31 00:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -24,7 +24,7 @@ msgid "Raccourcis clavier"
 msgstr ""
 
 #: ../../source/raccourcis.rst:9
-msgid "Raccourcis généraux"
+msgid "Général"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -68,7 +68,7 @@ msgid "Afficher/cacher l'aide."
 msgstr ""
 
 #: ../../source/raccourcis.rst:24
-msgid "Raccourcis du mode NORMAL"
+msgid "Mode NORMAL"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -192,7 +192,7 @@ msgid "Afficher/cacher les commentaires."
 msgstr ""
 
 #: ../../source/raccourcis.rst:50
-msgid "Raccourcis du mode EDIT"
+msgid "Mode EDIT"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -232,7 +232,7 @@ msgid "Rechercher une position."
 msgstr ""
 
 #: ../../source/raccourcis.rst:67
-msgid "Raccourcis du mode COMMAND"
+msgid "Mode COMMAND"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -349,5 +349,17 @@ msgstr ""
 #~ "au score away du joueur en haut."
 #~ " Pour annuler une entrée, appuyer sur"
 #~ " \"ESC\"."
+#~ msgstr ""
+
+#~ msgid "Raccourcis généraux"
+#~ msgstr ""
+
+#~ msgid "Raccourcis du mode NORMAL"
+#~ msgstr ""
+
+#~ msgid "Raccourcis du mode EDIT"
+#~ msgstr ""
+
+#~ msgid "Raccourcis du mode COMMAND"
 #~ msgstr ""
 

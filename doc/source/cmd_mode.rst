@@ -10,13 +10,14 @@ Opérations globales
 
 .. csv-table::
    :header: "Commande", "Action"
-   :widths: 3, 40
-   :align: left
+   :widths: 10, 40
+   :align: center
 
    "new, ne, n", "Crée une nouvelle base de données."
    "open, op, o", "Ouvre une base de données existante."
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
+
 
 .. _cmd_normal:
 
@@ -25,8 +26,8 @@ Mode NORMAL
 
 .. csv-table::
    :header: "Commande", "Action"
-   :widths: 3, 20
-   :align: left
+   :widths: 10, 20
+   :align: center
 
    "import, i", "Importe une position par fichier texte (txt)."
    "delete, del, d", "Supprime la position courante."
@@ -35,6 +36,7 @@ Mode NORMAL
    "comment, co", "Afficher/écrire des commentaires."
    "#tag1 tag2 ...", "Etiqueter la position courante."
 
+
 .. _cmd_edit:
 
 Mode EDIT
@@ -42,13 +44,14 @@ Mode EDIT
 
 .. csv-table::
    :header: "Commande", "Action"
-   :widths: 3, 20
-   :align: left
+   :widths: 10, 20
+   :align: center
 
    "write, wr, w", "Enregistre la position courante."
    "write!, wr!, w!", "Mettre à jour la position courante."
    "s", "Chercher des positions avec des filtres."
    "e", "Charger toutes les positions de la base de données."
+
 
 .. _cmd_filter:
 
@@ -79,7 +82,7 @@ c'est-à-dire après le début de commande ``s``.
 
 .. csv-table::
    :header: "Requête", "Action"
-   :widths: 3, 20
+   :widths: 10, 20
    :align: center
 
    "cube, cub, cu, c", "La position vérifie la configuration du cube."

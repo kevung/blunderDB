@@ -8,15 +8,16 @@ msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-30 17:14+0100\n"
-"PO-Revision-Date: 2024-09-20 14:54+0200\n"
-"Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
+"PO-Revision-Date: 2024-12-31 00:30+0100\n"
+"Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
+"X-Generator: Lokalize 24.12.0\n"
 
 #: ../../source/manuel.rst:4
 msgid "Manuel"
@@ -67,15 +68,13 @@ msgstr "editing positions (EDIT mode),"
 msgid ""
 "l'édition d'une requête pour filtrer des positions (mode COMMAND ou "
 "fenêtre de recherche)."
-msgstr ""
-"editing a query to filter positions (COMMAND mode or search window)."
+msgstr "editing a query to filter positions (COMMAND mode or search window)."
 
 #: ../../source/manuel.rst:28
 msgid ""
 "L'utilisateur peut étiqueter librement les positions à l'aide de tags et "
 "les annoter via des commentaires."
-msgstr ""
-"The user can freely tag positions and annotate them with comments."
+msgstr "The user can freely tag positions and annotate them with comments."
 
 #: ../../source/manuel.rst:31
 msgid ""
@@ -188,8 +187,10 @@ msgid "le mode courant (NORMAL, EDIT, COMMAND),"
 msgstr "the current mode (NORMAL, EDIT, COMMAND),"
 
 #: ../../source/manuel.rst:79
-msgid "un message d'information lié à une opération réalisée par l'utilisateur,"
-msgstr "an informational message related to an operation performed by the user,"
+msgid ""
+"un message d'information lié à une opération réalisée par l'utilisateur,"
+msgstr ""
+"an informational message related to an operation performed by the user,"
 
 #: ../../source/manuel.rst:81
 msgid ""
@@ -214,7 +215,8 @@ msgid "Le mode NORMAL"
 msgstr "NORMAL mode"
 
 #: ../../source/manuel.rst:93
-msgid "Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:"
+msgid ""
+"Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:"
 msgstr "NORMAL mode is the default mode of blunderDB. It is used for:"
 
 #: ../../source/manuel.rst:95
@@ -233,8 +235,7 @@ msgstr "displaying, adding, and modifying comments on a position."
 msgid ""
 "Se référer à la :numref:`raccourcis_normal` pour les raccourcis du mode "
 "NORMAL."
-msgstr ""
-"Refer to the section :numref:`raccourcis_normal` for NORMAL mode shortcuts."
+msgstr "Refer to :numref:`raccourcis_normal` for NORMAL mode shortcuts."
 
 #: ../../source/manuel.rst:107
 msgid "Le mode EDIT"
@@ -259,8 +260,8 @@ msgid ""
 "Se référer à la :numref:`raccourcis_edit` pour les raccourcis du mode "
 "EDIT."
 msgstr ""
-"Refer to the section :ref:`raccourcis_modaux` for navigation shortcuts in"
-" EDIT mode."
+"Refer to :numref:`raccourcis_edit` for "
+"EDIT mode shortcuts."
 
 #: ../../source/manuel.rst:121
 msgid "Le mode COMMAND"
@@ -309,7 +310,7 @@ msgid ""
 "Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
 "en mode COMMAND."
 msgstr ""
-"Refer to the section :ref:`cmd_mode` for the list of available commands"
+"Refer to :numref:`cmd_mode` for the list of available commands"
 " in COMMAND mode."
 
 #~ msgid ""
@@ -385,4 +386,3 @@ msgstr ""
 #~ msgstr ""
 #~ "search for types of positions based "
 #~ "on various freely combinable criteria."
-
