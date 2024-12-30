@@ -655,7 +655,7 @@
                                 <td>Opponent checkers in zone between x and y</td>
                             </tr>
                             <tr>
-                                <td>s</td>
+                                <td>"some_tags_or_keyword"</td>
                                 <td>Search text</td>
                             </tr>
                         </tbody>
