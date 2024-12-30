@@ -87,7 +87,8 @@ c'est-à-dire après le début de commande ``s``.
 
    "cube, cub, cu, c", "La position vérifie la configuration du cube."
    "score, sco, sc, s", "La position vérifie le score."
-   "dice, dic, di, d", "La position vérifie les dés ou la décision de cube."
+   "d", "La position vérifie le type de décision (pion ou cube)."
+   "D", "La position vérifie le lancer de dés."
    "p>x", "Le joueur a au moins x pips de retard à la course."
    "p<x", "Le joueur a au plus x pips de retard à la course."
    "px,y", "Le joueur a entre x et y pips de retard à la course."
@@ -135,6 +136,8 @@ c'est-à-dire après le début de commande ``s``.
    "Zx,y", "L'adversaire a entre x et y pions dans la zone."
    "'tag_ou_motcle'", "Les commentaires de la position contient le tag/mot-clé."
 
+.. note:: Filtrer les positions en fonction du lancer de dés (`D`) implique *a
+   fortiori* de filtrer les positions en fonction du type de décision (`d`).
 
 Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les
 positions en prenant en compte la structure des pions, le score et le cube
