@@ -90,5 +90,5 @@ fille Perrine. Je tiens à remercier tout particulièrement quelques amis:
   patience face à mes piètres tentatives de mieux jouer.
 
 * *Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine
-  d'années dans de chouettes aventures, qui a choppé le virus du
-  backgammon, et avec lequel j'essaye de mieux jouer.
+  d'années dans de chouettes aventures, et un fantastique partenaire de jeu
+  depuis qu'il a choppé le virus du backgammon.

@@ -5,8 +5,8 @@ Raccourcis clavier
 
 .. _raccourcis_generaux:
 
-Raccourcis généraux
--------------------
+Général
+-------
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -20,8 +20,8 @@ Raccourcis généraux
 
 .. _raccourcis_normal:
 
-Raccourcis du mode NORMAL
--------------------------
+Mode NORMAL
+-----------
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -46,8 +46,8 @@ Raccourcis du mode NORMAL
 
 .. _raccourcis_edit:
 
-Raccourcis du mode EDIT
------------------------
+Mode EDIT
+---------
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -63,8 +63,8 @@ Raccourcis du mode EDIT
 
 .. _raccourcis_command:
 
-Raccourcis du mode COMMAND
---------------------------
+Mode COMMAND
+------------
 
 .. csv-table::
    :header: "Raccourci", "Action"

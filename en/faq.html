@@ -88,7 +88,7 @@
 <span id="faq"></span><h1><span class="section-number">6. </span>Frequently Asked Questions (FAQ)<a class="headerlink" href="#foire-aux-questions" title="Link to this heading"></a></h1>
 <section id="quel-est-l-utilite-de-blunderdb">
 <h2><span class="section-number">6.1. </span>What is the purpose of blunderDB?<a class="headerlink" href="#quel-est-l-utilite-de-blunderdb" title="Link to this heading"></a></h2>
-<p>blunderDB allows users to create a personalized database of positions. Its strength lies in not presupposing any classification <em>a priori</em>. This gives users the freedom to query positions with great flexibility by combining various criteria (race, structure, cube, score, backward pawns, checkers in the zone, chances of winning/gammon/backgammon, etc.).</p>
+<p>blunderDB allows users to create a personalized database of positions. Its strength lies in not presupposing any classification <em>a priori</em>. This gives users the freedom to query positions with great flexibility by combining various criteria (race, structure, cube, score, backcheckers, checkers in the zone, chances of winning/gammon/backgammon, etc.).</p>
 <p>Another convenient use of blunderDB is the creation of reference position catalogs. With the ability to tag positions, users can organize all their reference positions in a structured way using a single file. I hope that blunderDB facilitates the sharing of positions between players.</p>
 </section>
 <section id="qu-est-ce-qui-a-motive-la-creation-de-blunderdb">
@@ -97,8 +97,7 @@
 </section>
 <section id="comment-sauvegarder-la-base-de-donnees-courante">
 <h2><span class="section-number">6.3. </span>How to save the state of the current database?<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Link to this heading"></a></h2>
-<p>La base de données est modifiée immédiatement après exécution des requêtes.
-Aucune opération de sauvegarde explicite est nécessaire.</p>
+<p>The database is updated immediately upon validation of the request. No explicit saving operation is necessary.</p>
 </section>
 <section id="puis-je-modifier-copier-partager-blunderdb">
 <h2><span class="section-number">6.4. </span>Can I modify, copy, share blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Link to this heading"></a></h2>
@@ -106,18 +105,11 @@ Aucune opération de sauvegarde explicite est nécessaire.</p>
 </section>
 <section id="quel-format-de-donnees-utilise-blunderdb">
 <h2><span class="section-number">6.5. </span>What data format does blunderDB use?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Link to this heading"></a></h2>
-<p>La base de données est un simple fichier Sqlite. En l’absence de
-blunderDB, elle peut ainsi s’ouvrir avec tout éditeur de fichier sqlite.</p>
+<p>The database is a simple SQLite file. In the absence of blunderDB, it can thus be opened with any SQLite file editor.</p>
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
 <h2><span class="section-number">6.6. </span>What were the design principles of blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
-<p>Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s’inspire du très
-puissant éditeur de texte <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>. Je souhaitais blunderDB
-léger, autonome, sans installation et disponible pour différentes plateformes,
-d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
-sérialisation de la base de données, le format de fichiers doit être
-multi-plateforme et adapté pour contenir une base de données. Le format de
-fichier sqlite semblait tout indiqué.</p>
+<p>The modal operation of blunderDB (NORMAL, EDIT, COMMAND) is inspired by the very powerful text editor <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>. I wanted blunderDB to be lightweight, standalone, installation-free, and available on multiple platforms, which led to my choice of the Go programming language and the Svelte library. For database serialization, the file format needed to be cross-platform and suitable for containing a database. The SQLite file format seemed like the perfect choice.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
 <h2><span class="section-number">6.7. </span>What is the purpose of blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
@@ -131,7 +123,7 @@ fichier sqlite semblait tout indiqué.</p>
 </section>
 <section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
 <h2><span class="section-number">6.8. </span>On which platforms does blunderDB run?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
-<p>blunderDB fonctionne sur Windows et Linux.</p>
+<p>blunderDB runs on Windows and Linux.</p>
 </section>
 </section>
 
