@@ -6,10 +6,12 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
+import requests
+
 project = 'blunderDB'
 copyright = '2024, Kevin UNGER <blunderdb@proton.me>'
 author = 'Kevin UNGER <blunderdb@proton.me>'
-release = '0.1.0'
+release = '0.0.6'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -37,3 +39,18 @@ html_show_sourcelink = False
 html_context = {
         'languages': [["en", "../en"], ["fr", "../fr"]]
         }
+
+# Construct the latest Windows executable URL
+if release:
+    latest_windows_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-{release}.exe"
+    latest_linux_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-{release}"
+else:
+    latest_windows_exe_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
+    latest_linux_exe_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
+
+# Add it as a Sphinx variable
+rst_prolog = f"""
+.. |latest_windows_exe| replace:: `{latest_windows_exe_url} <{latest_windows_exe_url}>`__
+.. |latest_linux_exe| replace:: `{latest_linux_exe_url} <{latest_linux_exe_url}>`__
+"""
+

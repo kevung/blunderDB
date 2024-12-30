@@ -1,7 +1,7 @@
 .. _cmd_mode:
 
-Liste des requêtes
-==================
+Liste des commandes
+===================
 
 .. _cmd_global:
 
@@ -9,61 +9,61 @@ Opérations globales
 -------------------
 
 .. csv-table::
-   :header: "Requête", "Action"
-   :widths: 5, 20
+   :header: "Commande", "Action"
+   :widths: 3, 40
    :align: left
 
-   ":n", "Crée une nouvelle base de données."
-   ":o", "Ouvre une base de données existante."
-   ":q", "Ferme blunderDB."
+   "new, ne, n", "Crée une nouvelle base de données."
+   "open, op, o", "Ouvre une base de données existante."
+   "quit, q", "Ferme blunderDB."
+   "help, he, h", "Ouvre l'aide de blunderDB."
 
-.. _cmd_position:
+.. _cmd_normal:
 
-Interagir avec une position
----------------------------
+Mode NORMAL
+-----------
 
 .. csv-table::
-   :header: "Requête", "Action"
-   :widths: 5, 20
+   :header: "Commande", "Action"
+   :widths: 3, 20
    :align: left
 
-   ":i", "Importe une position par fichier texte (txt)."
-   ":w", "Enregistre la position courante dans la bibliothèque courante."
-   ":w!", "Après édition d'une position existante, modifie cette dernière dans la base de données."
-   ":w *toto* *titi* ...", "Enregistre la position courante dans les bibliothèques *toto*, *titi*, ..."
-   ":w -*toto*", "Retirer la position courante de la bibliothèque *toto*."
-   ":LS", "Liste les bibliothèques auxquelles la position courante appartient."
-   ":D", "Supprime la position courante."
+   "import, i", "Importe une position par fichier texte (txt)."
+   "delete, del, d", "Supprime la position courante."
+   "[number]", "Aller à la position d'indice indiqué."
+   "list, l", "Afficher l'analyse de la position courante."
+   "comment, co", "Afficher/écrire des commentaires."
+   "#tag1 tag2 ...", "Etiqueter la position courante."
 
-.. _cmd_library:
+.. _cmd_edit:
 
-Gérer les bibliothèques
------------------------
+Mode EDIT
+---------
 
 .. csv-table::
-   :header: "Requête", "Action"
-   :widths: 5, 20
-   :align: center
+   :header: "Commande", "Action"
+   :widths: 3, 20
+   :align: left
 
-   ":e *toto*", "Ouvre la bibliothèque *toto*."
-   ":mv *titi*", "Renomme la bibliothèque courante en *titi*."
-   ":mv *toto* *titi*", "Renomme la bibliothèque *toto* en *titi*."
-   ":cp *titi*", "Copie la bibliothèque courante dans la bibliothèque *titi*."
-   ":cp *toto* *titi*", "Copie la bibliothèque *toto* dans *titi*."
-   ":d", "Supprime la bibliothèque courante."
-   ":d *toto*", "Supprime la bibliothèque *toto*."
-   ":ls", "Liste les bibliothèques."
+   "write, wr, w", "Enregistre la position courante."
+   "write!, wr!, w!", "Mettre à jour la position courante."
+   "s", "Chercher des positions avec des filtres."
+   "e", "Charger toutes les positions de la base de données."
+
+.. _cmd_filter:
+
+Filtres de recherche
+--------------------
+
+Les filtres ci-dessous doivent être juxtaposés lors d'une recherche,
+c'est-à-dire après le début de commande ``s``.
 
 .. _cmd_filter_pos:
 
-Rechercher des positions
-------------------------
-
-.. warning::
-   Dans la recherche de positions, par défaut, blunderDB prend en compte
-   la structure de pions courante, ignore la position du videau et du
-   score. Pour prendre en compte la position du videau ou du score, il
-   faut le mentionner explicitement dans la requête.
+.. warning:: Dans la recherche de positions, par défaut, blunderDB prend en
+   compte la structure de pions courante, ignore la position du videau, du
+   score et des dés. Pour prendre en compte la position du videau, du score,
+   des dés, il faut le mentionner explicitement dans la recherche.
 
 .. note::
    blunderDB considère qu'un pion arriéré (backchecker) est un pion
@@ -79,39 +79,62 @@ Rechercher des positions
 
 .. csv-table::
    :header: "Requête", "Action"
-   :widths: 5, 20
+   :widths: 3, 20
    :align: center
 
-   ":s cube", "Filtre les positions vérifiant la configuration courante du cube."
-   ":s score", "Filtre les positions vérifiant le score courant."
-   ":s o7", "Filtre les positions ayant au moins 7 pions sortis."
-   ":s p-20,30", "Filtre les positions où le joueur 1 a entre 20 pips d'avance et 30 pips de retard de course."
-   ":s p<-10", "Filtre les positions où le joueur 1 a au moins 10 pips d'avance."
-   ":s p>110", "Filtre les positions où le joueur 1 a au moins 110 pips de retard."
-   ":s P5,40", "Filtre les positions ayant une différence de course entre 5 et 40 pips."
-   ":s k5", "Filtre les positions où le joueur 1 a 5 pions arriérés."
-   ":s K2", "Filtre les positions où le joueur 2 a 2 pions arriérés."
-   ":s z8", "Filtre les positions où le joueur 1 a 8 pions dans la zone."
-   ":s Z6", "Filtre les positions où le joueur 2 a 6 pions dans la zone."
-   ":s e800,1200", "Filtre les positions où le joueur 1 a une équité entre 800 et 1200."
-   ":s e<200", "Filtre les positions où le joueur 1 a une équité inférieure à 200."
-   ":s e>400", "Filtre les positions où le joueur 1 a une équité supérieure à 400."
-   ":s w40,60", "Filtre les positions où le joueur 1 a des chances de gains entre 40% et 60%."
-   ":s w<25", "Filtre les positions où le joueur 1 a des chances de gain inférieures à 25."
-   ":s w>68", "Filtre les positions où le joueur 1 a des chances de gain supérieures à 68%."
-   ":s g14,22", "Filtre les positions où le joueur 1 a des chances de gammon entre 14% et 22%."
-   ":s g<27", "Filtre les positions où le joueur 1 a des chances de gammon inférieures à 27%."
-   ":s g>45", "Filtre les positions où le joueur 1 a des chances de gammon supérieures à 45%."
-   ":s bg4,8", "Filtre les positions où le joueur 1 a des chances de backgammon entre 4% et 8%."
-   ":s bg<10", "Filtre les positions où le joueur 1 a des chances de backgammon inférieures à 10%."
-   ":s bg>5", "Filtre les positions où le joueur 1 a des chances de backgammon supérieures à 5%."
-   ":s W40,60", "Filtre les positions où le joueur 2 a des chances de gains entre 40% et 60%."
-   ":s W<25", "Filtre les positions où le joueur 2 a des chances de gain inférieures à 25."
-   ":s W>68", "Filtre les positions où le joueur 2 a des chances de gain supérieures à 68%."
-   ":s G14,22", "Filtre les positions où le joueur 2 a des chances de gammon entre 14% et 22%."
-   ":s G<27", "Filtre les positions où le joueur 2 a des chances de gammon inférieures à 27%."
-   ":s G>45", "Filtre les positions où le joueur 2 a des chances de gammon supérieures à 45%."
-   ":s BG4,8", "Filtre les positions où le joueur 2 a des chances de backgammon entre 4% et 8%."
-   ":s BG<10", "Filtre les positions où le joueur 2 a des chances de backgammon inférieures à 10%."
-   ":s BG>5", "Filtre les positions où le joueur 2 a des chances de backgammon supérieures à 5%."
+   "cube, cub, cu, c", "La position vérifie la configuration du cube."
+   "score, sco, sc, s", "La position vérifie le score."
+   "dice, dic, di, d", "La position vérifie les dés ou la décision de cube."
+   "p>x", "Le joueur a au moins x pips de retard à la course."
+   "p<x", "Le joueur a au plus x pips de retard à la course."
+   "px,y", "Le joueur a entre x et y pips de retard à la course."
+   "P>x", "Le joueur a une course au moins de x pips."
+   "P<x", "Le joueur a une course au plus de x pips."
+   "Px,y", "Le joueur a une course entre x et y pips."
+   "e>x", "L'équité (en millipoints) de la position est supérieure à x."
+   "e<x", "L'équité (en millipoints) de la position est inférieure à x."
+   "ex,y", "L'équité (en millipoints) de la position est comprise entre x et y."
+   "w>x", "Le joueur a des chances de gain supérieures à x %."
+   "w<x", "Le joueur a des chances de gain inférieures à x %."
+   "wx,y", "Le joueur a des chances de gain comprises à x % et y %."
+   "g>x", "Le joueur a des chances de gammon supérieures à x %."
+   "g<x", "Le joueur a des chances de gammon inférieures à x %."
+   "gx,y", "Le joueur a des chances de gammon comprises à x % et y %."
+   "b>x", "Le joueur a des chances de backgammon supérieures à x %."
+   "b<x", "Le joueur a des chances de backgammon inférieures à x %."
+   "bx,y", "Le joueur a des chances de backgammon comprises à x % et y %."
+   "W>x", "L'adversaire a des chances de gain supérieures à x %."
+   "W<x", "L'adversaire a des chances de gain inférieures à x %."
+   "Wx,y", "L'adversaire a des chances de gain comprises à x % et y %."
+   "G>x", "L'adversaire a des chances de gammon supérieures à x %."
+   "G<x", "L'adversaire a des chances de gammon inférieures à x %."
+   "Gx,y", "L'adversaire a des chances de gammon comprises à x % et y %."
+   "B>x", "L'adversaire a des chances de backgammon supérieures à x %."
+   "B<x", "L'adversaire a des chances de backgammon inférieures à x %."
+   "Bx,y", "L'adversaire a des chances de backgammon comprises à x % et y %."
+   "o>x", "Le joueur a au moins x pions sortis."
+   "o<x", "Le joueur a au plus x pions sortis."
+   "ox,y", "Le joueur a entre x et y pions sortis."
+   "O>x", "L'adversaire a au moins x pions sortis."
+   "O<x", "L'adversaire a au plus x pions sortis."
+   "Ox,y", "L'adversaire a entre x et y pions sortis."
+   "k>x", "Le joueur a au moins x pions arriérés."
+   "k<x", "Le joueur a au plus x pions arriérés."
+   "kx,y", "Le joueur a entre x et y pions arriérés."
+   "K>x", "L'adversaire a au moins x pions arriérés."
+   "K<x", "L'adversaire a au plus x pions arriérés."
+   "Kx,y", "L'adversaire a entre x et y pions arriérés."
+   "z>x", "Le joueur a au moins x pions dans la zone."
+   "z<x", "Le joueur a au plus x pions dans la zone."
+   "zx,y", "Le joueur a entre x et y pions dans la zone."
+   "Z>x", "L'adversaire a au moins x pions dans la zone."
+   "Z<x", "L'adversaire a au plus x pions dans la zone."
+   "Zx,y", "L'adversaire a entre x et y pions dans la zone."
+   "'tag_ou_motcle'", "Les commentaires de la position contient le tag/mot-clé."
 
+
+Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les
+positions en prenant en compte la structure des pions, le score et le cube
+de la position éditée où le joueur a entre 20 et 5 pips d'avance à la
+course, avec au moins 60% de chances de gain, au moins 10 pions dans la
+zone, et l'adversaire a entre 2 et 3 pions arriérés.

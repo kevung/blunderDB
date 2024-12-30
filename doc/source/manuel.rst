@@ -17,19 +17,19 @@ Les principales interactions possibles avec blunderDB sont:
 
 * rechercher une ou plusieurs positions.
 
-Pour ce faire, l'utilisateur bascule dans des modes dédiés pour la
-visualisation (mode NORMAL), l'édition de positions (mode EDIT),
-l'édition d'une requête pour filtrer des positions (mode COMMAND).
+Pour ce faire, l'utilisateur bascule dans des modes dédiés pour:
 
-L'utilisateur peut ranger librement les positions en créant des
-*bibliothèques*. Une position peut être ajoutée à plusieurs
-bibliothèques en même temps.
+* la navigation et la visualisation de positions (mode NORMAL),
+
+* l'édition de positions (mode EDIT),
+
+* l'édition d'une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche).
+
+L'utilisateur peut étiqueter librement les positions à l'aide de tags et les
+annoter via des commentaires.
 
 Dans la suite du manuel, il est décrit l'interface graphique ainsi que
 les principaux modes de blunderDB.
-
-.. note:: Le mécanisme de bibliothèques est analogue à un mécanisme de
-   *tags* qui permettrait d'étiqueter les positions.
 
 Description de l'IHM
 --------------------
@@ -44,6 +44,18 @@ L'IHM de blunderDB est constituée de haut en bas par:
 
 * [en bas] la barre d'état, qui présente différentes informations sur la
   base de données ou la position courante.
+
+Des panneaux peuvent être affichés pour:
+
+* afficher les données d'analyse associées à la position courante issues d'eXtreme Gammon (XG),
+
+* afficher, ajouter ou modifier des commentaires
+
+Des fenêtres modales peuvent s'afficher pour:
+
+* [mode EDIT uniquement] paramétrer les filtres de recherche,
+
+* afficher l'aide de blunderDB.
 
 La zone d'affichage principale met à disposition à l'utilisateur:
 
@@ -64,15 +76,14 @@ suivantes:
 
 * le mode courant (NORMAL, EDIT, COMMAND),
 
-* le nom de la bibliothèque courante. Toutes les positions sont ajoutées
-  à la bibliothèque principale intitulée *main*,
+* un message d'information lié à une opération réalisée par l'utilisateur,
 
 * l'index de la position courante, suivi du nombre de positions dans la
-  bibliothèque courante. Dans le cas de positions issues d'une recherche
-  par l'utilisateur, le nombre de positions correspond au nombre de
-  positions filtrées,
+  bibliothèque courante.
 
-* un message d'information.
+.. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
+   nombre de positions indiqué dans la barre d'état correspond au nombre de
+   positions filtrées.
 
 .. _mode_normal:
 
@@ -83,10 +94,12 @@ Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:
 
 * faire défiler les différentes positions de la bibliothèque courante,
 
-* afficher les informations d'analyse associées à une position.
+* afficher les informations d'analyse associées à une position,
 
-.. tip:: Se référer à la section :ref:`raccourcis_modaux` pour les
-   raccourcis de navigation du mode NORMAL.
+* afficher, ajouter et modifier les commentaires d'une position.
+
+.. tip:: Se référer à la :numref:`raccourcis_normal` pour les raccourcis
+   du mode NORMAL.
 
 .. _mode_edit:
 
@@ -97,28 +110,23 @@ Le mode EDIT permet d'éditer une position en vue de l'ajouter à
 la base de données, ou de définir le type de position à rechercher.
 Le mode EDIT est activé en appuyant sur la touche *TAB*.
 La distribution des pions, du videau, du score, et du trait peuvent être
-modifiés à l'aide de la souris (voir :ref:`guide_edit_position`) ou du clavier (voir
-:ref:`raccourcis_position`).
+modifiés à l'aide de la souris (voir :ref:`guide_edit_position`).
 
-.. tip:: Se référer à la section :ref:`raccourcis_modaux` pour les
-   raccourcis de navigation du mode EDIT.
+.. tip:: Se référer à la :numref:`raccourcis_edit` pour les raccourcis du mode
+   EDIT.
+
+.. _mode_command:
 
 Le mode COMMAND
 ---------------
 
-Le mode COMMAND permet à l'utilisateur d'émettre une requête à la base
-de données afin de:
-
-* ajouter une nouvelle position ou mettre à jour une position existante,
-
-* ajouter une position dans une bibliothèque,
-
-* renommer, copier, supprimer une bibliothèque,
-
-* lister les bibliothèques existantes,
-
-* rechercher des types de positions selon divers critères librement
-  combinables.
+Le mode COMMAND permet de réaliser l'ensemble des fonctionalités de blunderDB
+disponibles à l'interface graphique: opérations générales sur la base de
+données, navigation de position, affichage de l'analyse et/ou des commentaires,
+recherche de positions selon des filtres... Après une première prise en main de
+l'interface, il est recommandé de progressivement utiliser ce mode qui permet
+une utilisation puissante et fluide de blunderDB, notamment pour les
+fonctionnalités de recherche de positions.
 
 Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur
 la touche *ESPACE*. Pour envoyer une requête et quitter le mode COMMAND,
@@ -129,6 +137,6 @@ qu'elles soient valides et modifie immédiatement l'état de la base de données
 le cas échéant. Il n'y a pas d'actions de sauvegarde explicite de la part
 de l'utilisateur.
 
-.. tip:: Se référer à la section :ref:`raccourcis_modaux` pour les
-   raccourcis de navigation du mode COMMAND.
+.. tip:: Se référer à la :numref:`cmd_mode` pour la liste de commandes
+   disponible en mode COMMAND.
 
