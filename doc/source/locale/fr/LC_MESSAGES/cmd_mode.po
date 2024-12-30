@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 17:14+0100\n"
+"POT-Creation-Date: 2024-12-31 00:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -67,7 +67,7 @@ msgstr ""
 msgid "Ouvre l'aide de blunderDB."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:24
+#: ../../source/cmd_mode.rst:25
 msgid "Mode NORMAL"
 msgstr ""
 
@@ -119,7 +119,7 @@ msgstr ""
 msgid "Etiqueter la position courante."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:41
+#: ../../source/cmd_mode.rst:43
 msgid "Mode EDIT"
 msgstr ""
 
@@ -155,17 +155,17 @@ msgstr ""
 msgid "Charger toutes les positions de la base de données."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:56
+#: ../../source/cmd_mode.rst:59
 msgid "Filtres de recherche"
 msgstr ""
 
-#: ../../source/cmd_mode.rst:58
+#: ../../source/cmd_mode.rst:61
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:63
+#: ../../source/cmd_mode.rst:66
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -173,19 +173,19 @@ msgid ""
 " il faut le mentionner explicitement dans la recherche."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:69
+#: ../../source/cmd_mode.rst:72
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 14."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:73
+#: ../../source/cmd_mode.rst:76
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:80
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -212,11 +212,19 @@ msgid "La position vérifie le score."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "dice, dic, di, d"
+msgid "d"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie les dés ou la décision de cube."
+msgid "La position vérifie le type de décision (pion ou cube)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "D"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position vérifie le lancer de dés."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -593,7 +601,13 @@ msgstr ""
 msgid "Les commentaires de la position contient le tag/mot-clé."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:136
+#: ../../source/cmd_mode.rst:139
+msgid ""
+"Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
+"fortiori* de filtrer les positions en fonction du type de décision (`d`)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:142
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -983,5 +997,11 @@ msgstr ""
 #~ "Filtre les positions où le joueur "
 #~ "2 a des chances de backgammon "
 #~ "supérieures à 5%."
+#~ msgstr ""
+
+#~ msgid "dice, dic, di, d"
+#~ msgstr ""
+
+#~ msgid "La position vérifie les dés ou la décision de cube."
 #~ msgstr ""
 

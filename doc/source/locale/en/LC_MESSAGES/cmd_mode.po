@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 17:14+0100\n"
-"PO-Revision-Date: 2024-12-30 18:19+0100\n"
+"POT-Creation-Date: 2024-12-31 00:48+0100\n"
+"PO-Revision-Date: 2024-12-31 00:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -67,7 +67,7 @@ msgstr "help, he, h"
 msgid "Ouvre l'aide de blunderDB."
 msgstr "Open blunderDB help."
 
-#: ../../source/cmd_mode.rst:24
+#: ../../source/cmd_mode.rst:25
 msgid "Mode NORMAL"
 msgstr "NORMAL Mode"
 
@@ -119,7 +119,7 @@ msgstr "#tag1 tag2 ..."
 msgid "Etiqueter la position courante."
 msgstr "Tag the current position."
 
-#: ../../source/cmd_mode.rst:41
+#: ../../source/cmd_mode.rst:43
 msgid "Mode EDIT"
 msgstr "EDIT Mode"
 
@@ -155,19 +155,19 @@ msgstr "e"
 msgid "Charger toutes les positions de la base de données."
 msgstr "Load all positions from the database."
 
-#: ../../source/cmd_mode.rst:56
+#: ../../source/cmd_mode.rst:59
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:58
+#: ../../source/cmd_mode.rst:61
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
 msgstr ""
-"The filters below must be juxtaposed during a search, i.e., after the start of"
-" the ``s`` command."
+"The filters below must be juxtaposed during a search, i.e., after the "
+"start of the ``s`` command."
 
-#: ../../source/cmd_mode.rst:63
+#: ../../source/cmd_mode.rst:66
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -175,28 +175,27 @@ msgid ""
 " il faut le mentionner explicitement dans la recherche."
 msgstr ""
 "In the position search, by default, blunderDB takes into account the "
-"current checker structure, ignoring the position of the cube, the score, and"
-" the dice. To consider the position of the cube, the score, and the dice,"
-" it must be explicitly mentioned in the search."
+"current checker structure, ignoring the position of the cube, the score, "
+"and the dice. To consider the position of the cube, the score, and the "
+"dice, it must be explicitly mentioned in the search."
 
-#: ../../source/cmd_mode.rst:69
+#: ../../source/cmd_mode.rst:72
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 14."
 msgstr ""
-"blunderDB considers that a backward checker (backchecker) is a checker located"
-" "
-"between point 24 and point 14."
+"blunderDB considers that a backward checker (backchecker) is a checker "
+"located between point 24 and point 14."
 
-#: ../../source/cmd_mode.rst:73
+#: ../../source/cmd_mode.rst:76
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
-"blunderDB considers that the number of checkers in the zone is the number of"
-" checkers located between point 12 and point 1."
+"blunderDB considers that the number of checkers in the zone is the number"
+" of checkers located between point 12 and point 1."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:80
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -223,12 +222,20 @@ msgid "La position vérifie le score."
 msgstr "The position checks the score."
 
 #: ../../source/cmd_mode.rst:1
-msgid "dice, dic, di, d"
-msgstr "dice, dic, di, d"
+msgid "d"
+msgstr "d"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie les dés ou la décision de cube."
+msgid "La position vérifie le type de décision (pion ou cube)."
 msgstr "The position checks the dice or the cube decision."
+
+#: ../../source/cmd_mode.rst:1
+msgid "D"
+msgstr "D"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position vérifie le lancer de dés."
+msgstr "The position checks the dice roll."
 
 #: ../../source/cmd_mode.rst:1
 msgid "p>x"
@@ -604,7 +611,15 @@ msgstr "'tag_or_keyword'"
 msgid "Les commentaires de la position contient le tag/mot-clé."
 msgstr "The comments of the position contain the tag/keyword."
 
-#: ../../source/cmd_mode.rst:136
+#: ../../source/cmd_mode.rst:139
+msgid ""
+"Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
+"fortiori* de filtrer les positions en fonction du type de décision (`d`)."
+msgstr ""
+"Filtering positions based on the dice roll (`D`) necessarily implies filtering"
+" positions based on the type of decision (`d`)."
+
+#: ../../source/cmd_mode.rst:142
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -613,11 +628,11 @@ msgid ""
 "la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
-"For example, the command ``s s c p-20,-5 w>60 z>10 K2,3`` filters all position"
-"s taking into account the checker structure, the score, and the cube of the ed"
-"ited position where the player has between 20 and 5 pips ahead in the race, wi"
-"th at least 60% winning chances, at least 10 checkers in the zone, and the opp"
-"onent has between 2 and 3 backcheckers."
+"For example, the command ``s s c p-20,-5 w>60 z>10 K2,3`` filters all "
+"positions taking into account the checker structure, the score, and the "
+"cube of the edited position where the player has between 20 and 5 pips "
+"ahead in the race, with at least 60% winning chances, at least 10 "
+"checkers in the zone, and the opponent has between 2 and 3 backcheckers."
 
 #~ msgid ":n"
 #~ msgstr ":n"
@@ -951,3 +966,6 @@ msgstr ""
 
 #~ msgid ":s BG>5"
 #~ msgstr ":s BG>5"
+
+#~ msgid "dice, dic, di, d"
+#~ msgstr "dice, dic, di, d"
