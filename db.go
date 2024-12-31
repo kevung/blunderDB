@@ -376,7 +376,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string) ([]Position, error) {
+func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -405,6 +405,7 @@ func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, inc
 		if position.MatchesCheckerPosition(filter) &&
 			(!includeCube || position.MatchesCubePosition(filter)) &&
 			(!includeScore || position.MatchesScorePosition(filter)) &&
+			(!decisionTypeFilter || position.MatchesDecisionType(filter)) &&
 			(pipCountFilter == "" || position.MatchesPipCountFilter(pipCountFilter)) &&
 			(winRateFilter == "" || position.MatchesWinRate(winRateFilter, d)) &&
 			(gammonRateFilter == "" || position.MatchesGammonRate(gammonRateFilter, d)) &&
@@ -427,6 +428,11 @@ func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, inc
 
 	fmt.Println("Loaded positions by filters:", positions)
 	return positions, nil
+}
+
+// Add MatchesDecisionType method to Position type
+func (p *Position) MatchesDecisionType(filter Position) bool {
+	return p.DecisionType == filter.DecisionType && p.PlayerOnRoll == filter.PlayerOnRoll
 }
 
 func (p *Position) MatchesSearchText(searchText string, d *Database) bool {

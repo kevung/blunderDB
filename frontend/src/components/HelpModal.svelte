@@ -468,11 +468,15 @@
                         <tbody>
                             <tr>
                                 <td>cube, cub, cu, c</td>
-                                <td>Include cube in search</td>
+                                <td>Include cube</td>
                             </tr>
                             <tr>
                                 <td>score, sco, sc, s</td>
-                                <td>Include score in search</td>
+                                <td>Include score</td>
+                            </tr>
+                            <tr>
+                                <td>d</td>
+                                <td>Include decision type</td>
                             </tr>
                             <tr>
                                 <td>p>x</td>
