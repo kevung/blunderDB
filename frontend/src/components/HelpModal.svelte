@@ -479,6 +479,10 @@
                                 <td>Include decision type</td>
                             </tr>
                             <tr>
+                                <td>D</td>
+                                <td>Include dice roll</td>
+                            </tr>
+                            <tr>
                                 <td>p>x</td>
                                 <td>Pip count &gt; x</td>
                             </tr>

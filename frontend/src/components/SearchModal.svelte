@@ -29,7 +29,7 @@
     let player1AbsolutePipCountFilter = '';
     let equityFilter = '';
     let decisionTypeFilter = false; // Rename this line
-    
+    let diceRollFilter = false; // Add this line
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -121,6 +121,7 @@
         'Include Cube',
         'Include Score',
         'Decision Type', // Rename this line
+        'Include Dice Roll', // Add this line
         'Pipcount Difference',
         'Player Absolute Pipcount',
         'Equity (millipoints)',
@@ -215,9 +216,10 @@
         const searchTextFilter = searchText.split(';').map(text => text.trim()).join(' ');
 
         const decisionTypeFilter = filters.includes('Decision Type'); // Rename this line
+        const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
 
         statusBarModeStore.set('NORMAL');
-        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextFilter, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter); // Rename this line
+        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextFilter, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter); // Rename this line
         onClose();
     }
 
@@ -339,7 +341,7 @@
                         <label class="filter-label">{filter}</label>
                     </div>
                     <div class="filter-options-wrapper">
-                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Decision Type'}
+                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Decision Type' || filter === 'Include Dice Roll'}
                             <!-- No input needed for these filters -->
                         {/if}
                         {#if filter === 'Pipcount Difference'}

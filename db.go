@@ -376,7 +376,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool) ([]Position, error) {
+func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool, diceRollFilter bool) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -421,7 +421,8 @@ func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, inc
 			(player2CheckerInZoneFilter == "" || position.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
 			(searchText == "" || position.MatchesSearchText(searchText, d)) &&
 			(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
-			(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) {
+			(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) &&
+			(!diceRollFilter || position.MatchesDiceRoll(filter)) {
 			positions = append(positions, position)
 		}
 	}
@@ -1264,6 +1265,14 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 		return equity >= minValue && equity <= maxValue
 	}
 	return false
+}
+
+// Add MatchesDiceRoll method to Position type
+func (p *Position) MatchesDiceRoll(filter Position) bool {
+	dice := fmt.Sprintf("%d%d", p.Dice[0], p.Dice[1])
+	reverseDice := fmt.Sprintf("%d%d", p.Dice[1], p.Dice[0])
+	filterDice := fmt.Sprintf("%d%d", filter.Dice[0], filter.Dice[1])
+	return (dice == filterDice || reverseDice == filterDice) && p.PlayerOnRoll == filter.PlayerOnRoll && p.DecisionType == filter.DecisionType
 }
 
 func colorName(color int) string {
