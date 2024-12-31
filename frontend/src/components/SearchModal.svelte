@@ -120,7 +120,7 @@
     let availableFilters = [
         'Include Cube',
         'Include Score',
-        'Decision Type', // Rename this line
+        'Include Decision Type', // Rename this line
         'Include Dice Roll', // Add this line
         'Pipcount Difference',
         'Player Absolute Pipcount',
@@ -215,7 +215,7 @@
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
         const searchTextFilter = searchText.split(';').map(text => text.trim()).join(' ');
 
-        const decisionTypeFilter = filters.includes('Decision Type'); // Rename this line
+        const decisionTypeFilter = filters.includes('Include Decision Type'); // Rename this line
         const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
 
         statusBarModeStore.set('NORMAL');
@@ -341,7 +341,7 @@
                         <label class="filter-label">{filter}</label>
                     </div>
                     <div class="filter-options-wrapper">
-                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Decision Type' || filter === 'Include Dice Roll'}
+                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Include Decision Type' || filter === 'Include Dice Roll'}
                             <!-- No input needed for these filters -->
                         {/if}
                         {#if filter === 'Pipcount Difference'}
