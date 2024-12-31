@@ -765,9 +765,10 @@
                     checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
                     if (i === 4 && point.checkers > 5) {
                         const text = two.makeText(point.checkers.toString(), x, y);
-                        text.size = 20;
+                        text.size = 20; // Ensure consistent text size
                         text.alignment = "center";
                         text.baseline = "middle";
+                        text.weight = "bold"; // Ensure consistent text weight
                         if (point.color === 0) {
                             text.fill = "#ffffff"; // Contrast color for black checker
                         } else if (point.color === 1) {
@@ -791,9 +792,10 @@
                         checker.linewidth = boardCfg.checker.linewidth; // Use checker linewidth
                         if (i === 4 && point.checkers > 5) {
                             const text = two.makeText(point.checkers.toString(), x, y);
-                            text.size = 20;
+                            text.size = 20; // Ensure consistent text size
                             text.alignment = "center";
                             text.baseline = "middle";
+                            text.weight = "bold"; // Ensure consistent text weight
                             if (point.color === 0) {
                                 text.fill = "#ffffff"; // Contrast color for black checker
                             } else if (point.color === 1) {
