@@ -33,7 +33,7 @@ Historique des versions
    :widths: 5, 7, 20
    :align: center
 
-   0.1.0, xx/xx/2024, "Création."
+   0.1.0, 31/12/2024, "Création version beta."
 
 Sommaire
 ========

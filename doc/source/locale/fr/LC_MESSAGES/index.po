@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-31 00:36+0100\n"
+"POT-Creation-Date: 2024-12-31 04:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -86,11 +86,11 @@ msgid "0.1.0"
 msgstr ""
 
 #: ../../source/index.rst:1
-msgid "xx/xx/2024"
+msgid "31/12/2024"
 msgstr ""
 
 #: ../../source/index.rst:1
-msgid "Création."
+msgid "Création version beta."
 msgstr ""
 
 #: ../../source/index.rst:39
@@ -214,5 +214,11 @@ msgstr ""
 #~ "maintenant plus d'une dizaine d'années "
 #~ "dans de chouettes aventures, qui a "
 #~ "choppé le virus du backgammon."
+#~ msgstr ""
+
+#~ msgid "xx/xx/2024"
+#~ msgstr ""
+
+#~ msgid "Création."
 #~ msgstr ""
 
