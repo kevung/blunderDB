@@ -146,7 +146,8 @@
             <div class="tab-content" bind:this={contentArea}>
                 {#if activeTab === 'manual'}
                     <h3>Introduction</h3>
-                    <p>blunderDB is a software for creating position databases. Positions are stored in a database represented by a *.db* file.</p>
+                    <p>blunderDB is a software for creating position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online, in tournaments) and to be able to re-study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs of reference positions.</p>
+                    <p>Positions are stored in a database represented by a .db file.</p>
                     
                     <h3>Main Interactions</h3>
                     <p>The main interactions possible with blunderDB are:</p>
@@ -739,8 +740,27 @@
                 {/if}
 
                 {#if activeTab === 'about'}
-                    <h2>About blunderDB</h2>
-                    <p>Information about the blunderDB project...</p>
+                    
+                    <h3>Version</h3>
+                    <p>Current version: 0.1.0</p>
+                    
+                    <h3>Author</h3>
+                    <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;.</strong></p>
+                    <p>You can also find me on Heroes under the nickname postmanpat.</p>
+                    <p>I developed blunderDB initially for my personal use to detect patterns in my mistakes. But it is very pleasant to have feedback, especially when a lot of hours have been spent on design, coding, debugging... So feel free to write to me to share your feedback.</p>
+                    <p>Here are several ways to reach out:</p>
+                    <ul>
+                        <li>Discuss with me if we meet in a tournament,</li>
+                        <li>Send me an email,</li>
+                    </ul>
+                    <h3>License</h3>
+                    <p>blunderDB is licensed under the MIT License. This means you are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, provided that the original copyright notice and this permission notice are included in all copies or substantial portions of the software.</p>
+                    <h3>Acknowledgements</h3>
+                    <p>I dedicate this small software to my partner <strong>Anne-Claire</strong> and our dear daughter <strong>Perrine</strong>. I would like to especially thank some friends:</p>
+                    <ul>
+                        <li><strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to encourage me with kindness and patience in the face of my poor attempts to play better.</li>
+                        <li><strong>Nicolas Harmand</strong>, a joyful companion for over a decade in great adventures, and a fantastic game partner since he caught the backgammon bug.</li>
+                    </ul>
                 {/if}
             </div>
         </div>
