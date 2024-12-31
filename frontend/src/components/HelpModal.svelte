@@ -145,8 +145,76 @@
             <!-- Tab Content -->
             <div class="tab-content" bind:this={contentArea}>
                 {#if activeTab === 'manual'}
-                    <h2>Manual</h2>
-                    <p>Here is the user manual for blunderDB...</p>
+                    <h3>Introduction</h3>
+                    <p>blunderDB is a software for creating position databases. Positions are stored in a database represented by a *.db* file.</p>
+                    
+                    <h3>Main Interactions</h3>
+                    <p>The main interactions possible with blunderDB are:</p>
+                    <ul>
+                        <li>adding a new position,</li>
+                        <li>modifying an existing position,</li>
+                        <li>deleting an existing position,</li>
+                        <li>searching for one or more positions.</li>
+                    </ul>
+                    
+                    <h3>Modes</h3>
+                    <p>To do this, the user switches to dedicated modes for:</p>
+                    <ul>
+                        <li>navigating and viewing positions (NORMAL mode),</li>
+                        <li>editing positions (EDIT mode),</li>
+                        <li>editing a query to filter positions (COMMAND mode or search window).</li>
+                    </ul>
+                    <p>The user can freely tag positions and annotate them with comments.</p>
+                    <p>The rest of the manual describes the graphical interface and the main modes of blunderDB.</p>
+                    
+                    <h3>Description of the GUI</h3>
+                    <p>The blunderDB GUI is structured from top to bottom as follows:</p>
+                    <ul>
+                        <li>[at the top] the menu bar, which gathers all the main operations that can be performed on the database,</li>
+                        <li>[in the middle] the main display area, which allows displaying or editing backgammon positions,</li>
+                        <li>[at the bottom] the status bar, which presents various information about the database or the current position.</li>
+                    </ul>
+                    <p>Panels can be displayed to:</p>
+                    <ul>
+                        <li>display analysis data associated with the current position from eXtreme Gammon (XG),</li>
+                        <li>display, add, or modify comments</li>
+                    </ul>
+                    <p>Modal windows can be displayed to:</p>
+                    <ul>
+                        <li>[EDIT mode only] set search filters,</li>
+                        <li>display the blunderDB help.</li>
+                    </ul>
+                    <p>The main display area provides the user with:</p>
+                    <ul>
+                        <li>a board to display or edit a backgammon position,</li>
+                        <li>the level and owner of the cube,</li>
+                        <li>the race count of each player,</li>
+                        <li>the score of each player,</li>
+                        <li>the dice to be played. If no value is displayed on the dice, the position of the dice indicates which player has the turn and that the position is a cube decision.</li>
+                    </ul>
+                    <p>The status bar is structured from left to right with the following information:</p>
+                    <ul>
+                        <li>the current mode (NORMAL, EDIT, COMMAND),</li>
+                        <li>an information message related to an operation performed by the user,</li>
+                        <li>the index of the current position, followed by the number of positions in the current library.</li>
+                    </ul>
+                    <p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
+                    
+                    <h3>NORMAL Mode</h3>
+                    <p>NORMAL mode is the default mode of blunderDB. It is used to:</p>
+                    <ul>
+                        <li>scroll through the different positions in the current library,</li>
+                        <li>display analysis information associated with a position,</li>
+                        <li>display, add, and modify comments on a position.</li>
+                    </ul>
+                    
+                    <h3>EDIT Mode</h3>
+                    <p>EDIT mode allows editing a position to add it to the database or to define the type of position to search for. EDIT mode is activated by pressing the *TAB* key. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse.</p>
+                    
+                    <h3>COMMAND Mode</h3>
+                    <p>COMMAND mode allows performing all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions according to filters... After getting familiar with the interface, it is recommended to gradually use this mode, which allows powerful and smooth use of blunderDB, especially for position search functionalities.</p>
+                    <p>To switch to COMMAND mode from any other mode, press the *SPACE* key. To send a query and exit COMMAND mode, press the *ENTER* key.</p>
+                    <p>blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required by the user.</p>
                 {/if}
 
                 {#if activeTab === 'shortcuts'}
@@ -753,6 +821,11 @@
         padding: 0; /* Remove padding */
         box-sizing: border-box;
         height: calc(100% - 50px); /* Adjust height to ensure uniform tab size */
+    }
+
+    .tab-content p, .tab-content ul, .tab-content h2, .tab-content h3 {
+        margin: 0 20px 20px 20px; /* Add bottom margin for spacing */
+        text-align: justify;
     }
 
     table {
