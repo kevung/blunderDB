@@ -4,7 +4,7 @@
 
     export let visible = false;
     export let onClose;
-    export let onLoadPositionsByFilters; // Add this line
+    export let onLoadPositionsByFilters;
 
     const dispatch = createEventDispatcher();
 
@@ -28,7 +28,8 @@
     let searchText = '';
     let player1AbsolutePipCountFilter = '';
     let equityFilter = '';
-    let decisionTypeFilter = ''; // Add this line
+    let decisionTypeFilter = false; // Rename this line
+    
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -119,7 +120,7 @@
     let availableFilters = [
         'Include Cube',
         'Include Score',
-        'Include Decision Type', // Rename this line
+        'Decision Type', // Rename this line
         'Pipcount Difference',
         'Player Absolute Pipcount',
         'Equity (millipoints)',
@@ -213,10 +214,10 @@
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
         const searchTextFilter = searchText.split(';').map(text => text.trim()).join(' ');
 
-        const includeDecisionType = filters.includes('Include Decision Type');
+        const decisionTypeFilter = filters.includes('Decision Type'); // Rename this line
 
         statusBarModeStore.set('NORMAL');
-        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextFilter, player1AbsolutePipCountFilter, equityFilter, includeDecisionType); // Add includeDecisionType
+        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextFilter, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter); // Rename this line
         onClose();
     }
 
@@ -338,7 +339,7 @@
                         <label class="filter-label">{filter}</label>
                     </div>
                     <div class="filter-options-wrapper">
-                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Include Decision Type'}
+                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Decision Type'}
                             <!-- No input needed for these filters -->
                         {/if}
                         {#if filter === 'Pipcount Difference'}
