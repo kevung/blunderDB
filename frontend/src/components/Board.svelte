@@ -77,13 +77,6 @@
             y: mouseY,
             button: event.button
         };
-
-        // Create a white checker on right-click
-        if (event.button === 2) {
-            const checkerPoint = getCheckerPointAndCount(mouseX, mouseY, event.button).checkerPoint;
-            updateCheckerPositionByPoint(checkerPoint, 1, event.button);
-            isMouseDown = false; // Prevent further dragging
-        }
     }
 
     function handleMouseMove(event) {
@@ -775,7 +768,11 @@
                         text.size = 20;
                         text.alignment = "center";
                         text.baseline = "middle";
-                        text.fill = point.color === 0 ? "#ffffff" : "#333333"; // Contrast color
+                        if (point.color === 0) {
+                            text.fill = "#ffffff"; // Contrast color for black checker
+                        } else if (point.color === 1) {
+                            text.fill = "#333333"; // Contrast color for white checker
+                        }
                     }
                 }
             });
@@ -797,7 +794,11 @@
                             text.size = 20;
                             text.alignment = "center";
                             text.baseline = "middle";
-                            text.fill = point.color === 0 ? "#ffffff" : "#333333"; // Contrast color
+                            if (point.color === 0) {
+                                text.fill = "#ffffff"; // Contrast color for black checker
+                            } else if (point.color === 1) {
+                                text.fill = "#333333"; // Contrast color for white checker
+                            }
                         }
                     }
                 }
