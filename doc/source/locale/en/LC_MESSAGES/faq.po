@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2024-12-30 17:14+0100\n"
-"PO-Revision-Date: 2024-12-31 00:08+0100\n"
+"PO-Revision-Date: 2024-12-31 13:26+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -146,7 +146,7 @@ msgstr ""
 
 #: ../../source/faq.rst:74
 msgid "Quel est l'architecture logicielle de blunderDB?"
-msgstr "What is the purpose of blunderDB?"
+msgstr "What is the software architecture of blunderDB?"
 
 #: ../../source/faq.rst:76
 msgid ""
