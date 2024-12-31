@@ -77,6 +77,13 @@
             y: mouseY,
             button: event.button
         };
+
+        // Create a white checker on right-click
+        if (event.button === 2) {
+            const checkerPoint = getCheckerPointAndCount(mouseX, mouseY, event.button).checkerPoint;
+            updateCheckerPositionByPoint(checkerPoint, 1, event.button);
+            isMouseDown = false; // Prevent further dragging
+        }
     }
 
     function handleMouseMove(event) {
@@ -522,6 +529,7 @@
         canvas.addEventListener("mousedown", handleRectangleClick);
         canvas.addEventListener("mousedown", handleDiceClick);
         canvas.addEventListener("mousedown", handleScoreClick);
+        canvas.addEventListener("contextmenu", event => event.preventDefault()); // Deactivate contextual menu
         drawBoard();
         window.addEventListener("resize", resizeBoard);
         window.addEventListener("keydown", handleOrientationChange);
@@ -547,6 +555,7 @@
         canvas.removeEventListener("mousedown", handleRectangleClick);
         canvas.removeEventListener("mousedown", handleDiceClick);
         canvas.removeEventListener("mousedown", handleScoreClick);
+        canvas.removeEventListener("contextmenu", event => event.preventDefault()); // Remove event listener
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         window.removeEventListener("keydown", handleOrientationChange);

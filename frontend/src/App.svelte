@@ -1194,11 +1194,13 @@
         console.log('Wails runtime:', window.runtime);
         window.addEventListener("keydown", handleKeyDown);
         mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
+        window.addEventListener("contextmenu", event => event.preventDefault()); // Deactivate contextual menu
     });
 
     onDestroy(() => {
         window.removeEventListener("keydown", handleKeyDown);
         mainArea.removeEventListener("wheel", handleWheel); // Remove wheel event listener from main container
+        window.removeEventListener("contextmenu", event => event.preventDefault()); // Remove event listener
     });
 
     function toggleHelpModal() {
