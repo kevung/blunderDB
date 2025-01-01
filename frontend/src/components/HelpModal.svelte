@@ -525,6 +525,10 @@
                                 <td>2-Cube Take Point in Long Races</td>
                             </tr>
                             <tr>
+                                <td>tp4_last</td>
+                                <td>4-Cube Take Point in Last Roll Positions</td>
+                            </tr>
+                            <tr>
                                 <td>#tag1 tag2 ...</td>
                                 <td>Tag Position</td>
                             </tr>

@@ -54,7 +54,8 @@
         showSearchModalStore, // Import showSearchModalStore
         showMetModalStore, // Import showMetModalStore
         showTakePoint2LastModalStore, // Import showTakePoint2LastModalStore
-        showTakePoint2LiveModalStore // Import showTakePoint2LiveModalStore
+        showTakePoint2LiveModalStore, // Import showTakePoint2LiveModalStore
+        showTakePoint4LastModalStore // Import showTakePoint4LastModalStore
     } from './stores/uiStore';
 
     // import components
@@ -70,6 +71,7 @@
     import MetModal from './components/MetModal.svelte'; // Import MetModal component
     import TakePoint2LastModal from './components/TakePoint2LastModal.svelte'; // Import TakePoint2LastModal component
     import TakePoint2LiveModal from './components/TakePoint2LiveModal.svelte'; // Import TakePoint2LiveModal component
+    import TakePoint4LastModal from './components/TakePoint4LastModal.svelte'; // Import TakePoint4LastModal component
 
     // Visibility variables
     let showCommand = false;
@@ -81,6 +83,7 @@
     let showMetModal = false;
     let showTakePoint2LastModal = false;
     let showTakePoint2LiveModal = false;
+    let showTakePoint4LastModal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -133,6 +136,10 @@
 
     showTakePoint2LiveModalStore.subscribe(value => {
         showTakePoint2LiveModal = value;
+    });
+
+    showTakePoint4LastModalStore.subscribe(value => {
+        showTakePoint4LastModal = value;
     });
 
     //Global shortcuts
@@ -1389,6 +1396,11 @@
     <TakePoint2LiveModal
         visible={showTakePoint2LiveModal}
         onClose={() => showTakePoint2LiveModalStore.set(false)}
+    />
+
+    <TakePoint4LastModal
+        visible={showTakePoint4LastModal}
+        onClose={() => showTakePoint4LastModalStore.set(false)}
     />
 
     <HelpModal

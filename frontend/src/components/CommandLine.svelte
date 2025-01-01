@@ -1,6 +1,6 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore, commandTextStore, showTakePoint2LiveModalStore } from '../stores/uiStore';
+   import { commentTextStore, currentPositionIndexStore, commandTextStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore } from '../stores/uiStore';
    import { SaveComment } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
    import { showMetModalStore, showTakePoint2LastModalStore } from '../stores/uiStore'; // Import showMetModalStore, showTakePoint2LastModalStore, and showTakePoint2LiveModalStore
@@ -175,6 +175,10 @@
             } else if (command === 'tp2_live') {
                onClose().then(() => {
                   showTakePoint2LiveModalStore.set(true); // Show TakePoint2Live modal
+               });
+            } else if (command === 'tp4_last') {
+               onClose().then(() => {
+                  showTakePoint4LastModalStore.set(true); // Show TakePoint4Last modal
                });
             } else {
                onClose();
