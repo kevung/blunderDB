@@ -53,7 +53,8 @@
         analysisDataStore,
         showSearchModalStore, // Import showSearchModalStore
         showMetModalStore, // Import showMetModalStore
-        showTakePoint2LastModalStore // Import showTakePoint2LastModalStore
+        showTakePoint2LastModalStore, // Import showTakePoint2LastModalStore
+        showTakePoint2LiveModalStore // Import showTakePoint2LiveModalStore
     } from './stores/uiStore';
 
     // import components
@@ -68,6 +69,7 @@
     import SearchModal from './components/SearchModal.svelte'; // Import SearchModal component
     import MetModal from './components/MetModal.svelte'; // Import MetModal component
     import TakePoint2LastModal from './components/TakePoint2LastModal.svelte'; // Import TakePoint2LastModal component
+    import TakePoint2LiveModal from './components/TakePoint2LiveModal.svelte'; // Import TakePoint2LiveModal component
 
     // Visibility variables
     let showCommand = false;
@@ -78,6 +80,7 @@
     let showSearchModal = false; // Remove this line
     let showMetModal = false;
     let showTakePoint2LastModal = false;
+    let showTakePoint2LiveModal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -126,6 +129,10 @@
 
     showTakePoint2LastModalStore.subscribe(value => {
         showTakePoint2LastModal = value;
+    });
+
+    showTakePoint2LiveModalStore.subscribe(value => {
+        showTakePoint2LiveModal = value;
     });
 
     //Global shortcuts
@@ -1379,6 +1386,11 @@
         onClose={() => showTakePoint2LastModalStore.set(false)}
     />
 
+    <TakePoint2LiveModal
+        visible={showTakePoint2LiveModal}
+        onClose={() => showTakePoint2LiveModalStore.set(false)}
+    />
+
     <HelpModal
         visible={showHelp}
         onClose={toggleHelpModal}
@@ -1409,17 +1421,6 @@
         box-sizing: border-box;
         display: flex;
         justify-content: center; /* Center the board initially */
-        align-items: flex-start; /* Align items to the start to remove space */
-        margin-top: 0; /* Remove any margin on top */
-    }
-
-    .full-size-board {
-        width: 100%;
-        height: auto; /* Maintain aspect ratio */
-        max-height: 100%; /* Ensure the board fits within the available height */
-        margin: 0; /* Remove margin */
-        padding: 0; /* Remove padding */
-        border: 1px solid black; /* Add border for debugging */
     }
 
     .comments-zone {

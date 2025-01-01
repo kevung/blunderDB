@@ -16,3 +16,5 @@ export const showSearchModalStore = writable(false); // Add store for search mod
 export const showMetModalStore = writable(false); // Add store for MET modal visibility
 
 export const showTakePoint2LastModalStore = writable(false); // Add store for TakePoint2Last modal visibility
+
+export const showTakePoint2LiveModalStore = writable(false); // Add store for TakePoint2Live modal visibility
