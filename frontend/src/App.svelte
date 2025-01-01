@@ -57,7 +57,8 @@
         showTakePoint2LiveModalStore, // Import showTakePoint2LiveModalStore
         showTakePoint4LastModalStore, // Import showTakePoint4LastModalStore
         showTakePoint4LiveModalStore, // Import showTakePoint4LiveModalStore
-        showGammonValue1ModalStore // Import showGammonValue1ModalStore
+        showGammonValue1ModalStore, // Import showGammonValue1ModalStore
+        showGammonValue2ModalStore // Import showGammonValue2ModalStore
     } from './stores/uiStore';
 
     // import components
@@ -76,6 +77,7 @@
     import TakePoint4LastModal from './components/TakePoint4LastModal.svelte'; // Import TakePoint4LastModal component
     import TakePoint4LiveModal from './components/TakePoint4LiveModal.svelte'; // Import TakePoint4LiveModal component
     import GammonValue1Modal from './components/GammonValue1Modal.svelte'; // Import GammonValue1Modal component
+    import GammonValue2Modal from './components/GammonValue2Modal.svelte'; // Import GammonValue2Modal component
 
     // Visibility variables
     let showCommand = false;
@@ -90,6 +92,7 @@
     let showTakePoint4LastModal = false;
     let showTakePoint4LiveModal = false;
     let showGammonValue1Modal = false;
+    let showGammonValue2Modal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -154,6 +157,10 @@
 
     showGammonValue1ModalStore.subscribe(value => {
         showGammonValue1Modal = value;
+    });
+
+    showGammonValue2ModalStore.subscribe(value => {
+        showGammonValue2Modal = value;
     });
 
     //Global shortcuts
@@ -1425,6 +1432,11 @@
     <GammonValue1Modal
         visible={showGammonValue1Modal}
         onClose={() => showGammonValue1ModalStore.set(false)}
+    />
+
+    <GammonValue2Modal
+        visible={showGammonValue2Modal}
+        onClose={() => showGammonValue2ModalStore.set(false)}
     />
 
     <HelpModal
