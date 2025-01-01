@@ -1,9 +1,10 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore, commandTextStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore } from '../stores/uiStore';
+   import { commentTextStore, currentPositionIndexStore, commandTextStore } from '../stores/uiStore';
    import { SaveComment } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
-   import { showMetModalStore, showTakePoint2LastModalStore } from '../stores/uiStore'; // Import showMetModalStore, showTakePoint2LastModalStore, and showTakePoint2LiveModalStore
+   import { showMetModalStore,  showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore } from '../stores/uiStore'; 
+   // Import showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, and showGammonValue1ModalStore
 
    export let visible = false;
    export let onClose;
@@ -183,6 +184,10 @@
             } else if (command === 'tp4_live') {
                onClose().then(() => {
                   showTakePoint4LiveModalStore.set(true); // Show TakePoint4Live modal
+               });
+            } else if (command === 'gv1') {
+               onClose().then(() => {
+                  showGammonValue1ModalStore.set(true); // Show GammonValue1 modal
                });
             } else {
                onClose();

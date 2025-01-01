@@ -533,6 +533,10 @@
                                 <td>4-Cube Take Point in Long Races</td>
                             </tr>
                             <tr>
+                                <td>gv1</td>
+                                <td>1-Cube Gammon Values</td>
+                            </tr>
+                            <tr>
                                 <td>#tag1 tag2 ...</td>
                                 <td>Tag Position</td>
                             </tr>

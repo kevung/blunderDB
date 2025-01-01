@@ -22,3 +22,5 @@ export const showTakePoint2LiveModalStore = writable(false); // Add store for Ta
 export const showTakePoint4LastModalStore = writable(false); // Add store for TakePoint4Last modal visibility
 
 export const showTakePoint4LiveModalStore = writable(false); // Add store for TakePoint4Live modal visibility
+
+export const showGammonValue1ModalStore = writable(false); // Add store for GammonValue1 modal visibility
