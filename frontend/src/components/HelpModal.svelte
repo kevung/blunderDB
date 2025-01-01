@@ -517,6 +517,10 @@
                                 <td>Open The Kazaross-XG2 Match Equity Table</td>
                             </tr>
                             <tr>
+                                <td>tp2_last</td>
+                                <td>2-Cube Take Point in Last Roll Positions</td>
+                            </tr>
+                            <tr>
                                 <td>#tag1 tag2 ...</td>
                                 <td>Tag Position</td>
                             </tr>
@@ -749,8 +753,8 @@
                     <p>Current version: 0.1.0</p>
                     
                     <h3>Author</h3>
-                    <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;.</strong></p>
-                    <p>You can also find me on Heroes under the nickname postmanpat.</p>
+                    <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>
+                    <p>You can also find me on Heroes under the nickname <strong>postmanpat</strong>.</p>
                     <p>I developed blunderDB initially for my personal use to detect patterns in my mistakes. But it is very pleasant to have feedback, especially when a lot of hours have been spent on design, coding, debugging... So feel free to write to me to share your feedback.</p>
                     <p>Here are several ways to reach out:</p>
                     <ul>
@@ -766,6 +770,7 @@
                         <li><strong>Nicolas Harmand</strong>, a joyful companion for over a decade in great adventures, and a fantastic game partner since he caught the backgammon bug.</li>
                     </ul>
                     <p>The Kazaross-XG2 Match Equity Table (MET) is credited to <strong>Neil Kazaross</strong>.</p>
+                    <p>The take point and gammon values tables are taken from <strong>Dirk Schiemann</strong>'s book <em>The Theory of Backgammon</em>.</p>
                 {/if}
             </div>
         </div>

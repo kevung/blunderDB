@@ -3,7 +3,7 @@
    import { commentTextStore, currentPositionIndexStore, commandTextStore } from '../stores/uiStore';
    import { SaveComment } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
-   import { showMetModalStore } from '../stores/uiStore'; // Import showMetModalStore
+   import { showMetModalStore, showTakePoint2LastModalStore } from '../stores/uiStore'; // Import showMetModalStore and showTakePoint2LastModalStore
 
    export let visible = false;
    export let onClose;
@@ -167,6 +167,10 @@
             } else if (command === 'met') {
                onClose().then(() => {
                   showMetModalStore.set(true); // Show MET modal
+               });
+            } else if (command === 'tp2_last') {
+               onClose().then(() => {
+                  showTakePoint2LastModalStore.set(true); // Show TakePoint2Last modal
                });
             } else {
                onClose();

@@ -52,7 +52,8 @@
         commentTextStore,
         analysisDataStore,
         showSearchModalStore, // Import showSearchModalStore
-        showMetModalStore // Import showMetModalStore
+        showMetModalStore, // Import showMetModalStore
+        showTakePoint2LastModalStore // Import showTakePoint2LastModalStore
     } from './stores/uiStore';
 
     // import components
@@ -66,6 +67,7 @@
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import SearchModal from './components/SearchModal.svelte'; // Import SearchModal component
     import MetModal from './components/MetModal.svelte'; // Import MetModal component
+    import TakePoint2LastModal from './components/TakePoint2LastModal.svelte'; // Import TakePoint2LastModal component
 
     // Visibility variables
     let showCommand = false;
@@ -75,6 +77,7 @@
     let showGoToPositionModal = false;
     let showSearchModal = false; // Remove this line
     let showMetModal = false;
+    let showTakePoint2LastModal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -119,6 +122,10 @@
 
     showMetModalStore.subscribe(value => {
         showMetModal = value;
+    });
+
+    showTakePoint2LastModalStore.subscribe(value => {
+        showTakePoint2LastModal = value;
     });
 
     //Global shortcuts
@@ -1365,6 +1372,11 @@
     <MetModal
         visible={showMetModal}
         onClose={() => showMetModalStore.set(false)}
+    />
+
+    <TakePoint2LastModal
+        visible={showTakePoint2LastModal}
+        onClose={() => showTakePoint2LastModalStore.set(false)}
     />
 
     <HelpModal

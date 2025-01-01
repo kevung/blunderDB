@@ -14,3 +14,5 @@ export const currentPositionIndexStore = writable(0); // Add current position in
 export const showSearchModalStore = writable(false); // Add store for search modal visibility
 
 export const showMetModalStore = writable(false); // Add store for MET modal visibility
+
+export const showTakePoint2LastModalStore = writable(false); // Add store for TakePoint2Last modal visibility
