@@ -513,6 +513,10 @@
                                 <td>Open Help</td>
                             </tr>
                             <tr>
+                                <td>met</td>
+                                <td>Open The Kazaross-XG2 Match Equity Table</td>
+                            </tr>
+                            <tr>
                                 <td>#tag1 tag2 ...</td>
                                 <td>Tag Position</td>
                             </tr>
@@ -761,6 +765,7 @@
                         <li><strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to encourage me with kindness and patience in the face of my poor attempts to play better.</li>
                         <li><strong>Nicolas Harmand</strong>, a joyful companion for over a decade in great adventures, and a fantastic game partner since he caught the backgammon bug.</li>
                     </ul>
+                    <p>The Kazaross-XG2 Match Equity Table (MET) is credited to <strong>Neil Kazaross</strong>.</p>
                 {/if}
             </div>
         </div>

@@ -3,6 +3,7 @@
    import { commentTextStore, currentPositionIndexStore, commandTextStore } from '../stores/uiStore';
    import { SaveComment } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
+   import { showMetModalStore } from '../stores/uiStore'; // Import showMetModalStore
 
    export let visible = false;
    export let onClose;
@@ -162,6 +163,10 @@
                console.log('searchText:', searchText); // Add logging
                onClose().then(() => {
                   onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
+               });
+            } else if (command === 'met') {
+               onClose().then(() => {
+                  showMetModalStore.set(true); // Show MET modal
                });
             } else {
                onClose();

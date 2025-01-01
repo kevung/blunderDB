@@ -51,7 +51,8 @@
         commandTextStore,
         commentTextStore,
         analysisDataStore,
-        showSearchModalStore // Import showSearchModalStore
+        showSearchModalStore, // Import showSearchModalStore
+        showMetModalStore // Import showMetModalStore
     } from './stores/uiStore';
 
     // import components
@@ -64,6 +65,7 @@
     import HelpModal from './components/HelpModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import SearchModal from './components/SearchModal.svelte'; // Import SearchModal component
+    import MetModal from './components/MetModal.svelte'; // Import MetModal component
 
     // Visibility variables
     let showCommand = false;
@@ -72,6 +74,7 @@
     let showComment = false;
     let showGoToPositionModal = false;
     let showSearchModal = false; // Remove this line
+    let showMetModal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -114,6 +117,10 @@
         showSearchModal = value;
     });
 
+    showMetModalStore.subscribe(value => {
+        showMetModal = value;
+    });
+
     //Global shortcuts
     function handleKeyDown(event) {
         event.stopPropagation();
@@ -127,10 +134,11 @@
             return;
         }
 
-        // Prevent shortcuts when search modal is visible
-        if (showSearchModal) {
+        // Prevent shortcuts when search modal or MET modal is visible
+        if (showSearchModal || showMetModal) {
             if (event.key === 'Escape') {
                 showSearchModalStore.set(false);
+                showMetModalStore.set(false);
             }
             // Allow backspace to work inside input fields
             if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
@@ -1253,8 +1261,8 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
-        if (showGoToPositionModal || showSearchModal || $statusBarModeStore === 'EDIT') {
-            return; // Prevent changing position when GoToPositionModal or SearchModal is open or in edit mode
+        if (showGoToPositionModal || showSearchModal || showMetModal || $statusBarModeStore === 'EDIT') {
+            return; // Prevent changing position when GoToPositionModal, SearchModal, or MetModal is open or in edit mode
         }
 
         // Prevent changing position when scrolling in the analysis panel or comment panel
@@ -1352,6 +1360,11 @@
         visible={showSearchModal}
         onClose={() => showSearchModalStore.set(false)}
         onLoadPositionsByFilters={loadPositionsByFilters}
+    />
+
+    <MetModal
+        visible={showMetModal}
+        onClose={() => showMetModalStore.set(false)}
     />
 
     <HelpModal

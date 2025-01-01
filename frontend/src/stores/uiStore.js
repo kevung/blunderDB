@@ -12,3 +12,5 @@ export const analysisDataStore = writable('This is where your analysis data will
 export const currentPositionIndexStore = writable(0); // Add current position index store
 
 export const showSearchModalStore = writable(false); // Add store for search modal visibility
+
+export const showMetModalStore = writable(false); // Add store for MET modal visibility

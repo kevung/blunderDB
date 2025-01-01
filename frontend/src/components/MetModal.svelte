@@ -1,0 +1,102 @@
+<script>
+    export let visible = false;
+    export let onClose;
+
+    function closeModal() {
+        onClose();
+    }
+
+    const tableData = [
+        [50, 67.7, 75.1, 81.4, 84.2, 88.7, 90.7, 93.3, 94.4, 95.9, 96.6, 97.6, 98, 98.5, 98.8],
+        [32.3, 50, 59.9, 66.9, 74.4, 79.9, 84.2, 87.5, 90.2, 92.3, 93.9, 95.2, 96.2, 97.1, 97.7],
+        [24.9, 40.1, 50, 57.6, 64.8, 71.1, 76.2, 80.5, 84, 87.1, 89.4, 91.5, 93.1, 94.4, 95.5],
+        [18.6, 33.1, 42.9, 50, 57.7, 64.3, 69.9, 74.6, 78.8, 82.4, 85.4, 87.9, 90, 91.8, 93.3],
+        [15.8, 25.6, 35.2, 42.3, 50, 56.6, 62.6, 67.8, 72.5, 76.7, 80.3, 83.4, 86, 88.3, 90.2],
+        [11.3, 20.1, 28.9, 35.7, 43.4, 50, 56.3, 61.6, 66.8, 71.3, 75.3, 78.9, 82, 84.7, 87],
+        [9.3, 15.8, 23.8, 30.1, 37.4, 43.7, 50, 55.5, 60.8, 65.6, 70, 73.9, 77.4, 80.5, 83.3],
+        [6.8, 12.5, 19.5, 25.4, 32.2, 38.4, 44.5, 50, 55.4, 60.4, 65, 69.1, 72.9, 76.4, 79.4],
+        [5.6, 9.8, 16, 21.2, 27.5, 33.2, 39.1, 44.6, 50, 55, 59.8, 64.1, 68.2, 71.9, 75.3],
+        [4.1, 7.7, 12.9, 17.6, 23.3, 28.7, 34.4, 39.6, 45, 50, 54.9, 59.3, 63.6, 67.5, 71.1],
+        [3.4, 6.1, 10.6, 14.6, 19.7, 24.7, 30, 35, 40.2, 45.1, 50, 54.6, 58.9, 63, 66.8],
+        [2.4, 4.8, 8.5, 12.1, 16.6, 21.1, 26.1, 30.9, 35.9, 40.7, 45.4, 50, 54.4, 58.6, 62.5],
+        [2, 3.8, 6.9, 10, 14, 18, 22.6, 27.1, 31.8, 36.4, 41.1, 45.6, 50, 54.2, 58.3],
+        [1.5, 2.9, 5.6, 8.2, 11.7, 15.3, 19.5, 23.6, 28.1, 32.5, 37, 41.4, 45.8, 50, 54.1],
+        [1.2, 2.3, 4.5, 6.7, 9.8, 13, 16.7, 20.6, 24.7, 28.9, 33.2, 37.5, 41.7, 45.9, 50]
+    ];
+
+    function formatCell(value) {
+        return value.toFixed(1);
+    }
+</script>
+
+{#if visible}
+    <div class="modal-overlay" on:click={closeModal}>
+        <div class="modal-content" on:click|stopPropagation>
+            <table>
+                <thead>
+                    <tr>
+                        <th></th>
+                        {#each Array(15) as _, colIndex}
+                            <th><strong>{colIndex + 1}</strong></th>
+                        {/each}
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each tableData as row, rowIndex}
+                        <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
+                            <td><strong>{rowIndex + 1}</strong></td>
+                            {#each row as cell}
+                                <td>{formatCell(cell)}</td>
+                            {/each}
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{/if}
+
+<style>
+    .modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        max-width: 90%;
+        max-height: 90%;
+        overflow: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    th, td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: center;
+        width: calc(100% / 16); /* Ensure cells are square */
+    }
+
+    .even-row {
+        background-color: #f2f2f2; /* Increase contrast for alternating row color */
+    }
+
+    .odd-row {
+        background-color: #ffffff; /* Increase contrast for alternating row color */
+    }
+</style>
