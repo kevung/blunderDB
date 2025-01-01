@@ -88,7 +88,7 @@
     .modal-content {
         background-color: white;
         padding: 1rem;
-        border-radius: 8px;
+        border-radius: 4px;
         box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         z-index: 1000;
         width: 90%;
