@@ -1391,6 +1391,7 @@
         onShowComment={toggleCommentPanel}
         onFindPosition={findPosition}
         onToggleHelp={toggleHelpModal}
+        onLoadAllPositions={loadAllPositions}
     />
 
     <div class="scrollable-content">

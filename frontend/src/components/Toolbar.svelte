@@ -19,6 +19,7 @@
     export let onShowComment;
     export let onFindPosition;
     export let onToggleHelp;
+    export let onLoadAllPositions;
 
     import { statusBarModeStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
@@ -142,7 +143,6 @@
 
 <!--// https://heroicons.com/-->
 <div class="toolbar">
-
     <button on:click|stopPropagation={onNewDatabase} aria-label="New Database" title="New Database (Ctrl-N)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 10.5v6m3-3H9m4.06-7.19-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z" />
@@ -159,12 +159,11 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
         </svg>
-
     </button>
 
     <div class="separator"></div>
 
-    <button on:click|stopPropagation={handleImportPosition}  aria-label="Import Position" title="Import Position (Ctrl-I)" disabled={statusBarMode === 'EDIT' || !databasePath}>
+    <button on:click|stopPropagation={handleImportPosition} aria-label="Import Position" title="Import Position (Ctrl-I)" disabled={statusBarMode === 'EDIT' || !databasePath}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
         </svg>
@@ -188,13 +187,11 @@
         </svg>
     </button>
 
-
     <button on:click|stopPropagation={handleUpdatePosition} aria-label="Update Position" title="Update Position (Ctrl-U)" disabled={statusBarMode !== 'EDIT' || !databasePath}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
         </svg>
     </button>
-
 
     <button on:click|stopPropagation={handleDeletePosition} aria-label="Delete Position" title="Delete Position (Del)" disabled={statusBarMode !== 'NORMAL' && statusBarMode !== 'COMMAND' || !databasePath}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -203,6 +200,12 @@
     </button>
 
     <div class="separator"></div>
+
+    <button on:click|stopPropagation={onLoadAllPositions} aria-label="Reload All Positions" title="Reload All Positions (Ctrl-R)" disabled={statusBarMode !== 'NORMAL' || !databasePath}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+    </button>
 
     <button on:click|stopPropagation={handleFirstPosition} aria-label="First Position" title="First Position (PageUp, h)" disabled={statusBarMode === 'EDIT' || !databasePath}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -226,7 +229,7 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
         </svg>
-    </button>
+    </button>  
 
     <button on:click|stopPropagation={handleGoToPosition} aria-label="Go To Position" title="Go To Position (Ctrl-K)" disabled={statusBarMode !== 'NORMAL' || !databasePath}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -244,12 +247,12 @@
 
     <button on:click|stopPropagation={onToggleCommandMode} aria-label="Command Mode" title="Command Mode (Space)">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-  <path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
-</svg>
+            <path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
+        </svg>
     </button>
 
     <div class="separator"></div>
-
+    
     <button on:click|stopPropagation={onShowAnalysis} aria-label="Show Analysis" title="Show Analysis (Ctrl-L)" disabled={statusBarMode === 'EDIT' || !databasePath}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.242 5.992h12m-12 6.003H20.24m-12 5.999h12M4.117 7.495v-3.75H2.99m1.125 3.75H2.99m1.125 0H5.24m-1.92 2.577a1.125 1.125 0 1 1 1.591 1.59l-1.83 1.83h2.16M2.99 15.745h1.125a1.125 1.125 0 0 1 0 2.25H3.74m0-.002h.375a1.125 1.125 0 0 1 0 2.25H2.99" />
@@ -273,8 +276,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
         </svg>
     </button>
-
-    </div>
+</div>
 
 <style>
     .toolbar {
@@ -283,6 +285,8 @@
         padding: 4px;
         background-color: #f0f0f0;
         border-bottom: 1px solid #ccc;
+        height: 22px; /* Ensure toolbar height is sufficient */
+        width: 100%; /* Ensure toolbar takes up full available width */
     }
 
     .toolbar button {
@@ -303,6 +307,7 @@
     .toolbar button svg {
         width: 20px;
         height: 20px;
+        stroke: currentColor; /* Ensure the stroke color matches the current text color */
     }
 
     .toolbar button:focus {
@@ -320,9 +325,9 @@
 
     .separator {
         width: 1px;
-        background-color: #ccc;
         margin: 0 8px; /* Add some space between the icon groups */
-        height: 20px;
+        height: 80%; /* Ensure separator height matches toolbar height */
+        border-left: 1px solid #d3d3d3; /* Use a lighter shade for the separator */
     }
 
 </style>
