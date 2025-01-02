@@ -311,6 +311,11 @@
                         <tbody>
 
                             <tr>
+                                <td>Ctrl + R</td>
+                                <td>Reload All Positions</td>
+                            </tr>
+
+                            <tr>
                                 <td>PageUp, h</td>
                                 <td>First Position</td>
                             </tr>
@@ -554,7 +559,7 @@
                             </tr>
                             <tr>
                                 <td>e</td>
-                                <td>Load All Positions and Analyses</td>
+                                <td>Reload All Positions</td>
                             </tr>
                         </tbody>
                     </table>

@@ -272,6 +272,8 @@
             lastPosition();
         } else if(event.ctrlKey && event.code == 'KeyK') {
             gotoPosition();
+        } else if(event.ctrlKey && event.code == 'KeyR') {
+            loadAllPositions();
         } else if(!event.ctrlKey && event.code === 'Tab') {
             if(!showHelp) {
                 toggleEditMode();
