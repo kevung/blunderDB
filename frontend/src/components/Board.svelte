@@ -212,6 +212,18 @@
                 }
                 return point;
             });
+
+            // Set color to -1 if no checkers on a point
+            pos.board.points = pos.board.points.map(point => {
+                if (point.checkers === 0) {
+                    return {
+                        ...point,
+                        color: -1
+                    };
+                }
+                return point;
+            });
+
             return pos;
         });
 
