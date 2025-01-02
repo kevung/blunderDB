@@ -340,6 +340,7 @@
             positionStore.update(pos => {
                 pos.player_on_roll = 0;
                 pos.decision_type = 1; // Set decision type to doubling cube
+                pos.dice = [0, 0];
                 console.log("Updated decision_type to 1 for top player"); // Debug log
                 return pos;
             });
@@ -352,6 +353,7 @@
             positionStore.update(pos => {
                 pos.player_on_roll = 1;
                 pos.decision_type = 1; // Set decision type to doubling cube
+                pos.dice = [0, 0];
                 console.log("Updated decision_type to 1 for bottom player"); // Debug log
                 return pos;
             });
