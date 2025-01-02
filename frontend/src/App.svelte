@@ -744,16 +744,16 @@
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = cubefulDoublePassMatch[2] ? parseFloat(cubefulDoublePassMatch[2]) : 0;
             }
             if (redoubleNoMatch) {
-                parsedAnalysis.doublingCubeAnalysis.redoubleNoEquity = parseFloat(redoubleNoMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.redoubleNoError = redoubleNoMatch[2] ? parseFloat(redoubleNoMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity = parseFloat(redoubleNoMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError = redoubleNoMatch[2] ? parseFloat(redoubleNoMatch[2]) : 0;
             }
             if (redoubleTakeMatch) {
-                parsedAnalysis.doublingCubeAnalysis.redoubleTakeEquity = parseFloat(redoubleTakeMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.redoubleTakeError = redoubleTakeMatch[2] ? parseFloat(redoubleTakeMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(redoubleTakeMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = redoubleTakeMatch[2] ? parseFloat(redoubleTakeMatch[2]) : 0;
             }
             if (redoublePassMatch) {
-                parsedAnalysis.doublingCubeAnalysis.redoublePassEquity = parseFloat(redoublePassMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.redoublePassError = redoublePassMatch[2] ? parseFloat(redoublePassMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(redoublePassMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = redoublePassMatch[2] ? parseFloat(redoublePassMatch[2]) : 0;
             }
             if (bestCubeActionMatch) {
                 parsedAnalysis.doublingCubeAnalysis.bestCubeAction = bestCubeActionMatch[1].trim();
