@@ -26,3 +26,5 @@ export const showTakePoint4LiveModalStore = writable(false); // Add store for Ta
 export const showGammonValue1ModalStore = writable(false); // Add store for GammonValue1 modal visibility
 
 export const showGammonValue2ModalStore = writable(false); // Add store for GammonValue2 modal visibility
+
+export const showGammonValue4ModalStore = writable(false); // Add store for GammonValue4 modal visibility

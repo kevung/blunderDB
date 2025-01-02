@@ -541,6 +541,10 @@
                                 <td>2-Cube Gammon Values</td>
                             </tr>
                             <tr>
+                                <td>gv4</td>
+                                <td>4-Cube Gammon Values</td>
+                            </tr>
+                            <tr>
                                 <td>#tag1 tag2 ...</td>
                                 <td>Tag Position</td>
                             </tr>

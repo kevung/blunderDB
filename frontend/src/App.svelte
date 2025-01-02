@@ -58,7 +58,8 @@
         showTakePoint4LastModalStore, // Import showTakePoint4LastModalStore
         showTakePoint4LiveModalStore, // Import showTakePoint4LiveModalStore
         showGammonValue1ModalStore, // Import showGammonValue1ModalStore
-        showGammonValue2ModalStore // Import showGammonValue2ModalStore
+        showGammonValue2ModalStore, // Import showGammonValue2ModalStore
+        showGammonValue4ModalStore // Import showGammonValue4ModalStore
     } from './stores/uiStore';
 
     // import components
@@ -78,6 +79,7 @@
     import TakePoint4LiveModal from './components/TakePoint4LiveModal.svelte'; // Import TakePoint4LiveModal component
     import GammonValue1Modal from './components/GammonValue1Modal.svelte'; // Import GammonValue1Modal component
     import GammonValue2Modal from './components/GammonValue2Modal.svelte'; // Import GammonValue2Modal component
+    import GammonValue4Modal from './components/GammonValue4Modal.svelte'; // Import GammonValue4Modal component
 
     // Visibility variables
     let showCommand = false;
@@ -93,6 +95,7 @@
     let showTakePoint4LiveModal = false;
     let showGammonValue1Modal = false;
     let showGammonValue2Modal = false;
+    let showGammonValue4Modal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -161,6 +164,10 @@
 
     showGammonValue2ModalStore.subscribe(value => {
         showGammonValue2Modal = value;
+    });
+
+    showGammonValue4ModalStore.subscribe(value => {
+        showGammonValue4Modal = value;
     });
 
     //Global shortcuts
@@ -1377,7 +1384,7 @@
             onLoadAllPositions={loadAllPositions}
         />
 
-    </div> <!-- Close the scrollable-content div properly -->
+    </div>
 
     <div class="panel-container">
 
@@ -1437,6 +1444,11 @@
     <GammonValue2Modal
         visible={showGammonValue2Modal}
         onClose={() => showGammonValue2ModalStore.set(false)}
+    />
+
+    <GammonValue4Modal
+        visible={showGammonValue4Modal}
+        onClose={() => showGammonValue4ModalStore.set(false)}
     />
 
     <HelpModal
