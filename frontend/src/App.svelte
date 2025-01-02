@@ -598,9 +598,12 @@
 
         const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: "" };
 
-        const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: .*/);
+        const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: ([\d.]+)(?:, MET: (.+))?/);
         if (engineVersionMatch) {
-            parsedAnalysis.analysisEngineVersion = engineVersionMatch[0];
+            parsedAnalysis.analysisEngineVersion = `eXtreme Gammon Version: ${engineVersionMatch[1]}`;
+            if (engineVersionMatch[2]) {
+                parsedAnalysis.analysisEngineVersion += `, MET: ${engineVersionMatch[2]}`;
+            }
         }
 
         if (isInternalDoublingAnalysisFormat) {
@@ -669,11 +672,11 @@
                 const lineStart = moveMatch.index + moveMatch[0].length;
                 const remainingContent = normalizedContent.slice(lineStart);
                 const playerRegex = isFrench
-                    ? /Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/
-                    : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
+                    ? /Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                    : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
                 const opponentRegex = isFrench
-                    ? /Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/
-                    : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
+                    ? /Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                    : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
                 const playerMatch = playerRegex.exec(remainingContent);
                 const opponentMatch = opponentRegex.exec(remainingContent);
                 if (playerMatch) {
@@ -878,6 +881,11 @@
                 clipboardContent += `Opponent Gammon Chance: ${move.opponentGammonChance}%\n`;
                 clipboardContent += `Opponent Backgammon Chance: ${move.opponentBackgammonChance}%\n\n`;
             });
+        }
+
+        // Add engine version
+        if (analysis.analysisEngineVersion) {
+            clipboardContent += `Engine Version: ${analysis.analysisEngineVersion}\n`;
         }
 
         // Copy to clipboard
