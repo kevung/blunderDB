@@ -129,6 +129,7 @@
                 has_jacoby: 0,
                 has_beaver: 0,
             });
+            analysisStore.set({}); // Reset analysisStore when no positions
         }
     });
 
