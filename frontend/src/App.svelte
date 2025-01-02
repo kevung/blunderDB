@@ -59,7 +59,12 @@
         showTakePoint4LiveModalStore, // Import showTakePoint4LiveModalStore
         showGammonValue1ModalStore, // Import showGammonValue1ModalStore
         showGammonValue2ModalStore, // Import showGammonValue2ModalStore
-        showGammonValue4ModalStore // Import showGammonValue4ModalStore
+        showGammonValue4ModalStore, // Import showGammonValue4ModalStore
+        showCommandStore,
+        showAnalysisStore,
+        showHelpStore,
+        showCommentStore,
+        showGoToPositionModalStore
     } from './stores/uiStore';
 
     // import components
@@ -82,12 +87,7 @@
     import GammonValue4Modal from './components/GammonValue4Modal.svelte'; // Import GammonValue4Modal component
 
     // Visibility variables
-    let showCommand = false;
-    let showAnalysis = false;
-    let showHelp = false;
-    let showComment = false;
-    let showGoToPositionModal = false;
-    let showSearchModal = false; // Remove this line
+    let showSearchModal = false;
     let showMetModal = false;
     let showTakePoint2LastModal = false;
     let showTakePoint2LiveModal = false;
@@ -96,6 +96,11 @@
     let showGammonValue1Modal = false;
     let showGammonValue2Modal = false;
     let showGammonValue4Modal = false;
+    let showCommand = false;
+    let showAnalysis = false;
+    let showHelp = false;
+    let showComment = false;
+    let showGoToPositionModal = false;
 
     // Reference for various elements.
     let mainArea;
@@ -168,6 +173,26 @@
 
     showGammonValue4ModalStore.subscribe(value => {
         showGammonValue4Modal = value;
+    });
+
+    showCommandStore.subscribe(value => {
+        showCommand = value;
+    });
+
+    showAnalysisStore.subscribe(value => {
+        showAnalysis = value;
+    });
+
+    showHelpStore.subscribe(value => {
+        showHelp = value;
+    });
+
+    showCommentStore.subscribe(value => {
+        showComment = value;
+    });
+
+    showGoToPositionModalStore.subscribe(value => {
+        showGoToPositionModal = value;
     });
 
     //Global shortcuts
@@ -1084,7 +1109,7 @@
             setStatusBarMessage('Cannot go to position in current mode');
             return;
         }
-        showGoToPositionModal = true;
+        showGoToPositionModalStore.set(true);
     }
 
     function findPosition() {
@@ -1128,7 +1153,7 @@
             } else {
                 statusBarModeStore.set('NORMAL');
             }
-            showCommand = !showCommand;
+            showCommandStore.set(!showCommand);
             resolve();
         });
     }
@@ -1148,12 +1173,12 @@
         statusBarModeStore.set('NORMAL'); // Ensure normal mode
 
         if ($statusBarModeStore === 'NORMAL') {
-            showAnalysis = !showAnalysis;
+            showAnalysisStore.set(!showAnalysis);
             console.log('showAnalysis:', showAnalysis); // Debugging log
         }
 
         if (showAnalysis) {
-            showComment = false;
+            showCommentStore.set(false);
             setTimeout(() => {
                 const analysisPanel = document.querySelector('.analysis-panel');
                 if (analysisPanel) {
@@ -1188,13 +1213,13 @@
             if (showComment) {
                 SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore); // Ensure position ID is an int64
             }
-            showComment = !showComment;
+            showCommentStore.set(!showComment);
             console.log('showComment state:', showComment); // Debugging log
         }
 
         if (showComment) {
-            showAnalysis = false;
-            showCommand = false;
+            showAnalysisStore.set(false);
+            showCommandStore.set(false);
             setTimeout(() => {
                 const commentPanel = document.querySelector('.comment-panel');
                 if (commentPanel) {
@@ -1273,7 +1298,7 @@
 
     function toggleHelpModal() {
         console.log('Help button clicked!');
-        showHelp = !showHelp;
+        showHelpStore.set(!showHelp);
 
         // Focus the command input when closing the Help modal
         if (!showHelp) {
@@ -1413,7 +1438,7 @@
 
     <GoToPositionModal
         visible={showGoToPositionModal}
-        onClose={() => showGoToPositionModal = false}
+        onClose={() => showGoToPositionModalStore.set(false)}
     />
 
     <SearchModal
