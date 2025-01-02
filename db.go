@@ -442,7 +442,13 @@ func (p *Position) MatchesSearchText(searchText string, d *Database) bool {
 		fmt.Printf("Error loading comment for position ID: %d, error: %v\n", p.ID, err)
 		return false
 	}
-	return strings.Contains(comment, searchText)
+	searchTextArray := strings.Split(searchText, ";")
+	for _, text := range searchTextArray {
+		if strings.Contains(comment, text) {
+			return true
+		}
+	}
+	return false
 }
 
 // Add MatchesPlayer1CheckerOff method to Position type

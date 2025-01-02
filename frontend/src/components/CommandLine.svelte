@@ -156,6 +156,7 @@
                const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
                const searchTextMatch = command.match(/["']([^"']*)["']/);
                const searchText = searchTextMatch ? searchTextMatch[1] : '';
+               const searchTextArray = searchText; // Update this line to pass searchText as a single string
                console.log('Filters:', filters); // Add logging
                console.log('player1BackCheckerFilter:', player1BackCheckerFilter); // Add logging
                console.log('player2BackCheckerFilter:', player2BackCheckerFilter); // Add logging
@@ -163,7 +164,7 @@
                console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter); // Add logging
                console.log('searchText:', searchText); // Add logging
                onClose().then(() => {
-                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
+                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
                });
             } else if (command === 'met') {
                onClose().then(() => {

@@ -25,7 +25,7 @@
     let player2BackCheckerFilter = '';
     let player1CheckerInZoneFilter = '';
     let player2CheckerInZoneFilter = '';
-    let searchText = '';
+    let searchText = ''; // Update this line to handle multiple words
     let player1AbsolutePipCountFilter = '';
     let equityFilter = '';
     let decisionTypeFilter = false; // Rename this line
@@ -218,8 +218,10 @@
         const decisionTypeFilter = filters.includes('Include Decision Type'); // Rename this line
         const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
 
+        const searchTextArray = searchText; // Update this line to pass searchText as a single string
+
         statusBarModeStore.set('NORMAL');
-        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextFilter, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter); // Rename this line
+        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter); // Rename this line
         onClose();
     }
 
