@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the blunderDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
-# SPDX-FileCopyrightText: 2024 Kévin Unger <kevin.unger@onera.fr>
+# SPDX-FileCopyrightText: 2024, 2025 Kévin Unger <kevin.unger@onera.fr>
 msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-31 04:01+0100\n"
-"PO-Revision-Date: 2024-12-31 13:29+0100\n"
+"POT-Creation-Date: 2025-01-02 13:38+0100\n"
+"PO-Revision-Date: 2025-01-02 13:39+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -26,13 +26,14 @@ msgstr "blunderDB"
 #: ../../source/index.rst:6
 msgid ""
 "blunderDB est un logiciel pour constituer des bases de données de "
-"positions. Sa force principale est de constituer un lieu unique où "
-"aggréger les positions qu'un joueur a pu rencontrer (en ligne, en "
-"tournoi) et de pouvoir réétudier ces positions en les filtrant selon "
+"positions de backgammon. Sa force principale est de constituer un lieu "
+"unique où aggréger les positions qu'un joueur a pu rencontrer (en ligne, "
+"en tournoi) et de pouvoir réétudier ces positions en les filtrant selon "
 "différents filtres combinables arbitrairement. blunderDB peut également "
 "être utilisé pour constituer des catalogues de positions de référence."
 msgstr ""
-"blunderDB is software for creating position databases. Its main strength "
+"blunderDB is a software for creating backgammon position databases. Its main s"
+"trength "
 "is to provide a single place where a player can aggregate the positions "
 "he or she has encountered (online, in tournaments) and be able to review "
 "these positions by filtering them with various filters that can be "
