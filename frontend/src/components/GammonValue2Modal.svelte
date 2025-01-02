@@ -6,6 +6,16 @@
         onClose();
     }
 
+    function handleKeyDown(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+        // Prevent browsing position shortcuts
+        if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key)) {
+            event.preventDefault();
+        }
+    }
+
     const tableData = [
         [0.48, 0.5, 0.45, 0.46, 0.36, 0.36, 0.31, 0.31],
         [1, 0.97, 0.98, 0.81, 0.67, 0.6, 0.54, 0.48],
@@ -18,6 +28,12 @@
 
     function formatCell(value) {
         return value.toFixed(2);
+    }
+
+    $: if (visible) {
+        window.addEventListener('keydown', handleKeyDown);
+    } else {
+        window.removeEventListener('keydown', handleKeyDown);
     }
 </script>
 

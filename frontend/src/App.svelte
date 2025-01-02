@@ -183,11 +183,22 @@
             return;
         }
 
-        // Prevent shortcuts when search modal or MET modal is visible
-        if (showSearchModal || showMetModal) {
+        // Prevent shortcuts when any modal is visible
+        if (showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal) {
             if (event.key === 'Escape') {
                 showSearchModalStore.set(false);
                 showMetModalStore.set(false);
+                showTakePoint2LastModalStore.set(false);
+                showTakePoint2LiveModalStore.set(false);
+                showTakePoint4LastModalStore.set(false);
+                showTakePoint4LiveModalStore.set(false);
+                showGammonValue1ModalStore.set(false);
+                showGammonValue2ModalStore.set(false);
+                showGammonValue4ModalStore.set(false);
+            }
+            // Prevent browsing position shortcuts
+            if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key)) {
+                event.preventDefault();
             }
             // Allow backspace to work inside input fields
             if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
@@ -1310,8 +1321,8 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
-        if (showGoToPositionModal || showSearchModal || showMetModal || $statusBarModeStore === 'EDIT') {
-            return; // Prevent changing position when GoToPositionModal, SearchModal, or MetModal is open or in edit mode
+        if (showGoToPositionModal || showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || $statusBarModeStore === 'EDIT') {
+            return; // Prevent changing position when any modal is open or in edit mode
         }
 
         // Prevent changing position when scrolling in the analysis panel or comment panel
