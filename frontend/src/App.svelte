@@ -509,37 +509,20 @@
             throw new Error("File is empty or invalid.");
         }
 
-        // Normalize line endings for both Windows (\r\n) and old Mac (\r) to Unix (\n)
-        //const normalizedContent = fileContent.replace(/\r\n|\r/g, '\n');
-        const normalizedContent = fileContent
-            .replace(/\r\n|\r/g, '\n') // Normalize line endings
-            .trim(); // Remove leading and trailing spaces
-
-
-        // Split the file content into lines and trim each line to remove excess whitespace
+        const normalizedContent = fileContent.replace(/\r\n|\r/g, '\n').trim();
         const lines = normalizedContent.split('\n').map(line => line.trim());
 
-        // Log each line for debugging (optional)
-        lines.forEach((line, index) => console.log(`Cleaned Line ${index}: "${line}"`));
+        const isFrench = normalizedContent.includes("Joueur") || normalizedContent.includes("Adversaire") || normalizedContent.includes("Videau");
+        const isNewCheckerAnalysisFormat = normalizedContent.includes("Analysis:\nChecker Move Analysis:");
+        const isNewDoublingAnalysisFormat = normalizedContent.includes("Analysis:\nDoubling Cube Analysis:");
 
-        // Detect if the file is in French or English by checking for French words
-        const isFrench = normalizedContent.includes("Joueur")
-            || normalizedContent.includes("Adversaire")
-            || normalizedContent.includes("Videau");
-
-
-        // Parse the XGID
         const xgidLine = lines.find(line => line.startsWith("XGID="));
         const xgid = xgidLine ? xgidLine.split('=')[1] : null;
-
-        console.log("xgidLine:", xgidLine);
-        console.log("xgid:", xgid);
 
         if (!xgid) {
             throw new Error("XGID not found in the file content.");
         }
 
-        // XGID components: "-A-CCD-----a---a------dfc-:4:1:-1:33:1:0:0:9:10"
         const [
             positionPart, 
             cubeValue, 
@@ -553,45 +536,37 @@
             dummy
         ] = xgid.split(":");
 
-        // Decode board positions from the XGID
         const board = { points: Array(26).fill({ checkers: 0, color: -1 }), bearoff: [0, 0] };
 
-        const pointChars = positionPart.split('');
+        if (positionPart) {
+            const pointChars = positionPart.split('');
+            let pointIndex = 0;
+            pointChars.forEach(char => {
+                if (char >= 'A' && char <= 'Z') {
+                    const numCheckers = char.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+                    board.points[pointIndex] = { checkers: numCheckers, color: 0 };
+                } else if (char >= 'a' && char <= 'z') {
+                    const numCheckers = char.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
+                    board.points[pointIndex] = { checkers: numCheckers, color: 1 };
+                }
+                pointIndex++;
+            });
+        }
 
-        // Parse player on roll
-        let pointIndex = 0;  // Start from the last point (24th)
-        pointChars.forEach(char => {
-            if (char >= 'A' && char <= 'Z') {
-                const numCheckers = char.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers, color: 0 };
-            } else if (char >= 'a' && char <= 'z') {
-                const numCheckers = char.charCodeAt(0) - 'a'.charCodeAt(0) + 1;
-                board.points[pointIndex] = { checkers: numCheckers, color: 1 };
-            }
-            pointIndex++;
-        });
-
-        // Parse dice
-        const diceValues = dicePart.split("").map(num => parseInt(num));
+        const diceValues = dicePart ? dicePart.split("").map(num => parseInt(num)) : [0, 0];
         const dice = [diceValues[0], diceValues[1]];
-        console.log('diceValues', diceValues);
-        console.log('dice', dice);
 
         const player1Score = parseInt(score1);
         const player2Score = parseInt(score2);
         const matchLengthValue = parseInt(matchLength);
-        const playerOnRoll = parseInt(playerDownOnDiagram) === 1 ? 0 : 1;  // 0 for player1, 1 for player2
-        
+        const playerOnRoll = parseInt(playerDownOnDiagram) === 1 ? 0 : 1;
 
-
-        // if unlimited mode
         let hasJacoby = 0, hasBeaver = 0, awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
         if (parseInt(isCrawford) === 0) {
             awayScores = awayScores.map(score => score === 1 ? 0 : score);
         }
         if (matchLengthValue === 0) {
             awayScores = [-1, -1];
-            console.log('isCrawford', parseInt(isCrawford));
             switch (parseInt(isCrawford)) {
                 case 1: hasJacoby = 1; break;
                 case 2: hasBeaver = 1; break;
@@ -604,7 +579,7 @@
         board.bearoff = [player1Bearoff, player2Bearoff];
 
         const decisionLine = lines.find(line => line.includes(isFrench ? "jouer" : "to play"));
-        const decisionType = decisionLine ? 0 : 1; // 0 for checker decision, 1 for cube action
+        const decisionType = decisionLine || isNewCheckerAnalysisFormat ? 0 : 1;
 
         const positionData = {
             board: board,
@@ -620,17 +595,99 @@
             has_beaver: hasBeaver,
         };
 
-        // Analysis Parsing
         const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: "" };
 
-        const engineVersionMatch = normalizedContent.match(new RegExp(/eXtreme Gammon Version: .*/));  // For English version, match the full engine version line
-
+        const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: .*/);
         if (engineVersionMatch) {
-            parsedAnalysis.analysisEngineVersion = engineVersionMatch[0]; // Store the whole line as-is
+            parsedAnalysis.analysisEngineVersion = engineVersionMatch[0];
         }
 
-        // Doubling Cube Analysis Parsing
-        if (
+        if (isNewDoublingAnalysisFormat) {
+            parsedAnalysis.analysisType = "DoublingCube";
+            const doublingCubeAnalysisRegex = /Doubling Cube Analysis:\nAnalysis Depth: (.+)\nPlayer Win Chances: ([-.\d]+)%\nPlayer Gammon Chances: ([-.\d]+)%\nPlayer Backgammon Chances: ([-.\d]+)%\nOpponent Win Chances: ([-.\d]+)%\nOpponent Gammon Chances: ([-.\d]+)%\nOpponent Backgammon Chances: ([-.\d]+)%\nCubeless No Double Equity: ([-.\d]+)\nCubeless Double Equity: ([-.\d]+)\nCubeful No Double Equity: ([-.\d]+)\nCubeful No Double Error: ([-.\d]+)\nCubeful Double Take Equity: ([-.\d]+)\nCubeful Double Take Error: ([-.\d]+)\nCubeful Double Pass Equity: ([-.\d]+)\nCubeful Double Pass Error: ([-.\d]+)\nBest Cube Action: (.+)\nWrong Pass Percentage: ([-.\d]+)%\nWrong Take Percentage: ([-.\d]+)%/;
+            const doublingCubeMatch = doublingCubeAnalysisRegex.exec(normalizedContent);
+            if (doublingCubeMatch) {
+                parsedAnalysis.doublingCubeAnalysis = {
+                    analysisDepth: doublingCubeMatch[1].trim(),
+                    playerWinChances: parseFloat(doublingCubeMatch[2]),
+                    playerGammonChances: parseFloat(doublingCubeMatch[3]),
+                    playerBackgammonChances: parseFloat(doublingCubeMatch[4]),
+                    opponentWinChances: parseFloat(doublingCubeMatch[5]),
+                    opponentGammonChances: parseFloat(doublingCubeMatch[6]),
+                    opponentBackgammonChances: parseFloat(doublingCubeMatch[7]),
+                    cubelessNoDoubleEquity: parseFloat(doublingCubeMatch[8]),
+                    cubelessDoubleEquity: parseFloat(doublingCubeMatch[9]),
+                    cubefulNoDoubleEquity: parseFloat(doublingCubeMatch[10]),
+                    cubefulNoDoubleError: parseFloat(doublingCubeMatch[11]),
+                    cubefulDoubleTakeEquity: parseFloat(doublingCubeMatch[12]),
+                    cubefulDoubleTakeError: parseFloat(doublingCubeMatch[13]),
+                    cubefulDoublePassEquity: parseFloat(doublingCubeMatch[14]),
+                    cubefulDoublePassError: parseFloat(doublingCubeMatch[15]),
+                    bestCubeAction: doublingCubeMatch[16].trim(),
+                    wrongPassPercentage: parseFloat(doublingCubeMatch[17]),
+                    wrongTakePercentage: parseFloat(doublingCubeMatch[18])
+                };
+            }
+        } else if (isNewCheckerAnalysisFormat) {
+            parsedAnalysis.analysisType = "CheckerMove";
+            const moveRegex = /^Move (\d+): (.+)\nAnalysis Depth: (.+)\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%/gm;
+            let moveMatch;
+            while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
+                const moveDetails = {
+                    index: parseInt(moveMatch[1], 10),
+                    move: moveMatch[2].trim(),
+                    analysisDepth: moveMatch[3].trim(),
+                    equity: parseFloat(moveMatch[4]),
+                    equityError: parseFloat(moveMatch[5]),
+                    playerWinChance: parseFloat(moveMatch[6]),
+                    playerGammonChance: parseFloat(moveMatch[7]),
+                    playerBackgammonChance: parseFloat(moveMatch[8]),
+                    opponentWinChance: parseFloat(moveMatch[9]),
+                    opponentGammonChance: parseFloat(moveMatch[10]),
+                    opponentBackgammonChance: parseFloat(moveMatch[11]),
+                };
+                parsedAnalysis.checkerAnalysis.push(moveDetails);
+            }
+        } else if (/^ {4}(\d+)\./gm.test(normalizedContent)) {
+            parsedAnalysis.analysisType = "CheckerMove";
+            const moveRegex = new RegExp(
+                isFrench
+                ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\séq:(.{6})\s(?:\((-?[-.\d]+)\))?/
+                : /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{6})\s(?:\((-?[-.\d.]+)\))?/,
+                'gm'
+            );
+            let moveMatch;
+            while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
+                const moveDetails = {
+                    index: parseInt(moveMatch[1], 10),
+                    analysisDepth: moveMatch[2].trim(),
+                    move: moveMatch[3].trim(),
+                    equity: parseFloat(moveMatch[4]),
+                    equityError: moveMatch[5] ? parseFloat(moveMatch[5]) : 0,
+                };
+                const lineStart = moveMatch.index + moveMatch[0].length;
+                const remainingContent = normalizedContent.slice(lineStart);
+                const playerRegex = isFrench
+                    ? /Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/
+                    : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
+                const opponentRegex = isFrench
+                    ? /Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/
+                    : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;
+                const playerMatch = playerRegex.exec(remainingContent);
+                const opponentMatch = opponentRegex.exec(remainingContent);
+                if (playerMatch) {
+                    moveDetails.playerWinChance = parseFloat(playerMatch[1]);
+                    moveDetails.playerGammonChance = parseFloat(playerMatch[2]);
+                    moveDetails.playerBackgammonChance = parseFloat(playerMatch[3]);
+                }
+                if (opponentMatch) {
+                    moveDetails.opponentWinChance = parseFloat(opponentMatch[1]);
+                    moveDetails.opponentGammonChance = parseFloat(opponentMatch[2]);
+                    moveDetails.opponentBackgammonChance = parseFloat(opponentMatch[3]);
+                }
+                parsedAnalysis.checkerAnalysis.push(moveDetails);
+            }
+        } else if (
             (isFrench && (normalizedContent.includes("Equités sans videau") || normalizedContent.includes("Equités avec videau"))) ||
             (!isFrench && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")))
         ) {
@@ -644,23 +701,17 @@
 
             const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equités sans videau\s*:\s*Pas de double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/));
 
-            // Cubeful Equities with optional error margin for No Double, Double/Take, and Double/Pass
             const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /No double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
             const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Take:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
             const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Pass:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-                // Redouble handling
             const redoubleNoMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de redouble\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /No redouble\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
             const redoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Redouble\/Prend:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Redouble\/Take:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
             const redoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Redouble\/Passe:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Redouble\/Pass:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
 
-
-            // Best Cube action parsing
             const bestCubeActionMatch = normalizedContent.match(new RegExp(isFrench ? /Meilleur action du videau:\s*(.*)/ : /Best Cube action:\s*(.*)/));
 
             const wrongPassPercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/));
             const wrongTakePercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/));
-
-
 
             if (analysisDepthMatch) {
                 parsedAnalysis.doublingCubeAnalysis.analysisDepth = analysisDepthMatch[1].trim();
@@ -691,18 +742,17 @@
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(cubefulDoublePassMatch[1]);
                 parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = cubefulDoublePassMatch[2] ? parseFloat(cubefulDoublePassMatch[2]) : 0;
             }
-            // Redouble Handling
             if (redoubleNoMatch) {
-                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity = parseFloat(redoubleNoMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError = redoubleNoMatch[2] ? parseFloat(redoubleNoMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.redoubleNoEquity = parseFloat(redoubleNoMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.redoubleNoError = redoubleNoMatch[2] ? parseFloat(redoubleNoMatch[2]) : 0;
             }
             if (redoubleTakeMatch) {
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity = parseFloat(redoubleTakeMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError = parseFloat(redoubleTakeMatch[2]) ? parseFloat(redoubleTakeMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.redoubleTakeEquity = parseFloat(redoubleTakeMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.redoubleTakeError = redoubleTakeMatch[2] ? parseFloat(redoubleTakeMatch[2]) : 0;
             }
             if (redoublePassMatch) {
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity = parseFloat(redoublePassMatch[1]);
-                parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError = parseFloat(redoublePassMatch[2]) ? parseFloat(redoublePassMatch[2]) : 0;
+                parsedAnalysis.doublingCubeAnalysis.redoublePassEquity = parseFloat(redoublePassMatch[1]);
+                parsedAnalysis.doublingCubeAnalysis.redoublePassError = redoublePassMatch[2] ? parseFloat(redoublePassMatch[2]) : 0;
             }
             if (bestCubeActionMatch) {
                 parsedAnalysis.doublingCubeAnalysis.bestCubeAction = bestCubeActionMatch[1].trim();
@@ -713,72 +763,9 @@
             if (wrongTakePercentageMatch) {
                 parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage = parseFloat(wrongTakePercentageMatch[1]);
             }
-
-
-
-        } else if (/^ {4}(\d+)\./gm.test(normalizedContent)) {
-            parsedAnalysis.analysisType = "CheckerMove";
-
-            // Checker Move Analysis Parsing for both English and French
-
-            const moveRegex = new RegExp(
-                isFrench
-                ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\séq:(.{6})\s(?:\((-?[-.\d]+)\))?/
-                : /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{6})\s(?:\((-?[-.\d.]+)\))?/,
-                'gm'
-            );
-
-            let moveMatch;
-            let playerMatch;
-            let opponentMatch;
-
-            // Loop through all move lines in the normalized content
-            while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
-                // Extract the move details from moveRegex match
-                const moveDetails = {
-                    index: parseInt(moveMatch[1], 10), // Move number (e.g., 1)
-                    analysisDepth: moveMatch[2].trim(), // XG Roller++ or ply value
-                    move: moveMatch[3].trim(), // The move description (e.g., 20/15 10/8)
-                    equity: parseFloat(moveMatch[4]), // Equity value (e.g., -1.448)
-                    equityError: moveMatch[5] ? parseFloat(moveMatch[5]) : 0, // Optional equity change value (e.g., -0.038)
-                };
-
-                // Find the next lines for Player and Opponent information
-                const lineStart = moveMatch.index + moveMatch[0].length; // Position after the main move line
-                const remainingContent = normalizedContent.slice(lineStart);
-
-                // Check for Player and Opponent percentage details in the following lines
-                // This regex pattern ensures it matches Player and Opponent details on the next lines
-                const playerRegex = isFrench
-                    ? /Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/  // French version
-                    : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;  // English version
-
-                const opponentRegex = isFrench
-                    ? /Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/  // French version
-                    : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)%\s+B:(\d+\.\d+)%\)/;  // English version
-
-                // Capture Player details
-                if ((playerMatch = playerRegex.exec(remainingContent)) !== null) {
-                    moveDetails.playerWinChance = parseFloat(playerMatch[1]);
-                    moveDetails.playerGammonChance = parseFloat(playerMatch[2]);
-                    moveDetails.playerBackgammonChance = parseFloat(playerMatch[3]);
-                }
-
-                // Capture Opponent details
-                if ((opponentMatch = opponentRegex.exec(remainingContent)) !== null) {
-                    moveDetails.opponentWinChance = parseFloat(opponentMatch[1]);
-                    moveDetails.opponentGammonChance = parseFloat(opponentMatch[2]);
-                    moveDetails.opponentBackgammonChance = parseFloat(opponentMatch[3]);
-                }
-
-                // Push the current move details into checkerAnalysis array
-                parsedAnalysis.checkerAnalysis.push(moveDetails);
-            }
-
         }
 
         return { positionData, parsedAnalysis };
-
     }
 
     function generateXGID(position) {
@@ -856,6 +843,7 @@
         clipboardContent += `Analysis:\n`;
         if (analysis.analysisType === "DoublingCube") {
             clipboardContent += `Doubling Cube Analysis:\n`;
+            clipboardContent += `Analysis Depth: ${analysis.doublingCubeAnalysis.analysisDepth}\n`;
             clipboardContent += `Player Win Chances: ${analysis.doublingCubeAnalysis.playerWinChances}%\n`;
             clipboardContent += `Player Gammon Chances: ${analysis.doublingCubeAnalysis.playerGammonChances}%\n`;
             clipboardContent += `Player Backgammon Chances: ${analysis.doublingCubeAnalysis.playerBackgammonChances}%\n`;
@@ -865,13 +853,23 @@
             clipboardContent += `Cubeless No Double Equity: ${analysis.doublingCubeAnalysis.cubelessNoDoubleEquity}\n`;
             clipboardContent += `Cubeless Double Equity: ${analysis.doublingCubeAnalysis.cubelessDoubleEquity}\n`;
             clipboardContent += `Cubeful No Double Equity: ${analysis.doublingCubeAnalysis.cubefulNoDoubleEquity}\n`;
+            clipboardContent += `Cubeful No Double Error: ${analysis.doublingCubeAnalysis.cubefulNoDoubleError}\n`;
             clipboardContent += `Cubeful Double Take Equity: ${analysis.doublingCubeAnalysis.cubefulDoubleTakeEquity}\n`;
+            clipboardContent += `Cubeful Double Take Error: ${analysis.doublingCubeAnalysis.cubefulDoubleTakeError}\n`;
             clipboardContent += `Cubeful Double Pass Equity: ${analysis.doublingCubeAnalysis.cubefulDoublePassEquity}\n`;
+            clipboardContent += `Cubeful Double Pass Error: ${analysis.doublingCubeAnalysis.cubefulDoublePassError}\n`;
+            clipboardContent += `Best Cube Action: ${analysis.doublingCubeAnalysis.bestCubeAction}\n`;
+            clipboardContent += `Wrong Pass Percentage: ${analysis.doublingCubeAnalysis.wrongPassPercentage}%\n`;
+            clipboardContent += `Wrong Take Percentage: ${analysis.doublingCubeAnalysis.wrongTakePercentage}%\n`;
         } else if (analysis.analysisType === "CheckerMove") {
             clipboardContent += `Checker Move Analysis:\n`;
             analysis.checkerAnalysis.moves.forEach(move => {
                 clipboardContent += `Move ${move.index}: ${move.move}\n`;
+                clipboardContent += `Analysis Depth: ${move.analysisDepth}\n`;
                 clipboardContent += `Equity: ${move.equity}\n`;
+                if (move.equityError !== undefined) {
+                    clipboardContent += `Equity Error: ${move.equityError}\n`;
+                }
                 clipboardContent += `Player Win Chance: ${move.playerWinChance}%\n`;
                 clipboardContent += `Player Gammon Chance: ${move.playerGammonChance}%\n`;
                 clipboardContent += `Player Backgammon Chance: ${move.playerBackgammonChance}%\n`;
