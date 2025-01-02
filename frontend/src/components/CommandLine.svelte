@@ -163,6 +163,7 @@
                console.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter); // Add logging
                console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter); // Add logging
                console.log('searchText:', searchText); // Add logging
+               console.log('Search Text (use ";" to separate multiple keywords):', searchText); // Add logging
                onClose().then(() => {
                   onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
                });

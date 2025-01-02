@@ -633,7 +633,8 @@
                         {/if}
                         {#if filter === 'Search Text'}
                             <div class="search-text-container">
-                                <input type="text" bind:value={searchText} class="filter-input search-text-input" />
+                                <label for="searchText">(tag1;tag2;...)</label>
+                                <input type="text" id="searchText" bind:value={searchText} class="search-text-input" style="margin-left: 10px;" />
                             </div>
                         {/if}
                     </div>
