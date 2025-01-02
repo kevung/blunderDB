@@ -3,12 +3,12 @@
 blunderDB
 =========
 
-blunderDB est un logiciel pour constituer des bases de données de positions. Sa
-force principale est de constituer un lieu unique où aggréger les positions
-qu'un joueur a pu rencontrer (en ligne, en tournoi) et de pouvoir réétudier ces
-positions en les filtrant selon différents filtres combinables arbitrairement.
-blunderDB peut également être utilisé pour constituer des catalogues de
-positions de référence.
+blunderDB est un logiciel pour constituer des bases de données de positions de
+backgammon. Sa force principale est de constituer un lieu unique où aggréger
+les positions qu'un joueur a pu rencontrer (en ligne, en tournoi) et de pouvoir
+réétudier ces positions en les filtrant selon différents filtres combinables
+arbitrairement. blunderDB peut également être utilisé pour constituer des
+catalogues de positions de référence.
 
 La présente documentation est structurée de la manière suivante:
 
