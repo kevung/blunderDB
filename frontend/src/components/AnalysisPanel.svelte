@@ -1,14 +1,21 @@
 <script>
     import { analysisStore } from '../stores/analysisStore'; // Import analysisStore
+    import { positionStore } from '../stores/positionStore'; // Import positionStore
 
     export let visible = false;
     export let onClose;
 
     let analysisData;
+    let cubeValue;
 
     // Subscribe to analysisStore to get the analysis data
     analysisStore.subscribe(value => {
         analysisData = value;
+    });
+
+    // Subscribe to positionStore to get the cube value
+    positionStore.subscribe(value => {
+        cubeValue = value.cube.value;
     });
 
     $: if (visible) {
@@ -37,6 +44,13 @@
 
     function formatEquity(value) {
         return value >= 0 ? `+${value.toFixed(3)}` : value.toFixed(3);
+    }
+
+    function getDecisionLabel(decision) {
+        if (cubeValue >= 1) {
+            return decision.replace('Double', 'Redouble');
+        }
+        return decision;
     }
 </script>
 
@@ -83,17 +97,17 @@
                             <th>Error</th>
                         </tr>
                         <tr>
-                            <td>No Double</td>
+                            <td>{getDecisionLabel('No Double')}</td>
                             <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
                             <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleError || 0)}</td>
                         </tr>
                         <tr>
-                            <td>Double/Take</td>
+                            <td>{getDecisionLabel('Double/Take')}</td>
                             <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
                             <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeError || 0)}</td>
                         </tr>
                         <tr>
-                            <td>Double/Pass</td>
+                            <td>{getDecisionLabel('Double/Pass')}</td>
                             <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassEquity || 0)}</td>
                             <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassError || 0)}</td>
                         </tr>
