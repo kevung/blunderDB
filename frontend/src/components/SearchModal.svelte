@@ -226,6 +226,8 @@
     }
 
     function handleKeyDown(event) {
+        if (!visible) return; // Only handle keydown events when the modal is visible
+
         if (event.key === 'Escape') {
             onClose();
         } else if (event.key === 'Enter') {
