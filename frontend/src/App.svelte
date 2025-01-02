@@ -513,8 +513,8 @@
         const lines = normalizedContent.split('\n').map(line => line.trim());
 
         const isFrench = normalizedContent.includes("Joueur") || normalizedContent.includes("Adversaire") || normalizedContent.includes("Videau");
-        const isNewCheckerAnalysisFormat = normalizedContent.includes("Analysis:\nChecker Move Analysis:");
-        const isNewDoublingAnalysisFormat = normalizedContent.includes("Analysis:\nDoubling Cube Analysis:");
+        const isInternalCheckerAnalysisFormat = normalizedContent.includes("Analysis:\nChecker Move Analysis:");
+        const isInternalDoublingAnalysisFormat = normalizedContent.includes("Analysis:\nDoubling Cube Analysis:");
 
         const xgidLine = lines.find(line => line.startsWith("XGID="));
         const xgid = xgidLine ? xgidLine.split('=')[1] : null;
@@ -579,7 +579,7 @@
         board.bearoff = [player1Bearoff, player2Bearoff];
 
         const decisionLine = lines.find(line => line.includes(isFrench ? "jouer" : "to play"));
-        const decisionType = decisionLine || isNewCheckerAnalysisFormat ? 0 : 1;
+        const decisionType = decisionLine || isInternalCheckerAnalysisFormat ? 0 : 1;
 
         const positionData = {
             board: board,
@@ -602,7 +602,7 @@
             parsedAnalysis.analysisEngineVersion = engineVersionMatch[0];
         }
 
-        if (isNewDoublingAnalysisFormat) {
+        if (isInternalDoublingAnalysisFormat) {
             parsedAnalysis.analysisType = "DoublingCube";
             const doublingCubeAnalysisRegex = /Doubling Cube Analysis:\nAnalysis Depth: (.+)\nPlayer Win Chances: ([-.\d]+)%\nPlayer Gammon Chances: ([-.\d]+)%\nPlayer Backgammon Chances: ([-.\d]+)%\nOpponent Win Chances: ([-.\d]+)%\nOpponent Gammon Chances: ([-.\d]+)%\nOpponent Backgammon Chances: ([-.\d]+)%\nCubeless No Double Equity: ([-.\d]+)\nCubeless Double Equity: ([-.\d]+)\nCubeful No Double Equity: ([-.\d]+)\nCubeful No Double Error: ([-.\d]+)\nCubeful Double Take Equity: ([-.\d]+)\nCubeful Double Take Error: ([-.\d]+)\nCubeful Double Pass Equity: ([-.\d]+)\nCubeful Double Pass Error: ([-.\d]+)\nBest Cube Action: (.+)\nWrong Pass Percentage: ([-.\d]+)%\nWrong Take Percentage: ([-.\d]+)%/;
             const doublingCubeMatch = doublingCubeAnalysisRegex.exec(normalizedContent);
@@ -628,7 +628,7 @@
                     wrongTakePercentage: parseFloat(doublingCubeMatch[18])
                 };
             }
-        } else if (isNewCheckerAnalysisFormat) {
+        } else if (isInternalCheckerAnalysisFormat) {
             parsedAnalysis.analysisType = "CheckerMove";
             const moveRegex = /^Move (\d+): (.+)\nAnalysis Depth: (.+)\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%/gm;
             let moveMatch;
