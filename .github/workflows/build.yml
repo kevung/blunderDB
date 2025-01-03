@@ -69,7 +69,7 @@ jobs:
         shell: bash
 
       - name: Build App
-        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.version }}${{matrix.build.ext}} -upx -clean
+        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.version }}${{matrix.build.ext}} -upx -clean -tags webkit2_41
         shell: bash
         
       - name: Add Linux perms
