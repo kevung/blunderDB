@@ -23,7 +23,8 @@
         LoadComment,
         SaveComment,
         LoadAnalysis,
-        LoadPositionsByFilters // Update import
+        LoadPositionsByFilters, // Update import
+        CheckDatabaseVersion // Import CheckDatabaseVersion
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
@@ -64,8 +65,11 @@
         showAnalysisStore,
         showHelpStore,
         showCommentStore,
-        showGoToPositionModalStore
+        showGoToPositionModalStore,
+        showWarningModalStore // Import showWarningModalStore
     } from './stores/uiStore';
+
+    import { metaStore } from './stores/metaStore'; // Import metaStore
 
     // import components
     import Toolbar from './components/Toolbar.svelte';
@@ -85,6 +89,7 @@
     import GammonValue1Modal from './components/GammonValue1Modal.svelte'; // Import GammonValue1Modal component
     import GammonValue2Modal from './components/GammonValue2Modal.svelte'; // Import GammonValue2Modal component
     import GammonValue4Modal from './components/GammonValue4Modal.svelte'; // Import GammonValue4Modal component
+    import WarningModal from './components/WarningModal.svelte'; // Import WarningModal component
 
     // Visibility variables
     let showSearchModal = false;
@@ -101,6 +106,15 @@
     let showHelp = false;
     let showComment = false;
     let showGoToPositionModal = false;
+    let showWarningModal = false; // Ensure this variable is declared
+    let warningMessage = '';
+    let databaseVersion = ''; // Add database version variable
+    let expectedVersion = ''; // Add expectedVersion variable
+
+    // Subscribe to the metaStore
+    metaStore.subscribe(value => {
+        expectedVersion = value.expectedVersion;
+    });
 
     // Reference for various elements.
     let mainArea;
@@ -194,6 +208,10 @@
 
     showGoToPositionModalStore.subscribe(value => {
         showGoToPositionModal = value;
+    });
+
+    showWarningModalStore.subscribe(value => {
+        showWarningModal = value;
     });
 
     //Global shortcuts
@@ -369,6 +387,18 @@
             databasePathStore.set(filePath);
             console.log('databasePathStore:', $databasePathStore);
             await SetupDatabase(filePath);
+
+            // Check database version
+            const dbVersion = await CheckDatabaseVersion();
+            console.log(`Database version: ${dbVersion}`);
+            databaseVersion = dbVersion; // Set database version
+            setStatusBarMessage(`Database version: ${dbVersion}`);
+
+            if (getMajorVersion(dbVersion) !== getMajorVersion(expectedVersion)) {
+                warningMessage = `Major version mismatch. The database schema might be incompatible with the current version of blunderDB.\nDatabase version: ${dbVersion}\nExpected version: ${expectedVersion}`;
+                showWarningModal = true;
+            }
+
             setStatusBarMessage('Database opened successfully');
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
@@ -379,6 +409,14 @@
             console.error('Error opening file dialog:', error);
             setStatusBarMessage('Error opening database');
         }
+    }
+
+    function getMajorVersion(version) {
+        return version.split('.')[0];
+    }
+
+    function closeWarningModal() {
+        showWarningModal = false;
     }
 
     function exitApp() {
@@ -1499,6 +1537,12 @@
     <GammonValue4Modal
         visible={showGammonValue4Modal}
         onClose={() => showGammonValue4ModalStore.set(false)}
+    />
+
+    <WarningModal
+        message={warningMessage}
+        visible={showWarningModal}
+        onClose={closeWarningModal}
     />
 
     <HelpModal

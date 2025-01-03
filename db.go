@@ -10,6 +10,8 @@ import (
 	_ "modernc.org/sqlite"
 )
 
+const Version = "0.2.0"
+
 type Database struct {
 	db *sql.DB
 }
@@ -63,7 +65,54 @@ func (d *Database) SetupDatabase(path string) error {
 		fmt.Println("Error creating comment table:", err)
 		return err
 	}
+
+	_, err = d.db.Exec(`
+        CREATE TABLE IF NOT EXISTS metadata (
+            key TEXT PRIMARY KEY,
+            value TEXT
+        )
+    `)
+	if err != nil {
+		fmt.Println("Error creating metadata table:", err)
+		return err
+	}
+
+	// Insert or update the version
+	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('version', ?)`, Version)
+	if err != nil {
+		fmt.Println("Error inserting version:", err)
+		return err
+	}
+
 	return nil
+}
+
+func (d *Database) CheckVersion() error {
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying version:", err)
+		return err
+	}
+
+	dbMajorVersion := strings.Split(dbVersion, ".")[0]
+	appMajorVersion := strings.Split(Version, ".")[0]
+
+	if dbMajorVersion != appMajorVersion {
+		return fmt.Errorf("database major version mismatch: expected %s.x.x, got %s.x.x", appMajorVersion, dbMajorVersion)
+	}
+
+	return nil
+}
+
+func (d *Database) CheckDatabaseVersion() (string, error) {
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying version:", err)
+		return "", err
+	}
+	return dbVersion, nil
 }
 
 func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
@@ -115,6 +164,11 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 }
 
 func (d *Database) SavePosition(position *Position) (int64, error) {
+	// Check version before saving
+	if err := d.CheckVersion(); err != nil {
+		return 0, err
+	}
+
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
@@ -152,6 +206,11 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 }
 
 func (d *Database) UpdatePosition(position Position) error {
+	// Check version before updating
+	if err := d.CheckVersion(); err != nil {
+		return err
+	}
+
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)

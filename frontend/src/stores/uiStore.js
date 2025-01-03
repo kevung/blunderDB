@@ -29,6 +29,8 @@ export const showGammonValue2ModalStore = writable(false); // Add store for Gamm
 
 export const showGammonValue4ModalStore = writable(false); // Add store for GammonValue4 modal visibility
 
+export const showWarningModalStore = writable(false); // Add store for warning modal visibility
+
 export const showCommandStore = writable(false);
 export const showAnalysisStore = writable(false);
 export const showHelpStore = writable(false);
