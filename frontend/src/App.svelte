@@ -1348,6 +1348,7 @@
             const positions = await LoadAllPositions(); // Remove databaseVersion
             positionsStore.set(Array.isArray(positions) ? positions : []);
             if (positions && positions.length > 0) {
+                currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw board
                 currentPositionIndexStore.set(positions.length - 1);
             } else {
                 currentPositionIndexStore.set(-1);
