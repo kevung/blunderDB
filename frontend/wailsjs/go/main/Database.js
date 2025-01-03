@@ -6,8 +6,8 @@ export function CheckDatabaseVersion() {
   return window['go']['main']['Database']['CheckDatabaseVersion']();
 }
 
-export function CheckVersion() {
-  return window['go']['main']['Database']['CheckVersion']();
+export function CheckVersion(arg1) {
+  return window['go']['main']['Database']['CheckVersion'](arg1);
 }
 
 export function DeleteAnalysis(arg1) {
@@ -20,6 +20,10 @@ export function DeleteComment(arg1) {
 
 export function DeletePosition(arg1) {
   return window['go']['main']['Database']['DeletePosition'](arg1);
+}
+
+export function GetDatabaseVersion() {
+  return window['go']['main']['Database']['GetDatabaseVersion']();
 }
 
 export function LoadAllPositions() {
@@ -42,6 +46,10 @@ export function LoadPositionsByFilters(arg1, arg2, arg3, arg4, arg5, arg6, arg7,
   return window['go']['main']['Database']['LoadPositionsByFilters'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21);
 }
 
+export function OpenDatabase(arg1) {
+  return window['go']['main']['Database']['OpenDatabase'](arg1);
+}
+
 export function PositionExists(arg1) {
   return window['go']['main']['Database']['PositionExists'](arg1);
 }
@@ -62,6 +70,6 @@ export function SetupDatabase(arg1) {
   return window['go']['main']['Database']['SetupDatabase'](arg1);
 }
 
-export function UpdatePosition(arg1) {
-  return window['go']['main']['Database']['UpdatePosition'](arg1);
+export function UpdatePosition(arg1, arg2) {
+  return window['go']['main']['Database']['UpdatePosition'](arg1, arg2);
 }

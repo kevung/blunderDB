@@ -30,6 +30,10 @@ const (
 	Beaver
 )
 
+const (
+	DatabaseVersion = "1.0.0"
+)
+
 type Point struct {
 	Checkers int `json:"checkers"`
 	Color    int `json:"color"`

@@ -4,13 +4,15 @@ import {main} from '../models';
 
 export function CheckDatabaseVersion():Promise<string>;
 
-export function CheckVersion():Promise<void>;
+export function CheckVersion(arg1:string):Promise<void>;
 
 export function DeleteAnalysis(arg1:number):Promise<void>;
 
 export function DeleteComment(arg1:number):Promise<void>;
 
 export function DeletePosition(arg1:number):Promise<void>;
+
+export function GetDatabaseVersion():Promise<string>;
 
 export function LoadAllPositions():Promise<Array<main.Position>>;
 
@@ -22,6 +24,8 @@ export function LoadPosition(arg1:number):Promise<main.Position>;
 
 export function LoadPositionsByFilters(arg1:main.Position,arg2:boolean,arg3:boolean,arg4:string,arg5:string,arg6:string,arg7:string,arg8:string,arg9:string,arg10:string,arg11:string,arg12:string,arg13:string,arg14:string,arg15:string,arg16:string,arg17:string,arg18:string,arg19:string,arg20:boolean,arg21:boolean):Promise<Array<main.Position>>;
 
+export function OpenDatabase(arg1:string):Promise<void>;
+
 export function PositionExists(arg1:main.Position):Promise<{[key: string]: any}>;
 
 export function SaveAnalysis(arg1:number,arg2:main.PositionAnalysis):Promise<void>;
@@ -32,4 +36,4 @@ export function SavePosition(arg1:main.Position):Promise<number>;
 
 export function SetupDatabase(arg1:string):Promise<void>;
 
-export function UpdatePosition(arg1:main.Position):Promise<void>;
+export function UpdatePosition(arg1:main.Position,arg2:string):Promise<void>;

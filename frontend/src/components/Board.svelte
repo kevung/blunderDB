@@ -541,7 +541,8 @@
         canvas.addEventListener("mousedown", handleRectangleClick);
         canvas.addEventListener("mousedown", handleDiceClick);
         canvas.addEventListener("mousedown", handleScoreClick);
-        canvas.addEventListener("contextmenu", event => event.preventDefault()); // Deactivate contextual menu
+        // Remove the event listener that deactivates the contextual menu
+        // canvas.addEventListener("contextmenu", event => event.preventDefault());
         drawBoard();
         window.addEventListener("resize", resizeBoard);
         window.addEventListener("keydown", handleOrientationChange);
@@ -567,7 +568,8 @@
         canvas.removeEventListener("mousedown", handleRectangleClick);
         canvas.removeEventListener("mousedown", handleDiceClick);
         canvas.removeEventListener("mousedown", handleScoreClick);
-        canvas.removeEventListener("contextmenu", event => event.preventDefault()); // Remove event listener
+        // Remove the event listener that deactivates the contextual menu
+        // canvas.removeEventListener("contextmenu", event => event.preventDefault());
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         window.removeEventListener("keydown", handleOrientationChange);

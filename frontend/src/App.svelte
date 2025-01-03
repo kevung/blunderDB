@@ -24,7 +24,9 @@
         SaveComment,
         LoadAnalysis,
         LoadPositionsByFilters, // Update import
-        CheckDatabaseVersion // Import CheckDatabaseVersion
+        CheckDatabaseVersion, // Import CheckDatabaseVersion
+        OpenDatabase, // Import OpenDatabase
+        GetDatabaseVersion // Import GetDatabaseVersion
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
@@ -108,12 +110,13 @@
     let showGoToPositionModal = false;
     let showWarningModal = false; // Ensure this variable is declared
     let warningMessage = '';
-    let databaseVersion = ''; // Add database version variable
-    let expectedVersion = ''; // Add expectedVersion variable
+    let databaseVersion = ''; // Add databaseVersion variable
+    let applicationVersion = ''; // Add applicationVersion variable
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
-        expectedVersion = value.expectedVersion;
+        databaseVersion = value.databaseVersion;
+        applicationVersion = value.applicationVersion;
     });
 
     // Reference for various elements.
@@ -359,7 +362,7 @@
 
                 databasePathStore.set(filePath);
                 console.log('databasePathStore:', $databasePathStore);
-                await SetupDatabase(filePath);
+                await SetupDatabase(filePath); // Remove databaseVersion and applicationVersion
                 setStatusBarMessage('New database created successfully');
                 const filename = getFilenameFromPath(filePath);
                 WindowSetTitle(`blunderDB - ${filename}`);
@@ -386,17 +389,20 @@
 
             databasePathStore.set(filePath);
             console.log('databasePathStore:', $databasePathStore);
-            await SetupDatabase(filePath);
 
-            // Check database version
+            // Open the database and check for required tables and metadata keys
+            await OpenDatabase(filePath);
+
+            // Check database version after opening the database
             const dbVersion = await CheckDatabaseVersion();
+            const modelVersion = await GetDatabaseVersion();
             console.log(`Database version: ${dbVersion}`);
-            databaseVersion = dbVersion; // Set database version
+            console.log(`Model version: ${modelVersion}`);
             setStatusBarMessage(`Database version: ${dbVersion}`);
 
-            if (getMajorVersion(dbVersion) !== getMajorVersion(expectedVersion)) {
-                warningMessage = `Major version mismatch. The database schema might be incompatible with the current version of blunderDB.\nDatabase version: ${dbVersion}\nExpected version: ${expectedVersion}`;
-                showWarningModal = true;
+            if (getMajorVersion(dbVersion) !== getMajorVersion(modelVersion)) {
+                warningMessage = `Major database version mismatch. The database schema might be incompatible with the current version of blunderDB. Continuing to edit the database is done at your own risk. Backup your file before proceeding any further.\nDatabase version: ${dbVersion}\nExpected version: ${modelVersion}`;
+                showWarningModalStore.set(true); // Use store to show warning modal
             }
 
             setStatusBarMessage('Database opened successfully');
@@ -416,7 +422,7 @@
     }
 
     function closeWarningModal() {
-        showWarningModal = false;
+        showWarningModalStore.set(false); // Use store to close warning modal
     }
 
     function exitApp() {
@@ -449,7 +455,7 @@
 
         // Save the position and analysis to the database
         try {
-            const positionID = await SavePosition(positionData);
+            const positionID = await SavePosition(positionData); // Remove databaseVersion
             console.log('Position saved with ID:', positionID);
 
             positionData.id = positionID; // Ensure the position ID is set in the position data
@@ -996,7 +1002,7 @@
 
         try {
             const positionID = positions[currentPositionIndex].id;
-            await DeletePosition(positionID);
+            await DeletePosition(positionID); // Remove databaseVersion
             console.log('Position and associated analysis deleted with ID:', positionID);
 
             // Load all positions from the database
@@ -1074,7 +1080,7 @@
             analysis.xgid = generateXGID(position);
 
             // Update the position in the database
-            await UpdatePosition(position);
+            await UpdatePosition(position); // Remove databaseVersion
             console.log('Position updated with ID:', positionID);
 
             // Update the analysis in the database
@@ -1296,7 +1302,7 @@
         try {
             const currentPosition = $positionStore;
 
-            const loadedPositions = await LoadPositionsByFilters(currentPosition, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
+            const loadedPositions = await LoadPositionsByFilters(currentPosition, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter); // Remove databaseVersion
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
             if (loadedPositions && loadedPositions.length > 0) {
@@ -1319,7 +1325,7 @@
             return;
         }
         try {
-            const positions = await LoadAllPositions();
+            const positions = await LoadAllPositions(); // Remove databaseVersion
             positionsStore.set(Array.isArray(positions) ? positions : []);
             if (positions && positions.length > 0) {
                 currentPositionIndexStore.set(positions.length - 1);
@@ -1338,13 +1344,11 @@
         console.log('Wails runtime:', window.runtime);
         window.addEventListener("keydown", handleKeyDown);
         mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
-        window.addEventListener("contextmenu", event => event.preventDefault()); // Deactivate contextual menu
     });
 
     onDestroy(() => {
         window.removeEventListener("keydown", handleKeyDown);
         mainArea.removeEventListener("wheel", handleWheel); // Remove wheel event listener from main container
-        window.removeEventListener("contextmenu", event => event.preventDefault()); // Remove event listener
     });
 
     function toggleHelpModal() {
@@ -1541,7 +1545,7 @@
 
     <WarningModal
         message={warningMessage}
-        visible={showWarningModal}
+        visible={$showWarningModalStore}
         onClose={closeWarningModal}
     />
 

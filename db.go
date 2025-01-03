@@ -10,8 +10,6 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-const Version = "0.2.0"
-
 type Database struct {
 	db *sql.DB
 }
@@ -77,29 +75,69 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
-	// Insert or update the version
-	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('version', ?)`, Version)
+	// Insert or update the database version
+	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
-		fmt.Println("Error inserting version:", err)
+		fmt.Println("Error inserting database version:", err)
 		return err
 	}
 
 	return nil
 }
 
-func (d *Database) CheckVersion() error {
-	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'version'`).Scan(&dbVersion)
+func (d *Database) OpenDatabase(path string) error {
+	// Open the database using string path
+	var err error
+	d.db, err = sql.Open("sqlite", path)
 	if err != nil {
-		fmt.Println("Error querying version:", err)
+		fmt.Println("Error opening database:", err)
+		return err
+	}
+
+	// Check if the required tables exist
+	requiredTables := []string{"position", "analysis", "comment", "metadata"}
+	for _, table := range requiredTables {
+		var tableName string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&tableName)
+		if err != nil {
+			fmt.Printf("Error checking table %s: %v\n", table, err)
+			return err
+		}
+		if tableName != table {
+			return fmt.Errorf("required table %s does not exist", table)
+		}
+	}
+
+	// Check if the required metadata keys exist
+	requiredKeys := []string{"database_version"}
+	for _, key := range requiredKeys {
+		var value string
+		err = d.db.QueryRow(`SELECT value FROM metadata WHERE key=?`, key).Scan(&value)
+		if err != nil {
+			fmt.Printf("Error checking metadata key %s: %v\n", key, err)
+			return err
+		}
+		if value == "" {
+			return fmt.Errorf("required metadata key %s does not exist", key)
+		}
+	}
+
+	return nil
+}
+
+func (d *Database) CheckVersion(databaseVersion string) error {
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
 	dbMajorVersion := strings.Split(dbVersion, ".")[0]
-	appMajorVersion := strings.Split(Version, ".")[0]
+	expectedMajorVersion := strings.Split(databaseVersion, ".")[0]
 
-	if dbMajorVersion != appMajorVersion {
-		return fmt.Errorf("database major version mismatch: expected %s.x.x, got %s.x.x", appMajorVersion, dbMajorVersion)
+	if dbMajorVersion != expectedMajorVersion {
+		return fmt.Errorf("database major version mismatch: expected %s.x.x, got %s.x.x", expectedMajorVersion, dbMajorVersion)
 	}
 
 	return nil
@@ -107,9 +145,9 @@ func (d *Database) CheckVersion() error {
 
 func (d *Database) CheckDatabaseVersion() (string, error) {
 	var dbVersion string
-	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'version'`).Scan(&dbVersion)
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying version:", err)
+		fmt.Println("Error querying database version:", err)
 		return "", err
 	}
 	return dbVersion, nil
@@ -164,11 +202,6 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 }
 
 func (d *Database) SavePosition(position *Position) (int64, error) {
-	// Check version before saving
-	if err := d.CheckVersion(); err != nil {
-		return 0, err
-	}
-
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
@@ -205,12 +238,7 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 	return positionID, nil
 }
 
-func (d *Database) UpdatePosition(position Position) error {
-	// Check version before updating
-	if err := d.CheckVersion(); err != nil {
-		return err
-	}
-
+func (d *Database) UpdatePosition(position Position, databaseVersion string) error {
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
@@ -1338,6 +1366,10 @@ func (p *Position) MatchesDiceRoll(filter Position) bool {
 	reverseDice := fmt.Sprintf("%d%d", p.Dice[1], p.Dice[0])
 	filterDice := fmt.Sprintf("%d%d", filter.Dice[0], filter.Dice[1])
 	return (dice == filterDice || reverseDice == filterDice) && p.PlayerOnRoll == filter.PlayerOnRoll && p.DecisionType == filter.DecisionType
+}
+
+func (d *Database) GetDatabaseVersion() (string, error) {
+	return DatabaseVersion, nil
 }
 
 func colorName(color int) string {
