@@ -3,15 +3,19 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
-    import { statusBarModeStore, showSearchModalStore } from '../stores/uiStore'; // Import showSearchModalStore
+    import { statusBarModeStore, showSearchModalStore, showCommentStore } from '../stores/uiStore'; // Import showSearchModalStore and showCommentStore
 
     let mode;
     let showSearchModal = false;
+    let showComment = false;
     statusBarModeStore.subscribe(value => {
         mode = value;
     });
     showSearchModalStore.subscribe(value => {
         showSearchModal = value;
+    });
+    showCommentStore.subscribe(value => {
+        showComment = value;
     });
     
     let canvasCfg = {
@@ -498,6 +502,7 @@
     }
 
     function handleOrientationChange(event) {
+        if (showComment) return; // Disable orientation change when comment panel is open
         if (event.ctrlKey && event.key === 'ArrowLeft') {
             setBoardOrientation("left");
         } else if (event.ctrlKey && event.key === 'ArrowRight') {

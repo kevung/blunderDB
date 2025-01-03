@@ -303,9 +303,13 @@
         } else if (!event.ctrlKey && event.key === '?') {
             toggleHelpModal();
         } else if (event.ctrlKey && event.key === 'ArrowLeft') {
-            setBoardOrientation("left");
+            if (!showComment) {
+                setBoardOrientation("left");
+            }
         } else if (event.ctrlKey && event.key === 'ArrowRight') {
-            setBoardOrientation("right");
+            if (!showComment) {
+                setBoardOrientation("right");
+            }
         }
     }
 
