@@ -110,13 +110,13 @@
     let showHelp = false;
     let showComment = false;
     let showGoToPositionModal = false;
-    let showWarningModal = false; // Ensure this variable is declared
+    let showWarningModal = false;
     let warningMessage = '';
-    let databaseVersion = ''; // Add databaseVersion variable
-    let applicationVersion = ''; // Add applicationVersion variable
-    let showMetadataModal = false; // Add state for Metadata modal
-    let databaseLoaded = false; // Add databaseLoaded variable
-    let mode = 'NORMAL'; // Add mode variable
+    let databaseVersion = '';
+    let applicationVersion = '';
+    let showMetadataModal = false;
+    let databaseLoaded = false;
+    let mode = 'NORMAL';
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -382,7 +382,7 @@
 
                 databasePathStore.set(filePath);
                 console.log('databasePathStore:', $databasePathStore);
-                await SetupDatabase(filePath); // Remove databaseVersion and applicationVersion
+                await SetupDatabase(filePath);
                 setStatusBarMessage('New database created successfully');
                 const filename = getFilenameFromPath(filePath);
                 WindowSetTitle(`blunderDB - ${filename}`);
