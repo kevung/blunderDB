@@ -3,6 +3,8 @@
 
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
+    import { metaStore } from '../stores/metaStore'; // Import metaStore
+    import { GetDatabaseVersion } from '../../wailsjs/go/main/Database'; // Correct import path
 
     export let visible = false;
     export let onClose;
@@ -11,6 +13,22 @@
     let activeTab = "manual"; // Default active tab
     const tabs = ['manual', 'shortcuts', 'commands', 'about'];
     let contentArea;
+
+    let databaseVersion = '';
+    let applicationVersion = '';
+
+    // Subscribe to the metaStore
+    metaStore.subscribe(value => {
+        applicationVersion = value.applicationVersion;
+    });
+
+    onMount(async () => {
+        try {
+            databaseVersion = await GetDatabaseVersion();
+        } catch (error) {
+            console.error('Error fetching database version:', error);
+        }
+    });
 
     function switchTab(tab) {
         activeTab = tab;
@@ -779,7 +797,8 @@
                 {#if activeTab === 'about'}
                     
                     <h3>Version</h3>
-                    <p>Current version: 0.1.0</p>
+                    <p>Application version: {applicationVersion}</p>
+                    <p>Database version: {databaseVersion}</p>
                     
                     <h3>Author</h3>
                     <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>
