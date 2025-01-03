@@ -1382,3 +1382,35 @@ func colorName(color int) string {
 		return "None"
 	}
 }
+
+func (d *Database) LoadMetadata() (map[string]string, error) {
+	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation')`)
+	if err != nil {
+		fmt.Println("Error loading metadata:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	metadata := make(map[string]string)
+	for rows.Next() {
+		var key, value string
+		if err = rows.Scan(&key, &value); err != nil {
+			fmt.Println("Error scanning metadata:", err)
+			return nil, err
+		}
+		metadata[key] = value
+	}
+
+	return metadata, nil
+}
+
+func (d *Database) SaveMetadata(metadata map[string]string) error {
+	for key, value := range metadata {
+		_, err := d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
+		if err != nil {
+			fmt.Println("Error saving metadata:", err)
+			return err
+		}
+	}
+	return nil
+}

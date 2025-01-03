@@ -68,7 +68,8 @@
         showHelpStore,
         showCommentStore,
         showGoToPositionModalStore,
-        showWarningModalStore // Import showWarningModalStore
+        showWarningModalStore, // Import showWarningModalStore
+        showMetadataModalStore // Import showMetadataModalStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -92,6 +93,7 @@
     import GammonValue2Modal from './components/GammonValue2Modal.svelte'; // Import GammonValue2Modal component
     import GammonValue4Modal from './components/GammonValue4Modal.svelte'; // Import GammonValue4Modal component
     import WarningModal from './components/WarningModal.svelte'; // Import WarningModal component
+    import MetadataModal from './components/MetadataModal.svelte'; // Import MetadataModal component
 
     // Visibility variables
     let showSearchModal = false;
@@ -112,6 +114,9 @@
     let warningMessage = '';
     let databaseVersion = ''; // Add databaseVersion variable
     let applicationVersion = ''; // Add applicationVersion variable
+    let showMetadataModal = false; // Add state for Metadata modal
+    let databaseLoaded = false; // Add databaseLoaded variable
+    let mode = 'NORMAL'; // Add mode variable
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -217,6 +222,18 @@
         showWarningModal = value;
     });
 
+    showMetadataModalStore.subscribe(value => {
+        showMetadataModal = value;
+    });
+
+    databasePathStore.subscribe(value => {
+        databaseLoaded = !!value;
+    });
+
+    statusBarModeStore.subscribe(value => {
+        mode = value;
+    });
+
     //Global shortcuts
     function handleKeyDown(event) {
         event.stopPropagation();
@@ -231,7 +248,7 @@
         }
 
         // Prevent shortcuts when any modal is visible
-        if (showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal) {
+        if (showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal) {
             if (event.key === 'Escape') {
                 showSearchModalStore.set(false);
                 showMetModalStore.set(false);
@@ -242,9 +259,10 @@
                 showGammonValue1ModalStore.set(false);
                 showGammonValue2ModalStore.set(false);
                 showGammonValue4ModalStore.set(false);
+                showMetadataModalStore.set(false); // Close Metadata modal
             }
-            // Prevent browsing position shortcuts
-            if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key)) {
+            // Prevent browsing position shortcuts unless focused on input or textarea
+            if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key) && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
                 event.preventDefault();
             }
             // Allow backspace to work inside input fields
@@ -331,6 +349,8 @@
             if (!showComment) {
                 setBoardOrientation("right");
             }
+        } else if (event.ctrlKey && event.code === 'KeyM') {
+            toggleMetadataModal();
         }
     }
 
@@ -585,7 +605,7 @@
             dummy
         ] = xgid.split(":");
 
-        const board = { points: Array(26).fill({ checkers: 0, color: -1 }), bearoff: [0, 0] };
+        const board = { points: Array(26).fill({ checkers: 0, color: -1 }) };
 
         if (positionPart) {
             const pointChars = positionPart.split('');
@@ -1401,7 +1421,7 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
-        if (showGoToPositionModal || showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || $statusBarModeStore === 'EDIT') {
+        if (showGoToPositionModal || showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal || $statusBarModeStore === 'EDIT') {
             return; // Prevent changing position when any modal is open or in edit mode
         }
 
@@ -1421,11 +1441,20 @@
         }
     }
 
+    function toggleMetadataModal() {
+        if (databaseLoaded) {
+            if (mode === 'EDIT') {
+                setStatusBarMessage('Cannot show metadata modal in edit mode');
+            } else {
+                showMetadataModalStore.set(!showMetadataModal);
+            }
+        }
+    }
+
 </script>
 
 <main class="main-container" bind:this={mainArea}>
-
-    <Toolbar 
+    <Toolbar
         onNewDatabase={newDatabase}
         onOpenDatabase={openDatabase}
         onExit={exitApp}
@@ -1447,6 +1476,7 @@
         onFindPosition={findPosition}
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
+        onShowMetadata={toggleMetadataModal}
     />
 
     <div class="scrollable-content">
@@ -1547,6 +1577,11 @@
         message={warningMessage}
         visible={$showWarningModalStore}
         onClose={closeWarningModal}
+    />
+
+    <MetadataModal
+        visible={showMetadataModal}
+        onClose={() => showMetadataModalStore.set(false)}
     />
 
     <HelpModal

@@ -3,7 +3,7 @@
    import { commentTextStore, currentPositionIndexStore, commandTextStore } from '../stores/uiStore';
    import { SaveComment } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
-   import { showMetModalStore,  showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore } from '../stores/uiStore'; 
+   import { showMetModalStore,  showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore } from '../stores/uiStore'; 
    // Import showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, and showGammonValue1ModalStore
 
    export let visible = false;
@@ -198,6 +198,10 @@
             } else if (command === 'gv4') {
                onClose().then(() => {
                   showGammonValue4ModalStore.set(true); // Show GammonValue4 modal
+               });
+            } else if (command === 'meta') {
+               onClose().then(() => {
+                  showMetadataModalStore.set(true); // Show Metadata modal
                });
             } else {
                onClose();

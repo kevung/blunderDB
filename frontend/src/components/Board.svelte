@@ -3,11 +3,12 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
-    import { statusBarModeStore, showSearchModalStore, showCommentStore } from '../stores/uiStore'; // Import showSearchModalStore and showCommentStore
+    import { statusBarModeStore, showSearchModalStore, showCommentStore, showMetadataModalStore } from '../stores/uiStore'; // Import showMetadataModalStore
 
     let mode;
     let showSearchModal = false;
     let showComment = false;
+    let showMetadataModal = false; // Add showMetadataModal variable
     statusBarModeStore.subscribe(value => {
         mode = value;
     });
@@ -16,6 +17,9 @@
     });
     showCommentStore.subscribe(value => {
         showComment = value;
+    });
+    showMetadataModalStore.subscribe(value => {
+        showMetadataModal = value;
     });
     
     let canvasCfg = {
@@ -511,7 +515,7 @@
     }
 
     function handleKeyDown(event) {
-        if (mode !== "EDIT" || showSearchModal) return;
+        if (mode !== "EDIT" || showSearchModal || showMetadataModal) return; // Disable shortcuts when metadata modal is open
 
         if (event.key === "Backspace" && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             event.preventDefault();

@@ -38,6 +38,10 @@ export function LoadComment(arg1) {
   return window['go']['main']['Database']['LoadComment'](arg1);
 }
 
+export function LoadMetadata() {
+  return window['go']['main']['Database']['LoadMetadata']();
+}
+
 export function LoadPosition(arg1) {
   return window['go']['main']['Database']['LoadPosition'](arg1);
 }
@@ -60,6 +64,10 @@ export function SaveAnalysis(arg1, arg2) {
 
 export function SaveComment(arg1, arg2) {
   return window['go']['main']['Database']['SaveComment'](arg1, arg2);
+}
+
+export function SaveMetadata(arg1) {
+  return window['go']['main']['Database']['SaveMetadata'](arg1);
 }
 
 export function SavePosition(arg1) {

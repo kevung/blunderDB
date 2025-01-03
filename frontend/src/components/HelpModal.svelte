@@ -263,6 +263,11 @@
                                 <td>Exit blunderDB</td>
                             </tr>
 
+                            <tr>
+                                <td>Ctrl + M</td>
+                                <td>Edit Metadata</td>
+                            </tr>
+                            
                         </tbody>
                     </table>
 
@@ -469,6 +474,10 @@
                             <tr>
                                 <td>quit, q</td>
                                 <td>Exit blunderDB</td>
+                            </tr>
+                            <tr>
+                                <td>meta</td>
+                                <td>Edit Metadata</td>
                             </tr>
                         </tbody>
                     </table>

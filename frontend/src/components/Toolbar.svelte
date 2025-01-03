@@ -5,7 +5,7 @@
     export let onImportPosition;
     export let onCopyPosition;
     export let onPastePosition;
-    export let onSavePosition; // Renamed from onAddPosition
+    export let onSavePosition;
     export let onUpdatePosition;
     export let onDeletePosition;
     export let onFirstPosition;
@@ -20,6 +20,7 @@
     export let onFindPosition;
     export let onToggleHelp;
     export let onLoadAllPositions;
+    export let onShowMetadata;
 
     import { statusBarModeStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
@@ -159,6 +160,12 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15M12 9l3 3m0 0-3 3m3-3H2.25" />
         </svg>
+    </button>
+
+    <button on:click|stopPropagation={onShowMetadata} aria-label="Database Metadata" title="Database Metadata (Ctrl-M)" disabled={statusBarMode !== 'NORMAL' || !databasePath}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+          </svg>
     </button>
 
     <div class="separator"></div>
