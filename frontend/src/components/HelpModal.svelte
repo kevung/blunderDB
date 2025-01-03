@@ -146,7 +146,7 @@
             <div class="tab-content" bind:this={contentArea}>
                 {#if activeTab === 'manual'}
                     <h3>Introduction</h3>
-                    <p>blunderDB is a software for creating position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online, in tournaments) and to be able to re-study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs of reference positions.</p>
+                    <p>blunderDB is a software for creating backgammon position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online, in tournaments) and to be able to re-study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs of reference positions.</p>
                     <p>Positions are stored in a database represented by a .db file.</p>
                     
                     <h3>Main Interactions</h3>
