@@ -3,7 +3,7 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
-    import { statusBarModeStore, showSearchModalStore, showCommentStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore'; // Import showTakePoint2ModalStore and showTakePoint4ModalStore
+    import { statusBarModeStore, isAnyModalOpenStore, showSearchModalStore, showCommentStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore'; // Import showTakePoint2ModalStore and showTakePoint4ModalStore
 
     let mode;
     let showSearchModal = false;
@@ -494,7 +494,8 @@
     }
 
     function handleOrientationChange(event) {
-        if (showComment) return; // Disable orientation change when comment panel is open
+        const isAnyModalOpen = get(isAnyModalOpenStore);
+        if (isAnyModalOpen || showComment) return; // Disable orientation change when any modal or comment panel is open
         if (event.ctrlKey && event.key === 'ArrowLeft') {
             setBoardOrientation("left");
         } else if (event.ctrlKey && event.key === 'ArrowRight') {
