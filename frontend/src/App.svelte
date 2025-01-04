@@ -1438,7 +1438,7 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
-        if (showGoToPositionModal || showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal || showTakePoint2Modal || showTakePoint4Modal || $statusBarModeStore === 'EDIT') {
+        if ($isAnyModalOrPanelOpenStore || $statusBarModeStore === 'EDIT') {
             return; // Prevent changing position when any modal is open or in edit mode
         }
 
