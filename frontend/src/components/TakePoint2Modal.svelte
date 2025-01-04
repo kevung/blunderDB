@@ -16,6 +16,10 @@
         }
     }
 
+    function handleWheel(event) {
+        event.preventDefault();
+    }
+
     const liveTableData = [
         [32.5, 26, 20, 17.5, 22.5, 22, 21.5, 21],
         [25, 25, 21.5, 19.5, 22.5, 23, 22.5, 23],
@@ -44,8 +48,10 @@
 
     $: if (visible) {
         window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('wheel', handleWheel, { passive: false });
     } else {
         window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('wheel', handleWheel);
     }
 </script>
 

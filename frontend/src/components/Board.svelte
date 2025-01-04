@@ -3,12 +3,14 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
-    import { statusBarModeStore, showSearchModalStore, showCommentStore, showMetadataModalStore } from '../stores/uiStore'; // Import showMetadataModalStore
+    import { statusBarModeStore, showSearchModalStore, showCommentStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore'; // Import showTakePoint2ModalStore and showTakePoint4ModalStore
 
     let mode;
     let showSearchModal = false;
     let showComment = false;
     let showMetadataModal = false; // Add showMetadataModal variable
+    let showTakePoint2Modal = false; // Add showTakePoint2Modal variable
+    let showTakePoint4Modal = false; // Add showTakePoint4Modal variable
     statusBarModeStore.subscribe(value => {
         mode = value;
     });
@@ -20,6 +22,12 @@
     });
     showMetadataModalStore.subscribe(value => {
         showMetadataModal = value;
+    });
+    showTakePoint2ModalStore.subscribe(value => {
+        showTakePoint2Modal = value;
+    });
+    showTakePoint4ModalStore.subscribe(value => {
+        showTakePoint4Modal = value;
     });
     
     let canvasCfg = {
@@ -495,7 +503,7 @@
     }
 
     function handleKeyDown(event) {
-        if (mode !== "EDIT" || showSearchModal || showMetadataModal) return; // Disable shortcuts when metadata modal is open
+        if (mode !== "EDIT" || showSearchModal || showMetadataModal || showTakePoint2Modal || showTakePoint4Modal) return; // Disable shortcuts when metadata modal, TakePoint2Modal, or TakePoint4Modal is open
 
         if (event.key === "Backspace" && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
             event.preventDefault();

@@ -16,6 +16,10 @@
         }
     }
 
+    function handleWheel(event) {
+        event.preventDefault();
+    }
+
     const liveTableData = [
         [25, 40, 33, 29, 30, 33, 32],
         [19, 33, 30, 25, 26, 29, 29],
@@ -42,8 +46,10 @@
 
     $: if (visible) {
         window.addEventListener('keydown', handleKeyDown);
+        window.addEventListener('wheel', handleWheel, { passive: false });
     } else {
         window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener('wheel', handleWheel);
     }
 </script>
 

@@ -263,7 +263,7 @@
         }
 
         // Prevent shortcuts when any modal is visible
-        if (showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal) {
+        if (showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal || showTakePoint2Modal || showTakePoint4Modal) {
             if (event.key === 'Escape') {
                 showSearchModalStore.set(false);
                 showMetModalStore.set(false);
@@ -275,6 +275,8 @@
                 showGammonValue2ModalStore.set(false);
                 showGammonValue4ModalStore.set(false);
                 showMetadataModalStore.set(false); // Close Metadata modal
+                showTakePoint2ModalStore.set(false); // Close TakePoint2 modal
+                showTakePoint4ModalStore.set(false); // Close TakePoint4 modal
             }
             // Prevent browsing position shortcuts unless focused on input or textarea
             if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key) && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
@@ -1440,7 +1442,7 @@
 
     // Function to handle mouse wheel events
     function handleWheel(event) {
-        if (showGoToPositionModal || showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal || $statusBarModeStore === 'EDIT') {
+        if (showGoToPositionModal || showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal || showTakePoint2Modal || showTakePoint4Modal || $statusBarModeStore === 'EDIT') {
             return; // Prevent changing position when any modal is open or in edit mode
         }
 
