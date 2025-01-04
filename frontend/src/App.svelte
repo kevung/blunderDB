@@ -300,56 +300,50 @@
         } else if (event.code === 'Delete') {
             deletePosition();
         } else if (!event.ctrlKey && event.key === 'PageUp') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 event.preventDefault();
                 firstPosition();
             }
         } else if (!event.ctrlKey && event.key === 'h') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 firstPosition();
             }
         } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 event.preventDefault();
                 previousPosition();
             }
         } else if (!event.ctrlKey && event.key === 'k') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 previousPosition();
             }
         } else if (!event.ctrlKey && event.key === 'ArrowRight') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 event.preventDefault();
                 nextPosition();
             }
         } else if (!event.ctrlKey && event.key === 'j') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 nextPosition();
             }
         } else if (!event.ctrlKey && event.key === 'PageDown') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 event.preventDefault();
                 lastPosition();
             }
         } else if (!event.ctrlKey && event.key === 'l') {
-            if (!isAnyModalOrPanelOpen) {
+            if (!showComment) {
                 lastPosition();
             }
         } else if(event.ctrlKey && event.code == 'KeyK') {
             gotoPosition();
         } else if(event.ctrlKey && event.code == 'KeyR') {
-            if (!isAnyModalOpen) {
             loadAllPositions();
-            }
         } else if(!event.ctrlKey && event.code === 'Tab') {
-            if(!showHelp) {
                 toggleEditMode();
-            }
-        } else if (!event.ctrlKey && event.code === 'Space') {
-            if(!showCommand && !showComment && !showHelp) {
+        } else if (!event.ctrlKey && event.code === 'Space') {        
                 event.preventDefault();
-                toggleCommandMode();
-            }
+                toggleCommandMode();            
         } else if (event.ctrlKey && event.code === 'KeyL') {
             event.preventDefault();
             if (showComment) {
@@ -357,10 +351,8 @@
             }
             toggleAnalysisPanel();
         } else if(event.ctrlKey && event.code == 'KeyP') {
-            if(!showHelp && !showCommand) {
                 event.preventDefault();
                 toggleCommentPanel();
-            }
         } else if (event.ctrlKey && event.code === 'KeyF') {
             if ($statusBarModeStore === 'EDIT') {
                 findPosition();

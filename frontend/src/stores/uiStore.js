@@ -34,6 +34,7 @@ export const showWarningModalStore = writable(false); // Add store for warning m
 export const showMetadataModalStore = writable(false); // Add store for metadata modal visibility
 
 export const showCommandStore = writable(false);
+
 export const showAnalysisStore = writable(false);
 export const showHelpStore = writable(false);
 export const showCommentStore = writable(false);
@@ -55,7 +56,7 @@ export const isAnyModalOrPanelOpenStore = derived(
     showGammonValue4ModalStore,
     showWarningModalStore,
     showMetadataModalStore,
-    showCommandStore,
+    showCommandStore, // Moved here
     showAnalysisStore,
     showHelpStore, // Moved here
     showCommentStore,
@@ -75,7 +76,7 @@ export const isAnyModalOrPanelOpenStore = derived(
     showGammonValue4Modal,
     showWarningModal,
     showMetadataModal,
-    showCommand,
+    showCommand, // Moved here
     showAnalysis,
     showHelp, // Moved here
     showComment,
@@ -95,7 +96,7 @@ export const isAnyModalOrPanelOpenStore = derived(
       showGammonValue4Modal ||
       showWarningModal ||
       showMetadataModal ||
-      showCommand ||
+      showCommand || // Moved here
       showAnalysis ||
       showHelp || // Moved here
       showComment ||
@@ -122,7 +123,8 @@ export const isAnyModalOpenStore = derived(
     showGoToPositionModalStore,
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
-    showHelpStore // Added here
+    showHelpStore, // Added here
+    showCommandStore // Added here
   ],
   ([
     showSearchModal,
@@ -139,7 +141,8 @@ export const isAnyModalOpenStore = derived(
     showGoToPositionModal,
     showTakePoint2Modal,
     showTakePoint4Modal,
-    showHelp // Added here
+    showHelp, // Added here
+    showCommand // Added here
   ]) => {
     return (
       showSearchModal ||
@@ -156,24 +159,22 @@ export const isAnyModalOpenStore = derived(
       showGoToPositionModal ||
       showTakePoint2Modal ||
       showTakePoint4Modal ||
-      showHelp // Added here
+      showHelp || // Added here
+      showCommand // Added here
     );
   }
 );
 
 export const isAnyPanelOpenStore = derived(
   [
-    showCommandStore,
     showAnalysisStore,
     showCommentStore
   ],
   ([
-    showCommand,
     showAnalysis,
     showComment
   ]) => {
     return (
-      showCommand ||
       showAnalysis ||
       showComment
     );
