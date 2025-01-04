@@ -9,6 +9,13 @@
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             onClose();
+        } else if (event.ctrlKey && event.code === 'KeyL') {
+            event.preventDefault();
+            onClose();
+            const analysisPanel = document.querySelector('.analysis-panel');
+            if (analysisPanel) {
+                analysisPanel.focus();
+            }
         }
     }
 

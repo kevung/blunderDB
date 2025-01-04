@@ -326,6 +326,9 @@
             }
         } else if (event.ctrlKey && event.code === 'KeyL') {
             event.preventDefault();
+            if (showComment) {
+                toggleCommentPanel(); // Close comment panel if open
+            }
             toggleAnalysisPanel();
         } else if(event.ctrlKey && event.code == 'KeyP') {
             if(!showHelp && !showCommand) {
