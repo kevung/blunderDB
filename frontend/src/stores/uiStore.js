@@ -40,3 +40,4 @@ export const showCommentStore = writable(false);
 export const showGoToPositionModalStore = writable(false);
 
 export const showTakePoint2ModalStore = writable(false); // Add store for TakePoint2 modal visibility
+export const showTakePoint4ModalStore = writable(false); // Add store for TakePoint4 modal visibility

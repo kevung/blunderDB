@@ -558,20 +558,24 @@
                                 <td>2-Cube Take Point (Live and Last)</td>
                             </tr>
                             <tr>
-                                <td>tp2_last</td>
-                                <td>2-Cube Take Point in Last Roll Positions</td>
-                            </tr>
-                            <tr>
                                 <td>tp2_live</td>
                                 <td>2-Cube Take Point in Long Races</td>
                             </tr>
                             <tr>
-                                <td>tp4_last</td>
-                                <td>4-Cube Take Point in Last Roll Positions</td>
+                                <td>tp2_last</td>
+                                <td>2-Cube Take Point in Last Roll Positions</td>
+                            </tr>
+                            <tr>
+                                <td>tp4</td>
+                                <td>4-Cube Take Point (Live and Last)</td>
                             </tr>
                             <tr>
                                 <td>tp4_live</td>
                                 <td>4-Cube Take Point in Long Races</td>
+                            </tr>
+                            <tr>
+                                <td>tp4_last</td>
+                                <td>4-Cube Take Point in Last Roll Positions</td>
                             </tr>
                             <tr>
                                 <td>gv1</td>

@@ -17,25 +17,23 @@
     }
 
     const liveTableData = [
-        [32.5, 26, 20, 17.5, 22.5, 22, 21.5, 21],
-        [25, 25, 21.5, 19.5, 22.5, 23, 22.5, 23],
-        [18.5, 24, 22, 19.5, 23, 22.5, 22.5, 21.5],
-        [23.5, 21.5, 24, 20, 23, 22.5, 23, 22],
-        [22.5, 22, 24.5, 20, 23, 22, 22.5, 21],
-        [23, 19.5, 25, 20, 23, 21.5, 22.5, 21.5],
-        [20.5, 19.5, 24, 20, 22.5, 21, 22.5, 21.5],
-        [22, 17.5, 24, 20, 22.5, 21, 22.5, 21.5]
+        [25, 40, 33, 29, 30, 33, 32],
+        [19, 33, 30, 25, 26, 29, 29],
+        [16, 26, 25, 25, 25, 27, 28],
+        [11, 20, 22, 23, 24, 26, 26],
+        [9, 16, 18, 20, 22, 24, 25],
+        [7, 12, 16, 18, 20, 22, 23],
+        [7, 12, 15, 17, 19, 21, 22]
     ];
 
     const lastTableData = [
-        [32.5, 26, 20, 17.5, 22.5, 22, 21.5, 21],
-        [37, 30, 24, 21, 24, 24.5, 23, 23.5],
-        [37, 35, 29, 22.5, 26, 24.5, 24.5, 23],
-        [39.5, 28.5, 30.5, 24, 27, 25.5, 25, 24],
-        [34, 28, 29.5, 23.5, 27, 25, 25.5, 24],
-        [36, 25, 30.5, 24, 27.5, 25, 26, 24.5],
-        [33.5, 26, 30.5, 24.5, 27.5, 25.5, 26.5, 24.5],
-        [35.5, 23, 30.5, 24.5, 28, 25.5, 26.5, 25]
+        [25, 40, 33, 29, 30, 33, 32],
+        [19, 33, 30, 25, 26, 29, 29],
+        [21, 31, 28, 26, 27, 28, 28],
+        [19, 30, 28, 26, 26, 28, 28],
+        [19, 27, 26, 26, 26, 27, 27],
+        [16, 25, 25, 25, 25, 26, 26],
+        [16, 23, 23, 24, 25, 26, 26]
     ];
 
     function formatCell(value) {
@@ -59,15 +57,15 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                {#each Array(8) as _, colIndex}
-                                    <th><strong>{colIndex + 2}</strong></th>
+                                {#each Array(7) as _, colIndex}
+                                    <th><strong>{colIndex + 3}</strong></th>
                                 {/each}
                             </tr>
                         </thead>
                         <tbody>
                             {#each liveTableData as row, rowIndex}
                                 <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
-                                    <td><strong>{rowIndex + 2}</strong></td>
+                                    <td><strong>{rowIndex + 3}</strong></td>
                                     {#each row as cell}
                                         <td>{formatCell(cell)}</td>
                                     {/each}
@@ -82,15 +80,15 @@
                         <thead>
                             <tr>
                                 <th></th>
-                                {#each Array(8) as _, colIndex}
-                                    <th><strong>{colIndex + 2}</strong></th>
+                                {#each Array(7) as _, colIndex}
+                                    <th><strong>{colIndex + 3}</strong></th>
                                 {/each}
                             </tr>
                         </thead>
                         <tbody>
                             {#each lastTableData as row, rowIndex}
                                 <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
-                                    <td><strong>{rowIndex + 2}</strong></td>
+                                    <td><strong>{rowIndex + 3}</strong></td>
                                     {#each row as cell}
                                         <td>{formatCell(cell)}</td>
                                     {/each}
@@ -153,7 +151,7 @@
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;
-        width: calc(100% / 9); /* Ensure cells are square */
+        width: calc(100% / 8); /* Ensure cells are square */
     }
 
     .even-row {
