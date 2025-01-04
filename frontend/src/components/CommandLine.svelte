@@ -59,7 +59,15 @@
             if (match) {
                const positionNumber = parseInt(match[1], 10);
                onClose().then(() => {
-                  currentPositionIndexStore.set(positionNumber - 1);
+                  let index;
+                  if (positionNumber < 1) {
+                     index = 0;
+                  } else if (positionNumber > positions.length) {
+                     index = positions.length - 1;
+                  } else {
+                     index = positionNumber - 1;
+                  }
+                  currentPositionIndexStore.set(index);
                });
             } else if (command === 'new' || command === 'ne' || command === 'n') {
                onClose().then(() => {
