@@ -9,7 +9,10 @@
         SaveDatabaseDialog,
         OpenDatabaseDialog,
         OpenPositionDialog,
-        DeleteFile
+        DeleteFile,
+
+        ShowAlert
+
     } from '../wailsjs/go/main/App.js';
     import {
         SetupDatabase,
@@ -281,7 +284,10 @@
             return;
         }
 
-        if(event.ctrlKey && event.code == 'KeyN') {
+        if (event.key === 'Escape') {
+            event.preventDefault();
+            event.stopPropagation();
+        } else if(event.ctrlKey && event.code == 'KeyN') {
             newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') {
             openDatabase();
