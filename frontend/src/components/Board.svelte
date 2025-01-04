@@ -67,19 +67,6 @@
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
 
-        // Check if the click is in the middle of the bar
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
-        if (Math.abs(mouseX - boardOrigXpos) < boardCheckerSize / 2 && Math.abs(mouseY - boardOrigYpos) < boardCheckerSize / 2) {
-            positionStore.update(pos => {
-                pos.board.points[0].checkers = 0;
-                pos.board.points[25].checkers = 0;
-                return pos;
-            });
-            return;
-        }
-
         isMouseDown = true;
         startMousePos = {
             x: mouseX,
@@ -157,7 +144,7 @@
                     } else {
                         checkerPoint = 25;
                     }
-                } else {
+                } else if (y > 0) {
                     if (x > 0) {
                         checkerPoint = 7 - x;
                     } else if (x < 0) {
@@ -175,7 +162,7 @@
                     } else {
                         checkerPoint = 25;
                     }
-                } else {
+                } else if (y > 0) {
                     if (x > 0) {
                         checkerPoint = 6 + x;
                     } else if (x < 0) {
@@ -188,7 +175,7 @@
 
             return { checkerPoint, checkerCount };
         }
-        return { checkerPoint: 0, checkerCount: 0 };
+        return { checkerPoint: -1, checkerCount: 0 };
     }
 
     function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {
