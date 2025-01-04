@@ -71,7 +71,8 @@
         showWarningModalStore, // Import showWarningModalStore
         showMetadataModalStore, // Import showMetadataModalStore
         showTakePoint2ModalStore, // Import showTakePoint2ModalStore
-        showTakePoint4ModalStore // Import showTakePoint4ModalStore
+        showTakePoint4ModalStore, // Import showTakePoint4ModalStore
+        isAnyModalOrPanelOpenStore // Import the derived store
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -123,11 +124,17 @@
     let mode = 'NORMAL';
     let showTakePoint2Modal = false;
     let showTakePoint4Modal = false;
+    let isAnyModalOrPanelOpen = false;
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
         databaseVersion = value.databaseVersion;
         applicationVersion = value.applicationVersion;
+    });
+
+    // Subscribe to the derived store
+    isAnyModalOrPanelOpenStore.subscribe(value => {
+        isAnyModalOrPanelOpen = value;
     });
 
     // Reference for various elements.
@@ -262,33 +269,6 @@
             return;
         }
 
-        // Prevent shortcuts when any modal is visible
-        if (showSearchModal || showMetModal || showTakePoint2LastModal || showTakePoint2LiveModal || showTakePoint4LastModal || showTakePoint4LiveModal || showGammonValue1Modal || showGammonValue2Modal || showGammonValue4Modal || showMetadataModal || showTakePoint2Modal || showTakePoint4Modal) {
-            if (event.key === 'Escape') {
-                showSearchModalStore.set(false);
-                showMetModalStore.set(false);
-                showTakePoint2LastModalStore.set(false);
-                showTakePoint2LiveModalStore.set(false);
-                showTakePoint4LastModalStore.set(false);
-                showTakePoint4LiveModalStore.set(false);
-                showGammonValue1ModalStore.set(false);
-                showGammonValue2ModalStore.set(false);
-                showGammonValue4ModalStore.set(false);
-                showMetadataModalStore.set(false); // Close Metadata modal
-                showTakePoint2ModalStore.set(false); // Close TakePoint2 modal
-                showTakePoint4ModalStore.set(false); // Close TakePoint4 modal
-            }
-            // Prevent browsing position shortcuts unless focused on input or textarea
-            if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key) && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                event.preventDefault();
-            }
-            // Allow backspace to work inside input fields
-            if (event.key === 'Backspace' && document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
-                event.preventDefault(); // Prevent backspace from erasing position
-            }
-            return;
-        }
-
         if(event.ctrlKey && event.code == 'KeyN') {
             newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') {
@@ -308,25 +288,41 @@
         } else if (event.code === 'Delete') {
             deletePosition();
         } else if (!event.ctrlKey && event.key === 'PageUp') {
-            event.preventDefault();
-            firstPosition();
+            if (!isAnyModalOrPanelOpen) {
+                event.preventDefault();
+                firstPosition();
+            }
         } else if (!event.ctrlKey && event.key === 'h') {
-            firstPosition();
+            if (!isAnyModalOrPanelOpen) {
+                firstPosition();
+            }
         } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
-            event.preventDefault();
-            previousPosition();
+            if (!isAnyModalOrPanelOpen) {
+                event.preventDefault();
+                previousPosition();
+            }
         } else if (!event.ctrlKey && event.key === 'k') {
-            previousPosition();
+            if (!isAnyModalOrPanelOpen) {
+                previousPosition();
+            }
         } else if (!event.ctrlKey && event.key === 'ArrowRight') {
-            event.preventDefault();
-            nextPosition();
+            if (!isAnyModalOrPanelOpen) {
+                event.preventDefault();
+                nextPosition();
+            }
         } else if (!event.ctrlKey && event.key === 'j') {
-            nextPosition();
+            if (!isAnyModalOrPanelOpen) {
+                nextPosition();
+            }
         } else if (!event.ctrlKey && event.key === 'PageDown') {
-            event.preventDefault();
-            lastPosition();
+            if (!isAnyModalOrPanelOpen) {
+                event.preventDefault();
+                lastPosition();
+            }
         } else if (!event.ctrlKey && event.key === 'l') {
-            lastPosition();
+            if (!isAnyModalOrPanelOpen) {
+                lastPosition();
+            }
         } else if(event.ctrlKey && event.code == 'KeyK') {
             gotoPosition();
         } else if(event.ctrlKey && event.code == 'KeyR') {

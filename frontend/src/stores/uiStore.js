@@ -1,4 +1,4 @@
-import { writable } from 'svelte/store';
+import { writable, derived } from 'svelte/store';
 
 export const statusBarTextStore = writable('');
 export const statusBarModeStore = writable('NORMAL');
@@ -41,3 +41,67 @@ export const showGoToPositionModalStore = writable(false);
 
 export const showTakePoint2ModalStore = writable(false); // Add store for TakePoint2 modal visibility
 export const showTakePoint4ModalStore = writable(false); // Add store for TakePoint4 modal visibility
+
+export const isAnyModalOrPanelOpenStore = derived(
+  [
+    showSearchModalStore,
+    showMetModalStore,
+    showTakePoint2LastModalStore,
+    showTakePoint2LiveModalStore,
+    showTakePoint4LastModalStore,
+    showTakePoint4LiveModalStore,
+    showGammonValue1ModalStore,
+    showGammonValue2ModalStore,
+    showGammonValue4ModalStore,
+    showWarningModalStore,
+    showMetadataModalStore,
+    showCommandStore,
+    showAnalysisStore,
+    showHelpStore,
+    showCommentStore,
+    showGoToPositionModalStore,
+    showTakePoint2ModalStore,
+    showTakePoint4ModalStore
+  ],
+  ([
+    showSearchModal,
+    showMetModal,
+    showTakePoint2LastModal,
+    showTakePoint2LiveModal,
+    showTakePoint4LastModal,
+    showTakePoint4LiveModal,
+    showGammonValue1Modal,
+    showGammonValue2Modal,
+    showGammonValue4Modal,
+    showWarningModal,
+    showMetadataModal,
+    showCommand,
+    showAnalysis,
+    showHelp,
+    showComment,
+    showGoToPositionModal,
+    showTakePoint2Modal,
+    showTakePoint4Modal
+  ]) => {
+    return (
+      showSearchModal ||
+      showMetModal ||
+      showTakePoint2LastModal ||
+      showTakePoint2LiveModal ||
+      showTakePoint4LastModal ||
+      showTakePoint4LiveModal ||
+      showGammonValue1Modal ||
+      showGammonValue2Modal ||
+      showGammonValue4Modal ||
+      showWarningModal ||
+      showMetadataModal ||
+      showCommand ||
+      showAnalysis ||
+      showHelp ||
+      showComment ||
+      showGoToPositionModal ||
+      showTakePoint2Modal ||
+      showTakePoint4Modal
+    );
+  }
+);

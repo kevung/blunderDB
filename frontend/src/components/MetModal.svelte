@@ -27,6 +27,23 @@
     function formatCell(value) {
         return value.toFixed(1);
     }
+
+    function handleKeyDown(event) {
+        if (event.key === 'Escape') {
+            closeModal();
+        }
+    }
+
+    // Add event listener on mount and remove on destroy
+    import { onMount, onDestroy } from 'svelte';
+
+    onMount(() => {
+        window.addEventListener('keydown', handleKeyDown);
+    });
+
+    onDestroy(() => {
+        window.removeEventListener('keydown', handleKeyDown);
+    });
 </script>
 
 {#if visible}
