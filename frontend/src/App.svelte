@@ -359,13 +359,8 @@
         return filePath.split('/').pop();
     }
 
-    const STATUSBAR_MESSAGE_DURATION = 5000; // Duration in milliseconds
-
     export function setStatusBarMessage(message) {
         statusBarTextStore.set(message);
-        setTimeout(() => {
-            statusBarTextStore.set('');
-        }, STATUSBAR_MESSAGE_DURATION);
     }
 
     async function newDatabase() {
