@@ -1,5 +1,7 @@
 package main
 
+import "time"
+
 const (
 	NumPoints = 24
 	BlackBar  = 25
@@ -109,6 +111,8 @@ type PositionAnalysis struct {
 	AnalysisEngineVersion string                `json:"analysisEngineVersion"`
 	DoublingCubeAnalysis  *DoublingCubeAnalysis `json:"doublingCubeAnalysis,omitempty"`
 	CheckerAnalysis       *CheckerAnalysis      `json:"checkerAnalysis,omitempty"`
+	CreationDate          time.Time             `json:"creationDate"`
+	LastModifiedDate      time.Time             `json:"lastModifiedDate"`
 }
 
 func initializeBoard() Board {

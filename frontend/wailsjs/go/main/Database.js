@@ -78,6 +78,6 @@ export function SetupDatabase(arg1) {
   return window['go']['main']['Database']['SetupDatabase'](arg1);
 }
 
-export function UpdatePosition(arg1, arg2) {
-  return window['go']['main']['Database']['UpdatePosition'](arg1, arg2);
+export function UpdatePosition(arg1) {
+  return window['go']['main']['Database']['UpdatePosition'](arg1);
 }

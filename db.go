@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"time"
 
 	_ "modernc.org/sqlite"
 )
@@ -238,7 +239,7 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 	return positionID, nil
 }
 
-func (d *Database) UpdatePosition(position Position, databaseVersion string) error {
+func (d *Database) UpdatePosition(position Position) error {
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
@@ -255,30 +256,54 @@ func (d *Database) UpdatePosition(position Position, databaseVersion string) err
 }
 
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
-	analysis.PositionID = int(positionID) // Ensure the positionID is set in the analysis
-	analysisJSON, err := json.Marshal(analysis)
-	if err != nil {
-		fmt.Println("Error marshalling analysis:", err)
-		return err
-	}
+	// Ensure the positionID is set in the analysis
+	analysis.PositionID = int(positionID)
+
+	// Update last modified date
+	analysis.LastModifiedDate = time.Now()
 
 	// Check if an analysis already exists for the given position ID
 	var existingID int64
-	err = d.db.QueryRow(`SELECT id FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID)
+	var existingAnalysisJSON string
+	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println("Error querying analysis:", err)
 		return err
 	}
 
 	if existingID > 0 {
+		// Preserve the existing creation date
+		var existingAnalysis PositionAnalysis
+		err = json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
+		if err != nil {
+			fmt.Println("Error unmarshalling existing analysis:", err)
+			return err
+		}
+		analysis.CreationDate = existingAnalysis.CreationDate
+
 		// Update the existing analysis
+		analysisJSON, err := json.Marshal(analysis)
+		if err != nil {
+			fmt.Println("Error marshalling analysis:", err)
+			return err
+		}
 		_, err = d.db.Exec(`UPDATE analysis SET data = ? WHERE id = ?`, string(analysisJSON), existingID)
 		if err != nil {
 			fmt.Println("Error updating analysis:", err)
 			return err
 		}
 	} else {
+		// Set creation date if not already set
+		if analysis.CreationDate.IsZero() {
+			analysis.CreationDate = time.Now()
+		}
+
 		// Insert a new analysis
+		analysisJSON, err := json.Marshal(analysis)
+		if err != nil {
+			fmt.Println("Error marshalling analysis:", err)
+			return err
+		}
 		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
 		if err != nil {
 			fmt.Println("Error inserting analysis:", err)

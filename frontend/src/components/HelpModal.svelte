@@ -318,6 +318,11 @@
                                 <td>Reset board, cube, score, and dice</td>
                             </tr>
 
+                            <tr>
+                                <td>Ctrl + G</td>
+                                <td>Show Position Metadata</td>
+                            </tr>
+
                         </tbody>
                     </table>
 

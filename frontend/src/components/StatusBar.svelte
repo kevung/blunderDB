@@ -1,9 +1,33 @@
 <script>
   import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
   import { positionsStore } from '../stores/positionStore';
+  import { analysisStore } from '../stores/analysisStore';
   import { get } from 'svelte/store';
 
-  // No need for reactive statements here
+  function showDates() {
+    const analysis = get(analysisStore);
+    if (!analysis || !analysis.creationDate || !analysis.lastModifiedDate) {
+      statusBarTextStore.set('No database opened');
+      return;
+    }
+    const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+    const formatDate = (date) => {
+      const [year, month, day] = date.toLocaleDateString('sv-SE').split('-');
+      const time = date.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit' });
+      return `${year}/${month}/${day} ${time}`;
+    };
+    const creationDate = formatDate(new Date(analysis.creationDate));
+    const lastModifiedDate = formatDate(new Date(analysis.lastModifiedDate));
+    statusBarTextStore.set(`Created: ${creationDate} | Modified: ${lastModifiedDate}`);
+  }
+
+  window.addEventListener('keydown', (event) => {
+    if (event.ctrlKey && event.key === 'g') {
+      if (get(statusBarModeStore) === 'NORMAL') {
+        showDates();
+      }
+    }
+  });
 </script>
 
 <div class="status-bar">

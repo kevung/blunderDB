@@ -159,6 +159,7 @@
         currentPositionIndex = value;
         if (positions.length > 0 && currentPositionIndex >= 0 && currentPositionIndex < positions.length) {
             await showPosition(positions[currentPositionIndex]);
+            setStatusBarMessage(''); // Reset status bar message when changing position
         }
     });
 

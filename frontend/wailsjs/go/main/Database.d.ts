@@ -40,4 +40,4 @@ export function SavePosition(arg1:main.Position):Promise<number>;
 
 export function SetupDatabase(arg1:string):Promise<void>;
 
-export function UpdatePosition(arg1:main.Position,arg2:string):Promise<void>;
+export function UpdatePosition(arg1:main.Position):Promise<void>;

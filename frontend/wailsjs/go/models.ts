@@ -241,6 +241,10 @@ export namespace main {
 	    analysisEngineVersion: string;
 	    doublingCubeAnalysis?: DoublingCubeAnalysis;
 	    checkerAnalysis?: CheckerAnalysis;
+	    // Go type: time
+	    creationDate: any;
+	    // Go type: time
+	    lastModifiedDate: any;
 	
 	    static createFrom(source: any = {}) {
 	        return new PositionAnalysis(source);
@@ -256,6 +260,8 @@ export namespace main {
 	        this.analysisEngineVersion = source["analysisEngineVersion"];
 	        this.doublingCubeAnalysis = this.convertValues(source["doublingCubeAnalysis"], DoublingCubeAnalysis);
 	        this.checkerAnalysis = this.convertValues(source["checkerAnalysis"], CheckerAnalysis);
+	        this.creationDate = this.convertValues(source["creationDate"], null);
+	        this.lastModifiedDate = this.convertValues(source["lastModifiedDate"], null);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

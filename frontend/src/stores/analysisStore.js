@@ -30,6 +30,8 @@ export const analysisStore = writable({
         wrongPassPercentage: 0,
         wrongTakePercentage: 0,
     },
+    creationDate: '',
+    lastModifiedDate: ''
 });
 
 
