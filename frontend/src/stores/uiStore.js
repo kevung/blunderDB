@@ -57,7 +57,7 @@ export const isAnyModalOrPanelOpenStore = derived(
     showMetadataModalStore,
     showCommandStore,
     showAnalysisStore,
-    showHelpStore,
+    showHelpStore, // Moved here
     showCommentStore,
     showGoToPositionModalStore,
     showTakePoint2ModalStore,
@@ -77,7 +77,7 @@ export const isAnyModalOrPanelOpenStore = derived(
     showMetadataModal,
     showCommand,
     showAnalysis,
-    showHelp,
+    showHelp, // Moved here
     showComment,
     showGoToPositionModal,
     showTakePoint2Modal,
@@ -97,7 +97,7 @@ export const isAnyModalOrPanelOpenStore = derived(
       showMetadataModal ||
       showCommand ||
       showAnalysis ||
-      showHelp ||
+      showHelp || // Moved here
       showComment ||
       showGoToPositionModal ||
       showTakePoint2Modal ||
@@ -121,7 +121,8 @@ export const isAnyModalOpenStore = derived(
     showMetadataModalStore,
     showGoToPositionModalStore,
     showTakePoint2ModalStore,
-    showTakePoint4ModalStore
+    showTakePoint4ModalStore,
+    showHelpStore // Added here
   ],
   ([
     showSearchModal,
@@ -137,7 +138,8 @@ export const isAnyModalOpenStore = derived(
     showMetadataModal,
     showGoToPositionModal,
     showTakePoint2Modal,
-    showTakePoint4Modal
+    showTakePoint4Modal,
+    showHelp // Added here
   ]) => {
     return (
       showSearchModal ||
@@ -153,7 +155,8 @@ export const isAnyModalOpenStore = derived(
       showMetadataModal ||
       showGoToPositionModal ||
       showTakePoint2Modal ||
-      showTakePoint4Modal
+      showTakePoint4Modal ||
+      showHelp // Added here
     );
   }
 );
@@ -162,19 +165,16 @@ export const isAnyPanelOpenStore = derived(
   [
     showCommandStore,
     showAnalysisStore,
-    showHelpStore,
     showCommentStore
   ],
   ([
     showCommand,
     showAnalysis,
-    showHelp,
     showComment
   ]) => {
     return (
       showCommand ||
       showAnalysis ||
-      showHelp ||
       showComment
     );
   }
