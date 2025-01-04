@@ -72,7 +72,8 @@
         showMetadataModalStore, // Import showMetadataModalStore
         showTakePoint2ModalStore, // Import showTakePoint2ModalStore
         showTakePoint4ModalStore, // Import showTakePoint4ModalStore
-        isAnyModalOrPanelOpenStore // Import the derived store
+        isAnyModalOrPanelOpenStore, // Import the derived store
+        isAnyModalOpenStore // Import the derived store
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -125,6 +126,7 @@
     let showTakePoint2Modal = false;
     let showTakePoint4Modal = false;
     let isAnyModalOrPanelOpen = false;
+    let isAnyModalOpen = false;
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -135,6 +137,11 @@
     // Subscribe to the derived store
     isAnyModalOrPanelOpenStore.subscribe(value => {
         isAnyModalOrPanelOpen = value;
+    });
+
+        // Subscribe to the derived store
+        isAnyModalOpenStore.subscribe(value => {
+        isAnyModalOpen = value;
     });
 
     // Reference for various elements.
@@ -326,7 +333,9 @@
         } else if(event.ctrlKey && event.code == 'KeyK') {
             gotoPosition();
         } else if(event.ctrlKey && event.code == 'KeyR') {
+            if (!isAnyModalOpen) {
             loadAllPositions();
+            }
         } else if(!event.ctrlKey && event.code === 'Tab') {
             if(!showHelp) {
                 toggleEditMode();
