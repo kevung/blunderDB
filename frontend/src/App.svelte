@@ -357,14 +357,6 @@
             toggleHelpModal();
         } else if (!event.ctrlKey && event.key === '?') {
             toggleHelpModal();
-        } else if (event.ctrlKey && event.key === 'ArrowLeft') {
-            if (!showComment) {
-                setBoardOrientation("left");
-            }
-        } else if (event.ctrlKey && event.key === 'ArrowRight') {
-            if (!showComment) {
-                setBoardOrientation("right");
-            }
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
         }
