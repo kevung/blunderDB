@@ -105,3 +105,77 @@ export const isAnyModalOrPanelOpenStore = derived(
     );
   }
 );
+
+export const isAnyModalOpenStore = derived(
+  [
+    showSearchModalStore,
+    showMetModalStore,
+    showTakePoint2LastModalStore,
+    showTakePoint2LiveModalStore,
+    showTakePoint4LastModalStore,
+    showTakePoint4LiveModalStore,
+    showGammonValue1ModalStore,
+    showGammonValue2ModalStore,
+    showGammonValue4ModalStore,
+    showWarningModalStore,
+    showMetadataModalStore,
+    showGoToPositionModalStore,
+    showTakePoint2ModalStore,
+    showTakePoint4ModalStore
+  ],
+  ([
+    showSearchModal,
+    showMetModal,
+    showTakePoint2LastModal,
+    showTakePoint2LiveModal,
+    showTakePoint4LastModal,
+    showTakePoint4LiveModal,
+    showGammonValue1Modal,
+    showGammonValue2Modal,
+    showGammonValue4Modal,
+    showWarningModal,
+    showMetadataModal,
+    showGoToPositionModal,
+    showTakePoint2Modal,
+    showTakePoint4Modal
+  ]) => {
+    return (
+      showSearchModal ||
+      showMetModal ||
+      showTakePoint2LastModal ||
+      showTakePoint2LiveModal ||
+      showTakePoint4LastModal ||
+      showTakePoint4LiveModal ||
+      showGammonValue1Modal ||
+      showGammonValue2Modal ||
+      showGammonValue4Modal ||
+      showWarningModal ||
+      showMetadataModal ||
+      showGoToPositionModal ||
+      showTakePoint2Modal ||
+      showTakePoint4Modal
+    );
+  }
+);
+
+export const isAnyPanelOpenStore = derived(
+  [
+    showCommandStore,
+    showAnalysisStore,
+    showHelpStore,
+    showCommentStore
+  ],
+  ([
+    showCommand,
+    showAnalysis,
+    showHelp,
+    showComment
+  ]) => {
+    return (
+      showCommand ||
+      showAnalysis ||
+      showHelp ||
+      showComment
+    );
+  }
+);
