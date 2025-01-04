@@ -49,6 +49,7 @@
     let isMouseDown = false;
     let startMousePos = null;
     let cubePosition = { x: 0, y: 0 };
+    let previousDice = get(positionStore).dice; // Save previous dice values
 
     function handleMouseDown(event) {
         event.preventDefault(); // Prevent text or element selection
@@ -309,20 +310,20 @@
         }
     }
 
-    function handleRectangleClick(event) {
+    function handleRectangleAndDiceClick(event) {
         if (mode !== "EDIT") return;
 
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
 
-        console.log("Rectangle click detected at:", mouseX, mouseY); // Debug log
+        console.log("Rectangle or Dice click detected at:", mouseX, mouseY); // Debug log
 
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
         const boardWidth = boardCfg.widthFactor * width;
-        const boardHeight = (11 / 13) * boardWidth;
         const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
+        const boardHeight = (11 / 13) * boardWidth;
         const gap = 1.2 * boardCheckerSize;
 
         const bearoff1Xpos = boardOrigXpos + boardWidth / 2 + gap;
@@ -333,33 +334,12 @@
         const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
         const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
 
-        // Check if the click is inside the top player's rectangle
-        if (mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
-            mouseY >= Math.min(bearoff1Ypos, score1Ypos) && mouseY <= Math.max(bearoff1Ypos, score1Ypos)) {
-            console.log("Top player's rectangle clicked"); // Debug log
-            positionStore.update(pos => {
-                pos.player_on_roll = 0;
-                pos.decision_type = 1; // Set decision type to doubling cube
-                pos.dice = [0, 0];
-                console.log("Updated decision_type to 1 for top player"); // Debug log
-                return pos;
-            });
-        }
+        const isInsideTopPlayerRectangle = mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
+            mouseY >= Math.min(bearoff1Ypos, score1Ypos) && mouseY <= Math.max(bearoff1Ypos, score1Ypos);
 
-        // Check if the click is inside the bottom player's rectangle
-        if (mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
-            mouseY >= Math.min(bearoff2Ypos, score2Ypos) && mouseY <= Math.max(bearoff2Ypos, score2Ypos)) {
-            console.log("Bottom player's rectangle clicked"); // Debug log
-            positionStore.update(pos => {
-                pos.player_on_roll = 1;
-                pos.decision_type = 1; // Set decision type to doubling cube
-                pos.dice = [0, 0];
-                console.log("Updated decision_type to 1 for bottom player"); // Debug log
-                return pos;
-            });
-        }
+        const isInsideBottomPlayerRectangle = mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
+            mouseY >= Math.min(bearoff2Ypos, score2Ypos) && mouseY <= Math.max(bearoff2Ypos, score2Ypos);
 
-        // Check if the click is inside the red rectangle
         const rectangle1Xpos = bearoff1Xpos;
         const rectangle1Ypos = (bearoff1Ypos + score1Ypos) / 2;
         const rectangle2Xpos = bearoff2Xpos;
@@ -368,59 +348,66 @@
         const rectangleHeight1 = Math.abs(bearoff1Ypos - score1Ypos);
         const rectangleHeight2 = Math.abs(bearoff2Ypos - score2Ypos);
 
-        if ((mouseX >= rectangle1Xpos - rectangleWidth / 2 && mouseX <= rectangle1Xpos + rectangleWidth / 2 &&
-            mouseY >= rectangle1Ypos - rectangleHeight1 / 2 && mouseY <= rectangle1Ypos + rectangleHeight1 / 2) ||
-            (mouseX >= rectangle2Xpos - rectangleWidth / 2 && mouseX <= rectangle2Xpos + rectangleWidth / 2 &&
-            mouseY >= rectangle2Ypos - rectangleHeight2 / 2 && mouseY <= rectangle2Ypos + rectangleHeight2 / 2)) {
-            console.log("Red rectangle clicked"); // Debug log
-            positionStore.update(pos => {
-                pos.decision_type = 1; // Set decision type to doubling cube
-                console.log("Updated decision_type to 1 for red rectangle"); // Debug log
-                return pos;
-            });
-        }
-    }
-
-    function handleDiceClick(event) {
-        if (mode !== "EDIT") return;
-
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = event.clientX - rect.left;
-        const mouseY = event.clientY - rect.top;
-
-        const boardAspectFactor = 11 / 13;
-        const boardWidth = boardCfg.widthFactor * width;
-        const boardHeight = boardAspectFactor * boardWidth;
-        const boardCheckerSize = boardHeight / 11;
-        const boardOrigXpos = width / 2;
-        const boardOrigYpos = height / 2;
-        const gap = 0.325 * boardCheckerSize;
+        const diceGap = 0.325 * boardCheckerSize;
         const diceSize = 0.7 * boardCheckerSize;
-
-        const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * gap;
+        const diceXpos = boardOrigXpos + boardWidth / 2 + 2 * diceGap;
         const diceYpos = get(positionStore).player_on_roll === 0 ? boardOrigYpos + 0.5 * boardHeight - 1.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardHeight + 1.5 * boardCheckerSize;
+        
+        let isInsideDie1 = false;
+        let isInsideDie2 = false;
 
-        let diceClicked = false;
+        for (let index = 0; index < 2; index++) {
+            const dieXpos = diceXpos + index * (diceSize + diceGap);
+            if (mouseX >= dieXpos - diceSize / 2 && mouseX <= dieXpos + diceSize / 2 &&
+                mouseY >= diceYpos - diceSize / 2 && mouseY <= diceYpos + diceSize / 2) {
+                if (index === 0) {
+                    isInsideDie1 = true;
+                } else {
+                    isInsideDie2 = true;
+                }
+            }
+        }
+
+        if (isInsideDie1 || isInsideDie2) {
+            console.log("Die clicked"); // Debug log
+        }
 
         positionStore.update(pos => {
-            pos.dice.forEach((die, index) => {
-                const dieXpos = diceXpos + index * (diceSize + gap);
-                if (mouseX >= dieXpos - diceSize / 2 && mouseX <= dieXpos + diceSize / 2 &&
-                    mouseY >= diceYpos - diceSize / 2 && mouseY <= diceYpos + diceSize / 2) {
-                    diceClicked = true;
-                    if (event.button === 0) {
-                        pos.dice[index] = (die % 6) + 1; // Left click to increase
-                    } else if (event.button === 2) {
-                        pos.dice[index] = (die === 1 ? 6 : die - 1); // Right click to decrease
-                    }
+            if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
+                console.log("Top player's rectangle clicked"); // Debug log
+                pos.player_on_roll = 0;
+                pos.decision_type = 1; // Set decision type to doubling cube
+                previousDice = pos.dice; // Save previous dice values
+                pos.dice = [0, 0];
+                console.log("Updated decision_type to 1 for top player"); // Debug log
+            } else if (isInsideBottomPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
+                console.log("Bottom player's rectangle clicked"); // Debug log
+                pos.player_on_roll = 1;
+                pos.decision_type = 1; // Set decision type to doubling cube
+                pos.dice = [0, 0];
+                console.log("Updated decision_type to 1 for bottom player"); // Debug log
+            } else if (isInsideDie1) {
+                console.log("Die 1 clicked"); // Debug log
+                pos.decision_type = 0;
+                pos.dice = previousDice; // Restore previous dice values
+                if (event.button === 0) {
+                    pos.dice[0] = (pos.dice[0] % 6) + 1; // Left click to increase
+                } else if (event.button === 2) {
+                    pos.dice[0] = (pos.dice[0] === 1 ? 6 : pos.dice[0] - 1); // Right click to decrease
                 }
-            });
-
-            if (diceClicked) {
-                pos.decision_type = 0; // Set decision type to checker only if dice are clicked
+            } else if (isInsideDie2) {
+                console.log("Die 2 clicked"); // Debug log
+                pos.decision_type = 0;
+                pos.dice = previousDice; // Restore previous dice values
+                if (event.button === 0) {
+                    pos.dice[1] = (pos.dice[1] % 6) + 1; // Left click to increase
+                } else if (event.button === 2) {
+                    pos.dice[1] = (pos.dice[1] === 1 ? 6 : pos.dice[1] - 1); // Right click to decrease
+                }
             }
 
             console.log("Updated dice values:", pos.dice); // Debug log
+            console.log("Updated position store:", pos); // Log the updated position store
             return pos;
         });
     }
@@ -521,10 +508,8 @@
         canvas.addEventListener("mouseup", handleMouseUp);
         canvas.addEventListener("dblclick", handleDoubleClick);
         canvas.addEventListener("mousedown", handleDoublingCubeClick);
-        canvas.addEventListener("mousedown", handleRectangleClick);
-        canvas.addEventListener("mousedown", handleDiceClick);
+        canvas.addEventListener("mousedown", handleRectangleAndDiceClick);
         canvas.addEventListener("mousedown", handleScoreClick);
-        canvas.addEventListener("contextmenu", event => event.preventDefault()); // Deactivate contextual menu
         drawBoard();
         window.addEventListener("resize", resizeBoard);
         window.addEventListener("keydown", handleOrientationChange);
@@ -547,10 +532,8 @@
         canvas.removeEventListener("mouseup", handleMouseUp);
         canvas.removeEventListener("dblclick", handleDoubleClick);
         canvas.removeEventListener("mousedown", handleDoublingCubeClick);
-        canvas.removeEventListener("mousedown", handleRectangleClick);
-        canvas.removeEventListener("mousedown", handleDiceClick);
+        canvas.removeEventListener("mousedown", handleRectangleAndDiceClick);
         canvas.removeEventListener("mousedown", handleScoreClick);
-        canvas.removeEventListener("contextmenu", event => event.preventDefault()); // Remove event listener
         window.removeEventListener("resize", resizeBoard);
         window.removeEventListener("resize", logCanvasSize);
         window.removeEventListener("keydown", handleOrientationChange);
@@ -943,13 +926,13 @@
             // Add transparent rectangles with red borders
             const rectangle1 = two.makeRectangle(bearoff1Xpos, (bearoff1Ypos + score1Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff1Ypos - score1Ypos));
             rectangle1.fill = "transparent";
-            rectangle1.stroke = "transparent"; // Make border invisible
-            rectangle1.linewidth = 2;
+            rectangle1.stroke = "red"; // Make border visible
+            rectangle1.linewidth = 0;
 
             const rectangle2 = two.makeRectangle(bearoff2Xpos, (bearoff2Ypos + score2Ypos) / 2, 1.5 * boardCheckerSize, Math.abs(bearoff2Ypos - score2Ypos));
             rectangle2.fill = "transparent";
-            rectangle2.stroke = "transparent"; // Make border invisible
-            rectangle2.linewidth = 2;
+            rectangle2.stroke = "red"; // Make border visible
+            rectangle2.linewidth = 0;
         }
 
         function drawDice() {
@@ -1013,16 +996,16 @@
             const score2Xpos = boardOrigXpos + boardWidth / 2 + 1.2 * boardCheckerSize;
             const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize; // Move closer to the middle
 
-            // Add transparent red rectangles behind the score text
+            // Add visible red rectangles behind the score text
             const redRectangle1 = two.makeRectangle(score1Xpos, score1Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
             redRectangle1.fill = "transparent";
-            redRectangle1.stroke = "transparent"; // Make border invisible
-            redRectangle1.linewidth = 2;
+            redRectangle1.stroke = "red"; // Make border visible
+            redRectangle1.linewidth = 0;
 
             const redRectangle2 = two.makeRectangle(score2Xpos, score2Ypos, 1.5 * boardCheckerSize, 0.5 * boardCheckerSize);
             redRectangle2.fill = "transparent";
-            redRectangle2.stroke = "transparent"; // Make border invisible
-            redRectangle2.linewidth = 2;
+            redRectangle2.stroke = "red"; // Make border visible
+            redRectangle2.linewidth = 0;
 
             // Add score text
             const scoreText1Element = two.makeText(scoreText1, score1Xpos, score1Ypos - (score1 === 0 ? 10 : 0));
