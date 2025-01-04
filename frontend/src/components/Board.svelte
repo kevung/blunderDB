@@ -462,6 +462,9 @@
                 } else if (event.button === 2) {
                     pos.score[0] = Math.min(pos.score[0] + 1, 99); // Increment score, max 99
                 }
+                if (pos.score[0] === -1) {
+                    pos.score[1] = -1; // Set other player's score to unlimited
+                }
                 return pos;
             });
         }
@@ -474,6 +477,9 @@
                     pos.score[1] = Math.max(pos.score[1] - 1, -1); // Decrement score
                 } else if (event.button === 2) {
                     pos.score[1] = Math.min(pos.score[1] + 1, 99); // Increment score, max 99
+                }
+                if (pos.score[1] === -1) {
+                    pos.score[0] = -1; // Set other player's score to unlimited
                 }
                 return pos;
             });
