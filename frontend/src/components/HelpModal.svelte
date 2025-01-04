@@ -554,6 +554,10 @@
                                 <td>Open The Kazaross-XG2 Match Equity Table</td>
                             </tr>
                             <tr>
+                                <td>tp2</td>
+                                <td>2-Cube Take Point (Live and Last)</td>
+                            </tr>
+                            <tr>
                                 <td>tp2_last</td>
                                 <td>2-Cube Take Point in Last Roll Positions</td>
                             </tr>

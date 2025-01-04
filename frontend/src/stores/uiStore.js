@@ -38,3 +38,5 @@ export const showAnalysisStore = writable(false);
 export const showHelpStore = writable(false);
 export const showCommentStore = writable(false);
 export const showGoToPositionModalStore = writable(false);
+
+export const showTakePoint2ModalStore = writable(false); // Add store for TakePoint2 modal visibility

@@ -69,7 +69,8 @@
         showCommentStore,
         showGoToPositionModalStore,
         showWarningModalStore, // Import showWarningModalStore
-        showMetadataModalStore // Import showMetadataModalStore
+        showMetadataModalStore, // Import showMetadataModalStore
+        showTakePoint2ModalStore // Import showTakePoint2ModalStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -94,6 +95,7 @@
     import GammonValue4Modal from './components/GammonValue4Modal.svelte'; // Import GammonValue4Modal component
     import WarningModal from './components/WarningModal.svelte'; // Import WarningModal component
     import MetadataModal from './components/MetadataModal.svelte'; // Import MetadataModal component
+    import TakePoint2Modal from './components/TakePoint2Modal.svelte'; // Import TakePoint2Modal component
 
     // Visibility variables
     let showSearchModal = false;
@@ -117,6 +119,7 @@
     let showMetadataModal = false;
     let databaseLoaded = false;
     let mode = 'NORMAL';
+    let showTakePoint2Modal = false;
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -225,6 +228,10 @@
 
     showMetadataModalStore.subscribe(value => {
         showMetadataModal = value;
+    });
+
+    showTakePoint2ModalStore.subscribe(value => {
+        showTakePoint2Modal = value;
     });
 
     databasePathStore.subscribe(value => {
@@ -1587,6 +1594,11 @@
     <MetadataModal
         visible={showMetadataModal}
         onClose={() => showMetadataModalStore.set(false)}
+    />
+
+    <TakePoint2Modal
+        visible={showTakePoint2Modal}
+        onClose={() => showTakePoint2ModalStore.set(false)}
     />
 
     <HelpModal
