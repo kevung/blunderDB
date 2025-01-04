@@ -267,6 +267,11 @@
     function handleKeyDown(event) {
         event.stopPropagation();
 
+        // Prevent shortcuts if any modal is open
+        if ($isAnyModalOpenStore) {
+            return;
+        }
+        
         // Prevent all shortcuts except toggleCommentPanel when comment panel is visible and focused
         if (showComment && document.activeElement.id === 'commentTextArea') {
             if (event.ctrlKey && event.code === 'KeyP') {
