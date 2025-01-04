@@ -1000,6 +1000,11 @@
             }
         }
 
+        if ((position.score[0] === -1 && position.score[1] !== -1) || (position.score[1] === -1 && position.score[0] !== -1)) {
+            setStatusBarMessage('Invalid position: Both players must have unlimited score or neither');
+            return false;
+        }
+
         return true;
     }
 
