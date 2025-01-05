@@ -46,7 +46,7 @@
       let tp4LiveValue = 'N/A';
       let tp4LastValue = 'N/A';
 
-      if (position.score[0] - 1 < metTable.length && position.score[1] - 1 < metTable[0].length) {
+      if (position.score[0] - 1 >= 0 && position.score[0] - 1 < metTable.length && position.score[1] - 1 >= 0 && position.score[1] - 1 < metTable[0].length) {
         metValue = metTable[position.score[0] - 1][position.score[1] - 1].toFixed(1);
       }
 
