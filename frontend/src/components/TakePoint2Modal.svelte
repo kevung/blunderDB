@@ -1,4 +1,7 @@
 <script>
+    import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
+    import { takePoint2LastTable } from '../stores/takePoint2LastTable';
+
     export let visible = false;
     export let onClose;
 
@@ -19,28 +22,6 @@
     function handleWheel(event) {
         event.preventDefault();
     }
-
-    const liveTableData = [
-        [32.5, 26, 20, 17.5, 22.5, 22, 21.5, 21],
-        [25, 25, 21.5, 19.5, 22.5, 23, 22.5, 23],
-        [18.5, 24, 22, 19.5, 23, 22.5, 22.5, 21.5],
-        [23.5, 21.5, 24, 20, 23, 22.5, 23, 22],
-        [22.5, 22, 24.5, 20, 23, 22, 22.5, 21],
-        [23, 19.5, 25, 20, 23, 21.5, 22.5, 21.5],
-        [20.5, 19.5, 24, 20, 22.5, 21, 22.5, 21.5],
-        [22, 17.5, 24, 20, 22.5, 21, 22.5, 21.5]
-    ];
-
-    const lastTableData = [
-        [32.5, 26, 20, 17.5, 22.5, 22, 21.5, 21],
-        [37, 30, 24, 21, 24, 24.5, 23, 23.5],
-        [37, 35, 29, 22.5, 26, 24.5, 24.5, 23],
-        [39.5, 28.5, 30.5, 24, 27, 25.5, 25, 24],
-        [34, 28, 29.5, 23.5, 27, 25, 25.5, 24],
-        [36, 25, 30.5, 24, 27.5, 25, 26, 24.5],
-        [33.5, 26, 30.5, 24.5, 27.5, 25.5, 26.5, 24.5],
-        [35.5, 23, 30.5, 24.5, 28, 25.5, 26.5, 25]
-    ];
 
     function formatCell(value) {
         return value.toFixed(1);
@@ -71,7 +52,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each liveTableData as row, rowIndex}
+                            {#each takePoint2LiveTable as row, rowIndex}
                                 <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                                     <td><strong>{rowIndex + 2}</strong></td>
                                     {#each row as cell}
@@ -94,7 +75,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each lastTableData as row, rowIndex}
+                            {#each takePoint2LastTable as row, rowIndex}
                                 <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                                     <td><strong>{rowIndex + 2}</strong></td>
                                     {#each row as cell}
