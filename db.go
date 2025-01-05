@@ -1409,8 +1409,13 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 
 	if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		move := analysis.CheckerAnalysis.Moves[0].Move
-		fmt.Printf("Position ID: %d, Checker decision, Move: %s, Filter: %s\n", p.ID, move, filter) // Add logging
-		return strings.Contains(move, filter)
+		movePatterns := strings.Split(filter, ";")
+		for _, pattern := range movePatterns {
+			if strings.Contains(move, pattern) {
+				fmt.Printf("Position ID: %d, Checker decision, Move: %s, Filter: %s\n", p.ID, move, pattern) // Add logging
+				return true
+			}
+		}
 	}
 	fmt.Printf("Position ID: %d does not match move pattern filter: %s\n", p.ID, filter) // Add logging
 	return false

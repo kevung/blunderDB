@@ -813,8 +813,8 @@
                                 <td>Search text</td>
                             </tr>
                             <tr>
-                                <td>m"pattern"</td>
-                                <td>Best moves containing "pattern"</td>
+                                <td>m"pattern1;pattern2;..."</td>
+                                <td>Best moves containing at least one of the given patterns</td>
                             </tr>
                         </tbody>
                     </table>

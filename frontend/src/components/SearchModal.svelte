@@ -645,7 +645,7 @@
                         {/if}
                         {#if filter === 'Best Move'}
                             <div class="search-text-container">
-                                <label for="movePatternFilter">Move Pattern</label>
+                                <label for="movePatternFilter">(pattern1;pattern2;...)</label> <!-- Update this line -->
                                 <input type="text" id="movePatternFilter" bind:value={movePatternFilter} class="search-text-input" style="margin-left: 10px;" />
                             </div>
                         {/if}
