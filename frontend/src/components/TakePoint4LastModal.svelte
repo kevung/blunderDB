@@ -1,4 +1,5 @@
 <script>
+    import { takePoint4LastTable } from '../stores/takePoint4LastTable';
     export let visible = false;
     export let onClose;
 
@@ -15,16 +16,6 @@
             event.preventDefault();
         }
     }
-
-    const tableData = [
-        [25, 40, 33, 29, 30, 33, 32],
-        [19, 33, 30, 25, 26, 29, 29],
-        [21, 31, 28, 26, 27, 28, 28],
-        [19, 30, 28, 26, 26, 28, 28],
-        [19, 27, 26, 26, 26, 27, 27],
-        [16, 25, 25, 25, 25, 26, 26],
-        [16, 23, 23, 24, 25, 26, 26]
-    ];
 
     function formatCell(value) {
         return value.toFixed(1);
@@ -50,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each tableData as row, rowIndex}
+                    {#each $takePoint4LastTable as row, rowIndex}
                         <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                             <td><strong>{rowIndex + 3}</strong></td>
                             {#each row as cell}

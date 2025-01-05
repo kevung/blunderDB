@@ -1,4 +1,5 @@
 <script>
+    import { gammonValue4Table } from '../stores/gammonValue4Table';
     export let visible = false;
     export let onClose;
 
@@ -16,13 +17,7 @@
         }
     }
 
-    const tableData = [
-        [0.48, 0.33, 0.23, 0.23, 0.13, 0.17, 0.13, 0.13],
-        [1, 0.67, 0.5, 0.41, 0.34, 0.29, 0.24, 0.21],
-        [1.5, 1, 0.75, 0.63, 0.52, 0.45, 0.39, 0.34],
-        [2.02, 1.33, 1, 0.83, 0.69, 0.6, 0.52, 0.46],
-        [1.64, 1.13, 0.93, 0.77, 0.67, 0.6, 0.55, 0.49]
-    ];
+    const tableData = gammonValue4Table;
 
     function formatCell(value) {
         return value.toFixed(2);

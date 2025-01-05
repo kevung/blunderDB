@@ -6,6 +6,12 @@
         onClose();
     }
 
+    import { takePoint2LiveTable as tableData } from '../stores/takePoint2LiveTable';
+
+    function formatCell(value) {
+        return value.toFixed(1);
+    }
+
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             closeModal();
@@ -14,21 +20,6 @@
         if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key)) {
             event.preventDefault();
         }
-    }
-
-    const tableData = [
-        [32.5, 26, 20, 17.5, 22.5, 22, 21.5, 21],
-        [25, 25, 21.5, 19.5, 22.5, 23, 22.5, 23],
-        [18.5, 24, 22, 19.5, 23, 22.5, 22.5, 21.5],
-        [23.5, 21.5, 24, 20, 23, 22.5, 23, 22],
-        [22.5, 22, 24.5, 20, 23, 22, 22.5, 21],
-        [23, 19.5, 25, 20, 23, 21.5, 22.5, 21.5],
-        [20.5, 19.5, 24, 20, 22.5, 21, 22.5, 21.5],
-        [22, 17.5, 24, 20, 22.5, 21, 22.5, 21.5]
-    ];
-
-    function formatCell(value) {
-        return value.toFixed(1);
     }
 
     $: if (visible) {

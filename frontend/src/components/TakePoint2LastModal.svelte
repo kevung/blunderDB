@@ -6,6 +6,12 @@
         onClose();
     }
 
+    import { takePoint2LastTable as tableData } from '../stores/takePoint2LastTable';
+
+    function formatCell(value) {
+        return value.toFixed(1);
+    }
+
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             closeModal();
@@ -14,21 +20,6 @@
         if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key)) {
             event.preventDefault();
         }
-    }
-
-    const tableData = [
-        [32.5, 26, 20, 17.5, 22.5, 22, 21.5, 21],
-        [37, 30, 24, 21, 24, 24.5, 23, 23.5],
-        [37, 35, 29, 22.5, 26, 24.5, 24.5, 23],
-        [39.5, 28.5, 30.5, 24, 27, 25.5, 25, 24],
-        [34, 28, 29.5, 23.5, 27, 25, 25.5, 24],
-        [36, 25, 30.5, 24, 27.5, 25, 26, 24.5],
-        [33.5, 26, 30.5, 24.5, 27.5, 25.5, 26.5, 24.5],
-        [35.5, 23, 30.5, 24.5, 28, 25.5, 26.5, 25]
-    ];
-
-    function formatCell(value) {
-        return value.toFixed(1);
     }
 
     $: if (visible) {

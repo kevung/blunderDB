@@ -1,4 +1,5 @@
 <script>
+    import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
     export let visible = false;
     export let onClose;
 
@@ -16,15 +17,7 @@
         }
     }
 
-    const tableData = [
-        [25, 40, 33, 29, 30, 33, 32],
-        [19, 33, 30, 25, 26, 29, 29],
-        [16, 26, 25, 25, 25, 27, 28],
-        [11, 20, 22, 23, 24, 26, 26],
-        [9, 16, 18, 20, 22, 24, 25],
-        [7, 12, 16, 18, 20, 22, 23],
-        [7, 12, 15, 17, 19, 21, 22]
-    ];
+    const tableData = takePoint4LiveTable;
 
     function formatCell(value) {
         return value.toFixed(1);
