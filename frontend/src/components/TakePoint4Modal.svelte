@@ -1,4 +1,7 @@
 <script>
+    import { takePoint4LastTable } from '../stores/takePoint4LastTable';
+    import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
+
     export let visible = false;
     export let onClose;
 
@@ -19,26 +22,6 @@
     function handleWheel(event) {
         event.preventDefault();
     }
-
-    const liveTableData = [
-        [25, 40, 33, 29, 30, 33, 32],
-        [19, 33, 30, 25, 26, 29, 29],
-        [16, 26, 25, 25, 25, 27, 28],
-        [11, 20, 22, 23, 24, 26, 26],
-        [9, 16, 18, 20, 22, 24, 25],
-        [7, 12, 16, 18, 20, 22, 23],
-        [7, 12, 15, 17, 19, 21, 22]
-    ];
-
-    const lastTableData = [
-        [25, 40, 33, 29, 30, 33, 32],
-        [19, 33, 30, 25, 26, 29, 29],
-        [21, 31, 28, 26, 27, 28, 28],
-        [19, 30, 28, 26, 26, 28, 28],
-        [19, 27, 26, 26, 26, 27, 27],
-        [16, 25, 25, 25, 25, 26, 26],
-        [16, 23, 23, 24, 25, 26, 26]
-    ];
 
     function formatCell(value) {
         return value.toFixed(1);
@@ -69,7 +52,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each liveTableData as row, rowIndex}
+                            {#each takePoint4LiveTable as row, rowIndex}
                                 <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                                     <td><strong>{rowIndex + 3}</strong></td>
                                     {#each row as cell}
@@ -92,7 +75,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each lastTableData as row, rowIndex}
+                            {#each $takePoint4LastTable as row, rowIndex}
                                 <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                                     <td><strong>{rowIndex + 3}</strong></td>
                                     {#each row as cell}
