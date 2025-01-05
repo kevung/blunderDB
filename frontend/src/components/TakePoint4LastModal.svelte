@@ -18,7 +18,7 @@
     }
 
     function formatCell(value) {
-        return value.toFixed(1);
+        return value.toFixed(0);
     }
 
     $: if (visible) {

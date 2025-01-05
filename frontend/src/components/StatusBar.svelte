@@ -71,11 +71,11 @@
       }
 
       if (position.score[0] - 3 >= 0 && position.score[0] - 3 < takePoint4LiveTable.length && position.score[1] - 3 >= 0 && position.score[1] - 3 < takePoint4LiveTable[0].length) {
-        tp4LiveValue = takePoint4LiveTable[position.score[0] - 3][position.score[1] - 3].toFixed(1);
+        tp4LiveValue = takePoint4LiveTable[position.score[0] - 3][position.score[1] - 3].toFixed(0);
       }
 
       if (position.score[0] - 3 >= 0 && position.score[0] - 3 < takePoint4LastTable.length && position.score[1] - 3 >= 0 && position.score[1] - 3 < takePoint4LastTable[0].length) {
-        tp4LastValue = takePoint4LastTable[position.score[0] - 3][position.score[1] - 3].toFixed(1);
+        tp4LastValue = takePoint4LastTable[position.score[0] - 3][position.score[1] - 3].toFixed(0);
       }
 
       let metadata = `met: ${metValue}`;
