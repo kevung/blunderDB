@@ -13,10 +13,6 @@
         if (event.key === 'Escape') {
             closeModal();
         }
-        // Prevent browsing position shortcuts
-        if (['PageUp', 'PageDown', 'ArrowLeft', 'ArrowRight', 'h', 'k', 'j', 'l'].includes(event.key)) {
-            event.preventDefault();
-        }
     }
 
     function handleWheel(event) {
