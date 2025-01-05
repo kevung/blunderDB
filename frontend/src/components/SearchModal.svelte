@@ -139,7 +139,7 @@
         'Player Checker in the Zone',
         'Opponent Checker in the Zone',
         'Search Text',
-        'Best Move' // Add this line
+        'Best Move or Cube Decision' // Add this line
     ];
 
     function addFilter() {
@@ -192,7 +192,7 @@
                     return player2CheckerInZoneOption === 'min' ? `Z>${player2CheckerInZoneMin}` : player2CheckerInZoneOption === 'max' ? `Z<${player2CheckerInZoneMax}` : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
                 case 'Search Text':
                     return searchText.split(';').map(text => text.trim()).join(' ');
-                case 'Best Move':
+                case 'Best Move or Cube Decision':
                     return `m"${movePatternFilter}"`; // Add this line
                 default:
                     return '';
@@ -643,7 +643,7 @@
                                 <input type="text" id="searchText" bind:value={searchText} class="search-text-input" style="margin-left: 10px;" />
                             </div>
                         {/if}
-                        {#if filter === 'Best Move'}
+                        {#if filter === 'Best Move or Cube Decision'}
                             <div class="search-text-container">
                                 <label for="movePatternFilter">(pattern1;pattern2;...)</label> <!-- Update this line -->
                                 <input type="text" id="movePatternFilter" bind:value={movePatternFilter} class="search-text-input" style="margin-left: 10px;" />

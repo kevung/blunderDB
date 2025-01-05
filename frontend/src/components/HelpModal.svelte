@@ -816,6 +816,10 @@
                                 <td>m"pattern1;pattern2;..."</td>
                                 <td>Best moves containing at least one of the given patterns</td>
                             </tr>
+                            <tr>
+                                <td>m"ND;DT;DP;..."</td>
+                                <td>Best cube decision of No Double/Take, Double/Take, Double/Pass</td>
+                            </tr>
                         </tbody>
                     </table>
                 {/if}

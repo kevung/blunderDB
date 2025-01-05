@@ -1416,6 +1416,27 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 				return true
 			}
 		}
+	} else if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
+		movePatterns := strings.Split(filter, ";")
+		for _, pattern := range movePatterns {
+			switch pattern {
+			case "ND":
+				if analysis.DoublingCubeAnalysis.CubefulNoDoubleError == 0 {
+					fmt.Printf("Position ID: %d, Doubling decision, No Double Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulNoDoubleError, pattern) // Add logging
+					return true
+				}
+			case "DT":
+				if analysis.DoublingCubeAnalysis.CubefulDoubleTakeError == 0 {
+					fmt.Printf("Position ID: %d, Doubling decision, Double Take Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoubleTakeError, pattern) // Add logging
+					return true
+				}
+			case "DP":
+				if analysis.DoublingCubeAnalysis.CubefulDoublePassError == 0 {
+					fmt.Printf("Position ID: %d, Doubling decision, Double Pass Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoublePassError, pattern) // Add logging
+					return true
+				}
+			}
+		}
 	}
 	fmt.Printf("Position ID: %d does not match move pattern filter: %s\n", p.ID, filter) // Add logging
 	return false
