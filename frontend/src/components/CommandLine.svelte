@@ -131,9 +131,9 @@
                      }
                      const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
                      const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
-                     const movePatternMatch = command.match(/m"([^"]*)"/);
+                     const movePatternMatch = command.match(/m["']([^"']*)["']/);
                      const movePatternFilter = movePatternMatch ? movePatternMatch[1] : '';
-                     const searchTextMatch = command.match(/ (?<!m)"([^"]*)"/);
+                     const searchTextMatch = command.match(/ (?!m)["']([^"']*)["']/);
                      const searchText = searchTextMatch ? searchTextMatch[1] : '';
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
