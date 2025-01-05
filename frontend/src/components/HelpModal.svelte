@@ -812,6 +812,10 @@
                                 <td>"word1;word2;..."</td>
                                 <td>Search text</td>
                             </tr>
+                            <tr>
+                                <td>m"pattern"</td>
+                                <td>Best moves containing "pattern"</td>
+                            </tr>
                         </tbody>
                     </table>
                 {/if}

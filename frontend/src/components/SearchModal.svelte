@@ -30,6 +30,7 @@
     let equityFilter = '';
     let decisionTypeFilter = false; // Rename this line
     let diceRollFilter = false; // Add this line
+    let movePatternFilter = ''; // Add this line
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -137,7 +138,8 @@
         'Opponent Back Checker',
         'Player Checker in the Zone',
         'Opponent Checker in the Zone',
-        'Search Text'
+        'Search Text',
+        'Best Move' // Add this line
     ];
 
     function addFilter() {
@@ -190,6 +192,8 @@
                     return player2CheckerInZoneOption === 'min' ? `Z>${player2CheckerInZoneMin}` : player2CheckerInZoneOption === 'max' ? `Z<${player2CheckerInZoneMax}` : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
                 case 'Search Text':
                     return searchText.split(';').map(text => text.trim()).join(' ');
+                case 'Best Move':
+                    return `m"${movePatternFilter}"`; // Add this line
                 default:
                     return '';
             }
@@ -221,7 +225,7 @@
         const searchTextArray = searchText; // Update this line to pass searchText as a single string
 
         statusBarModeStore.set('NORMAL');
-        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter); // Rename this line
+        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter, movePatternFilter); // Add movePatternFilter
         onClose();
     }
 
@@ -637,6 +641,12 @@
                             <div class="search-text-container">
                                 <label for="searchText">(tag1;tag2;...)</label>
                                 <input type="text" id="searchText" bind:value={searchText} class="search-text-input" style="margin-left: 10px;" />
+                            </div>
+                        {/if}
+                        {#if filter === 'Best Move'}
+                            <div class="search-text-container">
+                                <label for="movePatternFilter">Move Pattern</label>
+                                <input type="text" id="movePatternFilter" bind:value={movePatternFilter} class="search-text-input" style="margin-left: 10px;" />
                             </div>
                         {/if}
                     </div>

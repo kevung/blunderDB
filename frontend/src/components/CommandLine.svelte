@@ -131,17 +131,14 @@
                      }
                      const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
                      const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
-                     const searchTextMatch = command.match(/["']([^"']*)["']/);
+                     const movePatternMatch = command.match(/m"([^"]*)"/);
+                     const movePatternFilter = movePatternMatch ? movePatternMatch[1] : '';
+                     const searchTextMatch = command.match(/ (?<!m)"([^"]*)"/);
                      const searchText = searchTextMatch ? searchTextMatch[1] : '';
-                     const searchTextArray = searchText; // Update this line to pass searchText as a single string
                      console.log('Filters:', filters); // Add logging
-                     console.log('player1BackCheckerFilter:', player1BackCheckerFilter); // Add logging
-                     console.log('player2BackCheckerFilter:', player2BackCheckerFilter); // Add logging
-                     console.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter); // Add logging
-                     console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter); // Add logging
-                     console.log('searchText:', searchText); // Add logging
-                     console.log('Search Text (use ";" to separate multiple keywords):', searchText); // Add logging
-                     onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
+                     console.log('Search Text:', searchText); // Add logging
+                     console.log('Move Pattern Filter:', movePatternFilter); // Add logging
+                     onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter, movePatternFilter);
                   }
                } else {
                   statusBarTextStore.set('Search is only available in edit mode.');
