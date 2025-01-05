@@ -1,9 +1,10 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore } from '../stores/uiStore';
+   import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore, statusBarTextStore } from '../stores/uiStore';
    import { SaveComment } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
    import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
+   import { databaseLoadedStore } from '../stores/databaseStore'; // Ensure the import path is correct
 
    export let onToggleHelp;
    export let onNewDatabase;
@@ -24,6 +25,9 @@
    // Subscribe to the stores
    let positions = [];
    positionsStore.subscribe(value => positions = value);
+
+   let databaseLoaded = false;
+   databaseLoadedStore.subscribe(value => databaseLoaded = value);
 
    showCommandStore.subscribe(value => {
       if (value) {
@@ -161,7 +165,11 @@
             } else if (command === 'gv4') {
                showGammonValue4ModalStore.set(true); // Show GammonValue4 modal
             } else if (command === 'meta') {
-               showMetadataModalStore.set(true); // Show Metadata modal
+               if (databaseLoaded) {
+                  showMetadataModalStore.set(true); // Show Metadata modal
+               } else {
+                  statusBarTextStore.set('No database loaded.'); // Display message in status bar
+               }
             } else if (command === 'tp2') {
                showTakePoint2ModalStore.set(true); // Show TakePoint2 modal
             } else if (command === 'tp4') {
