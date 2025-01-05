@@ -39,9 +39,7 @@
          }, 0);
          window.addEventListener('click', handleClickOutside);
       } else {
-         previousModeStore.subscribe(value => {
-            statusBarModeStore.set(value);
-         });
+         statusBarModeStore.set($previousModeStore); // Restore the previous mode
          window.removeEventListener('click', handleClickOutside);
       }
    });
@@ -55,7 +53,6 @@
          } else if (event.code === 'Escape') {
             showCommandStore.set(false);
          } else if (event.code === 'Enter') {
-            previousModeStore.set('NORMAL'); // Set artificially previous mode to NORMAL to force the mode to switch to NORMAL after the command is executed
             const command = inputEl.value.trim();
             console.log('Command entered:', command); // Debugging log
             const match = command.match(/^(\d+)$/);
@@ -91,63 +88,64 @@
                exitApp();
             } else if (command === 'help' || command === 'he' || command === 'h') {
                onToggleHelp();
-            } else if (command === 's') {
-               onLoadPositionsByFilters([]);
-            } else if (command === 'e') {
-               onLoadAllPositions();
-            } else if (command.startsWith('#')) {
-               const tags = Array.from(new Set(command.split(' ').map((tag, index) => index === 0 ? tag : `#${tag}`))).join(' ');
-               insertTags(tags);
             } else if (command.startsWith('s')) {
-               const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
-               const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
-               const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
-               const decisionTypeFilter = filters.includes('d');
-               const diceRollFilter = filters.includes('D');
-               const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
-               const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
-               const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
-               const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || filter.startsWith('b')));
-               const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
-               const player2GammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
-               const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B')));
-               let player1CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
-               if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
-                  player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`; // Handle case where 'ox' means 'ox,x'
+               if ($previousModeStore === 'EDIT') {
+                  if (command === 's') {
+                     onLoadPositionsByFilters([]);
+                  } else {
+                     const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
+                     const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
+                     const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
+                     const decisionTypeFilter = filters.includes('d');
+                     const diceRollFilter = filters.includes('D');
+                     const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
+                     const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
+                     const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
+                     const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || filter.startsWith('b')));
+                     const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
+                     const player2GammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
+                     const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B')));
+                     let player1CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
+                     if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
+                        player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`; // Handle case where 'ox' means 'ox,x'
+                     }
+                     let player2CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('O>') || filter.startsWith('O<') || filter.startsWith('O')));
+                     if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
+                        player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`; // Handle case where 'Ox' means 'Ox,x'
+                     }
+                     let player1BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('k>') || filter.startsWith('k<') || filter.startsWith('k')));
+                     if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
+                        player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`; // Handle case where 'kx' means 'kx,x'
+                     }
+                     let player2BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
+                     if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
+                        player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`; // Handle case where 'Kx' means 'Kx,x'
+                     }
+                     let player1CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('z>') || filter.startsWith('z<') || filter.startsWith('z')));
+                     if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
+                        player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`; // Handle case where 'zx' means 'zx,x'
+                     }
+                     let player2CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('Z>') || filter.startsWith('Z<') || filter.startsWith('Z')));
+                     if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
+                        player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`; // Handle case where 'Zx' means 'Zx,x'
+                     }
+                     const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
+                     const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
+                     const searchTextMatch = command.match(/["']([^"']*)["']/);
+                     const searchText = searchTextMatch ? searchTextMatch[1] : '';
+                     const searchTextArray = searchText; // Update this line to pass searchText as a single string
+                     console.log('Filters:', filters); // Add logging
+                     console.log('player1BackCheckerFilter:', player1BackCheckerFilter); // Add logging
+                     console.log('player2BackCheckerFilter:', player2BackCheckerFilter); // Add logging
+                     console.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter); // Add logging
+                     console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter); // Add logging
+                     console.log('searchText:', searchText); // Add logging
+                     console.log('Search Text (use ";" to separate multiple keywords):', searchText); // Add logging
+                     onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
+                  }
+               } else {
+                  statusBarTextStore.set('Search is only available in edit mode.');
                }
-               let player2CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('O>') || filter.startsWith('O<') || filter.startsWith('O')));
-               if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
-                  player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`; // Handle case where 'Ox' means 'Ox,x'
-               }
-               let player1BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('k>') || filter.startsWith('k<') || filter.startsWith('k')));
-               if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
-                  player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`; // Handle case where 'kx' means 'kx,x'
-               }
-               let player2BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
-               if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
-                  player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`; // Handle case where 'Kx' means 'Kx,x'
-               }
-               let player1CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('z>') || filter.startsWith('z<') || filter.startsWith('z')));
-               if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
-                  player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`; // Handle case where 'zx' means 'zx,x'
-               }
-               let player2CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('Z>') || filter.startsWith('Z<') || filter.startsWith('Z')));
-               if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
-                  player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`; // Handle case where 'Zx' means 'Zx,x'
-               }
-               const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
-               const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
-               const searchTextMatch = command.match(/["']([^"']*)["']/);
-               const searchText = searchTextMatch ? searchTextMatch[1] : '';
-               const searchTextArray = searchText; // Update this line to pass searchText as a single string
-               console.log('Filters:', filters); // Add logging
-               console.log('player1BackCheckerFilter:', player1BackCheckerFilter); // Add logging
-               console.log('player2BackCheckerFilter:', player2BackCheckerFilter); // Add logging
-               console.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter); // Add logging
-               console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter); // Add logging
-               console.log('searchText:', searchText); // Add logging
-               console.log('Search Text (use ";" to separate multiple keywords):', searchText); // Add logging
-               onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
             } else if (command === 'met') {
                showMetModalStore.set(true); // Show MET modal
             } else if (command === 'tp2_last') {

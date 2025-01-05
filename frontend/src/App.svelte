@@ -1225,22 +1225,24 @@
         showSearchModalStore.set(true); // Show the search modal
     }
 
-    function toggleEditMode(){
+    function toggleEditMode() {
         console.log('toggleEditMode');
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             statusBarModeStore.set('NORMAL');
             return;
         }
-        if($statusBarModeStore !== "EDIT") {
-            if(showComment){
+        if ($statusBarModeStore !== "EDIT") {
+            previousModeStore.set($statusBarModeStore);
+            if (showComment) {
                 toggleCommentPanel();
             }
-            if(showAnalysis){
+            if (showAnalysis) {
                 toggleAnalysisPanel();
             }
             statusBarModeStore.set('EDIT');
         } else {
+            previousModeStore.set($statusBarModeStore);
             statusBarModeStore.set('NORMAL');
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
@@ -1347,6 +1349,10 @@
             } else {
                 setStatusBarMessage('No matching positions found');
             }
+
+            // Set both previousMode and statusBarMode to NORMAL after search to be sure to switch back to normal mode
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
         } catch (error) {
             console.error('Error loading positions by filters:', error);
             setStatusBarMessage('Error loading positions by filters');
