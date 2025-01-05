@@ -148,7 +148,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" id="helpModal" transition:fade={{ duration: 30 }}>
+    <div class="modal-overlay" id="helpModal" tabindex="0" transition:fade={{ duration: 30 }}>
         <div class="modal-content" id="modalContent">
             <div class="close-button" on:click={onClose} on:keydown={handleKeyDown}>×</div>
 
