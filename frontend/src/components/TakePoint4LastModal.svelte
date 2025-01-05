@@ -41,7 +41,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each $takePoint4LastTable as row, rowIndex}
+                    {#each takePoint4LastTable as row, rowIndex}
                         <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                             <td><strong>{rowIndex + 3}</strong></td>
                             {#each row as cell}
