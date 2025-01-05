@@ -8,7 +8,6 @@
   import { gammonValue1Table } from '../stores/gammonValue1Table';
   import { gammonValue2Table } from '../stores/gammonValue2Table';
   import { gammonValue4Table } from '../stores/gammonValue4Table';
-  import { tp4LiveTable } from '../stores/tp4LiveTable';
   import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
   import { takePoint4LastTable } from '../stores/takePoint4LastTable';
   import { get } from 'svelte/store';
