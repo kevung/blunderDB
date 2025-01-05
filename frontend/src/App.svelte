@@ -76,7 +76,8 @@
         showTakePoint2ModalStore, // Import showTakePoint2ModalStore
         showTakePoint4ModalStore, // Import showTakePoint4ModalStore
         isAnyModalOrPanelOpenStore, // Import the derived store
-        isAnyModalOpenStore // Import the derived store
+        isAnyModalOpenStore, // Import the derived store
+        previousModeStore // Import previousModeStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -349,7 +350,7 @@
                 toggleEditMode();
         } else if (!event.ctrlKey && event.code === 'Space') {        
                 event.preventDefault();
-                toggleCommandMode();            
+                showCommandStore.set(true); // Show command line
         } else if (event.ctrlKey && event.code === 'KeyL') {
             event.preventDefault();
             if (showComment) {
@@ -1242,19 +1243,6 @@
         }
     }
 
-    function toggleCommandMode() {
-        console.log('toggleCommandMode');
-        return new Promise((resolve) => {
-            if (!showCommand) {
-                statusBarModeStore.set('COMMAND');
-            } else {
-                statusBarModeStore.set('NORMAL');
-            }
-            showCommandStore.set(!showCommand);
-            resolve();
-        });
-    }
-
     function toggleAnalysisPanel() {
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
@@ -1491,7 +1479,7 @@
         onLastPosition={lastPosition}
         onGoToPosition={gotoPosition}
         onToggleEditMode={toggleEditMode}
-        onToggleCommandMode={toggleCommandMode}
+        onToggleCommandMode={() => showCommandStore.set(true)}
         onShowAnalysis={toggleAnalysisPanel}
         onShowComment={toggleCommentPanel}
         onFindPosition={findPosition}
@@ -1508,7 +1496,7 @@
 
         <CommandLine
             visible={showCommand}
-            onClose={toggleCommandMode}
+            onClose={() => showCommandStore.set(false)}
             onToggleHelp={toggleHelpModal}
             bind:this={commandInput}
             onNewDatabase={newDatabase}

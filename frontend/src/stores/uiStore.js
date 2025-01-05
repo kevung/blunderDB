@@ -43,6 +43,8 @@ export const showGoToPositionModalStore = writable(false);
 export const showTakePoint2ModalStore = writable(false); // Add store for TakePoint2 modal visibility
 export const showTakePoint4ModalStore = writable(false); // Add store for TakePoint4 modal visibility
 
+export const previousModeStore = writable('NORMAL'); // Ensure previousModeStore is exported
+
 export const isAnyModalOrPanelOpenStore = derived(
   [
     showSearchModalStore,

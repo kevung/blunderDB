@@ -1,13 +1,10 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore, commandTextStore } from '../stores/uiStore';
+   import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore } from '../stores/uiStore';
    import { SaveComment } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
-   import { showMetModalStore,  showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore'; 
-   // Import showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, and showGammonValue1ModalStore
+   import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
 
-   export let visible = false;
-   export let onClose;
    export let onToggleHelp;
    export let onNewDatabase;
    export let onOpenDatabase;
@@ -28,101 +25,75 @@
    let positions = [];
    positionsStore.subscribe(value => positions = value);
 
-   $: if (visible && !initialized) {
-      commandTextStore.set('');
-      initialized = true;
-
-      setTimeout(() => {
-         inputEl?.focus();
-      }, 0);
-
-      window.addEventListener('click', handleClickOutside);
-   }
-
-   $: if (!visible) {
-      initialized = false;
-      window.removeEventListener('click', handleClickOutside);
-   }
+   showCommandStore.subscribe(value => {
+      if (value) {
+         previousModeStore.set($statusBarModeStore);
+         statusBarModeStore.set('COMMAND');
+         commandTextStore.set('');
+         setTimeout(() => {
+            inputEl?.focus();
+         }, 0);
+         window.addEventListener('click', handleClickOutside);
+      } else {
+         previousModeStore.subscribe(value => {
+            statusBarModeStore.set(value);
+         });
+         window.removeEventListener('click', handleClickOutside);
+      }
+   });
 
    function handleKeyDown(event) {
       event.stopPropagation();
 
-      if(visible) {
-         if(event.code === 'Backspace' && inputEl.value === '') {
-            onClose();
+      if ($showCommandStore) {
+         if (event.code === 'Backspace' && inputEl.value === '') {
+            showCommandStore.set(false);
          } else if (event.code === 'Escape') {
-            onClose();
+            showCommandStore.set(false);
          } else if (event.code === 'Enter') {
+            previousModeStore.set('NORMAL'); // Set artificially previous mode to NORMAL to force the mode to switch to NORMAL after the command is executed
             const command = inputEl.value.trim();
             console.log('Command entered:', command); // Debugging log
             const match = command.match(/^(\d+)$/);
             if (match) {
                const positionNumber = parseInt(match[1], 10);
-               onClose().then(() => {
-                  let index;
-                  if (positionNumber < 1) {
-                     index = 0;
-                  } else if (positionNumber > positions.length) {
-                     index = positions.length - 1;
-                  } else {
-                     index = positionNumber - 1;
-                  }
-                  currentPositionIndexStore.set(index);
-               });
+               let index;
+               if (positionNumber < 1) {
+                  index = 0;
+               } else if (positionNumber > positions.length) {
+                  index = positions.length - 1;
+               } else {
+                  index = positionNumber - 1;
+               }
+               currentPositionIndexStore.set(index);
             } else if (command === 'new' || command === 'ne' || command === 'n') {
-               onClose().then(() => {
-                  onNewDatabase();
-               });
+               onNewDatabase();
             } else if (command === 'open' || command === 'op' || command === 'o') {
-               onClose().then(() => {
-                  onOpenDatabase();
-               });
+               onOpenDatabase();
             } else if (command === 'import' || command === 'i') {
-               onClose().then(() => {
-                  importPosition();
-               });
+               importPosition();
             } else if (command === 'write' || command === 'wr' || command === 'w') {
-               onClose().then(() => {
-                  onSavePosition();
-               });
+               onSavePosition();
             } else if (command === 'write!' || command === 'wr!' || command === 'w!') {
-               onClose().then(() => {
-                  onUpdatePosition();
-               });
+               onUpdatePosition();
             } else if (command === 'delete' || command === 'del' || command === 'd') {
-               onClose().then(() => {
-                  onDeletePosition();
-               });
+               onDeletePosition();
             } else if (command === 'list' || command === 'l') {
-               onClose().then(() => {
-                  onToggleAnalysis();
-               });
+               onToggleAnalysis();
             } else if (command === 'comment' || command === 'co') {
                console.log('Toggling comment panel'); // Debugging log
-               onClose().then(() => {
-                  onToggleComment();
-               });
+               onToggleComment();
             } else if (command === 'quit' || command === 'q') {
-               onClose().then(() => {
-                  exitApp();
-               });
+               exitApp();
             } else if (command === 'help' || command === 'he' || command === 'h') {
-               onClose().then(() => {
-                  onToggleHelp();
-               });
+               onToggleHelp();
             } else if (command === 's') {
-               onClose().then(() => {
-                  onLoadPositionsByFilters([]);
-               });
+               onLoadPositionsByFilters([]);
             } else if (command === 'e') {
-               onClose().then(() => {
-                  onLoadAllPositions();
-               });
+               onLoadAllPositions();
             } else if (command.startsWith('#')) {
                const tags = Array.from(new Set(command.split(' ').map((tag, index) => index === 0 ? tag : `#${tag}`))).join(' ');
-               onClose().then(() => {
-                  insertTags(tags);
-               });
+               insertTags(tags);
             } else if (command.startsWith('s')) {
                const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
                const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
@@ -172,56 +143,31 @@
                console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter); // Add logging
                console.log('searchText:', searchText); // Add logging
                console.log('Search Text (use ";" to separate multiple keywords):', searchText); // Add logging
-               onClose().then(() => {
-                  onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
-               });
+               onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter);
             } else if (command === 'met') {
-               onClose().then(() => {
-                  showMetModalStore.set(true); // Show MET modal
-               });
+               showMetModalStore.set(true); // Show MET modal
             } else if (command === 'tp2_last') {
-               onClose().then(() => {
-                  showTakePoint2LastModalStore.set(true); // Show TakePoint2Last modal
-               });
+               showTakePoint2LastModalStore.set(true); // Show TakePoint2Last modal
             } else if (command === 'tp2_live') {
-               onClose().then(() => {
-                  showTakePoint2LiveModalStore.set(true); // Show TakePoint2Live modal
-               });
+               showTakePoint2LiveModalStore.set(true); // Show TakePoint2Live modal
             } else if (command === 'tp4_last') {
-               onClose().then(() => {
-                  showTakePoint4LastModalStore.set(true); // Show TakePoint4Last modal
-               });
+               showTakePoint4LastModalStore.set(true); // Show TakePoint4Last modal
             } else if (command === 'tp4_live') {
-               onClose().then(() => {
-                  showTakePoint4LiveModalStore.set(true); // Show TakePoint4Live modal
-               });
+               showTakePoint4LiveModalStore.set(true); // Show TakePoint4Live modal
             } else if (command === 'gv1') {
-               onClose().then(() => {
-                  showGammonValue1ModalStore.set(true); // Show GammonValue1 modal
-               });
+               showGammonValue1ModalStore.set(true); // Show GammonValue1 modal
             } else if (command === 'gv2') {
-               onClose().then(() => {
-                  showGammonValue2ModalStore.set(true); // Show GammonValue2 modal
-               });
+               showGammonValue2ModalStore.set(true); // Show GammonValue2 modal
             } else if (command === 'gv4') {
-               onClose().then(() => {
-                  showGammonValue4ModalStore.set(true); // Show GammonValue4 modal
-               });
+               showGammonValue4ModalStore.set(true); // Show GammonValue4 modal
             } else if (command === 'meta') {
-               onClose().then(() => {
-                  showMetadataModalStore.set(true); // Show Metadata modal
-               });
+               showMetadataModalStore.set(true); // Show Metadata modal
             } else if (command === 'tp2') {
-               onClose().then(() => {
-                  showTakePoint2ModalStore.set(true); // Show TakePoint2 modal
-               });
+               showTakePoint2ModalStore.set(true); // Show TakePoint2 modal
             } else if (command === 'tp4') {
-               onClose().then(() => {
-                  showTakePoint4ModalStore.set(true); // Show TakePoint4 modal
-               });
-            } else {
-               onClose();
+               showTakePoint4ModalStore.set(true); // Show TakePoint4 modal
             }
+            showCommandStore.set(false);
          } else if (event.ctrlKey && event.code === 'KeyH') {
             onToggleHelp();
          }
@@ -247,8 +193,8 @@
    }
 
    function handleClickOutside(event) {
-      if (visible && !inputEl.contains(event.target)) {
-         onClose();
+      if ($showCommandStore && !inputEl.contains(event.target)) {
+         showCommandStore.set(false);
       }
    }
 
@@ -257,7 +203,7 @@
    });
 </script>
 
-{#if visible}
+{#if $showCommandStore}
    <input
          type="text"
          bind:this={inputEl}
