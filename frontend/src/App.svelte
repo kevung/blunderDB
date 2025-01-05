@@ -417,6 +417,9 @@
         } catch (error) {
             console.error('Error opening file dialog:', error);
             setStatusBarMessage('Error creating new database');
+        } finally {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
         }
     }
 
@@ -456,6 +459,9 @@
         } catch (error) {
             console.error('Error opening file dialog:', error);
             setStatusBarMessage('Error opening database');
+        } finally {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
         }
     }
 
@@ -540,6 +546,9 @@
             await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
         } catch (error) {
             console.error("Error importing position:", error);
+        } finally {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
         }
     }
 
@@ -593,6 +602,7 @@
 
         await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
         statusBarModeStore.set('NORMAL');
+        previousModeStore.set('NORMAL');
     }
 
     function parsePosition(fileContent) {
@@ -1058,6 +1068,9 @@
         } catch (error) {
             console.error('Error deleting position and associated analysis:', error);
             setStatusBarMessage('Error deleting position and associated analysis');
+        } finally {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
         }
     }
 
@@ -1145,6 +1158,9 @@
         } catch (error) {
             console.error('Error updating position and analysis:', error);
             setStatusBarMessage('Error updating position and analysis');
+        } finally {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
         }
     }
 
@@ -1289,6 +1305,9 @@
                 });
             }, 0);
         }
+
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
     }
 
     function toggleCommentPanel() {
@@ -1327,6 +1346,9 @@
                 behavior: 'smooth'
             });
         }
+
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
     }
 
     async function loadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter) {
@@ -1378,6 +1400,9 @@
         } catch (error) {
             console.error('Error loading all positions:', error);
             setStatusBarMessage('Error loading all positions');
+        } finally {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
         }
     }
 
