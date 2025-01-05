@@ -37,6 +37,7 @@
     // import stores
     import {
         databasePathStore,
+        databaseLoadedStore // Import databaseLoadedStore
     } from './stores/databaseStore';
 
     import {
@@ -146,6 +147,11 @@
         // Subscribe to the derived store
         isAnyModalOpenStore.subscribe(value => {
         isAnyModalOpen = value;
+    });
+
+    // Subscribe to the databaseLoadedStore
+    databaseLoadedStore.subscribe(value => {
+        databaseLoaded = value;
     });
 
     // Reference for various elements.
