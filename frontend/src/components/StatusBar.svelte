@@ -50,31 +50,31 @@
         metValue = metTable[position.score[0] - 1][position.score[1] - 1].toFixed(1);
       }
 
-      if (position.score[0] - 2 < takePoint2LiveTable.length && position.score[1] - 2 < takePoint2LiveTable[0].length) {
+      if (position.score[0] - 2 >= 0 && position.score[0] - 2 < takePoint2LiveTable.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < takePoint2LiveTable[0].length) {
         tp2LiveValue = takePoint2LiveTable[position.score[0] - 2][position.score[1] - 2].toFixed(1);
       }
 
-      if (position.score[0] - 2 < takePoint2LastTable.length && position.score[1] - 2 < takePoint2LastTable[0].length) {
+      if (position.score[0] - 2 >= 0 && position.score[0] - 2 < takePoint2LastTable.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < takePoint2LastTable[0].length) {
         tp2LastValue = takePoint2LastTable[position.score[0] - 2][position.score[1] - 2].toFixed(1);
       }
 
-      if (position.score[0] - 2 < gammonValue1Table.length && position.score[1] - 2 < gammonValue1Table[0].length) {
+      if (position.score[0] - 2 >= 0 && position.score[0] - 2 < gammonValue1Table.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < gammonValue1Table[0].length) {
         gv1Value = gammonValue1Table[position.score[0] - 2][position.score[1] - 2].toFixed(2);
       }
 
-      if (position.score[0] - 3 < gammonValue2Table.length && position.score[1] - 2 < gammonValue2Table[0].length) {
+      if (position.score[0] - 3 >= 0 && position.score[0] - 3 < gammonValue2Table.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < gammonValue2Table[0].length) {
         gv2Value = gammonValue2Table[position.score[0] - 3][position.score[1] - 2].toFixed(2);
       }
 
-      if (position.score[0] - 5 < gammonValue4Table.length && position.score[1] - 2 < gammonValue4Table[0].length) {
+      if (position.score[0] - 5 >= 0 && position.score[0] - 5 < gammonValue4Table.length && position.score[1] - 2 >= 0 && position.score[1] - 2 < gammonValue4Table[0].length) {
         gv4Value = gammonValue4Table[position.score[0] - 5][position.score[1] - 2].toFixed(2);
       }
 
-      if (position.score[0] - 3 < takePoint4LiveTable.length && position.score[1] - 3 < takePoint4LiveTable[0].length) {
+      if (position.score[0] - 3 >= 0 && position.score[0] - 3 < takePoint4LiveTable.length && position.score[1] - 3 >= 0 && position.score[1] - 3 < takePoint4LiveTable[0].length) {
         tp4LiveValue = takePoint4LiveTable[position.score[0] - 3][position.score[1] - 3].toFixed(1);
       }
 
-      if (position.score[0] - 3 < takePoint4LastTable.length && position.score[1] - 3 < takePoint4LastTable[0].length) {
+      if (position.score[0] - 3 >= 0 && position.score[0] - 3 < takePoint4LastTable.length && position.score[1] - 3 >= 0 && position.score[1] - 3 < takePoint4LastTable[0].length) {
         tp4LastValue = takePoint4LastTable[position.score[0] - 3][position.score[1] - 3].toFixed(1);
       }
 
