@@ -561,7 +561,8 @@ func (p *Position) MatchesSearchText(searchText string, d *Database) bool {
 		fmt.Printf("Error loading comment for position ID: %d, error: %v\n", p.ID, err)
 		return false
 	}
-	searchTextArray := strings.Split(searchText, ";")
+	searchTextArray := strings.Split(strings.ToLower(searchText), ";")
+	comment = strings.ToLower(comment)
 	for _, text := range searchTextArray {
 		if strings.Contains(comment, text) {
 			return true
@@ -1408,8 +1409,8 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 	}
 
 	if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-		move := analysis.CheckerAnalysis.Moves[0].Move
-		movePatterns := strings.Split(filter, ";")
+		move := strings.ToLower(analysis.CheckerAnalysis.Moves[0].Move)
+		movePatterns := strings.Split(strings.ToLower(filter), ";")
 		for _, pattern := range movePatterns {
 			if strings.Contains(move, pattern) {
 				fmt.Printf("Position ID: %d, Checker decision, Move: %s, Filter: %s\n", p.ID, move, pattern) // Add logging
@@ -1417,20 +1418,20 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 			}
 		}
 	} else if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
-		movePatterns := strings.Split(filter, ";")
+		movePatterns := strings.Split(strings.ToLower(filter), ";")
 		for _, pattern := range movePatterns {
 			switch pattern {
-			case "ND":
+			case "nd":
 				if analysis.DoublingCubeAnalysis.CubefulNoDoubleError == 0 {
 					fmt.Printf("Position ID: %d, Doubling decision, No Double Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulNoDoubleError, pattern) // Add logging
 					return true
 				}
-			case "DT":
+			case "dt":
 				if analysis.DoublingCubeAnalysis.CubefulDoubleTakeError == 0 {
 					fmt.Printf("Position ID: %d, Doubling decision, Double Take Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoubleTakeError, pattern) // Add logging
 					return true
 				}
-			case "DP":
+			case "dp":
 				if analysis.DoublingCubeAnalysis.CubefulDoublePassError == 0 {
 					fmt.Printf("Position ID: %d, Doubling decision, Double Pass Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoublePassError, pattern) // Add logging
 					return true
