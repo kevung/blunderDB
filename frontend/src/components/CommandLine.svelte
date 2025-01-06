@@ -137,7 +137,7 @@
                      const movePatternMatch = command.match(/m["']([^"']*)["']/);
                      const movePatternFilter = movePatternMatch ? movePatternMatch[1] : '';
                      const searchTextMatch = command.match(/ (?!m)["']([^"']*)["']/);
-                     const searchText = searchTextMatch ? searchText[1] : '';
+                     const searchText = searchTextMatch ? searchTextMatch[1] : '';
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
                      console.log('Move Pattern Filter:', movePatternFilter); // Add logging
