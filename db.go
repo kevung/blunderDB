@@ -560,10 +560,9 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 }
 
 func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool, diceRollFilter bool, movePatternFilter string, dateFilter string) ([]Position, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
-
+	d.mu.Lock()
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
+	d.mu.Unlock()
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
 		return nil, err
