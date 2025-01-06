@@ -67,6 +67,9 @@
                   index = positionNumber - 1;
                }
                currentPositionIndexStore.set(index);
+            } else if (command.startsWith('#')) {
+               const tags = command.slice(1).trim();
+               insertTags(tags);
             } else if (command === 'new' || command === 'ne' || command === 'n') {
                onNewDatabase();
             } else if (command === 'open' || command === 'op' || command === 'o') {
