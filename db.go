@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
+	"sync" // Import sync package
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -13,6 +14,7 @@ import (
 
 type Database struct {
 	db *sql.DB
+	mu sync.Mutex // Add a mutex to the Database struct
 }
 
 func NewDatabase() *Database {
@@ -20,6 +22,9 @@ func NewDatabase() *Database {
 }
 
 func (d *Database) SetupDatabase(path string) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	// Open the database using string path
 	var err error
 	d.db, err = sql.Open("sqlite", path)
@@ -87,6 +92,9 @@ func (d *Database) SetupDatabase(path string) error {
 }
 
 func (d *Database) OpenDatabase(path string) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	// Open the database using string path
 	var err error
 	d.db, err = sql.Open("sqlite", path)
@@ -127,6 +135,9 @@ func (d *Database) OpenDatabase(path string) error {
 }
 
 func (d *Database) CheckVersion(databaseVersion string) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
@@ -145,6 +156,9 @@ func (d *Database) CheckVersion(databaseVersion string) error {
 }
 
 func (d *Database) CheckDatabaseVersion() (string, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
@@ -155,6 +169,9 @@ func (d *Database) CheckDatabaseVersion() (string, error) {
 }
 
 func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	// Create a copy of the position without the ID field inside the state
 	positionCopy := position
 	positionCopy.ID = 0
@@ -203,6 +220,9 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 }
 
 func (d *Database) SavePosition(position *Position) (int64, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
@@ -240,6 +260,9 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 }
 
 func (d *Database) UpdatePosition(position Position) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	positionJSON, err := json.Marshal(position)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
@@ -256,6 +279,9 @@ func (d *Database) UpdatePosition(position Position) error {
 }
 
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	// Ensure the positionID is set in the analysis
 	analysis.PositionID = int(positionID)
 
@@ -315,6 +341,9 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 }
 
 func (d *Database) LoadPosition(id int) (*Position, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	var stateJSON string
 
 	err := d.db.QueryRow(`SELECT state from position WHERE id = ?`, id).Scan(&stateJSON)
@@ -334,6 +363,9 @@ func (d *Database) LoadPosition(id int) (*Position, error) {
 }
 
 func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	fmt.Printf("Loading analysis for position ID: %d\n", positionID) // Add logging
 
 	var analysisJSON string
@@ -358,6 +390,9 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 }
 
 func (d *Database) LoadAllPositions() ([]Position, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -392,6 +427,9 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 }
 
 func (d *Database) DeletePosition(positionID int64) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	// Delete the associated analysis first
 	err := d.DeleteAnalysis(positionID)
 	if err != nil {
@@ -428,6 +466,9 @@ func (d *Database) DeletePosition(positionID int64) error {
 }
 
 func (d *Database) DeleteAnalysis(positionID int64) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	_, err := d.db.Exec(`DELETE FROM analysis WHERE position_id = ?`, positionID)
 	if err != nil {
 		fmt.Println("Error deleting analysis:", err)
@@ -437,6 +478,9 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 }
 
 func (d *Database) DeleteComment(positionID int64) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	_, err := d.db.Exec(`DELETE FROM comment WHERE position_id = ?`, positionID)
 	if err != nil {
 		fmt.Println("Error deleting comment:", err)
@@ -447,6 +491,9 @@ func (d *Database) DeleteComment(positionID int64) error {
 
 // SaveComment saves a comment for a given position ID
 func (d *Database) SaveComment(positionID int64, text string) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	// Check if a comment already exists for the given position ID
 	var existingID int64
 	err := d.db.QueryRow(`SELECT id FROM comment WHERE position_id = ?`, positionID).Scan(&existingID)
@@ -476,6 +523,9 @@ func (d *Database) SaveComment(positionID int64, text string) error {
 
 // LoadComment loads a comment for a given position ID
 func (d *Database) LoadComment(positionID int64) (string, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	var text string
 	err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, positionID).Scan(&text)
 	if err != nil {
@@ -489,6 +539,9 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 }
 
 func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool, diceRollFilter bool, movePatternFilter string, dateFilter string) ([]Position, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -1445,10 +1498,16 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 }
 
 func (d *Database) GetDatabaseVersion() (string, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	return DatabaseVersion, nil
 }
 
 func (d *Database) LoadMetadata() (map[string]string, error) {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation')`)
 	if err != nil {
 		fmt.Println("Error loading metadata:", err)
@@ -1470,6 +1529,9 @@ func (d *Database) LoadMetadata() (map[string]string, error) {
 }
 
 func (d *Database) SaveMetadata(metadata map[string]string) error {
+	d.mu.Lock()         // Lock the mutex
+	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
 	for key, value := range metadata {
 		_, err := d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
 		if err != nil {
