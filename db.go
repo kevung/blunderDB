@@ -37,6 +37,19 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	// Erase any content in the database
+	_, err = d.db.Exec(`
+		PRAGMA writable_schema = 1;
+		DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger');
+		PRAGMA writable_schema = 0;
+		VACUUM;
+		PRAGMA INTEGRITY_CHECK;
+	`)
+	if err != nil {
+		fmt.Println("Error erasing database content:", err)
+		return err
+	}
+
 	_, err = d.db.Exec(`
         CREATE TABLE IF NOT EXISTS position (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
