@@ -41,7 +41,6 @@
     } from './stores/databaseStore';
 
     import {
-        importPositionPathStore,
         pastePositionTextStore,
         positionStore,
         positionsStore // Import positionsStore
