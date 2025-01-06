@@ -145,7 +145,7 @@ c'est-à-dire après le début de commande ``s``.
    "Z>x", "L'adversaire a au moins x pions dans la zone."
    "Z<x", "L'adversaire a au plus x pions dans la zone."
    "Zx,y", "L'adversaire a entre x et y pions dans la zone."
-   "'mot1;mot2;...'", "Les commentaires de la position contiennent au moins un des mots."
+   "t'mot1;mot2;...'", "Les commentaires de la position contiennent au moins un des mots."
    "m'motif1,motif2,...\'", "Les meilleurs coups de pions contenant au moins un des motifs."
    "m'ND,DT,DP,...\'", "Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass."
    "T>x", "Date d'ajout de la position après x (AAAA/MM/JJ)."
