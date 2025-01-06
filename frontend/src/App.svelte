@@ -513,6 +513,10 @@
             parsedAnalysis.checkerAnalysis = { moves: parsedAnalysis.checkerAnalysis };
         }
 
+        // Remove creationDate and lastModifiedDate from parsedAnalysis since they are dealt by the backend
+        delete parsedAnalysis.creationDate;
+        delete parsedAnalysis.lastModifiedDate;
+
         // Check if the position already exists
         const positionExistsResult = await PositionExists(positionData);
         if (positionExistsResult.exists) {
