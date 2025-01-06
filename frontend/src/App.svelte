@@ -54,9 +54,7 @@
         currentPositionIndexStore, // Import currentPositionIndexStore
         statusBarTextStore,
         statusBarModeStore,
-        commandTextStore,
         commentTextStore,
-        analysisDataStore,
         showSearchModalStore, // Import showSearchModalStore
         showMetModalStore, // Import showMetModalStore
         showTakePoint2LastModalStore, // Import showTakePoint2LastModalStore
