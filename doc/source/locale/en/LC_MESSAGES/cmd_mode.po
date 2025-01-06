@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-06 03:57+0100\n"
-"PO-Revision-Date: 2025-01-06 04:18+0100\n"
+"POT-Creation-Date: 2025-01-06 16:01+0100\n"
+"PO-Revision-Date: 2025-01-06 16:03+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -718,24 +718,24 @@ msgid ""
 msgstr "The best cube decisions for No Double/Take, Double Take, Double Pass."
 
 #: ../../source/cmd_mode.rst:1
-msgid "t>x"
-msgstr "t>x"
+msgid "T>x"
+msgstr "T>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 msgstr "Date of position addition after x (YYYY/MM/DD)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "t<x"
-msgstr "t<x"
+msgid "T<x"
+msgstr "T<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
 msgstr "Date of position addition before x (YYYY/MM/DD)."
 
 #: ../../source/cmd_mode.rst:1
-msgid "tx,y"
-msgstr "tx,y"
+msgid "Tx,y"
+msgstr "Tx,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."

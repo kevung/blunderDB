@@ -136,7 +136,7 @@
                      }
                      const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
                      const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
-                     const dateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('t>') || filter.startsWith('t<') || filter.startsWith('t')));
+                     const dateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('T>') || filter.startsWith('T<') || filter.startsWith('T')));
                      const movePatternMatch = command.match(/m["']([^"']*)["']/);
                      const movePatternFilter = movePatternMatch ? movePatternMatch[1] : '';
                      const searchTextMatch = command.match(/ (?!m)["']([^"']*)["']/);
@@ -144,6 +144,29 @@
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
                      console.log('Move Pattern Filter:', movePatternFilter); // Add logging
+
+                     // display in console log all the filters
+                     console.log('includeCube:', includeCube);
+                     console.log('includeScore:', includeScore);
+                     console.log('pipCountFilter:', pipCountFilter);
+                     console.log('winRateFilter:', winRateFilter);
+                     console.log('gammonRateFilter:', gammonRateFilter);
+                     console.log('backgammonRateFilter:', backgammonRateFilter);
+                     console.log('player2WinRateFilter:', player2WinRateFilter);
+                     console.log('player2GammonRateFilter:', player2GammonRateFilter);
+                     console.log('player2BackgammonRateFilter:', player2BackgammonRateFilter);
+                     console.log('player1CheckerOffFilter:', player1CheckerOffFilter);
+                     console.log('player2CheckerOffFilter:', player2CheckerOffFilter);
+                     console.log('player1BackCheckerFilter:', player1BackCheckerFilter);
+                     console.log('player2BackCheckerFilter:', player2BackCheckerFilter);
+                     console.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter);
+                     console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter);
+                     console.log('player1AbsolutePipCountFilter:', player1AbsolutePipCountFilter);
+                     console.log('equityFilter:', equityFilter);
+                     console.log('decisionTypeFilter:', decisionTypeFilter);
+                     console.log('diceRollFilter:', diceRollFilter);
+                     console.log('dateFilter:', dateFilter);
+                     
                      onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter, movePatternFilter, dateFilter);
                   }
                } else {

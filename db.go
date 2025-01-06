@@ -1573,18 +1573,18 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 	creationDate := analysis.CreationDate
 	fmt.Printf("Position ID: %d, Creation Date: %s\n", p.ID, creationDate)
 
-	if strings.HasPrefix(filter, "t>") {
+	if strings.HasPrefix(filter, "T>") {
 		dateStr := filter[2:]
 		date, err := time.ParseInLocation("2006/01/02", dateStr, creationDate.Location())
 		if err != nil {
 			fmt.Printf("Error parsing date filter value: %s\n", dateStr)
 			return false
 		}
-		fmt.Printf("Filter: t>, Date: %s\n", date)
+		fmt.Printf("Filter: T>, Date: %s\n", date)
 		match := creationDate.After(date) || creationDate.Equal(date)
 		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
-	} else if strings.HasPrefix(filter, "t<") {
+	} else if strings.HasPrefix(filter, "T<") {
 		dateStr := filter[2:]
 		date, err := time.ParseInLocation("2006/01/02", dateStr, creationDate.Location())
 		if err != nil {
@@ -1592,11 +1592,11 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			return false
 		}
 		date = date.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
-		fmt.Printf("Filter: t<, Date: %s\n", date)
+		fmt.Printf("Filter: T<, Date: %s\n", date)
 		match := creationDate.Before(date)
 		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
-	} else if strings.HasPrefix(filter, "t") {
+	} else if strings.HasPrefix(filter, "T") {
 		dateRange := strings.Split(filter[1:], ",")
 		if len(dateRange) != 2 {
 			fmt.Printf("Error parsing date range filter values: %s\n", filter[1:])
@@ -1612,7 +1612,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			startDate, endDate = endDate, startDate // Swap to ensure correct order
 		}
 		endDate = endDate.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
-		fmt.Printf("Filter: t, Start Date: %s, End Date: %s\n", startDate, endDate)
+		fmt.Printf("Filter: T, Start Date: %s, End Date: %s\n", startDate, endDate)
 		match := (creationDate.After(startDate) || creationDate.Equal(startDate)) && (creationDate.Before(endDate) || creationDate.Equal(endDate))
 		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match

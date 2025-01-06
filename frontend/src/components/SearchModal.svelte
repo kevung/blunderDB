@@ -202,7 +202,7 @@
                     return `m"${movePatternFilter}"`; // Add this line
                 case 'Creation Date':
                     const formatDate = date => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
-                    return creationDateOption === 'min' ? `t>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `t<${formatDate(creationDateMax)}` : `t${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
+                    return creationDateOption === 'min' ? `T>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `T<${formatDate(creationDateMax)}` : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
                 default:
                     return '';
             }
@@ -229,7 +229,7 @@
 
         const decisionTypeFilter = filters.includes('Include Decision Type'); // Rename this line
         const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
-        const creationDateFilter = transformedFilters.find(filter => filter.startsWith('t'));
+        const creationDateFilter = transformedFilters.find(filter => filter.startsWith('T'));
 
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(

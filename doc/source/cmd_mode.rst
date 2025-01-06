@@ -148,9 +148,9 @@ c'est-à-dire après le début de commande ``s``.
    "'mot1;mot2;...'", "Les commentaires de la position contiennent au moins un des mots."
    "m'motif1,motif2,...\'", "Les meilleurs coups de pions contenant au moins un des motifs."
    "m'ND,DT,DP,...\'", "Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass."
-   "t>x", "Date d'ajout de la position après x (AAAA/MM/JJ)."
-   "t<x", "Date d'ajout de la position avant x (AAAA/MM/JJ)."
-   "tx,y", "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
+   "T>x", "Date d'ajout de la position après x (AAAA/MM/JJ)."
+   "T<x", "Date d'ajout de la position avant x (AAAA/MM/JJ)."
+   "Tx,y", "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 
 
 .. note:: Filtrer les positions en fonction du lancer de dés (`D`) implique *a

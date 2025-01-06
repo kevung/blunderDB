@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-06 03:57+0100\n"
+"POT-Creation-Date: 2025-01-06 16:01+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -708,7 +708,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "t>x"
+msgid "T>x"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -716,7 +716,7 @@ msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "t<x"
+msgid "T<x"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -724,7 +724,7 @@ msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "tx,y"
+msgid "Tx,y"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -1139,5 +1139,14 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Les commentaires de la position contient le tag/mot-clé."
+#~ msgstr ""
+
+#~ msgid "t>x"
+#~ msgstr ""
+
+#~ msgid "t<x"
+#~ msgstr ""
+
+#~ msgid "tx,y"
 #~ msgstr ""
 
