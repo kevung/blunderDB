@@ -197,9 +197,9 @@
                 case 'Opponent Checker in the Zone':
                     return player2CheckerInZoneOption === 'min' ? `Z>${player2CheckerInZoneMin}` : player2CheckerInZoneOption === 'max' ? `Z<${player2CheckerInZoneMax}` : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
                 case 'Search Text':
-                    return searchText.split(';').map(text => text.trim()).join(';');
+                    return `t"${searchText}"`;
                 case 'Best Move or Cube Decision':
-                    return `m"${movePatternFilter}"`; // Add this line
+                    return `m"${movePatternFilter}"`;
                 case 'Creation Date':
                     const formatDate = date => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
                     return creationDateOption === 'min' ? `T>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `T<${formatDate(creationDateMax)}` : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
@@ -249,7 +249,7 @@
             player2BackCheckerFilter,
             player1CheckerInZoneFilter,
             player2CheckerInZoneFilter,
-            searchText, // Pass searchText directly
+            searchText,
             player1AbsolutePipCountFilter,
             equityFilter,
             decisionTypeFilter,

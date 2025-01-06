@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-06 16:01+0100\n"
-"PO-Revision-Date: 2025-01-06 16:03+0100\n"
+"POT-Creation-Date: 2025-01-06 16:06+0100\n"
+"PO-Revision-Date: 2025-01-06 16:06+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -692,8 +692,8 @@ msgid "L'adversaire a entre x et y pions dans la zone."
 msgstr "The opponent has between x and y checkers in the zone."
 
 #: ../../source/cmd_mode.rst:1
-msgid "'mot1;mot2;...'"
-msgstr "'word1;word2;...'"
+msgid "t'mot1;mot2;...'"
+msgstr "t'word1;word2;...'"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Les commentaires de la position contiennent au moins un des mots."

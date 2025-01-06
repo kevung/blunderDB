@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-06 16:01+0100\n"
+"POT-Creation-Date: 2025-01-06 16:06+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -682,7 +682,7 @@ msgid "L'adversaire a entre x et y pions dans la zone."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "'mot1;mot2;...'"
+msgid "t'mot1;mot2;...'"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -1148,5 +1148,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "tx,y"
+#~ msgstr ""
+
+#~ msgid "'mot1;mot2;...'"
 #~ msgstr ""
 
