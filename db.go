@@ -25,6 +25,10 @@ func (d *Database) SetupDatabase(path string) error {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
+	if d.db != nil {
+		d.db.Close() // Close the currently opened database
+	}
+
 	// Open the database using string path
 	var err error
 	d.db, err = sql.Open("sqlite", path)
@@ -94,6 +98,10 @@ func (d *Database) SetupDatabase(path string) error {
 func (d *Database) OpenDatabase(path string) error {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
+
+	if d.db != nil {
+		d.db.Close() // Close the currently opened database
+	}
 
 	// Open the database using string path
 	var err error
