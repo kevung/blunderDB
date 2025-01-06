@@ -555,6 +555,10 @@
     }
 
     export async function importPosition() {
+        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
+            setStatusBarMessage('Cannot import position in current mode');
+            return;
+        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -617,6 +621,10 @@
     }
 
     async function pastePosition() {
+        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
+            setStatusBarMessage('Cannot paste position in current mode');
+            return;
+        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -641,6 +649,10 @@
     }
 
     async function saveCurrentPosition() {
+        if ($statusBarModeStore !== 'EDIT' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'EDIT')) {
+            setStatusBarMessage('Save is only possible in edit mode');
+            return;
+        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1005,6 +1017,10 @@
     }
 
     function copyPosition() {
+        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
+            setStatusBarMessage('Cannot copy position in current mode');
+            return;
+        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1131,6 +1147,10 @@
     }
 
     async function deletePosition() {
+        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
+            setStatusBarMessage('Cannot delete position in current mode');
+            return;
+        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1164,15 +1184,16 @@
     }
 
     async function updatePosition() {
+        if ($statusBarModeStore !== 'EDIT' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'EDIT')) {
+            setStatusBarMessage('Update is only possible in edit mode');
+            return;
+        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
         }
         console.log('updatePosition');
-        if ($statusBarModeStore !== 'EDIT') {
-            setStatusBarMessage('Update is only possible in edit mode');
-            return;
-        }
+
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1679,10 +1700,7 @@
             onOpenDatabase={openDatabase}
             importPosition={importPosition}
             onSavePosition={saveCurrentPosition}
-            onUpdatePosition={() => {
-                statusBarModeStore.set('EDIT'); // Set mode to EDIT before updating
-                updatePosition();
-            }}
+            onUpdatePosition={updatePosition}
             onDeletePosition={deletePosition}
             onToggleAnalysis={toggleAnalysisPanel}
             onToggleComment={toggleCommentPanel}
