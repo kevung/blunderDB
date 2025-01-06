@@ -193,7 +193,7 @@
             }
          }, 0);
          // Save the updated comment to the database
-         SaveComment(parseInt($currentPositionIndexStore), updatedText);
+         SaveComment($currentPositionIndexStore, updatedText);
          return updatedText;
       });
    }

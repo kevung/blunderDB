@@ -568,8 +568,38 @@
 
             // Now you can parse and use the file content
             const { positionData, parsedAnalysis } = parsePosition(response.content);
-            positionStore.set({ ...positionData, id: 0 });
-            analysisStore.set(parsedAnalysis);
+            positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
+            analysisStore.set({
+                positionId: null,
+                xgid: parsedAnalysis.xgid,
+                player1: '',
+                player2: '',
+                analysisType: parsedAnalysis.analysisType,
+                analysisEngineVersion: parsedAnalysis.analysisEngineVersion,
+                checkerAnalysis: { moves: parsedAnalysis.checkerAnalysis },
+                doublingCubeAnalysis: {
+                    analysisDepth: parsedAnalysis.doublingCubeAnalysis.analysisDepth || '',
+                    playerWinChances: parsedAnalysis.doublingCubeAnalysis.playerWinChances || 0,
+                    playerGammonChances: parsedAnalysis.doublingCubeAnalysis.playerGammonChances || 0,
+                    playerBackgammonChances: parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances || 0,
+                    opponentWinChances: parsedAnalysis.doublingCubeAnalysis.opponentWinChances || 0,
+                    opponentGammonChances: parsedAnalysis.doublingCubeAnalysis.opponentGammonChances || 0,
+                    opponentBackgammonChances: parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances || 0,
+                    cubelessNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity || 0,
+                    cubelessDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity || 0,
+                    cubefulNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity || 0,
+                    cubefulNoDoubleError: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError || 0,
+                    cubefulDoubleTakeEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0,
+                    cubefulDoubleTakeError: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError || 0,
+                    cubefulDoublePassEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity || 0,
+                    cubefulDoublePassError: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError || 0,
+                    bestCubeAction: parsedAnalysis.doublingCubeAnalysis.bestCubeAction || '',
+                    wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
+                    wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
+                },
+                creationDate: '',
+                lastModifiedDate: ''
+            });
             console.log('positionStore:', $positionStore);
             console.log('analysisStore:', $analysisStore);
 
@@ -626,8 +656,27 @@
         // Reset all fields of analysis to initialized values
         analysis.xgid = generateXGID(position);
         analysis.analysisType = "";
-        analysis.checkerAnalysis = [];
-        analysis.doublingCubeAnalysis = {};
+        analysis.checkerAnalysis = { moves: [] };
+        analysis.doublingCubeAnalysis = {
+            analysisDepth: '',
+            playerWinChances: 0,
+            playerGammonChances: 0,
+            playerBackgammonChances: 0,
+            opponentWinChances: 0,
+            opponentGammonChances: 0,
+            opponentBackgammonChances: 0,
+            cubelessNoDoubleEquity: 0,
+            cubelessDoubleEquity: 0,
+            cubefulNoDoubleEquity: 0,
+            cubefulNoDoubleError: 0,
+            cubefulDoubleTakeEquity: 0,
+            cubefulDoubleTakeError: 0,
+            cubefulDoublePassEquity: 0,
+            cubefulDoublePassError: 0,
+            bestCubeAction: '',
+            wrongPassPercentage: 0,
+            wrongTakePercentage: 0
+        };
         analysis.analysisEngineVersion = "";
 
         await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
@@ -1140,8 +1189,27 @@
             // Reset all fields of analysis to initialized values
             analysis.xgid = "";
             analysis.analysisType = "";
-            analysis.checkerAnalysis = [];
-            analysis.doublingCubeAnalysis = {};
+            analysis.checkerAnalysis = { moves: [] };
+            analysis.doublingCubeAnalysis = {
+                analysisDepth: '',
+                playerWinChances: 0,
+                playerGammonChances: 0,
+                playerBackgammonChances: 0,
+                opponentWinChances: 0,
+                opponentGammonChances: 0,
+                opponentBackgammonChances: 0,
+                cubelessNoDoubleEquity: 0,
+                cubelessDoubleEquity: 0,
+                cubefulNoDoubleEquity: 0,
+                cubefulNoDoubleError: 0,
+                cubefulDoubleTakeEquity: 0,
+                cubefulDoubleTakeError: 0,
+                cubefulDoublePassEquity: 0,
+                cubefulDoublePassError: 0,
+                bestCubeAction: '',
+                wrongPassPercentage: 0,
+                wrongTakePercentage: 0
+            };
             analysis.analysisEngineVersion = "";
 
             // Ensure checkerAnalysis is correctly structured
@@ -1170,10 +1238,12 @@
             analysis.xgid = generateXGID(position);
 
             // Update the position in the database
-            await UpdatePosition(position); // Remove databaseVersion
+            // @ts-ignore
+            await UpdatePosition(position);
             console.log('Position updated with ID:', positionID);
 
             // Update the analysis in the database
+            // @ts-ignore
             await SaveAnalysis(positionID, analysis);
             console.log('Analysis updated for position ID:', positionID);
 
@@ -1390,6 +1460,7 @@
         try {
             const currentPosition = $positionStore;
 
+            // @ts-ignore
             const loadedPositions = await LoadPositionsByFilters(currentPosition, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter, movePatternFilter, dateFilter); // Remove databaseVersion
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
@@ -1437,7 +1508,8 @@
     }
 
     onMount(() => {
-        console.log('Wails runtime:', window.runtime);
+        // @ts-ignore
+        console.log('Wails runtime:', runtime);
         window.addEventListener("keydown", handleKeyDown);
         mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
     });
@@ -1458,6 +1530,7 @@
                 if(showCommand) {
                     const commandInput = document.querySelector('.command-input');
                     if (commandInput) {
+                        // @ts-ignore
                         commandInput.focus();
                     }
 
@@ -1486,7 +1559,37 @@
 
         // Load the analysis for the current position
         const analysis = await LoadAnalysis(position.id);
-        analysisStore.set(analysis || {});
+        analysisStore.set({
+            positionId: analysis?.positionId || null,
+            xgid: analysis?.xgid || '',
+            player1: analysis?.player1 || '',
+            player2: analysis?.player2 || '',
+            analysisType: analysis?.analysisType || '',
+            analysisEngineVersion: analysis?.analysisEngineVersion || '',
+            checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
+            doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
+                analysisDepth: '',
+                playerWinChances: 0,
+                playerGammonChances: 0,
+                playerBackgammonChances: 0,
+                opponentWinChances: 0,
+                opponentGammonChances: 0,
+                opponentBackgammonChances: 0,
+                cubelessNoDoubleEquity: 0,
+                cubelessDoubleEquity: 0,
+                cubefulNoDoubleEquity: 0,
+                cubefulNoDoubleError: 0,
+                cubefulDoubleTakeEquity: 0,
+                cubefulDoubleTakeError: 0,
+                cubefulDoublePassEquity: 0,
+                cubefulDoublePassError: 0,
+                bestCubeAction: '',
+                wrongPassPercentage: 0,
+                wrongTakePercentage: 0
+            },
+            creationDate: analysis?.creationDate || '',
+            lastModifiedDate: analysis?.lastModifiedDate || ''
+        });
 
         console.log('Analysis Data:', analysis); // Debugging log
 
@@ -1557,13 +1660,9 @@
 
     <div class="scrollable-content">
 
-        <Board
-            class="full-size-board"
-        />
+        <Board />
 
         <CommandLine
-            visible={showCommand}
-            onClose={() => showCommandStore.set(false)}
             onToggleHelp={toggleHelpModal}
             bind:this={commandInput}
             onNewDatabase={newDatabase}
