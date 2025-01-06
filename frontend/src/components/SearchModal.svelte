@@ -231,8 +231,6 @@
         const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
         const creationDateFilter = transformedFilters.find(filter => filter.startsWith('t'));
 
-        const searchTextArray = searchText; // Update this line to pass searchText as a single string
-
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
             transformedFilters,
@@ -251,7 +249,7 @@
             player2BackCheckerFilter,
             player1CheckerInZoneFilter,
             player2CheckerInZoneFilter,
-            searchTextArray,
+            searchText, // Pass searchText directly
             player1AbsolutePipCountFilter,
             equityFilter,
             decisionTypeFilter,
