@@ -197,7 +197,7 @@
                 case 'Opponent Checker in the Zone':
                     return player2CheckerInZoneOption === 'min' ? `Z>${player2CheckerInZoneMin}` : player2CheckerInZoneOption === 'max' ? `Z<${player2CheckerInZoneMax}` : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
                 case 'Search Text':
-                    return searchText.split(';').map(text => text.trim()).join(' ');
+                    return searchText.split(';').map(text => text.trim()).join(';');
                 case 'Best Move or Cube Decision':
                     return `m"${movePatternFilter}"`; // Add this line
                 case 'Creation Date':
