@@ -88,6 +88,8 @@
                exitApp();
             } else if (command === 'help' || command === 'he' || command === 'h') {
                onToggleHelp();
+            } else if (command === 'e') {
+               onLoadAllPositions();
             } else if (command.startsWith('s')) {
                if ($previousModeStore === 'EDIT') {
                   if (command === 's') {
@@ -135,7 +137,7 @@
                      const movePatternMatch = command.match(/m["']([^"']*)["']/);
                      const movePatternFilter = movePatternMatch ? movePatternMatch[1] : '';
                      const searchTextMatch = command.match(/ (?!m)["']([^"']*)["']/);
-                     const searchText = searchTextMatch ? searchTextMatch[1] : '';
+                     const searchText = searchTextMatch ? searchText[1] : '';
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
                      console.log('Move Pattern Filter:', movePatternFilter); // Add logging
