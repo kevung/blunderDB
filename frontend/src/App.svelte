@@ -32,7 +32,7 @@
         GetDatabaseVersion // Import GetDatabaseVersion
     } from '../wailsjs/go/main/Database.js';
 
-    import { WindowSetTitle } from '../wailsjs/runtime/runtime.js';
+    import { WindowSetTitle, Quit, ClipboardGetText } from '../wailsjs/runtime/runtime.js';
 
     // import stores
     import {
@@ -135,7 +135,6 @@
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
-        databaseVersion = value.databaseVersion;
         applicationVersion = value.applicationVersion;
     });
 
@@ -166,6 +165,7 @@
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
             positionStore.set({
+                id: 0, // Add a default id
                 board: {
                     points: Array(26).fill({ checkers: 0, color: -1 }),
                     bearoff: [15, 15],
@@ -181,7 +181,37 @@
                 has_jacoby: 0,
                 has_beaver: 0,
             });
-            analysisStore.set({}); // Reset analysisStore when no positions
+            analysisStore.set({
+                positionId: null,
+                xgid: '',
+                player1: '',
+                player2: '',
+                analysisType: '',
+                analysisEngineVersion: '',
+                checkerAnalysis: { moves: [] },
+                doublingCubeAnalysis: {
+                    analysisDepth: '',
+                    playerWinChances: 0,
+                    playerGammonChances: 0,
+                    playerBackgammonChances: 0,
+                    opponentWinChances: 0,
+                    opponentGammonChances: 0,
+                    opponentBackgammonChances: 0,
+                    cubelessNoDoubleEquity: 0,
+                    cubelessDoubleEquity: 0,
+                    cubefulNoDoubleEquity: 0,
+                    cubefulNoDoubleError: 0,
+                    cubefulDoubleTakeEquity: 0,
+                    cubefulDoubleTakeError: 0,
+                    cubefulDoublePassEquity: 0,
+                    cubefulDoublePassError: 0,
+                    bestCubeAction: '',
+                    wrongPassPercentage: 0,
+                    wrongTakePercentage: 0
+                },
+                creationDate: '',
+                lastModifiedDate: ''
+            }); // Reset analysisStore when no positions
         }
     });
 
@@ -474,7 +504,7 @@
     }
 
     function exitApp() {
-        window.runtime.Quit();
+        Quit();
     }
 
     async function savePositionAndAnalysis(positionData, parsedAnalysis, successMessage) {
@@ -538,7 +568,7 @@
 
             // Now you can parse and use the file content
             const { positionData, parsedAnalysis } = parsePosition(response.content);
-            positionStore.set(positionData);
+            positionStore.set({ ...positionData, id: 0 });
             analysisStore.set(parsedAnalysis);
             console.log('positionStore:', $positionStore);
             console.log('analysisStore:', $analysisStore);
@@ -562,7 +592,7 @@
             return;
         }
         console.log('pastePosition');
-        let promise = window.runtime.ClipboardGetText();
+        let promise = ClipboardGetText();
         promise.then(
             async (result) => {
                 pastePositionTextStore.set(result);
@@ -1673,20 +1703,6 @@
         justify-content: center; /* Center the board initially */
     }
 
-    .comments-zone {
-        position: absolute;
-        bottom: 50px; /* Adjust based on height of StatusBar */
-        left: 0;
-        right: 0;
-        max-height: 50vh; /* Limit height of comment zone */
-        overflow-y: auto; /* Scroll inside the comment zone if content exceeds max height */
-        overflow-x: hidden; /* Disable horizontal scrolling */
-        background: white;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 16px;
-        box-sizing: border-box;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-    }
 
     .panel-container {
         display: flex;

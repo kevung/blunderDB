@@ -1448,17 +1448,6 @@ func (d *Database) GetDatabaseVersion() (string, error) {
 	return DatabaseVersion, nil
 }
 
-func colorName(color int) string {
-	switch color {
-	case Black:
-		return "Black"
-	case White:
-		return "White"
-	default:
-		return "None"
-	}
-}
-
 func (d *Database) LoadMetadata() (map[string]string, error) {
 	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation')`)
 	if err != nil {
