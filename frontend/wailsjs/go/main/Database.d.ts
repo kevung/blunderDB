@@ -24,7 +24,7 @@ export function LoadMetadata():Promise<{[key: string]: string}>;
 
 export function LoadPosition(arg1:number):Promise<main.Position>;
 
-export function LoadPositionsByFilters(arg1:main.Position,arg2:boolean,arg3:boolean,arg4:string,arg5:string,arg6:string,arg7:string,arg8:string,arg9:string,arg10:string,arg11:string,arg12:string,arg13:string,arg14:string,arg15:string,arg16:string,arg17:string,arg18:string,arg19:string,arg20:boolean,arg21:boolean,arg22:string):Promise<Array<main.Position>>;
+export function LoadPositionsByFilters(arg1:main.Position,arg2:boolean,arg3:boolean,arg4:string,arg5:string,arg6:string,arg7:string,arg8:string,arg9:string,arg10:string,arg11:string,arg12:string,arg13:string,arg14:string,arg15:string,arg16:string,arg17:string,arg18:string,arg19:string,arg20:boolean,arg21:boolean,arg22:string,arg23:string):Promise<Array<main.Position>>;
 
 export function OpenDatabase(arg1:string):Promise<void>;
 

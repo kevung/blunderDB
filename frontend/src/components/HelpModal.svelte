@@ -820,6 +820,18 @@
                                 <td>m"ND;DT;DP;..."</td>
                                 <td>Best cube decision of No Double/Take, Double/Take, Double/Pass</td>
                             </tr>
+                            <tr>
+                                <td>t&gt;x</td>
+                                <td>Creation date &gt; x (year/month/day)</td>
+                            </tr>
+                            <tr>
+                                <td>t&lt;x</td>
+                                <td>Creation date &lt; x (year/month/day)</td>
+                            </tr>
+                            <tr>
+                                <td>tx,y</td>
+                                <td>Creation date between x and y</td>
+                            </tr>
                         </tbody>
                     </table>
                 {/if}

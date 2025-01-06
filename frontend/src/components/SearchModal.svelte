@@ -31,6 +31,11 @@
     let decisionTypeFilter = false; // Rename this line
     let diceRollFilter = false; // Add this line
     let movePatternFilter = ''; // Add this line
+    let creationDateOption = 'min'; // Default option for creation date
+    let creationDateMin = ''; // Min value for creation date
+    let creationDateMax = ''; // Max value for creation date
+    let creationDateRangeMin = ''; // Min value for creation date range
+    let creationDateRangeMax = ''; // Max value for creation date range
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -139,7 +144,8 @@
         'Player Checker in the Zone',
         'Opponent Checker in the Zone',
         'Search Text',
-        'Best Move or Cube Decision' // Add this line
+        'Best Move or Cube Decision', // Add this line
+        'Creation Date' // Add this line
     ];
 
     function addFilter() {
@@ -194,6 +200,9 @@
                     return searchText.split(';').map(text => text.trim()).join(' ');
                 case 'Best Move or Cube Decision':
                     return `m"${movePatternFilter}"`; // Add this line
+                case 'Creation Date':
+                    const formatDate = date => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
+                    return creationDateOption === 'min' ? `t>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `t<${formatDate(creationDateMax)}` : `t${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
                 default:
                     return '';
             }
@@ -217,15 +226,39 @@
         const player2CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('Z'));
         const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
-        const searchTextFilter = searchText.split(';').map(text => text.trim()).join(' ');
 
         const decisionTypeFilter = filters.includes('Include Decision Type'); // Rename this line
         const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
+        const creationDateFilter = transformedFilters.find(filter => filter.startsWith('t'));
 
         const searchTextArray = searchText; // Update this line to pass searchText as a single string
 
         statusBarModeStore.set('NORMAL');
-        onLoadPositionsByFilters(transformedFilters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchTextArray, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter, movePatternFilter); // Add movePatternFilter
+        onLoadPositionsByFilters(
+            transformedFilters,
+            includeCube,
+            includeScore,
+            pipCountFilter,
+            winRateFilter,
+            gammonRateFilter,
+            backgammonRateFilter,
+            player2WinRateFilter,
+            player2GammonRateFilter,
+            player2BackgammonRateFilter,
+            player1CheckerOffFilter,
+            player2CheckerOffFilter,
+            player1BackCheckerFilter,
+            player2BackCheckerFilter,
+            player1CheckerInZoneFilter,
+            player2CheckerInZoneFilter,
+            searchTextArray,
+            player1AbsolutePipCountFilter,
+            equityFilter,
+            decisionTypeFilter,
+            diceRollFilter,
+            movePatternFilter,
+            creationDateFilter // Add this line
+        );
         onClose();
     }
 
@@ -647,6 +680,25 @@
                             <div class="search-text-container">
                                 <label for="movePatternFilter">(pattern1;pattern2;...)</label> <!-- Update this line -->
                                 <input type="text" id="movePatternFilter" bind:value={movePatternFilter} class="search-text-input" style="margin-left: 10px;" />
+                            </div>
+                        {/if}
+                        {#if filter === 'Creation Date'}
+                            <div class="filter-options-container expanded">
+                                <div class="filter-options expanded">
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={creationDateOption} value="min" /> Min
+                                        <input type="date" bind:value={creationDateMin} placeholder="Min" class="filter-input" disabled={creationDateOption !== 'min'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={creationDateOption} value="max" /> Max
+                                        <input type="date" bind:value={creationDateMax} placeholder="Max" class="filter-input" disabled={creationDateOption !== 'max'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={creationDateOption} value="range" /> Range
+                                        <input type="date" bind:value={creationDateRangeMin} placeholder="Min" class="filter-input" disabled={creationDateOption !== 'range'} />
+                                        <input type="date" bind:value={creationDateRangeMax} placeholder="Max" class="filter-input" disabled={creationDateOption !== 'range'} />
+                                    </label>
+                                </div>
                             </div>
                         {/if}
                     </div>

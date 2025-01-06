@@ -488,7 +488,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool, diceRollFilter bool, movePatternFilter string) ([]Position, error) {
+func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool, diceRollFilter bool, movePatternFilter string, dateFilter string) ([]Position, error) {
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
@@ -534,7 +534,8 @@ func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, inc
 			(searchText == "" || position.MatchesSearchText(searchText, d)) &&
 			(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
 			(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) &&
-			(!diceRollFilter || position.MatchesDiceRoll(filter)) {
+			(!diceRollFilter || position.MatchesDiceRoll(filter)) &&
+			(dateFilter == "" || position.MatchesDateFilter(dateFilter, d)) {
 			if movePatternFilter != "" {
 				fmt.Printf("Checking move pattern filter: %s for position ID: %d\n", movePatternFilter, position.ID) // Add logging
 				if position.MatchesMovePattern(movePatternFilter, d) {
@@ -1488,4 +1489,62 @@ func (d *Database) SaveMetadata(metadata map[string]string) error {
 		}
 	}
 	return nil
+}
+
+// Add MatchesDateFilter method to Position type
+func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
+	analysis, err := d.LoadAnalysis(p.ID)
+	if err != nil || analysis == nil {
+		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
+		return false
+	}
+
+	creationDate := analysis.CreationDate
+	fmt.Printf("Position ID: %d, Creation Date: %s\n", p.ID, creationDate)
+
+	if strings.HasPrefix(filter, "t>") {
+		dateStr := filter[2:]
+		date, err := time.ParseInLocation("2006/01/02", dateStr, creationDate.Location())
+		if err != nil {
+			fmt.Printf("Error parsing date filter value: %s\n", dateStr)
+			return false
+		}
+		fmt.Printf("Filter: t>, Date: %s\n", date)
+		match := creationDate.After(date) || creationDate.Equal(date)
+		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
+		return match
+	} else if strings.HasPrefix(filter, "t<") {
+		dateStr := filter[2:]
+		date, err := time.ParseInLocation("2006/01/02", dateStr, creationDate.Location())
+		if err != nil {
+			fmt.Printf("Error parsing date filter value: %s\n", dateStr)
+			return false
+		}
+		date = date.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
+		fmt.Printf("Filter: t<, Date: %s\n", date)
+		match := creationDate.Before(date)
+		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
+		return match
+	} else if strings.HasPrefix(filter, "t") {
+		dateRange := strings.Split(filter[1:], ",")
+		if len(dateRange) != 2 {
+			fmt.Printf("Error parsing date range filter values: %s\n", filter[1:])
+			return false
+		}
+		startDate, err1 := time.ParseInLocation("2006/01/02", dateRange[0], creationDate.Location())
+		endDate, err2 := time.ParseInLocation("2006/01/02", dateRange[1], creationDate.Location())
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing date range filter values: %s, %s\n", dateRange[0], dateRange[1])
+			return false
+		}
+		if startDate.After(endDate) {
+			startDate, endDate = endDate, startDate // Swap to ensure correct order
+		}
+		endDate = endDate.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
+		fmt.Printf("Filter: t, Start Date: %s, End Date: %s\n", startDate, endDate)
+		match := (creationDate.After(startDate) || creationDate.Equal(startDate)) && (creationDate.Before(endDate) || creationDate.Equal(endDate))
+		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
+		return match
+	}
+	return false
 }
