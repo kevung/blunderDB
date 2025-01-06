@@ -649,14 +649,15 @@
     }
 
     async function saveCurrentPosition() {
-        if ($statusBarModeStore !== 'EDIT' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'EDIT')) {
-            setStatusBarMessage('Save is only possible in edit mode');
-            return;
-        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
         }
+        if ($statusBarModeStore !== 'EDIT' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'EDIT')) {
+            setStatusBarMessage('Save is only possible in edit mode');
+            return;
+        }
+
         console.log('saveCurrentPosition');
 
         const position = $positionStore;
@@ -1184,6 +1185,10 @@
     }
 
     async function updatePosition() {
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            return;
+        }
         if ($statusBarModeStore !== 'EDIT' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'EDIT')) {
             setStatusBarMessage('Update is only possible in edit mode');
             return;
@@ -1193,11 +1198,6 @@
             return;
         }
         console.log('updatePosition');
-
-        if (!$databasePathStore) {
-            setStatusBarMessage('No database opened');
-            return;
-        }
 
         if (positions.length === 0) {
             setStatusBarMessage('No positions to update');
