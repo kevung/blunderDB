@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-31 00:48+0100\n"
+"POT-Creation-Date: 2025-01-06 03:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -67,7 +67,95 @@ msgstr ""
 msgid "Ouvre l'aide de blunderDB."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:25
+#: ../../source/cmd_mode.rst:1
+msgid "meta"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Affiche les métadonnées de la base de données."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "met"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table d'équité de match Kazaross-XG2."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2_live"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2_last"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2 mort."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4_live"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4_last"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4 mort."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv1"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv2"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv4"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:35
 msgid "Mode NORMAL"
 msgstr ""
 
@@ -119,7 +207,15 @@ msgstr ""
 msgid "Etiqueter la position courante."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:43
+#: ../../source/cmd_mode.rst:1
+msgid "e"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Charger toutes les positions de la base de données."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:54
 msgid "Mode EDIT"
 msgstr ""
 
@@ -147,25 +243,17 @@ msgstr ""
 msgid "Chercher des positions avec des filtres."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:1
-msgid "e"
-msgstr ""
-
-#: ../../source/cmd_mode.rst:1
-msgid "Charger toutes les positions de la base de données."
-msgstr ""
-
-#: ../../source/cmd_mode.rst:59
+#: ../../source/cmd_mode.rst:70
 msgid "Filtres de recherche"
 msgstr ""
 
-#: ../../source/cmd_mode.rst:61
+#: ../../source/cmd_mode.rst:72
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:66
+#: ../../source/cmd_mode.rst:77
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -173,19 +261,19 @@ msgid ""
 " il faut le mentionner explicitement dans la recherche."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:72
+#: ../../source/cmd_mode.rst:83
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 14."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:76
+#: ../../source/cmd_mode.rst:87
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:80
+#: ../../source/cmd_mode.rst:91
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -594,20 +682,62 @@ msgid "L'adversaire a entre x et y pions dans la zone."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "'tag_ou_motcle'"
+msgid "'mot1;mot2;...'"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "Les commentaires de la position contient le tag/mot-clé."
+msgid "Les commentaires de la position contiennent au moins un des mots."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:139
+#: ../../source/cmd_mode.rst:1
+msgid "m'motif1,motif2,...\\'"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Les meilleurs coups de pions contenant au moins un des motifs."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "m'ND,DT,DP,...\\'"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
+"Pass."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "t>x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "t<x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tx,y"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:156
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:142
+#: ../../source/cmd_mode.rst:159
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1003,5 +1133,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "La position vérifie les dés ou la décision de cube."
+#~ msgstr ""
+
+#~ msgid "'tag_ou_motcle'"
+#~ msgstr ""
+
+#~ msgid "Les commentaires de la position contient le tag/mot-clé."
 #~ msgstr ""
 

@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the blunderDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
-# SPDX-FileCopyrightText: 2024 Kévin Unger <kevin.unger@onera.fr>
+# SPDX-FileCopyrightText: 2024, 2025 Kévin Unger <kevin.unger@onera.fr>
 msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-31 00:11+0100\n"
-"PO-Revision-Date: 2024-12-31 00:14+0100\n"
+"POT-Creation-Date: 2025-01-06 03:57+0100\n"
+"PO-Revision-Date: 2025-01-06 04:00+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -191,7 +191,23 @@ msgstr "CTRL-P"
 msgid "Afficher/cacher les commentaires."
 msgstr "Show/hide the comments."
 
-#: ../../source/raccourcis.rst:50
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-G"
+msgstr "CTRL-G"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher les métadonnées de la position."
+msgstr "Show the position metadata."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-R"
+msgstr "CTRL-R"
+
+#: ../../source/raccourcis.rst:1
+msgid "Recharger toutes les positions de la base de données."
+msgstr "Reload all the positions from the database."
+
+#: ../../source/raccourcis.rst:52
 msgid "Mode EDIT"
 msgstr "EDIT mode"
 
@@ -231,7 +247,7 @@ msgstr "CTRL-F"
 msgid "Rechercher une position."
 msgstr "Search for a position."
 
-#: ../../source/raccourcis.rst:67
+#: ../../source/raccourcis.rst:69
 msgid "Mode COMMAND"
 msgstr "COMMAND mode."
 

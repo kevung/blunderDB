@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-02 13:38+0100\n"
+"POT-Creation-Date: 2025-01-06 04:21+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -93,21 +93,57 @@ msgstr ""
 msgid "Création version beta."
 msgstr ""
 
-#: ../../source/index.rst:39
+#: ../../source/index.rst:1
+msgid "0.2.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "06/01/2025"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "Résolutions de bugs divers."
+msgstr ""
+
+#: ../../source/index.rst:3
+msgid "Ajout de tables de matchs/TP/GV."
+msgstr ""
+
+#: ../../source/index.rst:5
+msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
+msgstr ""
+
+#: ../../source/index.rst:7
+msgid "Ajout de métadonnées sur les positions."
+msgstr ""
+
+#: ../../source/index.rst:9
+msgid "Fonction d'import/export entre instances de blunderDB."
+msgstr ""
+
+#: ../../source/index.rst:11
+msgid "Ajout de fonction de métadonnées sur les bases de données."
+msgstr ""
+
+#: ../../source/index.rst:13
+msgid "Introduction des numéros de versions (base de données et application)."
+msgstr ""
+
+#: ../../source/index.rst:52
 msgid "Sommaire"
 msgstr ""
 
-#: ../../source/index.rst:56
+#: ../../source/index.rst:69
 msgid "Contacts"
 msgstr ""
 
-#: ../../source/index.rst:58
+#: ../../source/index.rst:71
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
 msgstr ""
 
-#: ../../source/index.rst:61
+#: ../../source/index.rst:74
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -117,43 +153,43 @@ msgid ""
 "sont bienvenus."
 msgstr ""
 
-#: ../../source/index.rst:68
+#: ../../source/index.rst:81
 msgid "Voici plusieurs manières de réagir:"
 msgstr ""
 
-#: ../../source/index.rst:70
+#: ../../source/index.rst:83
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr ""
 
-#: ../../source/index.rst:72
+#: ../../source/index.rst:85
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr ""
 
-#: ../../source/index.rst:74
+#: ../../source/index.rst:87
 msgid "sur Github,"
 msgstr ""
 
-#: ../../source/index.rst:76
+#: ../../source/index.rst:89
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr ""
 
-#: ../../source/index.rst:78
+#: ../../source/index.rst:91
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr ""
 
-#: ../../source/index.rst:82
+#: ../../source/index.rst:95
 msgid "Remerciements"
 msgstr ""
 
-#: ../../source/index.rst:84
+#: ../../source/index.rst:97
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
 msgstr ""
 
-#: ../../source/index.rst:87
+#: ../../source/index.rst:100
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -161,7 +197,7 @@ msgid ""
 " piètres tentatives de mieux jouer."
 msgstr ""
 
-#: ../../source/index.rst:92
+#: ../../source/index.rst:105
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -235,5 +271,8 @@ msgstr ""
 #~ "blunderDB peut également être utilisé "
 #~ "pour constituer des catalogues de "
 #~ "positions de référence."
+#~ msgstr ""
+
+#~ msgid "Introduction des numéro de versions (bases de données et application)."
 #~ msgstr ""
 

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-02 13:38+0100\n"
-"PO-Revision-Date: 2025-01-02 13:39+0100\n"
+"POT-Creation-Date: 2025-01-06 04:21+0100\n"
+"PO-Revision-Date: 2025-01-06 04:22+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -32,13 +32,12 @@ msgid ""
 "différents filtres combinables arbitrairement. blunderDB peut également "
 "être utilisé pour constituer des catalogues de positions de référence."
 msgstr ""
-"blunderDB is a software for creating backgammon position databases. Its main s"
-"trength "
-"is to provide a single place where a player can aggregate the positions "
-"he or she has encountered (online, in tournaments) and be able to review "
-"these positions by filtering them with various filters that can be "
-"arbitrarily combined. blunderDB can also be used to create catalogs of "
-"reference positions."
+"blunderDB is a software for creating backgammon position databases. Its "
+"main strength is to provide a single place where a player can aggregate "
+"the positions he or she has encountered (online, in tournaments) and be "
+"able to review these positions by filtering them with various filters "
+"that can be arbitrarily combined. blunderDB can also be used to create "
+"catalogs of reference positions."
 
 #: ../../source/index.rst:13
 msgid "La présente documentation est structurée de la manière suivante:"
@@ -108,15 +107,51 @@ msgstr "December 31, 2024"
 msgid "Création version beta."
 msgstr "Beta version"
 
-#: ../../source/index.rst:39
+#: ../../source/index.rst:1
+msgid "0.2.0"
+msgstr "0.2.0"
+
+#: ../../source/index.rst:1
+msgid "06/01/2025"
+msgstr "January 6, 2025"
+
+#: ../../source/index.rst:1
+msgid "Résolutions de bugs divers."
+msgstr "Various bug fixes."
+
+#: ../../source/index.rst:3
+msgid "Ajout de tables de matchs/TP/GV."
+msgstr "Addition of match/TP/GV tables."
+
+#: ../../source/index.rst:5
+msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
+msgstr "Added search filters (moves, cube decisions, date)."
+
+#: ../../source/index.rst:7
+msgid "Ajout de métadonnées sur les positions."
+msgstr "Added metadata for positions."
+
+#: ../../source/index.rst:9
+msgid "Fonction d'import/export entre instances de blunderDB."
+msgstr "Import/export functionality between blunderDB instances."
+
+#: ../../source/index.rst:11
+msgid "Ajout de fonction de métadonnées sur les bases de données."
+msgstr "Added metadata functionality for databases."
+
+#: ../../source/index.rst:13
+msgid "Introduction des numéros de versions (base de données et application)."
+msgstr "Introduction of version numbers (database and application)."
+
+#: ../../source/index.rst:52
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:56
+#: ../../source/index.rst:69
 msgid "Contacts"
 msgstr "Contacts"
 
-#: ../../source/index.rst:58
+#: ../../source/index.rst:71
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -124,7 +159,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:61
+#: ../../source/index.rst:74
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -139,37 +174,37 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:68
+#: ../../source/index.rst:81
 msgid "Voici plusieurs manières de réagir:"
 msgstr "Here are several ways to respond:"
 
-#: ../../source/index.rst:70
+#: ../../source/index.rst:83
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:72
+#: ../../source/index.rst:85
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:74
+#: ../../source/index.rst:87
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:76
+#: ../../source/index.rst:89
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:78
+#: ../../source/index.rst:91
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:82
+#: ../../source/index.rst:95
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:84
+#: ../../source/index.rst:97
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -177,7 +212,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:87
+#: ../../source/index.rst:100
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -189,7 +224,7 @@ msgstr ""
 "for continuing to encourage me with gentleness and patience in the face "
 "of my poor attempts to improve my play."
 
-#: ../../source/index.rst:92
+#: ../../source/index.rst:105
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

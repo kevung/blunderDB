@@ -17,7 +17,17 @@ Opérations globales
    "open, op, o", "Ouvre une base de données existante."
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
-
+   "meta", "Affiche les métadonnées de la base de données."
+   "met", "Ouvre la table d'équité de match Kazaross-XG2."
+   "tp2", "Ouvre la table des takepoints avec videau à 2."
+   "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+   "tp2_last", "Ouvre la table des takepoints avec videau à 2 mort."
+   "tp4", "Ouvre la table des takepoints avec videau à 4."
+   "tp4_live", "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+   "tp4_last", "Ouvre la table des takepoints avec videau à 4 mort."
+   "gv1", "Ouvre la table des valeurs de gammon avec videau à 1."
+   "gv2", "Ouvre la table des valeurs de gammon avec videau à 2."
+   "gv4", "Ouvre la table des valeurs de gammon avec videau à 4."
 
 .. _cmd_normal:
 
@@ -35,6 +45,7 @@ Mode NORMAL
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."
    "#tag1 tag2 ...", "Etiqueter la position courante."
+   "e", "Charger toutes les positions de la base de données."
 
 
 .. _cmd_edit:
@@ -50,7 +61,7 @@ Mode EDIT
    "write, wr, w", "Enregistre la position courante."
    "write!, wr!, w!", "Mettre à jour la position courante."
    "s", "Chercher des positions avec des filtres."
-   "e", "Charger toutes les positions de la base de données."
+   
 
 
 .. _cmd_filter:
@@ -134,7 +145,13 @@ c'est-à-dire après le début de commande ``s``.
    "Z>x", "L'adversaire a au moins x pions dans la zone."
    "Z<x", "L'adversaire a au plus x pions dans la zone."
    "Zx,y", "L'adversaire a entre x et y pions dans la zone."
-   "'tag_ou_motcle'", "Les commentaires de la position contient le tag/mot-clé."
+   "'mot1;mot2;...'", "Les commentaires de la position contiennent au moins un des mots."
+   "m'motif1,motif2,...\'", "Les meilleurs coups de pions contenant au moins un des motifs."
+   "m'ND,DT,DP,...\'", "Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass."
+   "t>x", "Date d'ajout de la position après x (AAAA/MM/JJ)."
+   "t<x", "Date d'ajout de la position avant x (AAAA/MM/JJ)."
+   "tx,y", "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
+
 
 .. note:: Filtrer les positions en fonction du lancer de dés (`D`) implique *a
    fortiori* de filtrer les positions en fonction du type de décision (`d`).

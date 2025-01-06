@@ -34,6 +34,19 @@ Historique des versions
    :align: center
 
    0.1.0, 31/12/2024, "Création version beta."
+   0.2.0, 06/01/2025, "Résolutions de bugs divers. 
+   
+   Ajout de tables de matchs/TP/GV.
+
+   Ajout de filtres de recherche (coups, décision de videau, date).
+   
+   Ajout de métadonnées sur les positions.
+
+   Fonction d'import/export entre instances de blunderDB.
+
+   Ajout de fonction de métadonnées sur les bases de données.
+   
+   Introduction des numéros de versions (base de données et application)."
 
 Sommaire
 ========

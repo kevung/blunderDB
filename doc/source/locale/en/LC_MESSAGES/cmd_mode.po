@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the blunderDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
-# SPDX-FileCopyrightText: 2024 Kévin Unger <kevin.unger@onera.fr>
+# SPDX-FileCopyrightText: 2024, 2025 Kévin Unger <kevin.unger@onera.fr>
 msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-31 00:48+0100\n"
-"PO-Revision-Date: 2024-12-31 00:50+0100\n"
+"POT-Creation-Date: 2025-01-06 03:57+0100\n"
+"PO-Revision-Date: 2025-01-06 04:18+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -67,7 +67,95 @@ msgstr "help, he, h"
 msgid "Ouvre l'aide de blunderDB."
 msgstr "Open blunderDB help."
 
-#: ../../source/cmd_mode.rst:25
+#: ../../source/cmd_mode.rst:1
+msgid "meta"
+msgstr "meta"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Affiche les métadonnées de la base de données."
+msgstr "Display database metadata."
+
+#: ../../source/cmd_mode.rst:1
+msgid "met"
+msgstr "met"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table d'équité de match Kazaross-XG2."
+msgstr "Open the Kazaross-XG2 match equity table."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2"
+msgstr "tp2"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2."
+msgstr "Open the takepoint table with a 2-cube."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2_live"
+msgstr "tp2_live"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgstr "Open the takepoint table with a 2-cube for long race positions."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2_last"
+msgstr "tp2_last"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2 mort."
+msgstr "Open the takepoint table with a 2-cube for last roll positions."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4"
+msgstr "tp4"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4."
+msgstr "Open the takepoint table with a 4-cube."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4_live"
+msgstr "tp4_live"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgstr "Open the takepoint table with a 4-cube for long race positions."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4_last"
+msgstr "tp4_last"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4 mort."
+msgstr "Open the takepoint table with a 4-cube for last roll positions."
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv1"
+msgstr "gv1"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+msgstr "Open the gammon value table with a 1-cube."
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv2"
+msgstr "gv2"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+msgstr "Open the gammon value table with a 2-cube."
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv4"
+msgstr "gv4"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+msgstr "Open the gammon value table with a 4-cube."
+
+#: ../../source/cmd_mode.rst:35
 msgid "Mode NORMAL"
 msgstr "NORMAL Mode"
 
@@ -119,7 +207,15 @@ msgstr "#tag1 tag2 ..."
 msgid "Etiqueter la position courante."
 msgstr "Tag the current position."
 
-#: ../../source/cmd_mode.rst:43
+#: ../../source/cmd_mode.rst:1
+msgid "e"
+msgstr "e"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Charger toutes les positions de la base de données."
+msgstr "Load all positions from the database."
+
+#: ../../source/cmd_mode.rst:54
 msgid "Mode EDIT"
 msgstr "EDIT Mode"
 
@@ -147,19 +243,11 @@ msgstr "s"
 msgid "Chercher des positions avec des filtres."
 msgstr "Search for positions with filters."
 
-#: ../../source/cmd_mode.rst:1
-msgid "e"
-msgstr "e"
-
-#: ../../source/cmd_mode.rst:1
-msgid "Charger toutes les positions de la base de données."
-msgstr "Load all positions from the database."
-
-#: ../../source/cmd_mode.rst:59
+#: ../../source/cmd_mode.rst:70
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:61
+#: ../../source/cmd_mode.rst:72
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
@@ -167,7 +255,7 @@ msgstr ""
 "The filters below must be juxtaposed during a search, i.e., after the "
 "start of the ``s`` command."
 
-#: ../../source/cmd_mode.rst:66
+#: ../../source/cmd_mode.rst:77
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -179,7 +267,7 @@ msgstr ""
 "and the dice. To consider the position of the cube, the score, and the "
 "dice, it must be explicitly mentioned in the search."
 
-#: ../../source/cmd_mode.rst:72
+#: ../../source/cmd_mode.rst:83
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 14."
@@ -187,7 +275,7 @@ msgstr ""
 "blunderDB considers that a backward checker (backchecker) is a checker "
 "located between point 24 and point 14."
 
-#: ../../source/cmd_mode.rst:76
+#: ../../source/cmd_mode.rst:87
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
@@ -195,7 +283,7 @@ msgstr ""
 "blunderDB considers that the number of checkers in the zone is the number"
 " of checkers located between point 12 and point 1."
 
-#: ../../source/cmd_mode.rst:80
+#: ../../source/cmd_mode.rst:91
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -604,22 +692,64 @@ msgid "L'adversaire a entre x et y pions dans la zone."
 msgstr "The opponent has between x and y checkers in the zone."
 
 #: ../../source/cmd_mode.rst:1
-msgid "'tag_ou_motcle'"
-msgstr "'tag_or_keyword'"
+msgid "'mot1;mot2;...'"
+msgstr "'word1;word2;...'"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Les commentaires de la position contient le tag/mot-clé."
-msgstr "The comments of the position contain the tag/keyword."
+msgid "Les commentaires de la position contiennent au moins un des mots."
+msgstr "The position comments contain at least one of the words."
 
-#: ../../source/cmd_mode.rst:139
+#: ../../source/cmd_mode.rst:1
+msgid "m'motif1,motif2,...\\'"
+msgstr "m'pattern1,pattern2,...\\'"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Les meilleurs coups de pions contenant au moins un des motifs."
+msgstr "The best checker moves containing at least one of the patterns."
+
+#: ../../source/cmd_mode.rst:1
+msgid "m'ND,DT,DP,...\\'"
+msgstr "m'ND,DT,DP,...\\'"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
+"Pass."
+msgstr "The best cube decisions for No Double/Take, Double Take, Double Pass."
+
+#: ../../source/cmd_mode.rst:1
+msgid "t>x"
+msgstr "t>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
+msgstr "Date of position addition after x (YYYY/MM/DD)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "t<x"
+msgstr "t<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
+msgstr "Date of position addition before x (YYYY/MM/DD)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tx,y"
+msgstr "tx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
+msgstr "Date of position addition between x and y (YYYY/MM/DD)."
+
+#: ../../source/cmd_mode.rst:156
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
 msgstr ""
-"Filtering positions based on the dice roll (`D`) necessarily implies filtering"
-" positions based on the type of decision (`d`)."
+"Filtering positions based on the dice roll (`D`) necessarily implies "
+"filtering positions based on the type of decision (`d`)."
 
-#: ../../source/cmd_mode.rst:142
+#: ../../source/cmd_mode.rst:159
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -969,3 +1099,6 @@ msgstr ""
 
 #~ msgid "dice, dic, di, d"
 #~ msgstr "dice, dic, di, d"
+
+#~ msgid "'tag_ou_motcle'"
+#~ msgstr "'tag_or_keyword'"
