@@ -1659,6 +1659,7 @@
         box-sizing: border-box;
         position: relative;
         overflow: hidden; /* Hide overflow initially */
+        width: 100vw; /* Ensure it takes the full viewport width */
     }
 
     .scrollable-content {

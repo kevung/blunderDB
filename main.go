@@ -3,6 +3,7 @@ package main
 import (
 	"embed"
 	"fmt"
+	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -26,8 +27,13 @@ func main() {
 	}
 
 	// Calculate the initial height based on the aspect factor
-	initialWidth := 960
-	aspectFactor := 0.7815
+	initialWidth := 1024 // Adjusted width for better compatibility
+	var aspectFactor float64
+	if runtime.GOOS == "windows" {
+		aspectFactor = 0.814 // Adjusted aspect factor for Windows
+	} else {
+		aspectFactor = 0.7815 // Original aspect factor for Linux
+	}
 	initialHeight := int(float64(initialWidth) * aspectFactor) // Adjust to have equal space above and below
 
 	// Create application with options
