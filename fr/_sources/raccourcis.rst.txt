@@ -43,6 +43,8 @@ Mode NORMAL
    "CTRL-K", "Afficher la fenêtre de navigation de positions."
    "CTRL-L", "Afficher/cacher l'analyse."
    "CTRL-P", "Afficher/cacher les commentaires."
+   "CTRL-G", "Afficher les métadonnées de la position."
+   "CTRL-R", "Recharger toutes les positions de la base de données."
 
 .. _raccourcis_edit:
 

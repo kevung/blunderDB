@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. Liste des commandes &mdash; Documentation blunderDB 0.1.0</title>
+  <title>4. Liste des commandes &mdash; Documentation blunderDB 0.2.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="_static/favicon.jpg"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=897fae25"></script>
+      <script src="_static/documentation_options.js?v=1b0070ce"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -109,6 +109,39 @@
 <tr class="row-odd"><td><p>help, he, h</p></td>
 <td><p>Ouvre l’aide de blunderDB.</p></td>
 </tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>Affiche les métadonnées de la base de données.</p></td>
+</tr>
+<tr class="row-odd"><td><p>met</p></td>
+<td><p>Ouvre la table d’équité de match Kazaross-XG2.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2</p></td>
+<td><p>Ouvre la table des takepoints avec videau à 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_live</p></td>
+<td><p>Ouvre la table des takepoints avec videau à 2 pour les courses longues.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_last</p></td>
+<td><p>Ouvre la table des takepoints avec videau à 2 mort.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4</p></td>
+<td><p>Ouvre la table des takepoints avec videau à 4.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_live</p></td>
+<td><p>Ouvre la table des takepoints avec videau à 4 pour les courses longues.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_last</p></td>
+<td><p>Ouvre la table des takepoints avec videau à 4 mort.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv1</p></td>
+<td><p>Ouvre la table des valeurs de gammon avec videau à 1.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv2</p></td>
+<td><p>Ouvre la table des valeurs de gammon avec videau à 2.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv4</p></td>
+<td><p>Ouvre la table des valeurs de gammon avec videau à 4.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -143,6 +176,9 @@
 <tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
 <td><p>Etiqueter la position courante.</p></td>
 </tr>
+<tr class="row-even"><td><p>e</p></td>
+<td><p>Charger toutes les positions de la base de données.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -167,9 +203,6 @@
 </tr>
 <tr class="row-even"><td><p>s</p></td>
 <td><p>Chercher des positions avec des filtres.</p></td>
-</tr>
-<tr class="row-odd"><td><p>e</p></td>
-<td><p>Charger toutes les positions de la base de données.</p></td>
 </tr>
 </tbody>
 </table>
@@ -358,8 +391,23 @@ combinés.</p>
 <tr class="row-even"><td><p>Zx,y</p></td>
 <td><p>L’adversaire a entre x et y pions dans la zone.</p></td>
 </tr>
-<tr class="row-odd"><td><p>“tag_ou_motcle”</p></td>
-<td><p>Les commentaires de la position contient le tag/mot-clé.</p></td>
+<tr class="row-odd"><td><p>“mot1;mot2;…”</p></td>
+<td><p>Les commentaires de la position contiennent au moins un des mots.</p></td>
+</tr>
+<tr class="row-even"><td><p>m’motif1,motif2,…'</p></td>
+<td><p>Les meilleurs coups de pions contenant au moins un des motifs.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m’ND,DT,DP,…'</p></td>
+<td><p>Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass.</p></td>
+</tr>
+<tr class="row-even"><td><p>t&gt;x</p></td>
+<td><p>Date d’ajout de la position après x (AAAA/MM/JJ).</p></td>
+</tr>
+<tr class="row-odd"><td><p>t&lt;x</p></td>
+<td><p>Date d’ajout de la position avant x (AAAA/MM/JJ).</p></td>
+</tr>
+<tr class="row-even"><td><p>tx,y</p></td>
+<td><p>Date d’ajout de la position entre x et y (AAAA/MM/JJ).</p></td>
 </tr>
 </tbody>
 </table>

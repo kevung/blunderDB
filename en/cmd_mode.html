@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. List of commands &mdash; blunderDB 0.1.0 documentation</title>
+  <title>4. List of commands &mdash; blunderDB 0.2.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
@@ -14,7 +14,7 @@
     <link rel="shortcut icon" href="_static/favicon.jpg"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=01f34227"></script>
+      <script src="_static/documentation_options.js?v=938c9ccc"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -108,6 +108,39 @@
 <tr class="row-odd"><td><p>help, he, h</p></td>
 <td><p>Open blunderDB help.</p></td>
 </tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>Display database metadata.</p></td>
+</tr>
+<tr class="row-odd"><td><p>met</p></td>
+<td><p>Open the Kazaross-XG2 match equity table.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2</p></td>
+<td><p>Open the takepoint table with a 2-cube.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_live</p></td>
+<td><p>Open the takepoint table with a 2-cube for long race positions.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_last</p></td>
+<td><p>Open the takepoint table with a 2-cube for last roll positions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4</p></td>
+<td><p>Open the takepoint table with a 4-cube.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_live</p></td>
+<td><p>Open the takepoint table with a 4-cube for long race positions.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_last</p></td>
+<td><p>Open the takepoint table with a 4-cube for last roll positions.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv1</p></td>
+<td><p>Open the gammon value table with a 1-cube.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv2</p></td>
+<td><p>Open the gammon value table with a 2-cube.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv4</p></td>
+<td><p>Open the gammon value table with a 4-cube.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -142,6 +175,9 @@
 <tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
 <td><p>Tag the current position.</p></td>
 </tr>
+<tr class="row-even"><td><p>e</p></td>
+<td><p>Load all positions from the database.</p></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -166,9 +202,6 @@
 </tr>
 <tr class="row-even"><td><p>s</p></td>
 <td><p>Search for positions with filters.</p></td>
-</tr>
-<tr class="row-odd"><td><p>e</p></td>
-<td><p>Load all positions from the database.</p></td>
 </tr>
 </tbody>
 </table>
@@ -350,8 +383,23 @@
 <tr class="row-even"><td><p>Zx,y</p></td>
 <td><p>The opponent has between x and y checkers in the zone.</p></td>
 </tr>
-<tr class="row-odd"><td><p>‘tag_or_keyword’</p></td>
-<td><p>The comments of the position contain the tag/keyword.</p></td>
+<tr class="row-odd"><td><p>‘word1;word2;…’</p></td>
+<td><p>The position comments contain at least one of the words.</p></td>
+</tr>
+<tr class="row-even"><td><p>m’pattern1,pattern2,…'</p></td>
+<td><p>The best checker moves containing at least one of the patterns.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m’ND,DT,DP,…'</p></td>
+<td><p>The best cube decisions for No Double/Take, Double Take, Double Pass.</p></td>
+</tr>
+<tr class="row-even"><td><p>t&gt;x</p></td>
+<td><p>Date of position addition after x (YYYY/MM/DD).</p></td>
+</tr>
+<tr class="row-odd"><td><p>t&lt;x</p></td>
+<td><p>Date of position addition before x (YYYY/MM/DD).</p></td>
+</tr>
+<tr class="row-even"><td><p>tx,y</p></td>
+<td><p>Date of position addition between x and y (YYYY/MM/DD).</p></td>
 </tr>
 </tbody>
 </table>
