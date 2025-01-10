@@ -62,6 +62,12 @@ Sommaire
    raccourcis
    faq
 
+.. youtube:: HkY4iXjxMeI
+   :width: 100%
+
+.. raw:: html
+
+   <div style="margin-top: 20px;"></div>
 
 .. _contacts:
 
