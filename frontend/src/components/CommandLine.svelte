@@ -139,8 +139,8 @@
                      const dateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('T>') || filter.startsWith('T<') || filter.startsWith('T')));
                      const movePatternMatch = command.match(/m["'][^"']*["']/);
                      const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
-                     const searchTextMatch = command.match(/ t["']([^"']*)["']/);
-                     const searchText = searchTextMatch ? searchTextMatch[1] : '';
+                     const searchTextMatch = command.match(/t["'][^"']*["']/);
+                     const searchText = searchTextMatch ? searchTextMatch[0] : '';
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
                      console.log('Move Pattern Filter:', movePatternFilter); // Add logging

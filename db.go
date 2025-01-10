@@ -635,7 +635,10 @@ func (p *Position) MatchesSearchText(searchText string, d *Database) bool {
 		fmt.Printf("Error loading comment for position ID: %d, error: %v\n", p.ID, err)
 		return false
 	}
-	searchTextArray := strings.Split(strings.ToLower(searchText), ";")
+
+	// Extract the keyword from the raw search text filter
+	searchTextMatch := strings.Trim(searchText, ` t"'`)
+	searchTextArray := strings.Split(strings.ToLower(searchTextMatch), ";")
 	comment = strings.ToLower(comment)
 	for _, text := range searchTextArray {
 		if strings.Contains(comment, text) {

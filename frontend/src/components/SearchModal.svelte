@@ -230,6 +230,7 @@
         const decisionTypeFilter = filters.includes('Include Decision Type'); // Rename this line
         const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
         const creationDateFilter = transformedFilters.find(filter => filter.startsWith('T'));
+        const searchTextFilter = searchText ? `t"${searchText}"` : '';
 
         // print all values of arguments to console
         console.log('includeCube:', includeCube);
@@ -273,7 +274,7 @@
             player2BackCheckerFilter,
             player1CheckerInZoneFilter,
             player2CheckerInZoneFilter,
-            searchText,
+            searchTextFilter, // Use the transformed searchTextFilter
             player1AbsolutePipCountFilter,
             equityFilter,
             decisionTypeFilter,
