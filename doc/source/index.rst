@@ -97,6 +97,15 @@ Voici plusieurs manières de réagir:
   * pour des corrections de bugs ou des propositions d'amélioration,
     créer une pull request.
 
+Faire un don
+============
+
+Si vous appréciez blunderDB et que vous voulez soutenir les développements passés et futurs, vous pouvez
+
+* me payer un verre si on a le plaisir de se rencontrer!
+
+* faire un petit don par PayPal à l'adresse blunderdb@proton.me
+
 Remerciements
 =============
 

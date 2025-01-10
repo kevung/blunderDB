@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-06 04:21+0100\n"
-"PO-Revision-Date: 2025-01-06 04:22+0100\n"
+"POT-Creation-Date: 2025-01-11 00:53+0100\n"
+"PO-Revision-Date: 2025-01-11 00:54+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.0\n"
+"X-Generator: Lokalize 24.12.1\n"
 
 #: ../../source/index.rst:4
 msgid "blunderDB"
@@ -147,11 +147,11 @@ msgstr "Introduction of version numbers (database and application)."
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:69
+#: ../../source/index.rst:75
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:71
+#: ../../source/index.rst:77
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -159,7 +159,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:74
+#: ../../source/index.rst:80
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -174,37 +174,57 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:81
+#: ../../source/index.rst:87
 msgid "Voici plusieurs manières de réagir:"
 msgstr "Here are several ways to respond:"
 
-#: ../../source/index.rst:83
+#: ../../source/index.rst:89
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:85
+#: ../../source/index.rst:91
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:87
+#: ../../source/index.rst:93
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:89
+#: ../../source/index.rst:95
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:91
+#: ../../source/index.rst:97
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:95
+#: ../../source/index.rst:101
+msgid "Faire un don"
+msgstr "Donate"
+
+#: ../../source/index.rst:103
+msgid ""
+"Si vous appréciez blunderDB et que vous voulez soutenir les "
+"développements passés et futurs, vous pouvez"
+msgstr ""
+"If you appreciate blunderDB and want to support its past and future "
+"developments, you can"
+
+#: ../../source/index.rst:105
+msgid "me payer un verre si on a le plaisir de se rencontrer!"
+msgstr "buy me a drink if we have the pleasure of meeting!"
+
+#: ../../source/index.rst:107
+msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
+msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
+
+#: ../../source/index.rst:110
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:97
+#: ../../source/index.rst:112
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -212,7 +232,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:100
+#: ../../source/index.rst:115
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -224,7 +244,7 @@ msgstr ""
 "for continuing to encourage me with gentleness and patience in the face "
 "of my poor attempts to improve my play."
 
-#: ../../source/index.rst:105
+#: ../../source/index.rst:120
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
