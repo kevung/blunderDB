@@ -1482,9 +1482,12 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 		return false
 	}
 
+	// Extract the move pattern from the raw string
+	movePatternMatch := strings.Trim(filter, `m"'`)
+	movePatterns := strings.Split(strings.ToLower(movePatternMatch), ";")
+
 	if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		move := strings.ToLower(analysis.CheckerAnalysis.Moves[0].Move)
-		movePatterns := strings.Split(strings.ToLower(filter), ";")
 		for _, pattern := range movePatterns {
 			if strings.Contains(move, pattern) {
 				fmt.Printf("Position ID: %d, Checker decision, Move: %s, Filter: %s\n", p.ID, move, pattern) // Add logging
@@ -1492,7 +1495,6 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 			}
 		}
 	} else if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
-		movePatterns := strings.Split(strings.ToLower(filter), ";")
 		for _, pattern := range movePatterns {
 			switch pattern {
 			case "nd":

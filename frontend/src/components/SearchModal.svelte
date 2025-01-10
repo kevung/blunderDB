@@ -231,6 +231,30 @@
         const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
         const creationDateFilter = transformedFilters.find(filter => filter.startsWith('T'));
 
+        // print all values of arguments to console
+        console.log('includeCube:', includeCube);
+        console.log('includeScore:', includeScore);
+        console.log('pipCountFilter:', pipCountFilter);
+        console.log('winRateFilter:', winRateFilter);
+        console.log('gammonRateFilter:', gammonRateFilter);
+        console.log('backgammonRateFilter:', backgammonRateFilter);
+        console.log('player2WinRateFilter:', player2WinRateFilter);
+        console.log('player2GammonRateFilter:', player2GammonRateFilter);
+        console.log('player2BackgammonRateFilter:', player2BackgammonRateFilter);
+        console.log('player1CheckerOffFilter:', player1CheckerOffFilter);
+        console.log('player2CheckerOffFilter:', player2CheckerOffFilter);
+        console.log('player1BackCheckerFilter:', player1BackCheckerFilter);
+        console.log('player2BackCheckerFilter:', player2BackCheckerFilter);
+        console.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter);
+        console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter);
+        console.log('searchText:', searchText);
+        console.log('player1AbsolutePipCountFilter:', player1AbsolutePipCountFilter);
+        console.log('equityFilter:', equityFilter);
+        console.log('decisionTypeFilter:', decisionTypeFilter);
+        console.log('diceRollFilter:', diceRollFilter);
+        console.log('movePatternFilter:', movePatternFilter);
+        console.log('creationDateFilter:', creationDateFilter);
+        
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
             transformedFilters,
@@ -254,7 +278,7 @@
             equityFilter,
             decisionTypeFilter,
             diceRollFilter,
-            movePatternFilter,
+            `m"${movePatternFilter}"`, // Transform the move pattern filter
             creationDateFilter // Add this line
         );
         onClose();
