@@ -18,6 +18,7 @@ release = '0.2.4'
 
 extensions = [
         'sphinx_rtd_theme',
+        'sphinxcontrib.youtube'
         ]
 
 templates_path = ['_templates']
