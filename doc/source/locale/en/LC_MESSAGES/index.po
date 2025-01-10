@@ -149,7 +149,7 @@ msgstr "Table of contents"
 
 #: ../../source/index.rst:69
 msgid "Contacts"
-msgstr "Contacts"
+msgstr "Contact"
 
 #: ../../source/index.rst:71
 msgid ""
