@@ -699,12 +699,17 @@
             throw new Error("File is empty or invalid.");
         }
 
-        const normalizedContent = fileContent.replace(/\r\n|\r/g, '\n').trim();
+        let normalizedContent = fileContent.replace(/\r\n|\r/g, '\n').trim();
         const lines = normalizedContent.split('\n').map(line => line.trim());
 
         const isFrench = normalizedContent.includes("Joueur") || normalizedContent.includes("Adversaire") || normalizedContent.includes("Videau");
         const isInternalCheckerAnalysisFormat = normalizedContent.includes("Analysis:\nChecker Move Analysis:");
         const isInternalDoublingAnalysisFormat = normalizedContent.includes("Analysis:\nDoubling Cube Analysis:");
+
+        // Replace commas with dots in French content
+        if (isFrench) {
+            normalizedContent = normalizedContent.replace(/,/g, '.');
+        }
 
         const xgidLine = lines.find(line => line.startsWith("XGID="));
         const xgid = xgidLine ? xgidLine.split('=')[1] : null;
