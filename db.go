@@ -448,8 +448,6 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 }
 
 func (d *Database) DeletePosition(positionID int64) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
 	// Delete the associated analysis first
 	err := d.DeleteAnalysis(positionID)
@@ -464,6 +462,8 @@ func (d *Database) DeletePosition(positionID int64) error {
 		fmt.Println("Error deleting associated comment:", err)
 		return err
 	}
+
+	d.mu.Lock() // Lock the mutex
 
 	// Delete the position
 	_, err = d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
@@ -482,6 +482,8 @@ func (d *Database) DeletePosition(positionID int64) error {
 	if count == 0 {
 		fmt.Println("Database is empty.")
 	}
+
+	d.mu.Unlock() // Unlock the mutex when the function returns
 
 	return nil
 }
