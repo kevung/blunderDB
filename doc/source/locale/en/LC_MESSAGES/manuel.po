@@ -2,13 +2,13 @@
 # This file is distributed under the same license as the blunderDB package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
 #
-# SPDX-FileCopyrightText: 2024 Kévin Unger <kevin.unger@onera.fr>
+# SPDX-FileCopyrightText: 2024, 2025 Kévin Unger <kevin.unger@onera.fr>
 msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 17:14+0100\n"
-"PO-Revision-Date: 2024-12-31 00:30+0100\n"
+"POT-Creation-Date: 2025-01-20 13:36+0100\n"
+"PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.0\n"
+"X-Generator: Lokalize 24.12.1\n"
 
 #: ../../source/manuel.rst:4
 msgid "Manuel"
@@ -85,19 +85,19 @@ msgstr ""
 "main modes of blunderDB are described."
 
 #: ../../source/manuel.rst:35
-msgid "Description de l'IHM"
-msgstr "Description of the GUI"
+msgid "Description de l'interface"
+msgstr "Description of the interface"
 
 #: ../../source/manuel.rst:37
-msgid "L'IHM de blunderDB est constituée de haut en bas par:"
-msgstr "The GUI of blunderDB is composed, from top to bottom, of:"
+msgid "L'interface de blunderDB est constituée de haut en bas par:"
+msgstr "The interface of blunderDB is composed, from top to bottom, of:"
 
 #: ../../source/manuel.rst:39
 msgid ""
-"[en haut] la barre de menus, qui rassemble l'ensemble des principales "
+"[en haut] la barre d'outils, qui rassemble l'ensemble des principales "
 "opérations réalisables sur la base de données,"
 msgstr ""
-"[top] the menu bar, which gathers all the main operations that can be "
+"[top] the toolbar, which gathers all the main operations that can be "
 "performed on the database,"
 
 #: ../../source/manuel.rst:42
@@ -259,9 +259,7 @@ msgstr ""
 msgid ""
 "Se référer à la :numref:`raccourcis_edit` pour les raccourcis du mode "
 "EDIT."
-msgstr ""
-"Refer to :numref:`raccourcis_edit` for "
-"EDIT mode shortcuts."
+msgstr "Refer to :numref:`raccourcis_edit` for EDIT mode shortcuts."
 
 #: ../../source/manuel.rst:121
 msgid "Le mode COMMAND"
@@ -310,8 +308,8 @@ msgid ""
 "Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
 "en mode COMMAND."
 msgstr ""
-"Refer to :numref:`cmd_mode` for the list of available commands"
-" in COMMAND mode."
+"Refer to :numref:`cmd_mode` for the list of available commands in COMMAND"
+" mode."
 
 #~ msgid ""
 #~ "Pour ce faire, l'utilisateur bascule "

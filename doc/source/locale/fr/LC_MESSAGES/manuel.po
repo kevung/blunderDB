@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 17:14+0100\n"
+"POT-Creation-Date: 2025-01-20 13:36+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -81,16 +81,16 @@ msgid ""
 msgstr ""
 
 #: ../../source/manuel.rst:35
-msgid "Description de l'IHM"
+msgid "Description de l'interface"
 msgstr ""
 
 #: ../../source/manuel.rst:37
-msgid "L'IHM de blunderDB est constituée de haut en bas par:"
+msgid "L'interface de blunderDB est constituée de haut en bas par:"
 msgstr ""
 
 #: ../../source/manuel.rst:39
 msgid ""
-"[en haut] la barre de menus, qui rassemble l'ensemble des principales "
+"[en haut] la barre d'outils, qui rassemble l'ensemble des principales "
 "opérations réalisables sur la base de données,"
 msgstr ""
 
@@ -389,5 +389,18 @@ msgstr ""
 #~ "Se référer à la section "
 #~ ":ref:`raccourcis_modaux` pour les raccourcis "
 #~ "de navigation du mode COMMAND."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "[en haut] la barre de menus, qui"
+#~ " rassemble l'ensemble des principales "
+#~ "opérations réalisables sur la base de"
+#~ " données,"
+#~ msgstr ""
+
+#~ msgid "Description de l'IHM"
+#~ msgstr ""
+
+#~ msgid "L'IHM de blunderDB est constituée de haut en bas par:"
 #~ msgstr ""
 

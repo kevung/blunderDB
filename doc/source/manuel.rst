@@ -31,12 +31,12 @@ annoter via des commentaires.
 Dans la suite du manuel, il est décrit l'interface graphique ainsi que
 les principaux modes de blunderDB.
 
-Description de l'IHM
---------------------
+Description de l'interface
+--------------------------
 
-L'IHM de blunderDB est constituée de haut en bas par:
+L'interface de blunderDB est constituée de haut en bas par:
 
-* [en haut] la barre de menus, qui rassemble l'ensemble des principales
+* [en haut] la barre d'outils, qui rassemble l'ensemble des principales
   opérations réalisables sur la base de données,
 
 * [au milieu] la zone d'affichage principale, qui permet d'afficher ou d'éditer des
