@@ -802,7 +802,7 @@
 
         if (isInternalDoublingAnalysisFormat) {
             parsedAnalysis.analysisType = "DoublingCube";
-            const doublingCubeAnalysisRegex = /Doubling Cube Analysis:\nAnalysis Depth: (.+)\nPlayer Win Chances: ([-.\d]+)%\nPlayer Gammon Chances: ([-.\d]+)%\nPlayer Backgammon Chances: ([-.\d]+)%\nOpponent Win Chances: ([-.\d]+)%\nOpponent Gammon Chances: ([-.\d]+)%\nOpponent Backgammon Chances: ([-.\d]+)%\nCubeless No Double Equity: ([-.\d]+)\nCubeless Double Equity: ([-.\d]+)\nCubeful No Double Equity: ([-.\d]+)\nCubeful No Double Error: ([-.\d]+)\nCubeful Double Take Equity: ([-.\d]+)\nCubeful Double Take Error: ([-.\d]+)\nCubeful Double Pass Equity: ([-.\d]+)\nCubeful Double Pass Error: ([-.\d]+)\nBest Cube Action: (.+)\nWrong Pass Percentage: ([-.\d]+)%\nWrong Take Percentage: ([-.\d]+)%/;
+            const doublingCubeAnalysisRegex = /Doubling Cube Analysis:\nAnalysis Depth: "(.+)"\nPlayer Win Chances: ([-.\d]+)%\nPlayer Gammon Chances: ([-.\d]+)%\nPlayer Backgammon Chances: ([-.\d]+)%\nOpponent Win Chances: ([-.\d]+)%\nOpponent Gammon Chances: ([-.\d]+)%\nOpponent Backgammon Chances: ([-.\d]+)%\nCubeless No Double Equity: ([-.\d]+)\nCubeless Double Equity: ([-.\d]+)\nCubeful No Double Equity: ([-.\d]+)\nCubeful No Double Error: ([-.\d]+)\nCubeful Double Take Equity: ([-.\d]+)\nCubeful Double Take Error: ([-.\d]+)\nCubeful Double Pass Equity: ([-.\d]+)\nCubeful Double Pass Error: ([-.\d]+)\nBest Cube Action: (.+)\nWrong Pass Percentage: ([-.\d]+)%\nWrong Take Percentage: ([-.\d]+)%/;
             const doublingCubeMatch = doublingCubeAnalysisRegex.exec(normalizedContent);
             if (doublingCubeMatch) {
                 parsedAnalysis.doublingCubeAnalysis = {
@@ -828,7 +828,7 @@
             }
         } else if (isInternalCheckerAnalysisFormat) {
             parsedAnalysis.analysisType = "CheckerMove";
-            const moveRegex = /^Move (\d+): (.+)\nAnalysis Depth: (.+)\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%/gm;
+            const moveRegex = /^Move (\d+): (.+)\nAnalysis Depth: "(.+)"\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%/gm;
             let moveMatch;
             while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
                 const moveDetails = {
@@ -1082,7 +1082,7 @@
         clipboardContent += `Analysis:\n`;
         if (analysis.analysisType === "DoublingCube") {
             clipboardContent += `Doubling Cube Analysis:\n`;
-            clipboardContent += `Analysis Depth: ${analysis.doublingCubeAnalysis.analysisDepth}\n`;
+            clipboardContent += `Analysis Depth: "${analysis.doublingCubeAnalysis.analysisDepth}"\n`;
             clipboardContent += `Player Win Chances: ${analysis.doublingCubeAnalysis.playerWinChances}%\n`;
             clipboardContent += `Player Gammon Chances: ${analysis.doublingCubeAnalysis.playerGammonChances}%\n`;
             clipboardContent += `Player Backgammon Chances: ${analysis.doublingCubeAnalysis.playerBackgammonChances}%\n`;
@@ -1104,7 +1104,7 @@
             clipboardContent += `Checker Move Analysis:\n`;
             analysis.checkerAnalysis.moves.forEach(move => {
                 clipboardContent += `Move ${move.index}: ${move.move}\n`;
-                clipboardContent += `Analysis Depth: ${move.analysisDepth}\n`;
+                clipboardContent += `Analysis Depth: "${move.analysisDepth}"\n`;
                 clipboardContent += `Equity: ${move.equity}\n`;
                 if (move.equityError !== undefined) {
                     clipboardContent += `Equity Error: ${move.equityError}\n`;
