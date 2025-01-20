@@ -885,6 +885,22 @@
                 }
                 parsedAnalysis.checkerAnalysis.push(moveDetails);
             }
+            if (playerOnRoll === 1) {
+                // Swap win, gammon, and backgammon chances between player and opponent for each move
+                parsedAnalysis.checkerAnalysis.forEach(move => {
+                    const tempWinChance = move.playerWinChance;
+                    const tempGammonChance = move.playerGammonChance;
+                    const tempBackgammonChance = move.playerBackgammonChance;
+
+                    move.playerWinChance = move.opponentWinChance;
+                    move.playerGammonChance = move.opponentGammonChance;
+                    move.playerBackgammonChance = move.opponentBackgammonChance;
+
+                    move.opponentWinChance = tempWinChance;
+                    move.opponentGammonChance = tempGammonChance;
+                    move.opponentBackgammonChance = tempBackgammonChance;
+                });
+            }
         } else if (
             (isFrench && (normalizedContent.includes("Equités sans videau") || normalizedContent.includes("Equités avec videau"))) ||
             (!isFrench && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")))
@@ -966,6 +982,21 @@
             }
             if (wrongTakePercentageMatch) {
                 parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage = parseFloat(wrongTakePercentageMatch[1]);
+            }
+
+            if (playerOnRoll === 1) {
+                // Swap win, gammon, and backgammon chances between player and opponent
+                const tempWinChances = parsedAnalysis.doublingCubeAnalysis.playerWinChances;
+                const tempGammonChances = parsedAnalysis.doublingCubeAnalysis.playerGammonChances;
+                const tempBackgammonChances = parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances;
+
+                parsedAnalysis.doublingCubeAnalysis.playerWinChances = parsedAnalysis.doublingCubeAnalysis.opponentWinChances;
+                parsedAnalysis.doublingCubeAnalysis.playerGammonChances = parsedAnalysis.doublingCubeAnalysis.opponentGammonChances;
+                parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances = parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances;
+
+                parsedAnalysis.doublingCubeAnalysis.opponentWinChances = tempWinChances;
+                parsedAnalysis.doublingCubeAnalysis.opponentGammonChances = tempGammonChances;
+                parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances = tempBackgammonChances;
             }
         }
 
