@@ -38,7 +38,7 @@
 
 {#if visible}
     <div class="comment-panel">
-        <div class="close-icon" on:click={handleClose}>×</div>
+        <button class="close-icon" on:click={handleClose} aria-label="Close" on:keydown={(event) => { if (event.key === 'Enter' || event.key === ' ') handleClose(); }}>×</button>
         <textarea
             id="commentTextArea"
             rows="5"
@@ -75,7 +75,14 @@
         font-weight: bold;
         color: #666;
         cursor: pointer;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
+        background: none;
+        border: none;
+        padding: 0;
+        transition: color 0.3s ease;
+    }
+
+    .close-icon:hover {
+        color: #333;
     }
 
     textarea {

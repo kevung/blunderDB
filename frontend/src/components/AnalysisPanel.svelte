@@ -55,8 +55,8 @@
 </script>
 
 {#if visible}
-    <div class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" on:keydown={handleKeyDown}>
-        <div class="close-icon" on:click={onClose}>×</div>
+    <section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" on:keydown={handleKeyDown}>
+        <button type="button" class="close-icon" on:click={onClose} aria-label="Close" on:keydown={handleKeyDown}>×</button>
         <div class="analysis-content">
             {#if analysisData.analysisType === 'DoublingCube' && analysisData.doublingCubeAnalysis}
                 <div class="tables-container">
@@ -168,7 +168,7 @@
                 </table>
             {/if}
         </div>
-    </div>
+    </section>
 {/if}
 
 <style>
@@ -197,7 +197,14 @@
         font-weight: bold;
         color: #666;
         cursor: pointer;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
+        background: none;
+        border: none;
+        padding: 0;
+        transition: color 0.3s ease;
+    }
+
+    .close-icon:hover {
+        color: #333;
     }
 
     .analysis-content {
@@ -288,10 +295,5 @@
         color: #000000; /* Subtle color change for emphasis */
     }
 
-    .best-action {
-        margin-top: 10px;
-        text-align: center;
-        width: 100%;
-    }
 </style>
 
