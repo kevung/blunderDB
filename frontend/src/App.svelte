@@ -1055,6 +1055,7 @@
             setStatusBarMessage('No database opened');
             return;
         }
+        // @ts-ignore
         if ($statusBarModeStore === 'EDIT') {
             setStatusBarMessage('Cannot copy position in edit mode');
             return;
