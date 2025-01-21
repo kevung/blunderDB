@@ -55,7 +55,7 @@
 </script>
 
 {#if visible}
-    <div class="analysis-panel" tabindex="0" id="analysisPanel" on:keydown={handleKeyDown}>
+    <div class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" on:keydown={handleKeyDown}>
         <div class="close-icon" on:click={onClose}>×</div>
         <div class="analysis-content">
             {#if analysisData.analysisType === 'DoublingCube' && analysisData.doublingCubeAnalysis}
