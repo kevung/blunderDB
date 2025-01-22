@@ -20,3 +20,7 @@ La dernière version de blunderDB est disponible en licence MIT:
 .. note:: Sous Linux, si blunderDB n'est pas exécutable après le
    téléchargement, exécuter dans un terminal la commande ``chmod +x
    ./blunderDB-linux-x.y.z`` où x, y, z correspond à la version téléchargée.
+
+.. warning:: Sous Windows, il est possible que ce dernier émette des réticences
+   à exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre
+   pourquoi et contourner les éventuels blocages.

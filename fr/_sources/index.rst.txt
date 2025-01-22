@@ -61,6 +61,7 @@ Sommaire
    cmd_mode
    raccourcis
    faq
+   annexe_windows_securite
 
 .. youtube:: HkY4iXjxMeI
    :width: 100%
