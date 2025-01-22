@@ -1,19 +1,17 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) 2024, Kevin UNGER <blunderdb@proton.me>
-# This file is distributed under the same license as the blunderDB package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+# Translations template for PROJECT.
+# Copyright (C) 2025 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: blunderDB \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 17:14+0100\n"
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2025-01-22 15:40+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language: fr\n"
-"Language-Team: fr <LL@li.org>\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -55,5 +53,12 @@ msgid ""
 "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
 "exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
 "linux-x.y.z`` où x, y, z correspond à la version téléchargée."
+msgstr ""
+
+#: ../../source/telecharge_install.rst:24
+msgid ""
+"Sous Windows, il est possible que ce dernier émette des réticences à "
+"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
+" pourquoi et contourner les éventuels blocages."
 msgstr ""
 
