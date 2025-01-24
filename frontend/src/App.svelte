@@ -706,10 +706,9 @@
         const isInternalCheckerAnalysisFormat = normalizedContent.includes("Analysis:\nChecker Move Analysis:");
         const isInternalDoublingAnalysisFormat = normalizedContent.includes("Analysis:\nDoubling Cube Analysis:");
 
-        // Replace commas with dots in French content
-        if (isFrench) {
-            normalizedContent = normalizedContent.replace(/,/g, '.');
-        }
+        // Replace commas with dots. Enable to treat decimal numbers with commas as well.
+        normalizedContent = normalizedContent.replace(/,/g, '.');
+    
 
         const xgidLine = lines.find(line => line.startsWith("XGID="));
         const xgid = xgidLine ? xgidLine.split('=')[1] : null;
@@ -792,7 +791,7 @@
 
         const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: "" };
 
-        const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: ([\d.]+)(?:, MET: (.+))?/);
+        const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: ([\d.]+)(?:. MET: (.+))?/); // remember comma transformed in dot
         if (engineVersionMatch) {
             parsedAnalysis.analysisEngineVersion = `eXtreme Gammon Version: ${engineVersionMatch[1]}`;
             if (engineVersionMatch[2]) {
@@ -912,8 +911,8 @@
             const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain du joueur:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
 
             const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain de l'adversaire:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
-
-            const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equités sans videau\s*:\s*Pas de double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+),\s*Double=([\+\-\d.]+)/));
+            // in regex, look for dot instead of comma because of French content (replace commas with dots)
+            const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equités sans videau\s*:\s*Pas de double=([\+\-\d.]+).\s*Double=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+).\s*Double=([\+\-\d.]+)/)); // remember comma transformed in dot
 
             const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /No double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
             const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Take:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
@@ -1055,6 +1054,7 @@
             setStatusBarMessage('No database opened');
             return;
         }
+        // @ts-ignore
         if ($statusBarModeStore === 'EDIT') {
             setStatusBarMessage('Cannot copy position in edit mode');
             return;

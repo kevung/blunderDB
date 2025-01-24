@@ -230,8 +230,20 @@
       }
    }
 
+   function handleGlobalKeyDown(event) {
+      if (!initialized) {
+         initialized = true;
+         window.addEventListener('keydown', handleKeyDown);
+      }
+   }
+
+   onMount(() => {
+      window.addEventListener('keydown', handleGlobalKeyDown);
+   });
+
    onDestroy(() => {
       window.removeEventListener('click', handleClickOutside);
+      window.removeEventListener('keydown', handleGlobalKeyDown);
    });
 </script>
 
