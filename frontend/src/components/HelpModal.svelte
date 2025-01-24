@@ -809,7 +809,7 @@
                                 <td>Opponent checkers in zone between x and y</td>
                             </tr>
                             <tr>
-                                <td>"word1;word2;..."</td>
+                                <td>t"word1;word2;..."</td>
                                 <td>Search text</td>
                             </tr>
                             <tr>
