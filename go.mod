@@ -5,12 +5,12 @@ go 1.22.0
 toolchain go1.23.1
 
 require (
+	github.com/adrg/xdg v0.5.3
 	github.com/wailsapp/wails/v2 v2.9.2
 	modernc.org/sqlite v1.34.4
 )
 
 require (
-	github.com/adrg/xdg v0.5.3 // indirect
 	github.com/bep/debounce v1.2.1 // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
 	github.com/go-ole/go-ole v1.3.0 // indirect

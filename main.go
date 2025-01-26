@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"fmt"
-	"runtime"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -15,26 +14,29 @@ var assets embed.FS
 
 func main() {
 
-	// Create an instance of the app structure
 	app := NewApp()
 	db := NewDatabase()
+	cfg := NewConfig()
+
+	// Load the configuration file
+	config, err := cfg.LoadConfig()
+	if err != nil {
+		fmt.Println("Error loading configuration file:", err)
+		return
+	}
 
 	// Set up the in-memory database
-	err := db.SetupDatabase(":memory:")
+	err = db.SetupDatabase(":memory:")
 	if err != nil {
 		fmt.Println("Error setting up in-memory database:", err)
 		return
 	}
 
-	// Calculate the initial height based on the aspect factor
-	initialWidth := 1024 // Adjusted width for better compatibility
-	var aspectFactor float64
-	if runtime.GOOS == "windows" {
-		aspectFactor = 0.814 // Adjusted aspect factor for Windows
-	} else {
-		aspectFactor = 0.7815 // Original aspect factor for Linux
-	}
-	initialHeight := int(float64(initialWidth) * aspectFactor) // Adjust to have equal space above and below
+	// Initialize width and height from config
+	initialWidth := config.WindowWidth
+	initialHeight := config.WindowHeight
+	fmt.Println("Initial dimensions:", initialWidth, "x", initialHeight)
+	fmt.Println("Aspect ratio:", float64(initialHeight)/float64(initialWidth))
 
 	// Create application with options
 	err = wails.Run(&options.App{
