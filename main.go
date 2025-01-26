@@ -51,6 +51,7 @@ func main() {
 		Bind: []interface{}{
 			app,
 			db,
+			cfg,
 		},
 	})
 

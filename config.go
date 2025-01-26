@@ -81,3 +81,9 @@ func (c *Config) SaveConfig(config *Config) error {
 
 	return os.WriteFile(configPath, bytes, 0644)
 }
+
+func (c *Config) SaveWindowDimensions(width, height int) error {
+	c.WindowWidth = width
+	c.WindowHeight = height
+	return c.SaveConfig(c)
+}

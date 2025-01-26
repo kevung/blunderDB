@@ -34,6 +34,8 @@
 
     import { WindowSetTitle, Quit, ClipboardGetText } from '../wailsjs/runtime/runtime.js';
 
+    import { SaveWindowDimensions } from '../wailsjs/go/main/Config.js';
+
     // import stores
     import {
         databasePathStore,
@@ -1572,11 +1574,13 @@
         console.log('Wails runtime:', runtime);
         window.addEventListener("keydown", handleKeyDown);
         mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
+        window.addEventListener("resize", handleResize);
     });
 
     onDestroy(() => {
         window.removeEventListener("keydown", handleKeyDown);
         mainArea.removeEventListener("wheel", handleWheel); // Remove wheel event listener from main container
+        window.removeEventListener("resize", handleResize);
     });
 
     function toggleHelpModal() {
@@ -1688,6 +1692,14 @@
                 showMetadataModalStore.set(!showMetadataModal);
             }
         }
+    }
+
+    function handleResize() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        SaveWindowDimensions(width, height).catch(err => {
+            console.error('Error saving window dimensions:', err);
+        });
     }
 
 </script>

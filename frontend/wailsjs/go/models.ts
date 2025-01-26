@@ -109,6 +109,20 @@ export namespace main {
 		}
 	}
 	
+	export class Config {
+	    window_width: number;
+	    window_height: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Config(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.window_width = source["window_width"];
+	        this.window_height = source["window_height"];
+	    }
+	}
 	export class Cube {
 	    owner: number;
 	    value: number;
