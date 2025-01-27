@@ -32,7 +32,7 @@
         GetDatabaseVersion // Import GetDatabaseVersion
     } from '../wailsjs/go/main/Database.js';
 
-    import { WindowSetTitle, Quit, ClipboardGetText } from '../wailsjs/runtime/runtime.js';
+    import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
 
     import { SaveWindowDimensions } from '../wailsjs/go/main/Config.js';
 
@@ -1694,12 +1694,19 @@
         }
     }
 
-    function handleResize() {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        SaveWindowDimensions(width, height).catch(err => {
-            console.error('Error saving window dimensions:', err);
-        });
+    async function handleResize() {
+        try {
+            const size = await WindowGetSize();
+            if (size) {
+                const { w, h } = size;
+                console.log('Window dimensions:', w, h);
+                await SaveWindowDimensions(w, h);
+            } else {
+                console.error('Error: WindowGetSize returned undefined size');
+            }
+        } catch (err) {
+            console.error('Error getting window dimensions:', err);
+        }
     }
 
 </script>
