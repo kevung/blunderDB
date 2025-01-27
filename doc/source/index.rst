@@ -47,6 +47,11 @@ Historique des versions
    Ajout de fonction de métadonnées sur les bases de données.
    
    Introduction des numéros de versions (base de données et application)."
+   0.3.0, 27/01/2025, "Résolutions de bugs divers. 
+
+   Sauvegarde automatiquement le dimensionnement de la fenêtre.
+
+   Importe les éventuels commentaires depuis XG."
 
 Sommaire
 ========
