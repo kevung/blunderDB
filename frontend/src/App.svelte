@@ -523,13 +523,21 @@
             try {
                 parsedAnalysis.positionId = positionExistsResult.id; // Ensure the position ID is set in the analysis
                 await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
-                console.log('Analysis updated for position ID:', positionExistsResult.id);
-                setStatusBarMessage('Position already exists, analysis updated');
+
+                // Append new comment to existing comment if not already included
+                let existingComment = await LoadComment(positionExistsResult.id);
+                if (!existingComment.includes(parsedAnalysis.comment)) {
+                    existingComment += `\n\n${parsedAnalysis.comment}`;
+                }
+                await SaveComment(positionExistsResult.id, existingComment); // Save the comment
+
+                console.log('Analysis and comment updated for position ID:', positionExistsResult.id);
+                setStatusBarMessage('Position already exists, analysis and comment updated');
                 currentPositionIndexStore.set(-1); //force change to trigger re-render
                 currentPositionIndexStore.set(positions.findIndex(pos => pos.id === positionExistsResult.id)); // Set current position index to display the existing position
             } catch (error) {
-                console.error('Error updating analysis:', error);
-                setStatusBarMessage('Error updating analysis');
+                console.error('Error updating analysis and comment:', error);
+                setStatusBarMessage('Error updating analysis and comment');
             }
             return;
         }
@@ -542,14 +550,15 @@
             positionData.id = positionID; // Ensure the position ID is set in the position data
             parsedAnalysis.positionId = positionID; // Ensure the position ID is set in the analysis
             await SaveAnalysis(positionID, parsedAnalysis);
-            console.log('Analysis saved for position ID:', positionID);
+            await SaveComment(positionID, parsedAnalysis.comment); // Save the comment
+            console.log('Analysis and comment saved for position ID:', positionID);
 
             // Reload all positions and show the last one
             await loadAllPositions();
             setStatusBarMessage(successMessage);
         } catch (error) {
-            console.error('Error saving position and analysis:', error);
-            setStatusBarMessage('Error saving position and analysis');
+            console.error('Error saving position, analysis, and comment:', error);
+            setStatusBarMessage('Error saving position, analysis, and comment');
         }
     }
 
@@ -904,7 +913,7 @@
             }
         } else if (
             (isFrench && (normalizedContent.includes("Equités sans videau") || normalizedContent.includes("Equités avec videau"))) ||
-            (!isFrench && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")))
+            (!isFrench && (normalizedContent.includes("Cubeless Equities") || "Cubeful Equities"))
         ) {
             parsedAnalysis.analysisType = "DoublingCube";
 
@@ -1001,7 +1010,71 @@
             }
         }
 
+        // Extract comment section
+        const commentSection = extractCommentSection(normalizedContent, parsedAnalysis.analysisType === "DoublingCube");
+        parsedAnalysis.comment = commentSection;
+
         return { positionData, parsedAnalysis };
+    }
+
+    function extractCommentSection(content, isDoublingCube) {
+        if (isDoublingCube) {
+            const commentRegex = /(?:Best Cube action: .+|Meilleur action du videau: .+|Percentage of wrong .+|Pourcentage de passes incorrectes .+%)\n\n([\s\S]+?)\n\neXtreme Gammon Version:/;
+
+            let match = commentRegex.exec(content);
+            return match ? match[1].trim() : '';
+        } else {
+            const lines = content.split('\n');
+            let lastOpponentIndex = -1;
+
+            // Find the last line where "Opponent" appears
+            for (let i = lines.length - 1; i >= 0; i--) {
+                if (lines[i].includes('Opponent') || lines[i].includes('Adversaire')) {
+                    lastOpponentIndex = i;
+                    break;
+                }
+            }
+
+            if (lastOpponentIndex === -1) {
+                return '';
+            }
+
+            // Count 2 blank lines after the last "Opponent" line
+            let blankLineCount = 0;
+            let commentStartIndex = -1;
+            for (let i = lastOpponentIndex + 1; i < lines.length; i++) {
+                if (lines[i].trim() === '') {
+                    blankLineCount++;
+                } else {
+                    blankLineCount = 0;
+                }
+
+                if (blankLineCount === 2) {
+                    commentStartIndex = i + 1;
+                    break;
+                }
+            }
+
+            if (commentStartIndex === -1) {
+                return '';
+            }
+
+            // Extract the comment section until the next blank line before the engine version
+            let commentEndIndex = -1;
+            for (let i = commentStartIndex; i < lines.length; i++) {
+                if (lines[i].trim() === '' && lines[i + 1] && lines[i + 1].startsWith('eXtreme Gammon Version:')) {
+                    commentEndIndex = i;
+                    break;
+                }
+            }
+
+            if (commentEndIndex === -1) {
+                return '';
+            }
+
+            const commentLines = lines.slice(commentStartIndex, commentEndIndex);
+            return commentLines.join('\n').trim();
+        }
     }
 
     function generateXGID(position) {
