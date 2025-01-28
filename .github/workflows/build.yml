@@ -82,7 +82,7 @@ jobs:
         
       - name: Build App MacOS
         if: runner.os == 'macOS'
-        run: wails build --platform 'darwin/universal' -o blunderDB-macos-${{ steps.vars.outputs.version }}.app -upx -clean -tags webkit2_41
+        run: wails build --platform 'darwin/universal' -o blunderDB-macos-${{ steps.vars.outputs.version }} -clean -tags webkit2_41
         shell: bash
         
       - name: Add Linux perms
