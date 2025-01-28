@@ -19,6 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
+        os: [ubuntu-latest, macos-latest]
         build:
           - name: 'blunderDB'
             platform:  'linux'
@@ -28,7 +29,7 @@ jobs:
             ext: '.exe'
 
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -65,16 +66,41 @@ jobs:
         shell: bash
 
       - name: Install Linux Wails deps
+        if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.1-dev gcc-aarch64-linux-gnu
         shell: bash
 
-      - name: Build App
+      - name: Install MacOS Wails deps
+        if: runner.os == 'macOS'
+        run: brew install mitchellh/gon/gon
+        shell: bash
+
+      - name: Build App Linux and Windows
+        if: runner.os == 'Linux'
         run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.version }}${{matrix.build.ext}} -upx -clean -tags webkit2_41
         shell: bash
         
+      - name: Build App MacOS
+        if: runner.os == 'macOS'
+        run: wails build --platform 'darwin/universal' -o blunderDB-macos-${{ steps.vars.outputs.version }}.app -upx -clean -tags webkit2_41
+        shell: bash
+        
       - name: Add Linux perms
+        if: runner.os == 'Linux'
         run: chmod +x build/bin/*
         shell: bash
+
+      - name: Add macOS perms
+        if: runner.os == 'macOS'
+        run: chmod +x build/bin/*/Contents/MacOS/*
+        shell: bash
+
+      - name: Build .app zip file
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          ditto -c -k --keepParent ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app.zip
+
 
       # Upload build assets
       - uses: actions/upload-artifact@v4
