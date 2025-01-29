@@ -167,7 +167,30 @@
                      console.log('diceRollFilter:', diceRollFilter);
                      console.log('dateFilter:', dateFilter);
                      
-                     onLoadPositionsByFilters(filters, includeCube, includeScore, pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter, player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter, player1CheckerOffFilter, player2CheckerOffFilter, player1BackCheckerFilter, player2BackCheckerFilter, player1CheckerInZoneFilter, player2CheckerInZoneFilter, searchText, player1AbsolutePipCountFilter, equityFilter, decisionTypeFilter, diceRollFilter, movePatternFilter, dateFilter);
+                     onLoadPositionsByFilters(
+                        filters,
+                        includeCube,
+                        includeScore,
+                        pipCountFilter,
+                        winRateFilter,
+                        gammonRateFilter,
+                        backgammonRateFilter,
+                        player2WinRateFilter,
+                        player2GammonRateFilter,
+                        player2BackgammonRateFilter,
+                        player1CheckerOffFilter,
+                        player2CheckerOffFilter,
+                        player1BackCheckerFilter,
+                        player2BackCheckerFilter,
+                        player1CheckerInZoneFilter,
+                        player2CheckerInZoneFilter,
+                        searchText,
+                        player1AbsolutePipCountFilter,
+                        equityFilter,
+                        decisionTypeFilter,
+                        diceRollFilter,
+                        movePatternFilter,
+                        dateFilter);
                   }
                } else {
                   statusBarTextStore.set('Search is only available in edit mode.');
