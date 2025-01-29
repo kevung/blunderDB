@@ -36,6 +36,7 @@ jobs:
           else
             echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           fi
+        shell: bash
 
       # Setup and configure GoLang
       - name: Setup GoLang
