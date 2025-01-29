@@ -212,9 +212,8 @@
             }
         });
 
-        // Ensure 'Include Cube' filter is correctly handled
-        const includeCube = filters.includes('Include Cube');
-        const includeScore = filters.includes('Include Score');
+        const includeCube = transformedFilters.includes('cube');
+        const includeScore = transformedFilters.includes('score');
         const pipCountFilter = transformedFilters.find(filter => filter.startsWith('p'));
         const winRateFilter = transformedFilters.find(filter => filter.startsWith('w'));
         const gammonRateFilter = transformedFilters.find(filter => filter.startsWith('g'));
@@ -231,8 +230,8 @@
         const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
 
-        const decisionTypeFilter = filters.includes('Include Decision Type'); // Rename this line
-        const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
+        const decisionTypeFilter = transformedFilters.includes('d');
+        const diceRollFilter = transformedFilters.includes('D');
         const creationDateFilter = transformedFilters.find(filter => filter.startsWith('T'));
         const searchTextFilter = searchText ? `t"${searchText}"` : '';
 
