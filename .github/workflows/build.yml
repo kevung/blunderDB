@@ -58,6 +58,12 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.9.2
         shell: bash
 
+      - name: Install UPX
+        if: runner.os == 'Windows'
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+
       - name: Install Linux Wails deps
         if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.1-dev gcc-aarch64-linux-gnu
