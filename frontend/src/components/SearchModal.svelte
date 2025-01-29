@@ -166,6 +166,10 @@
                     return 'cube';
                 case 'Include Score':
                     return 'score';
+                case 'Include Decision Type':
+                    return 'd';
+                case 'Include Dice Roll':
+                    return 'D';
                 case 'Pipcount Difference':
                     return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
                 case 'Player Absolute Pipcount':
