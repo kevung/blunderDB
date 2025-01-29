@@ -68,6 +68,9 @@ Sommaire
    faq
    annexe_windows_securite
 
+.. youtube:: Ln7XKVFqfUk
+   :width: 100%
+
 .. youtube:: HkY4iXjxMeI
    :width: 100%
 
