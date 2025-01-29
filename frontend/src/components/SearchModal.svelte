@@ -126,8 +126,8 @@
     let availableFilters = [
         'Include Cube',
         'Include Score',
-        'Include Decision Type', // Rename this line
-        'Include Dice Roll', // Add this line
+        'Include Decision Type',
+        'Include Dice Roll',
         'Pipcount Difference',
         'Player Absolute Pipcount',
         'Equity (millipoints)',
@@ -144,8 +144,8 @@
         'Player Checker in the Zone',
         'Opponent Checker in the Zone',
         'Search Text',
-        'Best Move or Cube Decision', // Add this line
-        'Creation Date' // Add this line
+        'Best Move or Cube Decision',
+        'Creation Date'
     ];
 
     function addFilter() {
