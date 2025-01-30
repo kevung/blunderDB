@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 23:35+0100\n"
-"PO-Revision-Date: 2025-01-30 23:37+0100\n"
+"POT-Creation-Date: 2025-01-30 23:44+0100\n"
+"PO-Revision-Date: 2025-01-30 23:45+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -191,8 +191,8 @@ msgstr ""
 "(constructive) feedback is welcome."
 
 #: ../../source/index.rst:96
-msgid "Voici plusieurs manières de réagir:"
-msgstr "Here are several ways to respond:"
+msgid "Voici plusieurs manières de discuter:"
+msgstr "Here are several ways to discuss:"
 
 #: ../../source/index.rst:98
 msgid ""

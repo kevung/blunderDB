@@ -93,7 +93,7 @@ conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour
 faire part de votre retour d'expérience. Tous les retours (constructifs)
 sont bienvenus.
 
-Voici plusieurs manières de réagir:
+Voici plusieurs manières de discuter:
 
 * rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En
 
