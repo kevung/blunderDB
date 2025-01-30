@@ -95,9 +95,11 @@ sont bienvenus.
 
 Voici plusieurs manières de réagir:
 
-* discuter avec moi, si on se retrouve dans un tournoi,
+* rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En
 
 * m'écrire un mail à blunderdb@proton.me,
+
+* discuter avec moi, si on se retrouve dans un tournoi,
 
 * sur Github,
 
