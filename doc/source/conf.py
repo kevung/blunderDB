@@ -24,7 +24,8 @@ extensions = [
 templates_path = ['_templates']
 locale_dirs = ['locale/']
 gettext_compact = False
-html_favicon = 'img/favicon.jpg'
+html_favicon = '_static/favicon.ico'
+html_logo = '_static/logo.png'
 exclude_patterns = []
 
 language = 'fr'
