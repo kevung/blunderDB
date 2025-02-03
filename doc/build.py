@@ -85,6 +85,26 @@ def build_sphinx_docs(path, language):
         "language=" + language, "source", "build/" + language])
     print(f"Documentation built for {language} language in {path}")
 
+def build_latex_docs(path, language):
+    os.chdir(path)
+    build_path = os.path.join("build", f"pdf_{language}")
+    subprocess.run(["sphinx-build", "-b", "latex", "-D", f"language={language}", "source", build_path])
+    os.chdir(build_path)
+    subprocess.run(["make"])
+    print(f"LaTeX documentation built for {language} language in {path}")
+
+def rename_pdf(root_dir, language, latest_commit):
+    build_path = os.path.join(root_dir, "build", f"pdf_{language}")
+    pdf_filename = "blunderdb.pdf"
+    new_pdf_filename = f"blunderDB-{latest_commit}-{language}.pdf"
+    pdf_path = os.path.join(build_path, pdf_filename)
+    new_pdf_path = os.path.join(build_path, new_pdf_filename)
+    if os.path.exists(pdf_path):
+        os.rename(pdf_path, new_pdf_path)
+        print(f"PDF renamed to {new_pdf_filename}")
+    else:
+        print(f"PDF file {pdf_filename} not found in {build_path}")
+
 def clean_previous_build(root_dir):
     build_folders = find_build_folders(root_dir)
     for folder in build_folders:
@@ -104,6 +124,14 @@ def main():
 
     build_sphinx_docs(root_dir, "fr")
     build_sphinx_docs(root_dir, "en")
+
+    latest_commit = get_latest_commit()
+
+    build_latex_docs(root_dir, "fr")
+    rename_pdf(root_dir, "fr", latest_commit)
+
+    build_latex_docs(root_dir, "en")
+    rename_pdf(root_dir, "en", latest_commit)
 
     if CREATE_ARCHIVE:
         build_folders = find_build_folders(root_dir)
