@@ -52,6 +52,14 @@ Historique des versions
    Sauvegarde automatiquement le dimensionnement de la fenêtre.
 
    Importe les éventuels commentaires depuis XG."
+   0.4.0, 03/02/2025, "Résolutions de bugs divers. 
+
+   Ajout d'une icone pour blunderDB.
+
+   Corrections de filtres.
+
+   Ajout du support de MacOS."
+
 
 Sommaire
 ========
