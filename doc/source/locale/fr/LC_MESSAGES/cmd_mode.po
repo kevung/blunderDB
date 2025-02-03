@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-06 16:06+0100\n"
+"POT-Creation-Date: 2025-02-03 13:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -264,7 +264,7 @@ msgstr ""
 #: ../../source/cmd_mode.rst:83
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
-"entre le point 24 et le point 14."
+"entre le point 24 et le point 19."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:87
@@ -1151,5 +1151,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "'mot1;mot2;...'"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "blunderDB considère qu'un pion arriéré "
+#~ "(backchecker) est un pion situé entre"
+#~ " le point 24 et le point 14."
 #~ msgstr ""
 

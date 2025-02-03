@@ -81,7 +81,7 @@ c'est-à-dire après le début de commande ``s``.
 
 .. note::
    blunderDB considère qu'un pion arriéré (backchecker) est un pion
-   situé entre le point 24 et le point 14.
+   situé entre le point 24 et le point 19.
 
 .. note::
    blunderDB considère que le nombre de pions dans la zone est le nombre
