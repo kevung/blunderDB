@@ -37,6 +37,7 @@
     let creationDateRangeMin = ''; // Min value for creation date range
     let creationDateRangeMax = ''; // Max value for creation date range
     let player1OutfieldBlotFilter = ''; // New filter for player 1 outfield blot
+    let player2OutfieldBlotFilter = ''; // New filter for player 2 outfield blot
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -130,6 +131,12 @@
     let player1OutfieldBlotRangeMin = 0; // Min value for player 1 outfield blot range
     let player1OutfieldBlotRangeMax = 15; // Max value for player 1 outfield blot range
 
+    let player2OutfieldBlotOption = 'min'; // Default option for player 2 outfield blot
+    let player2OutfieldBlotMin = 0; // Min value for player 2 outfield blot
+    let player2OutfieldBlotMax = 15; // Max value for player 2 outfield blot
+    let player2OutfieldBlotRangeMin = 0; // Min value for player 2 outfield blot range
+    let player2OutfieldBlotRangeMax = 15; // Max value for player 2 outfield blot range
+
     let availableFilters = [
         'Include Cube',
         'Include Score',
@@ -151,6 +158,7 @@
         'Player Checker in the Zone',
         'Opponent Checker in the Zone',
         'Player Outfield Blot',
+        'Opponent Outfield Blot',
         'Search Text',
         'Best Move or Cube Decision',
         'Creation Date'
@@ -216,7 +224,9 @@
                     const formatDate = date => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
                     return creationDateOption === 'min' ? `T>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `T<${formatDate(creationDateMax)}` : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
                 case 'Player Outfield Blot':
-                    return player1OutfieldBlotFilter === 'min' ? `bo>${player1OutfieldBlotMin}` : player1OutfieldBlotFilter === 'max' ? `bo<${player1OutfieldBlotMax}` : `bo${player1OutfieldBlotRangeMin},${player1OutfieldBlotRangeMax}`;
+                    return player1OutfieldBlotOption === 'min' ? `bo>${player1OutfieldBlotMin}` : player1OutfieldBlotOption === 'max' ? `bo<${player1OutfieldBlotMax}` : `bo${player1OutfieldBlotRangeMin},${player1OutfieldBlotRangeMax}`;
+                case 'Opponent Outfield Blot':
+                    return player2OutfieldBlotOption === 'min' ? `BO>${player2OutfieldBlotMin}` : player2OutfieldBlotOption === 'max' ? `BO<${player2OutfieldBlotMax}` : `BO${player2OutfieldBlotRangeMin},${player2OutfieldBlotRangeMax}`;
                 default:
                     return '';
             }
@@ -230,7 +240,7 @@
         const backgammonRateFilter = transformedFilters.find(filter => filter.startsWith('b') && !filter.startsWith('bo'));
         const player2WinRateFilter = transformedFilters.find(filter => filter.startsWith('W'));
         const player2GammonRateFilter = transformedFilters.find(filter => filter.startsWith('G'));
-        const player2BackgammonRateFilter = transformedFilters.find(filter => filter.startsWith('B'));
+        const player2BackgammonRateFilter = transformedFilters.find(filter => filter.startsWith('B') && !filter.startsWith('BO'));
         const player1CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('o'));
         const player2CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('O'));
         const player1BackCheckerFilter = transformedFilters.find(filter => filter.startsWith('k'));
@@ -240,6 +250,7 @@
         const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
         const player1OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('bo'));
+        const player2OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('BO'));
 
         const decisionTypeFilter = transformedFilters.includes('d');
         const diceRollFilter = transformedFilters.includes('D');
@@ -274,6 +285,7 @@
         console.log('movePatternFilter:', movePatternFilter);
         console.log('creationDateFilter:', creationDateFilter);
         console.log('player1OutfieldBlotFilter:', player1OutfieldBlotFilter);
+        console.log('player2OutfieldBlotFilter:', player2OutfieldBlotFilter);
         
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
@@ -300,7 +312,8 @@
             diceRollFilter,
             movePatternFilter,
             creationDateFilter,
-            player1OutfieldBlotFilter
+            player1OutfieldBlotFilter,
+            player2OutfieldBlotFilter
         );
         onClose();
     }
@@ -400,6 +413,11 @@
         player1OutfieldBlotMax = 15;
         player1OutfieldBlotRangeMin = 0;
         player1OutfieldBlotRangeMax = 15;
+        player2OutfieldBlotOption = 'min';
+        player2OutfieldBlotMin = 0;
+        player2OutfieldBlotMax = 15;
+        player2OutfieldBlotRangeMin = 0;
+        player2OutfieldBlotRangeMax = 15;
     }
 
     onMount(() => {
@@ -733,6 +751,25 @@
                                         <input type="radio" bind:group={player1OutfieldBlotOption} value="range" /> Range
                                         <input type="number" bind:value={player1OutfieldBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'range'} />
                                         <input type="number" bind:value={player1OutfieldBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'range'} />
+                                    </label>
+                                </div>
+                            </div>
+                        {/if}
+                        {#if filter === 'Opponent Outfield Blot'}
+                            <div class="filter-options-container expanded">
+                                <div class="filter-options expanded">
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="min" /> Min
+                                        <input type="number" bind:value={player2OutfieldBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'min'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="max" /> Max
+                                        <input type="number" bind:value={player2OutfieldBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'max'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player2OutfieldBlotOption} value="range" /> Range
+                                        <input type="number" bind:value={player2OutfieldBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'range'} />
+                                        <input type="number" bind:value={player2OutfieldBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>

@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-03 21:22+0100\n"
-"PO-Revision-Date: 2025-02-03 21:24+0100\n"
+"POT-Creation-Date: 2025-02-03 22:38+0100\n"
+"PO-Revision-Date: 2025-02-03 22:40+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -723,6 +723,30 @@ msgid "Le joueur a entre x et y blots dans l'outfield."
 msgstr "The player has between x and y blots in the outfield."
 
 #: ../../source/cmd_mode.rst:1
+msgid "BO>x"
+msgstr "BO>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au moins x blots dans l'outfield."
+msgstr "The opponent has at least x blots in the outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BO<x"
+msgstr "BO<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au plus x blots dans l'outfield."
+msgstr "The opponent has at most x blots in the outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BOx,y"
+msgstr "BOx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a entre x et y blots dans l'outfield."
+msgstr "The opponent has between x and y blots in the outfield."
+
+#: ../../source/cmd_mode.rst:1
 msgid "t'mot1;mot2;...'"
 msgstr "t'word1;word2;...'"
 
@@ -772,7 +796,7 @@ msgstr "Tx,y"
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr "Date of position addition between x and y (YYYY/MM/DD)."
 
-#: ../../source/cmd_mode.rst:162
+#: ../../source/cmd_mode.rst:165
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
@@ -780,7 +804,7 @@ msgstr ""
 "Filtering positions based on the dice roll (`D`) necessarily implies "
 "filtering positions based on the type of decision (`d`)."
 
-#: ../../source/cmd_mode.rst:165
+#: ../../source/cmd_mode.rst:168
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -794,7 +818,7 @@ msgstr ""
 "ahead in the race. `p50,70`: the player is between 50 and 70 pips behind "
 "in the race."
 
-#: ../../source/cmd_mode.rst:171
+#: ../../source/cmd_mode.rst:174
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "

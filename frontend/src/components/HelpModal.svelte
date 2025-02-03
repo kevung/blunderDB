@@ -821,6 +821,18 @@
                                 <td>Player outfield blot between x and y</td>
                             </tr>
                             <tr>
+                                <td>BO>x</td>
+                                <td>Opponent outfield blot &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>BO&lt;x</td>
+                                <td>Opponent outfield blot &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>BOx,y</td>
+                                <td>Opponent outfield blot between x and y</td>
+                            </tr>
+                            <tr>
                                 <td>t"word1;word2;..."</td>
                                 <td>Search text</td>
                             </tr>

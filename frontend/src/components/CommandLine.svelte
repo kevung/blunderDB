@@ -109,7 +109,7 @@
                      const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || (filter.startsWith('b') && !filter.startsWith('bo'))));
                      const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
                      const player2GammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
-                     const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B')));
+                     const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B') && !filter.startsWith('BO')));
                      let player1CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
                      if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
                         player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`; // Handle case where 'ox' means 'ox,x'
@@ -142,6 +142,7 @@
                      const searchTextMatch = command.match(/t["'][^"']*["']/);
                      const searchText = searchTextMatch ? searchTextMatch[0] : '';
                      const player1OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bo>') || filter.startsWith('bo<') || filter.startsWith('bo')));
+                     const player2OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
                      console.log('Move Pattern Filter:', movePatternFilter); // Add logging
@@ -168,6 +169,7 @@
                      console.log('diceRollFilter:', diceRollFilter);
                      console.log('dateFilter:', dateFilter);
                      console.log('player1OutfieldBlotFilter:', player1OutfieldBlotFilter);
+                     console.log('player2OutfieldBlotFilter:', player2OutfieldBlotFilter);
                      
                      onLoadPositionsByFilters(
                         filters,
@@ -193,7 +195,8 @@
                         diceRollFilter,
                         movePatternFilter,
                         dateFilter,
-                        player1OutfieldBlotFilter
+                        player1OutfieldBlotFilter,
+                        player2OutfieldBlotFilter
                      );
                   }
                } else {
