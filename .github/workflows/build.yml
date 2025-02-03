@@ -19,16 +19,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        build:
-          - name: 'blunderDB'
-            platform:  'linux'
-            ext: ''
-          - name: 'blunderDB.exe'
-            platform:  'windows'
-            ext: '.exe'
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
-
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -43,6 +36,7 @@ jobs:
           else
             echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
           fi
+        shell: bash
 
       # Setup and configure GoLang
       - name: Setup GoLang
@@ -64,25 +58,60 @@ jobs:
         run: go install github.com/wailsapp/wails/v2/cmd/wails@v2.9.2
         shell: bash
 
+      - name: Install UPX
+        if: runner.os == 'Windows'
+        uses: crazy-max/ghaction-upx@v3
+        with:
+          install-only: true
+
       - name: Install Linux Wails deps
+        if: runner.os == 'Linux'
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.1-dev gcc-aarch64-linux-gnu
         shell: bash
 
-      - name: Build App
-        run: wails build --platform ${{matrix.build.platform}} -o blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.version }}${{matrix.build.ext}} -upx -clean -tags webkit2_41
+      - name: Build App Linux
+        if: runner.os == 'Linux'
+        run: wails build --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41
+        shell: bash
+        
+      - name: Build App Windows
+        if: runner.os == 'Windows'
+        run: wails build --platform 'windows' -o blunderDB-windows-${{ steps.vars.outputs.version }}.exe -upx -clean -tags webkit2_41
+        shell: bash
+        
+      - name: Build App MacOS
+        if: runner.os == 'macOS'
+        run: wails build --platform 'darwin/universal' -o blunderDB-macos-${{ steps.vars.outputs.version }} -clean -tags webkit2_41
         shell: bash
         
       - name: Add Linux perms
+        if: runner.os == 'Linux'
         run: chmod +x build/bin/*
         shell: bash
+
+      - name: Add macOS perms
+        if: runner.os == 'macOS'
+        run: |
+          chmod +x build/bin/*/Contents/MacOS/*
+          mv build/bin/*/Contents/MacOS/* build/bin/
+          rm -rf build/bin/blunderdb.app
+        shell: bash
+
+      # - name: Build .app zip file
+      #   if: runner.os == 'macOS'
+      #   shell: bash
+      #   run: |
+      #     ditto -c -k --keepParent ./build/bin/blunderdb.app ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app.zip
+
 
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: Wails Build ${{runner.os}} blunderDB-${{matrix.build.platform}}-${{ steps.vars.outputs.version }}
+          name: Wails Build ${{runner.os}} blunderDB ${{ steps.vars.outputs.version }}
           path: |
             */bin/
             *\bin\*
+            */bin/*/Contents/MacOS/*
 
       - name: Release
         uses: softprops/action-gh-release@v1

@@ -67,6 +67,7 @@ Sommaire
    raccourcis
    faq
    annexe_windows_securite
+   annexe_mac_securite
 
 .. youtube:: Ln7XKVFqfUk
    :width: 100%
