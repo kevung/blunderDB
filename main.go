@@ -60,7 +60,7 @@ func main() {
 		Linux: &linux.Options{
 			Icon:                icon,
 			WindowIsTranslucent: false,
-			WebviewGpuPolicy:    linux.WebviewGpuPolicyAlways,
+			WebviewGpuPolicy:    linux.WebviewGpuPolicyNever,
 			ProgramName:         "blunderDB",
 		},
 		Debug: options.Debug{
