@@ -1357,6 +1357,11 @@ Date of position addition between x and y (YYYY/MM/DD).
 Filtering positions based on the dice roll (\sphinxtitleref{D}) necessarily implies filtering positions based on the type of decision (\sphinxtitleref{d}).
 \end{sphinxadmonition}
 
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+For the relative difference filter in the race (\sphinxtitleref{p\textgreater{}x}, \sphinxtitleref{p\textless{}x}, \sphinxtitleref{px,y}), the player is behind in the race compared to the opponent if \sphinxtitleref{x\textgreater{}0} and ahead if \sphinxtitleref{x\textless{}0}. For example: \sphinxtitleref{p\textless{}\sphinxhyphen{}10}: the player is at least 10 pips ahead in the race. \sphinxtitleref{p50,70}: the player is between 50 and 70 pips behind in the race.
+\end{sphinxadmonition}
+
 \sphinxAtStartPar
 For example, the command \sphinxcode{\sphinxupquote{s s c p\sphinxhyphen{}20,\sphinxhyphen{}5 w\textgreater{}60 z\textgreater{}10 K2,3}} filters all positions taking into account the checker structure, the score, and the cube of the edited position where the player has between 20 and 5 pips ahead in the race, with at least 60\% winning chances, at least 10 checkers in the zone, and the opponent has between 2 and 3 backcheckers.
 
