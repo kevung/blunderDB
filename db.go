@@ -587,6 +587,8 @@ func (d *Database) LoadPositionsByFilters(
 	dateFilter string,
 	player1OutfieldBlotFilter string,
 	player2OutfieldBlotFilter string,
+	player1JanBlotFilter string,
+	player2JanBlotFilter string,
 ) ([]Position, error) {
 	d.mu.Lock()
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
@@ -638,7 +640,9 @@ func (d *Database) LoadPositionsByFilters(
 			(!diceRollFilter || position.MatchesDiceRoll(filter)) &&
 			(dateFilter == "" || position.MatchesDateFilter(dateFilter, d)) &&
 			(player1OutfieldBlotFilter == "" || position.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
-			(player2OutfieldBlotFilter == "" || position.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) {
+			(player2OutfieldBlotFilter == "" || position.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
+			(player1JanBlotFilter == "" || position.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
+			(player2JanBlotFilter == "" || position.MatchesPlayer2JanBlot(player2JanBlotFilter)) {
 			if movePatternFilter != "" {
 				fmt.Printf("Checking move pattern filter: %s for position ID: %d\n", movePatternFilter, position.ID) // Add logging
 				if position.MatchesMovePattern(movePatternFilter, d) {
@@ -1743,6 +1747,98 @@ func (p *Position) MatchesPlayer2OutfieldBlot(filter string) bool {
 			maxValue = value1
 		}
 		return opponentOutfieldBlots >= minValue && opponentOutfieldBlots <= maxValue
+	}
+	return false
+}
+
+// Add MatchesPlayer1JanBlot method to Position type
+func (p *Position) MatchesPlayer1JanBlot(filter string) bool {
+	janBlots := 0
+	for i := 1; i <= 6; i++ {
+		if p.Board.Points[i].Color == 0 && p.Board.Points[i].Checkers == 1 {
+			janBlots++
+		}
+	}
+
+	if strings.HasPrefix(filter, "bj>") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return janBlots >= value
+	} else if strings.HasPrefix(filter, "bj<") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return janBlots <= value
+	} else if strings.HasPrefix(filter, "bj") {
+		values := strings.Split(filter[2:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			return false
+		}
+		value1, err1 := strconv.Atoi(values[0])
+		value2, err2 := strconv.Atoi(values[1])
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return janBlots >= minValue && janBlots <= maxValue
+	}
+	return false
+}
+
+// Add MatchesPlayer2JanBlot method to Position type
+func (p *Position) MatchesPlayer2JanBlot(filter string) bool {
+	opponentJanBlots := 0
+	for i := 19; i <= 24; i++ {
+		if p.Board.Points[i].Color == 1 && p.Board.Points[i].Checkers == 1 {
+			opponentJanBlots++
+		}
+	}
+
+	if strings.HasPrefix(filter, "BJ>") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return opponentJanBlots >= value
+	} else if strings.HasPrefix(filter, "BJ<") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return opponentJanBlots <= value
+	} else if strings.HasPrefix(filter, "BJ") {
+		values := strings.Split(filter[2:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			return false
+		}
+		value1, err1 := strconv.Atoi(values[0])
+		value2, err2 := strconv.Atoi(values[1])
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return opponentJanBlots >= minValue && opponentJanBlots <= maxValue
 	}
 	return false
 }

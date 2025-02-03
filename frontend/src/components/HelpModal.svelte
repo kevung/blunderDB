@@ -833,6 +833,31 @@
                                 <td>Opponent outfield blot between x and y</td>
                             </tr>
                             <tr>
+                                <td>bj&gt;x</td>
+                                <td>Player Jan blot &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>bj&lt;x</td>
+                                <td>Player Jan blot &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>bjx,y</td>
+                                <td>Player Jan blot between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>BJ&gt;x</td>
+                                <td>Opponent Jan blot &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>BJ&lt;x</td>
+                                <td>Opponent Jan blot &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>BJx,y</td>
+                                <td>Opponent Jan blot between x and y</td>
+                            </tr>
+
+                            <tr>
                                 <td>t"word1;word2;..."</td>
                                 <td>Search text</td>
                             </tr>

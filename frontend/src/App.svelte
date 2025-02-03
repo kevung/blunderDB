@@ -1611,7 +1611,9 @@
         movePatternFilter,
         dateFilter,
         player1OutfieldBlotFilter,
-        player2OutfieldBlotFilter
+        player2OutfieldBlotFilter,
+        player1JanBlotFilter,
+        player2JanBlotFilter,
     ) {
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
@@ -1642,7 +1644,9 @@
         movePatternFilter,
         dateFilter,
         player1OutfieldBlotFilter,
-        player2OutfieldBlotFilter);
+        player2OutfieldBlotFilter,
+        player1JanBlotFilter,
+        player2JanBlotFilter);
         try {
             const currentPosition = $positionStore;
 
@@ -1672,7 +1676,9 @@
                 movePatternFilter,
                 dateFilter,
                 player1OutfieldBlotFilter,
-                player2OutfieldBlotFilter);
+                player2OutfieldBlotFilter,
+                player1JanBlotFilter,
+                player2JanBlotFilter);
                 
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 

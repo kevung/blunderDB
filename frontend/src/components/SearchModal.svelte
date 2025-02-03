@@ -36,8 +36,6 @@
     let creationDateMax = ''; // Max value for creation date
     let creationDateRangeMin = ''; // Min value for creation date range
     let creationDateRangeMax = ''; // Max value for creation date range
-    let player1OutfieldBlotFilter = ''; // New filter for player 1 outfield blot
-    let player2OutfieldBlotFilter = ''; // New filter for player 2 outfield blot
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -137,6 +135,18 @@
     let player2OutfieldBlotRangeMin = 0; // Min value for player 2 outfield blot range
     let player2OutfieldBlotRangeMax = 15; // Max value for player 2 outfield blot range
 
+    let player1JanBlotOption = 'min'; // Default option for player 1 jan blot
+    let player1JanBlotMin = 0; // Min value for player 1 jan blot
+    let player1JanBlotMax = 15; // Max value for player 1 jan blot
+    let player1JanBlotRangeMin = 0; // Min value for player 1 jan blot range
+    let player1JanBlotRangeMax = 15; // Max value for player 1 jan blot range
+
+    let player2JanBlotOption = 'min'; // Default option for player 2 jan blot
+    let player2JanBlotMin = 0; // Min value for player 2 jan blot
+    let player2JanBlotMax = 15; // Max value for player 2 jan blot
+    let player2JanBlotRangeMin = 0; // Min value for player 2 jan blot range
+    let player2JanBlotRangeMax = 15; // Max value for player 2 jan blot range
+
     let availableFilters = [
         'Include Cube',
         'Include Score',
@@ -159,6 +169,8 @@
         'Opponent Checker in the Zone',
         'Player Outfield Blot',
         'Opponent Outfield Blot',
+        'Player Jan Blot',
+        'Opponent Jan Blot',
         'Search Text',
         'Best Move or Cube Decision',
         'Creation Date'
@@ -227,6 +239,10 @@
                     return player1OutfieldBlotOption === 'min' ? `bo>${player1OutfieldBlotMin}` : player1OutfieldBlotOption === 'max' ? `bo<${player1OutfieldBlotMax}` : `bo${player1OutfieldBlotRangeMin},${player1OutfieldBlotRangeMax}`;
                 case 'Opponent Outfield Blot':
                     return player2OutfieldBlotOption === 'min' ? `BO>${player2OutfieldBlotMin}` : player2OutfieldBlotOption === 'max' ? `BO<${player2OutfieldBlotMax}` : `BO${player2OutfieldBlotRangeMin},${player2OutfieldBlotRangeMax}`;
+                case 'Player Jan Blot':
+                    return player1JanBlotOption === 'min' ? `bj>${player1JanBlotMin}` : player1JanBlotOption === 'max' ? `bj<${player1JanBlotMax}` : `bj${player1JanBlotRangeMin},${player1JanBlotRangeMax}`;
+                case 'Opponent Jan Blot':
+                    return player2JanBlotOption === 'min' ? `BJ>${player2JanBlotMin}` : player2JanBlotOption === 'max' ? `BJ<${player2JanBlotMax}` : `BJ${player2JanBlotRangeMin},${player2JanBlotRangeMax}`;
                 default:
                     return '';
             }
@@ -237,10 +253,10 @@
         const pipCountFilter = transformedFilters.find(filter => filter.startsWith('p'));
         const winRateFilter = transformedFilters.find(filter => filter.startsWith('w'));
         const gammonRateFilter = transformedFilters.find(filter => filter.startsWith('g'));
-        const backgammonRateFilter = transformedFilters.find(filter => filter.startsWith('b') && !filter.startsWith('bo'));
+        const backgammonRateFilter = transformedFilters.find(filter => filter.startsWith('b') && !filter.startsWith('bo') && !filter.startsWith('bj'));
         const player2WinRateFilter = transformedFilters.find(filter => filter.startsWith('W'));
         const player2GammonRateFilter = transformedFilters.find(filter => filter.startsWith('G'));
-        const player2BackgammonRateFilter = transformedFilters.find(filter => filter.startsWith('B') && !filter.startsWith('BO'));
+        const player2BackgammonRateFilter = transformedFilters.find(filter => filter.startsWith('B') && !filter.startsWith('BO') && !filter.startsWith('BJ'));
         const player1CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('o'));
         const player2CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('O'));
         const player1BackCheckerFilter = transformedFilters.find(filter => filter.startsWith('k'));
@@ -251,6 +267,8 @@
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
         const player1OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('bo'));
         const player2OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('BO'));
+        const player1JanBlotFilter = transformedFilters.find(filter => filter.startsWith('bj'));
+        const player2JanBlotFilter = transformedFilters.find(filter => filter.startsWith('BJ'));
 
         const decisionTypeFilter = transformedFilters.includes('d');
         const diceRollFilter = transformedFilters.includes('D');
@@ -286,6 +304,8 @@
         console.log('creationDateFilter:', creationDateFilter);
         console.log('player1OutfieldBlotFilter:', player1OutfieldBlotFilter);
         console.log('player2OutfieldBlotFilter:', player2OutfieldBlotFilter);
+        console.log('player1JanBlotFilter:', player1JanBlotFilter);
+        console.log('player2JanBlotFilter:', player2JanBlotFilter);
         
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
@@ -313,7 +333,9 @@
             movePatternFilter,
             creationDateFilter,
             player1OutfieldBlotFilter,
-            player2OutfieldBlotFilter
+            player2OutfieldBlotFilter,
+            player1JanBlotFilter,
+            player2JanBlotFilter
         );
         onClose();
     }
@@ -418,6 +440,16 @@
         player2OutfieldBlotMax = 15;
         player2OutfieldBlotRangeMin = 0;
         player2OutfieldBlotRangeMax = 15;
+        player1JanBlotOption = 'min';
+        player1JanBlotMin = 0;
+        player1JanBlotMax = 15;
+        player1JanBlotRangeMin = 0;
+        player1JanBlotRangeMax = 15;
+        player2JanBlotOption = 'min';
+        player2JanBlotMin = 0;
+        player2JanBlotMax = 15;
+        player2JanBlotRangeMin = 0;
+        player2JanBlotRangeMax = 15;
     }
 
     onMount(() => {
@@ -774,6 +806,46 @@
                                 </div>
                             </div>
                         {/if}
+
+                        {#if filter === 'Player Jan Blot'}
+                            <div class="filter-options-container expanded">
+                                <div class="filter-options expanded">
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player1JanBlotOption} value="min" /> Min
+                                        <input type="number" bind:value={player1JanBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'min'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player1JanBlotOption} value="max" /> Max
+                                        <input type="number" bind:value={player1JanBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'max'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player1JanBlotOption} value="range" /> Range
+                                        <input type="number" bind:value={player1JanBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'range'} />
+                                        <input type="number" bind:value={player1JanBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'range'} />
+                                    </label>
+                                </div>
+                            </div>
+                        {/if}
+                        {#if filter === 'Opponent Jan Blot'}
+                            <div class="filter-options-container expanded">
+                                <div class="filter-options expanded">
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player2JanBlotOption} value="min" /> Min
+                                        <input type="number" bind:value={player2JanBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'min'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player2JanBlotOption} value="max" /> Max
+                                        <input type="number" bind:value={player2JanBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'max'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player2JanBlotOption} value="range" /> Range
+                                        <input type="number" bind:value={player2JanBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'range'} />
+                                        <input type="number" bind:value={player2JanBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'range'} />
+                                    </label>
+                                </div>
+                            </div>
+                        {/if}
+
                         {#if filter === 'Search Text'}
                             <div class="search-text-container">
                                 <label for="searchText">(tag1;tag2;...)</label>
