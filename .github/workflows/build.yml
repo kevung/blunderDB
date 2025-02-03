@@ -126,6 +126,13 @@ jobs:
           publish_branch: gh-pages
           keep_files: false  # This will clean the branch before deploying
 
+      # Upload build assets
+      - uses: actions/upload-artifact@v4
+        with:
+          name: blunderDB pdf docs
+          path: |
+            */build/*/*.pdf
+
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
