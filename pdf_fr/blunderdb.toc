@@ -27,23 +27,23 @@
 \contentsline {section}{\numberline {2.5}Raccourcis clavier}{14}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Général}{14}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Mode NORMAL}{14}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}Mode EDIT}{14}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.3}Mode EDIT}{15}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Mode COMMAND}{15}{subsection.2.5.4}%
 \contentsline {section}{\numberline {2.6}Foire aux questions}{15}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Quel est l’utilité de blunderDB?}{15}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Qu’est ce qui a motivé la création de blunderDB?}{15}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Comment sauvegarder la base de données courante?}{15}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{15}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}Quel format de données utilise blunderDB?}{15}{subsection.2.6.5}%
-\contentsline {subsection}{\numberline {2.6.6}Quelles ont été les principes de conception de blunderDB?}{15}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.4}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{16}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.5}Quel format de données utilise blunderDB?}{16}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.6}Quelles ont été les principes de conception de blunderDB?}{16}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}Quel est l’architecture logicielle de blunderDB?}{16}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{16}{subsection.2.6.8}%
 \contentsline {section}{\numberline {2.7}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{16}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Avertissement Windows SmartScreen}{16}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.1}Avertissement Windows SmartScreen}{17}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Blocage Windows Defender}{17}{subsection.2.7.2}%
 \contentsline {section}{\numberline {2.8}Annexe Mac : Blocage éventuel de blunderDB}{18}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Installation de blunderDB}{18}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Autorisation de l’exécution de blunderDB}{18}{subsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.8.1}Installation de blunderDB}{26}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Autorisation de l’exécution de blunderDB}{26}{subsection.2.8.2}%
 \contentsline {chapter}{\numberline {3}Contacts}{27}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Faire un don}{29}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Remerciements}{31}{chapter.5}%

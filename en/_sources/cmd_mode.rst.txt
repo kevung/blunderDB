@@ -90,6 +90,9 @@ c'est-à-dire après le début de commande ``s``.
 .. note::
    blunderDB considère que l'outfield s'étend entre le point 18 et le point 7.
 
+.. note::
+   blunderDB considère que le jan s'étend entre le point 1 et le point 6.
+   
 .. tip::
    Les paramètres pour filtrer des positions peuvent être arbitrairement
    combinés.
@@ -154,6 +157,12 @@ c'est-à-dire après le début de commande ``s``.
    "BO>x", "L'adversaire a au moins x blots dans l'outfield."
    "BO<x", "L'adversaire a au plus x blots dans l'outfield."
    "BOx,y", "L'adversaire a entre x et y blots dans l'outfield."
+   "jb>x", "Le joueur a au moins x blots dans le jan."
+   "jb<x", "Le joueur a au plus x blots dans le jan."
+   "jbx,y", "Le joueur a entre x et y blots dans le jan."
+   "JB>x", "L'adversaire a au moins x blots dans le jan."
+   "JB<x", "L'adversaire a au plus x blots dans le jan."
+   "JBx,y", "L'adversaire a entre x et y blots dans le jan."
    "t'mot1;mot2;...'", "Les commentaires de la position contiennent au moins un des mots."
    "m'motif1,motif2,...\'", "Les meilleurs coups de pions contenant au moins un des motifs."
    "m'ND,DT,DP,...\'", "Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass."
