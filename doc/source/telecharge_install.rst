@@ -11,6 +11,10 @@ La dernière version de blunderDB est disponible en licence MIT:
 
 * pour Linux: |latest_linux_exe|
 
+.. only:: html
+
+   Pour une consultation hors ligne, vous pouvez également télécharger cette documentation au format PDF  : |latest_fr_pdf|
+
 .. note:: blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il
    y a de fortes chances que Webview2 soit déjà présent nativement sur votre
    système d'exploitation. Si ce n'est pas le cas, la première exécution de

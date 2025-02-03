@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-22 15:40+0100\n"
-"PO-Revision-Date: 2025-01-22 15:42+0100\n"
+"POT-Creation-Date: 2025-02-03 11:48+0100\n"
+"PO-Revision-Date: 2025-02-03 11:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -41,7 +41,15 @@ msgstr "for Windows: |latest_windows_exe|"
 msgid "pour Linux: |latest_linux_exe|"
 msgstr "for Linux: |latest_linux_exe|"
 
-#: ../../source/telecharge_install.rst:14
+#: ../../source/telecharge_install.rst:16
+msgid ""
+"Pour une consultation hors ligne, vous pouvez également télécharger cette"
+" documentation au format PDF  : |latest_fr_pdf|"
+msgstr ""
+"For an offline consultation, you can also download this documentation in PDF f"
+"ormat: |latest_en_pdf|"
+
+#: ../../source/telecharge_install.rst:18
 msgid ""
 "blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
 " de fortes chances que Webview2 soit déjà présent nativement sur votre "
@@ -54,7 +62,7 @@ msgstr ""
 "system. If not, the first execution of blunderDB will offer to download "
 "and install it. No user action is required."
 
-#: ../../source/telecharge_install.rst:20
+#: ../../source/telecharge_install.rst:24
 msgid ""
 "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
 "exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
@@ -64,12 +72,12 @@ msgstr ""
 "command ``chmod +x ./blunderDB-linux-x.y.z`` in a terminal, where x, y, z"
 " corresponds to the downloaded version."
 
-#: ../../source/telecharge_install.rst:24
+#: ../../source/telecharge_install.rst:28
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
 " pourquoi et contourner les éventuels blocages."
 msgstr ""
-"On Windows, it is possible that it may hesitate to run blunderDB. See: :numref"
-":`annexe_windows_malware` for an explanation of why and how to bypass any pote"
-"ntial blocks."
+"On Windows, it is possible that it may hesitate to run blunderDB. See: "
+":numref:`annexe_windows_malware` for an explanation of why and how to "
+"bypass any potential blocks."

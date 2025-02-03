@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-01-22 15:40+0100\n"
+"POT-Creation-Date: 2025-02-03 11:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -39,7 +39,13 @@ msgstr ""
 msgid "pour Linux: |latest_linux_exe|"
 msgstr ""
 
-#: ../../source/telecharge_install.rst:14
+#: ../../source/telecharge_install.rst:16
+msgid ""
+"Pour une consultation hors ligne, vous pouvez également télécharger cette"
+" documentation au format PDF  : |latest_fr_pdf|"
+msgstr ""
+
+#: ../../source/telecharge_install.rst:18
 msgid ""
 "blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
 " de fortes chances que Webview2 soit déjà présent nativement sur votre "
@@ -48,14 +54,14 @@ msgid ""
 "manipulation de la part de l'utilisateur n'est attendue."
 msgstr ""
 
-#: ../../source/telecharge_install.rst:20
+#: ../../source/telecharge_install.rst:24
 msgid ""
 "Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
 "exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
 "linux-x.y.z`` où x, y, z correspond à la version téléchargée."
 msgstr ""
 
-#: ../../source/telecharge_install.rst:24
+#: ../../source/telecharge_install.rst:28
 msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
