@@ -11,6 +11,8 @@ La dernière version de blunderDB est disponible en licence MIT:
 
 * pour Linux: |latest_linux_exe|
 
+* pour Mac: |latest_mac_exe|
+
 .. only:: html
 
    Pour une consultation hors ligne, vous pouvez également télécharger cette documentation au format PDF  : |latest_fr_pdf|
@@ -27,4 +29,8 @@ La dernière version de blunderDB est disponible en licence MIT:
 
 .. warning:: Sous Windows, il est possible que ce dernier émette des réticences
    à exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre
+   pourquoi et contourner les éventuels blocages.
+
+.. warning:: Sous Mac, il est possible que ce dernier émette des réticences
+   à exécuter blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre
    pourquoi et contourner les éventuels blocages.
