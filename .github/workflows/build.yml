@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest, macos-13, macos-13-xlarge, macos-14, macos-latest-large, macos-15, macos-15-large]
+        os: [ubuntu-latest, macos-latest, windows-latest]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -94,11 +94,11 @@ jobs:
         run: chmod +x build/bin/*/Contents/MacOS/*
         shell: bash
 
-      - name: Build .app zip file
-        if: runner.os == 'macOS'
-        shell: bash
-        run: |
-          ditto -c -k --keepParent ./build/bin/blunderdb.app ./build/bin/blunderDB-${{runner.os}}-${{ steps.vars.outputs.version }}.app.zip
+      # - name: Build .app zip file
+      #   if: runner.os == 'macOS'
+      #   shell: bash
+      #   run: |
+      #     ditto -c -k --keepParent ./build/bin/blunderdb.app ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app.zip
 
 
       # Upload build assets
@@ -108,6 +108,7 @@ jobs:
           path: |
             */bin/
             *\bin\*
+            */bin/*/Contents/MacOS/*
 
       - name: Release
         uses: softprops/action-gh-release@v1
