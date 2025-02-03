@@ -156,6 +156,12 @@ c'est-à-dire après le début de commande ``s``.
 .. note:: Filtrer les positions en fonction du lancer de dés (`D`) implique *a
    fortiori* de filtrer les positions en fonction du type de décision (`d`).
 
+.. note:: Pour le filtre de différence relative à la course (`p>x`, `p<x`,
+   `px,y`), le joueur est en retard à la course par rapport à l'adversaire si
+   `x>0` et en avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips
+   d'avance à la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à
+   la course.
+
 Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les
 positions en prenant en compte la structure des pions, le score et le cube
 de la position éditée où le joueur a entre 20 et 5 pips d'avance à la
