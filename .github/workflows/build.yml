@@ -98,7 +98,7 @@ jobs:
         if: runner.os == 'macOS'
         shell: bash
         run: |
-          ditto -c -k --keepParent ./build/bin/blunderdb.app ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app.zip
+          ditto -c -k --keepParent ./build/bin/blunderdb.app ./build/bin/blunderDB-${{runner.os}}-${{ steps.vars.outputs.version }}.app.zip
 
 
       # Upload build assets
