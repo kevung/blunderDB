@@ -1159,7 +1159,7 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 	fmt.Printf("MatchesPlayer1BackChecker called with filter: %s\n", filter) // Add logging
 
 	backCheckers := 0
-	for i := 14; i <= 25; i++ {
+	for i := 19; i <= 25; i++ {
 		if p.Board.Points[i].Color == 0 {
 			backCheckers += p.Board.Points[i].Checkers
 		}
@@ -1211,7 +1211,7 @@ func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
 	fmt.Printf("MatchesPlayer2BackChecker called with filter: %s\n", filter) // Add logging
 
 	backCheckers := 0
-	for i := 0; i <= 11; i++ {
+	for i := 0; i <= 6; i++ {
 		if p.Board.Points[i].Color == 1 {
 			backCheckers += p.Board.Points[i].Checkers
 		}

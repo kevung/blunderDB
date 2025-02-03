@@ -68,6 +68,9 @@ Sommaire
    faq
    annexe_windows_securite
 
+.. youtube:: Ln7XKVFqfUk
+   :width: 100%
+
 .. youtube:: HkY4iXjxMeI
    :width: 100%
 
@@ -90,11 +93,13 @@ conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour
 faire part de votre retour d'expérience. Tous les retours (constructifs)
 sont bienvenus.
 
-Voici plusieurs manières de réagir:
+Voici plusieurs manières de discuter:
 
-* discuter avec moi, si on se retrouve dans un tournoi,
+* rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En
 
 * m'écrire un mail à blunderdb@proton.me,
+
+* discuter avec moi, si on se retrouve dans un tournoi,
 
 * sur Github,
 

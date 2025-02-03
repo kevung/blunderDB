@@ -7,7 +7,11 @@ import (
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
+	"github.com/wailsapp/wails/v2/pkg/options/linux"
 )
+
+//go:embed build/appicon.png
+var icon []byte
 
 //go:embed all:frontend/dist
 var assets embed.FS
@@ -52,6 +56,15 @@ func main() {
 			app,
 			db,
 			cfg,
+		},
+		Linux: &linux.Options{
+			Icon:                icon,
+			WindowIsTranslucent: false,
+			WebviewGpuPolicy:    linux.WebviewGpuPolicyNever,
+			ProgramName:         "blunderDB",
+		},
+		Debug: options.Debug{
+			OpenInspectorOnStartup: false,
 		},
 	})
 

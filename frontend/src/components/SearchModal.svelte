@@ -25,12 +25,12 @@
     let player2BackCheckerFilter = '';
     let player1CheckerInZoneFilter = '';
     let player2CheckerInZoneFilter = '';
-    let searchText = ''; // Update this line to handle multiple words
+    let searchText = '';
     let player1AbsolutePipCountFilter = '';
     let equityFilter = '';
-    let decisionTypeFilter = false; // Rename this line
-    let diceRollFilter = false; // Add this line
-    let movePatternFilter = ''; // Add this line
+    let decisionTypeFilter = false;
+    let diceRollFilter = false;
+    let movePattern = '';
     let creationDateOption = 'min'; // Default option for creation date
     let creationDateMin = ''; // Min value for creation date
     let creationDateMax = ''; // Max value for creation date
@@ -126,8 +126,8 @@
     let availableFilters = [
         'Include Cube',
         'Include Score',
-        'Include Decision Type', // Rename this line
-        'Include Dice Roll', // Add this line
+        'Include Decision Type',
+        'Include Dice Roll',
         'Pipcount Difference',
         'Player Absolute Pipcount',
         'Equity (millipoints)',
@@ -144,8 +144,8 @@
         'Player Checker in the Zone',
         'Opponent Checker in the Zone',
         'Search Text',
-        'Best Move or Cube Decision', // Add this line
-        'Creation Date' // Add this line
+        'Best Move or Cube Decision',
+        'Creation Date'
     ];
 
     function addFilter() {
@@ -166,6 +166,10 @@
                     return 'cube';
                 case 'Include Score':
                     return 'score';
+                case 'Include Decision Type':
+                    return 'd';
+                case 'Include Dice Roll':
+                    return 'D';
                 case 'Pipcount Difference':
                     return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
                 case 'Player Absolute Pipcount':
@@ -199,7 +203,7 @@
                 case 'Search Text':
                     return `t"${searchText}"`;
                 case 'Best Move or Cube Decision':
-                    return `m"${movePatternFilter}"`;
+                    return `m"${movePattern}"`;
                 case 'Creation Date':
                     const formatDate = date => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
                     return creationDateOption === 'min' ? `T>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `T<${formatDate(creationDateMax)}` : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
@@ -208,9 +212,8 @@
             }
         });
 
-        // Ensure 'Include Cube' filter is correctly handled
-        const includeCube = filters.includes('Include Cube');
-        const includeScore = filters.includes('Include Score');
+        const includeCube = transformedFilters.includes('cube');
+        const includeScore = transformedFilters.includes('score');
         const pipCountFilter = transformedFilters.find(filter => filter.startsWith('p'));
         const winRateFilter = transformedFilters.find(filter => filter.startsWith('w'));
         const gammonRateFilter = transformedFilters.find(filter => filter.startsWith('g'));
@@ -227,10 +230,14 @@
         const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
 
-        const decisionTypeFilter = filters.includes('Include Decision Type'); // Rename this line
-        const diceRollFilter = filters.includes('Include Dice Roll'); // Add this line
+        const decisionTypeFilter = transformedFilters.includes('d');
+        const diceRollFilter = transformedFilters.includes('D');
         const creationDateFilter = transformedFilters.find(filter => filter.startsWith('T'));
         const searchTextFilter = searchText ? `t"${searchText}"` : '';
+        const movePatternFilter = movePattern ? `m"${movePattern}"` : '';
+
+        // Ensure that an empty array is passed if no filters are selected
+        const finalFilters = transformedFilters.length > 0 ? transformedFilters : [];
 
         // print all values of arguments to console
         console.log('includeCube:', includeCube);
@@ -258,7 +265,7 @@
         
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
-            transformedFilters,
+            finalFilters,
             includeCube,
             includeScore,
             pipCountFilter,
@@ -274,13 +281,13 @@
             player2BackCheckerFilter,
             player1CheckerInZoneFilter,
             player2CheckerInZoneFilter,
-            searchTextFilter, // Use the transformed searchTextFilter
+            searchTextFilter,
             player1AbsolutePipCountFilter,
             equityFilter,
             decisionTypeFilter,
             diceRollFilter,
-            `m"${movePatternFilter}"`, // Transform the move pattern filter
-            creationDateFilter // Add this line
+            movePatternFilter,
+            creationDateFilter
         );
         onClose();
     }
@@ -701,8 +708,8 @@
                         {/if}
                         {#if filter === 'Best Move or Cube Decision'}
                             <div class="search-text-container">
-                                <label for="movePatternFilter">(pattern1;pattern2;...)</label> <!-- Update this line -->
-                                <input type="text" id="movePatternFilter" bind:value={movePatternFilter} class="search-text-input" style="margin-left: 10px;" />
+                                <label for="movePattern">(pattern1;pattern2;...)</label>
+                                <input type="text" id="movePattern" bind:value={movePattern} class="search-text-input" style="margin-left: 10px;" />
                             </div>
                         {/if}
                         {#if filter === 'Creation Date'}
