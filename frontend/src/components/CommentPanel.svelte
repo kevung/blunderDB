@@ -24,11 +24,20 @@
         onClose();
     }
 
+    function adjustTextareaHeight() {
+        const textAreaEl = document.getElementById('commentTextArea');
+        if (textAreaEl) {
+            textAreaEl.style.height = 'auto';
+            textAreaEl.style.height = textAreaEl.scrollHeight + 'px';
+        }
+    }
+
     $: if (visible) {
        setTimeout(() => {
           const textAreaEl = document.getElementById('commentTextArea');
           if (textAreaEl) {
              textAreaEl.focus();
+             adjustTextareaHeight();
           }
        }, 0);
     }
@@ -46,6 +55,7 @@
             bind:value={$commentTextStore}
             placeholder="Type your comments here..."
             on:keydown={handleKeyDown}
+            on:input={adjustTextareaHeight}
         ></textarea>
     </div>
 {/if}
@@ -56,15 +66,16 @@
         bottom: 0; /* Above the status bar */
         left: 0;
         right: 0;
-        max-height: 50vh; /* Limit height to half the viewport */
-        min-height: 200px;
+        height: 178px;
         overflow-y: auto; /* Allow scrolling inside the comment zone */
         overflow-x: hidden; /* Disable horizontal scrolling inside the comment zone */
         background-color: white;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 25px;
+        padding: 10px;
         box-sizing: border-box; /* Include padding in width */
         z-index: 5;
+        font-size: 12px;
+        padding-top: 10px; /* Reduce padding to the top */
     }
 
     .close-icon {
@@ -76,9 +87,10 @@
         color: #666;
         cursor: pointer;
         background: none;
-        border: none;
+        border: none; /* Change border to none */
         padding: 0;
         transition: color 0.3s ease;
+        z-index: 10; /* Ensure the close icon is above other elements */
     }
 
     .close-icon:hover {
@@ -92,12 +104,14 @@
         height: 150px;
         padding: 8px;
         margin-bottom: 16px;
-        border: 1px solid rgba(0, 0, 0, 0);
+        border: 1px solid rgba(0, 0, 0, 0); /* Update border style */
         border-radius: 0px;
         outline: none;
         resize: none;
         background-color: white; /* Ensure background is opaque */
-        font-size: 18px;
+        font-size: 12px; /* Match font size with AnalysisPanel */
+        overflow: hidden;
+        margin-top: 0; /* Remove top margin */
     }
 </style>
 
