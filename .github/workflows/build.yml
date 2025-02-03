@@ -125,8 +125,8 @@ jobs:
 
       - name: Rename PDF files
         run: |
-          mv ./doc/build/pdf_en/blunderdb*-en.pdf ./doc/build/pdf_en/blunderDB-${{ steps.vars.outputs.version }}-en.pdf
-          mv ./doc/build/pdf_fr/blunderdb-*-fr.pdf ./doc/build/pdf_fr/blunderDB-${{ steps.vars.outputs.version }}-fr.pdf
+          find ./doc/build/pdf_en/ -name '*.pdf' -exec mv {} ./doc/build/pdf_en/blunderDB-${{ steps.vars.outputs.version }}-en.pdf \;
+          find ./doc/build/pdf_fr/ -name '*.pdf' -exec mv {} ./doc/build/pdf_fr/blunderDB-${{ steps.vars.outputs.version }}-fr.pdf \;
         shell: bash
 
       - name: Create index.html for redirection
