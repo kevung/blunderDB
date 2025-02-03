@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-03 13:56+0100\n"
+"POT-Creation-Date: 2025-02-03 21:22+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -274,6 +274,12 @@ msgid ""
 msgstr ""
 
 #: ../../source/cmd_mode.rst:91
+msgid ""
+"blunderDB considère que l'outfield s'étend entre le point 18 et le point "
+"7."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -682,6 +688,30 @@ msgid "L'adversaire a entre x et y pions dans la zone."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
+msgid "bo>x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x blots dans l'outfield."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "bo<x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x blots dans l'outfield."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "box,y"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y blots dans l'outfield."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
 msgid "t'mot1;mot2;...'"
 msgstr ""
 
@@ -731,13 +761,13 @@ msgstr ""
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:156
+#: ../../source/cmd_mode.rst:162
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:159
+#: ../../source/cmd_mode.rst:165
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -746,7 +776,7 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:165
+#: ../../source/cmd_mode.rst:171
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "

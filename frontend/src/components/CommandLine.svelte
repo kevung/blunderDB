@@ -106,7 +106,7 @@
                      const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
                      const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
                      const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
-                     const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || filter.startsWith('b')));
+                     const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || (filter.startsWith('b') && !filter.startsWith('bo'))));
                      const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
                      const player2GammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
                      const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B')));
@@ -141,6 +141,7 @@
                      const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
                      const searchTextMatch = command.match(/t["'][^"']*["']/);
                      const searchText = searchTextMatch ? searchTextMatch[0] : '';
+                     const player1OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bo>') || filter.startsWith('bo<') || filter.startsWith('bo')));
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
                      console.log('Move Pattern Filter:', movePatternFilter); // Add logging
@@ -166,6 +167,7 @@
                      console.log('decisionTypeFilter:', decisionTypeFilter);
                      console.log('diceRollFilter:', diceRollFilter);
                      console.log('dateFilter:', dateFilter);
+                     console.log('player1OutfieldBlotFilter:', player1OutfieldBlotFilter);
                      
                      onLoadPositionsByFilters(
                         filters,
@@ -190,7 +192,9 @@
                         decisionTypeFilter,
                         diceRollFilter,
                         movePatternFilter,
-                        dateFilter);
+                        dateFilter,
+                        player1OutfieldBlotFilter
+                     );
                   }
                } else {
                   statusBarTextStore.set('Search is only available in edit mode.');

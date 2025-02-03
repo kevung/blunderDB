@@ -561,7 +561,7 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 	return text, nil
 }
 
-func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool, diceRollFilter bool, movePatternFilter string, dateFilter string) ([]Position, error) {
+func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, includeScore bool, pipCountFilter string, winRateFilter string, gammonRateFilter string, backgammonRateFilter string, player2WinRateFilter string, player2GammonRateFilter string, player2BackgammonRateFilter string, player1CheckerOffFilter string, player2CheckerOffFilter string, player1BackCheckerFilter string, player2BackCheckerFilter string, player1CheckerInZoneFilter string, player2CheckerInZoneFilter string, searchText string, player1AbsolutePipCountFilter string, equityFilter string, decisionTypeFilter bool, diceRollFilter bool, movePatternFilter string, dateFilter string, player1OutfieldBlotFilter string) ([]Position, error) {
 	d.mu.Lock()
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
 	d.mu.Unlock()
@@ -610,7 +610,8 @@ func (d *Database) LoadPositionsByFilters(filter Position, includeCube bool, inc
 			(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
 			(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) &&
 			(!diceRollFilter || position.MatchesDiceRoll(filter)) &&
-			(dateFilter == "" || position.MatchesDateFilter(dateFilter, d)) {
+			(dateFilter == "" || position.MatchesDateFilter(dateFilter, d)) &&
+			(player1OutfieldBlotFilter == "" || position.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) {
 			if movePatternFilter != "" {
 				fmt.Printf("Checking move pattern filter: %s for position ID: %d\n", movePatternFilter, position.ID) // Add logging
 				if position.MatchesMovePattern(movePatternFilter, d) {
@@ -1095,21 +1096,21 @@ func (p *Position) MatchesBackgammonRate(filter string, d *Database) bool {
 		return false
 	}
 
-	if strings.HasPrefix(filter, "b>") {
+	if strings.HasPrefix(filter, "b>") && !strings.HasPrefix(filter, "bo>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
 			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
 			return false
 		}
 		return backgammonRate >= value
-	} else if strings.HasPrefix(filter, "b<") {
+	} else if strings.HasPrefix(filter, "b<") && !strings.HasPrefix(filter, "bo<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
 			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
 			return false
 		}
 		return backgammonRate <= value
-	} else if strings.HasPrefix(filter, "b") {
+	} else if strings.HasPrefix(filter, "b") && !strings.HasPrefix(filter, "bo") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
 			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
@@ -1623,6 +1624,52 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 		match := (creationDate.After(startDate) || creationDate.Equal(startDate)) && (creationDate.Before(endDate) || creationDate.Equal(endDate))
 		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
+	}
+	return false
+}
+
+// Add MatchesPlayer1OutfieldBlot method to Position type
+func (p *Position) MatchesPlayer1OutfieldBlot(filter string) bool {
+	outfieldBlots := 0
+	for i := 7; i <= 18; i++ {
+		if p.Board.Points[i].Color == 0 && p.Board.Points[i].Checkers == 1 {
+			outfieldBlots++
+		}
+	}
+
+	if strings.HasPrefix(filter, "bo>") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return outfieldBlots >= value
+	} else if strings.HasPrefix(filter, "bo<") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return outfieldBlots <= value
+	} else if strings.HasPrefix(filter, "bo") {
+		values := strings.Split(filter[2:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			return false
+		}
+		value1, err1 := strconv.Atoi(values[0])
+		value2, err2 := strconv.Atoi(values[1])
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return outfieldBlots >= minValue && outfieldBlots <= maxValue
 	}
 	return false
 }

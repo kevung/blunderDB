@@ -36,6 +36,7 @@
     let creationDateMax = ''; // Max value for creation date
     let creationDateRangeMin = ''; // Min value for creation date range
     let creationDateRangeMax = ''; // Max value for creation date range
+    let player1OutfieldBlotFilter = ''; // New filter for player 1 outfield blot
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -123,6 +124,12 @@
     let equityRangeMin = -1000; // Min value for equity range
     let equityRangeMax = 1000; // Max value for equity range
 
+    let player1OutfieldBlotOption = 'min'; // Default option for player 1 outfield blot
+    let player1OutfieldBlotMin = 0; // Min value for player 1 outfield blot
+    let player1OutfieldBlotMax = 15; // Max value for player 1 outfield blot
+    let player1OutfieldBlotRangeMin = 0; // Min value for player 1 outfield blot range
+    let player1OutfieldBlotRangeMax = 15; // Max value for player 1 outfield blot range
+
     let availableFilters = [
         'Include Cube',
         'Include Score',
@@ -143,6 +150,7 @@
         'Opponent Back Checker',
         'Player Checker in the Zone',
         'Opponent Checker in the Zone',
+        'Player Outfield Blot',
         'Search Text',
         'Best Move or Cube Decision',
         'Creation Date'
@@ -207,6 +215,8 @@
                 case 'Creation Date':
                     const formatDate = date => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
                     return creationDateOption === 'min' ? `T>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `T<${formatDate(creationDateMax)}` : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
+                case 'Player Outfield Blot':
+                    return player1OutfieldBlotFilter === 'min' ? `bo>${player1OutfieldBlotMin}` : player1OutfieldBlotFilter === 'max' ? `bo<${player1OutfieldBlotMax}` : `bo${player1OutfieldBlotRangeMin},${player1OutfieldBlotRangeMax}`;
                 default:
                     return '';
             }
@@ -217,7 +227,7 @@
         const pipCountFilter = transformedFilters.find(filter => filter.startsWith('p'));
         const winRateFilter = transformedFilters.find(filter => filter.startsWith('w'));
         const gammonRateFilter = transformedFilters.find(filter => filter.startsWith('g'));
-        const backgammonRateFilter = transformedFilters.find(filter => filter.startsWith('b'));
+        const backgammonRateFilter = transformedFilters.find(filter => filter.startsWith('b') && !filter.startsWith('bo'));
         const player2WinRateFilter = transformedFilters.find(filter => filter.startsWith('W'));
         const player2GammonRateFilter = transformedFilters.find(filter => filter.startsWith('G'));
         const player2BackgammonRateFilter = transformedFilters.find(filter => filter.startsWith('B'));
@@ -229,6 +239,7 @@
         const player2CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('Z'));
         const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
+        const player1OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('bo'));
 
         const decisionTypeFilter = transformedFilters.includes('d');
         const diceRollFilter = transformedFilters.includes('D');
@@ -262,6 +273,7 @@
         console.log('diceRollFilter:', diceRollFilter);
         console.log('movePatternFilter:', movePatternFilter);
         console.log('creationDateFilter:', creationDateFilter);
+        console.log('player1OutfieldBlotFilter:', player1OutfieldBlotFilter);
         
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
@@ -287,7 +299,8 @@
             decisionTypeFilter,
             diceRollFilter,
             movePatternFilter,
-            creationDateFilter
+            creationDateFilter,
+            player1OutfieldBlotFilter
         );
         onClose();
     }
@@ -382,6 +395,11 @@
         equityRangeMin = -1000;
         equityRangeMax = 1000;
         searchText = '';
+        player1OutfieldBlotOption = 'min';
+        player1OutfieldBlotMin = 0;
+        player1OutfieldBlotMax = 15;
+        player1OutfieldBlotRangeMin = 0;
+        player1OutfieldBlotRangeMax = 15;
     }
 
     onMount(() => {
@@ -696,6 +714,25 @@
                                         <input type="radio" bind:group={player2CheckerInZoneOption} value="range" /> Range
                                         <input type="number" bind:value={player2CheckerInZoneRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerInZoneOption !== 'range'} />
                                         <input type="number" bind:value={player2CheckerInZoneRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerInZoneOption !== 'range'} />
+                                    </label>
+                                </div>
+                            </div>
+                        {/if}
+                        {#if filter === 'Player Outfield Blot'}
+                            <div class="filter-options-container expanded">
+                                <div class="filter-options expanded">
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="min" /> Min
+                                        <input type="number" bind:value={player1OutfieldBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'min'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="max" /> Max
+                                        <input type="number" bind:value={player1OutfieldBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'max'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={player1OutfieldBlotOption} value="range" /> Range
+                                        <input type="number" bind:value={player1OutfieldBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'range'} />
+                                        <input type="number" bind:value={player1OutfieldBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>

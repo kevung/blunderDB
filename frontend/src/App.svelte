@@ -1609,7 +1609,9 @@
         decisionTypeFilter,
         diceRollFilter,
         movePatternFilter,
-        dateFilter) {
+        dateFilter,
+        player1OutfieldBlotFilter // Add new filter parameter
+    ) {
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1637,7 +1639,8 @@
         decisionTypeFilter,
         diceRollFilter,
         movePatternFilter,
-        dateFilter);
+        dateFilter,
+        player1OutfieldBlotFilter);
         try {
             const currentPosition = $positionStore;
 
@@ -1665,7 +1668,8 @@
                 decisionTypeFilter,
                 diceRollFilter,
                 movePatternFilter,
-                dateFilter);
+                dateFilter,
+                player1OutfieldBlotFilter);
                 
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 

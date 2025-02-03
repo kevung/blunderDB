@@ -809,6 +809,18 @@
                                 <td>Opponent checkers in zone between x and y</td>
                             </tr>
                             <tr>
+                                <td>bo>x</td>
+                                <td>Player outfield blot &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>bo&lt;x</td>
+                                <td>Player outfield blot &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>box,y</td>
+                                <td>Player outfield blot between x and y</td>
+                            </tr>
+                            <tr>
                                 <td>t"word1;word2;..."</td>
                                 <td>Search text</td>
                             </tr>

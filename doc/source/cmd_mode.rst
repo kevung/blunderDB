@@ -87,6 +87,9 @@ c'est-à-dire après le début de commande ``s``.
    blunderDB considère que le nombre de pions dans la zone est le nombre
    de pions situés entre le point 12 et le point 1.
 
+.. note::
+   blunderDB considère que l'outfield s'étend entre le point 18 et le point 7.
+
 .. tip::
    Les paramètres pour filtrer des positions peuvent être arbitrairement
    combinés.
@@ -145,6 +148,9 @@ c'est-à-dire après le début de commande ``s``.
    "Z>x", "L'adversaire a au moins x pions dans la zone."
    "Z<x", "L'adversaire a au plus x pions dans la zone."
    "Zx,y", "L'adversaire a entre x et y pions dans la zone."
+   "bo>x", "Le joueur a au moins x blots dans l'outfield."
+   "bo<x", "Le joueur a au plus x blots dans l'outfield."
+   "box,y", "Le joueur a entre x et y blots dans l'outfield."
    "t'mot1;mot2;...'", "Les commentaires de la position contiennent au moins un des mots."
    "m'motif1,motif2,...\'", "Les meilleurs coups de pions contenant au moins un des motifs."
    "m'ND,DT,DP,...\'", "Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass."
