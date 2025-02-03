@@ -131,11 +131,13 @@ jobs:
         with:
           name: blunderDB pdf docs
           path: |
-            */build/*/*.pdf
+            */build/pdf_en/*.pdf
+            */build/pdf_fr/*.pdf
 
       - name: Release
         uses: softprops/action-gh-release@v1
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            */build/*/*.pdf
+            */build/pdf_en/*.pdf
+            */build/pdf_fr/*.pdf
