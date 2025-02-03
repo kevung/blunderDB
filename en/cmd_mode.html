@@ -224,6 +224,10 @@
 <p class="admonition-title">Note</p>
 <p>blunderDB considers that the number of checkers in the zone is the number of checkers located between point 12 and point 1.</p>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>blunderDB considers the outfield to extend between point 18 and point 7.</p>
+</div>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>The parameters for filtering positions can be combined arbitrarily.</p>
@@ -386,22 +390,31 @@
 <tr class="row-even"><td><p>Zx,y</p></td>
 <td><p>The opponent has between x and y checkers in the zone.</p></td>
 </tr>
-<tr class="row-odd"><td><p>t’word1;word2;…’</p></td>
+<tr class="row-odd"><td><p>bo&gt;x</p></td>
+<td><p>The player has at least x blots in the outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>bo&lt;x</p></td>
+<td><p>The player has at most x blots in the outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>box,y</p></td>
+<td><p>The player has between x and y blots in the outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>t’word1;word2;…’</p></td>
 <td><p>The position comments contain at least one of the words.</p></td>
 </tr>
-<tr class="row-even"><td><p>m’pattern1,pattern2,…'</p></td>
+<tr class="row-odd"><td><p>m’pattern1,pattern2,…'</p></td>
 <td><p>The best checker moves containing at least one of the patterns.</p></td>
 </tr>
-<tr class="row-odd"><td><p>m’ND,DT,DP,…'</p></td>
+<tr class="row-even"><td><p>m’ND,DT,DP,…'</p></td>
 <td><p>The best cube decisions for No Double/Take, Double Take, Double Pass.</p></td>
 </tr>
-<tr class="row-even"><td><p>T&gt;x</p></td>
+<tr class="row-odd"><td><p>T&gt;x</p></td>
 <td><p>Date of position addition after x (YYYY/MM/DD).</p></td>
 </tr>
-<tr class="row-odd"><td><p>T&lt;x</p></td>
+<tr class="row-even"><td><p>T&lt;x</p></td>
 <td><p>Date of position addition before x (YYYY/MM/DD).</p></td>
 </tr>
-<tr class="row-even"><td><p>Tx,y</p></td>
+<tr class="row-odd"><td><p>Tx,y</p></td>
 <td><p>Date of position addition between x and y (YYYY/MM/DD).</p></td>
 </tr>
 </tbody>
