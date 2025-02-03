@@ -124,3 +124,9 @@ jobs:
           publish_branch: gh-pages
           keep_files: false  # This will clean the branch before deploying
 
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            */build/*/*.pdf
