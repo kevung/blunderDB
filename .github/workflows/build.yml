@@ -102,6 +102,15 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Set outputs
+        id: vars
+        run: |
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          else
+            echo "version=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+          fi
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -113,6 +122,12 @@ jobs:
         run: |
           cd ./doc
           python build.py
+
+      - name: Rename PDF files
+        run: |
+          mv ./doc/build/pdf_en/blunderdb*-en.pdf ./doc/build/pdf_en/blunderDB-${{ steps.vars.outputs.version }}-en.pdf
+          mv ./doc/build/pdf_fr/blunderdb-*-fr.pdf ./doc/build/pdf_fr/blunderDB-${{ steps.vars.outputs.version }}-fr.pdf
+        shell: bash
 
       - name: Create index.html for redirection
         run: |
