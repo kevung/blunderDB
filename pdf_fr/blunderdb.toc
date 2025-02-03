@@ -1,0 +1,46 @@
+\babel@toc {nil}{}\relax 
+\contentsline {chapter}{\numberline {1}Historique des versions}{3}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Sommaire}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Téléchargement et installation}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Manuel}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Description de l’interface}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Le mode NORMAL}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Le mode EDIT}{7}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Le mode COMMAND}{7}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}Guide utilisateur}{7}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Créer une nouvelle base de données}{8}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Ouvrir une base de donnée existante}{8}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Editer une position}{8}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Ajouter une position à la base de données}{8}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Etiqueter une position}{9}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Supprimer une position}{9}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Import une position depuis XG}{9}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.8}Afficher l’analyse d’une position importée depuis XG}{9}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.9}Exporter une position vers XG}{9}{subsection.2.3.9}%
+\contentsline {subsection}{\numberline {2.3.10}Visualiser les différentes positions}{10}{subsection.2.3.10}%
+\contentsline {subsection}{\numberline {2.3.11}Rechercher des positions selon des critères}{10}{subsection.2.3.11}%
+\contentsline {section}{\numberline {2.4}Liste des commandes}{10}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Opérations globales}{10}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Mode NORMAL}{11}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Mode EDIT}{11}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Filtres de recherche}{11}{subsection.2.4.4}%
+\contentsline {section}{\numberline {2.5}Raccourcis clavier}{13}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Général}{13}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Mode NORMAL}{13}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Mode EDIT}{14}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Mode COMMAND}{14}{subsection.2.5.4}%
+\contentsline {section}{\numberline {2.6}Foire aux questions}{14}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Quel est l’utilité de blunderDB?}{14}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}Qu’est ce qui a motivé la création de blunderDB?}{14}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}Comment sauvegarder la base de données courante?}{14}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{15}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.5}Quel format de données utilise blunderDB?}{15}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.6}Quelles ont été les principes de conception de blunderDB?}{15}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.7}Quel est l’architecture logicielle de blunderDB?}{15}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.8}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{15}{subsection.2.6.8}%
+\contentsline {section}{\numberline {2.7}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{15}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Avertissement Windows SmartScreen}{16}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Blocage Windows Defender}{16}{subsection.2.7.2}%
+\contentsline {chapter}{\numberline {3}Contacts}{25}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Faire un don}{27}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Remerciements}{29}{chapter.5}%

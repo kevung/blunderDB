@@ -1,0 +1,46 @@
+\babel@toc {english}{}\relax 
+\contentsline {chapter}{\numberline {1}Version history}{3}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Table of contents}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Download and Installation}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Manual}{5}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Description of the interface}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}NORMAL mode}{7}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}EDIT mode}{7}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}COMMAND mode}{7}{subsection.2.2.4}%
+\contentsline {section}{\numberline {2.3}User Guide}{7}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Create a new database}{7}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Open an existing database}{8}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Edit a position}{8}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Add a position to the database}{8}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Tag a position}{8}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Delete a position}{9}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Import a position from XG}{9}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.8}Display the analysis of a position imported from XG}{9}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.9}Export a position to XG}{9}{subsection.2.3.9}%
+\contentsline {subsection}{\numberline {2.3.10}View the different positions}{9}{subsection.2.3.10}%
+\contentsline {subsection}{\numberline {2.3.11}Search for positions based on criteria}{9}{subsection.2.3.11}%
+\contentsline {section}{\numberline {2.4}List of commands}{10}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Global operations}{10}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}NORMAL Mode}{10}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}EDIT Mode}{11}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Search Filters}{11}{subsection.2.4.4}%
+\contentsline {section}{\numberline {2.5}Keyboard shortcuts}{13}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}General}{13}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}NORMAL mode.}{13}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}EDIT mode}{13}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}COMMAND mode.}{14}{subsection.2.5.4}%
+\contentsline {section}{\numberline {2.6}Frequently Asked Questions (FAQ)}{14}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}What is the purpose of blunderDB?}{14}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}What motivated the creation of blunderDB?}{14}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}How to save the state of the current database?}{14}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}Can I modify, copy, share blunderDB?}{14}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.5}What data format does blunderDB use?}{14}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.6}What were the design principles of blunderDB?}{14}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.7}What is the software architecture of blunderDB?}{14}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.8}On which platforms does blunderDB run?}{15}{subsection.2.6.8}%
+\contentsline {section}{\numberline {2.7}Windows Annex: False Detection of blunderDB as Malware}{15}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Windows SmartScreen Warning}{15}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Windows Defender Blocking}{16}{subsection.2.7.2}%
+\contentsline {chapter}{\numberline {3}Contact}{25}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Donate}{27}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Acknowledgments}{29}{chapter.5}%
