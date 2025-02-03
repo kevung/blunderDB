@@ -91,7 +91,10 @@ jobs:
 
       - name: Add macOS perms
         if: runner.os == 'macOS'
-        run: chmod +x build/bin/*/Contents/MacOS/*
+        run: |
+          chmod +x build/bin/*/Contents/MacOS/*
+          mv build/bin/*/Contents/MacOS/* build/bin/
+          rm -rf build/bin/blunderdb.app
         shell: bash
 
       # - name: Build .app zip file
