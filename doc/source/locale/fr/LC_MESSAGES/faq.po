@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-12-30 17:14+0100\n"
+"POT-Creation-Date: 2025-02-04 11:32+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -152,7 +152,7 @@ msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr ""
 
 #: ../../source/faq.rst:93
-msgid "blunderDB fonctionne sur Windows et Linux."
+msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr ""
 
 #~ msgid ""
@@ -223,5 +223,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Tout à fait. Il est exécutable avec Wine."
+#~ msgstr ""
+
+#~ msgid "blunderDB fonctionne sur Windows et Linux."
 #~ msgstr ""
 
