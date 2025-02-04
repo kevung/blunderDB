@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 11:32+0100\n"
-"PO-Revision-Date: 2025-02-04 11:33+0100\n"
+"POT-Creation-Date: 2025-02-04 11:37+0100\n"
+"PO-Revision-Date: 2025-02-04 12:15+0100\n"
 "Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -195,6 +195,18 @@ msgstr "On which platforms does blunderDB run?"
 #: ../../source/faq.rst:93
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB runs on Windows, Linux and Mac."
+
+#: ../../source/faq.rst:96
+msgid "D'où vient l'icône de blunderDB?"
+msgstr "Where does the blunderDB icon come from?"
+
+#: ../../source/faq.rst:98
+msgid ""
+"L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
+"<https://commons.wikimedia.org/wiki/SMirC/>`_."
+msgstr ""
+"The blunderDB icon is the \"goggling\" emoticon from the  `SMirC series <"
+"https://commons.wikimedia.org/wiki/SMirC>`_."
 
 #~ msgid "Tout à fait. Il est exécutable avec Wine."
 #~ msgstr " Absolutely. It can be run with Wine."

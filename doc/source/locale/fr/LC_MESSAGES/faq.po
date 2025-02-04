@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 11:32+0100\n"
+"POT-Creation-Date: 2025-02-04 11:37+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -155,6 +155,16 @@ msgstr ""
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr ""
 
+#: ../../source/faq.rst:96
+msgid "D'où vient l'icône de blunderDB?"
+msgstr ""
+
+#: ../../source/faq.rst:98
+msgid ""
+"L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
+"<https://commons.wikimedia.org/wiki/SMirC/>`_."
+msgstr ""
+
 #~ msgid ""
 #~ "Une autre utilisation commode de "
 #~ "blunderDB est la constitution de "
@@ -226,5 +236,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "blunderDB fonctionne sur Windows et Linux."
+#~ msgstr ""
+
+#~ msgid "D'où vient l'icon de blunderDB?"
 #~ msgstr ""
 
