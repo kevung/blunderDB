@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.2.4)  4 FEB 2025 09:26
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.2.4)  4 FEB 2025 10:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -882,35 +882,35 @@ ng, run the com-mand \T1/txtt/m/n/10 chmod +x ./
 <smartscreen_en.png, id=331, 502.12593pt x 191.21437pt>
 File: smartscreen_en.png Graphic file (type png)
 <use smartscreen_en.png>
-Package pdftex.def Info: smartscreen_en.png  used on input line 1899.
+Package pdftex.def Info: smartscreen_en.png  used on input line 1906.
 (pdftex.def)             Requested size: 469.77652pt x 178.89539pt.
  [16 <./smartscreen_en.png>]
 <blunderdb_potential_virus.png, id=341, 417.05812pt x 125.71968pt>
 File: blunderdb_potential_virus.png Graphic file (type png)
 <use blunderdb_potential_virus.png>
-Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 1947
+Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 1954
 .
 (pdftex.def)             Requested size: 417.0571pt x 125.71936pt.
 <threat_found_action_needed.png, id=343, 365.86688pt x 240.9pt>
 File: threat_found_action_needed.png Graphic file (type png)
 <use threat_found_action_needed.png>
-Package pdftex.def Info: threat_found_action_needed.png  used on input line 195
-6.
+Package pdftex.def Info: threat_found_action_needed.png  used on input line 196
+3.
 (pdftex.def)             Requested size: 365.86598pt x 240.8994pt.
 <win1.png, id=346, 584.93532pt x 587.94656pt>
 File: win1.png Graphic file (type png)
 <use win1.png>
-Package pdftex.def Info: win1.png  used on input line 1984.
+Package pdftex.def Info: win1.png  used on input line 1991.
 (pdftex.def)             Requested size: 469.76967pt x 472.17908pt.
 <win2.png, id=347, 604.50844pt x 478.78876pt>
 File: win2.png Graphic file (type png)
 <use win2.png>
-Package pdftex.def Info: win2.png  used on input line 2004.
+Package pdftex.def Info: win2.png  used on input line 2011.
 (pdftex.def)             Requested size: 469.75288pt x 372.05833pt.
 <win3.png, id=348, 605.26125pt x 478.03593pt>
 File: win3.png Graphic file (type png)
 <use win3.png>
-Package pdftex.def Info: win3.png  used on input line 2024.
+Package pdftex.def Info: win3.png  used on input line 2031.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
 
 [17 <./blunderdb_potential_virus.png> <./threat_found_action_needed.png>]
@@ -918,22 +918,22 @@ Package pdftex.def Info: win3.png  used on input line 2024.
 <win4.png, id=374, 601.4972pt x 477.28313pt>
 File: win4.png Graphic file (type png)
 <use win4.png>
-Package pdftex.def Info: win4.png  used on input line 2044.
+Package pdftex.def Info: win4.png  used on input line 2051.
 (pdftex.def)             Requested size: 469.77168pt x 372.74542pt.
 <win5.png, id=375, 604.50844pt x 479.54156pt>
 File: win5.png Graphic file (type png)
 <use win5.png>
-Package pdftex.def Info: win5.png  used on input line 2064.
+Package pdftex.def Info: win5.png  used on input line 2071.
 (pdftex.def)             Requested size: 469.75288pt x 372.65063pt.
 <win6.png, id=376, 461.47406pt x 357.58594pt>
 File: win6.png Graphic file (type png)
 <use win6.png>
-Package pdftex.def Info: win6.png  used on input line 2070.
+Package pdftex.def Info: win6.png  used on input line 2077.
 (pdftex.def)             Requested size: 461.47292pt x 357.58505pt.
 <win7.png, id=377, 605.26125pt x 478.03593pt>
 File: win7.png Graphic file (type png)
 <use win7.png>
-Package pdftex.def Info: win7.png  used on input line 2076.
+Package pdftex.def Info: win7.png  used on input line 2083.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
  [21 <./win4.png>]
 [22 <./win5.png>] [23 <./win6.png>] [24 <./win7.png>] [25] [26
@@ -959,7 +959,7 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 Here is how much of TeX's memory you used:
  17010 strings out of 476182
  289562 string characters out of 5795596
- 1972975 words of memory out of 5000000
+ 1973975 words of memory out of 5000000
  38536 multiletter control sequences out of 15000+600000
  608304 words of font info for 74 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
@@ -970,7 +970,7 @@ s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 tt.pfb>
-Output written on blunderdb.pdf (35 pages, 442370 bytes).
+Output written on blunderdb.pdf (35 pages, 442420 bytes).
 PDF statistics:
  498 PDF objects out of 1000 (max. 8388607)
  423 compressed objects within 5 object streams
