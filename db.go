@@ -590,6 +590,7 @@ func (d *Database) LoadPositionsByFilters(
 	player1JanBlotFilter string,
 	player2JanBlotFilter string,
 	noContactFilter bool,
+	mirrorFilter bool,
 ) ([]Position, error) {
 	d.mu.Lock()
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
@@ -618,33 +619,34 @@ func (d *Database) LoadPositionsByFilters(
 
 		fmt.Printf("Checking position ID: %d\n", position.ID) // Add logging
 
-		if position.MatchesCheckerPosition(filter) &&
-			(!includeCube || position.MatchesCubePosition(filter)) &&
-			(!includeScore || position.MatchesScorePosition(filter)) &&
-			(!decisionTypeFilter || position.MatchesDecisionType(filter)) &&
-			(pipCountFilter == "" || position.MatchesPipCountFilter(pipCountFilter)) &&
-			(winRateFilter == "" || position.MatchesWinRate(winRateFilter, d)) &&
-			(gammonRateFilter == "" || position.MatchesGammonRate(gammonRateFilter, d)) &&
-			(backgammonRateFilter == "" || position.MatchesBackgammonRate(backgammonRateFilter, d)) &&
-			(player2WinRateFilter == "" || position.MatchesPlayer2WinRate(player2WinRateFilter, d)) &&
-			(player2GammonRateFilter == "" || position.MatchesPlayer2GammonRate(player2GammonRateFilter, d)) &&
-			(player2BackgammonRateFilter == "" || position.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
-			(player1CheckerOffFilter == "" || position.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
-			(player2CheckerOffFilter == "" || position.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
-			(player1BackCheckerFilter == "" || position.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
-			(player2BackCheckerFilter == "" || position.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
-			(player1CheckerInZoneFilter == "" || position.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
-			(player2CheckerInZoneFilter == "" || position.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
-			(searchText == "" || position.MatchesSearchText(searchText, d)) &&
-			(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
-			(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) &&
-			(!diceRollFilter || position.MatchesDiceRoll(filter)) &&
-			(dateFilter == "" || position.MatchesDateFilter(dateFilter, d)) &&
-			(player1OutfieldBlotFilter == "" || position.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
-			(player2OutfieldBlotFilter == "" || position.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
-			(player1JanBlotFilter == "" || position.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
-			(player2JanBlotFilter == "" || position.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
-			(!noContactFilter || position.MatchesNoContact()) {
+		if (!mirrorFilter && position.MatchesCheckerPosition(filter)) ||
+			(mirrorFilter && position.MatchesMirrorPosition(filter)) &&
+				(!includeCube || position.MatchesCubePosition(filter)) &&
+				(!includeScore || position.MatchesScorePosition(filter)) &&
+				(!decisionTypeFilter || position.MatchesDecisionType(filter)) &&
+				(pipCountFilter == "" || position.MatchesPipCountFilter(pipCountFilter)) &&
+				(winRateFilter == "" || position.MatchesWinRate(winRateFilter, d)) &&
+				(gammonRateFilter == "" || position.MatchesGammonRate(gammonRateFilter, d)) &&
+				(backgammonRateFilter == "" || position.MatchesBackgammonRate(backgammonRateFilter, d)) &&
+				(player2WinRateFilter == "" || position.MatchesPlayer2WinRate(player2WinRateFilter, d)) &&
+				(player2GammonRateFilter == "" || position.MatchesPlayer2GammonRate(player2GammonRateFilter, d)) &&
+				(player2BackgammonRateFilter == "" || position.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
+				(player1CheckerOffFilter == "" || position.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
+				(player2CheckerOffFilter == "" || position.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
+				(player1BackCheckerFilter == "" || position.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
+				(player2BackCheckerFilter == "" || position.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
+				(player1CheckerInZoneFilter == "" || position.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
+				(player2CheckerInZoneFilter == "" || position.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
+				(searchText == "" || position.MatchesSearchText(searchText, d)) &&
+				(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
+				(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) &&
+				(!diceRollFilter || position.MatchesDiceRoll(filter)) &&
+				(dateFilter == "" || position.MatchesDateFilter(dateFilter, d)) &&
+				(player1OutfieldBlotFilter == "" || position.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
+				(player2OutfieldBlotFilter == "" || position.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
+				(player1JanBlotFilter == "" || position.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
+				(player2JanBlotFilter == "" || position.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
+				(!noContactFilter || position.MatchesNoContact()) {
 			if movePatternFilter != "" {
 				fmt.Printf("Checking move pattern filter: %s for position ID: %d\n", movePatternFilter, position.ID) // Add logging
 				if position.MatchesMovePattern(movePatternFilter, d) {
@@ -1864,4 +1866,33 @@ func (p *Position) MatchesNoContact() bool {
 
 	// Compare indices to determine if there is no contact
 	return furthestPlayerChecker < furthestOpponentChecker
+}
+
+func (p *Position) MatchesMirrorPosition(filter Position) bool {
+	mirroredPosition := p.Mirror()
+	return p.MatchesCheckerPosition(filter) || mirroredPosition.MatchesCheckerPosition(filter)
+}
+
+// Mirror creates a mirrored version of the current Position.
+// It reverses the board points, swaps the bearoff positions,
+// changes the player on roll, swaps the scores, and changes the cube owner.
+// Returns the mirrored Position.
+func (p *Position) Mirror() Position {
+	mirrored := *p
+	for i, point := range p.Board.Points {
+		mirrored.Board.Points[25-i] = Point{
+			Color:    point.Color,
+			Checkers: point.Checkers,
+		}
+		if point.Color != -1 {
+			mirrored.Board.Points[25-i].Color = 1 - point.Color
+		}
+	}
+	mirrored.Board.Bearoff[0], mirrored.Board.Bearoff[1] = p.Board.Bearoff[1], p.Board.Bearoff[0]
+	mirrored.PlayerOnRoll = 1 - p.PlayerOnRoll
+	mirrored.Score[0], mirrored.Score[1] = p.Score[1], p.Score[0]
+	if p.Cube.Owner != -1 {
+		mirrored.Cube.Owner = 1 - p.Cube.Owner
+	}
+	return mirrored
 }

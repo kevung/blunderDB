@@ -30,6 +30,7 @@
     let equityFilter = '';
     let decisionTypeFilter = false;
     let diceRollFilter = false;
+    let mirrorPositionFilter = false;
     let movePattern = '';
     let creationDateOption = 'min'; // Default option for creation date
     let creationDateMin = ''; // Min value for creation date
@@ -154,6 +155,7 @@
         'Include Decision Type',
         'Include Dice Roll',
         'No Contact',
+        'Mirror Position',
         'Pipcount Difference',
         'Player Absolute Pipcount',
         'Equity (millipoints)',
@@ -202,6 +204,8 @@
                     return 'D';
                 case 'No Contact':
                     return 'nc';
+                case 'Mirror Position':
+                    return 'M';
                 case 'Pipcount Difference':
                     return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
                 case 'Player Absolute Pipcount':
@@ -255,6 +259,7 @@
         const includeCube = transformedFilters.includes('cube');
         const includeScore = transformedFilters.includes('score');
         const noContactFilter = transformedFilters.includes('nc');
+        const mirrorPositionFilter = transformedFilters.includes('M');
         const pipCountFilter = transformedFilters.find(filter => filter.startsWith('p'));
         const winRateFilter = transformedFilters.find(filter => filter.startsWith('w'));
         const gammonRateFilter = transformedFilters.find(filter => filter.startsWith('g'));
@@ -312,6 +317,7 @@
         console.log('player1JanBlotFilter:', player1JanBlotFilter);
         console.log('player2JanBlotFilter:', player2JanBlotFilter);
         console.log('noContactFilter:', noContactFilter);
+        console.log('mirrorPositionFilter:', mirrorPositionFilter);
         
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
@@ -342,7 +348,8 @@
             player2OutfieldBlotFilter,
             player1JanBlotFilter,
             player2JanBlotFilter,
-            noContactFilter
+            noContactFilter,
+            mirrorPositionFilter
         );
         onClose();
     }
@@ -458,6 +465,7 @@
         player2JanBlotRangeMin = 0;
         player2JanBlotRangeMax = 15;
         noContactFilter = false;
+        mirrorPositionFilter = false;
     }
 
     onMount(() => {

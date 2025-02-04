@@ -104,6 +104,7 @@
                      const noContactFilter = filters.includes('nc');
                      const decisionTypeFilter = filters.includes('d');
                      const diceRollFilter = filters.includes('D');
+                     const mirrorPositionFilter = filters.includes('M');
                      const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
                      const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
                      const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
@@ -177,6 +178,7 @@
                      console.log('player1JanBlotFilter:', player1JanBlotFilter);
                      console.log('player2JanBlotFilter:', player2JanBlotFilter);
                      console.log('noContactFilter:', noContactFilter);
+                     console.log('mirrorPositionFilter:', mirrorPositionFilter);
                      
                      onLoadPositionsByFilters(
                         filters,
@@ -207,6 +209,7 @@
                         player1JanBlotFilter,
                         player2JanBlotFilter,
                         noContactFilter,
+                        mirrorPositionFilter
                      );
                   }
                } else {

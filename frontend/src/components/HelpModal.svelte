@@ -633,6 +633,10 @@
                                 <td>Include non-contact positions</td>
                             </tr>
                             <tr>
+                                <td>M</td>
+                                <td>Include mirrored positions</td>
+                            </tr>
+                            <tr>
                                 <td>p>x</td>
                                 <td>Pip count &gt; x</td>
                             </tr>
