@@ -913,7 +913,7 @@
                     <h3>Acknowledgements</h3>
                     <p>I dedicate this small software to my partner <strong>Anne-Claire</strong> and our dear daughter <strong>Perrine</strong>. I would like to especially thank some friends:</p>
                     <ul>
-                        <li><strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to encourage me with kindness and patience in the face of my poor attempts to play better.</li>
+                        <li><strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to support me despite my poor attempts to play better.</li>
                         <li><strong>Nicolas Harmand</strong>, a joyful companion for over a decade in great adventures, and a fantastic game partner since he caught the backgammon bug.</li>
                     </ul>
                     <p>The Kazaross-XG2 Match Equity Table (MET) is credited to <strong>Neil Kazaross</strong>.</p>
