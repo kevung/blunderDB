@@ -105,6 +105,7 @@ c'est-à-dire après le début de commande ``s``.
    "cube, cub, cu, c", "La position vérifie la configuration du cube."
    "score, sco, sc, s", "La position vérifie le score."
    "d", "La position vérifie le type de décision (pion ou cube)."
+   "nc", "La position est sans contact."
    "D", "La position vérifie le lancer de dés."
    "p>x", "Le joueur a au moins x pips de retard à la course."
    "p<x", "Le joueur a au plus x pips de retard à la course."
