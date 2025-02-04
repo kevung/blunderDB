@@ -38,6 +38,7 @@
 \contentsline {subsection}{\numberline {2.6.6}What were the design principles of blunderDB?}{15}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}What is the software architecture of blunderDB?}{15}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}On which platforms does blunderDB run?}{16}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}Where does the blunderDB icon come from?}{16}{subsection.2.6.9}%
 \contentsline {section}{\numberline {2.7}Windows Annex: False Detection of blunderDB as Malware}{16}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Windows SmartScreen Warning}{16}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Windows Defender Blocking}{17}{subsection.2.7.2}%
