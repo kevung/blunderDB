@@ -101,6 +101,7 @@
                      const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
                      const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
                      const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
+                     const noContactFilter = filters.includes('nc');
                      const decisionTypeFilter = filters.includes('d');
                      const diceRollFilter = filters.includes('D');
                      const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
@@ -175,6 +176,7 @@
                      console.log('player2OutfieldBlotFilter:', player2OutfieldBlotFilter);
                      console.log('player1JanBlotFilter:', player1JanBlotFilter);
                      console.log('player2JanBlotFilter:', player2JanBlotFilter);
+                     console.log('noContactFilter:', noContactFilter);
                      
                      onLoadPositionsByFilters(
                         filters,
@@ -203,7 +205,8 @@
                         player1OutfieldBlotFilter,
                         player2OutfieldBlotFilter,
                         player1JanBlotFilter,
-                        player2JanBlotFilter
+                        player2JanBlotFilter,
+                        noContactFilter,
                      );
                   }
                } else {

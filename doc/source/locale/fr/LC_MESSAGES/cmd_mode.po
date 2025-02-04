@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 00:29+0100\n"
+"POT-Creation-Date: 2025-02-04 10:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -315,6 +315,14 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le type de décision (pion ou cube)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "nc"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position est sans contact."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -837,13 +845,13 @@ msgstr ""
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:174
+#: ../../source/cmd_mode.rst:175
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:177
+#: ../../source/cmd_mode.rst:178
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -852,7 +860,7 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:183
+#: ../../source/cmd_mode.rst:184
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "

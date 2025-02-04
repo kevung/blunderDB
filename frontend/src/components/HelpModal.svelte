@@ -629,6 +629,10 @@
                                 <td>Include dice roll</td>
                             </tr>
                             <tr>
+                                <td>nc</td>
+                                <td>Include non-contact positions</td>
+                            </tr>
+                            <tr>
                                 <td>p>x</td>
                                 <td>Pip count &gt; x</td>
                             </tr>

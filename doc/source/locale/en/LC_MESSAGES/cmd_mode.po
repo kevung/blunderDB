@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 00:29+0100\n"
-"PO-Revision-Date: 2025-02-04 00:32+0100\n"
-"Last-Translator: unger <kevin.unger@proton.me>\n"
+"POT-Creation-Date: 2025-02-04 10:20+0100\n"
+"PO-Revision-Date: 2025-02-04 10:21+0100\n"
+"Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.1\n"
+"X-Generator: Lokalize 23.08.5\n"
 
 #: ../../source/cmd_mode.rst:4
 msgid "Liste des commandes"
@@ -327,6 +327,14 @@ msgstr "d"
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le type de décision (pion ou cube)."
 msgstr "The position checks the dice or the cube decision."
+
+#: ../../source/cmd_mode.rst:1
+msgid "nc"
+msgstr "nc"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position est sans contact."
+msgstr "The position has no contact."
 
 #: ../../source/cmd_mode.rst:1
 msgid "D"
@@ -848,7 +856,7 @@ msgstr "Tx,y"
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr "Date of position addition between x and y (YYYY/MM/DD)."
 
-#: ../../source/cmd_mode.rst:174
+#: ../../source/cmd_mode.rst:175
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
@@ -856,7 +864,7 @@ msgstr ""
 "Filtering positions based on the dice roll (`D`) necessarily implies "
 "filtering positions based on the type of decision (`d`)."
 
-#: ../../source/cmd_mode.rst:177
+#: ../../source/cmd_mode.rst:178
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -870,7 +878,7 @@ msgstr ""
 "ahead in the race. `p50,70`: the player is between 50 and 70 pips behind "
 "in the race."
 
-#: ../../source/cmd_mode.rst:183
+#: ../../source/cmd_mode.rst:184
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1223,3 +1231,5 @@ msgstr ""
 
 #~ msgid "'tag_ou_motcle'"
 #~ msgstr "'tag_or_keyword'"
+
+

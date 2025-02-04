@@ -589,6 +589,7 @@ func (d *Database) LoadPositionsByFilters(
 	player2OutfieldBlotFilter string,
 	player1JanBlotFilter string,
 	player2JanBlotFilter string,
+	noContactFilter bool,
 ) ([]Position, error) {
 	d.mu.Lock()
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
@@ -642,7 +643,8 @@ func (d *Database) LoadPositionsByFilters(
 			(player1OutfieldBlotFilter == "" || position.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
 			(player2OutfieldBlotFilter == "" || position.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
 			(player1JanBlotFilter == "" || position.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
-			(player2JanBlotFilter == "" || position.MatchesPlayer2JanBlot(player2JanBlotFilter)) {
+			(player2JanBlotFilter == "" || position.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
+			(!noContactFilter || position.MatchesNoContact()) {
 			if movePatternFilter != "" {
 				fmt.Printf("Checking move pattern filter: %s for position ID: %d\n", movePatternFilter, position.ID) // Add logging
 				if position.MatchesMovePattern(movePatternFilter, d) {
@@ -1841,4 +1843,25 @@ func (p *Position) MatchesPlayer2JanBlot(filter string) bool {
 		return opponentJanBlots >= minValue && opponentJanBlots <= maxValue
 	}
 	return false
+}
+
+// Add MatchesNoContact method to Position type
+func (p *Position) MatchesNoContact() bool {
+	var furthestPlayerChecker, furthestOpponentChecker int
+
+	// Initialize to invalid indices
+	furthestPlayerChecker = -1
+	furthestOpponentChecker = 26
+
+	for i := 0; i < len(p.Board.Points); i++ {
+		if p.Board.Points[i].Color == 0 && p.Board.Points[i].Checkers > 0 {
+			furthestPlayerChecker = i
+		}
+		if p.Board.Points[25-i].Color == 1 && p.Board.Points[25-i].Checkers > 0 {
+			furthestOpponentChecker = 25 - i
+		}
+	}
+
+	// Compare indices to determine if there is no contact
+	return furthestPlayerChecker < furthestOpponentChecker
 }
