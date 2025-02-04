@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 11:11+0100\n"
-"PO-Revision-Date: 2025-02-04 11:12+0100\n"
+"POT-Creation-Date: 2025-02-04 14:00+0100\n"
+"PO-Revision-Date: 2025-02-04 14:01+0100\n"
 "Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -349,8 +349,8 @@ msgid "M"
 msgstr "M"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position a la structure de pions et celle miroir."
-msgstr "The position has the checker structure and or its mirror one."
+msgid "La position ou celle miroir vérifie les filtres."
+msgstr "The position or the mirror one meets the filters."
 
 #: ../../source/cmd_mode.rst:1
 msgid "p>x"
@@ -1239,5 +1239,8 @@ msgstr ""
 
 #~ msgid "'tag_ou_motcle'"
 #~ msgstr "'tag_or_keyword'"
+
+#~ msgid "La position a la structure de pions et celle miroir."
+#~ msgstr "The position has the checker structure and or its mirror one."
 
 

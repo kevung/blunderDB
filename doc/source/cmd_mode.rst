@@ -107,7 +107,7 @@ c'est-à-dire après le début de commande ``s``.
    "d", "La position vérifie le type de décision (pion ou cube)."
    "D", "La position vérifie le lancer de dés."
    "nc", "La position est sans contact."
-   "M", "La position a la structure de pions et celle miroir."
+   "M", "La position ou celle miroir vérifie les filtres."
    "p>x", "Le joueur a au moins x pips de retard à la course."
    "p<x", "Le joueur a au plus x pips de retard à la course."
    "px,y", "Le joueur a entre x et y pips de retard à la course."

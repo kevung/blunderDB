@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 11:11+0100\n"
+"POT-Creation-Date: 2025-02-04 14:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -338,7 +338,7 @@ msgid "M"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position a la structure de pions et celle miroir."
+msgid "La position ou celle miroir vérifie les filtres."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -1291,5 +1291,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "La position est la structure de pions et celle miroir."
+#~ msgstr ""
+
+#~ msgid "La position a la structure de pions et celle miroir."
 #~ msgstr ""
 
