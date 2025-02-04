@@ -134,8 +134,8 @@ fille Perrine. Je tiens à remercier tout particulièrement quelques amis:
 
 * *Tristan Remille*, de m'avoir initié au backgammon avec joie et
   bienveillance; de montrer la Voie dans la compréhension de ce
-  merveilleux jeu; de continuer à m'encourager avec gentillesse et
-  patience face à mes piètres tentatives de mieux jouer.
+  merveilleux jeu; de continuer à m'encourager malgré mes piètres
+  tentatives de mieux jouer.
 
 * *Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine
   d'années dans de chouettes aventures, et un fantastique partenaire de jeu
