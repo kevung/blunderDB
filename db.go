@@ -98,6 +98,18 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	_, err = d.db.Exec(`
+        CREATE TABLE IF NOT EXISTS command_history (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            command TEXT,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+        )
+    `)
+	if err != nil {
+		fmt.Println("Error creating command_history table:", err)
+		return err
+	}
+
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
@@ -125,7 +137,7 @@ func (d *Database) OpenDatabase(path string) error {
 	}
 
 	// Check if the required tables exist
-	requiredTables := []string{"position", "analysis", "comment", "metadata"}
+	requiredTables := []string{"position", "analysis", "comment", "metadata", "command_history"}
 	for _, table := range requiredTables {
 		var tableName string
 		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&tableName)
@@ -1745,4 +1757,41 @@ func (p *Position) MatchesPlayer2OutfieldBlot(filter string) bool {
 		return opponentOutfieldBlots >= minValue && opponentOutfieldBlots <= maxValue
 	}
 	return false
+}
+
+// SaveCommand saves a command to the command_history table
+func (d *Database) SaveCommand(command string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	_, err := d.db.Exec(`INSERT INTO command_history (command) VALUES (?)`, command)
+	if err != nil {
+		fmt.Println("Error saving command:", err)
+		return err
+	}
+	return nil
+}
+
+// LoadCommandHistory loads the command history from the command_history table
+func (d *Database) LoadCommandHistory() ([]string, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	rows, err := d.db.Query(`SELECT command FROM command_history ORDER BY timestamp ASC`)
+	if err != nil {
+		fmt.Println("Error loading command history:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var history []string
+	for rows.Next() {
+		var command string
+		if err = rows.Scan(&command); err != nil {
+			fmt.Println("Error scanning command:", err)
+			return nil, err
+		}
+		history = append(history, command)
+	}
+	return history, nil
 }

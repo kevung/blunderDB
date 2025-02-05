@@ -34,6 +34,10 @@ export function LoadAnalysis(arg1) {
   return window['go']['main']['Database']['LoadAnalysis'](arg1);
 }
 
+export function LoadCommandHistory() {
+  return window['go']['main']['Database']['LoadCommandHistory']();
+}
+
 export function LoadComment(arg1) {
   return window['go']['main']['Database']['LoadComment'](arg1);
 }
@@ -60,6 +64,10 @@ export function PositionExists(arg1) {
 
 export function SaveAnalysis(arg1, arg2) {
   return window['go']['main']['Database']['SaveAnalysis'](arg1, arg2);
+}
+
+export function SaveCommand(arg1) {
+  return window['go']['main']['Database']['SaveCommand'](arg1);
 }
 
 export function SaveComment(arg1, arg2) {

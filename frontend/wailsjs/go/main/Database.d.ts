@@ -18,6 +18,8 @@ export function LoadAllPositions():Promise<Array<main.Position>>;
 
 export function LoadAnalysis(arg1:number):Promise<main.PositionAnalysis>;
 
+export function LoadCommandHistory():Promise<Array<string>>;
+
 export function LoadComment(arg1:number):Promise<string>;
 
 export function LoadMetadata():Promise<{[key: string]: string}>;
@@ -31,6 +33,8 @@ export function OpenDatabase(arg1:string):Promise<void>;
 export function PositionExists(arg1:main.Position):Promise<{[key: string]: any}>;
 
 export function SaveAnalysis(arg1:number,arg2:main.PositionAnalysis):Promise<void>;
+
+export function SaveCommand(arg1:string):Promise<void>;
 
 export function SaveComment(arg1:number,arg2:string):Promise<void>;
 
