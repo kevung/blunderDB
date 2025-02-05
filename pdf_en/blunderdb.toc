@@ -24,6 +24,7 @@
 \contentsline {subsection}{\numberline {2.4.2}NORMAL Mode}{11}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}EDIT Mode}{11}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Search Filters}{11}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}Various commands}{13}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Keyboard shortcuts}{14}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}General}{14}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}NORMAL mode.}{14}{subsection.2.5.2}%
@@ -45,6 +46,9 @@
 \contentsline {section}{\numberline {2.8}Mac Annex: Possible Blocking of blunderDB}{21}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Installation of blunderDB}{25}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Authorization to Run blunderDB}{25}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Annex: Database Schema}{25}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Version 1.0.0}{25}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Version 1.1.0}{25}{subsection.2.9.2}%
 \contentsline {chapter}{\numberline {3}Contact}{27}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Donate}{29}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Acknowledgments}{31}{chapter.5}%

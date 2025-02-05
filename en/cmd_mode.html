@@ -53,12 +53,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#mode-normal">4.2. NORMAL Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#mode-edit">4.3. EDIT Mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Search Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Various commands</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">6. Frequently Asked Questions (FAQ)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">7. Windows Annex: False Detection of blunderDB as Malware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">8. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">9. Annex: Database Schema</a></li>
 </ul>
 
         </div>
@@ -465,6 +467,28 @@
 <p>For the relative difference filter in the race (<cite>p&gt;x</cite>, <cite>p&lt;x</cite>, <cite>px,y</cite>), the player is behind in the race compared to the opponent if <cite>x&gt;0</cite> and ahead if <cite>x&lt;0</cite>. For example: <cite>p&lt;-10</cite>: the player is at least 10 pips ahead in the race. <cite>p50,70</cite>: the player is between 50 and 70 pips behind in the race.</p>
 </div>
 <p>For example, the command <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">s</span> <span class="pre">c</span> <span class="pre">p-20,-5</span> <span class="pre">w&gt;60</span> <span class="pre">z&gt;10</span> <span class="pre">K2,3</span></code> filters all positions taking into account the checker structure, the score, and the cube of the edited position where the player has between 20 and 5 pips ahead in the race, with at least 60% winning chances, at least 10 checkers in the zone, and the opponent has between 2 and 3 backcheckers.</p>
+</section>
+<section id="commandes-diverses">
+<span id="cmd-misc"></span><h2><span class="section-number">4.5. </span>Various commands<a class="headerlink" href="#commandes-diverses" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Command</p></th>
+<th class="head"><p>Action</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clear, cl</p></td>
+<td><p>Clear the command history.</p></td>
+</tr>
+<tr class="row-odd"><td><p>migrate_from_1_0_to_1_1</p></td>
+<td><p>Migrate the database from version 1.0 to version 1.1.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 

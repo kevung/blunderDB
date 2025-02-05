@@ -59,7 +59,7 @@ Historique des versions
    Corrections de filtres.
 
    Ajout du support de MacOS."
-
+   0.5.0, 15/02/2025, "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 
 Sommaire
 ========
@@ -76,6 +76,7 @@ Sommaire
    faq
    annexe_windows_securite
    annexe_mac_securite
+   annexe_db_scheme
 
 .. youtube:: Ln7XKVFqfUk
    :width: 100%

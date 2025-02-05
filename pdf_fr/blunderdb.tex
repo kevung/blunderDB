@@ -67,7 +67,7 @@
 
 
 \title{blunderDB}
-\date{04 février 2025}
+\date{05 février 2025}
 \release{0.5.2}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -216,6 +216,16 @@ Corrections de filtres.
 
 \sphinxAtStartPar
 Ajout du support de MacOS.
+\\
+\sphinxhline
+\sphinxAtStartPar
+0.5.0
+&
+\sphinxAtStartPar
+15/02/2025
+&
+\sphinxAtStartPar
+Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot).
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1606,6 +1616,42 @@ de la position éditée où le joueur a entre 20 et 5 pips d’avance à la
 course, avec au moins 60\% de chances de gain, au moins 10 pions dans la
 zone, et l’adversaire a entre 2 et 3 pions arriérés.
 
+
+\subsection{Commandes diverses}
+\label{\detokenize{cmd_mode:commandes-diverses}}\label{\detokenize{cmd_mode:cmd-misc}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{10}{50}\X{40}{50}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Commande
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
+\sphinxAtStartPar
+clear, cl
+&
+\sphinxAtStartPar
+Efface l’historique des commandes.
+\\
+\sphinxhline
+\sphinxAtStartPar
+migrate\_from\_1\_0\_to\_1\_1
+&
+\sphinxAtStartPar
+Migre la base de données de la version 1.0 à la version 1.1.
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
 \sphinxstepscope
 
 
@@ -2307,6 +2353,53 @@ blunderDB s’ouvre et vous pouvez l’utiliser.
 Vous n’avez à réaliser cette opération qu’une seule fois. Par la
 suite, vous pourrez ouvrir blunderDB sans avoir à passer par ces étapes.
 \end{sphinxadmonition}
+
+\sphinxstepscope
+
+
+\section{Annexe: Schéma de la base de données}
+\label{\detokenize{annexe_db_scheme:annexe-schema-de-la-base-de-donnees}}\label{\detokenize{annexe_db_scheme:annexe-db-migration}}\label{\detokenize{annexe_db_scheme::doc}}
+
+\subsection{Version 1.0.0}
+\label{\detokenize{annexe_db_scheme:version-1-0-0}}
+\sphinxAtStartPar
+La version 1.0.0 de la base de données contient les tables suivantes :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{position} : Stocke les positions avec les colonnes \sphinxtitleref{id} (clé primaire) et \sphinxtitleref{state} (état de la position en format JSON).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{analysis} : Stocke les analyses des positions avec les colonnes \sphinxtitleref{id} (clé primaire), \sphinxtitleref{position\_id} (clé étrangère vers \sphinxtitleref{position}), et \sphinxtitleref{data} (données de l’analyse en format JSON).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{comment} : Stocke les commentaires associés aux positions avec les colonnes \sphinxtitleref{id} (clé primaire), \sphinxtitleref{position\_id} (clé étrangère vers \sphinxtitleref{position}), et \sphinxtitleref{text} (texte du commentaire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{metadata} : Stocke les métadonnées de la base de données avec les colonnes \sphinxtitleref{key} (clé primaire) et \sphinxtitleref{value} (valeur associée à la clé).
+
+\end{itemize}
+
+
+\subsection{Version 1.1.0}
+\label{\detokenize{annexe_db_scheme:version-1-1-0}}
+\sphinxAtStartPar
+La version 1.1.0 de la base de données ajoute la table suivante :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{command\_history} : Stocke l’historique des commandes avec les colonnes \sphinxtitleref{id} (clé primaire), \sphinxtitleref{command} (texte de la commande), et \sphinxtitleref{timestamp} (date et heure de l’exécution de la commande).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Les autres tables restent inchangées par rapport à la version 1.0.0.
+
+\sphinxAtStartPar
+Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, exécutez la commande \sphinxcode{\sphinxupquote{migrate\_from\_1\_0\_to\_1\_1}} dans blunderDB.
 \sphinxcontribyoutube{https://youtu.be/}{Ln7XKVFqfUk}{}
 \sphinxcontribyoutube{https://youtu.be/}{HkY4iXjxMeI}{}
 
