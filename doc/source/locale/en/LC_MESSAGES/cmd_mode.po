@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 14:00+0100\n"
-"PO-Revision-Date: 2025-02-04 14:01+0100\n"
+"POT-Creation-Date: 2025-02-05 15:05+0100\n"
+"PO-Revision-Date: 2025-02-05 15:24+0100\n"
 "Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -900,6 +900,26 @@ msgstr ""
 "cube of the edited position where the player has between 20 and 5 pips "
 "ahead in the race, with at least 60% winning chances, at least 10 "
 "checkers in the zone, and the opponent has between 2 and 3 backcheckers."
+
+#: ../../source/cmd_mode.rst:183
+msgid "Commandes diverses"
+msgstr "Various commands"
+
+#: ../../source/cmd_mode.rst:1
+msgid "clear, cl"
+msgstr "clear, cl"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Efface l'historique des commandes."
+msgstr "Clear the command history."
+
+#: ../../source/cmd_mode.rst:1
+msgid "migrate_from_1_0_to_1_1"
+msgstr "migrate_from_1_0_to_1_1"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Migre la base de données de la version 1.0 à la version 1.1."
+msgstr "Migrate the database from version 1.0 to version 1.1."
 
 #~ msgid ":n"
 #~ msgstr ":n"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 14:00+0100\n"
+"POT-Creation-Date: 2025-02-05 15:05+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -876,6 +876,26 @@ msgid ""
 " cube de la position éditée où le joueur a entre 20 et 5 pips d'avance à "
 "la course, avec au moins 60% de chances de gain, au moins 10 pions dans "
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:183
+msgid "Commandes diverses"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "clear, cl"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Efface l'historique des commandes."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "migrate_from_1_0_to_1_1"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Migre la base de données de la version 1.0 à la version 1.1."
 msgstr ""
 
 #~ msgid "Liste des requêtes"

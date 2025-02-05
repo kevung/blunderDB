@@ -1,10 +1,12 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore, statusBarTextStore } from '../stores/uiStore';
-   import { SaveComment } from '../../wailsjs/go/main/Database.js';
+   import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
    import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
    import { databaseLoadedStore } from '../stores/databaseStore'; // Ensure the import path is correct
+   import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
+   import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/main/Database.js'; // Import database functions
 
    export let onToggleHelp;
    export let onNewDatabase;
@@ -29,7 +31,12 @@
    let databaseLoaded = false;
    databaseLoadedStore.subscribe(value => databaseLoaded = value);
 
-   showCommandStore.subscribe(value => {
+   let commandHistory = [];
+   let historyIndex = -1;
+
+   commandHistoryStore.subscribe(value => commandHistory = value);
+
+   showCommandStore.subscribe(async value => {
       if (value) {
          previousModeStore.set($statusBarModeStore);
          statusBarModeStore.set('COMMAND');
@@ -38,23 +45,58 @@
             inputEl?.focus();
          }, 0);
          window.addEventListener('click', handleClickOutside);
+
+         // Load command history from the database
+         const history = await LoadCommandHistory();
+         commandHistoryStore.set((history || []).reverse()); // Reverse the order of history
+         historyIndex = -1; // Start at the end of the history
       } else {
          statusBarModeStore.set($previousModeStore); // Restore the previous mode
          window.removeEventListener('click', handleClickOutside);
       }
    });
 
-   function handleKeyDown(event) {
+   async function handleKeyDown(event) {
       event.stopPropagation();
 
       if ($showCommandStore) {
-         if (event.code === 'Backspace' && inputEl.value === '') {
+         if (event.code === 'ArrowUp') {
+            if (historyIndex < commandHistory.length - 1) {
+               historyIndex++;
+               commandTextStore.set(commandHistory[historyIndex]);
+               // Move cursor to the end without delay
+               requestAnimationFrame(() => {
+                  inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+               });
+            }
+         } else if (event.code === 'ArrowDown') {
+            if (historyIndex > 0) {
+               historyIndex--;
+               commandTextStore.set(commandHistory[historyIndex]);
+               // Move cursor to the end without delay
+               requestAnimationFrame(() => {
+                  inputEl.setSelectionRange(inputEl.value.length, inputEl.value.length);
+               });
+            } else {
+               historyIndex = -1;
+               commandTextStore.set('');
+            }
+         } else if (event.code === 'Backspace' && inputEl.value === '') {
             showCommandStore.set(false);
          } else if (event.code === 'Escape') {
             showCommandStore.set(false);
          } else if (event.code === 'Enter') {
             const command = inputEl.value.trim();
             console.log('Command entered:', command); // Debugging log
+            if (command) {
+               commandHistoryStore.update(history => {
+                  history = history || []; // Ensure history is an array
+                  history.unshift(command); // Add the new command to the beginning
+                  return history;
+               });
+               historyIndex = -1; // Reset the history index
+               SaveCommand(command); // Save the command to the database
+            }
             const match = command.match(/^(\d+)$/);
             if (match) {
                const positionNumber = parseInt(match[1], 10);
@@ -241,8 +283,25 @@
                showTakePoint2ModalStore.set(true); // Show TakePoint2 modal
             } else if (command === 'tp4') {
                showTakePoint4ModalStore.set(true); // Show TakePoint4 modal
+            } else if (command === 'migrate_from_1_0_to_1_1') {
+               try {
+                  await Migrate_1_0_0_to_1_1_0();
+                  statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
+               } catch (error) {
+                  console.error('Error migrating database:', error);
+                  statusBarTextStore.set('Error migrating database.');
+               }
+            } else if (command === 'cl' || command === 'clear' ) {
+               try {
+                  await ClearCommandHistory();
+                  commandHistoryStore.set([]);
+                  statusBarTextStore.set('Command history cleared.');
+               } catch (error) {
+                  console.error('Error clearing command history:', error);
+                  statusBarTextStore.set('Error clearing command history.');
+               }
             }
-            showCommandStore.set(false);
+            showCommandStore.set(false); // Hide the command line after processing the command
          } else if (event.ctrlKey && event.code === 'KeyH') {
             onToggleHelp();
          }
