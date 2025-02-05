@@ -611,6 +611,10 @@ func (d *Database) LoadPositionsByFilters(
 	dateFilter string,
 	player1OutfieldBlotFilter string,
 	player2OutfieldBlotFilter string,
+	player1JanBlotFilter string,
+	player2JanBlotFilter string,
+	noContactFilter bool,
+	mirrorFilter bool,
 ) ([]Position, error) {
 	d.mu.Lock()
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
@@ -639,30 +643,39 @@ func (d *Database) LoadPositionsByFilters(
 
 		fmt.Printf("Checking position ID: %d\n", position.ID) // Add logging
 
-		if position.MatchesCheckerPosition(filter) &&
-			(!includeCube || position.MatchesCubePosition(filter)) &&
-			(!includeScore || position.MatchesScorePosition(filter)) &&
-			(!decisionTypeFilter || position.MatchesDecisionType(filter)) &&
-			(pipCountFilter == "" || position.MatchesPipCountFilter(pipCountFilter)) &&
-			(winRateFilter == "" || position.MatchesWinRate(winRateFilter, d)) &&
-			(gammonRateFilter == "" || position.MatchesGammonRate(gammonRateFilter, d)) &&
-			(backgammonRateFilter == "" || position.MatchesBackgammonRate(backgammonRateFilter, d)) &&
-			(player2WinRateFilter == "" || position.MatchesPlayer2WinRate(player2WinRateFilter, d)) &&
-			(player2GammonRateFilter == "" || position.MatchesPlayer2GammonRate(player2GammonRateFilter, d)) &&
-			(player2BackgammonRateFilter == "" || position.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
-			(player1CheckerOffFilter == "" || position.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
-			(player2CheckerOffFilter == "" || position.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
-			(player1BackCheckerFilter == "" || position.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
-			(player2BackCheckerFilter == "" || position.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
-			(player1CheckerInZoneFilter == "" || position.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
-			(player2CheckerInZoneFilter == "" || position.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
-			(searchText == "" || position.MatchesSearchText(searchText, d)) &&
-			(player1AbsolutePipCountFilter == "" || position.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
-			(equityFilter == "" || position.MatchesEquityFilter(equityFilter, d)) &&
-			(!diceRollFilter || position.MatchesDiceRoll(filter)) &&
-			(dateFilter == "" || position.MatchesDateFilter(dateFilter, d)) &&
-			(player1OutfieldBlotFilter == "" || position.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
-			(player2OutfieldBlotFilter == "" || position.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) {
+		// Function to check if a position matches all filters
+		matchesFilters := func(pos Position) bool {
+			return pos.MatchesCheckerPosition(filter) &&
+				(!includeCube || pos.MatchesCubePosition(filter)) &&
+				(!includeScore || pos.MatchesScorePosition(filter)) &&
+				(!decisionTypeFilter || pos.MatchesDecisionType(filter)) &&
+				(pipCountFilter == "" || pos.MatchesPipCountFilter(pipCountFilter)) &&
+				(winRateFilter == "" || pos.MatchesWinRate(winRateFilter, d)) &&
+				(gammonRateFilter == "" || pos.MatchesGammonRate(gammonRateFilter, d)) &&
+				(backgammonRateFilter == "" || pos.MatchesBackgammonRate(backgammonRateFilter, d)) &&
+				(player2WinRateFilter == "" || pos.MatchesPlayer2WinRate(player2WinRateFilter, d)) &&
+				(player2GammonRateFilter == "" || pos.MatchesPlayer2GammonRate(player2GammonRateFilter, d)) &&
+				(player2BackgammonRateFilter == "" || pos.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
+				(player1CheckerOffFilter == "" || pos.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
+				(player2CheckerOffFilter == "" || pos.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
+				(player1BackCheckerFilter == "" || pos.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
+				(player2BackCheckerFilter == "" || pos.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
+				(player1CheckerInZoneFilter == "" || pos.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
+				(player2CheckerInZoneFilter == "" || pos.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
+				(searchText == "" || pos.MatchesSearchText(searchText, d)) &&
+				(player1AbsolutePipCountFilter == "" || pos.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
+				(equityFilter == "" || pos.MatchesEquityFilter(equityFilter, d)) &&
+				(!diceRollFilter || pos.MatchesDiceRoll(filter)) &&
+				(dateFilter == "" || pos.MatchesDateFilter(dateFilter, d)) &&
+				(player1OutfieldBlotFilter == "" || pos.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
+				(player2OutfieldBlotFilter == "" || pos.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
+				(player1JanBlotFilter == "" || pos.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
+				(player2JanBlotFilter == "" || pos.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
+				(!noContactFilter || pos.MatchesNoContact())
+		}
+
+		// Check the original position
+		if matchesFilters(position) {
 			if movePatternFilter != "" {
 				fmt.Printf("Checking move pattern filter: %s for position ID: %d\n", movePatternFilter, position.ID) // Add logging
 				if position.MatchesMovePattern(movePatternFilter, d) {
@@ -671,6 +684,18 @@ func (d *Database) LoadPositionsByFilters(
 			} else {
 				positions = append(positions, position)
 			}
+		} else if mirrorFilter {
+			mirroredPosition := position.Mirror()
+			if matchesFilters(mirroredPosition) {
+				if movePatternFilter != "" {
+					fmt.Printf("Checking move pattern filter: %s for mirrored position ID: %d\n", movePatternFilter, mirroredPosition.ID) // Add logging
+					if mirroredPosition.MatchesMovePattern(movePatternFilter, d) {
+						positions = append(positions, mirroredPosition)
+					}
+				} else {
+					positions = append(positions, mirroredPosition)
+				}
+			}
 		}
 	}
 
@@ -678,7 +703,6 @@ func (d *Database) LoadPositionsByFilters(
 	return positions, nil
 }
 
-// Add MatchesDecisionType method to Position type
 func (p *Position) MatchesDecisionType(filter Position) bool {
 	return p.DecisionType == filter.DecisionType && p.PlayerOnRoll == filter.PlayerOnRoll
 }
@@ -1770,6 +1794,149 @@ func (p *Position) MatchesPlayer2OutfieldBlot(filter string) bool {
 	}
 	return false
 }
+
+// Add MatchesPlayer1JanBlot method to Position type
+func (p *Position) MatchesPlayer1JanBlot(filter string) bool {
+	janBlots := 0
+	for i := 1; i <= 6; i++ {
+		if p.Board.Points[i].Color == 0 && p.Board.Points[i].Checkers == 1 {
+			janBlots++
+		}
+	}
+
+	if strings.HasPrefix(filter, "bj>") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return janBlots >= value
+	} else if strings.HasPrefix(filter, "bj<") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return janBlots <= value
+	} else if strings.HasPrefix(filter, "bj") {
+		values := strings.Split(filter[2:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			return false
+		}
+		value1, err1 := strconv.Atoi(values[0])
+		value2, err2 := strconv.Atoi(values[1])
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return janBlots >= minValue && janBlots <= maxValue
+	}
+	return false
+}
+
+// Add MatchesPlayer2JanBlot method to Position type
+func (p *Position) MatchesPlayer2JanBlot(filter string) bool {
+	opponentJanBlots := 0
+	for i := 19; i <= 24; i++ {
+		if p.Board.Points[i].Color == 1 && p.Board.Points[i].Checkers == 1 {
+			opponentJanBlots++
+		}
+	}
+
+	if strings.HasPrefix(filter, "BJ>") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return opponentJanBlots >= value
+	} else if strings.HasPrefix(filter, "BJ<") {
+		value, err := strconv.Atoi(filter[3:])
+		if err != nil {
+			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			return false
+		}
+		return opponentJanBlots <= value
+	} else if strings.HasPrefix(filter, "BJ") {
+		values := strings.Split(filter[2:], ",")
+		if len(values) != 2 {
+			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			return false
+		}
+		value1, err1 := strconv.Atoi(values[0])
+		value2, err2 := strconv.Atoi(values[1])
+		if err1 != nil || err2 != nil {
+			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return opponentJanBlots >= minValue && opponentJanBlots <= maxValue
+	}
+	return false
+}
+
+// Add MatchesNoContact method to Position type
+func (p *Position) MatchesNoContact() bool {
+	var furthestPlayerChecker, furthestOpponentChecker int
+
+	// Initialize to invalid indices
+	furthestPlayerChecker = -1
+	furthestOpponentChecker = 26
+
+	for i := 0; i < len(p.Board.Points); i++ {
+		if p.Board.Points[i].Color == 0 && p.Board.Points[i].Checkers > 0 {
+			furthestPlayerChecker = i
+		}
+		if p.Board.Points[25-i].Color == 1 && p.Board.Points[25-i].Checkers > 0 {
+			furthestOpponentChecker = 25 - i
+		}
+	}
+
+	// Compare indices to determine if there is no contact
+	return furthestPlayerChecker < furthestOpponentChecker
+}
+
+func (p *Position) MatchesMirrorPosition(filter Position) bool {
+	mirroredPosition := p.Mirror()
+	return p.MatchesCheckerPosition(filter) || mirroredPosition.MatchesCheckerPosition(filter)
+}
+
+// Mirror creates a mirrored version of the current Position.
+// It reverses the board points, swaps the bearoff positions,
+// changes the player on roll, swaps the scores, and changes the cube owner.
+// Returns the mirrored Position.
+func (p *Position) Mirror() Position {
+	mirrored := *p
+	for i, point := range p.Board.Points {
+		mirrored.Board.Points[25-i] = Point{
+			Color:    point.Color,
+			Checkers: point.Checkers,
+		}
+		if point.Color != -1 {
+			mirrored.Board.Points[25-i].Color = 1 - point.Color
+		}
+	}
+	mirrored.Board.Bearoff[0], mirrored.Board.Bearoff[1] = p.Board.Bearoff[1], p.Board.Bearoff[0]
+	mirrored.PlayerOnRoll = 1 - p.PlayerOnRoll
+	mirrored.Score[0], mirrored.Score[1] = p.Score[1], p.Score[0]
+	if p.Cube.Owner != -1 {
+		mirrored.Cube.Owner = 1 - p.Cube.Owner
+	}
+	return mirrored
+}
+
 
 // SaveCommand saves a command to the command_history table
 func (d *Database) SaveCommand(command string) error {

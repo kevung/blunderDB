@@ -629,6 +629,14 @@
                                 <td>Include dice roll</td>
                             </tr>
                             <tr>
+                                <td>nc</td>
+                                <td>Include non-contact positions</td>
+                            </tr>
+                            <tr>
+                                <td>M</td>
+                                <td>Include mirrored positions</td>
+                            </tr>
+                            <tr>
                                 <td>p>x</td>
                                 <td>Pip count &gt; x</td>
                             </tr>
@@ -833,6 +841,31 @@
                                 <td>Opponent outfield blot between x and y</td>
                             </tr>
                             <tr>
+                                <td>bj&gt;x</td>
+                                <td>Player Jan blot &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>bj&lt;x</td>
+                                <td>Player Jan blot &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>bjx,y</td>
+                                <td>Player Jan blot between x and y</td>
+                            </tr>
+                            <tr>
+                                <td>BJ&gt;x</td>
+                                <td>Opponent Jan blot &gt; x</td>
+                            </tr>
+                            <tr>
+                                <td>BJ&lt;x</td>
+                                <td>Opponent Jan blot &lt; x</td>
+                            </tr>
+                            <tr>
+                                <td>BJx,y</td>
+                                <td>Opponent Jan blot between x and y</td>
+                            </tr>
+
+                            <tr>
                                 <td>t"word1;word2;..."</td>
                                 <td>Search text</td>
                             </tr>
@@ -899,7 +932,7 @@
                     <h3>Acknowledgements</h3>
                     <p>I dedicate this small software to my partner <strong>Anne-Claire</strong> and our dear daughter <strong>Perrine</strong>. I would like to especially thank some friends:</p>
                     <ul>
-                        <li><strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to encourage me with kindness and patience in the face of my poor attempts to play better.</li>
+                        <li><strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to support me despite my poor attempts to play better.</li>
                         <li><strong>Nicolas Harmand</strong>, a joyful companion for over a decade in great adventures, and a fantastic game partner since he caught the backgammon bug.</li>
                     </ul>
                     <p>The Kazaross-XG2 Match Equity Table (MET) is credited to <strong>Neil Kazaross</strong>.</p>

@@ -263,8 +263,8 @@ msgstr ""
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
-" jeu; de continuer à m'encourager avec gentillesse et patience face à mes"
-" piètres tentatives de mieux jouer."
+" jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
+"jouer."
 msgstr ""
 
 #: ../../source/index.rst:141
@@ -350,5 +350,15 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Voici plusieurs manières de réagir:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "*Tristan Remille*, de m'avoir initié au"
+#~ " backgammon avec joie et bienveillance; "
+#~ "de montrer la Voie dans la "
+#~ "compréhension de ce merveilleux jeu; de"
+#~ " continuer à m'encourager avec gentillesse"
+#~ " et patience face à mes piètres "
+#~ "tentatives de mieux jouer."
 #~ msgstr ""
 

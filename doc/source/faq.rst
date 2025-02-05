@@ -90,6 +90,9 @@ Pour plus d'informations, voir le `dépôt Github de blunderDB <https://github.c
 Sur quelles plateformes blunderDB fonctionne-t'il?
 --------------------------------------------------
 
-blunderDB fonctionne sur Windows et Linux.
+blunderDB fonctionne sur Windows, Linux et Mac.
 
+D'où vient l'icône de blunderDB?
+--------------------------------
 
+L'icône de blunderDB est l'émoticône "goggling" de la série `SMirC <https://commons.wikimedia.org/wiki/SMirC>`_.

@@ -280,6 +280,10 @@ msgid ""
 msgstr ""
 
 #: ../../source/cmd_mode.rst:94
+msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:97
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -319,6 +323,22 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position vérifie le lancer de dés."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "nc"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position est sans contact."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "M"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position ou celle miroir vérifie les filtres."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -736,6 +756,54 @@ msgid "L'adversaire a entre x et y blots dans l'outfield."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
+msgid "jb>x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x blots dans le jan."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "jb<x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x blots dans le jan."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "jbx,y"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y blots dans le jan."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "JB>x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au moins x blots dans le jan."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "JB<x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au plus x blots dans le jan."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "JBx,y"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a entre x et y blots dans le jan."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
 msgid "t'mot1;mot2;...'"
 msgstr ""
 
@@ -785,13 +853,13 @@ msgstr ""
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:165
+#: ../../source/cmd_mode.rst:176
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:168
+#: ../../source/cmd_mode.rst:179
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -800,7 +868,7 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:174
+#: ../../source/cmd_mode.rst:185
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1240,5 +1308,11 @@ msgstr ""
 #~ "blunderDB considère qu'un pion arriéré "
 #~ "(backchecker) est un pion situé entre"
 #~ " le point 24 et le point 14."
+#~ msgstr ""
+
+#~ msgid "La position est la structure de pions et celle miroir."
+#~ msgstr ""
+
+#~ msgid "La position a la structure de pions et celle miroir."
 #~ msgstr ""
 
