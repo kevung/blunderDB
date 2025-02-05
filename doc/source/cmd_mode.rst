@@ -176,3 +176,16 @@ positions en prenant en compte la structure des pions, le score et le cube
 de la position éditée où le joueur a entre 20 et 5 pips d'avance à la
 course, avec au moins 60% de chances de gain, au moins 10 pions dans la
 zone, et l'adversaire a entre 2 et 3 pions arriérés.
+
+.. _cmd_misc:
+
+Commandes diverses
+------------------
+
+.. csv-table::
+   :header: "Commande", "Action"
+   :widths: 10, 40
+   :align: center
+
+   "clear, cl", "Efface l'historique des commandes."
+   "migrate_from_1_0_to_1_1", "Migre la base de données de la version 1.0 à la version 1.1."
