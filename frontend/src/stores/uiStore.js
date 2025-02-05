@@ -45,6 +45,8 @@ export const showTakePoint4ModalStore = writable(false); // Add store for TakePo
 
 export const previousModeStore = writable('NORMAL'); // Ensure previousModeStore is exported
 
+export const showFilterLibraryModalStore = writable(false); // Add store for filter library modal visibility
+
 export const isAnyModalOrPanelOpenStore = derived(
   [
     showSearchModalStore,
@@ -64,7 +66,8 @@ export const isAnyModalOrPanelOpenStore = derived(
     showCommentStore,
     showGoToPositionModalStore,
     showTakePoint2ModalStore,
-    showTakePoint4ModalStore
+    showTakePoint4ModalStore,
+    showFilterLibraryModalStore // Add this line
   ],
   ([
     showSearchModal,
@@ -84,7 +87,8 @@ export const isAnyModalOrPanelOpenStore = derived(
     showComment,
     showGoToPositionModal,
     showTakePoint2Modal,
-    showTakePoint4Modal
+    showTakePoint4Modal,
+    showFilterLibraryModal // Add this line
   ]) => {
     return (
       showSearchModal ||
@@ -104,7 +108,8 @@ export const isAnyModalOrPanelOpenStore = derived(
       showComment ||
       showGoToPositionModal ||
       showTakePoint2Modal ||
-      showTakePoint4Modal
+      showTakePoint4Modal ||
+      showFilterLibraryModal // Add this line
     );
   }
 );
@@ -126,7 +131,8 @@ export const isAnyModalOpenStore = derived(
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
     showHelpStore, // Added here
-    showCommandStore // Added here
+    showCommandStore, // Added here
+    showFilterLibraryModalStore // Add this line
   ],
   ([
     showSearchModal,
@@ -144,7 +150,8 @@ export const isAnyModalOpenStore = derived(
     showTakePoint2Modal,
     showTakePoint4Modal,
     showHelp, // Added here
-    showCommand // Added here
+    showCommand, // Added here
+    showFilterLibraryModal // Add this line
   ]) => {
     return (
       showSearchModal ||
@@ -162,7 +169,8 @@ export const isAnyModalOpenStore = derived(
       showTakePoint2Modal ||
       showTakePoint4Modal ||
       showHelp || // Added here
-      showCommand // Added here
+      showCommand || // Added here
+      showFilterLibraryModal // Add this line
     );
   }
 );

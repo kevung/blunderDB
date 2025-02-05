@@ -77,7 +77,8 @@
         showTakePoint4ModalStore, // Import showTakePoint4ModalStore
         isAnyModalOrPanelOpenStore, // Import the derived store
         isAnyModalOpenStore, // Import the derived store
-        previousModeStore // Import previousModeStore
+        previousModeStore, // Import previousModeStore
+        showFilterLibraryModalStore // Import showFilterLibraryModalStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -104,6 +105,7 @@
     import MetadataModal from './components/MetadataModal.svelte'; // Import MetadataModal component
     import TakePoint2Modal from './components/TakePoint2Modal.svelte'; // Import TakePoint2Modal component
     import TakePoint4Modal from './components/TakePoint4Modal.svelte'; // Import TakePoint4Modal component
+    import FilterLibraryModal from './components/FilterLibraryModal.svelte'; // Import FilterLibraryModal component
 
     // Visibility variables
     let showSearchModal = false;
@@ -131,6 +133,7 @@
     let showTakePoint4Modal = false;
     let isAnyModalOrPanelOpen = false;
     let isAnyModalOpen = false;
+    let showFilterLibraryModal = false;
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -150,6 +153,11 @@
     // Subscribe to the databaseLoadedStore
     databaseLoadedStore.subscribe(value => {
         databaseLoaded = value;
+    });
+
+    // Subscribe to the showFilterLibraryModalStore
+    showFilterLibraryModalStore.subscribe(value => {
+        showFilterLibraryModal = value;
     });
 
     // Reference for various elements.
@@ -407,6 +415,8 @@
             toggleHelpModal();
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
+        } else if (event.ctrlKey && event.code === 'KeyB') {
+            toggleFilterLibraryModal(); // Use the new function
         }
     }
 
@@ -1871,6 +1881,14 @@
         }
     }
 
+    function toggleFilterLibraryModal() {
+        if (databaseLoaded) {
+            showFilterLibraryModalStore.set(!showFilterLibraryModal);
+        } else {
+            setStatusBarMessage('No database loaded');
+        }
+    }
+
 </script>
 
 <main class="main-container" bind:this={mainArea}>
@@ -2006,6 +2024,8 @@
         visible={showTakePoint4Modal}
         onClose={() => showTakePoint4ModalStore.set(false)}
     />
+
+    <FilterLibraryModal />
 
     <HelpModal
         visible={showHelp}

@@ -1937,7 +1937,6 @@ func (p *Position) Mirror() Position {
 	return mirrored
 }
 
-
 // SaveCommand saves a command to the command_history table
 func (d *Database) SaveCommand(command string) error {
 	d.mu.Lock()
@@ -2061,4 +2060,156 @@ func (d *Database) Migrate_1_0_0_to_1_1_0() error {
 
 	fmt.Println("Database successfully migrated from version 1.0.0 to 1.1.0")
 	return nil
+}
+
+func (d *Database) Migrate_1_1_0_to_1_2_0() error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check current database version
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion != "1.1.0" {
+		return fmt.Errorf("database version is not 1.1.0, current version: %s", dbVersion)
+	}
+
+	// Create the filter_library table
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS filter_library (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT,
+			command TEXT
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating filter_library table:", err)
+		return err
+	}
+
+	// Update the database version to 1.2.0
+	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.2.0")
+	if err != nil {
+		fmt.Println("Error updating database version:", err)
+		return err
+	}
+
+	fmt.Println("Database successfully migrated from version 1.1.0 to 1.2.0")
+	return nil
+}
+
+func (d *Database) SaveFilter(name, command string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check if the database version is 1.2.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion < "1.2.0" {
+		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
+	}
+
+	_, err = d.db.Exec(`INSERT INTO filter_library (name, command) VALUES (?, ?)`, name, command)
+	if err != nil {
+		fmt.Println("Error saving filter:", err)
+		return err
+	}
+	return nil
+}
+
+func (d *Database) UpdateFilter(id int64, name, command string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check if the database version is 1.2.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion < "1.2.0" {
+		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
+	}
+
+	_, err = d.db.Exec(`UPDATE filter_library SET name = ?, command = ? WHERE id = ?`, name, command, id)
+	if err != nil {
+		fmt.Println("Error updating filter:", err)
+		return err
+	}
+	return nil
+}
+
+func (d *Database) DeleteFilter(id int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check if the database version is 1.2.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion < "1.2.0" {
+		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
+	}
+
+	_, err = d.db.Exec(`DELETE FROM filter_library WHERE id = ?`, id)
+	if err != nil {
+		fmt.Println("Error deleting filter:", err)
+		return err
+	}
+	return nil
+}
+
+func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check if the database version is 1.2.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return nil, err
+	}
+
+	if dbVersion < "1.2.0" {
+		return nil, fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
+	}
+
+	rows, err := d.db.Query(`SELECT id, name, command FROM filter_library`)
+	if err != nil {
+		fmt.Println("Error loading filters:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var filters []map[string]interface{}
+	for rows.Next() {
+		var id int64
+		var name, command string
+		if err = rows.Scan(&id, &name, &command); err != nil {
+			fmt.Println("Error scanning filter:", err)
+			return nil, err
+		}
+		filters = append(filters, map[string]interface{}{
+			"id":      id,
+			"name":    name,
+			"command": command,
+		})
+	}
+	return filters, nil
 }

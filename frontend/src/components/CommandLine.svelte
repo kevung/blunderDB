@@ -7,6 +7,7 @@
    import { databaseLoadedStore } from '../stores/databaseStore'; // Ensure the import path is correct
    import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
    import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/main/Database.js'; // Import database functions
+   import { Migrate_1_1_0_to_1_2_0 } from '../../wailsjs/go/main/Database.js'; // Import the new migration function
 
    export let onToggleHelp;
    export let onNewDatabase;
@@ -287,6 +288,14 @@
                try {
                   await Migrate_1_0_0_to_1_1_0();
                   statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
+               } catch (error) {
+                  console.error('Error migrating database:', error);
+                  statusBarTextStore.set('Error migrating database.');
+               }
+            } else if (command === 'migrate_from_1_1_to_1_2') {
+               try {
+                  await Migrate_1_1_0_to_1_2_0();
+                  statusBarTextStore.set('Database migrated to version 1.2.0 successfully.');
                } catch (error) {
                   console.error('Error migrating database:', error);
                   statusBarTextStore.set('Error migrating database.');
