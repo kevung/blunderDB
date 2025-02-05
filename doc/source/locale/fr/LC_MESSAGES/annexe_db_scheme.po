@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:05+0100\n"
+"POT-Creation-Date: 2025-02-05 17:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -80,5 +80,30 @@ msgstr ""
 msgid ""
 "Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, "
 "exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:28
+msgid "Version 1.2.0"
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:30
+msgid "La version 1.2.0 de la base de données ajoute la table suivante :"
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:32
+msgid ""
+"**filter_library** : Stocke les filtres de recherche avec les colonnes "
+"`id` (clé primaire), `name` (nom du filtre), et `command` (commande "
+"associée au filtre)."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:34
+msgid "Les autres tables restent inchangées par rapport à la version 1.1.0."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:36
+msgid ""
+"Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, "
+"exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB."
 msgstr ""
 

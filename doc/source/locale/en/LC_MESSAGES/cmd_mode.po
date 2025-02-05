@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:05+0100\n"
-"PO-Revision-Date: 2025-02-05 15:24+0100\n"
-"Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
+"POT-Creation-Date: 2025-02-05 17:19+0100\n"
+"PO-Revision-Date: 2025-02-05 19:19+0100\n"
+"Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 23.08.5\n"
+"X-Generator: Lokalize 24.12.1\n"
 
 #: ../../source/cmd_mode.rst:4
 msgid "Liste des commandes"
@@ -901,7 +901,7 @@ msgstr ""
 "ahead in the race, with at least 60% winning chances, at least 10 "
 "checkers in the zone, and the opponent has between 2 and 3 backcheckers."
 
-#: ../../source/cmd_mode.rst:183
+#: ../../source/cmd_mode.rst:194
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -920,6 +920,14 @@ msgstr "migrate_from_1_0_to_1_1"
 #: ../../source/cmd_mode.rst:1
 msgid "Migre la base de données de la version 1.0 à la version 1.1."
 msgstr "Migrate the database from version 1.0 to version 1.1."
+
+#: ../../source/cmd_mode.rst:1
+msgid "migrate_from_1_1_to_1_2"
+msgstr "migrate_from_1_1_to_1_2"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Migre la base de données de la version 1.1 à la version 1.2."
+msgstr "Migrate the database from version 1.1 to version 1.2."
 
 #~ msgid ":n"
 #~ msgstr ":n"
@@ -1262,5 +1270,3 @@ msgstr "Migrate the database from version 1.0 to version 1.1."
 
 #~ msgid "La position a la structure de pions et celle miroir."
 #~ msgstr "The position has the checker structure and or its mirror one."
-
-

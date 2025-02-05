@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:05+0100\n"
+"POT-Creation-Date: 2025-02-05 17:19+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -878,7 +878,7 @@ msgid ""
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:183
+#: ../../source/cmd_mode.rst:194
 msgid "Commandes diverses"
 msgstr ""
 
@@ -896,6 +896,14 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid "Migre la base de données de la version 1.0 à la version 1.1."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "migrate_from_1_1_to_1_2"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Migre la base de données de la version 1.1 à la version 1.2."
 msgstr ""
 
 #~ msgid "Liste des requêtes"

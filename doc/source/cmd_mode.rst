@@ -200,3 +200,4 @@ Commandes diverses
 
    "clear, cl", "Efface l'historique des commandes."
    "migrate_from_1_0_to_1_1", "Migre la base de données de la version 1.0 à la version 1.1."
+   "migrate_from_1_1_to_1_2", "Migre la base de données de la version 1.1 à la version 1.2."
