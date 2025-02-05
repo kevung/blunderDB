@@ -76,6 +76,7 @@ Sommaire
    faq
    annexe_windows_securite
    annexe_mac_securite
+   annexe_db_scheme
 
 .. youtube:: Ln7XKVFqfUk
    :width: 100%
