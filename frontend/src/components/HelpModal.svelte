@@ -444,6 +444,11 @@
                             </tr>
 
                             <tr>
+                                <td>Ctrl + B</td>
+                                <td>Toggle Filter Library Panel</td>
+                            </tr>
+
+                            <tr>
                                 <td>Ctrl + F</td>
                                 <td>Find Position</td>
                             </tr>
@@ -451,11 +456,6 @@
                             <tr>
                                 <td>Ctrl + H, ?</td>
                                 <td>Open Help</td>
-                            </tr>
-
-                            <tr>
-                                <td>Ctrl + B</td>
-                                <td>Toggle Filter Library Panel</td>
                             </tr>
 
                         </tbody>
@@ -571,6 +571,10 @@
                                 <td>Write Comments</td>
                             </tr>
                             <tr>
+                                <td>filter, fl</td>
+                                <td>Toggle Filter Library Panel</td>
+                            </tr>
+                            <tr>
                                 <td>help, he, h</td>
                                 <td>Open Help</td>
                             </tr>
@@ -625,10 +629,6 @@
                             <tr>
                                 <td>e</td>
                                 <td>Reload All Positions</td>
-                            </tr>
-                            <tr>
-                                <td>filter, fl</td>
-                                <td>Toggle Filter Library Panel</td>
                             </tr>
                         </tbody>
                     </table>
