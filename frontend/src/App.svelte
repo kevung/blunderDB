@@ -324,7 +324,15 @@
             if (event.ctrlKey && event.code === 'KeyP') {
                 event.preventDefault();
                 toggleCommentPanel();
+            } else if (event.ctrlKey && event.code === 'KeyB') {
+                event.preventDefault();
+                toggleFilterLibraryPanel(); // Enable shortcut to toggle filter library panel in comment panel
             }
+            return;
+        }
+
+        // Prevent command line from opening when editing filter panel fields
+        if (document.activeElement.closest('.filter-library-panel')) {
             return;
         }
 
@@ -1533,6 +1541,7 @@
 
         if (showAnalysis) {
             showCommentStore.set(false);
+            showFilterLibraryPanelStore.set(false); // Close filter library panel if open
             setTimeout(() => {
                 const analysisPanel = document.querySelector('.analysis-panel');
                 if (analysisPanel) {
@@ -1576,6 +1585,7 @@
 
         if (showComment) {
             showAnalysisStore.set(false);
+            showFilterLibraryPanelStore.set(false); // Close filter library panel if open
             showCommandStore.set(false);
             setTimeout(() => {
                 const commentPanel = document.querySelector('.comment-panel');
@@ -1886,6 +1896,9 @@
 
     function toggleFilterLibraryPanel() {
         if (databaseLoaded) {
+            if (showComment) {
+                showCommentStore.set(false); // Close comment panel if open
+            }
             showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
         } else {
             setStatusBarMessage('No database loaded');
