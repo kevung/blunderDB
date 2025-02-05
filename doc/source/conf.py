@@ -11,7 +11,7 @@ import requests
 project = 'blunderDB'
 copyright = '2024, Kevin UNGER <blunderdb@proton.me>'
 author = 'Kevin UNGER <blunderdb@proton.me>'
-release = '0.5.2'
+release = '0.5.4'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -46,7 +46,7 @@ html_context = {
 if release:
     latest_windows_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-{release}.exe"
     latest_linux_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-{release}"
-    latest_mac_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-{release}"
+    latest_mac_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-{release}.zip"
     latest_fr_pdf_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-{release}-fr.pdf"
     latest_en_pdf_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-{release}-en.pdf"
     

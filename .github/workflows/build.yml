@@ -93,8 +93,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           chmod +x build/bin/*/Contents/MacOS/*
-          mv build/bin/*/Contents/MacOS/* build/bin/
-          rm -rf build/bin/blunderdb.app
+          mv build/bin/blunderDB.app build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app
+          zip -r build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.zip build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app
         shell: bash
 
       # - name: Build .app zip file
@@ -111,7 +111,6 @@ jobs:
           path: |
             */bin/
             *\bin\*
-            */bin/*/Contents/MacOS/*
 
       - name: Release
         uses: softprops/action-gh-release@v1
