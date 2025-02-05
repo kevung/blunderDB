@@ -1,7 +1,7 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore, statusBarTextStore } from '../stores/uiStore';
-   import { SaveComment } from '../../wailsjs/go/main/Database.js';
+   import { SaveComment, Migrate_1_0_0_to_1_1_0 } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
    import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
    import { databaseLoadedStore } from '../stores/databaseStore'; // Ensure the import path is correct
@@ -56,7 +56,7 @@
       }
    });
 
-   function handleKeyDown(event) {
+   async function handleKeyDown(event) {
       event.stopPropagation();
 
       if ($showCommandStore) {
@@ -270,6 +270,14 @@
                showTakePoint2ModalStore.set(true); // Show TakePoint2 modal
             } else if (command === 'tp4') {
                showTakePoint4ModalStore.set(true); // Show TakePoint4 modal
+            } else if (command === 'migrate_from_1_0_to_1_1') {
+               try {
+                  await Migrate_1_0_0_to_1_1_0();
+                  statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
+               } catch (error) {
+                  console.error('Error migrating database:', error);
+                  statusBarTextStore.set('Error migrating database.');
+               }
             }
             showCommandStore.set(false); // Hide the command line after processing the command
          } else if (event.ctrlKey && event.code === 'KeyH') {

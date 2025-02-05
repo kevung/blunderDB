@@ -136,8 +136,20 @@ func (d *Database) OpenDatabase(path string) error {
 		return err
 	}
 
-	// Check if the required tables exist
-	requiredTables := []string{"position", "analysis", "comment", "metadata", "command_history"}
+	// Check the database version
+	var dbVersion string
+	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	// Check if the required tables exist based on the database version
+	requiredTables := []string{"position", "analysis", "comment", "metadata"}
+	if dbVersion >= "1.1.0" {
+		requiredTables = append(requiredTables, "command_history")
+	}
+
 	for _, table := range requiredTables {
 		var tableName string
 		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&tableName)
@@ -1764,7 +1776,19 @@ func (d *Database) SaveCommand(command string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	_, err := d.db.Exec(`INSERT INTO command_history (command) VALUES (?)`, command)
+	// Check if the database version is 1.1.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion < "1.1.0" {
+		return fmt.Errorf("database version is lower than 1.1.0, current version: %s", dbVersion)
+	}
+
+	_, err = d.db.Exec(`INSERT INTO command_history (command) VALUES (?)`, command)
 	if err != nil {
 		fmt.Println("Error saving command:", err)
 		return err
@@ -1776,6 +1800,18 @@ func (d *Database) SaveCommand(command string) error {
 func (d *Database) LoadCommandHistory() ([]string, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
+
+	// Check if the database version is 1.1.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return nil, err
+	}
+
+	if dbVersion < "1.1.0" {
+		return nil, fmt.Errorf("database version is lower than 1.1.0, current version: %s", dbVersion)
+	}
 
 	rows, err := d.db.Query(`SELECT command FROM command_history ORDER BY timestamp ASC`)
 	if err != nil {
@@ -1794,4 +1830,44 @@ func (d *Database) LoadCommandHistory() ([]string, error) {
 		history = append(history, command)
 	}
 	return history, nil
+}
+
+func (d *Database) Migrate_1_0_0_to_1_1_0() error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check current database version
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion != "1.0.0" {
+		return fmt.Errorf("database version is not 1.0.0, current version: %s", dbVersion)
+	}
+
+	// Create the command_history table
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS command_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating command_history table:", err)
+		return err
+	}
+
+	// Update the database version to 1.1.0
+	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.1.0")
+	if err != nil {
+		fmt.Println("Error updating database version:", err)
+		return err
+	}
+
+	fmt.Println("Database successfully migrated from version 1.0.0 to 1.1.0")
+	return nil
 }
