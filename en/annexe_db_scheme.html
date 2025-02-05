@@ -55,6 +55,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">9. Annex: Database Schema</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">9.1. Version 1.0.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">9.2. Version 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">9.3. Version 1.2.0</a></li>
 </ul>
 </li>
 </ul>
@@ -102,6 +103,15 @@
 </ul>
 <p>The other tables remain unchanged from version 1.0.0.</p>
 <p>To migrate the database from version 1.0.0 to version 1.1.0, execute the command <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> in blunderDB.</p>
+</section>
+<section id="version-1-2-0">
+<h2><span class="section-number">9.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
+<p>Version 1.2.0 of the database adds the following table:</p>
+<ul class="simple">
+<li><p><strong>filter_library</strong>: Stores search filters with the columns <cite>id</cite> (primary key), <cite>name</cite> (name of the filter), and <cite>command</cite> (command associated with the filter).</p></li>
+</ul>
+<p>The other tables remain unchanged from version 1.1.0.</p>
+<p>To migrate the database from version 1.1.0 to version 1.2.0, execute the command <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> in blunderDB.</p>
 </section>
 </section>
 

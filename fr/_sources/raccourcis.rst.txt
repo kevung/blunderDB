@@ -45,6 +45,7 @@ Mode NORMAL
    "CTRL-P", "Afficher/cacher les commentaires."
    "CTRL-G", "Afficher les métadonnées de la position."
    "CTRL-R", "Recharger toutes les positions de la base de données."
+   "CTRL-B", "Afficher/cacher la bibliothèque de filtres."
 
 .. _raccourcis_edit:
 

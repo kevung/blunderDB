@@ -49,6 +49,7 @@
 \contentsline {section}{\numberline {2.9}Annexe: Schéma de la base de données}{26}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Version 1.0.0}{26}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Version 1.1.0}{26}{subsection.2.9.2}%
-\contentsline {chapter}{\numberline {3}Contacts}{27}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Faire un don}{29}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Remerciements}{31}{chapter.5}%
+\contentsline {subsection}{\numberline {2.9.3}Version 1.2.0}{27}{subsection.2.9.3}%
+\contentsline {chapter}{\numberline {3}Contacts}{29}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Faire un don}{31}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Remerciements}{33}{chapter.5}%
