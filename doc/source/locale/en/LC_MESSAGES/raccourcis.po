@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-06 03:57+0100\n"
-"PO-Revision-Date: 2025-01-06 04:00+0100\n"
+"POT-Creation-Date: 2025-02-05 15:58+0100\n"
+"PO-Revision-Date: 2025-02-05 16:02+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.0\n"
+"X-Generator: Lokalize 24.12.1\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
@@ -270,6 +270,22 @@ msgstr "Exit COMMAND mode."
 #: ../../source/raccourcis.rst:1
 msgid "Effacer la commande. Si vide, fermer le mode COMMAND"
 msgstr "Clear the command. If empty, close COMMAND mode."
+
+#: ../../source/raccourcis.rst:1
+msgid "HAUT"
+msgstr "UP"
+
+#: ../../source/raccourcis.rst:1
+msgid "Parcourir l'historique des commandes vers le haut."
+msgstr "Browse command history up."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS"
+msgstr "DOWN"
+
+#: ../../source/raccourcis.rst:1
+msgid "Parcourir l'historique des commandes vers le bas."
+msgstr "Browse command history down."
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"

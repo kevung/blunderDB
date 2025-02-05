@@ -456,6 +456,26 @@
                         </tbody>
                     </table>
 
+                    <h3>Command Line</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Up</td>
+                                <td>Browse Command History Up</td>
+                            </tr>
+                            <tr>
+                                <td>Down</td>
+                                <td>Browse Command History Down</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                 {/if}
 
                 {#if activeTab === 'commands'}
