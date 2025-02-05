@@ -1832,6 +1832,30 @@ func (d *Database) LoadCommandHistory() ([]string, error) {
 	return history, nil
 }
 
+func (d *Database) ClearCommandHistory() error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check if the database version is 1.1.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion < "1.1.0" {
+		return fmt.Errorf("database version is lower than 1.1.0, current version: %s", dbVersion)
+	}
+
+	_, err = d.db.Exec(`DELETE FROM command_history`)
+	if err != nil {
+		fmt.Println("Error clearing command history:", err)
+		return err
+	}
+	return nil
+}
+
 func (d *Database) Migrate_1_0_0_to_1_1_0() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()

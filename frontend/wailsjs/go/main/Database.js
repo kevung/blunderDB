@@ -10,6 +10,10 @@ export function CheckVersion(arg1) {
   return window['go']['main']['Database']['CheckVersion'](arg1);
 }
 
+export function ClearCommandHistory() {
+  return window['go']['main']['Database']['ClearCommandHistory']();
+}
+
 export function DeleteAnalysis(arg1) {
   return window['go']['main']['Database']['DeleteAnalysis'](arg1);
 }

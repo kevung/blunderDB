@@ -6,6 +6,8 @@ export function CheckDatabaseVersion():Promise<string>;
 
 export function CheckVersion(arg1:string):Promise<void>;
 
+export function ClearCommandHistory():Promise<void>;
+
 export function DeleteAnalysis(arg1:number):Promise<void>;
 
 export function DeleteComment(arg1:number):Promise<void>;

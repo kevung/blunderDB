@@ -1,7 +1,7 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
    import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore, statusBarTextStore } from '../stores/uiStore';
-   import { SaveComment, Migrate_1_0_0_to_1_1_0 } from '../../wailsjs/go/main/Database.js';
+   import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../../wailsjs/go/main/Database.js';
    import { positionsStore } from '../stores/positionStore';
    import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
    import { databaseLoadedStore } from '../stores/databaseStore'; // Ensure the import path is correct
@@ -277,6 +277,15 @@
                } catch (error) {
                   console.error('Error migrating database:', error);
                   statusBarTextStore.set('Error migrating database.');
+               }
+            } else if (command === 'cl' || command === 'clear' ) {
+               try {
+                  await ClearCommandHistory();
+                  commandHistoryStore.set([]);
+                  statusBarTextStore.set('Command history cleared.');
+               } catch (error) {
+                  console.error('Error clearing command history:', error);
+                  statusBarTextStore.set('Error clearing command history.');
                }
             }
             showCommandStore.set(false); // Hide the command line after processing the command
