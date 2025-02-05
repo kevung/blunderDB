@@ -76,5 +76,7 @@ Mode COMMAND
    "ENTREE", "Exécuter une requête."
    "ESC", "Quitter le mode COMMAND."
    "RETOUR ARRIERE", "Effacer la commande. Si vide, fermer le mode COMMAND"
+   "HAUT", "Parcourir l'historique des commandes vers le haut."
+   "BAS", "Parcourir l'historique des commandes vers le bas."
 
 

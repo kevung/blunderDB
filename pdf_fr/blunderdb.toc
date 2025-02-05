@@ -39,7 +39,7 @@
 \contentsline {subsection}{\numberline {2.6.6}Quelles ont été les principes de conception de blunderDB?}{16}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}Quel est l’architecture logicielle de blunderDB?}{16}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{16}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}D’où vient l’icône de blunderDB?}{16}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.9}D’où vient l’icône de blunderDB?}{17}{subsection.2.6.9}%
 \contentsline {section}{\numberline {2.7}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{17}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Avertissement Windows SmartScreen}{17}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Blocage Windows Defender}{18}{subsection.2.7.2}%
