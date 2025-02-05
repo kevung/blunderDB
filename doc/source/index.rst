@@ -59,7 +59,7 @@ Historique des versions
    Corrections de filtres.
 
    Ajout du support de MacOS."
-
+   0.5.0, 15/02/2025, "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 
 Sommaire
 ========
