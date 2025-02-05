@@ -8,6 +8,7 @@
     let user = '';
     let description = '';
     let dateOfCreation = '';
+    let databaseVersion = ''; // Add variable for database version
 
     async function loadMetadata() {
         try {
@@ -15,6 +16,7 @@
             user = metadata.user || '';
             description = metadata.description || '';
             dateOfCreation = metadata.dateOfCreation || '';
+            databaseVersion = metadata.database_version || ''; // Load database version
         } catch (error) {
             console.error('Error loading metadata:', error);
         }
@@ -73,6 +75,10 @@
             <div class="form-group">
                 <label for="dateOfCreation">Date of Creation:</label>
                 <input id="dateOfCreation" type="date" bind:value={dateOfCreation} />
+            </div>
+            <div class="form-group">
+                <label for="databaseVersion">Database Version:</label>
+                <input id="databaseVersion" type="text" bind:value={databaseVersion} readonly /> <!-- Display database version -->
             </div>
         </div>
     </div>

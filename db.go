@@ -1611,7 +1611,7 @@ func (d *Database) LoadMetadata() (map[string]string, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation')`)
+	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation', 'database_version')`)
 	if err != nil {
 		fmt.Println("Error loading metadata:", err)
 		return nil, err
@@ -1936,7 +1936,6 @@ func (p *Position) Mirror() Position {
 	}
 	return mirrored
 }
-
 
 // SaveCommand saves a command to the command_history table
 func (d *Database) SaveCommand(command string) error {
