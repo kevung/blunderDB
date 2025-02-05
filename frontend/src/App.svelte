@@ -78,7 +78,7 @@
         isAnyModalOrPanelOpenStore, // Import the derived store
         isAnyModalOpenStore, // Import the derived store
         previousModeStore, // Import previousModeStore
-        showFilterLibraryModalStore // Import showFilterLibraryModalStore
+        showFilterLibraryPanelStore // Import showFilterLibraryPanelStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -105,7 +105,7 @@
     import MetadataModal from './components/MetadataModal.svelte'; // Import MetadataModal component
     import TakePoint2Modal from './components/TakePoint2Modal.svelte'; // Import TakePoint2Modal component
     import TakePoint4Modal from './components/TakePoint4Modal.svelte'; // Import TakePoint4Modal component
-    import FilterLibraryModal from './components/FilterLibraryModal.svelte'; // Import FilterLibraryModal component
+    import FilterLibraryPanel from './components/FilterLibraryPanel.svelte'; // Update import
 
     // Visibility variables
     let showSearchModal = false;
@@ -133,7 +133,7 @@
     let showTakePoint4Modal = false;
     let isAnyModalOrPanelOpen = false;
     let isAnyModalOpen = false;
-    let showFilterLibraryModal = false;
+    let showFilterLibraryPanel = false; // Update variable
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -155,9 +155,9 @@
         databaseLoaded = value;
     });
 
-    // Subscribe to the showFilterLibraryModalStore
-    showFilterLibraryModalStore.subscribe(value => {
-        showFilterLibraryModal = value;
+    // Subscribe to the showFilterLibraryPanelStore
+    showFilterLibraryPanelStore.subscribe(value => {
+        showFilterLibraryPanel = value;
     });
 
     // Reference for various elements.
@@ -416,7 +416,7 @@
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
         } else if (event.ctrlKey && event.code === 'KeyB') {
-            toggleFilterLibraryModal(); // Use the new function
+            toggleFilterLibraryPanel(); // Use the new function
         }
     }
 
@@ -1840,10 +1840,13 @@
             return; // Prevent changing position when any modal is open or in edit mode
         }
 
-        // Prevent changing position when scrolling in the analysis panel or comment panel
+        // Prevent changing position when scrolling in the analysis panel, comment panel, or filter panel
         const analysisPanel = document.querySelector('.analysis-panel');
         const commentPanel = document.querySelector('.comment-panel');
-        if ((analysisPanel && analysisPanel.contains(event.target)) || (commentPanel && commentPanel.contains(event.target))) {
+        const filterPanel = document.querySelector('.filter-library-panel'); // Ensure correct class name
+        if ((analysisPanel && analysisPanel.contains(event.target)) || 
+            (commentPanel && commentPanel.contains(event.target)) || 
+            (filterPanel && filterPanel.contains(event.target))) { // Check filter panel
             return;
         }
 
@@ -1881,9 +1884,9 @@
         }
     }
 
-    function toggleFilterLibraryModal() {
+    function toggleFilterLibraryPanel() {
         if (databaseLoaded) {
-            showFilterLibraryModalStore.set(!showFilterLibraryModal);
+            showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
         } else {
             setStatusBarMessage('No database loaded');
         }
@@ -2025,7 +2028,7 @@
         onClose={() => showTakePoint4ModalStore.set(false)}
     />
 
-    <FilterLibraryModal />
+    <FilterLibraryPanel visible={showFilterLibraryPanel} onClose={toggleFilterLibraryPanel} />
 
     <HelpModal
         visible={showHelp}

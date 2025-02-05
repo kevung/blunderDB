@@ -40,12 +40,12 @@ export const showHelpStore = writable(false);
 export const showCommentStore = writable(false);
 export const showGoToPositionModalStore = writable(false);
 
-export const showTakePoint2ModalStore = writable(false); // Add store for TakePoint2 modal visibility
-export const showTakePoint4ModalStore = writable(false); // Add store for TakePoint4 modal visibility
+export const showTakePoint2ModalStore = writable(false);
+export const showTakePoint4ModalStore = writable(false);
 
-export const previousModeStore = writable('NORMAL'); // Ensure previousModeStore is exported
+export const previousModeStore = writable('NORMAL');
 
-export const showFilterLibraryModalStore = writable(false); // Add store for filter library modal visibility
+export const showFilterLibraryPanelStore = writable(false);
 
 export const isAnyModalOrPanelOpenStore = derived(
   [
@@ -60,14 +60,14 @@ export const isAnyModalOrPanelOpenStore = derived(
     showGammonValue4ModalStore,
     showWarningModalStore,
     showMetadataModalStore,
-    showCommandStore, // Moved here
+    showCommandStore,
     showAnalysisStore,
-    showHelpStore, // Moved here
+    showHelpStore,
     showCommentStore,
     showGoToPositionModalStore,
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
-    showFilterLibraryModalStore // Add this line
+    showFilterLibraryPanelStore
   ],
   ([
     showSearchModal,
@@ -81,14 +81,14 @@ export const isAnyModalOrPanelOpenStore = derived(
     showGammonValue4Modal,
     showWarningModal,
     showMetadataModal,
-    showCommand, // Moved here
+    showCommand,
     showAnalysis,
-    showHelp, // Moved here
+    showHelp,
     showComment,
     showGoToPositionModal,
     showTakePoint2Modal,
     showTakePoint4Modal,
-    showFilterLibraryModal // Add this line
+    showFilterLibraryPanel
   ]) => {
     return (
       showSearchModal ||
@@ -102,14 +102,14 @@ export const isAnyModalOrPanelOpenStore = derived(
       showGammonValue4Modal ||
       showWarningModal ||
       showMetadataModal ||
-      showCommand || // Moved here
+      showCommand ||
       showAnalysis ||
-      showHelp || // Moved here
+      showHelp ||
       showComment ||
       showGoToPositionModal ||
       showTakePoint2Modal ||
       showTakePoint4Modal ||
-      showFilterLibraryModal // Add this line
+      showFilterLibraryPanel 
     );
   }
 );
@@ -130,9 +130,8 @@ export const isAnyModalOpenStore = derived(
     showGoToPositionModalStore,
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
-    showHelpStore, // Added here
-    showCommandStore, // Added here
-    showFilterLibraryModalStore // Add this line
+    showHelpStore,
+    showCommandStore, 
   ],
   ([
     showSearchModal,
@@ -149,9 +148,8 @@ export const isAnyModalOpenStore = derived(
     showGoToPositionModal,
     showTakePoint2Modal,
     showTakePoint4Modal,
-    showHelp, // Added here
-    showCommand, // Added here
-    showFilterLibraryModal // Add this line
+    showHelp, 
+    showCommand, 
   ]) => {
     return (
       showSearchModal ||
@@ -168,9 +166,8 @@ export const isAnyModalOpenStore = derived(
       showGoToPositionModal ||
       showTakePoint2Modal ||
       showTakePoint4Modal ||
-      showHelp || // Added here
-      showCommand || // Added here
-      showFilterLibraryModal // Add this line
+      showHelp || 
+      showCommand 
     );
   }
 );
@@ -178,15 +175,18 @@ export const isAnyModalOpenStore = derived(
 export const isAnyPanelOpenStore = derived(
   [
     showAnalysisStore,
-    showCommentStore
+    showCommentStore,
+    showFilterLibraryPanelStore
   ],
   ([
     showAnalysis,
-    showComment
+    showComment,
+    showFilterLibraryPanel
   ]) => {
     return (
       showAnalysis ||
-      showComment
+      showComment ||
+      showFilterLibraryPanel
     );
   }
 );
