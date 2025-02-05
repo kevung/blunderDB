@@ -858,6 +858,25 @@
                             </tr>
                         </tbody>
                     </table>
+                    <h3>Misc</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Command</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>clear, cl</td>
+                                <td>Clear command history</td>
+                            </tr>
+                            <tr>
+                                <td>migrate_from_1_0_to_1_1</td>
+                                <td>Migrate database from version 1.0 to 1.1</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 {/if}
 
                 {#if activeTab === 'about'}
