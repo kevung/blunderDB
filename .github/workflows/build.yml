@@ -94,6 +94,7 @@ jobs:
         run: |
           chmod +x build/bin/*/Contents/MacOS/*
           mv build/bin/blunderDB.app build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app
+          zip -r build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.zip build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app
         shell: bash
 
       # - name: Build .app zip file
