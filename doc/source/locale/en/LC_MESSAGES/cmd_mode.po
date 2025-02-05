@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 17:19+0100\n"
-"PO-Revision-Date: 2025-02-05 19:19+0100\n"
+"POT-Creation-Date: 2025-02-06 00:11+0100\n"
+"PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -200,6 +200,14 @@ msgid "Afficher/écrire des commentaires."
 msgstr "Show/write comments."
 
 #: ../../source/cmd_mode.rst:1
+msgid "filter, fl"
+msgstr "filter, fl"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/cacher la bibliothèque de filtres."
+msgstr "Show/hide the filter library."
+
+#: ../../source/cmd_mode.rst:1
 msgid "#tag1 tag2 ..."
 msgstr "#tag1 tag2 ..."
 
@@ -215,7 +223,7 @@ msgstr "e"
 msgid "Charger toutes les positions de la base de données."
 msgstr "Load all positions from the database."
 
-#: ../../source/cmd_mode.rst:54
+#: ../../source/cmd_mode.rst:55
 msgid "Mode EDIT"
 msgstr "EDIT Mode"
 
@@ -243,11 +251,11 @@ msgstr "s"
 msgid "Chercher des positions avec des filtres."
 msgstr "Search for positions with filters."
 
-#: ../../source/cmd_mode.rst:70
+#: ../../source/cmd_mode.rst:71
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:72
+#: ../../source/cmd_mode.rst:73
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
@@ -255,7 +263,7 @@ msgstr ""
 "The filters below must be juxtaposed during a search, i.e., after the "
 "start of the ``s`` command."
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:78
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -267,7 +275,7 @@ msgstr ""
 "and the dice. To consider the position of the cube, the score, and the "
 "dice, it must be explicitly mentioned in the search."
 
-#: ../../source/cmd_mode.rst:83
+#: ../../source/cmd_mode.rst:84
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 19."
@@ -275,7 +283,7 @@ msgstr ""
 "blunderDB considers that a backchecker is a checker located between point"
 " 24 and point 19."
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:88
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
@@ -283,18 +291,18 @@ msgstr ""
 "blunderDB considers that the number of checkers in the zone is the number"
 " of checkers located between point 12 and point 1."
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid ""
 "blunderDB considère que l'outfield s'étend entre le point 18 et le point "
 "7."
 msgstr ""
 "blunderDB considers the outfield to extend between point 18 and point 7."
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
 msgstr "blunderDB considers the jan to extend between point 1 and point 6."
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -864,7 +872,7 @@ msgstr "Tx,y"
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr "Date of position addition between x and y (YYYY/MM/DD)."
 
-#: ../../source/cmd_mode.rst:176
+#: ../../source/cmd_mode.rst:177
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
@@ -872,7 +880,7 @@ msgstr ""
 "Filtering positions based on the dice roll (`D`) necessarily implies "
 "filtering positions based on the type of decision (`d`)."
 
-#: ../../source/cmd_mode.rst:179
+#: ../../source/cmd_mode.rst:180
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -886,7 +894,7 @@ msgstr ""
 "ahead in the race. `p50,70`: the player is between 50 and 70 pips behind "
 "in the race."
 
-#: ../../source/cmd_mode.rst:185
+#: ../../source/cmd_mode.rst:186
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -901,7 +909,7 @@ msgstr ""
 "ahead in the race, with at least 60% winning chances, at least 10 "
 "checkers in the zone, and the opponent has between 2 and 3 backcheckers."
 
-#: ../../source/cmd_mode.rst:194
+#: ../../source/cmd_mode.rst:195
 msgid "Commandes diverses"
 msgstr "Various commands"
 

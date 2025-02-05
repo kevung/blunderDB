@@ -21,6 +21,7 @@
    export let exitApp;
    export let onLoadPositionsByFilters;
    export let onLoadAllPositions;
+   export let toggleFilterLibraryPanel; // Add the prop
    let inputEl;
 
    let initialized = false;
@@ -258,6 +259,8 @@
                } else {
                   statusBarTextStore.set('Search is only available in edit mode.');
                }
+            } else if (command === 'filter' || command === 'fl') {
+               toggleFilterLibraryPanel();
             } else if (command === 'met') {
                showMetModalStore.set(true); // Show MET modal
             } else if (command === 'tp2_last') {

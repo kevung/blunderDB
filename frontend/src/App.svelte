@@ -1951,6 +1951,7 @@
             exitApp={exitApp}
             onLoadPositionsByFilters={loadPositionsByFilters}
             onLoadAllPositions={loadAllPositions}
+            toggleFilterLibraryPanel={toggleFilterLibraryPanel}
         />
 
     </div>
