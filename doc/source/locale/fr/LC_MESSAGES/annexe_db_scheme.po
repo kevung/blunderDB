@@ -1,0 +1,84 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-02-05 15:05+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fr\n"
+"Language-Team: fr <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.16.0\n"
+
+#: ../../source/annexe_db_scheme.rst:4
+msgid "Annexe: Schéma de la base de données"
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:7
+msgid "Version 1.0.0"
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:9
+msgid "La version 1.0.0 de la base de données contient les tables suivantes :"
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:11
+msgid ""
+"**position** : Stocke les positions avec les colonnes `id` (clé primaire)"
+" et `state` (état de la position en format JSON)."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:12
+msgid ""
+"**analysis** : Stocke les analyses des positions avec les colonnes `id` "
+"(clé primaire), `position_id` (clé étrangère vers `position`), et `data` "
+"(données de l'analyse en format JSON)."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:13
+msgid ""
+"**comment** : Stocke les commentaires associés aux positions avec les "
+"colonnes `id` (clé primaire), `position_id` (clé étrangère vers "
+"`position`), et `text` (texte du commentaire)."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:14
+msgid ""
+"**metadata** : Stocke les métadonnées de la base de données avec les "
+"colonnes `key` (clé primaire) et `value` (valeur associée à la clé)."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:17
+msgid "Version 1.1.0"
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:19
+msgid "La version 1.1.0 de la base de données ajoute la table suivante :"
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:21
+msgid ""
+"**command_history** : Stocke l'historique des commandes avec les colonnes"
+" `id` (clé primaire), `command` (texte de la commande), et `timestamp` "
+"(date et heure de l'exécution de la commande)."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:23
+msgid "Les autres tables restent inchangées par rapport à la version 1.0.0."
+msgstr ""
+
+#: ../../source/annexe_db_scheme.rst:25
+msgid ""
+"Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, "
+"exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB."
+msgstr ""
+
