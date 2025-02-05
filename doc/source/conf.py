@@ -46,7 +46,7 @@ html_context = {
 if release:
     latest_windows_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-{release}.exe"
     latest_linux_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-{release}"
-    latest_mac_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-{release}"
+    latest_mac_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-{release}.zip"
     latest_fr_pdf_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-{release}-fr.pdf"
     latest_en_pdf_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-{release}-en.pdf"
     
