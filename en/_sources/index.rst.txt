@@ -32,6 +32,7 @@ Historique des versions
    :header: "Version", "Date", "Cause et/ou nature des évolutions"
    :widths: 5, 7, 20
    :align: center
+   :class: align-center-table
 
    0.1.0, 31/12/2024, "Création version beta."
    0.2.0, 06/01/2025, "Résolutions de bugs divers. 
