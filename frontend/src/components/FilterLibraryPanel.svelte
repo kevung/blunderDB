@@ -253,9 +253,21 @@
     }
 
     .filter-table th, .filter-table td {
-        border: 1px solid #ccc;
-        padding: 4px 8px; /* Reduce padding to decrease row height */
-        text-align: left;
+        border: 1px solid #ddd;
+        padding: 2px; /* Reduce padding */
+        text-align: center;
+    }
+
+    .filter-table th {
+        background-color: #f2f2f2;
+    }
+
+    .filter-table th:nth-child(1) {
+        width: 200px; /* Restore previous width for name column */
+    }
+
+    .filter-table th:nth-child(2) {
+        width: 470px; /* Restore previous width for filter column */
     }
 
     .filter-table tr {
