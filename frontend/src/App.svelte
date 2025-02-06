@@ -1517,6 +1517,8 @@
         } else {
             previousModeStore.set($statusBarModeStore);
             statusBarModeStore.set('NORMAL');
+            // close filter library panel if open
+            showFilterLibraryPanelStore.set(false);
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
