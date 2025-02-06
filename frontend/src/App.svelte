@@ -318,7 +318,7 @@
         if ($isAnyModalOpenStore) {
             return;
         }
-        
+
         // Prevent all shortcuts except toggleCommentPanel when comment panel is visible and focused
         if (showComment && document.activeElement.id === 'commentTextArea') {
             if (event.ctrlKey && event.code === 'KeyP') {
@@ -333,7 +333,11 @@
 
         // Prevent command line from opening when editing filter panel fields
         if (document.activeElement.closest('.filter-library-panel')) {
-            return;
+            if (event.ctrlKey && (event.code === 'KeyP' || event.code === 'KeyL' || event.code === 'KeyB')) {
+                event.preventDefault();
+            } else {
+                return;
+            }
         }
 
         if (event.key === 'Escape') {

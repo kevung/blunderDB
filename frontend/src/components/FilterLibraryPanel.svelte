@@ -19,6 +19,7 @@
         visible = value;
         if (visible) {
             await loadFilters();
+            focusNameField(); // Focus on the name field when the panel is opened
         }
     });
 
@@ -26,6 +27,7 @@
         try {
             const loadedFilters = await LoadFilters();
             filterLibraryStore.set(loadedFilters);
+            filters = loadedFilters; // Ensure filters are set correctly
         } catch (error) {
             console.error('Error loading filters:', error);
             statusBarTextStore.set('Error loading filters');
@@ -41,6 +43,11 @@
             }
             await SaveFilter(filterName, filterCommand);
             await loadFilters();
+            const newFilter = filters.find(filter => filter.name === filterName);
+            if (newFilter) {
+                scrollToFilter(newFilter);
+                highlightFilter(newFilter);
+            }
             resetForm();
             statusBarTextStore.set('');
         } else {
@@ -107,6 +114,13 @@
         const filterRow = document.getElementById(`filter-${filter.id}`);
         if (filterRow) {
             filterRow.classList.add('highlight');
+        }
+    }
+
+    function focusNameField() {
+        const nameField = document.getElementById('filterName');
+        if (nameField) {
+            nameField.focus();
         }
     }
 </script>
