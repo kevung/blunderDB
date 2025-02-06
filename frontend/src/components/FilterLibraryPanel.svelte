@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
-    import { showFilterLibraryPanelStore, statusBarTextStore } from '../stores/uiStore';
+    import { showFilterLibraryPanelStore, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters } from '../../wailsjs/go/main/Database.js';
 
     let filters = [];
@@ -20,6 +20,13 @@
         if (visible) {
             await loadFilters();
             focusNameField(); // Focus on the name field when the panel is opened
+            statusBarModeStore.set('EDIT'); // Switch to edit mode when the panel is opened
+        } else {
+            statusBarModeStore.set('NORMAL'); // Switch to normal mode when the panel is closed
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
         }
     });
 
@@ -87,7 +94,13 @@
     }
 
     function closePanel() {
+        statusBarModeStore.set('NORMAL'); // Switch to normal mode when the panel is closed
         showFilterLibraryPanelStore.set(false);
+        
+        // Refresh board and display position associated with currentPositionIndexStore
+        const currentIndex = $currentPositionIndexStore;
+        currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+        currentPositionIndexStore.set(currentIndex); // Set back to the original value
     }
 
     $: filterExists = filters.some(filter => filter.name === filterName);
