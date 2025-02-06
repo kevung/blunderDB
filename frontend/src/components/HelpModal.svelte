@@ -445,7 +445,7 @@
 
                             <tr>
                                 <td>Ctrl + B</td>
-                                <td>Toggle Filter Library Panel</td>
+                                <td>Show Filter Library</td>
                             </tr>
 
                             <tr>
@@ -572,7 +572,7 @@
                             </tr>
                             <tr>
                                 <td>filter, fl</td>
-                                <td>Toggle Filter Library Panel</td>
+                                <td>Show Filter Library</td>
                             </tr>
                             <tr>
                                 <td>help, he, h</td>

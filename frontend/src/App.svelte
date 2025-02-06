@@ -1935,6 +1935,7 @@
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
         onShowMetadata={toggleMetadataModal}
+        onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
     />
 
     <div class="scrollable-content">
