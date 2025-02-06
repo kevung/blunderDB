@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:05+0100\n"
+"POT-Creation-Date: 2025-02-06 00:11+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -200,6 +200,14 @@ msgid "Afficher/écrire des commentaires."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
+msgid "filter, fl"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/cacher la bibliothèque de filtres."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
 msgid "#tag1 tag2 ..."
 msgstr ""
 
@@ -215,7 +223,7 @@ msgstr ""
 msgid "Charger toutes les positions de la base de données."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:54
+#: ../../source/cmd_mode.rst:55
 msgid "Mode EDIT"
 msgstr ""
 
@@ -243,17 +251,17 @@ msgstr ""
 msgid "Chercher des positions avec des filtres."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:70
+#: ../../source/cmd_mode.rst:71
 msgid "Filtres de recherche"
 msgstr ""
 
-#: ../../source/cmd_mode.rst:72
+#: ../../source/cmd_mode.rst:73
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:77
+#: ../../source/cmd_mode.rst:78
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -261,29 +269,29 @@ msgid ""
 " il faut le mentionner explicitement dans la recherche."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:83
+#: ../../source/cmd_mode.rst:84
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 19."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:87
+#: ../../source/cmd_mode.rst:88
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
 msgid ""
 "blunderDB considère que l'outfield s'étend entre le point 18 et le point "
 "7."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:94
+#: ../../source/cmd_mode.rst:95
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:97
+#: ../../source/cmd_mode.rst:98
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -853,13 +861,13 @@ msgstr ""
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:176
+#: ../../source/cmd_mode.rst:177
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:179
+#: ../../source/cmd_mode.rst:180
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -868,7 +876,7 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:185
+#: ../../source/cmd_mode.rst:186
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -878,7 +886,7 @@ msgid ""
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:183
+#: ../../source/cmd_mode.rst:195
 msgid "Commandes diverses"
 msgstr ""
 
@@ -896,6 +904,14 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid "Migre la base de données de la version 1.0 à la version 1.1."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "migrate_from_1_1_to_1_2"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Migre la base de données de la version 1.1 à la version 1.2."
 msgstr ""
 
 #~ msgid "Liste des requêtes"

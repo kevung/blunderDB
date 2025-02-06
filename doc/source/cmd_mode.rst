@@ -44,6 +44,7 @@ Mode NORMAL
    "[number]", "Aller à la position d'indice indiqué."
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."
+   "filter, fl", "Afficher/cacher la bibliothèque de filtres."
    "#tag1 tag2 ...", "Etiqueter la position courante."
    "e", "Charger toutes les positions de la base de données."
 
@@ -200,3 +201,4 @@ Commandes diverses
 
    "clear, cl", "Efface l'historique des commandes."
    "migrate_from_1_0_to_1_1", "Migre la base de données de la version 1.0 à la version 1.1."
+   "migrate_from_1_1_to_1_2", "Migre la base de données de la version 1.1 à la version 1.2."

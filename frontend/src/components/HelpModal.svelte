@@ -444,6 +444,11 @@
                             </tr>
 
                             <tr>
+                                <td>Ctrl + B</td>
+                                <td>Show Filter Library</td>
+                            </tr>
+
+                            <tr>
                                 <td>Ctrl + F</td>
                                 <td>Find Position</td>
                             </tr>
@@ -564,6 +569,10 @@
                             <tr>
                                 <td>comment, co</td>
                                 <td>Write Comments</td>
+                            </tr>
+                            <tr>
+                                <td>filter, fl</td>
+                                <td>Show Filter Library</td>
                             </tr>
                             <tr>
                                 <td>help, he, h</td>
@@ -927,6 +936,10 @@
                             <tr>
                                 <td>migrate_from_1_0_to_1_1</td>
                                 <td>Migrate database from version 1.0 to 1.1</td>
+                            </tr>
+                            <tr>
+                                <td>migrate_from_1_1_to_1_2</td>
+                                <td>Migrate database from version 1.1 to 1.2</td>
                             </tr>
                         </tbody>
                     </table>
