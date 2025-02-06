@@ -9,6 +9,7 @@
     let filterCommand = '';
     let selectedFilter = null;
     let visible = false;
+    let filterExists = false;
 
     filterLibraryStore.subscribe(value => {
         filters = value;
@@ -33,6 +34,11 @@
 
     async function saveFilter() {
         if (filterName && filterCommand.startsWith('s ')) {
+            const existingFilter = filters.find(filter => filter.name === filterName);
+            if (existingFilter) {
+                statusBarTextStore.set('Filter name already exists');
+                return;
+            }
             await SaveFilter(filterName, filterCommand);
             await loadFilters();
             resetForm();
@@ -76,6 +82,33 @@
     function closePanel() {
         showFilterLibraryPanelStore.set(false);
     }
+
+    $: filterExists = filters.some(filter => filter.name === filterName);
+
+    $: {
+        if (filterExists) {
+            const existingFilter = filters.find(filter => filter.name === filterName);
+            if (existingFilter) {
+                scrollToFilter(existingFilter);
+                highlightFilter(existingFilter);
+            }
+        }
+    }
+
+    function scrollToFilter(filter) {
+        const filterTable = document.querySelector('.filter-table-container');
+        const filterRow = document.getElementById(`filter-${filter.id}`);
+        if (filterTable && filterRow) {
+            filterTable.scrollTop = filterRow.offsetTop - filterTable.offsetTop;
+        }
+    }
+
+    function highlightFilter(filter) {
+        const filterRow = document.getElementById(`filter-${filter.id}`);
+        if (filterRow) {
+            filterRow.classList.add('highlight');
+        }
+    }
 </script>
 
 {#if visible}
@@ -90,8 +123,8 @@
                     <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " />
                 </div>
                 <div class="form-actions">
-                    <button on:click={saveFilter}>Add</button>
-                    <button on:click={updateFilter} disabled={!selectedFilter}>Update</button>
+                    <button on:click={saveFilter} disabled={filterExists}>Add</button>
+                    <button on:click={updateFilter} disabled={!filterExists}>Update</button>
                     <button on:click={deleteFilter} disabled={!selectedFilter}>Delete</button>
                 </div>
             </div>
@@ -105,7 +138,7 @@
                     </thead>
                     <tbody>
                         {#each filters as filter}
-                            <tr on:click={() => selectFilter(filter)}>
+                            <tr id={`filter-${filter.id}`} class:highlight={filter.name === filterName} on:click={() => selectFilter(filter)}>
                                 <td>{filter.name}</td>
                                 <td>{filter.command}</td>
                             </tr>
@@ -217,6 +250,11 @@
 
     .filter-table tr:hover {
         background: #f0f0f0;
+    }
+
+    .highlight {
+        background-color: #f0f0f0; /* Very light highlight color */
+        border: 1px solid #ccc; /* Subtle border */
     }
 
     .status-bar {

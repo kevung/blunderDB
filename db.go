@@ -2118,6 +2118,17 @@ func (d *Database) SaveFilter(name, command string) error {
 		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
 	}
 
+	// Check if a filter with the same name already exists
+	var existingID int64
+	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, name).Scan(&existingID)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error checking existing filter:", err)
+		return err
+	}
+	if existingID > 0 {
+		return fmt.Errorf("filter name already exists")
+	}
+
 	_, err = d.db.Exec(`INSERT INTO filter_library (name, command) VALUES (?, ?)`, name, command)
 	if err != nil {
 		fmt.Println("Error saving filter:", err)
