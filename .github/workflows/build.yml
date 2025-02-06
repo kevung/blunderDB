@@ -94,14 +94,13 @@ jobs:
         run: |
           chmod +x build/bin/*/Contents/MacOS/*
           mv build/bin/blunderDB.app build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app
-          zip -r build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.zip build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app
         shell: bash
 
-      # - name: Build .app zip file
-      #   if: runner.os == 'macOS'
-      #   shell: bash
-      #   run: |
-      #     ditto -c -k --keepParent ./build/bin/blunderdb.app ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app.zip
+      - name: Build .app zip file
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          ditto -c -k --keepParent ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app ./build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.zip
 
 
       # Upload build assets
