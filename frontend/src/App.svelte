@@ -74,7 +74,6 @@
         showWarningModalStore, // Import showWarningModalStore
         showMetadataModalStore, // Import showMetadataModalStore
         showTakePoint2ModalStore, // Import showTakePoint2ModalStore
-        showTakePoint4ModalStore, // Import showTakePoint4ModalStore
         isAnyModalOrPanelOpenStore, // Import the derived store
         isAnyModalOpenStore, // Import the derived store
         previousModeStore, // Import previousModeStore
@@ -294,9 +293,7 @@
         showMetadataModal = value;
     });
 
-    showTakePoint2ModalStore.subscribe(value => {
-        showTakePoint2Modal = value;
-    });
+
 
     databasePathStore.subscribe(value => {
         databaseLoaded = !!value;
@@ -2001,10 +1998,7 @@
         onClose={() => showMetadataModalStore.set(false)}
     />
 
-    <TakePoint2Modal
-        visible={showTakePoint2Modal}
-        onClose={() => showTakePoint2ModalStore.set(false)}
-    />
+    <TakePoint2Modal/>
 
     <TakePoint4Modal/>
 
