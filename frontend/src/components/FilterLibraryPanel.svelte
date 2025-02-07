@@ -1,7 +1,8 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
-    import { showFilterLibraryPanelStore, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
+    import { showFilterLibraryPanelStore, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, showCommentStore } from '../stores/uiStore';
+    import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters } from '../../wailsjs/go/main/Database.js';
 
     let filters = [];
@@ -10,17 +11,26 @@
     let selectedFilter = null;
     let visible = false;
     let filterExists = false;
+    let databaseLoaded = false;
 
     filterLibraryStore.subscribe(value => {
         filters = value || [];
     });
 
+    databaseLoadedStore.subscribe(value => {
+        databaseLoaded = value;
+    });
+
     showFilterLibraryPanelStore.subscribe(async value => {
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
         visible = value;
         if (visible) {
             await loadFilters();
-            focusNameField(); // Focus on the name field when the panel is opened
-            statusBarModeStore.set('EDIT'); // Switch to edit mode when the panel is opened
+            statusBarModeStore.set('EDIT');
+            showCommentStore.set(false);
         } else {
             statusBarModeStore.set('NORMAL'); // Switch to normal mode when the panel is closed
             // Refresh board and display position associated with currentPositionIndexStore
@@ -130,12 +140,19 @@
         }
     }
 
-    function focusNameField() {
-        const nameField = document.getElementById('filterName');
-        if (nameField) {
-            nameField.focus();
+    function handleClickOutside(event) {
+        if (!event.target.closest('.filter-library-panel')) {
+            document.activeElement.blur();
         }
     }
+
+    onMount(() => {
+        document.addEventListener('click', handleClickOutside);
+    });
+
+    onDestroy(() => {
+        document.removeEventListener('click', handleClickOutside);
+    });
 </script>
 
 {#if visible}

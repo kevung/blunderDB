@@ -416,7 +416,7 @@
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
         } else if (event.ctrlKey && event.code === 'KeyB') {
-            toggleFilterLibraryPanel(); // Use the new function
+            showFilterLibraryPanelStore.set(!showFilterLibraryPanel); // Use inline function
         }
     }
 
@@ -1519,20 +1519,9 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if ($statusBarModeStore === 'EDIT') {
-            setStatusBarMessage('Cannot toggle analysis panel in edit mode');
-            return;
-        }
-
-        console.log('toggleAnalysisPanel'); // Debugging log
-
-        statusBarModeStore.set('NORMAL'); // Ensure normal mode
-
-        if ($statusBarModeStore === 'NORMAL') {
-            showAnalysisStore.set(!showAnalysis);
-            console.log('showAnalysis:', showAnalysis); // Debugging log
-        }
-
+        console.log('toggleAnalysisPanel');
+        showAnalysisStore.set(!showAnalysis);
+        
         if (showAnalysis) {
             showCommentStore.set(false);
             showFilterLibraryPanelStore.set(false); // Close filter library panel if open
@@ -1888,17 +1877,6 @@
         }
     }
 
-    function toggleFilterLibraryPanel() {
-        if (databaseLoaded) {
-            if (showComment) {
-                showCommentStore.set(false); // Close comment panel if open
-            }
-            showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
-        } else {
-            setStatusBarMessage('No database loaded');
-        }
-    }
-
 </script>
 
 <main class="main-container" bind:this={mainArea}>
@@ -1925,7 +1903,7 @@
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
         onShowMetadata={toggleMetadataModal}
-        onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
+        onToggleFilterLibraryPanel={() => showFilterLibraryPanelStore.set(!showFilterLibraryPanel)}
     />
 
     <div class="scrollable-content">
@@ -1946,7 +1924,7 @@
             exitApp={exitApp}
             onLoadPositionsByFilters={loadPositionsByFilters}
             onLoadAllPositions={loadAllPositions}
-            toggleFilterLibraryPanel={toggleFilterLibraryPanel}
+            toggleFilterLibraryPanel={() => showFilterLibraryPanelStore.set(!showFilterLibraryPanel)}
         />
 
     </div>
@@ -2037,7 +2015,7 @@
         onClose={() => showTakePoint4ModalStore.set(false)}
     />
 
-    <FilterLibraryPanel visible={showFilterLibraryPanel} onClose={toggleFilterLibraryPanel} />
+    <FilterLibraryPanel visible={showFilterLibraryPanel} onClose={() => showFilterLibraryPanelStore.set(!showFilterLibraryPanel)}/>
 
     <HelpModal
         visible={showHelp}
