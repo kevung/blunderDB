@@ -67,7 +67,7 @@
 
 
 \title{blunderDB}
-\date{06 février 2025}
+\date{07 février 2025}
 \release{0.5.4}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -959,6 +959,13 @@ Afficher/écrire des commentaires.
 \\
 \sphinxhline
 \sphinxAtStartPar
+filter, fl
+&
+\sphinxAtStartPar
+Afficher/cacher la bibliothèque de filtres.
+\\
+\sphinxhline
+\sphinxAtStartPar
 \#tag1 tag2 …
 &
 \sphinxAtStartPar
@@ -1647,6 +1654,13 @@ migrate\_from\_1\_0\_to\_1\_1
 \sphinxAtStartPar
 Migre la base de données de la version 1.0 à la version 1.1.
 \\
+\sphinxhline
+\sphinxAtStartPar
+migrate\_from\_1\_1\_to\_1\_2
+&
+\sphinxAtStartPar
+Migre la base de données de la version 1.1 à la version 1.2.
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -1842,6 +1856,13 @@ CTRL\sphinxhyphen{}R
 &
 \sphinxAtStartPar
 Recharger toutes les positions de la base de données.
+\\
+\sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}B
+&
+\sphinxAtStartPar
+Afficher/cacher la bibliothèque de filtres.
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2414,6 +2435,24 @@ Les autres tables restent inchangées par rapport à la version 1.0.0.
 
 \sphinxAtStartPar
 Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, exécutez la commande \sphinxcode{\sphinxupquote{migrate\_from\_1\_0\_to\_1\_1}} dans blunderDB.
+
+
+\subsection{Version 1.2.0}
+\label{\detokenize{annexe_db_scheme:version-1-2-0}}
+\sphinxAtStartPar
+La version 1.2.0 de la base de données ajoute la table suivante :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{filter\_library} : Stocke les filtres de recherche avec les colonnes \sphinxtitleref{id} (clé primaire), \sphinxtitleref{name} (nom du filtre), et \sphinxtitleref{command} (commande associée au filtre).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Les autres tables restent inchangées par rapport à la version 1.1.0.
+
+\sphinxAtStartPar
+Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, exécutez la commande \sphinxcode{\sphinxupquote{migrate\_from\_1\_1\_to\_1\_2}} dans blunderDB.
 \sphinxcontribyoutube{https://youtu.be/}{Ln7XKVFqfUk}{}
 \sphinxcontribyoutube{https://youtu.be/}{HkY4iXjxMeI}{}
 
