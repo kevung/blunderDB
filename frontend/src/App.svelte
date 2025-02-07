@@ -319,18 +319,6 @@
             return;
         }
 
-        // Prevent all shortcuts except toggleCommentPanel when comment panel is visible and focused
-        if (showComment && document.activeElement.id === 'commentTextArea') {
-            if (event.ctrlKey && event.code === 'KeyP') {
-                event.preventDefault();
-                toggleCommentPanel();
-            } else if (event.ctrlKey && event.code === 'KeyB') {
-                event.preventDefault();
-                toggleFilterLibraryPanel(); // Enable shortcut to toggle filter library panel in comment panel
-            }
-            return;
-        }
-
         // Prevent command line from opening when editing filter panel fields
         if (document.activeElement.closest('.filter-library-panel')) {
             if (event.ctrlKey && (event.code === 'KeyP' || event.code === 'KeyL' || event.code === 'KeyB')) {
