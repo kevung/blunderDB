@@ -254,6 +254,19 @@
         transform: translateX(-20px); /* Move buttons slightly to the left */
     }
 
+    .form-actions button {
+        font-size: 12px; /* Match font size with analysis panel */
+        padding: 2px 5px; /* Match padding with analysis panel */
+        border: 1px solid #ddd; /* Match border with analysis panel */
+        background-color: #f2f2f2; /* Match background color with analysis panel */
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-actions button:hover {
+        background-color: #e0e0e0; /* Match hover background color with analysis panel */
+    }
+
     .filter-table-container {
         max-height: 100px; /* Adjust height to ensure the last row and scrollbar are visible */
         overflow-y: auto;
@@ -307,5 +320,12 @@
 
     input::placeholder {
         color: rgba(0, 0, 0, 0.5); /* Subtle placeholder color */
+    }
+
+    input {
+        font-size: 12px; /* Match font size with analysis panel */
+        padding: 2px 5px; /* Match padding with analysis panel */
+        border: 1px solid #ddd; /* Match border with analysis panel */
+        background-color: #f2f2f2; /* Match background color with analysis panel */
     }
 </style>
