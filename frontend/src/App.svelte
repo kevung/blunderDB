@@ -298,10 +298,6 @@
         showTakePoint2Modal = value;
     });
 
-    showTakePoint4ModalStore.subscribe(value => {
-        showTakePoint4Modal = value;
-    });
-
     databasePathStore.subscribe(value => {
         databaseLoaded = !!value;
     });
@@ -2010,12 +2006,9 @@
         onClose={() => showTakePoint2ModalStore.set(false)}
     />
 
-    <TakePoint4Modal
-        visible={showTakePoint4Modal}
-        onClose={() => showTakePoint4ModalStore.set(false)}
-    />
+    <TakePoint4Modal/>
 
-    <FilterLibraryPanel visible={showFilterLibraryPanel} onClose={() => showFilterLibraryPanelStore.set(!showFilterLibraryPanel)}/>
+    <FilterLibraryPanel/>
 
     <HelpModal
         visible={showHelp}
