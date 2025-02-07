@@ -12,7 +12,7 @@
     let filterExists = false;
 
     filterLibraryStore.subscribe(value => {
-        filters = value;
+        filters = value || [];
     });
 
     showFilterLibraryPanelStore.subscribe(async value => {
@@ -34,7 +34,7 @@
         try {
             const loadedFilters = await LoadFilters();
             filterLibraryStore.set(loadedFilters);
-            filters = loadedFilters; // Ensure filters are set correctly
+            filters = loadedFilters || []; // Ensure filters are set correctly
         } catch (error) {
             console.error('Error loading filters:', error);
             statusBarTextStore.set('Error loading filters');
