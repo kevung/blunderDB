@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-20.04]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -64,14 +64,24 @@ jobs:
         with:
           install-only: true
 
-      - name: Install Linux Wails deps
-        if: runner.os == 'Linux'
+      - name: Install Linux Wails deps for libwebkit2gtk-4.0
+        if: matrix.os == 'ubuntu-20.04'
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+        shell: bash
+
+      - name: Install Linux Wails deps for libwebkit2gtk-4.1
+        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.1-dev gcc-aarch64-linux-gnu
         shell: bash
 
-      - name: Build App Linux
-        if: runner.os == 'Linux'
-        run: wails build --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41
+      - name: Build App Linux for libwebkit2gtk-4.0
+        if: matrix.os == 'ubuntu-20.04'
+        run: wails build --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean
+        shell: bash
+
+      - name: Build App Linux for libwebkit2gtk-4.1
+        if: matrix.os == 'ubuntu-latest'
+        run: wails build --platform 'linux' -o blunderDB-linux-webkit2gtk-4.1-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41
         shell: bash
         
       - name: Build App Windows
@@ -106,7 +116,7 @@ jobs:
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: Wails Build ${{runner.os}} blunderDB ${{ steps.vars.outputs.version }}
+          name: Wails Build ${{matrix.os}} blunderDB ${{ steps.vars.outputs.version }}
           path: |
             */bin/
             *\bin\*
