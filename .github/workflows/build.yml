@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest, macos-latest, windows-latest, ubuntu-20.04]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -69,9 +69,19 @@ jobs:
         run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.1-dev gcc-aarch64-linux-gnu
         shell: bash
 
+      - name: Install Linux Wails deps for Ubuntu 20.04
+        if: matrix.os == 'ubuntu-20.04'
+        run: sudo apt-get update && sudo apt-get install libgtk-3-0 libwebkit2gtk-4.0-dev gcc-aarch64-linux-gnu
+        shell: bash
+
       - name: Build App Linux
         if: runner.os == 'Linux'
         run: wails build --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41
+        shell: bash
+
+      - name: Build App Linux for Ubuntu 20.04
+        if: matrix.os == 'ubuntu-20.04'
+        run: wails build --platform 'linux' -o blunderDB-linux-webkit2gtk-4.0-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_40
         shell: bash
         
       - name: Build App Windows
