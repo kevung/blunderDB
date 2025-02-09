@@ -1,7 +1,7 @@
 <script>
     import { analysisStore } from '../stores/analysisStore'; // Import analysisStore
     import { positionStore } from '../stores/positionStore'; // Import positionStore
-
+    import { showAnalysisStore, showFilterLibraryPanelStore, showCommentStore, statusBarModeStore } from '../stores/uiStore'; // Import showAnalysisStore
     export let visible = false;
     export let onClose;
 
@@ -18,28 +18,28 @@
         cubeValue = value.cube.value;
     });
 
-    $: if (visible) {
-        console.log('Panel is now visible');
-        console.log('Received Analysis Data:', analysisData);
-        console.log('Analysis Type:', analysisData.analysisType);
-        console.log('Checker Analysis:', Array.isArray(analysisData.checkerAnalysis) ? analysisData.checkerAnalysis : []);
-    } else {
-        console.log('Panel is not visible');
-    }
+    showAnalysisStore.subscribe(value => {
+        visible = value;
+        if(visible) {
+            console.log('Panel is now visible');
+            console.log('Received Analysis Data:', analysisData);
+            console.log('Analysis Type:', analysisData.analysisType);
+            console.log('Checker Analysis:', Array.isArray(analysisData.checkerAnalysis) ? analysisData.checkerAnalysis : []);
+            setTimeout(() => {
+                const analysisEl = document.getElementById('analysisPanel');
+                if (analysisEl) {
+                    analysisEl.focus();
+                }
+            }, 0);
+        } else {
+            console.log('Panel is not visible');
+        }
+    });
 
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             onClose();
         }
-    }
-
-    $: if (visible) {
-        setTimeout(() => {
-            const analysisEl = document.getElementById('analysisPanel');
-            if (analysisEl) {
-                analysisEl.focus();
-            }
-        }, 0);
     }
 
     function formatEquity(value) {

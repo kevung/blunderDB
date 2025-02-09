@@ -312,8 +312,8 @@
             return;
         }
 
-        // Prevent command line from opening when editing filter panel fields
-        if (document.activeElement.closest('.filter-library-panel')) {
+        // Prevent command line from opening when editing filter panel fields or comment panel
+        if (document.activeElement.closest('.filter-library-panel') || showComment) {
             if (event.ctrlKey && (event.code === 'KeyP' || event.code === 'KeyL' || event.code === 'KeyB')) {
                 event.preventDefault();
             } else {
@@ -409,7 +409,7 @@
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
         } else if (event.ctrlKey && event.code === 'KeyB') {
-            showFilterLibraryPanelStore.set(!showFilterLibraryPanel); // Use inline function
+            toggleFilterLibraryPanel();
         }
     }
 
@@ -1488,13 +1488,9 @@
         }
         if ($statusBarModeStore !== "EDIT") {
             previousModeStore.set($statusBarModeStore);
-            if (showComment) {
-                toggleCommentPanel();
-            }
-            if (showAnalysis) {
-                toggleAnalysisPanel();
-            }
             statusBarModeStore.set('EDIT');
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
         } else {
             previousModeStore.set($statusBarModeStore);
             statusBarModeStore.set('NORMAL');
@@ -1516,8 +1512,9 @@
         showAnalysisStore.set(!showAnalysis);
         
         if (showAnalysis) {
+            statusBarModeStore.set('NORMAL');
+            showFilterLibraryPanelStore.set(false);
             showCommentStore.set(false);
-            showFilterLibraryPanelStore.set(false); // Close filter library panel if open
             setTimeout(() => {
                 const analysisPanel = document.querySelector('.analysis-panel');
                 if (analysisPanel) {
@@ -1550,19 +1547,16 @@
             return;
         }
         console.log('toggleCommentPanel called');
-
-        if ($statusBarModeStore === 'NORMAL' || $statusBarModeStore === 'COMMAND') {
-            if (showComment) {
-                SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore); // Ensure position ID is an int64
-            }
-            showCommentStore.set(!showComment);
-            console.log('showComment state:', showComment); // Debugging log
-        }
+        showCommentStore.set(!showComment);
 
         if (showComment) {
+            statusBarModeStore.set('NORMAL');
             showAnalysisStore.set(false);
             showFilterLibraryPanelStore.set(false); // Close filter library panel if open
             showCommandStore.set(false);
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
             setTimeout(() => {
                 const commentPanel = document.querySelector('.comment-panel');
                 if (commentPanel) {
@@ -1573,6 +1567,7 @@
                 }
             }, 0);
         } else {
+            SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore);
             mainArea.scrollIntoView({
                 behavior: 'smooth'
             });
@@ -1581,6 +1576,37 @@
         previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
+
+    function toggleMetadataModal() {
+        if (databaseLoaded) {
+            if (mode === 'EDIT') {
+                setStatusBarMessage('Cannot show metadata modal in edit mode');
+            } else {
+                showMetadataModalStore.set(!showMetadataModal);
+            }
+        }
+    }
+
+    function toggleFilterLibraryPanel() {
+        console.log('toggleFilterLibraryPanel');
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
+        showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
+        if (showFilterLibraryPanel) {
+            statusBarModeStore.set('EDIT');
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
+        } else {
+            statusBarModeStore.set('NORMAL'); // Switch to normal mode when the panel is closed
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
+        }
+    }
+
 
     async function loadPositionsByFilters(
         filters,
@@ -1843,24 +1869,6 @@
                 nextPosition();
             }
         }
-    }
-
-    function toggleMetadataModal() {
-        if (databaseLoaded) {
-            if (mode === 'EDIT') {
-                setStatusBarMessage('Cannot show metadata modal in edit mode');
-            } else {
-                showMetadataModalStore.set(!showMetadataModal);
-            }
-        }
-    }
-
-    function toggleFilterLibraryPanel() {
-        if (!databaseLoaded) {
-            statusBarTextStore.set('No database loaded');
-            return;
-        }
-        showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
     }
 
     async function handleResize() {

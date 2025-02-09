@@ -25,14 +25,6 @@
         visible = value;
         if (visible) {
             await loadFilters();
-            statusBarModeStore.set('EDIT');
-            showCommentStore.set(false);
-        } else {
-            statusBarModeStore.set('NORMAL'); // Switch to normal mode when the panel is closed
-            // Refresh board and display position associated with currentPositionIndexStore
-            const currentIndex = $currentPositionIndexStore;
-            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
-            currentPositionIndexStore.set(currentIndex); // Set back to the original value
         }
     });
 
