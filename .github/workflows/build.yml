@@ -75,7 +75,7 @@ jobs:
         shell: bash
 
       - name: Build App Linux
-        if: runner.os == 'Linux'
+        if: matrix.os == 'ubuntu-latest'
         run: wails build --platform 'linux' -o blunderDB-linux-${{ steps.vars.outputs.version }} -upx -clean -tags webkit2_41
         shell: bash
 
