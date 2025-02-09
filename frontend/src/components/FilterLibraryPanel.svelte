@@ -22,10 +22,6 @@
     });
 
     showFilterLibraryPanelStore.subscribe(async value => {
-        if (!databaseLoaded) {
-            statusBarTextStore.set('No database loaded');
-            return;
-        }
         visible = value;
         if (visible) {
             await loadFilters();
@@ -113,6 +109,13 @@
         currentPositionIndexStore.set(currentIndex); // Set back to the original value
     }
 
+    function handleClickOutside(event) {
+        const panel = document.getElementById('filterLibraryPanel');
+        if (panel && !panel.contains(event.target)) {
+            document.activeElement.blur(); // Remove focus from the active element
+        }
+    }
+
     $: filterExists = filters.some(filter => filter.name === filterName);
 
     $: {
@@ -137,12 +140,6 @@
         const filterRow = document.getElementById(`filter-${filter.id}`);
         if (filterRow) {
             filterRow.classList.add('highlight');
-        }
-    }
-
-    function handleClickOutside(event) {
-        if (!event.target.closest('.filter-library-panel')) {
-            document.activeElement.blur();
         }
     }
 

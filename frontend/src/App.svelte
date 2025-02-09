@@ -1855,6 +1855,14 @@
         }
     }
 
+    function toggleFilterLibraryPanel() {
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
+        showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
+    }
+
     async function handleResize() {
         try {
             const size = await WindowGetSize();
@@ -1896,7 +1904,7 @@
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
         onShowMetadata={toggleMetadataModal}
-        onToggleFilterLibraryPanel={() => showFilterLibraryPanelStore.set(!showFilterLibraryPanel)}
+        onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
     />
 
     <div class="scrollable-content">
@@ -1917,7 +1925,7 @@
             exitApp={exitApp}
             onLoadPositionsByFilters={loadPositionsByFilters}
             onLoadAllPositions={loadAllPositions}
-            toggleFilterLibraryPanel={() => showFilterLibraryPanelStore.set(!showFilterLibraryPanel)}
+            toggleFilterLibraryPanel={toggleFilterLibraryPanel}
         />
 
     </div>
