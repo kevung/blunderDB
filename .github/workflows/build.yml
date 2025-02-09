@@ -116,7 +116,7 @@ jobs:
       # Upload build assets
       - uses: actions/upload-artifact@v4
         with:
-          name: Wails Build ${{runner.os}} blunderDB ${{ steps.vars.outputs.version }}
+          name: Wails Build ${{matrix.os}} blunderDB ${{ steps.vars.outputs.version }}
           path: |
             */bin/
             *\bin\*
