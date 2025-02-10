@@ -264,15 +264,15 @@
                 <table class="filter-table">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Filter</th>
+                            <th class="no-select">Name</th>
+                            <th class="no-select">Filter</th>
                         </tr>
                     </thead>
                     <tbody>
                         {#each filters as filter}
                             <tr id={`filter-${filter.id}`} class:highlight={filter.name === filterName} on:click={() => selectFilter(filter)} on:dblclick={() => executeFilterCommand(filter)}>
-                                <td>{filter.name}</td>
-                                <td>{filter.command}</td>
+                                <td class="no-select">{filter.name}</td>
+                                <td class="no-select">{filter.command}</td>
                             </tr>
                         {/each}
                     </tbody>
@@ -387,6 +387,10 @@
         border: 1px solid #ddd;
         padding: 2px; /* Reduce padding */
         text-align: center;
+        user-select: none; /* Prevent text selection */
+        -webkit-user-select: none; /* Prevent text selection for Safari */
+        -moz-user-select: none; /* Prevent text selection for Firefox */
+        -ms-user-select: none; /* Prevent text selection for IE */
     }
 
     .filter-table th {
@@ -412,6 +416,13 @@
     .highlight {
         background-color: #f0f0f0; /* Very light highlight color */
         border: 1px solid #ccc; /* Subtle border */
+    }
+
+    .no-select {
+        user-select: none; /* Prevent text selection */
+        -webkit-user-select: none; /* Prevent text selection for Safari */
+        -moz-user-select: none; /* Prevent text selection for Firefox */
+        -ms-user-select: none; /* Prevent text selection for IE */
     }
 
     .status-bar {
