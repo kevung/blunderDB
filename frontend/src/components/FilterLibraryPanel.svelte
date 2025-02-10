@@ -5,6 +5,7 @@
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters, SaveEditPosition, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
     import { positionStore } from '../stores/positionStore';
+    import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
     
     export let onLoadPositionsByFilters; // Accept the prop
 
@@ -16,6 +17,8 @@
     let filterExists = false;
     let databaseLoaded = false;
     let editPosition = ''; // Add editPosition variable
+    let commandHistory = [];
+    let historyIndex = -1;
 
     filterLibraryStore.subscribe(value => {
         filters = value || [];
@@ -30,6 +33,10 @@
         if (visible) {
             await loadFilters();
         }
+    });
+
+    commandHistoryStore.subscribe(value => {
+        commandHistory = value.filter(command => command.startsWith('s ') || command === 's'); // Filter commands
     });
 
     async function loadFilters() {
@@ -208,6 +215,23 @@
         }
     }
 
+    function handleCommandKeyDown(event) {
+        if (event.code === 'ArrowUp') {
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                filterCommand = commandHistory[historyIndex];
+            }
+        } else if (event.code === 'ArrowDown') {
+            if (historyIndex > 0) {
+                historyIndex--;
+                filterCommand = commandHistory[historyIndex];
+            } else {
+                historyIndex = -1;
+                filterCommand = '';
+            }
+        }
+    }
+
     $: filterExists = filters.some(filter => filter.name === filterName);
 
     $: {
@@ -253,7 +277,7 @@
                     <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$statusBarModeStore !== 'EDIT'} />
                 </div>
                 <div class="form-group command-group">
-                    <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$statusBarModeStore !== 'EDIT'} />
+                    <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$statusBarModeStore !== 'EDIT'} on:keydown={handleCommandKeyDown} />
                 </div>
                 <div class="form-actions">
                     <button on:click={saveFilter} disabled={filterExists || $statusBarModeStore !== 'EDIT'}>Add</button>
