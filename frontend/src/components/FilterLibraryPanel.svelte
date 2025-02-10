@@ -193,18 +193,11 @@
             mirrorPositionFilter
         );
 
-        // Close the filter library panel after executing the filter search
-        closePanel();
+        // Do not close the filter library panel after executing the filter search
     }
 
     function closePanel() {
-        statusBarModeStore.set('NORMAL'); // Switch to normal mode when the panel is closed
         showFilterLibraryPanelStore.set(false);
-        
-        // Refresh board and display position associated with currentPositionIndexStore
-        const currentIndex = $currentPositionIndexStore;
-        currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
-        currentPositionIndexStore.set(currentIndex); // Set back to the original value
     }
 
     function handleClickOutside(event) {
@@ -262,9 +255,9 @@
                     <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " />
                 </div>
                 <div class="form-actions">
-                    <button on:click={saveFilter} disabled={filterExists}>Add</button>
-                    <button on:click={updateFilter} disabled={!filterExists}>Update</button>
-                    <button on:click={deleteFilter} disabled={!selectedFilter}>Delete</button>
+                    <button on:click={saveFilter} disabled={filterExists || $statusBarModeStore !== 'EDIT'}>Add</button>
+                    <button on:click={updateFilter} disabled={!filterExists || $statusBarModeStore !== 'EDIT'}>Update</button>
+                    <button on:click={deleteFilter} disabled={!selectedFilter || $statusBarModeStore !== 'EDIT'}>Delete</button>
                 </div>
             </div>
             <div class="filter-table-container">
