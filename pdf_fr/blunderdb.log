@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.2.9)  9 FEB 2025 23:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.2.10)  10 FEB 2025 01:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -978,7 +978,7 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  16991 strings out of 476182
- 288696 string characters out of 5795596
+ 288696 string characters out of 5795595
  1976975 words of memory out of 5000000
  38514 multiletter control sequences out of 15000+600000
  611301 words of font info for 75 fonts, out of 8000000 for 9000
