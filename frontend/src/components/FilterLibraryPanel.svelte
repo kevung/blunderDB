@@ -102,6 +102,7 @@
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition)); // Restore positionStore from JSON string
         }
+        currentPositionIndexStore.set(-1); // Set current position index to 0
     }
 
     async function executeFilterCommand(filter) {
