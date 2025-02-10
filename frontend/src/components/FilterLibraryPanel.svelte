@@ -249,10 +249,10 @@
         <div class="filter-library-content">
             <div class="form-row">
                 <div class="form-group name-group">
-                    <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " />
+                    <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$statusBarModeStore !== 'EDIT'} />
                 </div>
                 <div class="form-group command-group">
-                    <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " />
+                    <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$statusBarModeStore !== 'EDIT'} />
                 </div>
                 <div class="form-actions">
                     <button on:click={saveFilter} disabled={filterExists || $statusBarModeStore !== 'EDIT'}>Add</button>
