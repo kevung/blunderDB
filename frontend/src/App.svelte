@@ -2018,7 +2018,7 @@
 
     <TakePoint4Modal/>
 
-    <FilterLibraryPanel/>
+    <FilterLibraryPanel onLoadPositionsByFilters={loadPositionsByFilters} />
 
     <HelpModal
         visible={showHelp}

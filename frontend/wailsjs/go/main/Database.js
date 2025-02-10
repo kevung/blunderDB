@@ -50,6 +50,10 @@ export function LoadComment(arg1) {
   return window['go']['main']['Database']['LoadComment'](arg1);
 }
 
+export function LoadEditPosition(arg1) {
+  return window['go']['main']['Database']['LoadEditPosition'](arg1);
+}
+
 export function LoadFilters() {
   return window['go']['main']['Database']['LoadFilters']();
 }
@@ -92,6 +96,10 @@ export function SaveCommand(arg1) {
 
 export function SaveComment(arg1, arg2) {
   return window['go']['main']['Database']['SaveComment'](arg1, arg2);
+}
+
+export function SaveEditPosition(arg1, arg2) {
+  return window['go']['main']['Database']['SaveEditPosition'](arg1, arg2);
 }
 
 export function SaveFilter(arg1, arg2) {

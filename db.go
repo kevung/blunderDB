@@ -2083,7 +2083,8 @@ func (d *Database) Migrate_1_1_0_to_1_2_0() error {
 		CREATE TABLE IF NOT EXISTS filter_library (
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT,
-			command TEXT
+			command TEXT,
+			edit_position TEXT
 		)
 	`)
 	if err != nil {
@@ -2223,4 +2224,68 @@ func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 		})
 	}
 	return filters, nil
+}
+
+func (d *Database) SaveEditPosition(filterName, editPosition string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check if the database version is 1.2.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion < "1.2.0" {
+		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
+	}
+
+	// Check if a filter with the same name already exists
+	var existingID int64
+	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, filterName).Scan(&existingID)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error checking existing filter:", err)
+		return err
+	}
+	if existingID > 0 {
+		_, err = d.db.Exec(`UPDATE filter_library SET edit_position = ? WHERE id = ?`, editPosition, existingID)
+		if err != nil {
+			fmt.Println("Error updating edit position:", err)
+			return err
+		}
+	} else {
+		return fmt.Errorf("filter name does not exist")
+	}
+
+	return nil
+}
+
+func (d *Database) LoadEditPosition(filterName string) (string, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check if the database version is 1.2.0 or higher
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return "", err
+	}
+
+	if dbVersion < "1.2.0" {
+		return "", fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
+	}
+
+	var editPosition string
+	err = d.db.QueryRow(`SELECT edit_position FROM filter_library WHERE name = ?`, filterName).Scan(&editPosition)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil // No edit position found
+		}
+		fmt.Println("Error loading edit position:", err)
+		return "", err
+	}
+	return editPosition, nil
 }

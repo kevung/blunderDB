@@ -26,6 +26,8 @@ export function LoadCommandHistory():Promise<Array<string>>;
 
 export function LoadComment(arg1:number):Promise<string>;
 
+export function LoadEditPosition(arg1:string):Promise<string>;
+
 export function LoadFilters():Promise<Array<{[key: string]: any}>>;
 
 export function LoadMetadata():Promise<{[key: string]: string}>;
@@ -47,6 +49,8 @@ export function SaveAnalysis(arg1:number,arg2:main.PositionAnalysis):Promise<voi
 export function SaveCommand(arg1:string):Promise<void>;
 
 export function SaveComment(arg1:number,arg2:string):Promise<void>;
+
+export function SaveEditPosition(arg1:string,arg2:string):Promise<void>;
 
 export function SaveFilter(arg1:string,arg2:string):Promise<void>;
 
