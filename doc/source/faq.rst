@@ -43,6 +43,24 @@ Comment sauvegarder la base de données courante?
 La base de données est modifiée immédiatement après exécution des requêtes.
 Aucune opération de sauvegarde explicite est nécessaire.
 
+Dois-je créer différentes bases de données pour différentes catégories de positions?
+------------------------------------------------------------------------------------
+
+Sauf pour des raisons bien identifiées, il est essentiel de ne pas
+répartir les positions dans des bases de données séparées au risque
+de ne pas pouvoir les mettre en relation dans des recherches futures.
+La philisophie de blunderDB est de ne pas présupposer de catégories de
+positions *a priori* et de permettre à l'utilisateur de les interroger
+de manière flexible. Lorsque les positions ont été rencontrées dans des conditions
+particulières ou pour des raisons spécifiques, il peut être judicieux de les
+stocker dans des bases de données distinctes.
+On peut par exemple constituer des bases de données de positions distinctes
+pour :
+
+* les positions de référence,
+* les blunders en tournoi réel,
+* les blunders en ligne.
+
 
 Puis-je modifier, copier, partager blunderDB?
 ---------------------------------------------
