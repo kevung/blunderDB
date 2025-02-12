@@ -41,16 +41,20 @@
 \contentsline {subsection}{\numberline {2.6.8}What is the software architecture of blunderDB?}{16}{subsection.2.6.8}%
 \contentsline {subsection}{\numberline {2.6.9}On which platforms does blunderDB run?}{16}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}Where does the blunderDB icon come from?}{16}{subsection.2.6.10}%
-\contentsline {section}{\numberline {2.7}Windows Annex: False Detection of blunderDB as Malware}{16}{section.2.7}%
-\contentsline {subsection}{\numberline {2.7.1}Windows SmartScreen Warning}{17}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Windows Defender Blocking}{17}{subsection.2.7.2}%
-\contentsline {section}{\numberline {2.8}Mac Annex: Possible Blocking of blunderDB}{18}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Installation of blunderDB}{26}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Authorization to Run blunderDB}{26}{subsection.2.8.2}%
-\contentsline {section}{\numberline {2.9}Annex: Database Schema}{26}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Version 1.0.0}{26}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Version 1.1.0}{26}{subsection.2.9.2}%
-\contentsline {subsection}{\numberline {2.9.3}Version 1.2.0}{27}{subsection.2.9.3}%
+\contentsline {section}{\numberline {2.7}Annexe: Utilisation avancée des filtres}{16}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}Recherche de positions en ligne de commande}{17}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}Bibliotheque de filtres}{17}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Exemples}{17}{subsection.2.7.3}%
+\contentsline {section}{\numberline {2.8}Windows Annex: False Detection of blunderDB as Malware}{18}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Windows SmartScreen Warning}{18}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Windows Defender Blocking}{19}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Mac Annex: Possible Blocking of blunderDB}{20}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Installation of blunderDB}{20}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Authorization to Run blunderDB}{20}{subsection.2.9.2}%
+\contentsline {section}{\numberline {2.10}Annex: Database Schema}{28}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{28}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{28}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Version 1.2.0}{28}{subsection.2.10.3}%
 \contentsline {chapter}{\numberline {3}Contact}{29}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Donate}{31}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Acknowledgments}{33}{chapter.5}%

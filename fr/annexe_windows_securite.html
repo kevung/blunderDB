@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant &mdash; Documentation blunderDB 0.5.4</title>
+  <title>8. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant &mdash; Documentation blunderDB 0.5.4</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Recherche" href="search.html" />
-    <link rel="next" title="8. Annexe Mac : Blocage éventuel de blunderDB" href="annexe_mac_securite.html" />
-    <link rel="prev" title="6. Foire aux questions" href="faq.html" /> 
+    <link rel="next" title="9. Annexe Mac : Blocage éventuel de blunderDB" href="annexe_mac_securite.html" />
+    <link rel="prev" title="7. Annexe: Utilisation avancée des filtres" href="annexe_filtres.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,13 +54,14 @@
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">6. Foire aux questions</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">7.1. Avertissement Windows SmartScreen</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">7.2. Blocage Windows Defender</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">7. Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">8.1. Avertissement Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">8.2. Blocage Windows Defender</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">8. Annexe Mac : Blocage éventuel de blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">9. Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">9. Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">10. Annexe: Schéma de la base de données</a></li>
 </ul>
 
         </div>
@@ -77,7 +78,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">7. </span>Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -87,7 +88,7 @@
            <div itemprop="articleBody">
              
   <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
-<span id="annexe-windows-malware"></span><h1><span class="section-number">7. </span>Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Lien vers cette rubrique"></a></h1>
+<span id="annexe-windows-malware"></span><h1><span class="section-number">8. </span>Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Lien vers cette rubrique"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Ce qui suit concerne les systèmes d’exploitation Windows 10 et 11.</p>
@@ -105,7 +106,7 @@ avertisse d’un potentiel danger, voire bloque complètement l’exécution de
 blunderDB. Les sections suivantes expliquent les opérations à réaliser pour
 passer outre les réticences de Windows.</p>
 <section id="avertissement-windows-smartscreen">
-<h2><span class="section-number">7.1. </span>Avertissement Windows SmartScreen<a class="headerlink" href="#avertissement-windows-smartscreen" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">8.1. </span>Avertissement Windows SmartScreen<a class="headerlink" href="#avertissement-windows-smartscreen" title="Lien vers cette rubrique"></a></h2>
 <p>Après téléchargement de blunderDB, lors de son exécution, il est possible que
 Windows affiche un avertissement du type</p>
 <figure class="align-default">
@@ -134,7 +135,7 @@ même</strong> pour contourner l’avertissement SmartScreen pour cette instance
 </ol>
 </section>
 <section id="blocage-windows-defender">
-<h2><span class="section-number">7.2. </span>Blocage Windows Defender<a class="headerlink" href="#blocage-windows-defender" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">8.2. </span>Blocage Windows Defender<a class="headerlink" href="#blocage-windows-defender" title="Lien vers cette rubrique"></a></h2>
 <p>Pour certains paramétrages sécurité de Windows, il arrive que malgré le
 déblocage de SmartScreen (voir section plus précédente), Windows Defender
 puisse empêcher l’exécution de blunderDB avec des messages du type</p>
@@ -215,8 +216,8 @@ l’exécutable que vous souhaitez exclure et sélectionnez-le.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
-        <a href="faq.html" class="btn btn-neutral float-left" title="6. Foire aux questions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="8. Annexe Mac : Blocage éventuel de blunderDB" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="7. Annexe: Utilisation avancée des filtres" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="9. Annexe Mac : Blocage éventuel de blunderDB" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

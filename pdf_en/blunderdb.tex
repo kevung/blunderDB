@@ -1997,6 +1997,269 @@ The blunderDB icon is the “goggling” emoticon from the  \sphinxhref{https://
 \sphinxstepscope
 
 
+\section{Annexe: Utilisation avancée des filtres}
+\label{\detokenize{annexe_filtres:annexe-utilisation-avancee-des-filtres}}\label{\detokenize{annexe_filtres:annexe-filtres}}\label{\detokenize{annexe_filtres::doc}}
+\begin{sphinxadmonition}{warning}{Warning:}
+\sphinxAtStartPar
+Cette section s’adresse aux utilisateurs avancés de blunderDB qui souhaitent
+exploiter pleinement les fonctionnalités de recherche de positions.
+\end{sphinxadmonition}
+
+\sphinxAtStartPar
+Les filtres sont au coeur de l’analyse des positions dans blunderDB.
+Leur utilisation permet de rechercher des positions spécifiques relativement
+précisément. Dans cette section, l’utilisation des filtres via le mode COMMAND
+est détaillée. Le mode COMMAND est accessible en appuyant sur la touche \sphinxcode{\sphinxupquote{ESPACE}}.
+Il permet de combiner avec l’habitude très rapidement des filtres et d’utiliser
+la bibliothèque de filtres.
+
+
+\subsection{Recherche de positions en ligne de commande}
+\label{\detokenize{annexe_filtres:recherche-de-positions-en-ligne-de-commande}}
+\sphinxAtStartPar
+Pour faire une recherche à l’aide de filtres,
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Basculer en mode EDIT avec la touche \sphinxcode{\sphinxupquote{TAB}}.
+
+\item {} 
+\sphinxAtStartPar
+Editer la position courante.
+
+\item {} 
+\sphinxAtStartPar
+Basculer en mode COMMAND avec la touche \sphinxcode{\sphinxupquote{ESPACE}}.
+
+\item {} 
+\sphinxAtStartPar
+Utiliser la commande \sphinxcode{\sphinxupquote{s}} suivie éventuellement de filtres.
+
+\item {} 
+\sphinxAtStartPar
+Lancer la recherche avec la touche \sphinxcode{\sphinxupquote{ENTREE}}.
+
+\end{enumerate}
+
+\begin{sphinxadmonition}{warning}{Warning:}
+\sphinxAtStartPar
+Ne pas oublier d’effacer la position courante avant de lancer une recherche
+(touche \sphinxcode{\sphinxupquote{RETOUR ARRIERE}}), si cette dernière n’est pas celle souhaitée, au
+risque de filtrer abusivement des structures de pions.
+\end{sphinxadmonition}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+La liste des filtres disponibles en mode COMMAND est fournie dans la
+\hyperref[\detokenize{cmd_mode:cmd-filter}]{Section \ref{\detokenize{cmd_mode:cmd-filter}}}.
+\end{sphinxadmonition}
+
+
+\subsection{Bibliotheque de filtres}
+\label{\detokenize{annexe_filtres:bibliotheque-de-filtres}}
+\sphinxAtStartPar
+La bibliothèque de filtres permet à l’utilisateur d’enregistrer des commandes de recherche
+afin de faciliter ses études thématiques.
+
+\sphinxAtStartPar
+Pour ajouter un filtre à la bibliothèque,
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Basculer dans le mode EDIT.
+
+\item {} 
+\sphinxAtStartPar
+Ouvrir la bibliothèque de filtre en appuyant sur \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}B}}.
+
+\item {} 
+\sphinxAtStartPar
+Editer la position courante.
+
+\item {} 
+\sphinxAtStartPar
+Donner un nom au filtre.
+
+\item {} 
+\sphinxAtStartPar
+Editer la commande de recherche.
+
+\item {} 
+\sphinxAtStartPar
+Sauvegarder la commande de recherche à l’aide du bouton “Add”.
+
+\end{enumerate}
+
+\sphinxAtStartPar
+Pour utiliser un filtre enregistré dans la bibliothèque,
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Basculer en mode NORMAL.
+
+\item {} 
+\sphinxAtStartPar
+Ouvrir la bibliothèque de filtre en appuyant sur \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}B}}.
+
+\item {} 
+\sphinxAtStartPar
+Rechercher le filtre souhaité.
+
+\item {} 
+\sphinxAtStartPar
+Double cliquer sur le filtre pour lancer la recherche.
+
+\end{enumerate}
+
+
+\subsection{Exemples}
+\label{\detokenize{annexe_filtres:exemples}}
+\sphinxAtStartPar
+Voici quelques exemples d’utilisation des filtres en mode COMMAND:
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{10}{40}\X{10}{40}\X{20}{40}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Type de position
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Structure de pions
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Commande
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
+\sphinxAtStartPar
+Courses
+&&
+\sphinxAtStartPar
+s nc
+\\
+\sphinxhline
+\sphinxAtStartPar
+Courses petites
+&&
+\sphinxAtStartPar
+s nc P\textless{}70
+\\
+\sphinxhline
+\sphinxAtStartPar
+Frapper au point 1
+&&
+\sphinxAtStartPar
+s m"6/1*"
+\\
+\sphinxhline
+\sphinxAtStartPar
+Backgame 1\sphinxhyphen{}4
+&
+\sphinxAtStartPar
+portes 24, 21
+&
+\sphinxAtStartPar
+s p\textgreater{}35
+\\
+\sphinxhline
+\sphinxAtStartPar
+Décision de Take/Pass à \sphinxhyphen{}2 \sphinxhyphen{}4
+&
+\sphinxAtStartPar
+dés vides côté joueur du haut, score \sphinxhyphen{}2/\sphinxhyphen{}4
+&
+\sphinxAtStartPar
+s s d
+\\
+\sphinxhline
+\sphinxAtStartPar
+Envoi de too good
+&
+\sphinxAtStartPar
+dés vides côté joueur du bas
+&
+\sphinxAtStartPar
+s d e\textgreater{}1000
+\\
+\sphinxhline
+\sphinxAtStartPar
+Blitz avec au moins 20\% de gammon
+&
+\sphinxAtStartPar
+portes dans le jan, hommes à la barre
+&
+\sphinxAtStartPar
+s g\textgreater{}20
+\\
+\sphinxhline
+\sphinxAtStartPar
+Position du tournoi Aachen2024
+&&
+\sphinxAtStartPar
+s t"Aachen2024"
+\\
+\sphinxhline
+\sphinxAtStartPar
+Un pion arriéré à ramener
+&&
+\sphinxAtStartPar
+s k1,1
+\\
+\sphinxhline
+\sphinxAtStartPar
+Quitter le point 20
+&
+\sphinxAtStartPar
+point 20
+&
+\sphinxAtStartPar
+s m"20/"
+\\
+\sphinxhline
+\sphinxAtStartPar
+Prime contre prime
+&
+\sphinxAtStartPar
+indiquer les primes
+&
+\sphinxAtStartPar
+s
+\\
+\sphinxhline
+\sphinxAtStartPar
+Ace\sphinxhyphen{}point bear\sphinxhyphen{}off
+&
+\sphinxAtStartPar
+point 1 pour l’adversaire
+&
+\sphinxAtStartPar
+s P\textless{}60
+\\
+\sphinxhline
+\sphinxAtStartPar
+Double avec au moins 20pip d’avance
+&
+\sphinxAtStartPar
+dés vides côté joueur du bas
+&
+\sphinxAtStartPar
+s d p\textless{}\sphinxhyphen{}20
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxstepscope
+
+
 \section{Windows Annex: False Detection of blunderDB as Malware}
 \label{\detokenize{annexe_windows_securite:annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant}}\label{\detokenize{annexe_windows_securite:annexe-windows-malware}}\label{\detokenize{annexe_windows_securite::doc}}
 \begin{sphinxadmonition}{note}{Note:}
