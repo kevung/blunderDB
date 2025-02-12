@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 14:00+0100\n"
-"PO-Revision-Date: 2025-02-04 14:02+0100\n"
-"Last-Translator: Kévin Unger <kevin.unger@onera.fr>\n"
+"POT-Creation-Date: 2025-02-12 23:58+0100\n"
+"PO-Revision-Date: 2025-02-13 00:02+0100\n"
+"Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 23.08.5\n"
+"X-Generator: Lokalize 24.12.2\n"
 
 #: ../../source/faq.rst:4
 msgid "Foire aux questions"
@@ -98,21 +98,61 @@ msgstr ""
 "The database is updated immediately upon validation of the request. No "
 "explicit saving operation is necessary."
 
-#: ../../source/faq.rst:48
+#: ../../source/faq.rst:47
+msgid ""
+"Dois-je créer différentes bases de données pour différentes catégories de"
+" positions?"
+msgstr ""
+"Should I create different databases for different categories of positions?"
+
+#: ../../source/faq.rst:49
+msgid ""
+"Sauf pour des raisons bien identifiées, il est essentiel de ne pas "
+"répartir les positions dans des bases de données séparées au risque de ne"
+" pas pouvoir les mettre en relation dans des recherches futures. La "
+"philisophie de blunderDB est de ne pas présupposer de catégories de "
+"positions *a priori* et de permettre à l'utilisateur de les interroger de"
+" manière flexible. Lorsque les positions ont été rencontrées dans des "
+"conditions particulières ou pour des raisons spécifiques, il peut être "
+"judicieux de les stocker dans des bases de données distinctes. On peut "
+"par exemple constituer des bases de données de positions distinctes pour "
+":"
+msgstr ""
+"Unless there are clearly identified reasons, it is essential not to split posi"
+"tions into separate databases, as this could prevent you from linking them in "
+"future searches. The philosophy of blunderDB is not to assume position categor"
+"ies *a priori* but to allow the user to query them flexibly. When positions ha"
+"ve been encountered under specific conditions or for particular reasons, it ma"
+"y be wise to store them in separate databases. For example, you could create d"
+"istinct position databases for:"
+
+#: ../../source/faq.rst:60
+msgid "les positions de référence,"
+msgstr "reference positions,"
+
+#: ../../source/faq.rst:61
+msgid "les blunders en tournoi réel,"
+msgstr "blunders from live tournaments,"
+
+#: ../../source/faq.rst:62
+msgid "les blunders en ligne."
+msgstr "blunders from online play."
+
+#: ../../source/faq.rst:66
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr "Can I modify, copy, share blunderDB?"
 
-#: ../../source/faq.rst:50
+#: ../../source/faq.rst:68
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
 msgstr "Yes, absolutely. blunderDB is licensed under the MIT license."
 
-#: ../../source/faq.rst:54
+#: ../../source/faq.rst:72
 msgid "Quel format de données utilise blunderDB?"
 msgstr "What data format does blunderDB use?"
 
-#: ../../source/faq.rst:56
+#: ../../source/faq.rst:74
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
@@ -120,11 +160,11 @@ msgstr ""
 "The database is a simple SQLite file. In the absence of blunderDB, it can"
 " thus be opened with any SQLite file editor."
 
-#: ../../source/faq.rst:61
+#: ../../source/faq.rst:79
 msgid "Quelles ont été les principes de conception de blunderDB?"
 msgstr "What were the design principles of blunderDB?"
 
-#: ../../source/faq.rst:63
+#: ../../source/faq.rst:81
 msgid ""
 "Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s'inspire du"
 " très puissant éditeur de texte `Vim "
@@ -144,11 +184,11 @@ msgstr ""
 "needed to be cross-platform and suitable for containing a database. The "
 "SQLite file format seemed like the perfect choice."
 
-#: ../../source/faq.rst:74
+#: ../../source/faq.rst:92
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr "What is the software architecture of blunderDB?"
 
-#: ../../source/faq.rst:76
+#: ../../source/faq.rst:94
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
@@ -157,7 +197,7 @@ msgstr ""
 "The backend is coded in `Go <https://go.dev/>`_. It is responsible for "
 "all operations on the SQLite database that stores the positions."
 
-#: ../../source/faq.rst:80
+#: ../../source/faq.rst:98
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
@@ -166,7 +206,7 @@ msgstr ""
 "responsible for rendering the graphical interface and the Backgammon "
 "board."
 
-#: ../../source/faq.rst:83
+#: ../../source/faq.rst:101
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
@@ -176,11 +216,11 @@ msgstr ""
 "enabling the production of native desktop applications that can run on "
 "both Windows and Linux."
 
-#: ../../source/faq.rst:86
+#: ../../source/faq.rst:104
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "The database is managed by `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:88
+#: ../../source/faq.rst:106
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -188,19 +228,19 @@ msgstr ""
 "For more information, see the `blunderDB GitHub repository "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:91
+#: ../../source/faq.rst:109
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr "On which platforms does blunderDB run?"
 
-#: ../../source/faq.rst:93
+#: ../../source/faq.rst:111
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB runs on Windows, Linux and Mac."
 
-#: ../../source/faq.rst:96
+#: ../../source/faq.rst:114
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Where does the blunderDB icon come from?"
 
-#: ../../source/faq.rst:98
+#: ../../source/faq.rst:116
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."
@@ -210,5 +250,3 @@ msgstr ""
 
 #~ msgid "Tout à fait. Il est exécutable avec Wine."
 #~ msgstr " Absolutely. It can be run with Wine."
-
-
