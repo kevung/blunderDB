@@ -50,6 +50,10 @@ Pour ajouter un filtre à la bibliothèque,
 5. Editer la commande de recherche.
 6. Sauvegarder la commande de recherche à l'aide du bouton "Add".
 
+.. tip::
+   Lors de l'édition de la commande, il est possible d'utiliser les touches
+   ``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes.
+
 Pour utiliser un filtre enregistré dans la bibliothèque,
 
 1. Basculer en mode NORMAL.

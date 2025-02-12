@@ -44,7 +44,7 @@
 \contentsline {section}{\numberline {2.7}Annexe: Utilisation avancée des filtres}{16}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Recherche de positions en ligne de commande}{17}{subsection.2.7.1}%
 \contentsline {subsection}{\numberline {2.7.2}Bibliotheque de filtres}{17}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}Exemples}{17}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.3}Exemples}{18}{subsection.2.7.3}%
 \contentsline {section}{\numberline {2.8}Windows Annex: False Detection of blunderDB as Malware}{18}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Windows SmartScreen Warning}{18}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Windows Defender Blocking}{19}{subsection.2.8.2}%

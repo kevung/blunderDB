@@ -48,12 +48,12 @@
 \contentsline {section}{\numberline {2.8}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{19}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Avertissement Windows SmartScreen}{19}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Blocage Windows Defender}{20}{subsection.2.8.2}%
-\contentsline {section}{\numberline {2.9}Annexe Mac : Blocage éventuel de blunderDB}{23}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Installation de blunderDB}{28}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Autorisation de l’exécution de blunderDB}{28}{subsection.2.9.2}%
-\contentsline {section}{\numberline {2.10}Annexe: Schéma de la base de données}{28}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{28}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{28}{subsection.2.10.2}%
+\contentsline {section}{\numberline {2.9}Annexe Mac : Blocage éventuel de blunderDB}{21}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Installation de blunderDB}{21}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Autorisation de l’exécution de blunderDB}{29}{subsection.2.9.2}%
+\contentsline {section}{\numberline {2.10}Annexe: Schéma de la base de données}{29}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{29}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{29}{subsection.2.10.2}%
 \contentsline {subsection}{\numberline {2.10.3}Version 1.2.0}{29}{subsection.2.10.3}%
 \contentsline {chapter}{\numberline {3}Contacts}{31}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Faire un don}{33}{chapter.4}%
