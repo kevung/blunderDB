@@ -33,7 +33,7 @@ Version 1.2.0
 
 La version 1.2.0 de la base de données ajoute la table suivante :
 
-- **filter_library** : Stocke les filtres de recherche avec les colonnes `id` (clé primaire), `name` (nom du filtre), et `command` (commande associée au filtre).
+- **filter_library** : Stocke les filtres de recherche avec les colonnes `id` (clé primaire), `name` (nom du filtre), `command` (commande associée au filtre), et `edit_position` (position éditée lors de l'enregistrement du filtre). 
 
 Les autres tables restent inchangées par rapport à la version 1.1.0.
 

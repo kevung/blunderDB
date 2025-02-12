@@ -116,7 +116,7 @@
 <h2><span class="section-number">10.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Lien vers cette rubrique"></a></h2>
 <p>La version 1.2.0 de la base de données ajoute la table suivante :</p>
 <ul class="simple">
-<li><p><strong>filter_library</strong> : Stocke les filtres de recherche avec les colonnes <cite>id</cite> (clé primaire), <cite>name</cite> (nom du filtre), et <cite>command</cite> (commande associée au filtre).</p></li>
+<li><p><strong>filter_library</strong> : Stocke les filtres de recherche avec les colonnes <cite>id</cite> (clé primaire), <cite>name</cite> (nom du filtre), <cite>command</cite> (commande associée au filtre), et <cite>edit_position</cite> (position éditée lors de l’enregistrement du filtre).</p></li>
 </ul>
 <p>Les autres tables restent inchangées par rapport à la version 1.1.0.</p>
 <p>Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, exécutez la commande <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> dans blunderDB.</p>
