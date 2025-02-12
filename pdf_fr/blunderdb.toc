@@ -43,7 +43,7 @@
 \contentsline {subsection}{\numberline {2.6.10}D’où vient l’icône de blunderDB?}{17}{subsection.2.6.10}%
 \contentsline {section}{\numberline {2.7}Annexe: Utilisation avancée des filtres}{17}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Recherche de positions en ligne de commande}{17}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Bibliotheque de filtres}{18}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.2}Bibliothèque de filtres}{18}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Exemples}{18}{subsection.2.7.3}%
 \contentsline {section}{\numberline {2.8}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{19}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Avertissement Windows SmartScreen}{19}{subsection.2.8.1}%

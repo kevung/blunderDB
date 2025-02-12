@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.2.12)  12 FEB 2025 22:59
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.2.12)  12 FEB 2025 23:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -989,7 +989,7 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 502AEB246F184381CEFD0CC1B356456E;12307.
+(rerunfilecheck)             Checksum: 1FC078EC27AF53A094564416F9B6FDC6;12310.
  ) 
 Here is how much of TeX's memory you used:
  17027 strings out of 476182
@@ -1005,7 +1005,7 @@ s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 tt.pfb>
-Output written on blunderdb.pdf (39 pages, 462104 bytes).
+Output written on blunderdb.pdf (39 pages, 462108 bytes).
 PDF statistics:
  588 PDF objects out of 1000 (max. 8388607)
  508 compressed objects within 6 object streams

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7. Annexe: Utilisation avancée des filtres &mdash; blunderDB 0.5.4 documentation</title>
+  <title>7. Annex: Advanced Filter Usage &mdash; blunderDB 0.5.4 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -53,10 +53,10 @@
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">6. Frequently Asked Questions (FAQ)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Annexe: Utilisation avancée des filtres</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">7.1. Recherche de positions en ligne de commande</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">7.2. Bibliotheque de filtres</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exemples">7.3. Exemples</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Annex: Advanced Filter Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">7.1. Command-line search for positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">7.2. Filter Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples">7.3. Examples</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">8. Windows Annex: False Detection of blunderDB as Malware</a></li>
@@ -78,7 +78,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">7. </span>Annexe: Utilisation avancée des filtres</li>
+      <li class="breadcrumb-item active"><span class="section-number">7. </span>Annex: Advanced Filter Usage</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -88,69 +88,58 @@
            <div itemprop="articleBody">
              
   <section id="annexe-utilisation-avancee-des-filtres">
-<span id="annexe-filtres"></span><h1><span class="section-number">7. </span>Annexe: Utilisation avancée des filtres<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Link to this heading"></a></h1>
+<span id="annexe-filtres"></span><h1><span class="section-number">7. </span>Annex: Advanced Filter Usage<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Link to this heading"></a></h1>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Cette section s’adresse aux utilisateurs avancés de blunderDB qui souhaitent
-exploiter pleinement les fonctionnalités de recherche de positions.</p>
+<p>This section is for advanced users of blunderDB who wish to fully leverage the position search features.</p>
 </div>
-<p>Les filtres sont au coeur de l’analyse des positions dans blunderDB.
-Leur utilisation permet de rechercher des positions spécifiques relativement
-précisément. Dans cette section, l’utilisation des filtres via le mode COMMAND
-est détaillée. Le mode COMMAND est accessible en appuyant sur la touche <code class="docutils literal notranslate"><span class="pre">ESPACE</span></code>.
-Il permet de combiner avec l’habitude très rapidement des filtres et d’utiliser
-la bibliothèque de filtres.</p>
+<p>Filters are at the heart of position analysis in blunderDB. Their use allows for searching specific positions with great precision. In this section, the use of filters through the COMMAND mode is detailed. The COMMAND mode can be accessed by pressing the <code class="docutils literal notranslate"><span class="pre">SPACE</span></code> key. It allows users to quickly combine filters and use the filter library with ease.</p>
 <section id="recherche-de-positions-en-ligne-de-commande">
-<h2><span class="section-number">7.1. </span>Recherche de positions en ligne de commande<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Link to this heading"></a></h2>
-<p>Pour faire une recherche à l’aide de filtres,</p>
+<h2><span class="section-number">7.1. </span>Command-line search for positions<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>To perform a search using filters,</p>
 <ol class="arabic simple">
-<li><p>Basculer en mode EDIT avec la touche <code class="docutils literal notranslate"><span class="pre">TAB</span></code>.</p></li>
-<li><p>Editer la position courante.</p></li>
-<li><p>Basculer en mode COMMAND avec la touche <code class="docutils literal notranslate"><span class="pre">ESPACE</span></code>.</p></li>
-<li><p>Utiliser la commande <code class="docutils literal notranslate"><span class="pre">s</span></code> suivie éventuellement de filtres.</p></li>
-<li><p>Lancer la recherche avec la touche <code class="docutils literal notranslate"><span class="pre">ENTREE</span></code>.</p></li>
+<li><p>Switch to EDIT mode using the <code class="docutils literal notranslate"><span class="pre">TAB</span></code> key.</p></li>
+<li><p>Edit the current position.</p></li>
+<li><p>Switch to COMMAND mode using the <code class="docutils literal notranslate"><span class="pre">SPACE</span></code> key.</p></li>
+<li><p>Use the command <code class="docutils literal notranslate"><span class="pre">s</span></code> followed, optionally, by filters.</p></li>
+<li><p>Start the search with the <code class="docutils literal notranslate"><span class="pre">ENTER</span></code> key.</p></li>
 </ol>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Ne pas oublier d’effacer la position courante avant de lancer une recherche
-(touche <code class="docutils literal notranslate"><span class="pre">RETOUR</span> <span class="pre">ARRIERE</span></code>), si cette dernière n’est pas celle souhaitée, au
-risque de filtrer abusivement des structures de pions.</p>
+<p>Don’t forget to clear the current position before starting a search (<code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code> key), if it isn’t the one you want, to avoid excessively filtering checker structures.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>La liste des filtres disponibles en mode COMMAND est fournie dans la
-<a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Section 4.4</span></a>.</p>
+<p>The list of available filters in COMMAND mode is provided in <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Section 4.4</span></a>.</p>
 </div>
 </section>
 <section id="bibliotheque-de-filtres">
-<h2><span class="section-number">7.2. </span>Bibliotheque de filtres<a class="headerlink" href="#bibliotheque-de-filtres" title="Link to this heading"></a></h2>
-<p>La bibliothèque de filtres permet à l’utilisateur d’enregistrer des commandes de recherche
-afin de faciliter ses études thématiques.</p>
-<p>Pour ajouter un filtre à la bibliothèque,</p>
+<h2><span class="section-number">7.2. </span>Filter Library<a class="headerlink" href="#bibliotheque-de-filtres" title="Link to this heading"></a></h2>
+<p>The filter library allows the user to save search commands to facilitate their thematic studies.</p>
+<p>To add a filter to the library,</p>
 <ol class="arabic simple">
-<li><p>Basculer dans le mode EDIT.</p></li>
-<li><p>Ouvrir la bibliothèque de filtre en appuyant sur <code class="docutils literal notranslate"><span class="pre">CTRL-B</span></code>.</p></li>
-<li><p>Editer la position courante.</p></li>
-<li><p>Donner un nom au filtre.</p></li>
-<li><p>Editer la commande de recherche.</p></li>
-<li><p>Sauvegarder la commande de recherche à l’aide du bouton “Add”.</p></li>
+<li><p>Switch to EDIT mode.</p></li>
+<li><p>Open the filter library by pressing <code class="docutils literal notranslate"><span class="pre">CTRL-B</span></code>.</p></li>
+<li><p>Edit the current position.</p></li>
+<li><p>Give a name to the filter.</p></li>
+<li><p>Edit the search command.</p></li>
+<li><p>Save the search command using the “Add” button.</p></li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Lors de l’édition de la commande, il est possible d’utiliser les touches
-<code class="docutils literal notranslate"><span class="pre">HAUT</span></code> et <code class="docutils literal notranslate"><span class="pre">BAS</span></code> pour naviguer dans l’historique des commandes.</p>
+<p>While editing the command, you can use the <code class="docutils literal notranslate"><span class="pre">UP</span></code> and <code class="docutils literal notranslate"><span class="pre">DOWN</span></code> arrow keys to navigate through the command history.</p>
 </div>
-<p>Pour utiliser un filtre enregistré dans la bibliothèque,</p>
+<p>To use a filter saved in the library,</p>
 <ol class="arabic simple">
-<li><p>Basculer en mode NORMAL.</p></li>
-<li><p>Ouvrir la bibliothèque de filtre en appuyant sur <code class="docutils literal notranslate"><span class="pre">CTRL-B</span></code>.</p></li>
-<li><p>Rechercher le filtre souhaité.</p></li>
-<li><p>Double cliquer sur le filtre pour lancer la recherche.</p></li>
+<li><p>Switch to NORMAL mode.</p></li>
+<li><p>Open the filter library by pressing <code class="docutils literal notranslate"><span class="pre">CTRL-B</span></code>.</p></li>
+<li><p>Search for the desired filter.</p></li>
+<li><p>Double-click on the filter to start the search.</p></li>
 </ol>
 </section>
 <section id="exemples">
-<h2><span class="section-number">7.3. </span>Exemples<a class="headerlink" href="#exemples" title="Link to this heading"></a></h2>
-<p>Voici quelques exemples d’utilisation des filtres en mode COMMAND:</p>
+<h2><span class="section-number">7.3. </span>Examples<a class="headerlink" href="#exemples" title="Link to this heading"></a></h2>
+<p>Here are some examples of using filters in COMMAND mode:</p>
 <table class="docutils align-center">
 <colgroup>
 <col style="width: 25.0%" />
@@ -158,62 +147,62 @@ afin de faciliter ses études thématiques.</p>
 <col style="width: 50.0%" />
 </colgroup>
 <thead>
-<tr class="row-odd"><th class="head"><p>Type de position</p></th>
-<th class="head"><p>Structure de pions</p></th>
-<th class="head"><p>Commande</p></th>
+<tr class="row-odd"><th class="head"><p>Type of position</p></th>
+<th class="head"><p>Checker structure</p></th>
+<th class="head"><p>Command</p></th>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p>Courses</p></td>
+<tr class="row-even"><td><p>Races</p></td>
 <td></td>
 <td><p>s nc</p></td>
 </tr>
-<tr class="row-odd"><td><p>Courses petites</p></td>
+<tr class="row-odd"><td><p>Short races</p></td>
 <td></td>
 <td><p>s nc P&lt;70</p></td>
 </tr>
-<tr class="row-even"><td><p>Frapper au point 1</p></td>
+<tr class="row-even"><td><p>Hit to point 1</p></td>
 <td></td>
 <td><p>s m&quot;6/1*&quot;</p></td>
 </tr>
 <tr class="row-odd"><td><p>Backgame 1-4</p></td>
-<td><p>portes 24, 21</p></td>
+<td><p>points 24, 21</p></td>
 <td><p>s p&gt;35</p></td>
 </tr>
-<tr class="row-even"><td><p>Décision de Take/Pass à -2 -4</p></td>
-<td><p>dés vides côté joueur du haut, score -2/-4</p></td>
+<tr class="row-even"><td><p>Take/Pass decision at 2-away 4-away</p></td>
+<td><p>empty dice for top player, score 2a-4a</p></td>
 <td><p>s s d</p></td>
 </tr>
-<tr class="row-odd"><td><p>Envoi de too good</p></td>
-<td><p>dés vides côté joueur du bas</p></td>
+<tr class="row-odd"><td><p>Too Good doubles</p></td>
+<td><p>empty dice for bottom player</p></td>
 <td><p>s d e&gt;1000</p></td>
 </tr>
-<tr class="row-even"><td><p>Blitz avec au moins 20% de gammon</p></td>
-<td><p>portes dans le jan, hommes à la barre</p></td>
+<tr class="row-even"><td><p>Blitz with at least 20% gammon</p></td>
+<td><p>point in jan, checkers on the bar</p></td>
 <td><p>s g&gt;20</p></td>
 </tr>
-<tr class="row-odd"><td><p>Position du tournoi Aachen2024</p></td>
+<tr class="row-odd"><td><p>Positions from Aachen2024 tournment</p></td>
 <td></td>
 <td><p>s t&quot;Aachen2024&quot;</p></td>
 </tr>
-<tr class="row-even"><td><p>Un pion arriéré à ramener</p></td>
+<tr class="row-even"><td><p>One backchecker to bring back</p></td>
 <td></td>
 <td><p>s k1,1</p></td>
 </tr>
-<tr class="row-odd"><td><p>Quitter le point 20</p></td>
+<tr class="row-odd"><td><p>Leave the 20-point anchor</p></td>
 <td><p>point 20</p></td>
 <td><p>s m&quot;20/&quot;</p></td>
 </tr>
-<tr class="row-even"><td><p>Prime contre prime</p></td>
-<td><p>indiquer les primes</p></td>
+<tr class="row-even"><td><p>Prime vs prime</p></td>
+<td><p>Set the primes</p></td>
 <td><p>s</p></td>
 </tr>
 <tr class="row-odd"><td><p>Ace-point bear-off</p></td>
-<td><p>point 1 pour l’adversaire</p></td>
+<td><p>point 1 for the opponent</p></td>
 <td><p>s P&lt;60</p></td>
 </tr>
-<tr class="row-even"><td><p>Double avec au moins 20pip d’avance</p></td>
-<td><p>dés vides côté joueur du bas</p></td>
+<tr class="row-even"><td><p>Double with at least 20pip ahead</p></td>
+<td><p>empty dice for bottom player</p></td>
 <td><p>s d p&lt;-20</p></td>
 </tr>
 </tbody>

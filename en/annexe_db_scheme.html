@@ -52,7 +52,7 @@
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">6. Frequently Asked Questions (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">7. Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">7. Annex: Advanced Filter Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">8. Windows Annex: False Detection of blunderDB as Malware</a></li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">9. Mac Annex: Possible Blocking of blunderDB</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">10. Annex: Database Schema</a><ul>
@@ -90,7 +90,7 @@
 <span id="annexe-db-migration"></span><h1><span class="section-number">10. </span>Annex: Database Schema<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
-<p>Sauvegardez toujours votre fichier .db avant d’effectuer des migrations de base de données.</p>
+<p>Always back up your .db file before performing database migrations.</p>
 </div>
 <section id="version-1-0-0">
 <h2><span class="section-number">10.1. </span>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
@@ -115,7 +115,7 @@
 <h2><span class="section-number">10.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
 <p>Version 1.2.0 of the database adds the following table:</p>
 <ul class="simple">
-<li><p><strong>filter_library</strong> : Stocke les filtres de recherche avec les colonnes <cite>id</cite> (clé primaire), <cite>name</cite> (nom du filtre), <cite>command</cite> (commande associée au filtre), et <cite>edit_position</cite> (position éditée lors de l’enregistrement du filtre).</p></li>
+<li><p><strong>filter_library</strong>: Stores search filters with the columns <cite>id</cite> (primary key), <cite>name</cite> (filter name), <cite>command</cite> (command associated with the filter), and <cite>edit_position</cite> (position edited when saving the filter).</p></li>
 </ul>
 <p>The other tables remain unchanged from version 1.1.0.</p>
 <p>To migrate the database from version 1.1.0 to version 1.2.0, execute the command <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> in blunderDB.</p>

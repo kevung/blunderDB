@@ -1912,31 +1912,22 @@ I used to store interesting positions or blunders in different folders. However,
 The database is updated immediately upon validation of the request. No explicit saving operation is necessary.
 
 
-\subsection{Dois\sphinxhyphen{}je créer différentes bases de données pour différentes catégories de positions?}
+\subsection{Should I create different databases for different categories of positions?}
 \label{\detokenize{faq:dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions}}
 \sphinxAtStartPar
-Sauf pour des raisons bien identifiées, il est essentiel de ne pas
-répartir les positions dans des bases de données séparées au risque
-de ne pas pouvoir les mettre en relation dans des recherches futures.
-La philisophie de blunderDB est de ne pas présupposer de catégories de
-positions \sphinxstyleemphasis{a priori} et de permettre à l’utilisateur de les interroger
-de manière flexible. Lorsque les positions ont été rencontrées dans des conditions
-particulières ou pour des raisons spécifiques, il peut être judicieux de les
-stocker dans des bases de données distinctes.
-On peut par exemple constituer des bases de données de positions distinctes
-pour :
+Unless there are clearly identified reasons, it is essential not to split positions into separate databases, as this could prevent you from linking them in future searches. The philosophy of blunderDB is not to assume position categories \sphinxstyleemphasis{a priori} but to allow the user to query them flexibly. When positions have been encountered under specific conditions or for particular reasons, it may be wise to store them in separate databases. For example, you could create distinct position databases for:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-les positions de référence,
+reference positions,
 
 \item {} 
 \sphinxAtStartPar
-les blunders en tournoi réel,
+blunders from live tournaments,
 
 \item {} 
 \sphinxAtStartPar
-les blunders en ligne.
+blunders from online play.
 
 \end{itemize}
 
@@ -1997,134 +1988,123 @@ The blunderDB icon is the “goggling” emoticon from the  \sphinxhref{https://
 \sphinxstepscope
 
 
-\section{Annexe: Utilisation avancée des filtres}
+\section{Annex: Advanced Filter Usage}
 \label{\detokenize{annexe_filtres:annexe-utilisation-avancee-des-filtres}}\label{\detokenize{annexe_filtres:annexe-filtres}}\label{\detokenize{annexe_filtres::doc}}
 \begin{sphinxadmonition}{warning}{Warning:}
 \sphinxAtStartPar
-Cette section s’adresse aux utilisateurs avancés de blunderDB qui souhaitent
-exploiter pleinement les fonctionnalités de recherche de positions.
+This section is for advanced users of blunderDB who wish to fully leverage the position search features.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Les filtres sont au coeur de l’analyse des positions dans blunderDB.
-Leur utilisation permet de rechercher des positions spécifiques relativement
-précisément. Dans cette section, l’utilisation des filtres via le mode COMMAND
-est détaillée. Le mode COMMAND est accessible en appuyant sur la touche \sphinxcode{\sphinxupquote{ESPACE}}.
-Il permet de combiner avec l’habitude très rapidement des filtres et d’utiliser
-la bibliothèque de filtres.
+Filters are at the heart of position analysis in blunderDB. Their use allows for searching specific positions with great precision. In this section, the use of filters through the COMMAND mode is detailed. The COMMAND mode can be accessed by pressing the \sphinxcode{\sphinxupquote{SPACE}} key. It allows users to quickly combine filters and use the filter library with ease.
 
 
-\subsection{Recherche de positions en ligne de commande}
+\subsection{Command\sphinxhyphen{}line search for positions}
 \label{\detokenize{annexe_filtres:recherche-de-positions-en-ligne-de-commande}}
 \sphinxAtStartPar
-Pour faire une recherche à l’aide de filtres,
+To perform a search using filters,
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Basculer en mode EDIT avec la touche \sphinxcode{\sphinxupquote{TAB}}.
+Switch to EDIT mode using the \sphinxcode{\sphinxupquote{TAB}} key.
 
 \item {} 
 \sphinxAtStartPar
-Editer la position courante.
+Edit the current position.
 
 \item {} 
 \sphinxAtStartPar
-Basculer en mode COMMAND avec la touche \sphinxcode{\sphinxupquote{ESPACE}}.
+Switch to COMMAND mode using the \sphinxcode{\sphinxupquote{SPACE}} key.
 
 \item {} 
 \sphinxAtStartPar
-Utiliser la commande \sphinxcode{\sphinxupquote{s}} suivie éventuellement de filtres.
+Use the command \sphinxcode{\sphinxupquote{s}} followed, optionally, by filters.
 
 \item {} 
 \sphinxAtStartPar
-Lancer la recherche avec la touche \sphinxcode{\sphinxupquote{ENTREE}}.
+Start the search with the \sphinxcode{\sphinxupquote{ENTER}} key.
 
 \end{enumerate}
 
 \begin{sphinxadmonition}{warning}{Warning:}
 \sphinxAtStartPar
-Ne pas oublier d’effacer la position courante avant de lancer une recherche
-(touche \sphinxcode{\sphinxupquote{RETOUR ARRIERE}}), si cette dernière n’est pas celle souhaitée, au
-risque de filtrer abusivement des structures de pions.
+Don’t forget to clear the current position before starting a search (\sphinxcode{\sphinxupquote{BACKSPACE}} key), if it isn’t the one you want, to avoid excessively filtering checker structures.
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-La liste des filtres disponibles en mode COMMAND est fournie dans la
-\hyperref[\detokenize{cmd_mode:cmd-filter}]{Section \ref{\detokenize{cmd_mode:cmd-filter}}}.
+The list of available filters in COMMAND mode is provided in \hyperref[\detokenize{cmd_mode:cmd-filter}]{Section \ref{\detokenize{cmd_mode:cmd-filter}}}.
 \end{sphinxadmonition}
 
 
-\subsection{Bibliotheque de filtres}
+\subsection{Filter Library}
 \label{\detokenize{annexe_filtres:bibliotheque-de-filtres}}
 \sphinxAtStartPar
-La bibliothèque de filtres permet à l’utilisateur d’enregistrer des commandes de recherche
-afin de faciliter ses études thématiques.
+The filter library allows the user to save search commands to facilitate their thematic studies.
 
 \sphinxAtStartPar
-Pour ajouter un filtre à la bibliothèque,
+To add a filter to the library,
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Basculer dans le mode EDIT.
+Switch to EDIT mode.
 
 \item {} 
 \sphinxAtStartPar
-Ouvrir la bibliothèque de filtre en appuyant sur \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}B}}.
+Open the filter library by pressing \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}B}}.
 
 \item {} 
 \sphinxAtStartPar
-Editer la position courante.
+Edit the current position.
 
 \item {} 
 \sphinxAtStartPar
-Donner un nom au filtre.
+Give a name to the filter.
 
 \item {} 
 \sphinxAtStartPar
-Editer la commande de recherche.
+Edit the search command.
 
 \item {} 
 \sphinxAtStartPar
-Sauvegarder la commande de recherche à l’aide du bouton “Add”.
+Save the search command using the “Add” button.
 
 \end{enumerate}
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
-Lors de l’édition de la commande, il est possible d’utiliser les touches
-\sphinxcode{\sphinxupquote{HAUT}} et \sphinxcode{\sphinxupquote{BAS}} pour naviguer dans l’historique des commandes.
+While editing the command, you can use the \sphinxcode{\sphinxupquote{UP}} and \sphinxcode{\sphinxupquote{DOWN}} arrow keys to navigate through the command history.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Pour utiliser un filtre enregistré dans la bibliothèque,
+To use a filter saved in the library,
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Basculer en mode NORMAL.
+Switch to NORMAL mode.
 
 \item {} 
 \sphinxAtStartPar
-Ouvrir la bibliothèque de filtre en appuyant sur \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}B}}.
+Open the filter library by pressing \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}B}}.
 
 \item {} 
 \sphinxAtStartPar
-Rechercher le filtre souhaité.
+Search for the desired filter.
 
 \item {} 
 \sphinxAtStartPar
-Double cliquer sur le filtre pour lancer la recherche.
+Double\sphinxhyphen{}click on the filter to start the search.
 
 \end{enumerate}
 
 
-\subsection{Exemples}
+\subsection{Examples}
 \label{\detokenize{annexe_filtres:exemples}}
 \sphinxAtStartPar
-Voici quelques exemples d’utilisation des filtres en mode COMMAND:
+Here are some examples of using filters in COMMAND mode:
 
 
 \begin{savenotes}\sphinxattablestart
@@ -2134,32 +2114,32 @@ Voici quelques exemples d’utilisation des filtres en mode COMMAND:
 \sphinxtoprule
 \sphinxstyletheadfamily 
 \sphinxAtStartPar
-Type de position
+Type of position
 &\sphinxstyletheadfamily 
 \sphinxAtStartPar
-Structure de pions
+Checker structure
 &\sphinxstyletheadfamily 
 \sphinxAtStartPar
-Commande
+Command
 \\
 \sphinxmidrule
 \sphinxtableatstartofbodyhook
 \sphinxAtStartPar
-Courses
+Races
 &&
 \sphinxAtStartPar
 s nc
 \\
 \sphinxhline
 \sphinxAtStartPar
-Courses petites
+Short races
 &&
 \sphinxAtStartPar
 s nc P\textless{}70
 \\
 \sphinxhline
 \sphinxAtStartPar
-Frapper au point 1
+Hit to point 1
 &&
 \sphinxAtStartPar
 s m"6/1*"
@@ -2169,58 +2149,58 @@ s m"6/1*"
 Backgame 1\sphinxhyphen{}4
 &
 \sphinxAtStartPar
-portes 24, 21
+points 24, 21
 &
 \sphinxAtStartPar
 s p\textgreater{}35
 \\
 \sphinxhline
 \sphinxAtStartPar
-Décision de Take/Pass à \sphinxhyphen{}2 \sphinxhyphen{}4
+Take/Pass decision at 2\sphinxhyphen{}away 4\sphinxhyphen{}away
 &
 \sphinxAtStartPar
-dés vides côté joueur du haut, score \sphinxhyphen{}2/\sphinxhyphen{}4
+empty dice for top player, score 2a\sphinxhyphen{}4a
 &
 \sphinxAtStartPar
 s s d
 \\
 \sphinxhline
 \sphinxAtStartPar
-Envoi de too good
+Too Good doubles
 &
 \sphinxAtStartPar
-dés vides côté joueur du bas
+empty dice for bottom player
 &
 \sphinxAtStartPar
 s d e\textgreater{}1000
 \\
 \sphinxhline
 \sphinxAtStartPar
-Blitz avec au moins 20\% de gammon
+Blitz with at least 20\% gammon
 &
 \sphinxAtStartPar
-portes dans le jan, hommes à la barre
+point in jan, checkers on the bar
 &
 \sphinxAtStartPar
 s g\textgreater{}20
 \\
 \sphinxhline
 \sphinxAtStartPar
-Position du tournoi Aachen2024
+Positions from Aachen2024 tournment
 &&
 \sphinxAtStartPar
 s t"Aachen2024"
 \\
 \sphinxhline
 \sphinxAtStartPar
-Un pion arriéré à ramener
+One backchecker to bring back
 &&
 \sphinxAtStartPar
 s k1,1
 \\
 \sphinxhline
 \sphinxAtStartPar
-Quitter le point 20
+Leave the 20\sphinxhyphen{}point anchor
 &
 \sphinxAtStartPar
 point 20
@@ -2230,10 +2210,10 @@ s m"20/"
 \\
 \sphinxhline
 \sphinxAtStartPar
-Prime contre prime
+Prime vs prime
 &
 \sphinxAtStartPar
-indiquer les primes
+Set the primes
 &
 \sphinxAtStartPar
 s
@@ -2243,17 +2223,17 @@ s
 Ace\sphinxhyphen{}point bear\sphinxhyphen{}off
 &
 \sphinxAtStartPar
-point 1 pour l’adversaire
+point 1 for the opponent
 &
 \sphinxAtStartPar
 s P\textless{}60
 \\
 \sphinxhline
 \sphinxAtStartPar
-Double avec au moins 20pip d’avance
+Double with at least 20pip ahead
 &
 \sphinxAtStartPar
-dés vides côté joueur du bas
+empty dice for bottom player
 &
 \sphinxAtStartPar
 s d p\textless{}\sphinxhyphen{}20
@@ -2528,7 +2508,7 @@ You only need to perform this operation once. Afterward, you can open blunderDB 
 \label{\detokenize{annexe_db_scheme:annexe-schema-de-la-base-de-donnees}}\label{\detokenize{annexe_db_scheme:annexe-db-migration}}\label{\detokenize{annexe_db_scheme::doc}}
 \begin{sphinxadmonition}{important}{Important:}
 \sphinxAtStartPar
-Sauvegardez toujours votre fichier .db avant d’effectuer des migrations de base de données.
+Always back up your .db file before performing database migrations.
 \end{sphinxadmonition}
 
 
@@ -2581,7 +2561,7 @@ Version 1.2.0 of the database adds the following table:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{filter\_library} : Stocke les filtres de recherche avec les colonnes \sphinxtitleref{id} (clé primaire), \sphinxtitleref{name} (nom du filtre), \sphinxtitleref{command} (commande associée au filtre), et \sphinxtitleref{edit\_position} (position éditée lors de l’enregistrement du filtre).
+\sphinxstylestrong{filter\_library}: Stores search filters with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{name} (filter name), \sphinxtitleref{command} (command associated with the filter), and \sphinxtitleref{edit\_position} (position edited when saving the filter).
 
 \end{itemize}
 

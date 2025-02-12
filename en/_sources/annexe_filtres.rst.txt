@@ -35,7 +35,7 @@ Pour faire une recherche à l'aide de filtres,
    La liste des filtres disponibles en mode COMMAND est fournie dans la
    :numref:`cmd_filter`.
 
-Bibliotheque de filtres
+Bibliothèque de filtres
 -----------------------
 
 La bibliothèque de filtres permet à l'utilisateur d'enregistrer des commandes de recherche
