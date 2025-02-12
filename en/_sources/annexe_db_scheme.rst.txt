@@ -23,14 +23,3 @@ La version 1.1.0 de la base de données ajoute la table suivante :
 Les autres tables restent inchangées par rapport à la version 1.0.0.
 
 Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB.
-
-Version 1.2.0
--------------
-
-La version 1.2.0 de la base de données ajoute la table suivante :
-
-- **filter_library** : Stocke les filtres de recherche avec les colonnes `id` (clé primaire), `name` (nom du filtre), et `command` (commande associée au filtre).
-
-Les autres tables restent inchangées par rapport à la version 1.1.0.
-
-Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB.
