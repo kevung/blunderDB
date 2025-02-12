@@ -109,7 +109,7 @@
         outline: none;
         resize: none;
         background-color: white; /* Ensure background is opaque */
-        font-size: 12px; /* Match font size with AnalysisPanel */
+        font-size: 20px; /* Match font size with AnalysisPanel */
         overflow: hidden;
         margin-top: 0; /* Remove top margin */
     }
