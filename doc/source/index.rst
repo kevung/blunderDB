@@ -74,6 +74,7 @@ Sommaire
    cmd_mode
    raccourcis
    faq
+   annexe_filtres
    annexe_windows_securite
    annexe_mac_securite
    annexe_db_scheme
