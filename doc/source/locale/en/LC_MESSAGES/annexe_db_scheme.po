@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:05+0100\n"
-"PO-Revision-Date: 2025-02-05 15:23+0100\n"
+"POT-Creation-Date: 2025-02-12 23:58+0100\n"
+"PO-Revision-Date: 2025-02-13 00:00+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -17,82 +17,119 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.1\n"
+"X-Generator: Lokalize 24.12.2\n"
 
 #: ../../source/annexe_db_scheme.rst:4
 msgid "Annexe: Schéma de la base de données"
 msgstr "Annex: Database Schema"
 
-#: ../../source/annexe_db_scheme.rst:7
+#: ../../source/annexe_db_scheme.rst:8
+msgid ""
+"Sauvegardez toujours votre fichier .db avant d'effectuer des migrations "
+"de base de données."
+msgstr "Always back up your .db file before performing database migrations."
+
+#: ../../source/annexe_db_scheme.rst:11
 msgid "Version 1.0.0"
 msgstr "Version 1.0.0"
 
-#: ../../source/annexe_db_scheme.rst:9
+#: ../../source/annexe_db_scheme.rst:13
 msgid "La version 1.0.0 de la base de données contient les tables suivantes :"
 msgstr "Version 1.0.0 of the database contains the following tables:"
 
-#: ../../source/annexe_db_scheme.rst:11
+#: ../../source/annexe_db_scheme.rst:15
 msgid ""
 "**position** : Stocke les positions avec les colonnes `id` (clé primaire)"
 " et `state` (état de la position en format JSON)."
 msgstr ""
-"**position**: Stores the positions with the columns `id` (primary key) and `st"
-"ate` (state of the position in JSON format)."
+"**position**: Stores the positions with the columns `id` (primary key) "
+"and `state` (state of the position in JSON format)."
 
-#: ../../source/annexe_db_scheme.rst:12
+#: ../../source/annexe_db_scheme.rst:16
 msgid ""
 "**analysis** : Stocke les analyses des positions avec les colonnes `id` "
 "(clé primaire), `position_id` (clé étrangère vers `position`), et `data` "
 "(données de l'analyse en format JSON)."
 msgstr ""
-"**analysis**: Stores the analyses of the positions with the columns `id` (prim"
-"ary key), `position_id` (foreign key referencing `position`), and `data` (anal"
-"ysis data in JSON format)."
+"**analysis**: Stores the analyses of the positions with the columns `id` "
+"(primary key), `position_id` (foreign key referencing `position`), and "
+"`data` (analysis data in JSON format)."
 
-#: ../../source/annexe_db_scheme.rst:13
+#: ../../source/annexe_db_scheme.rst:17
 msgid ""
 "**comment** : Stocke les commentaires associés aux positions avec les "
 "colonnes `id` (clé primaire), `position_id` (clé étrangère vers "
 "`position`), et `text` (texte du commentaire)."
 msgstr ""
-"**comment**: Stores the comments associated with the positions with the column"
-"s `id` (primary key), `position_id` (foreign key referencing `position`), and "
-"`text` (comment text)."
+"**comment**: Stores the comments associated with the positions with the "
+"columns `id` (primary key), `position_id` (foreign key referencing "
+"`position`), and `text` (comment text)."
 
-#: ../../source/annexe_db_scheme.rst:14
+#: ../../source/annexe_db_scheme.rst:18
 msgid ""
 "**metadata** : Stocke les métadonnées de la base de données avec les "
 "colonnes `key` (clé primaire) et `value` (valeur associée à la clé)."
 msgstr ""
-"**metadata**: Stores the metadata of the database with the columns `key` (prim"
-"ary key) and `value` (value associated with the key)."
+"**metadata**: Stores the metadata of the database with the columns `key` "
+"(primary key) and `value` (value associated with the key)."
 
-#: ../../source/annexe_db_scheme.rst:17
+#: ../../source/annexe_db_scheme.rst:21
 msgid "Version 1.1.0"
 msgstr "Version 1.1.0"
 
-#: ../../source/annexe_db_scheme.rst:19
+#: ../../source/annexe_db_scheme.rst:23
 msgid "La version 1.1.0 de la base de données ajoute la table suivante :"
 msgstr "Version 1.1.0 of the database adds the following table:"
 
-#: ../../source/annexe_db_scheme.rst:21
+#: ../../source/annexe_db_scheme.rst:25
 msgid ""
 "**command_history** : Stocke l'historique des commandes avec les colonnes"
 " `id` (clé primaire), `command` (texte de la commande), et `timestamp` "
 "(date et heure de l'exécution de la commande)."
 msgstr ""
-"**command_history**: Stores the command history with the columns `id` (primary"
-" key), `command` (text of the command), and `timestamp` (date and time of comm"
-"and execution)."
+"**command_history**: Stores the command history with the columns `id` "
+"(primary key), `command` (text of the command), and `timestamp` (date and"
+" time of command execution)."
 
-#: ../../source/annexe_db_scheme.rst:23
+#: ../../source/annexe_db_scheme.rst:27
 msgid "Les autres tables restent inchangées par rapport à la version 1.0.0."
 msgstr "The other tables remain unchanged from version 1.0.0."
 
-#: ../../source/annexe_db_scheme.rst:25
+#: ../../source/annexe_db_scheme.rst:29
 msgid ""
 "Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, "
 "exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB."
 msgstr ""
-"To migrate the database from version 1.0.0 to version 1.1.0, execute the comma"
-"nd ``migrate_from_1_0_to_1_1`` in blunderDB."
+"To migrate the database from version 1.0.0 to version 1.1.0, execute the "
+"command ``migrate_from_1_0_to_1_1`` in blunderDB."
+
+#: ../../source/annexe_db_scheme.rst:32
+msgid "Version 1.2.0"
+msgstr "Version 1.2.0"
+
+#: ../../source/annexe_db_scheme.rst:34
+msgid "La version 1.2.0 de la base de données ajoute la table suivante :"
+msgstr "Version 1.2.0 of the database adds the following table:"
+
+#: ../../source/annexe_db_scheme.rst:36
+msgid ""
+"**filter_library** : Stocke les filtres de recherche avec les colonnes "
+"`id` (clé primaire), `name` (nom du filtre), `command` (commande associée"
+" au filtre), et `edit_position` (position éditée lors de l'enregistrement"
+" du filtre)."
+msgstr ""
+"**filter_library**: Stores search filters with the columns `id` (primary key),"
+" `name` (filter name), `command` (command associated with the filter), and `ed"
+"it_position` (position edited when saving the filter)."
+
+#: ../../source/annexe_db_scheme.rst:38
+msgid "Les autres tables restent inchangées par rapport à la version 1.1.0."
+msgstr "The other tables remain unchanged from version 1.1.0."
+
+#: ../../source/annexe_db_scheme.rst:40
+msgid ""
+"Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, "
+"exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB."
+msgstr ""
+"To migrate the database from version 1.1.0 to version 1.2.0, execute the "
+"command ``migrate_from_1_1_to_1_2`` in blunderDB."

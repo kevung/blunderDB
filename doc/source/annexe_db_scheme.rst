@@ -3,6 +3,10 @@
 Annexe: Schéma de la base de données
 ====================================
 
+
+.. important:: 
+    Sauvegardez toujours votre fichier .db avant d'effectuer des migrations de base de données.
+
 Version 1.0.0
 -------------
 
@@ -23,3 +27,14 @@ La version 1.1.0 de la base de données ajoute la table suivante :
 Les autres tables restent inchangées par rapport à la version 1.0.0.
 
 Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB.
+
+Version 1.2.0
+-------------
+
+La version 1.2.0 de la base de données ajoute la table suivante :
+
+- **filter_library** : Stocke les filtres de recherche avec les colonnes `id` (clé primaire), `name` (nom du filtre), `command` (commande associée au filtre), et `edit_position` (position éditée lors de l'enregistrement du filtre). 
+
+Les autres tables restent inchangées par rapport à la version 1.1.0.
+
+Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB.

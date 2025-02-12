@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:58+0100\n"
+"POT-Creation-Date: 2025-02-05 23:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -207,7 +207,15 @@ msgstr ""
 msgid "Recharger toutes les positions de la base de données."
 msgstr ""
 
-#: ../../source/raccourcis.rst:52
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-B"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher la bibliothèque de filtres."
+msgstr ""
+
+#: ../../source/raccourcis.rst:53
 msgid "Mode EDIT"
 msgstr ""
 
@@ -247,7 +255,7 @@ msgstr ""
 msgid "Rechercher une position."
 msgstr ""
 
-#: ../../source/raccourcis.rst:69
+#: ../../source/raccourcis.rst:70
 msgid "Mode COMMAND"
 msgstr ""
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-04 14:00+0100\n"
+"POT-Creation-Date: 2025-02-12 23:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -77,31 +77,63 @@ msgid ""
 "requêtes. Aucune opération de sauvegarde explicite est nécessaire."
 msgstr ""
 
-#: ../../source/faq.rst:48
+#: ../../source/faq.rst:47
+msgid ""
+"Dois-je créer différentes bases de données pour différentes catégories de"
+" positions?"
+msgstr ""
+
+#: ../../source/faq.rst:49
+msgid ""
+"Sauf pour des raisons bien identifiées, il est essentiel de ne pas "
+"répartir les positions dans des bases de données séparées au risque de ne"
+" pas pouvoir les mettre en relation dans des recherches futures. La "
+"philisophie de blunderDB est de ne pas présupposer de catégories de "
+"positions *a priori* et de permettre à l'utilisateur de les interroger de"
+" manière flexible. Lorsque les positions ont été rencontrées dans des "
+"conditions particulières ou pour des raisons spécifiques, il peut être "
+"judicieux de les stocker dans des bases de données distinctes. On peut "
+"par exemple constituer des bases de données de positions distinctes pour "
+":"
+msgstr ""
+
+#: ../../source/faq.rst:60
+msgid "les positions de référence,"
+msgstr ""
+
+#: ../../source/faq.rst:61
+msgid "les blunders en tournoi réel,"
+msgstr ""
+
+#: ../../source/faq.rst:62
+msgid "les blunders en ligne."
+msgstr ""
+
+#: ../../source/faq.rst:66
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:50
+#: ../../source/faq.rst:68
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
 msgstr ""
 
-#: ../../source/faq.rst:54
+#: ../../source/faq.rst:72
 msgid "Quel format de données utilise blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:56
+#: ../../source/faq.rst:74
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
 msgstr ""
 
-#: ../../source/faq.rst:61
+#: ../../source/faq.rst:79
 msgid "Quelles ont été les principes de conception de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:63
+#: ../../source/faq.rst:81
 msgid ""
 "Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s'inspire du"
 " très puissant éditeur de texte `Vim "
@@ -113,53 +145,53 @@ msgid ""
 " base de données. Le format de fichier sqlite semblait tout indiqué."
 msgstr ""
 
-#: ../../source/faq.rst:74
+#: ../../source/faq.rst:92
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:76
+#: ../../source/faq.rst:94
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
 "positions."
 msgstr ""
 
-#: ../../source/faq.rst:80
+#: ../../source/faq.rst:98
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
 msgstr ""
 
-#: ../../source/faq.rst:83
+#: ../../source/faq.rst:101
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
 " Windows et Linux."
 msgstr ""
 
-#: ../../source/faq.rst:86
+#: ../../source/faq.rst:104
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr ""
 
-#: ../../source/faq.rst:88
+#: ../../source/faq.rst:106
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 msgstr ""
 
-#: ../../source/faq.rst:91
+#: ../../source/faq.rst:109
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr ""
 
-#: ../../source/faq.rst:93
+#: ../../source/faq.rst:111
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr ""
 
-#: ../../source/faq.rst:96
+#: ../../source/faq.rst:114
 msgid "D'où vient l'icône de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:98
+#: ../../source/faq.rst:116
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

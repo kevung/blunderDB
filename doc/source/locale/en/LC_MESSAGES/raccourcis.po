@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:58+0100\n"
-"PO-Revision-Date: 2025-02-05 16:02+0100\n"
+"POT-Creation-Date: 2025-02-05 23:57+0100\n"
+"PO-Revision-Date: 2025-02-06 00:00+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -207,7 +207,15 @@ msgstr "CTRL-R"
 msgid "Recharger toutes les positions de la base de données."
 msgstr "Reload all the positions from the database."
 
-#: ../../source/raccourcis.rst:52
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-B"
+msgstr "CTRL-B"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher la bibliothèque de filtres."
+msgstr "Show/hide the filter library."
+
+#: ../../source/raccourcis.rst:53
 msgid "Mode EDIT"
 msgstr "EDIT mode"
 
@@ -247,7 +255,7 @@ msgstr "CTRL-F"
 msgid "Rechercher une position."
 msgstr "Search for a position."
 
-#: ../../source/raccourcis.rst:69
+#: ../../source/raccourcis.rst:70
 msgid "Mode COMMAND"
 msgstr "COMMAND mode."
 

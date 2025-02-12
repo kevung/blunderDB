@@ -74,10 +74,10 @@
         showWarningModalStore, // Import showWarningModalStore
         showMetadataModalStore, // Import showMetadataModalStore
         showTakePoint2ModalStore, // Import showTakePoint2ModalStore
-        showTakePoint4ModalStore, // Import showTakePoint4ModalStore
         isAnyModalOrPanelOpenStore, // Import the derived store
         isAnyModalOpenStore, // Import the derived store
-        previousModeStore // Import previousModeStore
+        previousModeStore, // Import previousModeStore
+        showFilterLibraryPanelStore // Import showFilterLibraryPanelStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -104,6 +104,7 @@
     import MetadataModal from './components/MetadataModal.svelte'; // Import MetadataModal component
     import TakePoint2Modal from './components/TakePoint2Modal.svelte'; // Import TakePoint2Modal component
     import TakePoint4Modal from './components/TakePoint4Modal.svelte'; // Import TakePoint4Modal component
+    import FilterLibraryPanel from './components/FilterLibraryPanel.svelte'; // Update import
 
     // Visibility variables
     let showSearchModal = false;
@@ -131,6 +132,7 @@
     let showTakePoint4Modal = false;
     let isAnyModalOrPanelOpen = false;
     let isAnyModalOpen = false;
+    let showFilterLibraryPanel = false; // Update variable
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -150,6 +152,11 @@
     // Subscribe to the databaseLoadedStore
     databaseLoadedStore.subscribe(value => {
         databaseLoaded = value;
+    });
+
+    // Subscribe to the showFilterLibraryPanelStore
+    showFilterLibraryPanelStore.subscribe(value => {
+        showFilterLibraryPanel = value;
     });
 
     // Reference for various elements.
@@ -286,13 +293,7 @@
         showMetadataModal = value;
     });
 
-    showTakePoint2ModalStore.subscribe(value => {
-        showTakePoint2Modal = value;
-    });
 
-    showTakePoint4ModalStore.subscribe(value => {
-        showTakePoint4Modal = value;
-    });
 
     databasePathStore.subscribe(value => {
         databaseLoaded = !!value;
@@ -310,14 +311,14 @@
         if ($isAnyModalOpenStore) {
             return;
         }
-        
-        // Prevent all shortcuts except toggleCommentPanel when comment panel is visible and focused
-        if (showComment && document.activeElement.id === 'commentTextArea') {
-            if (event.ctrlKey && event.code === 'KeyP') {
+
+        // Prevent command line from opening when editing filter panel fields or comment panel
+        if (document.activeElement.closest('.filter-library-panel') || showComment) {
+            if (event.ctrlKey && (event.code === 'KeyP' || event.code === 'KeyL' || event.code === 'KeyB')) {
                 event.preventDefault();
-                toggleCommentPanel();
+            } else {
+                return;
             }
-            return;
         }
 
         if (event.key === 'Escape') {
@@ -407,6 +408,8 @@
             toggleHelpModal();
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
+        } else if (event.ctrlKey && event.code === 'KeyB') {
+            toggleFilterLibraryPanel();
         }
     }
 
@@ -1485,13 +1488,9 @@
         }
         if ($statusBarModeStore !== "EDIT") {
             previousModeStore.set($statusBarModeStore);
-            if (showComment) {
-                toggleCommentPanel();
-            }
-            if (showAnalysis) {
-                toggleAnalysisPanel();
-            }
             statusBarModeStore.set('EDIT');
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
         } else {
             previousModeStore.set($statusBarModeStore);
             statusBarModeStore.set('NORMAL');
@@ -1507,21 +1506,12 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if ($statusBarModeStore === 'EDIT') {
-            setStatusBarMessage('Cannot toggle analysis panel in edit mode');
-            return;
-        }
-
-        console.log('toggleAnalysisPanel'); // Debugging log
-
-        statusBarModeStore.set('NORMAL'); // Ensure normal mode
-
-        if ($statusBarModeStore === 'NORMAL') {
-            showAnalysisStore.set(!showAnalysis);
-            console.log('showAnalysis:', showAnalysis); // Debugging log
-        }
-
+        console.log('toggleAnalysisPanel');
+        showAnalysisStore.set(!showAnalysis);
+        
         if (showAnalysis) {
+            statusBarModeStore.set('NORMAL');
+            showFilterLibraryPanelStore.set(false);
             showCommentStore.set(false);
             setTimeout(() => {
                 const analysisPanel = document.querySelector('.analysis-panel');
@@ -1555,18 +1545,16 @@
             return;
         }
         console.log('toggleCommentPanel called');
-
-        if ($statusBarModeStore === 'NORMAL' || $statusBarModeStore === 'COMMAND') {
-            if (showComment) {
-                SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore); // Ensure position ID is an int64
-            }
-            showCommentStore.set(!showComment);
-            console.log('showComment state:', showComment); // Debugging log
-        }
+        showCommentStore.set(!showComment);
 
         if (showComment) {
+            statusBarModeStore.set('NORMAL');
             showAnalysisStore.set(false);
+            showFilterLibraryPanelStore.set(false); // Close filter library panel if open
             showCommandStore.set(false);
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
             setTimeout(() => {
                 const commentPanel = document.querySelector('.comment-panel');
                 if (commentPanel) {
@@ -1577,6 +1565,7 @@
                 }
             }, 0);
         } else {
+            SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore);
             mainArea.scrollIntoView({
                 behavior: 'smooth'
             });
@@ -1585,6 +1574,35 @@
         previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
+
+    function toggleMetadataModal() {
+        if (databaseLoaded) {
+            if (mode === 'EDIT') {
+                setStatusBarMessage('Cannot show metadata modal in edit mode');
+            } else {
+                showMetadataModalStore.set(!showMetadataModal);
+            }
+        }
+    }
+
+    function toggleFilterLibraryPanel() {
+        console.log('toggleFilterLibraryPanel');
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
+        showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
+        if (showFilterLibraryPanel) {
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
+        } else {
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
+        }
+    }
+
 
     async function loadPositionsByFilters(
         filters,
@@ -1830,10 +1848,13 @@
             return; // Prevent changing position when any modal is open or in edit mode
         }
 
-        // Prevent changing position when scrolling in the analysis panel or comment panel
+        // Prevent changing position when scrolling in the analysis panel, comment panel, or filter panel
         const analysisPanel = document.querySelector('.analysis-panel');
         const commentPanel = document.querySelector('.comment-panel');
-        if ((analysisPanel && analysisPanel.contains(event.target)) || (commentPanel && commentPanel.contains(event.target))) {
+        const filterPanel = document.querySelector('.filter-library-panel'); // Ensure correct class name
+        if ((analysisPanel && analysisPanel.contains(event.target)) || 
+            (commentPanel && commentPanel.contains(event.target)) || 
+            (filterPanel && filterPanel.contains(event.target))) { // Check filter panel
             return;
         }
 
@@ -1842,16 +1863,6 @@
                 previousPosition();
             } else if (event.deltaY > 0) {
                 nextPosition();
-            }
-        }
-    }
-
-    function toggleMetadataModal() {
-        if (databaseLoaded) {
-            if (mode === 'EDIT') {
-                setStatusBarMessage('Cannot show metadata modal in edit mode');
-            } else {
-                showMetadataModalStore.set(!showMetadataModal);
             }
         }
     }
@@ -1897,6 +1908,7 @@
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
         onShowMetadata={toggleMetadataModal}
+        onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
     />
 
     <div class="scrollable-content">
@@ -1917,6 +1929,7 @@
             exitApp={exitApp}
             onLoadPositionsByFilters={loadPositionsByFilters}
             onLoadAllPositions={loadAllPositions}
+            toggleFilterLibraryPanel={toggleFilterLibraryPanel}
         />
 
     </div>
@@ -1997,15 +2010,11 @@
         onClose={() => showMetadataModalStore.set(false)}
     />
 
-    <TakePoint2Modal
-        visible={showTakePoint2Modal}
-        onClose={() => showTakePoint2ModalStore.set(false)}
-    />
+    <TakePoint2Modal/>
 
-    <TakePoint4Modal
-        visible={showTakePoint4Modal}
-        onClose={() => showTakePoint4ModalStore.set(false)}
-    />
+    <TakePoint4Modal/>
+
+    <FilterLibraryPanel onLoadPositionsByFilters={loadPositionsByFilters} />
 
     <HelpModal
         visible={showHelp}

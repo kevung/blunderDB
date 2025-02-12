@@ -22,6 +22,10 @@ export function DeleteComment(arg1) {
   return window['go']['main']['Database']['DeleteComment'](arg1);
 }
 
+export function DeleteFilter(arg1) {
+  return window['go']['main']['Database']['DeleteFilter'](arg1);
+}
+
 export function DeletePosition(arg1) {
   return window['go']['main']['Database']['DeletePosition'](arg1);
 }
@@ -46,6 +50,14 @@ export function LoadComment(arg1) {
   return window['go']['main']['Database']['LoadComment'](arg1);
 }
 
+export function LoadEditPosition(arg1) {
+  return window['go']['main']['Database']['LoadEditPosition'](arg1);
+}
+
+export function LoadFilters() {
+  return window['go']['main']['Database']['LoadFilters']();
+}
+
 export function LoadMetadata() {
   return window['go']['main']['Database']['LoadMetadata']();
 }
@@ -60,6 +72,10 @@ export function LoadPositionsByFilters(arg1, arg2, arg3, arg4, arg5, arg6, arg7,
 
 export function Migrate_1_0_0_to_1_1_0() {
   return window['go']['main']['Database']['Migrate_1_0_0_to_1_1_0']();
+}
+
+export function Migrate_1_1_0_to_1_2_0() {
+  return window['go']['main']['Database']['Migrate_1_1_0_to_1_2_0']();
 }
 
 export function OpenDatabase(arg1) {
@@ -82,6 +98,14 @@ export function SaveComment(arg1, arg2) {
   return window['go']['main']['Database']['SaveComment'](arg1, arg2);
 }
 
+export function SaveEditPosition(arg1, arg2) {
+  return window['go']['main']['Database']['SaveEditPosition'](arg1, arg2);
+}
+
+export function SaveFilter(arg1, arg2) {
+  return window['go']['main']['Database']['SaveFilter'](arg1, arg2);
+}
+
 export function SaveMetadata(arg1) {
   return window['go']['main']['Database']['SaveMetadata'](arg1);
 }
@@ -92,6 +116,10 @@ export function SavePosition(arg1) {
 
 export function SetupDatabase(arg1) {
   return window['go']['main']['Database']['SetupDatabase'](arg1);
+}
+
+export function UpdateFilter(arg1, arg2, arg3) {
+  return window['go']['main']['Database']['UpdateFilter'](arg1, arg2, arg3);
 }
 
 export function UpdatePosition(arg1) {
