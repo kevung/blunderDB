@@ -2,6 +2,7 @@ package gnubgid
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"strings"
 )
@@ -34,7 +35,7 @@ type GnubgID struct {
 	MatchKey   MatchKey
 }
 
-func PrintHumanReadableMatchKey(mk *MatchKey) {
+func PrintHumanReadableMatchKey(mk *MatchKey) error {
 
 	fmt.Println("Match Information:")
 	// Cube Value
@@ -50,7 +51,7 @@ func PrintHumanReadableMatchKey(mk *MatchKey) {
 	case 3:
 		own = "Centered Cube"
 	default:
-		panic("Error, wrong cube ownership value")
+		return errors.New("bad cube ownership value")
 	}
 	fmt.Println("Cube ownership:", own)
 
@@ -74,7 +75,7 @@ func PrintHumanReadableMatchKey(mk *MatchKey) {
 	case 0b100:
 		gs = "Dropped"
 	default:
-		panic("Error, wrong cube ownership value")
+		return errors.New("bad gamestate value")
 	}
 	fmt.Println("Game state:", gs)
 
@@ -96,7 +97,7 @@ func PrintHumanReadableMatchKey(mk *MatchKey) {
 	case 0b11:
 		rv = "Resign Backgaammon"
 	default:
-		panic("Error, wrong resign value")
+		return errors.New("bad resign value")
 	}
 	fmt.Println("Resign value:", rv)
 
@@ -109,9 +110,11 @@ func PrintHumanReadableMatchKey(mk *MatchKey) {
 	// Match score
 	fmt.Printf("Match score: %d-%d\n", mk.matchscore[0], mk.matchscore[1])
 
+	return nil
+
 }
 
-func checkPositionID(s string) string {
+func checkPositionID(s string) (string, error) {
 	// Check the GNUbg Position ID string (in base64)
 	// and append "==" at the end of the string if it is missing.
 	//
@@ -127,52 +130,58 @@ func checkPositionID(s string) string {
 		//fmt.Println("Making PositionID Correction:", s)
 	}
 	if len(s) != 16 {
-		fmt.Println("Bad Position ID, wrong size:", len(s))
-		panic("Bad Position ID, wrong size")
+		//fmt.Println("Bad Position ID, wrong size:", len(s))
+		return "", errors.New("bad position ID, wrong size")
 	}
-	return s
+	return s, nil
 
 }
 
-func validateGnubgID(g *GnubgID) {
+func validateGnubgID(g *GnubgID) error {
 	// Position ID length: 14 ASCII characters
 	// Match ID length: 12 characters
 	// GNUbgID length: 14+1+12 characters
 
 	// Validate GNUbgID
-	fmt.Println("GNUbgID length:", len(g.ID))
+	//fmt.Println("GNUbgID length:", len(g.ID))
 
 	switch len(g.ID) {
 	case 12:
-		fmt.Println("The GNUbgID is a MatchID only")
+		//fmt.Println("The GNUbgID is a MatchID only")
+		g.PositionID = ""
 		g.MatchID = g.ID
 	case 14:
-		fmt.Println("The GNUbgID is a PositionID only")
-		g.PositionID = checkPositionID(g.ID)
+		//fmt.Println("The GNUbgID is a PositionID only")
+		var err error
+		g.PositionID, err = checkPositionID(g.ID)
+		if err != nil {
+			return err
+		}
+		g.MatchID = ""
 	case 27:
-		fmt.Println("This is a GNUbgID with PositionID:MatchID")
+		//fmt.Println("This is a GNUbgID with PositionID:MatchID")
 		if len(g.ID) >= 27 && strings.Contains(g.ID, ":") {
 			ss := strings.Split(g.ID, ":")
 			// Check PositionID
-			g.PositionID = checkPositionID(ss[0])
-			// Check MatchID length
-			if len(ss[1]) == 12 {
-				g.MatchID = ss[1]
-			} else {
-				panic("MatchID has wrong length")
+			var err error
+			g.PositionID, err = checkPositionID(ss[0])
+			if err != nil {
+				return err
 			}
+			g.MatchID = ss[1]
 		}
 	default:
-		panic("Error: Bad GNUbgID length")
+		return errors.New("bad GNUbgID length")
 	}
+	return nil
 }
 
-func getMatchID(g *GnubgID) {
+func getMatchID(g *GnubgID) error {
 
 	// Decode the Base64 string match key (mk)
 	mk, err := base64.StdEncoding.DecodeString(g.MatchID)
 	if err != nil {
-		fmt.Println("Error decoding Match Key (Base64):", err)
+		return errors.New("error decoding match key (base64)")
 	}
 	// Get Match key
 	var mkbs [9 * 8]int //The match key is a bit string (mkbs) of length 66
@@ -256,16 +265,18 @@ func getMatchID(g *GnubgID) {
 		}
 	}
 	g.MatchKey.matchscore = score
+
+	return nil
 }
 
-func getPositionID(g *GnubgID) {
+func getPositionID(g *GnubgID) error {
 	// Get PositionID given a GnubgID structure
 	// Fills in the fields Position1 and Position2
 
 	// Decode the Base64 string
 	decodedBytes, err := base64.StdEncoding.DecodeString(g.PositionID)
 	if err != nil {
-		panic("Error decoding Position Key (Base64)")
+		return errors.New("error decoding position key (base64)")
 	}
 
 	// TODO Most probably a more elegant way to do this but I needed an array
@@ -317,21 +328,35 @@ func getPositionID(g *GnubgID) {
 	if nb_off > 0 {
 		g.Position2[0] = 15 - int(cnt)
 	}
+	return nil
 }
 
 func ReadGnubgID(s string) (GnubgID, error) {
 	// Read the input string and fill in the GNUbgID Structure
 	// Technical reference: https://www.gnu.org/software/gnubg/manual/gnubg.html#gnubg-tech_postionid
-	fmt.Println("Gnubgid(input):\t", s)
+	//fmt.Println("Gnubgid(input):\t", s)
 	// Create GnubgID structure
 	g := GnubgID{}
 	// Fill in the GNUbgID string
 	g.ID = s
 	// Validate the GNUbgID
-	validateGnubgID(&g)
+	err := validateGnubgID(&g)
+	if err != nil {
+		//fmt.Println("validate GnubgID")
+		return g, err
+	}
 	// Get MatchID
-	getMatchID(&g)
+	err = getMatchID(&g)
+	if err != nil {
+		//fmt.Println("getMatchID")
+		return g, err
+	}
 	// Get PositionID
-	getPositionID(&g)
+	err = getPositionID(&g)
+	if err != nil {
+		//fmt.Println("getPositionID")
+		return g, err
+	}
+
 	return g, nil
 }
