@@ -3,6 +3,10 @@
 Annexe: Schéma de la base de données
 ====================================
 
+
+.. important:: 
+    Sauvegardez toujours votre fichier .db avant d'effectuer des migrations de base de données.
+
 Version 1.0.0
 -------------
 
