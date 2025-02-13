@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-13 00:21+0100\n"
-"PO-Revision-Date: 2025-02-13 00:23+0100\n"
+"POT-Creation-Date: 2025-02-13 02:20+0100\n"
+"PO-Revision-Date: 2025-02-13 02:21+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -29,8 +29,8 @@ msgid ""
 "souhaitent exploiter pleinement les fonctionnalités de recherche de "
 "positions."
 msgstr ""
-"This section is for advanced users of blunderDB who wish to fully leverage the"
-" position search features."
+"This section is for advanced users of blunderDB who wish to fully "
+"leverage the position search features."
 
 #: ../../source/annexe_filtres.rst:11
 msgid ""
@@ -114,7 +114,7 @@ msgid "Basculer dans le mode EDIT."
 msgstr "Switch to EDIT mode."
 
 #: ../../source/annexe_filtres.rst:47 ../../source/annexe_filtres.rst:60
-msgid "Ouvrir la bibliothèque de filtre en appuyant sur ``CTRL-B``."
+msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-B``."
 msgstr "Open the filter library by pressing ``CTRL-B``."
 
 #: ../../source/annexe_filtres.rst:49

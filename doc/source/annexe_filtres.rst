@@ -44,7 +44,7 @@ afin de faciliter ses études thématiques.
 Pour ajouter un filtre à la bibliothèque,
 
 1. Basculer dans le mode EDIT. 
-2. Ouvrir la bibliothèque de filtre en appuyant sur ``CTRL-B``.
+2. Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-B``.
 3. Editer la position courante.
 4. Donner un nom au filtre.
 5. Editer la commande de recherche.
@@ -57,7 +57,7 @@ Pour ajouter un filtre à la bibliothèque,
 Pour utiliser un filtre enregistré dans la bibliothèque,
 
 1. Basculer en mode NORMAL.
-2. Ouvrir la bibliothèque de filtre en appuyant sur ``CTRL-B``.
+2. Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-B``.
 3. Rechercher le filtre souhaité.
 4. Double cliquer sur le filtre pour lancer la recherche.
 

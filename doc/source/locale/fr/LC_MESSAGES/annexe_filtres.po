@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-13 00:21+0100\n"
+"POT-Creation-Date: 2025-02-13 02:20+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -100,7 +100,7 @@ msgid "Basculer dans le mode EDIT."
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:47 ../../source/annexe_filtres.rst:60
-msgid "Ouvrir la bibliothèque de filtre en appuyant sur ``CTRL-B``."
+msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-B``."
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:49
@@ -291,5 +291,8 @@ msgid "s d p<-20"
 msgstr ""
 
 #~ msgid "Bibliotheque de filtres"
+#~ msgstr ""
+
+#~ msgid "Ouvrir la bibliothèque de filtre en appuyant sur ``CTRL-B``."
 #~ msgstr ""
 
