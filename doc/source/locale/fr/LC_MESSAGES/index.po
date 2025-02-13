@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 15:30+0100\n"
+"POT-Creation-Date: 2025-02-13 01:17+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -170,28 +170,44 @@ msgid "0.5.0"
 msgstr ""
 
 #: ../../source/index.rst:1
-msgid "15/02/2025"
+msgid "04/02/2025"
 msgstr ""
 
 #: ../../source/index.rst:1
 msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
 msgstr ""
 
-#: ../../source/index.rst:65
+#: ../../source/index.rst:1
+msgid "0.6.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "13/02/2025"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "Ajout de la bibliothèque de filtres."
+msgstr ""
+
+#: ../../source/index.rst:3
+msgid "Affichage de la version de la base de données dans les métadonnées."
+msgstr ""
+
+#: ../../source/index.rst:69
 msgid "Sommaire"
 msgstr ""
 
-#: ../../source/index.rst:94
+#: ../../source/index.rst:99
 msgid "Contacts"
 msgstr ""
 
-#: ../../source/index.rst:96
+#: ../../source/index.rst:101
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
 msgstr ""
 
-#: ../../source/index.rst:99
+#: ../../source/index.rst:104
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -201,65 +217,65 @@ msgid ""
 "sont bienvenus."
 msgstr ""
 
-#: ../../source/index.rst:106
+#: ../../source/index.rst:111
 msgid "Voici plusieurs manières de discuter:"
 msgstr ""
 
-#: ../../source/index.rst:108
+#: ../../source/index.rst:113
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 
-#: ../../source/index.rst:110
+#: ../../source/index.rst:115
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr ""
 
-#: ../../source/index.rst:112
+#: ../../source/index.rst:117
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr ""
 
-#: ../../source/index.rst:114
+#: ../../source/index.rst:119
 msgid "sur Github,"
 msgstr ""
 
-#: ../../source/index.rst:116
+#: ../../source/index.rst:121
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr ""
 
-#: ../../source/index.rst:118
+#: ../../source/index.rst:123
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr ""
 
-#: ../../source/index.rst:122
+#: ../../source/index.rst:127
 msgid "Faire un don"
 msgstr ""
 
-#: ../../source/index.rst:124
+#: ../../source/index.rst:129
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr ""
 
-#: ../../source/index.rst:126
+#: ../../source/index.rst:131
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr ""
 
-#: ../../source/index.rst:128
+#: ../../source/index.rst:133
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 
-#: ../../source/index.rst:131
+#: ../../source/index.rst:136
 msgid "Remerciements"
 msgstr ""
 
-#: ../../source/index.rst:133
+#: ../../source/index.rst:138
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
 msgstr ""
 
-#: ../../source/index.rst:136
+#: ../../source/index.rst:141
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -267,7 +283,7 @@ msgid ""
 "jouer."
 msgstr ""
 
-#: ../../source/index.rst:141
+#: ../../source/index.rst:146
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -360,5 +376,11 @@ msgstr ""
 #~ " continuer à m'encourager avec gentillesse"
 #~ " et patience face à mes piètres "
 #~ "tentatives de mieux jouer."
+#~ msgstr ""
+
+#~ msgid "15/02/2025"
+#~ msgstr ""
+
+#~ msgid "01/03/2025"
 #~ msgstr ""
 
