@@ -30,8 +30,8 @@ type GnubgID struct {
 	ID         string  // example: "4HPwATDgc/ABMA:VgkGAAAAAAAA"
 	PositionID string  // example: "4HPwATDgc/ABMA"
 	MatchID    string  // example: "VgkGAAAAAAAA"
-	Position1  [25]int // An array of nb of checkers on each point.
-	Position2  [25]int // 0: bear-off checkers, 1: pt 1, …, 24: pt 24, 25: on bar
+	Position1  [26]int // An array of nb of checkers on each point.
+	Position2  [26]int // 0: bear-off checkers, 1: pt 1, …, 24: pt 24, 25: on bar
 	MatchKey   MatchKey
 }
 
@@ -302,10 +302,10 @@ func getPositionID(g *GnubgID) error {
 
 	// Fill in Position1 and Position2 from the bitstream array
 	for i := 0; i < 25; i++ {
-		g.Position1[i] = key[i]
+		g.Position1[i+1] = key[i]
 	}
 	for i := 25; i < 50; i++ {
-		g.Position2[i-25] = key[i]
+		g.Position2[i-25+1] = key[i]
 	}
 
 	// Fill in off checkers
