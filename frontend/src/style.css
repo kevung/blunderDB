@@ -19,12 +19,25 @@ body {
     sans-serif;
 }
 
+.japanese-text {
+    font-family: 'Noto Sans JP', sans-serif; /* Font for Japanese text */
+}
+
+
 @font-face {
     font-family: "Nunito";
     font-style: normal;
     font-weight: 400;
     src: local(""),
     url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: "Noto Sans JP";
+    font-style: normal;
+    font-weight: normal;
+    src: local(""),
+    url("assets/fonts/NotoSansJP-Regular.ttf") format("truetype");
 }
 
 #app {
