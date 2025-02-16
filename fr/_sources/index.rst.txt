@@ -64,6 +64,7 @@ Historique des versions
    0.6.0, 13/02/2025, "Ajout de la bibliothèque de filtres.
 
    Affichage de la version de la base de données dans les métadonnées."
+   0.7.0, 16/02/2025, "Prise en charge du japonais et de l'allemand dans les exports de XG."
 
 Sommaire
 ========
