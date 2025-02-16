@@ -114,7 +114,7 @@
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassEquity || 0)}</td>
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassError || 0)}</td>
                             </tr>
-                            <tr class="best-action-row">
+                            <tr class="best-action-row {analysisData.doublingCubeAnalysis.bestCubeAction.includes('ダブル') ? 'japanese-text' : ''}">
                                 <td>Best Action</td>
                                 <td colspan="2">{analysisData.doublingCubeAnalysis.bestCubeAction}</td>
                             </tr>
@@ -295,5 +295,8 @@
         color: #000000; /* Subtle color change for emphasis */
     }
 
+    .japanese-text {
+        font-family: 'Noto Sans JP', sans-serif;
+    }
 </style>
 
