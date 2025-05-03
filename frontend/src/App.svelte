@@ -77,7 +77,8 @@
         isAnyModalOrPanelOpenStore, // Import the derived store
         isAnyModalOpenStore, // Import the derived store
         previousModeStore, // Import previousModeStore
-        showFilterLibraryPanelStore // Import showFilterLibraryPanelStore
+        showFilterLibraryPanelStore, // Import showFilterLibraryPanelStore
+        showPipcountStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -133,6 +134,12 @@
     let isAnyModalOrPanelOpen = false;
     let isAnyModalOpen = false;
     let showFilterLibraryPanel = false; // Update variable
+    let showPipcount = true; // Update variable
+    
+    // Subscrive to pipcount store
+    showPipcountStore.subscribe(value => {
+        showPipcount = value;
+    });
 
     // Subscribe to the metaStore
     metaStore.subscribe(value => {
@@ -410,6 +417,8 @@
             toggleMetadataModal();
         } else if (event.ctrlKey && event.code === 'KeyB') {
             toggleFilterLibraryPanel();
+        } else if (!event.ctrlKey && event.code === 'KeyP') {
+            togglePipcount();
         }
     }
 
@@ -1618,6 +1627,21 @@
         }
     }
 
+function togglePipcount() {
+        console.log('togglePipcount');
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            statusBarModeStore.set('NORMAL');
+            return;
+        }
+        if ($statusBarModeStore == "NORMAL") {
+            showPipcountStore.set(!showPipcount);
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
+        }
+    }
 
     async function loadPositionsByFilters(
         filters,
@@ -1915,6 +1939,7 @@
         onNextPosition={nextPosition}
         onLastPosition={lastPosition}
         onGoToPosition={gotoPosition}
+        onTogglePipcount={togglePipcount}
         onToggleEditMode={toggleEditMode}
         onToggleCommandMode={() => showCommandStore.set(true)}
         onShowAnalysis={toggleAnalysisPanel}

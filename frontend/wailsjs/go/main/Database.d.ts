@@ -28,9 +28,9 @@ export function LoadComment(arg1:number):Promise<string>;
 
 export function LoadEditPosition(arg1:string):Promise<string>;
 
-export function LoadFilters():Promise<Array<{[key: string]: any}>>;
+export function LoadFilters():Promise<Array<Record<string, any>>>;
 
-export function LoadMetadata():Promise<{[key: string]: string}>;
+export function LoadMetadata():Promise<Record<string, string>>;
 
 export function LoadPosition(arg1:number):Promise<main.Position>;
 
@@ -42,7 +42,7 @@ export function Migrate_1_1_0_to_1_2_0():Promise<void>;
 
 export function OpenDatabase(arg1:string):Promise<void>;
 
-export function PositionExists(arg1:main.Position):Promise<{[key: string]: any}>;
+export function PositionExists(arg1:main.Position):Promise<Record<string, any>>;
 
 export function SaveAnalysis(arg1:number,arg2:main.PositionAnalysis):Promise<void>;
 
@@ -54,7 +54,7 @@ export function SaveEditPosition(arg1:string,arg2:string):Promise<void>;
 
 export function SaveFilter(arg1:string,arg2:string):Promise<void>;
 
-export function SaveMetadata(arg1:{[key: string]: string}):Promise<void>;
+export function SaveMetadata(arg1:Record<string, string>):Promise<void>;
 
 export function SavePosition(arg1:main.Position):Promise<number>;
 

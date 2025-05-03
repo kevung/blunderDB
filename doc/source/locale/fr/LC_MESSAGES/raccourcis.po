@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 23:57+0100\n"
+"POT-Creation-Date: 2025-05-03 22:04+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -168,6 +168,14 @@ msgid "Orientation du board à droite."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "p"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le compte de course."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-K"
 msgstr ""
 
@@ -215,7 +223,7 @@ msgstr ""
 msgid "Afficher/cacher la bibliothèque de filtres."
 msgstr ""
 
-#: ../../source/raccourcis.rst:53
+#: ../../source/raccourcis.rst:54
 msgid "Mode EDIT"
 msgstr ""
 
@@ -255,7 +263,7 @@ msgstr ""
 msgid "Rechercher une position."
 msgstr ""
 
-#: ../../source/raccourcis.rst:70
+#: ../../source/raccourcis.rst:71
 msgid "Mode COMMAND"
 msgstr ""
 

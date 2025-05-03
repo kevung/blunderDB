@@ -393,6 +393,11 @@
                                 <td>Set Board Orientation to Right</td>
                             </tr>
 
+                            <tr>
+                                <td>p</td>
+                                <td>Toggle Pipcount</td>
+                            </tr>
+
                         </tbody>
                     </table>
 

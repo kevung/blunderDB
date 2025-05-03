@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-05 23:57+0100\n"
-"PO-Revision-Date: 2025-02-06 00:00+0100\n"
+"POT-Creation-Date: 2025-05-03 22:04+0200\n"
+"PO-Revision-Date: 2025-05-03 22:08+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.1\n"
+"X-Generator: Lokalize 25.04.0\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
@@ -168,6 +168,14 @@ msgid "Orientation du board à droite."
 msgstr "Board orientation to the right."
 
 #: ../../source/raccourcis.rst:1
+msgid "p"
+msgstr "p"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le compte de course."
+msgstr "Show/hide pipcount."
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-K"
 msgstr "CTRL-K"
 
@@ -215,7 +223,7 @@ msgstr "CTRL-B"
 msgid "Afficher/cacher la bibliothèque de filtres."
 msgstr "Show/hide the filter library."
 
-#: ../../source/raccourcis.rst:53
+#: ../../source/raccourcis.rst:54
 msgid "Mode EDIT"
 msgstr "EDIT mode"
 
@@ -255,7 +263,7 @@ msgstr "CTRL-F"
 msgid "Rechercher une position."
 msgstr "Search for a position."
 
-#: ../../source/raccourcis.rst:70
+#: ../../source/raccourcis.rst:71
 msgid "Mode COMMAND"
 msgstr "COMMAND mode."
 

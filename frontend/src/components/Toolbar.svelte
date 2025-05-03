@@ -13,6 +13,7 @@
     export let onNextPosition;
     export let onLastPosition;
     export let onGoToPosition;
+    export let onTogglePipcount;
     export let onToggleEditMode;
     export let onToggleCommandMode;
     export let onShowAnalysis;
@@ -22,6 +23,7 @@
     export let onLoadAllPositions;
     export let onShowMetadata;
     export let onToggleFilterLibraryPanel; // Add export for the new function
+    
 
     import { statusBarModeStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
@@ -243,6 +245,14 @@
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 12.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5ZM12 18.75a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5Z" />
         </svg>
+    </button>
+
+    <div class="separator"></div>
+
+    <button on:click|stopPropagation={onTogglePipcount} aria-label="Toggle Pipcount" title="Toggle Pipcount (p)" disabled={statusBarMode !== 'NORMAL' || !databasePath}>
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
+          </svg>
     </button>
 
     <div class="separator"></div>

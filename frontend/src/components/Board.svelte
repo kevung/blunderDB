@@ -3,7 +3,7 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
-    import { statusBarModeStore, isAnyModalOpenStore, showSearchModalStore, showCommentStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore'; // Import showTakePoint2ModalStore and showTakePoint4ModalStore
+    import { statusBarModeStore, isAnyModalOpenStore, showSearchModalStore, showCommentStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore, showPipcountStore } from '../stores/uiStore';
 
     let mode;
     let showSearchModal = false;
@@ -11,6 +11,10 @@
     let showMetadataModal = false; // Add showMetadataModal variable
     let showTakePoint2Modal = false; // Add showTakePoint2Modal variable
     let showTakePoint4Modal = false; // Add showTakePoint4Modal variable
+    let showPipcount = true; // Add a reactive variable to control pip count visibility
+    
+
+
     statusBarModeStore.subscribe(value => {
         mode = value;
     });
@@ -28,6 +32,9 @@
     });
     showTakePoint4ModalStore.subscribe(value => {
         showTakePoint4Modal = value;
+    });
+    showPipcountStore.subscribe(value => {
+        showPipcount = value;
     });
     
     let canvasCfg = {
@@ -566,7 +573,7 @@
         if (unsubscribe) unsubscribe();
     });
 
-    function drawBoard() {
+    export function drawBoard() {
         two.clear();
 
         const boardAspectFactor = 11 / 13;
@@ -1110,8 +1117,11 @@
 
         drawDoublingCube();
         drawCheckers();
-        drawBearoff();        
-        drawPipCounts();
+        drawBearoff();
+        console.log("showPipcount: ", showPipcount);        
+        if (showPipcount) {
+            drawPipCounts(); // Conditionally draw pip counts
+        }
         drawDice();
         drawScores();
 

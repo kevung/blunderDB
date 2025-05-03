@@ -47,6 +47,8 @@ export const previousModeStore = writable('NORMAL');
 
 export const showFilterLibraryPanelStore = writable(false);
 
+export const showPipcountStore = writable(true); // Add store for pip count visibility
+
 export const isAnyModalOrPanelOpenStore = derived(
   [
     showSearchModalStore,
