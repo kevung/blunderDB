@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-16 02:35+0100\n"
-"PO-Revision-Date: 2025-02-16 02:36+0100\n"
+"POT-Creation-Date: 2025-05-03 22:31+0200\n"
+"PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.2\n"
+"X-Generator: Lokalize 25.04.0\n"
 
 #: ../../source/index.rst:4
 msgid "blunderDB"
@@ -221,15 +221,31 @@ msgstr "February 16, 2025"
 msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
 msgstr "Support Japanese and German XG exports."
 
-#: ../../source/index.rst:70
+#: ../../source/index.rst:1
+msgid "0.8.0"
+msgstr "0.8.0"
+
+#: ../../source/index.rst:1
+msgid "03/05/2025"
+msgstr "May 3, 2025"
+
+#: ../../source/index.rst:1
+msgid "Possibilité de cacher le compte de course."
+msgstr "New button to hide pipcount."
+
+#: ../../source/index.rst:3
+msgid "Chargement d'une position aléatoire."
+msgstr "Button to load random position."
+
+#: ../../source/index.rst:73
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:100
+#: ../../source/index.rst:103
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:102
+#: ../../source/index.rst:105
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -237,7 +253,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:105
+#: ../../source/index.rst:108
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -252,42 +268,42 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:112
+#: ../../source/index.rst:115
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:114
+#: ../../source/index.rst:117
 msgid ""
 "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:116
+#: ../../source/index.rst:119
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:118
+#: ../../source/index.rst:121
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:120
+#: ../../source/index.rst:123
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:122
+#: ../../source/index.rst:125
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:124
+#: ../../source/index.rst:127
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:128
+#: ../../source/index.rst:131
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:130
+#: ../../source/index.rst:133
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -295,19 +311,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:132
+#: ../../source/index.rst:135
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:134
+#: ../../source/index.rst:137
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:137
+#: ../../source/index.rst:140
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:139
+#: ../../source/index.rst:142
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -315,7 +331,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:142
+#: ../../source/index.rst:145
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -326,7 +342,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:147
+#: ../../source/index.rst:150
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
