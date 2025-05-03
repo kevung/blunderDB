@@ -368,6 +368,11 @@
                                 <td>Go To Position</td>
                             </tr>
 
+                            <tr>
+                                <td>r</td>
+                                <td>Load Random Position</td>
+                            </tr>
+
                         </tbody>
                     </table>
 

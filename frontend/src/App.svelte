@@ -419,6 +419,8 @@
             toggleFilterLibraryPanel();
         } else if (!event.ctrlKey && event.code === 'KeyP') {
             togglePipcount();
+        } else if (!event.ctrlKey && event.code === 'KeyR') {
+            loadRandomPosition();
         }
     }
 
@@ -1643,6 +1645,29 @@ function togglePipcount() {
         }
     }
 
+    function loadRandomPosition() {
+        console.log('loadRandomPosition');
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            statusBarModeStore.set('NORMAL');
+            return;
+        }
+        if ($statusBarModeStore == "NORMAL") {
+            // Load a random position from the position store
+            let randomIndex = Math.floor(Math.random() * positions.length);
+            // ensure that the random index is not the same as the current index
+            while (randomIndex === $currentPositionIndexStore) {
+                randomIndex = Math.floor(Math.random() * positions.length);
+            }
+            // Set the current position index to the random index
+            console.log('Random position index:', randomIndex);
+            // Set the current position index to the random index
+            currentPositionIndexStore.set(randomIndex);
+            
+        }
+    }
+
+
     async function loadPositionsByFilters(
         filters,
         includeCube,
@@ -1940,6 +1965,7 @@ function togglePipcount() {
         onLastPosition={lastPosition}
         onGoToPosition={gotoPosition}
         onTogglePipcount={togglePipcount}
+        onRandomPosition={loadRandomPosition}
         onToggleEditMode={toggleEditMode}
         onToggleCommandMode={() => showCommandStore.set(true)}
         onShowAnalysis={toggleAnalysisPanel}

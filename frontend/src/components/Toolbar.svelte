@@ -14,6 +14,7 @@
     export let onLastPosition;
     export let onGoToPosition;
     export let onTogglePipcount;
+    export let onRandomPosition;
     export let onToggleEditMode;
     export let onToggleCommandMode;
     export let onShowAnalysis;
@@ -252,6 +253,12 @@
     <button on:click|stopPropagation={onTogglePipcount} aria-label="Toggle Pipcount" title="Toggle Pipcount (p)" disabled={statusBarMode !== 'NORMAL' || !databasePath}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
+          </svg>
+    </button>
+
+    <button on:click|stopPropagation={onRandomPosition} aria-label="Random Position" title="Random Position (r)" disabled={statusBarMode !== 'NORMAL' || !databasePath}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" fill="none" class="size-6">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M14.5 14.5c.12.069.384-.166.592-.525.207-.358.278-.705.158-.774-.12-.07-.384.166-.592.524-.207.36-.278.706-.158.775Zm3.25 1.5c.12.069.384-.166.592-.525.207-.358.278-.705.158-.774-.12-.07-.384.166-.592.524-.207.36-.278.706-.158.775ZM9.5 14.5c-.12.069-.384-.166-.592-.525-.207-.358-.278-.705-.158-.774.12-.07.384.166.592.524.207.36.278.706.158.775Zm0 3.25c-.12.069-.384-.166-.592-.525-.207-.358-.278-.705-.158-.774.12-.07.384.166.592.524.207.36.278.706.158.775ZM6.25 16c-.12.069-.384-.166-.592-.525-.207-.358-.278-.705-.158-.774.12-.07.384.166.592.524.207.36.278.706.158.775Zm0-3.201c-.12.07-.384-.166-.592-.524-.207-.36-.278-.706-.158-.775.12-.069.384.166.592.525.207.358.278.705.158.774Zm6.5-5.549a.75.25 0 0 1-.75.25.75.25 0 0 1-.75-.25A.75.25 0 0 1 12 7a.75.25 0 0 1 .75.25ZM21 7.5l-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9"></path>
           </svg>
     </button>
 

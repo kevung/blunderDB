@@ -38,6 +38,7 @@ Mode NORMAL
    "GAUCHE, k", "Position précédente."
    "DROITE, j", "Position suivante."
    "PageDown, l", "Dernière position."
+   "r", "Position aléatoire."
    "CTRL-GAUCHE", "Orientation du board à gauche."
    "CTRL-DROITE", "Orientation du board à droite."
    "p", "Afficher/cacher le compte de course."

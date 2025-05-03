@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-03 22:04+0200\n"
-"PO-Revision-Date: 2025-05-03 22:08+0200\n"
+"POT-Creation-Date: 2025-05-03 22:25+0200\n"
+"PO-Revision-Date: 2025-05-03 22:27+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -152,6 +152,14 @@ msgid "Dernière position."
 msgstr "Last position."
 
 #: ../../source/raccourcis.rst:1
+msgid "r"
+msgstr "r"
+
+#: ../../source/raccourcis.rst:1
+msgid "Position aléatoire."
+msgstr "Random position."
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-GAUCHE"
 msgstr "CTRL-LEFT"
 
@@ -223,7 +231,7 @@ msgstr "CTRL-B"
 msgid "Afficher/cacher la bibliothèque de filtres."
 msgstr "Show/hide the filter library."
 
-#: ../../source/raccourcis.rst:54
+#: ../../source/raccourcis.rst:55
 msgid "Mode EDIT"
 msgstr "EDIT mode"
 
@@ -263,7 +271,7 @@ msgstr "CTRL-F"
 msgid "Rechercher une position."
 msgstr "Search for a position."
 
-#: ../../source/raccourcis.rst:71
+#: ../../source/raccourcis.rst:72
 msgid "Mode COMMAND"
 msgstr "COMMAND mode."
 
