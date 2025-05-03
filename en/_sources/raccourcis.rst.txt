@@ -40,6 +40,7 @@ Mode NORMAL
    "PageDown, l", "Dernière position."
    "CTRL-GAUCHE", "Orientation du board à gauche."
    "CTRL-DROITE", "Orientation du board à droite."
+   "p", "Afficher/cacher le compte de course."
    "CTRL-K", "Afficher la fenêtre de navigation de positions."
    "CTRL-L", "Afficher/cacher l'analyse."
    "CTRL-P", "Afficher/cacher les commentaires."
