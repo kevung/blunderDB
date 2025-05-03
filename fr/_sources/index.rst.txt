@@ -65,6 +65,9 @@ Historique des versions
 
    Affichage de la version de la base de données dans les métadonnées."
    0.7.0, 16/02/2025, "Prise en charge du japonais et de l'allemand dans les exports de XG."
+   0.8.0, 03/05/2025, "Possibilité de cacher le compte de course.
+   
+   Chargement d'une position aléatoire."
 
 Sommaire
 ========
