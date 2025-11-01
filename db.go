@@ -110,6 +110,19 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS filter_library (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT,
+			command TEXT,
+			edit_position TEXT
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating filter_library table:", err)
+		return err
+	}
+
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
@@ -148,6 +161,9 @@ func (d *Database) OpenDatabase(path string) error {
 	requiredTables := []string{"position", "analysis", "comment", "metadata"}
 	if dbVersion >= "1.1.0" {
 		requiredTables = append(requiredTables, "command_history")
+	}
+	if dbVersion >= "1.2.0" {
+		requiredTables = append(requiredTables, "filter_library")
 	}
 
 	for _, table := range requiredTables {
