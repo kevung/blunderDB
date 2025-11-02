@@ -15,6 +15,8 @@ Opérations globales
 
    "new, ne, n", "Crée une nouvelle base de données."
    "open, op, o", "Ouvre une base de données existante."
+   "import_db, idb", "Importe et fusionne une autre base de données."
+   "export_db, edb", "Exporte la sélection courante vers une nouvelle base de données."
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
    "meta", "Affiche les métadonnées de la base de données."
