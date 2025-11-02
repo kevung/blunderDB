@@ -34,4 +34,5 @@ export const analysisStore = writable({
     lastModifiedDate: ''
 });
 
-
+// Store for tracking the selected move in the analysis panel
+export const selectedMoveStore = writable(null);

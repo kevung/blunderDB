@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-03 22:25+0200\n"
-"PO-Revision-Date: 2025-05-03 22:27+0200\n"
+"POT-Creation-Date: 2025-11-01 23:49+0100\n"
+"PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 25.04.0\n"
+"X-Generator: Lokalize 25.08.2\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
@@ -310,6 +310,38 @@ msgstr "DOWN"
 #: ../../source/raccourcis.rst:1
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
+
+#: ../../source/raccourcis.rst:88
+msgid "Panneau d'analyse"
+msgstr "Analysis Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic"
+msgstr "Click"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un coup (affiche/efface les flèches)."
+msgstr "Select/deselect a move (show/hide arrows)."
+
+#: ../../source/raccourcis.rst:1
+msgid "HAUT, k"
+msgstr "UP, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup précédent (si un coup est sélectionné)."
+msgstr "Select previous move (when a move is selected)."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j"
+msgstr "DOWN, j"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup suivant (si un coup est sélectionné)."
+msgstr "Select next move (when a move is selected)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+msgstr "Deselect move. If no move selected, close the panel."
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"

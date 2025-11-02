@@ -1,5 +1,5 @@
 <script>
-    import { analysisStore } from '../stores/analysisStore'; // Import analysisStore
+    import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore } from '../stores/positionStore'; // Import positionStore
     import { showAnalysisStore, showFilterLibraryPanelStore, showCommentStore, statusBarModeStore } from '../stores/uiStore'; // Import showAnalysisStore
     export let visible = false;
@@ -33,12 +33,51 @@
             }, 0);
         } else {
             console.log('Panel is not visible');
+            // Clear selected move when panel is closed
+            selectedMoveStore.set(null);
         }
     });
 
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
-            onClose();
+            // Clear selection first if a move is selected
+            if ($selectedMoveStore) {
+                selectedMoveStore.set(null);
+            } else {
+                onClose();
+            }
+            return;
+        }
+
+        // Handle j/k and arrow keys for move navigation when a move is selected
+        if ($selectedMoveStore && analysisData.analysisType === 'CheckerMove' && analysisData.checkerAnalysis) {
+            const moves = analysisData.checkerAnalysis.moves;
+            if (!moves || moves.length === 0) return;
+
+            const currentIndex = moves.findIndex(m => m.move === $selectedMoveStore);
+            
+            if (event.key === 'j' || event.key === 'ArrowDown') {
+                event.preventDefault();
+                // Select next move (down)
+                if (currentIndex >= 0 && currentIndex < moves.length - 1) {
+                    selectedMoveStore.set(moves[currentIndex + 1].move);
+                }
+            } else if (event.key === 'k' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                // Select previous move (up)
+                if (currentIndex > 0) {
+                    selectedMoveStore.set(moves[currentIndex - 1].move);
+                }
+            }
+        }
+    }
+
+    function handleMoveRowClick(move) {
+        // Toggle selection: if clicking the same move, deselect it
+        if ($selectedMoveStore === move.move) {
+            selectedMoveStore.set(null);
+        } else {
+            selectedMoveStore.set(move.move);
         }
     }
 
@@ -55,7 +94,7 @@
 </script>
 
 {#if visible}
-    <section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" on:keydown={handleKeyDown}>
+    <section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" on:keydown={handleKeyDown}>
         <button type="button" class="close-icon" on:click={onClose} aria-label="Close" on:keydown={handleKeyDown}>×</button>
         <div class="analysis-content">
             {#if analysisData.analysisType === 'DoublingCube' && analysisData.doublingCubeAnalysis}
@@ -151,7 +190,11 @@
                             <th>Depth</th>
                         </tr>
                         {#each analysisData.checkerAnalysis.moves as move}
-                            <tr>
+                            <tr 
+                                class:selected={$selectedMoveStore === move.move}
+                                on:click={() => handleMoveRowClick(move)}
+                                style="cursor: pointer;"
+                            >
                                 <td>{move.move}</td>
                                 <td>{formatEquity(move.equity || 0)}</td>
                                 <td>{formatEquity(move.equityError || 0)}</td>
@@ -288,6 +331,15 @@
 
     .checker-table tr:nth-child(odd) {
         background-color: #ffffff; /* More discreet alternating row color */
+    }
+
+    .checker-table tr.selected {
+        background-color: #b3d9ff !important; /* Highlight selected row with light blue */
+        font-weight: bold;
+    }
+
+    .checker-table tbody tr:not(:first-child):hover {
+        background-color: #e6f2ff; /* Light hover effect for move rows */
     }
 
     .best-action-row {

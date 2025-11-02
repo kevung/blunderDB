@@ -359,6 +359,16 @@
                             </tr>
 
                             <tr>
+                                <td>Up, k</td>
+                                <td>Previous Move (when move selected in Analysis)</td>
+                            </tr>
+
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Next Move (when move selected in Analysis)</td>
+                            </tr>
+
+                            <tr>
                                 <td>PageDown, l</td>
                                 <td>Last Position</td>
                             </tr>

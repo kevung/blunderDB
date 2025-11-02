@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-03 22:25+0200\n"
+"POT-Creation-Date: 2025-11-01 23:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -309,6 +309,38 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Parcourir l'historique des commandes vers le bas."
+msgstr ""
+
+#: ../../source/raccourcis.rst:88
+msgid "Panneau d'analyse"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un coup (affiche/efface les flèches)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "HAUT, k"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup précédent (si un coup est sélectionné)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup suivant (si un coup est sélectionné)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr ""
 
 #~ msgid "Raccourcis modaux"

@@ -50,6 +50,7 @@
 
     import {
         analysisStore,
+        selectedMoveStore,
     } from './stores/analysisStore';
 
     import {
@@ -359,21 +360,21 @@
                 firstPosition();
             }
         } else if (!event.ctrlKey && event.key === 'ArrowLeft') {
-            if (!showComment) {
+            if (!showComment && !$selectedMoveStore) {
                 event.preventDefault();
                 previousPosition();
             }
         } else if (!event.ctrlKey && event.key === 'k') {
-            if (!showComment) {
+            if (!showComment && !$selectedMoveStore) {
                 previousPosition();
             }
         } else if (!event.ctrlKey && event.key === 'ArrowRight') {
-            if (!showComment) {
+            if (!showComment && !$selectedMoveStore) {
                 event.preventDefault();
                 nextPosition();
             }
         } else if (!event.ctrlKey && event.key === 'j') {
-            if (!showComment) {
+            if (!showComment && !$selectedMoveStore) {
                 nextPosition();
             }
         } else if (!event.ctrlKey && event.key === 'PageDown') {

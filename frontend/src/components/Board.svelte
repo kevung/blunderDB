@@ -1,5 +1,6 @@
 <script>
     import { positionStore } from "../stores/positionStore";
+    import { selectedMoveStore } from "../stores/analysisStore"; // Import selectedMoveStore
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
@@ -12,7 +13,7 @@
     let showTakePoint2Modal = false; // Add showTakePoint2Modal variable
     let showTakePoint4Modal = false; // Add showTakePoint4Modal variable
     let showPipcount = true; // Add a reactive variable to control pip count visibility
-    
+    let arrowGroup = null; // Track the arrow group for cleanup
 
 
     statusBarModeStore.subscribe(value => {
@@ -73,6 +74,15 @@
     let startMousePos = null;
     let cubePosition = { x: 0, y: 0 };
     let previousDice = get(positionStore).dice; // Save previous dice values
+    let selectedMove; // Will be set by reactive statement
+
+    // Subscribe to selectedMoveStore and update selectedMove
+    $: selectedMove = $selectedMoveStore;
+    
+    // Reactive statement to redraw board when selectedMove changes
+    $: if (two && canvas && selectedMove !== undefined) {
+        drawBoard();
+    }
 
     function handleMouseDown(event) {
         event.preventDefault(); // Prevent text or element selection
@@ -247,6 +257,270 @@
         positionStore.update(pos => {
             pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];
             return pos;
+        });
+    }
+
+    // Parse move notation like "24/23 13/11" or "8/5 6/5(2)" into array of moves with counts
+    function parseMoveNotation(moveString) {
+        if (!moveString || moveString === 'bar' || moveString.toLowerCase().includes('cannot move')) {
+            return [];
+        }
+        
+        const moves = [];
+        // Split by spaces to get individual moves like "24/23" or "13/11(2)"
+        const parts = moveString.trim().split(/\s+/);
+        
+        for (const part of parts) {
+            // Match pattern like "24/23" or "24/23(2)" or "bar/23" or "6/off(4)"
+            const match = part.match(/(\d+|bar)\/(\d+|off)(?:\((\d+)\))?/i);
+            if (match) {
+                const from = match[1].toLowerCase() === 'bar' ? 0 : parseInt(match[1]);
+                const to = match[2].toLowerCase() === 'off' ? -1 : parseInt(match[2]);
+                const count = match[3] ? parseInt(match[3]) : 1;
+                
+                // Add multiple moves if count > 1
+                for (let i = 0; i < count; i++) {
+                    moves.push({ from, to, index: i });
+                }
+            }
+        }
+        
+        return moves;
+    }
+
+    // Get the x, y coordinates for a point on the board with offset for multiple arrows
+    function getPointCoordinates(point, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth, offsetIndex = 0) {
+        const position = get(positionStore);
+        let x, y;
+        const offset = offsetIndex * boardCheckerSize; // One full checker size offset
+        
+        if (boardCfg.orientation === "right") {
+            if (point === 0) { // bar
+                x = boardOrigXpos + offset;
+                y = boardOrigYpos;
+            } else if (point === -1) { // bearoff - closer to board edge
+                x = boardOrigXpos + 0.5 * boardWidth + boardCheckerSize * 0.75;
+                y = boardOrigYpos + offset;
+            } else if (point <= 6) {
+                x = boardOrigXpos + (7 - point) * boardCheckerSize;
+                y = boardOrigYpos + 0.5 * boardHeight - 2 * boardCheckerSize - offset;
+            } else if (point <= 12) {
+                x = boardOrigXpos - (point - 6) * boardCheckerSize;
+                y = boardOrigYpos + 0.5 * boardHeight - 2 * boardCheckerSize - offset;
+            } else if (point <= 18) {
+                x = boardOrigXpos - (19 - point) * boardCheckerSize;
+                y = boardOrigYpos - 0.5 * boardHeight + 2 * boardCheckerSize + offset;
+            } else if (point <= 24) {
+                x = boardOrigXpos + (point - 18) * boardCheckerSize;
+                y = boardOrigYpos - 0.5 * boardHeight + 2 * boardCheckerSize + offset;
+            }
+        } else if (boardCfg.orientation === "left") {
+            if (point === 0) { // bar
+                x = boardOrigXpos + offset;
+                y = boardOrigYpos;
+            } else if (point === -1) { // bearoff - closer to board edge
+                x = boardOrigXpos - 0.5 * boardWidth - boardCheckerSize * 0.75;
+                y = boardOrigYpos + offset;
+            } else if (point <= 6) {
+                x = boardOrigXpos - (7 - point) * boardCheckerSize;
+                y = boardOrigYpos + 0.5 * boardHeight - 2 * boardCheckerSize - offset;
+            } else if (point <= 12) {
+                x = boardOrigXpos + (point - 6) * boardCheckerSize;
+                y = boardOrigYpos + 0.5 * boardHeight - 2 * boardCheckerSize - offset;
+            } else if (point <= 18) {
+                x = boardOrigXpos + (19 - point) * boardCheckerSize;
+                y = boardOrigYpos - 0.5 * boardHeight + 2 * boardCheckerSize + offset;
+            } else if (point <= 24) {
+                x = boardOrigXpos - (point - 18) * boardCheckerSize;
+                y = boardOrigYpos - 0.5 * boardHeight + 2 * boardCheckerSize + offset;
+            }
+        }
+        
+        return { x, y };
+    }
+
+    // Draw arrows for a move
+    function drawMoveArrows(moveString, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth) {
+        const moves = parseMoveNotation(moveString);
+        const position = get(positionStore);
+        
+        // Count how many arrows start from each point and end at each point
+        const fromCounts = {};
+        const toCounts = {};
+        
+        moves.forEach(move => {
+            fromCounts[move.from] = (fromCounts[move.from] || 0) + 1;
+            toCounts[move.to] = (toCounts[move.to] || 0) + 1;
+        });
+        
+        // Track the current checker index for each point
+        const fromIndices = {};
+        const toIndices = {};
+        
+        // Draw arrows for each move
+        moves.forEach((move, idx) => {
+            // Determine which checker in the stack this arrow starts from
+            const fromIndex = fromIndices[move.from] || 0;
+            fromIndices[move.from] = fromIndex + 1;
+            
+            // Determine which checker in the stack this arrow ends at
+            const toIndex = toIndices[move.to] || 0;
+            toIndices[move.to] = toIndex + 1;
+            
+            // Add a horizontal offset for each arrow to prevent overlap when arrows cross
+            const horizontalOffset = idx * boardCheckerSize * 0.15;
+            
+            // Get base coordinates and calculate offset based on checker position in stack
+            let fromX, fromY, toX, toY;
+            
+            if (boardCfg.orientation === "right") {
+                // Calculate FROM coordinates - start from center of specific checker in stack
+                if (move.from === 0) { // bar (player 0) - checkers in upper section
+                    fromX = boardOrigXpos;
+                    const yBase = boardOrigYpos - 0.5 * boardCheckerSize;
+                    fromY = yBase - (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from === 25) { // bar (player 1) - checkers in lower section
+                    fromX = boardOrigXpos;
+                    const yBase = boardOrigYpos + 0.5 * boardCheckerSize;
+                    fromY = yBase + (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 6) {
+                    fromX = boardOrigXpos + (7 - move.from) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    fromY = yBase - (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 12) {
+                    fromX = boardOrigXpos - (move.from - 6) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    fromY = yBase - (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 18) {
+                    fromX = boardOrigXpos - (19 - move.from) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    fromY = yBase + (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 24) {
+                    fromX = boardOrigXpos + (move.from - 18) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    fromY = yBase + (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                }
+                
+                // Calculate TO coordinates - end at center of specific checker position in stack
+                if (move.to === -1) { // bearoff
+                    toX = boardOrigXpos + 0.5 * boardWidth + boardCheckerSize * 0.75 + horizontalOffset;
+                    toY = boardOrigYpos + (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 6) {
+                    toX = boardOrigXpos + (7 - move.to) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    toY = yBase - (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 12) {
+                    toX = boardOrigXpos - (move.to - 6) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    toY = yBase - (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 18) {
+                    toX = boardOrigXpos - (19 - move.to) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    toY = yBase + (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 24) {
+                    toX = boardOrigXpos + (move.to - 18) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    toY = yBase + (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                }
+            } else if (boardCfg.orientation === "left") {
+                // Calculate FROM coordinates - start from center of specific checker in stack
+                if (move.from === 0) { // bar (player 0) - checkers in upper section
+                    fromX = boardOrigXpos;
+                    const yBase = boardOrigYpos - 0.5 * boardCheckerSize;
+                    fromY = yBase - (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from === 25) { // bar (player 1) - checkers in lower section
+                    fromX = boardOrigXpos;
+                    const yBase = boardOrigYpos + 0.5 * boardCheckerSize;
+                    fromY = yBase + (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 6) {
+                    fromX = boardOrigXpos - (7 - move.from) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    fromY = yBase - (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 12) {
+                    fromX = boardOrigXpos + (move.from - 6) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    fromY = yBase - (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 18) {
+                    fromX = boardOrigXpos + (19 - move.from) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    fromY = yBase + (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.from <= 24) {
+                    fromX = boardOrigXpos - (move.from - 18) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    fromY = yBase + (fromIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                }
+                
+                // Calculate TO coordinates - end at center of specific checker position in stack
+                if (move.to === -1) { // bearoff
+                    toX = boardOrigXpos - 0.5 * boardWidth - boardCheckerSize * 0.75 + horizontalOffset;
+                    toY = boardOrigYpos + (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 6) {
+                    toX = boardOrigXpos - (7 - move.to) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    toY = yBase - (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 12) {
+                    toX = boardOrigXpos + (move.to - 6) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos + 0.5 * boardHeight;
+                    toY = yBase - (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 18) {
+                    toX = boardOrigXpos + (19 - move.to) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    toY = yBase + (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                } else if (move.to <= 24) {
+                    toX = boardOrigXpos - (move.to - 18) * boardCheckerSize + horizontalOffset;
+                    const yBase = boardOrigYpos - 0.5 * boardHeight;
+                    toY = yBase + (toIndex + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
+                }
+            }
+            
+            if (fromX === undefined || toX === undefined) return;
+            
+            // Arrow styling - much wider shaft, less transparent
+            const arrowColor = 'rgba(255, 107, 107, 0.85)';
+            const arrowWidth = 14; // Much wider shaft
+            
+            // Calculate arrow direction
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            
+            if (length < 1) return; // Skip if points are too close
+            
+            // Normalize direction
+            const ndx = dx / length;
+            const ndy = dy / length;
+            
+            // Arrowhead dimensions
+            const headLength = boardCheckerSize * 0.4;
+            const headWidth = boardCheckerSize * 0.35;
+            
+            // Calculate where the arrow line should end (at the base of the arrowhead)
+            const lineEndX = toX - headLength * ndx;
+            const lineEndY = toY - headLength * ndy;
+            
+            // Draw line (shaft ends before arrowhead)
+            const line = two.makeLine(fromX, fromY, lineEndX, lineEndY);
+            line.stroke = arrowColor;
+            line.linewidth = arrowWidth;
+            line.cap = 'butt'; // Use butt cap to avoid overlap
+            
+            // Draw arrowhead
+            const arrowTipX = toX;
+            const arrowTipY = toY;
+            const arrowBase1X = arrowTipX - headLength * ndx - headWidth * ndy;
+            const arrowBase1Y = arrowTipY - headLength * ndy + headWidth * ndx;
+            const arrowBase2X = arrowTipX - headLength * ndx + headWidth * ndy;
+            const arrowBase2Y = arrowTipY - headLength * ndy - headWidth * ndx;
+            
+            const arrowHead = two.makePath(
+                arrowTipX, arrowTipY,
+                arrowBase1X, arrowBase1Y,
+                arrowBase2X, arrowBase2Y
+            );
+            arrowHead.fill = arrowColor;
+            arrowHead.stroke = arrowColor;
+            arrowHead.linewidth = 1;
+            arrowHead.closed = true;
         });
     }
 
@@ -547,6 +821,8 @@
         window.addEventListener("keydown", handleKeyDown);
 
         unsubscribe = positionStore.subscribe(() => {
+            // Clear selected move when position changes
+            selectedMoveStore.set(null);
             drawBoard();
             const position = get(positionStore);
             console.log("positionStore.subscribe - decision_type: ", position.decision_type); // Debug log
@@ -574,6 +850,8 @@
     });
 
     export function drawBoard() {
+        if (!two) return; // Safety check
+        
         two.clear();
 
         const boardAspectFactor = 11 / 13;
@@ -1124,6 +1402,11 @@
         }
         drawDice();
         drawScores();
+        
+        // Draw arrows for selected move if any
+        if (selectedMove) {
+            drawMoveArrows(selectedMove, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth);
+        }
 
         // draw board outline on top to ensure consistent linewidth
         const board = two.makeRectangle(
