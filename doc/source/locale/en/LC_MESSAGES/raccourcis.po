@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:30+0100\n"
+"POT-Creation-Date: 2025-11-02 04:48+0100\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -51,6 +51,14 @@ msgid "Ouvrir une base de données existante."
 msgstr "Open an existing database."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-S"
+msgstr "CTRL-SHIFT-S"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exporter la base de données."
+msgstr "Export the database."
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-Q"
 msgstr "CTRL-Q"
 
@@ -66,7 +74,7 @@ msgstr "CTRL-M"
 msgid "Modifier les métadonnées de la base de données."
 msgstr "Edit database metadata."
 
-#: ../../source/raccourcis.rst:24
+#: ../../source/raccourcis.rst:25
 msgid "Position"
 msgstr "Position"
 
@@ -134,7 +142,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Show the position metadata."
 
-#: ../../source/raccourcis.rst:43
+#: ../../source/raccourcis.rst:44
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -210,7 +218,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Load a random position."
 
-#: ../../source/raccourcis.rst:63
+#: ../../source/raccourcis.rst:64
 msgid "Affichage"
 msgstr "Display"
 
@@ -238,7 +246,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Show/hide pipcount."
 
-#: ../../source/raccourcis.rst:77
+#: ../../source/raccourcis.rst:78
 msgid "Modes"
 msgstr "Modes"
 
@@ -258,7 +266,7 @@ msgstr "SPACE"
 msgid "Basculer en mode COMMAND."
 msgstr "Switch to COMMAND mode."
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Outils"
 msgstr "Tools"
 
@@ -302,7 +310,7 @@ msgstr "CTRL-H, ?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:106
+#: ../../source/raccourcis.rst:107
 msgid "Ligne de commande"
 msgstr "Command Line"
 

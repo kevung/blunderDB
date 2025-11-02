@@ -382,6 +382,8 @@
             copyPosition();
         } else if(event.ctrlKey && event.code == 'KeyV') {
             pastePosition();
+        } else if(event.ctrlKey && event.shiftKey && event.code == 'KeyS') {
+            exportDatabase();
         } else if(event.ctrlKey && event.code == 'KeyS') {
             saveCurrentPosition();
         } else if(event.ctrlKey && event.code == 'KeyU') {

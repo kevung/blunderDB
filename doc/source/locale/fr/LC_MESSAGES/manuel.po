@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:30+0100\n"
+"POT-Creation-Date: 2025-11-02 04:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -227,17 +227,15 @@ msgstr ""
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr ""
 
-#: ../../source/manuel.rst:116
-msgid ""
-"Se référer à la :numref:`raccourcis_normal` pour les raccourcis du mode "
-"NORMAL."
+#: ../../source/manuel.rst:116 ../../source/manuel.rst:129
+msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr ""
 
-#: ../../source/manuel.rst:122
+#: ../../source/manuel.rst:121
 msgid "Le mode EDIT"
 msgstr ""
 
-#: ../../source/manuel.rst:124
+#: ../../source/manuel.rst:123
 msgid ""
 "Le mode EDIT permet d'éditer une position en vue de l'ajouter à la base "
 "de données, ou de définir le type de position à rechercher. Le mode EDIT "
@@ -246,17 +244,11 @@ msgid ""
 "souris (voir :ref:`guide_edit_position`)."
 msgstr ""
 
-#: ../../source/manuel.rst:130
-msgid ""
-"Se référer à la :numref:`raccourcis_edit` pour les raccourcis du mode "
-"EDIT."
-msgstr ""
-
-#: ../../source/manuel.rst:136
+#: ../../source/manuel.rst:134
 msgid "Le mode COMMAND"
 msgstr ""
 
-#: ../../source/manuel.rst:138
+#: ../../source/manuel.rst:136
 msgid ""
 "Le mode COMMAND permet de réaliser l'ensemble des fonctionalités de "
 "blunderDB disponibles à l'interface graphique: opérations générales sur "
@@ -268,14 +260,14 @@ msgid ""
 "positions."
 msgstr ""
 
-#: ../../source/manuel.rst:146
+#: ../../source/manuel.rst:144
 msgid ""
 "Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur la"
 " touche *ESPACE*. Pour envoyer une requête et quitter le mode COMMAND, "
 "appuyer sur la touche *ENTREE*."
 msgstr ""
 
-#: ../../source/manuel.rst:150
+#: ../../source/manuel.rst:148
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -283,7 +275,7 @@ msgid ""
 " la part de l'utilisateur."
 msgstr ""
 
-#: ../../source/manuel.rst:155
+#: ../../source/manuel.rst:153
 msgid ""
 "Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
 "en mode COMMAND."
@@ -431,5 +423,15 @@ msgstr ""
 #~ "positions. Les positions sont stockées "
 #~ "dans une base de données représentée "
 #~ "par un fichier *.db*."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Se référer à la :numref:`raccourcis_normal`"
+#~ " pour les raccourcis du mode NORMAL."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Se référer à la :numref:`raccourcis_edit` "
+#~ "pour les raccourcis du mode EDIT."
 #~ msgstr ""
 

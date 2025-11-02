@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:30+0100\n"
+"POT-Creation-Date: 2025-11-02 04:48+0100\n"
 "PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -46,8 +46,7 @@ msgstr ""
 msgid ""
 "Les positions sont stockées dans une base de données représentée par un "
 "fichier *.db*."
-msgstr ""
-"Positions are stored in a database represented by a *.db* file."
+msgstr "Positions are stored in a database represented by a *.db* file."
 
 #: ../../source/manuel.rst:20
 msgid "Interactions principales"
@@ -253,17 +252,16 @@ msgstr "displaying the analysis information associated with a position."
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "displaying, adding, and modifying comments on a position."
 
-#: ../../source/manuel.rst:116
-msgid ""
-"Se référer à la :numref:`raccourcis_normal` pour les raccourcis du mode "
-"NORMAL."
-msgstr "Refer to :numref:`raccourcis_normal` for NORMAL mode shortcuts."
+#: ../../source/manuel.rst:116 ../../source/manuel.rst:129
+#, fuzzy
+msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
+msgstr "Refer to :numref:`raccourcis_edit` for EDIT mode shortcuts."
 
-#: ../../source/manuel.rst:122
+#: ../../source/manuel.rst:121
 msgid "Le mode EDIT"
 msgstr "EDIT mode"
 
-#: ../../source/manuel.rst:124
+#: ../../source/manuel.rst:123
 msgid ""
 "Le mode EDIT permet d'éditer une position en vue de l'ajouter à la base "
 "de données, ou de définir le type de position à rechercher. Le mode EDIT "
@@ -277,17 +275,11 @@ msgstr ""
 " cube, the score, and the turn can be modified using the mouse (see "
 ":ref:`guide_edit_position`)."
 
-#: ../../source/manuel.rst:130
-msgid ""
-"Se référer à la :numref:`raccourcis_edit` pour les raccourcis du mode "
-"EDIT."
-msgstr "Refer to :numref:`raccourcis_edit` for EDIT mode shortcuts."
-
-#: ../../source/manuel.rst:136
+#: ../../source/manuel.rst:134
 msgid "Le mode COMMAND"
 msgstr "COMMAND mode"
 
-#: ../../source/manuel.rst:138
+#: ../../source/manuel.rst:136
 msgid ""
 "Le mode COMMAND permet de réaliser l'ensemble des fonctionalités de "
 "blunderDB disponibles à l'interface graphique: opérations générales sur "
@@ -305,7 +297,7 @@ msgstr ""
 "it is recommended to gradually use this mode for a powerful and smooth "
 "use of blunderDB, especially for position search functionalities."
 
-#: ../../source/manuel.rst:146
+#: ../../source/manuel.rst:144
 msgid ""
 "Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur la"
 " touche *ESPACE*. Pour envoyer une requête et quitter le mode COMMAND, "
@@ -314,7 +306,7 @@ msgstr ""
 "To switch to COMMAND mode from any other mode, press the *SPACE* key. To "
 "submit a query and exit COMMAND mode, press the *ENTER* key."
 
-#: ../../source/manuel.rst:150
+#: ../../source/manuel.rst:148
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -325,7 +317,7 @@ msgstr ""
 " and immediately modifies the state of the database if necessary. There "
 "are no explicit save actions required from the user."
 
-#: ../../source/manuel.rst:155
+#: ../../source/manuel.rst:153
 msgid ""
 "Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
 "en mode COMMAND."
@@ -406,4 +398,9 @@ msgstr ""
 #~ msgstr ""
 #~ "search for types of positions based "
 #~ "on various freely combinable criteria."
+
+#~ msgid ""
+#~ "Se référer à la :numref:`raccourcis_normal`"
+#~ " pour les raccourcis du mode NORMAL."
+#~ msgstr "Refer to :numref:`raccourcis_normal` for NORMAL mode shortcuts."
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:30+0100\n"
+"POT-Creation-Date: 2025-11-02 04:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -52,6 +52,14 @@ msgid "Ouvrir une base de données existante."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-S"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Exporter la base de données."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-Q"
 msgstr ""
 
@@ -67,7 +75,7 @@ msgstr ""
 msgid "Modifier les métadonnées de la base de données."
 msgstr ""
 
-#: ../../source/raccourcis.rst:24
+#: ../../source/raccourcis.rst:25
 msgid "Position"
 msgstr ""
 
@@ -135,7 +143,7 @@ msgstr ""
 msgid "Afficher les métadonnées de la position."
 msgstr ""
 
-#: ../../source/raccourcis.rst:43
+#: ../../source/raccourcis.rst:44
 msgid "Navigation"
 msgstr ""
 
@@ -211,7 +219,7 @@ msgstr ""
 msgid "Charger une position aléatoire."
 msgstr ""
 
-#: ../../source/raccourcis.rst:63
+#: ../../source/raccourcis.rst:64
 msgid "Affichage"
 msgstr ""
 
@@ -239,7 +247,7 @@ msgstr ""
 msgid "Afficher/cacher le compte de course."
 msgstr ""
 
-#: ../../source/raccourcis.rst:77
+#: ../../source/raccourcis.rst:78
 msgid "Modes"
 msgstr ""
 
@@ -259,7 +267,7 @@ msgstr ""
 msgid "Basculer en mode COMMAND."
 msgstr ""
 
-#: ../../source/raccourcis.rst:90
+#: ../../source/raccourcis.rst:91
 msgid "Outils"
 msgstr ""
 
@@ -303,7 +311,7 @@ msgstr ""
 msgid "Afficher/cacher l'aide."
 msgstr ""
 
-#: ../../source/raccourcis.rst:106
+#: ../../source/raccourcis.rst:107
 msgid "Ligne de commande"
 msgstr ""
 
