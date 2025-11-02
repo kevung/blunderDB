@@ -82,4 +82,21 @@ Mode COMMAND
    "HAUT", "Parcourir l'historique des commandes vers le haut."
    "BAS", "Parcourir l'historique des commandes vers le bas."
 
+.. _raccourcis_analysis:
+
+Panneau d'analyse
+------------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Sélectionner/désélectionner un coup (affiche/efface les flèches)."
+   "HAUT, k", "Sélectionner le coup précédent (si un coup est sélectionné)."
+   "BAS, j", "Sélectionner le coup suivant (si un coup est sélectionné)."
+   "ESC", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+
+
+
 
