@@ -376,6 +376,8 @@
             openDatabase();
         } else if (event.ctrlKey && event.code === 'KeyQ') {
             exitApp();
+        } else if(event.ctrlKey && event.shiftKey && event.code == 'KeyI') {
+            importDatabase();
         } else if(event.ctrlKey && event.code == 'KeyI') {
             importPosition();
         } else if(event.ctrlKey && event.code == 'KeyC') {

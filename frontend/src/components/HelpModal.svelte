@@ -259,6 +259,11 @@
                             </tr>
 
                             <tr>
+                                <td>Ctrl + Shift + I</td>
+                                <td>Import Database</td>
+                            </tr>
+
+                            <tr>
                                 <td>Ctrl + Shift + S</td>
                                 <td>Export Database</td>
                             </tr>
