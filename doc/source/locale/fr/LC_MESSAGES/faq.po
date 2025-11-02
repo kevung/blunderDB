@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-12 23:58+0100\n"
+"POT-Creation-Date: 2025-11-02 04:26+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -109,31 +109,73 @@ msgstr ""
 msgid "les blunders en ligne."
 msgstr ""
 
-#: ../../source/faq.rst:66
+#: ../../source/faq.rst:65
+msgid "Comment fusionner plusieurs bases de données?"
+msgstr ""
+
+#: ../../source/faq.rst:67
+msgid ""
+"Si vous avez plusieurs bases de données blunderDB que vous souhaitez "
+"regrouper, utilisez la fonctionnalité \"Import Database\" :"
+msgstr ""
+
+#: ../../source/faq.rst:70
+msgid ""
+"Ouvrez la base de données principale (celle qui recevra les positions "
+"importées)"
+msgstr ""
+
+#: ../../source/faq.rst:71
+msgid "Cliquez sur le bouton \"Import Database\" dans la barre d'outils"
+msgstr ""
+
+#: ../../source/faq.rst:72
+msgid "Sélectionnez la base de données à importer"
+msgstr ""
+
+#: ../../source/faq.rst:73
+msgid "blunderDB fusionnera automatiquement les positions"
+msgstr ""
+
+#: ../../source/faq.rst:75
+msgid ""
+"Lors de la fusion, blunderDB évite les doublons et fusionne "
+"intelligemment les analyses et commentaires. Les positions identiques ne "
+"seront pas dupliquées, mais leurs analyses et commentaires seront "
+"combinés."
+msgstr ""
+
+#: ../../source/faq.rst:80
+msgid ""
+"Il est recommandé de faire une copie de sauvegarde de votre base de "
+"données principale avant d'importer une autre base de données."
+msgstr ""
+
+#: ../../source/faq.rst:85
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:68
+#: ../../source/faq.rst:87
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
 msgstr ""
 
-#: ../../source/faq.rst:72
+#: ../../source/faq.rst:91
 msgid "Quel format de données utilise blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:74
+#: ../../source/faq.rst:93
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
 msgstr ""
 
-#: ../../source/faq.rst:79
+#: ../../source/faq.rst:98
 msgid "Quelles ont été les principes de conception de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:81
+#: ../../source/faq.rst:100
 msgid ""
 "Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s'inspire du"
 " très puissant éditeur de texte `Vim "
@@ -145,53 +187,53 @@ msgid ""
 " base de données. Le format de fichier sqlite semblait tout indiqué."
 msgstr ""
 
-#: ../../source/faq.rst:92
+#: ../../source/faq.rst:111
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:94
+#: ../../source/faq.rst:113
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
 "positions."
 msgstr ""
 
-#: ../../source/faq.rst:98
+#: ../../source/faq.rst:117
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
 msgstr ""
 
-#: ../../source/faq.rst:101
+#: ../../source/faq.rst:120
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
 " Windows et Linux."
 msgstr ""
 
-#: ../../source/faq.rst:104
+#: ../../source/faq.rst:123
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr ""
 
-#: ../../source/faq.rst:106
+#: ../../source/faq.rst:125
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
 msgstr ""
 
-#: ../../source/faq.rst:109
+#: ../../source/faq.rst:128
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr ""
 
-#: ../../source/faq.rst:111
+#: ../../source/faq.rst:130
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr ""
 
-#: ../../source/faq.rst:114
+#: ../../source/faq.rst:133
 msgid "D'où vient l'icône de blunderDB?"
 msgstr ""
 
-#: ../../source/faq.rst:116
+#: ../../source/faq.rst:135
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

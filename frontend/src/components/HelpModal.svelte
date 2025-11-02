@@ -359,16 +359,6 @@
                             </tr>
 
                             <tr>
-                                <td>Up, k</td>
-                                <td>Previous Move (when move selected in Analysis)</td>
-                            </tr>
-
-                            <tr>
-                                <td>Down, j</td>
-                                <td>Next Move (when move selected in Analysis)</td>
-                            </tr>
-
-                            <tr>
                                 <td>PageDown, l</td>
                                 <td>Last Position</td>
                             </tr>
@@ -497,6 +487,34 @@
                             <tr>
                                 <td>Down</td>
                                 <td>Browse Command History Down</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Analysis Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Select/deselect a move (show/hide arrows)</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Select previous move (when a move is selected)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Select next move (when a move is selected)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Deselect move. If no move selected, close the panel.</td>
                             </tr>
                         </tbody>
                     </table>

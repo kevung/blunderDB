@@ -5,8 +5,8 @@ Raccourcis clavier
 
 .. _raccourcis_generaux:
 
-Général
--------
+Base de données
+---------------
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -16,12 +16,12 @@ Général
    "CTRL-N", "Créer une nouvelle base de données."
    "CTRL-O", "Ouvrir une base de données existante."
    "CTRL-Q", "Fermer blunderDB."
-   "CTRL-H, ?", "Afficher/cacher l'aide."
+   "CTRL-M", "Modifier les métadonnées de la base de données."
 
-.. _raccourcis_normal:
+.. _raccourcis_position:
 
-Mode NORMAL
------------
+Position
+--------
 
 .. csv-table::
    :header: "Raccourci", "Action"
@@ -29,29 +29,37 @@ Mode NORMAL
    :align: center
 
    "CTRL-I", "Importer une position par fichier texte (txt)."
-   "CTRL-C", "Exporter une position dans le presse-papier en vue d'un import dans XG."
-   "CTRL-V", "Importer une position XG."
+   "CTRL-C", "Copier une position dans le presse-papier."
+   "CTRL-V", "Coller une position depuis le presse-papier."
+   "CTRL-S", "Enregistrer une position."
+   "CTRL-U", "Mettre à jour une position."
    "Del", "Supprimer la position courante."
-   "TAB", "Basculer en mode EDIT."
-   "ESPACE", "Basculer en mode COMMAND."
+   "RETOUR ARRIERE", "Réinitialiser le board, le cube, le score et les dés."
+   "CTRL-G", "Afficher les métadonnées de la position."
+
+.. _raccourcis_navigation:
+
+Navigation
+----------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "CTRL-R", "Recharger toutes les positions de la base de données."
    "PageUp, h", "Première position."
    "GAUCHE, k", "Position précédente."
    "DROITE, j", "Position suivante."
+   "HAUT, k", "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
+   "BAS, j", "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
    "PageDown, l", "Dernière position."
-   "r", "Position aléatoire."
-   "CTRL-GAUCHE", "Orientation du board à gauche."
-   "CTRL-DROITE", "Orientation du board à droite."
-   "p", "Afficher/cacher le compte de course."
-   "CTRL-K", "Afficher la fenêtre de navigation de positions."
-   "CTRL-L", "Afficher/cacher l'analyse."
-   "CTRL-P", "Afficher/cacher les commentaires."
-   "CTRL-G", "Afficher les métadonnées de la position."
-   "CTRL-R", "Recharger toutes les positions de la base de données."
-   "CTRL-B", "Afficher/cacher la bibliothèque de filtres."
+   "CTRL-K", "Aller à une position spécifique."
+   "r", "Charger une position aléatoire."
 
-.. _raccourcis_edit:
+.. _raccourcis_affichage:
 
-Mode EDIT
+Affichage
 ---------
 
 .. csv-table::
@@ -59,43 +67,51 @@ Mode EDIT
    :widths: 7, 20
    :align: center
 
-   "TAB", "Basculer en mode NORMAL."
+   "CTRL-GAUCHE", "Orientation du board à gauche."
+   "CTRL-DROITE", "Orientation du board à droite."
+   "p", "Afficher/cacher le compte de course."
+
+.. _raccourcis_modes:
+
+Modes
+-----
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "TAB", "Basculer en mode EDIT."
    "ESPACE", "Basculer en mode COMMAND."
-   "RETOUR ARRIERE", "Effacer la position courante."
-   "CTRL-S", "Ajouter une position."
-   "CTRL-U", "Mettre à jour une position."
+
+.. _raccourcis_outils:
+
+Outils
+------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "CTRL-L", "Afficher/cacher l'analyse."
+   "CTRL-P", "Afficher/cacher les commentaires."
+   "CTRL-B", "Afficher/cacher la bibliothèque de filtres."
    "CTRL-F", "Rechercher une position."
+   "CTRL-H, ?", "Afficher/cacher l'aide."
 
 .. _raccourcis_command:
 
-Mode COMMAND
-------------
+Ligne de commande
+-----------------
 
 .. csv-table::
    :header: "Raccourci", "Action"
    :widths: 7, 20
    :align: center
 
-   "ENTREE", "Exécuter une requête."
-   "ESC", "Quitter le mode COMMAND."
-   "RETOUR ARRIERE", "Effacer la commande. Si vide, fermer le mode COMMAND"
    "HAUT", "Parcourir l'historique des commandes vers le haut."
    "BAS", "Parcourir l'historique des commandes vers le bas."
-
-.. _raccourcis_analysis:
-
-Panneau d'analyse
-------------------
-
-.. csv-table::
-   :header: "Raccourci", "Action"
-   :widths: 7, 20
-   :align: center
-
-   "Clic", "Sélectionner/désélectionner un coup (affiche/efface les flèches)."
-   "HAUT, k", "Sélectionner le coup précédent (si un coup est sélectionné)."
-   "BAS, j", "Sélectionner le coup suivant (si un coup est sélectionné)."
-   "ESC", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 
 
 

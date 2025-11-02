@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-06 00:11+0100\n"
+"POT-Creation-Date: 2025-11-02 04:30+0100\n"
 "PO-Revision-Date: 2025-02-06 00:12+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.1\n"
 
 #: ../../source/cmd_mode.rst:4
 msgid "Liste des commandes"
@@ -50,6 +49,22 @@ msgstr "open, op, o"
 #: ../../source/cmd_mode.rst:1
 msgid "Ouvre une base de données existante."
 msgstr "Open an existing database."
+
+#: ../../source/cmd_mode.rst:1
+msgid "import_db, idb"
+msgstr "import_db, idb"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Importe et fusionne une autre base de données."
+msgstr "Import and merge another database."
+
+#: ../../source/cmd_mode.rst:1
+msgid "export_db, edb"
+msgstr "export_db, edb"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Exporte la sélection courante vers une nouvelle base de données."
+msgstr "Export the current selection to a new database."
 
 #: ../../source/cmd_mode.rst:1
 msgid "quit, q"
@@ -155,7 +170,7 @@ msgstr "gv4"
 msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr "Open the gammon value table with a 4-cube."
 
-#: ../../source/cmd_mode.rst:35
+#: ../../source/cmd_mode.rst:37
 msgid "Mode NORMAL"
 msgstr "NORMAL Mode"
 
@@ -223,7 +238,7 @@ msgstr "e"
 msgid "Charger toutes les positions de la base de données."
 msgstr "Load all positions from the database."
 
-#: ../../source/cmd_mode.rst:55
+#: ../../source/cmd_mode.rst:57
 msgid "Mode EDIT"
 msgstr "EDIT Mode"
 
@@ -251,11 +266,11 @@ msgstr "s"
 msgid "Chercher des positions avec des filtres."
 msgstr "Search for positions with filters."
 
-#: ../../source/cmd_mode.rst:71
+#: ../../source/cmd_mode.rst:73
 msgid "Filtres de recherche"
 msgstr "Search Filters"
 
-#: ../../source/cmd_mode.rst:73
+#: ../../source/cmd_mode.rst:75
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
@@ -263,7 +278,7 @@ msgstr ""
 "The filters below must be juxtaposed during a search, i.e., after the "
 "start of the ``s`` command."
 
-#: ../../source/cmd_mode.rst:78
+#: ../../source/cmd_mode.rst:80
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -275,7 +290,7 @@ msgstr ""
 "and the dice. To consider the position of the cube, the score, and the "
 "dice, it must be explicitly mentioned in the search."
 
-#: ../../source/cmd_mode.rst:84
+#: ../../source/cmd_mode.rst:86
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 19."
@@ -283,7 +298,7 @@ msgstr ""
 "blunderDB considers that a backchecker is a checker located between point"
 " 24 and point 19."
 
-#: ../../source/cmd_mode.rst:88
+#: ../../source/cmd_mode.rst:90
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
@@ -291,18 +306,17 @@ msgstr ""
 "blunderDB considers that the number of checkers in the zone is the number"
 " of checkers located between point 12 and point 1."
 
-#: ../../source/cmd_mode.rst:92
+#: ../../source/cmd_mode.rst:94
 msgid ""
 "blunderDB considère que l'outfield s'étend entre le point 18 et le point "
 "7."
-msgstr ""
-"blunderDB considers the outfield to extend between point 18 and point 7."
+msgstr "blunderDB considers the outfield to extend between point 18 and point 7."
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:97
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
 msgstr "blunderDB considers the jan to extend between point 1 and point 6."
 
-#: ../../source/cmd_mode.rst:98
+#: ../../source/cmd_mode.rst:100
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -775,48 +789,54 @@ msgid "L'adversaire a entre x et y blots dans l'outfield."
 msgstr "The opponent has between x and y blots in the outfield."
 
 #: ../../source/cmd_mode.rst:1
-msgid "jb>x"
-msgstr "jb>x"
+#, fuzzy
+msgid "bj>x"
+msgstr "B>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a au moins x blots dans le jan."
 msgstr "The player has at least x blots in the jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "jb<x"
-msgstr "jb<x"
+#, fuzzy
+msgid "bj<x"
+msgstr "B<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a au plus x blots dans le jan."
 msgstr "The player has at most x blots in the jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "jbx,y"
-msgstr "jbx,y"
+#, fuzzy
+msgid "bjx,y"
+msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "Le joueur a entre x et y blots dans le jan."
 msgstr "The player has between x and y blots in the jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "JB>x"
-msgstr "JB>x"
+#, fuzzy
+msgid "BJ>x"
+msgstr "B>x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'adversaire a au moins x blots dans le jan."
 msgstr "The opponent has at least x blots in the jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "JB<x"
-msgstr "JB<x"
+#, fuzzy
+msgid "BJ<x"
+msgstr "B<x"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'adversaire a au plus x blots dans le jan."
 msgstr "The opponent has at most x blots in the jan."
 
 #: ../../source/cmd_mode.rst:1
-msgid "JBx,y"
-msgstr "JBx,y"
+#, fuzzy
+msgid "BJx,y"
+msgstr "Bx,y"
 
 #: ../../source/cmd_mode.rst:1
 msgid "L'adversaire a entre x et y blots dans le jan."
@@ -872,7 +892,7 @@ msgstr "Tx,y"
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr "Date of position addition between x and y (YYYY/MM/DD)."
 
-#: ../../source/cmd_mode.rst:177
+#: ../../source/cmd_mode.rst:179
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
@@ -880,7 +900,7 @@ msgstr ""
 "Filtering positions based on the dice roll (`D`) necessarily implies "
 "filtering positions based on the type of decision (`d`)."
 
-#: ../../source/cmd_mode.rst:180
+#: ../../source/cmd_mode.rst:182
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -894,7 +914,7 @@ msgstr ""
 "ahead in the race. `p50,70`: the player is between 50 and 70 pips behind "
 "in the race."
 
-#: ../../source/cmd_mode.rst:186
+#: ../../source/cmd_mode.rst:188
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -909,7 +929,7 @@ msgstr ""
 "ahead in the race, with at least 60% winning chances, at least 10 "
 "checkers in the zone, and the opponent has between 2 and 3 backcheckers."
 
-#: ../../source/cmd_mode.rst:195
+#: ../../source/cmd_mode.rst:197
 msgid "Commandes diverses"
 msgstr "Various commands"
 
@@ -1278,3 +1298,22 @@ msgstr "Migrate the database from version 1.1 to version 1.2."
 
 #~ msgid "La position a la structure de pions et celle miroir."
 #~ msgstr "The position has the checker structure and or its mirror one."
+
+#~ msgid "jb>x"
+#~ msgstr "jb>x"
+
+#~ msgid "jb<x"
+#~ msgstr "jb<x"
+
+#~ msgid "jbx,y"
+#~ msgstr "jbx,y"
+
+#~ msgid "JB>x"
+#~ msgstr "JB>x"
+
+#~ msgid "JB<x"
+#~ msgstr "JB<x"
+
+#~ msgid "JBx,y"
+#~ msgstr "JBx,y"
+

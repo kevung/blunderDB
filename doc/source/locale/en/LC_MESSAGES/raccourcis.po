@@ -7,25 +7,24 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-01 23:49+0100\n"
+"POT-Creation-Date: 2025-11-02 04:30+0100\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 25.08.2\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
 msgstr "Keyboard shortcuts"
 
 #: ../../source/raccourcis.rst:9
-msgid "Général"
-msgstr "General"
+msgid "Base de données"
+msgstr "Database"
 
 #: ../../source/raccourcis.rst:1
 msgid "Raccourci"
@@ -60,16 +59,16 @@ msgid "Fermer blunderDB."
 msgstr "Close blunderDB."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-H, ?"
-msgstr "CTRL-H, ?"
+msgid "CTRL-M"
+msgstr "CTRL-M"
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher/cacher l'aide."
-msgstr "Show/hide the help."
+msgid "Modifier les métadonnées de la base de données."
+msgstr "Edit database metadata."
 
 #: ../../source/raccourcis.rst:24
-msgid "Mode NORMAL"
-msgstr "NORMAL mode."
+msgid "Position"
+msgstr "Position"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-I"
@@ -84,16 +83,32 @@ msgid "CTRL-C"
 msgstr "CTRL-C"
 
 #: ../../source/raccourcis.rst:1
-msgid "Exporter une position dans le presse-papier en vue d'un import dans XG."
-msgstr "Export a position to the clipboard for import into XG."
+msgid "Copier une position dans le presse-papier."
+msgstr "Copy a position to the clipboard."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-V"
 msgstr "CTRL-V"
 
 #: ../../source/raccourcis.rst:1
-msgid "Importer une position XG."
-msgstr "Import an XG position."
+msgid "Coller une position depuis le presse-papier."
+msgstr "Paste a position from the clipboard."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-S"
+msgstr "CTRL-S"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer une position."
+msgstr "Save a position."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-U"
+msgstr "CTRL-U"
+
+#: ../../source/raccourcis.rst:1
+msgid "Mettre à jour une position."
+msgstr "Update a position."
 
 #: ../../source/raccourcis.rst:1
 msgid "Del"
@@ -104,20 +119,32 @@ msgid "Supprimer la position courante."
 msgstr "Delete the current position."
 
 #: ../../source/raccourcis.rst:1
-msgid "TAB"
-msgstr "TAB"
+msgid "RETOUR ARRIERE"
+msgstr "BACKSPACE"
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode EDIT."
-msgstr "Switch to EDIT mode."
+msgid "Réinitialiser le board, le cube, le score et les dés."
+msgstr "Reset board, cube, score, and dice."
 
 #: ../../source/raccourcis.rst:1
-msgid "ESPACE"
-msgstr "SPACE"
+msgid "CTRL-G"
+msgstr "CTRL-G"
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode COMMAND."
-msgstr "Switch to COMMAND mode."
+msgid "Afficher les métadonnées de la position."
+msgstr "Show the position metadata."
+
+#: ../../source/raccourcis.rst:43
+msgid "Navigation"
+msgstr "Navigation"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-R"
+msgstr "CTRL-R"
+
+#: ../../source/raccourcis.rst:1
+msgid "Recharger toutes les positions de la base de données."
+msgstr "Reload all the positions from the database."
 
 #: ../../source/raccourcis.rst:1
 msgid "PageUp, h"
@@ -144,6 +171,22 @@ msgid "Position suivante."
 msgstr "Next position."
 
 #: ../../source/raccourcis.rst:1
+msgid "HAUT, k"
+msgstr "UP, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
+msgstr "Previous move (when a move is selected in the analysis)."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j"
+msgstr "DOWN, j"
+
+#: ../../source/raccourcis.rst:1
+msgid "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
+msgstr "Next move (when a move is selected in the analysis)."
+
+#: ../../source/raccourcis.rst:1
 msgid "PageDown, l"
 msgstr "PageDown, l"
 
@@ -152,12 +195,24 @@ msgid "Dernière position."
 msgstr "Last position."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-K"
+msgstr "CTRL-K"
+
+#: ../../source/raccourcis.rst:1
+msgid "Aller à une position spécifique."
+msgstr "Go to a specific position."
+
+#: ../../source/raccourcis.rst:1
 msgid "r"
 msgstr "r"
 
 #: ../../source/raccourcis.rst:1
-msgid "Position aléatoire."
-msgstr "Random position."
+msgid "Charger une position aléatoire."
+msgstr "Load a random position."
+
+#: ../../source/raccourcis.rst:63
+msgid "Affichage"
+msgstr "Display"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-GAUCHE"
@@ -183,13 +238,29 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Show/hide pipcount."
 
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-K"
-msgstr "CTRL-K"
+#: ../../source/raccourcis.rst:77
+msgid "Modes"
+msgstr "Modes"
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher la fenêtre de navigation de positions."
-msgstr "Show the position navigation window."
+msgid "TAB"
+msgstr "TAB"
+
+#: ../../source/raccourcis.rst:1
+msgid "Basculer en mode EDIT."
+msgstr "Switch to EDIT mode."
+
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE"
+msgstr "SPACE"
+
+#: ../../source/raccourcis.rst:1
+msgid "Basculer en mode COMMAND."
+msgstr "Switch to COMMAND mode."
+
+#: ../../source/raccourcis.rst:90
+msgid "Outils"
+msgstr "Tools"
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-L"
@@ -208,60 +279,12 @@ msgid "Afficher/cacher les commentaires."
 msgstr "Show/hide the comments."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-G"
-msgstr "CTRL-G"
-
-#: ../../source/raccourcis.rst:1
-msgid "Afficher les métadonnées de la position."
-msgstr "Show the position metadata."
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-R"
-msgstr "CTRL-R"
-
-#: ../../source/raccourcis.rst:1
-msgid "Recharger toutes les positions de la base de données."
-msgstr "Reload all the positions from the database."
-
-#: ../../source/raccourcis.rst:1
 msgid "CTRL-B"
 msgstr "CTRL-B"
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher la bibliothèque de filtres."
 msgstr "Show/hide the filter library."
-
-#: ../../source/raccourcis.rst:55
-msgid "Mode EDIT"
-msgstr "EDIT mode"
-
-#: ../../source/raccourcis.rst:1
-msgid "Basculer en mode NORMAL."
-msgstr "Switch to NORMAL mode."
-
-#: ../../source/raccourcis.rst:1
-msgid "RETOUR ARRIERE"
-msgstr "BACKSPACE"
-
-#: ../../source/raccourcis.rst:1
-msgid "Effacer la position courante."
-msgstr "Clear the current position."
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-S"
-msgstr "CTRL-S"
-
-#: ../../source/raccourcis.rst:1
-msgid "Ajouter une position."
-msgstr "Add a position."
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-U"
-msgstr "CTRL-U"
-
-#: ../../source/raccourcis.rst:1
-msgid "Mettre à jour une position."
-msgstr "Update a position."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-F"
@@ -271,29 +294,17 @@ msgstr "CTRL-F"
 msgid "Rechercher une position."
 msgstr "Search for a position."
 
-#: ../../source/raccourcis.rst:72
-msgid "Mode COMMAND"
-msgstr "COMMAND mode."
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-H, ?"
+msgstr "CTRL-H, ?"
 
 #: ../../source/raccourcis.rst:1
-msgid "ENTREE"
-msgstr "ENTER"
+msgid "Afficher/cacher l'aide."
+msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:1
-msgid "Exécuter une requête."
-msgstr "Execute a query."
-
-#: ../../source/raccourcis.rst:1
-msgid "ESC"
-msgstr "ESC"
-
-#: ../../source/raccourcis.rst:1
-msgid "Quitter le mode COMMAND."
-msgstr "Exit COMMAND mode."
-
-#: ../../source/raccourcis.rst:1
-msgid "Effacer la commande. Si vide, fermer le mode COMMAND"
-msgstr "Clear the command. If empty, close COMMAND mode."
+#: ../../source/raccourcis.rst:106
+msgid "Ligne de commande"
+msgstr "Command Line"
 
 #: ../../source/raccourcis.rst:1
 msgid "HAUT"
@@ -310,38 +321,6 @@ msgstr "DOWN"
 #: ../../source/raccourcis.rst:1
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
-
-#: ../../source/raccourcis.rst:88
-msgid "Panneau d'analyse"
-msgstr "Analysis Panel"
-
-#: ../../source/raccourcis.rst:1
-msgid "Clic"
-msgstr "Click"
-
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner/désélectionner un coup (affiche/efface les flèches)."
-msgstr "Select/deselect a move (show/hide arrows)."
-
-#: ../../source/raccourcis.rst:1
-msgid "HAUT, k"
-msgstr "UP, k"
-
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le coup précédent (si un coup est sélectionné)."
-msgstr "Select previous move (when a move is selected)."
-
-#: ../../source/raccourcis.rst:1
-msgid "BAS, j"
-msgstr "DOWN, j"
-
-#: ../../source/raccourcis.rst:1
-msgid "Sélectionner le coup suivant (si un coup est sélectionné)."
-msgstr "Select next move (when a move is selected)."
-
-#: ../../source/raccourcis.rst:1
-msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
-msgstr "Deselect move. If no move selected, close the panel."
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"
@@ -456,3 +435,52 @@ msgstr "Deselect move. If no move selected, close the panel."
 
 #~ msgid "Raccourcis du mode COMMAND"
 #~ msgstr "COMMAND mode shortcuts"
+
+#~ msgid "Général"
+#~ msgstr "General"
+
+#~ msgid "Mode NORMAL"
+#~ msgstr "NORMAL mode."
+
+#~ msgid "Importer une position XG."
+#~ msgstr "Import an XG position."
+
+#~ msgid "Afficher la fenêtre de navigation de positions."
+#~ msgstr "Show the position navigation window."
+
+#~ msgid "Mode EDIT"
+#~ msgstr "EDIT mode"
+
+#~ msgid "Basculer en mode NORMAL."
+#~ msgstr "Switch to NORMAL mode."
+
+#~ msgid "Effacer la position courante."
+#~ msgstr "Clear the current position."
+
+#~ msgid "ENTREE"
+#~ msgstr "ENTER"
+
+#~ msgid "Exécuter une requête."
+#~ msgstr "Execute a query."
+
+#~ msgid "ESC"
+#~ msgstr "ESC"
+
+#~ msgid "Quitter le mode COMMAND."
+#~ msgstr "Exit COMMAND mode."
+
+#~ msgid "Effacer la commande. Si vide, fermer le mode COMMAND"
+#~ msgstr "Clear the command. If empty, close COMMAND mode."
+
+#~ msgid "Panneau d'analyse"
+#~ msgstr "Analysis Panel"
+
+#~ msgid "Clic"
+#~ msgstr "Click"
+
+#~ msgid "Sélectionner/désélectionner un coup (affiche/efface les flèches)."
+#~ msgstr "Select/deselect a move (show/hide arrows)."
+
+#~ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+#~ msgstr "Deselect move. If no move selected, close the panel."
+
