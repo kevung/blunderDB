@@ -30,6 +30,34 @@ choisir le fichier *.db* et cliquer sur "Open".
 .. tip::
    Raccourcis clavier: *CTRL-O*. Commande: ``o``
 
+Importer et fusionner une base de données
+-----------------------------------------
+
+Pour importer et fusionner une autre base de données blunderDB dans la base de
+données actuellement ouverte, cliquer dans la barre d'outils sur le bouton
+"Import Database". Choisir le fichier *.db* à importer et cliquer sur "Open".
+
+blunderDB va fusionner intelligemment les deux bases de données:
+
+* Les positions qui n'existent pas dans la base de données actuelle seront
+  ajoutées avec leurs analyses et commentaires.
+
+* Les positions qui existent déjà seront mises à jour: les analyses seront
+  complétées si manquantes, et les commentaires seront fusionnés (ajout des
+  nouveaux commentaires sans dupliquer les existants).
+
+* Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.
+
+.. note::
+   L'import nécessite que les deux bases de données aient des versions de schéma
+   compatibles. Il est possible d'importer une base de données d'une version
+   inférieure ou égale dans une base de données de version supérieure.
+
+.. caution::
+   L'opération d'import modifie immédiatement la base de données actuellement
+   ouverte. Il est recommandé de faire une copie de sauvegarde avant d'importer
+   une autre base de données.
+
 .. _guide_edit_position:
 
 Editer une position

@@ -540,6 +540,48 @@ Keyboard shortcuts: \sphinxstyleemphasis{CTRL\sphinxhyphen{}O}. Command: \sphinx
 \end{sphinxadmonition}
 
 
+\subsection{Importer et fusionner une base de données}
+\label{\detokenize{guide_utilisateur:importer-et-fusionner-une-base-de-donnees}}
+\sphinxAtStartPar
+Pour importer et fusionner une autre base de données blunderDB dans la base de
+données actuellement ouverte, cliquer dans la barre d’outils sur le bouton
+“Import Database”. Choisir le fichier \sphinxstyleemphasis{.db} à importer et cliquer sur “Open”.
+
+\sphinxAtStartPar
+blunderDB va fusionner intelligemment les deux bases de données:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Les positions qui n’existent pas dans la base de données actuelle seront
+ajoutées avec leurs analyses et commentaires.
+
+\item {} 
+\sphinxAtStartPar
+Les positions qui existent déjà seront mises à jour: les analyses seront
+complétées si manquantes, et les commentaires seront fusionnés (ajout des
+nouveaux commentaires sans dupliquer les existants).
+
+\item {} 
+\sphinxAtStartPar
+Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.
+
+\end{itemize}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+L’import nécessite que les deux bases de données aient des versions de schéma
+compatibles. Il est possible d’importer une base de données d’une version
+inférieure ou égale dans une base de données de version supérieure.
+\end{sphinxadmonition}
+
+\begin{sphinxadmonition}{caution}{Caution:}
+\sphinxAtStartPar
+L’opération d’import modifie immédiatement la base de données actuellement
+ouverte. Il est recommandé de faire une copie de sauvegarde avant d’importer
+une autre base de données.
+\end{sphinxadmonition}
+
+
 \subsection{Edit a position}
 \label{\detokenize{guide_utilisateur:editer-une-position}}\label{\detokenize{guide_utilisateur:guide-edit-position}}
 \sphinxAtStartPar
@@ -2030,6 +2072,43 @@ blunders from live tournaments,
 blunders from online play.
 
 \end{itemize}
+
+
+\subsection{Comment fusionner plusieurs bases de données?}
+\label{\detokenize{faq:comment-fusionner-plusieurs-bases-de-donnees}}
+\sphinxAtStartPar
+Si vous avez plusieurs bases de données blunderDB que vous souhaitez regrouper,
+utilisez la fonctionnalité “Import Database” :
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Ouvrez la base de données principale (celle qui recevra les positions importées)
+
+\item {} 
+\sphinxAtStartPar
+Cliquez sur le bouton “Import Database” dans la barre d’outils
+
+\item {} 
+\sphinxAtStartPar
+Sélectionnez la base de données à importer
+
+\item {} 
+\sphinxAtStartPar
+blunderDB fusionnera automatiquement les positions
+
+\end{enumerate}
+
+\sphinxAtStartPar
+Lors de la fusion, blunderDB évite les doublons et fusionne intelligemment
+les analyses et commentaires. Les positions identiques ne seront pas dupliquées,
+mais leurs analyses et commentaires seront combinés.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Il est recommandé de faire une copie de sauvegarde de votre base de données
+principale avant d’importer une autre base de données.
+\end{sphinxadmonition}
 
 
 \subsection{Can I modify, copy, share blunderDB?}

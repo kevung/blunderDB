@@ -58,12 +58,13 @@
 <li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">6.2. Qu’est ce qui a motivé la création de blunderDB?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">6.3. Comment sauvegarder la base de données courante?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">6.4. Dois-je créer différentes bases de données pour différentes catégories de positions?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">6.5. Puis-je modifier, copier, partager blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">6.6. Quel format de données utilise blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.7. Quelles ont été les principes de conception de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">6.8. Quel est l’architecture logicielle de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.9. Sur quelles plateformes blunderDB fonctionne-t’il?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">6.10. D’où vient l’icône de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-fusionner-plusieurs-bases-de-donnees">6.5. Comment fusionner plusieurs bases de données?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">6.6. Puis-je modifier, copier, partager blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">6.7. Quel format de données utilise blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.8. Quelles ont été les principes de conception de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">6.9. Quel est l’architecture logicielle de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.10. Sur quelles plateformes blunderDB fonctionne-t’il?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">6.11. D’où vient l’icône de blunderDB?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">7. Annexe: Utilisation avancée des filtres</a></li>
@@ -149,17 +150,36 @@ pour :</p>
 <li><p>les blunders en ligne.</p></li>
 </ul>
 </section>
+<section id="comment-fusionner-plusieurs-bases-de-donnees">
+<h2><span class="section-number">6.5. </span>Comment fusionner plusieurs bases de données?<a class="headerlink" href="#comment-fusionner-plusieurs-bases-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Si vous avez plusieurs bases de données blunderDB que vous souhaitez regrouper,
+utilisez la fonctionnalité « Import Database » :</p>
+<ol class="arabic simple">
+<li><p>Ouvrez la base de données principale (celle qui recevra les positions importées)</p></li>
+<li><p>Cliquez sur le bouton « Import Database » dans la barre d’outils</p></li>
+<li><p>Sélectionnez la base de données à importer</p></li>
+<li><p>blunderDB fusionnera automatiquement les positions</p></li>
+</ol>
+<p>Lors de la fusion, blunderDB évite les doublons et fusionne intelligemment
+les analyses et commentaires. Les positions identiques ne seront pas dupliquées,
+mais leurs analyses et commentaires seront combinés.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Il est recommandé de faire une copie de sauvegarde de votre base de données
+principale avant d’importer une autre base de données.</p>
+</div>
+</section>
 <section id="puis-je-modifier-copier-partager-blunderdb">
-<h2><span class="section-number">6.5. </span>Puis-je modifier, copier, partager blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">6.6. </span>Puis-je modifier, copier, partager blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Lien vers cette rubrique"></a></h2>
 <p>Oui, tout à fait (et c’est même encouragé!). blunderDB est sous licence MIT.</p>
 </section>
 <section id="quel-format-de-donnees-utilise-blunderdb">
-<h2><span class="section-number">6.6. </span>Quel format de données utilise blunderDB?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">6.7. </span>Quel format de données utilise blunderDB?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Lien vers cette rubrique"></a></h2>
 <p>La base de données est un simple fichier Sqlite. En l’absence de
 blunderDB, elle peut ainsi s’ouvrir avec tout éditeur de fichier sqlite.</p>
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
-<h2><span class="section-number">6.7. </span>Quelles ont été les principes de conception de blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">6.8. </span>Quelles ont été les principes de conception de blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
 <p>Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s’inspire du très
 puissant éditeur de texte <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>. Je souhaitais blunderDB
 léger, autonome, sans installation et disponible pour différentes plateformes,
@@ -169,7 +189,7 @@ multi-plateforme et adapté pour contenir une base de données. Le format de
 fichier sqlite semblait tout indiqué.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
-<h2><span class="section-number">6.8. </span>Quel est l’architecture logicielle de blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">6.9. </span>Quel est l’architecture logicielle de blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
 <ul class="simple">
 <li><p>Le backend est codé en <a class="reference external" href="https://go.dev/">Go</a>. Il est en charge de
 l’ensemble des opérations sur la base de données Sqlite qui stocke les
@@ -183,11 +203,11 @@ production d’applications Desktop natives, déclinables sous Windows et Linux.
 <p>Pour plus d’informations, voir le <a class="reference external" href="https://github.com/kevung/blunderDB">dépôt Github de blunderDB</a>.</p>
 </section>
 <section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
-<h2><span class="section-number">6.9. </span>Sur quelles plateformes blunderDB fonctionne-t’il?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">6.10. </span>Sur quelles plateformes blunderDB fonctionne-t’il?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Lien vers cette rubrique"></a></h2>
 <p>blunderDB fonctionne sur Windows, Linux et Mac.</p>
 </section>
 <section id="d-ou-vient-l-icone-de-blunderdb">
-<h2><span class="section-number">6.10. </span>D’où vient l’icône de blunderDB?<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">6.11. </span>D’où vient l’icône de blunderDB?<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Lien vers cette rubrique"></a></h2>
 <p>L’icône de blunderDB est l’émoticône « goggling » de la série <a class="reference external" href="https://commons.wikimedia.org/wiki/SMirC">SMirC</a>.</p>
 </section>
 </section>

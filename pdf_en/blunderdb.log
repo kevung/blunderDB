@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.2)  2 NOV 2025 00:34
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.2)  2 NOV 2025 02:01
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -879,103 +879,103 @@ ng, run the com-mand \T1/txtt/m/n/10 chmod +x ./
  []
 
 [5] [6] [7] [8] [9] [10] [11] [12] [13]
-Underfull \hbox (badness 10000) in paragraph at lines 1582--1584
+Underfull \hbox (badness 10000) in paragraph at lines 1624--1626
 []|\T1/qtm/m/n/10 mi-
  []
 
 
-Overfull \hbox (15.359pt too wide) in paragraph at lines 1582--1584
+Overfull \hbox (15.359pt too wide) in paragraph at lines 1624--1626
 \T1/qtm/m/n/10 grate_from_1_0_to_1_1| 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 1589--1591
+Underfull \hbox (badness 10000) in paragraph at lines 1631--1633
 []|\T1/qtm/m/n/10 mi-
  []
 
 
-Overfull \hbox (15.359pt too wide) in paragraph at lines 1589--1591
+Overfull \hbox (15.359pt too wide) in paragraph at lines 1631--1633
 \T1/qtm/m/n/10 grate_from_1_1_to_1_2| 
  []
 
-[14] [15] [16] [17]
-Underfull \hbox (badness 10000) in paragraph at lines 2271--2273
+[14] [15] [16] [17] [18]
+Underfull \hbox (badness 10000) in paragraph at lines 2350--2352
 []|\T1/qtm/m/n/10 empty dice for bot-tom
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2288--2290
+Underfull \hbox (badness 10000) in paragraph at lines 2367--2369
 []|\T1/qtm/m/n/10 Po-si-tions from
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2288--2290
+Underfull \hbox (badness 10000) in paragraph at lines 2367--2369
 \T1/qtm/m/n/10 Aachen2024 tourn-
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2335--2337
+Underfull \hbox (badness 10000) in paragraph at lines 2414--2416
 []|\T1/qtm/m/n/10 empty dice for bot-tom
  []
 
-[18]
-<smartscreen_en.png, id=414, 502.12593pt x 191.21437pt>
+<smartscreen_en.png, id=426, 502.12593pt x 191.21437pt>
 File: smartscreen_en.png Graphic file (type png)
 <use smartscreen_en.png>
-Package pdftex.def Info: smartscreen_en.png  used on input line 2371.
+Package pdftex.def Info: smartscreen_en.png  used on input line 2450.
 (pdftex.def)             Requested size: 469.77652pt x 178.89539pt.
-<blunderdb_potential_virus.png, id=415, 417.05812pt x 125.71968pt>
+[19]
+<blunderdb_potential_virus.png, id=434, 417.05812pt x 125.71968pt>
 File: blunderdb_potential_virus.png Graphic file (type png)
 <use blunderdb_potential_virus.png>
-Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 2419
+Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 2498
 .
 (pdftex.def)             Requested size: 417.0571pt x 125.71936pt.
-<threat_found_action_needed.png, id=417, 365.86688pt x 240.9pt>
+<threat_found_action_needed.png, id=436, 365.86688pt x 240.9pt>
 File: threat_found_action_needed.png Graphic file (type png)
 <use threat_found_action_needed.png>
-Package pdftex.def Info: threat_found_action_needed.png  used on input line 242
-8.
+Package pdftex.def Info: threat_found_action_needed.png  used on input line 250
+7.
 (pdftex.def)             Requested size: 365.86598pt x 240.8994pt.
- [19 <./smartscreen_en.png> <./blunderdb_potential_virus.png>]
-<win1.png, id=431, 584.93532pt x 587.94656pt>
+<win1.png, id=439, 584.93532pt x 587.94656pt>
 File: win1.png Graphic file (type png)
 <use win1.png>
-Package pdftex.def Info: win1.png  used on input line 2456.
+Package pdftex.def Info: win1.png  used on input line 2535.
 (pdftex.def)             Requested size: 469.76967pt x 472.17908pt.
-<win2.png, id=432, 604.50844pt x 478.78876pt>
+<win2.png, id=440, 604.50844pt x 478.78876pt>
 File: win2.png Graphic file (type png)
 <use win2.png>
-Package pdftex.def Info: win2.png  used on input line 2476.
+Package pdftex.def Info: win2.png  used on input line 2555.
 (pdftex.def)             Requested size: 469.75288pt x 372.05833pt.
-<win3.png, id=433, 605.26125pt x 478.03593pt>
+<win3.png, id=441, 605.26125pt x 478.03593pt>
 File: win3.png Graphic file (type png)
 <use win3.png>
-Package pdftex.def Info: win3.png  used on input line 2496.
+Package pdftex.def Info: win3.png  used on input line 2575.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
-<win4.png, id=434, 601.4972pt x 477.28313pt>
+ [20 <./smartscreen_en.png> <./blunderdb_potential_virus.png>]
+<win4.png, id=454, 601.4972pt x 477.28313pt>
 File: win4.png Graphic file (type png)
 <use win4.png>
-Package pdftex.def Info: win4.png  used on input line 2516.
+Package pdftex.def Info: win4.png  used on input line 2595.
 (pdftex.def)             Requested size: 469.77168pt x 372.74542pt.
-<win5.png, id=435, 604.50844pt x 479.54156pt>
+<win5.png, id=455, 604.50844pt x 479.54156pt>
 File: win5.png Graphic file (type png)
 <use win5.png>
-Package pdftex.def Info: win5.png  used on input line 2536.
+Package pdftex.def Info: win5.png  used on input line 2615.
 (pdftex.def)             Requested size: 469.75288pt x 372.65063pt.
-<win6.png, id=436, 461.47406pt x 357.58594pt>
+<win6.png, id=456, 461.47406pt x 357.58594pt>
 File: win6.png Graphic file (type png)
 <use win6.png>
-Package pdftex.def Info: win6.png  used on input line 2542.
+Package pdftex.def Info: win6.png  used on input line 2621.
 (pdftex.def)             Requested size: 461.47292pt x 357.58505pt.
-<win7.png, id=437, 605.26125pt x 478.03593pt>
+<win7.png, id=457, 605.26125pt x 478.03593pt>
 File: win7.png Graphic file (type png)
 <use win7.png>
-Package pdftex.def Info: win7.png  used on input line 2548.
+Package pdftex.def Info: win7.png  used on input line 2627.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
- [20 <./threat_found_action_needed.png>] [21 <./win1.png>] [22 <./win2.png>] [2
-3 <./win3.png>] [24 <./win4.png>] [25 <./win5.png>] [26 <./win6.png>] [27 <./wi
+ [21 <./threat_found_action_needed.png>] [22 <./win1.png>] [23 <./win2.png>] [2
+4 <./win3.png>] [25 <./win4.png>] [26 <./win5.png>] [27 <./win6.png>] [28 <./wi
 n7.png>]
-[28] [29] [30
+[29] [30
 
 ]
 Chapter 3.
@@ -993,13 +993,13 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: 024E6B53A55044F557E71BC975206EBD;11140.
+(rerunfilecheck)             Checksum: 7BAB2D543C1A0F15FEECF18FF895782D;11735.
  ) 
 Here is how much of TeX's memory you used:
- 17071 strings out of 476182
- 290822 string characters out of 5795595
- 1973975 words of memory out of 5000000
- 38566 multiletter control sequences out of 15000+600000
+ 17081 strings out of 476182
+ 291033 string characters out of 5795595
+ 1976975 words of memory out of 5000000
+ 38570 multiletter control sequences out of 15000+600000
  608304 words of font info for 74 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
  72i,11n,83p,1198b,666s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1009,10 +1009,10 @@ s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 tt.pfb>
-Output written on blunderdb.pdf (39 pages, 456239 bytes).
+Output written on blunderdb.pdf (39 pages, 458109 bytes).
 PDF statistics:
- 594 PDF objects out of 1000 (max. 8388607)
- 514 compressed objects within 6 object streams
- 134 named destinations out of 1000 (max. 500000)
- 551 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 607 PDF objects out of 1000 (max. 8388607)
+ 527 compressed objects within 6 object streams
+ 140 named destinations out of 1000 (max. 500000)
+ 567 words of extra memory for PDF output out of 10000 (max. 10000000)
 
