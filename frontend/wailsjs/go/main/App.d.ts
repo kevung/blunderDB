@@ -6,6 +6,8 @@ export function DeleteFile(arg1:string):Promise<void>;
 
 export function OpenDatabaseDialog():Promise<string>;
 
+export function OpenImportDatabaseDialog():Promise<string>;
+
 export function OpenPositionDialog():Promise<main.FileDialogResponse>;
 
 export function SaveDatabaseDialog():Promise<string>;

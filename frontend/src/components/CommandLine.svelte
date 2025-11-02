@@ -12,6 +12,7 @@
    export let onToggleHelp;
    export let onNewDatabase;
    export let onOpenDatabase;
+   export let onImportDatabase;
    export let importPosition;
    export let onSavePosition;
    export let onUpdatePosition;
@@ -118,6 +119,8 @@
                onNewDatabase();
             } else if (command === 'open' || command === 'op' || command === 'o') {
                onOpenDatabase();
+            } else if (command === 'import_db' || command === 'idb') {
+               onImportDatabase();
             } else if (command === 'import' || command === 'i') {
                importPosition();
             } else if (command === 'write' || command === 'wr' || command === 'w') {

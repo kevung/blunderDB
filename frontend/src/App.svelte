@@ -8,6 +8,7 @@
     import {
         SaveDatabaseDialog,
         OpenDatabaseDialog,
+        OpenImportDatabaseDialog,
         OpenPositionDialog,
         DeleteFile,
 
@@ -29,7 +30,10 @@
         LoadPositionsByFilters, // Update import
         CheckDatabaseVersion, // Import CheckDatabaseVersion
         OpenDatabase, // Import OpenDatabase
-        GetDatabaseVersion // Import GetDatabaseVersion
+        GetDatabaseVersion, // Import GetDatabaseVersion
+        AnalyzeImportDatabase, // Import AnalyzeImportDatabase
+        CommitImportDatabase, // Import CommitImportDatabase
+        CancelImport // Import CancelImport
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -107,6 +111,7 @@
     import TakePoint2Modal from './components/TakePoint2Modal.svelte'; // Import TakePoint2Modal component
     import TakePoint4Modal from './components/TakePoint4Modal.svelte'; // Import TakePoint4Modal component
     import FilterLibraryPanel from './components/FilterLibraryPanel.svelte'; // Update import
+    import ImportProgressModal from './components/ImportProgressModal.svelte'; // Import ImportProgressModal component
 
     // Visibility variables
     let showSearchModal = false;
@@ -124,6 +129,22 @@
     let showComment = false;
     let showGoToPositionModal = false;
     let showWarningModal = false;
+    let showImportProgressModal = false;
+    let importModalMode = 'analyzing'; // 'analyzing', 'preview', 'committing', 'completed'
+    let importAnalysis = {
+        toAdd: 0,
+        toMerge: 0,
+        toSkip: 0,
+        total: 0,
+        importPath: ''
+    };
+    let importResult = {
+        added: 0,
+        merged: 0,
+        skipped: 0,
+        total: 0
+    };
+    let pendingImportPath = null;
     let warningMessage = '';
     let databaseVersion = '';
     let applicationVersion = '';
@@ -511,6 +532,129 @@
 
     function getMajorVersion(version) {
         return version.split('.')[0];
+    }
+
+    async function importDatabase() {
+        console.log('importDatabase');
+        
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened. Please open a database first.');
+            return;
+        }
+
+        try {
+            const importFilePath = await OpenImportDatabaseDialog();
+            if (!importFilePath) {
+                console.log('No import database selected');
+                return;
+            }
+
+            console.log('Analyzing import from:', importFilePath);
+            
+            // Show modal in analyzing mode
+            showImportProgressModal = true;
+            importModalMode = 'analyzing';
+            pendingImportPath = importFilePath;
+
+            try {
+                // First, analyze what would be imported (ACID: no changes yet)
+                const analysis = await AnalyzeImportDatabase(importFilePath);
+                
+                console.log('Import analysis:', analysis);
+                
+                // Update to preview mode with analysis results
+                importAnalysis = {
+                    toAdd: analysis.toAdd,
+                    toMerge: analysis.toMerge,
+                    toSkip: analysis.toSkip,
+                    total: analysis.total,
+                    importPath: importFilePath
+                };
+                importModalMode = 'preview';
+                
+            } catch (analyzeError) {
+                showImportProgressModal = false;
+                throw analyzeError;
+            }
+            
+        } catch (error) {
+            console.error('Error analyzing import:', error);
+            setStatusBarMessage(`Error analyzing import: ${error}`);
+            await ShowAlert(`Error analyzing import: ${error}`);
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        }
+    }
+
+    async function handleImportCommit() {
+        if (!pendingImportPath) {
+            console.error('No pending import path');
+            return;
+        }
+
+        console.log('Committing import from:', pendingImportPath);
+        
+        // Change to committing mode
+        importModalMode = 'committing';
+
+        try {
+            // Commit the import (ACID transaction)
+            const result = await CommitImportDatabase(pendingImportPath);
+            
+            console.log('Import result:', result);
+            
+            // Update to completed mode with results
+            importResult = {
+                added: result.added,
+                merged: result.merged,
+                skipped: result.skipped,
+                total: result.total
+            };
+            importModalMode = 'completed';
+            
+            setStatusBarMessage(`Import completed: ${result.added} added, ${result.merged} merged, ${result.skipped} skipped`);
+            
+            // Reload all positions to refresh the view
+            await loadAllPositions();
+            
+        } catch (error) {
+            console.error('Error committing import:', error);
+            showImportProgressModal = false;
+            setStatusBarMessage(`Error committing import: ${error}`);
+            await ShowAlert(`Error committing import: ${error}`);
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        } finally {
+            pendingImportPath = null;
+        }
+    }
+
+    function handleImportCancel() {
+        console.log('Import cancelled by user');
+        
+        // If we're in the committing phase, call the backend to cancel
+        if (importModalMode === 'committing') {
+            console.log('Aborting ongoing commit transaction');
+            CancelImport().catch(err => {
+                console.error('Error calling CancelImport:', err);
+            });
+        }
+        
+        showImportProgressModal = false;
+        pendingImportPath = null;
+        importModalMode = 'analyzing';
+        setStatusBarMessage('Import cancelled');
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
+    }
+
+    function handleImportClose() {
+        console.log('Import completed and closed');
+        showImportProgressModal = false;
+        pendingImportPath = null;
+        importModalMode = 'analyzing';
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
     }
 
     function closeWarningModal() {
@@ -1984,6 +2128,7 @@ function togglePipcount() {
     <Toolbar
         onNewDatabase={newDatabase}
         onOpenDatabase={openDatabase}
+        onImportDatabase={importDatabase}
         onExit={exitApp}
         onImportPosition={importPosition}
         onCopyPosition={copyPosition}
@@ -2018,6 +2163,7 @@ function togglePipcount() {
             bind:this={commandInput}
             onNewDatabase={newDatabase}
             onOpenDatabase={openDatabase}
+            onImportDatabase={importDatabase}
             importPosition={importPosition}
             onSavePosition={saveCurrentPosition}
             onUpdatePosition={updatePosition}
@@ -2111,6 +2257,16 @@ function togglePipcount() {
     <TakePoint2Modal/>
 
     <TakePoint4Modal/>
+
+    <ImportProgressModal
+        visible={showImportProgressModal}
+        mode={importModalMode}
+        analysis={importAnalysis}
+        result={importResult}
+        onCancel={handleImportCancel}
+        onCommit={handleImportCommit}
+        onClose={handleImportClose}
+    />
 
     <FilterLibraryPanel onLoadPositionsByFilters={loadPositionsByFilters} />
 

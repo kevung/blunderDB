@@ -61,6 +61,25 @@ pour :
 * les blunders en tournoi réel,
 * les blunders en ligne.
 
+Comment fusionner plusieurs bases de données?
+---------------------------------------------
+
+Si vous avez plusieurs bases de données blunderDB que vous souhaitez regrouper,
+utilisez la fonctionnalité "Import Database" :
+
+#. Ouvrez la base de données principale (celle qui recevra les positions importées)
+#. Cliquez sur le bouton "Import Database" dans la barre d'outils
+#. Sélectionnez la base de données à importer
+#. blunderDB fusionnera automatiquement les positions
+
+Lors de la fusion, blunderDB évite les doublons et fusionne intelligemment
+les analyses et commentaires. Les positions identiques ne seront pas dupliquées,
+mais leurs analyses et commentaires seront combinés.
+
+.. note::
+   Il est recommandé de faire une copie de sauvegarde de votre base de données
+   principale avant d'importer une autre base de données.
+
 
 Puis-je modifier, copier, partager blunderDB?
 ---------------------------------------------

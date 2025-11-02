@@ -10,6 +10,10 @@ export function OpenDatabaseDialog() {
   return window['go']['main']['App']['OpenDatabaseDialog']();
 }
 
+export function OpenImportDatabaseDialog() {
+  return window['go']['main']['App']['OpenImportDatabaseDialog']();
+}
+
 export function OpenPositionDialog() {
   return window['go']['main']['App']['OpenPositionDialog']();
 }

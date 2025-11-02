@@ -522,6 +522,10 @@
                                 <td>Open an existing database</td>
                             </tr>
                             <tr>
+                                <td>import_db, idb</td>
+                                <td>Import and merge another database</td>
+                            </tr>
+                            <tr>
                                 <td>quit, q</td>
                                 <td>Exit blunderDB</td>
                             </tr>
