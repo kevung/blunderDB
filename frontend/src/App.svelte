@@ -539,17 +539,36 @@
                 parsedAnalysis.positionId = positionExistsResult.id; // Ensure the position ID is set in the analysis
                 await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
 
-                // Append new comment to existing comment if not already included
+                // Merge comments intelligently
                 let existingComment = await LoadComment(positionExistsResult.id);
-                if (!existingComment.includes(parsedAnalysis.comment)) {
-                    existingComment += `\n\n${parsedAnalysis.comment}`;
+                const newComment = parsedAnalysis.comment || '';
+                
+                // Trim both comments for comparison
+                const trimmedExisting = (existingComment || '').trim();
+                const trimmedNew = newComment.trim();
+                
+                let mergedComment = trimmedExisting;
+                
+                // Only merge if the new comment has content and is not already present
+                if (trimmedNew && !trimmedExisting.includes(trimmedNew)) {
+                    // If existing comment has content, add separator
+                    if (trimmedExisting) {
+                        mergedComment = `${trimmedExisting}\n\n${trimmedNew}`;
+                    } else {
+                        // No existing comment, just use the new one
+                        mergedComment = trimmedNew;
+                    }
                 }
-                await SaveComment(positionExistsResult.id, existingComment); // Save the comment
+                
+                await SaveComment(positionExistsResult.id, mergedComment);
 
                 console.log('Analysis and comment updated for position ID:', positionExistsResult.id);
-                setStatusBarMessage('Position already exists, analysis and comment updated');
+                setStatusBarMessage('Position already exists, analysis and comment merged');
                 currentPositionIndexStore.set(-1); //force change to trigger re-render
                 currentPositionIndexStore.set(positions.findIndex(pos => pos.id === positionExistsResult.id)); // Set current position index to display the existing position
+                
+                // Update the comment store to reflect the merged comment
+                commentTextStore.set(mergedComment);
             } catch (error) {
                 console.error('Error updating analysis and comment:', error);
                 setStatusBarMessage('Error updating analysis and comment');
@@ -1167,6 +1186,7 @@
         console.log('copyPosition');
         const position = $positionStore;
         const analysis = $analysisStore;
+        const comment = $commentTextStore;
 
         // Generate XGID if not present in the analysis
         const xgid = analysis.xgid || generateXGID(position);
@@ -1205,6 +1225,11 @@
             clipboardContent += `Best Cube Action: ${analysis.doublingCubeAnalysis.bestCubeAction}\n`;
             clipboardContent += `Wrong Pass Percentage: ${analysis.doublingCubeAnalysis.wrongPassPercentage}%\n`;
             clipboardContent += `Wrong Take Percentage: ${analysis.doublingCubeAnalysis.wrongTakePercentage}%\n`;
+            
+            // Add comment section if present (with proper formatting for doubling cube parsing)
+            if (comment && comment.trim() !== '') {
+                clipboardContent += `\n${comment}\n\n`;
+            }
         } else if (analysis.analysisType === "CheckerMove") {
             clipboardContent += `Checker Move Analysis:\n`;
             analysis.checkerAnalysis.moves.forEach(move => {
@@ -1221,17 +1246,23 @@
                 clipboardContent += `Opponent Gammon Chance: ${move.opponentGammonChance}%\n`;
                 clipboardContent += `Opponent Backgammon Chance: ${move.opponentBackgammonChance}%\n\n`;
             });
+            
+            // Add comment section if present (with proper formatting for checker move parsing)
+            if (comment && comment.trim() !== '') {
+                // Add two blank lines before comment to match expected format
+                clipboardContent += `\n${comment}\n\n`;
+            }
         }
 
         // Add engine version
         if (analysis.analysisEngineVersion) {
-            clipboardContent += `Engine Version: ${analysis.analysisEngineVersion}\n`;
+            clipboardContent += `eXtreme Gammon Version: ${analysis.analysisEngineVersion}\n`;
         }
 
         // Copy to clipboard
         navigator.clipboard.writeText(clipboardContent).then(() => {
-            console.log('Position and analysis copied to clipboard');
-            setStatusBarMessage('Position and analysis copied to clipboard');
+            console.log('Position, analysis, and comment copied to clipboard');
+            setStatusBarMessage('Position, analysis, and comment copied to clipboard');
         }).catch(err => {
             console.error('Error copying to clipboard:', err);
             setStatusBarMessage('Error copying to clipboard');
