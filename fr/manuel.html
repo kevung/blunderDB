@@ -50,10 +50,13 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. Manuel</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.1. Description de l’interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">2.2. Le mode NORMAL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-edit">2.3. Le mode EDIT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-command">2.4. Le mode COMMAND</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Interactions principales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modes">2.3. Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.4. Description de l’interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">2.5. Le mode NORMAL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-edit">2.6. Le mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-command">2.7. Le mode COMMAND</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
@@ -91,9 +94,19 @@
              
   <section id="manuel">
 <span id="id1"></span><h1><span class="section-number">2. </span>Manuel<a class="headerlink" href="#manuel" title="Lien vers cette rubrique"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">2.1. </span>Introduction<a class="headerlink" href="#introduction" title="Lien vers cette rubrique"></a></h2>
 <p>blunderDB est un logiciel pour constituer des bases de données de
-positions. Les positions sont stockées dans une base de données représentée par un fichier
+positions de backgammon. Sa force principale est de fournir un lieu unique
+pour agréger les positions qu’un joueur a rencontrées (en ligne, en tournoi)
+et de pouvoir les réétudier en les filtrant selon divers filtres arbitrairement
+combinables. blunderDB peut également être utilisé pour créer des catalogues
+de positions de référence.</p>
+<p>Les positions sont stockées dans une base de données représentée par un fichier
 <em>.db</em>.</p>
+</section>
+<section id="interactions-principales">
+<h2><span class="section-number">2.2. </span>Interactions principales<a class="headerlink" href="#interactions-principales" title="Lien vers cette rubrique"></a></h2>
 <p>Les principales interactions possibles avec blunderDB sont:</p>
 <ul class="simple">
 <li><p>ajouter une nouvelle position,</p></li>
@@ -101,6 +114,9 @@ positions. Les positions sont stockées dans une base de données représentée 
 <li><p>supprimer une position existante,</p></li>
 <li><p>rechercher une ou plusieurs positions.</p></li>
 </ul>
+</section>
+<section id="modes">
+<h2><span class="section-number">2.3. </span>Modes<a class="headerlink" href="#modes" title="Lien vers cette rubrique"></a></h2>
 <p>Pour ce faire, l’utilisateur bascule dans des modes dédiés pour:</p>
 <ul class="simple">
 <li><p>la navigation et la visualisation de positions (mode NORMAL),</p></li>
@@ -111,8 +127,9 @@ positions. Les positions sont stockées dans une base de données représentée 
 annoter via des commentaires.</p>
 <p>Dans la suite du manuel, il est décrit l’interface graphique ainsi que
 les principaux modes de blunderDB.</p>
+</section>
 <section id="description-de-l-interface">
-<h2><span class="section-number">2.1. </span>Description de l’interface<a class="headerlink" href="#description-de-l-interface" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">2.4. </span>Description de l’interface<a class="headerlink" href="#description-de-l-interface" title="Lien vers cette rubrique"></a></h2>
 <p>L’interface de blunderDB est constituée de haut en bas par:</p>
 <ul class="simple">
 <li><p>[en haut] la barre d’outils, qui rassemble l’ensemble des principales
@@ -158,7 +175,7 @@ positions filtrées.</p>
 </div>
 </section>
 <section id="le-mode-normal">
-<span id="mode-normal"></span><h2><span class="section-number">2.2. </span>Le mode NORMAL<a class="headerlink" href="#le-mode-normal" title="Lien vers cette rubrique"></a></h2>
+<span id="mode-normal"></span><h2><span class="section-number">2.5. </span>Le mode NORMAL<a class="headerlink" href="#le-mode-normal" title="Lien vers cette rubrique"></a></h2>
 <p>Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:</p>
 <ul class="simple">
 <li><p>faire défiler les différentes positions de la bibliothèque courante,</p></li>
@@ -167,12 +184,11 @@ positions filtrées.</p>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>Se référer à la <a class="reference internal" href="raccourcis.html#raccourcis-normal"><span class="std std-numref">Section 5.2</span></a> pour les raccourcis
-du mode NORMAL.</p>
+<p>Se référer à <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Raccourcis clavier</span></a> pour les raccourcis disponibles.</p>
 </div>
 </section>
 <section id="le-mode-edit">
-<span id="mode-edit"></span><h2><span class="section-number">2.3. </span>Le mode EDIT<a class="headerlink" href="#le-mode-edit" title="Lien vers cette rubrique"></a></h2>
+<span id="mode-edit"></span><h2><span class="section-number">2.6. </span>Le mode EDIT<a class="headerlink" href="#le-mode-edit" title="Lien vers cette rubrique"></a></h2>
 <p>Le mode EDIT permet d’éditer une position en vue de l’ajouter à
 la base de données, ou de définir le type de position à rechercher.
 Le mode EDIT est activé en appuyant sur la touche <em>TAB</em>.
@@ -180,12 +196,11 @@ La distribution des pions, du videau, du score, et du trait peuvent être
 modifiés à l’aide de la souris (voir <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Editer une position</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>Se référer à la <a class="reference internal" href="raccourcis.html#raccourcis-edit"><span class="std std-numref">Section 5.3</span></a> pour les raccourcis du mode
-EDIT.</p>
+<p>Se référer à <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Raccourcis clavier</span></a> pour les raccourcis disponibles.</p>
 </div>
 </section>
 <section id="le-mode-command">
-<span id="mode-command"></span><h2><span class="section-number">2.4. </span>Le mode COMMAND<a class="headerlink" href="#le-mode-command" title="Lien vers cette rubrique"></a></h2>
+<span id="mode-command"></span><h2><span class="section-number">2.7. </span>Le mode COMMAND<a class="headerlink" href="#le-mode-command" title="Lien vers cette rubrique"></a></h2>
 <p>Le mode COMMAND permet de réaliser l’ensemble des fonctionalités de blunderDB
 disponibles à l’interface graphique: opérations générales sur la base de
 données, navigation de position, affichage de l’analyse et/ou des commentaires,

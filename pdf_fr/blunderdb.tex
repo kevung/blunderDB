@@ -331,11 +331,24 @@ pourquoi et contourner les éventuels blocages.
 
 \section{Manuel}
 \label{\detokenize{manuel:manuel}}\label{\detokenize{manuel:id1}}\label{\detokenize{manuel::doc}}
+
+\subsection{Introduction}
+\label{\detokenize{manuel:introduction}}
 \sphinxAtStartPar
 blunderDB est un logiciel pour constituer des bases de données de
-positions. Les positions sont stockées dans une base de données représentée par un fichier
+positions de backgammon. Sa force principale est de fournir un lieu unique
+pour agréger les positions qu’un joueur a rencontrées (en ligne, en tournoi)
+et de pouvoir les réétudier en les filtrant selon divers filtres arbitrairement
+combinables. blunderDB peut également être utilisé pour créer des catalogues
+de positions de référence.
+
+\sphinxAtStartPar
+Les positions sont stockées dans une base de données représentée par un fichier
 \sphinxstyleemphasis{.db}.
 
+
+\subsection{Interactions principales}
+\label{\detokenize{manuel:interactions-principales}}
 \sphinxAtStartPar
 Les principales interactions possibles avec blunderDB sont:
 \begin{itemize}
@@ -357,6 +370,9 @@ rechercher une ou plusieurs positions.
 
 \end{itemize}
 
+
+\subsection{Modes}
+\label{\detokenize{manuel:modes}}
 \sphinxAtStartPar
 Pour ce faire, l’utilisateur bascule dans des modes dédiés pour:
 \begin{itemize}
@@ -506,8 +522,7 @@ afficher, ajouter et modifier les commentaires d’une position.
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
-Se référer à la \hyperref[\detokenize{raccourcis:raccourcis-normal}]{Section \ref{\detokenize{raccourcis:raccourcis-normal}}} pour les raccourcis
-du mode NORMAL.
+Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Raccourcis clavier}}}}} pour les raccourcis disponibles.
 \end{sphinxadmonition}
 
 
@@ -522,8 +537,7 @@ modifiés à l’aide de la souris (voir {\hyperref[\detokenize{guide_utilisateu
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
-Se référer à la \hyperref[\detokenize{raccourcis:raccourcis-edit}]{Section \ref{\detokenize{raccourcis:raccourcis-edit}}} pour les raccourcis du mode
-EDIT.
+Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Raccourcis clavier}}}}} pour les raccourcis disponibles.
 \end{sphinxadmonition}
 
 
@@ -1605,42 +1619,42 @@ L’adversaire a entre x et y blots dans l’outfield.
 \\
 \sphinxhline
 \sphinxAtStartPar
-jb\textgreater{}x
+bj\textgreater{}x
 &
 \sphinxAtStartPar
 Le joueur a au moins x blots dans le jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-jb\textless{}x
+bj\textless{}x
 &
 \sphinxAtStartPar
 Le joueur a au plus x blots dans le jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-jbx,y
+bjx,y
 &
 \sphinxAtStartPar
 Le joueur a entre x et y blots dans le jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-JB\textgreater{}x
+BJ\textgreater{}x
 &
 \sphinxAtStartPar
 L’adversaire a au moins x blots dans le jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-JB\textless{}x
+BJ\textless{}x
 &
 \sphinxAtStartPar
 L’adversaire a au plus x blots dans le jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-JBx,y
+BJx,y
 &
 \sphinxAtStartPar
 L’adversaire a entre x et y blots dans le jan.
@@ -1764,8 +1778,8 @@ Migre la base de données de la version 1.1 à la version 1.2.
 \section{Raccourcis clavier}
 \label{\detokenize{raccourcis:raccourcis-clavier}}\label{\detokenize{raccourcis:raccourcis}}\label{\detokenize{raccourcis::doc}}
 
-\subsection{Général}
-\label{\detokenize{raccourcis:general}}\label{\detokenize{raccourcis:raccourcis-generaux}}
+\subsection{Base de données}
+\label{\detokenize{raccourcis:base-de-donnees}}\label{\detokenize{raccourcis:raccourcis-generaux}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1803,10 +1817,10 @@ Fermer blunderDB.
 \\
 \sphinxhline
 \sphinxAtStartPar
-CTRL\sphinxhyphen{}H, ?
+CTRL\sphinxhyphen{}M
 &
 \sphinxAtStartPar
-Afficher/cacher l’aide.
+Modifier les métadonnées de la base de données.
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1814,8 +1828,8 @@ Afficher/cacher l’aide.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Mode NORMAL}
-\label{\detokenize{raccourcis:mode-normal}}\label{\detokenize{raccourcis:raccourcis-normal}}
+\subsection{Position}
+\label{\detokenize{raccourcis:position}}\label{\detokenize{raccourcis:raccourcis-position}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1842,14 +1856,28 @@ Importer une position par fichier texte (txt).
 CTRL\sphinxhyphen{}C
 &
 \sphinxAtStartPar
-Exporter une position dans le presse\sphinxhyphen{}papier en vue d’un import dans XG.
+Copier une position dans le presse\sphinxhyphen{}papier.
 \\
 \sphinxhline
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}V
 &
 \sphinxAtStartPar
-Importer une position XG.
+Coller une position depuis le presse\sphinxhyphen{}papier.
+\\
+\sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}S
+&
+\sphinxAtStartPar
+Enregistrer une position.
+\\
+\sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}U
+&
+\sphinxAtStartPar
+Mettre à jour une position.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1860,17 +1888,46 @@ Supprimer la position courante.
 \\
 \sphinxhline
 \sphinxAtStartPar
-TAB
+RETOUR ARRIERE
 &
 \sphinxAtStartPar
-Basculer en mode EDIT.
+Réinitialiser le board, le cube, le score et les dés.
 \\
 \sphinxhline
 \sphinxAtStartPar
-ESPACE
+CTRL\sphinxhyphen{}G
 &
 \sphinxAtStartPar
-Basculer en mode COMMAND.
+Afficher les métadonnées de la position.
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Navigation}
+\label{\detokenize{raccourcis:navigation}}\label{\detokenize{raccourcis:raccourcis-navigation}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Raccourci
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}R
+&
+\sphinxAtStartPar
+Recharger toutes les positions de la base de données.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1895,6 +1952,20 @@ Position suivante.
 \\
 \sphinxhline
 \sphinxAtStartPar
+HAUT, k
+&
+\sphinxAtStartPar
+Coup précédent (lorsqu’un coup est sélectionné dans l’analyse).
+\\
+\sphinxhline
+\sphinxAtStartPar
+BAS, j
+&
+\sphinxAtStartPar
+Coup suivant (lorsqu’un coup est sélectionné dans l’analyse).
+\\
+\sphinxhline
+\sphinxAtStartPar
 PageDown, l
 &
 \sphinxAtStartPar
@@ -1902,12 +1973,41 @@ Dernière position.
 \\
 \sphinxhline
 \sphinxAtStartPar
+CTRL\sphinxhyphen{}K
+&
+\sphinxAtStartPar
+Aller à une position spécifique.
+\\
+\sphinxhline
+\sphinxAtStartPar
 r
 &
 \sphinxAtStartPar
-Position aléatoire.
+Charger une position aléatoire.
 \\
-\sphinxhline
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Affichage}
+\label{\detokenize{raccourcis:affichage}}\label{\detokenize{raccourcis:raccourcis-affichage}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Raccourci
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}GAUCHE
 &
@@ -1928,56 +2028,14 @@ p
 \sphinxAtStartPar
 Afficher/cacher le compte de course.
 \\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}K
-&
-\sphinxAtStartPar
-Afficher la fenêtre de navigation de positions.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}L
-&
-\sphinxAtStartPar
-Afficher/cacher l’analyse.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}P
-&
-\sphinxAtStartPar
-Afficher/cacher les commentaires.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}G
-&
-\sphinxAtStartPar
-Afficher les métadonnées de la position.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}R
-&
-\sphinxAtStartPar
-Recharger toutes les positions de la base de données.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}B
-&
-\sphinxAtStartPar
-Afficher/cacher la bibliothèque de filtres.
-\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Mode EDIT}
-\label{\detokenize{raccourcis:mode-edit}}\label{\detokenize{raccourcis:raccourcis-edit}}
+\subsection{Modes}
+\label{\detokenize{raccourcis:modes}}\label{\detokenize{raccourcis:raccourcis-modes}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1997,7 +2055,7 @@ Action
 TAB
 &
 \sphinxAtStartPar
-Basculer en mode NORMAL.
+Basculer en mode EDIT.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -2006,42 +2064,14 @@ ESPACE
 \sphinxAtStartPar
 Basculer en mode COMMAND.
 \\
-\sphinxhline
-\sphinxAtStartPar
-RETOUR ARRIERE
-&
-\sphinxAtStartPar
-Effacer la position courante.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}S
-&
-\sphinxAtStartPar
-Ajouter une position.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}U
-&
-\sphinxAtStartPar
-Mettre à jour une position.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}F
-&
-\sphinxAtStartPar
-Rechercher une position.
-\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Mode COMMAND}
-\label{\detokenize{raccourcis:mode-command}}\label{\detokenize{raccourcis:raccourcis-command}}
+\subsection{Outils}
+\label{\detokenize{raccourcis:outils}}\label{\detokenize{raccourcis:raccourcis-outils}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -2058,26 +2088,62 @@ Action
 \sphinxmidrule
 \sphinxtableatstartofbodyhook
 \sphinxAtStartPar
-ENTREE
+CTRL\sphinxhyphen{}L
 &
 \sphinxAtStartPar
-Exécuter une requête.
+Afficher/cacher l’analyse.
 \\
 \sphinxhline
 \sphinxAtStartPar
-ESC
+CTRL\sphinxhyphen{}P
 &
 \sphinxAtStartPar
-Quitter le mode COMMAND.
+Afficher/cacher les commentaires.
 \\
 \sphinxhline
 \sphinxAtStartPar
-RETOUR ARRIERE
+CTRL\sphinxhyphen{}B
 &
 \sphinxAtStartPar
-Effacer la commande. Si vide, fermer le mode COMMAND
+Afficher/cacher la bibliothèque de filtres.
 \\
 \sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}F
+&
+\sphinxAtStartPar
+Rechercher une position.
+\\
+\sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}H, ?
+&
+\sphinxAtStartPar
+Afficher/cacher l’aide.
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Ligne de commande}
+\label{\detokenize{raccourcis:ligne-de-commande}}\label{\detokenize{raccourcis:raccourcis-command}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Raccourci
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
 \sphinxAtStartPar
 HAUT
 &
@@ -2090,56 +2156,6 @@ BAS
 &
 \sphinxAtStartPar
 Parcourir l’historique des commandes vers le bas.
-\\
-\sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
-
-
-\subsection{Panneau d’analyse}
-\label{\detokenize{raccourcis:panneau-d-analyse}}\label{\detokenize{raccourcis:raccourcis-analysis}}
-
-\begin{savenotes}\sphinxattablestart
-\sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
-\sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
-Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
-Action
-\\
-\sphinxmidrule
-\sphinxtableatstartofbodyhook
-\sphinxAtStartPar
-Clic
-&
-\sphinxAtStartPar
-Sélectionner/désélectionner un coup (affiche/efface les flèches).
-\\
-\sphinxhline
-\sphinxAtStartPar
-HAUT, k
-&
-\sphinxAtStartPar
-Sélectionner le coup précédent (si un coup est sélectionné).
-\\
-\sphinxhline
-\sphinxAtStartPar
-BAS, j
-&
-\sphinxAtStartPar
-Sélectionner le coup suivant (si un coup est sélectionné).
-\\
-\sphinxhline
-\sphinxAtStartPar
-ESC
-&
-\sphinxAtStartPar
-Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.
 \\
 \sphinxbottomrule
 \end{tabular}

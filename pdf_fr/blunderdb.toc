@@ -3,10 +3,13 @@
 \contentsline {chapter}{\numberline {2}Sommaire}{5}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Téléchargement et installation}{5}{section.2.1}%
 \contentsline {section}{\numberline {2.2}Manuel}{6}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Description de l’interface}{6}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}Le mode NORMAL}{7}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}Le mode EDIT}{7}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}Le mode COMMAND}{7}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.1}Introduction}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Interactions principales}{6}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Modes}{6}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Description de l’interface}{6}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Le mode NORMAL}{7}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}Le mode EDIT}{7}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Le mode COMMAND}{7}{subsection.2.2.7}%
 \contentsline {section}{\numberline {2.3}Guide utilisateur}{8}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Créer une nouvelle base de données}{8}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Ouvrir une base de donnée existante}{8}{subsection.2.3.2}%
@@ -14,7 +17,7 @@
 \contentsline {subsection}{\numberline {2.3.4}Editer une position}{9}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Ajouter une position à la base de données}{9}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Etiqueter une position}{9}{subsection.2.3.6}%
-\contentsline {subsection}{\numberline {2.3.7}Supprimer une position}{9}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.7}Supprimer une position}{10}{subsection.2.3.7}%
 \contentsline {subsection}{\numberline {2.3.8}Import une position depuis XG}{10}{subsection.2.3.8}%
 \contentsline {subsection}{\numberline {2.3.9}Afficher l’analyse d’une position importée depuis XG}{10}{subsection.2.3.9}%
 \contentsline {subsection}{\numberline {2.3.10}Exporter une position vers XG}{10}{subsection.2.3.10}%
@@ -22,42 +25,44 @@
 \contentsline {subsection}{\numberline {2.3.12}Rechercher des positions selon des critères}{10}{subsection.2.3.12}%
 \contentsline {section}{\numberline {2.4}Liste des commandes}{11}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Opérations globales}{11}{subsection.2.4.1}%
-\contentsline {subsection}{\numberline {2.4.2}Mode NORMAL}{11}{subsection.2.4.2}%
-\contentsline {subsection}{\numberline {2.4.3}Mode EDIT}{11}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.2}Mode NORMAL}{12}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Mode EDIT}{12}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Filtres de recherche}{12}{subsection.2.4.4}%
-\contentsline {subsection}{\numberline {2.4.5}Commandes diverses}{14}{subsection.2.4.5}%
-\contentsline {section}{\numberline {2.5}Raccourcis clavier}{14}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Général}{14}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}Mode NORMAL}{15}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}Mode EDIT}{15}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}Mode COMMAND}{15}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Panneau d’analyse}{16}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.4.5}Commandes diverses}{15}{subsection.2.4.5}%
+\contentsline {section}{\numberline {2.5}Raccourcis clavier}{15}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Base de données}{15}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Position}{15}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Navigation}{15}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Affichage}{16}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Modes}{16}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.6}Outils}{16}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}Ligne de commande}{16}{subsection.2.5.7}%
 \contentsline {section}{\numberline {2.6}Foire aux questions}{16}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Quel est l’utilité de blunderDB?}{16}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Qu’est ce qui a motivé la création de blunderDB?}{16}{subsection.2.6.2}%
-\contentsline {subsection}{\numberline {2.6.3}Comment sauvegarder la base de données courante?}{16}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}Dois\sphinxhyphen {}je créer différentes bases de données pour différentes catégories de positions?}{16}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.3}Comment sauvegarder la base de données courante?}{17}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}Dois\sphinxhyphen {}je créer différentes bases de données pour différentes catégories de positions?}{17}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}Comment fusionner plusieurs bases de données?}{17}{subsection.2.6.5}%
 \contentsline {subsection}{\numberline {2.6.6}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{17}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}Quel format de données utilise blunderDB?}{17}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}Quelles ont été les principes de conception de blunderDB?}{17}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}Quel est l’architecture logicielle de blunderDB?}{17}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{17}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.8}Quelles ont été les principes de conception de blunderDB?}{18}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}Quel est l’architecture logicielle de blunderDB?}{18}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.10}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{18}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}D’où vient l’icône de blunderDB?}{18}{subsection.2.6.11}%
 \contentsline {section}{\numberline {2.7}Annexe: Utilisation avancée des filtres}{18}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Recherche de positions en ligne de commande}{18}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Bibliothèque de filtres}{18}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.2}Bibliothèque de filtres}{19}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Exemples}{19}{subsection.2.7.3}%
-\contentsline {section}{\numberline {2.8}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{19}{section.2.8}%
+\contentsline {section}{\numberline {2.8}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{20}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Avertissement Windows SmartScreen}{20}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Blocage Windows Defender}{20}{subsection.2.8.2}%
-\contentsline {section}{\numberline {2.9}Annexe Mac : Blocage éventuel de blunderDB}{23}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Installation de blunderDB}{29}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Autorisation de l’exécution de blunderDB}{29}{subsection.2.9.2}%
-\contentsline {section}{\numberline {2.10}Annexe: Schéma de la base de données}{29}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{29}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.8.2}Blocage Windows Defender}{21}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Annexe Mac : Blocage éventuel de blunderDB}{22}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Installation de blunderDB}{22}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Autorisation de l’exécution de blunderDB}{30}{subsection.2.9.2}%
+\contentsline {section}{\numberline {2.10}Annexe: Schéma de la base de données}{30}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{30}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{30}{subsection.2.10.2}%
 \contentsline {subsection}{\numberline {2.10.3}Version 1.2.0}{30}{subsection.2.10.3}%
-\contentsline {chapter}{\numberline {3}Contacts}{31}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Faire un don}{33}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Remerciements}{35}{chapter.5}%
+\contentsline {chapter}{\numberline {3}Contacts}{33}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Faire un don}{35}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Remerciements}{37}{chapter.5}%

@@ -3,14 +3,17 @@
 \contentsline {chapter}{\numberline {2}Table of contents}{5}{chapter.2}%
 \contentsline {section}{\numberline {2.1}Download and Installation}{5}{section.2.1}%
 \contentsline {section}{\numberline {2.2}Manual}{6}{section.2.2}%
-\contentsline {subsection}{\numberline {2.2.1}Description of the interface}{6}{subsection.2.2.1}%
-\contentsline {subsection}{\numberline {2.2.2}NORMAL mode}{7}{subsection.2.2.2}%
-\contentsline {subsection}{\numberline {2.2.3}EDIT mode}{7}{subsection.2.2.3}%
-\contentsline {subsection}{\numberline {2.2.4}COMMAND mode}{7}{subsection.2.2.4}%
-\contentsline {section}{\numberline {2.3}User Guide}{7}{section.2.3}%
+\contentsline {subsection}{\numberline {2.2.1}Introduction}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Main Interactions}{6}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Modes}{6}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Description of the interface}{6}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}NORMAL mode}{7}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}EDIT mode}{7}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}COMMAND mode}{7}{subsection.2.2.7}%
+\contentsline {section}{\numberline {2.3}User Guide}{8}{section.2.3}%
 \contentsline {subsection}{\numberline {2.3.1}Create a new database}{8}{subsection.2.3.1}%
 \contentsline {subsection}{\numberline {2.3.2}Open an existing database}{8}{subsection.2.3.2}%
-\contentsline {subsection}{\numberline {2.3.3}Importer et fusionner une base de données}{8}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.3}Import and merge a database}{8}{subsection.2.3.3}%
 \contentsline {subsection}{\numberline {2.3.4}Edit a position}{9}{subsection.2.3.4}%
 \contentsline {subsection}{\numberline {2.3.5}Add a position to the database}{9}{subsection.2.3.5}%
 \contentsline {subsection}{\numberline {2.3.6}Tag a position}{9}{subsection.2.3.6}%
@@ -24,20 +27,22 @@
 \contentsline {subsection}{\numberline {2.4.1}Global operations}{11}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}NORMAL Mode}{11}{subsection.2.4.2}%
 \contentsline {subsection}{\numberline {2.4.3}EDIT Mode}{11}{subsection.2.4.3}%
-\contentsline {subsection}{\numberline {2.4.4}Search Filters}{11}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.4}Search Filters}{12}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Various commands}{14}{subsection.2.4.5}%
 \contentsline {section}{\numberline {2.5}Keyboard shortcuts}{14}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}General}{14}{subsection.2.5.1}%
-\contentsline {subsection}{\numberline {2.5.2}NORMAL mode.}{15}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}EDIT mode}{15}{subsection.2.5.3}%
-\contentsline {subsection}{\numberline {2.5.4}COMMAND mode.}{15}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Analysis Panel}{16}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.1}Database}{14}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Position}{15}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Navigation}{15}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Display}{15}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Modes}{15}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.6}Tools}{15}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}Command Line}{16}{subsection.2.5.7}%
 \contentsline {section}{\numberline {2.6}Frequently Asked Questions (FAQ)}{16}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}What is the purpose of blunderDB?}{16}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}What motivated the creation of blunderDB?}{16}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}How to save the state of the current database?}{16}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}Should I create different databases for different categories of positions?}{16}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}Comment fusionner plusieurs bases de données?}{16}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.5}How to merge multiple databases?}{16}{subsection.2.6.5}%
 \contentsline {subsection}{\numberline {2.6.6}Can I modify, copy, share blunderDB?}{17}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}What data format does blunderDB use?}{17}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}What were the design principles of blunderDB?}{17}{subsection.2.6.8}%

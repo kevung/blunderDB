@@ -3,9 +3,21 @@
 Manuel
 ======
 
+Introduction
+------------
+
 blunderDB est un logiciel pour constituer des bases de données de
-positions. Les positions sont stockées dans une base de données représentée par un fichier
+positions de backgammon. Sa force principale est de fournir un lieu unique
+pour agréger les positions qu'un joueur a rencontrées (en ligne, en tournoi)
+et de pouvoir les réétudier en les filtrant selon divers filtres arbitrairement
+combinables. blunderDB peut également être utilisé pour créer des catalogues
+de positions de référence.
+
+Les positions sont stockées dans une base de données représentée par un fichier
 *.db*.
+
+Interactions principales
+------------------------
 
 Les principales interactions possibles avec blunderDB sont:
 
@@ -16,6 +28,9 @@ Les principales interactions possibles avec blunderDB sont:
 * supprimer une position existante,
 
 * rechercher une ou plusieurs positions.
+
+Modes
+-----
 
 Pour ce faire, l'utilisateur bascule dans des modes dédiés pour:
 
@@ -98,8 +113,7 @@ Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:
 
 * afficher, ajouter et modifier les commentaires d'une position.
 
-.. tip:: Se référer à la :numref:`raccourcis_normal` pour les raccourcis
-   du mode NORMAL.
+.. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
 .. _mode_edit:
 
@@ -112,8 +126,7 @@ Le mode EDIT est activé en appuyant sur la touche *TAB*.
 La distribution des pions, du videau, du score, et du trait peuvent être
 modifiés à l'aide de la souris (voir :ref:`guide_edit_position`).
 
-.. tip:: Se référer à la :numref:`raccourcis_edit` pour les raccourcis du mode
-   EDIT.
+.. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
 .. _mode_command:
 

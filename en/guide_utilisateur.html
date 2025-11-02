@@ -52,7 +52,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">3. User Guide</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">3.1. Create a new database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">3.2. Open an existing database</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#importer-et-fusionner-une-base-de-donnees">3.3. Importer et fusionner une base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-et-fusionner-une-base-de-donnees">3.3. Import and merge a database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#editer-une-position">3.4. Edit a position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">3.5. Add a position to the database</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">3.6. Tag a position</a></li>
@@ -120,30 +120,21 @@
 </div>
 </section>
 <section id="importer-et-fusionner-une-base-de-donnees">
-<h2><span class="section-number">3.3. </span>Importer et fusionner une base de données<a class="headerlink" href="#importer-et-fusionner-une-base-de-donnees" title="Link to this heading"></a></h2>
-<p>Pour importer et fusionner une autre base de données blunderDB dans la base de
-données actuellement ouverte, cliquer dans la barre d’outils sur le bouton
-“Import Database”. Choisir le fichier <em>.db</em> à importer et cliquer sur “Open”.</p>
-<p>blunderDB va fusionner intelligemment les deux bases de données:</p>
+<h2><span class="section-number">3.3. </span>Import and merge a database<a class="headerlink" href="#importer-et-fusionner-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>To import and merge another blunderDB database into the currently open database, click on the “Import Database” button in the toolbar. Select the <em>.db</em> file to import and click “Open.”</p>
+<p>blunderDB will intelligently merge the two databases:</p>
 <ul class="simple">
-<li><p>Les positions qui n’existent pas dans la base de données actuelle seront
-ajoutées avec leurs analyses et commentaires.</p></li>
-<li><p>Les positions qui existent déjà seront mises à jour: les analyses seront
-complétées si manquantes, et les commentaires seront fusionnés (ajout des
-nouveaux commentaires sans dupliquer les existants).</p></li>
-<li><p>Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.</p></li>
+<li><p>Positions that do not exist in the current database will be added with their analyses and comments.</p></li>
+<li><p>Positions that already exist will be updated: analyses will be completed if missing, and comments will be merged (adding new comments without duplicating existing ones).</p></li>
+<li><p>A message will summarize the number of positions added, merged, and ignored.</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>L’import nécessite que les deux bases de données aient des versions de schéma
-compatibles. Il est possible d’importer une base de données d’une version
-inférieure ou égale dans une base de données de version supérieure.</p>
+<p>The import requires that both databases have compatible schema versions. It is possible to import a database with a lower or equal version into a database with a higher version.</p>
 </div>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
-<p>L’opération d’import modifie immédiatement la base de données actuellement
-ouverte. Il est recommandé de faire une copie de sauvegarde avant d’importer
-une autre base de données.</p>
+<p>The import operation immediately modifies the currently open database. It is recommended to make a backup copy before importing another database.</p>
 </div>
 </section>
 <section id="editer-une-position">

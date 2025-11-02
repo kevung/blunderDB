@@ -311,9 +311,18 @@ On Mac, it is possible that it may have reservations about running blunderDB. Se
 
 \section{Manual}
 \label{\detokenize{manuel:manuel}}\label{\detokenize{manuel:id1}}\label{\detokenize{manuel::doc}}
-\sphinxAtStartPar
-blunderDB is software for creating position databases. The positions are stored in a database represented by a \sphinxstyleemphasis{.db} file.
 
+\subsection{Introduction}
+\label{\detokenize{manuel:introduction}}
+\sphinxAtStartPar
+blunderDB is software for creating backgammon position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online, in tournaments) and to be able to re\sphinxhyphen{}study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs of reference positions.
+
+\sphinxAtStartPar
+Positions are stored in a database represented by a \sphinxstyleemphasis{.db} file.
+
+
+\subsection{Main Interactions}
+\label{\detokenize{manuel:interactions-principales}}
 \sphinxAtStartPar
 The main interactions possible with blunderDB are:
 \begin{itemize}
@@ -335,6 +344,9 @@ search for one or more positions.
 
 \end{itemize}
 
+
+\subsection{Modes}
+\label{\detokenize{manuel:modes}}
 \sphinxAtStartPar
 To do this, the user switches to dedicated modes for:
 \begin{itemize}
@@ -473,7 +485,7 @@ displaying, adding, and modifying comments on a position.
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
-Refer to \hyperref[\detokenize{raccourcis:raccourcis-normal}]{Section \ref{\detokenize{raccourcis:raccourcis-normal}}} for NORMAL mode shortcuts.
+Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Keyboard shortcuts}}}}} pour les raccourcis disponibles.
 \end{sphinxadmonition}
 
 
@@ -484,7 +496,7 @@ EDIT mode allows you to edit a position with the option to either add it to the 
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
-Refer to \hyperref[\detokenize{raccourcis:raccourcis-edit}]{Section \ref{\detokenize{raccourcis:raccourcis-edit}}} for EDIT mode shortcuts.
+Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Keyboard shortcuts}}}}} pour les raccourcis disponibles.
 \end{sphinxadmonition}
 
 
@@ -540,45 +552,36 @@ Keyboard shortcuts: \sphinxstyleemphasis{CTRL\sphinxhyphen{}O}. Command: \sphinx
 \end{sphinxadmonition}
 
 
-\subsection{Importer et fusionner une base de données}
+\subsection{Import and merge a database}
 \label{\detokenize{guide_utilisateur:importer-et-fusionner-une-base-de-donnees}}
 \sphinxAtStartPar
-Pour importer et fusionner une autre base de données blunderDB dans la base de
-données actuellement ouverte, cliquer dans la barre d’outils sur le bouton
-“Import Database”. Choisir le fichier \sphinxstyleemphasis{.db} à importer et cliquer sur “Open”.
+To import and merge another blunderDB database into the currently open database, click on the “Import Database” button in the toolbar. Select the \sphinxstyleemphasis{.db} file to import and click “Open.”
 
 \sphinxAtStartPar
-blunderDB va fusionner intelligemment les deux bases de données:
+blunderDB will intelligently merge the two databases:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Les positions qui n’existent pas dans la base de données actuelle seront
-ajoutées avec leurs analyses et commentaires.
+Positions that do not exist in the current database will be added with their analyses and comments.
 
 \item {} 
 \sphinxAtStartPar
-Les positions qui existent déjà seront mises à jour: les analyses seront
-complétées si manquantes, et les commentaires seront fusionnés (ajout des
-nouveaux commentaires sans dupliquer les existants).
+Positions that already exist will be updated: analyses will be completed if missing, and comments will be merged (adding new comments without duplicating existing ones).
 
 \item {} 
 \sphinxAtStartPar
-Un message résumera le nombre de positions ajoutées, fusionnées et ignorées.
+A message will summarize the number of positions added, merged, and ignored.
 
 \end{itemize}
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-L’import nécessite que les deux bases de données aient des versions de schéma
-compatibles. Il est possible d’importer une base de données d’une version
-inférieure ou égale dans une base de données de version supérieure.
+The import requires that both databases have compatible schema versions. It is possible to import a database with a lower or equal version into a database with a higher version.
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{caution}{Caution:}
 \sphinxAtStartPar
-L’opération d’import modifie immédiatement la base de données actuellement
-ouverte. Il est recommandé de faire une copie de sauvegarde avant d’importer
-une autre base de données.
+The import operation immediately modifies the currently open database. It is recommended to make a backup copy before importing another database.
 \end{sphinxadmonition}
 
 
@@ -803,14 +806,14 @@ Open an existing database.
 import\_db, idb
 &
 \sphinxAtStartPar
-Importe et fusionne une autre base de données.
+Import and merge another database.
 \\
 \sphinxhline
 \sphinxAtStartPar
 export\_db, edb
 &
 \sphinxAtStartPar
-Exporte la sélection courante vers une nouvelle base de données.
+Export the current selection to a new database.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1509,42 +1512,42 @@ The opponent has between x and y blots in the outfield.
 \\
 \sphinxhline
 \sphinxAtStartPar
-jb\textgreater{}x
+bj\textgreater{}x
 &
 \sphinxAtStartPar
 The player has at least x blots in the jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-jb\textless{}x
+bj\textless{}x
 &
 \sphinxAtStartPar
 The player has at most x blots in the jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-jbx,y
+bjx,y
 &
 \sphinxAtStartPar
 The player has between x and y blots in the jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-JB\textgreater{}x
+BJ\textgreater{}x
 &
 \sphinxAtStartPar
 The opponent has at least x blots in the jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-JB\textless{}x
+BJ\textless{}x
 &
 \sphinxAtStartPar
 The opponent has at most x blots in the jan.
 \\
 \sphinxhline
 \sphinxAtStartPar
-JBx,y
+BJx,y
 &
 \sphinxAtStartPar
 The opponent has between x and y blots in the jan.
@@ -1659,8 +1662,8 @@ Migrate the database from version 1.1 to version 1.2.
 \section{Keyboard shortcuts}
 \label{\detokenize{raccourcis:raccourcis-clavier}}\label{\detokenize{raccourcis:raccourcis}}\label{\detokenize{raccourcis::doc}}
 
-\subsection{General}
-\label{\detokenize{raccourcis:general}}\label{\detokenize{raccourcis:raccourcis-generaux}}
+\subsection{Database}
+\label{\detokenize{raccourcis:base-de-donnees}}\label{\detokenize{raccourcis:raccourcis-generaux}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1698,10 +1701,10 @@ Close blunderDB.
 \\
 \sphinxhline
 \sphinxAtStartPar
-CTRL\sphinxhyphen{}H, ?
+CTRL\sphinxhyphen{}M
 &
 \sphinxAtStartPar
-Show/hide the help.
+Edit database metadata.
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1709,8 +1712,8 @@ Show/hide the help.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{NORMAL mode.}
-\label{\detokenize{raccourcis:mode-normal}}\label{\detokenize{raccourcis:raccourcis-normal}}
+\subsection{Position}
+\label{\detokenize{raccourcis:position}}\label{\detokenize{raccourcis:raccourcis-position}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1737,14 +1740,28 @@ Import a position from a text file (txt).
 CTRL\sphinxhyphen{}C
 &
 \sphinxAtStartPar
-Export a position to the clipboard for import into XG.
+Copy a position to the clipboard.
 \\
 \sphinxhline
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}V
 &
 \sphinxAtStartPar
-Import an XG position.
+Paste a position from the clipboard.
+\\
+\sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}S
+&
+\sphinxAtStartPar
+Save a position.
+\\
+\sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}U
+&
+\sphinxAtStartPar
+Update a position.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1755,17 +1772,46 @@ Delete the current position.
 \\
 \sphinxhline
 \sphinxAtStartPar
-TAB
+BACKSPACE
 &
 \sphinxAtStartPar
-Switch to EDIT mode.
+Reset board, cube, score, and dice.
 \\
 \sphinxhline
 \sphinxAtStartPar
-SPACE
+CTRL\sphinxhyphen{}G
 &
 \sphinxAtStartPar
-Switch to COMMAND mode.
+Show the position metadata.
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Navigation}
+\label{\detokenize{raccourcis:navigation}}\label{\detokenize{raccourcis:raccourcis-navigation}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Shortcut
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}R
+&
+\sphinxAtStartPar
+Reload all the positions from the database.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1790,6 +1836,20 @@ Next position.
 \\
 \sphinxhline
 \sphinxAtStartPar
+UP, k
+&
+\sphinxAtStartPar
+Previous move (when a move is selected in the analysis).
+\\
+\sphinxhline
+\sphinxAtStartPar
+DOWN, j
+&
+\sphinxAtStartPar
+Next move (when a move is selected in the analysis).
+\\
+\sphinxhline
+\sphinxAtStartPar
 PageDown, l
 &
 \sphinxAtStartPar
@@ -1797,12 +1857,41 @@ Last position.
 \\
 \sphinxhline
 \sphinxAtStartPar
+CTRL\sphinxhyphen{}K
+&
+\sphinxAtStartPar
+Go to a specific position.
+\\
+\sphinxhline
+\sphinxAtStartPar
 r
 &
 \sphinxAtStartPar
-Random position.
+Load a random position.
 \\
-\sphinxhline
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Display}
+\label{\detokenize{raccourcis:affichage}}\label{\detokenize{raccourcis:raccourcis-affichage}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Shortcut
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}LEFT
 &
@@ -1823,56 +1912,14 @@ p
 \sphinxAtStartPar
 Show/hide pipcount.
 \\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}K
-&
-\sphinxAtStartPar
-Show the position navigation window.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}L
-&
-\sphinxAtStartPar
-Show/hide the analysis.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}P
-&
-\sphinxAtStartPar
-Show/hide the comments.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}G
-&
-\sphinxAtStartPar
-Show the position metadata.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}R
-&
-\sphinxAtStartPar
-Reload all the positions from the database.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}B
-&
-\sphinxAtStartPar
-Show/hide the filter library.
-\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
 
 
-\subsection{EDIT mode}
-\label{\detokenize{raccourcis:mode-edit}}\label{\detokenize{raccourcis:raccourcis-edit}}
+\subsection{Modes}
+\label{\detokenize{raccourcis:modes}}\label{\detokenize{raccourcis:raccourcis-modes}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1892,7 +1939,7 @@ Action
 TAB
 &
 \sphinxAtStartPar
-Switch to NORMAL mode.
+Switch to EDIT mode.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1901,42 +1948,14 @@ SPACE
 \sphinxAtStartPar
 Switch to COMMAND mode.
 \\
-\sphinxhline
-\sphinxAtStartPar
-BACKSPACE
-&
-\sphinxAtStartPar
-Clear the current position.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}S
-&
-\sphinxAtStartPar
-Add a position.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}U
-&
-\sphinxAtStartPar
-Update a position.
-\\
-\sphinxhline
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}F
-&
-\sphinxAtStartPar
-Search for a position.
-\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
 
 
-\subsection{COMMAND mode.}
-\label{\detokenize{raccourcis:mode-command}}\label{\detokenize{raccourcis:raccourcis-command}}
+\subsection{Tools}
+\label{\detokenize{raccourcis:outils}}\label{\detokenize{raccourcis:raccourcis-outils}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1953,26 +1972,62 @@ Action
 \sphinxmidrule
 \sphinxtableatstartofbodyhook
 \sphinxAtStartPar
-ENTER
+CTRL\sphinxhyphen{}L
 &
 \sphinxAtStartPar
-Execute a query.
+Show/hide the analysis.
 \\
 \sphinxhline
 \sphinxAtStartPar
-ESC
+CTRL\sphinxhyphen{}P
 &
 \sphinxAtStartPar
-Exit COMMAND mode.
+Show/hide the comments.
 \\
 \sphinxhline
 \sphinxAtStartPar
-BACKSPACE
+CTRL\sphinxhyphen{}B
 &
 \sphinxAtStartPar
-Clear the command. If empty, close COMMAND mode.
+Show/hide the filter library.
 \\
 \sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}F
+&
+\sphinxAtStartPar
+Search for a position.
+\\
+\sphinxhline
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}H, ?
+&
+\sphinxAtStartPar
+Show/hide the help.
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Command Line}
+\label{\detokenize{raccourcis:ligne-de-commande}}\label{\detokenize{raccourcis:raccourcis-command}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Shortcut
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
 \sphinxAtStartPar
 UP
 &
@@ -1985,56 +2040,6 @@ DOWN
 &
 \sphinxAtStartPar
 Browse command history down.
-\\
-\sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
-
-
-\subsection{Analysis Panel}
-\label{\detokenize{raccourcis:panneau-d-analyse}}\label{\detokenize{raccourcis:raccourcis-analysis}}
-
-\begin{savenotes}\sphinxattablestart
-\sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
-\sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
-Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
-Action
-\\
-\sphinxmidrule
-\sphinxtableatstartofbodyhook
-\sphinxAtStartPar
-Click
-&
-\sphinxAtStartPar
-Select/deselect a move (show/hide arrows).
-\\
-\sphinxhline
-\sphinxAtStartPar
-UP, k
-&
-\sphinxAtStartPar
-Select previous move (when a move is selected).
-\\
-\sphinxhline
-\sphinxAtStartPar
-DOWN, j
-&
-\sphinxAtStartPar
-Select next move (when a move is selected).
-\\
-\sphinxhline
-\sphinxAtStartPar
-ESC
-&
-\sphinxAtStartPar
-Deselect move. If no move selected, close the panel.
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2088,40 +2093,36 @@ blunders from online play.
 \end{itemize}
 
 
-\subsection{Comment fusionner plusieurs bases de données?}
+\subsection{How to merge multiple databases?}
 \label{\detokenize{faq:comment-fusionner-plusieurs-bases-de-donnees}}
 \sphinxAtStartPar
-Si vous avez plusieurs bases de données blunderDB que vous souhaitez regrouper,
-utilisez la fonctionnalité “Import Database” :
+If you have multiple blunderDB databases that you wish to merge, use the “Import Database” feature:
 \begin{enumerate}
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Ouvrez la base de données principale (celle qui recevra les positions importées)
+Open the main database (the one that will receive the imported positions)
 
 \item {} 
 \sphinxAtStartPar
-Cliquez sur le bouton “Import Database” dans la barre d’outils
+Click on the “Import Database” button in the toolbar
 
 \item {} 
 \sphinxAtStartPar
-Sélectionnez la base de données à importer
+Select the database to import
 
 \item {} 
 \sphinxAtStartPar
-blunderDB fusionnera automatiquement les positions
+blunderDB will automatically merge the positions
 
 \end{enumerate}
 
 \sphinxAtStartPar
-Lors de la fusion, blunderDB évite les doublons et fusionne intelligemment
-les analyses et commentaires. Les positions identiques ne seront pas dupliquées,
-mais leurs analyses et commentaires seront combinés.
+During the merge, blunderDB avoids duplicates and intelligently merges analyses and comments. Identical positions will not be duplicated, but their analyses and comments will be combined.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Il est recommandé de faire une copie de sauvegarde de votre base de données
-principale avant d’importer une autre base de données.
+It is recommended to make a backup copy of your main database before importing another database.
 \end{sphinxadmonition}
 
 
