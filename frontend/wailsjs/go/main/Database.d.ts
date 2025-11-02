@@ -22,6 +22,8 @@ export function DeleteFilter(arg1:number):Promise<void>;
 
 export function DeletePosition(arg1:number):Promise<void>;
 
+export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:boolean):Promise<void>;
+
 export function GetDatabaseVersion():Promise<string>;
 
 export function ImportDatabase(arg1:string):Promise<Record<string, any>>;

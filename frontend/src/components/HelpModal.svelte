@@ -526,6 +526,10 @@
                                 <td>Import and merge another database</td>
                             </tr>
                             <tr>
+                                <td>export_db, edb</td>
+                                <td>Export current selection to a new database</td>
+                            </tr>
+                            <tr>
                                 <td>quit, q</td>
                                 <td>Exit blunderDB</td>
                             </tr>

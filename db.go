@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 	"sync" // Import sync package
@@ -428,13 +429,10 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	fmt.Printf("Loading analysis for position ID: %d\n", positionID) // Add logging
-
 	var analysisJSON string
 	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisJSON)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			fmt.Printf("No analysis found for position ID: %d\n", positionID) // Add logging
 			return nil, err
 		}
 		fmt.Println("Error loading analysis:", err)
@@ -2809,4 +2807,258 @@ func (d *Database) resetImportCancellation() {
 func (d *Database) ImportDatabase(importPath string) (map[string]interface{}, error) {
 	// This function is kept for backward compatibility but redirects to the new ACID approach
 	return d.CommitImportDatabase(importPath)
+}
+
+// ExportDatabase creates a new database file containing the current selection of positions
+// with their analysis and comments
+func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check that the current database is open
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	// Delete the export file if it already exists
+	if _, err := os.Stat(exportPath); err == nil {
+		// File exists, remove it
+		if err := os.Remove(exportPath); err != nil {
+			return fmt.Errorf("cannot remove existing export file: %v", err)
+		}
+		fmt.Printf("Removed existing export file: %s\n", exportPath)
+	}
+
+	// Create a new database for export
+	exportDB, err := sql.Open("sqlite", exportPath)
+	if err != nil {
+		fmt.Println("Error creating export database:", err)
+		return err
+	}
+	defer exportDB.Close()
+
+	// Create the schema for the export database
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			state TEXT
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating position table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER UNIQUE,
+			data JSON,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating analysis table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS comment (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER UNIQUE,
+			text TEXT,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating comment table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS metadata (
+			key TEXT PRIMARY KEY,
+			value TEXT
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating metadata table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS command_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating command_history table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS filter_library (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT,
+			command TEXT,
+			edit_position TEXT
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating filter_library table in export database:", err)
+		return err
+	}
+
+	// Insert database version
+	_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
+	if err != nil {
+		fmt.Println("Error inserting database version in export database:", err)
+		return err
+	}
+
+	// Insert metadata (user, description, dateOfCreation)
+	for key, value := range metadata {
+		if value != "" {
+			_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
+			if err != nil {
+				fmt.Printf("Error inserting metadata %s in export database: %v\n", key, err)
+			}
+		}
+	}
+
+	// If dateOfCreation is not provided, set it to current date
+	if metadata["dateOfCreation"] == "" {
+		currentDate := time.Now().Format("2006-01-02")
+		_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('dateOfCreation', ?)`, currentDate)
+		if err != nil {
+			fmt.Println("Error inserting default creation date in export database:", err)
+		}
+	}
+
+	// Begin transaction for export
+	tx, err := exportDB.Begin()
+	if err != nil {
+		fmt.Println("Error starting transaction for export:", err)
+		return err
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+			fmt.Println("Transaction rolled back due to error during export")
+		}
+	}()
+
+	// Export all positions with their analysis and comments
+	idMapping := make(map[int64]int64) // map old position ID to new position ID
+
+	for _, position := range positions {
+		oldPositionID := position.ID
+
+		// Reset the ID for the new database
+		position.ID = 0
+
+		// Marshal the position
+		positionJSON, err := json.Marshal(position)
+		if err != nil {
+			fmt.Printf("Error marshalling position %d: %v\n", oldPositionID, err)
+			continue
+		}
+
+		// Insert the position into the export database
+		result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+		if err != nil {
+			fmt.Printf("Error inserting position %d into export database: %v\n", oldPositionID, err)
+			continue
+		}
+
+		newPositionID, err := result.LastInsertId()
+		if err != nil {
+			fmt.Printf("Error getting last insert ID for position %d: %v\n", oldPositionID, err)
+			continue
+		}
+
+		// Update the position ID in the state JSON
+		position.ID = newPositionID
+		updatedPositionJSON, _ := json.Marshal(position)
+		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedPositionJSON), newPositionID)
+		if err != nil {
+			fmt.Printf("Error updating position %d with new ID: %v\n", newPositionID, err)
+		}
+
+		// Store the ID mapping
+		idMapping[oldPositionID] = newPositionID
+
+		// Export analysis if it exists and if includeAnalysis is true
+		if includeAnalysis {
+			var analysisJSON string
+			analysisErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, oldPositionID).Scan(&analysisJSON)
+			if analysisErr == nil {
+				// Update position_id in the analysis JSON
+				var analysis PositionAnalysis
+				if unmarshalErr := json.Unmarshal([]byte(analysisJSON), &analysis); unmarshalErr == nil {
+					analysis.PositionID = int(newPositionID)
+					updatedAnalysisJSON, _ := json.Marshal(analysis)
+
+					if _, insertErr := tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON)); insertErr != nil {
+						fmt.Printf("Error inserting analysis for position %d (old ID: %d): %v\n", newPositionID, oldPositionID, insertErr)
+					}
+				}
+			} else if analysisErr != sql.ErrNoRows {
+				fmt.Printf("Error querying analysis for position %d: %v\n", oldPositionID, analysisErr)
+			}
+		}
+
+		// Export comment if it exists and if includeComments is true
+		if includeComments {
+			var comment string
+			commentErr := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, oldPositionID).Scan(&comment)
+			if commentErr == nil && comment != "" {
+				if _, insertErr := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newPositionID, comment); insertErr != nil {
+					fmt.Printf("Error inserting comment for position %d (old ID: %d): %v\n", newPositionID, oldPositionID, insertErr)
+				}
+			} else if commentErr != nil && commentErr != sql.ErrNoRows {
+				fmt.Printf("Error querying comment for position %d: %v\n", oldPositionID, commentErr)
+			}
+		}
+	}
+
+	// Commit the transaction
+	err = tx.Commit()
+	if err != nil {
+		fmt.Println("Error committing transaction for export:", err)
+		return err
+	}
+
+	// Export filter library if includeFilterLibrary is true
+	if includeFilterLibrary {
+		rows, err := d.db.Query(`SELECT name, command, edit_position FROM filter_library`)
+		if err == nil {
+			defer rows.Close()
+
+			for rows.Next() {
+				var name, command, editPosition string
+				err := rows.Scan(&name, &command, &editPosition)
+				if err == nil {
+					_, err = exportDB.Exec(`INSERT INTO filter_library (name, command, edit_position) VALUES (?, ?, ?)`, name, command, editPosition)
+					if err != nil {
+						fmt.Printf("Error inserting filter library entry '%s': %v\n", name, err)
+					}
+				}
+			}
+		}
+	}
+
+	fmt.Printf("Successfully exported %d positions to %s\n", len(positions), exportPath)
+	return nil
+}
+
+// DeleteFile is a helper function to delete a file
+func DeleteFile(filePath string) error {
+	err := os.Remove(filePath)
+	if err != nil {
+		return err
+	}
+	return nil
 }

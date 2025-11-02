@@ -9,6 +9,7 @@
         SaveDatabaseDialog,
         OpenDatabaseDialog,
         OpenImportDatabaseDialog,
+        OpenExportDatabaseDialog,
         OpenPositionDialog,
         DeleteFile,
 
@@ -33,7 +34,8 @@
         GetDatabaseVersion, // Import GetDatabaseVersion
         AnalyzeImportDatabase, // Import AnalyzeImportDatabase
         CommitImportDatabase, // Import CommitImportDatabase
-        CancelImport // Import CancelImport
+        CancelImport, // Import CancelImport
+        ExportDatabase // Import ExportDatabase
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -112,6 +114,7 @@
     import TakePoint4Modal from './components/TakePoint4Modal.svelte'; // Import TakePoint4Modal component
     import FilterLibraryPanel from './components/FilterLibraryPanel.svelte'; // Update import
     import ImportProgressModal from './components/ImportProgressModal.svelte'; // Import ImportProgressModal component
+    import ExportDatabaseModal from './components/ExportDatabaseModal.svelte'; // Import ExportDatabaseModal component
 
     // Visibility variables
     let showSearchModal = false;
@@ -145,6 +148,20 @@
         total: 0
     };
     let pendingImportPath = null;
+    let showExportDatabaseModal = false;
+    let exportModalMode = 'preparing'; // 'preparing', 'metadata', 'exporting', 'completed'
+    let exportPositionCount = 0;
+    let exportMetadata = {
+        user: '',
+        description: '',
+        dateOfCreation: ''
+    };
+    let exportOptions = {
+        includeAnalysis: true,
+        includeComments: true,
+        includeFilterLibrary: false
+    };
+    let pendingExportPath = null;
     let warningMessage = '';
     let databaseVersion = '';
     let applicationVersion = '';
@@ -450,6 +467,43 @@
         return filePath.split('/').pop();
     }
 
+    // Helper function to reset analysis and comment stores
+    function resetAnalysisAndCommentStores() {
+        analysisStore.set({
+            positionId: null,
+            xgid: '',
+            player1: '',
+            player2: '',
+            analysisType: '',
+            analysisEngineVersion: '',
+            checkerAnalysis: { moves: [] },
+            doublingCubeAnalysis: {
+                analysisDepth: '',
+                playerWinChances: 0,
+                playerGammonChances: 0,
+                playerBackgammonChances: 0,
+                opponentWinChances: 0,
+                opponentGammonChances: 0,
+                opponentBackgammonChances: 0,
+                cubelessNoDoubleEquity: 0,
+                cubelessDoubleEquity: 0,
+                cubefulNoDoubleEquity: 0,
+                cubefulNoDoubleError: 0,
+                cubefulDoubleTakeEquity: 0,
+                cubefulDoubleTakeError: 0,
+                cubefulDoublePassEquity: 0,
+                cubefulDoublePassError: 0,
+                bestCubeAction: '',
+                wrongPassPercentage: 0,
+                wrongTakePercentage: 0
+            },
+            creationDate: '',
+            lastModifiedDate: ''
+        });
+        commentTextStore.set('');
+        selectedMoveStore.set(null);
+    }
+
     export function setStatusBarMessage(message) {
         statusBarTextStore.set(message);
     }
@@ -459,6 +513,9 @@
         try {
             const filePath = await SaveDatabaseDialog();
             if (filePath) {
+                // Reset analysis and comment stores before creating new database
+                resetAnalysisAndCommentStores();
+
                 // Check if the file exists and delete it
                 try {
                     await DeleteFile(filePath);
@@ -496,6 +553,9 @@
                 console.log('No Database selected');
                 return;
             }
+
+            // Reset analysis and comment stores before opening new database
+            resetAnalysisAndCommentStores();
 
             databasePathStore.set(filePath);
             console.log('databasePathStore:', $databasePathStore);
@@ -653,6 +713,142 @@
         showImportProgressModal = false;
         pendingImportPath = null;
         importModalMode = 'analyzing';
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
+    }
+
+    async function exportDatabase() {
+        console.log('exportDatabase');
+        
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened. Please open a database first.');
+            return;
+        }
+
+        if (positions.length === 0) {
+            setStatusBarMessage('No positions to export.');
+            await ShowAlert('No positions to export. Please load positions first.');
+            return;
+        }
+
+        try {
+            const exportFilePath = await OpenExportDatabaseDialog();
+            if (!exportFilePath) {
+                console.log('No export path selected');
+                return;
+            }
+
+            console.log('Exporting to:', exportFilePath);
+            pendingExportPath = exportFilePath;
+            
+            // Show modal in metadata mode
+            exportPositionCount = positions.length;
+            exportModalMode = 'metadata';
+            showExportDatabaseModal = true;
+            
+        } catch (error) {
+            console.error('Error during export preparation:', error);
+            setStatusBarMessage(`Error preparing export: ${error}`);
+            await ShowAlert(`Error preparing export: ${error}`);
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        }
+    }
+
+    async function handleExportCommit() {
+        if (!pendingExportPath) {
+            console.error('No pending export path');
+            return;
+        }
+
+        console.log('Committing export to:', pendingExportPath);
+        
+        // Change to exporting mode
+        exportModalMode = 'exporting';
+
+        try {
+            // Prepare metadata
+            const metadata = {
+                user: exportMetadata.user || '',
+                description: exportMetadata.description || '',
+                dateOfCreation: exportMetadata.dateOfCreation || ''
+            };
+
+            // Call the backend to export
+            await ExportDatabase(
+                pendingExportPath, 
+                positions, 
+                metadata,
+                exportOptions.includeAnalysis,
+                exportOptions.includeComments,
+                exportOptions.includeFilterLibrary
+            );
+            
+            console.log('Export completed successfully');
+            
+            // Update to completed mode
+            exportModalMode = 'completed';
+            
+            setStatusBarMessage(`Export completed: ${exportPositionCount} position(s) exported`);
+            
+        } catch (error) {
+            console.error('Error committing export:', error);
+            showExportDatabaseModal = false;
+            setStatusBarMessage(`Error committing export: ${error}`);
+            await ShowAlert(`Error committing export: ${error}`);
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        } finally {
+            // Reset metadata for next export
+            exportMetadata = {
+                user: '',
+                description: '',
+                dateOfCreation: ''
+            };
+            exportOptions = {
+                includeAnalysis: true,
+                includeComments: true,
+                includeFilterLibrary: false
+            };
+        }
+    }
+
+    function handleExportCancel() {
+        console.log('Export cancelled by user');
+        
+        showExportDatabaseModal = false;
+        pendingExportPath = null;
+        exportModalMode = 'preparing';
+        exportMetadata = {
+            user: '',
+            description: '',
+            dateOfCreation: ''
+        };
+        exportOptions = {
+            includeAnalysis: true,
+            includeComments: true,
+            includeFilterLibrary: false
+        };
+        setStatusBarMessage('Export cancelled');
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
+    }
+
+    function handleExportClose() {
+        console.log('Export completed and closed');
+        showExportDatabaseModal = false;
+        pendingExportPath = null;
+        exportModalMode = 'preparing';
+        exportMetadata = {
+            user: '',
+            description: '',
+            dateOfCreation: ''
+        };
+        exportOptions = {
+            includeAnalysis: true,
+            includeComments: true,
+            includeFilterLibrary: false
+        };
         previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
@@ -2042,7 +2238,13 @@ function togglePipcount() {
         positionStore.set(positionCopy);
 
         // Load the analysis for the current position
-        const analysis = await LoadAnalysis(position.id);
+        let analysis = null;
+        try {
+            analysis = await LoadAnalysis(position.id);
+        } catch (error) {
+            // No analysis for this position
+        }
+        
         analysisStore.set({
             positionId: analysis?.positionId || null,
             xgid: analysis?.xgid || '',
@@ -2075,10 +2277,13 @@ function togglePipcount() {
             lastModifiedDate: analysis?.lastModifiedDate || ''
         });
 
-        console.log('Analysis Data:', analysis); // Debugging log
-
         // Load the comment for the current position
-        const comment = await LoadComment(position.id);
+        let comment = '';
+        try {
+            comment = await LoadComment(position.id);
+        } catch (error) {
+            // No comment for this position
+        }
         commentTextStore.set(comment || '');
     }
 
@@ -2129,6 +2334,7 @@ function togglePipcount() {
         onNewDatabase={newDatabase}
         onOpenDatabase={openDatabase}
         onImportDatabase={importDatabase}
+        onExportDatabase={exportDatabase}
         onExit={exitApp}
         onImportPosition={importPosition}
         onCopyPosition={copyPosition}
@@ -2164,6 +2370,7 @@ function togglePipcount() {
             onNewDatabase={newDatabase}
             onOpenDatabase={openDatabase}
             onImportDatabase={importDatabase}
+            onExportDatabase={exportDatabase}
             importPosition={importPosition}
             onSavePosition={saveCurrentPosition}
             onUpdatePosition={updatePosition}
@@ -2266,6 +2473,17 @@ function togglePipcount() {
         onCancel={handleImportCancel}
         onCommit={handleImportCommit}
         onClose={handleImportClose}
+    />
+
+    <ExportDatabaseModal
+        visible={showExportDatabaseModal}
+        mode={exportModalMode}
+        positionCount={exportPositionCount}
+        bind:metadata={exportMetadata}
+        bind:exportOptions={exportOptions}
+        onCancel={handleExportCancel}
+        onExport={handleExportCommit}
+        onClose={handleExportClose}
     />
 
     <FilterLibraryPanel onLoadPositionsByFilters={loadPositionsByFilters} />

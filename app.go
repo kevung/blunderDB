@@ -41,6 +41,14 @@ func (a *App) OpenImportDatabaseDialog() (string, error) {
 	})
 }
 
+func (a *App) OpenExportDatabaseDialog() (string, error) {
+	return runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title:                "Export Database File",
+		Filters:              []runtime.FileFilter{{DisplayName: "Database Files (*.db)", Pattern: "*.db"}},
+		CanCreateDirectories: true,
+	})
+}
+
 func (a *App) DeleteFile(filePath string) error {
 	err := os.Remove(filePath)
 	if err != nil {

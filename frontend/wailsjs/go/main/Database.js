@@ -42,6 +42,10 @@ export function DeletePosition(arg1) {
   return window['go']['main']['Database']['DeletePosition'](arg1);
 }
 
+export function ExportDatabase(arg1, arg2, arg3, arg4, arg5, arg6) {
+  return window['go']['main']['Database']['ExportDatabase'](arg1, arg2, arg3, arg4, arg5, arg6);
+}
+
 export function GetDatabaseVersion() {
   return window['go']['main']['Database']['GetDatabaseVersion']();
 }
