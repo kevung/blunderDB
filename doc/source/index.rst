@@ -68,6 +68,13 @@ Historique des versions
    0.8.0, 03/05/2025, "Possibilité de cacher le compte de course.
    
    Chargement d'une position aléatoire."
+   0.9.0, 02/11/2025, "Correction de bug de la bibliothèque de filtres.
+   
+   Import/export de base de données.
+   
+   Affichage de flèches pour les coups sélectionnés.
+   
+   Raccourcis clavier pour l'import/export."
 
 Sommaire
 ========

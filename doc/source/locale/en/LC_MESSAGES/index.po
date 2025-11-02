@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-05-03 22:31+0200\n"
+"POT-Creation-Date: 2025-11-02 05:16+0100\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 25.04.0\n"
 
 #: ../../source/index.rst:4
 msgid "blunderDB"
@@ -188,10 +187,8 @@ msgid "04/02/2025"
 msgstr "February 4, 2025"
 
 #: ../../source/index.rst:1
-msgid ""
-"Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
-msgstr ""
-"Addition of new filters (mirror, non-contact, jan blot, outfield blot)."
+msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
+msgstr "Addition of new filters (mirror, non-contact, jan blot, outfield blot)."
 
 #: ../../source/index.rst:1
 msgid "0.6.0"
@@ -237,15 +234,39 @@ msgstr "New button to hide pipcount."
 msgid "Chargement d'une position aléatoire."
 msgstr "Button to load random position."
 
-#: ../../source/index.rst:73
+#: ../../source/index.rst:1
+msgid "0.9.0"
+msgstr "0.9.0"
+
+#: ../../source/index.rst:1
+msgid "02/11/2025"
+msgstr "November 02, 2025"
+
+#: ../../source/index.rst:1
+msgid "Correction de bug de la bibliothèque de filtres."
+msgstr "Fix filter library bug."
+
+#: ../../source/index.rst:3
+msgid "Import/export de base de données."
+msgstr "Database import/export."
+
+#: ../../source/index.rst:5
+msgid "Affichage de flèches pour les coups sélectionnés."
+msgstr "Display arrows for selected moves."
+
+#: ../../source/index.rst:7
+msgid "Raccourcis clavier pour l'import/export."
+msgstr "Keyboard shortcuts for import/export."
+
+#: ../../source/index.rst:80
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:103
+#: ../../source/index.rst:110
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:105
+#: ../../source/index.rst:112
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -253,7 +274,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:108
+#: ../../source/index.rst:115
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -268,42 +289,41 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:115
+#: ../../source/index.rst:122
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:117
-msgid ""
-"rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+#: ../../source/index.rst:124
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:119
+#: ../../source/index.rst:126
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:121
+#: ../../source/index.rst:128
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:123
+#: ../../source/index.rst:130
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:125
+#: ../../source/index.rst:132
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:127
+#: ../../source/index.rst:134
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:131
+#: ../../source/index.rst:138
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:133
+#: ../../source/index.rst:140
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -311,19 +331,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:135
+#: ../../source/index.rst:142
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:137
+#: ../../source/index.rst:144
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:140
+#: ../../source/index.rst:147
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:142
+#: ../../source/index.rst:149
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -331,7 +351,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:145
+#: ../../source/index.rst:152
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -342,7 +362,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:150
+#: ../../source/index.rst:157
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -357,3 +377,4 @@ msgstr ""
 
 #~ msgid "01/03/2025"
 #~ msgstr "February 13, 2025"
+
