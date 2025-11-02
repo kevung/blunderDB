@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 	"sync" // Import sync package
+	"sync/atomic"
 	"time"
 
 	_ "modernc.org/sqlite"
@@ -16,7 +17,7 @@ import (
 type Database struct {
 	db              *sql.DB
 	mu              sync.Mutex // Add a mutex to the Database struct
-	importCancelled bool       // Flag to cancel ongoing import
+	importCancelled int32      // Flag to cancel ongoing import (atomic)
 }
 
 func NewDatabase() *Database {
@@ -2767,6 +2768,12 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		}
 	}
 
+	// Final check for cancellation before committing
+	if d.isImportCancelled() {
+		fmt.Println("Import cancelled by user before commit")
+		return nil, fmt.Errorf("import cancelled by user")
+	}
+
 	// Commit the transaction - this makes all changes atomic
 	err = tx.Commit()
 	if err != nil {
@@ -2787,20 +2794,18 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 // CancelImport sets the flag to cancel any ongoing import operation
 func (d *Database) CancelImport() {
-	d.mu.Lock()
-	defer d.mu.Unlock()
-	d.importCancelled = true
+	atomic.StoreInt32(&d.importCancelled, 1)
 	fmt.Println("Import cancellation requested")
 }
 
 // isImportCancelled checks if import has been cancelled (internal method, no lock needed as it's called within locked context)
 func (d *Database) isImportCancelled() bool {
-	return d.importCancelled
+	return atomic.LoadInt32(&d.importCancelled) == 1
 }
 
 // resetImportCancellation resets the cancellation flag (internal method)
 func (d *Database) resetImportCancellation() {
-	d.importCancelled = false
+	atomic.StoreInt32(&d.importCancelled, 0)
 }
 
 // Deprecated: Use AnalyzeImportDatabase followed by CommitImportDatabase instead
