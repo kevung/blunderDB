@@ -22,6 +22,10 @@ export function OpenPositionDialog() {
   return window['go']['main']['App']['OpenPositionDialog']();
 }
 
+export function OpenXGFileDialog() {
+  return window['go']['main']['App']['OpenXGFileDialog']();
+}
+
 export function SaveDatabaseDialog() {
   return window['go']['main']['App']['SaveDatabaseDialog']();
 }

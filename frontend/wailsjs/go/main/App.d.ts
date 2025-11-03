@@ -12,6 +12,8 @@ export function OpenImportDatabaseDialog():Promise<string>;
 
 export function OpenPositionDialog():Promise<main.FileDialogResponse>;
 
+export function OpenXGFileDialog():Promise<string>;
+
 export function SaveDatabaseDialog():Promise<string>;
 
 export function ShowAlert(arg1:string):Promise<void>;

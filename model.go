@@ -33,7 +33,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "1.3.0"
+	DatabaseVersion = "1.4.0"
 )
 
 type Point struct {
@@ -152,4 +152,57 @@ func (p *Position) MatchesCheckerPosition(filter Position) bool {
 		}
 	}
 	return true
+}
+
+// Match-related structures for XG import
+
+type Match struct {
+	ID          int64     `json:"id"`
+	Player1Name string    `json:"player1_name"`
+	Player2Name string    `json:"player2_name"`
+	Event       string    `json:"event"`
+	Location    string    `json:"location"`
+	Round       string    `json:"round"`
+	MatchLength int32     `json:"match_length"`
+	MatchDate   time.Time `json:"match_date"`
+	ImportDate  time.Time `json:"import_date"`
+	FilePath    string    `json:"file_path"`
+	GameCount   int       `json:"game_count"`
+}
+
+type Game struct {
+	ID           int64    `json:"id"`
+	MatchID      int64    `json:"match_id"`
+	GameNumber   int32    `json:"game_number"`
+	InitialScore [2]int32 `json:"initial_score"`
+	Winner       int32    `json:"winner"`
+	PointsWon    int32    `json:"points_won"`
+	MoveCount    int      `json:"move_count"`
+}
+
+type Move struct {
+	ID          int64    `json:"id"`
+	GameID      int64    `json:"game_id"`
+	MoveNumber  int32    `json:"move_number"`
+	MoveType    string   `json:"move_type"` // "checker" or "cube"
+	PositionID  int64    `json:"position_id"`
+	Player      int32    `json:"player"`
+	Dice        [2]int32 `json:"dice"`
+	CheckerMove string   `json:"checker_move,omitempty"`
+	CubeAction  string   `json:"cube_action,omitempty"`
+}
+
+type MoveAnalysis struct {
+	ID                     int64   `json:"id"`
+	MoveID                 int64   `json:"move_id"`
+	AnalysisType           string  `json:"analysis_type"` // "checker" or "cube"
+	Depth                  string  `json:"depth"`
+	Equity                 float64 `json:"equity"`
+	EquityError            float64 `json:"equity_error"`
+	WinRate                float64 `json:"win_rate"`
+	GammonRate             float64 `json:"gammon_rate"`
+	BackgammonRate         float64 `json:"backgammon_rate"`
+	OpponentWinRate        float64 `json:"opponent_win_rate"`
+	OpponentGammonRate     float64 `json:"opponent_gammon_rate"`
+	OpponentBackgammonRate float64 `json:"opponent_backgammon_rate"`
 }

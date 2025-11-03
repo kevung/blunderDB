@@ -49,6 +49,8 @@ export const previousModeStore = writable('NORMAL');
 
 export const showFilterLibraryPanelStore = writable(false);
 
+export const showMatchPanelStore = writable(false); // Add store for match panel visibility
+
 export const showPipcountStore = writable(true); // Add store for pip count visibility
 
 export const isAnyModalOrPanelOpenStore = derived(
@@ -72,7 +74,8 @@ export const isAnyModalOrPanelOpenStore = derived(
     showSearchHistoryPanelStore,
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
-    showFilterLibraryPanelStore
+    showFilterLibraryPanelStore,
+    showMatchPanelStore
   ],
   ([
     showSearchModal,
@@ -94,7 +97,8 @@ export const isAnyModalOrPanelOpenStore = derived(
     showSearchHistoryPanel,
     showTakePoint2Modal,
     showTakePoint4Modal,
-    showFilterLibraryPanel
+    showFilterLibraryPanel,
+    showMatchPanel
   ]) => {
     return (
       showSearchModal ||
@@ -116,7 +120,8 @@ export const isAnyModalOrPanelOpenStore = derived(
       showSearchHistoryPanel ||
       showTakePoint2Modal ||
       showTakePoint4Modal ||
-      showFilterLibraryPanel 
+      showFilterLibraryPanel ||
+      showMatchPanel
     );
   }
 );
@@ -184,19 +189,22 @@ export const isAnyPanelOpenStore = derived(
     showAnalysisStore,
     showCommentStore,
     showFilterLibraryPanelStore,
-    showSearchHistoryPanelStore
+    showSearchHistoryPanelStore,
+    showMatchPanelStore
   ],
   ([
     showAnalysis,
     showComment,
     showFilterLibraryPanel,
-    showSearchHistoryPanel
+    showSearchHistoryPanel,
+    showMatchPanel
   ]) => {
     return (
       showAnalysis ||
       showComment ||
       showFilterLibraryPanel ||
-      showSearchHistoryPanel
+      showSearchHistoryPanel ||
+      showMatchPanel
     );
   }
 );

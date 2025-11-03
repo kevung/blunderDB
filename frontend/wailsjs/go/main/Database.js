@@ -38,6 +38,10 @@ export function DeleteFilter(arg1) {
   return window['go']['main']['Database']['DeleteFilter'](arg1);
 }
 
+export function DeleteMatch(arg1) {
+  return window['go']['main']['Database']['DeleteMatch'](arg1);
+}
+
 export function DeletePosition(arg1) {
   return window['go']['main']['Database']['DeletePosition'](arg1);
 }
@@ -50,12 +54,32 @@ export function ExportDatabase(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['main']['Database']['ExportDatabase'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
 
+export function GetAllMatches() {
+  return window['go']['main']['Database']['GetAllMatches']();
+}
+
 export function GetDatabaseVersion() {
   return window['go']['main']['Database']['GetDatabaseVersion']();
 }
 
+export function GetGamesByMatch(arg1) {
+  return window['go']['main']['Database']['GetGamesByMatch'](arg1);
+}
+
+export function GetMatchByID(arg1) {
+  return window['go']['main']['Database']['GetMatchByID'](arg1);
+}
+
+export function GetMovesByGame(arg1) {
+  return window['go']['main']['Database']['GetMovesByGame'](arg1);
+}
+
 export function ImportDatabase(arg1) {
   return window['go']['main']['Database']['ImportDatabase'](arg1);
+}
+
+export function ImportXGMatch(arg1) {
+  return window['go']['main']['Database']['ImportXGMatch'](arg1);
 }
 
 export function LoadAllPositions() {

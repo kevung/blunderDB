@@ -479,6 +479,11 @@
                             </tr>
 
                             <tr>
+                                <td>Ctrl + T</td>
+                                <td>Match Panel</td>
+                            </tr>
+
+                            <tr>
                                 <td>?</td>
                                 <td>Open Help</td>
                             </tr>
@@ -598,6 +603,42 @@
                         </tbody>
                     </table>
 
+                    <h3>Match Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Select/deselect a match</td>
+                            </tr>
+                            <tr>
+                                <td>Double-click</td>
+                                <td>Load match positions</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Select previous match</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Select next match</td>
+                            </tr>
+                            <tr>
+                                <td>Del</td>
+                                <td>Delete selected match</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Deselect match. If no match selected, close the panel.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                 {/if}
 
                 {#if activeTab === 'commands'}
@@ -702,6 +743,10 @@
                             <tr>
                                 <td>history, hi</td>
                                 <td>Show Search History</td>
+                            </tr>
+                            <tr>
+                                <td>match, ma</td>
+                                <td>Show Match Panel</td>
                             </tr>
                             <tr>
                                 <td>help, he, h</td>

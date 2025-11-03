@@ -37,7 +37,9 @@
         CancelImport, // Import CancelImport
         ExportDatabase, // Import ExportDatabase
         SaveFilter, // Import SaveFilter
-        SaveEditPosition // Import SaveEditPosition
+        SaveEditPosition, // Import SaveEditPosition
+        ImportXGMatch, // Import ImportXGMatch
+        GetAllMatches // Import GetAllMatches
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -90,6 +92,7 @@
         isAnyModalOpenStore, // Import the derived store
         previousModeStore, // Import previousModeStore
         showFilterLibraryPanelStore, // Import showFilterLibraryPanelStore
+        showMatchPanelStore, // Import showMatchPanelStore
         showPipcountStore
     } from './stores/uiStore';
 
@@ -121,6 +124,7 @@
     import FilterLibraryPanel from './components/FilterLibraryPanel.svelte'; // Update import
     import ImportProgressModal from './components/ImportProgressModal.svelte'; // Import ImportProgressModal component
     import ExportDatabaseModal from './components/ExportDatabaseModal.svelte'; // Import ExportDatabaseModal component
+    import MatchPanel from './components/MatchPanel.svelte'; // Import MatchPanel component
 
     // Visibility variables
     let showSearchModal = false;
@@ -180,6 +184,7 @@
     let isAnyModalOrPanelOpen = false;
     let isAnyModalOpen = false;
     let showFilterLibraryPanel = false; // Update variable
+    let showMatchPanel = false; // Add match panel visibility variable
     let showPipcount = true; // Update variable
     
     // Subscrive to pipcount store
@@ -210,6 +215,11 @@
     // Subscribe to the showFilterLibraryPanelStore
     showFilterLibraryPanelStore.subscribe(value => {
         showFilterLibraryPanel = value;
+    });
+
+    // Subscribe to the showMatchPanelStore
+    showMatchPanelStore.subscribe(value => {
+        showMatchPanel = value;
     });
 
     // Reference for various elements.
@@ -382,7 +392,7 @@
         }
 
         // Prevent command line from opening when editing filter panel fields or comment panel
-        if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || showComment) {
+        if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || document.activeElement.closest('.match-panel') || showComment) {
             // Allow all Ctrl+key shortcuts to work globally
             if (event.ctrlKey) {
                 console.log('DEBUG: Inside panel, but Ctrl key pressed - allowing shortcut');
@@ -403,8 +413,9 @@
                     // Check if any row is selected in the panels
                     const filterLibraryHasSelection = document.querySelector('.filter-library-panel tr.highlight');
                     const searchHistoryHasSelection = document.querySelector('.search-history-panel tr.selected');
+                    const matchPanelHasSelection = document.querySelector('.match-panel tr.selected');
                     
-                    if (!filterLibraryHasSelection && !searchHistoryHasSelection) {
+                    if (!filterLibraryHasSelection && !searchHistoryHasSelection && !matchPanelHasSelection) {
                         // No selection, allow position navigation - don't return early
                         console.log('DEBUG: Panel open but no selection, allowing navigation key:', event.key);
                     } else {
@@ -513,6 +524,8 @@
             toggleMetadataModal();
         } else if (event.ctrlKey && event.code === 'KeyB') {
             toggleFilterLibraryPanel();
+        } else if (event.ctrlKey && event.code === 'KeyT') {
+            toggleMatchPanel();
         } else if (!event.ctrlKey && event.code === 'KeyP') {
             togglePipcount();
         } else if (!event.ctrlKey && event.code === 'KeyR') {
@@ -1011,46 +1024,69 @@
             }
 
             console.log("File path:", response.file_path);
-            console.log("File content:", response.content);
+            
+            // Detect file type by extension
+            const filePath = response.file_path;
+            const isXGFile = filePath.toLowerCase().endsWith('.xg');
+            
+            if (isXGFile) {
+                // Import XG match file
+                console.log("Importing XG match file:", filePath);
+                try {
+                    const matchID = await ImportXGMatch(filePath);
+                    console.log('XG match imported with ID:', matchID);
+                    setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
+                    
+                    // Show match panel to display the imported match
+                    showMatchPanelStore.set(true);
+                } catch (error) {
+                    console.error("Error importing XG match:", error);
+                    setStatusBarMessage('Error importing XG match: ' + error);
+                    await ShowAlert('Error importing XG match: ' + error);
+                }
+            } else {
+                // Import position text file
+                console.log("File content:", response.content);
 
-            // Now you can parse and use the file content
-            const { positionData, parsedAnalysis } = parsePosition(response.content);
-            positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
-            analysisStore.set({
-                positionId: null,
-                xgid: parsedAnalysis.xgid,
-                player1: '',
-                player2: '',
-                analysisType: parsedAnalysis.analysisType,
-                analysisEngineVersion: parsedAnalysis.analysisEngineVersion,
-                checkerAnalysis: { moves: parsedAnalysis.checkerAnalysis },
-                doublingCubeAnalysis: {
-                    analysisDepth: parsedAnalysis.doublingCubeAnalysis.analysisDepth || '',
-                    playerWinChances: parsedAnalysis.doublingCubeAnalysis.playerWinChances || 0,
-                    playerGammonChances: parsedAnalysis.doublingCubeAnalysis.playerGammonChances || 0,
-                    playerBackgammonChances: parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances || 0,
-                    opponentWinChances: parsedAnalysis.doublingCubeAnalysis.opponentWinChances || 0,
-                    opponentGammonChances: parsedAnalysis.doublingCubeAnalysis.opponentGammonChances || 0,
-                    opponentBackgammonChances: parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances || 0,
-                    cubelessNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity || 0,
-                    cubelessDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity || 0,
-                    cubefulNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity || 0,
-                    cubefulNoDoubleError: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError || 0,
-                    cubefulDoubleTakeEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0,
-                    cubefulDoubleTakeError: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError || 0,
-                    cubefulDoublePassEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity || 0,
-                    cubefulDoublePassError: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError || 0,
-                    bestCubeAction: parsedAnalysis.doublingCubeAnalysis.bestCubeAction || '',
-                    wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
-                    wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
-                },
-                creationDate: '',
-                lastModifiedDate: ''
-            });
-            console.log('positionStore:', $positionStore);
-            console.log('analysisStore:', $analysisStore);
+                // Now you can parse and use the file content
+                const { positionData, parsedAnalysis } = parsePosition(response.content);
+                positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
+                analysisStore.set({
+                    positionId: null,
+                    xgid: parsedAnalysis.xgid,
+                    player1: '',
+                    player2: '',
+                    analysisType: parsedAnalysis.analysisType,
+                    analysisEngineVersion: parsedAnalysis.analysisEngineVersion,
+                    checkerAnalysis: { moves: parsedAnalysis.checkerAnalysis },
+                    doublingCubeAnalysis: {
+                        analysisDepth: parsedAnalysis.doublingCubeAnalysis.analysisDepth || '',
+                        playerWinChances: parsedAnalysis.doublingCubeAnalysis.playerWinChances || 0,
+                        playerGammonChances: parsedAnalysis.doublingCubeAnalysis.playerGammonChances || 0,
+                        playerBackgammonChances: parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances || 0,
+                        opponentWinChances: parsedAnalysis.doublingCubeAnalysis.opponentWinChances || 0,
+                        opponentGammonChances: parsedAnalysis.doublingCubeAnalysis.opponentGammonChances || 0,
+                        opponentBackgammonChances: parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances || 0,
+                        cubelessNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity || 0,
+                        cubelessDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity || 0,
+                        cubefulNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity || 0,
+                        cubefulNoDoubleError: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError || 0,
+                        cubefulDoubleTakeEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0,
+                        cubefulDoubleTakeError: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError || 0,
+                        cubefulDoublePassEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity || 0,
+                        cubefulDoublePassError: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError || 0,
+                        bestCubeAction: parsedAnalysis.doublingCubeAnalysis.bestCubeAction || '',
+                        wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
+                        wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
+                    },
+                    creationDate: '',
+                    lastModifiedDate: ''
+                });
+                console.log('positionStore:', $positionStore);
+                console.log('analysisStore:', $analysisStore);
 
-            await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
+                await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
+            }
         } catch (error) {
             console.error("Error importing position:", error);
         } finally {
@@ -2060,6 +2096,32 @@
             showCommentStore.set(false);
             showAnalysisStore.set(false);
             showSearchHistoryPanelStore.set(false);
+            showMatchPanelStore.set(false);
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
+            currentPositionIndexStore.set(currentIndex); // Set back to the original value
+        }
+
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
+    }
+
+    function toggleMatchPanel() {
+        console.log('toggleMatchPanel');
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
+        const wasOpen = showMatchPanel;
+        showMatchPanelStore.set(!wasOpen);
+        if (!wasOpen) {
+            // Panel is now opening - close other panels
+            statusBarModeStore.set('NORMAL');
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
+            showSearchHistoryPanelStore.set(false);
+            showFilterLibraryPanelStore.set(false);
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
@@ -2461,6 +2523,7 @@ function togglePipcount() {
         onShowMetadata={toggleMetadataModal}
         onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
         onToggleSearchHistory={toggleSearchHistoryPanel}
+        onToggleMatchPanel={toggleMatchPanel}
     />
 
     <div class="scrollable-content">
@@ -2485,6 +2548,7 @@ function togglePipcount() {
             onLoadAllPositions={loadAllPositions}
             toggleFilterLibraryPanel={toggleFilterLibraryPanel}
             toggleSearchHistoryPanel={toggleSearchHistoryPanel}
+            toggleMatchPanel={toggleMatchPanel}
         />
 
     </div>
@@ -2591,6 +2655,8 @@ function togglePipcount() {
     />
 
     <FilterLibraryPanel onLoadPositionsByFilters={loadPositionsByFilters} />
+
+    <MatchPanel />
 
     <HelpModal
         visible={showHelp}

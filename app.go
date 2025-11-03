@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"io/ioutil"
 	"os"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -64,10 +63,15 @@ type FileDialogResponse struct {
 }
 
 func (a *App) OpenPositionDialog() (*FileDialogResponse, error) {
-	// Open the file dialog
+	// Open the file dialog with both .txt and .xg file types
 	filePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title:   "Import Position File",
-		Filters: []runtime.FileFilter{{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"}},
+		Title: "Import Position or XG Match File",
+		Filters: []runtime.FileFilter{
+			{DisplayName: "All Supported Files (*.txt, *.xg)", Pattern: "*.txt;*.xg"},
+			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
+			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
+			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
+		},
 	})
 
 	if err != nil {
@@ -79,7 +83,7 @@ func (a *App) OpenPositionDialog() (*FileDialogResponse, error) {
 	}
 
 	// Read the file content
-	content, err := ioutil.ReadFile(filePath)
+	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return &FileDialogResponse{Error: err.Error()}, err
 	}
@@ -88,6 +92,13 @@ func (a *App) OpenPositionDialog() (*FileDialogResponse, error) {
 		FilePath: filePath,
 		Content:  string(content),
 	}, nil
+}
+
+func (a *App) OpenXGFileDialog() (string, error) {
+	return runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title:   "Import XG Match File",
+		Filters: []runtime.FileFilter{{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"}},
+	})
 }
 
 func (a *App) ShowAlert(message string) {

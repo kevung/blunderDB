@@ -20,15 +20,27 @@ export function DeleteComment(arg1:number):Promise<void>;
 
 export function DeleteFilter(arg1:number):Promise<void>;
 
+export function DeleteMatch(arg1:number):Promise<void>;
+
 export function DeletePosition(arg1:number):Promise<void>;
 
 export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
 export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:boolean):Promise<void>;
 
+export function GetAllMatches():Promise<Array<main.Match>>;
+
 export function GetDatabaseVersion():Promise<string>;
 
+export function GetGamesByMatch(arg1:number):Promise<Array<main.Game>>;
+
+export function GetMatchByID(arg1:number):Promise<main.Match>;
+
+export function GetMovesByGame(arg1:number):Promise<Array<main.Move>>;
+
 export function ImportDatabase(arg1:string):Promise<Record<string, any>>;
+
+export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function LoadAllPositions():Promise<Array<main.Position>>;
 
