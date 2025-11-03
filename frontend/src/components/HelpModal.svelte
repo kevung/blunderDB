@@ -561,7 +561,39 @@
                             </tr>
                             <tr>
                                 <td>Esc</td>
-                                <td>Close the panel</td>
+                                <td>Deselect search. If no search selected, close the panel.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Filter Library Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Select/deselect a filter (show position)</td>
+                            </tr>
+                            <tr>
+                                <td>Double-click</td>
+                                <td>Execute filter search</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Select previous filter (when a filter is selected)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Select next filter (when a filter is selected)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Deselect filter. If no filter selected, close the panel.</td>
                             </tr>
                         </tbody>
                     </table>
@@ -666,6 +698,10 @@
                             <tr>
                                 <td>filter, fl</td>
                                 <td>Show Filter Library</td>
+                            </tr>
+                            <tr>
+                                <td>history, hi</td>
+                                <td>Show Search History</td>
                             </tr>
                             <tr>
                                 <td>help, he, h</td>

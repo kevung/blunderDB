@@ -25,6 +25,7 @@
    export let onLoadPositionsByFilters;
    export let onLoadAllPositions;
    export let toggleFilterLibraryPanel; // Add the prop
+   export let toggleSearchHistoryPanel; // Add the prop
    let inputEl;
 
    let initialized = false;
@@ -286,6 +287,8 @@
                }
             } else if (command === 'filter' || command === 'fl') {
                toggleFilterLibraryPanel();
+            } else if (command === 'history' || command === 'hi') {
+               toggleSearchHistoryPanel();
             } else if (command === 'met') {
                showMetModalStore.set(true); // Show MET modal
             } else if (command === 'tp2_last') {

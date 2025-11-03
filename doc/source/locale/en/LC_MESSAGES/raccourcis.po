@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:58+0100\n"
+"POT-Creation-Date: 2025-11-03 02:09+0100\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -326,7 +326,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -351,8 +351,17 @@ msgid "Panneau historique de recherche"
 msgstr "Search History Panel"
 
 #: ../../source/raccourcis.rst:1
+#, fuzzy
+msgid "Clic"
+msgstr "CTRL-I"
+
+#: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner une recherche (afficher la position)."
 msgstr "Select/deselect a search (show position)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic"
+msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Exécuter la recherche et fermer le panneau."
@@ -367,10 +376,15 @@ msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
 msgstr "Select next search (older, below)."
 
 #: ../../source/raccourcis.rst:1
+#, fuzzy
+msgid "Esc"
+msgstr "SPACE"
+
+#: ../../source/raccourcis.rst:1
 msgid "Fermer le panneau."
 msgstr "Close the panel."
 
-#: ../../source/raccourcis.rst:136
+#: ../../source/raccourcis.rst:138
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 

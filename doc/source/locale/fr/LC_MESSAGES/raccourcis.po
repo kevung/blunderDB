@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:58+0100\n"
+"POT-Creation-Date: 2025-11-03 02:09+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -312,14 +312,22 @@ msgid "Rechercher une position."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-H, ?"
+msgid "CTRL-H"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher l'historique de recherche."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "?"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
 msgstr ""
 
-#: ../../source/raccourcis.rst:108
+#: ../../source/raccourcis.rst:109
 msgid "Ligne de commande"
 msgstr ""
 
@@ -337,6 +345,62 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Parcourir l'historique des commandes vers le bas."
+msgstr ""
+
+#: ../../source/raccourcis.rst:122
+msgid "Panneau historique de recherche"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner une recherche (afficher la position)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche et fermer le panneau."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer le panneau."
+msgstr ""
+
+#: ../../source/raccourcis.rst:138
+msgid "Panneau d'analyse"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr ""
 
 #~ msgid "Raccourcis modaux"
@@ -511,5 +575,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+#~ msgstr ""
+
+#~ msgid "CTRL-H, ?"
 #~ msgstr ""
 

@@ -2476,6 +2476,7 @@ function togglePipcount() {
             onLoadPositionsByFilters={loadPositionsByFilters}
             onLoadAllPositions={loadAllPositions}
             toggleFilterLibraryPanel={toggleFilterLibraryPanel}
+            toggleSearchHistoryPanel={toggleSearchHistoryPanel}
         />
 
     </div>
