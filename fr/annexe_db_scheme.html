@@ -60,6 +60,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">10.1. Version 1.0.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">10.2. Version 1.1.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">10.3. Version 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">10.4. Version 1.3.0</a></li>
 </ul>
 </li>
 </ul>
@@ -120,6 +121,15 @@
 </ul>
 <p>Les autres tables restent inchangées par rapport à la version 1.1.0.</p>
 <p>Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, exécutez la commande <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> dans blunderDB.</p>
+</section>
+<section id="version-1-3-0">
+<h2><span class="section-number">10.4. </span>Version 1.3.0<a class="headerlink" href="#version-1-3-0" title="Lien vers cette rubrique"></a></h2>
+<p>La version 1.3.0 de la base de données ajoute la table suivante :</p>
+<ul class="simple">
+<li><p><strong>search_history</strong> : Stocke l’historique des recherches de positions avec les colonnes <cite>id</cite> (clé primaire), <cite>command</cite> (texte de la commande de recherche), <cite>position</cite> (état de la position au moment de la recherche), et <cite>timestamp</cite> (date et heure de la recherche).</p></li>
+</ul>
+<p>Les autres tables restent inchangées par rapport à la version 1.2.0.</p>
+<p>Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, exécutez la commande <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> dans blunderDB.</p>
 </section>
 </section>
 

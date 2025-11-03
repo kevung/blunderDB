@@ -100,7 +100,8 @@ Outils
    "CTRL-P", "Afficher/cacher les commentaires."
    "CTRL-B", "Afficher/cacher la bibliothèque de filtres."
    "CTRL-F", "Rechercher une position."
-   "CTRL-H, ?", "Afficher/cacher l'aide."
+   "CTRL-H", "Afficher/cacher l'historique de recherche."
+   "?", "Afficher/cacher l'aide."
 
 .. _raccourcis_command:
 
@@ -114,6 +115,37 @@ Ligne de commande
 
    "HAUT", "Parcourir l'historique des commandes vers le haut."
    "BAS", "Parcourir l'historique des commandes vers le bas."
+
+.. _raccourcis_search_history:
+
+Panneau historique de recherche
+--------------------------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Sélectionner/désélectionner une recherche (afficher la position)."
+   "Double-clic", "Exécuter la recherche et fermer le panneau."
+   "HAUT, k", "Sélectionner la recherche précédente (plus récente, au-dessus)."
+   "BAS, j", "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+   "Esc", "Fermer le panneau."
+
+.. _raccourcis_analysis:
+
+Panneau d'analyse
+-----------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
+   "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
+   "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
+   "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 
 
 

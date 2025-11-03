@@ -29,40 +29,43 @@
 \contentsline {subsection}{\numberline {2.4.3}EDIT Mode}{11}{subsection.2.4.3}%
 \contentsline {subsection}{\numberline {2.4.4}Search Filters}{12}{subsection.2.4.4}%
 \contentsline {subsection}{\numberline {2.4.5}Various commands}{14}{subsection.2.4.5}%
-\contentsline {section}{\numberline {2.5}Keyboard shortcuts}{14}{section.2.5}%
-\contentsline {subsection}{\numberline {2.5.1}Database}{14}{subsection.2.5.1}%
+\contentsline {section}{\numberline {2.5}Keyboard shortcuts}{15}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Database}{15}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Position}{15}{subsection.2.5.2}%
 \contentsline {subsection}{\numberline {2.5.3}Navigation}{15}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Display}{15}{subsection.2.5.4}%
-\contentsline {subsection}{\numberline {2.5.5}Modes}{15}{subsection.2.5.5}%
-\contentsline {subsection}{\numberline {2.5.6}Tools}{15}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.5}Modes}{16}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.6}Tools}{16}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Command Line}{16}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.8}Search History Panel}{16}{subsection.2.5.8}%
+\contentsline {subsection}{\numberline {2.5.9}Analysis Panel}{16}{subsection.2.5.9}%
 \contentsline {section}{\numberline {2.6}Frequently Asked Questions (FAQ)}{16}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}What is the purpose of blunderDB?}{16}{subsection.2.6.1}%
-\contentsline {subsection}{\numberline {2.6.2}What motivated the creation of blunderDB?}{16}{subsection.2.6.2}%
-\contentsline {subsection}{\numberline {2.6.3}How to save the state of the current database?}{16}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}Should I create different databases for different categories of positions?}{16}{subsection.2.6.4}%
-\contentsline {subsection}{\numberline {2.6.5}How to merge multiple databases?}{16}{subsection.2.6.5}%
+\contentsline {subsection}{\numberline {2.6.2}What motivated the creation of blunderDB?}{17}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}How to save the state of the current database?}{17}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}Should I create different databases for different categories of positions?}{17}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.5}How to merge multiple databases?}{17}{subsection.2.6.5}%
 \contentsline {subsection}{\numberline {2.6.6}Can I modify, copy, share blunderDB?}{17}{subsection.2.6.6}%
-\contentsline {subsection}{\numberline {2.6.7}What data format does blunderDB use?}{17}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}What were the design principles of blunderDB?}{17}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}What is the software architecture of blunderDB?}{17}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}On which platforms does blunderDB run?}{17}{subsection.2.6.10}%
-\contentsline {subsection}{\numberline {2.6.11}Where does the blunderDB icon come from?}{17}{subsection.2.6.11}%
-\contentsline {section}{\numberline {2.7}Annex: Advanced Filter Usage}{17}{section.2.7}%
+\contentsline {subsection}{\numberline {2.6.7}What data format does blunderDB use?}{18}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.8}What were the design principles of blunderDB?}{18}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}What is the software architecture of blunderDB?}{18}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.10}On which platforms does blunderDB run?}{18}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.11}Where does the blunderDB icon come from?}{18}{subsection.2.6.11}%
+\contentsline {section}{\numberline {2.7}Annex: Advanced Filter Usage}{18}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Command\sphinxhyphen {}line search for positions}{18}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Filter Library}{18}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.2}Filter Library}{19}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Examples}{19}{subsection.2.7.3}%
-\contentsline {section}{\numberline {2.8}Windows Annex: False Detection of blunderDB as Malware}{19}{section.2.8}%
-\contentsline {subsection}{\numberline {2.8.1}Windows SmartScreen Warning}{19}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Windows Defender Blocking}{20}{subsection.2.8.2}%
-\contentsline {section}{\numberline {2.9}Mac Annex: Possible Blocking of blunderDB}{21}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Installation of blunderDB}{21}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Authorization to Run blunderDB}{21}{subsection.2.9.2}%
-\contentsline {section}{\numberline {2.10}Annex: Database Schema}{29}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{29}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{29}{subsection.2.10.2}%
-\contentsline {subsection}{\numberline {2.10.3}Version 1.2.0}{29}{subsection.2.10.3}%
-\contentsline {chapter}{\numberline {3}Contact}{31}{chapter.3}%
-\contentsline {chapter}{\numberline {4}Donate}{33}{chapter.4}%
-\contentsline {chapter}{\numberline {5}Acknowledgments}{35}{chapter.5}%
+\contentsline {section}{\numberline {2.8}Windows Annex: False Detection of blunderDB as Malware}{20}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Windows SmartScreen Warning}{20}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Windows Defender Blocking}{21}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Mac Annex: Possible Blocking of blunderDB}{22}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Installation of blunderDB}{22}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Authorization to Run blunderDB}{22}{subsection.2.9.2}%
+\contentsline {section}{\numberline {2.10}Annex: Database Schema}{30}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{30}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{30}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.3}Version 1.2.0}{30}{subsection.2.10.3}%
+\contentsline {subsection}{\numberline {2.10.4}Version 1.3.0}{30}{subsection.2.10.4}%
+\contentsline {chapter}{\numberline {3}Contact}{33}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Donate}{35}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Acknowledgments}{37}{chapter.5}%

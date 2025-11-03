@@ -38,3 +38,15 @@ La version 1.2.0 de la base de données ajoute la table suivante :
 Les autres tables restent inchangées par rapport à la version 1.1.0.
 
 Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB.
+
+Version 1.3.0
+-------------
+
+La version 1.3.0 de la base de données ajoute la table suivante :
+
+- **search_history** : Stocke l'historique des recherches de positions avec les colonnes `id` (clé primaire), `command` (texte de la commande de recherche), `position` (état de la position au moment de la recherche), et `timestamp` (date et heure de la recherche).
+
+Les autres tables restent inchangées par rapport à la version 1.2.0.
+
+Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, exécutez la commande ``migrate_from_1_2_to_1_3`` dans blunderDB.
+

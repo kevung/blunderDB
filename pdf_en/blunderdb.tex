@@ -65,7 +65,7 @@
 
 
 \title{blunderDB}
-\date{Nov 02, 2025}
+\date{Nov 03, 2025}
 \release{0.9.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1670,6 +1670,13 @@ migrate\_from\_1\_1\_to\_1\_2
 \sphinxAtStartPar
 Migrate the database from version 1.1 to version 1.2.
 \\
+\sphinxhline
+\sphinxAtStartPar
+migrate\_from\_1\_2\_to\_1\_3
+&
+\sphinxAtStartPar
+Migrate the database from version 1.2 to version 1.3.
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -2033,7 +2040,14 @@ Search for a position.
 \\
 \sphinxhline
 \sphinxAtStartPar
-CTRL\sphinxhyphen{}H, ?
+CTRL\sphinxhyphen{}H
+&
+\sphinxAtStartPar
+Show/hide the search history.
+\\
+\sphinxhline
+\sphinxAtStartPar
+?
 &
 \sphinxAtStartPar
 Show/hide the help.
@@ -2073,6 +2087,113 @@ DOWN
 &
 \sphinxAtStartPar
 Browse command history down.
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Search History Panel}
+\label{\detokenize{raccourcis:panneau-historique-de-recherche}}\label{\detokenize{raccourcis:raccourcis-search-history}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Shortcut
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
+\sphinxAtStartPar
+Clic
+&
+\sphinxAtStartPar
+Select/deselect a search (show position).
+\\
+\sphinxhline
+\sphinxAtStartPar
+Double\sphinxhyphen{}clic
+&
+\sphinxAtStartPar
+Execute search and close panel.
+\\
+\sphinxhline
+\sphinxAtStartPar
+UP, k
+&
+\sphinxAtStartPar
+Select previous search (younger, above).
+\\
+\sphinxhline
+\sphinxAtStartPar
+DOWN, j
+&
+\sphinxAtStartPar
+Select next search (older, below).
+\\
+\sphinxhline
+\sphinxAtStartPar
+Esc
+&
+\sphinxAtStartPar
+Close the panel.
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Analysis Panel}
+\label{\detokenize{raccourcis:panneau-d-analyse}}\label{\detokenize{raccourcis:raccourcis-analysis}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Shortcut
+&\sphinxstyletheadfamily 
+\sphinxAtStartPar
+Action
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook
+\sphinxAtStartPar
+Clic
+&
+\sphinxAtStartPar
+Select/deselect a move (show/hide arrows).
+\\
+\sphinxhline
+\sphinxAtStartPar
+UP, k
+&
+\sphinxAtStartPar
+Select previous move (when a move is selected).
+\\
+\sphinxhline
+\sphinxAtStartPar
+DOWN, j
+&
+\sphinxAtStartPar
+Select next move (when a move is selected).
+\\
+\sphinxhline
+\sphinxAtStartPar
+Esc
+&
+\sphinxAtStartPar
+Deselect move. If no move selected, close the panel.
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2797,6 +2918,24 @@ The other tables remain unchanged from version 1.1.0.
 
 \sphinxAtStartPar
 To migrate the database from version 1.1.0 to version 1.2.0, execute the command \sphinxcode{\sphinxupquote{migrate\_from\_1\_1\_to\_1\_2}} in blunderDB.
+
+
+\subsection{Version 1.3.0}
+\label{\detokenize{annexe_db_scheme:version-1-3-0}}
+\sphinxAtStartPar
+Version 1.3.0 of the database adds the following table:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{search\_history}: Stores position search history with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{command} (search command text), \sphinxtitleref{position} (position state at the time of search), and \sphinxtitleref{timestamp} (date and time of the search).
+
+\end{itemize}
+
+\sphinxAtStartPar
+The other tables remain unchanged from version 1.2.0.
+
+\sphinxAtStartPar
+To migrate the database from version 1.2.0 to version 1.3.0, execute the command \sphinxcode{\sphinxupquote{migrate\_from\_1\_2\_to\_1\_3}} in blunderDB.
 \sphinxcontribyoutube{https://youtu.be/}{Ln7XKVFqfUk}{}
 \sphinxcontribyoutube{https://youtu.be/}{HkY4iXjxMeI}{}
 
