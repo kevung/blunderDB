@@ -359,6 +359,8 @@ export namespace main {
 	    analysisEngineVersion: string;
 	    doublingCubeAnalysis?: DoublingCubeAnalysis;
 	    checkerAnalysis?: CheckerAnalysis;
+	    playedMove?: string;
+	    playedCubeAction?: string;
 	    // Go type: time
 	    creationDate: any;
 	    // Go type: time
@@ -378,6 +380,8 @@ export namespace main {
 	        this.analysisEngineVersion = source["analysisEngineVersion"];
 	        this.doublingCubeAnalysis = this.convertValues(source["doublingCubeAnalysis"], DoublingCubeAnalysis);
 	        this.checkerAnalysis = this.convertValues(source["checkerAnalysis"], CheckerAnalysis);
+	        this.playedMove = source["playedMove"];
+	        this.playedCubeAction = source["playedCubeAction"];
 	        this.creationDate = this.convertValues(source["creationDate"], null);
 	        this.lastModifiedDate = this.convertValues(source["lastModifiedDate"], null);
 	    }

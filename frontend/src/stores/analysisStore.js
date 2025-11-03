@@ -30,6 +30,8 @@ export const analysisStore = writable({
         wrongPassPercentage: 0,
         wrongTakePercentage: 0,
     },
+    playedMove: '',  // The move actually played in a match (if available)
+    playedCubeAction: '',  // The cube action actually taken in a match (if available)
     creationDate: '',
     lastModifiedDate: ''
 });

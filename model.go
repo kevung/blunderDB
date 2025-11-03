@@ -111,6 +111,8 @@ type PositionAnalysis struct {
 	AnalysisEngineVersion string                `json:"analysisEngineVersion"`
 	DoublingCubeAnalysis  *DoublingCubeAnalysis `json:"doublingCubeAnalysis,omitempty"`
 	CheckerAnalysis       *CheckerAnalysis      `json:"checkerAnalysis,omitempty"`
+	PlayedMove            string                `json:"playedMove,omitempty"`       // The move actually played in a match (if available)
+	PlayedCubeAction      string                `json:"playedCubeAction,omitempty"` // The cube action actually taken in a match (if available)
 	CreationDate          time.Time             `json:"creationDate"`
 	LastModifiedDate      time.Time             `json:"lastModifiedDate"`
 }

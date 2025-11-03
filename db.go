@@ -673,6 +673,27 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 		return nil, err
 	}
 
+	// Try to load the played move if this position is from a match
+	var checkerMove sql.NullString
+	var cubeAction sql.NullString
+	err = d.db.QueryRow(`
+		SELECT checker_move, cube_action 
+		FROM move 
+		WHERE position_id = ?
+		LIMIT 1
+	`, positionID).Scan(&checkerMove, &cubeAction)
+
+	if err == nil {
+		// Found a move record for this position
+		if checkerMove.Valid {
+			analysis.PlayedMove = checkerMove.String
+		}
+		if cubeAction.Valid {
+			analysis.PlayedCubeAction = cubeAction.String
+		}
+	}
+	// If no move found, that's okay - this position might not be from a match
+
 	return &analysis, nil
 }
 

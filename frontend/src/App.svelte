@@ -2437,6 +2437,8 @@ function togglePipcount() {
                 wrongPassPercentage: 0,
                 wrongTakePercentage: 0
             },
+            playedMove: analysis?.playedMove || '',
+            playedCubeAction: analysis?.playedCubeAction || '',
             creationDate: analysis?.creationDate || '',
             lastModifiedDate: analysis?.lastModifiedDate || ''
         });

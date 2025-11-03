@@ -25,6 +25,7 @@
             console.log('Received Analysis Data:', analysisData);
             console.log('Analysis Type:', analysisData.analysisType);
             console.log('Checker Analysis:', Array.isArray(analysisData.checkerAnalysis) ? analysisData.checkerAnalysis : []);
+            console.log('Played Move:', analysisData.playedMove);
             setTimeout(() => {
                 const analysisEl = document.getElementById('analysisPanel');
                 if (analysisEl) {
@@ -91,6 +92,20 @@
         }
         return decision;
     }
+
+    function isPlayedMove(move) {
+        return analysisData.playedMove && move.move === analysisData.playedMove;
+    }
+
+    function isPlayedCubeAction(action) {
+        if (!analysisData.playedCubeAction) return false;
+        
+        // Normalize the action for comparison
+        const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
+        const normalizedPlayed = analysisData.playedCubeAction.toLowerCase().replace(/\s+/g, '');
+        
+        return normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction);
+    }
 </script>
 
 {#if visible}
@@ -138,17 +153,17 @@
                                 <th>Equity</th>
                                 <th>Error</th>
                             </tr>
-                            <tr>
+                            <tr class:played={isPlayedCubeAction('No Double')}>
                                 <td>{getDecisionLabel('No Double')}</td>
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleError || 0)}</td>
                             </tr>
-                            <tr>
+                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Take')}>
                                 <td>{getDecisionLabel('Double/Take')}</td>
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeError || 0)}</td>
                             </tr>
-                            <tr>
+                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Pass')}>
                                 <td>{getDecisionLabel('Double/Pass')}</td>
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassEquity || 0)}</td>
                                 <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassError || 0)}</td>
@@ -192,6 +207,7 @@
                         {#each analysisData.checkerAnalysis.moves as move}
                             <tr 
                                 class:selected={$selectedMoveStore === move.move}
+                                class:played={isPlayedMove(move)}
                                 on:click={() => handleMoveRowClick(move)}
                                 style="cursor: pointer;"
                             >
@@ -336,6 +352,18 @@
     .checker-table tr.selected {
         background-color: #b3d9ff !important; /* Highlight selected row with light blue */
         font-weight: bold;
+    }
+
+    .checker-table tr.played {
+        background-color: #fff3cd !important; /* Light yellow background for played move */
+    }
+
+    .checker-table tr.played.selected {
+        background-color: #a3c9ef !important; /* Mixed color when both played and selected */
+    }
+
+    .right-table tr.played {
+        background-color: #fff3cd !important; /* Light yellow background for played cube action */
     }
 
     .checker-table tbody tr:not(:first-child):hover {
