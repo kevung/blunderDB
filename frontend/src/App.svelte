@@ -2056,6 +2056,7 @@
         showFilterLibraryPanelStore.set(!wasOpen);
         if (!wasOpen) {
             // Panel is now opening - close other panels
+            statusBarModeStore.set('NORMAL');
             showCommentStore.set(false);
             showAnalysisStore.set(false);
             showSearchHistoryPanelStore.set(false);
@@ -2068,6 +2069,9 @@
             positionBeforeFilterLibraryStore.set(null);
             positionIndexBeforeFilterLibraryStore.set(-1);
         }
+
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
     }
 
 function togglePipcount() {
@@ -2304,10 +2308,14 @@ function togglePipcount() {
         showSearchHistoryPanelStore.set(!wasOpen);
         if (!wasOpen) {
             // Panel is now opening - close other panels
+            statusBarModeStore.set('NORMAL');
             showCommentStore.set(false);
             showAnalysisStore.set(false);
             showFilterLibraryPanelStore.set(false);
         }
+
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
     }
 
     async function addSearchToFilterLibrary(filterName, filterCommand, positionJson) {
