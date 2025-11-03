@@ -388,6 +388,10 @@
                 console.log('DEBUG: Inside panel, but Ctrl key pressed - allowing shortcut');
                 event.preventDefault();
                 // Don't return, let the shortcut be processed below
+            } else if (event.code === 'Space') {
+                // Allow Space key to open command line even when panels are open
+                console.log('DEBUG: Inside panel, but Space key pressed - allowing command line to open');
+                // Don't return, let the Space key handler below process it
             } else {
                 // Allow j/k/left/right keys for position navigation when no row is selected in panels
                 const isNavigationKey = (event.key === 'j' || event.key === 'k' || 
