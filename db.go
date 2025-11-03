@@ -4323,3 +4323,57 @@ func (d *Database) DeleteMatch(matchID int64) error {
 
 	return nil
 }
+
+// GetDatabaseStats returns statistics about the database
+func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	stats := make(map[string]interface{})
+
+	// Count positions
+	var posCount int64
+	err := d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount)
+	if err != nil {
+		return nil, err
+	}
+	stats["position_count"] = posCount
+
+	// Count analyses
+	var analysisCount int64
+	err = d.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount)
+	if err != nil {
+		return nil, err
+	}
+	stats["analysis_count"] = analysisCount
+
+	// Count matches
+	var matchCount int64
+	err = d.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&matchCount)
+	if err != nil {
+		// Table might not exist in older databases
+		stats["match_count"] = int64(0)
+	} else {
+		stats["match_count"] = matchCount
+	}
+
+	// Count games
+	var gameCount int64
+	err = d.db.QueryRow(`SELECT COUNT(*) FROM game`).Scan(&gameCount)
+	if err != nil {
+		stats["game_count"] = int64(0)
+	} else {
+		stats["game_count"] = gameCount
+	}
+
+	// Count moves
+	var moveCount int64
+	err = d.db.QueryRow(`SELECT COUNT(*) FROM move`).Scan(&moveCount)
+	if err != nil {
+		stats["move_count"] = int64(0)
+	} else {
+		stats["move_count"] = moveCount
+	}
+
+	return stats, nil
+}

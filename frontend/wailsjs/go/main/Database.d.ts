@@ -30,6 +30,8 @@ export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record
 
 export function GetAllMatches():Promise<Array<main.Match>>;
 
+export function GetDatabaseStats():Promise<Record<string, any>>;
+
 export function GetDatabaseVersion():Promise<string>;
 
 export function GetGamesByMatch(arg1:number):Promise<Array<main.Game>>;

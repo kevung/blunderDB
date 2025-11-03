@@ -3,6 +3,8 @@ package main
 import (
 	"embed"
 	"fmt"
+	"os"
+	"strings"
 
 	"github.com/wailsapp/wails/v2"
 	"github.com/wailsapp/wails/v2/pkg/options"
@@ -17,7 +19,33 @@ var icon []byte
 var assets embed.FS
 
 func main() {
+	// Check if running in CLI mode
+	if len(os.Args) > 1 {
+		// Check if first argument is a CLI command
+		cliCommands := []string{"import", "export", "list", "delete", "help", "version"}
+		for _, cmd := range cliCommands {
+			if strings.ToLower(os.Args[1]) == cmd {
+				runCLI()
+				return
+			}
+		}
+	}
 
+	// Run GUI mode
+	runGUI()
+}
+
+func runCLI() {
+	cli := NewCLI()
+	args := os.Args[1:]
+
+	if err := cli.Run(args); err != nil {
+		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
+		os.Exit(1)
+	}
+}
+
+func runGUI() {
 	app := NewApp()
 	db := NewDatabase()
 	cfg := NewConfig()

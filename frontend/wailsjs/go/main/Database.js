@@ -58,6 +58,10 @@ export function GetAllMatches() {
   return window['go']['main']['Database']['GetAllMatches']();
 }
 
+export function GetDatabaseStats() {
+  return window['go']['main']['Database']['GetDatabaseStats']();
+}
+
 export function GetDatabaseVersion() {
   return window['go']['main']['Database']['GetDatabaseVersion']();
 }
