@@ -130,7 +130,23 @@ Panneau historique de recherche
    "Double-clic", "Exécuter la recherche et fermer le panneau."
    "HAUT, k", "Sélectionner la recherche précédente (plus récente, au-dessus)."
    "BAS, j", "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
-   "Esc", "Fermer le panneau."
+   "Esc", "Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le panneau."
+
+.. _raccourcis_filter_library:
+
+Panneau bibliothèque de filtres
+--------------------------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Sélectionner/désélectionner un filtre (afficher la position)."
+   "Double-clic", "Exécuter la recherche du filtre."
+   "HAUT, k", "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+   "BAS, j", "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+   "Esc", "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 
 .. _raccourcis_analysis:
 

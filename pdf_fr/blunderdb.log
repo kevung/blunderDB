@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.3)  3 NOV 2025 01:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.3)  3 NOV 2025 01:20
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -861,133 +861,132 @@ LaTeX Font Info:    Trying to load font information for T1+txtt on input line 3
 File: t1txtt.fd 2000/12/15 v3.1
 ) [5] [6] [7]
 [8] [9] [10] [11] [12] [13] [14]
-Overfull \hbox (25.91899pt too wide) in paragraph at lines 1776--1778
+Overfull \hbox (25.91899pt too wide) in paragraph at lines 1783--1785
 []|\T1/qtm/m/n/10 migrate_from_1_0_to_1_1| 
  []
 
 
-Overfull \hbox (25.91899pt too wide) in paragraph at lines 1783--1785
+Overfull \hbox (25.91899pt too wide) in paragraph at lines 1790--1792
 []|\T1/qtm/m/n/10 migrate_from_1_1_to_1_2| 
  []
 
 
-Overfull \hbox (25.91899pt too wide) in paragraph at lines 1790--1792
+Overfull \hbox (25.91899pt too wide) in paragraph at lines 1797--1799
 []|\T1/qtm/m/n/10 migrate_from_1_2_to_1_3| 
  []
 
 [15] [16] [17] [18] [19]
-Underfull \hbox (badness 10000) in paragraph at lines 2701--2703
+Underfull \hbox (badness 10000) in paragraph at lines 2765--2767
 []|\T1/qtm/m/n/10 portes dans le jan,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2708--2710
+Underfull \hbox (badness 10000) in paragraph at lines 2772--2774
 []|\T1/qtm/m/n/10 Position du tournoi
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2752--2754
+Underfull \hbox (badness 10000) in paragraph at lines 2816--2818
 []|\T1/qtm/m/n/10 Double avec au moins
  []
 
-
-Underfull \hbox (badness 5817) in paragraph at lines 2776--2784
+[20]
+Underfull \hbox (badness 5817) in paragraph at lines 2840--2848
 \T1/qtm/m/n/10 de certifier numériquement leurs applications voire de distribue
 r via le Windows Store. Il est alors
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2776--2784
+Underfull \hbox (badness 10000) in paragraph at lines 2840--2848
 \T1/qtm/m/n/10 préconisé de faire appel à des sociétés extérieures pour obtenir
  un certificat numérique au prix de
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2776--2784
+Underfull \hbox (badness 10000) in paragraph at lines 2840--2848
 \T1/qtm/m/n/10 plusieurs centaines d'euros (voir par exemple [][]$https : / / l
 earn . microsoft . com / en-[]us / archive / blogs / ie _ fr /
  []
 
-[20]
-<smartscreen_en.png, id=464, 502.12593pt x 191.21437pt>
+<smartscreen_en.png, id=468, 502.12593pt x 191.21437pt>
 File: smartscreen_en.png Graphic file (type png)
 <use smartscreen_en.png>
-Package pdftex.def Info: smartscreen_en.png  used on input line 2802.
+Package pdftex.def Info: smartscreen_en.png  used on input line 2866.
 (pdftex.def)             Requested size: 469.77652pt x 178.89539pt.
-<blunderdb_potential_virus.png, id=465, 417.05812pt x 125.71968pt>
+[21]
+<blunderdb_potential_virus.png, id=478, 417.05812pt x 125.71968pt>
 File: blunderdb_potential_virus.png Graphic file (type png)
 <use blunderdb_potential_virus.png>
-Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 2855
+Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 2919
 .
 (pdftex.def)             Requested size: 417.0571pt x 125.71936pt.
-<threat_found_action_needed.png, id=467, 365.86688pt x 240.9pt>
+<threat_found_action_needed.png, id=480, 365.86688pt x 240.9pt>
 File: threat_found_action_needed.png Graphic file (type png)
 <use threat_found_action_needed.png>
-Package pdftex.def Info: threat_found_action_needed.png  used on input line 286
-4.
+Package pdftex.def Info: threat_found_action_needed.png  used on input line 292
+8.
 (pdftex.def)             Requested size: 365.86598pt x 240.8994pt.
-<win1.png, id=470, 584.93532pt x 587.94656pt>
+<win1.png, id=483, 584.93532pt x 587.94656pt>
 File: win1.png Graphic file (type png)
 <use win1.png>
-Package pdftex.def Info: win1.png  used on input line 2895.
+Package pdftex.def Info: win1.png  used on input line 2959.
 (pdftex.def)             Requested size: 469.76967pt x 472.17908pt.
- [21 <./smartscreen_en.png>] [22 <./blunderdb_potential_virus.png> <./threat_fo
-und_action_needed.png>] [23 <./win1.png>]
-<win2.png, id=493, 604.50844pt x 478.78876pt>
+<win2.png, id=484, 604.50844pt x 478.78876pt>
 File: win2.png Graphic file (type png)
 <use win2.png>
-Package pdftex.def Info: win2.png  used on input line 2915.
+Package pdftex.def Info: win2.png  used on input line 2979.
 (pdftex.def)             Requested size: 469.75288pt x 372.05833pt.
-<win3.png, id=494, 605.26125pt x 478.03593pt>
+<win3.png, id=485, 605.26125pt x 478.03593pt>
 File: win3.png Graphic file (type png)
 <use win3.png>
-Package pdftex.def Info: win3.png  used on input line 2935.
+Package pdftex.def Info: win3.png  used on input line 2999.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
+ [22 <./smartscreen_en.png> <./blunderdb_potential_virus.png>]
 <win4.png, id=495, 601.4972pt x 477.28313pt>
 File: win4.png Graphic file (type png)
 <use win4.png>
-Package pdftex.def Info: win4.png  used on input line 2955.
+Package pdftex.def Info: win4.png  used on input line 3019.
 (pdftex.def)             Requested size: 469.77168pt x 372.74542pt.
 <win5.png, id=496, 604.50844pt x 479.54156pt>
 File: win5.png Graphic file (type png)
 <use win5.png>
-Package pdftex.def Info: win5.png  used on input line 2976.
+Package pdftex.def Info: win5.png  used on input line 3040.
 (pdftex.def)             Requested size: 469.75288pt x 372.65063pt.
 <win6.png, id=497, 461.47406pt x 357.58594pt>
 File: win6.png Graphic file (type png)
 <use win6.png>
-Package pdftex.def Info: win6.png  used on input line 2982.
+Package pdftex.def Info: win6.png  used on input line 3046.
 (pdftex.def)             Requested size: 461.47292pt x 357.58505pt.
 <win7.png, id=498, 605.26125pt x 478.03593pt>
 File: win7.png Graphic file (type png)
 <use win7.png>
-Package pdftex.def Info: win7.png  used on input line 2988.
+Package pdftex.def Info: win7.png  used on input line 3052.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
- [24 <./win2.png>] [25 <./win3.png>] [26 <./win4.png>] [27 <./win5.png>] [28 <.
-/win6.png>] [29 <./win7.png>]
-[30]
-Underfull \hbox (badness 10000) in paragraph at lines 3102--3104
+ [23 <./threat_found_action_needed.png>] [24 <./win1.png>] [25 <./win2.png>] [2
+6 <./win3.png>] [27 <./win4.png>] [28 <./win5.png>] [29 <./win6.png>] [30 <./wi
+n7.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 3166--3168
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.0.0 à la versio
 n 1.1.0, exécutez la commande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3120--3122
+Underfull \hbox (badness 10000) in paragraph at lines 3184--3186
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.1.0 à la versio
 n 1.2.0, exécutez la commande
  []
 
-
-Underfull \hbox (badness 10000) in paragraph at lines 3138--3140
+[31]
+Underfull \hbox (badness 10000) in paragraph at lines 3202--3204
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.2.0 à la versio
 n 1.3.0, exécutez la commande
  []
 
-[31] [32
-
-]
+[32]
 Chapter 3.
-[33] [34
+[33
+
+] [34
 
 ]
 Chapter 4.
@@ -1001,13 +1000,13 @@ LaTeX2e <2023-11-01> patch level 1
 L3 programming layer <2024-01-22>
  ***********
 Package rerunfilecheck Info: File `blunderdb.out' has not changed.
-(rerunfilecheck)             Checksum: C4FC35FD628C1D3CA1F5845462EDD351;14151.
+(rerunfilecheck)             Checksum: E35F319372D157ABE153F3893D147C46;14381.
  ) 
 Here is how much of TeX's memory you used:
- 17069 strings out of 476182
- 290303 string characters out of 5795595
+ 17073 strings out of 476182
+ 290421 string characters out of 5795595
  1973975 words of memory out of 5000000
- 38553 multiletter control sequences out of 15000+600000
+ 38556 multiletter control sequences out of 15000+600000
  611301 words of font info for 75 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
  72i,12n,83p,1198b,666s stack positions out of 10000i,1000n,20000p,200000b,200000s
@@ -1017,10 +1016,10 @@ s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 tt.pfb>
-Output written on blunderdb.pdf (41 pages, 468428 bytes).
+Output written on blunderdb.pdf (41 pages, 469419 bytes).
 PDF statistics:
- 645 PDF objects out of 1000 (max. 8388607)
- 563 compressed objects within 6 object streams
- 150 named destinations out of 1000 (max. 500000)
- 631 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 650 PDF objects out of 1000 (max. 8388607)
+ 568 compressed objects within 6 object streams
+ 151 named destinations out of 1000 (max. 500000)
+ 639 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -47,6 +47,7 @@ Mode NORMAL
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."
    "filter, fl", "Afficher/cacher la bibliothèque de filtres."
+   "history, hi", "Afficher/cacher l'historique de recherche."
    "#tag1 tag2 ...", "Etiqueter la position courante."
    "e", "Charger toutes les positions de la base de données."
 

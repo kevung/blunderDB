@@ -38,34 +38,35 @@
 \contentsline {subsection}{\numberline {2.5.6}Outils}{16}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Ligne de commande}{16}{subsection.2.5.7}%
 \contentsline {subsection}{\numberline {2.5.8}Panneau historique de recherche}{16}{subsection.2.5.8}%
-\contentsline {subsection}{\numberline {2.5.9}Panneau d’analyse}{17}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.9}Panneau bibliothèque de filtres}{17}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.10}Panneau d’analyse}{17}{subsection.2.5.10}%
 \contentsline {section}{\numberline {2.6}Foire aux questions}{17}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Quel est l’utilité de blunderDB?}{17}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Qu’est ce qui a motivé la création de blunderDB?}{17}{subsection.2.6.2}%
 \contentsline {subsection}{\numberline {2.6.3}Comment sauvegarder la base de données courante?}{17}{subsection.2.6.3}%
-\contentsline {subsection}{\numberline {2.6.4}Dois\sphinxhyphen {}je créer différentes bases de données pour différentes catégories de positions?}{17}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.4}Dois\sphinxhyphen {}je créer différentes bases de données pour différentes catégories de positions?}{18}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}Comment fusionner plusieurs bases de données?}{18}{subsection.2.6.5}%
 \contentsline {subsection}{\numberline {2.6.6}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{18}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}Quel format de données utilise blunderDB?}{18}{subsection.2.6.7}%
 \contentsline {subsection}{\numberline {2.6.8}Quelles ont été les principes de conception de blunderDB?}{18}{subsection.2.6.8}%
-\contentsline {subsection}{\numberline {2.6.9}Quel est l’architecture logicielle de blunderDB?}{18}{subsection.2.6.9}%
-\contentsline {subsection}{\numberline {2.6.10}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{18}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.9}Quel est l’architecture logicielle de blunderDB?}{19}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.10}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{19}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}D’où vient l’icône de blunderDB?}{19}{subsection.2.6.11}%
 \contentsline {section}{\numberline {2.7}Annexe: Utilisation avancée des filtres}{19}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Recherche de positions en ligne de commande}{19}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Bibliothèque de filtres}{19}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.2}Bibliothèque de filtres}{20}{subsection.2.7.2}%
 \contentsline {subsection}{\numberline {2.7.3}Exemples}{20}{subsection.2.7.3}%
-\contentsline {section}{\numberline {2.8}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{20}{section.2.8}%
+\contentsline {section}{\numberline {2.8}Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant}{21}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Avertissement Windows SmartScreen}{21}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Blocage Windows Defender}{21}{subsection.2.8.2}%
-\contentsline {section}{\numberline {2.9}Annexe Mac : Blocage éventuel de blunderDB}{24}{section.2.9}%
-\contentsline {subsection}{\numberline {2.9.1}Installation de blunderDB}{30}{subsection.2.9.1}%
-\contentsline {subsection}{\numberline {2.9.2}Autorisation de l’exécution de blunderDB}{30}{subsection.2.9.2}%
-\contentsline {section}{\numberline {2.10}Annexe: Schéma de la base de données}{30}{section.2.10}%
-\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{30}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.8.2}Blocage Windows Defender}{22}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Annexe Mac : Blocage éventuel de blunderDB}{23}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Installation de blunderDB}{23}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Autorisation de l’exécution de blunderDB}{31}{subsection.2.9.2}%
+\contentsline {section}{\numberline {2.10}Annexe: Schéma de la base de données}{31}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{31}{subsection.2.10.1}%
 \contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{31}{subsection.2.10.2}%
 \contentsline {subsection}{\numberline {2.10.3}Version 1.2.0}{31}{subsection.2.10.3}%
-\contentsline {subsection}{\numberline {2.10.4}Version 1.3.0}{31}{subsection.2.10.4}%
+\contentsline {subsection}{\numberline {2.10.4}Version 1.3.0}{32}{subsection.2.10.4}%
 \contentsline {chapter}{\numberline {3}Contacts}{33}{chapter.3}%
 \contentsline {chapter}{\numberline {4}Faire un don}{35}{chapter.4}%
 \contentsline {chapter}{\numberline {5}Remerciements}{37}{chapter.5}%
