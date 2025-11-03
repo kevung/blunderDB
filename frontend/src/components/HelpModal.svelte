@@ -474,7 +474,12 @@
                             </tr>
 
                             <tr>
-                                <td>Ctrl + H, ?</td>
+                                <td>Ctrl + H</td>
+                                <td>Search History</td>
+                            </tr>
+
+                            <tr>
+                                <td>?</td>
                                 <td>Open Help</td>
                             </tr>
 
@@ -525,6 +530,38 @@
                             <tr>
                                 <td>Esc</td>
                                 <td>Deselect move. If no move selected, close the panel.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Search History Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Select/deselect a search (show position)</td>
+                            </tr>
+                            <tr>
+                                <td>Double-click</td>
+                                <td>Execute search and close panel</td>
+                            </tr>
+                            <tr>
+                                <td>Up, k</td>
+                                <td>Select previous search (younger, above)</td>
+                            </tr>
+                            <tr>
+                                <td>Down, j</td>
+                                <td>Select next search (older, below)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Close the panel</td>
                             </tr>
                         </tbody>
                     </table>
@@ -996,6 +1033,10 @@
                             <tr>
                                 <td>migrate_from_1_1_to_1_2</td>
                                 <td>Migrate database from version 1.1 to 1.2</td>
+                            </tr>
+                            <tr>
+                                <td>migrate_from_1_2_to_1_3</td>
+                                <td>Migrate database from version 1.2 to 1.3</td>
                             </tr>
                         </tbody>
                     </table>

@@ -40,6 +40,8 @@ export const showHelpStore = writable(false);
 export const showCommentStore = writable(false);
 export const showGoToPositionModalStore = writable(false);
 
+export const showSearchHistoryPanelStore = writable(false); // Add store for search history panel visibility
+
 export const showTakePoint2ModalStore = writable(false);
 export const showTakePoint4ModalStore = writable(false);
 
@@ -67,6 +69,7 @@ export const isAnyModalOrPanelOpenStore = derived(
     showHelpStore,
     showCommentStore,
     showGoToPositionModalStore,
+    showSearchHistoryPanelStore,
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
     showFilterLibraryPanelStore
@@ -88,6 +91,7 @@ export const isAnyModalOrPanelOpenStore = derived(
     showHelp,
     showComment,
     showGoToPositionModal,
+    showSearchHistoryPanel,
     showTakePoint2Modal,
     showTakePoint4Modal,
     showFilterLibraryPanel
@@ -109,6 +113,7 @@ export const isAnyModalOrPanelOpenStore = derived(
       showHelp ||
       showComment ||
       showGoToPositionModal ||
+      showSearchHistoryPanel ||
       showTakePoint2Modal ||
       showTakePoint4Modal ||
       showFilterLibraryPanel 
@@ -178,17 +183,20 @@ export const isAnyPanelOpenStore = derived(
   [
     showAnalysisStore,
     showCommentStore,
-    showFilterLibraryPanelStore
+    showFilterLibraryPanelStore,
+    showSearchHistoryPanelStore
   ],
   ([
     showAnalysis,
     showComment,
-    showFilterLibraryPanel
+    showFilterLibraryPanel,
+    showSearchHistoryPanel
   ]) => {
     return (
       showAnalysis ||
       showComment ||
-      showFilterLibraryPanel
+      showFilterLibraryPanel ||
+      showSearchHistoryPanel
     );
   }
 );

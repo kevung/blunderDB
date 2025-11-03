@@ -33,7 +33,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "1.2.0"
+	DatabaseVersion = "1.3.0"
 )
 
 type Point struct {

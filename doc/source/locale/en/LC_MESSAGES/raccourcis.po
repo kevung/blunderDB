@@ -311,8 +311,16 @@ msgid "Rechercher une position."
 msgstr "Search for a position."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-H, ?"
-msgstr "CTRL-H, ?"
+msgid "CTRL-H"
+msgstr "CTRL-H"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher l'historique de recherche."
+msgstr "Show/hide the search history."
+
+#: ../../source/raccourcis.rst:1
+msgid "?"
+msgstr "?"
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher l'aide."
@@ -337,6 +345,50 @@ msgstr "DOWN"
 #: ../../source/raccourcis.rst:1
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
+
+#: ../../source/raccourcis.rst:122
+msgid "Panneau historique de recherche"
+msgstr "Search History Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner une recherche (afficher la position)."
+msgstr "Select/deselect a search (show position)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche et fermer le panneau."
+msgstr "Execute search and close panel."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+msgstr "Select previous search (younger, above)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+msgstr "Select next search (older, below)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer le panneau."
+msgstr "Close the panel."
+
+#: ../../source/raccourcis.rst:136
+msgid "Panneau d'analyse"
+msgstr "Analysis Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
+msgstr "Select/deselect a move (show/hide arrows)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
+msgstr "Select previous move (when a move is selected)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
+msgstr "Select next move (when a move is selected)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+msgstr "Deselect move. If no move selected, close the panel."
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"

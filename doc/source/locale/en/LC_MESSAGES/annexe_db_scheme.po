@@ -133,3 +133,35 @@ msgid ""
 msgstr ""
 "To migrate the database from version 1.1.0 to version 1.2.0, execute the "
 "command ``migrate_from_1_1_to_1_2`` in blunderDB."
+
+#: ../../source/annexe_db_scheme.rst:42
+msgid "Version 1.3.0"
+msgstr "Version 1.3.0"
+
+#: ../../source/annexe_db_scheme.rst:44
+msgid "La version 1.3.0 de la base de données ajoute la table suivante :"
+msgstr "Version 1.3.0 of the database adds the following table:"
+
+#: ../../source/annexe_db_scheme.rst:46
+msgid ""
+"**search_history** : Stocke l'historique des recherches de positions avec "
+"les colonnes `id` (clé primaire), `command` (texte de la commande de recherche), "
+"`position` (état de la position au moment de la recherche), et `timestamp` "
+"(date et heure de la recherche)."
+msgstr ""
+"**search_history**: Stores position search history with the columns `id` (primary key), "
+"`command` (search command text), `position` (position state at the time of search), "
+"and `timestamp` (date and time of the search)."
+
+#: ../../source/annexe_db_scheme.rst:48
+msgid "Les autres tables restent inchangées par rapport à la version 1.2.0."
+msgstr "The other tables remain unchanged from version 1.2.0."
+
+#: ../../source/annexe_db_scheme.rst:50
+msgid ""
+"Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, "
+"exécutez la commande ``migrate_from_1_2_to_1_3`` dans blunderDB."
+msgstr ""
+"To migrate the database from version 1.2.0 to version 1.3.0, execute the "
+"command ``migrate_from_1_2_to_1_3`` in blunderDB."
+

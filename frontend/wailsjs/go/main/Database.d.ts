@@ -22,6 +22,8 @@ export function DeleteFilter(arg1:number):Promise<void>;
 
 export function DeletePosition(arg1:number):Promise<void>;
 
+export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
+
 export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:boolean):Promise<void>;
 
 export function GetDatabaseVersion():Promise<string>;
@@ -46,9 +48,13 @@ export function LoadPosition(arg1:number):Promise<main.Position>;
 
 export function LoadPositionsByFilters(arg1:main.Position,arg2:boolean,arg3:boolean,arg4:string,arg5:string,arg6:string,arg7:string,arg8:string,arg9:string,arg10:string,arg11:string,arg12:string,arg13:string,arg14:string,arg15:string,arg16:string,arg17:string,arg18:string,arg19:string,arg20:boolean,arg21:boolean,arg22:string,arg23:string,arg24:string,arg25:string,arg26:string,arg27:string,arg28:boolean,arg29:boolean):Promise<Array<main.Position>>;
 
+export function LoadSearchHistory():Promise<Array<main.SearchHistory>>;
+
 export function Migrate_1_0_0_to_1_1_0():Promise<void>;
 
 export function Migrate_1_1_0_to_1_2_0():Promise<void>;
+
+export function Migrate_1_2_0_to_1_3_0():Promise<void>;
 
 export function OpenDatabase(arg1:string):Promise<void>;
 
@@ -67,6 +73,8 @@ export function SaveFilter(arg1:string,arg2:string):Promise<void>;
 export function SaveMetadata(arg1:Record<string, string>):Promise<void>;
 
 export function SavePosition(arg1:main.Position):Promise<number>;
+
+export function SaveSearchHistory(arg1:string,arg2:string):Promise<void>;
 
 export function SetupDatabase(arg1:string):Promise<void>;
 

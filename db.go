@@ -126,6 +126,19 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS search_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			position TEXT,
+			timestamp INTEGER
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating search_history table:", err)
+		return err
+	}
+
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
@@ -167,6 +180,36 @@ func (d *Database) OpenDatabase(path string) error {
 	}
 	if dbVersion >= "1.2.0" {
 		requiredTables = append(requiredTables, "filter_library")
+	}
+	if dbVersion >= "1.3.0" {
+		requiredTables = append(requiredTables, "search_history")
+	}
+	// For databases at version 1.2.0, create search_history table if it doesn't exist
+	if dbVersion == "1.2.0" {
+		var searchHistoryExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='search_history'`).Scan(&searchHistoryExists)
+		if err == sql.ErrNoRows {
+			// Create the search_history table for 1.2.0 databases
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS search_history (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					command TEXT,
+					position TEXT,
+					timestamp INTEGER
+				)
+			`)
+			if err != nil {
+				fmt.Println("Error creating search_history table:", err)
+				return err
+			}
+			// Update to version 1.3.0
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.3.0")
+			if err != nil {
+				fmt.Println("Error updating database version:", err)
+				return err
+			}
+			fmt.Println("Database automatically upgraded from 1.2.0 to 1.3.0")
+		}
 	}
 
 	for _, table := range requiredTables {
@@ -2038,6 +2081,96 @@ func (d *Database) ClearCommandHistory() error {
 	return nil
 }
 
+// SearchHistory represents a search history entry
+type SearchHistory struct {
+	ID        int    `json:"id"`
+	Command   string `json:"command"`
+	Position  string `json:"position"`
+	Timestamp int64  `json:"timestamp"`
+}
+
+// SaveSearchHistory saves a search command and position to the search_history table
+func (d *Database) SaveSearchHistory(command string, position string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("database is not opened")
+	}
+
+	// Insert the search history entry
+	_, err := d.db.Exec(`INSERT INTO search_history (command, position, timestamp) VALUES (?, ?, ?)`,
+		command, position, time.Now().UnixMilli())
+	if err != nil {
+		fmt.Println("Error saving search history:", err)
+		return err
+	}
+
+	// Keep only the last 100 entries
+	_, err = d.db.Exec(`
+		DELETE FROM search_history 
+		WHERE id NOT IN (
+			SELECT id FROM search_history 
+			ORDER BY timestamp DESC 
+			LIMIT 100
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error pruning search history:", err)
+		return err
+	}
+
+	return nil
+}
+
+// LoadSearchHistory loads the search history from the search_history table
+func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("database is not opened")
+	}
+
+	rows, err := d.db.Query(`SELECT id, command, position, timestamp FROM search_history ORDER BY timestamp DESC LIMIT 100`)
+	if err != nil {
+		fmt.Println("Error loading search history:", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	var history []SearchHistory
+	for rows.Next() {
+		var entry SearchHistory
+		err := rows.Scan(&entry.ID, &entry.Command, &entry.Position, &entry.Timestamp)
+		if err != nil {
+			fmt.Println("Error scanning search history row:", err)
+			return nil, err
+		}
+		history = append(history, entry)
+	}
+
+	return history, nil
+}
+
+// DeleteSearchHistoryEntry deletes a search history entry by timestamp
+func (d *Database) DeleteSearchHistoryEntry(timestamp int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("database is not opened")
+	}
+
+	_, err := d.db.Exec(`DELETE FROM search_history WHERE timestamp = ?`, timestamp)
+	if err != nil {
+		fmt.Println("Error deleting search history entry:", err)
+		return err
+	}
+
+	return nil
+}
+
 func (d *Database) Migrate_1_0_0_to_1_1_0() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
@@ -2116,6 +2249,47 @@ func (d *Database) Migrate_1_1_0_to_1_2_0() error {
 	}
 
 	fmt.Println("Database successfully migrated from version 1.1.0 to 1.2.0")
+	return nil
+}
+
+func (d *Database) Migrate_1_2_0_to_1_3_0() error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Check current database version
+	var dbVersion string
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
+	if err != nil {
+		fmt.Println("Error querying database version:", err)
+		return err
+	}
+
+	if dbVersion != "1.2.0" {
+		return fmt.Errorf("database version is not 1.2.0, current version: %s", dbVersion)
+	}
+
+	// Create the search_history table
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS search_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			position TEXT,
+			timestamp INTEGER
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating search_history table:", err)
+		return err
+	}
+
+	// Update the database version to 1.3.0
+	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.3.0")
+	if err != nil {
+		fmt.Println("Error updating database version:", err)
+		return err
+	}
+
+	fmt.Println("Database successfully migrated from version 1.2.0 to 1.3.0")
 	return nil
 }
 

@@ -20,3 +20,5 @@ export const positionStore = writable({
     has_beaver: 0,
 });
 export const positionsStore = writable([]); // Add positions store
+export const positionBeforeFilterLibraryStore = writable(null); // Store position before opening filter library
+export const positionIndexBeforeFilterLibraryStore = writable(-1); // Store position index before opening filter library

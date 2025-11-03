@@ -2,12 +2,13 @@
    import { onMount, onDestroy } from 'svelte';
    import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore, statusBarTextStore } from '../stores/uiStore';
    import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../../wailsjs/go/main/Database.js';
-   import { positionsStore } from '../stores/positionStore';
+   import { positionsStore, positionStore } from '../stores/positionStore';
    import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
    import { databaseLoadedStore } from '../stores/databaseStore'; // Ensure the import path is correct
    import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
-   import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/main/Database.js'; // Import database functions
-   import { Migrate_1_1_0_to_1_2_0 } from '../../wailsjs/go/main/Database.js'; // Import the new migration function
+   import { searchHistoryStore } from '../stores/searchHistoryStore'; // Import search history store
+   import { LoadCommandHistory, SaveCommand, SaveSearchHistory } from '../../wailsjs/go/main/Database.js'; // Import database functions
+   import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../../wailsjs/go/main/Database.js'; // Import migration functions
 
    export let onToggleHelp;
    export let onNewDatabase;
@@ -145,6 +146,24 @@
                onLoadAllPositions();
             } else if (command.startsWith('s')) {
                if ($previousModeStore === 'EDIT') {
+                  // Save to search history for all search commands
+                  const searchHistoryEntry = {
+                     command: command,
+                     position: JSON.stringify($positionStore),
+                     timestamp: Date.now()
+                  };
+                  
+                  // Update search history store
+                  searchHistoryStore.update(history => {
+                     const newHistory = [searchHistoryEntry, ...history].slice(0, 100); // Keep only last 100
+                     return newHistory;
+                  });
+                  
+                  // Save to database
+                  SaveSearchHistory(command, JSON.stringify($positionStore)).catch(err => {
+                     console.error('Error saving search history:', err);
+                  });
+                  
                   if (command === 's') {
                      onLoadPositionsByFilters([]);
                   } else {
@@ -305,6 +324,14 @@
                try {
                   await Migrate_1_1_0_to_1_2_0();
                   statusBarTextStore.set('Database migrated to version 1.2.0 successfully.');
+               } catch (error) {
+                  console.error('Error migrating database:', error);
+                  statusBarTextStore.set('Error migrating database.');
+               }
+            } else if (command === 'migrate_from_1_2_to_1_3') {
+               try {
+                  await Migrate_1_2_0_to_1_3_0();
+                  statusBarTextStore.set('Database migrated to version 1.3.0 successfully.');
                } catch (error) {
                   console.error('Error migrating database:', error);
                   statusBarTextStore.set('Error migrating database.');

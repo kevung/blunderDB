@@ -1,6 +1,9 @@
 <script>
     import { createEventDispatcher, onMount, onDestroy } from 'svelte';
     import { statusBarModeStore } from '../stores/uiStore';
+    import { positionStore } from '../stores/positionStore';
+    import { searchHistoryStore } from '../stores/searchHistoryStore';
+    import { SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
 
     export let visible = false;
     export let onClose;
@@ -318,6 +321,33 @@
         console.log('player2JanBlotFilter:', player2JanBlotFilter);
         console.log('noContactFilter:', noContactFilter);
         console.log('mirrorPositionFilter:', mirrorPositionFilter);
+        
+        // Build the command string
+        const commandParts = ['s'];
+        transformedFilters.forEach(filter => {
+            if (filter !== 't""' && filter !== 'm""') { // Skip empty text filters
+                commandParts.push(filter);
+            }
+        });
+        const searchCommand = commandParts.join(' ');
+        
+        // Save to search history
+        const searchHistoryEntry = {
+            command: searchCommand,
+            position: JSON.stringify($positionStore),
+            timestamp: Date.now()
+        };
+        
+        // Update search history store
+        searchHistoryStore.update(history => {
+            const newHistory = [searchHistoryEntry, ...history].slice(0, 100); // Keep only last 100
+            return newHistory;
+        });
+        
+        // Save to database
+        SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch(err => {
+            console.error('Error saving search history:', err);
+        });
         
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(

@@ -4,8 +4,9 @@
     import { showFilterLibraryPanelStore, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, showCommentStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters, SaveEditPosition, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
-    import { positionStore } from '../stores/positionStore';
+    import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
+    import { searchHistoryStore } from '../stores/searchHistoryStore'; // Import search history store
     
     export let onLoadPositionsByFilters; // Accept the prop
 
@@ -18,6 +19,7 @@
     let databaseLoaded = false;
     let editPosition = ''; // Add editPosition variable
     let commandHistory = [];
+    let searchHistory = [];
     let historyIndex = -1;
 
     filterLibraryStore.subscribe(value => {
@@ -35,8 +37,21 @@
         }
     });
 
+    // Update saved position when browsing positions (only if no filter is selected)
+    currentPositionIndexStore.subscribe(value => {
+        if (visible && !selectedFilter && value >= 0) {
+            // Update the saved position as user browses
+            positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
+            positionIndexBeforeFilterLibraryStore.set(value);
+        }
+    });
+
     commandHistoryStore.subscribe(value => {
         commandHistory = value.filter(command => command.startsWith('s ') || command === 's'); // Filter commands
+    });
+
+    searchHistoryStore.subscribe(value => {
+        searchHistory = value;
     });
 
     async function loadFilters() {
@@ -101,7 +116,48 @@
         editPosition = ''; // Reset edit position
     }
 
+    async function saveLastSearch() {
+        if (searchHistory.length === 0) {
+            statusBarTextStore.set('No search history available');
+            return;
+        }
+        
+        const lastSearch = searchHistory[0]; // Get the most recent search
+        filterCommand = lastSearch.command;
+        editPosition = lastSearch.position;
+        
+        if (editPosition) {
+            positionStore.set(JSON.parse(editPosition)); // Restore positionStore from JSON string
+        }
+        
+        statusBarTextStore.set('Last search loaded. Enter a name and click Add to save.');
+    }
+
     async function selectFilter(filter) {
+        // If clicking on already selected filter, deselect it
+        if (selectedFilter && selectedFilter.id === filter.id) {
+            selectedFilter = null;
+            filterName = '';
+            filterCommand = '';
+            editPosition = '';
+            // Restore the position and index that was displayed before selecting any filter
+            if ($positionBeforeFilterLibraryStore) {
+                positionStore.set($positionBeforeFilterLibraryStore);
+            }
+            if ($positionIndexBeforeFilterLibraryStore >= 0) {
+                const savedIndex = $positionIndexBeforeFilterLibraryStore;
+                currentPositionIndexStore.set(-1); // Force redraw
+                currentPositionIndexStore.set(savedIndex);
+            }
+            return;
+        }
+        
+        // Save the current position BEFORE selecting a new filter (only if not already saved)
+        if (!selectedFilter && !$positionBeforeFilterLibraryStore) {
+            positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
+            positionIndexBeforeFilterLibraryStore.set($currentPositionIndexStore);
+        }
+        
         selectedFilter = filter;
         filterName = filter.name;
         filterCommand = filter.command;
@@ -109,7 +165,7 @@
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition)); // Restore positionStore from JSON string
         }
-        currentPositionIndexStore.set(-1); // Set current position index to 0
+        currentPositionIndexStore.set(-1); // Set current position index to -1
     }
 
     async function executeFilterCommand(filter) {
@@ -208,6 +264,58 @@
         showFilterLibraryPanelStore.set(false);
     }
 
+    function handleKeyDown(event) {
+        // Skip events from input fields to allow normal input field behavior
+        if (event.target.matches('input')) {
+            return;
+        }
+        
+        if (event.key === 'Escape') {
+            if (selectedFilter) {
+                // Deselect if a filter is selected
+                selectedFilter = null;
+                filterName = '';
+                filterCommand = '';
+                editPosition = '';
+                event.preventDefault();
+                event.stopPropagation();
+                // Restore the position and index that was displayed before selecting any filter
+                if ($positionBeforeFilterLibraryStore) {
+                    positionStore.set($positionBeforeFilterLibraryStore);
+                }
+                if ($positionIndexBeforeFilterLibraryStore >= 0) {
+                    const savedIndex = $positionIndexBeforeFilterLibraryStore;
+                    currentPositionIndexStore.set(-1); // Force redraw
+                    currentPositionIndexStore.set(savedIndex);
+                }
+            } else {
+                closePanel();
+            }
+            return;
+        }
+
+        // Handle j/k and arrow keys for filter navigation ONLY when a filter is selected
+        if (selectedFilter && filters.length > 0) {
+            const currentIndex = filters.findIndex(f => f.id === selectedFilter.id);
+
+            if (event.key === 'j' || event.key === 'ArrowDown') {
+                event.preventDefault();
+                event.stopPropagation();
+                // Select next filter (down in the list)
+                if (currentIndex >= 0 && currentIndex < filters.length - 1) {
+                    selectFilter(filters[currentIndex + 1]);
+                }
+            } else if (event.key === 'k' || event.key === 'ArrowUp') {
+                event.preventDefault();
+                event.stopPropagation();
+                // Select previous filter (up in the list)
+                if (currentIndex > 0) {
+                    selectFilter(filters[currentIndex - 1]);
+                }
+            }
+        }
+    }
+
     function handleClickOutside(event) {
         const panel = document.getElementById('filterLibraryPanel');
         if (panel && !panel.contains(event.target)) {
@@ -261,15 +369,17 @@
 
     onMount(() => {
         document.addEventListener('click', handleClickOutside);
+        document.addEventListener('keydown', handleKeyDown);
     });
 
     onDestroy(() => {
         document.removeEventListener('click', handleClickOutside);
+        document.removeEventListener('keydown', handleKeyDown);
     });
 </script>
 
 {#if visible}
-    <section class="filter-library-panel" role="dialog" aria-modal="true" id="filterLibraryPanel">
+    <section class="filter-library-panel" role="dialog" aria-modal="true" id="filterLibraryPanel" tabindex="-1">
         <button type="button" class="close-icon" on:click={closePanel} aria-label="Close">×</button>
         <div class="filter-library-content">
             <div class="form-row">
@@ -282,7 +392,8 @@
                 <div class="form-actions">
                     <button on:click={saveFilter} disabled={filterExists || $statusBarModeStore !== 'EDIT'}>Add</button>
                     <button on:click={updateFilter} disabled={!filterExists || $statusBarModeStore !== 'EDIT'}>Update</button>
-                    <button on:click={deleteFilter} disabled={!selectedFilter || $statusBarModeStore !== 'EDIT'}>Delete</button>
+                    <button on:click={deleteFilter} disabled={!selectedFilter}>Delete</button>
+                    <button on:click={saveLastSearch} disabled={$statusBarModeStore !== 'EDIT'} title="Load last search">Last Search</button>
                 </div>
             </div>
             <div class="filter-table-container">
@@ -435,12 +546,11 @@
     }
 
     .filter-table tr:hover {
-        background: #f0f0f0;
+        background-color: #e6f2ff; /* Light blue hover effect */
     }
 
     .highlight {
-        background-color: #f0f0f0; /* Very light highlight color */
-        border: 1px solid #ccc; /* Subtle border */
+        background-color: #b3d9ff !important; /* Light blue highlight for selected row */
     }
 
     .no-select {

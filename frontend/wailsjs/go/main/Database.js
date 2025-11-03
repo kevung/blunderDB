@@ -42,6 +42,10 @@ export function DeletePosition(arg1) {
   return window['go']['main']['Database']['DeletePosition'](arg1);
 }
 
+export function DeleteSearchHistoryEntry(arg1) {
+  return window['go']['main']['Database']['DeleteSearchHistoryEntry'](arg1);
+}
+
 export function ExportDatabase(arg1, arg2, arg3, arg4, arg5, arg6) {
   return window['go']['main']['Database']['ExportDatabase'](arg1, arg2, arg3, arg4, arg5, arg6);
 }
@@ -90,12 +94,20 @@ export function LoadPositionsByFilters(arg1, arg2, arg3, arg4, arg5, arg6, arg7,
   return window['go']['main']['Database']['LoadPositionsByFilters'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14, arg15, arg16, arg17, arg18, arg19, arg20, arg21, arg22, arg23, arg24, arg25, arg26, arg27, arg28, arg29);
 }
 
+export function LoadSearchHistory() {
+  return window['go']['main']['Database']['LoadSearchHistory']();
+}
+
 export function Migrate_1_0_0_to_1_1_0() {
   return window['go']['main']['Database']['Migrate_1_0_0_to_1_1_0']();
 }
 
 export function Migrate_1_1_0_to_1_2_0() {
   return window['go']['main']['Database']['Migrate_1_1_0_to_1_2_0']();
+}
+
+export function Migrate_1_2_0_to_1_3_0() {
+  return window['go']['main']['Database']['Migrate_1_2_0_to_1_3_0']();
 }
 
 export function OpenDatabase(arg1) {
@@ -132,6 +144,10 @@ export function SaveMetadata(arg1) {
 
 export function SavePosition(arg1) {
   return window['go']['main']['Database']['SavePosition'](arg1);
+}
+
+export function SaveSearchHistory(arg1, arg2) {
+  return window['go']['main']['Database']['SaveSearchHistory'](arg1, arg2);
 }
 
 export function SetupDatabase(arg1) {

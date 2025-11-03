@@ -35,7 +35,9 @@
         AnalyzeImportDatabase, // Import AnalyzeImportDatabase
         CommitImportDatabase, // Import CommitImportDatabase
         CancelImport, // Import CancelImport
-        ExportDatabase // Import ExportDatabase
+        ExportDatabase, // Import ExportDatabase
+        SaveFilter, // Import SaveFilter
+        SaveEditPosition // Import SaveEditPosition
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -51,7 +53,9 @@
     import {
         pastePositionTextStore,
         positionStore,
-        positionsStore // Import positionsStore
+        positionsStore, // Import positionsStore
+        positionBeforeFilterLibraryStore, // Import position before filter library store
+        positionIndexBeforeFilterLibraryStore // Import position index before filter library store
     } from './stores/positionStore';
 
     import {
@@ -78,6 +82,7 @@
         showHelpStore,
         showCommentStore,
         showGoToPositionModalStore,
+        showSearchHistoryPanelStore, // Import showSearchHistoryPanelStore
         showWarningModalStore, // Import showWarningModalStore
         showMetadataModalStore, // Import showMetadataModalStore
         showTakePoint2ModalStore, // Import showTakePoint2ModalStore
@@ -100,6 +105,7 @@
     import HelpModal from './components/HelpModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import SearchModal from './components/SearchModal.svelte'; // Import SearchModal component
+    import SearchHistoryPanel from './components/SearchHistoryPanel.svelte'; // Import SearchHistoryPanel component
     import MetModal from './components/MetModal.svelte'; // Import MetModal component
     import TakePoint2LastModal from './components/TakePoint2LastModal.svelte'; // Import TakePoint2LastModal component
     import TakePoint2LiveModal from './components/TakePoint2LiveModal.svelte'; // Import TakePoint2LiveModal component
@@ -131,6 +137,7 @@
     let showHelp = false;
     let showComment = false;
     let showGoToPositionModal = false;
+    let showSearchHistoryPanel = false; // Add search history panel visibility
     let showWarningModal = false;
     let showImportProgressModal = false;
     let importModalMode = 'analyzing'; // 'analyzing', 'preview', 'committing', 'completed'
@@ -323,6 +330,10 @@
         showHelp = value;
     });
 
+    showSearchHistoryPanelStore.subscribe(value => {
+        showSearchHistoryPanel = value;
+    });
+
     showCommentStore.subscribe(value => {
         showComment = value;
     });
@@ -353,17 +364,54 @@
     function handleKeyDown(event) {
         event.stopPropagation();
 
+        // Debug logging for Ctrl-H
+        if (event.ctrlKey && event.code === 'KeyH') {
+            console.log('DEBUG: Ctrl-H pressed');
+            console.log('  - isAnyModalOpenStore:', $isAnyModalOpenStore);
+            console.log('  - activeElement:', document.activeElement);
+            console.log('  - closest filter-library-panel:', document.activeElement.closest('.filter-library-panel'));
+            console.log('  - closest search-history-panel:', document.activeElement.closest('.search-history-panel'));
+            console.log('  - showComment:', showComment);
+            console.log('  - showSearchHistoryPanel:', $showSearchHistoryPanelStore);
+        }
+
         // Prevent shortcuts if any modal is open
         if ($isAnyModalOpenStore) {
+            console.log('DEBUG: Returning because modal is open');
             return;
         }
 
         // Prevent command line from opening when editing filter panel fields or comment panel
-        if (document.activeElement.closest('.filter-library-panel') || showComment) {
-            if (event.ctrlKey && (event.code === 'KeyP' || event.code === 'KeyL' || event.code === 'KeyB')) {
+        if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || showComment) {
+            // Allow all Ctrl+key shortcuts to work globally
+            if (event.ctrlKey) {
+                console.log('DEBUG: Inside panel, but Ctrl key pressed - allowing shortcut');
                 event.preventDefault();
+                // Don't return, let the shortcut be processed below
             } else {
-                return;
+                // Allow j/k/left/right keys for position navigation when no row is selected in panels
+                const isNavigationKey = (event.key === 'j' || event.key === 'k' || 
+                                        event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
+                                        event.key === 'h' || event.key === 'l' ||
+                                        event.key === 'PageUp' || event.key === 'PageDown');
+                
+                if (isNavigationKey) {
+                    // Check if any row is selected in the panels
+                    const filterLibraryHasSelection = document.querySelector('.filter-library-panel tr.highlight');
+                    const searchHistoryHasSelection = document.querySelector('.search-history-panel tr.selected');
+                    
+                    if (!filterLibraryHasSelection && !searchHistoryHasSelection) {
+                        // No selection, allow position navigation - don't return early
+                        console.log('DEBUG: Panel open but no selection, allowing navigation key:', event.key);
+                    } else {
+                        // Has selection, let panel handle it
+                        console.log('DEBUG: Inside panel with selection, returning early');
+                        return;
+                    }
+                } else {
+                    console.log('DEBUG: Inside panel, returning early (not Ctrl or navigation)');
+                    return;
+                }
             }
         }
 
@@ -453,9 +501,10 @@
                 setStatusBarMessage('Search is only available in edit mode');
             }
         } else if (event.ctrlKey && event.code === 'KeyH') {
-            toggleHelpModal();
+            console.log('DEBUG: Calling toggleSearchHistoryPanel');
+            toggleSearchHistoryPanel(); // Changed to toggleSearchHistoryPanel
         } else if (!event.ctrlKey && event.key === '?') {
-            toggleHelpModal();
+            toggleHelpModal(); // Keep '?' for help modal
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
         } else if (event.ctrlKey && event.code === 'KeyB') {
@@ -1909,12 +1958,15 @@
             return;
         }
         console.log('toggleAnalysisPanel');
-        showAnalysisStore.set(!showAnalysis);
+        const wasOpen = showAnalysis;
+        showAnalysisStore.set(!wasOpen);
         
-        if (showAnalysis) {
+        if (!wasOpen) {
+            // Panel is now opening - close other panels
             statusBarModeStore.set('NORMAL');
             showFilterLibraryPanelStore.set(false);
             showCommentStore.set(false);
+            showSearchHistoryPanelStore.set(false);
             setTimeout(() => {
                 const analysisPanel = document.querySelector('.analysis-panel');
                 if (analysisPanel) {
@@ -1947,12 +1999,15 @@
             return;
         }
         console.log('toggleCommentPanel called');
-        showCommentStore.set(!showComment);
+        const wasOpen = showComment;
+        showCommentStore.set(!wasOpen);
 
-        if (showComment) {
+        if (!wasOpen) {
+            // Panel is now opening - close other panels
             statusBarModeStore.set('NORMAL');
             showAnalysisStore.set(false);
-            showFilterLibraryPanelStore.set(false); // Close filter library panel if open
+            showFilterLibraryPanelStore.set(false);
+            showSearchHistoryPanelStore.set(false);
             showCommandStore.set(false);
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
@@ -1993,15 +2048,21 @@
             statusBarTextStore.set('No database loaded');
             return;
         }
-        showFilterLibraryPanelStore.set(!showFilterLibraryPanel);
-        if (showFilterLibraryPanel) {
+        const wasOpen = showFilterLibraryPanel;
+        showFilterLibraryPanelStore.set(!wasOpen);
+        if (!wasOpen) {
+            // Panel is now opening - close other panels
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
+            showSearchHistoryPanelStore.set(false);
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
             currentPositionIndexStore.set(currentIndex); // Set back to the original value
         } else {
-            showCommentStore.set(false);
-            showAnalysisStore.set(false);
+            // Panel is closing - clear the saved position/index
+            positionBeforeFilterLibraryStore.set(null);
+            positionIndexBeforeFilterLibraryStore.set(-1);
         }
     }
 
@@ -2229,6 +2290,35 @@ function togglePipcount() {
         }
     }
 
+    function toggleSearchHistoryPanel() {
+        console.log('toggleSearchHistoryPanel');
+        if (!$databasePathStore) {
+            setStatusBarMessage('Search history requires an open database');
+            return;
+        }
+        const wasOpen = $showSearchHistoryPanelStore;
+        showSearchHistoryPanelStore.set(!wasOpen);
+        if (!wasOpen) {
+            // Panel is now opening - close other panels
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
+            showFilterLibraryPanelStore.set(false);
+        }
+    }
+
+    async function addSearchToFilterLibrary(filterName, filterCommand, positionJson) {
+        try {
+            await SaveFilter(filterName, filterCommand);
+            if (positionJson) {
+                await SaveEditPosition(filterName, positionJson);
+            }
+            statusBarTextStore.set('Filter saved successfully');
+        } catch (error) {
+            console.error('Error saving filter:', error);
+            statusBarTextStore.set('Error saving filter');
+        }
+    }
+
     // Function to show a specific position and analysis
     async function showPosition(position) {
         if (!position) {
@@ -2362,6 +2452,7 @@ function togglePipcount() {
         onLoadAllPositions={loadAllPositions}
         onShowMetadata={toggleMetadataModal}
         onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
+        onToggleSearchHistory={toggleSearchHistoryPanel}
     />
 
     <div class="scrollable-content">
@@ -2496,6 +2587,11 @@ function togglePipcount() {
         visible={showHelp}
         onClose={toggleHelpModal}
         handleGlobalKeydown={handleKeyDown}
+    />
+
+    <SearchHistoryPanel
+        onLoadPositionsByFilters={loadPositionsByFilters}
+        onAddToFilterLibrary={addSearchToFilterLibrary}
     />
 
     <StatusBar />
