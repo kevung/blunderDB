@@ -6,12 +6,10 @@ toolchain go1.23.1
 
 require (
 	github.com/adrg/xdg v0.5.3
-	github.com/kevung/xgparser v0.0.0-00010101000000-000000000000
+	github.com/kevung/xgparser v1.0.0
 	github.com/wailsapp/wails/v2 v2.10.1
 	modernc.org/sqlite v1.34.5
 )
-
-replace github.com/kevung/xgparser => ../xgparser
 
 require (
 	github.com/bep/debounce v1.2.1 // indirect
