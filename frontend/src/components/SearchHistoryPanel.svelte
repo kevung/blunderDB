@@ -27,7 +27,19 @@
             await loadHistory();
             await loadFilterLibrary();
         } else if (!visible && wasVisible) {
-            // Panel just closed - clear saved position/index
+            // Panel just closed - restore previous position if a search was selected
+            if (selectedSearch) {
+                // Restore the position and index that was displayed before selecting any search
+                if ($positionBeforeFilterLibraryStore) {
+                    positionStore.set($positionBeforeFilterLibraryStore);
+                }
+                if ($positionIndexBeforeFilterLibraryStore >= 0) {
+                    const savedIndex = $positionIndexBeforeFilterLibraryStore;
+                    currentPositionIndexStore.set(-1); // Force redraw
+                    currentPositionIndexStore.set(savedIndex);
+                }
+            }
+            // Clear saved position/index and selection
             positionBeforeFilterLibraryStore.set(null);
             positionIndexBeforeFilterLibraryStore.set(-1);
             selectedSearch = null;

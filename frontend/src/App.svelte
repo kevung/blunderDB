@@ -2064,10 +2064,6 @@
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
             currentPositionIndexStore.set(currentIndex); // Set back to the original value
-        } else {
-            // Panel is closing - clear the saved position/index
-            positionBeforeFilterLibraryStore.set(null);
-            positionIndexBeforeFilterLibraryStore.set(-1);
         }
 
         previousModeStore.set('NORMAL');

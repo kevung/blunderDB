@@ -31,9 +31,31 @@
     });
 
     showFilterLibraryPanelStore.subscribe(async value => {
+        const wasVisible = visible;
         visible = value;
-        if (visible) {
+        if (visible && !wasVisible) {
+            // Panel just opened
             await loadFilters();
+        } else if (!visible && wasVisible) {
+            // Panel just closed - restore previous position if a filter was selected
+            if (selectedFilter) {
+                // Restore the position and index that was displayed before selecting any filter
+                if ($positionBeforeFilterLibraryStore) {
+                    positionStore.set($positionBeforeFilterLibraryStore);
+                }
+                if ($positionIndexBeforeFilterLibraryStore >= 0) {
+                    const savedIndex = $positionIndexBeforeFilterLibraryStore;
+                    currentPositionIndexStore.set(-1); // Force redraw
+                    currentPositionIndexStore.set(savedIndex);
+                }
+            }
+            // Clear selection and saved position/index
+            selectedFilter = null;
+            filterName = '';
+            filterCommand = '';
+            editPosition = '';
+            positionBeforeFilterLibraryStore.set(null);
+            positionIndexBeforeFilterLibraryStore.set(-1);
         }
     });
 
