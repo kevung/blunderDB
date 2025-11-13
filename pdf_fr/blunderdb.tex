@@ -67,7 +67,7 @@
 
 
 \title{blunderDB}
-\date{11 novembre 2025}
+\date{13 novembre 2025}
 \release{0.9.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1981,7 +1981,7 @@ Recharger toutes les positions de la base de données.
 PageUp, h
 &
 \sphinxAtStartPar
-Première position.
+Première position / Partie précédente (mode MATCH).
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -2016,7 +2016,7 @@ Coup suivant (lorsqu’un coup est sélectionné dans l’analyse).
 PageDown, l
 &
 \sphinxAtStartPar
-Dernière position.
+Dernière position / Partie suivante (mode MATCH).
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -2102,7 +2102,7 @@ Action
 TAB
 &
 \sphinxAtStartPar
-Basculer en mode EDIT.
+Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -2367,6 +2367,13 @@ BAS, j
 &
 \sphinxAtStartPar
 Sélectionner le coup suivant (lorsqu’un coup est sélectionné).
+\\
+\sphinxhline
+\sphinxAtStartPar
+d
+&
+\sphinxAtStartPar
+Basculer entre l’analyse des coups et du cube (mode MATCH uniquement).
 \\
 \sphinxhline
 \sphinxAtStartPar

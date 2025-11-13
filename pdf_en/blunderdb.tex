@@ -65,7 +65,7 @@
 
 
 \title{blunderDB}
-\date{Nov 11, 2025}
+\date{Nov 13, 2025}
 \release{0.9.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -1865,7 +1865,7 @@ Reload all the positions from the database.
 PageUp, h
 &
 \sphinxAtStartPar
-First position.
+First position / Previous game (MATCH mode).
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1900,7 +1900,7 @@ Next move (when a move is selected in the analysis).
 PageDown, l
 &
 \sphinxAtStartPar
-Last position.
+Last position / Next game (MATCH mode).
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -1986,7 +1986,7 @@ Action
 TAB
 &
 \sphinxAtStartPar
-Switch to EDIT mode.
+Switch to EDIT mode / Exit MATCH mode to NORMAL.
 \\
 \sphinxhline
 \sphinxAtStartPar
@@ -2251,6 +2251,13 @@ DOWN, j
 &
 \sphinxAtStartPar
 Select next move (when a move is selected).
+\\
+\sphinxhline
+\sphinxAtStartPar
+d
+&
+\sphinxAtStartPar
+Toggle between checker and cube analysis (MATCH mode only).
 \\
 \sphinxhline
 \sphinxAtStartPar

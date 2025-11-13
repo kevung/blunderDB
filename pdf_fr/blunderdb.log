@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.11)  11 NOV 2025 00:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.13)  13 NOV 2025 23:12
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -876,34 +876,34 @@ Overfull \hbox (25.91899pt too wide) in paragraph at lines 1797--1799
  []
 
 [15] [16] [17] [18] [19]
-Underfull \hbox (badness 10000) in paragraph at lines 2765--2767
+Underfull \hbox (badness 10000) in paragraph at lines 2772--2774
 []|\T1/qtm/m/n/10 portes dans le jan,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2772--2774
+Underfull \hbox (badness 10000) in paragraph at lines 2779--2781
 []|\T1/qtm/m/n/10 Position du tournoi
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2816--2818
+Underfull \hbox (badness 10000) in paragraph at lines 2823--2825
 []|\T1/qtm/m/n/10 Double avec au moins
  []
 
 [20]
-Underfull \hbox (badness 5817) in paragraph at lines 2840--2848
+Underfull \hbox (badness 5817) in paragraph at lines 2847--2855
 \T1/qtm/m/n/10 de certifier numériquement leurs applications voire de distribue
 r via le Windows Store. Il est alors
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2840--2848
+Underfull \hbox (badness 10000) in paragraph at lines 2847--2855
 \T1/qtm/m/n/10 préconisé de faire appel à des sociétés extérieures pour obtenir
  un certificat numérique au prix de
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2840--2848
+Underfull \hbox (badness 10000) in paragraph at lines 2847--2855
 \T1/qtm/m/n/10 plusieurs centaines d'euros (voir par exemple [][]$https : / / l
 earn . microsoft . com / en-[]us / archive / blogs / ie _ fr /
  []
@@ -911,73 +911,73 @@ earn . microsoft . com / en-[]us / archive / blogs / ie _ fr /
 <smartscreen_en.png, id=468, 502.12593pt x 191.21437pt>
 File: smartscreen_en.png Graphic file (type png)
 <use smartscreen_en.png>
-Package pdftex.def Info: smartscreen_en.png  used on input line 2866.
+Package pdftex.def Info: smartscreen_en.png  used on input line 2873.
 (pdftex.def)             Requested size: 469.77652pt x 178.89539pt.
 [21]
 <blunderdb_potential_virus.png, id=478, 417.05812pt x 125.71968pt>
 File: blunderdb_potential_virus.png Graphic file (type png)
 <use blunderdb_potential_virus.png>
-Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 2919
+Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 2926
 .
 (pdftex.def)             Requested size: 417.0571pt x 125.71936pt.
 <threat_found_action_needed.png, id=480, 365.86688pt x 240.9pt>
 File: threat_found_action_needed.png Graphic file (type png)
 <use threat_found_action_needed.png>
-Package pdftex.def Info: threat_found_action_needed.png  used on input line 292
-8.
+Package pdftex.def Info: threat_found_action_needed.png  used on input line 293
+5.
 (pdftex.def)             Requested size: 365.86598pt x 240.8994pt.
 <win1.png, id=483, 584.93532pt x 587.94656pt>
 File: win1.png Graphic file (type png)
 <use win1.png>
-Package pdftex.def Info: win1.png  used on input line 2959.
+Package pdftex.def Info: win1.png  used on input line 2966.
 (pdftex.def)             Requested size: 469.76967pt x 472.17908pt.
 <win2.png, id=484, 604.50844pt x 478.78876pt>
 File: win2.png Graphic file (type png)
 <use win2.png>
-Package pdftex.def Info: win2.png  used on input line 2979.
+Package pdftex.def Info: win2.png  used on input line 2986.
 (pdftex.def)             Requested size: 469.75288pt x 372.05833pt.
 <win3.png, id=485, 605.26125pt x 478.03593pt>
 File: win3.png Graphic file (type png)
 <use win3.png>
-Package pdftex.def Info: win3.png  used on input line 2999.
+Package pdftex.def Info: win3.png  used on input line 3006.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
  [22 <./smartscreen_en.png> <./blunderdb_potential_virus.png>]
 <win4.png, id=495, 601.4972pt x 477.28313pt>
 File: win4.png Graphic file (type png)
 <use win4.png>
-Package pdftex.def Info: win4.png  used on input line 3019.
+Package pdftex.def Info: win4.png  used on input line 3026.
 (pdftex.def)             Requested size: 469.77168pt x 372.74542pt.
 <win5.png, id=496, 604.50844pt x 479.54156pt>
 File: win5.png Graphic file (type png)
 <use win5.png>
-Package pdftex.def Info: win5.png  used on input line 3040.
+Package pdftex.def Info: win5.png  used on input line 3047.
 (pdftex.def)             Requested size: 469.75288pt x 372.65063pt.
 <win6.png, id=497, 461.47406pt x 357.58594pt>
 File: win6.png Graphic file (type png)
 <use win6.png>
-Package pdftex.def Info: win6.png  used on input line 3046.
+Package pdftex.def Info: win6.png  used on input line 3053.
 (pdftex.def)             Requested size: 461.47292pt x 357.58505pt.
 <win7.png, id=498, 605.26125pt x 478.03593pt>
 File: win7.png Graphic file (type png)
 <use win7.png>
-Package pdftex.def Info: win7.png  used on input line 3052.
+Package pdftex.def Info: win7.png  used on input line 3059.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
  [23 <./threat_found_action_needed.png>] [24 <./win1.png>] [25 <./win2.png>] [2
 6 <./win3.png>] [27 <./win4.png>] [28 <./win5.png>] [29 <./win6.png>] [30 <./wi
 n7.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 3166--3168
+Underfull \hbox (badness 10000) in paragraph at lines 3173--3175
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.0.0 à la versio
 n 1.1.0, exécutez la commande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3184--3186
+Underfull \hbox (badness 10000) in paragraph at lines 3191--3193
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.1.0 à la versio
 n 1.2.0, exécutez la commande
  []
 
 [31]
-Underfull \hbox (badness 10000) in paragraph at lines 3202--3204
+Underfull \hbox (badness 10000) in paragraph at lines 3209--3211
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.2.0 à la versio
 n 1.3.0, exécutez la commande
  []
@@ -1016,7 +1016,7 @@ s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 tt.pfb>
-Output written on blunderdb.pdf (41 pages, 469419 bytes).
+Output written on blunderdb.pdf (41 pages, 469557 bytes).
 PDF statistics:
  650 PDF objects out of 1000 (max. 8388607)
  568 compressed objects within 6 object streams
