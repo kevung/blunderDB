@@ -74,6 +74,10 @@ export function GetMatchByID(arg1) {
   return window['go']['main']['Database']['GetMatchByID'](arg1);
 }
 
+export function GetMatchMovePositions(arg1) {
+  return window['go']['main']['Database']['GetMatchMovePositions'](arg1);
+}
+
 export function GetMovesByGame(arg1) {
   return window['go']['main']['Database']['GetMovesByGame'](arg1);
 }

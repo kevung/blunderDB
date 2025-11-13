@@ -3547,7 +3547,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 
 		// Import moves for this game
 		for moveIdx, move := range game.Moves {
-			err := d.importMoveWithCache(tx, gameID, int32(moveIdx), &move, &game, positionCache)
+			err := d.importMoveWithCache(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), positionCache)
 			if err != nil {
 				return 0, fmt.Errorf("failed to import move %d in game %d: %w", moveIdx, game.GameNumber, err)
 			}
@@ -3580,7 +3580,7 @@ func (d *Database) importGame(tx *sql.Tx, matchID int64, game *xgparser.Game) (i
 }
 
 // importMoveWithCache imports a move using a position cache for deduplication
-func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, positionCache map[string]int64) error {
+func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, positionCache map[string]int64) error {
 	var positionID int64
 	var player int32
 	var dice [2]int32
@@ -3589,7 +3589,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 
 	if move.MoveType == "checker" && move.CheckerMove != nil {
 		// Create position from checker move
-		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, moveNumber)
+		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
@@ -3643,7 +3643,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 
 	} else if move.MoveType == "cube" && move.CubeMove != nil {
 		// Create position from cube move
-		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, moveNumber)
+		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
@@ -3695,7 +3695,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 }
 
 // importMove imports a move, creates associated position, and stores analysis (deprecated - use importMoveWithCache)
-func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game) error {
+func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32) error {
 	var positionID int64
 	var player int32
 	var dice [2]int32
@@ -3704,7 +3704,7 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 
 	if move.MoveType == "checker" && move.CheckerMove != nil {
 		// Create position from checker move
-		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, moveNumber)
+		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
@@ -3746,7 +3746,7 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 
 	} else if move.MoveType == "cube" && move.CubeMove != nil {
 		// Create position from cube move
-		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, moveNumber)
+		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
@@ -3786,14 +3786,37 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 }
 
 // createPositionFromXG converts xgparser.Position to blunderDB Position
-func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, moveNum int32) (*Position, error) {
+func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLength int32, moveNum int32) (*Position, error) {
+	// Calculate away scores from current scores
+	// In blunderDB, scores are "points away from winning"
+	// game.InitialScore contains current scores (e.g., 2-3 in a 7-point match)
+	// We need to convert to away scores (e.g., 5-away, 4-away)
+	awayScore1 := int(matchLength) - int(game.InitialScore[0])
+	awayScore2 := int(matchLength) - int(game.InitialScore[1])
+
+	// Handle unlimited match (matchLength == 0)
+	if matchLength == 0 {
+		awayScore1 = -1
+		awayScore2 = -1
+	}
+
+	// Map XG cube position to blunderDB format
+	// xgPos.CubePos: 0=center, 1=player1 owns, 2=player2 owns
+	// blunderDB: 0=center, 1=player1 owns, -1=player2 owns
+	cubeOwner := 0 // Default: center
+	if xgPos.CubePos == 1 {
+		cubeOwner = 1 // Player 1 owns
+	} else if xgPos.CubePos == 2 {
+		cubeOwner = -1 // Player 2 owns
+	}
+
 	pos := &Position{
 		PlayerOnRoll: 0, // Will be set from move context
 		DecisionType: 0, // Checker decision by default
-		Score:        [2]int{int(game.InitialScore[0]), int(game.InitialScore[1])},
+		Score:        [2]int{awayScore1, awayScore2},
 		Cube: Cube{
 			Value: int(xgPos.Cube),
-			Owner: int(xgPos.CubePos), // 0=center, 1=player1, -1=player2
+			Owner: cubeOwner,
 		},
 		Dice: [2]int{0, 0}, // Will be set from move data
 	}
@@ -4343,6 +4366,85 @@ func (d *Database) DeleteMatch(matchID int64) error {
 	}
 
 	return nil
+}
+
+// GetMatchMovePositions returns all positions from a match in chronological order
+// Positions are returned as they were stored (from player on roll POV)
+// The frontend is responsible for mirroring display if needed
+func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Get match info for player names
+	var player1Name, player2Name string
+	err := d.db.QueryRow(`
+		SELECT player1_name, player2_name 
+		FROM match 
+		WHERE id = ?
+	`, matchID).Scan(&player1Name, &player2Name)
+	if err != nil {
+		return nil, fmt.Errorf("match not found: %w", err)
+	}
+
+	// Get all moves across all games in chronological order
+	// Join with game table to get game number and position table to get position data
+	rows, err := d.db.Query(`
+		SELECT 
+			m.id as move_id,
+			m.game_id,
+			g.game_number,
+			m.move_number,
+			m.move_type,
+			m.player,
+			m.position_id,
+			p.state as position_state
+		FROM move m
+		INNER JOIN game g ON m.game_id = g.id
+		INNER JOIN position p ON m.position_id = p.id
+		WHERE g.match_id = ?
+		ORDER BY g.game_number ASC, m.move_number ASC
+	`, matchID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to query moves: %w", err)
+	}
+	defer rows.Close()
+
+	var movePositions []MatchMovePosition
+	for rows.Next() {
+		var moveID, gameID, positionID int64
+		var gameNumber, moveNumber, player int32
+		var moveType, positionState string
+
+		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState)
+		if err != nil {
+			fmt.Printf("Error scanning move: %v\n", err)
+			continue
+		}
+
+		// Unmarshal position
+		var position Position
+		err = json.Unmarshal([]byte(positionState), &position)
+		if err != nil {
+			fmt.Printf("Error unmarshalling position: %v\n", err)
+			continue
+		}
+
+		movePos := MatchMovePosition{
+			Position:     position,
+			MoveID:       moveID,
+			GameID:       gameID,
+			GameNumber:   gameNumber,
+			MoveNumber:   moveNumber,
+			MoveType:     moveType,
+			PlayerOnRoll: player,
+			Player1Name:  player1Name,
+			Player2Name:  player2Name,
+		}
+
+		movePositions = append(movePositions, movePos)
+	}
+
+	return movePositions, nil
 }
 
 // GetDatabaseStats returns statistics about the database

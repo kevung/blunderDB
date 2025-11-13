@@ -57,7 +57,9 @@
         positionStore,
         positionsStore, // Import positionsStore
         positionBeforeFilterLibraryStore, // Import position before filter library store
-        positionIndexBeforeFilterLibraryStore // Import position index before filter library store
+        positionIndexBeforeFilterLibraryStore, // Import position index before filter library store
+        matchContextStore, // Import matchContextStore
+        lastVisitedMatchStore // Import lastVisitedMatchStore
     } from './stores/positionStore';
 
     import {
@@ -278,6 +280,8 @@
                     wrongPassPercentage: 0,
                     wrongTakePercentage: 0
                 },
+                playedMove: '',
+                playedCubeAction: '',
                 creationDate: '',
                 lastModifiedDate: ''
             }); // Reset analysisStore when no positions
@@ -391,6 +395,28 @@
             return;
         }
 
+        // Special handling for analysis panel
+        if (document.activeElement.closest('.analysis-panel')) {
+            // Analysis panel has focus
+            if (event.ctrlKey) {
+                // Don't return, let the shortcut be processed below
+            } else {
+                // Check if a move is selected in the analysis panel
+                const isNavigationKey = (event.key === 'j' || event.key === 'k' || 
+                                        event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
+                                        event.key === 'h' || event.key === 'l' ||
+                                        event.key === 'PageUp' || event.key === 'PageDown');
+                
+                if (isNavigationKey && !$selectedMoveStore) {
+                    // Navigation key pressed and no move selected - allow position navigation
+                    // Don't return, let position navigation happen
+                } else {
+                    // Either not a navigation key, or a move is selected - let panel handle it
+                    return; // Let AnalysisPanel.svelte handle it
+                }
+            }
+        }
+
         // Prevent command line from opening when editing filter panel fields or comment panel
         if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || document.activeElement.closest('.match-panel') || showComment) {
             // Allow all Ctrl+key shortcuts to work globally
@@ -410,7 +436,7 @@
                                         event.key === 'PageUp' || event.key === 'PageDown');
                 
                 if (isNavigationKey) {
-                    // Check if any row is selected in the panels
+                    // Check if any row is selected in the panels (not analysis - already handled above)
                     const filterLibraryHasSelection = document.querySelector('.filter-library-panel tr.highlight');
                     const searchHistoryHasSelection = document.querySelector('.search-history-panel tr.selected');
                     const matchPanelHasSelection = document.querySelector('.match-panel tr.selected');
@@ -567,6 +593,8 @@
                 wrongPassPercentage: 0,
                 wrongTakePercentage: 0
             },
+            playedMove: '',
+            playedCubeAction: '',
             creationDate: '',
             lastModifiedDate: ''
         });
@@ -1079,6 +1107,8 @@
                         wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
                         wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
                     },
+                    playedMove: '',
+                    playedCubeAction: '',
                     creationDate: '',
                     lastModifiedDate: ''
                 });
@@ -1893,7 +1923,7 @@
         }
     }
 
-    function firstPosition() {
+    async function firstPosition() {
         if ($statusBarModeStore === 'EDIT') {
             setStatusBarMessage('Cannot browse positions in edit mode');
             return;
@@ -1902,12 +1932,62 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if (positions && positions.length > 0) {
+        
+        // In MATCH mode, go to previous game (or first position of first game)
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+            const matchCtx = $matchContextStore;
+            const currentGameNumber = matchCtx.movePositions[matchCtx.currentIndex].game_number;
+            
+            // Find the first position of the previous game
+            let targetIndex = -1;
+            for (let i = matchCtx.currentIndex - 1; i >= 0; i--) {
+                if (matchCtx.movePositions[i].game_number < currentGameNumber) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+            
+            // If no previous game found, go to the first position of the current/first game
+            if (targetIndex === -1) {
+                targetIndex = 0;
+            } else {
+                // Find the first position of that previous game
+                const targetGameNumber = matchCtx.movePositions[targetIndex].game_number;
+                for (let i = 0; i < matchCtx.movePositions.length; i++) {
+                    if (matchCtx.movePositions[i].game_number === targetGameNumber) {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            matchContextStore.update(ctx => ({ ...ctx, currentIndex: targetIndex }));
+            const movePos = matchCtx.movePositions[targetIndex];
+            // Load position and analysis
+            await showPosition(movePos.position);
+            statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
+            saveCurrentMatchPosition(); // Save for later restoration
+        } else if (positions && positions.length > 0) {
             currentPositionIndexStore.set(0);
         }
     }
 
-    function previousPosition() {
+    // Helper function to save current match position for later restoration
+    function saveCurrentMatchPosition() {
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+            const matchCtx = $matchContextStore;
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos) {
+                lastVisitedMatchStore.set({
+                    matchID: matchCtx.matchID,
+                    currentIndex: matchCtx.currentIndex,
+                    gameNumber: currentMovePos.game_number
+                });
+            }
+        }
+    }
+
+    async function previousPosition() {
         if ($statusBarModeStore === 'EDIT') {
             setStatusBarMessage('Cannot browse positions in edit mode');
             return;
@@ -1916,12 +1996,37 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if (positions && $currentPositionIndexStore > 0) {
+        
+        // Check if we're in MATCH mode
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+            const matchCtx = $matchContextStore;
+            if (matchCtx.currentIndex > 0) {
+                // Skip implicit cube positions (those without actual analysis)
+                let newIndex = matchCtx.currentIndex - 1;
+                while (newIndex >= 0) {
+                    const movePos = matchCtx.movePositions[newIndex];
+                    // Only stop at checker moves (skip implicit cube positions)
+                    if (movePos.move_type === 'checker') {
+                        break;
+                    }
+                    newIndex--;
+                }
+                
+                if (newIndex >= 0) {
+                    matchContextStore.update(ctx => ({ ...ctx, currentIndex: newIndex }));
+                    const movePos = matchCtx.movePositions[newIndex];
+                    // Load position and analysis
+                    await showPosition(movePos.position);
+                    statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
+                    saveCurrentMatchPosition(); // Save for later restoration
+                }
+            }
+        } else if (positions && $currentPositionIndexStore > 0) {
             currentPositionIndexStore.set($currentPositionIndexStore - 1);
         }
     }
 
-    function nextPosition() {
+    async function nextPosition() {
         if ($statusBarModeStore === 'EDIT') {
             setStatusBarMessage('Cannot browse positions in edit mode');
             return;
@@ -1930,12 +2035,37 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if (positions && $currentPositionIndexStore < positions.length - 1) {
+        
+        // Check if we're in MATCH mode
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+            const matchCtx = $matchContextStore;
+            if (matchCtx.currentIndex < matchCtx.movePositions.length - 1) {
+                // Skip implicit cube positions (those without actual analysis)
+                let newIndex = matchCtx.currentIndex + 1;
+                while (newIndex < matchCtx.movePositions.length) {
+                    const movePos = matchCtx.movePositions[newIndex];
+                    // Only stop at checker moves (skip implicit cube positions)
+                    if (movePos.move_type === 'checker') {
+                        break;
+                    }
+                    newIndex++;
+                }
+                
+                if (newIndex < matchCtx.movePositions.length) {
+                    matchContextStore.update(ctx => ({ ...ctx, currentIndex: newIndex }));
+                    const movePos = matchCtx.movePositions[newIndex];
+                    // Load position and analysis
+                    await showPosition(movePos.position);
+                    statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
+                    saveCurrentMatchPosition(); // Save for later restoration
+                }
+            }
+        } else if (positions && $currentPositionIndexStore < positions.length - 1) {
             currentPositionIndexStore.set($currentPositionIndexStore + 1);
         }
     }
 
-    function lastPosition() {
+    async function lastPosition() {
         if ($statusBarModeStore === 'EDIT') {
             setStatusBarMessage('Cannot browse positions in edit mode');
             return;
@@ -1944,7 +2074,41 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if (positions && positions.length > 0) {
+        
+        // In MATCH mode, go to next game (or first position of last game)
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+            const matchCtx = $matchContextStore;
+            const currentGameNumber = matchCtx.movePositions[matchCtx.currentIndex].game_number;
+            
+            // Find the first position of the next game
+            let targetIndex = -1;
+            for (let i = matchCtx.currentIndex + 1; i < matchCtx.movePositions.length; i++) {
+                if (matchCtx.movePositions[i].game_number > currentGameNumber) {
+                    targetIndex = i;
+                    break;
+                }
+            }
+            
+            // If no next game found, find the first position of the last game
+            if (targetIndex === -1) {
+                const maxGameNumber = Math.max(...matchCtx.movePositions.map(p => p.game_number));
+                for (let i = 0; i < matchCtx.movePositions.length; i++) {
+                    if (matchCtx.movePositions[i].game_number === maxGameNumber) {
+                        targetIndex = i;
+                        break;
+                    }
+                }
+            }
+            
+            if (targetIndex !== -1) {
+                matchContextStore.update(ctx => ({ ...ctx, currentIndex: targetIndex }));
+                const movePos = matchCtx.movePositions[targetIndex];
+                // Load position and analysis
+                await showPosition(movePos.position);
+                statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
+                saveCurrentMatchPosition(); // Save for later restoration
+            }
+        } else if (positions && positions.length > 0) {
             currentPositionIndexStore.set(positions.length - 1);
         }
     }
@@ -1954,7 +2118,7 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if ($statusBarModeStore !== 'NORMAL') {
+        if ($statusBarModeStore !== 'NORMAL' && $statusBarModeStore !== 'MATCH') {
             setStatusBarMessage('Cannot go to position in current mode');
             return;
         }
@@ -1977,6 +2141,26 @@
             statusBarModeStore.set('NORMAL');
             return;
         }
+        
+        // Special handling for MATCH mode: exit to NORMAL and reload all positions
+        if ($statusBarModeStore === "MATCH") {
+            console.log('Exiting MATCH mode to NORMAL mode');
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+            // Reset match context
+            matchContextStore.set({
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0,
+                player1Name: '',
+                player2Name: ''
+            });
+            // Reload all positions from database
+            loadAllPositions();
+            return;
+        }
+        
         if ($statusBarModeStore !== "EDIT") {
             previousModeStore.set($statusBarModeStore);
             statusBarModeStore.set('EDIT');
@@ -2003,7 +2187,10 @@
         
         if (!wasOpen) {
             // Panel is now opening - close other panels
-            statusBarModeStore.set('NORMAL');
+            // Don't change mode if we're in MATCH mode
+            if ($statusBarModeStore !== 'MATCH') {
+                statusBarModeStore.set('NORMAL');
+            }
             showFilterLibraryPanelStore.set(false);
             showCommentStore.set(false);
             showSearchHistoryPanelStore.set(false);
@@ -2025,8 +2212,11 @@
             }, 0);
         }
 
-        previousModeStore.set('NORMAL');
-        statusBarModeStore.set('NORMAL');
+        // Don't change mode to NORMAL if we're in MATCH mode
+        if ($statusBarModeStore !== 'MATCH') {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        }
     }
 
     function toggleCommentPanel() {
@@ -2117,7 +2307,11 @@
         showMatchPanelStore.set(!wasOpen);
         if (!wasOpen) {
             // Panel is now opening - close other panels
-            statusBarModeStore.set('NORMAL');
+            // Don't change mode if we're in MATCH mode
+            if ($statusBarModeStore !== 'MATCH') {
+                statusBarModeStore.set('NORMAL');
+                previousModeStore.set('NORMAL');
+            }
             showCommentStore.set(false);
             showAnalysisStore.set(false);
             showSearchHistoryPanelStore.set(false);
@@ -2127,9 +2321,6 @@
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
             currentPositionIndexStore.set(currentIndex); // Set back to the original value
         }
-
-        previousModeStore.set('NORMAL');
-        statusBarModeStore.set('NORMAL');
     }
 
 function togglePipcount() {
@@ -2241,6 +2432,7 @@ function togglePipcount() {
 
             // @ts-ignore
             const loadedPositions = await LoadPositionsByFilters(
+                // @ts-ignore
                 currentPosition,
                 includeCube,
                 includeScore,
@@ -2409,6 +2601,14 @@ function togglePipcount() {
             // No analysis for this position
         }
         
+        // Check if we're in match mode and on first position of a game
+        // First position can be move_number 0 or 1
+        const matchCtx = $matchContextStore;
+        const isFirstPositionOfGame = matchCtx.isMatchMode && 
+                                      matchCtx.movePositions.length > 0 &&
+                                      (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 ||
+                                       matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
+        
         analysisStore.set({
             positionId: analysis?.positionId || null,
             xgid: analysis?.xgid || '',
@@ -2417,7 +2617,8 @@ function togglePipcount() {
             analysisType: analysis?.analysisType || '',
             analysisEngineVersion: analysis?.analysisEngineVersion || '',
             checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
-            doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
+            // Clear cube analysis if first position of game, otherwise use loaded analysis
+            doublingCubeAnalysis: isFirstPositionOfGame ? null : (analysis?.doublingCubeAnalysis || {
                 analysisDepth: '',
                 playerWinChances: 0,
                 playerGammonChances: 0,
@@ -2436,9 +2637,9 @@ function togglePipcount() {
                 bestCubeAction: '',
                 wrongPassPercentage: 0,
                 wrongTakePercentage: 0
-            },
+            }),
             playedMove: analysis?.playedMove || '',
-            playedCubeAction: analysis?.playedCubeAction || '',
+            playedCubeAction: isFirstPositionOfGame ? '' : (analysis?.playedCubeAction || ''),
             creationDate: analysis?.creationDate || '',
             lastModifiedDate: analysis?.lastModifiedDate || ''
         });

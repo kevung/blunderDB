@@ -38,6 +38,8 @@ export function GetGamesByMatch(arg1:number):Promise<Array<main.Game>>;
 
 export function GetMatchByID(arg1:number):Promise<main.Match>;
 
+export function GetMatchMovePositions(arg1:number):Promise<Array<main.MatchMovePosition>>;
+
 export function GetMovesByGame(arg1:number):Promise<Array<main.Move>>;
 
 export function ImportDatabase(arg1:string):Promise<Record<string, any>>;

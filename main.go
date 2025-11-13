@@ -22,7 +22,7 @@ func main() {
 	// Check if running in CLI mode
 	if len(os.Args) > 1 {
 		// Check if first argument is a CLI command
-		cliCommands := []string{"import", "export", "list", "delete", "help", "version"}
+		cliCommands := []string{"create", "import", "export", "list", "match", "verify", "delete", "help", "version"}
 		for _, cmd := range cliCommands {
 			if strings.ToLower(os.Args[1]) == cmd {
 				runCLI()

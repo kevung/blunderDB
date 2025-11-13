@@ -1,5 +1,5 @@
 <script>
-    import { positionStore } from "../stores/positionStore";
+    import { positionStore, matchContextStore } from "../stores/positionStore";
     import { selectedMoveStore } from "../stores/analysisStore"; // Import selectedMoveStore
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
@@ -14,7 +14,7 @@
     let showTakePoint4Modal = false; // Add showTakePoint4Modal variable
     let showPipcount = true; // Add a reactive variable to control pip count visibility
     let arrowGroup = null; // Track the arrow group for cleanup
-
+    let matchContext = null; // Store match context
 
     statusBarModeStore.subscribe(value => {
         mode = value;
@@ -36,6 +36,9 @@
     });
     showPipcountStore.subscribe(value => {
         showPipcount = value;
+    });
+    matchContextStore.subscribe(value => {
+        matchContext = value;
     });
     
     let canvasCfg = {
@@ -820,13 +823,16 @@
         window.addEventListener("keydown", handleOrientationChange);
         window.addEventListener("keydown", handleKeyDown);
 
+        let previousPositionId = null;
         unsubscribe = positionStore.subscribe(() => {
-            // Clear selected move when position changes
-            selectedMoveStore.set(null);
-            drawBoard();
             const position = get(positionStore);
-            console.log("positionStore.subscribe - decision_type: ", position.decision_type); // Debug log
-            console.log("positionStore: ", position);
+            // Only clear selected move when position ID actually changes (real navigation)
+            // Don't clear it on board redraws or analysis updates
+            if (position.id !== previousPositionId) {
+                selectedMoveStore.set(null);
+                previousPositionId = position.id;
+            }
+            drawBoard();
         });
 
         logCanvasSize();
@@ -849,6 +855,54 @@
         if (unsubscribe) unsubscribe();
     });
 
+    // Helper function to get the position to display
+    // In match mode, mirror the position if Player 2 is on roll
+    // so that Player 1 is always displayed at the bottom
+    function getDisplayPosition() {
+        const position = get(positionStore);
+        const matchCtx = get(matchContextStore);
+        
+        // In match mode, if Player 2 (player_on_roll = 1) is on roll,
+        // we need to mirror the position for display so Player 1 is at the bottom
+        if (matchCtx && matchCtx.isMatchMode && position.player_on_roll === 1) {
+            // Mirror the position for display only
+            return mirrorPosition(position);
+        }
+        
+        return position;
+    }
+
+    // Mirror a position (swap players)
+    function mirrorPosition(pos) {
+        const mirrored = JSON.parse(JSON.stringify(pos)); // Deep copy
+        
+        // Mirror the board points
+        const tempPoints = [...mirrored.board.points];
+        for (let i = 0; i < 26; i++) {
+            mirrored.board.points[25 - i] = {
+                color: tempPoints[i].color === -1 ? -1 : 1 - tempPoints[i].color,
+                checkers: tempPoints[i].checkers
+            };
+        }
+        
+        // Swap bearoff
+        [mirrored.board.bearoff[0], mirrored.board.bearoff[1]] = 
+            [mirrored.board.bearoff[1], mirrored.board.bearoff[0]];
+        
+        // Swap player on roll
+        mirrored.player_on_roll = 1 - mirrored.player_on_roll;
+        
+        // Swap scores
+        [mirrored.score[0], mirrored.score[1]] = [mirrored.score[1], mirrored.score[0]];
+        
+        // Swap cube owner if owned
+        if (mirrored.cube.owner !== -1) {
+            mirrored.cube.owner = 1 - mirrored.cube.owner;
+        }
+        
+        return mirrored;
+    }
+
     export function drawBoard() {
         if (!two) return; // Safety check
         
@@ -865,7 +919,8 @@
         console.log("boardOrigXpos: ", boardOrigXpos, "boardOrigYpos: ", boardOrigYpos);
         console.log("two.width: ", two.width, "two.height: ", two.height);
 
-        const position = get(positionStore);
+        // Get the position to display (may be mirrored in match mode)
+        const position = getDisplayPosition();
         console.log("drawBoard - decision_type: ", position.decision_type); // Debug log
 
         function createTriangle(x, y, flip) {
@@ -925,7 +980,7 @@
 
         function createLabels() {
             let labels = two.makeGroup();
-            const position = get(positionStore);
+            // Use the already-calculated display position
             const flip = position.player_on_roll === 1;
 
             if (boardCfg.orientation === "right") {
@@ -1007,7 +1062,7 @@
         }
 
         function drawCheckers() {
-            const position = get(positionStore);
+            // Use the already-calculated display position
             position.board.points.forEach((point, index) => {
                 let x, yBase;
                 if (boardCfg.orientation === "right") {
@@ -1108,8 +1163,7 @@
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
 
-            // Get the value for the doubling cube
-            const position = get(positionStore);
+            // Use the already-calculated display position
             const cubeValue = position.cube.value;
             const doublingCubeTextValue = Math.pow(2, cubeValue);
 
@@ -1146,7 +1200,7 @@
         }
 
         function computePipCount() {
-            const position = get(positionStore);
+            // Use the already-calculated display position
             let pipCount1 = 0;
             let pipCount2 = 0;
 
@@ -1192,8 +1246,9 @@
         }
 
         function drawBearoff() {
-            const bearoff1 = get(positionStore).board.bearoff[0];
-            const bearoff2 = get(positionStore).board.bearoff[1];
+            // Use the already-calculated display position
+            const bearoff1 = position.board.bearoff[0];
+            const bearoff2 = position.board.bearoff[1];
             const boardOrigXpos = width / 2;
             const boardOrigYpos = height / 2;
             const boardWidth = boardCfg.widthFactor * width;
@@ -1246,7 +1301,7 @@
         }
 
         function drawDice() {
-            const position = get(positionStore);
+            // Use the already-calculated display position
             const playerOnRoll = position.player_on_roll;
             const dice = position.dice;
             const decisionType = position.decision_type;
@@ -1294,8 +1349,9 @@
             const boardWidth = boardCfg.widthFactor * width;
             const boardCheckerSize = (11 / 13) * (boardCfg.widthFactor * width) / 11;
 
-            const score1 = get(positionStore).score[0];
-            const score2 = get(positionStore).score[1];         
+            // Use the already-calculated display position
+            const score1 = position.score[0];
+            const score2 = position.score[1];         
 
             const scoreText1 = score1 === 1 ? "crawford" : score1 === 0 ? "post" : score1 === -1 ? "unlimited" : `${score1} away`;
             const scoreText2 = score2 === 1 ? "crawford" : score2 === 0 ? "post" : score2 === -1 ? "unlimited" : `${score2} away`;

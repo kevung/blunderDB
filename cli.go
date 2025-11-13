@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 )
 
@@ -35,6 +36,8 @@ func (cli *CLI) Run(args []string) error {
 	commandArgs := args[1:]
 
 	switch command {
+	case "create":
+		return cli.runCreate(commandArgs)
 	case "import":
 		return cli.runImport(commandArgs)
 	case "export":
@@ -43,6 +46,10 @@ func (cli *CLI) Run(args []string) error {
 		return cli.runList(commandArgs)
 	case "delete":
 		return cli.runDelete(commandArgs)
+	case "match":
+		return cli.runMatch(commandArgs)
+	case "verify":
+		return cli.runVerify(commandArgs)
 	case "help":
 		cli.printUsage()
 		return nil
@@ -64,9 +71,12 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  blunderdb <command> [options]")
 	fmt.Println()
 	fmt.Println("Commands:")
+	fmt.Println("  create    Create a new database")
 	fmt.Println("  import    Import data into the database")
 	fmt.Println("  export    Export data from the database")
 	fmt.Println("  list      List database contents")
+	fmt.Println("  match     Display match positions and analysis")
+	fmt.Println("  verify    Verify database integrity")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  help      Show this help message")
 	fmt.Println("  version   Show version information")
@@ -666,5 +676,402 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 	}
 
 	fmt.Printf("Successfully deleted match ID %d\n", matchID)
+	return nil
+}
+
+// runCreate handles the create command
+func (cli *CLI) runCreate(args []string) error {
+	createCmd := flag.NewFlagSet("create", flag.ExitOnError)
+
+	// Define flags
+	dbPath := createCmd.String("db", "", "Path to the database file to create (required)")
+	force := createCmd.Bool("force", false, "Overwrite existing database if it exists")
+
+	createCmd.Usage = func() {
+		fmt.Println("Usage: blunderdb create [options]")
+		fmt.Println()
+		fmt.Println("Create a new database with the required schema.")
+		fmt.Println()
+		fmt.Println("Options:")
+		createCmd.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  # Create a new database")
+		fmt.Println("  blunderdb create --db mydb.db")
+		fmt.Println()
+		fmt.Println("  # Force overwrite an existing database")
+		fmt.Println("  blunderdb create --db mydb.db --force")
+	}
+
+	if err := createCmd.Parse(args); err != nil {
+		return err
+	}
+
+	// Validate required flags
+	if *dbPath == "" {
+		fmt.Println("Error: --db flag is required")
+		createCmd.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+
+	// Check if database already exists
+	if _, err := os.Stat(*dbPath); err == nil && !*force {
+		return fmt.Errorf("database already exists: %s (use --force to overwrite)", *dbPath)
+	}
+
+	// Create directory if needed
+	dir := filepath.Dir(*dbPath)
+	if err := os.MkdirAll(dir, 0755); err != nil {
+		return fmt.Errorf("failed to create directory: %v", err)
+	}
+
+	// Create the database
+	fmt.Printf("Creating database: %s\n", *dbPath)
+	err := cli.db.SetupDatabase(*dbPath)
+	if err != nil {
+		return fmt.Errorf("failed to create database: %v", err)
+	}
+
+	fmt.Printf("Successfully created database with schema version %s\n", DatabaseVersion)
+
+	// Show database info
+	stats, err := cli.db.GetDatabaseStats()
+	if err == nil {
+		fmt.Println("\nDatabase initialized with:")
+		if posCount, ok := stats["position_count"].(int64); ok {
+			fmt.Printf("  Positions: %d\n", posCount)
+		}
+		if matchCount, ok := stats["match_count"].(int64); ok {
+			fmt.Printf("  Matches: %d\n", matchCount)
+		}
+	}
+
+	return nil
+}
+
+// runMatch handles the match command
+func (cli *CLI) runMatch(args []string) error {
+	matchCmd := flag.NewFlagSet("match", flag.ExitOnError)
+
+	// Define flags
+	dbPath := matchCmd.String("db", "", "Path to the database file (required)")
+	matchID := matchCmd.Int64("id", 0, "Match ID (required)")
+	format := matchCmd.String("format", "json", "Output format: json, text, summary")
+	output := matchCmd.String("output", "", "Output file (default: stdout)")
+
+	matchCmd.Usage = func() {
+		fmt.Println("Usage: blunderdb match [options]")
+		fmt.Println()
+		fmt.Println("Display match positions and analysis.")
+		fmt.Println()
+		fmt.Println("Options:")
+		matchCmd.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  # Display match positions in JSON format")
+		fmt.Println("  blunderdb match --db database.db --id 1 --format json")
+		fmt.Println()
+		fmt.Println("  # Display match summary")
+		fmt.Println("  blunderdb match --db database.db --id 1 --format summary")
+		fmt.Println()
+		fmt.Println("  # Save match positions to file")
+		fmt.Println("  blunderdb match --db database.db --id 1 --output match.json")
+	}
+
+	if err := matchCmd.Parse(args); err != nil {
+		return err
+	}
+
+	// Validate required flags
+	if *dbPath == "" {
+		fmt.Println("Error: --db flag is required")
+		matchCmd.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+
+	if *matchID == 0 {
+		fmt.Println("Error: --id flag is required")
+		matchCmd.Usage()
+		return fmt.Errorf("missing required flag: --id")
+	}
+
+	// Initialize database
+	if err := cli.initDatabase(*dbPath); err != nil {
+		return err
+	}
+
+	// Get match info
+	match, err := cli.db.GetMatchByID(*matchID)
+	if err != nil {
+		return fmt.Errorf("failed to get match: %v", err)
+	}
+
+	// Get match positions
+	positions, err := cli.db.GetMatchMovePositions(*matchID)
+	if err != nil {
+		return fmt.Errorf("failed to get match positions: %v", err)
+	}
+
+	// Format output based on requested format
+	var outputData string
+	switch strings.ToLower(*format) {
+	case "json":
+		outputData, err = cli.formatMatchJSON(match, positions)
+	case "text":
+		outputData, err = cli.formatMatchText(match, positions)
+	case "summary":
+		outputData, err = cli.formatMatchSummary(match, positions)
+	default:
+		return fmt.Errorf("unknown format: %s (must be 'json', 'text', or 'summary')", *format)
+	}
+
+	if err != nil {
+		return fmt.Errorf("failed to format output: %v", err)
+	}
+
+	// Output results
+	if *output != "" {
+		err := os.WriteFile(*output, []byte(outputData), 0644)
+		if err != nil {
+			return fmt.Errorf("failed to write output file: %v", err)
+		}
+		fmt.Printf("Match data written to: %s\n", *output)
+	} else {
+		fmt.Println(outputData)
+	}
+
+	return nil
+}
+
+// runVerify handles the verify command
+func (cli *CLI) runVerify(args []string) error {
+	verifyCmd := flag.NewFlagSet("verify", flag.ExitOnError)
+
+	// Define flags
+	dbPath := verifyCmd.String("db", "", "Path to the database file (required)")
+	matchID := verifyCmd.Int64("match", 0, "Match ID to verify (optional)")
+	matFile := verifyCmd.String("mat", "", "MAT file to compare against (optional)")
+
+	verifyCmd.Usage = func() {
+		fmt.Println("Usage: blunderdb verify [options]")
+		fmt.Println()
+		fmt.Println("Verify database integrity and imported data.")
+		fmt.Println()
+		fmt.Println("Options:")
+		verifyCmd.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  # Verify database integrity")
+		fmt.Println("  blunderdb verify --db database.db")
+		fmt.Println()
+		fmt.Println("  # Verify match against MAT file")
+		fmt.Println("  blunderdb verify --db database.db --match 1 --mat test.mat")
+	}
+
+	if err := verifyCmd.Parse(args); err != nil {
+		return err
+	}
+
+	// Validate required flags
+	if *dbPath == "" {
+		fmt.Println("Error: --db flag is required")
+		verifyCmd.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+
+	// Initialize database
+	if err := cli.initDatabase(*dbPath); err != nil {
+		return err
+	}
+
+	fmt.Println("Verifying database...")
+	fmt.Println()
+
+	// Get database stats
+	stats, err := cli.db.GetDatabaseStats()
+	if err != nil {
+		return fmt.Errorf("failed to get database stats: %v", err)
+	}
+
+	// Display stats
+	fmt.Println("Database Statistics:")
+	if posCount, ok := stats["position_count"].(int64); ok {
+		fmt.Printf("  Positions: %d\n", posCount)
+	}
+	if analysisCount, ok := stats["analysis_count"].(int64); ok {
+		fmt.Printf("  Analyses: %d\n", analysisCount)
+	}
+	if matchCount, ok := stats["match_count"].(int64); ok {
+		fmt.Printf("  Matches: %d\n", matchCount)
+	}
+	if gameCount, ok := stats["game_count"].(int64); ok {
+		fmt.Printf("  Games: %d\n", gameCount)
+	}
+	if moveCount, ok := stats["move_count"].(int64); ok {
+		fmt.Printf("  Moves: %d\n", moveCount)
+	}
+	fmt.Println()
+
+	// If match ID specified, verify that match
+	if *matchID != 0 {
+		err := cli.verifyMatch(*matchID, *matFile)
+		if err != nil {
+			return fmt.Errorf("match verification failed: %v", err)
+		}
+	}
+
+	fmt.Println("Verification complete!")
+	return nil
+}
+
+// formatMatchJSON formats match data as JSON
+func (cli *CLI) formatMatchJSON(match *Match, positions []MatchMovePosition) (string, error) {
+	output := map[string]interface{}{
+		"match":          match,
+		"positions":      positions,
+		"position_count": len(positions),
+	}
+
+	jsonData, err := json.MarshalIndent(output, "", "  ")
+	if err != nil {
+		return "", err
+	}
+
+	return string(jsonData), nil
+}
+
+// formatMatchText formats match data as text
+func (cli *CLI) formatMatchText(match *Match, positions []MatchMovePosition) (string, error) {
+	var sb strings.Builder
+
+	sb.WriteString(fmt.Sprintf("Match ID: %d\n", match.ID))
+	sb.WriteString(fmt.Sprintf("Players: %s vs %s\n", match.Player1Name, match.Player2Name))
+	if match.Event != "" {
+		sb.WriteString(fmt.Sprintf("Event: %s\n", match.Event))
+	}
+	if match.Location != "" {
+		sb.WriteString(fmt.Sprintf("Location: %s\n", match.Location))
+	}
+	sb.WriteString(fmt.Sprintf("Match Length: %d\n", match.MatchLength))
+	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
+
+	for i, movePos := range positions {
+		sb.WriteString(fmt.Sprintf("Position %d:\n", i+1))
+		sb.WriteString(fmt.Sprintf("  Game: %d, Move: %d\n", movePos.GameNumber, movePos.MoveNumber))
+
+		// Handle XG player encoding: -1 = Player1 (X), 1 = Player2 (O)
+		var playerName string
+		if movePos.PlayerOnRoll == -1 {
+			playerName = match.Player1Name
+		} else if movePos.PlayerOnRoll == 1 {
+			playerName = match.Player2Name
+		} else {
+			playerName = "Unknown"
+		}
+		sb.WriteString(fmt.Sprintf("  Player on roll: %d (%s)\n", movePos.PlayerOnRoll, playerName))
+		sb.WriteString(fmt.Sprintf("  Score: %d-%d\n", movePos.Position.Score[0], movePos.Position.Score[1]))
+		sb.WriteString(fmt.Sprintf("  Cube: %d (owner: %d)\n", movePos.Position.Cube.Value, movePos.Position.Cube.Owner))
+		if movePos.Position.Dice[0] != 0 {
+			sb.WriteString(fmt.Sprintf("  Dice: %d-%d\n", movePos.Position.Dice[0], movePos.Position.Dice[1]))
+		}
+		sb.WriteString("\n")
+	}
+
+	return sb.String(), nil
+}
+
+// formatMatchSummary formats match data as a summary
+func (cli *CLI) formatMatchSummary(match *Match, positions []MatchMovePosition) (string, error) {
+	var sb strings.Builder
+
+	sb.WriteString(fmt.Sprintf("Match: %s vs %s\n", match.Player1Name, match.Player2Name))
+	if match.Event != "" {
+		sb.WriteString(fmt.Sprintf("Event: %s\n", match.Event))
+	}
+	sb.WriteString(fmt.Sprintf("Match Length: %d points\n", match.MatchLength))
+	sb.WriteString(fmt.Sprintf("Games: %d\n", match.GameCount))
+	sb.WriteString(fmt.Sprintf("Total Positions: %d\n\n", len(positions)))
+
+	// Count positions by game
+	gamePositions := make(map[int32]int)
+	for _, pos := range positions {
+		gamePositions[pos.GameNumber]++
+	}
+
+	sb.WriteString("Positions per game:\n")
+	for gameNum := int32(1); gameNum <= int32(match.GameCount); gameNum++ {
+		count := gamePositions[gameNum]
+		sb.WriteString(fmt.Sprintf("  Game %d: %d positions\n", gameNum, count))
+	}
+
+	return sb.String(), nil
+}
+
+// verifyMatch verifies a match against a MAT file
+func (cli *CLI) verifyMatch(matchID int64, matFile string) error {
+	fmt.Printf("Verifying match %d...\n", matchID)
+
+	// Get match info
+	match, err := cli.db.GetMatchByID(matchID)
+	if err != nil {
+		return fmt.Errorf("failed to get match: %v", err)
+	}
+
+	// Get match positions
+	positions, err := cli.db.GetMatchMovePositions(matchID)
+	if err != nil {
+		return fmt.Errorf("failed to get match positions: %v", err)
+	}
+
+	fmt.Printf("  Match: %s vs %s\n", match.Player1Name, match.Player2Name)
+	fmt.Printf("  Database positions: %d\n", len(positions))
+
+	// If MAT file specified, compare
+	if matFile != "" {
+		fmt.Printf("  Comparing with MAT file: %s\n", matFile)
+
+		// Read MAT file
+		content, err := os.ReadFile(matFile)
+		if err != nil {
+			return fmt.Errorf("failed to read MAT file: %v", err)
+		}
+
+		// Count actual dice rolls in MAT file (each represents a checker move)
+		contentStr := string(content)
+
+		// Count dice patterns like "51:", "64:", etc.
+		dicePattern := regexp.MustCompile(`[0-9]{2}:`)
+		matCheckerMoves := len(dicePattern.FindAllString(contentStr, -1))
+
+		// Count cube actions
+		cubePattern := regexp.MustCompile(`(?i)(Doubles|Takes|Drops|Beaver|Passes)`)
+		matCubeActions := len(cubePattern.FindAllString(contentStr, -1))
+
+		fmt.Printf("  MAT file checker moves: %d\n", matCheckerMoves)
+		fmt.Printf("  MAT file cube actions: %d\n", matCubeActions)
+		fmt.Printf("  MAT file total: %d\n", matCheckerMoves+matCubeActions)
+
+		fmt.Printf("  Database total positions: %d\n", len(positions))
+
+		// Verify player1 is always displayed on bottom (stored from POV of player on roll)
+		fmt.Println("\n  Verifying position storage (player on roll POV):")
+		playerNeg1Count := 0 // XG format: -1 represents Player 1 (X)
+		playerPos1Count := 0 // XG format: 1 represents Player 2 (O)
+		for _, pos := range positions {
+			if pos.PlayerOnRoll == -1 {
+				playerNeg1Count++
+			} else if pos.PlayerOnRoll == 1 {
+				playerPos1Count++
+			}
+		}
+		fmt.Printf("    Positions with Player 1 (X/-1) on roll: %d\n", playerNeg1Count)
+		fmt.Printf("    Positions with Player 2 (O/+1) on roll: %d\n", playerPos1Count)
+		fmt.Println("    Note: Positions stored from player on roll POV (frontend handles display)")
+
+		fmt.Println("\n  Note: Run database query for accurate move type counts:")
+		fmt.Println("    SELECT move_type, COUNT(*) FROM move GROUP BY move_type;")
+	}
+
+	fmt.Println()
 	return nil
 }

@@ -1,6 +1,6 @@
 <script>
   import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
-  import { positionsStore } from '../stores/positionStore';
+  import { positionsStore, matchContextStore } from '../stores/positionStore';
   import { analysisStore } from '../stores/analysisStore';
   import { tableData as metTable } from '../stores/metTable';
   import { takePoint2LiveTable } from '../stores/takePoint2LiveTable';
@@ -106,7 +106,15 @@
   <div class="separator"></div>
   <span class="info-message">{$statusBarTextStore}</span>
   <div class="separator"></div>
-  <span class="position">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
+  {#if $statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
+    {@const checkerMoves = $matchContextStore.movePositions.filter(p => p.move_type === 'checker')}
+    {@const currentCheckerIndex = $matchContextStore.movePositions.slice(0, $matchContextStore.currentIndex + 1).filter(p => p.move_type === 'checker').length}
+    <span class="position">{currentCheckerIndex} / {checkerMoves.length}</span>
+    <div class="separator"></div>
+    <span class="position">{$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1} / {Math.max(...$matchContextStore.movePositions.map(p => p.game_number))}</span>
+  {:else}
+    <span class="position">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
+  {/if}
 </div>
 
 <style>

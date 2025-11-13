@@ -1,7 +1,9 @@
 <script>
     import { onMount } from 'svelte';
-    import { positionsStore } from '../stores/positionStore'; // Import positionsStore
-    import { currentPositionIndexStore, statusBarModeStore } from '../stores/uiStore'; // Import currentPositionIndexStore and statusBarModeStore
+    import { positionsStore, matchContextStore, positionStore } from '../stores/positionStore'; // Import stores
+    import { currentPositionIndexStore, statusBarModeStore, statusBarTextStore, commentTextStore } from '../stores/uiStore'; // Import stores
+    import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
+    import { LoadAnalysis } from '../../wailsjs/go/main/Database.js';
 
     export let visible = false;
     export let onClose;
@@ -11,23 +13,78 @@
     let maxPositionNumber = 0;
     let currentIndex = 0;
 
-    // Subscribe to positionsStore to get the number of positions
-    positionsStore.subscribe(value => {
-        maxPositionNumber = value.length;
-    });
+    // Subscribe to positionsStore and matchContextStore to get the number of positions
+    $: if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+        maxPositionNumber = $matchContextStore.movePositions.length;
+        currentIndex = $matchContextStore.currentIndex + 1; // Adjust for 1-based index
+    } else {
+        maxPositionNumber = $positionsStore.length;
+        currentIndex = $currentPositionIndexStore + 1; // Adjust for 1-based index
+    }
 
-    // Subscribe to currentPositionIndexStore to get the current index
-    currentPositionIndexStore.subscribe(value => {
-        currentIndex = value + 1; // Adjust for 1-based index
-    });
-
-    function handleGoToPosition() {
+    async function handleGoToPosition() {
         if (positionNumber < 1) {
             positionNumber = 1;
         } else if (positionNumber > maxPositionNumber) {
             positionNumber = maxPositionNumber;
         }
-        currentPositionIndexStore.set(positionNumber - 1); // Set the store value directly
+        
+        // Handle MATCH mode differently
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+            const newIndex = positionNumber - 1;
+            matchContextStore.update(ctx => ({ ...ctx, currentIndex: newIndex }));
+            const movePos = $matchContextStore.movePositions[newIndex];
+            positionStore.set(movePos.position);
+            
+            // Load analysis for the position
+            let analysis = null;
+            try {
+                analysis = await LoadAnalysis(movePos.position.id);
+            } catch (error) {
+                // No analysis for this position
+            }
+            
+            analysisStore.set({
+                positionId: analysis?.positionId || null,
+                xgid: analysis?.xgid || '',
+                player1: analysis?.player1 || '',
+                player2: analysis?.player2 || '',
+                analysisType: analysis?.analysisType || '',
+                analysisEngineVersion: analysis?.analysisEngineVersion || '',
+                checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
+                doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
+                    analysisDepth: '',
+                    playerWinChances: 0,
+                    playerGammonChances: 0,
+                    playerBackgammonChances: 0,
+                    opponentWinChances: 0,
+                    opponentGammonChances: 0,
+                    opponentBackgammonChances: 0,
+                    cubelessNoDoubleEquity: 0,
+                    cubelessDoubleEquity: 0,
+                    cubefulNoDoubleEquity: 0,
+                    cubefulNoDoubleError: 0,
+                    cubefulDoubleTakeEquity: 0,
+                    cubefulDoubleTakeError: 0,
+                    cubefulDoublePassEquity: 0,
+                    cubefulDoublePassError: 0,
+                    bestCubeAction: '',
+                    wrongPassPercentage: 0,
+                    wrongTakePercentage: 0
+                },
+                playedMove: analysis?.playedMove || '',
+                playedCubeAction: analysis?.playedCubeAction || '',
+                creationDate: analysis?.creationDate || '',
+                lastModifiedDate: analysis?.lastModifiedDate || ''
+            });
+            
+            commentTextStore.set('');
+            selectedMoveStore.set(null);
+            
+            statusBarTextStore.set(`${$matchContextStore.player1Name} vs ${$matchContextStore.player2Name}`);
+        } else {
+            currentPositionIndexStore.set(positionNumber - 1); // Set the store value directly
+        }
         onClose(); // Close the modal after going to the position
     }
 
@@ -52,8 +109,8 @@
         inputField.select(); // Select the text to allow direct replacement
     }
 
-    $: if (visible && $statusBarModeStore !== 'NORMAL') {
-        onClose(); // Close the modal if not in normal mode
+    $: if (visible && $statusBarModeStore !== 'NORMAL' && $statusBarModeStore !== 'MATCH') {
+        onClose(); // Close the modal if not in normal or match mode
     }
 </script>
 

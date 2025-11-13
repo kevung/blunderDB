@@ -1,12 +1,38 @@
 <script>
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
-    import { positionStore } from '../stores/positionStore'; // Import positionStore
+    import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { showAnalysisStore, showFilterLibraryPanelStore, showCommentStore, statusBarModeStore } from '../stores/uiStore'; // Import showAnalysisStore
     export let visible = false;
     export let onClose;
 
     let analysisData;
     let cubeValue;
+    let activeTab = 'checker'; // 'checker' or 'cube'
+    let matchCtx;
+
+    // Subscribe to matchContextStore
+    matchContextStore.subscribe(value => {
+        matchCtx = value;
+        // Auto-switch tab based on current move type in match mode
+        // But only if no move is currently selected (to avoid interfering with move navigation)
+        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode && matchCtx.movePositions.length > 0 && !$selectedMoveStore) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos) {
+                // If it's the first position of a game (move_number 0 or 1), force checker tab and clear cube data
+                if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
+                    activeTab = 'checker';
+                    // Clear any existing cube analysis data
+                    analysisStore.update(current => ({
+                        ...current,
+                        doublingCubeAnalysis: null,
+                        playedCubeAction: ''
+                    }));
+                } else if (currentMovePos.move_type) {
+                    activeTab = currentMovePos.move_type;
+                }
+            }
+        }
+    });
 
     // Subscribe to analysisStore to get the analysis data
     analysisStore.subscribe(value => {
@@ -18,14 +44,35 @@
         cubeValue = value.cube.value;
     });
 
-    showAnalysisStore.subscribe(value => {
+    showAnalysisStore.subscribe(async value => {
         visible = value;
         if(visible) {
-            console.log('Panel is now visible');
-            console.log('Received Analysis Data:', analysisData);
-            console.log('Analysis Type:', analysisData.analysisType);
-            console.log('Checker Analysis:', Array.isArray(analysisData.checkerAnalysis) ? analysisData.checkerAnalysis : []);
-            console.log('Played Move:', analysisData.playedMove);
+            // Pre-load cube analysis in match mode if current position is checker
+            if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+                const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+                if (currentMovePos && currentMovePos.move_type === 'checker') {
+                    // If it's the first position of a game (move_number 0 or 1), clear cube data immediately
+                    if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
+                        analysisStore.update(current => ({
+                            ...current,
+                            doublingCubeAnalysis: null,
+                            playedCubeAction: ''
+                        }));
+                    } else {
+                        // Load cube analysis in background (only if there's one in the same game)
+                        const hasCubeInGame = await loadCubeAnalysisForCurrentPosition();
+                        // If no cube analysis found in current game, clear any previous cube data
+                        if (!hasCubeInGame) {
+                            analysisStore.update(current => ({
+                                ...current,
+                                doublingCubeAnalysis: null,
+                                playedCubeAction: ''
+                            }));
+                        }
+                    }
+                }
+            }
+            
             setTimeout(() => {
                 const analysisEl = document.getElementById('analysisPanel');
                 if (analysisEl) {
@@ -33,7 +80,6 @@
                 }
             }, 0);
         } else {
-            console.log('Panel is not visible');
             // Clear selected move when panel is closed
             selectedMoveStore.set(null);
         }
@@ -50,25 +96,39 @@
             return;
         }
 
+        // Handle tab switching with 'd' (doubling/cube) key to toggle
+        // Only allow if showTabs is true (not first position of game)
+        if (showTabs && (event.key === 'd' || event.key === 'D')) {
+            event.preventDefault();
+            const newTab = activeTab === 'checker' ? 'cube' : 'checker';
+            handleTabSwitch(newTab);
+            return;
+        }
+
         // Handle j/k and arrow keys for move navigation when a move is selected
-        if ($selectedMoveStore && analysisData.analysisType === 'CheckerMove' && analysisData.checkerAnalysis) {
+        // This should work regardless of which tab is active
+        if ($selectedMoveStore) {
+            if (!analysisData.checkerAnalysis || !analysisData.checkerAnalysis.moves) {
+                return; // No moves to navigate
+            }
+            
             const moves = analysisData.checkerAnalysis.moves;
-            if (!moves || moves.length === 0) return;
+            if (moves.length === 0) return;
 
             const currentIndex = moves.findIndex(m => m.move === $selectedMoveStore);
             
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
-                // Select next move (down)
                 if (currentIndex >= 0 && currentIndex < moves.length - 1) {
                     selectedMoveStore.set(moves[currentIndex + 1].move);
                 }
+                return;
             } else if (event.key === 'k' || event.key === 'ArrowUp') {
                 event.preventDefault();
-                // Select previous move (up)
                 if (currentIndex > 0) {
                     selectedMoveStore.set(moves[currentIndex - 1].move);
                 }
+                return;
             }
         }
     }
@@ -106,13 +166,143 @@
         
         return normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction);
     }
+
+    async function switchTab(tab) {
+        activeTab = tab;
+        
+        // When switching to cube tab in match mode, load the cube analysis and update position
+        if (tab === 'cube' && $statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+            await loadCubeAnalysisForCurrentPosition(true); // true = update position to show cube position
+        }
+    }
+
+    // Load cube analysis for current checker position (find previous cube position)
+    // Returns true if cube analysis was found in the same game, false otherwise
+    async function loadCubeAnalysisForCurrentPosition(updatePosition = false) {
+        if (!matchCtx.isMatchMode) return false;
+        
+        const currentIndex = matchCtx.currentIndex;
+        const movePositions = matchCtx.movePositions;
+        const currentMovePos = movePositions[currentIndex];
+        
+        // If we're on the first position of a game (move_number 0 or 1), no cube decision is possible
+        if (currentMovePos && (currentMovePos.move_number === 0 || currentMovePos.move_number === 1)) {
+            return false;
+        }
+        
+        const currentGameNumber = movePositions[currentIndex].game_number;
+        
+        // Find the most recent cube decision before current position IN THE SAME GAME
+        for (let i = currentIndex - 1; i >= 0; i--) {
+            // Stop if we've gone to a different game
+            if (movePositions[i].game_number !== currentGameNumber) {
+                break;
+            }
+            
+            if (movePositions[i].move_type === 'cube') {
+                // Load analysis for this cube position
+                try {
+                    const { LoadAnalysis } = await import('../../wailsjs/go/main/Database.js');
+                    const cubeAnalysis = await LoadAnalysis(movePositions[i].position.id);
+                    if (cubeAnalysis && cubeAnalysis.doublingCubeAnalysis) {
+                        // Update only the cube analysis part
+                        analysisStore.update(current => ({
+                            ...current,
+                            doublingCubeAnalysis: cubeAnalysis.doublingCubeAnalysis,
+                            playedCubeAction: cubeAnalysis.playedCubeAction || ''
+                        }));
+                        
+                        // Only update position if explicitly requested (when clicking cube tab)
+                        if (updatePosition) {
+                            const cubePosition = {...movePositions[i].position};
+                            cubePosition.dice = [0, 0];
+                            positionStore.set(cubePosition);
+                        }
+                        return true; // Found cube analysis in current game
+                    }
+                } catch (error) {
+                    console.error('Error loading cube analysis:', error);
+                }
+                return false;
+            }
+        }
+        return false; // No cube analysis found in current game
+    }
+
+    // When switching back to checker tab, restore checker position
+    async function restoreCheckerPosition() {
+        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos && currentMovePos.move_type === 'checker') {
+                positionStore.set(currentMovePos.position);
+            }
+        }
+    }
+
+    // Enhanced switch with position restore
+    async function handleTabSwitch(tab) {
+        if (tab === activeTab) return;
+        
+        if (tab === 'checker') {
+            await restoreCheckerPosition();
+        }
+        
+        await switchTab(tab);
+    }
+
+    // Handle click in analysis content to toggle between checker and cube
+    function handleContentClick(event) {
+        // Only toggle if both analyses available (MATCH mode)
+        if (!showTabs) return;
+        
+        // Don't toggle if clicking on close button
+        if (event.target.closest('.close-icon')) {
+            return;
+        }
+        
+        // Check if clicking on table header (TH) or on a header row
+        const clickedTH = event.target.closest('th');
+        const clickedRow = event.target.closest('tr');
+        const clickedDataRow = clickedRow && clickedRow.parentElement.tagName === 'TBODY' && !clickedTH;
+        
+        // Toggle if clicking on header OR anywhere outside data rows
+        if (clickedTH || !clickedDataRow) {
+            // Toggle between checker and cube
+            const newTab = activeTab === 'checker' ? 'cube' : 'checker';
+            handleTabSwitch(newTab);
+        }
+        // If clicking on data row (not header), don't toggle - let the row click handler do its job
+    }
+
+    // Determine if both analyses are available
+    $: hasCheckerAnalysis = analysisData && analysisData.checkerAnalysis && 
+                            analysisData.checkerAnalysis.moves && 
+                            analysisData.checkerAnalysis.moves.length > 0;
+    // For cube analysis in MATCH mode, it must not be null and have actual data
+    // Check both that the object exists and that it has actual analysis content
+    $: hasCubeAnalysis = analysisData && 
+                         analysisData.doublingCubeAnalysis !== null && 
+                         analysisData.doublingCubeAnalysis !== undefined && 
+                         typeof analysisData.doublingCubeAnalysis === 'object' &&
+                         (analysisData.doublingCubeAnalysis.bestCubeAction || 
+                          analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined);
+    // Check if current position is the first position of a game (no cube decision possible)
+    // First position can be move_number 0 or 1
+    $: isFirstPositionOfGame = matchCtx.isMatchMode && 
+                                matchCtx.movePositions.length > 0 && 
+                                (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 ||
+                                 matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
+    // Only show tabs in MATCH mode where checker and cube are separate positions
+    // BUT not on the first position of a game (cube decision not possible)
+    $: showTabs = hasCheckerAnalysis && hasCubeAnalysis && $statusBarModeStore === 'MATCH' && matchCtx.isMatchMode && !isFirstPositionOfGame;
 </script>
 
 {#if visible}
     <section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" on:keydown={handleKeyDown}>
         <button type="button" class="close-icon" on:click={onClose} aria-label="Close" on:keydown={handleKeyDown}>×</button>
-        <div class="analysis-content">
-            {#if analysisData.analysisType === 'DoublingCube' && analysisData.doublingCubeAnalysis}
+        
+        <div class="analysis-content" on:click={handleContentClick} on:keydown={() => {}} role="button" tabindex="-1">
+            {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && analysisData.doublingCubeAnalysis}
                 <div class="tables-container">
                     <table class="left-table">
                         <tbody>
@@ -189,7 +379,7 @@
                 </div>
             {/if}
 
-            {#if analysisData.analysisType === 'CheckerMove' && analysisData.checkerAnalysis}
+            {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
                 <table class="checker-table">
                     <tbody>
                         <tr>
@@ -377,6 +567,11 @@
 
     .japanese-text {
         font-family: 'Noto Sans JP', sans-serif;
+    }
+
+    /* Make analysis content interactive in MATCH mode (toggle on click) */
+    .analysis-content {
+        cursor: default;
     }
 </style>
 

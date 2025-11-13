@@ -1,12 +1,20 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import { GetAllMatches, GetGamesByMatch, GetMovesByGame, DeleteMatch } from '../../wailsjs/go/main/Database.js';
-    import { positionStore } from '../stores/positionStore';
+    import { GetAllMatches, DeleteMatch, GetMatchMovePositions, LoadAnalysis } from '../../wailsjs/go/main/Database.js';
+    import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { statusBarModeStore, showMatchPanelStore, statusBarTextStore } from '../stores/uiStore';
+    import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
+    import { commentTextStore } from '../stores/uiStore';
 
     let matches = [];
     let selectedMatch = null;
     let visible = false;
+    let lastVisitedMatch = null;
+
+    // Subscribe to last visited match store
+    lastVisitedMatchStore.subscribe(value => {
+        lastVisitedMatch = value;
+    });
 
     showMatchPanelStore.subscribe(async value => {
         const wasVisible = visible;
@@ -14,7 +22,12 @@
         if (visible && !wasVisible) {
             // Panel just opened
             await loadMatches();
-            selectedMatch = null;
+            // Preselect the last visited match if it exists
+            if (lastVisitedMatch && lastVisitedMatch.matchID) {
+                selectedMatch = matches.find(m => m.id === lastVisitedMatch.matchID);
+            } else {
+                selectedMatch = null;
+            }
         } else if (!visible && wasVisible) {
             // Panel closed - reset selection
             selectedMatch = null;
@@ -43,33 +56,98 @@
 
     async function loadMatchPositions(match) {
         try {
+            // Load all move positions for this match in chronological order
+            const movePositions = await GetMatchMovePositions(match.id);
+            
+            if (!movePositions || movePositions.length === 0) {
+                console.error('No move positions found for match');
+                statusBarTextStore.set('No moves found in this match');
+                return;
+            }
+
+            // Check if this is the last visited match and restore position
+            let startIndex = 0;
+            if (lastVisitedMatch && lastVisitedMatch.matchID === match.id) {
+                // Validate the saved index is still valid
+                if (lastVisitedMatch.currentIndex >= 0 && lastVisitedMatch.currentIndex < movePositions.length) {
+                    startIndex = lastVisitedMatch.currentIndex;
+                    console.log(`Restoring last visited position: index ${startIndex}, game ${lastVisitedMatch.gameNumber}`);
+                }
+            }
+
+            // Update match context store - start at the restored position or first position
+            matchContextStore.set({
+                isMatchMode: true,
+                matchID: match.id,
+                movePositions: movePositions,
+                currentIndex: startIndex,
+                player1Name: match.player1_name,
+                player2Name: match.player2_name,
+            });
+
+            // Load the position at the start index
+            // The position is stored from player on roll POV
+            // The Board component will handle display transformation
+            const startMovePos = movePositions[startIndex];
+            positionStore.set(startMovePos.position);
+            
+            // Load analysis for the start position
+            let analysis = null;
+            try {
+                analysis = await LoadAnalysis(startMovePos.position.id);
+            } catch (error) {
+                // No analysis for this position
+            }
+            
+            analysisStore.set({
+                positionId: analysis?.positionId || null,
+                xgid: analysis?.xgid || '',
+                player1: analysis?.player1 || '',
+                player2: analysis?.player2 || '',
+                analysisType: analysis?.analysisType || '',
+                analysisEngineVersion: analysis?.analysisEngineVersion || '',
+                checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
+                doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
+                    analysisDepth: '',
+                    playerWinChances: 0,
+                    playerGammonChances: 0,
+                    playerBackgammonChances: 0,
+                    opponentWinChances: 0,
+                    opponentGammonChances: 0,
+                    opponentBackgammonChances: 0,
+                    cubelessNoDoubleEquity: 0,
+                    cubelessDoubleEquity: 0,
+                    cubefulNoDoubleEquity: 0,
+                    cubefulNoDoubleError: 0,
+                    cubefulDoubleTakeEquity: 0,
+                    cubefulDoubleTakeError: 0,
+                    cubefulDoublePassEquity: 0,
+                    cubefulDoublePassError: 0,
+                    bestCubeAction: '',
+                    wrongPassPercentage: 0,
+                    wrongTakePercentage: 0
+                },
+                playedMove: analysis?.playedMove || '',
+                playedCubeAction: analysis?.playedCubeAction || '',
+                creationDate: analysis?.creationDate || '',
+                lastModifiedDate: analysis?.lastModifiedDate || ''
+            });
+            
+            commentTextStore.set('');
+            selectedMoveStore.set(null);
+            
             // Switch to MATCH mode
             statusBarModeStore.set('MATCH');
+            statusBarTextStore.set(`${match.player1_name} vs ${match.player2_name}`);
             
-            // Load all games for this match
-            const games = await GetGamesByMatch(match.id);
-            if (!games || games.length === 0) {
-                console.error('No games found for match');
-                statusBarTextStore.set('No games found for this match');
-                return;
-            }
-
-            // Load first game's first position
-            const firstGame = games[0];
-            const moves = await GetMovesByGame(firstGame.id);
+            // Save this position as the last visited
+            lastVisitedMatchStore.set({
+                matchID: match.id,
+                currentIndex: startIndex,
+                gameNumber: startMovePos.game_number
+            });
             
-            if (!moves || moves.length === 0) {
-                console.error('No moves found for game');
-                statusBarTextStore.set('No moves found in this game');
-                return;
-            }
-
-            // Load the first position
-            // TODO: Need to implement GetPositionByID in backend
-            // For now, this is a placeholder
-            console.log('Loading first position of match:', match);
-            console.log('First move:', moves[0]);
-            statusBarTextStore.set(`Loaded match: ${match.player1_name} vs ${match.player2_name}`);
+            console.log('Loaded match with', movePositions.length, 'positions');
             
         } catch (error) {
             console.error('Error loading match positions:', error);
@@ -137,6 +215,13 @@
                 // Select next match (down in the list)
                 if (currentIndex >= 0 && currentIndex < matches.length - 1) {
                     selectMatch(matches[currentIndex + 1]);
+                    // Scroll to the newly selected row
+                    setTimeout(() => {
+                        const selectedRow = document.querySelector('.match-panel tr.selected');
+                        if (selectedRow) {
+                            selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }, 0);
                 }
             } else if (event.key === 'k' || event.key === 'ArrowUp') {
                 event.preventDefault();
@@ -144,6 +229,13 @@
                 // Select previous match (up in the list)
                 if (currentIndex > 0) {
                     selectMatch(matches[currentIndex - 1]);
+                    // Scroll to the newly selected row
+                    setTimeout(() => {
+                        const selectedRow = document.querySelector('.match-panel tr.selected');
+                        if (selectedRow) {
+                            selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    }, 0);
                 }
             } else if (event.key === 'Enter') {
                 event.preventDefault();
@@ -166,7 +258,7 @@
         }
     }
 
-    // Focus the panel when it becomes visible
+    // Focus the panel when it becomes visible and scroll to selected match
     $: {
         if (visible) {
             setTimeout(() => {
@@ -174,7 +266,14 @@
                 if (panel) {
                     panel.focus();
                 }
-            }, 0);
+                // Scroll to selected match if there is one
+                if (selectedMatch) {
+                    const selectedRow = document.querySelector('.match-panel tr.selected');
+                    if (selectedRow) {
+                        selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }
+            }, 100); // Increased timeout to allow table rendering
         }
     }
 

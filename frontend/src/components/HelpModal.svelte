@@ -355,7 +355,7 @@
 
                             <tr>
                                 <td>PageUp, h</td>
-                                <td>First Position</td>
+                                <td>First Position / Previous Game (MATCH mode)</td>
                             </tr>
 
                             <tr>
@@ -370,7 +370,7 @@
 
                             <tr>
                                 <td>PageDown, l</td>
-                                <td>Last Position</td>
+                                <td>Last Position / Next Game (MATCH mode)</td>
                             </tr>
 
                             <tr>
@@ -430,7 +430,7 @@
 
                             <tr>
                                 <td>Tab</td>
-                                <td>Edit Mode</td>
+                                <td>Edit Mode / Exit MATCH mode to NORMAL</td>
                             </tr>
 
                             <tr>
@@ -531,6 +531,10 @@
                             <tr>
                                 <td>Down, j</td>
                                 <td>Select next move (when a move is selected)</td>
+                            </tr>
+                            <tr>
+                                <td>d</td>
+                                <td>Toggle between checker and cube analysis (MATCH mode only)</td>
                             </tr>
                             <tr>
                                 <td>Esc</td>

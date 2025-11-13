@@ -208,3 +208,16 @@ type MoveAnalysis struct {
 	OpponentGammonRate     float64 `json:"opponent_gammon_rate"`
 	OpponentBackgammonRate float64 `json:"opponent_backgammon_rate"`
 }
+
+// MatchMovePosition combines position data with match context
+type MatchMovePosition struct {
+	Position     Position `json:"position"`       // The position (stored from player on roll POV)
+	MoveID       int64    `json:"move_id"`        // Move ID
+	GameID       int64    `json:"game_id"`        // Game ID
+	GameNumber   int32    `json:"game_number"`    // Game number in match
+	MoveNumber   int32    `json:"move_number"`    // Move number in game
+	MoveType     string   `json:"move_type"`      // Move type: "checker" or "cube"
+	PlayerOnRoll int32    `json:"player_on_roll"` // Player who rolled (0=Player1, 1=Player2)
+	Player1Name  string   `json:"player1_name"`   // Player 1 name for reference
+	Player2Name  string   `json:"player2_name"`   // Player 2 name for reference
+}

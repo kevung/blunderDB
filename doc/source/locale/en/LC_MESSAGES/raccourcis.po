@@ -167,8 +167,8 @@ msgid "PageUp, h"
 msgstr "PageUp, h"
 
 #: ../../source/raccourcis.rst:1
-msgid "Première position."
-msgstr "First position."
+msgid "Première position / Partie précédente (mode MATCH)."
+msgstr "First position / Previous game (MATCH mode)."
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, k"
@@ -207,8 +207,8 @@ msgid "PageDown, l"
 msgstr "PageDown, l"
 
 #: ../../source/raccourcis.rst:1
-msgid "Dernière position."
-msgstr "Last position."
+msgid "Dernière position / Partie suivante (mode MATCH)."
+msgstr "Last position / Next game (MATCH mode)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-K"
@@ -263,8 +263,8 @@ msgid "TAB"
 msgstr "TAB"
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode EDIT."
-msgstr "Switch to EDIT mode."
+msgid "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
+msgstr "Switch to EDIT mode / Exit MATCH mode to NORMAL."
 
 #: ../../source/raccourcis.rst:1
 msgid "ESPACE"
@@ -399,6 +399,14 @@ msgstr "Select previous move (when a move is selected)."
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
 msgstr "Select next move (when a move is selected)."
+
+#: ../../source/raccourcis.rst:1
+msgid "d"
+msgstr "d"
+
+#: ../../source/raccourcis.rst:1
+msgid "Basculer entre l'analyse des coups et du cube (mode MATCH uniquement)."
+msgstr "Toggle between checker and cube analysis (MATCH mode only)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
