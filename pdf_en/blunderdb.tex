@@ -7,6 +7,7 @@
 \ifdefined\pdfimageresolution
     \pdfimageresolution= \numexpr \dimexpr1in\relax/\sphinxpxdimen\relax
 \fi
+\newdimen\sphinxremdimen\sphinxremdimen = 10pt
 %% let collapsible pdf bookmarks panel have high depth per default
 \PassOptionsToPackage{bookmarksdepth=5}{hyperref}
 
@@ -65,7 +66,7 @@
 
 
 \title{blunderDB}
-\date{Nov 13, 2025}
+\date{Jan 26, 2026}
 \release{0.9.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -123,34 +124,50 @@ The \sphinxstylestrong{FAQ} provides answers to the most frequently asked questi
 \centering
 \begin{tabular}[t]{\X{5}{32}\X{7}{32}\X{20}{32}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Version
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Date
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Cause and/or nature of changes
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.1.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 December 31, 2024
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Beta version
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.2.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 January 6, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Various bug fixes.
 
@@ -171,14 +188,20 @@ Added metadata functionality for databases.
 
 \sphinxAtStartPar
 Introduction of version numbers (database and application).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.3.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 January 27, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Various bug fixes.
 
@@ -187,14 +210,20 @@ Automatically saves the window size.
 
 \sphinxAtStartPar
 Imports any comments from XG.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.4.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 February 3, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Various bug fixes.
 
@@ -206,60 +235,90 @@ Filter corrections.
 
 \sphinxAtStartPar
 Adding macOS support.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.5.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 February 4, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Addition of new filters (mirror, non\sphinxhyphen{}contact, jan blot, outfield blot).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.6.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 February 13, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Add filter library.
 
 \sphinxAtStartPar
 Displaying the database version in the metadata.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.7.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 February 16, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Support Japanese and German XG exports.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.8.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 May 3, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 New button to hide pipcount.
 
 \sphinxAtStartPar
 Button to load random position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.9.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 November 02, 2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Fix filter library bug.
 
@@ -271,6 +330,8 @@ Display arrows for selected moves.
 
 \sphinxAtStartPar
 Keyboard shortcuts for import/export.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -798,132 +859,204 @@ The displayed positions are those from the database that meet the search criteri
 \centering
 \begin{tabular}[t]{\X{10}{50}\X{40}{50}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Command
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 new, ne, n
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Create a new database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 open, op, o
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open an existing database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 import\_db, idb
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Import and merge another database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 export\_db, edb
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Export the current selection to a new database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 quit, q
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Close blunderDB.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 help, he, h
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open blunderDB help.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 meta
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Display database metadata.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 met
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the Kazaross\sphinxhyphen{}XG2 match equity table.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp2
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the takepoint table with a 2\sphinxhyphen{}cube.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp2\_live
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the takepoint table with a 2\sphinxhyphen{}cube for long race positions.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp2\_last
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the takepoint table with a 2\sphinxhyphen{}cube for last roll positions.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the takepoint table with a 4\sphinxhyphen{}cube.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp4\_live
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the takepoint table with a 4\sphinxhyphen{}cube for long race positions.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp4\_last
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the takepoint table with a 4\sphinxhyphen{}cube for last roll positions.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gv1
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the gammon value table with a 1\sphinxhyphen{}cube.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gv2
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the gammon value table with a 2\sphinxhyphen{}cube.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gv4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open the gammon value table with a 4\sphinxhyphen{}cube.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -939,76 +1072,116 @@ Open the gammon value table with a 4\sphinxhyphen{}cube.
 \centering
 \begin{tabular}[t]{\X{10}{30}\X{20}{30}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Command
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 import, i
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Import a position via a text file (txt).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 delete, del, d
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Delete the current position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 {[}number{]}
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Go to the specified index position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 list, l
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show the analysis of the current position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 comment, co
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/write comments.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 filter, fl
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide the filter library.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 history, hi
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher l’historique de recherche.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 \#tag1 tag2 …
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Tag the current position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 e
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Load all positions from the database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1024,34 +1197,50 @@ Load all positions from the database.
 \centering
 \begin{tabular}[t]{\X{10}{30}\X{20}{30}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Command
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 write, wr, w
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Save the current position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 write!, wr!, w!
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Update the current position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 s
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Search for positions with filters.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1105,12 +1294,16 @@ The parameters for filtering positions can be combined arbitrarily.
 \makeatother
 \begin{longtable}{\X{10}{30}\X{20}{30}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Query
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
 \endfirsthead
@@ -1119,12 +1312,16 @@ Action
     \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} continued from previous page}}%
 }\\
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Query
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
 \endhead
@@ -1137,488 +1334,764 @@ Action
 
 \endlastfoot
 \sphinxtableatstartofbodyhook
-
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 cube, cub, cu, c
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position checks the cube configuration.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 score, sco, sc, s
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position checks the score.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 d
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position checks the dice or the cube decision.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 D
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position checks the dice roll.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 nc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position has no contact.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 M
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position or the mirror one meets the filters.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 p\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at least x pips behind in the race.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 p\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at most x pips behind in the race.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 px,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has between x and y pips behind in the race.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 P\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has a race of at least x pips.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 P\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has a race of at most x pips.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Px,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has a race between x and y pips.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 e\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The equity (in millipoints) of the position is greater than x.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 e\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The equity (in millipoints) of the position is less than x.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 ex,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The equity (in millipoints) of the position is between x and y.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 w\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has winning chances greater than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 w\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has winning chances less than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 wx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has winning chances between x\% and y\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 g\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has gammon chances greater than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 g\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has gammon chances less than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has gammon chances between x\% and y\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 b\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has backgammon chances greater than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 b\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has backgammon chances less than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has backgammon chances between x\% and y\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 W\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has winning chances greater than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 W\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has winning chances less than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Wx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has winning chances between x\% and y\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 G\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has gammon chances greater than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 G\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has gammon chances less than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Gx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has gammon chances between x\% and y\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 B\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has backgammon chances greater than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 B\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has backgammon chances less than x\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Bx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has backgammon chances between x\% and y\%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 o\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at least x checkers off.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 o\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at most x checkers off.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 ox,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has between x and y checkers off.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 O\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at least x checkers off.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 O\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at most x checkers off.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ox,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has between x and y checkers off.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 k\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at least x backcheckers.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 k\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at most x backcheckers.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 kx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has between x and y backcheckers.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 K\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at least x backcheckers.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 K\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at most x backcheckers.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Kx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has between x and y backcheckers.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 z\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at least x checkers in the zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 z\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at most x checkers in the zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 zx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has between x and y checkers in the zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Z\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at least x checkers in the zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Z\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at most x checkers in the zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Zx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has between x and y checkers in the zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bo\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at least x blots in the outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bo\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at most x blots in the outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 box,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has between x and y blots in the outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BO\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at least x blots in the outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BO\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at most x blots in the outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BOx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has between x and y blots in the outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bj\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at least x blots in the jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bj\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has at most x blots in the jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bjx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The player has between x and y blots in the jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BJ\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at least x blots in the jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BJ\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has at most x blots in the jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BJx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The opponent has between x and y blots in the jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 t’word1;word2;…’
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The position comments contain at least one of the words.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 m’pattern1,pattern2,…\textquotesingle{}
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The best checker moves containing at least one of the patterns.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 m’ND,DT,DP,…\textquotesingle{}
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 The best cube decisions for No Double/Take, Double Take, Double Pass.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 T\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Date of position addition after x (YYYY/MM/DD).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 T\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Date of position addition before x (YYYY/MM/DD).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Tx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Date of position addition between x and y (YYYY/MM/DD).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{longtable}
@@ -1648,41 +2121,61 @@ For example, the command \sphinxcode{\sphinxupquote{s s c p\sphinxhyphen{}20,\sp
 \centering
 \begin{tabular}[t]{\X{10}{50}\X{40}{50}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Command
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 clear, cl
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Clear the command history.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 migrate\_from\_1\_0\_to\_1\_1
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Migrate the database from version 1.0 to version 1.1.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 migrate\_from\_1\_1\_to\_1\_2
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Migrate the database from version 1.1 to version 1.2.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 migrate\_from\_1\_2\_to\_1\_3
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Migrate the database from version 1.2 to version 1.3.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1703,55 +2196,83 @@ Migrate the database from version 1.2 to version 1.3.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}N
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Create a new database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}O
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Open an existing database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}SHIFT\sphinxhyphen{}I
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Import a database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}SHIFT\sphinxhyphen{}S
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Export the database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}Q
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Close blunderDB.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}M
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Edit database metadata.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1767,69 +2288,105 @@ Edit database metadata.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}I
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Import a position from a text file (txt).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}C
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Copy a position to the clipboard.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}V
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Paste a position from the clipboard.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}S
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Save a position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}U
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Update a position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Del
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Delete the current position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BACKSPACE
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Reset board, cube, score, and dice.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}G
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show the position metadata.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1845,76 +2402,116 @@ Show the position metadata.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}R
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Reload all the positions from the database.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 PageUp, h
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 First position / Previous game (MATCH mode).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 LEFT, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Previous position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 RIGHT, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Next position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 UP, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Previous move (when a move is selected in the analysis).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 DOWN, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Next move (when a move is selected in the analysis).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 PageDown, l
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Last position / Next game (MATCH mode).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}K
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Go to a specific position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 r
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Load a random position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1930,34 +2527,50 @@ Load a random position.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}LEFT
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Board orientation to the left.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}RIGHT
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Board orientation to the right.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 p
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide pipcount.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1973,27 +2586,39 @@ Show/hide pipcount.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 TAB
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Switch to EDIT mode / Exit MATCH mode to NORMAL.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 SPACE
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Switch to COMMAND mode.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2009,55 +2634,83 @@ Switch to COMMAND mode.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}L
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide the analysis.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}P
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide the comments.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}B
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide the filter library.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}F
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Search for a position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}H
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide the search history.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 ?
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide the help.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2073,27 +2726,39 @@ Show/hide the help.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 UP
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Browse command history up.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 DOWN
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Browse command history down.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2109,48 +2774,72 @@ Browse command history down.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Select/deselect a search (show position).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Double\sphinxhyphen{}clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Execute search and close panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 UP, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Select previous search (younger, above).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 DOWN, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Select next search (older, below).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Esc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le panneau.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2166,48 +2855,72 @@ Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le pan
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner/désélectionner un filtre (afficher la position).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Double\sphinxhyphen{}clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Exécuter la recherche du filtre.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 UP, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner le filtre précédent (lorsqu’un filtre est sélectionné).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 DOWN, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner le filtre suivant (lorsqu’un filtre est sélectionné).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Esc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2223,48 +2936,72 @@ Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Shortcut
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Select/deselect a move (show/hide arrows).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 UP, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Select previous move (when a move is selected).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 DOWN, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Select next move (when a move is selected).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 d
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Toggle between checker and cube analysis (MATCH mode only).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Esc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Deselect move. If no move selected, close the panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2531,131 +3268,220 @@ Here are some examples of using filters in COMMAND mode:
 \centering
 \begin{tabular}[t]{\X{10}{40}\X{10}{40}\X{20}{40}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Type of position
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Checker structure
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Command
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Races
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s nc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Short races
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s nc P\textless{}70
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Hit to point 1
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s m"6/1*"
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Backgame 1\sphinxhyphen{}4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 points 24, 21
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s p\textgreater{}35
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Take/Pass decision at 2\sphinxhyphen{}away 4\sphinxhyphen{}away
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 empty dice for top player, score 2a\sphinxhyphen{}4a
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s s d
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Too Good doubles
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 empty dice for bottom player
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s d e\textgreater{}1000
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Blitz with at least 20\% gammon
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 point in jan, checkers on the bar
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s g\textgreater{}20
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Positions from Aachen2024 tournment
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s t"Aachen2024"
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 One backchecker to bring back
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s k1,1
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Leave the 20\sphinxhyphen{}point anchor
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 point 20
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s m"20/"
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Prime vs prime
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Set the primes
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Ace\sphinxhyphen{}point bear\sphinxhyphen{}off
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 point 1 for the opponent
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s P\textless{}60
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Double with at least 20pip ahead
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 empty dice for bottom player
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s d p\textless{}\sphinxhyphen{}20
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}

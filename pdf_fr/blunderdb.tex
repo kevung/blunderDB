@@ -7,6 +7,7 @@
 \ifdefined\pdfimageresolution
     \pdfimageresolution= \numexpr \dimexpr1in\relax/\sphinxpxdimen\relax
 \fi
+\newdimen\sphinxremdimen\sphinxremdimen = 10pt
 %% let collapsible pdf bookmarks panel have high depth per default
 \PassOptionsToPackage{bookmarksdepth=5}{hyperref}
 
@@ -67,7 +68,7 @@
 
 
 \title{blunderDB}
-\date{13 novembre 2025}
+\date{26 janvier 2026}
 \release{0.9.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -133,34 +134,50 @@ la \sphinxstylestrong{FAQ} fournit quelques réponses aux interrogations les plu
 \centering
 \begin{tabular}[t]{\X{5}{32}\X{7}{32}\X{20}{32}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Version
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Date
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Cause et/ou nature des évolutions
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.1.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 31/12/2024
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Création version beta.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.2.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 06/01/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Résolutions de bugs divers.
 
@@ -181,14 +198,20 @@ Ajout de fonction de métadonnées sur les bases de données.
 
 \sphinxAtStartPar
 Introduction des numéros de versions (base de données et application).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.3.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 27/01/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Résolutions de bugs divers.
 
@@ -197,14 +220,20 @@ Sauvegarde automatiquement le dimensionnement de la fenêtre.
 
 \sphinxAtStartPar
 Importe les éventuels commentaires depuis XG.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.4.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 03/02/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Résolutions de bugs divers.
 
@@ -216,60 +245,90 @@ Corrections de filtres.
 
 \sphinxAtStartPar
 Ajout du support de MacOS.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.5.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 04/02/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.6.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 13/02/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Ajout de la bibliothèque de filtres.
 
 \sphinxAtStartPar
 Affichage de la version de la base de données dans les métadonnées.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.7.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 16/02/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Prise en charge du japonais et de l’allemand dans les exports de XG.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.8.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 03/05/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Possibilité de cacher le compte de course.
 
 \sphinxAtStartPar
 Chargement d’une position aléatoire.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 0.9.0
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 02/11/2025
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Correction de bug de la bibliothèque de filtres.
 
@@ -281,6 +340,8 @@ Affichage de flèches pour les coups sélectionnés.
 
 \sphinxAtStartPar
 Raccourcis clavier pour l’import/export.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -898,132 +959,204 @@ les critères de recherche entrés par l’utilisateur.
 \centering
 \begin{tabular}[t]{\X{10}{50}\X{40}{50}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Commande
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 new, ne, n
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Crée une nouvelle base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 open, op, o
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre une base de données existante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 import\_db, idb
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Importe et fusionne une autre base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 export\_db, edb
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Exporte la sélection courante vers une nouvelle base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 quit, q
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ferme blunderDB.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 help, he, h
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre l’aide de blunderDB.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 meta
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Affiche les métadonnées de la base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 met
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table d’équité de match Kazaross\sphinxhyphen{}XG2.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp2
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des takepoints avec videau à 2.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp2\_live
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des takepoints avec videau à 2 pour les courses longues.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp2\_last
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des takepoints avec videau à 2 mort.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des takepoints avec videau à 4.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp4\_live
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des takepoints avec videau à 4 pour les courses longues.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 tp4\_last
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des takepoints avec videau à 4 mort.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gv1
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des valeurs de gammon avec videau à 1.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gv2
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des valeurs de gammon avec videau à 2.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gv4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvre la table des valeurs de gammon avec videau à 4.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1039,76 +1172,116 @@ Ouvre la table des valeurs de gammon avec videau à 4.
 \centering
 \begin{tabular}[t]{\X{10}{30}\X{20}{30}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Commande
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 import, i
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Importe une position par fichier texte (txt).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 delete, del, d
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Supprime la position courante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 {[}number{]}
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Aller à la position d’indice indiqué.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 list, l
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher l’analyse de la position courante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 comment, co
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/écrire des commentaires.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 filter, fl
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher la bibliothèque de filtres.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 history, hi
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher l’historique de recherche.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 \#tag1 tag2 …
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Etiqueter la position courante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 e
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Charger toutes les positions de la base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1124,34 +1297,50 @@ Charger toutes les positions de la base de données.
 \centering
 \begin{tabular}[t]{\X{10}{30}\X{20}{30}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Commande
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 write, wr, w
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Enregistre la position courante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 write!, wr!, w!
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Mettre à jour la position courante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 s
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Chercher des positions avec des filtres.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1212,12 +1401,16 @@ combinés.
 \makeatother
 \begin{longtable}{\X{10}{30}\X{20}{30}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Requête
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
 \endfirsthead
@@ -1226,12 +1419,16 @@ Action
     \makebox[0pt]{\sphinxtablecontinued{\tablename\ \thetable{} \textendash{} suite de la page précédente}}%
 }\\
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Requête
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
 \endhead
@@ -1244,488 +1441,764 @@ Action
 
 \endlastfoot
 \sphinxtableatstartofbodyhook
-
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 cube, cub, cu, c
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 La position vérifie la configuration du cube.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 score, sco, sc, s
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 La position vérifie le score.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 d
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 La position vérifie le type de décision (pion ou cube).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 D
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 La position vérifie le lancer de dés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 nc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 La position est sans contact.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 M
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 La position ou celle miroir vérifie les filtres.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 p\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au moins x pips de retard à la course.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 p\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au plus x pips de retard à la course.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 px,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a entre x et y pips de retard à la course.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 P\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a une course au moins de x pips.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 P\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a une course au plus de x pips.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Px,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a une course entre x et y pips.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 e\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’équité (en millipoints) de la position est supérieure à x.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 e\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’équité (en millipoints) de la position est inférieure à x.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 ex,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’équité (en millipoints) de la position est comprise entre x et y.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 w\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de gain supérieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 w\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de gain inférieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 wx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de gain comprises à x \% et y \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 g\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de gammon supérieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 g\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de gammon inférieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 gx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de gammon comprises à x \% et y \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 b\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de backgammon supérieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 b\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de backgammon inférieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a des chances de backgammon comprises à x \% et y \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 W\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de gain supérieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 W\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de gain inférieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Wx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de gain comprises à x \% et y \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 G\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de gammon supérieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 G\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de gammon inférieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Gx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de gammon comprises à x \% et y \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 B\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de backgammon supérieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 B\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de backgammon inférieures à x \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Bx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a des chances de backgammon comprises à x \% et y \%.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 o\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au moins x pions sortis.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 o\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au plus x pions sortis.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 ox,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a entre x et y pions sortis.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 O\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au moins x pions sortis.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 O\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au plus x pions sortis.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ox,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a entre x et y pions sortis.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 k\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au moins x pions arriérés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 k\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au plus x pions arriérés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 kx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a entre x et y pions arriérés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 K\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au moins x pions arriérés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 K\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au plus x pions arriérés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Kx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a entre x et y pions arriérés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 z\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au moins x pions dans la zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 z\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au plus x pions dans la zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 zx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a entre x et y pions dans la zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Z\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au moins x pions dans la zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Z\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au plus x pions dans la zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Zx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a entre x et y pions dans la zone.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bo\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au moins x blots dans l’outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bo\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au plus x blots dans l’outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 box,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a entre x et y blots dans l’outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BO\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au moins x blots dans l’outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BO\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au plus x blots dans l’outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BOx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a entre x et y blots dans l’outfield.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bj\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au moins x blots dans le jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bj\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a au plus x blots dans le jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 bjx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Le joueur a entre x et y blots dans le jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BJ\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au moins x blots dans le jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BJ\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a au plus x blots dans le jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BJx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 L’adversaire a entre x et y blots dans le jan.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 t’mot1;mot2;…”
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Les commentaires de la position contiennent au moins un des mots.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 m’motif1,motif2,…\textquotesingle{}
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Les meilleurs coups de pions contenant au moins un des motifs.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 m’ND,DT,DP,…\textquotesingle{}
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 T\textgreater{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Date d’ajout de la position après x (AAAA/MM/JJ).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 T\textless{}x
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Date d’ajout de la position avant x (AAAA/MM/JJ).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Tx,y
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Date d’ajout de la position entre x et y (AAAA/MM/JJ).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{longtable}
@@ -1764,41 +2237,61 @@ zone, et l’adversaire a entre 2 et 3 pions arriérés.
 \centering
 \begin{tabular}[t]{\X{10}{50}\X{40}{50}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Commande
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 clear, cl
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Efface l’historique des commandes.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 migrate\_from\_1\_0\_to\_1\_1
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Migre la base de données de la version 1.0 à la version 1.1.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 migrate\_from\_1\_1\_to\_1\_2
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Migre la base de données de la version 1.1 à la version 1.2.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 migrate\_from\_1\_2\_to\_1\_3
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Migre la base de données de la version 1.2 à la version 1.3.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1819,55 +2312,83 @@ Migre la base de données de la version 1.2 à la version 1.3.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}N
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Créer une nouvelle base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}O
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Ouvrir une base de données existante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}SHIFT\sphinxhyphen{}I
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Importer une base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}SHIFT\sphinxhyphen{}S
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Exporter la base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}Q
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Fermer blunderDB.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}M
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Modifier les métadonnées de la base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1883,69 +2404,105 @@ Modifier les métadonnées de la base de données.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}I
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Importer une position par fichier texte (txt).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}C
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Copier une position dans le presse\sphinxhyphen{}papier.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}V
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Coller une position depuis le presse\sphinxhyphen{}papier.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}S
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Enregistrer une position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}U
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Mettre à jour une position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Del
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Supprimer la position courante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 RETOUR ARRIERE
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Réinitialiser le board, le cube, le score et les dés.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}G
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher les métadonnées de la position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -1961,76 +2518,116 @@ Afficher les métadonnées de la position.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}R
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Recharger toutes les positions de la base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 PageUp, h
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Première position / Partie précédente (mode MATCH).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 GAUCHE, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Position précédente.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 DROITE, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Position suivante.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 HAUT, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Coup précédent (lorsqu’un coup est sélectionné dans l’analyse).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BAS, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Coup suivant (lorsqu’un coup est sélectionné dans l’analyse).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 PageDown, l
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Dernière position / Partie suivante (mode MATCH).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}K
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Aller à une position spécifique.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 r
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Charger une position aléatoire.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2046,34 +2643,50 @@ Charger une position aléatoire.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}GAUCHE
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Orientation du board à gauche.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}DROITE
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Orientation du board à droite.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 p
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher le compte de course.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2089,27 +2702,39 @@ Afficher/cacher le compte de course.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 TAB
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 ESPACE
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Basculer en mode COMMAND.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2125,55 +2750,83 @@ Basculer en mode COMMAND.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}L
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher l’analyse.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}P
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher les commentaires.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}B
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher la bibliothèque de filtres.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}F
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Rechercher une position.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 CTRL\sphinxhyphen{}H
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher l’historique de recherche.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 ?
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher l’aide.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2189,27 +2842,39 @@ Afficher/cacher l’aide.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 HAUT
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Parcourir l’historique des commandes vers le haut.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BAS
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Parcourir l’historique des commandes vers le bas.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2225,48 +2890,72 @@ Parcourir l’historique des commandes vers le bas.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner/désélectionner une recherche (afficher la position).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Double\sphinxhyphen{}clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Exécuter la recherche et fermer le panneau.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 HAUT, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner la recherche précédente (plus récente, au\sphinxhyphen{}dessus).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BAS, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner la recherche suivante (plus ancienne, en\sphinxhyphen{}dessous).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Esc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le panneau.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2282,48 +2971,72 @@ Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le pan
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner/désélectionner un filtre (afficher la position).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Double\sphinxhyphen{}clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Exécuter la recherche du filtre.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 HAUT, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner le filtre précédent (lorsqu’un filtre est sélectionné).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BAS, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner le filtre suivant (lorsqu’un filtre est sélectionné).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Esc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2339,48 +3052,72 @@ Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau.
 \centering
 \begin{tabular}[t]{\X{7}{27}\X{20}{27}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Raccourci
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Clic
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner/désélectionner un coup (afficher/cacher les flèches).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 HAUT, k
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner le coup précédent (lorsqu’un coup est sélectionné).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 BAS, j
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Sélectionner le coup suivant (lorsqu’un coup est sélectionné).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 d
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Basculer entre l’analyse des coups et du cube (mode MATCH uniquement).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Esc
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}
@@ -2703,131 +3440,220 @@ Voici quelques exemples d’utilisation des filtres en mode COMMAND:
 \centering
 \begin{tabular}[t]{\X{10}{40}\X{10}{40}\X{20}{40}}
 \sphinxtoprule
-\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Type de position
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Structure de pions
-&\sphinxstyletheadfamily 
-\sphinxAtStartPar
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
 Commande
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxmidrule
-\sphinxtableatstartofbodyhook
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Courses
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s nc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Courses petites
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s nc P\textless{}70
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Frapper au point 1
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s m"6/1*"
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Backgame 1\sphinxhyphen{}4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 portes 24, 21
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s p\textgreater{}35
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Décision de Take/Pass à \sphinxhyphen{}2 \sphinxhyphen{}4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 dés vides côté joueur du haut, score \sphinxhyphen{}2/\sphinxhyphen{}4
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s s d
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Envoi de too good
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 dés vides côté joueur du bas
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s d e\textgreater{}1000
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Blitz avec au moins 20\% de gammon
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 portes dans le jan, hommes à la barre
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s g\textgreater{}20
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Position du tournoi Aachen2024
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s t"Aachen2024"
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Un pion arriéré à ramener
-&&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s k1,1
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Quitter le point 20
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 point 20
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s m"20/"
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Prime contre prime
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 indiquer les primes
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Ace\sphinxhyphen{}point bear\sphinxhyphen{}off
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 point 1 pour l’adversaire
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s P\textless{}60
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
-\sphinxhline
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Double avec au moins 20pip d’avance
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 dés vides côté joueur du bas
-&
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 s d p\textless{}\sphinxhyphen{}20
+\sphinxbeforeendvarwidth
+\end{varwidth}%
 \\
 \sphinxbottomrule
 \end{tabular}

@@ -120,6 +120,8 @@ INPUT ./sphinxlatexadmonitions.sty
 INPUT sphinxlatexadmonitions.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/framed/framed.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/framed/framed.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty
+INPUT /usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty
 INPUT ./sphinxpackagefootnote.sty
 INPUT sphinxpackagefootnote.sty
 INPUT ./sphinxlatexliterals.sty
@@ -130,8 +132,6 @@ INPUT /usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/base/alltt.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/upquote/upquote.sty
 INPUT /usr/share/texlive/texmf-dist/tex/latex/upquote/upquote.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty
-INPUT /usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty
 INPUT ./sphinxlatexshadowbox.sty
 INPUT sphinxlatexshadowbox.sty
 INPUT ./sphinxlatexcontainers.sty

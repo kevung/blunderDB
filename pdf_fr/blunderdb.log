@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2025.11.13)  13 NOV 2025 23:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.1.26)  26 JAN 2026 21:33
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -28,6 +28,8 @@ File: size10.clo 2023/05/17 v1.4n Standard LaTeX file (size option)
 )
 LaTeX Info: Redefining \and on input line 35.
 )
+\sphinxremdimen=\dimen141
+
 (/usr/share/texlive/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2021/02/14 v1.3d Input encoding file
 \inpenc@prehook=\toks17
@@ -57,11 +59,11 @@ Package: amstext 2021/08/26 v2.01 AMS text
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
 \@emptytoks=\toks19
-\ex@=\dimen141
+\ex@=\dimen142
 ))
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
-\pmbraise@=\dimen142
+\pmbraise@=\dimen143
 )
 (/usr/share/texlive/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2022/04/08 v2.04 operator names
@@ -83,7 +85,7 @@ LaTeX Info: Redefining \big on input line 722.
 LaTeX Info: Redefining \Big on input line 723.
 LaTeX Info: Redefining \bigg on input line 724.
 LaTeX Info: Redefining \Bigg on input line 725.
-\big@size=\dimen143
+\big@size=\dimen144
 LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
 \macc@depth=\count267
@@ -101,12 +103,12 @@ LaTeX Info: Redefining \Relbar on input line 971.
 \column@=\count272
 \maxfields@=\count273
 \andhelp@=\toks21
-\eqnshift@=\dimen144
-\alignsep@=\dimen145
-\tagshift@=\dimen146
-\tagwidth@=\dimen147
-\totwidth@=\dimen148
-\lineht@=\dimen149
+\eqnshift@=\dimen145
+\alignsep@=\dimen146
+\tagshift@=\dimen147
+\tagwidth@=\dimen148
+\totwidth@=\dimen149
+\lineht@=\dimen150
 \@envbody=\toks22
 \multlinegap=\skip51
 \multlinetaggap=\skip52
@@ -128,7 +130,7 @@ LaTeX Font Info:    Overwriting math alphabet `\mathfrak' in version `bold'
 (/usr/share/texlive/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2024/01/07 v24.1 The Babel package
 \babel@savecnt=\count274
-\U@D=\dimen150
+\U@D=\dimen151
 \l@unhyphenated=\language5
 
 (/usr/share/texlive/texmf-dist/tex/generic/babel/txtbabel.def)
@@ -170,7 +172,7 @@ Package: fncychap 2007/07/30 v1.34 LaTeX package (Revised chapters)
 \pyy=\skip58
 \pxx=\skip59
 ) (./sphinx.sty
-Package: sphinx 2024/11/23 v8.2.0 Sphinx LaTeX package (sphinx-doc)
+Package: sphinx 2025/12/26 v9.1.0 Sphinx LaTeX package (sphinx-doc)
 
 (/usr/share/texlive/texmf-dist/tex/latex/xcolor/xcolor.sty
 Package: xcolor 2023/11/15 v3.01 LaTeX color extensions (UK)
@@ -211,8 +213,8 @@ Package: float 2001/11/08 v1.3d Float enhancements (AL)
 \@floatcapt=\box54
 )
 (/usr/share/texlive/texmf-dist/tex/latex/wrapfig/wrapfig.sty
-\wrapoverhang=\dimen151
-\WF@size=\dimen152
+\wrapoverhang=\dimen152
+\WF@size=\dimen153
 \c@WF@wrappedlines=\count277
 \WF@box=\box55
 \WF@everypar=\toks27
@@ -225,22 +227,22 @@ Package: capt-of 2009/12/29 v0.2 standard captions outside of floats
 Package: multicol 2023/03/30 v1.9f multicolumn formatting (FMi)
 \c@tracingmulticols=\count278
 \mult@box=\box56
-\multicol@leftmargin=\dimen153
+\multicol@leftmargin=\dimen154
 \c@unbalance=\count279
 \c@collectmore=\count280
 \doublecol@number=\count281
 \multicoltolerance=\count282
 \multicolpretolerance=\count283
-\full@width=\dimen154
-\page@free=\dimen155
-\premulticols=\dimen156
-\postmulticols=\dimen157
+\full@width=\dimen155
+\page@free=\dimen156
+\premulticols=\dimen157
+\postmulticols=\dimen158
 \multicolsep=\skip60
 \multicolbaselineskip=\skip61
 \partial@page=\box57
 \last@line=\box58
 \mc@boxedresult=\box59
-\maxbalancingoverflow=\dimen158
+\maxbalancingoverflow=\dimen159
 \mult@rightbox=\box60
 \mult@grightbox=\box61
 \mult@firstbox=\box62
@@ -284,9 +286,9 @@ Package: multicol 2023/03/30 v1.9f multicolumn formatting (FMi)
 \c@minrows=\count284
 \c@columnbadness=\count285
 \c@finalcolumnbadness=\count286
-\last@try=\dimen159
-\multicolovershoot=\dimen160
-\multicolundershoot=\dimen161
+\last@try=\dimen160
+\multicolovershoot=\dimen161
+\multicolundershoot=\dimen162
 \mult@nat@firstbox=\box100
 \colbreak@box=\box101
 \mc@col@check@num=\count287
@@ -305,12 +307,12 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 107.
 )
-\Gin@req@height=\dimen162
-\Gin@req@width=\dimen163
+\Gin@req@height=\dimen163
+\Gin@req@width=\dimen164
 )
 (./sphinxlatexgraphics.sty
 Package: sphinxlatexgraphics 2024/08/13 v8.1.0 graphics
-\spx@image@maxheight=\dimen164
+\spx@image@maxheight=\dimen165
 \spx@image@box=\box102
 ) (./sphinxpackageboxes.sty
 Package: sphinxpackageboxes 2024/07/01 v7.4.0 advanced colored boxes
@@ -328,63 +330,66 @@ Package pict2e Info: Driver file for pict2e: p2e-pdftex.def on input line 114.
 File: p2e-pdftex.def 2016/02/05 v0.1u Driver-dependant file (RN,HjG,JT)
 )
 \pIIe@GRAPH=\toks28
-\@arclen=\dimen165
-\@arcrad=\dimen166
-\pIIe@tempdima=\dimen167
-\pIIe@tempdimb=\dimen168
-\pIIe@tempdimc=\dimen169
-\pIIe@tempdimd=\dimen170
-\pIIe@tempdime=\dimen171
-\pIIe@tempdimf=\dimen172
+\@arclen=\dimen166
+\@arcrad=\dimen167
+\pIIe@tempdima=\dimen168
+\pIIe@tempdimb=\dimen169
+\pIIe@tempdimc=\dimen170
+\pIIe@tempdimd=\dimen171
+\pIIe@tempdime=\dimen172
+\pIIe@tempdimf=\dimen173
 )
 (/usr/share/texlive/texmf-dist/tex/latex/ellipse/ellipse.sty
 Package: ellipse 2004/11/05 v1.0 .dtx ellipse file
 )
-\@tempdimd=\dimen173
+\@tempdimd=\dimen174
 \spx@tempboxa=\box103
 \spx@tempboxb=\box104
-\spx@boxes@border@top=\dimen174
-\spx@boxes@border@right=\dimen175
-\spx@boxes@border@bottom=\dimen176
-\spx@boxes@border@left=\dimen177
-\spx@boxes@padding@top=\dimen178
-\spx@boxes@padding@right=\dimen179
-\spx@boxes@padding@bottom=\dimen180
-\spx@boxes@padding@left=\dimen181
-\spx@boxes@shadow@xoffset=\dimen182
-\spx@boxes@shadow@yoffset=\dimen183
-\spx@boxes@radius@topleft@x=\dimen184
-\spx@boxes@radius@topright@x=\dimen185
-\spx@boxes@radius@bottomright@x=\dimen186
-\spx@boxes@radius@bottomleft@x=\dimen187
-\spx@boxes@radius@topleft@y=\dimen188
-\spx@boxes@radius@topright@y=\dimen189
-\spx@boxes@radius@bottomright@y=\dimen190
-\spx@boxes@radius@bottomleft@y=\dimen191
+\spx@boxes@border@top=\dimen175
+\spx@boxes@border@right=\dimen176
+\spx@boxes@border@bottom=\dimen177
+\spx@boxes@border@left=\dimen178
+\spx@boxes@padding@top=\dimen179
+\spx@boxes@padding@right=\dimen180
+\spx@boxes@padding@bottom=\dimen181
+\spx@boxes@padding@left=\dimen182
+\spx@boxes@shadow@xoffset=\dimen183
+\spx@boxes@shadow@yoffset=\dimen184
+\spx@boxes@radius@topleft@x=\dimen185
+\spx@boxes@radius@topright@x=\dimen186
+\spx@boxes@radius@bottomright@x=\dimen187
+\spx@boxes@radius@bottomleft@x=\dimen188
+\spx@boxes@radius@topleft@y=\dimen189
+\spx@boxes@radius@topright@y=\dimen190
+\spx@boxes@radius@bottomright@y=\dimen191
+\spx@boxes@radius@bottomleft@y=\dimen192
 )
 (./sphinxlatexadmonitions.sty
-Package: sphinxlatexadmonitions 2024/10/11 v8.1.1 admonitions
+Package: sphinxlatexadmonitions 2025/10/24 v9.0.0 admonitions
 
 (/usr/share/texlive/texmf-dist/tex/latex/framed/framed.sty
 Package: framed 2011/10/22 v 0.96: framed or shaded text with page breaks
 \OuterFrameSep=\skip62
-\fb@frw=\dimen192
-\fb@frh=\dimen193
-\FrameRule=\dimen194
-\FrameSep=\dimen195
+\fb@frw=\dimen193
+\fb@frh=\dimen194
+\FrameRule=\dimen195
+\FrameSep=\dimen196
+)
+(/usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty
+Package: needspace 2010/09/12 v1.3d reserve vertical space
 )
 (./sphinxpackagefootnote.sty
-Package: sphinxpackagefootnote 2024/05/17 v7.3.x Sphinx custom footnotehyper pa
+Package: sphinxpackagefootnote 2025/11/15 v9.0.0 Sphinx custom footnotehyper pa
 ckage (Sphinx team)
 \FNH@notes=\box105
 \FNH@toks=\toks29
-\FNH@width=\dimen196
+\FNH@width=\dimen197
 \c@sphinxfootnotemark=\count288
 )
-\spx@notice@border=\dimen197
+\spx@notice@border=\dimen198
 \c@sphinxtodo=\count289
 ) (./sphinxlatexliterals.sty
-Package: sphinxlatexliterals 2024/07/01 v7.4.0 code-blocks and parsed literals
+Package: sphinxlatexliterals 2025/12/26 v9.1.0 code-blocks and parsed literals
 
 (/usr/share/texlive/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
 Package: fancyvrb 2024/01/20 4.5c verbatim text (tvz,hv)
@@ -402,9 +407,6 @@ Package: alltt 2021/01/29 v2.0g defines alltt environment
 Package: upquote 2012/04/19 v1.3 upright-quote and grave-accent glyphs in verba
 tim
 )
-(/usr/share/texlive/texmf-dist/tex/latex/needspace/needspace.sty
-Package: needspace 2010/09/12 v1.3d reserve vertical space
-)
 \sphinxcontinuationbox=\box107
 \sphinxvisiblespacebox=\box108
 \sphinxVerbatim@TitleBox=\box109
@@ -418,26 +420,26 @@ Package: sphinxlatexcontainers 2021/05/03 containers
 (./sphinxhighlight.sty
 Package: sphinxhighlight 2022/06/30 stylesheet for highlighting with pygments
 ) (./sphinxlatextables.sty
-Package: sphinxlatextables 2024/07/01 v7.4.0 tables
+Package: sphinxlatextables 2025/12/30 v9.1.0 tables
 
 (/usr/share/texlive/texmf-dist/tex/latex/tabulary/tabulary.sty
 Package: tabulary 2014/06/11 v0.10 tabulary package (DPC)
 
 (/usr/share/texlive/texmf-dist/tex/latex/tools/array.sty
 Package: array 2023/10/16 v2.5g Tabular extension package (FMi)
-\col@sep=\dimen198
+\col@sep=\dimen199
 \ar@mcellbox=\box111
-\extrarowheight=\dimen199
+\extrarowheight=\dimen256
 \NC@list=\toks30
 \extratabsurround=\skip63
 \backup@length=\skip64
 \ar@cellbox=\box112
 )
 \TY@count=\count293
-\TY@linewidth=\dimen256
-\tymin=\dimen257
-\tymax=\dimen258
-\TY@tablewidth=\dimen259
+\TY@linewidth=\dimen257
+\tymin=\dimen258
+\tymax=\dimen259
+\TY@tablewidth=\dimen260
 )
 (/usr/share/texlive/texmf-dist/tex/latex/tools/longtable.sty
 Package: longtable 2023-11-01 v4.19 Multi-page Table package (DPC)
@@ -446,7 +448,7 @@ Package: longtable 2023-11-01 v4.19 Multi-page Table package (DPC)
 \LTpre=\skip67
 \LTpost=\skip68
 \LTchunksize=\count294
-\LTcapwidth=\dimen260
+\LTcapwidth=\dimen261
 \LT@head=\box113
 \LT@firsthead=\box114
 \LT@foot=\box115
@@ -462,10 +464,10 @@ Package: longtable 2023-11-01 v4.19 Multi-page Table package (DPC)
 Package: varwidth 2009/03/30 ver 0.92;  Variable-width minipages
 \@vwid@box=\box118
 \sift@deathcycles=\count299
-\@vwid@loff=\dimen261
-\@vwid@roff=\dimen262
+\@vwid@loff=\dimen262
+\@vwid@roff=\dimen263
 )
-\sphinx@TY@tablewidth=\dimen263
+\sphinx@TY@tablewidth=\dimen264
 
 (/usr/share/texlive/texmf-dist/tex/latex/colortbl/colortbl.sty
 Package: colortbl 2022/06/20 v1.0f Color table columns (DPC)
@@ -475,23 +477,23 @@ Package: colortbl 2022/06/20 v1.0f Color table columns (DPC)
 )
 (/usr/share/texlive/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen264
-\lightrulewidth=\dimen265
-\cmidrulewidth=\dimen266
-\belowrulesep=\dimen267
-\belowbottomsep=\dimen268
-\aboverulesep=\dimen269
-\abovetopsep=\dimen270
-\cmidrulesep=\dimen271
-\cmidrulekern=\dimen272
-\defaultaddspace=\dimen273
+\heavyrulewidth=\dimen265
+\lightrulewidth=\dimen266
+\cmidrulewidth=\dimen267
+\belowrulesep=\dimen268
+\belowbottomsep=\dimen269
+\aboverulesep=\dimen270
+\abovetopsep=\dimen271
+\cmidrulesep=\dimen272
+\cmidrulekern=\dimen273
+\defaultaddspace=\dimen274
 \@cmidla=\count301
 \@cmidlb=\count302
-\@aboverulesep=\dimen274
-\@belowrulesep=\dimen275
+\@aboverulesep=\dimen275
+\@belowrulesep=\dimen276
 \@thisruleclass=\count303
 \@lastruleclass=\count304
-\@thisrulewidth=\dimen276
+\@thisrulewidth=\dimen277
 ))
 (./sphinxlatexnumfig.sty
 Package: sphinxlatexnumfig 2024/07/31 v8.1.0 numbering
@@ -537,23 +539,29 @@ Package: titlesec 2023/10/27 v2.16 Sectioning titles
 \ttl@box=\box119
 \beforetitleunit=\skip79
 \aftertitleunit=\skip80
-\ttl@plus=\dimen277
-\ttl@minus=\dimen278
+\ttl@plus=\dimen278
+\ttl@minus=\dimen279
 \ttl@toksa=\toks34
-\titlewidth=\dimen279
-\titlewidthlast=\dimen280
-\titlewidthfirst=\dimen281
+\titlewidth=\dimen280
+\titlewidthlast=\dimen281
+\titlewidthfirst=\dimen282
 ))
 (./sphinxlatexstyletext.sty
-Package: sphinxlatexstyletext 2024/07/28 v8.1.0 text styling
+Package: sphinxlatexstyletext 2025/05/24 v9.0.0 text styling
 ) (./sphinxlatexobjects.sty
-Package: sphinxlatexobjects 2025/02/11 documentation environments
+Package: sphinxlatexobjects 2025/06/06 documentation environments
 \sphinxsignaturesep=\skip81
 \sphinxsignaturelistskip=\skip82
 \py@argswidth=\skip83
 \lineblockindentation=\skip84
 \DUlineblockindent=\skip85
-))
+)
+\sphinxvwdimen=\dimen283
+\sphinxvhdimen=\dimen284
+\sphinxvmindimen=\dimen285
+\sphinxvmaxdimen=\dimen286
+\sphinxQdimen=\dimen287
+)
 (/usr/share/texlive/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
 
@@ -566,14 +574,14 @@ Package: iftex 2022/02/03 v1.0f TeX engine tests
 \Gm@cnth=\count307
 \Gm@cntv=\count308
 \c@Gm@tempcnt=\count309
-\Gm@bindingoffset=\dimen282
-\Gm@wd@mp=\dimen283
-\Gm@odd@mp=\dimen284
-\Gm@even@mp=\dimen285
-\Gm@layoutwidth=\dimen286
-\Gm@layoutheight=\dimen287
-\Gm@layouthoffset=\dimen288
-\Gm@layoutvoffset=\dimen289
+\Gm@bindingoffset=\dimen288
+\Gm@wd@mp=\dimen289
+\Gm@odd@mp=\dimen290
+\Gm@even@mp=\dimen291
+\Gm@layoutwidth=\dimen292
+\Gm@layoutheight=\dimen293
+\Gm@layouthoffset=\dimen294
+\Gm@layoutvoffset=\dimen295
 \Gm@dimlist=\toks35
 )
 (/usr/share/texlive/texmf-dist/tex/latex/hyperref/hyperref.sty
@@ -613,7 +621,7 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count310
 )
-\@linkdim=\dimen290
+\@linkdim=\dimen296
 \Hy@linkcounter=\count311
 \Hy@pagecounter=\count312
 
@@ -649,7 +657,7 @@ Package hyperref Info: Bookmarks ON on input line 4446.
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 4784.
-\XeTeXLinkMargin=\dimen291
+\XeTeXLinkMargin=\dimen297
 
 (/usr/share/texlive/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -659,8 +667,8 @@ Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
 \Fld@menulength=\count315
-\Field@Width=\dimen292
-\Fld@charsize=\dimen293
+\Field@Width=\dimen298
+\Fld@charsize=\dimen299
 Package hyperref Info: Hyper figures OFF on input line 6063.
 Package hyperref Info: Link nesting OFF on input line 6068.
 Package hyperref Info: Hyper index ON on input line 6071.
@@ -715,7 +723,7 @@ Package: sphinxmessages 2019/01/04 v2.0 Localized LaTeX macros (Sphinx team)
 
 
 Writing index file blunderdb.idx
-LaTeX Font Info:    Trying to load font information for T1+qtm on input line 76
+LaTeX Font Info:    Trying to load font information for T1+qtm on input line 77
 .
 (/usr/share/texmf/tex/latex/tex-gyre/t1qtm.fd
 File: t1qtm.fd 2009/09/25 v1.2 font definition file for T1/qtm
@@ -728,35 +736,35 @@ File: l3backend-pdftex.def 2024-01-04 L3 backend support: PDF output (pdfTeX)
 (./blunderdb.aux)
 \openout1 = `blunderdb.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 76.
-LaTeX Font Info:    ... okay on input line 76.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 77.
+LaTeX Font Info:    ... okay on input line 77.
 
 (/usr/share/texlive/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count322
-\scratchdimen=\dimen294
+\scratchdimen=\dimen300
 \scratchbox=\box121
 \nofMPsegments=\count323
 \nofMParguments=\count324
 \everyMPshowfont=\toks36
 \MPscratchCnt=\count325
-\MPscratchDim=\dimen295
+\MPscratchDim=\dimen301
 \MPnumerator=\count326
 \makeMPintoPDFobject=\count327
 \everyMPtoPDFconversion=\toks37
@@ -805,24 +813,24 @@ e
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring ON on input line 76.
+Package hyperref Info: Link coloring ON on input line 77.
 (./blunderdb.out) (./blunderdb.out)
 \@outlinefile=\write5
 \openout5 = `blunderdb.out'.
 
-Package hyperref Info: Option `pageanchor' set `false' on input line 84.
-LaTeX Font Info:    Trying to load font information for T1+qhv on input line 84
+Package hyperref Info: Option `pageanchor' set `false' on input line 85.
+LaTeX Font Info:    Trying to load font information for T1+qhv on input line 85
 .
 
 (/usr/share/texmf/tex/latex/tex-gyre/t1qhv.fd
 File: t1qhv.fd 2009/09/25 v1.2 font definition file for T1/qhv
 )<<ot1.cmap>><<oml.cmap>><<oms.cmap>><<omx.cmap>>
-LaTeX Font Info:    Trying to load font information for U+msa on input line 84.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 85.
 
  (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsa.fd
 File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 84.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 85.
 
 
 (/usr/share/texlive/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -843,7 +851,7 @@ dvips/tex-gyre/q-ec.enc}] [2
 
 ]
 LaTeX Font Info:    Trying to load font information for TS1+qtm on input line 1
-02.
+03.
 
 (/usr/share/texmf/tex/latex/tex-gyre/ts1qtm.fd
 File: ts1qtm.fd 2009/09/25 v1.2 font definition file for TS1/qtm
@@ -856,54 +864,69 @@ Chapter 1.
 ]
 Chapter 2.
 LaTeX Font Info:    Trying to load font information for T1+txtt on input line 3
-31.
+92.
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/t1txtt.fd
 File: t1txtt.fd 2000/12/15 v3.1
 ) [5] [6] [7]
 [8] [9] [10] [11] [12] [13] [14]
-Overfull \hbox (25.91899pt too wide) in paragraph at lines 1783--1785
-[]|\T1/qtm/m/n/10 migrate_from_1_0_to_1_1| 
+Overfull \hbox (25.91899pt too wide) in paragraph at lines 2264--2266
+[]\T1/qtm/m/n/10 migrate_from_1_0_to_1_1 
  []
 
 
-Overfull \hbox (25.91899pt too wide) in paragraph at lines 1790--1792
-[]|\T1/qtm/m/n/10 migrate_from_1_1_to_1_2| 
+Overfull \hbox (25.91899pt too wide) detected at line 2267
+[]\T1/qtm/m/n/10 migrate_from_1_0_to_1_1 
  []
 
 
-Overfull \hbox (25.91899pt too wide) in paragraph at lines 1797--1799
-[]|\T1/qtm/m/n/10 migrate_from_1_2_to_1_3| 
+Overfull \hbox (25.91899pt too wide) in paragraph at lines 2275--2277
+[]\T1/qtm/m/n/10 migrate_from_1_1_to_1_2 
+ []
+
+
+Overfull \hbox (25.91899pt too wide) detected at line 2278
+[]\T1/qtm/m/n/10 migrate_from_1_1_to_1_2 
+ []
+
+
+Overfull \hbox (25.91899pt too wide) in paragraph at lines 2286--2288
+[]\T1/qtm/m/n/10 migrate_from_1_2_to_1_3 
+ []
+
+
+Overfull \hbox (25.91899pt too wide) detected at line 2289
+[]\T1/qtm/m/n/10 migrate_from_1_2_to_1_3 
  []
 
 [15] [16] [17] [18] [19]
-Underfull \hbox (badness 10000) in paragraph at lines 2772--2774
-[]|\T1/qtm/m/n/10 portes dans le jan,
+Underfull \hbox (badness 10000) in paragraph at lines 3556--3558
+[]\T1/qtm/m/n/10 portes dans le jan,
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2779--2781
-[]|\T1/qtm/m/n/10 Position du tournoi
+Underfull \hbox (badness 10000) in paragraph at lines 3567--3569
+[]\T1/qtm/m/n/10 Position du tournoi
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2823--2825
-[]|\T1/qtm/m/n/10 Double avec au moins
+Underfull \hbox (badness 10000) in paragraph at lines 3643--3645
+[]\T1/qtm/m/n/10 Double avec au moins
  []
 
 [20]
-Underfull \hbox (badness 5817) in paragraph at lines 2847--2855
+Underfull \hbox (badness 5817) in paragraph at lines 3673--3681
 \T1/qtm/m/n/10 de certifier numériquement leurs applications voire de distribue
 r via le Windows Store. Il est alors
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2847--2855
+Underfull \hbox (badness 10000) in paragraph at lines 3673--3681
 \T1/qtm/m/n/10 préconisé de faire appel à des sociétés extérieures pour obtenir
  un certificat numérique au prix de
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 2847--2855
+Underfull \hbox (badness 10000) in paragraph at lines 3673--3681
 \T1/qtm/m/n/10 plusieurs centaines d'euros (voir par exemple [][]$https : / / l
 earn . microsoft . com / en-[]us / archive / blogs / ie _ fr /
  []
@@ -911,73 +934,73 @@ earn . microsoft . com / en-[]us / archive / blogs / ie _ fr /
 <smartscreen_en.png, id=468, 502.12593pt x 191.21437pt>
 File: smartscreen_en.png Graphic file (type png)
 <use smartscreen_en.png>
-Package pdftex.def Info: smartscreen_en.png  used on input line 2873.
+Package pdftex.def Info: smartscreen_en.png  used on input line 3699.
 (pdftex.def)             Requested size: 469.77652pt x 178.89539pt.
 [21]
 <blunderdb_potential_virus.png, id=478, 417.05812pt x 125.71968pt>
 File: blunderdb_potential_virus.png Graphic file (type png)
 <use blunderdb_potential_virus.png>
-Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 2926
+Package pdftex.def Info: blunderdb_potential_virus.png  used on input line 3752
 .
 (pdftex.def)             Requested size: 417.0571pt x 125.71936pt.
 <threat_found_action_needed.png, id=480, 365.86688pt x 240.9pt>
 File: threat_found_action_needed.png Graphic file (type png)
 <use threat_found_action_needed.png>
-Package pdftex.def Info: threat_found_action_needed.png  used on input line 293
-5.
+Package pdftex.def Info: threat_found_action_needed.png  used on input line 376
+1.
 (pdftex.def)             Requested size: 365.86598pt x 240.8994pt.
 <win1.png, id=483, 584.93532pt x 587.94656pt>
 File: win1.png Graphic file (type png)
 <use win1.png>
-Package pdftex.def Info: win1.png  used on input line 2966.
+Package pdftex.def Info: win1.png  used on input line 3792.
 (pdftex.def)             Requested size: 469.76967pt x 472.17908pt.
 <win2.png, id=484, 604.50844pt x 478.78876pt>
 File: win2.png Graphic file (type png)
 <use win2.png>
-Package pdftex.def Info: win2.png  used on input line 2986.
+Package pdftex.def Info: win2.png  used on input line 3812.
 (pdftex.def)             Requested size: 469.75288pt x 372.05833pt.
 <win3.png, id=485, 605.26125pt x 478.03593pt>
 File: win3.png Graphic file (type png)
 <use win3.png>
-Package pdftex.def Info: win3.png  used on input line 3006.
+Package pdftex.def Info: win3.png  used on input line 3832.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
  [22 <./smartscreen_en.png> <./blunderdb_potential_virus.png>]
 <win4.png, id=495, 601.4972pt x 477.28313pt>
 File: win4.png Graphic file (type png)
 <use win4.png>
-Package pdftex.def Info: win4.png  used on input line 3026.
+Package pdftex.def Info: win4.png  used on input line 3852.
 (pdftex.def)             Requested size: 469.77168pt x 372.74542pt.
 <win5.png, id=496, 604.50844pt x 479.54156pt>
 File: win5.png Graphic file (type png)
 <use win5.png>
-Package pdftex.def Info: win5.png  used on input line 3047.
+Package pdftex.def Info: win5.png  used on input line 3873.
 (pdftex.def)             Requested size: 469.75288pt x 372.65063pt.
 <win6.png, id=497, 461.47406pt x 357.58594pt>
 File: win6.png Graphic file (type png)
 <use win6.png>
-Package pdftex.def Info: win6.png  used on input line 3053.
+Package pdftex.def Info: win6.png  used on input line 3879.
 (pdftex.def)             Requested size: 461.47292pt x 357.58505pt.
 <win7.png, id=498, 605.26125pt x 478.03593pt>
 File: win7.png Graphic file (type png)
 <use win7.png>
-Package pdftex.def Info: win7.png  used on input line 3059.
+Package pdftex.def Info: win7.png  used on input line 3885.
 (pdftex.def)             Requested size: 469.75603pt x 371.0138pt.
  [23 <./threat_found_action_needed.png>] [24 <./win1.png>] [25 <./win2.png>] [2
 6 <./win3.png>] [27 <./win4.png>] [28 <./win5.png>] [29 <./win6.png>] [30 <./wi
 n7.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 3173--3175
+Underfull \hbox (badness 10000) in paragraph at lines 3999--4001
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.0.0 à la versio
 n 1.1.0, exécutez la commande
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 3191--3193
+Underfull \hbox (badness 10000) in paragraph at lines 4017--4019
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.1.0 à la versio
 n 1.2.0, exécutez la commande
  []
 
 [31]
-Underfull \hbox (badness 10000) in paragraph at lines 3209--3211
+Underfull \hbox (badness 10000) in paragraph at lines 4035--4037
 []\T1/qtm/m/n/10 Pour migrer la base de données de la version 1.2.0 à la versio
 n 1.3.0, exécutez la commande
  []
@@ -1003,20 +1026,20 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 (rerunfilecheck)             Checksum: E35F319372D157ABE153F3893D147C46;14381.
  ) 
 Here is how much of TeX's memory you used:
- 17073 strings out of 476182
- 290421 string characters out of 5795594
- 1973975 words of memory out of 5000000
- 38556 multiletter control sequences out of 15000+600000
+ 17167 strings out of 476182
+ 292687 string characters out of 5795595
+ 1995975 words of memory out of 5000000
+ 38651 multiletter control sequences out of 15000+600000
  611301 words of font info for 75 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
- 72i,12n,83p,1198b,666s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,12n,83p,1198b,678s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </usr/share/texmf/fonts/type1/public/tex-gyre/qhvb.pfb></usr/share/texmf/font
 s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 /qhvr.pfb></usr/share/texmf/fonts/type1/public/tex-gyre/qtmb.pfb></usr/share/te
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 tt.pfb>
-Output written on blunderdb.pdf (41 pages, 469557 bytes).
+Output written on blunderdb.pdf (41 pages, 469739 bytes).
 PDF statistics:
  650 PDF objects out of 1000 (max. 8388607)
  568 compressed objects within 6 object streams

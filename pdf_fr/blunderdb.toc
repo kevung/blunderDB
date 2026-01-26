@@ -32,23 +32,23 @@
 \contentsline {section}{\numberline {2.5}Raccourcis clavier}{15}{section.2.5}%
 \contentsline {subsection}{\numberline {2.5.1}Base de données}{15}{subsection.2.5.1}%
 \contentsline {subsection}{\numberline {2.5.2}Position}{15}{subsection.2.5.2}%
-\contentsline {subsection}{\numberline {2.5.3}Navigation}{15}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.3}Navigation}{16}{subsection.2.5.3}%
 \contentsline {subsection}{\numberline {2.5.4}Affichage}{16}{subsection.2.5.4}%
 \contentsline {subsection}{\numberline {2.5.5}Modes}{16}{subsection.2.5.5}%
 \contentsline {subsection}{\numberline {2.5.6}Outils}{16}{subsection.2.5.6}%
 \contentsline {subsection}{\numberline {2.5.7}Ligne de commande}{16}{subsection.2.5.7}%
-\contentsline {subsection}{\numberline {2.5.8}Panneau historique de recherche}{16}{subsection.2.5.8}%
+\contentsline {subsection}{\numberline {2.5.8}Panneau historique de recherche}{17}{subsection.2.5.8}%
 \contentsline {subsection}{\numberline {2.5.9}Panneau bibliothèque de filtres}{17}{subsection.2.5.9}%
 \contentsline {subsection}{\numberline {2.5.10}Panneau d’analyse}{17}{subsection.2.5.10}%
 \contentsline {section}{\numberline {2.6}Foire aux questions}{17}{section.2.6}%
 \contentsline {subsection}{\numberline {2.6.1}Quel est l’utilité de blunderDB?}{17}{subsection.2.6.1}%
 \contentsline {subsection}{\numberline {2.6.2}Qu’est ce qui a motivé la création de blunderDB?}{17}{subsection.2.6.2}%
-\contentsline {subsection}{\numberline {2.6.3}Comment sauvegarder la base de données courante?}{17}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.3}Comment sauvegarder la base de données courante?}{18}{subsection.2.6.3}%
 \contentsline {subsection}{\numberline {2.6.4}Dois\sphinxhyphen {}je créer différentes bases de données pour différentes catégories de positions?}{18}{subsection.2.6.4}%
 \contentsline {subsection}{\numberline {2.6.5}Comment fusionner plusieurs bases de données?}{18}{subsection.2.6.5}%
 \contentsline {subsection}{\numberline {2.6.6}Puis\sphinxhyphen {}je modifier, copier, partager blunderDB?}{18}{subsection.2.6.6}%
 \contentsline {subsection}{\numberline {2.6.7}Quel format de données utilise blunderDB?}{18}{subsection.2.6.7}%
-\contentsline {subsection}{\numberline {2.6.8}Quelles ont été les principes de conception de blunderDB?}{18}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.8}Quelles ont été les principes de conception de blunderDB?}{19}{subsection.2.6.8}%
 \contentsline {subsection}{\numberline {2.6.9}Quel est l’architecture logicielle de blunderDB?}{19}{subsection.2.6.9}%
 \contentsline {subsection}{\numberline {2.6.10}Sur quelles plateformes blunderDB fonctionne\sphinxhyphen {}t’il?}{19}{subsection.2.6.10}%
 \contentsline {subsection}{\numberline {2.6.11}D’où vient l’icône de blunderDB?}{19}{subsection.2.6.11}%
