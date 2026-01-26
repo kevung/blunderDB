@@ -44,4 +44,6 @@ require (
 	modernc.org/memory v1.8.2 // indirect
 )
 
+replace github.com/wailsapp/go-webview2 => github.com/wailsapp/go-webview2 v1.0.16
+
 // replace github.com/wailsapp/wails/v2 v2.9.2 => /home/unger/go/pkg/mod
