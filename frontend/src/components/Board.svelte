@@ -856,19 +856,11 @@
     });
 
     // Helper function to get the position to display
-    // In match mode, mirror the position if Player 2 is on roll
-    // so that Player 1 is always displayed at the bottom
+    // In match mode, positions are already stored from Player 1's perspective
+    // (Player 1 at bottom with black checkers, Player 2 at top with white checkers)
+    // No mirroring needed - just return the position as-is
     function getDisplayPosition() {
         const position = get(positionStore);
-        const matchCtx = get(matchContextStore);
-        
-        // In match mode, if Player 2 (player_on_roll = 1) is on roll,
-        // we need to mirror the position for display so Player 1 is at the bottom
-        if (matchCtx && matchCtx.isMatchMode && position.player_on_roll === 1) {
-            // Mirror the position for display only
-            return mirrorPosition(position);
-        }
-        
         return position;
     }
 

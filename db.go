@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 	"sync" // Import sync package
@@ -3449,15 +3450,52 @@ func DeleteFile(filePath string) error {
 // Match import and management functions
 
 // Import XG match file using xgparser library
+// This function uses raw segment parsing to capture complete cube action information
 func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
-	// Parse the XG file
-	match, err := xgparser.ParseXGFromFile(filePath)
+	// Parse the XG file using raw segments for complete data
+	imp := xgparser.NewImport(filePath)
+	segments, err := imp.GetFileSegments()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get file segments: %w", err)
+	}
+
+	// Also parse lightweight structure for metadata
+	match, err := xgparser.ParseXG(segments)
 	if err != nil {
 		fmt.Printf("Error parsing XG file: %v\n", err)
 		return 0, fmt.Errorf("failed to parse XG file: %w", err)
+	}
+
+	// Parse raw records for complete cube information
+	rawCubeInfo := make(map[string]RawCubeAction) // key: "game_moveIdx"
+	for _, seg := range segments {
+		if seg.Type == xgparser.SegmentXGGameFile {
+			records, _ := xgparser.ParseGameFile(seg.Data, -1)
+			gameNum := int32(0)
+			cubeIdx := 0
+			for _, rec := range records {
+				switch r := rec.(type) {
+				case *xgparser.HeaderGameEntry:
+					gameNum = r.GameNumber
+					cubeIdx = 0
+				case *xgparser.CubeEntry:
+					if r.Double != -2 { // Skip initial positions
+						key := fmt.Sprintf("%d_%d", gameNum, cubeIdx)
+						rawCubeInfo[key] = RawCubeAction{
+							Double:   r.Double,
+							Take:     r.Take,
+							ActiveP:  r.ActiveP,
+							CubeB:    r.CubeB,
+							Position: r.Position,
+						}
+						cubeIdx++
+					}
+				}
+			}
+		}
 	}
 
 	// Parse match date
@@ -3539,15 +3577,28 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	fmt.Printf("Loaded %d existing positions into cache\n", len(positionCache))
 
 	// Import each game
-	for _, game := range match.Games {
+	for gameIdx, game := range match.Games {
 		gameID, err := d.importGame(tx, matchID, &game)
 		if err != nil {
 			return 0, fmt.Errorf("failed to import game %d: %w", game.GameNumber, err)
 		}
 
+		// Track cube index for raw data lookup
+		cubeIdx := 0
+
 		// Import moves for this game
 		for moveIdx, move := range game.Moves {
-			err := d.importMoveWithCache(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), positionCache)
+			// For cube moves, look up raw data for complete info
+			var rawCube *RawCubeAction
+			if move.MoveType == "cube" {
+				key := fmt.Sprintf("%d_%d", gameIdx+1, cubeIdx)
+				if rc, ok := rawCubeInfo[key]; ok {
+					rawCube = &rc
+				}
+				cubeIdx++
+			}
+
+			err := d.importMoveWithCacheAndRawCube(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), positionCache, rawCube)
 			if err != nil {
 				return 0, fmt.Errorf("failed to import move %d in game %d: %w", moveIdx, game.GameNumber, err)
 			}
@@ -3561,6 +3612,15 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 
 	fmt.Printf("Successfully imported match %d with %d games from %s\n", matchID, len(match.Games), filePath)
 	return matchID, nil
+}
+
+// RawCubeAction stores raw cube action data from XG file
+type RawCubeAction struct {
+	Double   int32
+	Take     int32
+	ActiveP  int32
+	CubeB    int32
+	Position [26]int8
 }
 
 // importGame inserts a game and returns its ID
@@ -3589,13 +3649,14 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 
 	if move.MoveType == "checker" && move.CheckerMove != nil {
 		// Create position from checker move
-		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber)
+		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber, move.CheckerMove.ActivePlayer)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
 
 		// Set position-specific attributes from move
-		pos.PlayerOnRoll = int(move.CheckerMove.ActivePlayer)
+		// Convert XG player encoding (-1, 1) to blunderDB encoding (0, 1)
+		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CheckerMove.ActivePlayer)
 		pos.DecisionType = CheckerAction
 		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
@@ -3610,7 +3671,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 		dice = move.CheckerMove.Dice
 
 		// Convert move notation
-		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove)
+		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove, move.CheckerMove.ActivePlayer)
 
 		// Save move
 		moveResult, err := tx.Exec(`
@@ -3635,7 +3696,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 			}
 
 			// Also save to position analysis table (for UI compatibility)
-			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis)
+			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
 			if err != nil {
 				fmt.Printf("Warning: failed to save position analysis: %v\n", err)
 			}
@@ -3643,13 +3704,14 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 
 	} else if move.MoveType == "cube" && move.CubeMove != nil {
 		// Create position from cube move
-		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber)
+		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
 
 		// Set position-specific attributes from move
-		pos.PlayerOnRoll = int(move.CubeMove.ActivePlayer)
+		// Convert XG player encoding (-1, 1) to blunderDB encoding (0, 1)
+		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
 		pos.DecisionType = CubeAction
 		pos.Dice = [2]int{0, 0} // No dice for cube decisions
 
@@ -3694,6 +3756,145 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 	return nil
 }
 
+// importMoveWithCacheAndRawCube imports a move with raw cube data for complete action info
+func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, positionCache map[string]int64, rawCube *RawCubeAction) error {
+	var positionID int64
+	var player int32
+	var dice [2]int32
+	var checkerMoveStr string
+	var cubeActionStr string
+
+	if move.MoveType == "checker" && move.CheckerMove != nil {
+		// Create position from checker move
+		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber, move.CheckerMove.ActivePlayer)
+		if err != nil {
+			return fmt.Errorf("failed to create position: %w", err)
+		}
+
+		// Set position-specific attributes from move
+		// Convert XG player encoding (-1, 1) to blunderDB encoding (0, 1)
+		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CheckerMove.ActivePlayer)
+		pos.DecisionType = CheckerAction
+		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
+
+		// Save position with cache
+		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		if err != nil {
+			return fmt.Errorf("failed to save position: %w", err)
+		}
+		positionID = posID
+
+		player = move.CheckerMove.ActivePlayer
+		dice = move.CheckerMove.Dice
+
+		// Convert move notation
+		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove, move.CheckerMove.ActivePlayer)
+
+		// Save move
+		moveResult, err := tx.Exec(`
+			INSERT INTO move (game_id, move_number, move_type, position_id, player,
+			                  dice_1, dice_2, checker_move)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		`, gameID, moveNumber, "checker", positionID, player, dice[0], dice[1], checkerMoveStr)
+		if err != nil {
+			return err
+		}
+
+		moveID, _ := moveResult.LastInsertId()
+
+		// Save analysis if available
+		if len(move.CheckerMove.Analysis) > 0 {
+			for _, analysis := range move.CheckerMove.Analysis {
+				err = d.saveMoveAnalysisInTx(tx, moveID, &analysis)
+				if err != nil {
+					fmt.Printf("Warning: failed to save checker analysis: %v\n", err)
+				}
+			}
+
+			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
+			if err != nil {
+				fmt.Printf("Warning: failed to save position analysis: %v\n", err)
+			}
+		}
+
+	} else if move.MoveType == "cube" && move.CubeMove != nil {
+		// Create position from cube move
+		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
+		if err != nil {
+			return fmt.Errorf("failed to create position: %w", err)
+		}
+
+		// Set position-specific attributes from move
+		// Convert XG player encoding (-1, 1) to blunderDB encoding (0, 1)
+		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
+		pos.DecisionType = CubeAction
+		pos.Dice = [2]int{0, 0} // No dice for cube decisions
+
+		// Save position with cache
+		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		if err != nil {
+			return fmt.Errorf("failed to save position: %w", err)
+		}
+		positionID = posID
+
+		player = move.CubeMove.ActivePlayer
+
+		// Use raw cube data if available for complete action info
+		if rawCube != nil {
+			cubeActionStr = d.convertRawCubeAction(rawCube.Double, rawCube.Take)
+		} else {
+			cubeActionStr = d.convertCubeAction(move.CubeMove.CubeAction)
+		}
+
+		// Save move
+		moveResult, err := tx.Exec(`
+			INSERT INTO move (game_id, move_number, move_type, position_id, player,
+			                  dice_1, dice_2, cube_action)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		`, gameID, moveNumber, "cube", positionID, player, 0, 0, cubeActionStr)
+		if err != nil {
+			return err
+		}
+
+		moveID, _ := moveResult.LastInsertId()
+
+		// Save cube analysis if available
+		if move.CubeMove.Analysis != nil {
+			err = d.saveCubeAnalysisInTx(tx, moveID, move.CubeMove.Analysis)
+			if err != nil {
+				fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+			}
+
+			err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+			if err != nil {
+				fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// convertRawCubeAction converts raw Double/Take values to action string
+func (d *Database) convertRawCubeAction(double, take int32) string {
+	// XG cube action encoding:
+	// Double=0, Take=-1: No Double
+	// Double=1, Take=1: Double, Take
+	// Double=1, Take=-1: Double (followed by Pass in next game end)
+	// Double=-2: Initial position (should be filtered before)
+
+	if double == 0 {
+		return "No Double"
+	} else if double == 1 {
+		if take == 1 {
+			return "Double/Take"
+		} else {
+			return "Double"
+		}
+	}
+	return fmt.Sprintf("Unknown(D=%d,T=%d)", double, take)
+}
+
 // importMove imports a move, creates associated position, and stores analysis (deprecated - use importMoveWithCache)
 func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32) error {
 	var positionID int64
@@ -3704,7 +3905,7 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 
 	if move.MoveType == "checker" && move.CheckerMove != nil {
 		// Create position from checker move
-		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber)
+		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber, move.CheckerMove.ActivePlayer)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
@@ -3720,7 +3921,7 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 		dice = move.CheckerMove.Dice
 
 		// Convert move notation
-		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove)
+		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove, move.CheckerMove.ActivePlayer)
 
 		// Save move
 		moveResult, err := tx.Exec(`
@@ -3746,7 +3947,7 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 
 	} else if move.MoveType == "cube" && move.CubeMove != nil {
 		// Create position from cube move
-		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber)
+		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
 		if err != nil {
 			return fmt.Errorf("failed to create position: %w", err)
 		}
@@ -3786,7 +3987,14 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 }
 
 // createPositionFromXG converts xgparser.Position to blunderDB Position
-func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLength int32, moveNum int32) (*Position, error) {
+// activePlayer indicates which XG player (-1 or 1) is on roll in this position
+func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.Game, matchLength int32, moveNum int32, activePlayer int32) (*Position, error) {
+	// Convert XG player encoding to blunderDB encoding
+	// XG: -1 = Player 1, 1 = Player 2
+	// blunderDB: 0 = Player 1, 1 = Player 2
+	activePlayerBlunderDB := convertXGPlayerToBlunderDB(activePlayer)
+	opponentPlayerBlunderDB := 1 - activePlayerBlunderDB
+
 	// Calculate away scores from current scores
 	// In blunderDB, scores are "points away from winning"
 	// game.InitialScore contains current scores (e.g., 2-3 in a 7-point match)
@@ -3801,13 +4009,23 @@ func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.
 	}
 
 	// Map XG cube position to blunderDB format
-	// xgPos.CubePos: 0=center, 1=player1 owns, 2=player2 owns
-	// blunderDB: 0=center, 1=player1 owns, -1=player2 owns
-	cubeOwner := 0 // Default: center
+	// xgPos.CubePos: 0=center (no owner), 1=player1 owns, 2=player2 owns
+	// blunderDB: -1=center (no owner), 0=player1 owns (bottom), 1=player2 owns (top)
+	cubeOwner := -1 // Default: center (no owner)
 	if xgPos.CubePos == 1 {
-		cubeOwner = 1 // Player 1 owns
+		cubeOwner = 0 // Player 1 owns (shown at bottom)
 	} else if xgPos.CubePos == 2 {
-		cubeOwner = -1 // Player 2 owns
+		cubeOwner = 1 // Player 2 owns (shown at top)
+	}
+
+	// Convert cube value from XG (direct value 1,2,4,8...) to blunderDB (exponent 0,1,2,3...)
+	// blunderDB displays 2^value, so we need log2(xgCube)
+	cubeValue := 0
+	if xgPos.Cube > 0 {
+		// Calculate log2 of cube value
+		for v := int(xgPos.Cube); v > 1; v >>= 1 {
+			cubeValue++
+		}
 	}
 
 	pos := &Position{
@@ -3815,34 +4033,81 @@ func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.
 		DecisionType: 0, // Checker decision by default
 		Score:        [2]int{awayScore1, awayScore2},
 		Cube: Cube{
-			Value: int(xgPos.Cube),
+			Value: cubeValue,
 			Owner: cubeOwner,
 		},
 		Dice: [2]int{0, 0}, // Will be set from move data
 	}
 
 	// Convert checkers from XG format to blunderDB format
-	// XG format: index 0-23 are points, 24=player bar, 25=opponent bar
-	// Positive values = player's checkers, negative = opponent's checkers
+	// XG format: index 0-23 are points 1-24, index 24=bar, 25=opponent bar
+	// Positive values = active player's checkers, negative = opponent's checkers
+	//
+	// In blunderDB:
+	// - Color 0 = Player 1 (always at bottom, black, moves 24→1) - NEVER CHANGES
+	// - Color 1 = Player 2 (always at top, white, moves 1→24) - NEVER CHANGES
+	// - Points 1-24 with indices 1-24 in the array
+	// - Index 0 = Player 2's bar (white), Index 25 = Player 1's bar (black)
+	//
+	// XG stores positions from the active player's perspective:
+	// - Positive checkers = active player's checkers
+	// - Negative checkers = opponent's checkers
+	// - Point numbering is from active player's perspective
+	//
+	// Player mapping:
+	// - XG Player 0 = blunderDB Player 1 (Color 0, bottom, black)
+	// - XG Player 1 = blunderDB Player 2 (Color 1, top, white)
+	//
+	// Strategy:
+	// 1. Determine which player owns the checkers based on sign AND activePlayer
+	// 2. Assign colors based on OWNER, not on sign
+	// 3. Mirror positions if activePlayer == 1 (since XG encodes from active player's view)
 	for i := 0; i < 26; i++ {
 		checkerCount := xgPos.Checkers[i]
-		if checkerCount > 0 {
-			// Player's checkers
-			pos.Board.Points[i] = Point{
-				Checkers: int(checkerCount),
-				Color:    0,
-			}
-		} else if checkerCount < 0 {
-			// Opponent's checkers
-			pos.Board.Points[i] = Point{
-				Checkers: int(-checkerCount),
-				Color:    1,
+
+		// Determine WHERE to place them (calculate targetIndex for ALL points, even empty)
+		// XG uses 1-based indexing: index 1-24 = points 1-24, index 0 = opponent bar, index 25 = active bar
+		// blunderDB also uses same: index 1-24 = points 1-24, index 0 = P2 bar, index 25 = P1 bar
+		targetIndex := i
+		if activePlayerBlunderDB == 1 {
+			// Player 2's perspective, need to mirror to Player 1's perspective
+			if i >= 1 && i <= 24 {
+				// XG index i = Player 2's point i → Player 1's point (25 - i) → same index (25 - i)
+				targetIndex = 25 - i
+			} else if i == 0 {
+				// Opponent's bar from Player 2's view = Player 1's bar
+				targetIndex = 25
+			} else if i == 25 {
+				// Active player's bar (Player 2) → Player 2's bar
+				targetIndex = 0
 			}
 		} else {
-			pos.Board.Points[i] = Point{
-				Checkers: 0,
-				Color:    -1,
-			}
+			// Player 1's perspective - direct mapping (XG index = blunderDB index)
+			// XG index 1-24 = Player 1's points 1-24 → blunderDB index 1-24 (same)
+			// XG index 0 = opponent bar (Player 2) → blunderDB index 0 (Player 2's bar)
+			// XG index 25 = active bar (Player 1) → blunderDB index 25 (Player 1's bar)
+			// No transformation needed: targetIndex = i
+		}
+
+		if checkerCount == 0 {
+			pos.Board.Points[targetIndex] = Point{Checkers: 0, Color: -1}
+			continue
+		}
+
+		// Determine WHO owns these checkers
+		var ownerColor int // 0=Player1(black), 1=Player2(white)
+		if checkerCount > 0 {
+			// Positive = active player
+			ownerColor = activePlayerBlunderDB
+		} else {
+			// Negative = opponent
+			ownerColor = opponentPlayerBlunderDB
+		}
+
+		// Place checkers with FIXED color based on owner
+		pos.Board.Points[targetIndex] = Point{
+			Checkers: int(abs(checkerCount)),
+			Color:    ownerColor,
 		}
 	}
 
@@ -3859,6 +4124,26 @@ func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.
 	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
 
 	return pos, nil
+}
+
+// Helper function for absolute value
+func abs(x int8) int {
+	if x < 0 {
+		return int(-x)
+	}
+	return int(x)
+}
+
+// convertXGPlayerToBlunderDB converts XG player encoding to blunderDB encoding
+// XG: -1 = Player 1, 1 = Player 2
+// blunderDB: 0 = Player 1, 1 = Player 2
+func convertXGPlayerToBlunderDB(xgPlayer int32) int {
+	// XG uses 1 for first player, -1 for second player
+	// blunderDB uses 0 for Player 1 (black, bottom), 1 for Player 2 (white, top)
+	if xgPlayer == 1 {
+		return 0 // Player 1
+	}
+	return 1 // Player 2
 }
 
 // savePositionInTxWithCache saves a position within a transaction using a cache for deduplication
@@ -3975,7 +4260,7 @@ func (d *Database) saveMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 		                           win_rate, gammon_rate, backgammon_rate,
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "checker", fmt.Sprintf("%d", analysis.AnalysisDepth),
+	`, moveID, "checker", translateAnalysisDepth(int(analysis.AnalysisDepth)),
 		analysis.Equity, 0.0, // No separate equity error in CheckerAnalysis
 		player1WinRate, analysis.Player1GammonRate*100.0, analysis.Player1BgRate*100.0,
 		player2WinRate, analysis.Player2GammonRate*100.0, analysis.Player2BgRate*100.0)
@@ -3994,7 +4279,7 @@ func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 		                           win_rate, gammon_rate, backgammon_rate,
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "cube", fmt.Sprintf("%d", analysis.AnalysisDepth),
+	`, moveID, "cube", translateAnalysisDepth(int(analysis.AnalysisDepth)),
 		analysis.CubefulNoDouble, 0.0,
 		player1WinRate, analysis.Player1GammonRate*100.0, analysis.Player1BgRate*100.0,
 		player2WinRate, analysis.Player2GammonRate*100.0, analysis.Player2BgRate*100.0)
@@ -4003,7 +4288,7 @@ func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 }
 
 // saveCheckerAnalysisToPositionInTx converts XG checker analysis to PositionAnalysis and saves it
-func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analyses []xgparser.CheckerAnalysis) error {
+func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analyses []xgparser.CheckerAnalysis, initialPosition *xgparser.Position, activePlayer int32) error {
 	if len(analyses) == 0 {
 		return nil
 	}
@@ -4025,7 +4310,13 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 		for j := 0; j < 8; j++ {
 			move[j] = int32(analysis.Move[j])
 		}
-		moveStr := d.convertXGMoveToString(move)
+		// Use move string with hit detection if initial position is available
+		var moveStr string
+		if initialPosition != nil {
+			moveStr = d.convertXGMoveToStringWithHits(move, initialPosition, activePlayer)
+		} else {
+			moveStr = d.convertXGMoveToString(move, activePlayer)
+		}
 
 		var equityError *float64
 		if i > 0 {
@@ -4035,7 +4326,7 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 
 		checkerMove := CheckerMove{
 			Index:                    i,
-			AnalysisDepth:            fmt.Sprintf("%d", analysis.AnalysisDepth),
+			AnalysisDepth:            translateAnalysisDepth(int(analysis.AnalysisDepth)),
 			Move:                     moveStr,
 			Equity:                   float64(analysis.Equity),
 			EquityError:              equityError,
@@ -4083,7 +4374,7 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 
 	// Build doubling cube analysis
 	cubeAnalysis := DoublingCubeAnalysis{
-		AnalysisDepth:             fmt.Sprintf("%d", analysis.AnalysisDepth),
+		AnalysisDepth:             translateAnalysisDepth(int(analysis.AnalysisDepth)),
 		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
 		PlayerGammonChances:       float64(analysis.Player1GammonRate) * 100.0,
 		PlayerBackgammonChances:   float64(analysis.Player1BgRate) * 100.0,
@@ -4180,27 +4471,361 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 	return nil
 }
 
+// translateAnalysisDepth converts XG analysis depth codes to human-readable strings
+// XG depth codes: 998/1002="book", 0="1-ply", 1="2-ply", 2="3-ply", 3="4-ply", 4="5-ply", etc.
+func translateAnalysisDepth(depth int) string {
+	if depth >= 998 && depth <= 1002 {
+		return "book"
+	}
+	if depth >= 0 && depth <= 10 {
+		return fmt.Sprintf("%d-ply", depth+1)
+	}
+	return fmt.Sprintf("%d", depth)
+}
+
 // convertXGMoveToString converts XG move format to readable string
-func (d *Database) convertXGMoveToString(playedMove [8]int32) string {
-	var moves []string
+// XG move format: [from, to, from, to, ...] where:
+//   - 1-24 are board points (from active player's perspective)
+//   - 25 is the bar
+//   - -2 is bear off
+//   - -1 is unused/end of move
+//
+// activePlayer: 0 = Player 1, 1 = Player 2
+// When Player 2 is active, points need to be mirrored to blunderDB's perspective
+func (d *Database) convertXGMoveToString(playedMove [8]int32, activePlayer int32) string {
+	// Helper to convert point from active player's perspective to blunderDB's (Player 1's)
+	convertPoint := func(p int32) int32 {
+		if activePlayer == 1 && p >= 1 && p <= 24 {
+			return 25 - p // Mirror: 24→1, 1→24, etc.
+		}
+		return p
+	}
+
+	// Parse raw moves into from/to pairs
+	var fromPts []int32
+	var toPts []int32
 	for i := 0; i < 8; i += 2 {
 		from := playedMove[i]
 		to := playedMove[i+1]
 		if from == -1 || to == -1 {
 			break
 		}
-		// Convert to notation (25=bar, 0=off)
-		fromStr := "bar"
-		if from != 25 {
-			fromStr = fmt.Sprintf("%d", from+1)
-		}
-		toStr := "off"
-		if to >= 0 && to < 24 {
-			toStr = fmt.Sprintf("%d", to+1)
-		}
-		moves = append(moves, fmt.Sprintf("%s/%s", fromStr, toStr))
+		fromPts = append(fromPts, convertPoint(from))
+		toPts = append(toPts, convertPoint(to))
 	}
+
+	if len(fromPts) == 0 {
+		return "Cannot Move"
+	}
+
+	// Try to merge consecutive checker slides (same checker moving through points)
+	// E.g., 24/23 23/22 22/21 21/20 -> 24/20 when dice are all same
+	fromPts, toPts = d.mergeSlides(fromPts, toPts)
+
+	// Create sortable items
+	type moveItem struct {
+		from int32
+		to   int32
+	}
+	items := make([]moveItem, len(fromPts))
+	for i := range fromPts {
+		items[i] = moveItem{from: fromPts[i], to: toPts[i]}
+	}
+
+	// Sort moves by 'from' point descending (standard backgammon notation)
+	// bar (25) comes first, then higher points before lower points
+	sort.Slice(items, func(i, j int) bool {
+		return items[i].from > items[j].from
+	})
+
+	// Format each move as string
+	formatPoint := func(p int32) string {
+		if p == 25 {
+			return "bar"
+		} else if p == -2 {
+			return "off"
+		} else if p >= 1 && p <= 24 {
+			return fmt.Sprintf("%d", p)
+		}
+		return fmt.Sprintf("?%d", p)
+	}
+
+	// Build move string, grouping identical moves with multiplier
+	var moves []string
+	for i := 0; i < len(items); {
+		item := items[i]
+		count := 1
+		// Count consecutive identical moves
+		for j := i + 1; j < len(items); j++ {
+			if items[j].from == item.from && items[j].to == item.to {
+				count++
+			} else {
+				break
+			}
+		}
+		if count > 1 {
+			moves = append(moves, fmt.Sprintf("%s/%s(%d)", formatPoint(item.from), formatPoint(item.to), count))
+		} else {
+			moves = append(moves, fmt.Sprintf("%s/%s", formatPoint(item.from), formatPoint(item.to)))
+		}
+		i += count
+	}
+
 	return strings.Join(moves, " ")
+}
+
+// convertXGMoveToStringWithHits converts XG move format to readable string with hit indicators (*)
+// It uses the initial position to detect when a blot is hit
+// activePlayer: 0 = Player 1, 1 = Player 2
+func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos *xgparser.Position, activePlayer int32) string {
+	if initialPos == nil {
+		return d.convertXGMoveToString(playedMove, activePlayer)
+	}
+
+	// Helper to convert point from active player's perspective to blunderDB's (Player 1's)
+	convertPoint := func(p int32) int32 {
+		if activePlayer == 1 && p >= 1 && p <= 24 {
+			return 25 - p // Mirror: 24→1, 1→24, etc.
+		}
+		return p
+	}
+
+	// Create a mutable copy of the position to track changes as we process moves
+	// XG position format: Checkers[0-23] are points 1-24, [24]=player bar, [25]=opponent bar
+	// Positive values = player's checkers, negative = opponent's checkers
+	positionCopy := make([]int8, 26)
+	copy(positionCopy, initialPos.Checkers[:])
+
+	// Parse raw moves into from/to pairs and track hits
+	var items []xgMoveWithHit
+	for i := 0; i < 8; i += 2 {
+		from := playedMove[i]
+		to := playedMove[i+1]
+		if from == -1 || to == -1 {
+			break
+		}
+
+		// Check if this move hits a blot
+		// The destination point must have exactly one opponent checker (negative value in XG format)
+		isHit := false
+		if to >= 1 && to <= 24 {
+			// Convert to 0-based index (XG uses 0-23 for points 1-24)
+			toIdx := to - 1
+			if positionCopy[toIdx] == -1 {
+				isHit = true
+				// Update position: opponent checker goes to bar
+				positionCopy[toIdx] = 0
+			}
+		}
+
+		// Update position: move our checker
+		if from >= 1 && from <= 24 {
+			fromIdx := from - 1
+			if positionCopy[fromIdx] > 0 {
+				positionCopy[fromIdx]--
+			}
+		} else if from == 25 {
+			// From bar
+			if positionCopy[24] > 0 {
+				positionCopy[24]--
+			}
+		}
+
+		if to >= 1 && to <= 24 {
+			toIdx := to - 1
+			positionCopy[toIdx]++
+		}
+
+		// Store with converted points for output (hit detection was done on XG coordinates)
+		items = append(items, xgMoveWithHit{from: convertPoint(from), to: convertPoint(to), isHit: isHit})
+	}
+
+	if len(items) == 0 {
+		return "Cannot Move"
+	}
+
+	// Try to merge consecutive checker slides - but preserve hit info for the final move
+	// For slides, only the last move in a chain can be a hit
+	items = d.mergeSlidesWithHits(items)
+
+	// Sort moves by 'from' point descending (standard backgammon notation)
+	sort.Slice(items, func(i, j int) bool {
+		return items[i].from > items[j].from
+	})
+
+	// Format each move as string
+	formatPoint := func(p int32) string {
+		if p == 25 {
+			return "bar"
+		} else if p == -2 {
+			return "off"
+		} else if p >= 1 && p <= 24 {
+			return fmt.Sprintf("%d", p)
+		}
+		return fmt.Sprintf("?%d", p)
+	}
+
+	// Build move string, grouping identical moves with multiplier
+	var moves []string
+	for i := 0; i < len(items); {
+		item := items[i]
+		count := 1
+		allHits := item.isHit
+		// Count consecutive identical moves
+		for j := i + 1; j < len(items); j++ {
+			if items[j].from == item.from && items[j].to == item.to {
+				count++
+				allHits = allHits && items[j].isHit
+			} else {
+				break
+			}
+		}
+
+		hitMarker := ""
+		if item.isHit || allHits {
+			hitMarker = "*"
+		}
+
+		if count > 1 {
+			moves = append(moves, fmt.Sprintf("%s/%s%s(%d)", formatPoint(item.from), formatPoint(item.to), hitMarker, count))
+		} else {
+			moves = append(moves, fmt.Sprintf("%s/%s%s", formatPoint(item.from), formatPoint(item.to), hitMarker))
+		}
+		i += count
+	}
+
+	return strings.Join(moves, " ")
+}
+
+// mergeSlidesWithHits merges consecutive moves of the same checker for doublets, preserving hit info
+func (d *Database) mergeSlidesWithHits(items []xgMoveWithHit) []xgMoveWithHit {
+	if len(items) <= 1 {
+		return items
+	}
+
+	// Detect if all moves have the same distance (doublet)
+	firstDist := items[0].from - items[0].to
+	allSameDist := true
+	for _, item := range items {
+		dist := item.from - item.to
+		if dist != firstDist {
+			allSameDist = false
+			break
+		}
+	}
+
+	// Only merge slides for doublets
+	if !allSameDist {
+		return items
+	}
+
+	// Try to merge chains: if move[i].to == move[j].from, they can be merged
+	result := make([]xgMoveWithHit, 0, len(items))
+	used := make([]bool, len(items))
+
+	for i := 0; i < len(items); i++ {
+		if used[i] {
+			continue
+		}
+
+		// Start a chain from this item
+		chainFrom := items[i].from
+		chainTo := items[i].to
+		chainHit := items[i].isHit
+		used[i] = true
+
+		// Extend chain forward: find items where from == chainTo
+		for changed := true; changed; {
+			changed = false
+			for j := 0; j < len(items); j++ {
+				if used[j] {
+					continue
+				}
+				if items[j].from == chainTo {
+					chainTo = items[j].to
+					chainHit = chainHit || items[j].isHit // Hit if any move in chain hits
+					used[j] = true
+					changed = true
+				}
+			}
+		}
+
+		result = append(result, xgMoveWithHit{from: chainFrom, to: chainTo, isHit: chainHit})
+	}
+
+	return result
+}
+
+// xgMoveWithHit represents a single move in XG format with hit information
+type xgMoveWithHit struct {
+	from  int32
+	to    int32
+	isHit bool
+}
+
+// xgMoveItem is unused but kept for documentation
+type xgMoveItem struct {
+	from int32
+	to   int32
+}
+
+// mergeSlides merges consecutive moves of the same checker for doublets
+func (d *Database) mergeSlides(fromPts, toPts []int32) ([]int32, []int32) {
+	if len(fromPts) <= 1 {
+		return fromPts, toPts
+	}
+
+	// Detect if all moves have the same distance (doublet)
+	firstDist := fromPts[0] - toPts[0]
+	allSameDist := true
+	for i := range fromPts {
+		dist := fromPts[i] - toPts[i]
+		if dist != firstDist {
+			allSameDist = false
+			break
+		}
+	}
+
+	// Only merge slides for doublets
+	if !allSameDist {
+		return fromPts, toPts
+	}
+
+	// Try to merge chains: if move[i].to == move[j].from, they can be merged
+	resultFrom := make([]int32, 0, len(fromPts))
+	resultTo := make([]int32, 0, len(toPts))
+	used := make([]bool, len(fromPts))
+
+	for i := 0; i < len(fromPts); i++ {
+		if used[i] {
+			continue
+		}
+
+		// Start a chain from this item
+		chainFrom := fromPts[i]
+		chainTo := toPts[i]
+		used[i] = true
+
+		// Extend chain forward: find items where from == chainTo
+		for changed := true; changed; {
+			changed = false
+			for j := 0; j < len(fromPts); j++ {
+				if used[j] {
+					continue
+				}
+				if fromPts[j] == chainTo {
+					chainTo = toPts[j]
+					used[j] = true
+					changed = true
+				}
+			}
+		}
+
+		resultFrom = append(resultFrom, chainFrom)
+		resultTo = append(resultTo, chainTo)
+	}
+
+	return resultFrom, resultTo
 }
 
 // convertCubeAction converts cube action code to string

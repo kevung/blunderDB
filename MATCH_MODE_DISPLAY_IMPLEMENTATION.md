@@ -23,10 +23,11 @@ Positions are stored **as-is** from the parser's perspective:
 
 ### Display Layer (Frontend)
 
-In match mode, positions are **transformed for display** only:
-- If Player 2 (player_on_roll = 1) is on roll, the position is mirrored
-- This ensures Player 1 is always displayed at the bottom
-- The actual stored position remains unchanged
+In match mode, positions are displayed **exactly as stored**:
+- Player 1 is always displayed at the bottom (black checkers, moves 24→1)
+- Player 2 is always displayed at the top (white checkers, moves 1→24)
+- No transformation is applied - the stored position IS the display position
+- This provides a consistent perspective throughout the match
 
 ## Implementation Details
 
@@ -101,52 +102,26 @@ async function loadMatchPositions(match) {
 
 #### C. Board Component (`Board.svelte`)
 
-Added display transformation logic:
+Simplified display logic - no transformation needed:
 
 ```javascript
 // Helper function to get the position to display
+// In match mode, positions are already stored from Player 1's perspective
+// (Player 1 at bottom with black checkers, Player 2 at top with white checkers)
+// No mirroring needed - just return the position as-is
 function getDisplayPosition() {
     const position = get(positionStore);
-    const matchCtx = get(matchContextStore);
-    
-    // In match mode, if Player 2 is on roll, mirror for display
-    if (matchCtx && matchCtx.isMatchMode && position.player_on_roll === 1) {
-        return mirrorPosition(position);
-    }
-    
     return position;
 }
-
-// Mirror a position (swap players)
-function mirrorPosition(pos) {
-    const mirrored = JSON.parse(JSON.stringify(pos));
-    
-    // Mirror the board points
-    for (let i = 0; i < 26; i++) {
-        mirrored.board.points[25 - i] = {
-            color: tempPoints[i].color === -1 ? -1 : 1 - tempPoints[i].color,
-            checkers: tempPoints[i].checkers
-        };
-    }
-    
-    // Swap bearoff, player on roll, scores, cube owner
-    [mirrored.board.bearoff[0], mirrored.board.bearoff[1]] = 
-        [mirrored.board.bearoff[1], mirrored.board.bearoff[0]];
-    mirrored.player_on_roll = 1 - mirrored.player_on_roll;
-    [mirrored.score[0], mirrored.score[1]] = [mirrored.score[1], mirrored.score[0]];
-    if (mirrored.cube.owner !== -1) {
-        mirrored.cube.owner = 1 - mirrored.cube.owner;
-    }
-    
-    return mirrored;
-}
 ```
+
+The `mirrorPosition()` function is kept for potential future use but is not currently used in match mode.
 
 Updated `drawBoard()` to use `getDisplayPosition()`:
 ```javascript
 export function drawBoard() {
     // ...
-    const position = getDisplayPosition(); // Use transformed position
+    const position = getDisplayPosition(); // Returns position as-is
     // ... rest of drawing code uses this position
 }
 ```
@@ -200,8 +175,8 @@ function previousPosition() {
 2. App.svelte checks if in MATCH mode
 3. Updates matchContextStore.currentIndex
 4. Loads new position into positionStore
-5. Board automatically redraws
-6. Applies mirroring if needed
+5. Board displays position as-is
+6. Player 1 always at bottom
 ```
 
 ## Key Design Decisions
@@ -215,9 +190,9 @@ function previousPosition() {
 
 **Display**: Transformed only when rendering
 - Clean separation of concerns
-- Original data remains intact
-- Easy to toggle display modes
-
+- Original data displays position as-is
+5. Player 1 always at bottom, Player 2 always at top
+6. No transformation applied
 ### 2. Mirror Function Location
 
 Placed in `Board.svelte` rather than utility:
@@ -243,8 +218,10 @@ Test with the provided files:
 6. Verify Player 1 always at bottom
 
 Expected first position (Game 1, Move 1):
-- Player: Kévin Unger (Player 2, at BOTTOM)
-- Move: 51: 13/8 24/23
+- Player on roll: Kévin Unger (Player 2)
+- Player 2 displayed at TOP (white checkers, moves 1→24)
+- Player 1 displayed at BOTTOM (black checkers, moves 24→1)
+- Move: 51: 24/23 13/8 (from Player 2's perspective, moving from their back points)
 
 ## Future Enhancements
 
@@ -265,11 +242,13 @@ Expected first position (Game 1, Move 1):
 
 ## Notes
 
-- The mirroring is ONLY for display - stored data never changes
-- Player numbers: 0 = Player 1, 1 = Player 2
+- No transformation is applied in match mode - positions are displayed exactly as stored
+- Player numbers: 0 = Player 1 (bottom, black), 1 = Player 2 (top, white)
 - Point numbering: 1-24 (backgammon standard)
-- Bar: point 0 (Player 1) and point 25 (Player 2)
-- Bearoff: separate array, not part of points
+- Player 1's checkers move from point 24 to point 1 (bearing off)
+- Player 2's checkers move from point 1 to point 24 (bearing off)
+- Bar: index 0 = Player 2's bar (white), index 25 = Player 1's bar (black)
+- Bearoff: separate array [Player 1's bearoff, Player 2's bearoff]
 
 ## Compatibility
 
