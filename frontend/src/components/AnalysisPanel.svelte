@@ -153,8 +153,18 @@
         return decision;
     }
 
+    // Normalize a move string for comparison by sorting individual moves
+    // "5/2 5/4" and "5/4 5/2" are the same move but in different order
+    function normalizeMoveString(move) {
+        if (!move) return '';
+        // Split by spaces and sort the individual moves
+        return move.split(' ').sort().join(' ');
+    }
+
     function isPlayedMove(move) {
-        return analysisData.playedMove && move.move === analysisData.playedMove;
+        if (!analysisData.playedMove || !move.move) return false;
+        // Compare normalized versions to handle different move orderings
+        return normalizeMoveString(move.move) === normalizeMoveString(analysisData.playedMove);
     }
 
     function isPlayedCubeAction(action) {

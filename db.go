@@ -3529,7 +3529,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	}
 
 	// Parse raw records for complete cube information
-	rawCubeInfo := make(map[string]RawCubeAction) // key: "game_moveIdx"
+	rawCubeInfo := make(map[string]*RawCubeAction) // key: "game_cubeIdx"
 	for _, seg := range segments {
 		if seg.Type == xgparser.SegmentXGGameFile {
 			records, _ := xgparser.ParseGameFile(seg.Data, -1)
@@ -3543,12 +3543,13 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 				case *xgparser.CubeEntry:
 					if r.Double != -2 { // Skip initial positions
 						key := fmt.Sprintf("%d_%d", gameNum, cubeIdx)
-						rawCubeInfo[key] = RawCubeAction{
+						rawCubeInfo[key] = &RawCubeAction{
 							Double:   r.Double,
 							Take:     r.Take,
 							ActiveP:  r.ActiveP,
 							CubeB:    r.CubeB,
 							Position: r.Position,
+							Doubled:  r.Doubled,
 						}
 						cubeIdx++
 					}
@@ -3655,18 +3656,30 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		}
 
 		// Track cube index for raw data lookup
+		// Each turn in XG has a CubeEntry followed by a MoveEntry
+		// cubeIdx tracks which CubeEntry we're at (reset per game)
 		cubeIdx := 0
+
+		// Track the last cube analysis to associate with checker moves
+		var lastCubeAnalysis *RawCubeAction
 
 		// Import moves for this game
 		for moveIdx, move := range game.Moves {
-			// For cube moves, look up raw data for complete info
 			var rawCube *RawCubeAction
+
 			if move.MoveType == "cube" {
+				// This is a cube decision, look up the raw data
 				key := fmt.Sprintf("%d_%d", gameIdx+1, cubeIdx)
 				if rc, ok := rawCubeInfo[key]; ok {
-					rawCube = &rc
+					rawCube = rc
+					lastCubeAnalysis = rc // Remember for the following checker move
 				}
 				cubeIdx++
+			} else if move.MoveType == "checker" {
+				// For checker moves, the cube analysis comes from the preceding CubeEntry
+				// Pass the last cube analysis so it can be saved with the checker position
+				rawCube = lastCubeAnalysis
+				lastCubeAnalysis = nil // Clear after use (one cube analysis per checker move)
 			}
 
 			err := d.importMoveWithCacheAndRawCube(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), positionCache, rawCube)
@@ -3692,6 +3705,7 @@ type RawCubeAction struct {
 	ActiveP  int32
 	CubeB    int32
 	Position [26]int8
+	Doubled  *xgparser.EngineStructDoubleAction // Full cube analysis data
 }
 
 // importGame inserts a game and returns its ID
@@ -3741,8 +3755,8 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 		player = move.CheckerMove.ActivePlayer
 		dice = move.CheckerMove.Dice
 
-		// Convert move notation
-		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove, move.CheckerMove.ActivePlayer)
+		// Convert move notation with hit detection for consistency with analysis display
+		checkerMoveStr = d.convertXGMoveToStringWithHits(move.CheckerMove.PlayedMove, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
 
 		// Save move
 		moveResult, err := tx.Exec(`
@@ -3858,8 +3872,8 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 		player = move.CheckerMove.ActivePlayer
 		dice = move.CheckerMove.Dice
 
-		// Convert move notation
-		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove, move.CheckerMove.ActivePlayer)
+		// Convert move notation with hit detection for consistency with analysis display
+		checkerMoveStr = d.convertXGMoveToStringWithHits(move.CheckerMove.PlayedMove, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
 
 		// Save move
 		moveResult, err := tx.Exec(`
@@ -3885,6 +3899,15 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
 			if err != nil {
 				fmt.Printf("Warning: failed to save position analysis: %v\n", err)
+			}
+		}
+
+		// Save cube analysis for this checker position (from the preceding CubeEntry)
+		// This allows displaying cube info when pressing 'd' on a checker decision
+		if rawCube != nil && rawCube.Doubled != nil {
+			err = d.saveCubeAnalysisForCheckerPositionInTx(tx, positionID, rawCube)
+			if err != nil {
+				fmt.Printf("Warning: failed to save cube analysis for checker position: %v\n", err)
 			}
 		}
 
@@ -4089,8 +4112,8 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 		player = move.CheckerMove.ActivePlayer
 		dice = move.CheckerMove.Dice
 
-		// Convert move notation
-		checkerMoveStr = d.convertXGMoveToString(move.CheckerMove.PlayedMove, move.CheckerMove.ActivePlayer)
+		// Convert move notation with hit detection for consistency with analysis display
+		checkerMoveStr = d.convertXGMoveToStringWithHits(move.CheckerMove.PlayedMove, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
 
 		// Save move
 		moveResult, err := tx.Exec(`
@@ -4488,6 +4511,7 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 		for j := 0; j < 8; j++ {
 			move[j] = int32(analysis.Move[j])
 		}
+
 		// Use move string with hit detection if initial position is available
 		var moveStr string
 		if initialPosition != nil {
@@ -4541,16 +4565,33 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 		LastModifiedDate:      time.Now(),
 	}
 
-	// Calculate best equity
-	bestEquity := float64(analysis.CubefulNoDouble)
-	if float64(analysis.CubefulDoubleTake) > bestEquity {
-		bestEquity = float64(analysis.CubefulDoubleTake)
+	cubefulNoDouble := float64(analysis.CubefulNoDouble)
+	cubefulDoubleTake := float64(analysis.CubefulDoubleTake)
+	cubefulDoublePass := float64(analysis.CubefulDoublePass)
+
+	// Calculate best equity considering opponent's optimal response
+	// If player doubles, opponent will choose the action that minimizes player's equity
+	// So effective double equity = min(DoubleTake, DoublePass)
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
 	}
-	if float64(analysis.CubefulDoublePass) > bestEquity {
-		bestEquity = float64(analysis.CubefulDoublePass)
+
+	// Player's best achievable equity = max(NoDouble, effectiveDoubleEquity)
+	bestEquity := cubefulNoDouble
+	bestAction := "No Double"
+	if effectiveDoubleEquity > cubefulNoDouble {
+		bestEquity = effectiveDoubleEquity
+		// Best action is "Double, Take" or "Double, Pass" depending on opponent's response
+		if cubefulDoubleTake <= cubefulDoublePass {
+			bestAction = "Double, Take"
+		} else {
+			bestAction = "Double, Pass"
+		}
 	}
 
 	// Build doubling cube analysis
+	// Error is negative when this decision loses equity vs best (current - best)
 	cubeAnalysis := DoublingCubeAnalysis{
 		AnalysisDepth:             translateAnalysisDepth(int(analysis.AnalysisDepth)),
 		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
@@ -4561,13 +4602,13 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 		OpponentBackgammonChances: float64(analysis.Player2BgRate) * 100.0,
 		CubelessNoDoubleEquity:    float64(analysis.CubelessNoDouble),
 		CubelessDoubleEquity:      float64(analysis.CubelessDouble),
-		CubefulNoDoubleEquity:     float64(analysis.CubefulNoDouble),
-		CubefulNoDoubleError:      bestEquity - float64(analysis.CubefulNoDouble),
-		CubefulDoubleTakeEquity:   float64(analysis.CubefulDoubleTake),
-		CubefulDoubleTakeError:    bestEquity - float64(analysis.CubefulDoubleTake),
-		CubefulDoublePassEquity:   float64(analysis.CubefulDoublePass),
-		CubefulDoublePassError:    bestEquity - float64(analysis.CubefulDoublePass),
-		BestCubeAction:            d.determineBestCubeAction(analysis),
+		CubefulNoDoubleEquity:     cubefulNoDouble,
+		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
+		CubefulDoubleTakeEquity:   cubefulDoubleTake,
+		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
+		CubefulDoublePassEquity:   cubefulDoublePass,
+		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
+		BestCubeAction:            bestAction,
 		WrongPassPercentage:       float64(analysis.WrongPassTakePercent) * 100.0,
 		WrongTakePercentage:       0.0, // XG provides WrongPassTakePercent which covers both
 	}
@@ -4578,21 +4619,131 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
 }
 
-// determineBestCubeAction determines the best cube action from analysis
-func (d *Database) determineBestCubeAction(analysis *xgparser.CubeAnalysis) string {
+// saveCubeAnalysisForCheckerPositionInTx saves cube analysis from a RawCubeAction to a checker position
+// This is used to attach the cube decision analysis to checker moves (from the preceding CubeEntry)
+// It merges the cube info with existing checker analysis if present
+func (d *Database) saveCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID int64, rawCube *RawCubeAction) error {
+	if rawCube == nil || rawCube.Doubled == nil {
+		return nil
+	}
+
+	doubled := rawCube.Doubled
+
+	// Try to load existing analysis for this position
+	var existingAnalysisJSON string
+	var existingID int64
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+
+	var posAnalysis PositionAnalysis
+	if err == nil && existingID > 0 {
+		// Existing analysis found - merge cube info with it
+		err = json.Unmarshal([]byte(existingAnalysisJSON), &posAnalysis)
+		if err != nil {
+			return err
+		}
+	} else {
+		// No existing analysis - create new one
+		posAnalysis = PositionAnalysis{
+			PositionID:            int(positionID),
+			AnalysisType:          "CheckerMove",
+			AnalysisEngineVersion: "XG",
+			CreationDate:          time.Now(),
+		}
+	}
+
+	posAnalysis.LastModifiedDate = time.Now()
+
+	// Extract data from EngineStructDoubleAction
+	// XG Eval array mapping (from xgparser convertCubeEntry):
+	// Eval[0] = opponent's backgammon rate
+	// Eval[1] = opponent's gammon rate
+	// Eval[2] = opponent's win rate (so player on roll's win rate = 1 - Eval[2])
+	// Eval[4] = player on roll's gammon rate
+	// Eval[5] = player on roll's backgammon rate
+	// Eval[6] = cubeless equity
+	cubefulNoDouble := float64(doubled.EquB)
+	cubefulDoubleTake := float64(doubled.EquDouble)
+	cubefulDoublePass := float64(doubled.EquDrop)
+
+	// Win/gammon/bg rates from player on roll's perspective
+	playerWin := (1.0 - float64(doubled.Eval[2])) * 100.0
+	playerGammon := float64(doubled.Eval[4]) * 100.0
+	playerBg := float64(doubled.Eval[5]) * 100.0
+	opponentWin := float64(doubled.Eval[2]) * 100.0
+	opponentGammon := float64(doubled.Eval[1]) * 100.0
+	opponentBg := float64(doubled.Eval[0]) * 100.0
+
+	// Calculate best equity considering opponent's optimal response
+	// If player doubles, opponent will choose the action that minimizes player's equity
+	// So effective double equity = min(DoubleTake, DoublePass)
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
+	}
+
+	// Player's best achievable equity = max(NoDouble, effectiveDoubleEquity)
+	bestEquity := cubefulNoDouble
 	bestAction := "No Double"
-	bestEquity := analysis.CubefulNoDouble
-
-	if analysis.CubefulDoubleTake > bestEquity {
-		bestAction = "Double, Take"
-		bestEquity = analysis.CubefulDoubleTake
+	if effectiveDoubleEquity > cubefulNoDouble {
+		bestEquity = effectiveDoubleEquity
+		// Best action is "Double, Take" or "Double, Pass" depending on opponent's response
+		if cubefulDoubleTake <= cubefulDoublePass {
+			bestAction = "Double, Take"
+		} else {
+			bestAction = "Double, Pass"
+		}
 	}
 
-	if analysis.CubefulDoublePass > bestEquity {
-		bestAction = "Double, Pass"
+	// Build doubling cube analysis
+	// Error is negative when this decision loses equity vs best (current - best)
+	cubeAnalysis := DoublingCubeAnalysis{
+		AnalysisDepth:             translateAnalysisDepth(int(doubled.Level)),
+		PlayerWinChances:          playerWin,
+		PlayerGammonChances:       playerGammon,
+		PlayerBackgammonChances:   playerBg,
+		OpponentWinChances:        opponentWin,
+		OpponentGammonChances:     opponentGammon,
+		OpponentBackgammonChances: opponentBg,
+		CubelessNoDoubleEquity:    float64(doubled.Eval[6]),
+		CubelessDoubleEquity:      float64(doubled.Eval[6]), // Same as no double for cubeless
+		CubefulNoDoubleEquity:     cubefulNoDouble,
+		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
+		CubefulDoubleTakeEquity:   cubefulDoubleTake,
+		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
+		CubefulDoublePassEquity:   cubefulDoublePass,
+		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
+		BestCubeAction:            bestAction,
+		WrongPassPercentage:       0.0, // Not available from EngineStructDoubleAction
+		WrongTakePercentage:       0.0,
 	}
 
-	return bestAction
+	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
+
+	// Save to analysis table (will update if exists, insert if not)
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
+// determineBestCubeAction determines the best cube action from analysis
+// Takes into account that opponent will play optimally (choose min equity for the player)
+func (d *Database) determineBestCubeAction(analysis *xgparser.CubeAnalysis) string {
+	cubefulNoDouble := analysis.CubefulNoDouble
+	cubefulDoubleTake := analysis.CubefulDoubleTake
+	cubefulDoublePass := analysis.CubefulDoublePass
+
+	// If player doubles, opponent will choose the action that minimizes player's equity
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
+	}
+
+	// Player's best choice is max(NoDouble, effectiveDoubleEquity)
+	if effectiveDoubleEquity > cubefulNoDouble {
+		if cubefulDoubleTake <= cubefulDoublePass {
+			return "Double, Take"
+		}
+		return "Double, Pass"
+	}
+	return "No Double"
 }
 
 // saveAnalysisInTx saves a PositionAnalysis within a transaction
@@ -4650,13 +4801,14 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 }
 
 // translateAnalysisDepth converts XG analysis depth codes to human-readable strings
-// XG depth codes: 998/1002="book", 0="1-ply", 1="2-ply", 2="3-ply", 3="4-ply", 4="5-ply", etc.
+// XG depth codes: 0="book", N (for N>=1) = "N-ply"
+// High values like 998-1002 also indicate book moves
 func translateAnalysisDepth(depth int) string {
-	if depth >= 998 && depth <= 1002 {
+	if depth == 0 || (depth >= 998 && depth <= 1002) {
 		return "book"
 	}
-	if depth >= 0 && depth <= 10 {
-		return fmt.Sprintf("%d-ply", depth+1)
+	if depth >= 1 && depth <= 10 {
+		return fmt.Sprintf("%d-ply", depth)
 	}
 	return fmt.Sprintf("%d", depth)
 }
@@ -4668,16 +4820,12 @@ func translateAnalysisDepth(depth int) string {
 //   - -2 is bear off
 //   - -1 is unused/end of move
 //
-// activePlayer: 0 = Player 1, 1 = Player 2
-// When Player 2 is active, points need to be mirrored to blunderDB's perspective
+// Moves in XG files and analysis are stored from the player on roll's perspective.
+// They should be displayed as-is without mirroring, per standard backgammon notation.
 func (d *Database) convertXGMoveToString(playedMove [8]int32, activePlayer int32) string {
-	// Helper to convert point from active player's perspective to blunderDB's (Player 1's)
-	convertPoint := func(p int32) int32 {
-		if activePlayer == 1 && p >= 1 && p <= 24 {
-			return 25 - p // Mirror: 24→1, 1→24, etc.
-		}
-		return p
-	}
+	// Note: activePlayer is kept for API compatibility but moves don't need transformation
+	// Moves are always from the roller's perspective (24 = furthest from home, 1 = closest)
+	_ = activePlayer // unused but kept for signature compatibility
 
 	// Parse raw moves into from/to pairs
 	var fromPts []int32
@@ -4685,11 +4833,17 @@ func (d *Database) convertXGMoveToString(playedMove [8]int32, activePlayer int32
 	for i := 0; i < 8; i += 2 {
 		from := playedMove[i]
 		to := playedMove[i+1]
+		// Check for end of move marker (-1)
 		if from == -1 || to == -1 {
 			break
 		}
-		fromPts = append(fromPts, convertPoint(from))
-		toPts = append(toPts, convertPoint(to))
+		// Skip invalid point values (should be 1-24 for points, 25 for bar, -2 for bear off)
+		if (from != 25 && from != -2 && (from < 1 || from > 24)) ||
+			(to != 25 && to != -2 && (to < 1 || to > 24)) {
+			break
+		}
+		fromPts = append(fromPts, from)
+		toPts = append(toPts, to)
 	}
 
 	if len(fromPts) == 0 {
@@ -4754,19 +4908,14 @@ func (d *Database) convertXGMoveToString(playedMove [8]int32, activePlayer int32
 
 // convertXGMoveToStringWithHits converts XG move format to readable string with hit indicators (*)
 // It uses the initial position to detect when a blot is hit
-// activePlayer: 0 = Player 1, 1 = Player 2
+// Moves are displayed from the player on roll's perspective (standard notation).
+// activePlayer: XG encoding: 1 = Player 1 (X), -1 = Player 2 (O)
 func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos *xgparser.Position, activePlayer int32) string {
 	if initialPos == nil {
 		return d.convertXGMoveToString(playedMove, activePlayer)
 	}
 
-	// Helper to convert point from active player's perspective to blunderDB's (Player 1's)
-	convertPoint := func(p int32) int32 {
-		if activePlayer == 1 && p >= 1 && p <= 24 {
-			return 25 - p // Mirror: 24→1, 1→24, etc.
-		}
-		return p
-	}
+	// Note: No mirroring needed - moves are always from the roller's perspective
 
 	// Create a mutable copy of the position to track changes as we process moves
 	// XG position format: Checkers[0-23] are points 1-24, [24]=player bar, [25]=opponent bar
@@ -4779,7 +4928,13 @@ func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos
 	for i := 0; i < 8; i += 2 {
 		from := playedMove[i]
 		to := playedMove[i+1]
+		// Check for end of move marker (-1)
 		if from == -1 || to == -1 {
+			break
+		}
+		// Skip invalid point values (should be 1-24 for points, 25 for bar, -2 for bear off)
+		if (from != 25 && from != -2 && (from < 1 || from > 24)) ||
+			(to != 25 && to != -2 && (to < 1 || to > 24)) {
 			break
 		}
 
@@ -4814,8 +4969,8 @@ func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos
 			positionCopy[toIdx]++
 		}
 
-		// Store with converted points for output (hit detection was done on XG coordinates)
-		items = append(items, xgMoveWithHit{from: convertPoint(from), to: convertPoint(to), isHit: isHit})
+		// Store directly - no conversion needed since moves are already in roller's perspective
+		items = append(items, xgMoveWithHit{from: from, to: to, isHit: isHit})
 	}
 
 	if len(items) == 0 {
@@ -4875,29 +5030,16 @@ func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos
 	return strings.Join(moves, " ")
 }
 
-// mergeSlidesWithHits merges consecutive moves of the same checker for doublets, preserving hit info
+// mergeSlidesWithHits merges consecutive moves of the same checker, preserving hit info
+// For example: 14/12 12/8 becomes 14/8, but only if 12 was just a waypoint (not hit)
+// If there was a hit at the intermediate point, we keep both moves to show the hit
 func (d *Database) mergeSlidesWithHits(items []xgMoveWithHit) []xgMoveWithHit {
 	if len(items) <= 1 {
 		return items
 	}
 
-	// Detect if all moves have the same distance (doublet)
-	firstDist := items[0].from - items[0].to
-	allSameDist := true
-	for _, item := range items {
-		dist := item.from - item.to
-		if dist != firstDist {
-			allSameDist = false
-			break
-		}
-	}
-
-	// Only merge slides for doublets
-	if !allSameDist {
-		return items
-	}
-
-	// Try to merge chains: if move[i].to == move[j].from, they can be merged
+	// Try to merge chains: if move[i].to == move[j].from and move[i] is not a hit,
+	// they can be merged (the intermediate point was just a waypoint)
 	result := make([]xgMoveWithHit, 0, len(items))
 	used := make([]bool, len(items))
 
@@ -4912,18 +5054,29 @@ func (d *Database) mergeSlidesWithHits(items []xgMoveWithHit) []xgMoveWithHit {
 		chainHit := items[i].isHit
 		used[i] = true
 
-		// Extend chain forward: find items where from == chainTo
-		for changed := true; changed; {
-			changed = false
-			for j := 0; j < len(items); j++ {
-				if used[j] {
-					continue
+		// Only extend if the current segment doesn't end with a hit
+		// (we want to show hits, so don't merge past them)
+		if !chainHit {
+			// Extend chain forward: find items where from == chainTo
+			for changed := true; changed; {
+				changed = false
+				for j := 0; j < len(items); j++ {
+					if used[j] {
+						continue
+					}
+					if items[j].from == chainTo {
+						chainTo = items[j].to
+						chainHit = items[j].isHit
+						used[j] = true
+						changed = true
+						// If this new segment has a hit, stop extending
+						if chainHit {
+							break
+						}
+					}
 				}
-				if items[j].from == chainTo {
-					chainTo = items[j].to
-					chainHit = chainHit || items[j].isHit // Hit if any move in chain hits
-					used[j] = true
-					changed = true
+				if chainHit {
+					break
 				}
 			}
 		}
@@ -4947,25 +5100,10 @@ type xgMoveItem struct {
 	to   int32
 }
 
-// mergeSlides merges consecutive moves of the same checker for doublets
+// mergeSlides merges consecutive moves of the same checker
+// For example: 14/12 12/8 becomes 14/8
 func (d *Database) mergeSlides(fromPts, toPts []int32) ([]int32, []int32) {
 	if len(fromPts) <= 1 {
-		return fromPts, toPts
-	}
-
-	// Detect if all moves have the same distance (doublet)
-	firstDist := fromPts[0] - toPts[0]
-	allSameDist := true
-	for i := range fromPts {
-		dist := fromPts[i] - toPts[i]
-		if dist != firstDist {
-			allSameDist = false
-			break
-		}
-	}
-
-	// Only merge slides for doublets
-	if !allSameDist {
 		return fromPts, toPts
 	}
 
