@@ -8,6 +8,8 @@ export function CancelImport():Promise<void>;
 
 export function CheckDatabaseVersion():Promise<string>;
 
+export function CheckMatchExists(arg1:string):Promise<number>;
+
 export function CheckVersion(arg1:string):Promise<void>;
 
 export function ClearCommandHistory():Promise<void>;

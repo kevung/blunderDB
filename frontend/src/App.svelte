@@ -1069,8 +1069,15 @@
                     showMatchPanelStore.set(true);
                 } catch (error) {
                     console.error("Error importing XG match:", error);
-                    setStatusBarMessage('Error importing XG match: ' + error);
-                    await ShowAlert('Error importing XG match: ' + error);
+                    // Check if this is a duplicate match error
+                    const errorStr = String(error);
+                    if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                        // Just show in status bar, no popup for duplicates
+                        setStatusBarMessage('This match has already been imported');
+                    } else {
+                        setStatusBarMessage('Error importing XG match: ' + error);
+                        await ShowAlert('Error importing XG match: ' + error);
+                    }
                 }
             } else {
                 // Import position text file

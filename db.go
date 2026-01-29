@@ -1,7 +1,9 @@
 package main
 
 import (
+	"crypto/sha256"
 	"database/sql"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -154,11 +156,19 @@ func (d *Database) SetupDatabase(path string) error {
 			match_date DATETIME,
 			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 			file_path TEXT,
-			game_count INTEGER DEFAULT 0
+			game_count INTEGER DEFAULT 0,
+			match_hash TEXT
 		)
 	`)
 	if err != nil {
 		fmt.Println("Error creating match table:", err)
+		return err
+	}
+
+	// Create index on match_hash for fast duplicate detection
+	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
+	if err != nil {
+		fmt.Println("Error creating match_hash index:", err)
 		return err
 	}
 
@@ -317,7 +327,8 @@ func (d *Database) OpenDatabase(path string) error {
 					match_date DATETIME,
 					import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 					file_path TEXT,
-					game_count INTEGER DEFAULT 0
+					game_count INTEGER DEFAULT 0,
+					match_hash TEXT
 				)
 			`)
 			if err != nil {
@@ -386,6 +397,13 @@ func (d *Database) OpenDatabase(path string) error {
 				return err
 			}
 
+			// Create index on match_hash for fast duplicate detection
+			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
+			if err != nil {
+				fmt.Println("Error creating match_hash index:", err)
+				return err
+			}
+
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.4.0")
 			if err != nil {
 				fmt.Println("Error updating database version:", err)
@@ -393,6 +411,47 @@ func (d *Database) OpenDatabase(path string) error {
 			}
 			dbVersion = "1.4.0"
 			fmt.Println("Database automatically upgraded from 1.3.0 to 1.4.0")
+		}
+	}
+
+	// Add match_hash column to existing v1.4.0 databases if it doesn't exist
+	if dbVersion == "1.4.0" {
+		// Check if match_hash column exists
+		var colInfo string
+		err = d.db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&colInfo)
+		if err == nil && !strings.Contains(colInfo, "match_hash") {
+			// Add match_hash column
+			_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN match_hash TEXT`)
+			if err != nil {
+				fmt.Println("Error adding match_hash column:", err)
+				return err
+			}
+
+			// Create index on match_hash
+			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
+			if err != nil {
+				fmt.Println("Error creating match_hash index:", err)
+				return err
+			}
+
+			// Populate match_hash for existing matches using stored data
+			// This uses a fallback hash based on stored moves since we don't have the original file
+			matchRows, err := d.db.Query(`SELECT id, player1_name, player2_name, match_length FROM match`)
+			if err == nil {
+				defer matchRows.Close()
+				for matchRows.Next() {
+					var matchID int64
+					var p1Name, p2Name string
+					var matchLength int32
+					if err := matchRows.Scan(&matchID, &p1Name, &p2Name, &matchLength); err != nil {
+						continue
+					}
+					hash := computeMatchHashFromStoredData(d.db, matchID, p1Name, p2Name, matchLength)
+					_, _ = d.db.Exec(`UPDATE match SET match_hash = ? WHERE id = ?`, hash, matchID)
+				}
+			}
+
+			fmt.Println("Added match_hash column and populated existing matches")
 		}
 	}
 
@@ -3517,6 +3576,18 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		matchDate = time.Now()
 	}
 
+	// Compute match hash for duplicate detection (includes full match transcription)
+	matchHash := ComputeMatchHash(match)
+
+	// Check if this match already exists
+	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
+	if err != nil {
+		return 0, fmt.Errorf("failed to check for duplicate match: %w", err)
+	}
+	if existingMatchID > 0 {
+		return 0, ErrDuplicateMatch
+	}
+
 	// Begin transaction for atomic import
 	tx, err := d.db.Begin()
 	if err != nil {
@@ -3528,14 +3599,14 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		}
 	}()
 
-	// Insert match metadata
+	// Insert match metadata (including match_hash)
 	result, err := tx.Exec(`
 		INSERT INTO match (player1_name, player2_name, event, location, round, 
-		                   match_length, match_date, file_path, game_count)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+		                   match_length, match_date, file_path, game_count, match_hash)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, match.Metadata.Player1Name, match.Metadata.Player2Name,
 		match.Metadata.Event, match.Metadata.Location, match.Metadata.Round,
-		match.Metadata.MatchLength, matchDate, filePath, len(match.Games))
+		match.Metadata.MatchLength, matchDate, filePath, len(match.Games), matchHash)
 
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert match: %w", err)
@@ -4949,6 +5020,138 @@ func (d *Database) convertCubeAction(action int32) string {
 	default:
 		return fmt.Sprintf("Unknown(%d)", action)
 	}
+}
+
+// ErrDuplicateMatch is returned when attempting to import a match that already exists
+var ErrDuplicateMatch = fmt.Errorf("duplicate match: this match has already been imported")
+
+// ComputeMatchHash generates a unique hash for a match based on full match transcription
+// This is used to detect duplicate imports - includes all moves and decisions
+func ComputeMatchHash(match *xgparser.Match) string {
+	var hashBuilder strings.Builder
+
+	// Include metadata (normalized)
+	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1Name))
+	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2Name))
+	hashBuilder.WriteString(fmt.Sprintf("meta:%s|%s|%d|", p1, p2, match.Metadata.MatchLength))
+
+	// Include full game transcription
+	for gameIdx, game := range match.Games {
+		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d,%d|",
+			gameIdx, game.InitialScore[0], game.InitialScore[1], game.Winner, game.PointsWon))
+
+		// Include all moves in the game
+		for moveIdx, move := range game.Moves {
+			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveIdx, move.MoveType))
+
+			if move.CheckerMove != nil {
+				// Include dice and played move
+				hashBuilder.WriteString(fmt.Sprintf("d%d%d,p%v|",
+					move.CheckerMove.Dice[0], move.CheckerMove.Dice[1],
+					move.CheckerMove.PlayedMove))
+			}
+
+			if move.CubeMove != nil {
+				// Include cube action details
+				hashBuilder.WriteString(fmt.Sprintf("c%d|", move.CubeMove.CubeAction))
+			}
+		}
+	}
+
+	// Compute SHA256 hash of the full transcription
+	hash := sha256.Sum256([]byte(hashBuilder.String()))
+	return hex.EncodeToString(hash[:])
+}
+
+// computeMatchHashFromStoredData computes a hash for existing matches in the database
+// This is used during migration when we don't have access to the original XG file
+func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name string, matchLength int32) string {
+	var hashBuilder strings.Builder
+
+	// Include metadata (normalized)
+	p1 := strings.TrimSpace(strings.ToLower(p1Name))
+	p2 := strings.TrimSpace(strings.ToLower(p2Name))
+	hashBuilder.WriteString(fmt.Sprintf("meta:%s|%s|%d|", p1, p2, matchLength))
+
+	// Query all games for this match
+	gameRows, err := db.Query(`
+		SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won 
+		FROM game WHERE match_id = ? ORDER BY game_number`, matchID)
+	if err != nil {
+		// Fallback to simple hash
+		hash := sha256.Sum256([]byte(hashBuilder.String()))
+		return hex.EncodeToString(hash[:])
+	}
+	defer gameRows.Close()
+
+	for gameRows.Next() {
+		var gameID int64
+		var gameNum, initScore1, initScore2, winner, pointsWon int32
+		if err := gameRows.Scan(&gameID, &gameNum, &initScore1, &initScore2, &winner, &pointsWon); err != nil {
+			continue
+		}
+
+		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d,%d|", gameNum, initScore1, initScore2, winner, pointsWon))
+
+		// Query all moves for this game
+		moveRows, err := db.Query(`
+			SELECT move_number, move_type, dice_1, dice_2, checker_move, cube_action 
+			FROM move WHERE game_id = ? ORDER BY move_number`, gameID)
+		if err != nil {
+			continue
+		}
+
+		for moveRows.Next() {
+			var moveNum int32
+			var moveType string
+			var dice1, dice2 int32
+			var checkerMove, cubeAction sql.NullString
+			if err := moveRows.Scan(&moveNum, &moveType, &dice1, &dice2, &checkerMove, &cubeAction); err != nil {
+				continue
+			}
+
+			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveNum, moveType))
+			if moveType == "checker" && checkerMove.Valid {
+				hashBuilder.WriteString(fmt.Sprintf("d%d%d,p%s|", dice1, dice2, checkerMove.String))
+			}
+			if moveType == "cube" && cubeAction.Valid {
+				hashBuilder.WriteString(fmt.Sprintf("c%s|", cubeAction.String))
+			}
+		}
+		moveRows.Close()
+	}
+
+	// Compute SHA256 hash
+	hash := sha256.Sum256([]byte(hashBuilder.String()))
+	return hex.EncodeToString(hash[:])
+}
+
+// CheckMatchExists checks if a match with the given hash already exists in the database
+// Returns the existing match ID if found, 0 otherwise
+func (d *Database) CheckMatchExists(matchHash string) (int64, error) {
+	var existingID int64
+	err := d.db.QueryRow(`SELECT id FROM match WHERE match_hash = ?`, matchHash).Scan(&existingID)
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("error checking for duplicate match: %w", err)
+	}
+	return existingID, nil
+}
+
+// CheckMatchExistsLocked is the same as CheckMatchExists but doesn't acquire the lock
+// Use this when you already hold the database lock
+func (d *Database) checkMatchExistsLocked(matchHash string) (int64, error) {
+	var existingID int64
+	err := d.db.QueryRow(`SELECT id FROM match WHERE match_hash = ?`, matchHash).Scan(&existingID)
+	if err == sql.ErrNoRows {
+		return 0, nil
+	}
+	if err != nil {
+		return 0, fmt.Errorf("error checking for duplicate match: %w", err)
+	}
+	return existingID, nil
 }
 
 // GetAllMatches returns all matches from the database

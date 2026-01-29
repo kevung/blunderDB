@@ -14,6 +14,10 @@ export function CheckDatabaseVersion() {
   return window['go']['main']['Database']['CheckDatabaseVersion']();
 }
 
+export function CheckMatchExists(arg1) {
+  return window['go']['main']['Database']['CheckMatchExists'](arg1);
+}
+
 export function CheckVersion(arg1) {
   return window['go']['main']['Database']['CheckVersion'](arg1);
 }

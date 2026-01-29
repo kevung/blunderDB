@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -389,6 +390,10 @@ func (cli *CLI) importMatch(filePath string) error {
 	// Import the match
 	matchID, err := cli.db.ImportXGMatch(filePath)
 	if err != nil {
+		// Check if this is a duplicate match error
+		if errors.Is(err, ErrDuplicateMatch) {
+			return fmt.Errorf("this match has already been imported to the database")
+		}
 		return fmt.Errorf("failed to import match: %v", err)
 	}
 
