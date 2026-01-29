@@ -2001,12 +2001,12 @@
         if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
             const matchCtx = $matchContextStore;
             if (matchCtx.currentIndex > 0) {
-                // Skip implicit cube positions (those without actual analysis)
+                // Navigate to previous position, stopping at checker and cube moves
                 let newIndex = matchCtx.currentIndex - 1;
                 while (newIndex >= 0) {
                     const movePos = matchCtx.movePositions[newIndex];
-                    // Only stop at checker moves (skip implicit cube positions)
-                    if (movePos.move_type === 'checker') {
+                    // Stop at checker moves and cube decisions (Double, Take)
+                    if (movePos.move_type === 'checker' || movePos.move_type === 'cube') {
                         break;
                     }
                     newIndex--;
@@ -2040,12 +2040,12 @@
         if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
             const matchCtx = $matchContextStore;
             if (matchCtx.currentIndex < matchCtx.movePositions.length - 1) {
-                // Skip implicit cube positions (those without actual analysis)
+                // Navigate to next position, stopping at checker and cube moves
                 let newIndex = matchCtx.currentIndex + 1;
                 while (newIndex < matchCtx.movePositions.length) {
                     const movePos = matchCtx.movePositions[newIndex];
-                    // Only stop at checker moves (skip implicit cube positions)
-                    if (movePos.move_type === 'checker') {
+                    // Stop at checker moves and cube decisions (Double, Take)
+                    if (movePos.move_type === 'checker' || movePos.move_type === 'cube') {
                         break;
                     }
                     newIndex++;

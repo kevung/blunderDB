@@ -3818,56 +3818,154 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 		}
 
 	} else if move.MoveType == "cube" && move.CubeMove != nil {
-		// Create position from cube move
-		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
-		if err != nil {
-			return fmt.Errorf("failed to create position: %w", err)
-		}
+		// Handle explicit cube decisions
+		// Only create positions for EXPLICIT cube actions (when a player actually doubles)
+		// Skip implicit "No Double" decisions
 
-		// Set position-specific attributes from move
-		// Convert XG player encoding (-1, 1) to blunderDB encoding (0, 1)
-		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
-		pos.DecisionType = CubeAction
-		pos.Dice = [2]int{0, 0} // No dice for cube decisions
-
-		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
-		if err != nil {
-			return fmt.Errorf("failed to save position: %w", err)
-		}
-		positionID = posID
-
-		player = move.CubeMove.ActivePlayer
-
-		// Use raw cube data if available for complete action info
+		// Check if this is an explicit cube action
+		isExplicitCubeAction := false
 		if rawCube != nil {
-			cubeActionStr = d.convertRawCubeAction(rawCube.Double, rawCube.Take)
+			// Explicit action: Double was offered (Double == 1)
+			isExplicitCubeAction = (rawCube.Double == 1)
 		} else {
-			cubeActionStr = d.convertCubeAction(move.CubeMove.CubeAction)
+			// Fallback: check CubeAction field
+			isExplicitCubeAction = (move.CubeMove.CubeAction != 0) // 0 = No Double
 		}
 
-		// Save move
-		moveResult, err := tx.Exec(`
-			INSERT INTO move (game_id, move_number, move_type, position_id, player,
-			                  dice_1, dice_2, cube_action)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`, gameID, moveNumber, "cube", positionID, player, 0, 0, cubeActionStr)
-		if err != nil {
-			return err
+		if !isExplicitCubeAction {
+			// Skip implicit "No Double" decisions - don't create position
+			return nil
 		}
 
-		moveID, _ := moveResult.LastInsertId()
+		if rawCube != nil && rawCube.Double == 1 && rawCube.Take == 1 {
+			// DOUBLE/TAKE scenario: Create two positions
 
-		// Save cube analysis if available
-		if move.CubeMove.Analysis != nil {
-			err = d.saveCubeAnalysisInTx(tx, moveID, move.CubeMove.Analysis)
+			// Position 1: Doubling decision (before the double)
+			// The player on roll decides whether to double
+			pos1, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
 			if err != nil {
-				fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+				return fmt.Errorf("failed to create doubling position: %w", err)
+			}
+			pos1.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
+			pos1.DecisionType = CubeAction
+			pos1.Dice = [2]int{0, 0}
+
+			// Save position 1 (doubling decision)
+			posID1, err := d.savePositionInTxWithCache(tx, pos1, positionCache)
+			if err != nil {
+				return fmt.Errorf("failed to save doubling position: %w", err)
 			}
 
-			err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+			player = move.CubeMove.ActivePlayer
+
+			// Save move 1: Double
+			moveResult1, err := tx.Exec(`
+				INSERT INTO move (game_id, move_number, move_type, position_id, player,
+				                  dice_1, dice_2, cube_action)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			`, gameID, moveNumber, "cube", posID1, player, 0, 0, "Double")
 			if err != nil {
-				fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+				return err
+			}
+			moveID1, _ := moveResult1.LastInsertId()
+
+			// Save analysis to first position
+			if move.CubeMove.Analysis != nil {
+				err = d.saveCubeAnalysisInTx(tx, moveID1, move.CubeMove.Analysis)
+				if err != nil {
+					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+				}
+				err = d.saveCubeAnalysisToPositionInTx(tx, posID1, move.CubeMove.Analysis)
+				if err != nil {
+					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+				}
+			}
+
+			// Position 2: Take/Pass decision (after the double)
+			// The opponent decides whether to take or pass
+			// Note: We show the position BEFORE the take decision is executed,
+			// so the cube is still in the center at doubled value.
+			// The cube ownership will be reflected in the NEXT checker move position.
+			pos2 := *pos1                           // Clone the position
+			pos2.Cube.Value++                       // Double the cube (increment exponent: 0→1, 1→2, etc.)
+			opponentPlayer := 1 - pos1.PlayerOnRoll // Opponent player (blunderDB encoding)
+			pos2.PlayerOnRoll = opponentPlayer      // Opponent decides whether to take
+			pos2.Cube.Owner = -1                    // Cube still in center (decision not yet executed)
+
+			// Save position 2 (take decision)
+			posID2, err := d.savePositionInTxWithCache(tx, &pos2, positionCache)
+			if err != nil {
+				return fmt.Errorf("failed to save take position: %w", err)
+			}
+			positionID = posID2 // Use second position as the reference
+
+			// Convert opponent from blunderDB (0,1) back to XG encoding (1,-1) for move table
+			opponentPlayerXG := int32(1)
+			if opponentPlayer == 0 {
+				opponentPlayerXG = 1
+			} else {
+				opponentPlayerXG = -1
+			}
+
+			// Save move 2: Take
+			_, err = tx.Exec(`
+				INSERT INTO move (game_id, move_number, move_type, position_id, player,
+				                  dice_1, dice_2, cube_action)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			`, gameID, moveNumber, "cube", posID2, opponentPlayerXG, 0, 0, "Take")
+			if err != nil {
+				return err
+			}
+
+		} else {
+			// Single cube action (Double without Take, or other actions)
+			pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
+			if err != nil {
+				return fmt.Errorf("failed to create position: %w", err)
+			}
+
+			pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
+			pos.DecisionType = CubeAction
+			pos.Dice = [2]int{0, 0}
+
+			// Save position
+			posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+			if err != nil {
+				return fmt.Errorf("failed to save position: %w", err)
+			}
+			positionID = posID
+			player = move.CubeMove.ActivePlayer
+
+			// Determine cube action string
+			if rawCube != nil {
+				cubeActionStr = d.convertRawCubeAction(rawCube.Double, rawCube.Take)
+			} else {
+				cubeActionStr = d.convertCubeAction(move.CubeMove.CubeAction)
+			}
+
+			// Save move
+			moveResult, err := tx.Exec(`
+				INSERT INTO move (game_id, move_number, move_type, position_id, player,
+				                  dice_1, dice_2, cube_action)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			`, gameID, moveNumber, "cube", positionID, player, 0, 0, cubeActionStr)
+			if err != nil {
+				return err
+			}
+
+			moveID, _ := moveResult.LastInsertId()
+
+			// Save cube analysis
+			if move.CubeMove.Analysis != nil {
+				err = d.saveCubeAnalysisInTx(tx, moveID, move.CubeMove.Analysis)
+				if err != nil {
+					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+				}
+
+				err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+				if err != nil {
+					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+				}
 			}
 		}
 	}
@@ -4009,14 +4107,23 @@ func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.
 	}
 
 	// Map XG cube position to blunderDB format
-	// xgPos.CubePos: 0=center (no owner), 1=player1 owns, 2=player2 owns
-	// blunderDB: -1=center (no owner), 0=player1 owns (bottom), 1=player2 owns (top)
+	// XG CubePos is RELATIVE to active player:
+	//   CubePos = 0: Center (no owner)
+	//   CubePos = 1: Active player owns the cube
+	//   CubePos = -1: Opponent owns the cube
+	// blunderDB uses absolute encoding:
+	//   -1 = center (no owner)
+	//   0 = Player 1 owns (bottom, black)
+	//   1 = Player 2 owns (top, white)
 	cubeOwner := -1 // Default: center (no owner)
 	if xgPos.CubePos == 1 {
-		cubeOwner = 0 // Player 1 owns (shown at bottom)
-	} else if xgPos.CubePos == 2 {
-		cubeOwner = 1 // Player 2 owns (shown at top)
+		// Active player owns the cube
+		cubeOwner = activePlayerBlunderDB
+	} else if xgPos.CubePos == -1 {
+		// Opponent owns the cube
+		cubeOwner = opponentPlayerBlunderDB
 	}
+	// CubePos == 0 means center, cubeOwner stays -1
 
 	// Convert cube value from XG (direct value 1,2,4,8...) to blunderDB (exponent 0,1,2,3...)
 	// blunderDB displays 2^value, so we need log2(xgCube)
