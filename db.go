@@ -4801,16 +4801,24 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 }
 
 // translateAnalysisDepth converts XG analysis depth codes to human-readable strings
-// XG depth codes: 0="book", N (for N>=1) = "N-ply"
-// High values like 998-1002 also indicate book moves
+// XG depth codes:
+//   - 0-9 = (N+1)-ply search depth (XG stores ply-1 internally)
+//   - 998-1000 = Book moves (different footnote references)
+//   - 1001 = XG Roller (neural network)
+//   - 1002 = XG Roller++ (extended neural network analysis)
 func translateAnalysisDepth(depth int) string {
-	if depth == 0 || (depth >= 998 && depth <= 1002) {
-		return "book"
+	switch {
+	case depth >= 0 && depth <= 9:
+		return fmt.Sprintf("%d-ply", depth+1)
+	case depth >= 998 && depth <= 1000:
+		return "Book"
+	case depth == 1001:
+		return "XG Roller"
+	case depth == 1002:
+		return "XG Roller++"
+	default:
+		return fmt.Sprintf("%d", depth)
 	}
-	if depth >= 1 && depth <= 10 {
-		return fmt.Sprintf("%d-ply", depth)
-	}
-	return fmt.Sprintf("%d", depth)
 }
 
 // convertXGMoveToString converts XG move format to readable string
