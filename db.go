@@ -2598,6 +2598,172 @@ func (d *Database) DeleteSearchHistoryEntry(timestamp int64) error {
 	return nil
 }
 
+// SessionState represents the last session state for restoring when reopening a database
+type SessionState struct {
+	LastSearchCommand  string  `json:"lastSearchCommand"`  // The last search command executed
+	LastSearchPosition string  `json:"lastSearchPosition"` // The position used for the last search (JSON)
+	LastPositionIndex  int     `json:"lastPositionIndex"`  // The index of the last viewed position in results
+	LastPositionIDs    []int64 `json:"lastPositionIds"`    // The list of position IDs from the last search
+	HasActiveSearch    bool    `json:"hasActiveSearch"`    // Whether there was an active search session
+}
+
+// SaveSessionState saves the current session state to the metadata table
+func (d *Database) SaveSessionState(state SessionState) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("database is not opened")
+	}
+
+	// Serialize position IDs to JSON
+	positionIDsJSON, err := json.Marshal(state.LastPositionIDs)
+	if err != nil {
+		fmt.Println("Error marshaling position IDs:", err)
+		return err
+	}
+
+	// Save each session state field as a metadata entry
+	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_command', ?)`, state.LastSearchCommand)
+	if err != nil {
+		fmt.Println("Error saving session_last_search_command:", err)
+		return err
+	}
+
+	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_position', ?)`, state.LastSearchPosition)
+	if err != nil {
+		fmt.Println("Error saving session_last_search_position:", err)
+		return err
+	}
+
+	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_index', ?)`, strconv.Itoa(state.LastPositionIndex))
+	if err != nil {
+		fmt.Println("Error saving session_last_position_index:", err)
+		return err
+	}
+
+	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_ids', ?)`, string(positionIDsJSON))
+	if err != nil {
+		fmt.Println("Error saving session_last_position_ids:", err)
+		return err
+	}
+
+	hasActiveSearchStr := "false"
+	if state.HasActiveSearch {
+		hasActiveSearchStr = "true"
+	}
+	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_has_active_search', ?)`, hasActiveSearchStr)
+	if err != nil {
+		fmt.Println("Error saving session_has_active_search:", err)
+		return err
+	}
+
+	return nil
+}
+
+// LoadSessionState loads the last session state from the metadata table
+func (d *Database) LoadSessionState() (*SessionState, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("database is not opened")
+	}
+
+	state := &SessionState{}
+
+	// Load last search command
+	var lastSearchCommand sql.NullString
+	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_command'`).Scan(&lastSearchCommand)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error loading session_last_search_command:", err)
+		return nil, err
+	}
+	if lastSearchCommand.Valid {
+		state.LastSearchCommand = lastSearchCommand.String
+	}
+
+	// Load last search position
+	var lastSearchPosition sql.NullString
+	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_position'`).Scan(&lastSearchPosition)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error loading session_last_search_position:", err)
+		return nil, err
+	}
+	if lastSearchPosition.Valid {
+		state.LastSearchPosition = lastSearchPosition.String
+	}
+
+	// Load last position index
+	var lastPositionIndex sql.NullString
+	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_index'`).Scan(&lastPositionIndex)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error loading session_last_position_index:", err)
+		return nil, err
+	}
+	if lastPositionIndex.Valid {
+		index, parseErr := strconv.Atoi(lastPositionIndex.String)
+		if parseErr == nil {
+			state.LastPositionIndex = index
+		}
+	}
+
+	// Load last position IDs
+	var lastPositionIDs sql.NullString
+	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_ids'`).Scan(&lastPositionIDs)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error loading session_last_position_ids:", err)
+		return nil, err
+	}
+	if lastPositionIDs.Valid && lastPositionIDs.String != "" {
+		var ids []int64
+		if parseErr := json.Unmarshal([]byte(lastPositionIDs.String), &ids); parseErr == nil {
+			state.LastPositionIDs = ids
+		}
+	}
+
+	// Load has active search flag
+	var hasActiveSearch sql.NullString
+	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_has_active_search'`).Scan(&hasActiveSearch)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error loading session_has_active_search:", err)
+		return nil, err
+	}
+	if hasActiveSearch.Valid {
+		state.HasActiveSearch = hasActiveSearch.String == "true"
+	}
+
+	return state, nil
+}
+
+// ClearSessionState clears the session state from the metadata table
+func (d *Database) ClearSessionState() error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("database is not opened")
+	}
+
+	sessionKeys := []string{
+		"session_last_search_command",
+		"session_last_search_position",
+		"session_last_position_index",
+		"session_last_position_ids",
+		"session_has_active_search",
+	}
+
+	for _, key := range sessionKeys {
+		_, err := d.db.Exec(`DELETE FROM metadata WHERE key = ?`, key)
+		if err != nil {
+			fmt.Println("Error deleting session key:", key, err)
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (d *Database) Migrate_1_0_0_to_1_1_0() error {
 	d.mu.Lock()
 	defer d.mu.Unlock()

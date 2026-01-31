@@ -167,7 +167,7 @@
                   });
                   
                   if (command === 's') {
-                     onLoadPositionsByFilters([]);
+                     onLoadPositionsByFilters([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, command);
                   } else {
                      const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
                      const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
@@ -280,7 +280,8 @@
                         player1JanBlotFilter,
                         player2JanBlotFilter,
                         noContactFilter,
-                        mirrorPositionFilter
+                        mirrorPositionFilter,
+                        command  // Pass the original search command for session tracking
                      );
                   }
                } else {

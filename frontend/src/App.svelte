@@ -39,7 +39,10 @@
         SaveFilter, // Import SaveFilter
         SaveEditPosition, // Import SaveEditPosition
         ImportXGMatch, // Import ImportXGMatch
-        GetAllMatches // Import GetAllMatches
+        GetAllMatches, // Import GetAllMatches
+        SaveSessionState, // Import SaveSessionState
+        LoadSessionState, // Import LoadSessionState
+        ClearSessionState // Import ClearSessionState
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -192,6 +195,11 @@
     let showMatchPanel = false; // Add match panel visibility variable
     let showPipcount = true; // Update variable
     
+    // Session state tracking
+    let lastSearchCommand = '';
+    let lastSearchPosition = null;
+    let hasActiveSearch = false;
+    
     // Subscrive to pipcount store
     showPipcountStore.subscribe(value => {
         showPipcount = value;
@@ -291,11 +299,22 @@
         }
     });
 
+    // Debounce timer for saving session state
+    let saveSessionTimeout = null;
+
     currentPositionIndexStore.subscribe(async value => {
         currentPositionIndex = value;
         if (positions.length > 0 && currentPositionIndex >= 0 && currentPositionIndex < positions.length) {
             await showPosition(positions[currentPositionIndex]);
             setStatusBarMessage(''); // Reset status bar message when changing position
+            
+            // Debounce session state saving to avoid too many writes when scrolling
+            if (saveSessionTimeout) {
+                clearTimeout(saveSessionTimeout);
+            }
+            saveSessionTimeout = setTimeout(() => {
+                saveSessionState();
+            }, 500); // Save after 500ms of no changes
         }
     });
 
@@ -680,14 +699,87 @@
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
 
-            // Load positions
-            await loadAllPositions();
+            // Try to restore session state
+            await restoreSessionState();
         } catch (error) {
             console.error('Error opening file dialog:', error);
             setStatusBarMessage('Error opening database');
         } finally {
             previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
+        }
+    }
+    
+    // Restore the last session state when opening a database
+    async function restoreSessionState() {
+        try {
+            const sessionState = await LoadSessionState();
+            console.log('Loaded session state:', sessionState);
+            
+            if (sessionState && sessionState.hasActiveSearch && sessionState.lastPositionIds && sessionState.lastPositionIds.length > 0) {
+                // Restore the session state
+                lastSearchCommand = sessionState.lastSearchCommand || '';
+                lastSearchPosition = sessionState.lastSearchPosition ? JSON.parse(sessionState.lastSearchPosition) : null;
+                hasActiveSearch = true;
+                
+                // Load positions by IDs (we need to fetch them from DB)
+                const allPositions = await LoadAllPositions();
+                const positionIdSet = new Set(sessionState.lastPositionIds);
+                const restoredPositions = allPositions.filter(pos => positionIdSet.has(pos.id));
+                
+                // Preserve original order from lastPositionIds
+                const positionMap = new Map(restoredPositions.map(pos => [pos.id, pos]));
+                const orderedPositions = sessionState.lastPositionIds
+                    .map(id => positionMap.get(id))
+                    .filter(pos => pos !== undefined);
+                
+                if (orderedPositions.length > 0) {
+                    positionsStore.set(orderedPositions);
+                    
+                    // Restore position index, ensuring it's within valid bounds
+                    let indexToRestore = sessionState.lastPositionIndex || 0;
+                    if (indexToRestore < 0) indexToRestore = 0;
+                    if (indexToRestore >= orderedPositions.length) indexToRestore = orderedPositions.length - 1;
+                    
+                    currentPositionIndexStore.set(-1); // Force redraw
+                    currentPositionIndexStore.set(indexToRestore);
+                    
+                    setStatusBarMessage(`Session restored: ${orderedPositions.length} positions, showing #${indexToRestore + 1}`);
+                    console.log(`Session restored with ${orderedPositions.length} positions at index ${indexToRestore}`);
+                    return;
+                }
+            }
+            
+            // No session to restore, or session had no positions - load all positions
+            hasActiveSearch = false;
+            lastSearchCommand = '';
+            lastSearchPosition = null;
+            await loadAllPositions();
+        } catch (error) {
+            console.error('Error restoring session state:', error);
+            // Fall back to loading all positions
+            await loadAllPositions();
+        }
+    }
+    
+    // Save the current session state to the database
+    async function saveSessionState() {
+        if (!$databasePathStore) return;
+        
+        try {
+            const positionIds = positions.map(pos => pos.id);
+            const sessionState = {
+                lastSearchCommand: lastSearchCommand,
+                lastSearchPosition: lastSearchPosition ? JSON.stringify(lastSearchPosition) : '',
+                lastPositionIndex: currentPositionIndex,
+                lastPositionIds: positionIds,
+                hasActiveSearch: hasActiveSearch
+            };
+            
+            await SaveSessionState(sessionState);
+            console.log('Session state saved');
+        } catch (error) {
+            console.error('Error saving session state:', error);
         }
     }
 
@@ -2424,6 +2516,7 @@ function togglePipcount() {
         player2JanBlotFilter,
         noContactFilter,
         mirrorPositionFilter,
+        searchCommand = '',  // Optional: the original search command for session tracking
     ) {
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
@@ -2502,6 +2595,14 @@ function togglePipcount() {
                     currentPositionIndexStore.set(1); // Temporarily set to a different value to force redraw board
                 }
                 currentPositionIndexStore.set(0); // Ensure the first matching position is displayed
+                
+                // Track session state for search results
+                hasActiveSearch = true;
+                lastSearchCommand = searchCommand || '';
+                lastSearchPosition = JSON.parse(JSON.stringify($positionStore));
+                
+                // Save session state after successful search
+                saveSessionState();
             } else {
                 setStatusBarMessage('No matching positions found');
             }
@@ -2526,6 +2627,12 @@ function togglePipcount() {
             if (positions && positions.length > 0) {
                 currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw board
                 currentPositionIndexStore.set(positions.length - 1);
+                
+                // When loading all positions, clear the active search state
+                hasActiveSearch = false;
+                lastSearchCommand = '';
+                lastSearchPosition = null;
+                saveSessionState();
             } else {
                 currentPositionIndexStore.set(-1);
                 setStatusBarMessage('No positions found');

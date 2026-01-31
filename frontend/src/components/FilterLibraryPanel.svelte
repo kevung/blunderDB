@@ -276,7 +276,8 @@
             player1JanBlotFilter,
             player2JanBlotFilter,
             noContactFilter,
-            mirrorPositionFilter
+            mirrorPositionFilter,
+            command  // Pass the original search command for session tracking
         );
 
         // Do not close the filter library panel after executing the filter search

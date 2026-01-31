@@ -94,6 +94,12 @@ export function SavePosition(arg1:main.Position):Promise<number>;
 
 export function SaveSearchHistory(arg1:string,arg2:string):Promise<void>;
 
+export function SaveSessionState(arg1:main.SessionState):Promise<void>;
+
+export function LoadSessionState():Promise<main.SessionState>;
+
+export function ClearSessionState():Promise<void>;
+
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function UpdateFilter(arg1:number,arg2:string,arg3:string):Promise<void>;

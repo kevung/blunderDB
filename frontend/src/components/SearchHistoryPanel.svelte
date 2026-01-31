@@ -203,7 +203,8 @@
                 player1JanBlotFilter,
                 player2JanBlotFilter,
                 noContactFilter,
-                mirrorPositionFilter
+                mirrorPositionFilter,
+                command  // Pass the original search command for session tracking
             );
         }
     }

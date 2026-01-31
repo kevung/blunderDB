@@ -186,6 +186,18 @@ export function SaveSearchHistory(arg1, arg2) {
   return window['go']['main']['Database']['SaveSearchHistory'](arg1, arg2);
 }
 
+export function SaveSessionState(arg1) {
+  return window['go']['main']['Database']['SaveSessionState'](arg1);
+}
+
+export function LoadSessionState() {
+  return window['go']['main']['Database']['LoadSessionState']();
+}
+
+export function ClearSessionState() {
+  return window['go']['main']['Database']['ClearSessionState']();
+}
+
 export function SetupDatabase(arg1) {
   return window['go']['main']['Database']['SetupDatabase'](arg1);
 }

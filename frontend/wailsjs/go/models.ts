@@ -477,6 +477,23 @@ export namespace main {
 	        this.timestamp = source["timestamp"];
 	    }
 	}
+	export class SessionState {
+	    lastSearchCommand: string;
+	    lastSearchPosition: string;
+	    lastPositionIndex: number;
+	    lastPositionIds: number[];
+	    hasActiveSearch: boolean;
 
-}
+	    static createFrom(source: any = {}) {
+	        return new SessionState(source);
+	    }
 
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.lastSearchCommand = source["lastSearchCommand"];
+	        this.lastSearchPosition = source["lastSearchPosition"];
+	        this.lastPositionIndex = source["lastPositionIndex"];
+	        this.lastPositionIds = source["lastPositionIds"];
+	        this.hasActiveSearch = source["hasActiveSearch"];
+	    }
+	}
