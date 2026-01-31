@@ -4511,8 +4511,35 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 		// Convert move from [8]int8 to [8]int32 for convertXGMoveToString
 		var move [8]int32
 
-		for j := 0; j < 8; j++ {
-			move[j] = int32(analysis.Move[j])
+		// For the first analysis (i=0), use playedMove if available
+		// This is a workaround for xgparser bug where analysis.Move may be incomplete
+		// for multi-submove bear-offs or other complex moves
+		if i == 0 && playedMove != nil {
+			// Check if playedMove has more info than analysis.Move
+			playedMoveCount := 0
+			analysisMoveCount := 0
+			for j := 0; j < 8; j += 2 {
+				if (*playedMove)[j] != -1 {
+					playedMoveCount++
+				}
+				if analysis.Move[j] != -1 {
+					analysisMoveCount++
+				}
+			}
+			// Use playedMove if it has more sub-moves
+			if playedMoveCount > analysisMoveCount {
+				for j := 0; j < 8; j++ {
+					move[j] = (*playedMove)[j]
+				}
+			} else {
+				for j := 0; j < 8; j++ {
+					move[j] = int32(analysis.Move[j])
+				}
+			}
+		} else {
+			for j := 0; j < 8; j++ {
+				move[j] = int32(analysis.Move[j])
+			}
 		}
 		// Infer multipliers from position changes
 		// XG stores moves compactly - e.g., 1/off(4) is stored as just 1/off once
