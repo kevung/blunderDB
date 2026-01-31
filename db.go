@@ -3524,6 +3524,103 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		return err
 	}
 
+	// Create search_history table (required for version >= 1.3.0)
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS search_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			position TEXT,
+			timestamp INTEGER
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating search_history table in export database:", err)
+		return err
+	}
+
+	// Create match-related tables (required for version >= 1.4.0)
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT,
+			player2_name TEXT,
+			event TEXT,
+			location TEXT,
+			round TEXT,
+			match_length INTEGER,
+			match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT,
+			game_count INTEGER DEFAULT 0,
+			match_hash TEXT
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating match table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS game (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			match_id INTEGER,
+			game_number INTEGER,
+			initial_score_1 INTEGER,
+			initial_score_2 INTEGER,
+			winner INTEGER,
+			points_won INTEGER,
+			move_count INTEGER DEFAULT 0,
+			FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating game table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS move (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			game_id INTEGER,
+			move_number INTEGER,
+			move_type TEXT,
+			position_id INTEGER,
+			player INTEGER,
+			dice_1 INTEGER,
+			dice_2 INTEGER,
+			checker_move TEXT,
+			cube_action TEXT,
+			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating move table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS move_analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			move_id INTEGER,
+			analysis_type TEXT,
+			depth TEXT,
+			equity REAL,
+			equity_error REAL,
+			win_rate REAL,
+			gammon_rate REAL,
+			backgammon_rate REAL,
+			opponent_win_rate REAL,
+			opponent_gammon_rate REAL,
+			opponent_backgammon_rate REAL,
+			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating move_analysis table in export database:", err)
+		return err
+	}
+
 	// Insert database version
 	_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
