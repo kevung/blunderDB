@@ -111,8 +111,10 @@ type PositionAnalysis struct {
 	AnalysisEngineVersion string                `json:"analysisEngineVersion"`
 	DoublingCubeAnalysis  *DoublingCubeAnalysis `json:"doublingCubeAnalysis,omitempty"`
 	CheckerAnalysis       *CheckerAnalysis      `json:"checkerAnalysis,omitempty"`
-	PlayedMove            string                `json:"playedMove,omitempty"`       // The move actually played in a match (if available)
-	PlayedCubeAction      string                `json:"playedCubeAction,omitempty"` // The cube action actually taken in a match (if available)
+	PlayedMove            string                `json:"playedMove,omitempty"`        // Deprecated: Use PlayedMoves instead
+	PlayedCubeAction      string                `json:"playedCubeAction,omitempty"`  // Deprecated: Use PlayedCubeActions instead
+	PlayedMoves           []string              `json:"playedMoves,omitempty"`       // All moves played in this position across different matches
+	PlayedCubeActions     []string              `json:"playedCubeActions,omitempty"` // All cube actions taken in this position across different matches
 	CreationDate          time.Time             `json:"creationDate"`
 	LastModifiedDate      time.Time             `json:"lastModifiedDate"`
 }
@@ -220,4 +222,6 @@ type MatchMovePosition struct {
 	PlayerOnRoll int32    `json:"player_on_roll"` // Player who rolled (0=Player1, 1=Player2)
 	Player1Name  string   `json:"player1_name"`   // Player 1 name for reference
 	Player2Name  string   `json:"player2_name"`   // Player 2 name for reference
+	CheckerMove  string   `json:"checker_move"`   // The checker move played in this specific position
+	CubeAction   string   `json:"cube_action"`    // The cube action taken in this specific position
 }

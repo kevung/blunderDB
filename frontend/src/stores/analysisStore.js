@@ -30,8 +30,10 @@ export const analysisStore = writable({
         wrongPassPercentage: 0,
         wrongTakePercentage: 0,
     },
-    playedMove: '',  // The move actually played in a match (if available)
-    playedCubeAction: '',  // The cube action actually taken in a match (if available)
+    playedMove: '',  // Deprecated: for backward compatibility
+    playedCubeAction: '',  // Deprecated: for backward compatibility
+    playedMoves: [],  // All moves played in this position across different matches
+    playedCubeActions: [],  // All cube actions taken in this position across different matches
     creationDate: '',
     lastModifiedDate: ''
 });

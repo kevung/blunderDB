@@ -2616,6 +2616,26 @@ function togglePipcount() {
                                       (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 ||
                                        matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
         
+        // In match mode, use the specific move from the current match context
+        // instead of the aggregated played moves from all matches
+        let currentPlayedMove = '';
+        let currentPlayedCubeAction = '';
+        let allPlayedMoves = analysis?.playedMoves || [];
+        let allPlayedCubeActions = analysis?.playedCubeActions || [];
+        
+        if (matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos) {
+                // Use the specific move from this match
+                currentPlayedMove = currentMovePos.checker_move || '';
+                currentPlayedCubeAction = currentMovePos.cube_action || '';
+            }
+        } else {
+            // Not in match mode, use the first played move (backward compatibility)
+            currentPlayedMove = analysis?.playedMove || '';
+            currentPlayedCubeAction = analysis?.playedCubeAction || '';
+        }
+        
         analysisStore.set({
             positionId: analysis?.positionId || null,
             xgid: analysis?.xgid || '',
@@ -2645,8 +2665,10 @@ function togglePipcount() {
                 wrongPassPercentage: 0,
                 wrongTakePercentage: 0
             }),
-            playedMove: analysis?.playedMove || '',
-            playedCubeAction: isFirstPositionOfGame ? '' : (analysis?.playedCubeAction || ''),
+            playedMove: currentPlayedMove,
+            playedCubeAction: isFirstPositionOfGame ? '' : currentPlayedCubeAction,
+            playedMoves: allPlayedMoves,
+            playedCubeActions: isFirstPositionOfGame ? [] : allPlayedCubeActions,
             creationDate: analysis?.creationDate || '',
             lastModifiedDate: analysis?.lastModifiedDate || ''
         });

@@ -44,6 +44,10 @@
                 // No analysis for this position
             }
             
+            // Use the specific move from this match context, not all played moves
+            const currentPlayedMove = movePos.checker_move || '';
+            const currentPlayedCubeAction = movePos.cube_action || '';
+            
             analysisStore.set({
                 positionId: analysis?.positionId || null,
                 xgid: analysis?.xgid || '',
@@ -72,8 +76,10 @@
                     wrongPassPercentage: 0,
                     wrongTakePercentage: 0
                 },
-                playedMove: analysis?.playedMove || '',
-                playedCubeAction: analysis?.playedCubeAction || '',
+                playedMove: currentPlayedMove,
+                playedCubeAction: currentPlayedCubeAction,
+                playedMoves: analysis?.playedMoves || [],
+                playedCubeActions: analysis?.playedCubeActions || [],
                 creationDate: analysis?.creationDate || '',
                 lastModifiedDate: analysis?.lastModifiedDate || ''
             });

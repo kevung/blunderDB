@@ -331,6 +331,8 @@ export namespace main {
 	    player_on_roll: number;
 	    player1_name: string;
 	    player2_name: string;
+	    checker_move: string;
+	    cube_action: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchMovePosition(source);
@@ -347,6 +349,8 @@ export namespace main {
 	        this.player_on_roll = source["player_on_roll"];
 	        this.player1_name = source["player1_name"];
 	        this.player2_name = source["player2_name"];
+	        this.checker_move = source["checker_move"];
+	        this.cube_action = source["cube_action"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -408,6 +412,8 @@ export namespace main {
 	    checkerAnalysis?: CheckerAnalysis;
 	    playedMove?: string;
 	    playedCubeAction?: string;
+	    playedMoves?: string[];
+	    playedCubeActions?: string[];
 	    // Go type: time
 	    creationDate: any;
 	    // Go type: time
@@ -429,6 +435,8 @@ export namespace main {
 	        this.checkerAnalysis = this.convertValues(source["checkerAnalysis"], CheckerAnalysis);
 	        this.playedMove = source["playedMove"];
 	        this.playedCubeAction = source["playedCubeAction"];
+	        this.playedMoves = source["playedMoves"];
+	        this.playedCubeActions = source["playedCubeActions"];
 	        this.creationDate = this.convertValues(source["creationDate"], null);
 	        this.lastModifiedDate = this.convertValues(source["lastModifiedDate"], null);
 	    }

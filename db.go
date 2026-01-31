@@ -654,14 +654,76 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 	}
 
 	if existingID > 0 {
-		// Preserve the existing creation date
+		// Parse existing analysis
 		var existingAnalysis PositionAnalysis
 		err = json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
 		if err != nil {
 			fmt.Println("Error unmarshalling existing analysis:", err)
 			return err
 		}
+
+		// Preserve the existing creation date
 		analysis.CreationDate = existingAnalysis.CreationDate
+
+		// Merge checker analysis if both exist
+		if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
+			analysis.CheckerAnalysis.Moves = mergeCheckerMoves(
+				existingAnalysis.CheckerAnalysis.Moves,
+				analysis.CheckerAnalysis.Moves,
+			)
+		} else if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis == nil {
+			// Keep existing checker analysis if new one is nil
+			analysis.CheckerAnalysis = existingAnalysis.CheckerAnalysis
+		}
+
+		// Merge doubling cube analysis - keep existing if new is nil
+		if existingAnalysis.DoublingCubeAnalysis != nil && analysis.DoublingCubeAnalysis == nil {
+			analysis.DoublingCubeAnalysis = existingAnalysis.DoublingCubeAnalysis
+		}
+
+		// Merge played moves (support both old single field and new array field)
+		existingPlayedMoves := existingAnalysis.PlayedMoves
+		if existingAnalysis.PlayedMove != "" && len(existingPlayedMoves) == 0 {
+			existingPlayedMoves = []string{existingAnalysis.PlayedMove}
+		}
+		incomingPlayedMoves := analysis.PlayedMoves
+		if analysis.PlayedMove != "" && len(incomingPlayedMoves) == 0 {
+			incomingPlayedMoves = []string{analysis.PlayedMove}
+		}
+		analysis.PlayedMoves = mergePlayedMoves(existingPlayedMoves, incomingPlayedMoves)
+
+		// Merge played cube actions
+		existingCubeActions := existingAnalysis.PlayedCubeActions
+		if existingAnalysis.PlayedCubeAction != "" && len(existingCubeActions) == 0 {
+			existingCubeActions = []string{existingAnalysis.PlayedCubeAction}
+		}
+		incomingCubeActions := analysis.PlayedCubeActions
+		if analysis.PlayedCubeAction != "" && len(incomingCubeActions) == 0 {
+			incomingCubeActions = []string{analysis.PlayedCubeAction}
+		}
+		analysis.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
+
+		// Clear deprecated single fields after merging
+		analysis.PlayedMove = ""
+		analysis.PlayedCubeAction = ""
+
+		// Sort checker moves by equity after merging
+		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
+				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
+			})
+			// Recalculate indices and equity errors
+			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
+			for i := range analysis.CheckerAnalysis.Moves {
+				analysis.CheckerAnalysis.Moves[i].Index = i
+				if i == 0 {
+					analysis.CheckerAnalysis.Moves[i].EquityError = nil
+				} else {
+					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
+					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
+				}
+			}
+		}
 
 		// Update the existing analysis
 		analysisJSON, err := json.Marshal(analysis)
@@ -678,6 +740,34 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		// Set creation date if not already set
 		if analysis.CreationDate.IsZero() {
 			analysis.CreationDate = time.Now()
+		}
+
+		// Convert single played move to array if needed
+		if analysis.PlayedMove != "" && len(analysis.PlayedMoves) == 0 {
+			analysis.PlayedMoves = []string{analysis.PlayedMove}
+			analysis.PlayedMove = ""
+		}
+		if analysis.PlayedCubeAction != "" && len(analysis.PlayedCubeActions) == 0 {
+			analysis.PlayedCubeActions = []string{analysis.PlayedCubeAction}
+			analysis.PlayedCubeAction = ""
+		}
+
+		// Sort checker moves by equity
+		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
+				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
+			})
+			// Recalculate indices and equity errors
+			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
+			for i := range analysis.CheckerAnalysis.Moves {
+				analysis.CheckerAnalysis.Moves[i].Index = i
+				if i == 0 {
+					analysis.CheckerAnalysis.Moves[i].EquityError = nil
+				} else {
+					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
+					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
+				}
+			}
 		}
 
 		// Insert a new analysis
@@ -739,26 +829,89 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 		return nil, err
 	}
 
-	// Try to load the played move if this position is from a match
-	var checkerMove sql.NullString
-	var cubeAction sql.NullString
-	err = d.db.QueryRow(`
+	// Load ALL played moves/cube actions from move table for this position
+	// This supplements the PlayedMoves/PlayedCubeActions arrays stored in analysis
+	rows, err := d.db.Query(`
 		SELECT checker_move, cube_action 
 		FROM move 
 		WHERE position_id = ?
-		LIMIT 1
-	`, positionID).Scan(&checkerMove, &cubeAction)
+	`, positionID)
 
 	if err == nil {
-		// Found a move record for this position
-		if checkerMove.Valid {
-			analysis.PlayedMove = checkerMove.String
+		defer rows.Close()
+
+		// Collect all moves from the database
+		dbCheckerMoves := make(map[string]bool)
+		dbCubeActions := make(map[string]bool)
+
+		for rows.Next() {
+			var checkerMove sql.NullString
+			var cubeAction sql.NullString
+			if err := rows.Scan(&checkerMove, &cubeAction); err == nil {
+				if checkerMove.Valid && checkerMove.String != "" {
+					dbCheckerMoves[normalizeMove(checkerMove.String)] = true
+				}
+				if cubeAction.Valid && cubeAction.String != "" {
+					dbCubeActions[cubeAction.String] = true
+				}
+			}
 		}
-		if cubeAction.Valid {
-			analysis.PlayedCubeAction = cubeAction.String
+
+		// Merge with existing PlayedMoves array
+		existingMoves := make(map[string]bool)
+		for _, m := range analysis.PlayedMoves {
+			existingMoves[normalizeMove(m)] = true
+		}
+		// Backward compatibility: include old single PlayedMove field
+		if analysis.PlayedMove != "" {
+			existingMoves[normalizeMove(analysis.PlayedMove)] = true
+		}
+
+		// Combine all moves
+		for m := range dbCheckerMoves {
+			existingMoves[m] = true
+		}
+
+		// Convert to slice
+		analysis.PlayedMoves = make([]string, 0, len(existingMoves))
+		for m := range existingMoves {
+			analysis.PlayedMoves = append(analysis.PlayedMoves, m)
+		}
+		sort.Strings(analysis.PlayedMoves)
+
+		// Do the same for cube actions
+		existingCubeActions := make(map[string]bool)
+		for _, a := range analysis.PlayedCubeActions {
+			existingCubeActions[a] = true
+		}
+		// Backward compatibility: include old single PlayedCubeAction field
+		if analysis.PlayedCubeAction != "" {
+			existingCubeActions[analysis.PlayedCubeAction] = true
+		}
+
+		for a := range dbCubeActions {
+			existingCubeActions[a] = true
+		}
+
+		analysis.PlayedCubeActions = make([]string, 0, len(existingCubeActions))
+		for a := range existingCubeActions {
+			analysis.PlayedCubeActions = append(analysis.PlayedCubeActions, a)
+		}
+		sort.Strings(analysis.PlayedCubeActions)
+
+		// For backward compatibility, also set the old single fields if there's exactly one
+		if len(analysis.PlayedMoves) == 1 {
+			analysis.PlayedMove = analysis.PlayedMoves[0]
+		} else if len(analysis.PlayedMoves) > 0 {
+			// Set to first one for backward compatibility with old frontend
+			analysis.PlayedMove = analysis.PlayedMoves[0]
+		}
+		if len(analysis.PlayedCubeActions) == 1 {
+			analysis.PlayedCubeAction = analysis.PlayedCubeActions[0]
+		} else if len(analysis.PlayedCubeActions) > 0 {
+			analysis.PlayedCubeAction = analysis.PlayedCubeActions[0]
 		}
 	}
-	// If no move found, that's okay - this position might not be from a match
 
 	return &analysis, nil
 }
@@ -4801,7 +4954,95 @@ func (d *Database) determineBestCubeAction(analysis *xgparser.CubeAnalysis) stri
 	return "No Double"
 }
 
-// saveAnalysisInTx saves a PositionAnalysis within a transaction
+// mergeCheckerMoves merges two sets of checker moves, avoiding duplicates
+// Moves are considered duplicates if they have the same move string
+// Returns moves sorted by equity (highest first)
+func mergeCheckerMoves(existing, incoming []CheckerMove) []CheckerMove {
+	// Use a map to track unique moves by their move string
+	moveMap := make(map[string]CheckerMove)
+
+	// Add existing moves to the map
+	for _, m := range existing {
+		moveMap[m.Move] = m
+	}
+
+	// Add incoming moves, prefer incoming if there's a conflict (newer analysis)
+	for _, m := range incoming {
+		if existingMove, exists := moveMap[m.Move]; exists {
+			// If the incoming move has the same depth or higher quality analysis, use it
+			// Otherwise keep the existing one
+			if m.AnalysisDepth >= existingMove.AnalysisDepth {
+				moveMap[m.Move] = m
+			}
+		} else {
+			moveMap[m.Move] = m
+		}
+	}
+
+	// Convert map to slice
+	result := make([]CheckerMove, 0, len(moveMap))
+	for _, m := range moveMap {
+		result = append(result, m)
+	}
+
+	// Sort by equity (highest first)
+	sort.Slice(result, func(i, j int) bool {
+		return result[i].Equity > result[j].Equity
+	})
+
+	// Recalculate equity errors relative to the best move
+	if len(result) > 0 {
+		bestEquity := result[0].Equity
+		for i := range result {
+			result[i].Index = i
+			if i == 0 {
+				result[i].EquityError = nil
+			} else {
+				diff := bestEquity - result[i].Equity
+				result[i].EquityError = &diff
+			}
+		}
+	}
+
+	return result
+}
+
+// mergePlayedMoves merges played moves/cube actions, avoiding duplicates
+func mergePlayedMoves(existing, incoming []string) []string {
+	// Use a map to track unique moves
+	moveSet := make(map[string]bool)
+
+	for _, m := range existing {
+		if m != "" {
+			moveSet[normalizeMove(m)] = true
+		}
+	}
+
+	for _, m := range incoming {
+		if m != "" {
+			moveSet[normalizeMove(m)] = true
+		}
+	}
+
+	// Convert map to slice
+	result := make([]string, 0, len(moveSet))
+	for m := range moveSet {
+		result = append(result, m)
+	}
+
+	sort.Strings(result)
+	return result
+}
+
+// normalizeMove normalizes a move string for comparison
+// "5/2 5/4" and "5/4 5/2" are the same move but in different order
+func normalizeMove(move string) string {
+	parts := strings.Fields(move)
+	sort.Strings(parts)
+	return strings.Join(parts, " ")
+}
+
+// saveAnalysisInTx saves a PositionAnalysis within a transaction, merging with existing analysis if present
 func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis PositionAnalysis) error {
 	// Ensure the positionID is set in the analysis
 	analysis.PositionID = int(positionID)
@@ -4818,13 +5059,75 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 	}
 
 	if existingID > 0 {
-		// Preserve the existing creation date
+		// Parse existing analysis
 		var existingAnalysis PositionAnalysis
 		err = json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
 		if err != nil {
 			return err
 		}
+
+		// Preserve the existing creation date
 		analysis.CreationDate = existingAnalysis.CreationDate
+
+		// Merge checker analysis if both exist
+		if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis != nil {
+			analysis.CheckerAnalysis.Moves = mergeCheckerMoves(
+				existingAnalysis.CheckerAnalysis.Moves,
+				analysis.CheckerAnalysis.Moves,
+			)
+		} else if existingAnalysis.CheckerAnalysis != nil && analysis.CheckerAnalysis == nil {
+			// Keep existing checker analysis if new one is nil
+			analysis.CheckerAnalysis = existingAnalysis.CheckerAnalysis
+		}
+
+		// Merge doubling cube analysis - keep the one with higher analysis depth
+		if existingAnalysis.DoublingCubeAnalysis != nil && analysis.DoublingCubeAnalysis == nil {
+			analysis.DoublingCubeAnalysis = existingAnalysis.DoublingCubeAnalysis
+		}
+
+		// Merge played moves (support both old single field and new array field)
+		existingPlayedMoves := existingAnalysis.PlayedMoves
+		if existingAnalysis.PlayedMove != "" && len(existingPlayedMoves) == 0 {
+			existingPlayedMoves = []string{existingAnalysis.PlayedMove}
+		}
+		incomingPlayedMoves := analysis.PlayedMoves
+		if analysis.PlayedMove != "" && len(incomingPlayedMoves) == 0 {
+			incomingPlayedMoves = []string{analysis.PlayedMove}
+		}
+		analysis.PlayedMoves = mergePlayedMoves(existingPlayedMoves, incomingPlayedMoves)
+
+		// Merge played cube actions
+		existingCubeActions := existingAnalysis.PlayedCubeActions
+		if existingAnalysis.PlayedCubeAction != "" && len(existingCubeActions) == 0 {
+			existingCubeActions = []string{existingAnalysis.PlayedCubeAction}
+		}
+		incomingCubeActions := analysis.PlayedCubeActions
+		if analysis.PlayedCubeAction != "" && len(incomingCubeActions) == 0 {
+			incomingCubeActions = []string{analysis.PlayedCubeAction}
+		}
+		analysis.PlayedCubeActions = mergePlayedMoves(existingCubeActions, incomingCubeActions)
+
+		// Clear deprecated single fields after merging
+		analysis.PlayedMove = ""
+		analysis.PlayedCubeAction = ""
+
+		// Sort checker moves by equity after merging
+		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
+				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
+			})
+			// Recalculate indices and equity errors
+			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
+			for i := range analysis.CheckerAnalysis.Moves {
+				analysis.CheckerAnalysis.Moves[i].Index = i
+				if i == 0 {
+					analysis.CheckerAnalysis.Moves[i].EquityError = nil
+				} else {
+					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
+					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
+				}
+			}
+		}
 
 		// Update the existing analysis
 		analysisJSON, err := json.Marshal(analysis)
@@ -4839,6 +5142,34 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		// Set creation date if not already set
 		if analysis.CreationDate.IsZero() {
 			analysis.CreationDate = time.Now()
+		}
+
+		// Convert single played move to array if needed
+		if analysis.PlayedMove != "" && len(analysis.PlayedMoves) == 0 {
+			analysis.PlayedMoves = []string{analysis.PlayedMove}
+			analysis.PlayedMove = ""
+		}
+		if analysis.PlayedCubeAction != "" && len(analysis.PlayedCubeActions) == 0 {
+			analysis.PlayedCubeActions = []string{analysis.PlayedCubeAction}
+			analysis.PlayedCubeAction = ""
+		}
+
+		// Sort checker moves by equity
+		if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+			sort.Slice(analysis.CheckerAnalysis.Moves, func(i, j int) bool {
+				return analysis.CheckerAnalysis.Moves[i].Equity > analysis.CheckerAnalysis.Moves[j].Equity
+			})
+			// Recalculate indices and equity errors
+			bestEquity := analysis.CheckerAnalysis.Moves[0].Equity
+			for i := range analysis.CheckerAnalysis.Moves {
+				analysis.CheckerAnalysis.Moves[i].Index = i
+				if i == 0 {
+					analysis.CheckerAnalysis.Moves[i].EquityError = nil
+				} else {
+					diff := bestEquity - analysis.CheckerAnalysis.Moves[i].Equity
+					analysis.CheckerAnalysis.Moves[i].EquityError = &diff
+				}
+			}
 		}
 
 		// Insert a new analysis
@@ -5734,7 +6065,9 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			m.move_type,
 			m.player,
 			m.position_id,
-			p.state as position_state
+			p.state as position_state,
+			COALESCE(m.checker_move, '') as checker_move,
+			COALESCE(m.cube_action, '') as cube_action
 		FROM move m
 		INNER JOIN game g ON m.game_id = g.id
 		INNER JOIN position p ON m.position_id = p.id
@@ -5750,9 +6083,9 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 	for rows.Next() {
 		var moveID, gameID, positionID int64
 		var gameNumber, moveNumber, player int32
-		var moveType, positionState string
+		var moveType, positionState, checkerMove, cubeAction string
 
-		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState)
+		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState, &checkerMove, &cubeAction)
 		if err != nil {
 			fmt.Printf("Error scanning move: %v\n", err)
 			continue
@@ -5779,6 +6112,8 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			PlayerOnRoll: int32(playerBlunderDB), // Now 0 or 1
 			Player1Name:  player1Name,
 			Player2Name:  player2Name,
+			CheckerMove:  checkerMove,
+			CubeAction:   cubeAction,
 		}
 
 		movePositions = append(movePositions, movePos)

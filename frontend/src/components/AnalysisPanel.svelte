@@ -162,19 +162,70 @@
     }
 
     function isPlayedMove(move) {
-        if (!analysisData.playedMove || !move.move) return false;
-        // Compare normalized versions to handle different move orderings
-        return normalizeMoveString(move.move) === normalizeMoveString(analysisData.playedMove);
+        if (!move.move) return false;
+        
+        const normalizedMoveStr = normalizeMoveString(move.move);
+        
+        // In MATCH mode, only highlight the current match's specific move
+        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+            // Use the single playedMove field which contains the current match's move
+            if (analysisData.playedMove) {
+                return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
+            }
+            return false;
+        }
+        
+        // In normal mode (browsing positions), highlight all played moves
+        // Check the playedMoves array first
+        if (analysisData.playedMoves && analysisData.playedMoves.length > 0) {
+            for (const playedMove of analysisData.playedMoves) {
+                if (normalizeMoveString(playedMove) === normalizedMoveStr) {
+                    return true;
+                }
+            }
+        }
+        
+        // Fallback to old single playedMove field for backward compatibility
+        if (analysisData.playedMove) {
+            return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
+        }
+        
+        return false;
     }
 
     function isPlayedCubeAction(action) {
-        if (!analysisData.playedCubeAction) return false;
+        // In MATCH mode, only highlight the current match's specific cube action
+        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+            if (analysisData.playedCubeAction) {
+                const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
+                const normalizedPlayed = analysisData.playedCubeAction.toLowerCase().replace(/\s+/g, '');
+                return normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction);
+            }
+            return false;
+        }
         
-        // Normalize the action for comparison
-        const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
-        const normalizedPlayed = analysisData.playedCubeAction.toLowerCase().replace(/\s+/g, '');
+        // In normal mode, highlight all played cube actions
+        // Check the playedCubeActions array first
+        if (analysisData.playedCubeActions && analysisData.playedCubeActions.length > 0) {
+            // Normalize the action for comparison
+            const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
+            
+            for (const playedAction of analysisData.playedCubeActions) {
+                const normalizedPlayed = playedAction.toLowerCase().replace(/\s+/g, '');
+                if (normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction)) {
+                    return true;
+                }
+            }
+        }
         
-        return normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction);
+        // Fallback to old single playedCubeAction field for backward compatibility
+        if (analysisData.playedCubeAction) {
+            const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
+            const normalizedPlayed = analysisData.playedCubeAction.toLowerCase().replace(/\s+/g, '');
+            return normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction);
+        }
+        
+        return false;
     }
 
     async function switchTab(tab) {
