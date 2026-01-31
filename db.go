@@ -3781,7 +3781,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 			}
 
 			// Also save to position analysis table (for UI compatibility)
-			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
+			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer, &move.CheckerMove.PlayedMove)
 			if err != nil {
 				fmt.Printf("Warning: failed to save position analysis: %v\n", err)
 			}
@@ -3896,7 +3896,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 				}
 			}
 
-			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
+			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer, &move.CheckerMove.PlayedMove)
 			if err != nil {
 				fmt.Printf("Warning: failed to save position analysis: %v\n", err)
 			}
@@ -4489,7 +4489,9 @@ func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 }
 
 // saveCheckerAnalysisToPositionInTx converts XG checker analysis to PositionAnalysis and saves it
-func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analyses []xgparser.CheckerAnalysis, initialPosition *xgparser.Position, activePlayer int32) error {
+// playedMove is optional - if provided, it will be used as the source of truth for the first analysis
+// (workaround for xgparser bug where analysis.Move may be incomplete for multi-submove bear-offs)
+func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analyses []xgparser.CheckerAnalysis, initialPosition *xgparser.Position, activePlayer int32, playedMove *[8]int32) error {
 	if len(analyses) == 0 {
 		return nil
 	}
@@ -4508,8 +4510,21 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 	for i, analysis := range analyses {
 		// Convert move from [8]int8 to [8]int32 for convertXGMoveToString
 		var move [8]int32
-		for j := 0; j < 8; j++ {
-			move[j] = int32(analysis.Move[j])
+
+		// For the first analysis (index 0), use playedMove if available
+		// This is a workaround for xgparser bug where analysis.Move may be incomplete
+		// for multi-submove moves (e.g., 4/off 3/off might only have 4/off in analysis)
+		if i == 0 && playedMove != nil {
+			move = *playedMove
+		} else {
+			for j := 0; j < 8; j++ {
+				move[j] = int32(analysis.Move[j])
+			}
+			// For other analyses, infer multipliers from position changes
+			// XG stores moves compactly - e.g., 1/off(4) is stored as just 1/off once
+			if initialPosition != nil {
+				move = inferMoveMultipliers(move, initialPosition, &analysis.Position, activePlayer)
+			}
 		}
 
 		// Use move string with hit detection if initial position is available
@@ -4800,6 +4815,127 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 	return nil
 }
 
+// inferMoveMultipliers analyzes a partial move array and the position difference
+// to infer the correct number of repetitions for each move.
+// XG sometimes stores only one instance of a move even when multiple checkers make the same move.
+// This function expands the move array to include all repetitions.
+// Returns the expanded move array with correct multipliers.
+func inferMoveMultipliers(partialMove [8]int32, initialPos, finalPos *xgparser.Position, activePlayer int32) [8]int32 {
+	if initialPos == nil || finalPos == nil {
+		return partialMove
+	}
+
+	// Parse the partial move to get unique from/to pairs, preserving order
+	type moveSpec struct {
+		from int32
+		to   int32
+	}
+	var uniqueMoves []moveSpec
+	for i := 0; i < 8; i += 2 {
+		from := partialMove[i]
+		to := partialMove[i+1]
+		if from == -1 {
+			break
+		}
+		// Handle implicit bear-off
+		if from >= 1 && from <= 6 && to <= 0 && to != -2 {
+			to = -2
+		}
+		// Check if this move is already in our list
+		found := false
+		for _, m := range uniqueMoves {
+			if m.from == from && m.to == to {
+				found = true
+				break
+			}
+		}
+		if !found {
+			uniqueMoves = append(uniqueMoves, moveSpec{from: from, to: to})
+		}
+	}
+
+	if len(uniqueMoves) == 0 {
+		return partialMove
+	}
+
+	// Calculate how many checkers left each source point
+	// netChange[point] = initialCheckers - finalCheckers (positive = net loss of checkers)
+	netChange := make(map[int32]int32)
+
+	for _, ms := range uniqueMoves {
+		if ms.from == 25 {
+			netChange[25] = int32(initialPos.Checkers[25]) - int32(finalPos.Checkers[25])
+		} else if ms.from >= 1 && ms.from <= 24 {
+			netChange[ms.from] = int32(initialPos.Checkers[ms.from]) - int32(finalPos.Checkers[ms.from])
+		}
+		// Track destination changes too
+		if ms.to >= 1 && ms.to <= 24 {
+			netChange[ms.to] = int32(initialPos.Checkers[ms.to]) - int32(finalPos.Checkers[ms.to])
+		}
+	}
+
+	// Build a flow model: how many checkers move from each source
+	// Track arriving checkers for intermediate points
+	arriving := make(map[int32]int32) // checkers arriving at each point
+
+	var expandedMove [8]int32
+	for i := range expandedMove {
+		expandedMove[i] = -1
+	}
+	moveIndex := 0
+
+	// Process moves in order
+	for _, ms := range uniqueMoves {
+		var count int32 = 1
+
+		if ms.to == -2 {
+			// Bear-off: count = net checkers that left this point + checkers arriving from other points
+			count = netChange[ms.from] + arriving[ms.from]
+		} else if ms.to >= 1 && ms.to <= 24 {
+			// Move to board point
+			// Count = how many checkers left the source AND didn't come back
+			// For most cases, this is simply the net change of the source
+			// But we need to also account for checker flow
+
+			// Net change at source tells us how many checkers total left
+			srcLoss := netChange[ms.from]
+
+			// If source also receives checkers (from another move), we need less moves
+			srcReceive := arriving[ms.from]
+
+			// The move count is the source loss minus any checkers that arrived
+			count = srcLoss - srcReceive
+			if count <= 0 {
+				count = 1
+			}
+
+			// After this move, these checkers arrive at the destination
+			arriving[ms.to] += count
+		}
+
+		// Cap at 4 (maximum for doubles) or remaining slots
+		maxMoves := int32(4)
+		remainingSlots := int32((8 - moveIndex) / 2)
+		if count > maxMoves {
+			count = maxMoves
+		}
+		if count > remainingSlots {
+			count = remainingSlots
+		}
+		if count < 1 {
+			count = 1
+		}
+
+		for j := int32(0); j < count && moveIndex < 8; j++ {
+			expandedMove[moveIndex] = ms.from
+			expandedMove[moveIndex+1] = ms.to
+			moveIndex += 2
+		}
+	}
+
+	return expandedMove
+}
+
 // translateAnalysisDepth converts XG analysis depth codes to human-readable strings
 // XG depth codes:
 //   - 0-9 = (N+1)-ply search depth (XG stores ply-1 internally)
@@ -4841,9 +4977,15 @@ func (d *Database) convertXGMoveToString(playedMove [8]int32, activePlayer int32
 	for i := 0; i < 8; i += 2 {
 		from := playedMove[i]
 		to := playedMove[i+1]
-		// Check for end of move marker (-1)
-		if from == -1 || to == -1 {
+		// Check for end of move marker (-1 when from is also -1)
+		if from == -1 {
 			break
+		}
+		// Handle implicit bear-off: XG sometimes encodes bear-off as to=-1 or to<=0
+		// when the calculated destination (from - die) would be <= 0
+		// This happens when bearing off from the home board (points 1-6)
+		if from >= 1 && from <= 6 && to <= 0 && to != -2 {
+			to = -2 // Convert to explicit bear-off
 		}
 		// Skip invalid point values (should be 1-24 for points, 25 for bar, -2 for bear off)
 		if (from != 25 && from != -2 && (from < 1 || from > 24)) ||
@@ -4936,9 +5078,15 @@ func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos
 	for i := 0; i < 8; i += 2 {
 		from := playedMove[i]
 		to := playedMove[i+1]
-		// Check for end of move marker (-1)
-		if from == -1 || to == -1 {
+		// Check for end of move marker (-1 when from is also -1)
+		if from == -1 {
 			break
+		}
+		// Handle implicit bear-off: XG sometimes encodes bear-off as to=-1 or to<=0
+		// when the calculated destination (from - die) would be <= 0
+		// This happens when bearing off from the home board (points 1-6)
+		if from >= 1 && from <= 6 && to <= 0 && to != -2 {
+			to = -2 // Convert to explicit bear-off
 		}
 		// Skip invalid point values (should be 1-24 for points, 25 for bar, -2 for bear off)
 		if (from != 25 && from != -2 && (from < 1 || from > 24)) ||
@@ -5115,7 +5263,22 @@ func (d *Database) mergeSlides(fromPts, toPts []int32) ([]int32, []int32) {
 		return fromPts, toPts
 	}
 
+	// Count how many times each destination point is used
+	// If multiple moves end at the same point, we should NOT merge through that point
+	// because it means different checkers are moving, not the same checker sliding
+	toCount := make(map[int32]int)
+	for _, t := range toPts {
+		toCount[t]++
+	}
+
+	// Also count how many times each point is a source
+	fromCount := make(map[int32]int)
+	for _, f := range fromPts {
+		fromCount[f]++
+	}
+
 	// Try to merge chains: if move[i].to == move[j].from, they can be merged
+	// BUT only if that intermediate point appears exactly once as a destination AND once as a source
 	resultFrom := make([]int32, 0, len(fromPts))
 	resultTo := make([]int32, 0, len(toPts))
 	used := make([]bool, len(fromPts))
@@ -5131,6 +5294,7 @@ func (d *Database) mergeSlides(fromPts, toPts []int32) ([]int32, []int32) {
 		used[i] = true
 
 		// Extend chain forward: find items where from == chainTo
+		// Only merge if the intermediate point is not used by multiple checkers
 		for changed := true; changed; {
 			changed = false
 			for j := 0; j < len(fromPts); j++ {
@@ -5138,6 +5302,13 @@ func (d *Database) mergeSlides(fromPts, toPts []int32) ([]int32, []int32) {
 					continue
 				}
 				if fromPts[j] == chainTo {
+					// Check if this is a valid merge (same checker moving)
+					// Don't merge if chainTo is a destination for multiple moves
+					// or if chainTo is a source for multiple moves
+					// This indicates different checkers
+					if toCount[chainTo] > 1 || fromCount[chainTo] > 1 {
+						continue // Don't merge - different checkers
+					}
 					chainTo = toPts[j]
 					used[j] = true
 					changed = true
