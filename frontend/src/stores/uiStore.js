@@ -53,6 +53,8 @@ export const showMatchPanelStore = writable(false); // Add store for match panel
 
 export const showPipcountStore = writable(true); // Add store for pip count visibility
 
+export const showExportDatabaseModalStore = writable(false); // Add store for export database modal visibility
+
 export const isAnyModalOrPanelOpenStore = derived(
   [
     showSearchModalStore,
@@ -143,7 +145,8 @@ export const isAnyModalOpenStore = derived(
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
     showHelpStore,
-    showCommandStore, 
+    showCommandStore,
+    showExportDatabaseModalStore,
   ],
   ([
     showSearchModal,
@@ -161,7 +164,8 @@ export const isAnyModalOpenStore = derived(
     showTakePoint2Modal,
     showTakePoint4Modal,
     showHelp, 
-    showCommand, 
+    showCommand,
+    showExportDatabaseModal,
   ]) => {
     return (
       showSearchModal ||
@@ -179,7 +183,8 @@ export const isAnyModalOpenStore = derived(
       showTakePoint2Modal ||
       showTakePoint4Modal ||
       showHelp || 
-      showCommand 
+      showCommand ||
+      showExportDatabaseModal
     );
   }
 );

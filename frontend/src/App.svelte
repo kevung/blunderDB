@@ -95,7 +95,8 @@
         previousModeStore, // Import previousModeStore
         showFilterLibraryPanelStore, // Import showFilterLibraryPanelStore
         showMatchPanelStore, // Import showMatchPanelStore
-        showPipcountStore
+        showPipcountStore,
+        showExportDatabaseModalStore // Import showExportDatabaseModalStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -161,7 +162,6 @@
         total: 0
     };
     let pendingImportPath = null;
-    let showExportDatabaseModal = false;
     let exportModalMode = 'preparing'; // 'preparing', 'metadata', 'exporting', 'completed'
     let exportPositionCount = 0;
     let exportMetadata = {
@@ -842,7 +842,7 @@
             // Show modal in metadata mode
             exportPositionCount = positions.length;
             exportModalMode = 'metadata';
-            showExportDatabaseModal = true;
+            showExportDatabaseModalStore.set(true);
             
         } catch (error) {
             console.error('Error during export preparation:', error);
@@ -891,7 +891,7 @@
             
         } catch (error) {
             console.error('Error committing export:', error);
-            showExportDatabaseModal = false;
+            showExportDatabaseModalStore.set(false);
             setStatusBarMessage(`Error committing export: ${error}`);
             await ShowAlert(`Error committing export: ${error}`);
             previousModeStore.set('NORMAL');
@@ -914,7 +914,7 @@
     function handleExportCancel() {
         console.log('Export cancelled by user');
         
-        showExportDatabaseModal = false;
+        showExportDatabaseModalStore.set(false);
         pendingExportPath = null;
         exportModalMode = 'preparing';
         exportMetadata = {
@@ -934,7 +934,7 @@
 
     function handleExportClose() {
         console.log('Export completed and closed');
-        showExportDatabaseModal = false;
+        showExportDatabaseModalStore.set(false);
         pendingExportPath = null;
         exportModalMode = 'preparing';
         exportMetadata = {
@@ -2876,7 +2876,7 @@ function togglePipcount() {
     />
 
     <ExportDatabaseModal
-        visible={showExportDatabaseModal}
+        visible={$showExportDatabaseModalStore}
         mode={exportModalMode}
         positionCount={exportPositionCount}
         bind:metadata={exportMetadata}
