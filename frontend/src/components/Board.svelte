@@ -346,10 +346,22 @@
     function drawMoveArrows(moveString, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth) {
         let moves = parseMoveNotation(moveString);
         const position = get(positionStore);
+        const matchCtx = get(matchContextStore);
+        
+        // Determine if the actual player on roll was Player 2
+        // In match mode, use MatchMovePosition.player_on_roll
+        // In normal mode, use position.player_on_roll (but normalized positions have player_on_roll = 0)
+        let actualPlayerOnRoll = position.player_on_roll;
+        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos) {
+                actualPlayerOnRoll = currentMovePos.player_on_roll;
+            }
+        }
         
         // When Player 2 is on roll, the move notation is from Player 2's perspective
         // but the board displays from Player 1's perspective, so we need to transform the points
-        if (position.player_on_roll === 1) {
+        if (actualPlayerOnRoll === 1) {
             moves = moves.map(move => ({
                 ...move,
                 from: move.from === 0 ? 25 : (move.from === 25 ? 0 : (move.from === -1 ? -1 : 25 - move.from)),
@@ -866,11 +878,39 @@
     });
 
     // Helper function to get the position to display
-    // In match mode, positions are already stored from Player 1's perspective
-    // (Player 1 at bottom with black checkers, Player 2 at top with white checkers)
-    // No mirroring needed - just return the position as-is
+    // 
+    // STORAGE: All positions are stored normalized with player_on_roll = 0
+    //          (player on roll is always the bottom player in stored positions)
+    //
+    // NORMAL MODE: Player on roll should always be at the bottom.
+    //   - Stored positions already have player_on_roll = 0, so they display correctly.
+    //   - If editing and player_on_roll = 1, mirror for display so player on roll is at bottom.
+    //
+    // MATCH MODE: Player 1 is always at the bottom, Player 2 at top.
+    //   - Positions are stored normalized (player_on_roll = 0)
+    //   - MatchMovePosition.player_on_roll tells us who was actually on roll in the match
+    //   - If Player 2 was on roll (player_on_roll = 1), we need to mirror the stored position
+    //     so that Player 1 appears at bottom and Player 2 (who was actually on roll) appears at top
     function getDisplayPosition() {
         const position = get(positionStore);
+        const matchCtx = get(matchContextStore);
+        
+        // In match mode, check who was actually on roll
+        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos && currentMovePos.player_on_roll === 1) {
+                // Player 2 was on roll - mirror the position so Player 1 stays at bottom
+                // but the dice show on Player 2's side (top)
+                return mirrorPosition(position);
+            }
+            return position;
+        }
+        
+        // In normal mode, if player_on_roll is 1, mirror so player on roll is at bottom
+        if (position.player_on_roll === 1) {
+            return mirrorPosition(position);
+        }
+        
         return position;
     }
 
@@ -982,8 +1022,21 @@
 
         function createLabels() {
             let labels = two.makeGroup();
-            // Use the already-calculated display position
-            const flip = position.player_on_roll === 1;
+            // In normal mode: labels from player on roll's perspective (always at bottom)
+            // In match mode: labels from Player 1's perspective (Player 1 always at bottom)
+            // Since positions are normalized (player_on_roll = 0) and in match mode we mirror
+            // when Player 2 is on roll, we need to check match context for flip
+            
+            const matchCtx = get(matchContextStore);
+            let flip = false;
+            
+            if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+                // In match mode: never flip labels (Player 1's perspective always)
+                flip = false;
+            } else {
+                // In normal mode: flip if player_on_roll is 1 (for edited positions before save)
+                flip = position.player_on_roll === 1;
+            }
 
             if (boardCfg.orientation === "right") {
                 for (let i = 0; i < 6; i++) {

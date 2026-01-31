@@ -573,7 +573,10 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	positionJSON, err := json.Marshal(position)
+	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
+	normalizedPosition := position.NormalizeForStorage()
+
+	positionJSON, err := json.Marshal(normalizedPosition)
 	if err != nil {
 		fmt.Println("Error marshalling position:", err)
 		return 0, err
@@ -591,10 +594,10 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 		return 0, err
 	}
 
-	position.ID = positionID // Update the position ID
+	normalizedPosition.ID = positionID // Update the position ID
 
 	// Update the state with the new ID
-	positionJSON, err = json.Marshal(position)
+	positionJSON, err = json.Marshal(normalizedPosition)
 	if err != nil {
 		fmt.Println("Error marshalling position with ID:", err)
 		return 0, err
@@ -605,6 +608,9 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 		fmt.Println("Error updating position with ID:", err)
 		return 0, err
 	}
+
+	// Update the original position with the saved ID and normalized state
+	*position = normalizedPosition
 
 	return positionID, nil
 }
@@ -2260,6 +2266,17 @@ func (p *Position) Mirror() Position {
 	return mirrored
 }
 
+// NormalizeForStorage returns a normalized version of the position for storage.
+// Positions are always stored from the player on roll's perspective (player_on_roll = 0).
+// If player_on_roll is 1, the position is mirrored so that player_on_roll becomes 0.
+// This prevents storing duplicate positions that are just mirror images of each other.
+func (p *Position) NormalizeForStorage() Position {
+	if p.PlayerOnRoll == 1 {
+		return p.Mirror()
+	}
+	return *p
+}
+
 // SaveCommand saves a command to the command_history table
 func (d *Database) SaveCommand(command string) error {
 	d.mu.Lock()
@@ -3639,9 +3656,10 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 			continue
 		}
 
-		// Normalize for comparison
-		existingPosition.ID = 0
-		normalizedJSON, _ := json.Marshal(existingPosition)
+		// Normalize for comparison (positions are now stored normalized, but older ones might not be)
+		normalizedPosition := existingPosition.NormalizeForStorage()
+		normalizedPosition.ID = 0
+		normalizedJSON, _ := json.Marshal(normalizedPosition)
 		positionCache[string(normalizedJSON)] = existingID
 	}
 	existingRows.Close()
@@ -4348,12 +4366,13 @@ func convertXGPlayerToBlunderDB(xgPlayer int32) int {
 }
 
 // savePositionInTxWithCache saves a position within a transaction using a cache for deduplication
+// Positions are normalized before storage (player_on_roll = 0) to prevent storing duplicates.
 func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, positionCache map[string]int64) (int64, error) {
-	// Normalize position for comparison (exclude ID)
-	positionCopy := *position
-	positionCopy.ID = 0
+	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
+	normalizedPosition := position.NormalizeForStorage()
+	normalizedPosition.ID = 0 // Exclude ID for comparison
 
-	positionJSON, err := json.Marshal(positionCopy)
+	positionJSON, err := json.Marshal(normalizedPosition)
 	if err != nil {
 		return 0, err
 	}
@@ -4375,8 +4394,8 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, pos
 	}
 
 	// Update position with ID
-	position.ID = positionID
-	positionJSONWithID, _ := json.Marshal(position)
+	normalizedPosition.ID = positionID
+	positionJSONWithID, _ := json.Marshal(normalizedPosition)
 	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
 	if err != nil {
 		return 0, err
@@ -4389,12 +4408,13 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, pos
 }
 
 // savePositionInTx saves a position within a transaction, checking for duplicates first
+// Positions are normalized before storage (player_on_roll = 0) to prevent storing duplicates.
 func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, error) {
-	// First check if this position already exists
-	positionCopy := *position
-	positionCopy.ID = 0
+	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
+	normalizedPosition := position.NormalizeForStorage()
+	normalizedPosition.ID = 0 // Exclude ID for comparison
 
-	positionJSON, err := json.Marshal(positionCopy)
+	positionJSON, err := json.Marshal(normalizedPosition)
 	if err != nil {
 		return 0, err
 	}
@@ -4443,8 +4463,8 @@ func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, erro
 	}
 
 	// Update position with ID
-	position.ID = positionID
-	positionJSON, _ = json.Marshal(position)
+	normalizedPosition.ID = positionID
+	positionJSON, _ = json.Marshal(normalizedPosition)
 	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
 
 	return positionID, err
@@ -5746,6 +5766,9 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			continue
 		}
 
+		// Convert player from XG encoding (-1, 1) to blunderDB encoding (0, 1)
+		playerBlunderDB := convertXGPlayerToBlunderDB(player)
+
 		movePos := MatchMovePosition{
 			Position:     position,
 			MoveID:       moveID,
@@ -5753,7 +5776,7 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			GameNumber:   gameNumber,
 			MoveNumber:   moveNumber,
 			MoveType:     moveType,
-			PlayerOnRoll: player,
+			PlayerOnRoll: int32(playerBlunderDB), // Now 0 or 1
 			Player1Name:  player1Name,
 			Player2Name:  player2Name,
 		}
