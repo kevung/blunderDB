@@ -4072,7 +4072,7 @@ func (d *Database) convertRawCubeAction(double, take int32) string {
 	// XG cube action encoding:
 	// Double=0, Take=-1: No Double
 	// Double=1, Take=1: Double, Take
-	// Double=1, Take=-1: Double (followed by Pass in next game end)
+	// Double=1, Take=-1: Double/Pass (opponent passed the double)
 	// Double=-2: Initial position (should be filtered before)
 
 	if double == 0 {
@@ -4081,7 +4081,7 @@ func (d *Database) convertRawCubeAction(double, take int32) string {
 		if take == 1 {
 			return "Double/Take"
 		} else {
-			return "Double"
+			return "Double/Pass"
 		}
 	}
 	return fmt.Sprintf("Unknown(D=%d,T=%d)", double, take)
