@@ -719,6 +719,11 @@ func (cli *CLI) runCreate(args []string) error {
 		return fmt.Errorf("missing required flag: --db")
 	}
 
+	// Ensure .db extension is present
+	if !strings.HasSuffix(strings.ToLower(*dbPath), ".db") {
+		*dbPath += ".db"
+	}
+
 	// Check if database already exists
 	if _, err := os.Stat(*dbPath); err == nil && !*force {
 		return fmt.Errorf("database already exists: %s (use --force to overwrite)", *dbPath)

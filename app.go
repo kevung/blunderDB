@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"os"
+	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 	// "fmt"
@@ -19,11 +20,19 @@ func NewApp() *App {
 }
 
 func (a *App) SaveDatabaseDialog() (string, error) {
-	return runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+	filePath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		Title:                "New Database File",
 		Filters:              []runtime.FileFilter{{DisplayName: "Database Files (*.db)", Pattern: "*.db"}},
 		CanCreateDirectories: true,
 	})
+	if err != nil || filePath == "" {
+		return filePath, err
+	}
+	// Ensure .db extension is present
+	if !strings.HasSuffix(strings.ToLower(filePath), ".db") {
+		filePath += ".db"
+	}
+	return filePath, nil
 }
 
 func (a *App) OpenDatabaseDialog() (string, error) {
@@ -41,11 +50,19 @@ func (a *App) OpenImportDatabaseDialog() (string, error) {
 }
 
 func (a *App) OpenExportDatabaseDialog() (string, error) {
-	return runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+	filePath, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
 		Title:                "Export Database File",
 		Filters:              []runtime.FileFilter{{DisplayName: "Database Files (*.db)", Pattern: "*.db"}},
 		CanCreateDirectories: true,
 	})
+	if err != nil || filePath == "" {
+		return filePath, err
+	}
+	// Ensure .db extension is present
+	if !strings.HasSuffix(strings.ToLower(filePath), ".db") {
+		filePath += ".db"
+	}
+	return filePath, nil
 }
 
 func (a *App) DeleteFile(filePath string) error {
