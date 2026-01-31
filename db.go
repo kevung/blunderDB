@@ -4511,20 +4511,13 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 		// Convert move from [8]int8 to [8]int32 for convertXGMoveToString
 		var move [8]int32
 
-		// For the first analysis (index 0), use playedMove if available
-		// This is a workaround for xgparser bug where analysis.Move may be incomplete
-		// for multi-submove moves (e.g., 4/off 3/off might only have 4/off in analysis)
-		if i == 0 && playedMove != nil {
-			move = *playedMove
-		} else {
-			for j := 0; j < 8; j++ {
-				move[j] = int32(analysis.Move[j])
-			}
-			// For other analyses, infer multipliers from position changes
-			// XG stores moves compactly - e.g., 1/off(4) is stored as just 1/off once
-			if initialPosition != nil {
-				move = inferMoveMultipliers(move, initialPosition, &analysis.Position, activePlayer)
-			}
+		for j := 0; j < 8; j++ {
+			move[j] = int32(analysis.Move[j])
+		}
+		// Infer multipliers from position changes
+		// XG stores moves compactly - e.g., 1/off(4) is stored as just 1/off once
+		if initialPosition != nil {
+			move = inferMoveMultipliers(move, initialPosition, &analysis.Position, activePlayer)
 		}
 
 		// Use move string with hit detection if initial position is available
@@ -4825,12 +4818,15 @@ func inferMoveMultipliers(partialMove [8]int32, initialPos, finalPos *xgparser.P
 		return partialMove
 	}
 
-	// Parse the partial move to get unique from/to pairs, preserving order
+	// First, count how many moves are explicitly in the input
+	// and count occurrences of each unique (from,to) pair
 	type moveSpec struct {
 		from int32
 		to   int32
 	}
-	var uniqueMoves []moveSpec
+	moveCount := make(map[moveSpec]int32)
+	totalInputMoves := 0
+
 	for i := 0; i < 8; i += 2 {
 		from := partialMove[i]
 		to := partialMove[i+1]
@@ -4841,20 +4837,62 @@ func inferMoveMultipliers(partialMove [8]int32, initialPos, finalPos *xgparser.P
 		if from >= 1 && from <= 6 && to <= 0 && to != -2 {
 			to = -2
 		}
-		// Check if this move is already in our list
-		found := false
-		for _, m := range uniqueMoves {
-			if m.from == from && m.to == to {
-				found = true
+		moveCount[moveSpec{from, to}]++
+		totalInputMoves++
+	}
+
+	if totalInputMoves == 0 {
+		return partialMove
+	}
+
+	// If we already have multiple moves in input (not a compact representation),
+	// just return the input as-is - no inference needed
+	// XG uses compact representation only for doublets where same move repeats
+	if totalInputMoves > 1 {
+		// Check if all moves are the same (compact doublet notation)
+		allSame := true
+		var firstMove moveSpec
+		first := true
+		for ms := range moveCount {
+			if first {
+				firstMove = ms
+				first = false
+			} else if ms != firstMove {
+				allSame = false
 				break
 			}
 		}
-		if !found {
-			uniqueMoves = append(uniqueMoves, moveSpec{from: from, to: to})
+		// If moves are different, no inference needed - return as-is
+		if !allSame {
+			return partialMove
 		}
 	}
 
-	if len(uniqueMoves) == 0 {
+	// At this point, either:
+	// 1. We have a single move that might need expansion (e.g., [8,3,-1,-1,-1,-1,-1,-1] for 8/3(4))
+	// 2. We have multiple identical moves (already explicit, no expansion needed)
+
+	// Get the unique moves preserving order
+	var uniqueMoves []moveSpec
+	seen := make(map[moveSpec]bool)
+	for i := 0; i < 8; i += 2 {
+		from := partialMove[i]
+		to := partialMove[i+1]
+		if from == -1 {
+			break
+		}
+		if from >= 1 && from <= 6 && to <= 0 && to != -2 {
+			to = -2
+		}
+		ms := moveSpec{from, to}
+		if !seen[ms] {
+			seen[ms] = true
+			uniqueMoves = append(uniqueMoves, ms)
+		}
+	}
+
+	// If we have multiple identical moves in input, they're already explicit
+	if len(uniqueMoves) == 1 && moveCount[uniqueMoves[0]] > 1 {
 		return partialMove
 	}
 
