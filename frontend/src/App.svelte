@@ -172,7 +172,8 @@
     let exportOptions = {
         includeAnalysis: true,
         includeComments: true,
-        includeFilterLibrary: false
+        includeFilterLibrary: false,
+        includePlayedMoves: true
     };
     let pendingExportPath = null;
     let warningMessage = '';
@@ -879,7 +880,8 @@
                 metadata,
                 exportOptions.includeAnalysis,
                 exportOptions.includeComments,
-                exportOptions.includeFilterLibrary
+                exportOptions.includeFilterLibrary,
+                exportOptions.includePlayedMoves
             );
             
             console.log('Export completed successfully');
@@ -906,7 +908,8 @@
             exportOptions = {
                 includeAnalysis: true,
                 includeComments: true,
-                includeFilterLibrary: false
+                includeFilterLibrary: false,
+                includePlayedMoves: true
             };
         }
     }
@@ -925,7 +928,8 @@
         exportOptions = {
             includeAnalysis: true,
             includeComments: true,
-            includeFilterLibrary: false
+            includeFilterLibrary: false,
+            includePlayedMoves: true
         };
         setStatusBarMessage('Export cancelled');
         previousModeStore.set('NORMAL');
@@ -945,7 +949,8 @@
         exportOptions = {
             includeAnalysis: true,
             includeComments: true,
-            includeFilterLibrary: false
+            includeFilterLibrary: false,
+            includePlayedMoves: true
         };
         previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');

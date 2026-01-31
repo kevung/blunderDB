@@ -15,7 +15,8 @@
     export let exportOptions = {
         includeAnalysis: true,
         includeComments: true,
-        includeFilterLibrary: false
+        includeFilterLibrary: false,
+        includePlayedMoves: true
     };
 
     // Get current date in YYYY-MM-DD format
@@ -38,6 +39,7 @@
         if (exportOptions.includeAnalysis) parts.push('analysis');
         if (exportOptions.includeComments) parts.push('comments');
         if (exportOptions.includeFilterLibrary) parts.push('filter library');
+        if (exportOptions.includePlayedMoves) parts.push('played moves');
         
         if (parts.length === 0) {
             return 'positions only';
@@ -155,10 +157,20 @@
         accent-color: #333;
     }
 
+    .checkbox-item input[type="checkbox"]:disabled {
+        cursor: not-allowed;
+        opacity: 0.5;
+    }
+
     .checkbox-item label {
         margin: 0;
         cursor: pointer;
         font-weight: normal;
+    }
+
+    .checkbox-item input[type="checkbox"]:disabled + label {
+        cursor: not-allowed;
+        opacity: 0.5;
     }
 
     .spinner {
@@ -306,6 +318,15 @@
                             bind:checked={exportOptions.includeFilterLibrary}
                         />
                         <label for="export-filter-library">Include filter library</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input 
+                            type="checkbox" 
+                            id="export-played-moves" 
+                            bind:checked={exportOptions.includePlayedMoves}
+                            disabled={!exportOptions.includeAnalysis}
+                        />
+                        <label for="export-played-moves">Include played moves</label>
                     </div>
                 </div>
 

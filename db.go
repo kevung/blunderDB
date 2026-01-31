@@ -3424,7 +3424,7 @@ func (d *Database) ImportDatabase(importPath string) (map[string]interface{}, er
 
 // ExportDatabase creates a new database file containing the current selection of positions
 // with their analysis and comments
-func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool) error {
+func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool, includePlayedMoves bool) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -3709,6 +3709,78 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				var analysis PositionAnalysis
 				if unmarshalErr := json.Unmarshal([]byte(analysisJSON), &analysis); unmarshalErr == nil {
 					analysis.PositionID = int(newPositionID)
+
+					// Handle played moves
+					if includePlayedMoves {
+						// Load played moves from the move table and merge with existing
+						moveRows, moveErr := d.db.Query(`
+							SELECT checker_move, cube_action 
+							FROM move 
+							WHERE position_id = ?
+						`, oldPositionID)
+
+						if moveErr == nil {
+							defer moveRows.Close()
+
+							// Collect all moves from the database
+							existingMoves := make(map[string]bool)
+							existingCubeActions := make(map[string]bool)
+
+							// Include existing PlayedMoves from analysis JSON
+							for _, m := range analysis.PlayedMoves {
+								if m != "" {
+									existingMoves[normalizeMove(m)] = true
+								}
+							}
+							if analysis.PlayedMove != "" {
+								existingMoves[normalizeMove(analysis.PlayedMove)] = true
+							}
+
+							// Include existing PlayedCubeActions from analysis JSON
+							for _, a := range analysis.PlayedCubeActions {
+								if a != "" {
+									existingCubeActions[a] = true
+								}
+							}
+							if analysis.PlayedCubeAction != "" {
+								existingCubeActions[analysis.PlayedCubeAction] = true
+							}
+
+							// Add moves from move table
+							for moveRows.Next() {
+								var checkerMove sql.NullString
+								var cubeAction sql.NullString
+								if scanErr := moveRows.Scan(&checkerMove, &cubeAction); scanErr == nil {
+									if checkerMove.Valid && checkerMove.String != "" {
+										existingMoves[normalizeMove(checkerMove.String)] = true
+									}
+									if cubeAction.Valid && cubeAction.String != "" {
+										existingCubeActions[cubeAction.String] = true
+									}
+								}
+							}
+
+							// Convert to slices
+							analysis.PlayedMoves = make([]string, 0, len(existingMoves))
+							for m := range existingMoves {
+								analysis.PlayedMoves = append(analysis.PlayedMoves, m)
+							}
+							sort.Strings(analysis.PlayedMoves)
+
+							analysis.PlayedCubeActions = make([]string, 0, len(existingCubeActions))
+							for a := range existingCubeActions {
+								analysis.PlayedCubeActions = append(analysis.PlayedCubeActions, a)
+							}
+							sort.Strings(analysis.PlayedCubeActions)
+						}
+					} else {
+						// Clear played move fields if includePlayedMoves is false
+						analysis.PlayedMove = ""
+						analysis.PlayedCubeAction = ""
+						analysis.PlayedMoves = nil
+						analysis.PlayedCubeActions = nil
+					}
+
 					updatedAnalysisJSON, _ := json.Marshal(analysis)
 
 					if _, insertErr := tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON)); insertErr != nil {

@@ -481,8 +481,8 @@ func (cli *CLI) exportDatabase(outputFile string) error {
 		metadata["database_version"] = version
 	}
 
-	// Export with all data
-	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, true)
+	// Export with all data (including played moves)
+	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, true, true)
 	if err != nil {
 		return fmt.Errorf("failed to export database: %v", err)
 	}

@@ -28,7 +28,7 @@ export function DeletePosition(arg1:number):Promise<void>;
 
 export function DeleteSearchHistoryEntry(arg1:number):Promise<void>;
 
-export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:boolean):Promise<void>;
+export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:boolean,arg7:boolean):Promise<void>;
 
 export function GetAllMatches():Promise<Array<main.Match>>;
 
