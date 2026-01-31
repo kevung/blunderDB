@@ -8,7 +8,10 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"sort"
 	"strings"
+	"text/tabwriter"
+	"time"
 )
 
 // CLI represents the command-line interface
@@ -51,6 +54,12 @@ func (cli *CLI) Run(args []string) error {
 		return cli.runMatch(commandArgs)
 	case "verify":
 		return cli.runVerify(commandArgs)
+	case "info":
+		return cli.runInfo(commandArgs)
+	case "edit":
+		return cli.runEdit(commandArgs)
+	case "search":
+		return cli.runSearch(commandArgs)
 	case "help":
 		cli.printUsage()
 		return nil
@@ -72,11 +81,14 @@ func (cli *CLI) printUsage() {
 	fmt.Println("  blunderdb <command> [options]")
 	fmt.Println()
 	fmt.Println("Commands:")
-	fmt.Println("  create    Create a new database")
-	fmt.Println("  import    Import data into the database")
+	fmt.Println("  create    Create a new database with optional metadata")
+	fmt.Println("  import    Import data into the database (match, position, batch)")
 	fmt.Println("  export    Export data from the database")
 	fmt.Println("  list      List database contents")
+	fmt.Println("  search    Search positions with filters")
 	fmt.Println("  match     Display match positions and analysis")
+	fmt.Println("  info      Display database metadata")
+	fmt.Println("  edit      Edit database metadata")
 	fmt.Println("  verify    Verify database integrity")
 	fmt.Println("  delete    Delete data from the database")
 	fmt.Println("  help      Show this help message")
@@ -96,8 +108,10 @@ func (cli *CLI) runImport(args []string) error {
 
 	// Define flags
 	dbPath := importCmd.String("db", "", "Path to the database file (required)")
-	importType := importCmd.String("type", "", "Import type: match, position (required)")
-	inputFile := importCmd.String("file", "", "Path to the file to import (required)")
+	importType := importCmd.String("type", "", "Import type: match, position, batch (required)")
+	inputFile := importCmd.String("file", "", "Path to the file to import (for match/position)")
+	inputDir := importCmd.String("dir", "", "Path to directory for batch import (for batch)")
+	recursive := importCmd.Bool("recursive", true, "Recursively scan subdirectories for batch import")
 
 	importCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb import [options]")
@@ -107,12 +121,23 @@ func (cli *CLI) runImport(args []string) error {
 		fmt.Println("Options:")
 		importCmd.PrintDefaults()
 		fmt.Println()
+		fmt.Println("Import Types:")
+		fmt.Println("  match     Import a single XG match file (.xg)")
+		fmt.Println("  position  Import positions from a text file")
+		fmt.Println("  batch     Batch import all .xg files from a directory")
+		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  # Import XG match file")
 		fmt.Println("  blunderdb import --db database.db --type match --file match.xg")
 		fmt.Println()
 		fmt.Println("  # Import position file")
 		fmt.Println("  blunderdb import --db database.db --type position --file positions.txt")
+		fmt.Println()
+		fmt.Println("  # Batch import all .xg files from a directory (recursive)")
+		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/")
+		fmt.Println()
+		fmt.Println("  # Batch import (non-recursive)")
+		fmt.Println("  blunderdb import --db database.db --type batch --dir ./matches/ --recursive=false")
 	}
 
 	if err := importCmd.Parse(args); err != nil {
@@ -132,17 +157,6 @@ func (cli *CLI) runImport(args []string) error {
 		return fmt.Errorf("missing required flag: --type")
 	}
 
-	if *inputFile == "" {
-		fmt.Println("Error: --file flag is required")
-		importCmd.Usage()
-		return fmt.Errorf("missing required flag: --file")
-	}
-
-	// Verify input file exists
-	if _, err := os.Stat(*inputFile); os.IsNotExist(err) {
-		return fmt.Errorf("input file does not exist: %s", *inputFile)
-	}
-
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
@@ -151,11 +165,40 @@ func (cli *CLI) runImport(args []string) error {
 	// Perform import based on type
 	switch strings.ToLower(*importType) {
 	case "match":
+		if *inputFile == "" {
+			fmt.Println("Error: --file flag is required for match import")
+			importCmd.Usage()
+			return fmt.Errorf("missing required flag: --file")
+		}
+		// Verify input file exists
+		if _, err := os.Stat(*inputFile); os.IsNotExist(err) {
+			return fmt.Errorf("input file does not exist: %s", *inputFile)
+		}
 		return cli.importMatch(*inputFile)
 	case "position":
+		if *inputFile == "" {
+			fmt.Println("Error: --file flag is required for position import")
+			importCmd.Usage()
+			return fmt.Errorf("missing required flag: --file")
+		}
+		// Verify input file exists
+		if _, err := os.Stat(*inputFile); os.IsNotExist(err) {
+			return fmt.Errorf("input file does not exist: %s", *inputFile)
+		}
 		return cli.importPosition(*inputFile)
+	case "batch":
+		if *inputDir == "" {
+			fmt.Println("Error: --dir flag is required for batch import")
+			importCmd.Usage()
+			return fmt.Errorf("missing required flag: --dir")
+		}
+		// Verify directory exists
+		if info, err := os.Stat(*inputDir); os.IsNotExist(err) || !info.IsDir() {
+			return fmt.Errorf("directory does not exist or is not a directory: %s", *inputDir)
+		}
+		return cli.importBatch(*inputDir, *recursive)
 	default:
-		return fmt.Errorf("unknown import type: %s (must be 'match' or 'position')", *importType)
+		return fmt.Errorf("unknown import type: %s (must be 'match', 'position', or 'batch')", *importType)
 	}
 }
 
@@ -691,11 +734,13 @@ func (cli *CLI) runCreate(args []string) error {
 	// Define flags
 	dbPath := createCmd.String("db", "", "Path to the database file to create (required)")
 	force := createCmd.Bool("force", false, "Overwrite existing database if it exists")
+	user := createCmd.String("user", "", "User name (owner of the database)")
+	description := createCmd.String("description", "", "Description of the database")
 
 	createCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb create [options]")
 		fmt.Println()
-		fmt.Println("Create a new database with the required schema.")
+		fmt.Println("Create a new database with the required schema and optional metadata.")
 		fmt.Println()
 		fmt.Println("Options:")
 		createCmd.PrintDefaults()
@@ -703,6 +748,9 @@ func (cli *CLI) runCreate(args []string) error {
 		fmt.Println("Examples:")
 		fmt.Println("  # Create a new database")
 		fmt.Println("  blunderdb create --db mydb.db")
+		fmt.Println()
+		fmt.Println("  # Create with metadata")
+		fmt.Println("  blunderdb create --db mydb.db --user \"John Doe\" --description \"My backgammon positions\"")
 		fmt.Println()
 		fmt.Println("  # Force overwrite an existing database")
 		fmt.Println("  blunderdb create --db mydb.db --force")
@@ -742,19 +790,35 @@ func (cli *CLI) runCreate(args []string) error {
 		return fmt.Errorf("failed to create database: %v", err)
 	}
 
+	// Save metadata if provided
+	metadata := make(map[string]string)
+	if *user != "" {
+		metadata["user"] = *user
+	}
+	if *description != "" {
+		metadata["description"] = *description
+	}
+	metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
+
+	if len(metadata) > 0 {
+		err = cli.db.SaveMetadata(metadata)
+		if err != nil {
+			return fmt.Errorf("failed to save metadata: %v", err)
+		}
+	}
+
 	fmt.Printf("Successfully created database with schema version %s\n", DatabaseVersion)
 
 	// Show database info
-	stats, err := cli.db.GetDatabaseStats()
-	if err == nil {
-		fmt.Println("\nDatabase initialized with:")
-		if posCount, ok := stats["position_count"].(int64); ok {
-			fmt.Printf("  Positions: %d\n", posCount)
-		}
-		if matchCount, ok := stats["match_count"].(int64); ok {
-			fmt.Printf("  Matches: %d\n", matchCount)
-		}
+	fmt.Println("\nDatabase Information:")
+	fmt.Printf("  Version: %s\n", DatabaseVersion)
+	if *user != "" {
+		fmt.Printf("  User: %s\n", *user)
 	}
+	if *description != "" {
+		fmt.Printf("  Description: %s\n", *description)
+	}
+	fmt.Printf("  Created: %s\n", metadata["dateOfCreation"])
 
 	return nil
 }
@@ -1084,4 +1148,739 @@ func (cli *CLI) verifyMatch(matchID int64, matFile string) error {
 
 	fmt.Println()
 	return nil
+}
+
+// BatchImportResult represents the result of a single file import
+type BatchImportResult struct {
+	FilePath  string
+	Success   bool
+	MatchID   int64
+	Error     string
+	Player1   string
+	Player2   string
+	Games     int
+	Positions int
+}
+
+// importBatch imports all .xg files from a directory
+func (cli *CLI) importBatch(dirPath string, recursive bool) error {
+	fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
+
+	// Find all .xg files
+	var xgFiles []string
+
+	walkFunc := func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+
+		// Skip directories if not recursive (but always process root)
+		if info.IsDir() {
+			if !recursive && path != dirPath {
+				return filepath.SkipDir
+			}
+			return nil
+		}
+
+		// Check for .xg extension
+		if strings.ToLower(filepath.Ext(path)) == ".xg" {
+			xgFiles = append(xgFiles, path)
+		}
+
+		return nil
+	}
+
+	err := filepath.Walk(dirPath, walkFunc)
+	if err != nil {
+		return fmt.Errorf("failed to scan directory: %v", err)
+	}
+
+	if len(xgFiles) == 0 {
+		fmt.Println("No .xg files found in directory")
+		return nil
+	}
+
+	fmt.Printf("Found %d .xg file(s) to import\n\n", len(xgFiles))
+
+	// Import each file and collect results
+	var results []BatchImportResult
+	successCount := 0
+	failCount := 0
+	duplicateCount := 0
+	totalPositions := 0
+
+	for i, filePath := range xgFiles {
+		relPath, _ := filepath.Rel(dirPath, filePath)
+		fmt.Printf("[%d/%d] Importing: %s...", i+1, len(xgFiles), relPath)
+
+		result := BatchImportResult{
+			FilePath: relPath,
+		}
+
+		matchID, err := cli.db.ImportXGMatch(filePath)
+		if err != nil {
+			if errors.Is(err, ErrDuplicateMatch) {
+				fmt.Println(" DUPLICATE")
+				result.Error = "duplicate"
+				duplicateCount++
+			} else {
+				fmt.Printf(" ERROR: %v\n", err)
+				result.Error = err.Error()
+				failCount++
+			}
+		} else {
+			result.Success = true
+			result.MatchID = matchID
+			successCount++
+
+			// Get match details
+			match, err := cli.db.GetMatchByID(matchID)
+			if err == nil && match != nil {
+				result.Player1 = match.Player1Name
+				result.Player2 = match.Player2Name
+				result.Games = match.GameCount
+			}
+
+			// Get position count
+			positions, err := cli.db.GetMatchMovePositions(matchID)
+			if err == nil {
+				result.Positions = len(positions)
+				totalPositions += len(positions)
+			}
+
+			fmt.Printf(" OK (ID: %d, %d positions)\n", matchID, result.Positions)
+		}
+
+		results = append(results, result)
+	}
+
+	// Print summary table
+	fmt.Println("\n" + strings.Repeat("=", 100))
+	fmt.Println("IMPORT SUMMARY")
+	fmt.Println(strings.Repeat("=", 100))
+
+	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+	fmt.Fprintln(w, "Status\tFile\tID\tPlayer 1\tPlayer 2\tGames\tPositions\tError")
+	fmt.Fprintln(w, "------\t----\t--\t--------\t--------\t-----\t---------\t-----")
+
+	for _, r := range results {
+		status := "✗"
+		if r.Success {
+			status = "✓"
+		} else if r.Error == "duplicate" {
+			status = "⊘"
+		}
+
+		idStr := ""
+		if r.MatchID > 0 {
+			idStr = fmt.Sprintf("%d", r.MatchID)
+		}
+
+		errorStr := ""
+		if !r.Success && r.Error != "duplicate" {
+			errorStr = r.Error
+			if len(errorStr) > 30 {
+				errorStr = errorStr[:30] + "..."
+			}
+		}
+
+		fmt.Fprintf(w, "%s\t%s\t%s\t%s\t%s\t%d\t%d\t%s\n",
+			status, r.FilePath, idStr, r.Player1, r.Player2, r.Games, r.Positions, errorStr)
+	}
+	w.Flush()
+
+	fmt.Println(strings.Repeat("-", 100))
+	fmt.Printf("Total: %d files | Success: %d | Duplicates: %d | Failed: %d | Positions imported: %d\n",
+		len(xgFiles), successCount, duplicateCount, failCount, totalPositions)
+
+	return nil
+}
+
+// runInfo handles the info command
+func (cli *CLI) runInfo(args []string) error {
+	infoCmd := flag.NewFlagSet("info", flag.ExitOnError)
+
+	// Define flags
+	dbPath := infoCmd.String("db", "", "Path to the database file (required)")
+	format := infoCmd.String("format", "text", "Output format: text, json")
+
+	infoCmd.Usage = func() {
+		fmt.Println("Usage: blunderdb info [options]")
+		fmt.Println()
+		fmt.Println("Display database metadata and statistics.")
+		fmt.Println()
+		fmt.Println("Options:")
+		infoCmd.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  # Display database info")
+		fmt.Println("  blunderdb info --db database.db")
+		fmt.Println()
+		fmt.Println("  # Output as JSON")
+		fmt.Println("  blunderdb info --db database.db --format json")
+	}
+
+	if err := infoCmd.Parse(args); err != nil {
+		return err
+	}
+
+	// Validate required flags
+	if *dbPath == "" {
+		fmt.Println("Error: --db flag is required")
+		infoCmd.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+
+	// Initialize database
+	if err := cli.initDatabase(*dbPath); err != nil {
+		return err
+	}
+
+	// Get metadata
+	metadata, err := cli.db.LoadMetadata()
+	if err != nil {
+		metadata = make(map[string]string)
+	}
+
+	// Get stats
+	stats, err := cli.db.GetDatabaseStats()
+	if err != nil {
+		return fmt.Errorf("failed to get database stats: %v", err)
+	}
+
+	// Format output
+	if strings.ToLower(*format) == "json" {
+		output := map[string]interface{}{
+			"path":     *dbPath,
+			"metadata": metadata,
+			"stats":    stats,
+		}
+		jsonData, err := json.MarshalIndent(output, "", "  ")
+		if err != nil {
+			return fmt.Errorf("failed to format JSON: %v", err)
+		}
+		fmt.Println(string(jsonData))
+	} else {
+		fmt.Println("Database Information")
+		fmt.Println(strings.Repeat("=", 50))
+		fmt.Printf("Path: %s\n\n", *dbPath)
+
+		fmt.Println("Metadata:")
+		if v, ok := metadata["database_version"]; ok {
+			fmt.Printf("  Version: %s\n", v)
+		}
+		if v, ok := metadata["user"]; ok && v != "" {
+			fmt.Printf("  User: %s\n", v)
+		}
+		if v, ok := metadata["description"]; ok && v != "" {
+			fmt.Printf("  Description: %s\n", v)
+		}
+		if v, ok := metadata["dateOfCreation"]; ok && v != "" {
+			fmt.Printf("  Date of Creation: %s\n", v)
+		}
+
+		fmt.Println("\nStatistics:")
+		if posCount, ok := stats["position_count"].(int64); ok {
+			fmt.Printf("  Positions: %d\n", posCount)
+		}
+		if analysisCount, ok := stats["analysis_count"].(int64); ok {
+			fmt.Printf("  Analyses: %d\n", analysisCount)
+		}
+		if matchCount, ok := stats["match_count"].(int64); ok {
+			fmt.Printf("  Matches: %d\n", matchCount)
+		}
+		if gameCount, ok := stats["game_count"].(int64); ok {
+			fmt.Printf("  Games: %d\n", gameCount)
+		}
+		if moveCount, ok := stats["move_count"].(int64); ok {
+			fmt.Printf("  Moves: %d\n", moveCount)
+		}
+	}
+
+	return nil
+}
+
+// runEdit handles the edit command
+func (cli *CLI) runEdit(args []string) error {
+	editCmd := flag.NewFlagSet("edit", flag.ExitOnError)
+
+	// Define flags
+	dbPath := editCmd.String("db", "", "Path to the database file (required)")
+	user := editCmd.String("user", "", "Set user name")
+	description := editCmd.String("description", "", "Set description")
+	clearUser := editCmd.Bool("clear-user", false, "Clear user name")
+	clearDescription := editCmd.Bool("clear-description", false, "Clear description")
+
+	editCmd.Usage = func() {
+		fmt.Println("Usage: blunderdb edit [options]")
+		fmt.Println()
+		fmt.Println("Edit database metadata.")
+		fmt.Println()
+		fmt.Println("Options:")
+		editCmd.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  # Set user name")
+		fmt.Println("  blunderdb edit --db database.db --user \"John Doe\"")
+		fmt.Println()
+		fmt.Println("  # Set description")
+		fmt.Println("  blunderdb edit --db database.db --description \"My positions collection\"")
+		fmt.Println()
+		fmt.Println("  # Clear user name")
+		fmt.Println("  blunderdb edit --db database.db --clear-user")
+		fmt.Println()
+		fmt.Println("  # Set multiple values")
+		fmt.Println("  blunderdb edit --db database.db --user \"John\" --description \"Tournament positions\"")
+	}
+
+	if err := editCmd.Parse(args); err != nil {
+		return err
+	}
+
+	// Validate required flags
+	if *dbPath == "" {
+		fmt.Println("Error: --db flag is required")
+		editCmd.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+
+	// Check that at least one edit option is provided
+	if *user == "" && *description == "" && !*clearUser && !*clearDescription {
+		fmt.Println("Error: at least one edit option is required")
+		editCmd.Usage()
+		return fmt.Errorf("no edit options provided")
+	}
+
+	// Initialize database
+	if err := cli.initDatabase(*dbPath); err != nil {
+		return err
+	}
+
+	// Build metadata updates
+	metadata := make(map[string]string)
+	changes := []string{}
+
+	if *clearUser {
+		metadata["user"] = ""
+		changes = append(changes, "Cleared user")
+	} else if *user != "" {
+		metadata["user"] = *user
+		changes = append(changes, fmt.Sprintf("Set user to: %s", *user))
+	}
+
+	if *clearDescription {
+		metadata["description"] = ""
+		changes = append(changes, "Cleared description")
+	} else if *description != "" {
+		metadata["description"] = *description
+		changes = append(changes, fmt.Sprintf("Set description to: %s", *description))
+	}
+
+	// Save metadata
+	err := cli.db.SaveMetadata(metadata)
+	if err != nil {
+		return fmt.Errorf("failed to save metadata: %v", err)
+	}
+
+	fmt.Println("Database metadata updated:")
+	for _, change := range changes {
+		fmt.Printf("  - %s\n", change)
+	}
+
+	return nil
+}
+
+// runSearch handles the search command
+func (cli *CLI) runSearch(args []string) error {
+	searchCmd := flag.NewFlagSet("search", flag.ExitOnError)
+
+	// Define flags
+	dbPath := searchCmd.String("db", "", "Path to the database file (required)")
+	outputDB := searchCmd.String("export", "", "Export results to a new database file")
+	limit := searchCmd.Int("limit", 0, "Maximum number of results (0 = no limit)")
+	format := searchCmd.String("format", "table", "Output format: table, json, xgid")
+
+	// Filter flags
+	decisionType := searchCmd.String("decision", "", "Filter by decision type: checker, cube")
+	pipMin := searchCmd.Int("pip-min", 0, "Minimum pip count difference")
+	pipMax := searchCmd.Int("pip-max", 0, "Maximum pip count difference")
+	winRateMin := searchCmd.Float64("winrate-min", 0, "Minimum win rate (%)")
+	winRateMax := searchCmd.Float64("winrate-max", 0, "Maximum win rate (%)")
+	cubeValue := searchCmd.Int("cube", 0, "Filter by cube value")
+	score1 := searchCmd.Int("score1", -1, "Filter by player 1 score")
+	score2 := searchCmd.Int("score2", -1, "Filter by player 2 score")
+	matchLength := searchCmd.Int("match-length", 0, "Filter by match length")
+	errorMin := searchCmd.Float64("error-min", 0, "Minimum equity error (blunders)")
+	hasAnalysis := searchCmd.Bool("has-analysis", false, "Only positions with analysis")
+	checkerOff1Min := searchCmd.Int("off1-min", 0, "Minimum checkers off for player 1")
+	checkerOff2Min := searchCmd.Int("off2-min", 0, "Minimum checkers off for player 2")
+
+	searchCmd.Usage = func() {
+		fmt.Println("Usage: blunderdb search [options]")
+		fmt.Println()
+		fmt.Println("Search for positions in the database using filters.")
+		fmt.Println()
+		fmt.Println("Options:")
+		searchCmd.PrintDefaults()
+		fmt.Println()
+		fmt.Println("Examples:")
+		fmt.Println("  # List all positions")
+		fmt.Println("  blunderdb search --db database.db")
+		fmt.Println()
+		fmt.Println("  # Search cube decisions")
+		fmt.Println("  blunderdb search --db database.db --decision cube")
+		fmt.Println()
+		fmt.Println("  # Search positions with errors >= 0.1")
+		fmt.Println("  blunderdb search --db database.db --error-min 0.1")
+		fmt.Println()
+		fmt.Println("  # Search and export to new database")
+		fmt.Println("  blunderdb search --db database.db --decision cube --export cubes.db")
+		fmt.Println()
+		fmt.Println("  # Search bearoff positions")
+		fmt.Println("  blunderdb search --db database.db --off1-min 1 --off2-min 1")
+		fmt.Println()
+		fmt.Println("  # Output as JSON")
+		fmt.Println("  blunderdb search --db database.db --format json --limit 10")
+	}
+
+	if err := searchCmd.Parse(args); err != nil {
+		return err
+	}
+
+	// Validate required flags
+	if *dbPath == "" {
+		fmt.Println("Error: --db flag is required")
+		searchCmd.Usage()
+		return fmt.Errorf("missing required flag: --db")
+	}
+
+	// Initialize database
+	if err := cli.initDatabase(*dbPath); err != nil {
+		return err
+	}
+
+	// Build filter parameters for LoadPositionsByFilters
+	// Create a base filter position with EMPTY board (no checker position filtering)
+	// This is different from InitializePosition() which sets up starting position
+	filter := Position{
+		Board:        Board{Points: [26]Point{}}, // Empty board - matches any position
+		Cube:         Cube{None, 0},
+		Dice:         [2]int{0, 0},
+		Score:        [2]int{-1, -1}, // -1 means no score filter
+		PlayerOnRoll: 0,
+		DecisionType: CheckerAction,
+	}
+
+	// Set decision type filter
+	decisionTypeFilter := false
+	if *decisionType != "" {
+		decisionTypeFilter = true
+		switch strings.ToLower(*decisionType) {
+		case "checker":
+			filter.DecisionType = CheckerAction
+		case "cube":
+			filter.DecisionType = CubeAction
+		default:
+			return fmt.Errorf("invalid decision type: %s (must be 'checker' or 'cube')", *decisionType)
+		}
+	}
+
+	// Build filter strings for the search function
+	var pipCountFilter string
+	if *pipMin > 0 || *pipMax > 0 {
+		if *pipMin > 0 && *pipMax > 0 {
+			pipCountFilter = fmt.Sprintf("p%d,%d", *pipMin, *pipMax)
+		} else if *pipMin > 0 {
+			pipCountFilter = fmt.Sprintf("p>%d", *pipMin)
+		} else {
+			pipCountFilter = fmt.Sprintf("p<%d", *pipMax)
+		}
+	}
+
+	var winRateFilter string
+	if *winRateMin > 0 || *winRateMax > 0 {
+		if *winRateMin > 0 && *winRateMax > 0 {
+			winRateFilter = fmt.Sprintf("w%f,%f", *winRateMin, *winRateMax)
+		} else if *winRateMin > 0 {
+			winRateFilter = fmt.Sprintf("w>%f", *winRateMin)
+		} else {
+			winRateFilter = fmt.Sprintf("w<%f", *winRateMax)
+		}
+	}
+
+	var player1CheckerOffFilter string
+	if *checkerOff1Min > 0 {
+		player1CheckerOffFilter = fmt.Sprintf("o>%d", *checkerOff1Min-1)
+	}
+
+	var player2CheckerOffFilter string
+	if *checkerOff2Min > 0 {
+		player2CheckerOffFilter = fmt.Sprintf("O>%d", *checkerOff2Min-1)
+	}
+
+	// Set cube value filter
+	includeCube := false
+	if *cubeValue > 0 {
+		includeCube = true
+		filter.Cube.Value = *cubeValue
+	}
+
+	// Set score filter
+	includeScore := false
+	if *score1 >= 0 || *score2 >= 0 || *matchLength > 0 {
+		includeScore = true
+		if *score1 >= 0 {
+			filter.Score[0] = *score1
+		}
+		if *score2 >= 0 {
+			filter.Score[1] = *score2
+		}
+	}
+
+	// For CLI, we apply decision type filter ourselves since db filter also checks PlayerOnRoll
+	// Load positions without decision type filter, we'll apply it manually
+	positions, err := cli.db.LoadPositionsByFilters(
+		filter,
+		includeCube,
+		includeScore,
+		pipCountFilter,
+		winRateFilter,
+		"", // gammonRateFilter
+		"", // backgammonRateFilter
+		"", // player2WinRateFilter
+		"", // player2GammonRateFilter
+		"", // player2BackgammonRateFilter
+		player1CheckerOffFilter,
+		player2CheckerOffFilter,
+		"",    // player1BackCheckerFilter
+		"",    // player2BackCheckerFilter
+		"",    // player1CheckerInZoneFilter
+		"",    // player2CheckerInZoneFilter
+		"",    // searchText
+		"",    // player1AbsolutePipCountFilter
+		"",    // equityFilter
+		false, // decisionTypeFilter - we'll filter ourselves
+		false, // diceRollFilter
+		"",    // movePatternFilter
+		"",    // dateFilter
+		"",    // player1OutfieldBlotFilter
+		"",    // player2OutfieldBlotFilter
+		"",    // player1JanBlotFilter
+		"",    // player2JanBlotFilter
+		false, // noContactFilter
+		false, // mirrorFilter
+	)
+	if err != nil {
+		return fmt.Errorf("failed to search positions: %v", err)
+	}
+
+	// Apply additional filters that aren't supported by LoadPositionsByFilters
+	var filteredPositions []Position
+	for _, pos := range positions {
+		// Filter by decision type (CLI only compares DecisionType, not PlayerOnRoll)
+		if decisionTypeFilter {
+			if pos.DecisionType != filter.DecisionType {
+				continue
+			}
+		}
+
+		// Filter by error minimum if specified
+		if *errorMin > 0 || *hasAnalysis {
+			analysis, err := cli.db.LoadAnalysis(pos.ID)
+			if err != nil || analysis == nil {
+				if *hasAnalysis {
+					continue
+				}
+			} else {
+				if *errorMin > 0 {
+					// Check if this position has an error >= errorMin
+					hasError := false
+					if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 1 {
+						if analysis.CheckerAnalysis.Moves[1].EquityError != nil {
+							if *analysis.CheckerAnalysis.Moves[1].EquityError >= *errorMin {
+								hasError = true
+							}
+						}
+					}
+					if analysis.DoublingCubeAnalysis != nil {
+						if analysis.DoublingCubeAnalysis.CubefulNoDoubleError >= *errorMin ||
+							analysis.DoublingCubeAnalysis.CubefulDoubleTakeError >= *errorMin ||
+							analysis.DoublingCubeAnalysis.CubefulDoublePassError >= *errorMin {
+							hasError = true
+						}
+					}
+					if !hasError {
+						continue
+					}
+				}
+			}
+		}
+
+		filteredPositions = append(filteredPositions, pos)
+	}
+
+	// Apply limit
+	if *limit > 0 && len(filteredPositions) > *limit {
+		filteredPositions = filteredPositions[:*limit]
+	}
+
+	// Output results
+	fmt.Printf("Found %d position(s)\n\n", len(filteredPositions))
+
+	if len(filteredPositions) == 0 {
+		return nil
+	}
+
+	// Format output
+	switch strings.ToLower(*format) {
+	case "json":
+		type PositionResult struct {
+			ID           int64   `json:"id"`
+			XGID         string  `json:"xgid,omitempty"`
+			Score        [2]int  `json:"score"`
+			Cube         int     `json:"cube"`
+			DecisionType string  `json:"decision_type"`
+			Dice         [2]int  `json:"dice"`
+			BestMove     string  `json:"best_move,omitempty"`
+			Equity       float64 `json:"equity,omitempty"`
+		}
+
+		var results []PositionResult
+		for _, pos := range filteredPositions {
+			result := PositionResult{
+				ID:    pos.ID,
+				Score: pos.Score,
+				Cube:  pos.Cube.Value,
+				Dice:  pos.Dice,
+			}
+
+			if pos.DecisionType == CheckerAction {
+				result.DecisionType = "checker"
+			} else {
+				result.DecisionType = "cube"
+			}
+
+			// Get analysis if available
+			analysis, err := cli.db.LoadAnalysis(pos.ID)
+			if err == nil && analysis != nil {
+				result.XGID = analysis.XGID
+				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+					result.BestMove = analysis.CheckerAnalysis.Moves[0].Move
+					result.Equity = analysis.CheckerAnalysis.Moves[0].Equity
+				}
+			}
+
+			results = append(results, result)
+		}
+
+		jsonData, err := json.MarshalIndent(results, "", "  ")
+		if err != nil {
+			return fmt.Errorf("failed to format JSON: %v", err)
+		}
+		fmt.Println(string(jsonData))
+
+	case "xgid":
+		for _, pos := range filteredPositions {
+			analysis, err := cli.db.LoadAnalysis(pos.ID)
+			if err == nil && analysis != nil && analysis.XGID != "" {
+				fmt.Println(analysis.XGID)
+			}
+		}
+
+	default: // table format
+		w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+		fmt.Fprintln(w, "ID\tScore\tCube\tType\tDice\tBest Move\tEquity")
+		fmt.Fprintln(w, "--\t-----\t----\t----\t----\t---------\t------")
+
+		for _, pos := range filteredPositions {
+			decType := "checker"
+			if pos.DecisionType == CubeAction {
+				decType = "cube"
+			}
+
+			diceStr := ""
+			if pos.Dice[0] > 0 {
+				diceStr = fmt.Sprintf("%d-%d", pos.Dice[0], pos.Dice[1])
+			}
+
+			bestMove := ""
+			equityStr := ""
+
+			// Get analysis if available
+			analysis, err := cli.db.LoadAnalysis(pos.ID)
+			if err == nil && analysis != nil {
+				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+					bestMove = analysis.CheckerAnalysis.Moves[0].Move
+					equityStr = fmt.Sprintf("%.3f", analysis.CheckerAnalysis.Moves[0].Equity)
+				} else if analysis.DoublingCubeAnalysis != nil {
+					bestMove = analysis.DoublingCubeAnalysis.BestCubeAction
+					equityStr = fmt.Sprintf("%.3f", analysis.DoublingCubeAnalysis.CubefulNoDoubleEquity)
+				}
+			}
+
+			fmt.Fprintf(w, "%d\t%d-%d\t%d\t%s\t%s\t%s\t%s\n",
+				pos.ID, pos.Score[0], pos.Score[1], pos.Cube.Value, decType, diceStr, bestMove, equityStr)
+		}
+		w.Flush()
+	}
+
+	// Export to new database if requested
+	if *outputDB != "" {
+		fmt.Printf("\nExporting %d positions to: %s\n", len(filteredPositions), *outputDB)
+
+		// Get metadata from source database
+		metadata, _ := cli.db.LoadMetadata()
+		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
+		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
+
+		err = cli.db.ExportDatabase(*outputDB, filteredPositions, metadata, true, true, false, true)
+		if err != nil {
+			return fmt.Errorf("failed to export database: %v", err)
+		}
+
+		fmt.Println("Export completed successfully")
+	}
+
+	return nil
+}
+
+// SearchResult represents a position search result for display
+type SearchResult struct {
+	Position    Position
+	Analysis    *PositionAnalysis
+	XGID        string
+	BestMove    string
+	Equity      float64
+	EquityError *float64
+}
+
+// getSearchResults loads positions with their analysis for display
+func (cli *CLI) getSearchResults(positions []Position) []SearchResult {
+	var results []SearchResult
+
+	for _, pos := range positions {
+		result := SearchResult{
+			Position: pos,
+		}
+
+		analysis, err := cli.db.LoadAnalysis(pos.ID)
+		if err == nil && analysis != nil {
+			result.Analysis = analysis
+			result.XGID = analysis.XGID
+
+			if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+				result.BestMove = analysis.CheckerAnalysis.Moves[0].Move
+				result.Equity = analysis.CheckerAnalysis.Moves[0].Equity
+			}
+		}
+
+		results = append(results, result)
+	}
+
+	// Sort by ID
+	sort.Slice(results, func(i, j int) bool {
+		return results[i].Position.ID < results[j].Position.ID
+	})
+
+	return results
 }

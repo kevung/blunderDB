@@ -1112,18 +1112,14 @@ func (d *Database) LoadPositionsByFilters(
 		var id int64
 		var stateJSON string
 		if err = rows.Scan(&id, &stateJSON); err != nil {
-			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
 
 		var position Position
 		if err = json.Unmarshal([]byte(stateJSON), &position); err != nil {
-			fmt.Println("Error unmarshalling position:", err)
 			return nil, err
 		}
 		position.ID = id // Ensure the ID is set
-
-		fmt.Printf("Checking position ID: %d\n", position.ID) // Add logging
 
 		// Function to check if a position matches all filters
 		matchesFilters := func(pos Position) bool {
@@ -1159,7 +1155,6 @@ func (d *Database) LoadPositionsByFilters(
 		// Check the original position
 		if matchesFilters(position) {
 			if movePatternFilter != "" {
-				fmt.Printf("Checking move pattern filter: %s for position ID: %d\n", movePatternFilter, position.ID) // Add logging
 				if position.MatchesMovePattern(movePatternFilter, d) {
 					positions = append(positions, position)
 				}
@@ -1170,7 +1165,6 @@ func (d *Database) LoadPositionsByFilters(
 			mirroredPosition := position.Mirror()
 			if matchesFilters(mirroredPosition) {
 				if movePatternFilter != "" {
-					fmt.Printf("Checking move pattern filter: %s for mirrored position ID: %d\n", movePatternFilter, mirroredPosition.ID) // Add logging
 					if mirroredPosition.MatchesMovePattern(movePatternFilter, d) {
 						positions = append(positions, mirroredPosition)
 					}
@@ -1181,7 +1175,6 @@ func (d *Database) LoadPositionsByFilters(
 		}
 	}
 
-	fmt.Println("Loaded positions by filters:", positions)
 	return positions, nil
 }
 
