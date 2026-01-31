@@ -2348,6 +2348,11 @@ function togglePipcount() {
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
             currentPositionIndexStore.set(currentIndex); // Set back to the original value
+        } else if ($statusBarModeStore == "MATCH") {
+            showPipcountStore.set(!showPipcount);
+            // Refresh board by triggering a positionStore update
+            const currentPosition = $positionStore;
+            positionStore.set({ ...currentPosition });
         }
     }
 
