@@ -208,8 +208,9 @@ func (cli *CLI) runExport(args []string) error {
 
 	// Define flags
 	dbPath := exportCmd.String("db", "", "Path to the database file (required)")
-	exportType := exportCmd.String("type", "", "Export type: database, positions (required)")
+	exportType := exportCmd.String("type", "", "Export type: database, positions, matches (required)")
 	outputFile := exportCmd.String("file", "", "Path to the output file (required)")
+	includeMatches := exportCmd.Bool("matches", true, "Include matches in database export (default: true)")
 
 	exportCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb export [options]")
@@ -219,12 +220,23 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println("Options:")
 		exportCmd.PrintDefaults()
 		fmt.Println()
+		fmt.Println("Export Types:")
+		fmt.Println("  database   Export entire database (positions, analysis, comments, matches)")
+		fmt.Println("  positions  Export positions to text file (JSON format)")
+		fmt.Println("  matches    Export only matches to a new database")
+		fmt.Println()
 		fmt.Println("Examples:")
-		fmt.Println("  # Export entire database")
+		fmt.Println("  # Export entire database with all matches")
 		fmt.Println("  blunderdb export --db database.db --type database --file export.db")
+		fmt.Println()
+		fmt.Println("  # Export database without matches")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --matches=false")
 		fmt.Println()
 		fmt.Println("  # Export positions to text file")
 		fmt.Println("  blunderdb export --db database.db --type positions --file positions.txt")
+		fmt.Println()
+		fmt.Println("  # Export only matches to a new database")
+		fmt.Println("  blunderdb export --db database.db --type matches --file matches.db")
 	}
 
 	if err := exportCmd.Parse(args); err != nil {
@@ -258,11 +270,13 @@ func (cli *CLI) runExport(args []string) error {
 	// Perform export based on type
 	switch strings.ToLower(*exportType) {
 	case "database":
-		return cli.exportDatabase(*outputFile)
+		return cli.exportDatabaseWithOptions(*outputFile, *includeMatches)
 	case "positions":
 		return cli.exportPositions(*outputFile)
+	case "matches":
+		return cli.exportMatchesOnly(*outputFile)
 	default:
-		return fmt.Errorf("unknown export type: %s (must be 'database' or 'positions')", *exportType)
+		return fmt.Errorf("unknown export type: %s (must be 'database', 'positions', or 'matches')", *exportType)
 	}
 }
 
@@ -507,8 +521,13 @@ func (cli *CLI) importPosition(filePath string) error {
 	return nil
 }
 
-// exportDatabase exports the entire database
+// exportDatabase exports the entire database (legacy function, exports with matches)
 func (cli *CLI) exportDatabase(outputFile string) error {
+	return cli.exportDatabaseWithOptions(outputFile, true)
+}
+
+// exportDatabaseWithOptions exports the database with configurable options
+func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeMatches bool) error {
 	fmt.Printf("Exporting database to: %s\n", outputFile)
 
 	// Get all positions
@@ -524,8 +543,8 @@ func (cli *CLI) exportDatabase(outputFile string) error {
 		metadata["database_version"] = version
 	}
 
-	// Export with all data (including played moves)
-	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, true, true)
+	// Export with all data (including played moves and optionally matches)
+	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, true, true, includeMatches)
 	if err != nil {
 		return fmt.Errorf("failed to export database: %v", err)
 	}
@@ -536,6 +555,53 @@ func (cli *CLI) exportDatabase(outputFile string) error {
 		fmt.Printf("Successfully exported database (%d bytes)\n", info.Size())
 	} else {
 		fmt.Println("Successfully exported database")
+	}
+
+	return nil
+}
+
+// exportMatchesOnly exports only the matches to a new database
+func (cli *CLI) exportMatchesOnly(outputFile string) error {
+	fmt.Printf("Exporting matches to: %s\n", outputFile)
+
+	// Get matches count first
+	matches, err := cli.db.GetAllMatches()
+	if err != nil {
+		return fmt.Errorf("failed to load matches: %v", err)
+	}
+
+	if len(matches) == 0 {
+		return fmt.Errorf("no matches found in database")
+	}
+
+	fmt.Printf("Found %d match(es) to export\n", len(matches))
+
+	// Export with empty positions but with matches
+	metadata := make(map[string]string)
+	version, err := cli.db.GetDatabaseVersion()
+	if err == nil {
+		metadata["database_version"] = version
+	}
+
+	// We need to export positions that are linked to matches
+	// Get all positions linked to moves in the matches
+	positions, err := cli.db.LoadAllPositions()
+	if err != nil {
+		return fmt.Errorf("failed to load positions: %v", err)
+	}
+
+	// Export with positions, analysis, comments disabled, but matches enabled
+	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, false, true, true)
+	if err != nil {
+		return fmt.Errorf("failed to export matches: %v", err)
+	}
+
+	// Get file size
+	info, err := os.Stat(outputFile)
+	if err == nil {
+		fmt.Printf("Successfully exported matches (%d bytes)\n", info.Size())
+	} else {
+		fmt.Println("Successfully exported matches")
 	}
 
 	return nil
@@ -1833,7 +1899,7 @@ func (cli *CLI) runSearch(args []string) error {
 		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
 		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
 
-		err = cli.db.ExportDatabase(*outputDB, filteredPositions, metadata, true, true, false, true)
+		err = cli.db.ExportDatabase(*outputDB, filteredPositions, metadata, true, true, false, true, false)
 		if err != nil {
 			return fmt.Errorf("failed to export database: %v", err)
 		}

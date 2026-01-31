@@ -102,8 +102,27 @@ Each position is exported as a JSON object on a separate line.
 
 **Options:**
 - `--db` - Path to the source database file (required)
-- `--type` - Export type: `database` or `positions` (required)
+- `--type` - Export type: `database`, `positions`, or `matches` (required)
 - `--file` - Path to the output file (required)
+- `--matches` - Include matches in database export (default: true, only for `database` type)
+
+### Export Database Without Matches
+
+```bash
+./blunderdb export --db database.db --type database --file export.db --matches=false
+```
+
+This creates a copy of the database with positions, analyses, and comments, but without match data.
+
+### Export Matches Only
+
+Export only match data (with linked positions) to a new database:
+
+```bash
+./blunderdb export --db database.db --type matches --file matches.db
+```
+
+This creates a new database containing only the match structure and linked positions.
 
 ## List Command
 

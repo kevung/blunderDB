@@ -164,6 +164,7 @@
     let pendingImportPath = null;
     let exportModalMode = 'preparing'; // 'preparing', 'metadata', 'exporting', 'completed'
     let exportPositionCount = 0;
+    let exportMatchCount = 0;
     let exportMetadata = {
         user: '',
         description: '',
@@ -173,7 +174,8 @@
         includeAnalysis: true,
         includeComments: true,
         includeFilterLibrary: false,
-        includePlayedMoves: true
+        includePlayedMoves: true,
+        includeMatches: true
     };
     let pendingExportPath = null;
     let warningMessage = '';
@@ -840,6 +842,15 @@
             console.log('Exporting to:', exportFilePath);
             pendingExportPath = exportFilePath;
             
+            // Get match count for display
+            try {
+                const matches = await GetAllMatches();
+                exportMatchCount = matches ? matches.length : 0;
+            } catch (e) {
+                console.log('Could not get match count:', e);
+                exportMatchCount = 0;
+            }
+            
             // Show modal in metadata mode
             exportPositionCount = positions.length;
             exportModalMode = 'metadata';
@@ -881,7 +892,8 @@
                 exportOptions.includeAnalysis,
                 exportOptions.includeComments,
                 exportOptions.includeFilterLibrary,
-                exportOptions.includePlayedMoves
+                exportOptions.includePlayedMoves,
+                exportOptions.includeMatches
             );
             
             console.log('Export completed successfully');
@@ -909,7 +921,8 @@
                 includeAnalysis: true,
                 includeComments: true,
                 includeFilterLibrary: false,
-                includePlayedMoves: true
+                includePlayedMoves: true,
+                includeMatches: true
             };
         }
     }
@@ -929,7 +942,8 @@
             includeAnalysis: true,
             includeComments: true,
             includeFilterLibrary: false,
-            includePlayedMoves: true
+            includePlayedMoves: true,
+            includeMatches: true
         };
         setStatusBarMessage('Export cancelled');
         previousModeStore.set('NORMAL');
@@ -950,7 +964,8 @@
             includeAnalysis: true,
             includeComments: true,
             includeFilterLibrary: false,
-            includePlayedMoves: true
+            includePlayedMoves: true,
+            includeMatches: true
         };
         previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
@@ -2889,6 +2904,7 @@ function togglePipcount() {
         visible={$showExportDatabaseModalStore}
         mode={exportModalMode}
         positionCount={exportPositionCount}
+        matchCount={exportMatchCount}
         bind:metadata={exportMetadata}
         bind:exportOptions={exportOptions}
         onCancel={handleExportCancel}

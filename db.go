@@ -3417,7 +3417,7 @@ func (d *Database) ImportDatabase(importPath string) (map[string]interface{}, er
 
 // ExportDatabase creates a new database file containing the current selection of positions
 // with their analysis and comments
-func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool, includePlayedMoves bool) error {
+func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -3823,6 +3823,221 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				}
 			}
 		}
+	}
+
+	// Export matches if includeMatches is true
+	if includeMatches {
+		matchCount := 0
+		gameCount := 0
+		moveCount := 0
+		moveAnalysisCount := 0
+
+		// Get all matches
+		matchRows, err := d.db.Query(`
+			SELECT id, player1_name, player2_name, event, location, round,
+			       match_length, match_date, import_date, file_path, game_count, match_hash
+			FROM match
+		`)
+		if err == nil {
+			defer matchRows.Close()
+
+			matchIDMapping := make(map[int64]int64) // old match ID -> new match ID
+
+			for matchRows.Next() {
+				var oldMatchID int64
+				var player1Name, player2Name, event, location, round, filePath string
+				var matchLength int32
+				var matchDate, importDate time.Time
+				var gameCountVal int
+				var matchHash sql.NullString
+
+				err := matchRows.Scan(&oldMatchID, &player1Name, &player2Name, &event, &location, &round,
+					&matchLength, &matchDate, &importDate, &filePath, &gameCountVal, &matchHash)
+				if err != nil {
+					fmt.Printf("Error scanning match: %v\n", err)
+					continue
+				}
+
+				// Insert match into export database
+				var result sql.Result
+				if matchHash.Valid {
+					result, err = exportDB.Exec(`
+						INSERT INTO match (player1_name, player2_name, event, location, round,
+						                   match_length, match_date, import_date, file_path, game_count, match_hash)
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					`, player1Name, player2Name, event, location, round,
+						matchLength, matchDate, importDate, filePath, gameCountVal, matchHash.String)
+				} else {
+					result, err = exportDB.Exec(`
+						INSERT INTO match (player1_name, player2_name, event, location, round,
+						                   match_length, match_date, import_date, file_path, game_count)
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					`, player1Name, player2Name, event, location, round,
+						matchLength, matchDate, importDate, filePath, gameCountVal)
+				}
+				if err != nil {
+					fmt.Printf("Error inserting match: %v\n", err)
+					continue
+				}
+
+				newMatchID, err := result.LastInsertId()
+				if err != nil {
+					fmt.Printf("Error getting new match ID: %v\n", err)
+					continue
+				}
+				matchIDMapping[oldMatchID] = newMatchID
+				matchCount++
+			}
+
+			// Export games for each match
+			gameIDMapping := make(map[int64]int64) // old game ID -> new game ID
+
+			for oldMatchID, newMatchID := range matchIDMapping {
+				gameRows, err := d.db.Query(`
+					SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count
+					FROM game
+					WHERE match_id = ?
+				`, oldMatchID)
+				if err != nil {
+					fmt.Printf("Error querying games for match %d: %v\n", oldMatchID, err)
+					continue
+				}
+
+				for gameRows.Next() {
+					var oldGameID int64
+					var gameNumber, score1, score2, winner, pointsWon int32
+					var moveCountVal int
+
+					err := gameRows.Scan(&oldGameID, &gameNumber, &score1, &score2, &winner, &pointsWon, &moveCountVal)
+					if err != nil {
+						fmt.Printf("Error scanning game: %v\n", err)
+						continue
+					}
+
+					result, err := exportDB.Exec(`
+						INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count)
+						VALUES (?, ?, ?, ?, ?, ?, ?)
+					`, newMatchID, gameNumber, score1, score2, winner, pointsWon, moveCountVal)
+					if err != nil {
+						fmt.Printf("Error inserting game: %v\n", err)
+						continue
+					}
+
+					newGameID, err := result.LastInsertId()
+					if err != nil {
+						fmt.Printf("Error getting new game ID: %v\n", err)
+						continue
+					}
+					gameIDMapping[oldGameID] = newGameID
+					gameCount++
+				}
+				gameRows.Close()
+			}
+
+			// Export moves for each game
+			moveIDMapping := make(map[int64]int64) // old move ID -> new move ID
+
+			for oldGameID, newGameID := range gameIDMapping {
+				moveRows, err := d.db.Query(`
+					SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action
+					FROM move
+					WHERE game_id = ?
+				`, oldGameID)
+				if err != nil {
+					fmt.Printf("Error querying moves for game %d: %v\n", oldGameID, err)
+					continue
+				}
+
+				for moveRows.Next() {
+					var oldMoveID, positionID int64
+					var moveNumber, player, dice1, dice2 int32
+					var moveType string
+					var checkerMove, cubeAction sql.NullString
+
+					err := moveRows.Scan(&oldMoveID, &moveNumber, &moveType, &positionID, &player, &dice1, &dice2, &checkerMove, &cubeAction)
+					if err != nil {
+						fmt.Printf("Error scanning move: %v\n", err)
+						continue
+					}
+
+					// Map the position ID to the new database
+					newPositionID, posExists := idMapping[positionID]
+					if !posExists {
+						// Position might not have been exported (not in the selection)
+						// Still export the move but with null position_id
+						newPositionID = 0
+					}
+
+					var result sql.Result
+					if newPositionID > 0 {
+						result, err = exportDB.Exec(`
+							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action)
+							VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+						`, newGameID, moveNumber, moveType, newPositionID, player, dice1, dice2,
+							checkerMove.String, cubeAction.String)
+					} else {
+						result, err = exportDB.Exec(`
+							INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action)
+							VALUES (?, ?, ?, NULL, ?, ?, ?, ?, ?)
+						`, newGameID, moveNumber, moveType, player, dice1, dice2,
+							checkerMove.String, cubeAction.String)
+					}
+					if err != nil {
+						fmt.Printf("Error inserting move: %v\n", err)
+						continue
+					}
+
+					newMoveID, err := result.LastInsertId()
+					if err != nil {
+						fmt.Printf("Error getting new move ID: %v\n", err)
+						continue
+					}
+					moveIDMapping[oldMoveID] = newMoveID
+					moveCount++
+				}
+				moveRows.Close()
+			}
+
+			// Export move analysis for each move
+			for oldMoveID, newMoveID := range moveIDMapping {
+				analysisRows, err := d.db.Query(`
+					SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,
+					       opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate
+					FROM move_analysis
+					WHERE move_id = ?
+				`, oldMoveID)
+				if err != nil {
+					continue
+				}
+
+				for analysisRows.Next() {
+					var analysisType, depth string
+					var equity, equityError, winRate, gammonRate, backgammonRate float64
+					var oppWinRate, oppGammonRate, oppBackgammonRate float64
+
+					err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &backgammonRate,
+						&oppWinRate, &oppGammonRate, &oppBackgammonRate)
+					if err != nil {
+						continue
+					}
+
+					_, err = exportDB.Exec(`
+						INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate,
+						                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+					`, newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, backgammonRate,
+						oppWinRate, oppGammonRate, oppBackgammonRate)
+					if err != nil {
+						fmt.Printf("Error inserting move analysis: %v\n", err)
+						continue
+					}
+					moveAnalysisCount++
+				}
+				analysisRows.Close()
+			}
+		}
+
+		fmt.Printf("Exported %d matches, %d games, %d moves, %d move analyses\n", matchCount, gameCount, moveCount, moveAnalysisCount)
 	}
 
 	fmt.Printf("Successfully exported %d positions to %s\n", len(positions), exportPath)

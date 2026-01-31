@@ -4,6 +4,7 @@
     export let visible = false;
     export let mode = 'preparing'; // 'preparing', 'metadata', 'exporting', 'completed'
     export let positionCount = 0;
+    export let matchCount = 0;
     export let onCancel;
     export let onExport;
     export let onClose;
@@ -16,7 +17,8 @@
         includeAnalysis: true,
         includeComments: true,
         includeFilterLibrary: false,
-        includePlayedMoves: true
+        includePlayedMoves: true,
+        includeMatches: true
     };
 
     // Get current date in YYYY-MM-DD format
@@ -40,6 +42,7 @@
         if (exportOptions.includeComments) parts.push('comments');
         if (exportOptions.includeFilterLibrary) parts.push('filter library');
         if (exportOptions.includePlayedMoves) parts.push('played moves');
+        if (exportOptions.includeMatches && matchCount > 0) parts.push(`${matchCount} match${matchCount > 1 ? 'es' : ''}`);
         
         if (parts.length === 0) {
             return 'positions only';
@@ -327,6 +330,15 @@
                             disabled={!exportOptions.includeAnalysis}
                         />
                         <label for="export-played-moves">Include played moves</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input 
+                            type="checkbox" 
+                            id="export-matches" 
+                            bind:checked={exportOptions.includeMatches}
+                            disabled={matchCount === 0}
+                        />
+                        <label for="export-matches">Include matches ({matchCount})</label>
                     </div>
                 </div>
 
