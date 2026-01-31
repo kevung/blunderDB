@@ -5133,7 +5133,8 @@ func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos
 	// Note: No mirroring needed - moves are always from the roller's perspective
 
 	// Create a mutable copy of the position to track changes as we process moves
-	// XG position format: Checkers[0-23] are points 1-24, [24]=player bar, [25]=opponent bar
+	// XG position format: Checkers[1-24] are points 1-24 (1-based indexing)
+	// [0]=opponent's bar, [25]=player's bar
 	// Positive values = player's checkers, negative = opponent's checkers
 	positionCopy := make([]int8, 26)
 	copy(positionCopy, initialPos.Checkers[:])
@@ -5163,31 +5164,30 @@ func (d *Database) convertXGMoveToStringWithHits(playedMove [8]int32, initialPos
 		// The destination point must have exactly one opponent checker (negative value in XG format)
 		isHit := false
 		if to >= 1 && to <= 24 {
-			// Convert to 0-based index (XG uses 0-23 for points 1-24)
-			toIdx := to - 1
-			if positionCopy[toIdx] == -1 {
+			// Position.Checkers uses 1-based indexing: Checkers[1] = point 1, Checkers[24] = point 24
+			if positionCopy[to] == -1 {
 				isHit = true
 				// Update position: opponent checker goes to bar
-				positionCopy[toIdx] = 0
+				positionCopy[to] = 0
 			}
 		}
 
 		// Update position: move our checker
 		if from >= 1 && from <= 24 {
-			fromIdx := from - 1
-			if positionCopy[fromIdx] > 0 {
-				positionCopy[fromIdx]--
+			// Position.Checkers uses 1-based indexing
+			if positionCopy[from] > 0 {
+				positionCopy[from]--
 			}
 		} else if from == 25 {
-			// From bar
-			if positionCopy[24] > 0 {
-				positionCopy[24]--
+			// From bar - player's bar is at index 25
+			if positionCopy[25] > 0 {
+				positionCopy[25]--
 			}
 		}
 
 		if to >= 1 && to <= 24 {
-			toIdx := to - 1
-			positionCopy[toIdx]++
+			// Position.Checkers uses 1-based indexing
+			positionCopy[to]++
 		}
 
 		// Store directly - no conversion needed since moves are already in roller's perspective
