@@ -344,8 +344,18 @@
 
     // Draw arrows for a move
     function drawMoveArrows(moveString, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth) {
-        const moves = parseMoveNotation(moveString);
+        let moves = parseMoveNotation(moveString);
         const position = get(positionStore);
+        
+        // When Player 2 is on roll, the move notation is from Player 2's perspective
+        // but the board displays from Player 1's perspective, so we need to transform the points
+        if (position.player_on_roll === 1) {
+            moves = moves.map(move => ({
+                ...move,
+                from: move.from === 0 ? 25 : (move.from === 25 ? 0 : (move.from === -1 ? -1 : 25 - move.from)),
+                to: move.to === 0 ? 25 : (move.to === 25 ? 0 : (move.to === -1 ? -1 : 25 - move.to))
+            }));
+        }
         
         // Count how many arrows start from each point and end at each point
         const fromCounts = {};
