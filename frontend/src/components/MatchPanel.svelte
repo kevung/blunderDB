@@ -9,7 +9,7 @@
         SetMatchTournamentByName
     } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
-    import { statusBarModeStore, showMatchPanelStore, matchPanelRefreshTriggerStore, statusBarTextStore } from '../stores/uiStore';
+    import { statusBarModeStore, showMatchPanelStore, matchPanelRefreshTriggerStore, positionReloadTriggerStore, statusBarTextStore } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
@@ -241,6 +241,10 @@
             if (selectedMatch && selectedMatch.id === match.id) {
                 selectedMatch = null;
             }
+            // Trigger match panel refresh to update all dependent components
+            matchPanelRefreshTriggerStore.update(n => n + 1);
+            // Trigger position reload to reflect deleted positions
+            positionReloadTriggerStore.update(n => n + 1);
             statusBarTextStore.set('Match deleted');
         } catch (error) {
             console.error('Error deleting match:', error);

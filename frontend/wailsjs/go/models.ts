@@ -136,6 +136,7 @@ export namespace main {
 	export class Config {
 	    window_width: number;
 	    window_height: number;
+	    last_database_path: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
@@ -145,6 +146,7 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.window_width = source["window_width"];
 	        this.window_height = source["window_height"];
+	        this.last_database_path = source["last_database_path"];
 	    }
 	}
 	export class Cube {

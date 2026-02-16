@@ -53,6 +53,8 @@ export const showMatchPanelStore = writable(false); // Add store for match panel
 
 export const matchPanelRefreshTriggerStore = writable(0); // Trigger to refresh match panel data
 
+export const positionReloadTriggerStore = writable(0); // Trigger to reload all positions
+
 export const showCollectionPanelStore = writable(false); // Add store for collection panel visibility
 
 export const showTournamentPanelStore = writable(false); // Add store for tournament panel visibility

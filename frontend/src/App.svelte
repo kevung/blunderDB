@@ -50,7 +50,7 @@
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
 
-    import { SaveWindowDimensions } from '../wailsjs/go/main/Config.js';
+    import { SaveWindowDimensions, SaveLastDatabasePath, GetLastDatabasePath } from '../wailsjs/go/main/Config.js';
 
     // import stores
     import {
@@ -102,6 +102,7 @@
         showFilterLibraryPanelStore, // Import showFilterLibraryPanelStore
         showMatchPanelStore, // Import showMatchPanelStore
         matchPanelRefreshTriggerStore, // Import matchPanelRefreshTriggerStore
+        positionReloadTriggerStore, // Import positionReloadTriggerStore
         showCollectionPanelStore, // Import showCollectionPanelStore
         showTournamentPanelStore, // Import showTournamentPanelStore
         showPipcountStore,
@@ -272,6 +273,13 @@
     // Subscribe to the showMatchPanelStore
     showMatchPanelStore.subscribe(value => {
         showMatchPanel = value;
+    });
+
+    // Subscribe to position reload trigger
+    positionReloadTriggerStore.subscribe(async () => {
+        if ($databasePathStore) {
+            await loadAllPositions();
+        }
     });
 
     // Reference for various elements.
@@ -722,11 +730,24 @@
                 return;
             }
 
+            await openDatabaseByPath(filePath);
+        } catch (error) {
+            console.error('Error opening file dialog:', error);
+            setStatusBarMessage('Error opening database');
+        }
+    }
+
+    // Open a database given its file path (used by both dialog and auto-reopen)
+    async function openDatabaseByPath(filePath) {
+        try {
             // Reset analysis and comment stores before opening new database
             resetAnalysisAndCommentStores();
 
             databasePathStore.set(filePath);
             console.log('databasePathStore:', $databasePathStore);
+
+            // Save the database path to config for auto-reopen on next launch
+            await SaveLastDatabasePath(filePath);
 
             // Open the database and check for required tables and metadata keys
             await OpenDatabase(filePath);
@@ -750,7 +771,7 @@
             // Try to restore session state
             await restoreSessionState();
         } catch (error) {
-            console.error('Error opening file dialog:', error);
+            console.error('Error opening database:', error);
             setStatusBarMessage('Error opening database');
         } finally {
             previousModeStore.set('NORMAL');
@@ -1153,7 +1174,9 @@
         showWarningModalStore.set(false); // Use store to close warning modal
     }
 
-    function exitApp() {
+    async function exitApp() {
+        // Save session state before quitting so the user can resume
+        await saveSessionState();
         Quit();
     }
 
@@ -2954,12 +2977,25 @@ function togglePipcount() {
         }
     }
 
-    onMount(() => {
+    onMount(async () => {
         // @ts-ignore
         console.log('Wails runtime:', runtime);
         window.addEventListener("keydown", handleKeyDown);
         mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
         window.addEventListener("resize", handleResize);
+
+        // Auto-reopen last database on startup
+        try {
+            const lastDbPath = await GetLastDatabasePath();
+            if (lastDbPath) {
+                console.log('Auto-reopening last database:', lastDbPath);
+                await openDatabaseByPath(lastDbPath);
+            }
+        } catch (error) {
+            console.error('Error auto-reopening last database:', error);
+            // Clear the stored path so we don't retry a broken path on every launch
+            try { await SaveLastDatabasePath(''); } catch (e) { /* ignore */ }
+        }
     });
 
     onDestroy(() => {

@@ -13,8 +13,9 @@ import (
 const configFilePath = "blunderDB/config.yaml"
 
 type Config struct {
-	WindowWidth  int `json:"window_width"`
-	WindowHeight int `json:"window_height"`
+	WindowWidth      int    `json:"window_width"`
+	WindowHeight     int    `json:"window_height"`
+	LastDatabasePath string `json:"last_database_path"`
 }
 
 func NewConfig() *Config {
@@ -65,6 +66,11 @@ func (c *Config) LoadConfig() (*Config, error) {
 		return nil, err
 	}
 
+	// Update the receiver so the Wails-bound instance has the loaded values
+	c.WindowWidth = config.WindowWidth
+	c.WindowHeight = config.WindowHeight
+	c.LastDatabasePath = config.LastDatabasePath
+
 	return &config, nil
 }
 
@@ -86,4 +92,13 @@ func (c *Config) SaveWindowDimensions(width, height int) error {
 	c.WindowWidth = width
 	c.WindowHeight = height
 	return c.SaveConfig(c)
+}
+
+func (c *Config) SaveLastDatabasePath(path string) error {
+	c.LastDatabasePath = path
+	return c.SaveConfig(c)
+}
+
+func (c *Config) GetLastDatabasePath() string {
+	return c.LastDatabasePath
 }

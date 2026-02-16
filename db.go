@@ -7084,11 +7084,51 @@ func (d *Database) DeleteMatch(matchID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
+	// Collect position IDs referenced by this match's moves before cascade delete
+	rows, err := d.db.Query(`
+		SELECT DISTINCT m.position_id 
+		FROM move m
+		INNER JOIN game g ON m.game_id = g.id
+		WHERE g.match_id = ? AND m.position_id IS NOT NULL
+	`, matchID)
+	if err != nil {
+		fmt.Println("Error collecting position IDs:", err)
+		return err
+	}
+	var positionIDs []int64
+	for rows.Next() {
+		var pid int64
+		if err := rows.Scan(&pid); err == nil {
+			positionIDs = append(positionIDs, pid)
+		}
+	}
+	rows.Close()
+
 	// Foreign key constraints will cascade delete to game, move, and move_analysis
-	_, err := d.db.Exec(`DELETE FROM match WHERE id = ?`, matchID)
+	_, err = d.db.Exec(`DELETE FROM match WHERE id = ?`, matchID)
 	if err != nil {
 		fmt.Println("Error deleting match:", err)
 		return err
+	}
+
+	// Delete orphaned positions that are no longer referenced by any move
+	// and not part of any collection
+	for _, pid := range positionIDs {
+		var refCount int
+		err := d.db.QueryRow(`
+			SELECT COUNT(*) FROM (
+				SELECT position_id FROM move WHERE position_id = ?
+				UNION ALL
+				SELECT position_id FROM collection_position WHERE position_id = ?
+			)
+		`, pid, pid).Scan(&refCount)
+		if err != nil {
+			continue
+		}
+		if refCount == 0 {
+			// Position is orphaned — delete it (cascades to analysis and comment)
+			d.db.Exec(`DELETE FROM position WHERE id = ?`, pid)
+		}
 	}
 
 	return nil
