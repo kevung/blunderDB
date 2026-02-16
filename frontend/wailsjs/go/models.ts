@@ -262,6 +262,7 @@ export namespace main {
 	    file_path: string;
 	    game_count: number;
 	    tournament_id?: number;
+	    tournament_name: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -281,6 +282,7 @@ export namespace main {
 	        this.file_path = source["file_path"];
 	        this.game_count = source["game_count"];
 	        this.tournament_id = source["tournament_id"];
+	        this.tournament_name = source["tournament_name"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

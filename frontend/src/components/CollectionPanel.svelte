@@ -680,6 +680,13 @@
         if (!visible) return;
         if (event.target.matches('input, textarea')) return;
 
+        // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+K to toggle panel)
+        if (event.ctrlKey) return;
+
+        // Stop all keyboard events from propagating to global handlers
+        // This prevents global shortcuts (j, k, space, etc.) from interfering with collection panel
+        event.stopPropagation();
+
         if (event.key === 'Escape') {
             if (selectedCollection) {
                 selectedCollectionStore.set(null);

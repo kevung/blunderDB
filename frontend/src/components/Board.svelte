@@ -1031,8 +1031,10 @@
             let flip = false;
             
             if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
-                // In match mode: never flip labels (Player 1's perspective always)
-                flip = false;
+                // In match mode: flip labels when Player 2 is on roll
+                // so point numbers reflect the player on roll's perspective
+                const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+                flip = currentMovePos && currentMovePos.player_on_roll === 1;
             } else {
                 // In normal mode: flip if player_on_roll is 1 (for edited positions before save)
                 flip = position.player_on_roll === 1;

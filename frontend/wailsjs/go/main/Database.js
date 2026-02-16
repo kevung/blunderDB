@@ -294,6 +294,10 @@ export function SaveSessionState(arg1) {
   return window['go']['main']['Database']['SaveSessionState'](arg1);
 }
 
+export function SetMatchTournamentByName(arg1, arg2) {
+  return window['go']['main']['Database']['SetMatchTournamentByName'](arg1, arg2);
+}
+
 export function SetupDatabase(arg1) {
   return window['go']['main']['Database']['SetupDatabase'](arg1);
 }

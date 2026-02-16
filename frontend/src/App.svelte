@@ -478,7 +478,7 @@
         }
 
         // Prevent command line from opening when editing filter panel fields or comment panel
-        if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || showComment) {
+        if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
             // Allow all Ctrl+key shortcuts to work globally
             if (event.ctrlKey) {
                 console.log('DEBUG: Inside panel, but Ctrl key pressed - allowing shortcut');
@@ -614,6 +614,7 @@
         } else if (event.ctrlKey && event.code === 'KeyT') {
             toggleMatchPanel();
         } else if (event.ctrlKey && event.code === 'KeyY') {
+            event.preventDefault();
             toggleTournamentPanel();
         } else if (!event.ctrlKey && event.code === 'KeyP') {
             togglePipcount();
@@ -3096,13 +3097,19 @@ function togglePipcount() {
             return; // Prevent changing position when any modal is open or in edit mode
         }
 
-        // Prevent changing position when scrolling in the analysis panel, comment panel, or filter panel
+        // Prevent changing position when scrolling in the analysis panel, comment panel, filter panel, match panel, collection panel, or tournament panel
         const analysisPanel = document.querySelector('.analysis-panel');
         const commentPanel = document.querySelector('.comment-panel');
         const filterPanel = document.querySelector('.filter-library-panel'); // Ensure correct class name
+        const matchPanel = document.querySelector('.match-panel');
+        const collectionPanel = document.querySelector('.collection-panel');
+        const tournamentPanel = document.querySelector('.tournament-panel');
         if ((analysisPanel && analysisPanel.contains(event.target)) || 
             (commentPanel && commentPanel.contains(event.target)) || 
-            (filterPanel && filterPanel.contains(event.target))) { // Check filter panel
+            (filterPanel && filterPanel.contains(event.target)) ||
+            (matchPanel && matchPanel.contains(event.target)) ||
+            (collectionPanel && collectionPanel.contains(event.target)) ||
+            (tournamentPanel && tournamentPanel.contains(event.target))) { // Check all panels
             return;
         }
 
@@ -3303,6 +3310,8 @@ function togglePipcount() {
     <MatchPanel />
 
     <CollectionPanel onOpenCollection={handleOpenCollection} />
+
+    <TournamentPanel />
 
     <HelpModal
         visible={showHelp}

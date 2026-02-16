@@ -173,18 +173,19 @@ func (p *Position) MatchesCheckerPosition(filter Position) bool {
 // Match-related structures for XG import
 
 type Match struct {
-	ID           int64     `json:"id"`
-	Player1Name  string    `json:"player1_name"`
-	Player2Name  string    `json:"player2_name"`
-	Event        string    `json:"event"`
-	Location     string    `json:"location"`
-	Round        string    `json:"round"`
-	MatchLength  int32     `json:"match_length"`
-	MatchDate    time.Time `json:"match_date"`
-	ImportDate   time.Time `json:"import_date"`
-	FilePath     string    `json:"file_path"`
-	GameCount    int       `json:"game_count"`
-	TournamentID *int64    `json:"tournament_id,omitempty"`
+	ID             int64     `json:"id"`
+	Player1Name    string    `json:"player1_name"`
+	Player2Name    string    `json:"player2_name"`
+	Event          string    `json:"event"`
+	Location       string    `json:"location"`
+	Round          string    `json:"round"`
+	MatchLength    int32     `json:"match_length"`
+	MatchDate      time.Time `json:"match_date"`
+	ImportDate     time.Time `json:"import_date"`
+	FilePath       string    `json:"file_path"`
+	GameCount      int       `json:"game_count"`
+	TournamentID   *int64    `json:"tournament_id,omitempty"`
+	TournamentName string    `json:"tournament_name"`
 }
 
 type Game struct {

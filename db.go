@@ -6834,10 +6834,12 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 	defer d.mu.Unlock()
 
 	rows, err := d.db.Query(`
-		SELECT id, player1_name, player2_name, event, location, round, 
-		       match_length, match_date, import_date, file_path, game_count
-		FROM match
-		ORDER BY match_date DESC
+		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round, 
+		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
+		       m.tournament_id, COALESCE(t.name, '') as tournament_name
+		FROM match m
+		LEFT JOIN tournament t ON m.tournament_id = t.id
+		ORDER BY m.match_date DESC
 	`)
 	if err != nil {
 		fmt.Println("Error loading matches:", err)
@@ -6849,7 +6851,8 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 	for rows.Next() {
 		var m Match
 		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount)
+			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
+			&m.TournamentID, &m.TournamentName)
 		if err != nil {
 			fmt.Println("Error scanning match:", err)
 			continue
@@ -8106,6 +8109,43 @@ func (d *Database) RemoveMatchFromTournament(matchID int64) error {
 
 	_, err := d.db.Exec(`UPDATE match SET tournament_id = NULL WHERE id = ?`, matchID)
 	return err
+}
+
+// SetMatchTournamentByName assigns a match to a tournament by name.
+// If tournamentName is empty, the match is unlinked from any tournament.
+// If no tournament with that name exists, one is created.
+func (d *Database) SetMatchTournamentByName(matchID int64, tournamentName string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	name := strings.TrimSpace(tournamentName)
+	if name == "" {
+		_, err := d.db.Exec(`UPDATE match SET tournament_id = NULL WHERE id = ?`, matchID)
+		return err
+	}
+
+	// Look for existing tournament with that name
+	var tournamentID int64
+	err := d.db.QueryRow(`SELECT id FROM tournament WHERE name = ?`, name).Scan(&tournamentID)
+	if err != nil {
+		// Create new tournament
+		res, err2 := d.db.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, name)
+		if err2 != nil {
+			return err2
+		}
+		tournamentID, _ = res.LastInsertId()
+	}
+
+	_, err = d.db.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+	if err != nil {
+		return err
+	}
+	_, _ = d.db.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
+	return nil
 }
 
 // GetTournamentMatches returns all matches in a tournament

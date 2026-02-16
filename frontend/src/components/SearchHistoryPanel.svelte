@@ -264,7 +264,19 @@
     }
 
     function handleKeyDown(event) {
-        console.log('DEBUG SearchHistoryPanel.handleKeyDown:', event.key, 'ctrlKey:', event.ctrlKey, 'code:', event.code);
+        if (!visible) return;
+        
+        // Skip events from input fields to allow normal input field behavior
+        if (event.target.matches('input, textarea')) {
+            return;
+        }
+
+        // Let Ctrl+key combos pass through to global handler
+        if (event.ctrlKey) return;
+        
+        // Stop all keyboard events from propagating to global handlers
+        // This prevents global shortcuts (j, k, space, etc.) from interfering with search history panel
+        event.stopPropagation();
         
         if (event.key === 'Escape') {
             if (showSaveDialog) {

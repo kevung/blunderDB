@@ -6,7 +6,7 @@
         GetMatchMovePositions, 
         LoadAnalysis,
         GetAllTournaments,
-        AddMatchToTournament
+        SetMatchTournamentByName
     } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { statusBarModeStore, showMatchPanelStore, statusBarTextStore } from '../stores/uiStore';
@@ -19,15 +19,17 @@
     let visible = false;
     let lastVisitedMatch = null;
     let tournaments = [];
-    let showTournamentSelector = false;
-    let selectedTournament = null;
 
-    // Subscribe to last visited match store
+    // Inline tournament editing
+    let editingTournamentMatchId = null;
+    let editTournamentValue = '';
+    let showTournamentDropdown = false;
+    let filteredTournaments = [];
+
     lastVisitedMatchStore.subscribe(value => {
         lastVisitedMatch = value;
     });
 
-    // Subscribe to tournaments store
     tournamentsStore.subscribe(value => {
         tournaments = value || [];
     });
@@ -36,26 +38,22 @@
         const wasVisible = visible;
         visible = value;
         if (visible && !wasVisible) {
-            // Panel just opened
             await loadMatches();
-            // Preselect the last visited match if it exists
             if (lastVisitedMatch && lastVisitedMatch.matchID) {
                 selectedMatch = matches.find(m => m.id === lastVisitedMatch.matchID);
             } else {
                 selectedMatch = null;
             }
         } else if (!visible && wasVisible) {
-            // Panel closed - reset selection
             selectedMatch = null;
+            editingTournamentMatchId = null;
         }
     });
 
     async function loadMatches() {
         try {
             const loadedMatches = await GetAllMatches();
-            // Reverse to show most recent first (chronological order with recent at top)
             matches = (loadedMatches || []).reverse();
-            // Load tournaments for assignment UI
             await loadTournaments();
         } catch (error) {
             console.error('Error loading matches:', error);
@@ -72,22 +70,69 @@
         }
     }
 
-    async function assignMatchToTournament(tournamentId) {
-        if (!selectedMatch) return;
+    function startEditTournament(match, event) {
+        event.stopPropagation();
+        editingTournamentMatchId = match.id;
+        editTournamentValue = match.tournament_name || '';
+        showTournamentDropdown = true;
+        filteredTournaments = tournaments;
+        setTimeout(() => {
+            const input = document.querySelector('.tournament-edit-input');
+            if (input) input.focus();
+        }, 50);
+    }
+
+    function filterTournaments() {
+        const val = editTournamentValue.toLowerCase();
+        if (!val) {
+            filteredTournaments = tournaments;
+        } else {
+            filteredTournaments = tournaments.filter(t => t.name.toLowerCase().includes(val));
+        }
+        showTournamentDropdown = true;
+    }
+
+    async function selectTournamentOption(name) {
+        editTournamentValue = name;
+        showTournamentDropdown = false;
+        await saveTournamentEdit();
+    }
+
+    async function saveTournamentEdit() {
+        if (editingTournamentMatchId === null) return;
         try {
-            await AddMatchToTournament(tournamentId, selectedMatch.id);
+            await SetMatchTournamentByName(editingTournamentMatchId, editTournamentValue.trim());
             await loadMatches();
-            showTournamentSelector = false;
-            statusBarTextStore.set('Match added to tournament');
+            await loadTournaments();
+            statusBarTextStore.set(editTournamentValue.trim() ? `Tournament set to "${editTournamentValue.trim()}"` : 'Tournament cleared');
         } catch (error) {
-            console.error('Error assigning match to tournament:', error);
-            statusBarTextStore.set('Error assigning match');
+            console.error('Error setting tournament:', error);
+            statusBarTextStore.set('Error setting tournament');
+        }
+        editingTournamentMatchId = null;
+        editTournamentValue = '';
+        showTournamentDropdown = false;
+    }
+
+    function cancelTournamentEdit() {
+        editingTournamentMatchId = null;
+        editTournamentValue = '';
+        showTournamentDropdown = false;
+    }
+
+    function handleTournamentKeyDown(event) {
+        event.stopPropagation();
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            saveTournamentEdit();
+        } else if (event.key === 'Escape') {
+            event.preventDefault();
+            cancelTournamentEdit();
         }
     }
 
     function selectMatch(match) {
         if (selectedMatch === match) {
-            // Deselect if clicking the same match
             selectedMatch = null;
         } else {
             selectedMatch = match;
@@ -96,26 +141,20 @@
 
     async function loadMatchPositions(match) {
         try {
-            // Load all move positions for this match in chronological order
             const movePositions = await GetMatchMovePositions(match.id);
             
             if (!movePositions || movePositions.length === 0) {
-                console.error('No move positions found for match');
                 statusBarTextStore.set('No moves found in this match');
                 return;
             }
 
-            // Check if this is the last visited match and restore position
             let startIndex = 0;
             if (lastVisitedMatch && lastVisitedMatch.matchID === match.id) {
-                // Validate the saved index is still valid
                 if (lastVisitedMatch.currentIndex >= 0 && lastVisitedMatch.currentIndex < movePositions.length) {
                     startIndex = lastVisitedMatch.currentIndex;
-                    console.log(`Restoring last visited position: index ${startIndex}, game ${lastVisitedMatch.gameNumber}`);
                 }
             }
 
-            // Update match context store - start at the restored position or first position
             matchContextStore.set({
                 isMatchMode: true,
                 matchID: match.id,
@@ -125,21 +164,14 @@
                 player2Name: match.player2_name,
             });
 
-            // Load the position at the start index
-            // The position is stored from player on roll POV
-            // The Board component will handle display transformation
             const startMovePos = movePositions[startIndex];
             positionStore.set(startMovePos.position);
             
-            // Load analysis for the start position
             let analysis = null;
             try {
                 analysis = await LoadAnalysis(startMovePos.position.id);
-            } catch (error) {
-                // No analysis for this position
-            }
+            } catch (error) {}
             
-            // Use the specific move from this match context, not all played moves
             const currentPlayedMove = startMovePos.checker_move || '';
             const currentPlayedCubeAction = startMovePos.cube_action || '';
             
@@ -152,24 +184,12 @@
                 analysisEngineVersion: analysis?.analysisEngineVersion || '',
                 checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
                 doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
-                    analysisDepth: '',
-                    playerWinChances: 0,
-                    playerGammonChances: 0,
-                    playerBackgammonChances: 0,
-                    opponentWinChances: 0,
-                    opponentGammonChances: 0,
-                    opponentBackgammonChances: 0,
-                    cubelessNoDoubleEquity: 0,
-                    cubelessDoubleEquity: 0,
-                    cubefulNoDoubleEquity: 0,
-                    cubefulNoDoubleError: 0,
-                    cubefulDoubleTakeEquity: 0,
-                    cubefulDoubleTakeError: 0,
-                    cubefulDoublePassEquity: 0,
-                    cubefulDoublePassError: 0,
-                    bestCubeAction: '',
-                    wrongPassPercentage: 0,
-                    wrongTakePercentage: 0
+                    analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
+                    playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
+                    opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
+                    cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
+                    cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
+                    bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
                 },
                 playedMove: currentPlayedMove,
                 playedCubeAction: currentPlayedCubeAction,
@@ -181,19 +201,14 @@
             
             commentTextStore.set('');
             selectedMoveStore.set(null);
-            
-            // Switch to MATCH mode
             statusBarModeStore.set('MATCH');
             statusBarTextStore.set(`${match.player1_name} vs ${match.player2_name}`);
             
-            // Save this position as the last visited
             lastVisitedMatchStore.set({
                 matchID: match.id,
                 currentIndex: startIndex,
                 gameNumber: startMovePos.game_number
             });
-            
-            console.log('Loaded match with', movePositions.length, 'positions');
             
         } catch (error) {
             console.error('Error loading match positions:', error);
@@ -208,11 +223,7 @@
 
     async function deleteMatchEntry(match, event) {
         event.stopPropagation();
-        
-        if (!confirm(`Delete match between ${match.player1_name} and ${match.player2_name}?`)) {
-            return;
-        }
-
+        if (!confirm(`Delete match between ${match.player1_name} and ${match.player2_name}?`)) return;
         try {
             await DeleteMatch(match.id);
             await loadMatches();
@@ -239,58 +250,51 @@
     function handleKeyDown(event) {
         if (!visible) return;
 
+        // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+T to toggle panel)
+        if (event.ctrlKey) return;
+
+        // Stop all keyboard events from propagating to global handlers
+        event.stopPropagation();
+
         if (event.key === 'Escape') {
-            if (selectedMatch) {
-                // Deselect if a match is selected
+            if (editingTournamentMatchId !== null) {
+                cancelTournamentEdit();
+                event.preventDefault();
+            } else if (selectedMatch) {
                 selectedMatch = null;
                 event.preventDefault();
-                event.stopPropagation();
             } else {
                 closePanel();
             }
             return;
         }
 
-        // Handle j/k and arrow keys for match navigation ONLY when a match is selected
         if (selectedMatch && matches.length > 0) {
             const currentIndex = matches.findIndex(m => m.id === selectedMatch.id);
 
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
-                event.stopPropagation();
-                // Select next match (down in the list)
                 if (currentIndex >= 0 && currentIndex < matches.length - 1) {
                     selectMatch(matches[currentIndex + 1]);
-                    // Scroll to the newly selected row
                     setTimeout(() => {
                         const selectedRow = document.querySelector('.match-panel tr.selected');
-                        if (selectedRow) {
-                            selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }
+                        if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }, 0);
                 }
             } else if (event.key === 'k' || event.key === 'ArrowUp') {
                 event.preventDefault();
-                event.stopPropagation();
-                // Select previous match (up in the list)
                 if (currentIndex > 0) {
                     selectMatch(matches[currentIndex - 1]);
-                    // Scroll to the newly selected row
                     setTimeout(() => {
                         const selectedRow = document.querySelector('.match-panel tr.selected');
-                        if (selectedRow) {
-                            selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                        }
+                        if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                     }, 0);
                 }
             } else if (event.key === 'Enter') {
                 event.preventDefault();
-                event.stopPropagation();
                 handleDoubleClick(selectedMatch);
             } else if (event.key === 'Delete') {
                 event.preventDefault();
-                event.stopPropagation();
-                // Create a synthetic event object
                 const syntheticEvent = { stopPropagation: () => {} };
                 deleteMatchEntry(selectedMatch, syntheticEvent);
             }
@@ -298,35 +302,31 @@
     }
 
     function handleClickOutside(event) {
+        // Close tournament dropdown if clicking outside
+        if (editingTournamentMatchId !== null && !event.target.closest('.tournament-cell-edit')) {
+            cancelTournamentEdit();
+        }
         const panel = document.getElementById('matchPanel');
         if (panel && !panel.contains(event.target)) {
             document.activeElement.blur();
         }
     }
 
-    // Focus the panel when it becomes visible and scroll to selected match
     $: {
         if (visible) {
             setTimeout(() => {
                 const panel = document.getElementById('matchPanel');
-                if (panel) {
-                    panel.focus();
-                }
-                // Scroll to selected match if there is one
+                if (panel) panel.focus();
                 if (selectedMatch) {
                     const selectedRow = document.querySelector('.match-panel tr.selected');
-                    if (selectedRow) {
-                        selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
+                    if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
-            }, 100); // Increased timeout to allow table rendering
+            }, 100);
         }
     }
 
     onMount(async () => {
-        if (visible) {
-            await loadMatches();
-        }
+        if (visible) await loadMatches();
         document.addEventListener('click', handleClickOutside);
         document.addEventListener('keydown', handleKeyDown);
     });
@@ -354,6 +354,7 @@
                                 <th class="no-select">Event</th>
                                 <th class="no-select">Date</th>
                                 <th class="no-select">Length</th>
+                                <th class="no-select">Tournament</th>
                                 <th class="no-select">Actions</th>
                             </tr>
                         </thead>
@@ -370,19 +371,33 @@
                                     <td class="no-select">{match.event || '-'}</td>
                                     <td class="no-select">{formatDate(match.match_date)}</td>
                                     <td class="no-select">{match.match_length}</td>
+                                    <td class="tournament-cell no-select" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
+                                        {#if editingTournamentMatchId === match.id}
+                                            <div class="tournament-cell-edit">
+                                                <input 
+                                                    type="text" 
+                                                    class="tournament-edit-input"
+                                                    bind:value={editTournamentValue}
+                                                    on:input={filterTournaments}
+                                                    on:keydown={handleTournamentKeyDown}
+                                                    on:blur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                    placeholder="Tournament name"
+                                                />
+                                                {#if showTournamentDropdown && filteredTournaments.length > 0}
+                                                    <div class="tournament-dropdown">
+                                                        {#each filteredTournaments as t}
+                                                            <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
+                                                                {t.name}
+                                                            </div>
+                                                        {/each}
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {:else}
+                                            <span class="tournament-display" title="Click to edit">{match.tournament_name || '—'}</span>
+                                        {/if}
+                                    </td>
                                     <td class="actions-cell">
-                                        <button 
-                                            class="action-btn assign-btn" 
-                                            on:click|stopPropagation={() => {
-                                                selectedTournament = null;
-                                                showTournamentSelector = !showTournamentSelector;
-                                            }}
-                                            title="Add to tournament"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                                            </svg>
-                                        </button>
                                         <button 
                                             class="action-btn delete-btn" 
                                             on:click|stopPropagation={(e) => deleteMatchEntry(match, e)}
@@ -398,29 +413,6 @@
                         </tbody>
                     </table>
                 </div>
-
-                {#if showTournamentSelector && selectedMatch}
-                    <div class="tournament-selector">
-                        <h4>Add match to tournament:</h4>
-                        <div class="tournament-list">
-                            {#each tournaments as tournament}
-                                <button 
-                                    class="tournament-option"
-                                    on:click={() => assignMatchToTournament(tournament.id)}
-                                >
-                                    {tournament.name} {tournament.date ? `(${tournament.date})` : ''}
-                                </button>
-                            {/each}
-                            {#if tournaments.length === 0}
-                                <p class="no-tournaments">No tournaments available. Create one first.</p>
-                            {/if}
-                        </div>
-                        <button 
-                            class="cancel-selector"
-                            on:click={() => showTournamentSelector = false}
-                        >Cancel</button>
-                    </div>
-                {/if}
             {/if}
         </div>
     </section>
@@ -431,7 +423,7 @@
     .match-panel {
         position: fixed;
         width: 100%;
-        bottom: 0;
+        bottom: 22px;
         left: 0;
         right: 0;
         height: 178px;
@@ -439,6 +431,8 @@
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         z-index: 5;
         outline: none;
+        user-select: none;
+        -webkit-user-select: none;
     }
 
     .close-icon {
@@ -467,6 +461,8 @@
     .match-panel-content {
         height: 100%;
         overflow-y: auto;
+        display: flex;
+        flex-direction: row;
     }
 
     .empty-message {
@@ -477,6 +473,7 @@
     }
 
     .match-table-container {
+        flex: 1;
         height: 100%;
         overflow-y: auto;
     }
@@ -530,7 +527,7 @@
     }
 
     .actions-cell {
-        width: 80px;
+        width: 40px;
         text-align: center;
     }
 
@@ -564,5 +561,59 @@
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
+    }
+
+    .tournament-cell {
+        position: relative;
+        cursor: pointer;
+        min-width: 100px;
+    }
+
+    .tournament-display {
+        color: #666;
+        font-size: 11px;
+    }
+
+    .tournament-display:hover {
+        color: #1976d2;
+    }
+
+    .tournament-cell-edit {
+        position: relative;
+    }
+
+    .tournament-edit-input {
+        width: 100%;
+        padding: 2px 4px;
+        border: 1px solid #1976d2;
+        border-radius: 2px;
+        font-size: 11px;
+        box-sizing: border-box;
+        outline: none;
+    }
+
+    .tournament-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: white;
+        border: 1px solid #ccc;
+        border-top: none;
+        border-radius: 0 0 3px 3px;
+        max-height: 80px;
+        overflow-y: auto;
+        z-index: 20;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    }
+
+    .tournament-dropdown-item {
+        padding: 3px 6px;
+        font-size: 11px;
+        cursor: pointer;
+    }
+
+    .tournament-dropdown-item:hover {
+        background: #e3f2fd;
     }
 </style>
