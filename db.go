@@ -44,6 +44,13 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	// Enable foreign key constraints
+	_, err = d.db.Exec("PRAGMA foreign_keys = ON")
+	if err != nil {
+		fmt.Println("Error enabling foreign keys:", err)
+		return err
+	}
+
 	// Erase any content in the database
 	_, err = d.db.Exec(`
 		PRAGMA writable_schema = 1;
@@ -233,6 +240,67 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	// Create collection-related tables for position collections (v1.5.0)
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS collection (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			description TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating collection table:", err)
+		return err
+	}
+
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS collection_position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			collection_id INTEGER NOT NULL,
+			position_id INTEGER NOT NULL,
+			sort_order INTEGER DEFAULT 0,
+			added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
+			UNIQUE(collection_id, position_id)
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating collection_position table:", err)
+		return err
+	}
+
+	// Create index for faster collection lookups
+	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`)
+	if err != nil {
+		fmt.Println("Error creating collection_position index:", err)
+		return err
+	}
+
+	// Create tournament table for organizing matches (v1.6.0)
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS tournament (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			date TEXT,
+			location TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating tournament table:", err)
+		return err
+	}
+
+	// Add tournament_id column to match table if it doesn't exist
+	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
+	// Ignore error if column already exists
+
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
@@ -259,6 +327,13 @@ func (d *Database) OpenDatabase(path string) error {
 		return err
 	}
 
+	// Enable foreign key constraints
+	_, err = d.db.Exec("PRAGMA foreign_keys = ON")
+	if err != nil {
+		fmt.Println("Error enabling foreign keys:", err)
+		return err
+	}
+
 	// Check the database version
 	var dbVersion string
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
@@ -280,6 +355,9 @@ func (d *Database) OpenDatabase(path string) error {
 	}
 	if dbVersion >= "1.4.0" {
 		requiredTables = append(requiredTables, "match", "game", "move", "move_analysis")
+	}
+	if dbVersion >= "1.5.0" {
+		requiredTables = append(requiredTables, "collection", "collection_position")
 	}
 
 	// Auto-migrate from 1.2.0 to 1.3.0
@@ -452,6 +530,97 @@ func (d *Database) OpenDatabase(path string) error {
 			}
 
 			fmt.Println("Added match_hash column and populated existing matches")
+		}
+	}
+
+	// Auto-migrate from 1.4.0 to 1.5.0
+	if dbVersion == "1.4.0" {
+		var collectionExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='collection'`).Scan(&collectionExists)
+		if err == sql.ErrNoRows {
+			// Create collection-related tables
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS collection (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					name TEXT NOT NULL,
+					description TEXT,
+					sort_order INTEGER DEFAULT 0,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				)
+			`)
+			if err != nil {
+				fmt.Println("Error creating collection table:", err)
+				return err
+			}
+
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS collection_position (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					collection_id INTEGER NOT NULL,
+					position_id INTEGER NOT NULL,
+					sort_order INTEGER DEFAULT 0,
+					added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
+					FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
+					UNIQUE(collection_id, position_id)
+				)
+			`)
+			if err != nil {
+				fmt.Println("Error creating collection_position table:", err)
+				return err
+			}
+
+			// Create index for faster collection lookups
+			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`)
+			if err != nil {
+				fmt.Println("Error creating collection_position index:", err)
+				return err
+			}
+
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.5.0")
+			if err != nil {
+				fmt.Println("Error updating database version:", err)
+				return err
+			}
+			dbVersion = "1.5.0"
+			fmt.Println("Database automatically upgraded from 1.4.0 to 1.5.0")
+		}
+	}
+
+	// Auto-migrate from 1.5.0 to 1.6.0
+	if dbVersion == "1.5.0" {
+		var tournamentExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='tournament'`).Scan(&tournamentExists)
+		if err == sql.ErrNoRows {
+			// Create tournament table
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS tournament (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					name TEXT NOT NULL,
+					date TEXT,
+					location TEXT,
+					sort_order INTEGER DEFAULT 0,
+					created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+					updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+				)
+			`)
+			if err != nil {
+				fmt.Println("Error creating tournament table:", err)
+				return err
+			}
+
+			// Add tournament_id column to match table
+			_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
+			// Ignore error if column already exists
+
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.6.0")
+			if err != nil {
+				fmt.Println("Error updating database version:", err)
+				return err
+			}
+			dbVersion = "1.6.0"
+			fmt.Println("Database automatically upgraded from 1.5.0 to 1.6.0")
 		}
 	}
 
@@ -970,6 +1139,14 @@ func (d *Database) DeletePosition(positionID int64) error {
 	}
 
 	d.mu.Lock() // Lock the mutex
+
+	// Delete the position from any collections (CASCADE should handle this, but be explicit)
+	_, err = d.db.Exec(`DELETE FROM collection_position WHERE position_id = ?`, positionID)
+	if err != nil {
+		fmt.Println("Error deleting position from collections:", err)
+		d.mu.Unlock()
+		return err
+	}
 
 	// Delete the position
 	_, err = d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
@@ -3583,7 +3760,7 @@ func (d *Database) ImportDatabase(importPath string) (map[string]interface{}, er
 
 // ExportDatabase creates a new database file containing the current selection of positions
 // with their analysis and comments
-func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool) error {
+func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool, includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -3711,11 +3888,58 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 			file_path TEXT,
 			game_count INTEGER DEFAULT 0,
-			match_hash TEXT
+			match_hash TEXT,
+			tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL
 		)
 	`)
 	if err != nil {
 		fmt.Println("Error creating match table in export database:", err)
+		return err
+	}
+
+	// Create tournament table
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS tournament (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			date TEXT,
+			location TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+
+	// Create collection tables (required for version >= 1.5.0)
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS collection (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			description TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating collection table in export database:", err)
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS collection_position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			collection_id INTEGER NOT NULL,
+			position_id INTEGER NOT NULL,
+			sort_order INTEGER DEFAULT 0,
+			added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
+			UNIQUE(collection_id, position_id)
+		)
+	`)
+	if err != nil {
+		fmt.Println("Error creating collection_position table in export database:", err)
 		return err
 	}
 
@@ -3992,22 +4216,39 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	}
 
 	// Export matches if includeMatches is true
+	matchIDMapping := make(map[int64]int64) // old match ID -> new match ID (accessible for tournament linking)
 	if includeMatches {
 		matchCount := 0
 		gameCount := 0
 		moveCount := 0
 		moveAnalysisCount := 0
 
-		// Get all matches
-		matchRows, err := d.db.Query(`
-			SELECT id, player1_name, player2_name, event, location, round,
-			       match_length, match_date, import_date, file_path, game_count, match_hash
-			FROM match
-		`)
+		// Get matches - filter by matchIDs if provided, otherwise get all
+		var matchRows *sql.Rows
+		if len(matchIDs) > 0 {
+			// Build IN clause for specific match IDs
+			placeholders := make([]string, len(matchIDs))
+			args := make([]interface{}, len(matchIDs))
+			for i, id := range matchIDs {
+				placeholders[i] = "?"
+				args[i] = id
+			}
+			query := fmt.Sprintf(`
+				SELECT id, player1_name, player2_name, event, location, round,
+				       match_length, match_date, import_date, file_path, game_count, match_hash, tournament_id
+				FROM match
+				WHERE id IN (%s)
+			`, strings.Join(placeholders, ","))
+			matchRows, err = d.db.Query(query, args...)
+		} else {
+			matchRows, err = d.db.Query(`
+				SELECT id, player1_name, player2_name, event, location, round,
+				       match_length, match_date, import_date, file_path, game_count, match_hash, tournament_id
+				FROM match
+			`)
+		}
 		if err == nil {
 			defer matchRows.Close()
-
-			matchIDMapping := make(map[int64]int64) // old match ID -> new match ID
 
 			for matchRows.Next() {
 				var oldMatchID int64
@@ -4016,9 +4257,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				var matchDate, importDate time.Time
 				var gameCountVal int
 				var matchHash sql.NullString
+				var tournamentID sql.NullInt64
 
 				err := matchRows.Scan(&oldMatchID, &player1Name, &player2Name, &event, &location, &round,
-					&matchLength, &matchDate, &importDate, &filePath, &gameCountVal, &matchHash)
+					&matchLength, &matchDate, &importDate, &filePath, &gameCountVal, &matchHash, &tournamentID)
 				if err != nil {
 					fmt.Printf("Error scanning match: %v\n", err)
 					continue
@@ -4204,6 +4446,106 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		}
 
 		fmt.Printf("Exported %d matches, %d games, %d moves, %d move analyses\n", matchCount, gameCount, moveCount, moveAnalysisCount)
+	}
+
+	// Export collections if requested
+	if includeCollections && len(collectionIDs) > 0 {
+		collectionCount := 0
+		collectionPosCount := 0
+
+		for _, collectionID := range collectionIDs {
+			var name, description string
+			var sortOrder int
+			var createdAt, updatedAt string
+			err := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
+				Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
+			if err != nil {
+				fmt.Printf("Error reading collection %d: %v\n", collectionID, err)
+				continue
+			}
+
+			result, err := exportDB.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
+				name, description, sortOrder, createdAt, updatedAt)
+			if err != nil {
+				fmt.Printf("Error inserting collection %d: %v\n", collectionID, err)
+				continue
+			}
+			newCollectionID, _ := result.LastInsertId()
+			collectionCount++
+
+			// Export collection_position mappings
+			cpRows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
+			if err != nil {
+				fmt.Printf("Error querying collection_position for collection %d: %v\n", collectionID, err)
+				continue
+			}
+			for cpRows.Next() {
+				var oldPosID int64
+				var cpSortOrder int
+				var addedAt string
+				if err := cpRows.Scan(&oldPosID, &cpSortOrder, &addedAt); err != nil {
+					continue
+				}
+				if newPosID, ok := idMapping[oldPosID]; ok {
+					_, _ = exportDB.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
+						newCollectionID, newPosID, cpSortOrder, addedAt)
+					collectionPosCount++
+				}
+			}
+			cpRows.Close()
+		}
+
+		fmt.Printf("Exported %d collections with %d position mappings\n", collectionCount, collectionPosCount)
+	}
+
+	// Export tournaments if requested
+	if len(tournamentIDs) > 0 {
+		tournamentCount := 0
+		tournamentIDMapping := make(map[int64]int64)
+
+		for _, tournamentID := range tournamentIDs {
+			var name string
+			var date, location sql.NullString
+			var sortOrder int
+			var createdAt, updatedAt string
+			err := d.db.QueryRow(`SELECT name, date, location, sort_order, created_at, updated_at FROM tournament WHERE id = ?`, tournamentID).
+				Scan(&name, &date, &location, &sortOrder, &createdAt, &updatedAt)
+			if err != nil {
+				fmt.Printf("Error reading tournament %d: %v\n", tournamentID, err)
+				continue
+			}
+
+			result, err := exportDB.Exec(`INSERT INTO tournament (name, date, location, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+				name, date, location, sortOrder, createdAt, updatedAt)
+			if err != nil {
+				fmt.Printf("Error inserting tournament %d: %v\n", tournamentID, err)
+				continue
+			}
+			newTournamentID, _ := result.LastInsertId()
+			tournamentIDMapping[tournamentID] = newTournamentID
+			tournamentCount++
+		}
+
+		// Update tournament_id on exported matches that belong to exported tournaments
+		if includeMatches && len(matchIDMapping) > 0 {
+			matchTournamentRows, mterr := d.db.Query(`SELECT id, tournament_id FROM match WHERE tournament_id IS NOT NULL`)
+			if mterr == nil {
+				for matchTournamentRows.Next() {
+					var oldMatchID int64
+					var oldTournamentID int64
+					if err := matchTournamentRows.Scan(&oldMatchID, &oldTournamentID); err == nil {
+						newMatchID, matchExported := matchIDMapping[oldMatchID]
+						newTournamentID, tournamentExported := tournamentIDMapping[oldTournamentID]
+						if matchExported && tournamentExported {
+							_, _ = exportDB.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, newTournamentID, newMatchID)
+						}
+					}
+				}
+				matchTournamentRows.Close()
+			}
+		}
+
+		fmt.Printf("Exported %d tournaments\n", tournamentCount)
 	}
 
 	fmt.Printf("Successfully exported %d positions to %s\n", len(positions), exportPath)
@@ -6717,4 +7059,1453 @@ func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
 	}
 
 	return stats, nil
+}
+
+// Collection represents a collection of positions
+type Collection struct {
+	ID            int64  `json:"id"`
+	Name          string `json:"name"`
+	Description   string `json:"description"`
+	SortOrder     int    `json:"sortOrder"`
+	CreatedAt     string `json:"createdAt"`
+	UpdatedAt     string `json:"updatedAt"`
+	PositionCount int    `json:"positionCount"`
+}
+
+// CollectionPosition represents a position in a collection with its order
+type CollectionPosition struct {
+	ID           int64    `json:"id"`
+	CollectionID int64    `json:"collectionId"`
+	PositionID   int64    `json:"positionId"`
+	SortOrder    int      `json:"sortOrder"`
+	AddedAt      string   `json:"addedAt"`
+	Position     Position `json:"position"`
+}
+
+// CreateCollection creates a new collection
+func (d *Database) CreateCollection(name string, description string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+
+	// Get the max sort_order
+	var maxOrder int
+	err := d.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection`).Scan(&maxOrder)
+	if err != nil {
+		maxOrder = -1
+	}
+
+	result, err := d.db.Exec(`
+		INSERT INTO collection (name, description, sort_order, created_at, updated_at)
+		VALUES (?, ?, ?, datetime('now'), datetime('now'))
+	`, name, description, maxOrder+1)
+	if err != nil {
+		fmt.Println("Error creating collection:", err)
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+// GetAllCollections returns all collections with their position counts
+func (d *Database) GetAllCollections() ([]Collection, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	rows, err := d.db.Query(`
+		SELECT 
+			c.id,
+			c.name,
+			COALESCE(c.description, ''),
+			c.sort_order,
+			c.created_at,
+			c.updated_at,
+			COUNT(cp.id) as position_count
+		FROM collection c
+		LEFT JOIN collection_position cp ON c.id = cp.collection_id
+		GROUP BY c.id
+		ORDER BY c.sort_order ASC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var collections []Collection
+	for rows.Next() {
+		var c Collection
+		err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt, &c.PositionCount)
+		if err != nil {
+			continue
+		}
+		collections = append(collections, c)
+	}
+
+	return collections, nil
+}
+
+// UpdateCollection updates a collection's name and description
+func (d *Database) UpdateCollection(id int64, name string, description string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`
+		UPDATE collection SET name = ?, description = ?, updated_at = datetime('now')
+		WHERE id = ?
+	`, name, description, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteCollection deletes a collection and all its position associations
+func (d *Database) DeleteCollection(id int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`DELETE FROM collection WHERE id = ?`, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// ReorderCollections updates the sort order of all collections
+func (d *Database) ReorderCollections(collectionIDs []int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	for i, id := range collectionIDs {
+		_, err := tx.Exec(`UPDATE collection SET sort_order = ? WHERE id = ?`, i, id)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit()
+}
+
+// AddPositionToCollection adds a position to a collection
+func (d *Database) AddPositionToCollection(collectionID int64, positionID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	// Get the max sort_order for this collection
+	var maxOrder int
+	err := d.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, collectionID).Scan(&maxOrder)
+	if err != nil {
+		maxOrder = -1
+	}
+
+	_, err = d.db.Exec(`
+		INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order, added_at)
+		VALUES (?, ?, ?, datetime('now'))
+	`, collectionID, positionID, maxOrder+1)
+	if err != nil {
+		return err
+	}
+
+	// Update collection's updated_at
+	_, err = d.db.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+
+	return err
+}
+
+// AddPositionsToCollection adds multiple positions to a collection
+func (d *Database) AddPositionsToCollection(collectionID int64, positionIDs []int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	// Get the max sort_order for this collection
+	var maxOrder int
+	err := d.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, collectionID).Scan(&maxOrder)
+	if err != nil {
+		maxOrder = -1
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	for i, positionID := range positionIDs {
+		_, err = tx.Exec(`
+			INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order, added_at)
+			VALUES (?, ?, ?, datetime('now'))
+		`, collectionID, positionID, maxOrder+1+i)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// Update collection's updated_at
+	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+// RemovePositionFromCollection removes a position from a collection
+func (d *Database) RemovePositionFromCollection(collectionID int64, positionID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`
+		DELETE FROM collection_position 
+		WHERE collection_id = ? AND position_id = ?
+	`, collectionID, positionID)
+	if err != nil {
+		return err
+	}
+
+	// Update collection's updated_at
+	_, err = d.db.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+
+	return err
+}
+
+// RemovePositionsFromCollection removes multiple positions from a collection
+func (d *Database) RemovePositionsFromCollection(collectionID int64, positionIDs []int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	for _, positionID := range positionIDs {
+		_, err = tx.Exec(`
+			DELETE FROM collection_position 
+			WHERE collection_id = ? AND position_id = ?
+		`, collectionID, positionID)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// Update collection's updated_at
+	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+// GetPositionIndexMap returns a map of position ID to its 1-based index in the database
+func (d *Database) GetPositionIndexMap() (map[int64]int, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	rows, err := d.db.Query(`SELECT id FROM position ORDER BY id ASC`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	result := make(map[int64]int)
+	index := 1
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			continue
+		}
+		result[id] = index
+		index++
+	}
+
+	return result, nil
+}
+
+// GetCollectionPositions returns all positions in a collection
+func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	rows, err := d.db.Query(`
+		SELECT p.id, p.state
+		FROM position p
+		INNER JOIN collection_position cp ON p.id = cp.position_id
+		WHERE cp.collection_id = ?
+		ORDER BY cp.sort_order ASC
+	`, collectionID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var positions []Position
+	for rows.Next() {
+		var id int64
+		var state string
+		err := rows.Scan(&id, &state)
+		if err != nil {
+			continue
+		}
+
+		var position Position
+		err = json.Unmarshal([]byte(state), &position)
+		if err != nil {
+			continue
+		}
+		position.ID = id
+		positions = append(positions, position)
+	}
+
+	return positions, nil
+}
+
+// ReorderCollectionPositions updates the sort order of positions within a collection
+func (d *Database) ReorderCollectionPositions(collectionID int64, positionIDs []int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	for i, positionID := range positionIDs {
+		_, err := tx.Exec(`
+			UPDATE collection_position SET sort_order = ?
+			WHERE collection_id = ? AND position_id = ?
+		`, i, collectionID, positionID)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+	}
+
+	// Update collection's updated_at
+	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+// MovePositionBetweenCollections moves a position from one collection to another
+func (d *Database) MovePositionBetweenCollections(fromCollectionID int64, toCollectionID int64, positionID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return err
+	}
+
+	// Remove from source collection
+	_, err = tx.Exec(`
+		DELETE FROM collection_position 
+		WHERE collection_id = ? AND position_id = ?
+	`, fromCollectionID, positionID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Get max sort_order in destination collection
+	var maxOrder int
+	err = tx.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, toCollectionID).Scan(&maxOrder)
+	if err != nil {
+		maxOrder = -1
+	}
+
+	// Add to destination collection
+	_, err = tx.Exec(`
+		INSERT INTO collection_position (collection_id, position_id, sort_order, added_at)
+		VALUES (?, ?, ?, datetime('now'))
+	`, toCollectionID, positionID, maxOrder+1)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	// Update both collections' updated_at
+	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id IN (?, ?)`, fromCollectionID, toCollectionID)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit()
+}
+
+// CopyPositionToCollection copies a position to a collection (position can be in multiple collections)
+func (d *Database) CopyPositionToCollection(toCollectionID int64, positionID int64) error {
+	return d.AddPositionToCollection(toCollectionID, positionID)
+}
+
+// GetCollectionByID returns a collection by its ID
+func (d *Database) GetCollectionByID(id int64) (*Collection, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	var c Collection
+	err := d.db.QueryRow(`
+		SELECT 
+			c.id,
+			c.name,
+			COALESCE(c.description, ''),
+			c.sort_order,
+			c.created_at,
+			c.updated_at,
+			COUNT(cp.id) as position_count
+		FROM collection c
+		LEFT JOIN collection_position cp ON c.id = cp.collection_id
+		WHERE c.id = ?
+		GROUP BY c.id
+	`, id).Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt, &c.PositionCount)
+	if err != nil {
+		return nil, err
+	}
+
+	return &c, nil
+}
+
+// GetPositionCollections returns all collections that contain a specific position
+func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	rows, err := d.db.Query(`
+		SELECT 
+			c.id,
+			c.name,
+			COALESCE(c.description, ''),
+			c.sort_order,
+			c.created_at,
+			c.updated_at
+		FROM collection c
+		INNER JOIN collection_position cp ON c.id = cp.collection_id
+		WHERE cp.position_id = ?
+		ORDER BY c.sort_order ASC
+	`, positionID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var collections []Collection
+	for rows.Next() {
+		var c Collection
+		err := rows.Scan(&c.ID, &c.Name, &c.Description, &c.SortOrder, &c.CreatedAt, &c.UpdatedAt)
+		if err != nil {
+			continue
+		}
+		collections = append(collections, c)
+	}
+
+	return collections, nil
+}
+
+// ExportCollections exports specific collections to a database file
+func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	// Collect all unique position IDs from selected collections
+	positionIDsMap := make(map[int64]bool)
+	for _, collectionID := range collectionIDs {
+		rows, err := d.db.Query(`SELECT position_id FROM collection_position WHERE collection_id = ?`, collectionID)
+		if err != nil {
+			return err
+		}
+		for rows.Next() {
+			var posID int64
+			if err := rows.Scan(&posID); err == nil {
+				positionIDsMap[posID] = true
+			}
+		}
+		rows.Close()
+	}
+
+	// Convert map to slice
+	var positionIDs []int64
+	for id := range positionIDsMap {
+		positionIDs = append(positionIDs, id)
+	}
+
+	// Delete the export file if it already exists
+	if _, err := os.Stat(exportPath); err == nil {
+		if err := os.Remove(exportPath); err != nil {
+			return fmt.Errorf("cannot remove existing export file: %v", err)
+		}
+	}
+
+	// Create export database
+	exportDB, err := sql.Open("sqlite", exportPath)
+	if err != nil {
+		return err
+	}
+	defer exportDB.Close()
+
+	// Create schema
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			state TEXT
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER UNIQUE,
+			data JSON,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS comment (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER UNIQUE,
+			text TEXT,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS metadata (
+			key TEXT PRIMARY KEY,
+			value TEXT
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS command_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS filter_library (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT,
+			command TEXT,
+			edit_position TEXT
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS search_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			position TEXT,
+			timestamp INTEGER
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	// Create match-related tables (for v1.4.0 compatibility)
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT,
+			player2_name TEXT,
+			event TEXT,
+			location TEXT,
+			round TEXT,
+			match_length INTEGER,
+			match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT,
+			game_count INTEGER DEFAULT 0,
+			match_hash TEXT
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`CREATE TABLE IF NOT EXISTS game (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		match_id INTEGER,
+		game_number INTEGER,
+		initial_score_1 INTEGER,
+		initial_score_2 INTEGER,
+		winner INTEGER,
+		points_won INTEGER,
+		move_count INTEGER DEFAULT 0,
+		FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+	)`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`CREATE TABLE IF NOT EXISTS move (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		game_id INTEGER,
+		move_number INTEGER,
+		move_type TEXT,
+		position_id INTEGER,
+		player INTEGER,
+		dice_1 INTEGER,
+		dice_2 INTEGER,
+		checker_move TEXT,
+		cube_action TEXT,
+		FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+		FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+	)`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`CREATE TABLE IF NOT EXISTS move_analysis (
+		id INTEGER PRIMARY KEY AUTOINCREMENT,
+		move_id INTEGER,
+		analysis_type TEXT,
+		depth TEXT,
+		equity REAL,
+		equity_error REAL,
+		win_rate REAL,
+		gammon_rate REAL,
+		backgammon_rate REAL,
+		opponent_win_rate REAL,
+		opponent_gammon_rate REAL,
+		opponent_backgammon_rate REAL,
+		FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+	)`)
+	if err != nil {
+		return err
+	}
+
+	// Create collection tables
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS collection (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			description TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS collection_position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			collection_id INTEGER NOT NULL,
+			position_id INTEGER NOT NULL,
+			sort_order INTEGER DEFAULT 0,
+			added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
+			UNIQUE(collection_id, position_id)
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	// Export positions and create ID mapping
+	oldToNewID := make(map[int64]int64)
+	for _, posID := range positionIDs {
+		var state string
+		err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, posID).Scan(&state)
+		if err != nil {
+			continue
+		}
+
+		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, state)
+		if err != nil {
+			continue
+		}
+		newID, _ := result.LastInsertId()
+		oldToNewID[posID] = newID
+
+		// Export analysis if requested
+		if includeAnalysis {
+			var analysisData string
+			err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&analysisData)
+			if err == nil {
+				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, analysisData)
+			}
+		}
+
+		// Export comments if requested
+		if includeComments {
+			var commentText string
+			err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, posID).Scan(&commentText)
+			if err == nil {
+				_, _ = exportDB.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newID, commentText)
+			}
+		}
+	}
+
+	// Export collections and their position mappings
+	collectionIDMapping := make(map[int64]int64)
+	for _, collectionID := range collectionIDs {
+		var name, description string
+		var sortOrder int
+		var createdAt, updatedAt string
+		err := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
+			Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
+		if err != nil {
+			continue
+		}
+
+		result, err := exportDB.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
+			name, description, sortOrder, createdAt, updatedAt)
+		if err != nil {
+			continue
+		}
+		newCollectionID, _ := result.LastInsertId()
+		collectionIDMapping[collectionID] = newCollectionID
+
+		// Export collection_position mappings
+		rows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
+		if err != nil {
+			continue
+		}
+		for rows.Next() {
+			var oldPosID int64
+			var sortOrder int
+			var addedAt string
+			if err := rows.Scan(&oldPosID, &sortOrder, &addedAt); err != nil {
+				continue
+			}
+			if newPosID, ok := oldToNewID[oldPosID]; ok {
+				_, _ = exportDB.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
+					newCollectionID, newPosID, sortOrder, addedAt)
+			}
+		}
+		rows.Close()
+	}
+
+	// Export metadata
+	_, err = exportDB.Exec(`INSERT INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
+	if err != nil {
+		return err
+	}
+
+	for key, value := range metadata {
+		_, _ = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
+	}
+
+	return nil
+}
+
+// ========== Tournament Functions ==========
+
+// CreateTournament creates a new tournament
+func (d *Database) CreateTournament(name string, date string, location string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return 0, fmt.Errorf("no database is currently open")
+	}
+
+	// Get the max sort_order
+	var maxOrder int
+	err := d.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM tournament`).Scan(&maxOrder)
+	if err != nil {
+		maxOrder = -1
+	}
+
+	result, err := d.db.Exec(`
+		INSERT INTO tournament (name, date, location, sort_order, created_at, updated_at)
+		VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
+	`, name, date, location, maxOrder+1)
+	if err != nil {
+		fmt.Println("Error creating tournament:", err)
+		return 0, err
+	}
+
+	id, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+// GetAllTournaments returns all tournaments with their match counts
+func (d *Database) GetAllTournaments() ([]Tournament, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	rows, err := d.db.Query(`
+		SELECT 
+			t.id,
+			t.name,
+			COALESCE(t.date, ''),
+			COALESCE(t.location, ''),
+			t.sort_order,
+			t.created_at,
+			t.updated_at,
+			COUNT(m.id) as match_count
+		FROM tournament t
+		LEFT JOIN match m ON t.id = m.tournament_id
+		GROUP BY t.id
+		ORDER BY t.date DESC, t.created_at DESC
+	`)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var tournaments []Tournament
+	for rows.Next() {
+		var t Tournament
+		err := rows.Scan(&t.ID, &t.Name, &t.Date, &t.Location, &t.SortOrder, &t.CreatedAt, &t.UpdatedAt, &t.MatchCount)
+		if err != nil {
+			continue
+		}
+		tournaments = append(tournaments, t)
+	}
+
+	return tournaments, nil
+}
+
+// UpdateTournament updates a tournament's details
+func (d *Database) UpdateTournament(id int64, name string, date string, location string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`
+		UPDATE tournament SET name = ?, date = ?, location = ?, updated_at = datetime('now')
+		WHERE id = ?
+	`, name, date, location, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// DeleteTournament deletes a tournament (matches are unlinked, not deleted)
+func (d *Database) DeleteTournament(id int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	// Unlink matches from this tournament
+	_, err := d.db.Exec(`UPDATE match SET tournament_id = NULL WHERE tournament_id = ?`, id)
+	if err != nil {
+		return err
+	}
+
+	// Delete the tournament
+	_, err = d.db.Exec(`DELETE FROM tournament WHERE id = ?`, id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AddMatchToTournament adds a match to a tournament
+func (d *Database) AddMatchToTournament(tournamentID int64, matchID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+	if err != nil {
+		return err
+	}
+
+	// Update tournament's updated_at
+	_, err = d.db.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
+
+	return err
+}
+
+// RemoveMatchFromTournament removes a match from a tournament
+func (d *Database) RemoveMatchFromTournament(matchID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`UPDATE match SET tournament_id = NULL WHERE id = ?`, matchID)
+	return err
+}
+
+// GetTournamentMatches returns all matches in a tournament
+func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	rows, err := d.db.Query(`
+		SELECT 
+			id, player1_name, player2_name, event, location, round, 
+			match_length, match_date, import_date, file_path, game_count, tournament_id
+		FROM match 
+		WHERE tournament_id = ?
+		ORDER BY match_date DESC
+	`, tournamentID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var matches []Match
+	for rows.Next() {
+		var m Match
+		var tournamentID sql.NullInt64
+		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
+			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &tournamentID)
+		if err != nil {
+			continue
+		}
+		if tournamentID.Valid {
+			tid := tournamentID.Int64
+			m.TournamentID = &tid
+		}
+		matches = append(matches, m)
+	}
+
+	return matches, nil
+}
+
+// GetMatchTournament returns the tournament a match belongs to (if any)
+func (d *Database) GetMatchTournament(matchID int64) (*Tournament, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	var tournamentID sql.NullInt64
+	err := d.db.QueryRow(`SELECT tournament_id FROM match WHERE id = ?`, matchID).Scan(&tournamentID)
+	if err != nil {
+		return nil, err
+	}
+
+	if !tournamentID.Valid {
+		return nil, nil // Match is not in any tournament
+	}
+
+	var t Tournament
+	err = d.db.QueryRow(`
+		SELECT id, name, COALESCE(date, ''), COALESCE(location, ''), sort_order, created_at, updated_at
+		FROM tournament WHERE id = ?
+	`, tournamentID.Int64).Scan(&t.ID, &t.Name, &t.Date, &t.Location, &t.SortOrder, &t.CreatedAt, &t.UpdatedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return &t, nil
+}
+
+// ExportTournaments exports specific tournaments and their matches to a database file
+func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, metadata map[string]string, includeAnalysis bool, includeComments bool) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	// Collect all match IDs from selected tournaments
+	var matchIDs []int64
+	for _, tournamentID := range tournamentIDs {
+		rows, err := d.db.Query(`SELECT id FROM match WHERE tournament_id = ?`, tournamentID)
+		if err != nil {
+			return err
+		}
+		for rows.Next() {
+			var matchID int64
+			if err := rows.Scan(&matchID); err == nil {
+				matchIDs = append(matchIDs, matchID)
+			}
+		}
+		rows.Close()
+	}
+
+	// Collect all unique position IDs from matches
+	positionIDsMap := make(map[int64]bool)
+	for _, matchID := range matchIDs {
+		rows, err := d.db.Query(`
+			SELECT DISTINCT m.position_id 
+			FROM move m
+			JOIN game g ON m.game_id = g.id
+			WHERE g.match_id = ? AND m.position_id IS NOT NULL
+		`, matchID)
+		if err != nil {
+			continue
+		}
+		for rows.Next() {
+			var posID int64
+			if err := rows.Scan(&posID); err == nil {
+				positionIDsMap[posID] = true
+			}
+		}
+		rows.Close()
+	}
+
+	// Convert map to slice
+	var positionIDs []int64
+	for id := range positionIDsMap {
+		positionIDs = append(positionIDs, id)
+	}
+
+	// Delete the export file if it already exists
+	if _, err := os.Stat(exportPath); err == nil {
+		if err := os.Remove(exportPath); err != nil {
+			return fmt.Errorf("cannot remove existing export file: %v", err)
+		}
+	}
+
+	// Create export database
+	exportDB, err := sql.Open("sqlite", exportPath)
+	if err != nil {
+		return err
+	}
+	defer exportDB.Close()
+
+	// Create schema (same as SetupDatabase but simplified)
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			state TEXT
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS analysis (
+			id INTEGER PRIMARY KEY,
+			position_id INTEGER,
+			data JSON,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS comment (
+			id INTEGER PRIMARY KEY,
+			position_id INTEGER,
+			text TEXT,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS metadata (
+			key TEXT PRIMARY KEY,
+			value TEXT
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS tournament (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			date TEXT,
+			location TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT,
+			player2_name TEXT,
+			event TEXT,
+			location TEXT,
+			round TEXT,
+			match_length INTEGER,
+			match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT,
+			game_count INTEGER DEFAULT 0,
+			match_hash TEXT,
+			tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS game (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			match_id INTEGER,
+			game_number INTEGER,
+			initial_score_1 INTEGER,
+			initial_score_2 INTEGER,
+			winner INTEGER,
+			points_won INTEGER,
+			move_count INTEGER DEFAULT 0,
+			FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS move (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			game_id INTEGER,
+			move_number INTEGER,
+			move_type TEXT,
+			position_id INTEGER,
+			player INTEGER,
+			dice_1 INTEGER,
+			dice_2 INTEGER,
+			checker_move TEXT,
+			cube_action TEXT,
+			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	_, err = exportDB.Exec(`
+		CREATE TABLE IF NOT EXISTS move_analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			move_id INTEGER,
+			analysis_type TEXT,
+			depth TEXT,
+			equity REAL,
+			equity_error REAL,
+			win_rate REAL,
+			gammon_rate REAL,
+			backgammon_rate REAL,
+			opponent_win_rate REAL,
+			opponent_gammon_rate REAL,
+			opponent_backgammon_rate REAL,
+			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return err
+	}
+
+	// Export positions
+	oldToNewID := make(map[int64]int64)
+	for _, posID := range positionIDs {
+		var state string
+		err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, posID).Scan(&state)
+		if err != nil {
+			continue
+		}
+
+		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, state)
+		if err != nil {
+			continue
+		}
+		newID, _ := result.LastInsertId()
+		oldToNewID[posID] = newID
+
+		// Export analysis if requested
+		if includeAnalysis {
+			var analysisData string
+			err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&analysisData)
+			if err == nil {
+				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, analysisData)
+			}
+		}
+
+		// Export comments if requested
+		if includeComments {
+			var commentText string
+			err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, posID).Scan(&commentText)
+			if err == nil {
+				_, _ = exportDB.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newID, commentText)
+			}
+		}
+	}
+
+	// Export tournaments
+	tournamentIDMapping := make(map[int64]int64)
+	for _, tournamentID := range tournamentIDs {
+		var name, date, location string
+		var sortOrder int
+		var createdAt, updatedAt string
+		err := d.db.QueryRow(`SELECT name, COALESCE(date, ''), COALESCE(location, ''), sort_order, created_at, updated_at FROM tournament WHERE id = ?`, tournamentID).
+			Scan(&name, &date, &location, &sortOrder, &createdAt, &updatedAt)
+		if err != nil {
+			continue
+		}
+
+		result, err := exportDB.Exec(`INSERT INTO tournament (name, date, location, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
+			name, date, location, sortOrder, createdAt, updatedAt)
+		if err != nil {
+			continue
+		}
+		newTournamentID, _ := result.LastInsertId()
+		tournamentIDMapping[tournamentID] = newTournamentID
+	}
+
+	// Export matches and their games/moves
+	matchIDMapping := make(map[int64]int64)
+	for _, matchID := range matchIDs {
+		var player1Name, player2Name, event, location, round, filePath string
+		var matchLength, gameCount int
+		var matchDate, importDate string
+		var matchHash sql.NullString
+		var srcTournamentID sql.NullInt64
+
+		err := d.db.QueryRow(`
+			SELECT player1_name, player2_name, event, location, round, match_length, 
+			       match_date, import_date, file_path, game_count, match_hash, tournament_id 
+			FROM match WHERE id = ?`, matchID).
+			Scan(&player1Name, &player2Name, &event, &location, &round, &matchLength,
+				&matchDate, &importDate, &filePath, &gameCount, &matchHash, &srcTournamentID)
+		if err != nil {
+			continue
+		}
+
+		var newTournamentID sql.NullInt64
+		if srcTournamentID.Valid {
+			if newID, ok := tournamentIDMapping[srcTournamentID.Int64]; ok {
+				newTournamentID = sql.NullInt64{Int64: newID, Valid: true}
+			}
+		}
+
+		result, err := exportDB.Exec(`
+			INSERT INTO match (player1_name, player2_name, event, location, round, match_length, 
+			                   match_date, import_date, file_path, game_count, match_hash, tournament_id)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+			player1Name, player2Name, event, location, round, matchLength,
+			matchDate, importDate, filePath, gameCount, matchHash, newTournamentID)
+		if err != nil {
+			continue
+		}
+		newMatchID, _ := result.LastInsertId()
+		matchIDMapping[matchID] = newMatchID
+
+		// Export games
+		gameRows, err := d.db.Query(`SELECT id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count FROM game WHERE match_id = ?`, matchID)
+		if err != nil {
+			continue
+		}
+
+		gameIDMapping := make(map[int64]int64)
+		for gameRows.Next() {
+			var gameID int64
+			var gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount int
+			if err := gameRows.Scan(&gameID, &gameNumber, &initialScore1, &initialScore2, &winner, &pointsWon, &moveCount); err != nil {
+				continue
+			}
+
+			result, err := exportDB.Exec(`INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2, winner, points_won, move_count) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+				newMatchID, gameNumber, initialScore1, initialScore2, winner, pointsWon, moveCount)
+			if err != nil {
+				continue
+			}
+			newGameID, _ := result.LastInsertId()
+			gameIDMapping[gameID] = newGameID
+		}
+		gameRows.Close()
+
+		// Export moves for each game
+		for oldGameID, newGameID := range gameIDMapping {
+			moveRows, err := d.db.Query(`SELECT id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action FROM move WHERE game_id = ?`, oldGameID)
+			if err != nil {
+				continue
+			}
+
+			for moveRows.Next() {
+				var moveID int64
+				var moveNumber, player, dice1, dice2 int
+				var moveType, checkerMove, cubeAction string
+				var oldPosID sql.NullInt64
+				if err := moveRows.Scan(&moveID, &moveNumber, &moveType, &oldPosID, &player, &dice1, &dice2, &checkerMove, &cubeAction); err != nil {
+					continue
+				}
+
+				var newPosID sql.NullInt64
+				if oldPosID.Valid {
+					if newID, ok := oldToNewID[oldPosID.Int64]; ok {
+						newPosID = sql.NullInt64{Int64: newID, Valid: true}
+					}
+				}
+
+				result, err := exportDB.Exec(`INSERT INTO move (game_id, move_number, move_type, position_id, player, dice_1, dice_2, checker_move, cube_action) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+					newGameID, moveNumber, moveType, newPosID, player, dice1, dice2, checkerMove, cubeAction)
+				if err != nil {
+					continue
+				}
+				newMoveID, _ := result.LastInsertId()
+
+				// Export move_analysis
+				analysisRows, err := d.db.Query(`SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate FROM move_analysis WHERE move_id = ?`, moveID)
+				if err != nil {
+					continue
+				}
+				for analysisRows.Next() {
+					var analysisType, depth string
+					var equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate float64
+					if err := analysisRows.Scan(&analysisType, &depth, &equity, &equityError, &winRate, &gammonRate, &bgRate, &oppWinRate, &oppGammonRate, &oppBgRate); err != nil {
+						continue
+					}
+					_, _ = exportDB.Exec(`INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+						newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate)
+				}
+				analysisRows.Close()
+			}
+			moveRows.Close()
+		}
+	}
+
+	// Export metadata
+	_, err = exportDB.Exec(`INSERT INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
+	if err != nil {
+		return err
+	}
+
+	for key, value := range metadata {
+		_, _ = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
+	}
+
+	return nil
 }

@@ -1,19 +1,35 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import { GetAllMatches, DeleteMatch, GetMatchMovePositions, LoadAnalysis } from '../../wailsjs/go/main/Database.js';
+    import { 
+        GetAllMatches, 
+        DeleteMatch, 
+        GetMatchMovePositions, 
+        LoadAnalysis,
+        GetAllTournaments,
+        AddMatchToTournament
+    } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { statusBarModeStore, showMatchPanelStore, statusBarTextStore } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
+    import { tournamentsStore } from '../stores/tournamentStore';
 
     let matches = [];
     let selectedMatch = null;
     let visible = false;
     let lastVisitedMatch = null;
+    let tournaments = [];
+    let showTournamentSelector = false;
+    let selectedTournament = null;
 
     // Subscribe to last visited match store
     lastVisitedMatchStore.subscribe(value => {
         lastVisitedMatch = value;
+    });
+
+    // Subscribe to tournaments store
+    tournamentsStore.subscribe(value => {
+        tournaments = value || [];
     });
 
     showMatchPanelStore.subscribe(async value => {
@@ -39,9 +55,33 @@
             const loadedMatches = await GetAllMatches();
             // Reverse to show most recent first (chronological order with recent at top)
             matches = (loadedMatches || []).reverse();
+            // Load tournaments for assignment UI
+            await loadTournaments();
         } catch (error) {
             console.error('Error loading matches:', error);
             matches = [];
+        }
+    }
+
+    async function loadTournaments() {
+        try {
+            const loaded = await GetAllTournaments();
+            tournamentsStore.set(loaded || []);
+        } catch (error) {
+            console.error('Error loading tournaments:', error);
+        }
+    }
+
+    async function assignMatchToTournament(tournamentId) {
+        if (!selectedMatch) return;
+        try {
+            await AddMatchToTournament(tournamentId, selectedMatch.id);
+            await loadMatches();
+            showTournamentSelector = false;
+            statusBarTextStore.set('Match added to tournament');
+        } catch (error) {
+            console.error('Error assigning match to tournament:', error);
+            statusBarTextStore.set('Error assigning match');
         }
     }
 
@@ -332,6 +372,18 @@
                                     <td class="no-select">{match.match_length}</td>
                                     <td class="actions-cell">
                                         <button 
+                                            class="action-btn assign-btn" 
+                                            on:click|stopPropagation={() => {
+                                                selectedTournament = null;
+                                                showTournamentSelector = !showTournamentSelector;
+                                            }}
+                                            title="Add to tournament"
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                                            </svg>
+                                        </button>
+                                        <button 
                                             class="action-btn delete-btn" 
                                             on:click|stopPropagation={(e) => deleteMatchEntry(match, e)}
                                             title="Delete match"
@@ -346,6 +398,29 @@
                         </tbody>
                     </table>
                 </div>
+
+                {#if showTournamentSelector && selectedMatch}
+                    <div class="tournament-selector">
+                        <h4>Add match to tournament:</h4>
+                        <div class="tournament-list">
+                            {#each tournaments as tournament}
+                                <button 
+                                    class="tournament-option"
+                                    on:click={() => assignMatchToTournament(tournament.id)}
+                                >
+                                    {tournament.name} {tournament.date ? `(${tournament.date})` : ''}
+                                </button>
+                            {/each}
+                            {#if tournaments.length === 0}
+                                <p class="no-tournaments">No tournaments available. Create one first.</p>
+                            {/if}
+                        </div>
+                        <button 
+                            class="cancel-selector"
+                            on:click={() => showTournamentSelector = false}
+                        >Cancel</button>
+                    </div>
+                {/if}
             {/if}
         </div>
     </section>

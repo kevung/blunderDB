@@ -27,6 +27,7 @@
    export let toggleFilterLibraryPanel; // Add the prop
    export let toggleSearchHistoryPanel; // Add the prop
    export let toggleMatchPanel; // Add the prop for match panel
+   export let toggleCollectionPanel; // Add the prop for collection panel
    let inputEl;
 
    let initialized = false;
@@ -293,6 +294,8 @@
                toggleSearchHistoryPanel();
             } else if (command === 'match' || command === 'ma') {
                toggleMatchPanel();
+            } else if (command === 'collection' || command === 'coll') {
+               toggleCollectionPanel();
             } else if (command === 'met') {
                showMetModalStore.set(true); // Show MET modal
             } else if (command === 'tp2_last') {

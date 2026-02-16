@@ -109,6 +109,30 @@ export namespace main {
 		}
 	}
 	
+	export class Collection {
+	    id: number;
+	    name: string;
+	    description: string;
+	    sortOrder: number;
+	    createdAt: string;
+	    updatedAt: string;
+	    positionCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Collection(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.description = source["description"];
+	        this.sortOrder = source["sortOrder"];
+	        this.createdAt = source["createdAt"];
+	        this.updatedAt = source["updatedAt"];
+	        this.positionCount = source["positionCount"];
+	    }
+	}
 	export class Config {
 	    window_width: number;
 	    window_height: number;
@@ -237,6 +261,7 @@ export namespace main {
 	    import_date: any;
 	    file_path: string;
 	    game_count: number;
+	    tournament_id?: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -255,6 +280,7 @@ export namespace main {
 	        this.import_date = this.convertValues(source["import_date"], null);
 	        this.file_path = source["file_path"];
 	        this.game_count = source["game_count"];
+	        this.tournament_id = source["tournament_id"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -483,11 +509,11 @@ export namespace main {
 	    lastPositionIndex: number;
 	    lastPositionIds: number[];
 	    hasActiveSearch: boolean;
-
+	
 	    static createFrom(source: any = {}) {
 	        return new SessionState(source);
 	    }
-
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.lastSearchCommand = source["lastSearchCommand"];
@@ -497,3 +523,32 @@ export namespace main {
 	        this.hasActiveSearch = source["hasActiveSearch"];
 	    }
 	}
+	export class Tournament {
+	    id: number;
+	    name: string;
+	    date: string;
+	    location: string;
+	    sortOrder: number;
+	    createdAt: string;
+	    updatedAt: string;
+	    matchCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Tournament(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.date = source["date"];
+	        this.location = source["location"];
+	        this.sortOrder = source["sortOrder"];
+	        this.createdAt = source["createdAt"];
+	        this.updatedAt = source["updatedAt"];
+	        this.matchCount = source["matchCount"];
+	    }
+	}
+
+}
+

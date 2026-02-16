@@ -42,7 +42,10 @@
         GetAllMatches, // Import GetAllMatches
         SaveSessionState, // Import SaveSessionState
         LoadSessionState, // Import LoadSessionState
-        ClearSessionState // Import ClearSessionState
+        ClearSessionState, // Import ClearSessionState
+        GetAllCollections, // Import GetAllCollections
+        GetCollectionPositions, // Import GetCollectionPositions
+        GetAllTournaments // Import GetAllTournaments
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -98,11 +101,22 @@
         previousModeStore, // Import previousModeStore
         showFilterLibraryPanelStore, // Import showFilterLibraryPanelStore
         showMatchPanelStore, // Import showMatchPanelStore
+        showCollectionPanelStore, // Import showCollectionPanelStore
+        showTournamentPanelStore, // Import showTournamentPanelStore
         showPipcountStore,
         showExportDatabaseModalStore // Import showExportDatabaseModalStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
+
+    import { 
+        collectionsStore,
+        collectionPositionsStore,
+        selectedCollectionStore,
+        activeCollectionStore
+    } from './stores/collectionStore'; // Import collection stores
+
+    import { tournamentsStore } from './stores/tournamentStore'; // Import tournament store
 
     // import components
     import Toolbar from './components/Toolbar.svelte';
@@ -131,6 +145,8 @@
     import ImportProgressModal from './components/ImportProgressModal.svelte'; // Import ImportProgressModal component
     import ExportDatabaseModal from './components/ExportDatabaseModal.svelte'; // Import ExportDatabaseModal component
     import MatchPanel from './components/MatchPanel.svelte'; // Import MatchPanel component
+    import CollectionPanel from './components/CollectionPanel.svelte'; // Import CollectionPanel component
+    import TournamentPanel from './components/TournamentPanel.svelte'; // Import TournamentPanel component
 
     // Visibility variables
     let showSearchModal = false;
@@ -167,7 +183,6 @@
     let pendingImportPath = null;
     let exportModalMode = 'preparing'; // 'preparing', 'metadata', 'exporting', 'completed'
     let exportPositionCount = 0;
-    let exportMatchCount = 0;
     let exportMetadata = {
         user: '',
         description: '',
@@ -178,8 +193,14 @@
         includeComments: true,
         includeFilterLibrary: false,
         includePlayedMoves: true,
-        includeMatches: true
+        includeMatches: true,
+        matchIDs: [],
+        includeTournaments: false,
+        includeTournamentIDs: [],
+        includeCollections: false,
+        collectionIDs: []
     };
+    let exportMatches = []; // matches loaded for export selection
     let pendingExportPath = null;
     let warningMessage = '';
     let databaseVersion = '';
@@ -193,13 +214,30 @@
     let isAnyModalOpen = false;
     let showFilterLibraryPanel = false; // Update variable
     let showMatchPanel = false; // Add match panel visibility variable
+    let showCollectionPanel = false; // Add collection panel visibility variable
+    let showTournamentPanel = false; // Add tournament panel visibility variable
     let showPipcount = true; // Update variable
+    
+    // Save position before entering COLLECTION mode (for restore on exit)
+    let savedPositionBeforeCollection = null;
+    let savedPositionIndexBeforeCollection = -1;
+    let savedPositionsBeforeCollection = null;
     
     // Session state tracking
     let lastSearchCommand = '';
     let lastSearchPosition = null;
     let hasActiveSearch = false;
     
+    // Subscribe to tournament panel store
+    showTournamentPanelStore.subscribe(value => {
+        showTournamentPanel = value;
+    });
+
+    // Subscribe to collection panel store
+    showCollectionPanelStore.subscribe(value => {
+        showCollectionPanel = value;
+    });
+
     // Subscrive to pipcount store
     showPipcountStore.subscribe(value => {
         showPipcount = value;
@@ -440,7 +478,7 @@
         }
 
         // Prevent command line from opening when editing filter panel fields or comment panel
-        if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || document.activeElement.closest('.match-panel') || showComment) {
+        if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || showComment) {
             // Allow all Ctrl+key shortcuts to work globally
             if (event.ctrlKey) {
                 console.log('DEBUG: Inside panel, but Ctrl key pressed - allowing shortcut');
@@ -540,7 +578,8 @@
                 lastPosition();
             }
         } else if(event.ctrlKey && event.code == 'KeyK') {
-            gotoPosition();
+            event.preventDefault();
+            toggleCollectionPanelAction();
         } else if(event.ctrlKey && event.code == 'KeyR') {
             loadAllPositions();
         } else if(!event.ctrlKey && event.code === 'Tab') {
@@ -574,6 +613,8 @@
             toggleFilterLibraryPanel();
         } else if (event.ctrlKey && event.code === 'KeyT') {
             toggleMatchPanel();
+        } else if (event.ctrlKey && event.code === 'KeyY') {
+            toggleTournamentPanel();
         } else if (!event.ctrlKey && event.code === 'KeyP') {
             togglePipcount();
         } else if (!event.ctrlKey && event.code === 'KeyR') {
@@ -934,13 +975,29 @@
             console.log('Exporting to:', exportFilePath);
             pendingExportPath = exportFilePath;
             
-            // Get match count for display
+            // Get matches for export selection
             try {
                 const matches = await GetAllMatches();
-                exportMatchCount = matches ? matches.length : 0;
+                exportMatches = matches || [];
             } catch (e) {
-                console.log('Could not get match count:', e);
-                exportMatchCount = 0;
+                console.log('Could not get matches:', e);
+                exportMatches = [];
+            }
+
+            // Load collections for export selection
+            try {
+                const colls = await GetAllCollections();
+                collectionsStore.set(colls || []);
+            } catch (e) {
+                console.log('Could not get collections:', e);
+            }
+
+            // Load tournaments for export selection
+            try {
+                const tourns = await GetAllTournaments();
+                tournamentsStore.set(tourns || []);
+            } catch (e) {
+                console.log('Could not get tournaments:', e);
             }
             
             // Show modal in metadata mode
@@ -985,7 +1042,11 @@
                 exportOptions.includeComments,
                 exportOptions.includeFilterLibrary,
                 exportOptions.includePlayedMoves,
-                exportOptions.includeMatches
+                exportOptions.includeMatches,
+                exportOptions.includeCollections,
+                exportOptions.collectionIDs || [],
+                exportOptions.matchIDs || [],
+                exportOptions.includeTournamentIDs || []
             );
             
             console.log('Export completed successfully');
@@ -1014,8 +1075,14 @@
                 includeComments: true,
                 includeFilterLibrary: false,
                 includePlayedMoves: true,
-                includeMatches: true
+                includeMatches: true,
+                matchIDs: [],
+                includeTournaments: false,
+                includeTournamentIDs: [],
+                includeCollections: false,
+                collectionIDs: []
             };
+            exportMatches = [];
         }
     }
 
@@ -1035,8 +1102,14 @@
             includeComments: true,
             includeFilterLibrary: false,
             includePlayedMoves: true,
-            includeMatches: true
+            includeMatches: true,
+            matchIDs: [],
+            includeTournaments: false,
+            includeTournamentIDs: [],
+            includeCollections: false,
+            collectionIDs: []
         };
+        exportMatches = [];
         setStatusBarMessage('Export cancelled');
         previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
@@ -1057,8 +1130,14 @@
             includeComments: true,
             includeFilterLibrary: false,
             includePlayedMoves: true,
-            includeMatches: true
+            includeMatches: true,
+            matchIDs: [],
+            includeTournaments: false,
+            includeTournamentIDs: [],
+            includeCollections: false,
+            collectionIDs: []
         };
+        exportMatches = [];
         previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
@@ -2253,7 +2332,7 @@
         showSearchModalStore.set(true); // Show the search modal
     }
 
-    function toggleEditMode() {
+    async function toggleEditMode() {
         console.log('toggleEditMode');
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
@@ -2279,6 +2358,12 @@
             loadAllPositions();
             return;
         }
+
+        // Special handling for COLLECTION mode: exit to NORMAL and reload all positions
+        if ($statusBarModeStore === "COLLECTION") {
+            await exitCollectionMode();
+            return;
+        }
         
         if ($statusBarModeStore !== "EDIT") {
             previousModeStore.set($statusBarModeStore);
@@ -2302,13 +2387,17 @@
         }
         console.log('toggleAnalysisPanel');
         const wasOpen = showAnalysis;
+        const inCollectionOrMatch = $statusBarModeStore === 'MATCH' || $statusBarModeStore === 'COLLECTION';
         showAnalysisStore.set(!wasOpen);
         
         if (!wasOpen) {
             // Panel is now opening - close other panels
-            // Don't change mode if we're in MATCH mode
-            if ($statusBarModeStore !== 'MATCH') {
+            if (!inCollectionOrMatch) {
                 statusBarModeStore.set('NORMAL');
+            }
+            // Don't close collection panel when in COLLECTION mode
+            if ($statusBarModeStore !== 'COLLECTION') {
+                showCollectionPanelStore.set(false);
             }
             showFilterLibraryPanelStore.set(false);
             showCommentStore.set(false);
@@ -2331,8 +2420,8 @@
             }, 0);
         }
 
-        // Don't change mode to NORMAL if we're in MATCH mode
-        if ($statusBarModeStore !== 'MATCH') {
+        // Don't change mode to NORMAL if we're in MATCH or COLLECTION mode
+        if (!inCollectionOrMatch) {
             previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
@@ -2349,11 +2438,18 @@
         }
         console.log('toggleCommentPanel called');
         const wasOpen = showComment;
+        const inCollectionOrMatch = $statusBarModeStore === 'MATCH' || $statusBarModeStore === 'COLLECTION';
         showCommentStore.set(!wasOpen);
 
         if (!wasOpen) {
             // Panel is now opening - close other panels
-            statusBarModeStore.set('NORMAL');
+            // Don't close collection panel when in COLLECTION mode
+            if ($statusBarModeStore !== 'COLLECTION') {
+                showCollectionPanelStore.set(false);
+            }
+            if (!inCollectionOrMatch) {
+                statusBarModeStore.set('NORMAL');
+            }
             showAnalysisStore.set(false);
             showFilterLibraryPanelStore.set(false);
             showSearchHistoryPanelStore.set(false);
@@ -2377,8 +2473,11 @@
             });
         }
 
-        previousModeStore.set('NORMAL');
-        statusBarModeStore.set('NORMAL');
+        // Don't change mode to NORMAL if we're in MATCH or COLLECTION mode
+        if (!inCollectionOrMatch) {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        }
     }
 
     function toggleMetadataModal() {
@@ -2400,12 +2499,17 @@
         const wasOpen = showFilterLibraryPanel;
         showFilterLibraryPanelStore.set(!wasOpen);
         if (!wasOpen) {
+            // Opening filter library exits COLLECTION mode
+            if ($statusBarModeStore === 'COLLECTION') {
+                exitCollectionMode();
+            }
             // Panel is now opening - close other panels
             statusBarModeStore.set('NORMAL');
             showCommentStore.set(false);
             showAnalysisStore.set(false);
             showSearchHistoryPanelStore.set(false);
             showMatchPanelStore.set(false);
+            showCollectionPanelStore.set(false);
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
@@ -2425,6 +2529,10 @@
         const wasOpen = showMatchPanel;
         showMatchPanelStore.set(!wasOpen);
         if (!wasOpen) {
+            // Opening match panel exits COLLECTION mode
+            if ($statusBarModeStore === 'COLLECTION') {
+                exitCollectionMode();
+            }
             // Panel is now opening - close other panels
             // Don't change mode if we're in MATCH mode
             if ($statusBarModeStore !== 'MATCH') {
@@ -2435,11 +2543,147 @@
             showAnalysisStore.set(false);
             showSearchHistoryPanelStore.set(false);
             showFilterLibraryPanelStore.set(false);
+            showCollectionPanelStore.set(false);
+            showTournamentPanelStore.set(false);
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
             currentPositionIndexStore.set(currentIndex); // Set back to the original value
         }
+    }
+
+    function toggleCollectionPanelAction() {
+        console.log('toggleCollectionPanelAction');
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
+        const wasOpen = showCollectionPanel;
+        showCollectionPanelStore.set(!wasOpen);
+        if (!wasOpen) {
+            // Panel is now opening - close other panels
+            if ($statusBarModeStore !== 'COLLECTION') {
+                statusBarModeStore.set('NORMAL');
+                previousModeStore.set('NORMAL');
+            }
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
+            showSearchHistoryPanelStore.set(false);
+            showFilterLibraryPanelStore.set(false);
+            showMatchPanelStore.set(false);
+            showTournamentPanelStore.set(false);
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1);
+            currentPositionIndexStore.set(currentIndex);
+        }
+    }
+
+    function toggleTournamentPanel() {
+        console.log('toggleTournamentPanel');
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
+        const wasOpen = showTournamentPanel;
+        showTournamentPanelStore.set(!wasOpen);
+        if (!wasOpen) {
+            // Opening tournament panel exits COLLECTION mode
+            if ($statusBarModeStore === 'COLLECTION') {
+                exitCollectionMode();
+            }
+            // Panel is now opening - close other panels
+            statusBarModeStore.set('NORMAL');
+            previousModeStore.set('NORMAL');
+            showCommentStore.set(false);
+            showAnalysisStore.set(false);
+            showSearchHistoryPanelStore.set(false);
+            showFilterLibraryPanelStore.set(false);
+            showMatchPanelStore.set(false);
+            showCollectionPanelStore.set(false);
+            // Refresh board and display position associated with currentPositionIndexStore
+            const currentIndex = $currentPositionIndexStore;
+            currentPositionIndexStore.set(-1);
+            currentPositionIndexStore.set(currentIndex);
+        }
+    }
+
+    // Exit COLLECTION mode: reload all positions and navigate to last viewed position
+    async function exitCollectionMode() {
+        console.log('Exiting COLLECTION mode to NORMAL mode');
+        // Capture the last viewed position in collection mode before clearing stores
+        const lastViewedPosition = $positionStore;
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('NORMAL');
+        activeCollectionStore.set(null);
+        selectedCollectionStore.set(null);
+        collectionPositionsStore.set([]);
+        showCollectionPanelStore.set(false);
+        // Reload all positions and navigate to the last viewed position from collection mode
+        savedPositionBeforeCollection = null;
+        savedPositionIndexBeforeCollection = -1;
+        savedPositionsBeforeCollection = null;
+        try {
+            const allPositions = await LoadAllPositions();
+            positionsStore.set(Array.isArray(allPositions) ? allPositions : []);
+            if (allPositions && allPositions.length > 0) {
+                // Find the last viewed position by ID in the full list
+                let targetIdx = allPositions.length - 1; // default to last
+                if (lastViewedPosition && lastViewedPosition.id) {
+                    const foundIdx = allPositions.findIndex(p => p.id === lastViewedPosition.id);
+                    if (foundIdx >= 0) {
+                        targetIdx = foundIdx;
+                    }
+                }
+                currentPositionIndexStore.set(-1);
+                currentPositionIndexStore.set(targetIdx);
+                loadAnalysisForPosition(allPositions[targetIdx]);
+                hasActiveSearch = false;
+                lastSearchCommand = '';
+                lastSearchPosition = null;
+            }
+        } catch (error) {
+            console.error('Error reloading positions after collection exit:', error);
+            loadAllPositions();
+        }
+    }
+
+    // Called when double-clicking a collection - switch to COLLECTION mode
+    function handleOpenCollection(collection, collectionPositions) {
+        if (!collectionPositions || collectionPositions.length === 0) {
+            statusBarTextStore.set('Collection is empty');
+            return;
+        }
+
+        // Save current position/index before entering COLLECTION mode
+        savedPositionBeforeCollection = $positionStore;
+        savedPositionIndexBeforeCollection = $currentPositionIndexStore;
+        savedPositionsBeforeCollection = positions;
+
+        // Exit match mode if active
+        if ($matchContextStore.isMatchMode) {
+            matchContextStore.update(ctx => ({
+                ...ctx,
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0
+            }));
+        }
+
+        // Switch to COLLECTION mode
+        previousModeStore.set('NORMAL');
+        statusBarModeStore.set('COLLECTION');
+
+        // Load positions in main view
+        positionsStore.set(collectionPositions);
+        positionStore.set(collectionPositions[0]);
+        currentPositionIndexStore.set(0);
+        
+        // Load analysis for the first position
+        loadAnalysisForPosition(collectionPositions[0]);
+        
+        statusBarTextStore.set(`Collection "${collection.name}" — ${collectionPositions.length} position(s)`);
     }
 
 function togglePipcount() {
@@ -2644,6 +2888,37 @@ function togglePipcount() {
         } finally {
             previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
+        }
+    }
+
+    // Helper function to load analysis for a position
+    async function loadAnalysisForPosition(position) {
+        if (!position || !position.id) return;
+        
+        try {
+            const analysis = await LoadAnalysis(position.id);
+            if (analysis) {
+                analysisStore.set(analysis);
+            } else {
+                analysisStore.set({
+                    positionId: position.id,
+                    xgid: '',
+                    player1: '',
+                    player2: '',
+                    analysisType: '',
+                    analysisEngineVersion: '',
+                    checkerAnalysis: { moves: [] },
+                    doublingCubeAnalysis: null,
+                    playedMove: '',
+                    playedCubeAction: '',
+                    playedMoves: [],
+                    playedCubeActions: [],
+                    creationDate: '',
+                    lastModifiedDate: ''
+                });
+            }
+        } catch (error) {
+            console.error('Error loading analysis:', error);
         }
     }
 
@@ -2859,6 +3134,7 @@ function togglePipcount() {
 
 <main class="main-container" bind:this={mainArea}>
     <Toolbar
+    on:click={() => {}}
         onNewDatabase={newDatabase}
         onOpenDatabase={openDatabase}
         onImportDatabase={importDatabase}
@@ -2888,6 +3164,8 @@ function togglePipcount() {
         onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
         onToggleSearchHistory={toggleSearchHistoryPanel}
         onToggleMatchPanel={toggleMatchPanel}
+        onToggleCollectionPanel={toggleCollectionPanelAction}
+        onToggleTournamentPanel={toggleTournamentPanel}
     />
 
     <div class="scrollable-content">
@@ -2913,6 +3191,7 @@ function togglePipcount() {
             toggleFilterLibraryPanel={toggleFilterLibraryPanel}
             toggleSearchHistoryPanel={toggleSearchHistoryPanel}
             toggleMatchPanel={toggleMatchPanel}
+            toggleCollectionPanel={toggleCollectionPanelAction}
         />
 
     </div>
@@ -3011,7 +3290,7 @@ function togglePipcount() {
         visible={$showExportDatabaseModalStore}
         mode={exportModalMode}
         positionCount={exportPositionCount}
-        matchCount={exportMatchCount}
+        matches={exportMatches}
         bind:metadata={exportMetadata}
         bind:exportOptions={exportOptions}
         onCancel={handleExportCancel}
@@ -3022,6 +3301,8 @@ function togglePipcount() {
     <FilterLibraryPanel onLoadPositionsByFilters={loadPositionsByFilters} />
 
     <MatchPanel />
+
+    <CollectionPanel onOpenCollection={handleOpenCollection} />
 
     <HelpModal
         visible={showHelp}

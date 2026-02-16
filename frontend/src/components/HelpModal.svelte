@@ -374,11 +374,6 @@
                             </tr>
 
                             <tr>
-                                <td>Ctrl-K</td>
-                                <td>Go To Position</td>
-                            </tr>
-
-                            <tr>
                                 <td>r</td>
                                 <td>Load Random Position</td>
                             </tr>
@@ -481,6 +476,16 @@
                             <tr>
                                 <td>Ctrl + T</td>
                                 <td>Match Panel</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + K</td>
+                                <td>Collection Panel</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + Y</td>
+                                <td>Tournaments Panel</td>
                             </tr>
 
                             <tr>
@@ -643,6 +648,38 @@
                         </tbody>
                     </table>
 
+                    <h3>Collection Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Click</td>
+                                <td>Select a collection (show its positions)</td>
+                            </tr>
+                            <tr>
+                                <td>Double-click</td>
+                                <td>Open collection in COLLECTION mode (Tab to exit)</td>
+                            </tr>
+                            <tr>
+                                <td>Del</td>
+                                <td>Remove current position from active collection (COLLECTION mode)</td>
+                            </tr>
+                            <tr>
+                                <td>Tab</td>
+                                <td>Exit COLLECTION mode, return to NORMAL</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Deselect collection. If no collection selected, close the panel.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
                 {/if}
 
                 {#if activeTab === 'commands'}
@@ -751,6 +788,10 @@
                             <tr>
                                 <td>match, ma</td>
                                 <td>Show Match Panel</td>
+                            </tr>
+                            <tr>
+                                <td>collection, coll</td>
+                                <td>Show Collections Panel</td>
                             </tr>
                             <tr>
                                 <td>help, he, h</td>

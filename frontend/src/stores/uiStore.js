@@ -51,6 +51,10 @@ export const showFilterLibraryPanelStore = writable(false);
 
 export const showMatchPanelStore = writable(false); // Add store for match panel visibility
 
+export const showCollectionPanelStore = writable(false); // Add store for collection panel visibility
+
+export const showTournamentPanelStore = writable(false); // Add store for tournament panel visibility
+
 export const showPipcountStore = writable(true); // Add store for pip count visibility
 
 export const showExportDatabaseModalStore = writable(false); // Add store for export database modal visibility
@@ -77,7 +81,9 @@ export const isAnyModalOrPanelOpenStore = derived(
     showTakePoint2ModalStore,
     showTakePoint4ModalStore,
     showFilterLibraryPanelStore,
-    showMatchPanelStore
+    showMatchPanelStore,
+    showCollectionPanelStore,
+    showTournamentPanelStore
   ],
   ([
     showSearchModal,
@@ -100,7 +106,9 @@ export const isAnyModalOrPanelOpenStore = derived(
     showTakePoint2Modal,
     showTakePoint4Modal,
     showFilterLibraryPanel,
-    showMatchPanel
+    showMatchPanel,
+    showCollectionPanel,
+    showTournamentPanel
   ]) => {
     return (
       showSearchModal ||
@@ -123,7 +131,9 @@ export const isAnyModalOrPanelOpenStore = derived(
       showTakePoint2Modal ||
       showTakePoint4Modal ||
       showFilterLibraryPanel ||
-      showMatchPanel
+      showMatchPanel ||
+      showCollectionPanel ||
+      showTournamentPanel
     );
   }
 );
@@ -195,21 +205,27 @@ export const isAnyPanelOpenStore = derived(
     showCommentStore,
     showFilterLibraryPanelStore,
     showSearchHistoryPanelStore,
-    showMatchPanelStore
+    showMatchPanelStore,
+    showCollectionPanelStore,
+    showTournamentPanelStore
   ],
   ([
     showAnalysis,
     showComment,
     showFilterLibraryPanel,
     showSearchHistoryPanel,
-    showMatchPanel
+    showMatchPanel,
+    showCollectionPanel,
+    showTournamentPanel
   ]) => {
     return (
       showAnalysis ||
       showComment ||
       showFilterLibraryPanel ||
       showSearchHistoryPanel ||
-      showMatchPanel
+      showMatchPanel ||
+      showCollectionPanel ||
+      showTournamentPanel
     );
   }
 );

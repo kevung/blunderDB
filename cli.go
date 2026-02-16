@@ -544,7 +544,7 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeMatches bool
 	}
 
 	// Export with all data (including played moves and optionally matches)
-	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, true, true, includeMatches)
+	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, true, true, includeMatches, false, nil, nil, nil)
 	if err != nil {
 		return fmt.Errorf("failed to export database: %v", err)
 	}
@@ -591,7 +591,7 @@ func (cli *CLI) exportMatchesOnly(outputFile string) error {
 	}
 
 	// Export with positions, analysis, comments disabled, but matches enabled
-	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, false, true, true)
+	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, false, true, true, false, nil, nil, nil)
 	if err != nil {
 		return fmt.Errorf("failed to export matches: %v", err)
 	}
@@ -1899,7 +1899,7 @@ func (cli *CLI) runSearch(args []string) error {
 		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
 		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
 
-		err = cli.db.ExportDatabase(*outputDB, filteredPositions, metadata, true, true, false, true, false)
+		err = cli.db.ExportDatabase(*outputDB, filteredPositions, metadata, true, true, false, true, false, false, nil, nil, nil)
 		if err != nil {
 			return fmt.Errorf("failed to export database: %v", err)
 		}

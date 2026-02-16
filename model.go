@@ -33,8 +33,20 @@ const (
 )
 
 const (
-	DatabaseVersion = "1.4.0"
+	DatabaseVersion = "1.6.0"
 )
+
+// Tournament represents a tournament that organizes matches
+type Tournament struct {
+	ID         int64  `json:"id"`
+	Name       string `json:"name"`
+	Date       string `json:"date"`
+	Location   string `json:"location"`
+	SortOrder  int    `json:"sortOrder"`
+	CreatedAt  string `json:"createdAt"`
+	UpdatedAt  string `json:"updatedAt"`
+	MatchCount int    `json:"matchCount"`
+}
 
 type Point struct {
 	Checkers int `json:"checkers"`
@@ -161,17 +173,18 @@ func (p *Position) MatchesCheckerPosition(filter Position) bool {
 // Match-related structures for XG import
 
 type Match struct {
-	ID          int64     `json:"id"`
-	Player1Name string    `json:"player1_name"`
-	Player2Name string    `json:"player2_name"`
-	Event       string    `json:"event"`
-	Location    string    `json:"location"`
-	Round       string    `json:"round"`
-	MatchLength int32     `json:"match_length"`
-	MatchDate   time.Time `json:"match_date"`
-	ImportDate  time.Time `json:"import_date"`
-	FilePath    string    `json:"file_path"`
-	GameCount   int       `json:"game_count"`
+	ID           int64     `json:"id"`
+	Player1Name  string    `json:"player1_name"`
+	Player2Name  string    `json:"player2_name"`
+	Event        string    `json:"event"`
+	Location     string    `json:"location"`
+	Round        string    `json:"round"`
+	MatchLength  int32     `json:"match_length"`
+	MatchDate    time.Time `json:"match_date"`
+	ImportDate   time.Time `json:"import_date"`
+	FilePath     string    `json:"file_path"`
+	GameCount    int       `json:"game_count"`
+	TournamentID *int64    `json:"tournament_id,omitempty"`
 }
 
 type Game struct {
