@@ -683,8 +683,14 @@
         // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+K to toggle panel)
         if (event.ctrlKey) return;
 
-        // Stop all keyboard events from propagating to global handlers
-        // This prevents global shortcuts (j, k, space, etc.) from interfering with collection panel
+        // Let navigation keys pass through to global handler for position browsing
+        const isNavigationKey = (event.key === 'j' || event.key === 'k' || 
+                                event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
+                                event.key === 'h' || event.key === 'l' ||
+                                event.key === 'PageUp' || event.key === 'PageDown');
+        if (isNavigationKey) return;
+
+        // Stop other keyboard events from propagating to global handlers
         event.stopPropagation();
 
         if (event.key === 'Escape') {

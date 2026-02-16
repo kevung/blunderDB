@@ -2838,6 +2838,19 @@ function togglePipcount() {
                 noContactFilter,
                 mirrorPositionFilter);
                 
+            // Set mode to NORMAL and reset match context BEFORE triggering position display
+            // so that showPosition sees the correct mode and doesn't use stale match context
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+            matchContextStore.set({
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0,
+                player1Name: '',
+                player2Name: ''
+            });
+
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
             if (loadedPositions && loadedPositions.length > 0) {
@@ -2856,10 +2869,6 @@ function togglePipcount() {
             } else {
                 setStatusBarMessage('No matching positions found');
             }
-
-            // Set both previousMode and statusBarMode to NORMAL after search to be sure to switch back to normal mode
-            previousModeStore.set('NORMAL');
-            statusBarModeStore.set('NORMAL');
         } catch (error) {
             console.error('Error loading positions by filters:', error);
             setStatusBarMessage('Error loading positions by filters');
@@ -2873,6 +2882,19 @@ function togglePipcount() {
         }
         try {
             const positions = await LoadAllPositions(); // Remove databaseVersion
+
+            // Set mode to NORMAL and reset match context BEFORE triggering position display
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+            matchContextStore.set({
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0,
+                player1Name: '',
+                player2Name: ''
+            });
+
             positionsStore.set(Array.isArray(positions) ? positions : []);
             if (positions && positions.length > 0) {
                 currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw board
@@ -2891,9 +2913,6 @@ function togglePipcount() {
         } catch (error) {
             console.error('Error loading all positions:', error);
             setStatusBarMessage('Error loading all positions');
-        } finally {
-            previousModeStore.set('NORMAL');
-            statusBarModeStore.set('NORMAL');
         }
     }
 
@@ -3023,8 +3042,10 @@ function togglePipcount() {
         
         // Check if we're in match mode and on first position of a game
         // First position can be move_number 0 or 1
+        // Use statusBarModeStore as the authoritative mode check to avoid stale matchContextStore
         const matchCtx = $matchContextStore;
-        const isFirstPositionOfGame = matchCtx.isMatchMode && 
+        const inMatchMode = $statusBarModeStore === 'MATCH' && matchCtx.isMatchMode;
+        const isFirstPositionOfGame = inMatchMode && 
                                       matchCtx.movePositions.length > 0 &&
                                       (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 ||
                                        matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
@@ -3036,7 +3057,7 @@ function togglePipcount() {
         let allPlayedMoves = analysis?.playedMoves || [];
         let allPlayedCubeActions = analysis?.playedCubeActions || [];
         
-        if (matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+        if (inMatchMode && matchCtx.movePositions.length > 0) {
             const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
             if (currentMovePos) {
                 // Use the specific move from this match

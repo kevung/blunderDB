@@ -10,6 +10,10 @@
     let activeTab = 'checker'; // 'checker' or 'cube'
     let matchCtx;
 
+    // Sorting state for checker analysis table
+    let sortColumn = 'equity';  // default sort by equity
+    let sortDirection = 'desc'; // default highest to lowest
+
     // Subscribe to matchContextStore
     matchContextStore.subscribe(value => {
         matchCtx = value;
@@ -108,29 +112,77 @@
         // Handle j/k and arrow keys for move navigation when a move is selected
         // This should work regardless of which tab is active
         if ($selectedMoveStore) {
-            if (!analysisData.checkerAnalysis || !analysisData.checkerAnalysis.moves) {
+            if (!sortedMoves || sortedMoves.length === 0) {
                 return; // No moves to navigate
             }
             
-            const moves = analysisData.checkerAnalysis.moves;
-            if (moves.length === 0) return;
-
-            const currentIndex = moves.findIndex(m => m.move === $selectedMoveStore);
+            const currentIndex = sortedMoves.findIndex(m => m.move === $selectedMoveStore);
             
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
-                if (currentIndex >= 0 && currentIndex < moves.length - 1) {
-                    selectedMoveStore.set(moves[currentIndex + 1].move);
+                if (currentIndex >= 0 && currentIndex < sortedMoves.length - 1) {
+                    selectedMoveStore.set(sortedMoves[currentIndex + 1].move);
                 }
                 return;
             } else if (event.key === 'k' || event.key === 'ArrowUp') {
                 event.preventDefault();
                 if (currentIndex > 0) {
-                    selectedMoveStore.set(moves[currentIndex - 1].move);
+                    selectedMoveStore.set(sortedMoves[currentIndex - 1].move);
                 }
                 return;
             }
         }
+    }
+
+    // Column definitions for sorting
+    const sortableColumns = {
+        'move': { key: 'move', type: 'string' },
+        'equity': { key: 'equity', type: 'number' },
+        'error': { key: 'equityError', type: 'number' },
+        'pw': { key: 'playerWinChance', type: 'number' },
+        'pg': { key: 'playerGammonChance', type: 'number' },
+        'pb': { key: 'playerBackgammonChance', type: 'number' },
+        'ow': { key: 'opponentWinChance', type: 'number' },
+        'og': { key: 'opponentGammonChance', type: 'number' },
+        'ob': { key: 'opponentBackgammonChance', type: 'number' },
+        'depth': { key: 'analysisDepth', type: 'number' }
+    };
+
+    function handleSort(column) {
+        if (sortColumn === column) {
+            sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+        } else {
+            sortColumn = column;
+            // Default direction: desc for numeric, asc for string
+            sortDirection = sortableColumns[column].type === 'string' ? 'asc' : 'desc';
+        }
+    }
+
+    // Reactive sorted moves array
+    $: sortedMoves = (() => {
+        if (!analysisData?.checkerAnalysis?.moves) return [];
+        const moves = [...analysisData.checkerAnalysis.moves];
+        const col = sortableColumns[sortColumn];
+        if (!col) return moves;
+        return moves.sort((a, b) => {
+            let va = a[col.key];
+            let vb = b[col.key];
+            if (col.type === 'number') {
+                va = va || 0;
+                vb = vb || 0;
+                return sortDirection === 'asc' ? va - vb : vb - va;
+            } else {
+                va = va || '';
+                vb = vb || '';
+                const cmp = va.localeCompare(vb);
+                return sortDirection === 'asc' ? cmp : -cmp;
+            }
+        });
+    })();
+
+    function getSortIndicator(column) {
+        if (sortColumn !== column) return '';
+        return sortDirection === 'asc' ? ' ▲' : ' ▼';
     }
 
     function handleMoveRowClick(move) {
@@ -326,6 +378,11 @@
         const clickedRow = event.target.closest('tr');
         const clickedDataRow = clickedRow && clickedRow.parentElement.tagName === 'TBODY' && !clickedTH;
         
+        // If clicking a sortable checker table header, don't toggle tabs
+        if (clickedTH && clickedTH.closest('.checker-table')) {
+            return;
+        }
+        
         // Toggle if clicking on header OR anywhere outside data rows
         if (clickedTH || !clickedDataRow) {
             // Toggle between checker and cube
@@ -442,20 +499,22 @@
 
             {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
                 <table class="checker-table">
-                    <tbody>
+                    <thead>
                         <tr>
-                            <th>Move</th>
-                            <th>Equity</th>
-                            <th>Error</th>
-                            <th>P W</th>
-                            <th>P G</th>
-                            <th>P B</th>
-                            <th>O W</th>
-                            <th>O G</th>
-                            <th>O B</th>
-                            <th>Depth</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'move'} on:click|stopPropagation={() => handleSort('move')}>Move{getSortIndicator('move')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'equity'} on:click|stopPropagation={() => handleSort('equity')}>Equity</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'error'} on:click|stopPropagation={() => handleSort('error')}>Error{getSortIndicator('error')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'pw'} on:click|stopPropagation={() => handleSort('pw')}>P W{getSortIndicator('pw')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'pg'} on:click|stopPropagation={() => handleSort('pg')}>P G{getSortIndicator('pg')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'pb'} on:click|stopPropagation={() => handleSort('pb')}>P B{getSortIndicator('pb')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'ow'} on:click|stopPropagation={() => handleSort('ow')}>O W{getSortIndicator('ow')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'og'} on:click|stopPropagation={() => handleSort('og')}>O G{getSortIndicator('og')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'ob'} on:click|stopPropagation={() => handleSort('ob')}>O B{getSortIndicator('ob')}</th>
+                            <th class="sortable" class:active-sort={sortColumn === 'depth'} on:click|stopPropagation={() => handleSort('depth')}>Depth{getSortIndicator('depth')}</th>
                         </tr>
-                        {#each analysisData.checkerAnalysis.moves as move}
+                    </thead>
+                    <tbody>
+                        {#each sortedMoves as move}
                             <tr 
                                 class:selected={$selectedMoveStore === move.move}
                                 class:played={isPlayedMove(move)}
@@ -617,8 +676,22 @@
         background-color: #fff3cd !important; /* Light yellow background for played cube action */
     }
 
-    .checker-table tbody tr:not(:first-child):hover {
+    .checker-table tbody tr:hover {
         background-color: #e6f2ff; /* Light hover effect for move rows */
+    }
+
+    .sortable {
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+    }
+
+    .sortable:hover {
+        background-color: #e0e0e0;
+    }
+
+    .active-sort {
+        background-color: #dde8f0;
     }
 
     .best-action-row {
