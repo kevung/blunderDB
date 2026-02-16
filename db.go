@@ -342,22 +342,57 @@ func (d *Database) OpenDatabase(path string) error {
 		return err
 	}
 
-	// Check if the required tables exist based on the database version
-	requiredTables := []string{"position", "analysis", "comment", "metadata"}
-	if dbVersion >= "1.1.0" {
-		requiredTables = append(requiredTables, "command_history")
+	// Auto-migrate from 1.0.0 to 1.1.0
+	if dbVersion == "1.0.0" {
+		var cmdHistExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='command_history'`).Scan(&cmdHistExists)
+		if err == sql.ErrNoRows {
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS command_history (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					command TEXT,
+					timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+				)
+			`)
+			if err != nil {
+				fmt.Println("Error creating command_history table:", err)
+				return err
+			}
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.1.0")
+			if err != nil {
+				fmt.Println("Error updating database version:", err)
+				return err
+			}
+			dbVersion = "1.1.0"
+			fmt.Println("Database automatically upgraded from 1.0.0 to 1.1.0")
+		}
 	}
-	if dbVersion >= "1.2.0" {
-		requiredTables = append(requiredTables, "filter_library")
-	}
-	if dbVersion >= "1.3.0" {
-		requiredTables = append(requiredTables, "search_history")
-	}
-	if dbVersion >= "1.4.0" {
-		requiredTables = append(requiredTables, "match", "game", "move", "move_analysis")
-	}
-	if dbVersion >= "1.5.0" {
-		requiredTables = append(requiredTables, "collection", "collection_position")
+
+	// Auto-migrate from 1.1.0 to 1.2.0
+	if dbVersion == "1.1.0" {
+		var filterLibExists string
+		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name='filter_library'`).Scan(&filterLibExists)
+		if err == sql.ErrNoRows {
+			_, err = d.db.Exec(`
+				CREATE TABLE IF NOT EXISTS filter_library (
+					id INTEGER PRIMARY KEY AUTOINCREMENT,
+					name TEXT,
+					command TEXT,
+					edit_position TEXT
+				)
+			`)
+			if err != nil {
+				fmt.Println("Error creating filter_library table:", err)
+				return err
+			}
+			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.2.0")
+			if err != nil {
+				fmt.Println("Error updating database version:", err)
+				return err
+			}
+			dbVersion = "1.2.0"
+			fmt.Println("Database automatically upgraded from 1.1.0 to 1.2.0")
+		}
 	}
 
 	// Auto-migrate from 1.2.0 to 1.3.0
@@ -622,6 +657,27 @@ func (d *Database) OpenDatabase(path string) error {
 			dbVersion = "1.6.0"
 			fmt.Println("Database automatically upgraded from 1.5.0 to 1.6.0")
 		}
+	}
+
+	// Build required tables list based on the FINAL dbVersion (after all migrations)
+	requiredTables := []string{"position", "analysis", "comment", "metadata"}
+	if dbVersion >= "1.1.0" {
+		requiredTables = append(requiredTables, "command_history")
+	}
+	if dbVersion >= "1.2.0" {
+		requiredTables = append(requiredTables, "filter_library")
+	}
+	if dbVersion >= "1.3.0" {
+		requiredTables = append(requiredTables, "search_history")
+	}
+	if dbVersion >= "1.4.0" {
+		requiredTables = append(requiredTables, "match", "game", "move", "move_analysis")
+	}
+	if dbVersion >= "1.5.0" {
+		requiredTables = append(requiredTables, "collection", "collection_position")
+	}
+	if dbVersion >= "1.6.0" {
+		requiredTables = append(requiredTables, "tournament")
 	}
 
 	for _, table := range requiredTables {
