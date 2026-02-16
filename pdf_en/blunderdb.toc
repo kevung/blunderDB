@@ -59,7 +59,7 @@
 \contentsline {section}{\numberline {2.8}Windows Annex: False Detection of blunderDB as Malware}{20}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Windows SmartScreen Warning}{21}{subsection.2.8.1}%
 \contentsline {subsection}{\numberline {2.8.2}Windows Defender Blocking}{21}{subsection.2.8.2}%
-\contentsline {section}{\numberline {2.9}Mac Annex: Possible Blocking of blunderDB}{27}{section.2.9}%
+\contentsline {section}{\numberline {2.9}Mac Annex: Possible Blocking of blunderDB}{22}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Installation of blunderDB}{30}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Authorization to Run blunderDB}{30}{subsection.2.9.2}%
 \contentsline {section}{\numberline {2.10}Annex: Database Schema}{30}{section.2.10}%
