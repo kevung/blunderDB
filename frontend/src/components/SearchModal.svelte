@@ -128,6 +128,12 @@
     let equityRangeMin = -1000; // Min value for equity range
     let equityRangeMax = 1000; // Max value for equity range
 
+    let moveErrorOption = 'min'; // Default option for move error
+    let moveErrorMin = 0; // Min value for move error (millipoints)
+    let moveErrorMax = 1000; // Max value for move error (millipoints)
+    let moveErrorRangeMin = 0; // Min value for move error range
+    let moveErrorRangeMax = 1000; // Max value for move error range
+
     let player1OutfieldBlotOption = 'min'; // Default option for player 1 outfield blot
     let player1OutfieldBlotMin = 0; // Min value for player 1 outfield blot
     let player1OutfieldBlotMax = 15; // Max value for player 1 outfield blot
@@ -162,6 +168,7 @@
         'Pipcount Difference',
         'Player Absolute Pipcount',
         'Equity (millipoints)',
+        'Move Error (millipoints)',
         'Win Rate',
         'Gammon Rate',
         'Backgammon Rate',
@@ -215,6 +222,8 @@
                     return player1AbsolutePipCountOption === 'min' ? `P>${player1AbsolutePipCountMin}` : player1AbsolutePipCountOption === 'max' ? `P<${player1AbsolutePipCountMax}` : `P${player1AbsolutePipCountRangeMin},${player1AbsolutePipCountRangeMax}`;
                 case 'Equity (millipoints)':
                     return equityOption === 'min' ? `e>${equityMin}` : equityOption === 'max' ? `e<${equityMax}` : `e${equityRangeMin},${equityRangeMax}`;
+                case 'Move Error (millipoints)':
+                    return moveErrorOption === 'min' ? `E>${moveErrorMin}` : moveErrorOption === 'max' ? `E<${moveErrorMax}` : `E${moveErrorRangeMin},${moveErrorRangeMax}`;
                 case 'Win Rate':
                     return winRateOption === 'min' ? `w>${winRateMin}` : winRateOption === 'max' ? `w<${winRateMax}` : `w${winRateRangeMin},${winRateRangeMax}`;
                 case 'Gammon Rate':
@@ -278,6 +287,7 @@
         const player2CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('Z'));
         const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
         const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
+        const moveErrorFilter = transformedFilters.find(filter => filter.startsWith('E'));
         const player1OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('bo'));
         const player2OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('BO'));
         const player1JanBlotFilter = transformedFilters.find(filter => filter.startsWith('bj'));
@@ -311,6 +321,7 @@
         console.log('searchText:', searchText);
         console.log('player1AbsolutePipCountFilter:', player1AbsolutePipCountFilter);
         console.log('equityFilter:', equityFilter);
+        console.log('moveErrorFilter:', moveErrorFilter);
         console.log('decisionTypeFilter:', decisionTypeFilter);
         console.log('diceRollFilter:', diceRollFilter);
         console.log('movePatternFilter:', movePatternFilter);
@@ -379,7 +390,8 @@
             player1JanBlotFilter,
             player2JanBlotFilter,
             noContactFilter,
-            mirrorPositionFilter
+            mirrorPositionFilter,
+            moveErrorFilter
         );
         onClose();
     }
@@ -473,6 +485,11 @@
         equityMax = 1000;
         equityRangeMin = -1000;
         equityRangeMax = 1000;
+        moveErrorOption = 'min';
+        moveErrorMin = 0;
+        moveErrorMax = 1000;
+        moveErrorRangeMin = 0;
+        moveErrorRangeMax = 1000;
         searchText = '';
         player1OutfieldBlotOption = 'min';
         player1OutfieldBlotMin = 0;
@@ -582,6 +599,25 @@
                                         <input type="radio" bind:group={equityOption} value="range" /> Range
                                         <input type="number" bind:value={equityRangeMin} placeholder="Min" class="filter-input" disabled={equityOption !== 'range'} />
                                         <input type="number" bind:value={equityRangeMax} placeholder="Max" class="filter-input" disabled={equityOption !== 'range'} />
+                                    </label>
+                                </div>
+                            </div>
+                        {/if}
+                        {#if filter === 'Move Error (millipoints)'}
+                            <div class="filter-options-container expanded">
+                                <div class="filter-options expanded">
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={moveErrorOption} value="min" /> Min
+                                        <input type="number" bind:value={moveErrorMin} placeholder="Min" class="filter-input" min="0" disabled={moveErrorOption !== 'min'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={moveErrorOption} value="max" /> Max
+                                        <input type="number" bind:value={moveErrorMax} placeholder="Max" class="filter-input" min="0" disabled={moveErrorOption !== 'max'} />
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={moveErrorOption} value="range" /> Range
+                                        <input type="number" bind:value={moveErrorRangeMin} placeholder="Min" class="filter-input" min="0" disabled={moveErrorOption !== 'range'} />
+                                        <input type="number" bind:value={moveErrorRangeMax} placeholder="Max" class="filter-input" min="0" disabled={moveErrorOption !== 'range'} />
                                     </label>
                                 </div>
                             </div>

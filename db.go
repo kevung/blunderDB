@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"math"
 	"os"
 	"sort"
 	"strconv"
@@ -1330,6 +1331,7 @@ func (d *Database) LoadPositionsByFilters(
 	player2JanBlotFilter string,
 	noContactFilter bool,
 	mirrorFilter bool,
+	moveErrorFilter string,
 ) ([]Position, error) {
 	d.mu.Lock()
 	rows, err := d.db.Query(`SELECT id, state FROM position`)
@@ -1382,7 +1384,8 @@ func (d *Database) LoadPositionsByFilters(
 				(player2OutfieldBlotFilter == "" || pos.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
 				(player1JanBlotFilter == "" || pos.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
 				(player2JanBlotFilter == "" || pos.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
-				(!noContactFilter || pos.MatchesNoContact())
+				(!noContactFilter || pos.MatchesNoContact()) &&
+				(moveErrorFilter == "" || pos.MatchesMoveErrorFilter(moveErrorFilter, d))
 		}
 
 		// Check the original position
@@ -2252,6 +2255,117 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 		}
 		fmt.Printf("Equity filter condition: BETWEEN, values: %f, %f\n", minValue, maxValue)
 		return equity >= minValue && equity <= maxValue
+	}
+	return false
+}
+
+// MatchesMoveErrorFilter filters positions by the equity error of the played move (in millipoints).
+// Supports E>x, E<x, Ex,y syntax.
+func (p *Position) MatchesMoveErrorFilter(filter string, d *Database) bool {
+	analysis, err := d.LoadAnalysis(p.ID)
+	if err != nil || analysis == nil {
+		return false
+	}
+
+	var moveError float64
+	found := false
+
+	if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
+		// Get the played move(s)
+		playedMoves := analysis.PlayedMoves
+		if len(playedMoves) == 0 && analysis.PlayedMove != "" {
+			playedMoves = []string{analysis.PlayedMove}
+		}
+		if len(playedMoves) == 0 {
+			return false
+		}
+		// Find the played move in the analysis moves and get its error
+		for _, played := range playedMoves {
+			for i, m := range analysis.CheckerAnalysis.Moves {
+				if strings.EqualFold(strings.ReplaceAll(m.Move, " ", ""), strings.ReplaceAll(played, " ", "")) {
+					if i == 0 {
+						moveError = 0
+					} else if m.EquityError != nil {
+						moveError = math.Abs(*m.EquityError)
+					}
+					found = true
+					break
+				}
+			}
+			if found {
+				break
+			}
+		}
+	} else if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
+		// Get the played cube action(s)
+		playedActions := analysis.PlayedCubeActions
+		if len(playedActions) == 0 && analysis.PlayedCubeAction != "" {
+			playedActions = []string{analysis.PlayedCubeAction}
+		}
+		if len(playedActions) == 0 {
+			return false
+		}
+		bestAction := strings.ToLower(analysis.DoublingCubeAnalysis.BestCubeAction)
+		for _, played := range playedActions {
+			playedLower := strings.ToLower(played)
+			if playedLower == bestAction {
+				moveError = 0
+				found = true
+			} else {
+				switch {
+				case strings.Contains(playedLower, "no double") || playedLower == "nd":
+					moveError = math.Abs(analysis.DoublingCubeAnalysis.CubefulNoDoubleError)
+					found = true
+				case strings.Contains(playedLower, "take") || playedLower == "dt":
+					moveError = math.Abs(analysis.DoublingCubeAnalysis.CubefulDoubleTakeError)
+					found = true
+				case strings.Contains(playedLower, "pass") || strings.Contains(playedLower, "drop") || playedLower == "dp":
+					moveError = math.Abs(analysis.DoublingCubeAnalysis.CubefulDoublePassError)
+					found = true
+				}
+			}
+			if found {
+				break
+			}
+		}
+	}
+
+	if !found {
+		return false
+	}
+
+	// Convert move error from equity points to millipoints for comparison
+	moveErrorMillipoints := moveError * 1000
+
+	if strings.HasPrefix(filter, "E>") {
+		value, err := strconv.ParseFloat(filter[2:], 64)
+		if err != nil {
+			return false
+		}
+		return moveErrorMillipoints >= value
+	} else if strings.HasPrefix(filter, "E<") {
+		value, err := strconv.ParseFloat(filter[2:], 64)
+		if err != nil {
+			return false
+		}
+		return moveErrorMillipoints <= value
+	} else if strings.HasPrefix(filter, "E") {
+		values := strings.Split(filter[1:], ",")
+		if len(values) != 2 {
+			return false
+		}
+		value1, err1 := strconv.ParseFloat(values[0], 64)
+		value2, err2 := strconv.ParseFloat(values[1], 64)
+		if err1 != nil || err2 != nil {
+			return false
+		}
+		minValue := value1
+		maxValue := value2
+		if value1 > value2 {
+			minValue = value2
+			maxValue = value1
+		}
+		return moveErrorMillipoints >= minValue && moveErrorMillipoints <= maxValue
 	}
 	return false
 }

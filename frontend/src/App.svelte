@@ -2770,6 +2770,7 @@ function togglePipcount() {
         player2JanBlotFilter,
         noContactFilter,
         mirrorPositionFilter,
+        moveErrorFilter,
         searchCommand = '',  // Optional: the original search command for session tracking
     ) {
         if (!$databasePathStore) {
@@ -2805,7 +2806,8 @@ function togglePipcount() {
         player1JanBlotFilter,
         player2JanBlotFilter,
         noContactFilter,
-        mirrorPositionFilter);
+        mirrorPositionFilter,
+        moveErrorFilter);
         try {
             const currentPosition = $positionStore;
 
@@ -2840,7 +2842,8 @@ function togglePipcount() {
                 player1JanBlotFilter,
                 player2JanBlotFilter,
                 noContactFilter,
-                mirrorPositionFilter);
+                mirrorPositionFilter,
+                moveErrorFilter);
                 
             // Set mode to NORMAL and reset match context BEFORE triggering position display
             // so that showPosition sees the correct mode and doesn't use stale match context

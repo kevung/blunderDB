@@ -173,6 +173,7 @@
             const player2OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
             const player1JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
             const player2JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
+            const moveErrorFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
 
             onLoadPositionsByFilters(
                 filters,
@@ -204,6 +205,7 @@
                 player2JanBlotFilter,
                 noContactFilter,
                 mirrorPositionFilter,
+                moveErrorFilter,
                 command  // Pass the original search command for session tracking
             );
         }

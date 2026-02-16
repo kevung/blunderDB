@@ -1649,6 +1649,8 @@ func (cli *CLI) runSearch(args []string) error {
 	score2 := searchCmd.Int("score2", -1, "Filter by player 2 score")
 	matchLength := searchCmd.Int("match-length", 0, "Filter by match length")
 	errorMin := searchCmd.Float64("error-min", 0, "Minimum equity error (blunders)")
+	moveErrorMin := searchCmd.Float64("move-error-min", 0, "Minimum played move error (millipoints)")
+	moveErrorMax := searchCmd.Float64("move-error-max", 0, "Maximum played move error (millipoints)")
 	hasAnalysis := searchCmd.Bool("has-analysis", false, "Only positions with analysis")
 	checkerOff1Min := searchCmd.Int("off1-min", 0, "Minimum checkers off for player 1")
 	checkerOff2Min := searchCmd.Int("off2-min", 0, "Minimum checkers off for player 2")
@@ -1746,6 +1748,17 @@ func (cli *CLI) runSearch(args []string) error {
 		}
 	}
 
+	var moveErrorFilter string
+	if *moveErrorMin > 0 || *moveErrorMax > 0 {
+		if *moveErrorMin > 0 && *moveErrorMax > 0 {
+			moveErrorFilter = fmt.Sprintf("E%f,%f", *moveErrorMin, *moveErrorMax)
+		} else if *moveErrorMin > 0 {
+			moveErrorFilter = fmt.Sprintf("E>%f", *moveErrorMin)
+		} else {
+			moveErrorFilter = fmt.Sprintf("E<%f", *moveErrorMax)
+		}
+	}
+
 	var player1CheckerOffFilter string
 	if *checkerOff1Min > 0 {
 		player1CheckerOffFilter = fmt.Sprintf("o>%d", *checkerOff1Min-1)
@@ -1790,23 +1803,24 @@ func (cli *CLI) runSearch(args []string) error {
 		"", // player2BackgammonRateFilter
 		player1CheckerOffFilter,
 		player2CheckerOffFilter,
-		"",    // player1BackCheckerFilter
-		"",    // player2BackCheckerFilter
-		"",    // player1CheckerInZoneFilter
-		"",    // player2CheckerInZoneFilter
-		"",    // searchText
-		"",    // player1AbsolutePipCountFilter
-		"",    // equityFilter
-		false, // decisionTypeFilter - we'll filter ourselves
-		false, // diceRollFilter
-		"",    // movePatternFilter
-		"",    // dateFilter
-		"",    // player1OutfieldBlotFilter
-		"",    // player2OutfieldBlotFilter
-		"",    // player1JanBlotFilter
-		"",    // player2JanBlotFilter
-		false, // noContactFilter
-		false, // mirrorFilter
+		"",              // player1BackCheckerFilter
+		"",              // player2BackCheckerFilter
+		"",              // player1CheckerInZoneFilter
+		"",              // player2CheckerInZoneFilter
+		"",              // searchText
+		"",              // player1AbsolutePipCountFilter
+		"",              // equityFilter
+		false,           // decisionTypeFilter - we'll filter ourselves
+		false,           // diceRollFilter
+		"",              // movePatternFilter
+		"",              // dateFilter
+		"",              // player1OutfieldBlotFilter
+		"",              // player2OutfieldBlotFilter
+		"",              // player1JanBlotFilter
+		"",              // player2JanBlotFilter
+		false,           // noContactFilter
+		false,           // mirrorFilter
+		moveErrorFilter, // moveErrorFilter
 	)
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)

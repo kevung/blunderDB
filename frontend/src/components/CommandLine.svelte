@@ -168,7 +168,7 @@
                   });
                   
                   if (command === 's') {
-                     onLoadPositionsByFilters([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, command);
+                     onLoadPositionsByFilters([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, '', command);
                   } else {
                      const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
                      const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
@@ -219,6 +219,7 @@
                      const player2OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
                      const player1JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
                      const player2JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
+                     const moveErrorFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
 
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
@@ -251,6 +252,7 @@
                      console.log('player2JanBlotFilter:', player2JanBlotFilter);
                      console.log('noContactFilter:', noContactFilter);
                      console.log('mirrorPositionFilter:', mirrorPositionFilter);
+                     console.log('moveErrorFilter:', moveErrorFilter);
                      
                      onLoadPositionsByFilters(
                         filters,
@@ -282,6 +284,7 @@
                         player2JanBlotFilter,
                         noContactFilter,
                         mirrorPositionFilter,
+                        moveErrorFilter,
                         command  // Pass the original search command for session tracking
                      );
                   }
