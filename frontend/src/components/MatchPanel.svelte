@@ -9,7 +9,7 @@
         SetMatchTournamentByName
     } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
-    import { statusBarModeStore, showMatchPanelStore, statusBarTextStore } from '../stores/uiStore';
+    import { statusBarModeStore, showMatchPanelStore, matchPanelRefreshTriggerStore, statusBarTextStore } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
@@ -32,6 +32,17 @@
 
     tournamentsStore.subscribe(value => {
         tournaments = value || [];
+    });
+
+    // Subscribe to refresh trigger to reload matches when a new match is imported
+    matchPanelRefreshTriggerStore.subscribe(async () => {
+        if (visible) {
+            await loadMatches();
+            // If we have a last visited match, try to re-select it
+            if (lastVisitedMatch && lastVisitedMatch.matchID) {
+                selectedMatch = matches.find(m => m.id === lastVisitedMatch.matchID);
+            }
+        }
     });
 
     showMatchPanelStore.subscribe(async value => {

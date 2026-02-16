@@ -51,6 +51,8 @@ export const showFilterLibraryPanelStore = writable(false);
 
 export const showMatchPanelStore = writable(false); // Add store for match panel visibility
 
+export const matchPanelRefreshTriggerStore = writable(0); // Trigger to refresh match panel data
+
 export const showCollectionPanelStore = writable(false); // Add store for collection panel visibility
 
 export const showTournamentPanelStore = writable(false); // Add store for tournament panel visibility

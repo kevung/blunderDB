@@ -101,6 +101,7 @@
         previousModeStore, // Import previousModeStore
         showFilterLibraryPanelStore, // Import showFilterLibraryPanelStore
         showMatchPanelStore, // Import showMatchPanelStore
+        matchPanelRefreshTriggerStore, // Import matchPanelRefreshTriggerStore
         showCollectionPanelStore, // Import showCollectionPanelStore
         showTournamentPanelStore, // Import showTournamentPanelStore
         showPipcountStore,
@@ -1261,6 +1262,9 @@
                     const matchID = await ImportXGMatch(filePath);
                     console.log('XG match imported with ID:', matchID);
                     setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
+                    
+                    // Trigger match panel refresh to display the imported match
+                    matchPanelRefreshTriggerStore.update(n => n + 1);
                     
                     // Show match panel to display the imported match
                     showMatchPanelStore.set(true);
