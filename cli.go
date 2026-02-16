@@ -9,10 +9,32 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
 )
+
+// parseIDList parses a comma-separated string of int64 IDs.
+func parseIDList(s string) ([]int64, error) {
+	if s == "" {
+		return nil, nil
+	}
+	parts := strings.Split(s, ",")
+	ids := make([]int64, 0, len(parts))
+	for _, p := range parts {
+		p = strings.TrimSpace(p)
+		if p == "" {
+			continue
+		}
+		id, err := strconv.ParseInt(p, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("invalid ID %q: %v", p, err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, nil
+}
 
 // CLI represents the command-line interface
 type CLI struct {
@@ -210,7 +232,15 @@ func (cli *CLI) runExport(args []string) error {
 	dbPath := exportCmd.String("db", "", "Path to the database file (required)")
 	exportType := exportCmd.String("type", "", "Export type: database, positions, matches (required)")
 	outputFile := exportCmd.String("file", "", "Path to the output file (required)")
+	includeAnalysis := exportCmd.Bool("analysis", true, "Include analysis in database export (default: true)")
+	includeComments := exportCmd.Bool("comments", true, "Include comments in database export (default: true)")
+	includeFilterLibrary := exportCmd.Bool("filters", true, "Include filter library in database export (default: true)")
+	includePlayedMoves := exportCmd.Bool("played-moves", true, "Include played moves in analysis (default: true)")
 	includeMatches := exportCmd.Bool("matches", true, "Include matches in database export (default: true)")
+	includeCollections := exportCmd.Bool("collections", false, "Include collections in database export (default: false)")
+	collectionIDsStr := exportCmd.String("collection-ids", "", "Comma-separated list of collection IDs to export")
+	matchIDsStr := exportCmd.String("match-ids", "", "Comma-separated list of match IDs to export (empty = all)")
+	tournamentIDsStr := exportCmd.String("tournament-ids", "", "Comma-separated list of tournament IDs to export")
 
 	exportCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb export [options]")
@@ -231,6 +261,18 @@ func (cli *CLI) runExport(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Export database without matches")
 		fmt.Println("  blunderdb export --db database.db --type database --file export.db --matches=false")
+		fmt.Println()
+		fmt.Println("  # Export without analysis or played moves")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --analysis=false")
+		fmt.Println()
+		fmt.Println("  # Export with analysis but without played moves")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --played-moves=false")
+		fmt.Println()
+		fmt.Println("  # Export with specific collections")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --collections --collection-ids=1,2,3")
+		fmt.Println()
+		fmt.Println("  # Export with specific tournaments")
+		fmt.Println("  blunderdb export --db database.db --type database --file export.db --tournament-ids=1,2")
 		fmt.Println()
 		fmt.Println("  # Export positions to text file")
 		fmt.Println("  blunderdb export --db database.db --type positions --file positions.txt")
@@ -262,6 +304,30 @@ func (cli *CLI) runExport(args []string) error {
 		return fmt.Errorf("missing required flag: --file")
 	}
 
+	// Parse comma-separated ID lists
+	var collectionIDs, matchIDs, tournamentIDs []int64
+	if *collectionIDsStr != "" {
+		var parseErr error
+		collectionIDs, parseErr = parseIDList(*collectionIDsStr)
+		if parseErr != nil {
+			return fmt.Errorf("invalid collection-ids: %v", parseErr)
+		}
+	}
+	if *matchIDsStr != "" {
+		var parseErr error
+		matchIDs, parseErr = parseIDList(*matchIDsStr)
+		if parseErr != nil {
+			return fmt.Errorf("invalid match-ids: %v", parseErr)
+		}
+	}
+	if *tournamentIDsStr != "" {
+		var parseErr error
+		tournamentIDs, parseErr = parseIDList(*tournamentIDsStr)
+		if parseErr != nil {
+			return fmt.Errorf("invalid tournament-ids: %v", parseErr)
+		}
+	}
+
 	// Initialize database
 	if err := cli.initDatabase(*dbPath); err != nil {
 		return err
@@ -270,7 +336,9 @@ func (cli *CLI) runExport(args []string) error {
 	// Perform export based on type
 	switch strings.ToLower(*exportType) {
 	case "database":
-		return cli.exportDatabaseWithOptions(*outputFile, *includeMatches)
+		return cli.exportDatabaseWithOptions(*outputFile, *includeAnalysis, *includeComments,
+			*includeFilterLibrary, *includePlayedMoves, *includeMatches,
+			*includeCollections, collectionIDs, matchIDs, tournamentIDs)
 	case "positions":
 		return cli.exportPositions(*outputFile)
 	case "matches":
@@ -523,11 +591,13 @@ func (cli *CLI) importPosition(filePath string) error {
 
 // exportDatabase exports the entire database (legacy function, exports with matches)
 func (cli *CLI) exportDatabase(outputFile string) error {
-	return cli.exportDatabaseWithOptions(outputFile, true)
+	return cli.exportDatabaseWithOptions(outputFile, true, true, true, true, true, false, nil, nil, nil)
 }
 
 // exportDatabaseWithOptions exports the database with configurable options
-func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeMatches bool) error {
+func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis bool, includeComments bool,
+	includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool,
+	includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64) error {
 	fmt.Printf("Exporting database to: %s\n", outputFile)
 
 	// Get all positions
@@ -543,8 +613,10 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeMatches bool
 		metadata["database_version"] = version
 	}
 
-	// Export with all data (including played moves and optionally matches)
-	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, true, true, includeMatches, false, nil, nil, nil)
+	// Export with the specified options
+	err = cli.db.ExportDatabase(outputFile, positions, metadata,
+		includeAnalysis, includeComments, includeFilterLibrary, includePlayedMoves,
+		includeMatches, includeCollections, collectionIDs, matchIDs, tournamentIDs)
 	if err != nil {
 		return fmt.Errorf("failed to export database: %v", err)
 	}

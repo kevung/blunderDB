@@ -4159,7 +4159,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 						`, oldPositionID)
 
 						if moveErr == nil {
-							defer moveRows.Close()
 
 							// Collect all moves from the database
 							existingMoves := make(map[string]bool)
@@ -4198,6 +4197,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 									}
 								}
 							}
+							moveRows.Close()
 
 							// Convert to slices
 							analysis.PlayedMoves = make([]string, 0, len(existingMoves))
@@ -4254,7 +4254,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 
 	// Export filter library if includeFilterLibrary is true
 	if includeFilterLibrary {
-		rows, err := d.db.Query(`SELECT name, command, edit_position FROM filter_library`)
+		rows, err := d.db.Query(`SELECT name, command, COALESCE(edit_position, '') FROM filter_library`)
 		if err == nil {
 			defer rows.Close()
 
