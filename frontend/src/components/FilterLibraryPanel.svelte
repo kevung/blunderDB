@@ -291,6 +291,7 @@
         if (!visible) return;
         // Skip events from input fields to allow normal input field behavior
         if (event.target.matches('input')) {
+            event.stopPropagation(); // Prevent global shortcuts from intercepting input
             return;
         }
 

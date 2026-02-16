@@ -268,6 +268,7 @@
         
         // Skip events from input fields to allow normal input field behavior
         if (event.target.matches('input, textarea')) {
+            event.stopPropagation(); // Prevent global shortcuts from intercepting input
             return;
         }
 

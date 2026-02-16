@@ -455,6 +455,11 @@
             return;
         }
 
+        // Allow normal typing in input fields and textareas (only process Ctrl shortcuts)
+        if (document.activeElement.matches('input, textarea, [contenteditable]') && !event.ctrlKey) {
+            return;
+        }
+
         // Special handling for analysis panel
         if (document.activeElement.closest('.analysis-panel')) {
             // Analysis panel has focus
