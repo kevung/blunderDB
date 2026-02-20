@@ -502,18 +502,24 @@ func (cli *CLI) initDatabase(dbPath string) error {
 	return nil
 }
 
-// importMatch imports an XG match file
+// importMatch imports a match file (XG, SGF, MAT, or TXT format)
 func (cli *CLI) importMatch(filePath string) error {
 	fmt.Printf("Importing match from: %s\n", filePath)
 
-	// Verify file extension
+	// Verify file extension and route to appropriate importer
 	ext := strings.ToLower(filepath.Ext(filePath))
-	if ext != ".xg" {
-		return fmt.Errorf("invalid file type: %s (expected .xg)", ext)
+	var matchID int64
+	var err error
+
+	switch ext {
+	case ".xg":
+		matchID, err = cli.db.ImportXGMatch(filePath)
+	case ".sgf", ".mat", ".txt":
+		matchID, err = cli.db.ImportGnuBGMatch(filePath)
+	default:
+		return fmt.Errorf("invalid file type: %s (expected .xg, .sgf, .mat, or .txt)", ext)
 	}
 
-	// Import the match
-	matchID, err := cli.db.ImportXGMatch(filePath)
 	if err != nil {
 		// Check if this is a duplicate match error
 		if errors.Is(err, ErrDuplicateMatch) {
@@ -1304,8 +1310,16 @@ type BatchImportResult struct {
 func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 	fmt.Printf("Batch importing from: %s (recursive: %v)\n\n", dirPath, recursive)
 
-	// Find all .xg files
-	var xgFiles []string
+	// Supported match file extensions
+	supportedExts := map[string]bool{
+		".xg":  true,
+		".sgf": true,
+		".mat": true,
+		".txt": true,
+	}
+
+	// Find all supported match files
+	var matchFiles []string
 
 	walkFunc := func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -1320,9 +1334,9 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 			return nil
 		}
 
-		// Check for .xg extension
-		if strings.ToLower(filepath.Ext(path)) == ".xg" {
-			xgFiles = append(xgFiles, path)
+		// Check for supported extensions
+		if supportedExts[strings.ToLower(filepath.Ext(path))] {
+			matchFiles = append(matchFiles, path)
 		}
 
 		return nil
@@ -1333,12 +1347,12 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 		return fmt.Errorf("failed to scan directory: %v", err)
 	}
 
-	if len(xgFiles) == 0 {
-		fmt.Println("No .xg files found in directory")
+	if len(matchFiles) == 0 {
+		fmt.Println("No match files found in directory (.xg, .sgf, .mat, .txt)")
 		return nil
 	}
 
-	fmt.Printf("Found %d .xg file(s) to import\n\n", len(xgFiles))
+	fmt.Printf("Found %d match file(s) to import\n\n", len(matchFiles))
 
 	// Import each file and collect results
 	var results []BatchImportResult
@@ -1347,15 +1361,24 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 	duplicateCount := 0
 	totalPositions := 0
 
-	for i, filePath := range xgFiles {
+	for i, filePath := range matchFiles {
 		relPath, _ := filepath.Rel(dirPath, filePath)
-		fmt.Printf("[%d/%d] Importing: %s...", i+1, len(xgFiles), relPath)
+		fmt.Printf("[%d/%d] Importing: %s...", i+1, len(matchFiles), relPath)
 
 		result := BatchImportResult{
 			FilePath: relPath,
 		}
 
-		matchID, err := cli.db.ImportXGMatch(filePath)
+		// Route to appropriate importer based on extension
+		ext := strings.ToLower(filepath.Ext(filePath))
+		var matchID int64
+		switch ext {
+		case ".xg":
+			matchID, err = cli.db.ImportXGMatch(filePath)
+		case ".sgf", ".mat", ".txt":
+			matchID, err = cli.db.ImportGnuBGMatch(filePath)
+		}
+
 		if err != nil {
 			if errors.Is(err, ErrDuplicateMatch) {
 				fmt.Println(" DUPLICATE")
@@ -1429,7 +1452,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 
 	fmt.Println(strings.Repeat("-", 100))
 	fmt.Printf("Total: %d files | Success: %d | Duplicates: %d | Failed: %d | Positions imported: %d\n",
-		len(xgFiles), successCount, duplicateCount, failCount, totalPositions)
+		len(matchFiles), successCount, duplicateCount, failCount, totalPositions)
 
 	return nil
 }

@@ -39,6 +39,7 @@
         SaveFilter, // Import SaveFilter
         SaveEditPosition, // Import SaveEditPosition
         ImportXGMatch, // Import ImportXGMatch
+        ImportGnuBGMatch, // Import ImportGnuBGMatch
         GetAllMatches, // Import GetAllMatches
         SaveSessionState, // Import SaveSessionState
         LoadSessionState, // Import LoadSessionState
@@ -1276,7 +1277,9 @@
             
             // Detect file type by extension
             const filePath = response.file_path;
-            const isXGFile = filePath.toLowerCase().endsWith('.xg');
+            const lowerPath = filePath.toLowerCase();
+            const isXGFile = lowerPath.endsWith('.xg');
+            const isGnuBGFile = lowerPath.endsWith('.sgf') || lowerPath.endsWith('.mat');
             
             if (isXGFile) {
                 // Import XG match file
@@ -1301,6 +1304,30 @@
                     } else {
                         setStatusBarMessage('Error importing XG match: ' + error);
                         await ShowAlert('Error importing XG match: ' + error);
+                    }
+                }
+            } else if (isGnuBGFile) {
+                // Import GnuBG match file (.sgf or .mat)
+                const formatName = lowerPath.endsWith('.sgf') ? 'GnuBG SGF' : 'Jellyfish MAT';
+                console.log(`Importing ${formatName} match file:`, filePath);
+                try {
+                    const matchID = await ImportGnuBGMatch(filePath);
+                    console.log(`${formatName} match imported with ID:`, matchID);
+                    setStatusBarMessage(`${formatName} match imported successfully (ID: ${matchID})`);
+                    
+                    // Trigger match panel refresh to display the imported match
+                    matchPanelRefreshTriggerStore.update(n => n + 1);
+                    
+                    // Show match panel to display the imported match
+                    showMatchPanelStore.set(true);
+                } catch (error) {
+                    console.error(`Error importing ${formatName} match:`, error);
+                    const errorStr = String(error);
+                    if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                        setStatusBarMessage('This match has already been imported');
+                    } else {
+                        setStatusBarMessage(`Error importing ${formatName} match: ` + error);
+                        await ShowAlert(`Error importing ${formatName} match: ` + error);
                     }
                 }
             } else {

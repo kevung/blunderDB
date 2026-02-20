@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"strings"
@@ -15,6 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/kevung/gnubgparser"
 	"github.com/kevung/xgparser/xgparser"
 	_ "modernc.org/sqlite"
 )
@@ -6940,6 +6942,930 @@ func (d *Database) checkMatchExistsLocked(matchHash string) (int64, error) {
 		return 0, fmt.Errorf("error checking for duplicate match: %w", err)
 	}
 	return existingID, nil
+}
+
+// ============================================================================
+// GnuBG / Jellyfish import functions (SGF, MAT, TXT formats)
+// ============================================================================
+
+// ImportGnuBGMatch imports a match from a GnuBG file (SGF, MAT, or TXT format)
+// using the gnubgparser library. SGF files include full analysis data,
+// while MAT/TXT files contain only moves (no analysis).
+func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Determine format from extension and parse accordingly
+	ext := strings.ToLower(filepath.Ext(filePath))
+	var gnuMatch *gnubgparser.Match
+	var err error
+
+	switch ext {
+	case ".sgf":
+		gnuMatch, err = gnubgparser.ParseSGFFile(filePath)
+	case ".mat", ".txt":
+		gnuMatch, err = gnubgparser.ParseMATFile(filePath)
+	default:
+		return 0, fmt.Errorf("unsupported file format: %s", ext)
+	}
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse file: %w", err)
+	}
+
+	// Parse match date
+	var matchDate time.Time
+	if gnuMatch.Metadata.Date != "" {
+		for _, layout := range []string{
+			"2006-01-02 15:04:05",
+			"2006-01-02",
+			"2006/01/02",
+			"01/02/2006",
+			"January 2, 2006",
+			time.RFC3339,
+		} {
+			if t, parseErr := time.Parse(layout, gnuMatch.Metadata.Date); parseErr == nil {
+				matchDate = t
+				break
+			}
+		}
+	}
+	if matchDate.IsZero() {
+		matchDate = time.Now()
+	}
+
+	// Compute match hash for duplicate detection
+	matchHash := ComputeGnuBGMatchHash(gnuMatch)
+
+	// Check if this match already exists
+	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
+	if err != nil {
+		return 0, fmt.Errorf("failed to check for duplicate match: %w", err)
+	}
+	if existingMatchID > 0 {
+		return 0, ErrDuplicateMatch
+	}
+
+	// Begin transaction for atomic import
+	tx, err := d.db.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// Insert match metadata
+	result, err := tx.Exec(`
+		INSERT INTO match (player1_name, player2_name, event, location, round,
+		                   match_length, match_date, file_path, game_count, match_hash)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, gnuMatch.Metadata.Player1, gnuMatch.Metadata.Player2,
+		gnuMatch.Metadata.Event, gnuMatch.Metadata.Place, gnuMatch.Metadata.Round,
+		gnuMatch.Metadata.MatchLength, matchDate, filePath, len(gnuMatch.Games), matchHash)
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert match: %w", err)
+	}
+
+	matchID, err := result.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get match ID: %w", err)
+	}
+
+	// Build a position cache for deduplication
+	positionCache := make(map[string]int64) // map[positionJSON]positionID
+
+	// Load existing positions into cache
+	existingRows, err := tx.Query(`SELECT id, state FROM position`)
+	if err != nil {
+		return 0, fmt.Errorf("failed to load existing positions: %w", err)
+	}
+
+	for existingRows.Next() {
+		var existingID int64
+		var existingStateJSON string
+		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
+			continue
+		}
+
+		var existingPosition Position
+		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
+			continue
+		}
+
+		normalizedPosition := existingPosition.NormalizeForStorage()
+		normalizedPosition.ID = 0
+		normalizedJSON, _ := json.Marshal(normalizedPosition)
+		positionCache[string(normalizedJSON)] = existingID
+	}
+	existingRows.Close()
+
+	fmt.Printf("Loaded %d existing positions into cache for GnuBG import\n", len(positionCache))
+
+	// Import each game
+	for gameIdx, game := range gnuMatch.Games {
+		game.GameNumber = gameIdx + 1 // gnubgparser may not set GameNumber, use 1-based index
+		gameID, err := d.importGnuBGGame(tx, matchID, &game)
+		if err != nil {
+			return 0, fmt.Errorf("failed to import game %d: %w", game.GameNumber, err)
+		}
+
+		// Track current board state for position reconstruction.
+		// gnubgparser only provides Position on "setboard" events, but SGF files
+		// from standard games don't include setboard - they start from the default
+		// starting position. We track the board and reconstruct positions for each move.
+		currentBoard := initStandardGnuBGPosition()
+
+		moveNumber := int32(0)
+		for i := range game.Moves {
+			moveRec := &game.Moves[i]
+
+			// Process setup events - update tracked board state
+			switch string(moveRec.Type) {
+			case "setboard":
+				if moveRec.Position != nil {
+					currentBoard = *moveRec.Position
+				}
+				continue
+			case "setdice":
+				continue
+			case "setcube":
+				currentBoard.CubeValue = moveRec.CubeValue
+				continue
+			case "setcubepos":
+				currentBoard.CubeOwner = moveRec.CubeOwner
+				continue
+			}
+
+			// For actual moves, reconstruct position from tracked board state
+			// if the parser didn't provide one
+			if moveRec.Position == nil {
+				posCopy := currentBoard
+				moveRec.Position = &posCopy
+			}
+
+			err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, positionCache)
+			if err != nil {
+				fmt.Printf("Warning: failed to import move %d in game %d: %v\n", moveNumber, game.GameNumber, err)
+				moveNumber++
+				continue
+			}
+
+			// After importing, update board state for subsequent moves
+			switch string(moveRec.Type) {
+			case "move":
+				applyGnuBGCheckerMove(&currentBoard, moveRec)
+			case "take":
+				// After take, cube doubles and ownership changes to the taker
+				if currentBoard.CubeValue == 0 {
+					currentBoard.CubeValue = 2
+				} else {
+					currentBoard.CubeValue *= 2
+				}
+				currentBoard.CubeOwner = moveRec.Player
+			}
+
+			moveNumber++
+		}
+	}
+
+	// Commit transaction
+	if err = tx.Commit(); err != nil {
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	fmt.Printf("Successfully imported GnuBG match %d with %d games from %s\n", matchID, len(gnuMatch.Games), filePath)
+	return matchID, nil
+}
+
+// importGnuBGGame inserts a game record from gnubgparser data and returns its ID
+func (d *Database) importGnuBGGame(tx *sql.Tx, matchID int64, game *gnubgparser.Game) (int64, error) {
+	result, err := tx.Exec(`
+		INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2,
+		                  winner, points_won, move_count)
+		VALUES (?, ?, ?, ?, ?, ?, ?)
+	`, matchID, game.GameNumber, game.Score[0], game.Score[1],
+		game.Winner, game.Points, len(game.Moves))
+
+	if err != nil {
+		return 0, err
+	}
+
+	return result.LastInsertId()
+}
+
+// importGnuBGMove imports a single move record from gnubgparser data
+func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64) error {
+	switch moveRec.Type {
+	case "move":
+		return d.importGnuBGCheckerMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache)
+	case "double":
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Double")
+	case "take":
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Take")
+	case "drop":
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Pass")
+	case "resign":
+		// Skip resign moves - they don't produce positions
+		return nil
+	default:
+		// Skip unknown move types
+		return nil
+	}
+}
+
+// importGnuBGCheckerMove handles importing a checker move from gnubgparser
+func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64) error {
+	player := moveRec.Player // 0 or 1, maps directly to blunderDB
+
+	// Get move string
+	checkerMoveStr := moveRec.MoveString
+	if checkerMoveStr == "" {
+		// Convert from Move[8]int if MoveString is not available
+		checkerMoveStr = convertGnuBGMoveToString(moveRec.Move, moveRec.Player)
+	}
+
+	// If position is available, create and save it
+	var positionID int64
+	if moveRec.Position != nil {
+		pos, err := d.createPositionFromGnuBG(moveRec.Position, game, matchLength)
+		if err != nil {
+			return fmt.Errorf("failed to create position: %w", err)
+		}
+
+		pos.PlayerOnRoll = player
+		pos.DecisionType = CheckerAction
+		pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
+
+		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		if err != nil {
+			return fmt.Errorf("failed to save position: %w", err)
+		}
+		positionID = posID
+	}
+
+	// Save move record
+	var moveResult sql.Result
+	var err error
+	if positionID > 0 {
+		moveResult, err = tx.Exec(`
+			INSERT INTO move (game_id, move_number, move_type, position_id, player,
+			                  dice_1, dice_2, checker_move)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		`, gameID, moveNumber, "checker", positionID, player,
+			moveRec.Dice[0], moveRec.Dice[1], checkerMoveStr)
+	} else {
+		moveResult, err = tx.Exec(`
+			INSERT INTO move (game_id, move_number, move_type, position_id, player,
+			                  dice_1, dice_2, checker_move)
+			VALUES (?, ?, ?, NULL, ?, ?, ?, ?)
+		`, gameID, moveNumber, "checker", player,
+			moveRec.Dice[0], moveRec.Dice[1], checkerMoveStr)
+	}
+	if err != nil {
+		return err
+	}
+
+	moveID, _ := moveResult.LastInsertId()
+
+	// Save analysis if available (SGF files only)
+	if moveRec.Analysis != nil && len(moveRec.Analysis.Moves) > 0 && positionID > 0 {
+		// Save to move_analysis table
+		for _, moveOpt := range moveRec.Analysis.Moves {
+			err = d.saveGnuBGMoveAnalysisInTx(tx, moveID, &moveOpt)
+			if err != nil {
+				fmt.Printf("Warning: failed to save checker analysis: %v\n", err)
+			}
+		}
+
+		// Save to position analysis table (for UI compatibility)
+		err = d.saveGnuBGCheckerAnalysisToPositionInTx(tx, positionID, moveRec.Analysis, moveRec.Player, checkerMoveStr)
+		if err != nil {
+			fmt.Printf("Warning: failed to save position analysis: %v\n", err)
+		}
+	}
+
+	// Save cube analysis if available on a checker move position
+	if moveRec.CubeAnalysis != nil && positionID > 0 {
+		err = d.saveGnuBGCubeAnalysisForCheckerPositionInTx(tx, positionID, moveRec.CubeAnalysis)
+		if err != nil {
+			fmt.Printf("Warning: failed to save cube analysis for checker position: %v\n", err)
+		}
+	}
+
+	return nil
+}
+
+// importGnuBGCubeMove handles importing a cube move (double/take/drop) from gnubgparser
+func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, cubeAction string) error {
+	player := moveRec.Player // 0 or 1
+
+	var positionID int64
+	if moveRec.Position != nil {
+		pos, err := d.createPositionFromGnuBG(moveRec.Position, game, matchLength)
+		if err != nil {
+			return fmt.Errorf("failed to create position: %w", err)
+		}
+
+		pos.PlayerOnRoll = player
+		pos.DecisionType = CubeAction
+		pos.Dice = [2]int{0, 0} // No dice for cube decisions
+
+		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		if err != nil {
+			return fmt.Errorf("failed to save position: %w", err)
+		}
+		positionID = posID
+	}
+
+	// Save move record
+	var moveResult sql.Result
+	var err error
+	if positionID > 0 {
+		moveResult, err = tx.Exec(`
+			INSERT INTO move (game_id, move_number, move_type, position_id, player,
+			                  dice_1, dice_2, cube_action)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+		`, gameID, moveNumber, "cube", positionID, player, 0, 0, cubeAction)
+	} else {
+		moveResult, err = tx.Exec(`
+			INSERT INTO move (game_id, move_number, move_type, position_id, player,
+			                  dice_1, dice_2, cube_action)
+			VALUES (?, ?, ?, NULL, ?, ?, ?, ?)
+		`, gameID, moveNumber, "cube", player, 0, 0, cubeAction)
+	}
+	if err != nil {
+		return err
+	}
+
+	moveID, _ := moveResult.LastInsertId()
+
+	// Save cube analysis if available (SGF files only)
+	if moveRec.CubeAnalysis != nil && positionID > 0 {
+		// Save to move_analysis table
+		err = d.saveGnuBGCubeMoveAnalysisInTx(tx, moveID, moveRec.CubeAnalysis)
+		if err != nil {
+			fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+		}
+
+		// Save to position analysis table (for UI compatibility)
+		err = d.saveGnuBGCubeAnalysisToPositionInTx(tx, positionID, moveRec.CubeAnalysis, cubeAction)
+		if err != nil {
+			fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+		}
+	}
+
+	return nil
+}
+
+// initStandardGnuBGPosition returns a gnubgparser.Position set to the standard
+// backgammon starting position. Used when SGF files don't include explicit setboard events.
+//
+// In gnuBG's player-relative encoding (0=ace point, 23=24-point):
+//   - Each player has: 2@pt23, 5@pt12, 3@pt7, 5@pt5 (15 checkers total)
+func initStandardGnuBGPosition() gnubgparser.Position {
+	var pos gnubgparser.Position
+	pos.CubeValue = 1
+	pos.CubeOwner = -1 // center
+
+	// Standard starting position (same for both players from their own perspective)
+	for p := 0; p < 2; p++ {
+		pos.Board[p][23] = 2 // 24-point: 2 checkers
+		pos.Board[p][12] = 5 // 13-point: 5 checkers
+		pos.Board[p][7] = 3  // 8-point: 3 checkers
+		pos.Board[p][5] = 5  // 6-point: 5 checkers
+	}
+
+	return pos
+}
+
+// applyGnuBGCheckerMove updates a gnubgparser board state after a checker move.
+// The move is encoded in MoveRecord.Move[8]int as pairs of (from, to) in
+// absolute coordinates (Player 0's system: 0=1pt, 23=24pt, 24=bar, 25=off).
+// Board[p] uses player-relative coords (same as absolute for Player 0,
+// index = 23-absolute for Player 1; bar=24 for both).
+func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.MoveRecord) {
+	player := moveRec.Player
+	opponent := 1 - player
+
+	for i := 0; i < 8; i += 2 {
+		from := moveRec.Move[i]
+		to := moveRec.Move[i+1]
+		if from == -1 {
+			break
+		}
+
+		// Convert absolute move index to player's board index
+		// Player 0: board index = move index (same system)
+		// Player 1: board index = 23 - move index (except bar which stays 24)
+		fromBoard := from
+		if player == 1 && from != 24 {
+			fromBoard = 23 - from
+		}
+
+		// Remove checker from source point
+		if fromBoard >= 0 && fromBoard <= 24 {
+			board.Board[player][fromBoard]--
+		}
+
+		// If bearing off (to=25), checker leaves the board entirely
+		if to == 25 {
+			continue
+		}
+
+		toBoard := to
+		if player == 1 {
+			toBoard = 23 - to
+		}
+
+		// Check for hit at destination
+		// Opponent's board index for the same physical point:
+		// Player 0 moves to absolute index 'to' → Opponent (P1) board index = 23-to
+		// Player 1 moves to absolute index 'to' → Opponent (P0) board index = to
+		var opponentBoard int
+		if player == 0 {
+			opponentBoard = 23 - to
+		} else {
+			opponentBoard = to
+		}
+
+		if opponentBoard >= 0 && opponentBoard <= 23 {
+			if board.Board[opponent][opponentBoard] == 1 {
+				// Hit: send opponent's checker to the bar
+				board.Board[opponent][opponentBoard] = 0
+				board.Board[opponent][24]++
+			}
+		}
+
+		// Place checker at destination
+		if toBoard >= 0 && toBoard <= 24 {
+			board.Board[player][toBoard]++
+		}
+	}
+}
+
+// createPositionFromGnuBG converts a gnubgparser.Position to a blunderDB Position
+//
+// gnubgparser board encoding (player-relative):
+//   - Board[player][0-23]: board points from player's perspective (0=ace/home, 23=far)
+//   - Board[player][24]: checkers on bar
+//
+// blunderDB board encoding (absolute):
+//   - Points[0]: Player 2's bar (White)
+//   - Points[1-24]: board points (standard numbering)
+//   - Points[25]: Player 1's bar (Black)
+//   - Color 0 = Player 1 (Black, moves 24→1), Color 1 = Player 2 (White, moves 1→24)
+//
+// Mapping:
+//   - Board[0][i] (player 0/Black): blunderDB point (i+1), Color 0
+//   - Board[1][i] (player 1/White): blunderDB point (24-i), Color 1
+//   - Board[0][24] (player 0 bar): blunderDB Points[25]
+//   - Board[1][24] (player 1 bar): blunderDB Points[0]
+func (d *Database) createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game *gnubgparser.Game, matchLength int) (*Position, error) {
+	// Calculate away scores
+	// blunderDB stores scores as "points away from winning"
+	awayScore1 := matchLength - game.Score[0]
+	awayScore2 := matchLength - game.Score[1]
+
+	// Handle unlimited/money match (matchLength == 0)
+	if matchLength == 0 {
+		awayScore1 = -1
+		awayScore2 = -1
+	}
+
+	// Convert cube value from actual (1,2,4,8...) to exponent (0,1,2,3...)
+	cubeValue := 0
+	if gnubgPos.CubeValue > 0 {
+		for v := gnubgPos.CubeValue; v > 1; v >>= 1 {
+			cubeValue++
+		}
+	}
+
+	// Cube owner: gnubgparser uses -1=center, 0=player0, 1=player1 (same as blunderDB)
+	cubeOwner := gnubgPos.CubeOwner
+
+	pos := &Position{
+		PlayerOnRoll: gnubgPos.OnRoll, // Will be overridden from move context
+		DecisionType: CheckerAction,   // Will be overridden from move context
+		Score:        [2]int{awayScore1, awayScore2},
+		Cube: Cube{
+			Value: cubeValue,
+			Owner: cubeOwner,
+		},
+		Dice: [2]int{0, 0}, // Will be set from move data
+	}
+
+	// Initialize all points as empty
+	for i := 0; i < 26; i++ {
+		pos.Board.Points[i] = Point{Checkers: 0, Color: -1}
+	}
+
+	// Place Player 0's (Black) checkers
+	for pt := 0; pt < 25; pt++ {
+		count := gnubgPos.Board[0][pt]
+		if count > 0 {
+			if pt == 24 {
+				// Bar: Player 0's bar → blunderDB index 25
+				pos.Board.Points[25] = Point{Checkers: count, Color: 0}
+			} else {
+				// Board point: gnubg pt → blunderDB pt+1
+				pos.Board.Points[pt+1] = Point{Checkers: count, Color: 0}
+			}
+		}
+	}
+
+	// Place Player 1's (White) checkers
+	for pt := 0; pt < 25; pt++ {
+		count := gnubgPos.Board[1][pt]
+		if count > 0 {
+			if pt == 24 {
+				// Bar: Player 1's bar → blunderDB index 0
+				pos.Board.Points[0] = Point{Checkers: count, Color: 1}
+			} else {
+				// Board point: gnubg pt (from player 1's view) → blunderDB (24-pt)
+				pos.Board.Points[24-pt] = Point{Checkers: count, Color: 1}
+			}
+		}
+	}
+
+	// Calculate bearoff (15 checkers total per player minus those on the board)
+	player1Total := 0
+	player2Total := 0
+	for i := 0; i < 26; i++ {
+		if pos.Board.Points[i].Color == 0 {
+			player1Total += pos.Board.Points[i].Checkers
+		} else if pos.Board.Points[i].Color == 1 {
+			player2Total += pos.Board.Points[i].Checkers
+		}
+	}
+	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
+
+	return pos, nil
+}
+
+// convertGnuBGMoveToString converts a gnubgparser Move[8]int to standard notation
+// Move encoding: 0-23 = board points (player-relative), 24 = bar, 25 = off, -1 = unused
+// For player 0: gnubg point i → standard point (i+1)
+// For player 1: gnubg point i → standard point (24-i)
+func convertGnuBGMoveToString(move [8]int, player int) string {
+	formatPoint := func(pt int, p int) string {
+		if pt == 24 {
+			return "bar"
+		}
+		if pt == 25 {
+			return "off"
+		}
+		if p == 0 {
+			return fmt.Sprintf("%d", pt+1) // Player 0: 0→1, 23→24
+		}
+		return fmt.Sprintf("%d", 24-pt) // Player 1: 0→24, 23→1
+	}
+
+	type moveItem struct {
+		from string
+		to   string
+	}
+
+	var items []moveItem
+	for i := 0; i < 8; i += 2 {
+		from := move[i]
+		to := move[i+1]
+		if from == -1 {
+			break
+		}
+		items = append(items, moveItem{
+			from: formatPoint(from, player),
+			to:   formatPoint(to, player),
+		})
+	}
+
+	if len(items) == 0 {
+		return "Cannot Move"
+	}
+
+	// Sort by 'from' point descending (standard notation)
+	sort.Slice(items, func(i, j int) bool {
+		// Parse to int for comparison
+		fi, _ := strconv.Atoi(items[i].from)
+		fj, _ := strconv.Atoi(items[j].from)
+		if items[i].from == "bar" {
+			fi = 25
+		}
+		if items[j].from == "bar" {
+			fj = 25
+		}
+		return fi > fj
+	})
+
+	// Group identical moves with multiplier
+	var moves []string
+	for i := 0; i < len(items); {
+		item := items[i]
+		count := 1
+		for j := i + 1; j < len(items); j++ {
+			if items[j].from == item.from && items[j].to == item.to {
+				count++
+			} else {
+				break
+			}
+		}
+		if count > 1 {
+			moves = append(moves, fmt.Sprintf("%s/%s(%d)", item.from, item.to, count))
+		} else {
+			moves = append(moves, fmt.Sprintf("%s/%s", item.from, item.to))
+		}
+		i += count
+	}
+
+	return strings.Join(moves, " ")
+}
+
+// saveGnuBGMoveAnalysisInTx saves a gnubgparser MoveOption to the move_analysis table
+func (d *Database) saveGnuBGMoveAnalysisInTx(tx *sql.Tx, moveID int64, moveOpt *gnubgparser.MoveOption) error {
+	// gnubgparser rates are 0-1 fractions; convert to percentages
+	player1WinRate := float64(moveOpt.Player1WinRate) * 100.0
+	player2WinRate := float64(moveOpt.Player2WinRate) * 100.0
+
+	_, err := tx.Exec(`
+		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
+		                           win_rate, gammon_rate, backgammon_rate,
+		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, moveID, "checker", translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth),
+		moveOpt.Equity, 0.0,
+		player1WinRate, float64(moveOpt.Player1GammonRate)*100.0, float64(moveOpt.Player1BackgammonRate)*100.0,
+		player2WinRate, float64(moveOpt.Player2GammonRate)*100.0, float64(moveOpt.Player2BackgammonRate)*100.0)
+
+	return err
+}
+
+// saveGnuBGCubeMoveAnalysisInTx saves gnubgparser CubeAnalysis to the move_analysis table
+func (d *Database) saveGnuBGCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *gnubgparser.CubeAnalysis) error {
+	player1WinRate := float64(analysis.Player1WinRate) * 100.0
+	player2WinRate := float64(analysis.Player2WinRate) * 100.0
+
+	_, err := tx.Exec(`
+		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
+		                           win_rate, gammon_rate, backgammon_rate,
+		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, moveID, "cube", translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
+		analysis.CubefulNoDouble, 0.0,
+		player1WinRate, float64(analysis.Player1GammonRate)*100.0, float64(analysis.Player1BackgammonRate)*100.0,
+		player2WinRate, float64(analysis.Player2GammonRate)*100.0, float64(analysis.Player2BackgammonRate)*100.0)
+
+	return err
+}
+
+// saveGnuBGCheckerAnalysisToPositionInTx converts gnubgparser MoveAnalysis to PositionAnalysis and saves it
+func (d *Database) saveGnuBGCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *gnubgparser.MoveAnalysis, player int, playedMoveStr string) error {
+	if analysis == nil || len(analysis.Moves) == 0 {
+		return nil
+	}
+
+	posAnalysis := PositionAnalysis{
+		PositionID:            int(positionID),
+		AnalysisType:          "CheckerMove",
+		AnalysisEngineVersion: "GNU Backgammon",
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
+	}
+
+	// Build checker moves list
+	checkerMoves := make([]CheckerMove, 0, len(analysis.Moves))
+	for i, moveOpt := range analysis.Moves {
+		// Use MoveString from analysis if available
+		moveStr := moveOpt.MoveString
+		if moveStr == "" {
+			moveStr = convertGnuBGMoveToString(moveOpt.Move, player)
+		}
+
+		var equityError *float64
+		if i > 0 {
+			diff := analysis.Moves[0].Equity - moveOpt.Equity
+			equityError = &diff
+		}
+
+		checkerMove := CheckerMove{
+			Index:                    i,
+			AnalysisDepth:            translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth),
+			Move:                     moveStr,
+			Equity:                   moveOpt.Equity,
+			EquityError:              equityError,
+			PlayerWinChance:          float64(moveOpt.Player1WinRate) * 100.0,
+			PlayerGammonChance:       float64(moveOpt.Player1GammonRate) * 100.0,
+			PlayerBackgammonChance:   float64(moveOpt.Player1BackgammonRate) * 100.0,
+			OpponentWinChance:        float64(moveOpt.Player2WinRate) * 100.0,
+			OpponentGammonChance:     float64(moveOpt.Player2GammonRate) * 100.0,
+			OpponentBackgammonChance: float64(moveOpt.Player2BackgammonRate) * 100.0,
+		}
+		checkerMoves = append(checkerMoves, checkerMove)
+	}
+
+	posAnalysis.CheckerAnalysis = &CheckerAnalysis{
+		Moves: checkerMoves,
+	}
+
+	// Set played move
+	if playedMoveStr != "" {
+		posAnalysis.PlayedMoves = []string{playedMoveStr}
+	}
+
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
+// saveGnuBGCubeAnalysisToPositionInTx converts gnubgparser CubeAnalysis to PositionAnalysis and saves it
+func (d *Database) saveGnuBGCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *gnubgparser.CubeAnalysis, playedCubeAction string) error {
+	if analysis == nil {
+		return nil
+	}
+
+	posAnalysis := PositionAnalysis{
+		PositionID:            int(positionID),
+		AnalysisType:          "DoublingCube",
+		AnalysisEngineVersion: "GNU Backgammon",
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
+	}
+
+	cubefulNoDouble := analysis.CubefulNoDouble
+	cubefulDoubleTake := analysis.CubefulDoubleTake
+	cubefulDoublePass := analysis.CubefulDoublePass
+
+	// Calculate best equity considering opponent's optimal response
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
+	}
+
+	bestEquity := cubefulNoDouble
+	bestAction := "No Double"
+	if effectiveDoubleEquity > cubefulNoDouble {
+		bestEquity = effectiveDoubleEquity
+		if cubefulDoubleTake <= cubefulDoublePass {
+			bestAction = "Double, Take"
+		} else {
+			bestAction = "Double, Pass"
+		}
+	}
+
+	// Use BestAction from gnuBG analysis if available
+	if analysis.BestAction != "" {
+		bestAction = analysis.BestAction
+	}
+
+	cubeAnalysis := DoublingCubeAnalysis{
+		AnalysisDepth:             translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
+		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
+		PlayerGammonChances:       float64(analysis.Player1GammonRate) * 100.0,
+		PlayerBackgammonChances:   float64(analysis.Player1BackgammonRate) * 100.0,
+		OpponentWinChances:        float64(analysis.Player2WinRate) * 100.0,
+		OpponentGammonChances:     float64(analysis.Player2GammonRate) * 100.0,
+		OpponentBackgammonChances: float64(analysis.Player2BackgammonRate) * 100.0,
+		CubelessNoDoubleEquity:    analysis.CubelessEquity,
+		CubelessDoubleEquity:      analysis.CubelessEquity,
+		CubefulNoDoubleEquity:     cubefulNoDouble,
+		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
+		CubefulDoubleTakeEquity:   cubefulDoubleTake,
+		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
+		CubefulDoublePassEquity:   cubefulDoublePass,
+		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
+		BestCubeAction:            bestAction,
+		WrongPassPercentage:       float64(analysis.WrongPassTakePercent) * 100.0,
+		WrongTakePercentage:       0.0,
+	}
+
+	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
+
+	// Set played cube action
+	if playedCubeAction != "" {
+		posAnalysis.PlayedCubeActions = []string{playedCubeAction}
+	}
+
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
+// saveGnuBGCubeAnalysisForCheckerPositionInTx saves cube analysis to a checker position
+// This allows displaying cube info when pressing 'd' on a checker decision
+func (d *Database) saveGnuBGCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID int64, analysis *gnubgparser.CubeAnalysis) error {
+	if analysis == nil {
+		return nil
+	}
+
+	// Try to load existing analysis for this position
+	var existingAnalysisJSON string
+	var existingID int64
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+
+	var posAnalysis PositionAnalysis
+	if err == nil && existingID > 0 {
+		err = json.Unmarshal([]byte(existingAnalysisJSON), &posAnalysis)
+		if err != nil {
+			return err
+		}
+	} else {
+		posAnalysis = PositionAnalysis{
+			PositionID:            int(positionID),
+			AnalysisType:          "CheckerMove",
+			AnalysisEngineVersion: "GNU Backgammon",
+			CreationDate:          time.Now(),
+		}
+	}
+
+	posAnalysis.LastModifiedDate = time.Now()
+
+	cubefulNoDouble := analysis.CubefulNoDouble
+	cubefulDoubleTake := analysis.CubefulDoubleTake
+	cubefulDoublePass := analysis.CubefulDoublePass
+
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
+	}
+
+	bestEquity := cubefulNoDouble
+	bestAction := "No Double"
+	if effectiveDoubleEquity > cubefulNoDouble {
+		bestEquity = effectiveDoubleEquity
+		if cubefulDoubleTake <= cubefulDoublePass {
+			bestAction = "Double, Take"
+		} else {
+			bestAction = "Double, Pass"
+		}
+	}
+
+	if analysis.BestAction != "" {
+		bestAction = analysis.BestAction
+	}
+
+	cubeAnalysis := DoublingCubeAnalysis{
+		AnalysisDepth:             translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
+		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
+		PlayerGammonChances:       float64(analysis.Player1GammonRate) * 100.0,
+		PlayerBackgammonChances:   float64(analysis.Player1BackgammonRate) * 100.0,
+		OpponentWinChances:        float64(analysis.Player2WinRate) * 100.0,
+		OpponentGammonChances:     float64(analysis.Player2GammonRate) * 100.0,
+		OpponentBackgammonChances: float64(analysis.Player2BackgammonRate) * 100.0,
+		CubelessNoDoubleEquity:    analysis.CubelessEquity,
+		CubelessDoubleEquity:      analysis.CubelessEquity,
+		CubefulNoDoubleEquity:     cubefulNoDouble,
+		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
+		CubefulDoubleTakeEquity:   cubefulDoubleTake,
+		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
+		CubefulDoublePassEquity:   cubefulDoublePass,
+		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
+		BestCubeAction:            bestAction,
+		WrongPassPercentage:       float64(analysis.WrongPassTakePercent) * 100.0,
+		WrongTakePercentage:       0.0,
+	}
+
+	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
+
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
+// translateGnuBGAnalysisDepth converts gnuBG analysis depth to a human-readable string
+// gnuBG uses ply levels: 0=0-ply (contact/race evaluation), 1=1-ply, 2=2-ply, etc.
+func translateGnuBGAnalysisDepth(depth int) string {
+	if depth >= 0 {
+		return fmt.Sprintf("%d-ply", depth)
+	}
+	return fmt.Sprintf("%d", depth)
+}
+
+// ComputeGnuBGMatchHash generates a unique hash for a gnubgparser match
+// Used to detect duplicate imports
+func ComputeGnuBGMatchHash(match *gnubgparser.Match) string {
+	var hashBuilder strings.Builder
+
+	// Include metadata (normalized)
+	p1 := strings.TrimSpace(strings.ToLower(match.Metadata.Player1))
+	p2 := strings.TrimSpace(strings.ToLower(match.Metadata.Player2))
+	hashBuilder.WriteString(fmt.Sprintf("meta:%s|%s|%d|", p1, p2, match.Metadata.MatchLength))
+
+	// Include full game transcription
+	for gameIdx, game := range match.Games {
+		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d,%d|",
+			gameIdx, game.Score[0], game.Score[1], game.Winner, game.Points))
+
+		// Include all moves in the game
+		for moveIdx, moveRec := range game.Moves {
+			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveIdx, string(moveRec.Type)))
+
+			if moveRec.Type == "move" {
+				hashBuilder.WriteString(fmt.Sprintf("d%d%d,p%s|",
+					moveRec.Dice[0], moveRec.Dice[1], moveRec.MoveString))
+			} else if moveRec.Type == "double" || moveRec.Type == "take" || moveRec.Type == "drop" {
+				hashBuilder.WriteString(fmt.Sprintf("c%s|", string(moveRec.Type)))
+			}
+		}
+	}
+
+	hash := sha256.Sum256([]byte(hashBuilder.String()))
+	return hex.EncodeToString(hash[:])
 }
 
 // GetAllMatches returns all matches from the database

@@ -80,13 +80,15 @@ type FileDialogResponse struct {
 }
 
 func (a *App) OpenPositionDialog() (*FileDialogResponse, error) {
-	// Open the file dialog with both .txt and .xg file types
+	// Open the file dialog with position and match file types
 	filePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
-		Title: "Import Position or XG Match File",
+		Title: "Import Position or Match File",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "All Supported Files (*.txt, *.xg)", Pattern: "*.txt;*.xg"},
+			{DisplayName: "All Supported Files (*.txt, *.xg, *.sgf, *.mat)", Pattern: "*.txt;*.xg;*.sgf;*.mat"},
 			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
 			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
+			{DisplayName: "GnuBG Match Files (*.sgf)", Pattern: "*.sgf"},
+			{DisplayName: "Jellyfish Match Files (*.mat)", Pattern: "*.mat"},
 			{DisplayName: "All Files (*.*)", Pattern: "*.*"},
 		},
 	})

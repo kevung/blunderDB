@@ -166,6 +166,10 @@ export function ImportDatabase(arg1) {
   return window['go']['main']['Database']['ImportDatabase'](arg1);
 }
 
+export function ImportGnuBGMatch(arg1) {
+  return window['go']['main']['Database']['ImportGnuBGMatch'](arg1);
+}
+
 export function ImportXGMatch(arg1) {
   return window['go']['main']['Database']['ImportXGMatch'](arg1);
 }
