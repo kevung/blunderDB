@@ -5575,6 +5575,16 @@ func convertXGPlayerToBlunderDB(xgPlayer int32) int {
 	return 1 // Player 2
 }
 
+// convertBlunderDBPlayerToXG converts blunderDB player encoding (0/1) to XG encoding (1/-1)
+// This is used when storing GnuBG-imported moves in the DB, so that GetMatchMovePositions
+// can apply convertXGPlayerToBlunderDB uniformly for both XG and GnuBG imports.
+func convertBlunderDBPlayerToXG(blunderDBPlayer int) int32 {
+	if blunderDBPlayer == 0 {
+		return 1 // Player 1
+	}
+	return -1 // Player 2
+}
+
 // savePositionInTxWithCache saves a position within a transaction using a cache for deduplication
 // Positions are normalized before storage (player_on_roll = 0) to prevent storing duplicates.
 func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, positionCache map[string]int64) (int64, error) {
@@ -6960,6 +6970,11 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 	var gnuMatch *gnubgparser.Match
 	var err error
 
+	// isSGF indicates whether moves use absolute coordinates (Player 0's system)
+	// SGF: moves are in absolute coords, MoveString is in letter format (needs conversion)
+	// MAT/TXT: moves are in player-relative coords, MoveString is already human-readable
+	isSGF := ext == ".sgf"
+
 	switch ext {
 	case ".sgf":
 		gnuMatch, err = gnubgparser.ParseSGFFile(filePath)
@@ -7107,7 +7122,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 				moveRec.Position = &posCopy
 			}
 
-			err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, positionCache)
+			err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, positionCache, isSGF)
 			if err != nil {
 				fmt.Printf("Warning: failed to import move %d in game %d: %v\n", moveNumber, game.GameNumber, err)
 				moveNumber++
@@ -7158,16 +7173,17 @@ func (d *Database) importGnuBGGame(tx *sql.Tx, matchID int64, game *gnubgparser.
 }
 
 // importGnuBGMove imports a single move record from gnubgparser data
-func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64) error {
+// isSGF indicates SGF format where moves use absolute coordinates (Player 0's system)
+func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, isSGF bool) error {
 	switch moveRec.Type {
 	case "move":
-		return d.importGnuBGCheckerMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache)
+		return d.importGnuBGCheckerMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, isSGF)
 	case "double":
-		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Double")
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Double", isSGF)
 	case "take":
-		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Take")
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Take", isSGF)
 	case "drop":
-		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Pass")
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, "Pass", isSGF)
 	case "resign":
 		// Skip resign moves - they don't produce positions
 		return nil
@@ -7178,14 +7194,27 @@ func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, m
 }
 
 // importGnuBGCheckerMove handles importing a checker move from gnubgparser
-func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64) error {
+// isSGF indicates SGF format where moves use absolute coordinates and MoveString is in letter format
+func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, isSGF bool) error {
 	player := moveRec.Player // 0 or 1, maps directly to blunderDB
 
+	// Convert player to XG-style encoding for DB storage consistency
+	// The DB player column uses XG encoding (1=Player1, -1=Player2) so that
+	// GetMatchMovePositions can use convertXGPlayerToBlunderDB uniformly.
+	dbPlayer := convertBlunderDBPlayerToXG(player)
+
 	// Get move string
-	checkerMoveStr := moveRec.MoveString
-	if checkerMoveStr == "" {
-		// Convert from Move[8]int if MoveString is not available
+	var checkerMoveStr string
+	if isSGF {
+		// For SGF files, Move[8]int is in absolute coordinates (Player 0's system).
+		// Always compute from Move array since MoveString is in letter format.
 		checkerMoveStr = convertGnuBGMoveToString(moveRec.Move, moveRec.Player)
+	} else {
+		// For MAT/TXT files, MoveString is already in human-readable notation.
+		checkerMoveStr = moveRec.MoveString
+		if checkerMoveStr == "" {
+			checkerMoveStr = convertGnuBGMoveToString(moveRec.Move, moveRec.Player)
+		}
 	}
 
 	// If position is available, create and save it
@@ -7215,14 +7244,14 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 			INSERT INTO move (game_id, move_number, move_type, position_id, player,
 			                  dice_1, dice_2, checker_move)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`, gameID, moveNumber, "checker", positionID, player,
+		`, gameID, moveNumber, "checker", positionID, dbPlayer,
 			moveRec.Dice[0], moveRec.Dice[1], checkerMoveStr)
 	} else {
 		moveResult, err = tx.Exec(`
 			INSERT INTO move (game_id, move_number, move_type, position_id, player,
 			                  dice_1, dice_2, checker_move)
 			VALUES (?, ?, ?, NULL, ?, ?, ?, ?)
-		`, gameID, moveNumber, "checker", player,
+		`, gameID, moveNumber, "checker", dbPlayer,
 			moveRec.Dice[0], moveRec.Dice[1], checkerMoveStr)
 	}
 	if err != nil {
@@ -7242,7 +7271,7 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 		}
 
 		// Save to position analysis table (for UI compatibility)
-		err = d.saveGnuBGCheckerAnalysisToPositionInTx(tx, positionID, moveRec.Analysis, moveRec.Player, checkerMoveStr)
+		err = d.saveGnuBGCheckerAnalysisToPositionInTx(tx, positionID, moveRec.Analysis, moveRec.Player, checkerMoveStr, isSGF)
 		if err != nil {
 			fmt.Printf("Warning: failed to save position analysis: %v\n", err)
 		}
@@ -7260,8 +7289,11 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 }
 
 // importGnuBGCubeMove handles importing a cube move (double/take/drop) from gnubgparser
-func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, cubeAction string) error {
+func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, cubeAction string, isSGF bool) error {
 	player := moveRec.Player // 0 or 1
+
+	// Convert player to XG-style encoding for DB storage consistency
+	dbPlayer := convertBlunderDBPlayerToXG(player)
 
 	var positionID int64
 	if moveRec.Position != nil {
@@ -7289,13 +7321,13 @@ func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int3
 			INSERT INTO move (game_id, move_number, move_type, position_id, player,
 			                  dice_1, dice_2, cube_action)
 			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`, gameID, moveNumber, "cube", positionID, player, 0, 0, cubeAction)
+		`, gameID, moveNumber, "cube", positionID, dbPlayer, 0, 0, cubeAction)
 	} else {
 		moveResult, err = tx.Exec(`
 			INSERT INTO move (game_id, move_number, move_type, position_id, player,
 			                  dice_1, dice_2, cube_action)
 			VALUES (?, ?, ?, NULL, ?, ?, ?, ?)
-		`, gameID, moveNumber, "cube", player, 0, 0, cubeAction)
+		`, gameID, moveNumber, "cube", dbPlayer, 0, 0, cubeAction)
 	}
 	if err != nil {
 		return err
@@ -7621,7 +7653,8 @@ func (d *Database) saveGnuBGCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, analy
 }
 
 // saveGnuBGCheckerAnalysisToPositionInTx converts gnubgparser MoveAnalysis to PositionAnalysis and saves it
-func (d *Database) saveGnuBGCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *gnubgparser.MoveAnalysis, player int, playedMoveStr string) error {
+// isSGF indicates SGF format where Move[8]int is in absolute coordinates and MoveString is in letter format
+func (d *Database) saveGnuBGCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *gnubgparser.MoveAnalysis, player int, playedMoveStr string, isSGF bool) error {
 	if analysis == nil || len(analysis.Moves) == 0 {
 		return nil
 	}
@@ -7637,10 +7670,16 @@ func (d *Database) saveGnuBGCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID
 	// Build checker moves list
 	checkerMoves := make([]CheckerMove, 0, len(analysis.Moves))
 	for i, moveOpt := range analysis.Moves {
-		// Use MoveString from analysis if available
-		moveStr := moveOpt.MoveString
-		if moveStr == "" {
+		var moveStr string
+		if isSGF {
+			// For SGF, always convert from Move[8]int (absolute coords) to numeric notation
 			moveStr = convertGnuBGMoveToString(moveOpt.Move, player)
+		} else {
+			// For MAT, use the existing human-readable MoveString
+			moveStr = moveOpt.MoveString
+			if moveStr == "" {
+				moveStr = convertGnuBGMoveToString(moveOpt.Move, player)
+			}
 		}
 
 		var equityError *float64
