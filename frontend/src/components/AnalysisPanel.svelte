@@ -427,15 +427,24 @@
                           analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined);
     
     // Build the list of cube analyses to display (may have multiple from different engines)
+    // Sort so XG analysis appears first, then GNUbg, then others
     $: cubeAnalysesList = (() => {
         if (!analysisData) return [];
+        let list = [];
         if (analysisData.allCubeAnalyses && analysisData.allCubeAnalyses.length > 0) {
-            return analysisData.allCubeAnalyses;
+            list = [...analysisData.allCubeAnalyses];
+        } else if (analysisData.doublingCubeAnalysis) {
+            list = [analysisData.doublingCubeAnalysis];
         }
-        if (analysisData.doublingCubeAnalysis) {
-            return [analysisData.doublingCubeAnalysis];
-        }
-        return [];
+        // Sort by engine priority: XG first, GNUbg second, others last
+        const enginePriority = (engine) => {
+            const e = (engine || '').toLowerCase();
+            if (e === 'xg') return 0;
+            if (e === 'gnubg') return 1;
+            return 2;
+        };
+        list.sort((a, b) => enginePriority(a.analysisEngine) - enginePriority(b.analysisEngine));
+        return list;
     })();
     // Check if current position is the first position of a game (no cube decision possible)
     // First position can be move_number 0 or 1
@@ -455,9 +464,6 @@
         <div class="analysis-content" on:click={handleContentClick} on:keydown={() => {}} role="button" tabindex="-1">
             {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
                 {#each cubeAnalysesList as cubeAnalysis, cubeIdx}
-                    {#if cubeAnalysesList.length > 1}
-                        <div class="cube-engine-header">{cubeAnalysis.analysisEngine || 'Engine ' + (cubeIdx + 1)}</div>
-                    {/if}
                     <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
                         <table class="left-table">
                             <tbody>
@@ -596,6 +602,7 @@
         background-color: white;
         border-top: 1px solid rgba(0, 0, 0, 0.1);
         padding: 10px;
+        padding-bottom: 30px; /* Extra space so content isn't hidden behind the status bar */
         box-sizing: border-box;
         z-index: 5;
         outline: none;

@@ -1146,6 +1146,11 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 		}
 	}
 
+	// Sort AllCubeAnalyses so XG comes first (for existing data in DB)
+	if len(analysis.AllCubeAnalyses) > 0 {
+		sortCubeAnalysesByEngine(analysis.AllCubeAnalyses)
+	}
+
 	return &analysis, nil
 }
 
@@ -6095,9 +6100,29 @@ func (d *Database) determineBestCubeAction(analysis *xgparser.CubeAnalysis) stri
 	return "No Double"
 }
 
+// enginePriority returns a sort priority for analysis engines.
+// XG gets priority 0 (first), GNUbg gets 1, unknown/empty gets 2.
+func enginePriority(engine string) int {
+	switch strings.ToLower(engine) {
+	case "xg":
+		return 0
+	case "gnubg":
+		return 1
+	default:
+		return 2
+	}
+}
+
+// sortCubeAnalysesByEngine sorts cube analyses so XG comes first, then GNUbg, then others.
+func sortCubeAnalysesByEngine(analyses []DoublingCubeAnalysis) {
+	sort.SliceStable(analyses, func(i, j int) bool {
+		return enginePriority(analyses[i].AnalysisEngine) < enginePriority(analyses[j].AnalysisEngine)
+	})
+}
+
 // mergeCheckerMoves merges two sets of checker moves, avoiding duplicates
 // Moves are considered duplicates if they have the same move string
-// Returns moves sorted by equity (highest first)
+// Returns moves sorted by equity (highest first), with XG engine preferred as tiebreaker
 func mergeCheckerMoves(existing, incoming []CheckerMove) []CheckerMove {
 	// Use a map to track unique moves by their move string
 	moveMap := make(map[string]CheckerMove)
@@ -6126,9 +6151,12 @@ func mergeCheckerMoves(existing, incoming []CheckerMove) []CheckerMove {
 		result = append(result, m)
 	}
 
-	// Sort by equity (highest first)
-	sort.Slice(result, func(i, j int) bool {
-		return result[i].Equity > result[j].Equity
+	// Sort by equity (highest first), with XG engine preferred as tiebreaker
+	sort.SliceStable(result, func(i, j int) bool {
+		if result[i].Equity != result[j].Equity {
+			return result[i].Equity > result[j].Equity
+		}
+		return enginePriority(result[i].AnalysisEngine) < enginePriority(result[j].AnalysisEngine)
 	})
 
 	// Recalculate equity errors relative to the best move
@@ -6247,6 +6275,7 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 				if !hasIncoming {
 					allCube = append(allCube, *analysis.DoublingCubeAnalysis)
 				}
+				sortCubeAnalysesByEngine(allCube)
 				analysis.AllCubeAnalyses = allCube
 				// Primary DoublingCubeAnalysis stays as the incoming one
 			} else {
