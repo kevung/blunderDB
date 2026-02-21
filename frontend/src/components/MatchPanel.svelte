@@ -379,6 +379,9 @@
         // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+T to toggle panel)
         if (event.ctrlKey) return;
 
+        // Let Space pass through so the command line can be opened from global handler
+        if (event.code === 'Space') return;
+
         // Stop all keyboard events from propagating to global handlers
         event.stopPropagation();
 
