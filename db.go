@@ -4870,6 +4870,23 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		if err != nil {
 			return 0, fmt.Errorf("failed to get match ID: %w", err)
 		}
+
+		// Auto-link tournament from event metadata
+		eventName := strings.TrimSpace(match.Metadata.Event)
+		if eventName != "" {
+			var tournamentID int64
+			err2 := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
+			if err2 != nil {
+				// Tournament doesn't exist yet — create it
+				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
+				if err3 == nil {
+					tournamentID, _ = res2.LastInsertId()
+				}
+			}
+			if tournamentID > 0 {
+				tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+			}
+		}
 	}
 
 	// Build a position cache for deduplication
@@ -7200,6 +7217,22 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 		matchID, err = result.LastInsertId()
 		if err != nil {
 			return 0, fmt.Errorf("failed to get match ID: %w", err)
+		}
+
+		// Auto-link tournament from event metadata
+		eventName := strings.TrimSpace(gnuMatch.Metadata.Event)
+		if eventName != "" {
+			var tournamentID int64
+			err2 := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
+			if err2 != nil {
+				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
+				if err3 == nil {
+					tournamentID, _ = res2.LastInsertId()
+				}
+			}
+			if tournamentID > 0 {
+				tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+			}
 		}
 	}
 
@@ -10056,6 +10089,37 @@ func (d *Database) SetMatchTournamentByName(matchID int64, tournamentName string
 	}
 	_, _ = d.db.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
 	return nil
+}
+
+// UpdateMatch updates editable metadata for a match (player names and date).
+// matchDate should be an empty string or a date string parseable by time.Parse ("2006-01-02").
+func (d *Database) UpdateMatch(matchID int64, player1Name, player2Name, matchDate string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	var dateVal interface{}
+	if matchDate != "" {
+		t, err := time.Parse("2006-01-02", matchDate)
+		if err != nil {
+			return fmt.Errorf("invalid date format: %w", err)
+		}
+		dateVal = t
+	} else {
+		dateVal = nil
+	}
+
+	_, err := d.db.Exec(
+		`UPDATE match SET player1_name = ?, player2_name = ?, match_date = ? WHERE id = ?`,
+		strings.TrimSpace(player1Name),
+		strings.TrimSpace(player2Name),
+		dateVal,
+		matchID,
+	)
+	return err
 }
 
 // GetTournamentMatches returns all matches in a tournament

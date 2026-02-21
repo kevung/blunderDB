@@ -314,6 +314,10 @@ export function UpdateFilter(arg1, arg2, arg3) {
   return window['go']['main']['Database']['UpdateFilter'](arg1, arg2, arg3);
 }
 
+export function UpdateMatch(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['Database']['UpdateMatch'](arg1, arg2, arg3, arg4);
+}
+
 export function UpdatePosition(arg1) {
   return window['go']['main']['Database']['UpdatePosition'](arg1);
 }

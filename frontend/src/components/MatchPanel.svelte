@@ -3,6 +3,7 @@
     import { 
         GetAllMatches, 
         DeleteMatch, 
+        UpdateMatch,
         GetMatchMovePositions, 
         LoadAnalysis,
         GetAllTournaments,
@@ -21,7 +22,7 @@
     let tournaments = [];
 
     // Sorting state
-    let sortColumn = null;     // null | 'player1' | 'player2' | 'event' | 'date' | 'length' | 'tournament'
+    let sortColumn = null;     // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
     let sortDirection = 'asc'; // 'asc' | 'desc'
 
     // Inline tournament editing
@@ -29,6 +30,12 @@
     let editTournamentValue = '';
     let showTournamentDropdown = false;
     let filteredTournaments = [];
+
+    // Inline match editing (player names, date)
+    let editingMatchId = null;
+    let editPlayer1Value = '';
+    let editPlayer2Value = '';
+    let editDateValue = '';
 
     lastVisitedMatchStore.subscribe(value => {
         lastVisitedMatch = value;
@@ -88,7 +95,7 @@
     function startEditTournament(match, event) {
         event.stopPropagation();
         editingTournamentMatchId = match.id;
-        editTournamentValue = match.tournament_name || '';
+        editTournamentValue = match.tournament_name || match.event || '';
         showTournamentDropdown = true;
         filteredTournaments = tournaments;
         setTimeout(() => {
@@ -146,6 +153,56 @@
         }
     }
 
+    function toDateInputValue(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const date = new Date(dateStr);
+            if (isNaN(date.getTime())) return '';
+            return date.toISOString().split('T')[0];
+        } catch {
+            return '';
+        }
+    }
+
+    function startEditMatch(match, ev) {
+        ev.stopPropagation();
+        editingMatchId = match.id;
+        editPlayer1Value = match.player1_name || '';
+        editPlayer2Value = match.player2_name || '';
+        editDateValue = toDateInputValue(match.match_date);
+    }
+
+    async function saveMatchEdit() {
+        if (editingMatchId === null) return;
+        try {
+            await UpdateMatch(editingMatchId, editPlayer1Value, editPlayer2Value, editDateValue);
+            await loadMatches();
+            statusBarTextStore.set('Match updated');
+        } catch (error) {
+            console.error('Error updating match:', error);
+            statusBarTextStore.set('Error updating match');
+        }
+        editingMatchId = null;
+    }
+
+    function cancelMatchEdit() {
+        editingMatchId = null;
+        editPlayer1Value = '';
+        editPlayer2Value = '';
+        editDateValue = '';
+    }
+
+    function handleMatchEditKeyDown(event) {
+        event.stopPropagation();
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            saveMatchEdit();
+        } else if (event.key === 'Escape') {
+            event.preventDefault();
+            cancelMatchEdit();
+        }
+    }
+
     // --- Sorting helpers ---
     function handleSort(column) {
         if (sortColumn === column) {
@@ -174,10 +231,9 @@
         switch (column) {
             case 'player1': return match.player1_name || '';
             case 'player2': return match.player2_name || '';
-            case 'event': return match.event || '';
             case 'date': return match.match_date || '';
             case 'length': return match.match_length || 0;
-            case 'tournament': return match.tournament_name || '';
+            case 'tournament': return match.tournament_name || match.event || '';
             default: return '';
         }
     }
@@ -306,7 +362,11 @@
     function formatDate(dateStr) {
         if (!dateStr) return '-';
         const date = new Date(dateStr);
-        return date.toLocaleDateString();
+        if (isNaN(date.getTime())) return '-';
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}/${m}/${d}`;
     }
 
     function closePanel() {
@@ -323,7 +383,10 @@
         event.stopPropagation();
 
         if (event.key === 'Escape') {
-            if (editingTournamentMatchId !== null) {
+            if (editingMatchId !== null) {
+                cancelMatchEdit();
+                event.preventDefault();
+            } else if (editingTournamentMatchId !== null) {
                 cancelTournamentEdit();
                 event.preventDefault();
             } else if (selectedMatch) {
@@ -372,6 +435,10 @@
         if (editingTournamentMatchId !== null && !event.target.closest('.tournament-cell-edit')) {
             cancelTournamentEdit();
         }
+        // Cancel match edit if clicking outside the editing row
+        if (editingMatchId !== null && !event.target.closest('.match-editing-row')) {
+            cancelMatchEdit();
+        }
         const panel = document.getElementById('matchPanel');
         if (panel && !panel.contains(event.target)) {
             document.activeElement.blur();
@@ -415,66 +482,124 @@
                         <thead>
                             <tr>
                                 <th class="no-select narrow-col">#</th>
+                                <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}>Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
+                                <th class="no-select sortable" on:click={() => handleSort('tournament')}>Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
                                 <th class="no-select sortable" on:click={() => handleSort('player1')}>Player 1 {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
                                 <th class="no-select sortable" on:click={() => handleSort('player2')}>Player 2 {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select sortable" on:click={() => handleSort('event')}>Event {#if sortColumn === 'event'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}>Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
                                 <th class="no-select sortable narrow-col" on:click={() => handleSort('length')}>Length {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select sortable" on:click={() => handleSort('tournament')}>Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select narrow-col actions-header">Actions</th>
+                                <th class="no-select actions-col"></th>
                             </tr>
                         </thead>
                         <tbody>
                             {#each sortedMatches as match, index}
-                                <tr 
-                                    class:selected={selectedMatch === match}
-                                    on:click={() => selectMatch(match)}
-                                    on:dblclick={() => handleDoubleClick(match)}
-                                >
-                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
-                                    <td class="no-select">{match.player1_name}</td>
-                                    <td class="no-select">{match.player2_name}</td>
-                                    <td class="no-select">{match.event || '-'}</td>
-                                    <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
-                                    <td class="narrow-col no-select">{match.match_length}</td>
-                                    <td class="tournament-cell no-select" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
-                                        {#if editingTournamentMatchId === match.id}
-                                            <div class="tournament-cell-edit">
-                                                <input 
-                                                    type="text" 
-                                                    class="tournament-edit-input"
-                                                    bind:value={editTournamentValue}
-                                                    on:input={filterTournaments}
-                                                    on:keydown={handleTournamentKeyDown}
-                                                    on:blur={() => setTimeout(cancelTournamentEdit, 200)}
-                                                    placeholder="Tournament name"
-                                                />
-                                                {#if showTournamentDropdown && filteredTournaments.length > 0}
-                                                    <div class="tournament-dropdown">
-                                                        {#each filteredTournaments as t}
-                                                            <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
-                                                                {t.name}
-                                                            </div>
-                                                        {/each}
-                                                    </div>
-                                                {/if}
-                                            </div>
-                                        {:else}
-                                            <span class="tournament-display" title="Click to edit">{match.tournament_name || '—'}</span>
-                                        {/if}
-                                    </td>
-                                    <td class="actions-cell narrow-col">
-                                        <button 
-                                            class="action-btn delete-btn" 
-                                            on:click|stopPropagation={(e) => deleteMatchEntry(match, e)}
-                                            title="Delete match"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
+                                {#if editingMatchId === match.id}
+                                    <tr class="match-editing-row" class:selected={selectedMatch === match}>
+                                        <td class="index-cell narrow-col no-select">{index + 1}</td>
+                                        <td class="narrow-col">
+                                            <input
+                                                type="date"
+                                                class="match-edit-input"
+                                                bind:value={editDateValue}
+                                                on:keydown={handleMatchEditKeyDown}
+                                            />
+                                        </td>
+                                        <td class="tournament-cell no-select" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
+                                            {#if editingTournamentMatchId === match.id}
+                                                <div class="tournament-cell-edit">
+                                                    <input 
+                                                        type="text" 
+                                                        class="tournament-edit-input"
+                                                        bind:value={editTournamentValue}
+                                                        on:input={filterTournaments}
+                                                        on:keydown={handleTournamentKeyDown}
+                                                        on:blur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                        placeholder="Tournament name"
+                                                    />
+                                                    {#if showTournamentDropdown && filteredTournaments.length > 0}
+                                                        <div class="tournament-dropdown">
+                                                            {#each filteredTournaments as t}
+                                                                <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
+                                                                    {t.name}
+                                                                </div>
+                                                            {/each}
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {:else}
+                                                <span class="tournament-display" title="Click to edit">{match.tournament_name || match.event || '—'}</span>
+                                            {/if}
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="match-edit-input"
+                                                bind:value={editPlayer1Value}
+                                                on:keydown={handleMatchEditKeyDown}
+                                                placeholder="Player 1"
+                                            />
+                                        </td>
+                                        <td>
+                                            <input
+                                                type="text"
+                                                class="match-edit-input"
+                                                bind:value={editPlayer2Value}
+                                                on:keydown={handleMatchEditKeyDown}
+                                                placeholder="Player 2"
+                                            />
+                                        </td>
+                                        <td class="narrow-col no-select">{match.match_length}</td>
+                                        <td class="actions-col no-select">
+                                            <span class="item-actions editing-actions">
+                                                <button class="icon-btn" on:click|stopPropagation={saveMatchEdit} title="Save">✓</button>
+                                                <button class="icon-btn" on:click|stopPropagation={cancelMatchEdit} title="Cancel">✕</button>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {:else}
+                                    <tr 
+                                        class:selected={selectedMatch === match}
+                                        on:click={() => selectMatch(match)}
+                                        on:dblclick={() => handleDoubleClick(match)}
+                                    >
+                                        <td class="index-cell narrow-col no-select">{index + 1}</td>
+                                        <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
+                                        <td class="tournament-cell no-select" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
+                                            {#if editingTournamentMatchId === match.id}
+                                                <div class="tournament-cell-edit">
+                                                    <input 
+                                                        type="text" 
+                                                        class="tournament-edit-input"
+                                                        bind:value={editTournamentValue}
+                                                        on:input={filterTournaments}
+                                                        on:keydown={handleTournamentKeyDown}
+                                                        on:blur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                        placeholder="Tournament name"
+                                                    />
+                                                    {#if showTournamentDropdown && filteredTournaments.length > 0}
+                                                        <div class="tournament-dropdown">
+                                                            {#each filteredTournaments as t}
+                                                                <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
+                                                                    {t.name}
+                                                                </div>
+                                                            {/each}
+                                                        </div>
+                                                    {/if}
+                                                </div>
+                                            {:else}
+                                                <span class="tournament-display" title="Click to edit">{match.tournament_name || match.event || '—'}</span>
+                                            {/if}
+                                        </td>
+                                        <td class="no-select">{match.player1_name}</td>
+                                        <td class="no-select">{match.player2_name}</td>
+                                        <td class="narrow-col no-select">{match.match_length}</td>
+                                        <td class="actions-col no-select">
+                                            <span class="item-actions">
+                                                <button class="icon-btn" on:click|stopPropagation={(e) => startEditMatch(match, e)} title="Edit">✎</button>
+                                                <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteMatchEntry(match, e)} title="Delete">×</button>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {/if}
                             {/each}
                         </tbody>
                     </table>
@@ -612,38 +737,57 @@
         padding-right: 6px;
     }
 
-    .actions-cell {
+    .actions-col {
+        width: 36px;
+        min-width: 36px;
+        max-width: 36px;
+        white-space: nowrap;
         text-align: center;
+        padding: 0 4px;
     }
 
-    .actions-header {
-        padding-right: 30px; /* clear the close button */
-        text-align: left;
+    /* Hover-based row actions (like TournamentPanel) */
+    .item-actions {
+        display: inline-flex;
+        gap: 2px;
+        visibility: hidden;
+        vertical-align: middle;
     }
 
-    .action-btn {
+    .editing-actions {
+        visibility: visible;
+    }
+
+    .match-table tbody tr:hover .item-actions {
+        visibility: visible;
+    }
+
+    .icon-btn {
         background: none;
         border: none;
         cursor: pointer;
-        padding: 4px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
+        font-size: 12px;
         color: #666;
-        transition: color 0.2s;
+        padding: 0 3px;
+        line-height: 1;
     }
 
-    .action-btn:hover {
+    .icon-btn:hover {
         color: #000;
     }
 
-    .delete-btn:hover {
-        color: #d32f2f;
+    .icon-btn.delete:hover {
+        color: #c55;
     }
 
-    .action-btn svg {
-        width: 18px;
-        height: 18px;
+    .match-edit-input {
+        width: 100%;
+        padding: 1px 4px;
+        border: 1px solid #1976d2;
+        border-radius: 2px;
+        font-size: 11px;
+        box-sizing: border-box;
+        outline: none;
     }
 
     .no-select {
@@ -657,14 +801,15 @@
         position: relative;
         cursor: pointer;
         max-width: 120px;
-        overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
     }
 
     .tournament-display {
         color: #666;
         font-size: 11px;
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     .tournament-display:hover {
@@ -690,13 +835,14 @@
         top: 100%;
         left: 0;
         right: 0;
+        min-width: 160px;
         background: white;
         border: 1px solid #ccc;
         border-top: none;
         border-radius: 0 0 3px 3px;
-        max-height: 80px;
+        max-height: 120px;
         overflow-y: auto;
-        z-index: 20;
+        z-index: 30;
         box-shadow: 0 2px 4px rgba(0,0,0,0.15);
     }
 

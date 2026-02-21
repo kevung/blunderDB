@@ -158,6 +158,8 @@ export function UpdateCollection(arg1:number,arg2:string,arg3:string):Promise<vo
 
 export function UpdateFilter(arg1:number,arg2:string,arg3:string):Promise<void>;
 
+export function UpdateMatch(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
+
 export function UpdatePosition(arg1:main.Position):Promise<void>;
 
 export function UpdateTournament(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
