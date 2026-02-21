@@ -1285,7 +1285,9 @@
             const filePath = response.file_path;
             const lowerPath = filePath.toLowerCase();
             const isXGFile = lowerPath.endsWith('.xg');
-            const isGnuBGFile = lowerPath.endsWith('.sgf') || lowerPath.endsWith('.mat');
+            // Check if .txt file is a Jellyfish match file (contains "N point match" header)
+            const isJellyfishTXT = lowerPath.endsWith('.txt') && response.content && /^\s*\d+\s+point\s+match\s*$/m.test(response.content);
+            const isGnuBGFile = lowerPath.endsWith('.sgf') || lowerPath.endsWith('.mat') || isJellyfishTXT;
             
             if (isXGFile) {
                 // Import XG match file
@@ -1313,8 +1315,8 @@
                     }
                 }
             } else if (isGnuBGFile) {
-                // Import GnuBG match file (.sgf or .mat)
-                const formatName = lowerPath.endsWith('.sgf') ? 'GnuBG SGF' : 'Jellyfish MAT';
+                // Import GnuBG match file (.sgf, .mat, or Jellyfish .txt)
+                const formatName = lowerPath.endsWith('.sgf') ? 'GnuBG SGF' : (lowerPath.endsWith('.txt') ? 'Jellyfish TXT' : 'Jellyfish MAT');
                 console.log(`Importing ${formatName} match file:`, filePath);
                 try {
                     const matchID = await ImportGnuBGMatch(filePath);

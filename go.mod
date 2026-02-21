@@ -4,7 +4,7 @@ go 1.24.0
 
 require (
 	github.com/adrg/xdg v0.5.3
-	github.com/kevung/gnubgparser v1.0.1-0.20260221172842-08c97a7957e2
+	github.com/kevung/gnubgparser v1.0.1-0.20260221192209-901c3cf88836
 	github.com/kevung/xgparser v1.1.0
 	github.com/wailsapp/wails/v2 v2.10.1
 	modernc.org/sqlite v1.34.5

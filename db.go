@@ -7318,7 +7318,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 						} else {
 							checkerMoveStr = moveRec.MoveString
 							if checkerMoveStr == "" {
-								checkerMoveStr = convertGnuBGMoveToString(moveRec.Move, moveRec.Player)
+								checkerMoveStr = convertPlayerRelativeMoveToString(moveRec.Move)
 							}
 						}
 						err = d.saveGnuBGCheckerAnalysisToPositionInTx(tx, posID, moveRec.Analysis, moveRec.Player, checkerMoveStr, isSGF)
@@ -7391,7 +7391,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 				// Update board state
 				switch string(moveRec.Type) {
 				case "move":
-					applyGnuBGCheckerMove(&currentBoard, moveRec)
+					applyGnuBGCheckerMove(&currentBoard, moveRec, isSGF)
 				case "take":
 					if currentBoard.CubeValue == 0 {
 						currentBoard.CubeValue = 2
@@ -7466,7 +7466,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 
 				switch string(moveRec.Type) {
 				case "move":
-					applyGnuBGCheckerMove(&currentBoard, moveRec)
+					applyGnuBGCheckerMove(&currentBoard, moveRec, isSGF)
 				case "take":
 					if currentBoard.CubeValue == 0 {
 						currentBoard.CubeValue = 2
@@ -7552,7 +7552,8 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 		// For MAT/TXT files, MoveString is already in human-readable notation.
 		checkerMoveStr = moveRec.MoveString
 		if checkerMoveStr == "" {
-			checkerMoveStr = convertGnuBGMoveToString(moveRec.Move, moveRec.Player)
+			// Move[8]int is in player-relative coordinates for MAT/TXT
+			checkerMoveStr = convertPlayerRelativeMoveToString(moveRec.Move)
 		}
 	}
 
@@ -7725,11 +7726,19 @@ func initStandardGnuBGPosition() gnubgparser.Position {
 }
 
 // applyGnuBGCheckerMove updates a gnubgparser board state after a checker move.
-// The move is encoded in MoveRecord.Move[8]int as pairs of (from, to) in
-// absolute coordinates (Player 0's system: 0=1pt, 23=24pt, 24=bar, 25=off).
-// Board[p] uses player-relative coords (same as absolute for Player 0,
-// index = 23-absolute for Player 1; bar=24 for both).
-func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.MoveRecord) {
+//
+// When isAbsoluteCoords is true (SGF format):
+//
+//	Move[8]int uses absolute coordinates (Player 0's system: 0=1pt, 23=24pt, 24=bar, 25=off).
+//	For Player 1, indices must be mirrored to reach the player-relative board.
+//
+// When isAbsoluteCoords is false (MAT/TXT format):
+//
+//	Move[8]int uses player-relative coordinates (from player's perspective:
+//	0=ace/home, 23=24pt, 24=bar, -1=off). No mirroring needed.
+//
+// Board[p] always uses player-relative coords (0=ace/home, 23=far, 24=bar).
+func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.MoveRecord, isAbsoluteCoords bool) {
 	player := moveRec.Player
 	opponent := 1 - player
 
@@ -7740,12 +7749,41 @@ func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.Mov
 			break
 		}
 
-		// Convert absolute move index to player's board index
-		// Player 0: board index = move index (same system)
-		// Player 1: board index = 23 - move index (except bar which stays 24)
-		fromBoard := from
-		if player == 1 && from != 24 {
-			fromBoard = 23 - from
+		var fromBoard, toBoard, opponentBoard int
+		var isBearOff bool
+
+		if isAbsoluteCoords {
+			// SGF: absolute coordinates — mirror for Player 1
+			fromBoard = from
+			if player == 1 && from != 24 {
+				fromBoard = 23 - from
+			}
+
+			isBearOff = (to == 25)
+
+			if !isBearOff {
+				toBoard = to
+				if player == 1 {
+					toBoard = 23 - to
+				}
+				// Opponent's board index for the same physical point
+				if player == 0 {
+					opponentBoard = 23 - to
+				} else {
+					opponentBoard = to
+				}
+			}
+		} else {
+			// MAT/TXT: player-relative coordinates — no mirroring needed
+			fromBoard = from // already in player's perspective
+
+			isBearOff = (to == -1)
+
+			if !isBearOff {
+				toBoard = to // already in player's perspective
+				// Opponent sees the mirror of this physical point
+				opponentBoard = 23 - to
+			}
 		}
 
 		// Remove checker from source point
@@ -7753,27 +7791,12 @@ func applyGnuBGCheckerMove(board *gnubgparser.Position, moveRec *gnubgparser.Mov
 			board.Board[player][fromBoard]--
 		}
 
-		// If bearing off (to=25), checker leaves the board entirely
-		if to == 25 {
+		// If bearing off, checker leaves the board entirely
+		if isBearOff {
 			continue
 		}
 
-		toBoard := to
-		if player == 1 {
-			toBoard = 23 - to
-		}
-
 		// Check for hit at destination
-		// Opponent's board index for the same physical point:
-		// Player 0 moves to absolute index 'to' → Opponent (P1) board index = 23-to
-		// Player 1 moves to absolute index 'to' → Opponent (P0) board index = to
-		var opponentBoard int
-		if player == 0 {
-			opponentBoard = 23 - to
-		} else {
-			opponentBoard = to
-		}
-
 		if opponentBoard >= 0 && opponentBoard <= 23 {
 			if board.Board[opponent][opponentBoard] == 1 {
 				// Hit: send opponent's checker to the bar
@@ -7888,8 +7911,9 @@ func (d *Database) createPositionFromGnuBG(gnubgPos *gnubgparser.Position, game 
 	return pos, nil
 }
 
-// convertGnuBGMoveToString converts a gnubgparser Move[8]int to standard notation
-// Move encoding: 0-23 = board points (player-relative), 24 = bar, 25 = off, -1 = unused
+// convertGnuBGMoveToString converts a gnubgparser Move[8]int to standard notation.
+// This function handles moves in ABSOLUTE coordinates (SGF format).
+// Move encoding: 0-23 = board points (absolute), 24 = bar, 25 = off, -1 = unused
 // For player 0: gnubg point i → standard point (i+1)
 // For player 1: gnubg point i → standard point (24-i)
 func convertGnuBGMoveToString(move [8]int, player int) string {
@@ -7905,6 +7929,30 @@ func convertGnuBGMoveToString(move [8]int, player int) string {
 		}
 		return fmt.Sprintf("%d", 24-pt) // Player 1: 0→24, 23→1
 	}
+
+	return formatGnuBGMoveItems(move, player, formatPoint)
+}
+
+// convertPlayerRelativeMoveToString converts a player-relative Move[8]int to standard notation.
+// This function handles moves in PLAYER-RELATIVE coordinates (MAT/TXT format).
+// Move encoding: 0-23 = board points (from player's perspective), 24 = bar, -1 = off
+// For both players: point i → standard point (i+1)
+func convertPlayerRelativeMoveToString(move [8]int) string {
+	formatPoint := func(pt int, _ int) string {
+		if pt == 24 {
+			return "bar"
+		}
+		if pt == -1 {
+			return "off"
+		}
+		return fmt.Sprintf("%d", pt+1) // Player-relative: 0→1, 23→24
+	}
+
+	return formatGnuBGMoveItems(move, 0, formatPoint)
+}
+
+// formatGnuBGMoveItems is a helper that formats move items using a point formatter.
+func formatGnuBGMoveItems(move [8]int, player int, formatPoint func(int, int) string) string {
 
 	type moveItem struct {
 		from string
@@ -8437,10 +8485,11 @@ func (d *Database) saveGnuBGCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID
 			// For SGF, always convert from Move[8]int (absolute coords) to numeric notation
 			moveStr = convertGnuBGMoveToString(moveOpt.Move, player)
 		} else {
-			// For MAT, use the existing human-readable MoveString
+			// For MAT/TXT, use the existing human-readable MoveString
 			moveStr = moveOpt.MoveString
 			if moveStr == "" {
-				moveStr = convertGnuBGMoveToString(moveOpt.Move, player)
+				// Move[8]int is in player-relative coordinates for MAT/TXT
+				moveStr = convertPlayerRelativeMoveToString(moveOpt.Move)
 			}
 		}
 
