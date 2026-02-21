@@ -20,6 +20,10 @@
     let lastVisitedMatch = null;
     let tournaments = [];
 
+    // Sorting state
+    let sortColumn = null;     // null | 'player1' | 'player2' | 'event' | 'date' | 'length' | 'tournament'
+    let sortDirection = 'asc'; // 'asc' | 'desc'
+
     // Inline tournament editing
     let editingTournamentMatchId = null;
     let editTournamentValue = '';
@@ -141,6 +145,53 @@
             cancelTournamentEdit();
         }
     }
+
+    // --- Sorting helpers ---
+    function handleSort(column) {
+        if (sortColumn === column) {
+            if (sortDirection === 'asc') {
+                sortDirection = 'desc';
+            } else {
+                // Reset sorting
+                sortColumn = null;
+                sortDirection = 'asc';
+            }
+        } else {
+            sortColumn = column;
+            sortDirection = 'asc';
+        }
+    }
+
+    function compareValues(a, b) {
+        if (a == null && b == null) return 0;
+        if (a == null) return 1;
+        if (b == null) return -1;
+        if (typeof a === 'string') return a.localeCompare(b, undefined, { sensitivity: 'base' });
+        return a - b;
+    }
+
+    function getSortValue(match, column) {
+        switch (column) {
+            case 'player1': return match.player1_name || '';
+            case 'player2': return match.player2_name || '';
+            case 'event': return match.event || '';
+            case 'date': return match.match_date || '';
+            case 'length': return match.match_length || 0;
+            case 'tournament': return match.tournament_name || '';
+            default: return '';
+        }
+    }
+
+    $: sortedMatches = (() => {
+        if (!sortColumn) return matches;
+        const sorted = [...matches].sort((a, b) => {
+            const valA = getSortValue(a, sortColumn);
+            const valB = getSortValue(b, sortColumn);
+            const cmp = compareValues(valA, valB);
+            return sortDirection === 'asc' ? cmp : -cmp;
+        });
+        return sorted;
+    })();
 
     function selectMatch(match) {
         if (selectedMatch === match) {
@@ -284,13 +335,13 @@
             return;
         }
 
-        if (selectedMatch && matches.length > 0) {
-            const currentIndex = matches.findIndex(m => m.id === selectedMatch.id);
+        if (selectedMatch && sortedMatches.length > 0) {
+            const currentIndex = sortedMatches.findIndex(m => m.id === selectedMatch.id);
 
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
-                if (currentIndex >= 0 && currentIndex < matches.length - 1) {
-                    selectMatch(matches[currentIndex + 1]);
+                if (currentIndex >= 0 && currentIndex < sortedMatches.length - 1) {
+                    selectMatch(sortedMatches[currentIndex + 1]);
                     setTimeout(() => {
                         const selectedRow = document.querySelector('.match-panel tr.selected');
                         if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -299,7 +350,7 @@
             } else if (event.key === 'k' || event.key === 'ArrowUp') {
                 event.preventDefault();
                 if (currentIndex > 0) {
-                    selectMatch(matches[currentIndex - 1]);
+                    selectMatch(sortedMatches[currentIndex - 1]);
                     setTimeout(() => {
                         const selectedRow = document.querySelector('.match-panel tr.selected');
                         if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -363,29 +414,29 @@
                     <table class="match-table">
                         <thead>
                             <tr>
-                                <th class="no-select">#</th>
-                                <th class="no-select">Player 1</th>
-                                <th class="no-select">Player 2</th>
-                                <th class="no-select">Event</th>
-                                <th class="no-select">Date</th>
-                                <th class="no-select">Length</th>
-                                <th class="no-select">Tournament</th>
-                                <th class="no-select">Actions</th>
+                                <th class="no-select narrow-col">#</th>
+                                <th class="no-select sortable" on:click={() => handleSort('player1')}>Player 1 {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
+                                <th class="no-select sortable" on:click={() => handleSort('player2')}>Player 2 {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
+                                <th class="no-select sortable" on:click={() => handleSort('event')}>Event {#if sortColumn === 'event'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
+                                <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}>Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
+                                <th class="no-select sortable narrow-col" on:click={() => handleSort('length')}>Length {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
+                                <th class="no-select sortable" on:click={() => handleSort('tournament')}>Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
+                                <th class="no-select narrow-col actions-header">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {#each matches as match, index}
+                            {#each sortedMatches as match, index}
                                 <tr 
                                     class:selected={selectedMatch === match}
                                     on:click={() => selectMatch(match)}
                                     on:dblclick={() => handleDoubleClick(match)}
                                 >
-                                    <td class="index-cell no-select">{index + 1}</td>
+                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
                                     <td class="no-select">{match.player1_name}</td>
                                     <td class="no-select">{match.player2_name}</td>
                                     <td class="no-select">{match.event || '-'}</td>
-                                    <td class="no-select">{formatDate(match.match_date)}</td>
-                                    <td class="no-select">{match.match_length}</td>
+                                    <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
+                                    <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="tournament-cell no-select" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
                                         {#if editingTournamentMatchId === match.id}
                                             <div class="tournament-cell-edit">
@@ -412,7 +463,7 @@
                                             <span class="tournament-display" title="Click to edit">{match.tournament_name || '—'}</span>
                                         {/if}
                                     </td>
-                                    <td class="actions-cell">
+                                    <td class="actions-cell narrow-col">
                                         <button 
                                             class="action-btn delete-btn" 
                                             on:click|stopPropagation={(e) => deleteMatchEntry(match, e)}
@@ -518,6 +569,20 @@
         color: #333;
     }
 
+    .match-table th.sortable {
+        cursor: pointer;
+    }
+
+    .match-table th.sortable:hover {
+        background-color: #e8e8e8;
+    }
+
+    .sort-arrow {
+        font-size: 9px;
+        margin-left: 3px;
+        color: #1976d2;
+    }
+
     .match-table tbody tr {
         cursor: pointer;
         transition: background-color 0.1s;
@@ -536,14 +601,24 @@
     }
 
     .index-cell {
-        width: 50px;
         text-align: center;
         color: #999;
     }
 
+    .narrow-col {
+        width: 1px;  /* shrink to content */
+        white-space: nowrap;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+
     .actions-cell {
-        width: 40px;
         text-align: center;
+    }
+
+    .actions-header {
+        padding-right: 30px; /* clear the close button */
+        text-align: left;
     }
 
     .action-btn {
@@ -581,7 +656,10 @@
     .tournament-cell {
         position: relative;
         cursor: pointer;
-        min-width: 100px;
+        max-width: 120px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .tournament-display {
