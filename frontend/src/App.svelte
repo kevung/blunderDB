@@ -1569,13 +1569,16 @@
 
         const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: "" };
 
-        const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: ([\d.]+)(?:. MET: (.+))?/); // remember comma transformed in dot
+        const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: (.+?)(?:\. MET: (.+))?$/m); // remember comma transformed in dot
         if (engineVersionMatch) {
             parsedAnalysis.analysisEngineVersion = `eXtreme Gammon Version: ${engineVersionMatch[1]}`;
             if (engineVersionMatch[2]) {
                 parsedAnalysis.analysisEngineVersion += `, MET: ${engineVersionMatch[2]}`;
             }
         }
+
+        // Determine short engine name for per-move/per-cube tagging
+        const engineName = engineVersionMatch ? "XG" : "";
 
         if (isInternalDoublingAnalysisFormat) {
             parsedAnalysis.analysisType = "DoublingCube";
@@ -1584,6 +1587,7 @@
             if (doublingCubeMatch) {
                 parsedAnalysis.doublingCubeAnalysis = {
                     analysisDepth: doublingCubeMatch[1].trim(),
+                    analysisEngine: engineName,
                     playerWinChances: parseFloat(doublingCubeMatch[2]),
                     playerGammonChances: parseFloat(doublingCubeMatch[3]),
                     playerBackgammonChances: parseFloat(doublingCubeMatch[4]),
@@ -1612,6 +1616,7 @@
                     index: parseInt(moveMatch[1], 10),
                     move: moveMatch[2].trim(),
                     analysisDepth: moveMatch[3].trim(),
+                    analysisEngine: engineName,
                     equity: parseFloat(moveMatch[4]),
                     equityError: parseFloat(moveMatch[5]),
                     playerWinChance: parseFloat(moveMatch[6]),
@@ -1640,6 +1645,7 @@
                 const moveDetails = {
                     index: parseInt(moveMatch[1], 10),
                     analysisDepth: moveMatch[2].trim(),
+                    analysisEngine: engineName,
                     move: moveMatch[3].trim(),
                     equity: parseFloat(moveMatch[4]),
                     equityError: moveMatch[5] ? parseFloat(moveMatch[5]) : 0,
@@ -1720,6 +1726,7 @@
             const wrongPassPercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : isJapanese ? /ダブルを正当化するのに必要な相手がパスする確率:\s*(\d+\.\d+)%/ : isGerman ? /Prozent von falschen Ablehnen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/ : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/));
             const wrongTakePercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : isJapanese ? /ダブルを正当化するのに必要な相手がテイクする確率:\s*(\d+\.\d+)%/ : isGerman ? /Prozent von falschen Annehmen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/ : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/));
 
+            parsedAnalysis.doublingCubeAnalysis.analysisEngine = engineName;
             if (analysisDepthMatch) {
                 parsedAnalysis.doublingCubeAnalysis.analysisDepth = analysisDepthMatch[1].trim();
             }

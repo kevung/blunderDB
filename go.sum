@@ -18,8 +18,6 @@ github.com/jchv/go-winloader v0.0.0-20250406163304-c1995be93bd1 h1:njuLRcjAuMKr7
 github.com/jchv/go-winloader v0.0.0-20250406163304-c1995be93bd1/go.mod h1:alcuEEnZsY1WQsagKhZDsoPCRoOijYqhZvPwLG0kzVs=
 github.com/kevung/gnubgparser v1.0.1-0.20260221192209-901c3cf88836 h1:p4NVpnV8mz2NCSrgVDAXUGRJUAkcRPZNo16KkH9bCj8=
 github.com/kevung/gnubgparser v1.0.1-0.20260221192209-901c3cf88836/go.mod h1:nG0xLpci44II/G0Alae6Q+y/4XkXT6mENXwwWz6Q9o8=
-github.com/kevung/xgparser v1.1.0 h1:b2e/L1HfxBSKE4tIrcJWfwIRTKex/ZDbrtJdOy2BvWs=
-github.com/kevung/xgparser v1.1.0/go.mod h1:ivg7Wu3VImDtGxqD1qxvQ09rrbmKmTOiWaDMjOiASb0=
 github.com/kevung/xgparser v1.2.0 h1:+cH/SuxZwmNE4AKUHr4vCVjnc1O6POws605Af8SHdEU=
 github.com/kevung/xgparser v1.2.0/go.mod h1:ivg7Wu3VImDtGxqD1qxvQ09rrbmKmTOiWaDMjOiASb0=
 github.com/labstack/echo/v4 v4.13.4 h1:oTZZW+T3s9gAu5L8vmzihV7/lkXGZuITzTQkTEhcXEA=
