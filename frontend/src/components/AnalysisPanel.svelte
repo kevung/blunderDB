@@ -555,9 +555,7 @@
                             <th class="sortable" class:active-sort={sortColumn === 'og'} on:click|stopPropagation={() => handleSort('og')}>O G{getSortIndicator('og')}</th>
                             <th class="sortable" class:active-sort={sortColumn === 'ob'} on:click|stopPropagation={() => handleSort('ob')}>O B{getSortIndicator('ob')}</th>
                             <th class="sortable" class:active-sort={sortColumn === 'depth'} on:click|stopPropagation={() => handleSort('depth')}>Depth{getSortIndicator('depth')}</th>
-                            {#if hasMultipleEngines}
-                                <th class="sortable" class:active-sort={sortColumn === 'engine'} on:click|stopPropagation={() => handleSort('engine')}>Engine{getSortIndicator('engine')}</th>
-                            {/if}
+                            <th class="sortable" class:active-sort={sortColumn === 'engine'} on:click|stopPropagation={() => handleSort('engine')}>Engine{getSortIndicator('engine')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -578,9 +576,7 @@
                                 <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
                                 <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
                                 <td>{move.analysisDepth}</td>
-                                {#if hasMultipleEngines}
-                                    <td>{move.analysisEngine || ''}</td>
-                                {/if}
+                                <td>{move.analysisEngine || ''}</td>
                             </tr>
                         {/each}
                     </tbody>
