@@ -295,7 +295,7 @@
 
                             <tr>
                                 <td>Ctrl + I</td>
-                                <td>Import Position</td>
+                                <td>Import Position or Match</td>
                             </tr>
 
                             <tr>
@@ -729,7 +729,7 @@
                         <tbody>
                             <tr>
                                 <td>import, i</td>
-                                <td>Import a position</td>
+                                <td>Import a position or match</td>
                             </tr>
                             <tr>
                                 <td>write, wr, w</td>

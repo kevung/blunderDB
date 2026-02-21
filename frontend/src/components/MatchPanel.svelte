@@ -477,9 +477,6 @@
     <section class="match-panel" role="dialog" aria-modal="true" id="matchPanel" tabindex="-1">
         <button type="button" class="close-icon" on:click={closePanel} aria-label="Close">×</button>
         <div class="match-panel-content">
-            {#if matches.length === 0}
-                <p class="empty-message">No matches imported yet. Import .xg files using Ctrl+I.</p>
-            {:else}
                 <div class="match-table-container">
                     <table class="match-table">
                         <thead>
@@ -607,7 +604,6 @@
                         </tbody>
                     </table>
                 </div>
-            {/if}
         </div>
     </section>
 {/if}
@@ -657,13 +653,6 @@
         overflow-y: auto;
         display: flex;
         flex-direction: row;
-    }
-
-    .empty-message {
-        text-align: center;
-        color: #666;
-        padding: 20px;
-        margin: 60px 0 0 0;
     }
 
     .match-table-container {
