@@ -916,4 +916,132 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 			t.Error("XG GetMatchMovePositions returned 0 positions")
 		}
 	})
+
+	// 8. Compare cube analysis values between XG and SGF
+	t.Run("CubeAnalysisComparison", func(t *testing.T) {
+		type cubeInfo struct {
+			gameNumber int
+			moveNumber int
+			cubeAction string
+			bestAction string
+			ndEquity   float64
+			dtEquity   float64
+			dpEquity   float64
+		}
+
+		queryCubeAnalysis := func(db *sql.DB, matchID int64) []cubeInfo {
+			rows, err := db.Query(`
+				SELECT g.game_number, m.move_number, m.cube_action, a.data
+				FROM move m
+				JOIN game g ON m.game_id = g.id
+				JOIN analysis a ON a.position_id = m.position_id
+				WHERE g.match_id = ? AND m.move_type = 'cube' AND a.data LIKE '%DoublingCube%'
+				ORDER BY g.game_number, m.move_number
+			`, matchID)
+			if err != nil {
+				t.Fatalf("Query failed: %v", err)
+			}
+			defer rows.Close()
+
+			var result []cubeInfo
+			for rows.Next() {
+				var ci cubeInfo
+				var analysisJSON string
+				rows.Scan(&ci.gameNumber, &ci.moveNumber, &ci.cubeAction, &analysisJSON)
+
+				var posAnalysis PositionAnalysis
+				json.Unmarshal([]byte(analysisJSON), &posAnalysis)
+				if posAnalysis.DoublingCubeAnalysis != nil {
+					ci.bestAction = posAnalysis.DoublingCubeAnalysis.BestCubeAction
+					ci.ndEquity = posAnalysis.DoublingCubeAnalysis.CubefulNoDoubleEquity
+					ci.dtEquity = posAnalysis.DoublingCubeAnalysis.CubefulDoubleTakeEquity
+					ci.dpEquity = posAnalysis.DoublingCubeAnalysis.CubefulDoublePassEquity
+				}
+				result = append(result, ci)
+			}
+			return result
+		}
+
+		xgCube := queryCubeAnalysis(dbXG.db, xgMatchID)
+		sgfCube := queryCubeAnalysis(dbSGF.db, sgfMatchID)
+
+		t.Logf("XG cube decisions: %d, SGF cube decisions: %d", len(xgCube), len(sgfCube))
+
+		// Log all cube decisions for comparison
+		t.Log("\n--- XG Cube Decisions ---")
+		for _, ci := range xgCube {
+			t.Logf("  Game %d Move %d: action=%q best=%q ND=%.4f DT=%.4f DP=%.4f",
+				ci.gameNumber, ci.moveNumber, ci.cubeAction, ci.bestAction,
+				ci.ndEquity, ci.dtEquity, ci.dpEquity)
+		}
+
+		t.Log("\n--- SGF Cube Decisions ---")
+		for _, ci := range sgfCube {
+			t.Logf("  Game %d Move %d: action=%q best=%q ND=%.4f DT=%.4f DP=%.4f",
+				ci.gameNumber, ci.moveNumber, ci.cubeAction, ci.bestAction,
+				ci.ndEquity, ci.dtEquity, ci.dpEquity)
+		}
+
+		// Verify SGF cube decisions don't have redundant take/pass entries
+		for _, ci := range sgfCube {
+			if ci.cubeAction == "Take" || ci.cubeAction == "Pass" {
+				t.Errorf("SGF has redundant cube entry with action=%q (should only have Double/Take or Double/Pass)", ci.cubeAction)
+			}
+		}
+
+		// Verify SGF best actions are reasonable (not "no_double", "double", "take", "pass")
+		for _, ci := range sgfCube {
+			switch ci.bestAction {
+			case "No Double", "Double, Take", "Double, Pass":
+				// OK
+			default:
+				t.Errorf("SGF Game %d Move %d: unexpected bestAction=%q", ci.gameNumber, ci.moveNumber, ci.bestAction)
+			}
+		}
+
+		// Verify SGF cube equity values are non-zero and in reasonable range
+		for _, ci := range sgfCube {
+			if ci.ndEquity == 0 && ci.dtEquity == 0 && ci.dpEquity == 0 {
+				t.Errorf("SGF Game %d Move %d: all cube equities are zero", ci.gameNumber, ci.moveNumber)
+			}
+			// Double/Pass should be 1.0 (money game convention)
+			if ci.dpEquity != 1.0 {
+				t.Logf("  Note: SGF Game %d Move %d: DP equity=%.4f (expected 1.0 for money/match DA convention)",
+					ci.gameNumber, ci.moveNumber, ci.dpEquity)
+			}
+		}
+
+		// Compare best actions between XG and SGF for matching cube decisions
+		// Build a map of XG cube decisions by game for comparison
+		if len(sgfCube) > 0 && len(xgCube) > 0 {
+			t.Log("\n--- Best Action Comparison ---")
+			// Compare XG decisions that are Double/Take or Double/Pass (explicit doubles)
+			xgDoubles := make([]cubeInfo, 0)
+			for _, ci := range xgCube {
+				if ci.cubeAction == "Double/Take" || ci.cubeAction == "Double/Pass" || ci.cubeAction == "Double" {
+					xgDoubles = append(xgDoubles, ci)
+				}
+			}
+			t.Logf("XG explicit doubles: %d, SGF doubles: %d", len(xgDoubles), len(sgfCube))
+
+			minLen := len(xgDoubles)
+			if len(sgfCube) < minLen {
+				minLen = len(sgfCube)
+			}
+			matchCount := 0
+			for i := 0; i < minLen; i++ {
+				xg := xgDoubles[i]
+				sgf := sgfCube[i]
+				matches := xg.bestAction == sgf.bestAction
+				if matches {
+					matchCount++
+				}
+				t.Logf("  #%d: XG best=%q (%q)  SGF best=%q (%q) match=%v",
+					i, xg.bestAction, xg.cubeAction, sgf.bestAction, sgf.cubeAction, matches)
+			}
+			if minLen > 0 {
+				t.Logf("Best action agreement: %d/%d (%.0f%%)", matchCount, minLen, float64(matchCount)/float64(minLen)*100)
+			}
+		}
+	})
 }

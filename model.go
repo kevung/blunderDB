@@ -77,6 +77,7 @@ type Position struct {
 
 type DoublingCubeAnalysis struct {
 	AnalysisDepth             string  `json:"analysisDepth"`
+	AnalysisEngine            string  `json:"analysisEngine,omitempty"`
 	PlayerWinChances          float64 `json:"playerWinChances"`
 	PlayerGammonChances       float64 `json:"playerGammonChances"`
 	PlayerBackgammonChances   float64 `json:"playerBackgammonChances"`
@@ -99,6 +100,7 @@ type DoublingCubeAnalysis struct {
 type CheckerMove struct {
 	Index                    int      `json:"index"`
 	AnalysisDepth            string   `json:"analysisDepth"`
+	AnalysisEngine           string   `json:"analysisEngine,omitempty"`
 	Move                     string   `json:"move"`
 	Equity                   float64  `json:"equity"`
 	EquityError              *float64 `json:"equityError,omitempty"`
@@ -115,20 +117,21 @@ type CheckerAnalysis struct {
 }
 
 type PositionAnalysis struct {
-	PositionID            int                   `json:"positionId"`
-	XGID                  string                `json:"xgid"`
-	Player1               string                `json:"player1"`
-	Player2               string                `json:"player2"`
-	AnalysisType          string                `json:"analysisType"`
-	AnalysisEngineVersion string                `json:"analysisEngineVersion"`
-	DoublingCubeAnalysis  *DoublingCubeAnalysis `json:"doublingCubeAnalysis,omitempty"`
-	CheckerAnalysis       *CheckerAnalysis      `json:"checkerAnalysis,omitempty"`
-	PlayedMove            string                `json:"playedMove,omitempty"`        // Deprecated: Use PlayedMoves instead
-	PlayedCubeAction      string                `json:"playedCubeAction,omitempty"`  // Deprecated: Use PlayedCubeActions instead
-	PlayedMoves           []string              `json:"playedMoves,omitempty"`       // All moves played in this position across different matches
-	PlayedCubeActions     []string              `json:"playedCubeActions,omitempty"` // All cube actions taken in this position across different matches
-	CreationDate          time.Time             `json:"creationDate"`
-	LastModifiedDate      time.Time             `json:"lastModifiedDate"`
+	PositionID            int                    `json:"positionId"`
+	XGID                  string                 `json:"xgid"`
+	Player1               string                 `json:"player1"`
+	Player2               string                 `json:"player2"`
+	AnalysisType          string                 `json:"analysisType"`
+	AnalysisEngineVersion string                 `json:"analysisEngineVersion"`
+	DoublingCubeAnalysis  *DoublingCubeAnalysis  `json:"doublingCubeAnalysis,omitempty"`
+	AllCubeAnalyses       []DoublingCubeAnalysis `json:"allCubeAnalyses,omitempty"`
+	CheckerAnalysis       *CheckerAnalysis       `json:"checkerAnalysis,omitempty"`
+	PlayedMove            string                 `json:"playedMove,omitempty"`        // Deprecated: Use PlayedMoves instead
+	PlayedCubeAction      string                 `json:"playedCubeAction,omitempty"`  // Deprecated: Use PlayedCubeActions instead
+	PlayedMoves           []string               `json:"playedMoves,omitempty"`       // All moves played in this position across different matches
+	PlayedCubeActions     []string               `json:"playedCubeActions,omitempty"` // All cube actions taken in this position across different matches
+	CreationDate          time.Time              `json:"creationDate"`
+	LastModifiedDate      time.Time              `json:"lastModifiedDate"`
 }
 
 func initializeBoard() Board {

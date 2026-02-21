@@ -49,6 +49,7 @@ export namespace main {
 	export class CheckerMove {
 	    index: number;
 	    analysisDepth: string;
+	    analysisEngine?: string;
 	    move: string;
 	    equity: number;
 	    equityError?: number;
@@ -67,6 +68,7 @@ export namespace main {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.index = source["index"];
 	        this.analysisDepth = source["analysisDepth"];
+	        this.analysisEngine = source["analysisEngine"];
 	        this.move = source["move"];
 	        this.equity = source["equity"];
 	        this.equityError = source["equityError"];
@@ -165,6 +167,7 @@ export namespace main {
 	}
 	export class DoublingCubeAnalysis {
 	    analysisDepth: string;
+	    analysisEngine?: string;
 	    playerWinChances: number;
 	    playerGammonChances: number;
 	    playerBackgammonChances: number;
@@ -190,6 +193,7 @@ export namespace main {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.analysisDepth = source["analysisDepth"];
+	        this.analysisEngine = source["analysisEngine"];
 	        this.playerWinChances = source["playerWinChances"];
 	        this.playerGammonChances = source["playerGammonChances"];
 	        this.playerBackgammonChances = source["playerBackgammonChances"];
@@ -439,6 +443,7 @@ export namespace main {
 	    analysisType: string;
 	    analysisEngineVersion: string;
 	    doublingCubeAnalysis?: DoublingCubeAnalysis;
+	    allCubeAnalyses?: DoublingCubeAnalysis[];
 	    checkerAnalysis?: CheckerAnalysis;
 	    playedMove?: string;
 	    playedCubeAction?: string;
@@ -462,6 +467,7 @@ export namespace main {
 	        this.analysisType = source["analysisType"];
 	        this.analysisEngineVersion = source["analysisEngineVersion"];
 	        this.doublingCubeAnalysis = this.convertValues(source["doublingCubeAnalysis"], DoublingCubeAnalysis);
+	        this.allCubeAnalyses = this.convertValues(source["allCubeAnalyses"], DoublingCubeAnalysis);
 	        this.checkerAnalysis = this.convertValues(source["checkerAnalysis"], CheckerAnalysis);
 	        this.playedMove = source["playedMove"];
 	        this.playedCubeAction = source["playedCubeAction"];

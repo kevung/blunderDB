@@ -339,8 +339,11 @@
                     wrongPassPercentage: 0,
                     wrongTakePercentage: 0
                 },
+                allCubeAnalyses: [],
                 playedMove: '',
                 playedCubeAction: '',
+                playedMoves: [],
+                playedCubeActions: [],
                 creationDate: '',
                 lastModifiedDate: ''
             }); // Reset analysisStore when no positions
@@ -672,8 +675,11 @@
                 wrongPassPercentage: 0,
                 wrongTakePercentage: 0
             },
+            allCubeAnalyses: [],
             playedMove: '',
             playedCubeAction: '',
+            playedMoves: [],
+            playedCubeActions: [],
             creationDate: '',
             lastModifiedDate: ''
         });
@@ -1365,8 +1371,11 @@
                         wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
                         wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
                     },
+                    allCubeAnalyses: [],
                     playedMove: '',
                     playedCubeAction: '',
+                    playedMoves: [],
+                    playedCubeActions: [],
                     creationDate: '',
                     lastModifiedDate: ''
                 });
@@ -2991,6 +3000,7 @@ function togglePipcount() {
                     analysisEngineVersion: '',
                     checkerAnalysis: { moves: [] },
                     doublingCubeAnalysis: null,
+                    allCubeAnalyses: [],
                     playedMove: '',
                     playedCubeAction: '',
                     playedMoves: [],
@@ -3169,6 +3179,7 @@ function togglePipcount() {
                 wrongPassPercentage: 0,
                 wrongTakePercentage: 0
             }),
+            allCubeAnalyses: isFirstPositionOfGame ? [] : (analysis?.allCubeAnalyses || []),
             playedMove: currentPlayedMove,
             playedCubeAction: isFirstPositionOfGame ? '' : currentPlayedCubeAction,
             playedMoves: allPlayedMoves,

@@ -145,8 +145,16 @@
         'ow': { key: 'opponentWinChance', type: 'number' },
         'og': { key: 'opponentGammonChance', type: 'number' },
         'ob': { key: 'opponentBackgammonChance', type: 'number' },
-        'depth': { key: 'analysisDepth', type: 'number' }
+        'depth': { key: 'analysisDepth', type: 'number' },
+        'engine': { key: 'analysisEngine', type: 'string' }
     };
+
+    // Detect if multiple engines are present in checker analysis
+    $: hasMultipleEngines = (() => {
+        if (!analysisData?.checkerAnalysis?.moves) return false;
+        const engines = new Set(analysisData.checkerAnalysis.moves.map(m => m.analysisEngine || '').filter(e => e));
+        return engines.size > 1;
+    })();
 
     function handleSort(column) {
         if (sortColumn === column) {
@@ -245,39 +253,52 @@
         return false;
     }
 
+    // Normalize cube action for exact matching
+    // Maps all variants to canonical forms: "nodouble", "double", "take", "pass"
+    function normalizeCubeAction(action) {
+        const s = action.toLowerCase().replace(/\s+/g, '');
+        // Map combined actions to individual parts
+        if (s === 'double/take' || s === 'doubletake') return ['double', 'take'];
+        if (s === 'double/pass' || s === 'doublepass') return ['double', 'pass'];
+        if (s === 'nodouble' || s === 'nodoubleorredouble' || s === 'noredouble') return ['nodouble'];
+        if (s === 'redouble') return ['double'];
+        return [s]; // "double", "take", "pass", etc.
+    }
+
     function isPlayedCubeAction(action) {
+        const actionParts = normalizeCubeAction(action);
+
         // In MATCH mode, only highlight the current match's specific cube action
         if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
             if (analysisData.playedCubeAction) {
-                const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
-                const normalizedPlayed = analysisData.playedCubeAction.toLowerCase().replace(/\s+/g, '');
-                return normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction);
+                const playedParts = normalizeCubeAction(analysisData.playedCubeAction);
+                return actionParts.every(a => playedParts.includes(a));
             }
             return false;
         }
         
         // In normal mode, highlight all played cube actions
-        // Check the playedCubeActions array first
+        // Collect all canonical played parts from all played actions
+        const allPlayedParts = new Set();
+
         if (analysisData.playedCubeActions && analysisData.playedCubeActions.length > 0) {
-            // Normalize the action for comparison
-            const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
-            
             for (const playedAction of analysisData.playedCubeActions) {
-                const normalizedPlayed = playedAction.toLowerCase().replace(/\s+/g, '');
-                if (normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction)) {
-                    return true;
+                for (const part of normalizeCubeAction(playedAction)) {
+                    allPlayedParts.add(part);
                 }
             }
         }
         
         // Fallback to old single playedCubeAction field for backward compatibility
-        if (analysisData.playedCubeAction) {
-            const normalizedAction = action.toLowerCase().replace(/\s+/g, '');
-            const normalizedPlayed = analysisData.playedCubeAction.toLowerCase().replace(/\s+/g, '');
-            return normalizedAction.includes(normalizedPlayed) || normalizedPlayed.includes(normalizedAction);
+        if (allPlayedParts.size === 0 && analysisData.playedCubeAction) {
+            for (const part of normalizeCubeAction(analysisData.playedCubeAction)) {
+                allPlayedParts.add(part);
+            }
         }
+
+        if (allPlayedParts.size === 0) return false;
         
-        return false;
+        return actionParts.every(a => allPlayedParts.has(a));
     }
 
     async function switchTab(tab) {
@@ -404,6 +425,18 @@
                          typeof analysisData.doublingCubeAnalysis === 'object' &&
                          (analysisData.doublingCubeAnalysis.bestCubeAction || 
                           analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined);
+    
+    // Build the list of cube analyses to display (may have multiple from different engines)
+    $: cubeAnalysesList = (() => {
+        if (!analysisData) return [];
+        if (analysisData.allCubeAnalyses && analysisData.allCubeAnalyses.length > 0) {
+            return analysisData.allCubeAnalyses;
+        }
+        if (analysisData.doublingCubeAnalysis) {
+            return [analysisData.doublingCubeAnalysis];
+        }
+        return [];
+    })();
     // Check if current position is the first position of a game (no cube decision possible)
     // First position can be move_number 0 or 1
     $: isFirstPositionOfGame = matchCtx.isMatchMode && 
@@ -420,81 +453,86 @@
         <button type="button" class="close-icon" on:click={onClose} aria-label="Close" on:keydown={handleKeyDown}>×</button>
         
         <div class="analysis-content" on:click={handleContentClick} on:keydown={() => {}} role="button" tabindex="-1">
-            {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && analysisData.doublingCubeAnalysis}
-                <div class="tables-container">
-                    <table class="left-table">
-                        <tbody>
-                            <tr>
-                                <th></th>
-                                <th>P</th>
-                                <th>O</th>
-                            </tr>
-                            <tr>
-                                <td>W</td>
-                                <td>{(analysisData.doublingCubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
-                                <td>{(analysisData.doublingCubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>G</td>
-                                <td>{(analysisData.doublingCubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
-                                <td>{(analysisData.doublingCubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>B</td>
-                                <td>{(analysisData.doublingCubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
-                                <td>{(analysisData.doublingCubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
-                            </tr>
-                            <tr>
-                                <td>ND Eq</td>
-                                <td colspan="2">{formatEquity(analysisData.doublingCubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
-                            </tr>
-                            <tr>
-                                <td>D Eq</td>
-                                <td colspan="2">{formatEquity(analysisData.doublingCubeAnalysis.cubelessDoubleEquity || 0)}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="right-table">
-                        <tbody>
-                            <tr>
-                                <th>Decision</th>
-                                <th>Equity</th>
-                                <th>Error</th>
-                            </tr>
-                            <tr class:played={isPlayedCubeAction('No Double')}>
-                                <td>{getDecisionLabel('No Double')}</td>
-                                <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
-                                <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulNoDoubleError || 0)}</td>
-                            </tr>
-                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Take')}>
-                                <td>{getDecisionLabel('Double/Take')}</td>
-                                <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
-                                <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoubleTakeError || 0)}</td>
-                            </tr>
-                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Pass')}>
-                                <td>{getDecisionLabel('Double/Pass')}</td>
-                                <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassEquity || 0)}</td>
-                                <td>{formatEquity(analysisData.doublingCubeAnalysis.cubefulDoublePassError || 0)}</td>
-                            </tr>
-                            <tr class="best-action-row {analysisData.doublingCubeAnalysis.bestCubeAction.includes('ダブル') ? 'japanese-text' : ''}">
-                                <td>Best Action</td>
-                                <td colspan="2">{analysisData.doublingCubeAnalysis.bestCubeAction}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <table class="info-table">
-                        <tbody>
-                            <tr>
-                                <th>Analysis Depth</th>
-                                <td>{analysisData.doublingCubeAnalysis.analysisDepth}</td>
-                            </tr>
-                            <tr>
-                                <th>Engine Version</th>
-                                <td>{analysisData.analysisEngineVersion}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+            {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
+                {#each cubeAnalysesList as cubeAnalysis, cubeIdx}
+                    {#if cubeAnalysesList.length > 1}
+                        <div class="cube-engine-header">{cubeAnalysis.analysisEngine || 'Engine ' + (cubeIdx + 1)}</div>
+                    {/if}
+                    <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
+                        <table class="left-table">
+                            <tbody>
+                                <tr>
+                                    <th></th>
+                                    <th>P</th>
+                                    <th>O</th>
+                                </tr>
+                                <tr>
+                                    <td>W</td>
+                                    <td>{(cubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
+                                    <td>{(cubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td>G</td>
+                                    <td>{(cubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
+                                    <td>{(cubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td>B</td>
+                                    <td>{(cubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
+                                    <td>{(cubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
+                                </tr>
+                                <tr>
+                                    <td>ND Eq</td>
+                                    <td colspan="2">{formatEquity(cubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
+                                </tr>
+                                <tr>
+                                    <td>D Eq</td>
+                                    <td colspan="2">{formatEquity(cubeAnalysis.cubelessDoubleEquity || 0)}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="right-table">
+                            <tbody>
+                                <tr>
+                                    <th>Decision</th>
+                                    <th>Equity</th>
+                                    <th>Error</th>
+                                </tr>
+                                <tr class:played={isPlayedCubeAction('No Double')}>
+                                    <td>{getDecisionLabel('No Double')}</td>
+                                    <td>{formatEquity(cubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
+                                    <td>{formatEquity(cubeAnalysis.cubefulNoDoubleError || 0)}</td>
+                                </tr>
+                                <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Take')}>
+                                    <td>{getDecisionLabel('Double/Take')}</td>
+                                    <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
+                                    <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeError || 0)}</td>
+                                </tr>
+                                <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Pass')}>
+                                    <td>{getDecisionLabel('Double/Pass')}</td>
+                                    <td>{formatEquity(cubeAnalysis.cubefulDoublePassEquity || 0)}</td>
+                                    <td>{formatEquity(cubeAnalysis.cubefulDoublePassError || 0)}</td>
+                                </tr>
+                                <tr class="best-action-row {cubeAnalysis.bestCubeAction && cubeAnalysis.bestCubeAction.includes('ダブル') ? 'japanese-text' : ''}">
+                                    <td>Best Action</td>
+                                    <td colspan="2">{cubeAnalysis.bestCubeAction || ''}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="info-table">
+                            <tbody>
+                                <tr>
+                                    <th>Analysis Depth</th>
+                                    <td>{cubeAnalysis.analysisDepth}</td>
+                                </tr>
+                                <tr>
+                                    <th>Engine</th>
+                                    <td>{cubeAnalysis.analysisEngine || analysisData.analysisEngineVersion}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {/each}
             {/if}
 
             {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
@@ -511,6 +549,9 @@
                             <th class="sortable" class:active-sort={sortColumn === 'og'} on:click|stopPropagation={() => handleSort('og')}>O G{getSortIndicator('og')}</th>
                             <th class="sortable" class:active-sort={sortColumn === 'ob'} on:click|stopPropagation={() => handleSort('ob')}>O B{getSortIndicator('ob')}</th>
                             <th class="sortable" class:active-sort={sortColumn === 'depth'} on:click|stopPropagation={() => handleSort('depth')}>Depth{getSortIndicator('depth')}</th>
+                            {#if hasMultipleEngines}
+                                <th class="sortable" class:active-sort={sortColumn === 'engine'} on:click|stopPropagation={() => handleSort('engine')}>Engine{getSortIndicator('engine')}</th>
+                            {/if}
                         </tr>
                     </thead>
                     <tbody>
@@ -531,6 +572,9 @@
                                 <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
                                 <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
                                 <td>{move.analysisDepth}</td>
+                                {#if hasMultipleEngines}
+                                    <td>{move.analysisEngine || ''}</td>
+                                {/if}
                             </tr>
                         {/each}
                     </tbody>
@@ -584,6 +628,19 @@
     .tables-container {
         display: flex;
         justify-content: space-between;
+    }
+
+    .cube-engine-header {
+        font-weight: bold;
+        font-size: 12px;
+        color: #444;
+        padding: 2px 4px;
+        margin-top: 4px;
+        border-bottom: 1px solid #ccc;
+    }
+
+    .multi-engine-cube {
+        margin-bottom: 6px;
     }
 
     .left-table, .right-table, .info-table {

@@ -30,6 +30,7 @@ export const analysisStore = writable({
         wrongPassPercentage: 0,
         wrongTakePercentage: 0,
     },
+    allCubeAnalyses: [],
     playedMove: '',  // Deprecated: for backward compatibility
     playedCubeAction: '',  // Deprecated: for backward compatibility
     playedMoves: [],  // All moves played in this position across different matches
