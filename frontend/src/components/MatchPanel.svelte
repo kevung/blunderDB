@@ -64,7 +64,7 @@
     async function loadMatches() {
         try {
             const loadedMatches = await GetAllMatches();
-            matches = (loadedMatches || []).reverse();
+            matches = loadedMatches || [];
             await loadTournaments();
         } catch (error) {
             console.error('Error loading matches:', error);

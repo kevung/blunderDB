@@ -8709,7 +8709,7 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		       m.tournament_id, COALESCE(t.name, '') as tournament_name
 		FROM match m
 		LEFT JOIN tournament t ON m.tournament_id = t.id
-		ORDER BY m.match_date DESC
+		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
 	`)
 	if err != nil {
 		fmt.Println("Error loading matches:", err)
