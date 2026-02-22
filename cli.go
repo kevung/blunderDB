@@ -516,8 +516,10 @@ func (cli *CLI) importMatch(filePath string) error {
 		matchID, err = cli.db.ImportXGMatch(filePath)
 	case ".sgf", ".mat", ".txt":
 		matchID, err = cli.db.ImportGnuBGMatch(filePath)
+	case ".bgf":
+		matchID, err = cli.db.ImportBGFMatch(filePath)
 	default:
-		return fmt.Errorf("invalid file type: %s (expected .xg, .sgf, .mat, or .txt)", ext)
+		return fmt.Errorf("invalid file type: %s (expected .xg, .sgf, .mat, .txt, or .bgf)", ext)
 	}
 
 	if err != nil {
@@ -558,8 +560,21 @@ func (cli *CLI) importPosition(filePath string) error {
 		return fmt.Errorf("failed to read file: %v", err)
 	}
 
+	// Check if this is a BGBlitz position text file
+	// BGBlitz text files contain "Position-ID:" which is unique to BGBlitz format
+	contentStr := string(content)
+	if strings.Contains(contentStr, "Position-ID:") {
+		// BGBlitz position text file
+		posID, err := cli.db.ImportBGFPosition(filePath)
+		if err != nil {
+			return fmt.Errorf("failed to import BGBlitz position: %v", err)
+		}
+		fmt.Printf("Successfully imported BGBlitz position (ID: %d)\n", posID)
+		return nil
+	}
+
 	// Parse positions (assuming position JSON format, one per line)
-	lines := strings.Split(string(content), "\n")
+	lines := strings.Split(contentStr, "\n")
 	imported := 0
 	errors := 0
 
@@ -1316,6 +1331,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 		".sgf": true,
 		".mat": true,
 		".txt": true,
+		".bgf": true,
 	}
 
 	// Find all supported match files
@@ -1348,7 +1364,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 	}
 
 	if len(matchFiles) == 0 {
-		fmt.Println("No match files found in directory (.xg, .sgf, .mat, .txt)")
+		fmt.Println("No match files found in directory (.xg, .sgf, .mat, .txt, .bgf)")
 		return nil
 	}
 
@@ -1377,6 +1393,8 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 			matchID, err = cli.db.ImportXGMatch(filePath)
 		case ".sgf", ".mat", ".txt":
 			matchID, err = cli.db.ImportGnuBGMatch(filePath)
+		case ".bgf":
+			matchID, err = cli.db.ImportBGFMatch(filePath)
 		}
 
 		if err != nil {

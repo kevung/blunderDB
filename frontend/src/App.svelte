@@ -40,6 +40,9 @@
         SaveEditPosition, // Import SaveEditPosition
         ImportXGMatch, // Import ImportXGMatch
         ImportGnuBGMatch, // Import ImportGnuBGMatch
+        ImportBGFMatch, // Import ImportBGFMatch
+        ImportBGFPosition, // Import ImportBGFPosition
+        ImportBGFPositionFromText, // Import ImportBGFPositionFromText
         GetAllMatches, // Import GetAllMatches
         SaveSessionState, // Import SaveSessionState
         LoadSessionState, // Import LoadSessionState
@@ -1285,6 +1288,7 @@
             const filePath = response.file_path;
             const lowerPath = filePath.toLowerCase();
             const isXGFile = lowerPath.endsWith('.xg');
+            const isBGFFile = lowerPath.endsWith('.bgf');
             // Check if .txt file is a Jellyfish match file (contains "N point match" header)
             const isJellyfishTXT = lowerPath.endsWith('.txt') && response.content && /^\s*\d+\s+point\s+match\s*$/m.test(response.content);
             const isGnuBGFile = lowerPath.endsWith('.sgf') || lowerPath.endsWith('.mat') || isJellyfishTXT;
@@ -1314,6 +1318,29 @@
                         await ShowAlert('Error importing XG match: ' + error);
                     }
                 }
+            } else if (isBGFFile) {
+                // Import BGBlitz BGF match file
+                console.log("Importing BGF match file:", filePath);
+                try {
+                    const matchID = await ImportBGFMatch(filePath);
+                    console.log('BGF match imported with ID:', matchID);
+                    setStatusBarMessage(`BGBlitz match imported successfully (ID: ${matchID})`);
+                    
+                    // Trigger match panel refresh to display the imported match
+                    matchPanelRefreshTriggerStore.update(n => n + 1);
+                    
+                    // Show match panel to display the imported match
+                    showMatchPanelStore.set(true);
+                } catch (error) {
+                    console.error("Error importing BGF match:", error);
+                    const errorStr = String(error);
+                    if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                        setStatusBarMessage('This match has already been imported');
+                    } else {
+                        setStatusBarMessage('Error importing BGBlitz match: ' + error);
+                        await ShowAlert('Error importing BGBlitz match: ' + error);
+                    }
+                }
             } else if (isGnuBGFile) {
                 // Import GnuBG match file (.sgf, .mat, or Jellyfish .txt)
                 const formatName = lowerPath.endsWith('.sgf') ? 'GnuBG SGF' : (lowerPath.endsWith('.txt') ? 'Jellyfish TXT' : 'Jellyfish MAT');
@@ -1339,52 +1366,77 @@
                     }
                 }
             } else {
-                // Import position text file
-                console.log("File content:", response.content);
+                // Check if this is a BGBlitz TXT position file
+                // BGBlitz files contain "Position-ID:" which is unique to BGBlitz
+                // XG text exports use the same board art but never have "Position-ID:"
+                const isBGBlitzTXT = response.content && response.content.includes('Position-ID:');
 
-                // Now you can parse and use the file content
-                const { positionData, parsedAnalysis } = parsePosition(response.content);
-                positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
-                analysisStore.set({
-                    positionId: null,
-                    xgid: parsedAnalysis.xgid,
-                    player1: '',
-                    player2: '',
-                    analysisType: parsedAnalysis.analysisType,
-                    analysisEngineVersion: parsedAnalysis.analysisEngineVersion,
-                    checkerAnalysis: { moves: parsedAnalysis.checkerAnalysis },
-                    doublingCubeAnalysis: {
-                        analysisDepth: parsedAnalysis.doublingCubeAnalysis.analysisDepth || '',
-                        playerWinChances: parsedAnalysis.doublingCubeAnalysis.playerWinChances || 0,
-                        playerGammonChances: parsedAnalysis.doublingCubeAnalysis.playerGammonChances || 0,
-                        playerBackgammonChances: parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances || 0,
-                        opponentWinChances: parsedAnalysis.doublingCubeAnalysis.opponentWinChances || 0,
-                        opponentGammonChances: parsedAnalysis.doublingCubeAnalysis.opponentGammonChances || 0,
-                        opponentBackgammonChances: parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances || 0,
-                        cubelessNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity || 0,
-                        cubelessDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity || 0,
-                        cubefulNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity || 0,
-                        cubefulNoDoubleError: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError || 0,
-                        cubefulDoubleTakeEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0,
-                        cubefulDoubleTakeError: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError || 0,
-                        cubefulDoublePassEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity || 0,
-                        cubefulDoublePassError: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError || 0,
-                        bestCubeAction: parsedAnalysis.doublingCubeAnalysis.bestCubeAction || '',
-                        wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
-                        wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
-                    },
-                    allCubeAnalyses: [],
-                    playedMove: '',
-                    playedCubeAction: '',
-                    playedMoves: [],
-                    playedCubeActions: [],
-                    creationDate: '',
-                    lastModifiedDate: ''
-                });
-                console.log('positionStore:', $positionStore);
-                console.log('analysisStore:', $analysisStore);
+                if (isBGBlitzTXT) {
+                    // Import BGBlitz TXT position via Go backend
+                    console.log("Importing BGBlitz TXT position:", filePath);
+                    try {
+                        const posID = await ImportBGFPosition(filePath);
+                        console.log('BGBlitz position imported with ID:', posID);
+                        setStatusBarMessage(`BGBlitz position imported successfully (ID: ${posID})`);
+                        await loadAllPositions();
+                    } catch (error) {
+                        console.error("Error importing BGBlitz position:", error);
+                        const errorStr = String(error);
+                        if (errorStr.includes('duplicate') || errorStr.includes('already exists')) {
+                            setStatusBarMessage('This position already exists');
+                        } else {
+                            setStatusBarMessage('Error importing BGBlitz position: ' + error);
+                            await ShowAlert('Error importing BGBlitz position: ' + error);
+                        }
+                    }
+                } else {
+                    // Import XG text position file via JS parser
+                    console.log("File content:", response.content);
 
-                await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
+                    // Now you can parse and use the file content
+                    const { positionData, parsedAnalysis } = parsePosition(response.content);
+                    positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
+                    analysisStore.set({
+                        positionId: null,
+                        xgid: parsedAnalysis.xgid,
+                        player1: '',
+                        player2: '',
+                        analysisType: parsedAnalysis.analysisType,
+                        analysisEngineVersion: parsedAnalysis.analysisEngineVersion,
+                        checkerAnalysis: { moves: parsedAnalysis.checkerAnalysis },
+                        doublingCubeAnalysis: {
+                            analysisDepth: parsedAnalysis.doublingCubeAnalysis.analysisDepth || '',
+                            playerWinChances: parsedAnalysis.doublingCubeAnalysis.playerWinChances || 0,
+                            playerGammonChances: parsedAnalysis.doublingCubeAnalysis.playerGammonChances || 0,
+                            playerBackgammonChances: parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances || 0,
+                            opponentWinChances: parsedAnalysis.doublingCubeAnalysis.opponentWinChances || 0,
+                            opponentGammonChances: parsedAnalysis.doublingCubeAnalysis.opponentGammonChances || 0,
+                            opponentBackgammonChances: parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances || 0,
+                            cubelessNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity || 0,
+                            cubelessDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity || 0,
+                            cubefulNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity || 0,
+                            cubefulNoDoubleError: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError || 0,
+                            cubefulDoubleTakeEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0,
+                            cubefulDoubleTakeError: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError || 0,
+                            cubefulDoublePassEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity || 0,
+                            cubefulDoublePassError: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError || 0,
+                            bestCubeAction: parsedAnalysis.doublingCubeAnalysis.bestCubeAction || '',
+                            wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
+                            wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
+                        },
+                        allCubeAnalyses: [],
+                        playedMove: '',
+                        playedCubeAction: '',
+                        playedMoves: [],
+                        playedCubeActions: [],
+                        creationDate: '',
+                        lastModifiedDate: ''
+                    });
+                    console.log('positionStore:', $positionStore);
+                    console.log('analysisStore:', $analysisStore);
+
+                    await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
+                }
             }
         } catch (error) {
             console.error("Error importing position:", error);
@@ -1409,8 +1461,27 @@
             async (result) => {
                 pastePositionTextStore.set(result);
                 console.log('pastePositionTextStore:', $pastePositionTextStore);
-                const { positionData, parsedAnalysis } = parsePosition(result);
-                await savePositionAndAnalysis(positionData, parsedAnalysis, 'Pasted position and analysis saved successfully');
+
+                // Check if this is a BGBlitz TXT position
+                // BGBlitz files contain "Position-ID:" which is unique to BGBlitz
+                // XG text exports use the same board art but never have "Position-ID:"
+                const isBGBlitzTXT = result && result.includes('Position-ID:');
+
+                if (isBGBlitzTXT) {
+                    // Import BGBlitz TXT position via Go backend
+                    try {
+                        const posID = await ImportBGFPositionFromText(result);
+                        console.log('BGBlitz position pasted with ID:', posID);
+                        setStatusBarMessage(`BGBlitz position pasted successfully (ID: ${posID})`);
+                        await loadAllPositions();
+                    } catch (error) {
+                        console.error('Error pasting BGBlitz position:', error);
+                        setStatusBarMessage('Error pasting BGBlitz position: ' + error);
+                    }
+                } else {
+                    const { positionData, parsedAnalysis } = parsePosition(result);
+                    await savePositionAndAnalysis(positionData, parsedAnalysis, 'Pasted position and analysis saved successfully');
+                }
                 statusBarModeStore.set('NORMAL');
             })
             .catch((error) => {
@@ -1700,7 +1771,7 @@
             (isFrench && (normalizedContent.includes("Equités sans videau") || normalizedContent.includes("Equités avec videau"))) ||
             (isJapanese && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities"))) ||
             (isGerman && (normalizedContent.includes("Equities ohne Dopplerwürfel") || normalizedContent.includes("Equities mit Dopplerwürfel"))) ||
-            (!isFrench && !isJapanese && !isGerman && (normalizedContent.includes("Cubeless Equities") || "Cubeful Equities"))
+            (!isFrench && !isJapanese && !isGerman && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")))
         ) {
             parsedAnalysis.analysisType = "DoublingCube";
 

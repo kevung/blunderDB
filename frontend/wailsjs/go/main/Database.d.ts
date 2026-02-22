@@ -82,6 +82,12 @@ export function GetPositionIndexMap():Promise<Record<number, number>>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<main.Match>>;
 
+export function ImportBGFMatch(arg1:string):Promise<number>;
+
+export function ImportBGFPosition(arg1:string):Promise<number>;
+
+export function ImportBGFPositionFromText(arg1:string):Promise<number>;
+
 export function ImportDatabase(arg1:string):Promise<Record<string, any>>;
 
 export function ImportGnuBGMatch(arg1:string):Promise<number>;

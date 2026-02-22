@@ -16,6 +16,7 @@ import (
 	"sync/atomic"
 	"time"
 
+	"github.com/kevung/bgfparser"
 	"github.com/kevung/gnubgparser"
 	"github.com/kevung/xgparser/xgparser"
 	_ "modernc.org/sqlite"
@@ -8778,6 +8779,1721 @@ func (d *Database) checkCanonicalMatchExistsLocked(canonicalHash string) (int64,
 		return 0, fmt.Errorf("error checking for canonical match: %w", err)
 	}
 	return existingID, nil
+}
+
+// ============================================================================
+// BGBlitz BGF import functions
+// ============================================================================
+
+// ImportBGFMatch imports a match from a BGBlitz BGF file using the bgfparser library.
+// BGF files contain full match data including moves, analysis, and cube decisions.
+func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Parse the BGF file
+	bgfMatch, err := bgfparser.ParseBGF(filePath)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse BGF file: %w", err)
+	}
+
+	if bgfMatch.Data == nil {
+		return 0, fmt.Errorf("BGF file contains no match data")
+	}
+
+	data := bgfMatch.Data
+
+	// Extract match metadata
+	nameGreen := bgfGetString(data, "nameGreen")
+	nameRed := bgfGetString(data, "nameRed")
+	matchLen := bgfGetInt(data, "matchlen")
+	event := bgfGetString(data, "event")
+	location := bgfGetString(data, "location")
+	round := bgfGetString(data, "round")
+	dateStr := bgfGetString(data, "date")
+
+	// Parse match date
+	var matchDate time.Time
+	if dateStr != "" {
+		for _, layout := range []string{
+			"Jan 2, 2006",
+			"2006-01-02 15:04:05",
+			"2006-01-02",
+			"January 2, 2006",
+			time.RFC3339,
+		} {
+			if t, err := time.Parse(layout, dateStr); err == nil {
+				matchDate = t
+				break
+			}
+		}
+	}
+	if matchDate.IsZero() {
+		matchDate = time.Now()
+	}
+
+	// Extract games
+	gamesData, ok := data["games"].([]interface{})
+	if !ok || len(gamesData) == 0 {
+		return 0, fmt.Errorf("BGF file contains no games")
+	}
+
+	// Compute match hash for duplicate detection
+	matchHash := ComputeBGFMatchHash(bgfMatch)
+
+	// Compute canonical hash (format-independent) for cross-format duplicate detection
+	canonicalHash := ComputeCanonicalMatchHashFromBGF(bgfMatch)
+
+	// Check if this exact match already exists (same format)
+	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
+	if err != nil {
+		return 0, fmt.Errorf("failed to check for duplicate match: %w", err)
+	}
+	if existingMatchID > 0 {
+		return 0, ErrDuplicateMatch
+	}
+
+	// Check if same match was imported from a different format (canonical duplicate)
+	canonicalMatchID, err := d.checkCanonicalMatchExistsLocked(canonicalHash)
+	if err != nil {
+		return 0, fmt.Errorf("failed to check for canonical duplicate: %w", err)
+	}
+	isCanonicalDuplicate := canonicalMatchID > 0
+
+	// Begin transaction for atomic import
+	tx, err := d.db.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer func() {
+		if err != nil {
+			tx.Rollback()
+		}
+	}()
+
+	// Insert match metadata or reuse existing canonical match
+	var matchID int64
+	if isCanonicalDuplicate {
+		matchID = canonicalMatchID
+		fmt.Printf("Canonical duplicate detected - reusing match ID %d, importing new analysis only\n", matchID)
+	} else {
+		result, err := tx.Exec(`
+			INSERT INTO match (player1_name, player2_name, event, location, round,
+			                   match_length, match_date, file_path, game_count, match_hash, canonical_hash)
+			VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+		`, nameGreen, nameRed, event, location, round,
+			matchLen, matchDate, filePath, len(gamesData), matchHash, canonicalHash)
+		if err != nil {
+			return 0, fmt.Errorf("failed to insert match: %w", err)
+		}
+
+		matchID, err = result.LastInsertId()
+		if err != nil {
+			return 0, fmt.Errorf("failed to get match ID: %w", err)
+		}
+
+		// Auto-link tournament from event metadata
+		eventName := strings.TrimSpace(event)
+		if eventName != "" {
+			var tournamentID int64
+			err2 := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
+			if err2 != nil {
+				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
+				if err3 == nil {
+					tournamentID, _ = res2.LastInsertId()
+				}
+			}
+			if tournamentID > 0 {
+				tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+			}
+		}
+	}
+
+	// Build a position cache for deduplication
+	positionCache := make(map[string]int64)
+
+	// Load existing positions into cache
+	existingRows, err := tx.Query(`SELECT id, state FROM position`)
+	if err != nil {
+		return 0, fmt.Errorf("failed to load existing positions: %w", err)
+	}
+
+	for existingRows.Next() {
+		var existingID int64
+		var existingStateJSON string
+		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
+			continue
+		}
+		var existingPosition Position
+		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
+			continue
+		}
+		normalizedPosition := existingPosition.NormalizeForStorage()
+		normalizedPosition.ID = 0
+		normalizedJSON, _ := json.Marshal(normalizedPosition)
+		positionCache[string(normalizedJSON)] = existingID
+	}
+	existingRows.Close()
+
+	fmt.Printf("Loaded %d existing positions into cache for BGF import\n", len(positionCache))
+
+	// Process each game
+	for gameIdx, gameRaw := range gamesData {
+		gameData, ok := gameRaw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		// Extract game metadata
+		scoreGreen := bgfGetInt(gameData, "scoreGreen")
+		scoreRed := bgfGetInt(gameData, "scoreRed")
+		isCrawford := bgfGetBool(gameData, "isCrawford")
+		wonPoints := bgfGetInt(gameData, "wonPoints")
+
+		// Get moves
+		movesData, ok := gameData["moves"].([]interface{})
+		if !ok {
+			continue
+		}
+
+		// Determine game winner from wonPoints and final positions
+		// Winner is determined by who won the game
+		winner := int32(0) // Will be computed from match final scores
+
+		if !isCanonicalDuplicate {
+			// Insert game record
+			gameResult, err := tx.Exec(`
+				INSERT INTO game (match_id, game_number, initial_score_1, initial_score_2,
+				                  winner, points_won, move_count)
+				VALUES (?, ?, ?, ?, ?, ?, ?)
+			`, matchID, gameIdx+1, scoreGreen, scoreRed,
+				winner, wonPoints, len(movesData))
+			if err != nil {
+				return 0, fmt.Errorf("failed to insert game %d: %w", gameIdx+1, err)
+			}
+
+			gameID, err := gameResult.LastInsertId()
+			if err != nil {
+				return 0, fmt.Errorf("failed to get game ID: %w", err)
+			}
+
+			// Process moves - build board state as we go
+			boardState := bgfInitBoardFromGame(gameData)
+			cubeValue := 1
+			cubeOwner := -1 // center
+
+			moveNumber := int32(0)
+			for moveIdx, moveRaw := range movesData {
+				moveData, ok := moveRaw.(map[string]interface{})
+				if !ok {
+					continue
+				}
+
+				mtype := bgfGetString(moveData, "type")
+				player := bgfGetInt(moveData, "player") // -1 = Green, 1 = Red
+
+				switch mtype {
+				case "amove":
+					err := d.importBGFCheckerMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache)
+					if err != nil {
+						fmt.Printf("Warning: failed to import BGF move %d in game %d: %v\n", moveIdx, gameIdx+1, err)
+					}
+					// Update board state
+					bgfApplyCheckerMove(&boardState, moveData, player)
+					moveNumber++
+
+				case "adouble":
+					// Cube double - find the response (take/pass)
+					cubeAction := "Double/Pass"
+					for j := moveIdx + 1; j < len(movesData); j++ {
+						nextMove, ok := movesData[j].(map[string]interface{})
+						if !ok {
+							continue
+						}
+						nextType := bgfGetString(nextMove, "type")
+						if nextType == "atake" {
+							cubeAction = "Double/Take"
+							break
+						} else if nextType == "apass" {
+							cubeAction = "Double/Pass"
+							break
+						} else if nextType != "amove" {
+							break
+						}
+					}
+
+					err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+					if err != nil {
+						fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
+					}
+					moveNumber++
+
+				case "atake":
+					// Take - update cube state
+					if cubeValue == 1 {
+						cubeValue = 2
+					} else {
+						cubeValue *= 2
+					}
+					// The taker becomes the cube owner
+					if player == -1 {
+						cubeOwner = 0 // Green
+					} else {
+						cubeOwner = 1 // Red
+					}
+					// Don't increment moveNumber (part of the double action)
+
+				case "apass":
+					// Pass/Drop - game ends, don't need to update state
+					// Don't increment moveNumber
+
+				default:
+					// Skip unknown move types
+					continue
+				}
+			}
+		} else {
+			// Canonical duplicate: only import analysis to existing positions
+			boardState := bgfInitBoardFromGame(gameData)
+			cubeValue := 1
+			cubeOwner := -1
+
+			for moveIdx, moveRaw := range movesData {
+				moveData, ok := moveRaw.(map[string]interface{})
+				if !ok {
+					continue
+				}
+
+				mtype := bgfGetString(moveData, "type")
+				player := bgfGetInt(moveData, "player")
+
+				switch mtype {
+				case "amove":
+					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache)
+					bgfApplyCheckerMove(&boardState, moveData, player)
+
+				case "adouble":
+					cubeAction := "Double/Pass"
+					for j := moveIdx + 1; j < len(movesData); j++ {
+						nextMove, ok := movesData[j].(map[string]interface{})
+						if !ok {
+							continue
+						}
+						nextType := bgfGetString(nextMove, "type")
+						if nextType == "atake" {
+							cubeAction = "Double/Take"
+							break
+						} else if nextType == "apass" {
+							cubeAction = "Double/Pass"
+							break
+						}
+					}
+					d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+
+				case "atake":
+					if cubeValue == 1 {
+						cubeValue = 2
+					} else {
+						cubeValue *= 2
+					}
+					if player == -1 {
+						cubeOwner = 0
+					} else {
+						cubeOwner = 1
+					}
+				}
+			}
+		}
+	}
+
+	// Commit transaction
+	if err = tx.Commit(); err != nil {
+		return 0, fmt.Errorf("failed to commit transaction: %w", err)
+	}
+
+	fmt.Printf("Successfully imported BGF match %d with %d games from %s\n", matchID, len(gamesData), filePath)
+	return matchID, nil
+}
+
+// importBGFCheckerMove imports a single checker move from a BGF file
+func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64) error {
+	player := bgfGetInt(moveData, "player") // -1 = Green, 1 = Red
+
+	// Convert BGF player to blunderDB player encoding
+	// BGF: -1 = Green (first player), 1 = Red (second player)
+	// blunderDB: 0 = Player 1 (Green/Black), 1 = Player 2 (Red/White)
+	blunderDBPlayer := bgfPlayerToBlunderDB(player)
+
+	// Get dice
+	dieGreen := bgfGetInt(moveData, "green")
+	dieRed := bgfGetInt(moveData, "red")
+	die1 := dieGreen
+	die2 := dieRed
+
+	// Handle impossible dice values (green=7 appears for some moves like opening rolls)
+	if die1 > 6 || die2 > 6 || die1 < 1 || die2 < 1 {
+		// This is likely an opening roll or special case - use from/to to infer
+		// For fanned moves, dice may be encoded differently
+		fromArr := bgfGetIntArray(moveData, "from")
+		if fromArr[0] == -1 {
+			// Fanned/no move - skip
+			return nil
+		}
+	}
+
+	// Create board position from current state
+	pos := d.createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, isCrawford)
+	pos.PlayerOnRoll = blunderDBPlayer
+	pos.DecisionType = CheckerAction
+	pos.Dice = [2]int{die1, die2}
+
+	// Save position
+	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	if err != nil {
+		return fmt.Errorf("failed to save position: %w", err)
+	}
+
+	// Convert move to string notation
+	checkerMoveStr := bgfConvertMoveToString(moveData, player)
+
+	// Convert player to XG-style encoding for DB storage consistency
+	dbPlayer := convertBlunderDBPlayerToXG(blunderDBPlayer)
+
+	// Save move record
+	moveResult, err := tx.Exec(`
+		INSERT INTO move (game_id, move_number, move_type, position_id, player,
+		                  dice_1, dice_2, checker_move)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+	`, gameID, moveNumber, "checker", posID, dbPlayer, die1, die2, checkerMoveStr)
+	if err != nil {
+		return err
+	}
+
+	moveID, _ := moveResult.LastInsertId()
+
+	// Save analysis if available
+	moveAnalysis, ok := moveData["moveAnalysis"].([]interface{})
+	if ok && len(moveAnalysis) > 0 {
+		// Save to move_analysis table (first/played move)
+		for _, maRaw := range moveAnalysis {
+			maData, ok := maRaw.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			if bgfGetBool(maData, "played") {
+				err = d.saveBGFMoveAnalysisInTx(tx, moveID, maData)
+				if err != nil {
+					fmt.Printf("Warning: failed to save BGF move analysis: %v\n", err)
+				}
+				break // Only save the played move to move_analysis
+			}
+		}
+
+		// Save to position analysis table (all moves for UI compatibility)
+		err = d.saveBGFCheckerAnalysisToPositionInTx(tx, posID, moveAnalysis, blunderDBPlayer, checkerMoveStr)
+		if err != nil {
+			fmt.Printf("Warning: failed to save BGF position analysis: %v\n", err)
+		}
+	}
+
+	// Save cube analysis from the equity field if present on a checker move
+	equity := bgfGetMap(moveData, "equity")
+	if equity != nil {
+		cubeDecision := bgfGetMap(equity, "cubeDecision")
+		if cubeDecision != nil {
+			stateOnMove := bgfGetString(cubeDecision, "stateOnMove")
+			if stateOnMove != "" {
+				err = d.saveBGFCubeAnalysisForCheckerPositionInTx(tx, posID, equity, cubeDecision)
+				if err != nil {
+					fmt.Printf("Warning: failed to save cube analysis for checker position: %v\n", err)
+				}
+			}
+		}
+	}
+
+	return nil
+}
+
+// importBGFCubeMove imports a cube double/take/pass move from a BGF file
+func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, cubeAction string) error {
+	player := bgfGetInt(moveData, "player")
+	blunderDBPlayer := bgfPlayerToBlunderDB(player)
+
+	// Create position from current board state
+	pos := d.createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, isCrawford)
+	pos.PlayerOnRoll = blunderDBPlayer
+	pos.DecisionType = CubeAction
+	pos.Dice = [2]int{0, 0}
+
+	// Save position
+	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	if err != nil {
+		return fmt.Errorf("failed to save position: %w", err)
+	}
+
+	// Convert player to XG-style encoding for DB storage consistency
+	dbPlayer := convertBlunderDBPlayerToXG(blunderDBPlayer)
+
+	// Save move record
+	moveResult, err := tx.Exec(`
+		INSERT INTO move (game_id, move_number, move_type, position_id, player,
+		                  dice_1, dice_2, cube_action)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+	`, gameID, moveNumber, "cube", posID, dbPlayer, 0, 0, cubeAction)
+	if err != nil {
+		return err
+	}
+
+	moveID, _ := moveResult.LastInsertId()
+
+	// Save cube analysis from equity field
+	equity := bgfGetMap(moveData, "equity")
+	if equity != nil {
+		cubeDecision := bgfGetMap(equity, "cubeDecision")
+		if cubeDecision != nil {
+			err = d.saveBGFCubeMoveAnalysisInTx(tx, moveID, equity, cubeDecision)
+			if err != nil {
+				fmt.Printf("Warning: failed to save BGF cube analysis: %v\n", err)
+			}
+
+			err = d.saveBGFCubeAnalysisToPositionInTx(tx, posID, equity, cubeDecision, cubeAction)
+			if err != nil {
+				fmt.Printf("Warning: failed to save BGF position cube analysis: %v\n", err)
+			}
+		}
+	}
+
+	return nil
+}
+
+// importBGFCheckerAnalysisOnly imports only analysis for a canonical duplicate
+func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64) {
+	player := bgfGetInt(moveData, "player")
+	blunderDBPlayer := bgfPlayerToBlunderDB(player)
+
+	dieGreen := bgfGetInt(moveData, "green")
+	dieRed := bgfGetInt(moveData, "red")
+
+	pos := d.createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, isCrawford)
+	pos.PlayerOnRoll = blunderDBPlayer
+	pos.DecisionType = CheckerAction
+	pos.Dice = [2]int{dieGreen, dieRed}
+
+	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	if err != nil {
+		return
+	}
+
+	moveAnalysis, ok := moveData["moveAnalysis"].([]interface{})
+	if ok && len(moveAnalysis) > 0 {
+		checkerMoveStr := bgfConvertMoveToString(moveData, player)
+		d.saveBGFCheckerAnalysisToPositionInTx(tx, posID, moveAnalysis, blunderDBPlayer, checkerMoveStr)
+	}
+
+	equity := bgfGetMap(moveData, "equity")
+	if equity != nil {
+		cubeDecision := bgfGetMap(equity, "cubeDecision")
+		if cubeDecision != nil && bgfGetString(cubeDecision, "stateOnMove") != "" {
+			d.saveBGFCubeAnalysisForCheckerPositionInTx(tx, posID, equity, cubeDecision)
+		}
+	}
+}
+
+// importBGFCubeAnalysisOnly imports only cube analysis for a canonical duplicate
+func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, cubeAction string) {
+	player := bgfGetInt(moveData, "player")
+	blunderDBPlayer := bgfPlayerToBlunderDB(player)
+
+	pos := d.createPositionFromBGF(boardState, gameData, matchLen, cubeValue, cubeOwner, isCrawford)
+	pos.PlayerOnRoll = blunderDBPlayer
+	pos.DecisionType = CubeAction
+	pos.Dice = [2]int{0, 0}
+
+	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	if err != nil {
+		return
+	}
+
+	equity := bgfGetMap(moveData, "equity")
+	if equity != nil {
+		cubeDecision := bgfGetMap(equity, "cubeDecision")
+		if cubeDecision != nil {
+			d.saveBGFCubeAnalysisToPositionInTx(tx, posID, equity, cubeDecision, cubeAction)
+		}
+	}
+}
+
+// createPositionFromBGF creates a blunderDB Position from BGF board state
+func (d *Database) createPositionFromBGF(boardState [28]int, gameData map[string]interface{}, matchLen int, cubeValue int, cubeOwner int, isCrawford bool) *Position {
+	scoreGreen := bgfGetInt(gameData, "scoreGreen")
+	scoreRed := bgfGetInt(gameData, "scoreRed")
+
+	// Calculate away scores (points away from winning)
+	awayScore1 := matchLen - scoreGreen
+	awayScore2 := matchLen - scoreRed
+
+	if matchLen == 0 {
+		awayScore1 = -1
+		awayScore2 = -1
+	}
+
+	// Convert cube value to exponent for blunderDB (2^n representation)
+	cubeExponent := 0
+	if cubeValue > 0 {
+		for v := cubeValue; v > 1; v >>= 1 {
+			cubeExponent++
+		}
+	}
+
+	pos := &Position{
+		PlayerOnRoll: 0,
+		DecisionType: CheckerAction,
+		Score:        [2]int{awayScore1, awayScore2},
+		Cube: Cube{
+			Value: cubeExponent,
+			Owner: cubeOwner,
+		},
+		Dice: [2]int{0, 0},
+	}
+
+	// Determine Jacoby/Beaver from match settings
+	if matchLen == 0 {
+		// Money game - check match-level settings
+		// (Jacoby/Beaver are only relevant in money games)
+	}
+
+	// Initialize all points as empty
+	for i := 0; i < 26; i++ {
+		pos.Board.Points[i] = Point{Checkers: 0, Color: -1}
+	}
+
+	// Convert BGF board encoding to blunderDB:
+	// BGF index 0-23: points 1-24 (from Green's perspective)
+	// BGF index 24: Green's bar, index 25: Red's bar
+	// BGF index 26: Green's borne off, index 27: Red's borne off
+	// Positive = Green checkers, Negative = Red checkers
+	//
+	// blunderDB:
+	// - Color 0 = Player 1 (Green) moves 24→1 (same as BGF Green)
+	// - Color 1 = Player 2 (Red) moves 1→24
+	// - Index 0 = Player 2's bar (Red/White), Index 25 = Player 1's bar (Green/Black)
+	// - Index 1-24 = Points 1-24
+
+	// Map board points (BGF index 0-23 → blunderDB index 1-24)
+	for i := 0; i < 24; i++ {
+		count := boardState[i]
+		if count > 0 {
+			// Green checkers (positive)
+			pos.Board.Points[i+1] = Point{Checkers: count, Color: 0} // Color 0 = Green/Player 1
+		} else if count < 0 {
+			// Red checkers (negative) - from Green's perspective
+			// Red on BGF index i = Red on blunderDB point (i+1)
+			pos.Board.Points[i+1] = Point{Checkers: -count, Color: 1} // Color 1 = Red/Player 2
+		}
+	}
+
+	// Map bar: BGF index 24 = Green's bar → blunderDB index 25
+	if boardState[24] > 0 {
+		pos.Board.Points[25] = Point{Checkers: boardState[24], Color: 0}
+	}
+	// BGF index 25 = Red's bar → blunderDB index 0
+	if boardState[25] < 0 {
+		pos.Board.Points[0] = Point{Checkers: -boardState[25], Color: 1}
+	} else if boardState[25] > 0 {
+		// Red bar is stored as positive in some encodings
+		pos.Board.Points[0] = Point{Checkers: boardState[25], Color: 1}
+	}
+
+	// Calculate bearoff
+	player1Total := 0
+	player2Total := 0
+	for i := 0; i < 26; i++ {
+		if pos.Board.Points[i].Color == 0 {
+			player1Total += pos.Board.Points[i].Checkers
+		} else if pos.Board.Points[i].Color == 1 {
+			player2Total += pos.Board.Points[i].Checkers
+		}
+	}
+	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
+
+	return pos
+}
+
+// bgfInitBoardFromGame extracts the initial board position from a BGF game
+func bgfInitBoardFromGame(gameData map[string]interface{}) [28]int {
+	var board [28]int
+
+	initial, ok := gameData["initial"].(map[string]interface{})
+	if !ok {
+		// Return standard starting position
+		board = [28]int{2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2, 0, 0, 0, 0}
+		return board
+	}
+
+	points, ok := initial["points"].([]interface{})
+	if !ok || len(points) < 28 {
+		board = [28]int{2, 0, 0, 0, 0, -5, 0, -3, 0, 0, 0, 5, -5, 0, 0, 0, 3, 0, 5, 0, 0, 0, 0, -2, 0, 0, 0, 0}
+		return board
+	}
+
+	for i := 0; i < 28 && i < len(points); i++ {
+		board[i] = bgfToInt(points[i])
+	}
+
+	return board
+}
+
+// bgfApplyCheckerMove updates the board state after a BGF checker move.
+// BGF from/to use 1-based point numbering from the active player's perspective:
+//   - Points 1-24 = board positions (1 = player's 1-point)
+//   - 25 = bar (from only)
+//   - 0 = bear off (to only)
+//
+// Board state uses 0-based Green's perspective: indices 0-23 = points 1-24,
+// 24 = Green's bar, 25 = Red's bar, 26 = Green off, 27 = Red off.
+func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, player int) {
+	fromArr := bgfGetIntArray(moveData, "from")
+	toArr := bgfGetIntArray(moveData, "to")
+
+	for i := 0; i < 4; i++ {
+		from := fromArr[i]
+		to := toArr[i]
+		if from == -1 {
+			break // No more submoves
+		}
+
+		if player == -1 {
+			// Green moves: Green's point N maps to board index (N-1)
+			// Green moves in decreasing direction (24→1→off)
+			var fromIdx int
+			if from == 25 {
+				fromIdx = 24 // Green's bar
+			} else {
+				fromIdx = from - 1 // 1-based to 0-based
+			}
+
+			// Remove checker from source
+			boardState[fromIdx]--
+
+			if to == 0 {
+				// Bear off
+				boardState[26]++
+			} else {
+				toIdx := to - 1 // 1-based to 0-based
+				// Check for hit
+				if boardState[toIdx] < 0 {
+					// Hit Red checker - move it to Red's bar
+					boardState[25] += boardState[toIdx] // boardState[toIdx] is negative, so this decrements
+					boardState[toIdx] = 0
+				}
+				boardState[toIdx]++
+			}
+		} else {
+			// Red moves: Red's point N maps to board index (24-N)
+			// Red moves in increasing direction (from Green's perspective)
+			var fromIdx int
+			if from == 25 {
+				fromIdx = 25 // Red's bar
+			} else {
+				fromIdx = 24 - from // Red's 1-based to Green's 0-based
+			}
+
+			// Remove checker from source (Red checkers are negative)
+			boardState[fromIdx]++
+
+			if to == 0 {
+				// Bear off
+				boardState[27]--
+			} else {
+				toIdx := 24 - to // Red's 1-based to Green's 0-based
+				// Check for hit
+				if boardState[toIdx] > 0 {
+					// Hit Green checker - move it to Green's bar
+					boardState[24] += boardState[toIdx]
+					boardState[toIdx] = 0
+				}
+				boardState[toIdx]--
+			}
+		}
+	}
+}
+
+// bgfConvertMoveToString converts BGF move from/to arrays to standard notation.
+// BGF from/to are 1-based from the active player's perspective (25=bar, 0=off).
+func bgfConvertMoveToString(moveData map[string]interface{}, player int) string {
+	fromArr := bgfGetIntArray(moveData, "from")
+	toArr := bgfGetIntArray(moveData, "to")
+
+	if fromArr[0] == -1 {
+		return "" // No move (fanned/dance)
+	}
+
+	type submove struct {
+		from int
+		to   int
+	}
+
+	moves := make([]submove, 0, 4)
+	for i := 0; i < 4; i++ {
+		if fromArr[i] == -1 {
+			break
+		}
+		// from/to are already 1-based from player perspective
+		from := fromArr[i]
+		to := toArr[i]
+
+		// from=25 means bar, keep as 25
+		// to=0 means bear off, keep as 0
+
+		moves = append(moves, submove{from, to})
+	}
+
+	if len(moves) == 0 {
+		return ""
+	}
+
+	// Sort by source point descending
+	sort.Slice(moves, func(i, j int) bool {
+		return moves[i].from > moves[j].from
+	})
+
+	// Group identical moves
+	var parts []string
+	i := 0
+	for i < len(moves) {
+		count := 1
+		for i+count < len(moves) && moves[i+count].from == moves[i].from && moves[i+count].to == moves[i].to {
+			count++
+		}
+
+		fromStr := fmt.Sprintf("%d", moves[i].from)
+		if moves[i].from == 25 {
+			fromStr = "bar"
+		}
+
+		toStr := fmt.Sprintf("%d", moves[i].to)
+		if moves[i].to == 0 {
+			toStr = "off"
+		}
+
+		if count > 1 {
+			parts = append(parts, fmt.Sprintf("%s/%s(%d)", fromStr, toStr, count))
+		} else {
+			parts = append(parts, fmt.Sprintf("%s/%s", fromStr, toStr))
+		}
+
+		i += count
+	}
+
+	return strings.Join(parts, " ")
+}
+
+// saveBGFMoveAnalysisInTx saves BGF move analysis to the move_analysis table
+func (d *Database) saveBGFMoveAnalysisInTx(tx *sql.Tx, moveID int64, maData map[string]interface{}) error {
+	eq := bgfGetMap(maData, "eq")
+	if eq == nil {
+		return nil
+	}
+
+	ply := bgfGetInt(maData, "ply")
+
+	playerWin := bgfGetFloat(eq, "myWins") * 100.0
+	playerGammon := bgfGetFloat(eq, "myGammon") * 100.0
+	playerBg := bgfGetFloat(eq, "myBackGammon") * 100.0
+	opponentWin := bgfGetFloat(eq, "oppWins") * 100.0
+	opponentGammon := bgfGetFloat(eq, "oppGammon") * 100.0
+	opponentBg := bgfGetFloat(eq, "oppBackGammon") * 100.0
+
+	equity := bgfGetFloat(eq, "emg")
+	if !bgfGetBool(eq, "hasEMG") {
+		equity = bgfGetFloat(eq, "equity")
+	}
+
+	_, err := tx.Exec(`
+		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
+		                           win_rate, gammon_rate, backgammon_rate,
+		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, moveID, "checker", translateBGFAnalysisDepth(ply),
+		equity, 0.0,
+		playerWin, playerGammon, playerBg,
+		opponentWin, opponentGammon, opponentBg)
+
+	return err
+}
+
+// saveBGFCheckerAnalysisToPositionInTx saves BGF checker analysis to position analysis table
+func (d *Database) saveBGFCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int64, moveAnalysis []interface{}, blunderDBPlayer int, playedMoveStr string) error {
+	if len(moveAnalysis) == 0 {
+		return nil
+	}
+
+	posAnalysis := PositionAnalysis{
+		PositionID:            int(positionID),
+		AnalysisType:          "CheckerMove",
+		AnalysisEngineVersion: "BGBlitz",
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
+	}
+
+	checkerMoves := make([]CheckerMove, 0, len(moveAnalysis))
+	var bestEquity float64
+
+	for i, maRaw := range moveAnalysis {
+		maData, ok := maRaw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+
+		eq := bgfGetMap(maData, "eq")
+		if eq == nil {
+			continue
+		}
+
+		ply := bgfGetInt(maData, "ply")
+		played := bgfGetBool(maData, "played")
+
+		equity := bgfGetFloat(eq, "emg")
+		if !bgfGetBool(eq, "hasEMG") {
+			equity = bgfGetFloat(eq, "equity")
+		}
+
+		if i == 0 {
+			bestEquity = equity
+		}
+
+		// Convert move from analysis
+		moveStr := ""
+		moveInfo := bgfGetMap(maData, "move")
+		if moveInfo != nil {
+			moveStr = bgfConvertAnalysisMoveToString(moveInfo)
+		}
+
+		var equityError *float64
+		if i > 0 {
+			diff := bestEquity - equity
+			equityError = &diff
+		}
+
+		checkerMove := CheckerMove{
+			Index:                    i,
+			AnalysisDepth:            translateBGFAnalysisDepth(ply),
+			AnalysisEngine:           "BGBlitz",
+			Move:                     moveStr,
+			Equity:                   equity,
+			EquityError:              equityError,
+			PlayerWinChance:          bgfGetFloat(eq, "myWins") * 100.0,
+			PlayerGammonChance:       bgfGetFloat(eq, "myGammon") * 100.0,
+			PlayerBackgammonChance:   bgfGetFloat(eq, "myBackGammon") * 100.0,
+			OpponentWinChance:        bgfGetFloat(eq, "oppWins") * 100.0,
+			OpponentGammonChance:     bgfGetFloat(eq, "oppGammon") * 100.0,
+			OpponentBackgammonChance: bgfGetFloat(eq, "oppBackGammon") * 100.0,
+		}
+		checkerMoves = append(checkerMoves, checkerMove)
+
+		_ = played
+	}
+
+	posAnalysis.CheckerAnalysis = &CheckerAnalysis{
+		Moves: checkerMoves,
+	}
+
+	if playedMoveStr != "" {
+		posAnalysis.PlayedMoves = []string{playedMoveStr}
+	}
+
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
+// saveBGFCubeMoveAnalysisInTx saves BGF cube analysis to move_analysis table
+func (d *Database) saveBGFCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
+	playerWin := bgfGetFloat(equity, "myWins") * 100.0
+	playerGammon := bgfGetFloat(equity, "myGammon") * 100.0
+	playerBg := bgfGetFloat(equity, "myBackGammon") * 100.0
+	opponentWin := bgfGetFloat(equity, "oppWins") * 100.0
+	opponentGammon := bgfGetFloat(equity, "oppGammon") * 100.0
+	opponentBg := bgfGetFloat(equity, "oppBackGammon") * 100.0
+
+	eqNoDouble := bgfGetFloat(cubeDecision, "eqNoDouble")
+
+	ply := 0 // Cube analysis doesn't have a ply field in BGF, use the move level
+	if pVal, ok := equity["ply"]; ok {
+		ply = bgfToInt(pVal)
+	}
+
+	_, err := tx.Exec(`
+		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
+		                           win_rate, gammon_rate, backgammon_rate,
+		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, moveID, "cube", translateBGFAnalysisDepth(ply),
+		eqNoDouble, 0.0,
+		playerWin, playerGammon, playerBg,
+		opponentWin, opponentGammon, opponentBg)
+
+	return err
+}
+
+// saveBGFCubeAnalysisToPositionInTx saves BGF cube analysis to position analysis table
+func (d *Database) saveBGFCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, equity map[string]interface{}, cubeDecision map[string]interface{}, playedCubeAction string) error {
+	posAnalysis := PositionAnalysis{
+		PositionID:            int(positionID),
+		AnalysisType:          "DoublingCube",
+		AnalysisEngineVersion: "BGBlitz",
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
+	}
+
+	cubefulNoDouble := bgfGetFloat(cubeDecision, "eqNoDouble")
+	cubefulDoubleTake := bgfGetFloat(cubeDecision, "eqDoubleTake")
+	cubefulDoublePass := bgfGetFloat(cubeDecision, "eqDoublePass")
+
+	cubelessEquity := bgfGetFloat(cubeDecision, "eqCubeLess")
+	_ = bgfGetFloat(cubeDecision, "eqCubeFul") // cubefulEquity available but not directly used
+
+	// Calculate best equity
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
+	}
+
+	bestEquity := cubefulNoDouble
+	bestAction := "No Double"
+	if effectiveDoubleEquity > cubefulNoDouble {
+		bestEquity = effectiveDoubleEquity
+		if cubefulDoubleTake <= cubefulDoublePass {
+			bestAction = "Double, Take"
+		} else {
+			bestAction = "Double, Pass"
+		}
+	}
+
+	// Also derive from BGF stateOnMove/stateOther
+	stateOnMove := bgfGetString(cubeDecision, "stateOnMove")
+	stateOther := bgfGetString(cubeDecision, "stateOther")
+	if stateOnMove == "DOUBLE" || stateOnMove == "REDOUBLE" {
+		if stateOther == "ACCEPT" {
+			bestAction = "Double, Take"
+		} else if stateOther == "REJECT" {
+			bestAction = "Double, Pass"
+		}
+	} else if stateOnMove == "TO_GOOD" {
+		bestAction = "No Double"
+	} else if stateOnMove == "NO_DOUBLE" {
+		bestAction = "No Double"
+	}
+
+	cubeAnalysis := DoublingCubeAnalysis{
+		AnalysisDepth:             "2-ply", // BGBlitz default
+		AnalysisEngine:            "BGBlitz",
+		PlayerWinChances:          bgfGetFloat(equity, "myWins") * 100.0,
+		PlayerGammonChances:       bgfGetFloat(equity, "myGammon") * 100.0,
+		PlayerBackgammonChances:   bgfGetFloat(equity, "myBackGammon") * 100.0,
+		OpponentWinChances:        bgfGetFloat(equity, "oppWins") * 100.0,
+		OpponentGammonChances:     bgfGetFloat(equity, "oppGammon") * 100.0,
+		OpponentBackgammonChances: bgfGetFloat(equity, "oppBackGammon") * 100.0,
+		CubelessNoDoubleEquity:    cubelessEquity,
+		CubelessDoubleEquity:      cubelessEquity,
+		CubefulNoDoubleEquity:     cubefulNoDouble,
+		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
+		CubefulDoubleTakeEquity:   cubefulDoubleTake,
+		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
+		CubefulDoublePassEquity:   cubefulDoublePass,
+		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
+		BestCubeAction:            bestAction,
+		WrongPassPercentage:       0.0,
+		WrongTakePercentage:       0.0,
+	}
+
+	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
+
+	if playedCubeAction != "" {
+		posAnalysis.PlayedCubeActions = []string{playedCubeAction}
+	}
+
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
+// saveBGFCubeAnalysisForCheckerPositionInTx saves cube analysis from equity field to a checker position
+func (d *Database) saveBGFCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
+	// Try to load existing analysis for this position
+	var existingAnalysisJSON string
+	var existingID int64
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+
+	var posAnalysis PositionAnalysis
+	if err == nil && existingID > 0 {
+		err = json.Unmarshal([]byte(existingAnalysisJSON), &posAnalysis)
+		if err != nil {
+			return err
+		}
+	} else {
+		posAnalysis = PositionAnalysis{
+			PositionID:            int(positionID),
+			AnalysisType:          "CheckerMove",
+			AnalysisEngineVersion: "BGBlitz",
+			CreationDate:          time.Now(),
+		}
+	}
+
+	posAnalysis.LastModifiedDate = time.Now()
+
+	cubefulNoDouble := bgfGetFloat(cubeDecision, "eqNoDouble")
+	cubefulDoubleTake := bgfGetFloat(cubeDecision, "eqDoubleTake")
+	cubefulDoublePass := bgfGetFloat(cubeDecision, "eqDoublePass")
+	cubelessEquity := bgfGetFloat(cubeDecision, "eqCubeLess")
+
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
+	}
+
+	bestEquity := cubefulNoDouble
+	bestAction := "No Double"
+	if effectiveDoubleEquity > cubefulNoDouble {
+		bestEquity = effectiveDoubleEquity
+		if cubefulDoubleTake <= cubefulDoublePass {
+			bestAction = "Double, Take"
+		} else {
+			bestAction = "Double, Pass"
+		}
+	}
+
+	cubeAnalysis := DoublingCubeAnalysis{
+		AnalysisDepth:             "2-ply",
+		AnalysisEngine:            "BGBlitz",
+		PlayerWinChances:          bgfGetFloat(equity, "myWins") * 100.0,
+		PlayerGammonChances:       bgfGetFloat(equity, "myGammon") * 100.0,
+		PlayerBackgammonChances:   bgfGetFloat(equity, "myBackGammon") * 100.0,
+		OpponentWinChances:        bgfGetFloat(equity, "oppWins") * 100.0,
+		OpponentGammonChances:     bgfGetFloat(equity, "oppGammon") * 100.0,
+		OpponentBackgammonChances: bgfGetFloat(equity, "oppBackGammon") * 100.0,
+		CubelessNoDoubleEquity:    cubelessEquity,
+		CubelessDoubleEquity:      cubelessEquity,
+		CubefulNoDoubleEquity:     cubefulNoDouble,
+		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
+		CubefulDoubleTakeEquity:   cubefulDoubleTake,
+		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
+		CubefulDoublePassEquity:   cubefulDoublePass,
+		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
+		BestCubeAction:            bestAction,
+		WrongPassPercentage:       0.0,
+		WrongTakePercentage:       0.0,
+	}
+
+	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
+
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
+// bgfConvertAnalysisMoveToString converts a BGF move from analysis entry to string notation
+// bgfConvertAnalysisMoveToString converts a BGF move from analysis entry to string notation.
+// BGF from/to are 1-based from the active player's perspective (25=bar, 0=off).
+func bgfConvertAnalysisMoveToString(moveInfo map[string]interface{}) string {
+	fromArr := bgfGetIntArray(moveInfo, "from")
+	toArr := bgfGetIntArray(moveInfo, "to")
+
+	if fromArr[0] == -1 {
+		return ""
+	}
+
+	type submove struct {
+		from int
+		to   int
+	}
+
+	moves := make([]submove, 0, 4)
+	for i := 0; i < 4; i++ {
+		if fromArr[i] == -1 {
+			break
+		}
+		// from/to are already 1-based from player perspective
+		from := fromArr[i]
+		to := toArr[i]
+
+		moves = append(moves, submove{from, to})
+	}
+
+	if len(moves) == 0 {
+		return ""
+	}
+
+	sort.Slice(moves, func(i, j int) bool {
+		return moves[i].from > moves[j].from
+	})
+
+	var parts []string
+	i := 0
+	for i < len(moves) {
+		count := 1
+		for i+count < len(moves) && moves[i+count].from == moves[i].from && moves[i+count].to == moves[i].to {
+			count++
+		}
+
+		fromStr := fmt.Sprintf("%d", moves[i].from)
+		if moves[i].from == 25 {
+			fromStr = "bar"
+		}
+		toStr := fmt.Sprintf("%d", moves[i].to)
+		if moves[i].to == 0 {
+			toStr = "off"
+		}
+
+		if count > 1 {
+			parts = append(parts, fmt.Sprintf("%s/%s(%d)", fromStr, toStr, count))
+		} else {
+			parts = append(parts, fmt.Sprintf("%s/%s", fromStr, toStr))
+		}
+		i += count
+	}
+
+	return strings.Join(parts, " ")
+}
+
+// translateBGFAnalysisDepth converts BGF ply level to human-readable string
+func translateBGFAnalysisDepth(ply int) string {
+	if ply > 0 {
+		return fmt.Sprintf("%d-ply", ply)
+	}
+	return "0-ply"
+}
+
+// ComputeBGFMatchHash generates a unique hash for a BGF match for duplicate detection
+func ComputeBGFMatchHash(match *bgfparser.Match) string {
+	var hashBuilder strings.Builder
+
+	data := match.Data
+	p1 := strings.TrimSpace(strings.ToLower(bgfGetString(data, "nameGreen")))
+	p2 := strings.TrimSpace(strings.ToLower(bgfGetString(data, "nameRed")))
+	matchLen := bgfGetInt(data, "matchlen")
+	hashBuilder.WriteString(fmt.Sprintf("bgf:%s|%s|%d|", p1, p2, matchLen))
+
+	gamesData, _ := data["games"].([]interface{})
+	for gameIdx, gameRaw := range gamesData {
+		g, ok := gameRaw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d,%d|",
+			gameIdx, bgfGetInt(g, "scoreGreen"), bgfGetInt(g, "scoreRed"), bgfGetInt(g, "wonPoints")))
+
+		movesData, _ := g["moves"].([]interface{})
+		for moveIdx, moveRaw := range movesData {
+			m, ok := moveRaw.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			mtype := bgfGetString(m, "type")
+			hashBuilder.WriteString(fmt.Sprintf("m%d:%s,", moveIdx, mtype))
+			if mtype == "amove" {
+				d1 := bgfGetInt(m, "green")
+				d2 := bgfGetInt(m, "red")
+				hashBuilder.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
+			} else if mtype == "adouble" || mtype == "atake" || mtype == "apass" {
+				hashBuilder.WriteString(fmt.Sprintf("c%s|", mtype))
+			}
+		}
+	}
+
+	hash := sha256.Sum256([]byte(hashBuilder.String()))
+	return hex.EncodeToString(hash[:])
+}
+
+// ComputeCanonicalMatchHashFromBGF computes a format-independent match hash from BGF data.
+// Must produce the same hash as ComputeCanonicalMatchHashFromXG for the same match.
+func ComputeCanonicalMatchHashFromBGF(match *bgfparser.Match) string {
+	var hashBuilder strings.Builder
+
+	data := match.Data
+	p1 := strings.TrimSpace(strings.ToLower(bgfGetString(data, "nameGreen")))
+	p2 := strings.TrimSpace(strings.ToLower(bgfGetString(data, "nameRed")))
+	matchLen := bgfGetInt(data, "matchlen")
+
+	if p1 > p2 {
+		p1, p2 = p2, p1
+	}
+	hashBuilder.WriteString(fmt.Sprintf("canonical:%s|%s|%d|", p1, p2, matchLen))
+
+	gamesData, _ := data["games"].([]interface{})
+	for gameIdx, gameRaw := range gamesData {
+		g, ok := gameRaw.(map[string]interface{})
+		if !ok {
+			continue
+		}
+		wonPoints := bgfGetInt(g, "wonPoints")
+		// Winner: determine from context
+		// In BGF, we need to figure out who won. We use wonPoints > 0 means the game was won.
+		// The last player to move in the game typically won.
+		winner := int32(0)
+		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d|", gameIdx, winner, wonPoints))
+
+		movesData, _ := g["moves"].([]interface{})
+		for _, moveRaw := range movesData {
+			m, ok := moveRaw.(map[string]interface{})
+			if !ok {
+				continue
+			}
+			mtype := bgfGetString(m, "type")
+			if mtype == "amove" {
+				d1 := bgfGetInt(m, "green")
+				d2 := bgfGetInt(m, "red")
+				if d1 > d2 {
+					d1, d2 = d2, d1
+				}
+				hashBuilder.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
+			} else if mtype == "adouble" || mtype == "atake" || mtype == "apass" {
+				hashBuilder.WriteString("cube|")
+			}
+		}
+	}
+
+	hash := sha256.Sum256([]byte(hashBuilder.String()))
+	return hex.EncodeToString(hash[:])
+}
+
+// ImportBGFPosition imports a single BGBlitz position from a TXT file
+func (d *Database) ImportBGFPosition(filePath string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	pos, err := bgfparser.ParseTXT(filePath)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse BGBlitz position file: %w", err)
+	}
+
+	return d.saveBGFPositionWithAnalysis(pos)
+}
+
+// ImportBGFPositionFromText imports a BGBlitz position from text content (clipboard/string)
+func (d *Database) ImportBGFPositionFromText(content string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	pos, err := bgfparser.ParseTXTFromReader(strings.NewReader(content))
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse BGBlitz position text: %w", err)
+	}
+
+	return d.saveBGFPositionWithAnalysis(pos)
+}
+
+// saveBGFPositionWithAnalysis converts a bgfparser.Position to blunderDB Position and saves it
+func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int64, error) {
+	// Convert bgfparser.Position to blunderDB Position
+	pos := d.convertBGFTextPosition(bgfPos)
+
+	// Save position to database (inline, since caller already holds the mutex)
+	normalizedPosition := pos.NormalizeForStorage()
+	positionJSON, err := json.Marshal(normalizedPosition)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal position: %w", err)
+	}
+
+	result, err := d.db.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert position: %w", err)
+	}
+
+	positionID, err := result.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get position ID: %w", err)
+	}
+
+	normalizedPosition.ID = positionID
+	positionJSON, err = json.Marshal(normalizedPosition)
+	if err != nil {
+		return positionID, nil
+	}
+	d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
+
+	// Save checker evaluation analysis if available
+	if len(bgfPos.Evaluations) > 0 {
+		posAnalysis := PositionAnalysis{
+			PositionID:            int(positionID),
+			XGID:                  bgfPos.XGID,
+			Player1:               bgfPos.PlayerX,
+			Player2:               bgfPos.PlayerO,
+			AnalysisType:          "CheckerMove",
+			AnalysisEngineVersion: "BGBlitz",
+			CreationDate:          time.Now(),
+			LastModifiedDate:      time.Now(),
+		}
+
+		checkerMoves := make([]CheckerMove, 0, len(bgfPos.Evaluations))
+		for i, eval := range bgfPos.Evaluations {
+			var equityError *float64
+			if i > 0 {
+				diff := bgfPos.Evaluations[0].Equity - eval.Equity
+				equityError = &diff
+			}
+
+			checkerMove := CheckerMove{
+				Index:                    i,
+				AnalysisDepth:            "2-ply", // BGBlitz TXT files don't specify ply, default to 2-ply
+				AnalysisEngine:           "BGBlitz",
+				Move:                     eval.Move,
+				Equity:                   eval.Equity,
+				EquityError:              equityError,
+				PlayerWinChance:          eval.Win * 100.0,
+				PlayerGammonChance:       eval.WinG * 100.0,
+				PlayerBackgammonChance:   eval.WinBG * 100.0,
+				OpponentWinChance:        (1.0 - eval.Win) * 100.0,
+				OpponentGammonChance:     eval.LoseG * 100.0,
+				OpponentBackgammonChance: eval.LoseBG * 100.0,
+			}
+			checkerMoves = append(checkerMoves, checkerMove)
+		}
+
+		posAnalysis.CheckerAnalysis = &CheckerAnalysis{
+			Moves: checkerMoves,
+		}
+
+		analysisJSON, err := json.Marshal(posAnalysis)
+		if err != nil {
+			return positionID, nil // Position saved, analysis failed
+		}
+		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		if err != nil {
+			fmt.Printf("Warning: failed to save checker analysis for BGBlitz position: %v\n", err)
+		}
+	}
+
+	// Save cube decision analysis if available
+	if len(bgfPos.CubeDecisions) > 0 {
+		posAnalysis := PositionAnalysis{
+			PositionID:            int(positionID),
+			XGID:                  bgfPos.XGID,
+			Player1:               bgfPos.PlayerX,
+			Player2:               bgfPos.PlayerO,
+			AnalysisType:          "DoublingCube",
+			AnalysisEngineVersion: "BGBlitz",
+			CreationDate:          time.Now(),
+			LastModifiedDate:      time.Now(),
+		}
+
+		// Find the best action using multilingual classifier
+		var noDouble, doubleTake, doublePass *bgfparser.CubeDecision
+		for i := range bgfPos.CubeDecisions {
+			cd := &bgfPos.CubeDecisions[i]
+			switch classifyBGFCubeAction(cd.Action) {
+			case "nodbl":
+				noDouble = cd
+			case "take":
+				doubleTake = cd
+			case "pass":
+				doublePass = cd
+			}
+		}
+
+		cubefulNoDouble := 0.0
+		cubefulDoubleTake := 0.0
+		cubefulDoublePass := 1.0 // Default pass equity
+
+		if noDouble != nil {
+			cubefulNoDouble = noDouble.EMG
+		}
+		if doubleTake != nil {
+			cubefulDoubleTake = doubleTake.EMG
+		}
+		if doublePass != nil {
+			cubefulDoublePass = doublePass.EMG
+		}
+
+		effectiveDoubleEquity := cubefulDoubleTake
+		if cubefulDoublePass < cubefulDoubleTake {
+			effectiveDoubleEquity = cubefulDoublePass
+		}
+
+		bestEquity := cubefulNoDouble
+		bestAction := "No Double"
+		if effectiveDoubleEquity > cubefulNoDouble {
+			bestEquity = effectiveDoubleEquity
+			if cubefulDoubleTake <= cubefulDoublePass {
+				bestAction = "Double, Take"
+			} else {
+				bestAction = "Double, Pass"
+			}
+		}
+
+		cubeAnalysis := DoublingCubeAnalysis{
+			AnalysisDepth:           "2-ply",
+			AnalysisEngine:          "BGBlitz",
+			CubelessNoDoubleEquity:  bgfPos.CubelessEquity,
+			CubelessDoubleEquity:    bgfPos.CubelessEquity,
+			CubefulNoDoubleEquity:   cubefulNoDouble,
+			CubefulNoDoubleError:    cubefulNoDouble - bestEquity,
+			CubefulDoubleTakeEquity: cubefulDoubleTake,
+			CubefulDoubleTakeError:  cubefulDoubleTake - bestEquity,
+			CubefulDoublePassEquity: cubefulDoublePass,
+			CubefulDoublePassError:  cubefulDoublePass - bestEquity,
+			BestCubeAction:          bestAction,
+		}
+
+		posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
+
+		analysisJSON, err := json.Marshal(posAnalysis)
+		if err != nil {
+			return positionID, nil
+		}
+		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		if err != nil {
+			fmt.Printf("Warning: failed to save cube analysis for BGBlitz position: %v\n", err)
+		}
+	}
+
+	return positionID, nil
+}
+
+// convertBGFTextPosition converts a bgfparser.Position from TXT format to blunderDB Position
+func (d *Database) convertBGFTextPosition(bgfPos *bgfparser.Position) *Position {
+	pos := &Position{
+		PlayerOnRoll: 0,
+		DecisionType: CheckerAction,
+	}
+
+	// Convert board from bgfparser encoding to blunderDB
+	// bgfparser Board[26]:
+	//   Index 0: (unused or bar-like)
+	//   Index 1-24: Points 1-24 (positive=X/Green, negative=O/Red)
+	//   Index 25: (unused or bar-like)
+	// blunderDB:
+	//   Index 0: Player 2's bar (Red/White)
+	//   Index 1-24: Points 1-24
+	//   Index 25: Player 1's bar (Green/Black)
+
+	for i := 0; i < 26; i++ {
+		pos.Board.Points[i] = Point{Checkers: 0, Color: -1}
+	}
+
+	// Map points 1-24
+	for i := 1; i <= 24; i++ {
+		count := bgfPos.Board[i]
+		if count > 0 {
+			pos.Board.Points[i] = Point{Checkers: count, Color: 0} // Green = Color 0
+		} else if count < 0 {
+			pos.Board.Points[i] = Point{Checkers: -count, Color: 1} // Red = Color 1
+		}
+	}
+
+	// Map bars from OnBar map
+	if bgfPos.OnBar != nil {
+		if xBar, ok := bgfPos.OnBar["X"]; ok && xBar > 0 {
+			pos.Board.Points[25] = Point{Checkers: xBar, Color: 0} // Green bar
+		}
+		if oBar, ok := bgfPos.OnBar["O"]; ok && oBar > 0 {
+			pos.Board.Points[0] = Point{Checkers: oBar, Color: 1} // Red bar
+		}
+	}
+
+	// Calculate bearoff
+	player1Total := 0
+	player2Total := 0
+	for i := 0; i < 26; i++ {
+		if pos.Board.Points[i].Color == 0 {
+			player1Total += pos.Board.Points[i].Checkers
+		} else if pos.Board.Points[i].Color == 1 {
+			player2Total += pos.Board.Points[i].Checkers
+		}
+	}
+	pos.Board.Bearoff = [2]int{15 - player1Total, 15 - player2Total}
+
+	// Set player on roll
+	if bgfPos.OnRoll == "O" {
+		pos.PlayerOnRoll = 1
+	} else {
+		pos.PlayerOnRoll = 0
+	}
+
+	// Set dice
+	pos.Dice = [2]int{bgfPos.Dice[0], bgfPos.Dice[1]}
+
+	// Set cube
+	cubeExponent := 0
+	if bgfPos.CubeValue > 0 {
+		for v := bgfPos.CubeValue; v > 1; v >>= 1 {
+			cubeExponent++
+		}
+	}
+	pos.Cube.Value = cubeExponent
+
+	switch bgfPos.CubeOwner {
+	case "X":
+		pos.Cube.Owner = 0 // Green owns
+	case "O":
+		pos.Cube.Owner = 1 // Red owns
+	default:
+		pos.Cube.Owner = -1 // Center
+	}
+
+	// Set scores (away scores)
+	if bgfPos.MatchLength > 0 {
+		pos.Score = [2]int{bgfPos.MatchLength - bgfPos.ScoreX, bgfPos.MatchLength - bgfPos.ScoreO}
+	} else {
+		pos.Score = [2]int{-1, -1} // Unlimited
+	}
+
+	// Decision type based on available analysis
+	if len(bgfPos.CubeDecisions) > 0 && len(bgfPos.Evaluations) == 0 {
+		pos.DecisionType = CubeAction
+		pos.Dice = [2]int{0, 0}
+	}
+
+	return pos
+}
+
+// ============================================================================
+// BGF helper functions for extracting typed values from map[string]interface{}
+// ============================================================================
+
+// bgfPlayerToBlunderDB converts BGF player encoding to blunderDB encoding
+// BGF: -1 = Green (first player), 1 = Red (second player)
+// blunderDB: 0 = Player 1 (Green/Black), 1 = Player 2 (Red/White)
+func bgfPlayerToBlunderDB(bgfPlayer int) int {
+	if bgfPlayer == -1 {
+		return 0 // Green = Player 1
+	}
+	return 1 // Red = Player 2
+}
+
+func bgfGetString(m map[string]interface{}, key string) string {
+	if v, ok := m[key]; ok {
+		if s, ok := v.(string); ok {
+			return s
+		}
+	}
+	return ""
+}
+
+// classifyBGFCubeAction classifies a cube decision action string into one of
+// "nodbl" (No Double / No Redouble), "take" (Double/Take, Redouble/Take),
+// or "pass" (Double/Pass, Redouble/Pass).
+// Handles multilingual action strings from BGBlitz text export (EN, FR, DE, JP, etc.).
+func classifyBGFCubeAction(action string) string {
+	action = strings.ToLower(strings.TrimSpace(action))
+
+	// No Double / No Redouble patterns
+	noDoublePatterns := []string{
+		"no double", "no redouble", // English
+		"pas de double", "pas de redouble", // French
+		"kein doppel", "kein redoppel", // German
+		"\u30c0\u30d6\u30eb\u305b\u305a", // Japanese: ダブルせず
+	}
+	for _, p := range noDoublePatterns {
+		if strings.Contains(action, p) {
+			return "nodbl"
+		}
+	}
+
+	// Double/Take patterns (check before pass since "take" is more specific)
+	takePatterns := []string{
+		"take", "accept", // English
+		"prendre", "accepter", // French
+		"annehmen",           // German
+		"\u53d7\u3051\u308b", // Japanese: 受ける
+	}
+	for _, p := range takePatterns {
+		if strings.Contains(action, p) {
+			return "take"
+		}
+	}
+
+	// Double/Pass patterns
+	passPatterns := []string{
+		"pass", "reject", "decline", // English
+		"refuser",            // French
+		"ablehnen",           // German
+		"\u964d\u308a\u308b", // Japanese: 降りる
+	}
+	for _, p := range passPatterns {
+		if strings.Contains(action, p) {
+			return "pass"
+		}
+	}
+
+	// Fallback: if the action contains a separator ("/"), it's likely take or pass.
+	// If no separator, it's likely no double.
+	if !strings.Contains(action, "/") {
+		return "nodbl"
+	}
+
+	return "unknown"
+}
+
+func bgfGetInt(m map[string]interface{}, key string) int {
+	if v, ok := m[key]; ok {
+		return bgfToInt(v)
+	}
+	return 0
+}
+
+func bgfGetFloat(m map[string]interface{}, key string) float64 {
+	if v, ok := m[key]; ok {
+		return bgfToFloat(v)
+	}
+	return 0.0
+}
+
+func bgfGetBool(m map[string]interface{}, key string) bool {
+	if v, ok := m[key]; ok {
+		if b, ok := v.(bool); ok {
+			return b
+		}
+	}
+	return false
+}
+
+func bgfGetMap(m map[string]interface{}, key string) map[string]interface{} {
+	if v, ok := m[key]; ok {
+		if sub, ok := v.(map[string]interface{}); ok {
+			return sub
+		}
+	}
+	return nil
+}
+
+func bgfGetIntArray(m map[string]interface{}, key string) [4]int {
+	var result [4]int
+	for i := range result {
+		result[i] = -1
+	}
+	if v, ok := m[key]; ok {
+		if arr, ok := v.([]interface{}); ok {
+			for i := 0; i < 4 && i < len(arr); i++ {
+				result[i] = bgfToInt(arr[i])
+			}
+		}
+	}
+	return result
+}
+
+func bgfToInt(v interface{}) int {
+	switch val := v.(type) {
+	case float64:
+		return int(val)
+	case int:
+		return val
+	case int64:
+		return int(val)
+	case string:
+		n, _ := strconv.Atoi(val)
+		return n
+	}
+	return 0
+}
+
+func bgfToFloat(v interface{}) float64 {
+	switch val := v.(type) {
+	case float64:
+		return val
+	case int:
+		return float64(val)
+	case int64:
+		return float64(val)
+	case string:
+		f, _ := strconv.ParseFloat(val, 64)
+		return f
+	}
+	return 0.0
 }
 
 // GetAllMatches returns all matches from the database

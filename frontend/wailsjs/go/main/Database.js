@@ -162,6 +162,18 @@ export function GetTournamentMatches(arg1) {
   return window['go']['main']['Database']['GetTournamentMatches'](arg1);
 }
 
+export function ImportBGFMatch(arg1) {
+  return window['go']['main']['Database']['ImportBGFMatch'](arg1);
+}
+
+export function ImportBGFPosition(arg1) {
+  return window['go']['main']['Database']['ImportBGFPosition'](arg1);
+}
+
+export function ImportBGFPositionFromText(arg1) {
+  return window['go']['main']['Database']['ImportBGFPositionFromText'](arg1);
+}
+
 export function ImportDatabase(arg1) {
   return window['go']['main']['Database']['ImportDatabase'](arg1);
 }
