@@ -8983,6 +8983,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			cubeOwner := -1 // center
 
 			moveNumber := int32(0)
+			pendingCubeDouble := false // tracks if previous move was a cube double encoded as amove
 			for moveIdx, moveRaw := range movesData {
 				moveData, ok := moveRaw.(map[string]interface{})
 				if !ok {
@@ -8994,12 +8995,75 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 
 				switch mtype {
 				case "amove":
+					// Check if this is a cube action encoded as amove
+					// (BGBlitz uses amove with from=[-1,-1,-1,-1] and green=7 for cube actions)
+					fromArr := bgfGetIntArray(moveData, "from")
+					if fromArr[0] == -1 {
+						if pendingCubeDouble {
+							// This is the response to a pending cube double (take/pass)
+							pendingCubeDouble = false
+							equity := bgfGetMap(moveData, "equity")
+							if equity != nil {
+								cd := bgfGetMap(equity, "cubeDecision")
+								if cd != nil && bgfGetBool(cd, "hasAccepted") {
+									// Take - update cube state
+									cubeValue *= 2
+									if player == -1 {
+										cubeOwner = 0 // Green takes
+									} else {
+										cubeOwner = 1 // Red takes
+									}
+								}
+								// Pass: no cube state update needed (game ends)
+							}
+							// Don't increment moveNumber (response is part of the double action)
+							continue
+						}
+
+						// This is a cube double
+						pendingCubeDouble = true
+						cubeAction := "Double/Take" // default
+						// Look ahead for the response
+						for j := moveIdx + 1; j < len(movesData); j++ {
+							nextMove, ok := movesData[j].(map[string]interface{})
+							if !ok {
+								continue
+							}
+							nextFrom := bgfGetIntArray(nextMove, "from")
+							if nextFrom[0] == -1 {
+								eq := bgfGetMap(nextMove, "equity")
+								if eq != nil {
+									cd := bgfGetMap(eq, "cubeDecision")
+									if cd != nil && !bgfGetBool(cd, "hasAccepted") {
+										cubeAction = "Double/Pass"
+									}
+								}
+								break
+							}
+							break
+						}
+
+						err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+						if err != nil {
+							fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
+						}
+						moveNumber++
+						continue
+					}
+
+					// Normal checker move
 					err := d.importBGFCheckerMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache)
 					if err != nil {
 						fmt.Printf("Warning: failed to import BGF move %d in game %d: %v\n", moveIdx, gameIdx+1, err)
 					}
-					// Update board state
-					bgfApplyCheckerMove(&boardState, moveData, player)
+					// Update board state - skip when green=7 (unplayable die marker)
+					// BGBlitz uses green=7 to indicate that one die couldn't be played.
+					// The from/to data in these moves represents analysis recommendations,
+					// not actual game moves, so applying them corrupts the board state.
+					greenDie := bgfGetInt(moveData, "green")
+					if greenDie != 7 {
+						bgfApplyCheckerMove(&boardState, moveData, player)
+					}
 					moveNumber++
 
 				case "adouble":
@@ -9057,6 +9121,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			boardState := bgfInitBoardFromGame(gameData)
 			cubeValue := 1
 			cubeOwner := -1
+			pendingCubeDouble2 := false
 
 			for moveIdx, moveRaw := range movesData {
 				moveData, ok := moveRaw.(map[string]interface{})
@@ -9069,8 +9134,55 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 
 				switch mtype {
 				case "amove":
+					// Check if this is a cube action encoded as amove
+					fromArr := bgfGetIntArray(moveData, "from")
+					if fromArr[0] == -1 {
+						if pendingCubeDouble2 {
+							pendingCubeDouble2 = false
+							equity := bgfGetMap(moveData, "equity")
+							if equity != nil {
+								cd := bgfGetMap(equity, "cubeDecision")
+								if cd != nil && bgfGetBool(cd, "hasAccepted") {
+									cubeValue *= 2
+									if player == -1 {
+										cubeOwner = 0
+									} else {
+										cubeOwner = 1
+									}
+								}
+							}
+							continue
+						}
+						pendingCubeDouble2 = true
+						cubeAction := "Double/Take"
+						for j := moveIdx + 1; j < len(movesData); j++ {
+							nextMove, ok := movesData[j].(map[string]interface{})
+							if !ok {
+								continue
+							}
+							nextFrom := bgfGetIntArray(nextMove, "from")
+							if nextFrom[0] == -1 {
+								eq := bgfGetMap(nextMove, "equity")
+								if eq != nil {
+									cd := bgfGetMap(eq, "cubeDecision")
+									if cd != nil && !bgfGetBool(cd, "hasAccepted") {
+										cubeAction = "Double/Pass"
+									}
+								}
+								break
+							}
+							break
+						}
+						d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+						continue
+					}
+
 					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache)
-					bgfApplyCheckerMove(&boardState, moveData, player)
+					// Skip board update for green=7 moves (unplayable die - analysis data only)
+					greenDie := bgfGetInt(moveData, "green")
+					if greenDie != 7 {
+						bgfApplyCheckerMove(&boardState, moveData, player)
+					}
 
 				case "adouble":
 					cubeAction := "Double/Pass"
@@ -9130,14 +9242,51 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 	die1 := dieGreen
 	die2 := dieRed
 
-	// Handle impossible dice values (green=7 appears for some moves like opening rolls)
+	// Handle impossible dice values (green=7 appears in BGBlitz for cube actions)
+	// Cube actions with from[0]==-1 are now handled in the main loop, so this
+	// should only fire for edge cases. Try to infer dice from the from/to arrays.
 	if die1 > 6 || die2 > 6 || die1 < 1 || die2 < 1 {
-		// This is likely an opening roll or special case - use from/to to infer
-		// For fanned moves, dice may be encoded differently
 		fromArr := bgfGetIntArray(moveData, "from")
+		toArr := bgfGetIntArray(moveData, "to")
 		if fromArr[0] == -1 {
-			// Fanned/no move - skip
+			// No checker move at all - skip
 			return nil
+		}
+		// Infer dice from the move sub-moves
+		var diceUsed []int
+		for j := 0; j < 4; j++ {
+			if fromArr[j] == -1 {
+				break
+			}
+			f := fromArr[j]
+			t := toArr[j]
+			if f == 25 {
+				// From bar: die = destination point
+				diceUsed = append(diceUsed, t)
+			} else if t == 0 {
+				// Bear off: die >= distance from point to off
+				diceUsed = append(diceUsed, f)
+			} else {
+				diff := f - t
+				if diff < 0 {
+					diff = -diff
+				}
+				diceUsed = append(diceUsed, diff)
+			}
+		}
+		if len(diceUsed) >= 2 {
+			die1 = diceUsed[0]
+			die2 = diceUsed[1]
+		} else if len(diceUsed) == 1 {
+			// Single sub-move: one die was used, the other couldn't be played
+			if die1 >= 1 && die1 <= 6 {
+				die2 = diceUsed[0]
+			} else if die2 >= 1 && die2 <= 6 {
+				die1 = diceUsed[0]
+			} else {
+				die1 = diceUsed[0]
+				die2 = diceUsed[0] // best guess
+			}
 		}
 	}
 
@@ -9368,7 +9517,9 @@ func (d *Database) createPositionFromBGF(boardState [28]int, gameData map[string
 	}
 
 	// Convert BGF board encoding to blunderDB:
-	// BGF index 0-23: points 1-24 (from Green's perspective)
+	// BGF board is indexed from Green's far side (24-point) to near side (1-point):
+	//   BGF index 0 = Green's 24-point, BGF index 23 = Green's 1-point
+	//   So: BGF index i corresponds to board point (24-i)
 	// BGF index 24: Green's bar, index 25: Red's bar
 	// BGF index 26: Green's borne off, index 27: Red's borne off
 	// Positive = Green checkers, Negative = Red checkers
@@ -9379,16 +9530,16 @@ func (d *Database) createPositionFromBGF(boardState [28]int, gameData map[string
 	// - Index 0 = Player 2's bar (Red/White), Index 25 = Player 1's bar (Green/Black)
 	// - Index 1-24 = Points 1-24
 
-	// Map board points (BGF index 0-23 → blunderDB index 1-24)
+	// Map board points (BGF index i → blunderDB point 24-i)
 	for i := 0; i < 24; i++ {
 		count := boardState[i]
+		blunderDBPoint := 24 - i // BGF index 0 = point 24, index 23 = point 1
 		if count > 0 {
 			// Green checkers (positive)
-			pos.Board.Points[i+1] = Point{Checkers: count, Color: 0} // Color 0 = Green/Player 1
+			pos.Board.Points[blunderDBPoint] = Point{Checkers: count, Color: 0} // Color 0 = Green/Player 1
 		} else if count < 0 {
-			// Red checkers (negative) - from Green's perspective
-			// Red on BGF index i = Red on blunderDB point (i+1)
-			pos.Board.Points[i+1] = Point{Checkers: -count, Color: 1} // Color 1 = Red/Player 2
+			// Red checkers (negative)
+			pos.Board.Points[blunderDBPoint] = Point{Checkers: -count, Color: 1} // Color 1 = Red/Player 2
 		}
 	}
 
@@ -9463,13 +9614,14 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 		}
 
 		if player == -1 {
-			// Green moves: Green's point N maps to board index (N-1)
+			// Green moves: Green's point N maps to board index (24-N)
+			// BGF board: index 0 = Green's 24-point, index 23 = Green's 1-point
 			// Green moves in decreasing direction (24→1→off)
 			var fromIdx int
 			if from == 25 {
 				fromIdx = 24 // Green's bar
 			} else {
-				fromIdx = from - 1 // 1-based to 0-based
+				fromIdx = 24 - from // Green's point N → board index (24-N)
 			}
 
 			// Remove checker from source
@@ -9479,7 +9631,7 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 				// Bear off
 				boardState[26]++
 			} else {
-				toIdx := to - 1 // 1-based to 0-based
+				toIdx := 24 - to // Green's point N → board index (24-N)
 				// Check for hit
 				if boardState[toIdx] < 0 {
 					// Hit Red checker - move it to Red's bar
@@ -9489,13 +9641,14 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 				boardState[toIdx]++
 			}
 		} else {
-			// Red moves: Red's point N maps to board index (24-N)
+			// Red moves: Red's point N maps to board index (N-1)
+			// Red's point N = Green's point (25-N) = board index 24-(25-N) = N-1
 			// Red moves in increasing direction (from Green's perspective)
 			var fromIdx int
 			if from == 25 {
 				fromIdx = 25 // Red's bar
 			} else {
-				fromIdx = 24 - from // Red's 1-based to Green's 0-based
+				fromIdx = from - 1 // Red's point N → board index (N-1)
 			}
 
 			// Remove checker from source (Red checkers are negative)
@@ -9505,7 +9658,7 @@ func bgfApplyCheckerMove(boardState *[28]int, moveData map[string]interface{}, p
 				// Bear off
 				boardState[27]--
 			} else {
-				toIdx := 24 - to // Red's 1-based to Green's 0-based
+				toIdx := to - 1 // Red's point N → board index (N-1)
 				// Check for hit
 				if boardState[toIdx] > 0 {
 					// Hit Green checker - move it to Green's bar
