@@ -1266,10 +1266,13 @@
     }
 
     export async function importPosition() {
-        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
+        const isNormalMode = $statusBarModeStore === 'NORMAL' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL');
+        const isMatchMode = $statusBarModeStore === 'MATCH' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'MATCH');
+        if (!isNormalMode && !isMatchMode) {
             setStatusBarMessage('Cannot import position in current mode');
             return;
         }
+        const wasMatchMode = isMatchMode;
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1441,6 +1444,17 @@
         } catch (error) {
             console.error("Error importing position:", error);
         } finally {
+            if (wasMatchMode) {
+                matchContextStore.set({
+                    isMatchMode: false,
+                    matchID: null,
+                    movePositions: [],
+                    currentIndex: 0,
+                    player1Name: '',
+                    player2Name: ''
+                });
+                loadAllPositions();
+            }
             previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
