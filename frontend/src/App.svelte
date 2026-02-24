@@ -49,7 +49,8 @@
         ClearSessionState, // Import ClearSessionState
         GetAllCollections, // Import GetAllCollections
         GetCollectionPositions, // Import GetCollectionPositions
-        GetAllTournaments // Import GetAllTournaments
+        GetAllTournaments, // Import GetAllTournaments
+        ComputeEPCFromPosition // Import ComputeEPCFromPosition
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -223,6 +224,11 @@
     let showCollectionPanel = false; // Add collection panel visibility variable
     let showTournamentPanel = false; // Add tournament panel visibility variable
     let showPipcount = true; // Update variable
+
+    // EPC mode state
+    let savedPositionBeforeEPC = null;
+    let savedPositionIndexBeforeEPC = -1;
+    let savedPositionsBeforeEPC = null;
     
     // Save position before entering COLLECTION mode (for restore on exit)
     let savedPositionBeforeCollection = null;
@@ -277,6 +283,13 @@
     // Subscribe to the showMatchPanelStore
     showMatchPanelStore.subscribe(value => {
         showMatchPanel = value;
+    });
+
+    // Subscribe to position store for EPC mode updates
+    positionStore.subscribe(value => {
+        if ($statusBarModeStore === 'EPC' && value) {
+            updateEPC(value);
+        }
     });
 
     // Subscribe to position reload trigger
@@ -360,7 +373,9 @@
         currentPositionIndex = value;
         if (positions.length > 0 && currentPositionIndex >= 0 && currentPositionIndex < positions.length) {
             await showPosition(positions[currentPositionIndex]);
-            setStatusBarMessage(''); // Reset status bar message when changing position
+            if ($statusBarModeStore !== 'EPC') {
+                setStatusBarMessage(''); // Reset status bar message when changing position
+            }
             
             // Debounce session state saving to avoid too many writes when scrolling
             if (saveSessionTimeout) {
@@ -2527,6 +2542,12 @@
             await exitCollectionMode();
             return;
         }
+
+        // Special handling for EPC mode: exit to NORMAL and restore saved state
+        if ($statusBarModeStore === "EPC") {
+            toggleEPCMode(); // toggleEPCMode handles exit when already in EPC mode
+            return;
+        }
         
         if ($statusBarModeStore !== "EDIT") {
             previousModeStore.set($statusBarModeStore);
@@ -2540,6 +2561,85 @@
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
             currentPositionIndexStore.set(currentIndex); // Set back to the original value
+        }
+    }
+
+    function toggleEPCMode() {
+        console.log('toggleEPCMode');
+
+        if ($statusBarModeStore === 'EPC') {
+            // Exit EPC mode: restore previous state
+            statusBarModeStore.set('NORMAL');
+            previousModeStore.set('NORMAL');
+            statusBarTextStore.set('');
+            if (savedPositionsBeforeEPC) {
+                positionsStore.set(savedPositionsBeforeEPC);
+                if (savedPositionBeforeEPC) {
+                    positionStore.set(savedPositionBeforeEPC);
+                    currentPositionIndexStore.set(savedPositionIndexBeforeEPC);
+                }
+                savedPositionsBeforeEPC = null;
+                savedPositionBeforeEPC = null;
+                savedPositionIndexBeforeEPC = -1;
+            } else {
+                // Reload all positions
+                loadAllPositions();
+            }
+            return;
+        }
+
+        // Save current state before entering EPC mode
+        savedPositionBeforeEPC = $positionStore ? { ...$positionStore } : null;
+        savedPositionIndexBeforeEPC = $currentPositionIndexStore;
+        savedPositionsBeforeEPC = $positionsStore ? [...$positionsStore] : null;
+
+        // Create EPC initial position: 6-point closed jan with 3 extra checkers on 4, 5, 6
+        // Points 1-6 for bottom (White): 2 on each + 1 extra on 4, 5, 6 = [2, 2, 2, 3, 3, 3]
+        const epcPoints = Array(26).fill({ checkers: 0, color: -1 });
+        epcPoints[1] = { checkers: 2, color: 0 }; // point 1: 2 black
+        epcPoints[2] = { checkers: 2, color: 0 }; // point 2: 2 black
+        epcPoints[3] = { checkers: 2, color: 0 }; // point 3: 2 black
+        epcPoints[4] = { checkers: 3, color: 0 }; // point 4: 3 black
+        epcPoints[5] = { checkers: 3, color: 0 }; // point 5: 3 black
+        epcPoints[6] = { checkers: 3, color: 0 }; // point 6: 3 black
+
+        const epcPosition = {
+            id: 0,
+            board: {
+                points: epcPoints,
+                bearoff: [0, 15], // 0 black off, 15 white off (only bottom side matters)
+            },
+            cube: { owner: -1, value: 0 },
+            dice: [0, 0],
+            score: [-1, -1],
+            player_on_roll: 0,
+            decision_type: 0,
+            has_jacoby: 0,
+            has_beaver: 0,
+        };
+
+        previousModeStore.set($statusBarModeStore);
+        statusBarModeStore.set('EPC');
+        showCommentStore.set(false);
+        showAnalysisStore.set(false);
+
+        positionsStore.set([epcPosition]);
+        positionStore.set(epcPosition);
+        currentPositionIndexStore.set(0);
+    }
+
+    async function updateEPC(position) {
+        try {
+            const result = await ComputeEPCFromPosition(position);
+            if (result && result.bottomEPC) {
+                const epc = result.bottomEPC;
+                statusBarTextStore.set(`EPC: ${epc.epc.toFixed(2)} | Pips: ${epc.pipCount} | Wastage: ${epc.wastage.toFixed(2)} | Avg rolls: ${epc.meanRolls.toFixed(3)}`);
+            } else {
+                statusBarTextStore.set('EPC: N/A (checkers not all in home board)');
+            }
+        } catch (error) {
+            console.error('Error computing EPC:', error);
+            statusBarTextStore.set('EPC: Error computing');
         }
     }
 
@@ -3054,6 +3154,10 @@ function togglePipcount() {
                 player1Name: '',
                 player2Name: ''
             });
+            // Clear EPC mode state if active
+            savedPositionsBeforeEPC = null;
+            savedPositionBeforeEPC = null;
+            savedPositionIndexBeforeEPC = -1;
 
             positionsStore.set(Array.isArray(positions) ? positions : []);
             if (positions && positions.length > 0) {
@@ -3374,6 +3478,7 @@ function togglePipcount() {
         onToggleMatchPanel={toggleMatchPanel}
         onToggleCollectionPanel={toggleCollectionPanelAction}
         onToggleTournamentPanel={toggleTournamentPanel}
+        onToggleEPCMode={toggleEPCMode}
     />
 
     <div class="scrollable-content">
@@ -3400,6 +3505,7 @@ function togglePipcount() {
             toggleSearchHistoryPanel={toggleSearchHistoryPanel}
             toggleMatchPanel={toggleMatchPanel}
             toggleCollectionPanel={toggleCollectionPanelAction}
+            toggleEPCMode={toggleEPCMode}
         />
 
     </div>

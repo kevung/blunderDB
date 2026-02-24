@@ -24,6 +24,8 @@ export function ClearSessionState():Promise<void>;
 
 export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 
+export function ComputeEPCFromPosition(arg1:main.Position):Promise<Record<string, any>>;
+
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CreateCollection(arg1:string,arg2:string):Promise<number>;

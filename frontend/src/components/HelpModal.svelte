@@ -234,6 +234,13 @@
                     <p>COMMAND mode allows performing all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions according to filters... After getting familiar with the interface, it is recommended to gradually use this mode, which allows powerful and smooth use of blunderDB, especially for position search functionalities.</p>
                     <p>To switch to COMMAND mode from any other mode, press the *SPACE* key. To send a query and exit COMMAND mode, press the *ENTER* key.</p>
                     <p>blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required by the user.</p>
+
+                    <h3>EPC Mode</h3>
+                    <p>EPC (Effective Pip Count) mode is a tool for computing the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database to compute exact EPC values.</p>
+                    <p>To enter EPC mode, click the calculator icon in the toolbar or type <strong>epc</strong> in the command line. The board is initialized with a closed jan (2 checkers on each of the 6 home-board points) plus 3 extra checkers on points 4, 5, and 6 (15 checkers total).</p>
+                    <p>In EPC mode, you can freely add or remove checkers on the home-board points using the mouse (same controls as EDIT mode). The EPC value is displayed in real-time in the status bar, along with the pip count and wastage.</p>
+                    <p>The <strong>EPC</strong> represents the average number of pips needed to bear off all checkers, accounting for the inefficiency (wastage) of actual dice rolls. <strong>Wastage</strong> is the difference between EPC and the raw pip count.</p>
+                    <p>To exit EPC mode, press <strong>TAB</strong> or use the <strong>Reload All Positions</strong> button (Ctrl+R) to return to NORMAL mode.</p>
                 {/if}
 
                 {#if activeTab === 'shortcuts'}
@@ -794,6 +801,10 @@
                                 <td>Show Collections Panel</td>
                             </tr>
                             <tr>
+                                <td>epc</td>
+                                <td>EPC Calculator (Effective Pip Count)</td>
+                            </tr>
+                            <tr>
                                 <td>help, he, h</td>
                                 <td>Open Help</td>
                             </tr>
@@ -1205,6 +1216,7 @@
                     </ul>
                     <p>The Kazaross-XG2 Match Equity Table (MET) is credited to <strong>Neil Kazaross</strong>.</p>
                     <p>The take point and gammon values tables are taken from <strong>Dirk Schiemann</strong>'s book <em>The Theory of Backgammon</em>.</p>
+                    <p>The one-sided 6-point bearoff database used for EPC (Effective Pip Count) computation has been generated with <strong>GNU Backgammon</strong> (GNUbg). GNUbg is a free and open-source backgammon program licensed under the GNU General Public License.</p>
                 {/if}
             </div>
         </div>

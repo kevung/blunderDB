@@ -46,6 +46,10 @@ export function CommitImportDatabase(arg1) {
   return window['go']['main']['Database']['CommitImportDatabase'](arg1);
 }
 
+export function ComputeEPCFromPosition(arg1) {
+  return window['go']['main']['Database']['ComputeEPCFromPosition'](arg1);
+}
+
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['main']['Database']['CopyPositionToCollection'](arg1, arg2);
 }

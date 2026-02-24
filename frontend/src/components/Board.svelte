@@ -89,7 +89,9 @@
 
     function handleMouseDown(event) {
         event.preventDefault(); // Prevent text or element selection
-        if (mode !== "EDIT") return;
+        if (mode !== "EDIT" && mode !== "EPC") return;
+        // In EPC mode, only allow left-click (Black checkers)
+        if (mode === "EPC" && event.button !== 0) return;
 
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
@@ -105,14 +107,14 @@
 
     function handleMouseMove(event) {
         event.preventDefault(); // Prevent text or element selection
-        if (mode !== "EDIT") return;
-
-        // No longer dynamically filling checkers during mouse move
+        if (mode !== "EDIT" && mode !== "EPC") return;
     }
 
     function handleMouseUp(event) {
         event.preventDefault(); // Prevent text or element selection
-        if (mode !== "EDIT") return;
+        if (mode !== "EDIT" && mode !== "EPC") return;
+        // In EPC mode, only allow left-click (Black checkers)
+        if (mode === "EPC" && event.button !== 0) return;
 
         isMouseDown = false;
         const rect = canvas.getBoundingClientRect();
@@ -207,9 +209,25 @@
     }
 
     function updateCheckerPositionByPoint(checkerPoint, checkerCount, button) {
+        // In EPC mode, only allow Black checkers (color 0) on points 1-6
+        if (mode === "EPC") {
+            if (checkerPoint < 1 || checkerPoint > 6) return;
+            button = 0; // Force Black checkers only
+        }
         const color = (checkerPoint === 0 || checkerPoint === 25) ? (checkerPoint === 0 ? 1 : 0) : (button === 2 ? 1 : 0);
 
         positionStore.update(pos => {
+            // In EPC mode, cap total checkers of this color at 15
+            let effectiveMaxPerPoint = 5; // default visual cap
+            if (mode === "EPC") {
+                const totalOtherPoints = pos.board.points.reduce((acc, point, idx) => {
+                    if (idx !== checkerPoint && point.color === color) return acc + point.checkers;
+                    return acc;
+                }, 0);
+                effectiveMaxPerPoint = 15 - totalOtherPoints;
+                if (effectiveMaxPerPoint <= 0) return pos;
+            }
+
             pos.board.points = pos.board.points.map((point, index) => {
                 if (index === checkerPoint) {
                     if (point.checkers >= 5 && point.color === color) {
@@ -217,19 +235,19 @@
                         if (checkerCount === 5) {
                             return {
                                 ...point,
-                                checkers: point.checkers + 1
+                                checkers: Math.min(point.checkers + 1, effectiveMaxPerPoint)
                             };
                         } else {
                             return {
                                 ...point,
-                                checkers: Math.min(checkerCount, 5),
+                                checkers: Math.min(checkerCount, effectiveMaxPerPoint),
                                 color: color
                             };
                         }
                     } else {
                         return {
                             ...point,
-                            checkers: Math.min(checkerCount, 5),
+                            checkers: Math.min(checkerCount, effectiveMaxPerPoint),
                             color: color
                         };
                     }
@@ -792,6 +810,11 @@
     function getDisplayPosition() {
         const position = get(positionStore);
         const matchCtx = get(matchContextStore);
+        
+        // In EPC mode, always use position as-is (player_on_roll is always 0)
+        if (mode === "EPC") {
+            return position;
+        }
         
         // In match mode, check who was actually on roll
         if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
