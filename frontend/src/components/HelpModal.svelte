@@ -922,15 +922,15 @@
                             </tr>
                             <tr>
                                 <td>E>x</td>
-                                <td>Played move error &gt; x (in millipoints)</td>
+                                <td>Player 1 move error &gt; x (in millipoints)</td>
                             </tr>
                             <tr>
                                 <td>E&lt;x</td>
-                                <td>Played move error &lt; x (in millipoints)</td>
+                                <td>Player 1 move error &lt; x (in millipoints)</td>
                             </tr>
                             <tr>
                                 <td>Ex,y</td>
-                                <td>Played move error between x and y (in millipoints)</td>
+                                <td>Player 1 move error between x and y (in millipoints)</td>
                             </tr>
                             <tr>
                                 <td>w>x</td>

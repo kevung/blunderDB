@@ -2272,7 +2272,47 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 	return false
 }
 
+// getPlayer1MovesForPosition returns checker moves and cube actions played by player1 for a position.
+// Player1 is identified by player=1 in XG encoding in the move table.
+func (d *Database) getPlayer1MovesForPosition(positionID int64) ([]string, []string) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	rows, err := d.db.Query(`SELECT checker_move, cube_action FROM move WHERE position_id = ? AND player = 1`, positionID)
+	if err != nil {
+		return nil, nil
+	}
+	defer rows.Close()
+
+	checkerMoves := make(map[string]bool)
+	cubeActions := make(map[string]bool)
+	for rows.Next() {
+		var cm sql.NullString
+		var ca sql.NullString
+		if err := rows.Scan(&cm, &ca); err != nil {
+			continue
+		}
+		if cm.Valid && cm.String != "" {
+			checkerMoves[normalizeMove(cm.String)] = true
+		}
+		if ca.Valid && ca.String != "" {
+			cubeActions[ca.String] = true
+		}
+	}
+
+	var checkerMovesList []string
+	for m := range checkerMoves {
+		checkerMovesList = append(checkerMovesList, m)
+	}
+	var cubeActionsList []string
+	for a := range cubeActions {
+		cubeActionsList = append(cubeActionsList, a)
+	}
+	return checkerMovesList, cubeActionsList
+}
+
 // MatchesMoveErrorFilter filters positions by the equity error of the played move (in millipoints).
+// By default, only considers errors made by player1 (player1 in match context).
 // Supports E>x, E<x, Ex,y syntax.
 func (p *Position) MatchesMoveErrorFilter(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
@@ -2280,15 +2320,15 @@ func (p *Position) MatchesMoveErrorFilter(filter string, d *Database) bool {
 		return false
 	}
 
+	// Get only player1's moves for this position from the move table
+	player1CheckerMoves, player1CubeActions := d.getPlayer1MovesForPosition(p.ID)
+
 	var moveError float64
 	found := false
 
 	if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-		// Get the played move(s)
-		playedMoves := analysis.PlayedMoves
-		if len(playedMoves) == 0 && analysis.PlayedMove != "" {
-			playedMoves = []string{analysis.PlayedMove}
-		}
+		// Use only player1's moves (from match context)
+		playedMoves := player1CheckerMoves
 		if len(playedMoves) == 0 {
 			return false
 		}
@@ -2310,11 +2350,8 @@ func (p *Position) MatchesMoveErrorFilter(filter string, d *Database) bool {
 			}
 		}
 	} else if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
-		// Get the played cube action(s)
-		playedActions := analysis.PlayedCubeActions
-		if len(playedActions) == 0 && analysis.PlayedCubeAction != "" {
-			playedActions = []string{analysis.PlayedCubeAction}
-		}
+		// Use only player1's cube actions (from match context)
+		playedActions := player1CubeActions
 		if len(playedActions) == 0 {
 			return false
 		}
