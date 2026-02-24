@@ -7380,6 +7380,20 @@ func (d *Database) checkMatchExistsLocked(matchHash string) (int64, error) {
 // GnuBG / Jellyfish import functions (SGF, MAT, TXT formats)
 // ============================================================================
 
+// ImportGnuBGMatchFromText imports a match from clipboard/string content in MAT/TXT format
+// using the gnubgparser library. Only MAT/TXT format is supported (no SGF).
+func (d *Database) ImportGnuBGMatchFromText(content string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	gnuMatch, err := gnubgparser.ParseMAT(strings.NewReader(content))
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse match text: %w", err)
+	}
+
+	return d.importGnuBGMatchInternal(gnuMatch, "clipboard", false)
+}
+
 // ImportGnuBGMatch imports a match from a GnuBG file (SGF, MAT, or TXT format)
 // using the gnubgparser library. SGF files include full analysis data,
 // while MAT/TXT files contain only moves (no analysis).
@@ -7410,6 +7424,12 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 		return 0, fmt.Errorf("failed to parse file: %w", err)
 	}
 
+	return d.importGnuBGMatchInternal(gnuMatch, filePath, isSGF)
+}
+
+// importGnuBGMatchInternal is the shared implementation for importing a parsed GnuBG match.
+// isSGF indicates SGF format where moves use absolute coordinates.
+func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePath string, isSGF bool) (int64, error) {
 	// Parse match date
 	var matchDate time.Time
 	if gnuMatch.Metadata.Date != "" {

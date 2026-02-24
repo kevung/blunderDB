@@ -96,6 +96,8 @@ export function ImportDatabase(arg1:string):Promise<Record<string, any>>;
 
 export function ImportGnuBGMatch(arg1:string):Promise<number>;
 
+export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
+
 export function ImportXGMatch(arg1:string):Promise<number>;
 
 export function LoadAllPositions():Promise<Array<main.Position>>;

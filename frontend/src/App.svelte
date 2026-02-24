@@ -40,6 +40,7 @@
         SaveEditPosition, // Import SaveEditPosition
         ImportXGMatch, // Import ImportXGMatch
         ImportGnuBGMatch, // Import ImportGnuBGMatch
+        ImportGnuBGMatchFromText, // Import ImportGnuBGMatchFromText
         ImportBGFMatch, // Import ImportBGFMatch
         ImportBGFPosition, // Import ImportBGFPosition
         ImportBGFPositionFromText, // Import ImportBGFPositionFromText
@@ -1497,12 +1498,33 @@
                 pastePositionTextStore.set(result);
                 console.log('pastePositionTextStore:', $pastePositionTextStore);
 
+                // Check if this is a GnuBG/Jellyfish MAT/TXT match
+                // MAT/TXT files contain "N point match" header and "Game N" lines
+                const isGnuBGMatch = result && /^\s*\d+\s+point\s+match\s*$/m.test(result) && /^\s*Game\s+\d+\s*$/m.test(result);
+
                 // Check if this is a BGBlitz TXT position
                 // BGBlitz files contain "Position-ID:" which is unique to BGBlitz
                 // XG text exports use the same board art but never have "Position-ID:"
                 const isBGBlitzTXT = result && result.includes('Position-ID:');
 
-                if (isBGBlitzTXT) {
+                if (isGnuBGMatch) {
+                    // Import GnuBG/Jellyfish match from clipboard text
+                    try {
+                        const matchID = await ImportGnuBGMatchFromText(result);
+                        console.log('GnuBG match pasted with ID:', matchID);
+                        setStatusBarMessage(`Match imported from clipboard successfully (ID: ${matchID})`);
+                        matchPanelRefreshTriggerStore.update(n => n + 1);
+                        showMatchPanelStore.set(true);
+                    } catch (error) {
+                        console.error('Error pasting GnuBG match:', error);
+                        const errorStr = String(error);
+                        if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                            setStatusBarMessage('This match has already been imported');
+                        } else {
+                            setStatusBarMessage('Error importing match from clipboard: ' + error);
+                        }
+                    }
+                } else if (isBGBlitzTXT) {
                     // Import BGBlitz TXT position via Go backend
                     try {
                         const posID = await ImportBGFPositionFromText(result);

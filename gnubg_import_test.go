@@ -1045,3 +1045,86 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 		}
 	})
 }
+
+// TestMATImportCheckerCounts verifies that all positions from a MAT import
+// have exactly 15 checkers per player (on board + bar + borne off).
+// This catches bugs where bar entries (25/...) or bearoffs (.../0) are not parsed.
+func TestMATImportCheckerCounts(t *testing.T) {
+	matFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat")
+	if _, err := os.Stat(matFile); os.IsNotExist(err) {
+		t.Skip("charlot match file not found")
+	}
+
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	matchID, err := db.ImportGnuBGMatch(matFile)
+	if err != nil {
+		t.Fatalf("MAT import failed: %v", err)
+	}
+
+	// Query all positions from this match
+	rows, err := db.db.Query(`
+		SELECT p.state, g.game_number, m.move_number, m.player, m.dice_1, m.dice_2,
+		       COALESCE(m.checker_move, '')
+		FROM move m
+		JOIN game g ON m.game_id = g.id
+		JOIN position p ON m.position_id = p.id
+		WHERE g.match_id = ?
+		ORDER BY g.game_number, m.move_number
+	`, matchID)
+	if err != nil {
+		t.Fatalf("Query failed: %v", err)
+	}
+	defer rows.Close()
+
+	posCount := 0
+	badCount := 0
+	for rows.Next() {
+		var stateJSON string
+		var gameNum, moveNum, player, dice1, dice2 int
+		var moveStr string
+		if err := rows.Scan(&stateJSON, &gameNum, &moveNum, &player, &dice1, &dice2, &moveStr); err != nil {
+			t.Fatalf("Scan failed: %v", err)
+		}
+
+		var pos Position
+		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
+			t.Fatalf("Unmarshal failed: %v", err)
+		}
+
+		posCount++
+
+		// Count checkers for each player (on board + bar + bearoff)
+		player1Board := 0 // Color 0
+		player2Board := 0 // Color 1
+		for i := 0; i < 26; i++ {
+			if pos.Board.Points[i].Color == 0 {
+				player1Board += pos.Board.Points[i].Checkers
+			} else if pos.Board.Points[i].Color == 1 {
+				player2Board += pos.Board.Points[i].Checkers
+			}
+		}
+
+		player1Total := player1Board + pos.Board.Bearoff[0]
+		player2Total := player2Board + pos.Board.Bearoff[1]
+
+		if player1Total != 15 || player2Total != 15 {
+			badCount++
+			if badCount <= 5 {
+				t.Errorf("Game %d Move %d (player=%d dice=%d/%d move=%q): "+
+					"Player1 checkers=%d (board=%d+bearoff=%d), "+
+					"Player2 checkers=%d (board=%d+bearoff=%d)",
+					gameNum, moveNum, player, dice1, dice2, moveStr,
+					player1Total, player1Board, pos.Board.Bearoff[0],
+					player2Total, player2Board, pos.Board.Bearoff[1])
+			}
+		}
+	}
+
+	if badCount > 0 {
+		t.Errorf("%d/%d positions have incorrect checker counts (should be 15 per player)", badCount, posCount)
+	} else {
+		t.Logf("All %d positions have correct checker counts (15 per player) ✓", posCount)
+	}
+}
