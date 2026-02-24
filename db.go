@@ -4892,6 +4892,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 
 	// Build a position cache for deduplication
 	positionCache := make(map[string]int64) // map[positionJSON]positionID
+	semanticCache := make(map[string]int64) // map[semanticKey]positionID
 
 	// Load existing positions into cache
 	existingRows, err := tx.Query(`SELECT id, state FROM position`)
@@ -4916,14 +4917,14 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		normalizedPosition.ID = 0
 		normalizedJSON, _ := json.Marshal(normalizedPosition)
 		positionCache[string(normalizedJSON)] = existingID
+		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
 	}
 	existingRows.Close()
 
 	fmt.Printf("Loaded %d existing positions into cache\n", len(positionCache))
 
 	if isCanonicalDuplicate {
-		// Canonical duplicate: only import analysis to existing positions
-		// Don't create new game/move records
+		// Canonical duplicate: import analysis to existing positions, create genuinely new ones
 		for _, game := range match.Games {
 			for _, move := range game.Moves {
 				if move.MoveType == "checker" && move.CheckerMove != nil {
@@ -4935,7 +4936,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					pos.DecisionType = CheckerAction
 					pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
-					posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
 					if err != nil {
 						continue
 					}
@@ -4957,7 +4958,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					pos.DecisionType = CubeAction
 					pos.Dice = [2]int{0, 0}
 
-					posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
 					if err != nil {
 						continue
 					}
@@ -5717,6 +5718,64 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, pos
 
 	// Add to cache for future lookups
 	positionCache[string(positionJSON)] = positionID
+
+	return positionID, nil
+}
+
+// positionSemanticKey generates a cache key based on the fields that define position identity:
+// board checker layout, cube state, score, player on roll, decision type, and dice.
+// This enables matching positions across different format parsers that may produce
+// different metadata (HasJacoby, HasBeaver) for the same physical board state.
+func positionSemanticKey(pos *Position) string {
+	return fmt.Sprintf("%v|%v|%v|%d|%d|%v",
+		pos.Board, pos.Cube, pos.Score,
+		pos.PlayerOnRoll, pos.DecisionType, pos.Dice)
+}
+
+// findOrCreatePositionForCanonicalDuplicate looks up a position by semantic key during
+// canonical duplicate imports. If the position already exists (by board, cube, score,
+// player on roll, decision type, dice), returns the existing ID. If it's genuinely new,
+// creates it in the database and returns the new ID.
+func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, position *Position, positionCache map[string]int64, semanticCache map[string]int64) (int64, error) {
+	normalizedPosition := position.NormalizeForStorage()
+	normalizedPosition.ID = 0
+
+	// Check exact match first (fast path)
+	positionJSON, err := json.Marshal(normalizedPosition)
+	if err != nil {
+		return 0, err
+	}
+	if existingID, exists := positionCache[string(positionJSON)]; exists {
+		return existingID, nil
+	}
+
+	// Check semantic match (board, cube, score, player_on_roll, decision_type, dice)
+	semKey := positionSemanticKey(&normalizedPosition)
+	if existingID, exists := semanticCache[semKey]; exists {
+		return existingID, nil
+	}
+
+	// Genuinely new position — create it
+	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	if err != nil {
+		return 0, err
+	}
+
+	positionID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	normalizedPosition.ID = positionID
+	positionJSONWithID, _ := json.Marshal(normalizedPosition)
+	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
+	if err != nil {
+		return 0, err
+	}
+
+	// Add to both caches
+	positionCache[string(positionJSON)] = positionID
+	semanticCache[semKey] = positionID
 
 	return positionID, nil
 }
@@ -7239,6 +7298,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 
 	// Build a position cache for deduplication
 	positionCache := make(map[string]int64) // map[positionJSON]positionID
+	semanticCache := make(map[string]int64) // map[semanticKey]positionID
 
 	// Load existing positions into cache
 	existingRows, err := tx.Query(`SELECT id, state FROM position`)
@@ -7262,13 +7322,14 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 		normalizedPosition.ID = 0
 		normalizedJSON, _ := json.Marshal(normalizedPosition)
 		positionCache[string(normalizedJSON)] = existingID
+		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
 	}
 	existingRows.Close()
 
 	fmt.Printf("Loaded %d existing positions into cache for GnuBG import\n", len(positionCache))
 
 	if isCanonicalDuplicate {
-		// Canonical duplicate: only import analysis to existing positions
+		// Canonical duplicate: import analysis to existing positions, create genuinely new ones
 		for gameIdx, game := range gnuMatch.Games {
 			game.GameNumber = gameIdx + 1
 			currentBoard := initStandardGnuBGPosition()
@@ -7308,7 +7369,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 						pos.DecisionType = CheckerAction
 						pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
 
-						posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
 						if err != nil {
 							continue
 						}
@@ -7333,7 +7394,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 							pos.PlayerOnRoll = moveRec.Player
 							pos.DecisionType = CheckerAction
 							pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
-							posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+							posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
 							if err == nil {
 								// Convert MWC to EMG for match play (copy to avoid mutating original)
 								cubeAnalysis := *moveRec.CubeAnalysis
@@ -7356,7 +7417,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 						pos.DecisionType = CubeAction
 						pos.Dice = [2]int{0, 0}
 
-						posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
 						if err != nil {
 							continue
 						}
@@ -8700,9 +8761,18 @@ func ComputeGnuBGMatchHash(match *gnubgparser.Match) string {
 	return hex.EncodeToString(hash[:])
 }
 
+// maxCanonicalDicePerGame limits how many dice per game are included in the canonical hash.
+// Different file formats (XG, SGF, MAT) handle end-of-game dice differently:
+// XG records game-ending rolls that SGF/MAT may omit, and MAT can diverge
+// in later moves due to parser edge cases. Using only the first N dice avoids
+// these differences while providing strong match identification.
+// 10 dice per game * 21 possible outcomes * 7+ games = astronomically low collision probability.
+const maxCanonicalDicePerGame = 10
+
 // ComputeCanonicalMatchHashFromXG computes a format-independent match hash from XG data.
-// This hash is based on normalized player names, match length, game outcomes, and dice sequences,
-// making it identical regardless of whether the match was imported from XG or GnuBG format.
+// This hash uses only the first N dice per game (physical events identical across all export
+// formats) plus normalized player names, match length, and game count, making it identical
+// whether the match was imported from XG, GnuBG (SGF/MAT), or BGBlitz (BGF) format.
 func ComputeCanonicalMatchHashFromXG(match *xgparser.Match) string {
 	var hashBuilder strings.Builder
 
@@ -8712,11 +8782,15 @@ func ComputeCanonicalMatchHashFromXG(match *xgparser.Match) string {
 	if p1 > p2 {
 		p1, p2 = p2, p1
 	}
-	hashBuilder.WriteString(fmt.Sprintf("canonical:%s|%s|%d|", p1, p2, match.Metadata.MatchLength))
+	hashBuilder.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, match.Metadata.MatchLength, len(match.Games)))
 
 	for gameIdx, game := range match.Games {
-		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d|", gameIdx, game.Winner, game.PointsWon))
+		hashBuilder.WriteString(fmt.Sprintf("g%d|", gameIdx))
+		diceCount := 0
 		for _, move := range game.Moves {
+			if diceCount >= maxCanonicalDicePerGame {
+				break
+			}
 			if move.MoveType == "checker" && move.CheckerMove != nil {
 				d1 := move.CheckerMove.Dice[0]
 				d2 := move.CheckerMove.Dice[1]
@@ -8724,8 +8798,7 @@ func ComputeCanonicalMatchHashFromXG(match *xgparser.Match) string {
 					d1, d2 = d2, d1
 				}
 				hashBuilder.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-			} else if move.MoveType == "cube" {
-				hashBuilder.WriteString("cube|")
+				diceCount++
 			}
 		}
 	}
@@ -8736,6 +8809,7 @@ func ComputeCanonicalMatchHashFromXG(match *xgparser.Match) string {
 
 // ComputeCanonicalMatchHashFromGnuBG computes a format-independent match hash from GnuBG data.
 // Must produce the same hash as ComputeCanonicalMatchHashFromXG for the same match.
+// Uses only the first N dice per game for cross-format compatibility.
 func ComputeCanonicalMatchHashFromGnuBG(match *gnubgparser.Match) string {
 	var hashBuilder strings.Builder
 
@@ -8744,21 +8818,23 @@ func ComputeCanonicalMatchHashFromGnuBG(match *gnubgparser.Match) string {
 	if p1 > p2 {
 		p1, p2 = p2, p1
 	}
-	hashBuilder.WriteString(fmt.Sprintf("canonical:%s|%s|%d|", p1, p2, match.Metadata.MatchLength))
+	hashBuilder.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, match.Metadata.MatchLength, len(match.Games)))
 
 	for gameIdx, game := range match.Games {
-		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d|", gameIdx, game.Winner, game.Points))
+		hashBuilder.WriteString(fmt.Sprintf("g%d|", gameIdx))
+		diceCount := 0
 		for _, moveRec := range game.Moves {
-			switch moveRec.Type {
-			case "move":
+			if diceCount >= maxCanonicalDicePerGame {
+				break
+			}
+			if moveRec.Type == "move" {
 				d1 := moveRec.Dice[0]
 				d2 := moveRec.Dice[1]
 				if d1 > d2 {
 					d1, d2 = d2, d1
 				}
 				hashBuilder.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-			case "double", "take", "drop":
-				hashBuilder.WriteString("cube|")
+				diceCount++
 			}
 		}
 	}
@@ -8911,6 +8987,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 
 	// Build a position cache for deduplication
 	positionCache := make(map[string]int64)
+	semanticCache := make(map[string]int64) // map[semanticKey]positionID
 
 	// Load existing positions into cache
 	existingRows, err := tx.Query(`SELECT id, state FROM position`)
@@ -8932,6 +9009,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 		normalizedPosition.ID = 0
 		normalizedJSON, _ := json.Marshal(normalizedPosition)
 		positionCache[string(normalizedJSON)] = existingID
+		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
 	}
 	existingRows.Close()
 
@@ -9173,11 +9251,11 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							}
 							break
 						}
-						d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+						d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache, cubeAction)
 						continue
 					}
 
-					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache)
+					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache)
 					// Skip board update for green=7 moves (unplayable die - analysis data only)
 					greenDie := bgfGetInt(moveData, "green")
 					if greenDie != 7 {
@@ -9200,7 +9278,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							break
 						}
 					}
-					d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+					d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache, cubeAction)
 
 				case "atake":
 					if cubeValue == 1 {
@@ -9416,7 +9494,7 @@ func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32,
 }
 
 // importBGFCheckerAnalysisOnly imports only analysis for a canonical duplicate
-func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64) {
+func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, semanticCache map[string]int64) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -9428,7 +9506,7 @@ func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]
 	pos.DecisionType = CheckerAction
 	pos.Dice = [2]int{dieGreen, dieRed}
 
-	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
 	if err != nil {
 		return
 	}
@@ -9449,7 +9527,7 @@ func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]
 }
 
 // importBGFCubeAnalysisOnly imports only cube analysis for a canonical duplicate
-func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, cubeAction string) {
+func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, semanticCache map[string]int64, cubeAction string) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -9458,7 +9536,7 @@ func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]int
 	pos.DecisionType = CubeAction
 	pos.Dice = [2]int{0, 0}
 
-	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
 	if err != nil {
 		return
 	}
@@ -10154,6 +10232,7 @@ func ComputeBGFMatchHash(match *bgfparser.Match) string {
 
 // ComputeCanonicalMatchHashFromBGF computes a format-independent match hash from BGF data.
 // Must produce the same hash as ComputeCanonicalMatchHashFromXG for the same match.
+// Uses only the first N dice per game for cross-format compatibility.
 func ComputeCanonicalMatchHashFromBGF(match *bgfparser.Match) string {
 	var hashBuilder strings.Builder
 
@@ -10165,37 +10244,41 @@ func ComputeCanonicalMatchHashFromBGF(match *bgfparser.Match) string {
 	if p1 > p2 {
 		p1, p2 = p2, p1
 	}
-	hashBuilder.WriteString(fmt.Sprintf("canonical:%s|%s|%d|", p1, p2, matchLen))
 
 	gamesData, _ := data["games"].([]interface{})
+	hashBuilder.WriteString(fmt.Sprintf("canonical2:%s|%s|%d|%d|", p1, p2, matchLen, len(gamesData)))
+
 	for gameIdx, gameRaw := range gamesData {
 		g, ok := gameRaw.(map[string]interface{})
 		if !ok {
 			continue
 		}
-		wonPoints := bgfGetInt(g, "wonPoints")
-		// Winner: determine from context
-		// In BGF, we need to figure out who won. We use wonPoints > 0 means the game was won.
-		// The last player to move in the game typically won.
-		winner := int32(0)
-		hashBuilder.WriteString(fmt.Sprintf("g%d:%d,%d|", gameIdx, winner, wonPoints))
+		hashBuilder.WriteString(fmt.Sprintf("g%d|", gameIdx))
 
+		diceCount := 0
 		movesData, _ := g["moves"].([]interface{})
 		for _, moveRaw := range movesData {
+			if diceCount >= maxCanonicalDicePerGame {
+				break
+			}
 			m, ok := moveRaw.(map[string]interface{})
 			if !ok {
 				continue
 			}
 			mtype := bgfGetString(m, "type")
 			if mtype == "amove" {
+				// Skip cube actions encoded as amove (from[0] == -1)
+				fromArr := bgfGetIntArray(m, "from")
+				if len(fromArr) > 0 && fromArr[0] == -1 {
+					continue
+				}
 				d1 := bgfGetInt(m, "green")
 				d2 := bgfGetInt(m, "red")
 				if d1 > d2 {
 					d1, d2 = d2, d1
 				}
 				hashBuilder.WriteString(fmt.Sprintf("d%d%d|", d1, d2))
-			} else if mtype == "adouble" || mtype == "atake" || mtype == "apass" {
-				hashBuilder.WriteString("cube|")
+				diceCount++
 			}
 		}
 	}

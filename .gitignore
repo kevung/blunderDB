@@ -1,3 +1,9 @@
+TODO.md
+bgfparser/
+gnubg/
+gnubgparser/
+xgparser/
+
 src/__pycache__
 tmp
 build/bin/
