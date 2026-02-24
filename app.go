@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"strings"
 
@@ -66,6 +67,10 @@ func (a *App) OpenExportDatabaseDialog() (string, error) {
 }
 
 func (a *App) DeleteFile(filePath string) error {
+	// Validate that the file has a .db extension to prevent arbitrary file deletion
+	if !strings.HasSuffix(strings.ToLower(filePath), ".db") {
+		return fmt.Errorf("only .db files can be deleted")
+	}
 	err := os.Remove(filePath)
 	if err != nil {
 		return err

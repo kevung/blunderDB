@@ -571,6 +571,9 @@ func (d *Database) OpenDatabase(path string) error {
 					hash := computeMatchHashFromStoredData(d.db, matchID, p1Name, p2Name, matchLength)
 					_, _ = d.db.Exec(`UPDATE match SET match_hash = ? WHERE id = ?`, hash, matchID)
 				}
+				if err := matchRows.Err(); err != nil {
+					return err
+				}
 			}
 
 			fmt.Println("Added match_hash column and populated existing matches")
@@ -798,6 +801,9 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 		if string(positionJSON) == string(existingPositionJSON) {
 			return map[string]interface{}{"id": positionID, "exists": true}, nil
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return map[string]interface{}{"id": 0, "exists": false}, nil
@@ -1090,6 +1096,9 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 				}
 			}
 		}
+		if err := rows.Err(); err != nil {
+			return nil, err
+		}
 
 		// Merge with existing PlayedMoves array
 		existingMoves := make(map[string]bool)
@@ -1183,6 +1192,9 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 		position.ID = id // Ensure the ID is set
 		positions = append(positions, position)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	if len(positions) == 0 {
 		fmt.Println("No positions found, returning empty array.")
@@ -1193,50 +1205,15 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 }
 
 func (d *Database) DeletePosition(positionID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
 
-	// Delete the associated analysis first
-	err := d.DeleteAnalysis(positionID)
-	if err != nil {
-		fmt.Println("Error deleting associated analysis:", err)
-		return err
-	}
-
-	// Delete the associated comment
-	err = d.DeleteComment(positionID)
-	if err != nil {
-		fmt.Println("Error deleting associated comment:", err)
-		return err
-	}
-
-	d.mu.Lock() // Lock the mutex
-
-	// Delete the position from any collections (CASCADE should handle this, but be explicit)
-	_, err = d.db.Exec(`DELETE FROM collection_position WHERE position_id = ?`, positionID)
-	if err != nil {
-		fmt.Println("Error deleting position from collections:", err)
-		d.mu.Unlock()
-		return err
-	}
-
-	// Delete the position
-	_, err = d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
+	// Delete the position — ON DELETE CASCADE handles analysis, comment, and collection_position
+	_, err := d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
 	if err != nil {
 		fmt.Println("Error deleting position:", err)
 		return err
 	}
-
-	// Check if the database is empty
-	var count int
-	err = d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&count)
-	if err != nil {
-		fmt.Println("Error counting positions:", err)
-		return err
-	}
-	if count == 0 {
-		fmt.Println("Database is empty.")
-	}
-
-	d.mu.Unlock() // Unlock the mutex when the function returns
 
 	return nil
 }
@@ -1422,6 +1399,9 @@ func (d *Database) LoadPositionsByFilters(
 				}
 			}
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return positions, nil
@@ -2299,6 +2279,9 @@ func (d *Database) getPlayer1MovesForPosition(positionID int64) ([]string, []str
 			cubeActions[ca.String] = true
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return nil, nil
+	}
 
 	var checkerMovesList []string
 	for m := range checkerMoves {
@@ -2499,6 +2482,9 @@ func (d *Database) LoadMetadata() (map[string]string, error) {
 		}
 		metadata[key] = value
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return metadata, nil
 }
@@ -2507,14 +2493,20 @@ func (d *Database) SaveMetadata(metadata map[string]string) error {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	for key, value := range metadata {
-		_, err := d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
+		_, err := tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
 		if err != nil {
 			fmt.Println("Error saving metadata:", err)
 			return err
 		}
 	}
-	return nil
+	return tx.Commit()
 }
 
 // Add MatchesDateFilter method to Position type
@@ -2878,6 +2870,9 @@ func (d *Database) LoadCommandHistory() ([]string, error) {
 		}
 		history = append(history, command)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 	return history, nil
 }
 
@@ -2973,6 +2968,9 @@ func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
 		}
 		history = append(history, entry)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return history, nil
 }
@@ -3020,26 +3018,32 @@ func (d *Database) SaveSessionState(state SessionState) error {
 		return err
 	}
 
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	// Save each session state field as a metadata entry
-	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_command', ?)`, state.LastSearchCommand)
+	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_command', ?)`, state.LastSearchCommand)
 	if err != nil {
 		fmt.Println("Error saving session_last_search_command:", err)
 		return err
 	}
 
-	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_position', ?)`, state.LastSearchPosition)
+	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_position', ?)`, state.LastSearchPosition)
 	if err != nil {
 		fmt.Println("Error saving session_last_search_position:", err)
 		return err
 	}
 
-	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_index', ?)`, strconv.Itoa(state.LastPositionIndex))
+	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_index', ?)`, strconv.Itoa(state.LastPositionIndex))
 	if err != nil {
 		fmt.Println("Error saving session_last_position_index:", err)
 		return err
 	}
 
-	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_ids', ?)`, string(positionIDsJSON))
+	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_ids', ?)`, string(positionIDsJSON))
 	if err != nil {
 		fmt.Println("Error saving session_last_position_ids:", err)
 		return err
@@ -3049,13 +3053,13 @@ func (d *Database) SaveSessionState(state SessionState) error {
 	if state.HasActiveSearch {
 		hasActiveSearchStr = "true"
 	}
-	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_has_active_search', ?)`, hasActiveSearchStr)
+	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_has_active_search', ?)`, hasActiveSearchStr)
 	if err != nil {
 		fmt.Println("Error saving session_has_active_search:", err)
 		return err
 	}
 
-	return nil
+	return tx.Commit()
 }
 
 // LoadSessionState loads the last session state from the metadata table
@@ -3150,15 +3154,21 @@ func (d *Database) ClearSessionState() error {
 		"session_has_active_search",
 	}
 
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	for _, key := range sessionKeys {
-		_, err := d.db.Exec(`DELETE FROM metadata WHERE key = ?`, key)
+		_, err := tx.Exec(`DELETE FROM metadata WHERE key = ?`, key)
 		if err != nil {
 			fmt.Println("Error deleting session key:", key, err)
 			return err
 		}
 	}
 
-	return nil
+	return tx.Commit()
 }
 
 func (d *Database) Migrate_1_0_0_to_1_1_0() error {
@@ -3334,10 +3344,17 @@ func (d *Database) UpdateFilter(id int64, name, command string) error {
 		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
 	}
 
-	_, err = d.db.Exec(`UPDATE filter_library SET name = ?, command = ? WHERE id = ?`, name, command, id)
+	result, err := d.db.Exec(`UPDATE filter_library SET name = ?, command = ? WHERE id = ?`, name, command, id)
 	if err != nil {
 		fmt.Println("Error updating filter:", err)
 		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("error checking rows affected: %w", err)
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("filter with id %d not found", id)
 	}
 	return nil
 }
@@ -3358,10 +3375,17 @@ func (d *Database) DeleteFilter(id int64) error {
 		return fmt.Errorf("database version is lower than 1.2.0, current version: %s", dbVersion)
 	}
 
-	_, err = d.db.Exec(`DELETE FROM filter_library WHERE id = ?`, id)
+	result, err := d.db.Exec(`DELETE FROM filter_library WHERE id = ?`, id)
 	if err != nil {
 		fmt.Println("Error deleting filter:", err)
 		return err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return fmt.Errorf("error checking rows affected: %w", err)
+	}
+	if rowsAffected == 0 {
+		return fmt.Errorf("filter with id %d not found", id)
 	}
 	return nil
 }
@@ -3402,6 +3426,9 @@ func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 			"name":    name,
 			"command": command,
 		})
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 	return filters, nil
 }
@@ -3543,8 +3570,14 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 		// Reset ID for comparison
 		currentPosition.ID = 0
-		currentPositionJSON, _ := json.Marshal(currentPosition)
+		currentPositionJSON, err := json.Marshal(currentPosition)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 		currentPositionsMap[string(currentPositionJSON)] = currentID
+	}
+	if err := currentRows.Err(); err != nil {
+		return nil, err
 	}
 	currentRows.Close()
 
@@ -3580,7 +3613,10 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 
 		// Reset ID for existence check
 		importPosition.ID = 0
-		importPositionJSON, _ := json.Marshal(importPosition)
+		importPositionJSON, err := json.Marshal(importPosition)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 
 		// OPTIMIZATION: O(1) hash map lookup instead of nested loop
 		existingPositionID, existsInCurrent := currentPositionsMap[string(importPositionJSON)]
@@ -3639,6 +3675,9 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		} else {
 			positionsToAdd++
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	result := map[string]interface{}{
@@ -3748,8 +3787,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 		// Reset ID for comparison
 		currentPosition.ID = 0
-		currentPositionJSON, _ := json.Marshal(currentPosition)
+		currentPositionJSON, err := json.Marshal(currentPosition)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 		currentPositionsMap[string(currentPositionJSON)] = currentID
+	}
+	if err := currentRows.Err(); err != nil {
+		return nil, err
 	}
 	currentRows.Close()
 
@@ -3789,7 +3834,10 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 		// Reset ID for existence check
 		importPosition.ID = 0
-		importPositionJSON, _ := json.Marshal(importPosition)
+		importPositionJSON, err := json.Marshal(importPosition)
+		if err != nil {
+			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 
 		// OPTIMIZATION: O(1) hash map lookup instead of nested loop
 		existingPositionID, existsInCurrent := currentPositionsMap[string(importPositionJSON)]
@@ -3896,7 +3944,10 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 			// Update the position ID in the state JSON
 			importPosition.ID = newPositionID
-			updatedStateJSON, _ := json.Marshal(importPosition)
+			updatedStateJSON, err := json.Marshal(importPosition)
+			if err != nil {
+				return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+			}
 			_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedStateJSON), newPositionID)
 			if err != nil {
 				fmt.Println("Error updating position with ID:", err)
@@ -3910,7 +3961,10 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				var analysis PositionAnalysis
 				json.Unmarshal([]byte(importAnalysisJSON), &analysis)
 				analysis.PositionID = int(newPositionID)
-				updatedAnalysisJSON, _ := json.Marshal(analysis)
+				updatedAnalysisJSON, err := json.Marshal(analysis)
+				if err != nil {
+					return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+				}
 
 				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON))
 				if err != nil {
@@ -3930,6 +3984,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 			positionsAdded++
 		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	// Final check for cancellation before committing
@@ -4129,6 +4186,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		)
 	`)
+	if err != nil {
+		fmt.Println("Error creating tournament table in export database:", err)
+		return err
+	}
 
 	// Create collection tables (required for version >= 1.5.0)
 	_, err = exportDB.Exec(`
@@ -4294,7 +4355,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 
 		// Update the position ID in the state JSON
 		position.ID = newPositionID
-		updatedPositionJSON, _ := json.Marshal(position)
+		updatedPositionJSON, err := json.Marshal(position)
+		if err != nil {
+			return fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedPositionJSON), newPositionID)
 		if err != nil {
 			fmt.Printf("Error updating position %d with new ID: %v\n", newPositionID, err)
@@ -4361,6 +4425,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 									}
 								}
 							}
+							if err := moveRows.Err(); err != nil {
+								return err
+							}
 							moveRows.Close()
 
 							// Convert to slices
@@ -4384,7 +4451,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 						analysis.PlayedCubeActions = nil
 					}
 
-					updatedAnalysisJSON, _ := json.Marshal(analysis)
+					updatedAnalysisJSON, err := json.Marshal(analysis)
+					if err != nil {
+						return fmt.Errorf("failed to marshal JSON: %w", err)
+					}
 
 					if _, insertErr := tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON)); insertErr != nil {
 						fmt.Printf("Error inserting analysis for position %d (old ID: %d): %v\n", newPositionID, oldPositionID, insertErr)
@@ -4431,6 +4501,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 						fmt.Printf("Error inserting filter library entry '%s': %v\n", name, err)
 					}
 				}
+			}
+			if err := rows.Err(); err != nil {
+				return err
 			}
 		}
 	}
@@ -4516,6 +4589,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				matchIDMapping[oldMatchID] = newMatchID
 				matchCount++
 			}
+			if err := matchRows.Err(); err != nil {
+				return err
+			}
 
 			// Export games for each match
 			gameIDMapping := make(map[int64]int64) // old game ID -> new game ID
@@ -4558,6 +4634,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					}
 					gameIDMapping[oldGameID] = newGameID
 					gameCount++
+				}
+				if err := gameRows.Err(); err != nil {
+					return err
 				}
 				gameRows.Close()
 			}
@@ -4623,6 +4702,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					moveIDMapping[oldMoveID] = newMoveID
 					moveCount++
 				}
+				if err := moveRows.Err(); err != nil {
+					return err
+				}
 				moveRows.Close()
 			}
 
@@ -4661,6 +4743,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					}
 					moveAnalysisCount++
 				}
+				if err := analysisRows.Err(); err != nil {
+					return err
+				}
 				analysisRows.Close()
 			}
 		}
@@ -4690,7 +4775,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				fmt.Printf("Error inserting collection %d: %v\n", collectionID, err)
 				continue
 			}
-			newCollectionID, _ := result.LastInsertId()
+			newCollectionID, err := result.LastInsertId()
+			if err != nil {
+				return fmt.Errorf("failed to get last insert ID: %w", err)
+			}
 			collectionCount++
 
 			// Export collection_position mappings
@@ -4711,6 +4799,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 						newCollectionID, newPosID, cpSortOrder, addedAt)
 					collectionPosCount++
 				}
+			}
+			if err := cpRows.Err(); err != nil {
+				return err
 			}
 			cpRows.Close()
 		}
@@ -4741,7 +4832,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				fmt.Printf("Error inserting tournament %d: %v\n", tournamentID, err)
 				continue
 			}
-			newTournamentID, _ := result.LastInsertId()
+			newTournamentID, err := result.LastInsertId()
+			if err != nil {
+				return fmt.Errorf("failed to get last insert ID: %w", err)
+			}
 			tournamentIDMapping[tournamentID] = newTournamentID
 			tournamentCount++
 		}
@@ -4760,6 +4854,9 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 							_, _ = exportDB.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, newTournamentID, newMatchID)
 						}
 					}
+				}
+				if err := matchTournamentRows.Err(); err != nil {
+					return err
 				}
 				matchTournamentRows.Close()
 			}
@@ -4918,11 +5015,17 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 				// Tournament doesn't exist yet — create it
 				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
 				if err3 == nil {
-					tournamentID, _ = res2.LastInsertId()
+					tournamentID, err = res2.LastInsertId()
+					if err != nil {
+						return 0, fmt.Errorf("failed to get last insert ID: %w", err)
+					}
 				}
 			}
 			if tournamentID > 0 {
-				tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+				if err != nil {
+					fmt.Printf("Warning: failed to link match to tournament: %v\n", err)
+				}
 			}
 		}
 	}
@@ -4952,9 +5055,15 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		// Normalize for comparison (positions are now stored normalized, but older ones might not be)
 		normalizedPosition := existingPosition.NormalizeForStorage()
 		normalizedPosition.ID = 0
-		normalizedJSON, _ := json.Marshal(normalizedPosition)
+		normalizedJSON, err := json.Marshal(normalizedPosition)
+		if err != nil {
+			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 		positionCache[string(normalizedJSON)] = existingID
 		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
+	}
+	if err := existingRows.Err(); err != nil {
+		return 0, err
 	}
 	existingRows.Close()
 
@@ -5128,7 +5237,10 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 			return err
 		}
 
-		moveID, _ := moveResult.LastInsertId()
+		moveID, err := moveResult.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 
 		// Save analysis if available
 		if len(move.CheckerMove.Analysis) > 0 {
@@ -5180,7 +5292,10 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 			return err
 		}
 
-		moveID, _ := moveResult.LastInsertId()
+		moveID, err := moveResult.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 
 		// Save cube analysis if available
 		if move.CubeMove.Analysis != nil {
@@ -5245,7 +5360,10 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			return err
 		}
 
-		moveID, _ := moveResult.LastInsertId()
+		moveID, err := moveResult.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 
 		// Save analysis if available
 		if len(move.CheckerMove.Analysis) > 0 {
@@ -5321,7 +5439,10 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			if err != nil {
 				return err
 			}
-			moveID1, _ := moveResult1.LastInsertId()
+			moveID1, err := moveResult1.LastInsertId()
+			if err != nil {
+				return fmt.Errorf("failed to get last insert ID: %w", err)
+			}
 
 			// Save analysis to first position
 			if move.CubeMove.Analysis != nil {
@@ -5407,7 +5528,10 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 				return err
 			}
 
-			moveID, _ := moveResult.LastInsertId()
+			moveID, err := moveResult.LastInsertId()
+			if err != nil {
+				return fmt.Errorf("failed to get last insert ID: %w", err)
+			}
 
 			// Save cube analysis
 			if move.CubeMove.Analysis != nil {
@@ -5485,7 +5609,10 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 			return err
 		}
 
-		moveID, _ := moveResult.LastInsertId()
+		moveID, err := moveResult.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 
 		// Save analysis if available
 		if len(move.CheckerMove.Analysis) > 0 {
@@ -5524,7 +5651,10 @@ func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *
 			return err
 		}
 
-		moveID, _ := moveResult.LastInsertId()
+		moveID, err := moveResult.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 
 		// Save cube analysis if available
 		if move.CubeMove.Analysis != nil {
@@ -5747,7 +5877,10 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, pos
 
 	// Update position with ID
 	normalizedPosition.ID = positionID
-	positionJSONWithID, _ := json.Marshal(normalizedPosition)
+	positionJSONWithID, err := json.Marshal(normalizedPosition)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
+	}
 	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
 	if err != nil {
 		return 0, err
@@ -5804,7 +5937,10 @@ func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, positio
 	}
 
 	normalizedPosition.ID = positionID
-	positionJSONWithID, _ := json.Marshal(normalizedPosition)
+	positionJSONWithID, err := json.Marshal(normalizedPosition)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
+	}
 	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
 	if err != nil {
 		return 0, err
@@ -5860,6 +5996,9 @@ func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, erro
 			return positionID, nil
 		}
 	}
+	if err := rows.Err(); err != nil {
+		return 0, err
+	}
 
 	// Position doesn't exist, create new one
 	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
@@ -5874,7 +6013,10 @@ func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, erro
 
 	// Update position with ID
 	normalizedPosition.ID = positionID
-	positionJSON, _ = json.Marshal(normalizedPosition)
+	positionJSON, err = json.Marshal(normalizedPosition)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
+	}
 	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
 
 	return positionID, err
@@ -7169,7 +7311,13 @@ func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name st
 				hashBuilder.WriteString(fmt.Sprintf("c%s|", cubeAction.String))
 			}
 		}
+		if err := moveRows.Err(); err != nil {
+			return ""
+		}
 		moveRows.Close()
+	}
+	if err := gameRows.Err(); err != nil {
+		return ""
 	}
 
 	// Compute SHA256 hash
@@ -7180,6 +7328,9 @@ func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name st
 // CheckMatchExists checks if a match with the given hash already exists in the database
 // Returns the existing match ID if found, 0 otherwise
 func (d *Database) CheckMatchExists(matchHash string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
 	var existingID int64
 	err := d.db.QueryRow(`SELECT id FROM match WHERE match_hash = ?`, matchHash).Scan(&existingID)
 	if err == sql.ErrNoRows {
@@ -7324,11 +7475,17 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 			if err2 != nil {
 				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
 				if err3 == nil {
-					tournamentID, _ = res2.LastInsertId()
+					tournamentID, err = res2.LastInsertId()
+					if err != nil {
+						return 0, fmt.Errorf("failed to get last insert ID: %w", err)
+					}
 				}
 			}
 			if tournamentID > 0 {
-				tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+				if err != nil {
+					fmt.Printf("Warning: failed to link match to tournament: %v\n", err)
+				}
 			}
 		}
 	}
@@ -7357,9 +7514,15 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 
 		normalizedPosition := existingPosition.NormalizeForStorage()
 		normalizedPosition.ID = 0
-		normalizedJSON, _ := json.Marshal(normalizedPosition)
+		normalizedJSON, err := json.Marshal(normalizedPosition)
+		if err != nil {
+			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 		positionCache[string(normalizedJSON)] = existingID
 		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
+	}
+	if err := existingRows.Err(); err != nil {
+		return 0, err
 	}
 	existingRows.Close()
 
@@ -7697,7 +7860,10 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 		return err
 	}
 
-	moveID, _ := moveResult.LastInsertId()
+	moveID, err := moveResult.LastInsertId()
+	if err != nil {
+		return fmt.Errorf("failed to get last insert ID: %w", err)
+	}
 
 	// Save analysis if available (SGF files only)
 	if moveRec.Analysis != nil && len(moveRec.Analysis.Moves) > 0 && positionID > 0 {
@@ -7777,7 +7943,10 @@ func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int3
 		return err
 	}
 
-	moveID, _ := moveResult.LastInsertId()
+	moveID, err := moveResult.LastInsertId()
+	if err != nil {
+		return fmt.Errorf("failed to get last insert ID: %w", err)
+	}
 
 	// Save cube analysis if available (SGF files only)
 	if moveRec.CubeAnalysis != nil && positionID > 0 {
@@ -9013,11 +9182,17 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			if err2 != nil {
 				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
 				if err3 == nil {
-					tournamentID, _ = res2.LastInsertId()
+					tournamentID, err = res2.LastInsertId()
+					if err != nil {
+						return 0, fmt.Errorf("failed to get last insert ID: %w", err)
+					}
 				}
 			}
 			if tournamentID > 0 {
-				tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+				if err != nil {
+					fmt.Printf("Warning: failed to link match to tournament: %v\n", err)
+				}
 			}
 		}
 	}
@@ -9044,9 +9219,15 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 		}
 		normalizedPosition := existingPosition.NormalizeForStorage()
 		normalizedPosition.ID = 0
-		normalizedJSON, _ := json.Marshal(normalizedPosition)
+		normalizedJSON, err := json.Marshal(normalizedPosition)
+		if err != nil {
+			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
 		positionCache[string(normalizedJSON)] = existingID
 		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
+	}
+	if err := existingRows.Err(); err != nil {
+		return 0, err
 	}
 	existingRows.Close()
 
@@ -9433,7 +9614,10 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 		return err
 	}
 
-	moveID, _ := moveResult.LastInsertId()
+	moveID, err := moveResult.LastInsertId()
+	if err != nil {
+		return fmt.Errorf("failed to get last insert ID: %w", err)
+	}
 
 	// Save analysis if available
 	moveAnalysis, ok := moveData["moveAnalysis"].([]interface{})
@@ -9508,7 +9692,10 @@ func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32,
 		return err
 	}
 
-	moveID, _ := moveResult.LastInsertId()
+	moveID, err := moveResult.LastInsertId()
+	if err != nil {
+		return fmt.Errorf("failed to get last insert ID: %w", err)
+	}
 
 	// Save cube analysis from equity field
 	equity := bgfGetMap(moveData, "equity")
@@ -10362,7 +10549,13 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 		return 0, fmt.Errorf("failed to marshal position: %w", err)
 	}
 
-	result, err := d.db.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	tx, err := d.db.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert position: %w", err)
 	}
@@ -10375,9 +10568,12 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 	normalizedPosition.ID = positionID
 	positionJSON, err = json.Marshal(normalizedPosition)
 	if err != nil {
-		return positionID, nil
+		return 0, fmt.Errorf("failed to marshal position with ID: %w", err)
 	}
-	d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
+	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
+	if err != nil {
+		return 0, fmt.Errorf("failed to update position state: %w", err)
+	}
 
 	// Save checker evaluation analysis if available
 	if len(bgfPos.Evaluations) > 0 {
@@ -10423,11 +10619,11 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 
 		analysisJSON, err := json.Marshal(posAnalysis)
 		if err != nil {
-			return positionID, nil // Position saved, analysis failed
+			return 0, fmt.Errorf("failed to marshal checker analysis: %w", err)
 		}
-		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
 		if err != nil {
-			fmt.Printf("Warning: failed to save checker analysis for BGBlitz position: %v\n", err)
+			return 0, fmt.Errorf("failed to save checker analysis for BGBlitz position: %w", err)
 		}
 	}
 
@@ -10506,14 +10702,17 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 
 		analysisJSON, err := json.Marshal(posAnalysis)
 		if err != nil {
-			return positionID, nil
+			return 0, fmt.Errorf("failed to marshal cube analysis: %w", err)
 		}
-		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
 		if err != nil {
-			fmt.Printf("Warning: failed to save cube analysis for BGBlitz position: %v\n", err)
+			return 0, fmt.Errorf("failed to save cube analysis for BGBlitz position: %w", err)
 		}
 	}
 
+	if err := tx.Commit(); err != nil {
+		return 0, fmt.Errorf("failed to commit position with analysis: %w", err)
+	}
 	return positionID, nil
 }
 
@@ -10800,6 +10999,9 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		}
 		matches = append(matches, m)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return matches, nil
 }
@@ -10860,6 +11062,9 @@ func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
 		g.InitialScore = [2]int32{score1, score2}
 		games = append(games, g)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return games, nil
 }
@@ -10902,6 +11107,9 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 		}
 		moves = append(moves, m)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return moves, nil
 }
@@ -10911,38 +11119,47 @@ func (d *Database) DeleteMatch(matchID int64) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	// Collect position IDs referenced by this match's moves before cascade delete
-	rows, err := d.db.Query(`
+	rows, err := tx.Query(`
 		SELECT DISTINCT m.position_id 
 		FROM move m
 		INNER JOIN game g ON m.game_id = g.id
 		WHERE g.match_id = ? AND m.position_id IS NOT NULL
 	`, matchID)
 	if err != nil {
-		fmt.Println("Error collecting position IDs:", err)
-		return err
+		return fmt.Errorf("error collecting position IDs: %w", err)
 	}
 	var positionIDs []int64
 	for rows.Next() {
 		var pid int64
-		if err := rows.Scan(&pid); err == nil {
-			positionIDs = append(positionIDs, pid)
+		if err := rows.Scan(&pid); err != nil {
+			rows.Close()
+			return fmt.Errorf("error scanning position ID: %w", err)
 		}
+		positionIDs = append(positionIDs, pid)
 	}
 	rows.Close()
+	if err := rows.Err(); err != nil {
+		return fmt.Errorf("error iterating position IDs: %w", err)
+	}
 
 	// Foreign key constraints will cascade delete to game, move, and move_analysis
-	_, err = d.db.Exec(`DELETE FROM match WHERE id = ?`, matchID)
+	_, err = tx.Exec(`DELETE FROM match WHERE id = ?`, matchID)
 	if err != nil {
-		fmt.Println("Error deleting match:", err)
-		return err
+		return fmt.Errorf("error deleting match: %w", err)
 	}
 
 	// Delete orphaned positions that are no longer referenced by any move
 	// and not part of any collection
 	for _, pid := range positionIDs {
 		var refCount int
-		err := d.db.QueryRow(`
+		err := tx.QueryRow(`
 			SELECT COUNT(*) FROM (
 				SELECT position_id FROM move WHERE position_id = ?
 				UNION ALL
@@ -10950,15 +11167,18 @@ func (d *Database) DeleteMatch(matchID int64) error {
 			)
 		`, pid, pid).Scan(&refCount)
 		if err != nil {
-			continue
+			return fmt.Errorf("error checking position references for ID %d: %w", pid, err)
 		}
 		if refCount == 0 {
 			// Position is orphaned — delete it (cascades to analysis and comment)
-			d.db.Exec(`DELETE FROM position WHERE id = ?`, pid)
+			_, err = tx.Exec(`DELETE FROM position WHERE id = ?`, pid)
+			if err != nil {
+				return fmt.Errorf("error deleting orphaned position %d: %w", pid, err)
+			}
 		}
 	}
 
-	return nil
+	return tx.Commit()
 }
 
 // GetMatchMovePositions returns all positions from a match in chronological order
@@ -11042,6 +11262,9 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 		}
 
 		movePositions = append(movePositions, movePos)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return movePositions, nil
@@ -11192,6 +11415,9 @@ func (d *Database) GetAllCollections() ([]Collection, error) {
 		}
 		collections = append(collections, c)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return collections, nil
 }
@@ -11267,14 +11493,20 @@ func (d *Database) AddPositionToCollection(collectionID int64, positionID int64)
 		return fmt.Errorf("no database is currently open")
 	}
 
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	// Get the max sort_order for this collection
 	var maxOrder int
-	err := d.db.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, collectionID).Scan(&maxOrder)
+	err = tx.QueryRow(`SELECT COALESCE(MAX(sort_order), -1) FROM collection_position WHERE collection_id = ?`, collectionID).Scan(&maxOrder)
 	if err != nil {
 		maxOrder = -1
 	}
 
-	_, err = d.db.Exec(`
+	_, err = tx.Exec(`
 		INSERT OR IGNORE INTO collection_position (collection_id, position_id, sort_order, added_at)
 		VALUES (?, ?, ?, datetime('now'))
 	`, collectionID, positionID, maxOrder+1)
@@ -11283,9 +11515,12 @@ func (d *Database) AddPositionToCollection(collectionID int64, positionID int64)
 	}
 
 	// Update collection's updated_at
-	_, err = d.db.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return tx.Commit()
 }
 
 // AddPositionsToCollection adds multiple positions to a collection
@@ -11339,7 +11574,13 @@ func (d *Database) RemovePositionFromCollection(collectionID int64, positionID i
 		return fmt.Errorf("no database is currently open")
 	}
 
-	_, err := d.db.Exec(`
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec(`
 		DELETE FROM collection_position 
 		WHERE collection_id = ? AND position_id = ?
 	`, collectionID, positionID)
@@ -11348,9 +11589,12 @@ func (d *Database) RemovePositionFromCollection(collectionID int64, positionID i
 	}
 
 	// Update collection's updated_at
-	_, err = d.db.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+	_, err = tx.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE id = ?`, collectionID)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return tx.Commit()
 }
 
 // RemovePositionsFromCollection removes multiple positions from a collection
@@ -11413,6 +11657,9 @@ func (d *Database) GetPositionIndexMap() (map[int64]int, error) {
 		result[id] = index
 		index++
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return result, nil
 }
@@ -11454,6 +11701,9 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 		}
 		position.ID = id
 		positions = append(positions, position)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return positions, nil
@@ -11617,6 +11867,9 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 		}
 		collections = append(collections, c)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return collections, nil
 }
@@ -11642,6 +11895,9 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 			if err := rows.Scan(&posID); err == nil {
 				positionIDsMap[posID] = true
 			}
+		}
+		if err := rows.Err(); err != nil {
+			return err
 		}
 		rows.Close()
 	}
@@ -11863,7 +12119,10 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		if err != nil {
 			continue
 		}
-		newID, _ := result.LastInsertId()
+		newID, err := result.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 		oldToNewID[posID] = newID
 
 		// Export analysis if requested
@@ -11902,7 +12161,10 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		if err != nil {
 			continue
 		}
-		newCollectionID, _ := result.LastInsertId()
+		newCollectionID, err := result.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 		collectionIDMapping[collectionID] = newCollectionID
 
 		// Export collection_position mappings
@@ -11921,6 +12183,9 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 				_, _ = exportDB.Exec(`INSERT INTO collection_position (collection_id, position_id, sort_order, added_at) VALUES (?, ?, ?, ?)`,
 					newCollectionID, newPosID, sortOrder, addedAt)
 			}
+		}
+		if err := rows.Err(); err != nil {
+			return err
 		}
 		rows.Close()
 	}
@@ -12011,6 +12276,9 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 		}
 		tournaments = append(tournaments, t)
 	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
 
 	return tournaments, nil
 }
@@ -12044,19 +12312,25 @@ func (d *Database) DeleteTournament(id int64) error {
 		return fmt.Errorf("no database is currently open")
 	}
 
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	// Unlink matches from this tournament
-	_, err := d.db.Exec(`UPDATE match SET tournament_id = NULL WHERE tournament_id = ?`, id)
+	_, err = tx.Exec(`UPDATE match SET tournament_id = NULL WHERE tournament_id = ?`, id)
 	if err != nil {
 		return err
 	}
 
 	// Delete the tournament
-	_, err = d.db.Exec(`DELETE FROM tournament WHERE id = ?`, id)
+	_, err = tx.Exec(`DELETE FROM tournament WHERE id = ?`, id)
 	if err != nil {
 		return err
 	}
 
-	return nil
+	return tx.Commit()
 }
 
 // AddMatchToTournament adds a match to a tournament
@@ -12068,15 +12342,24 @@ func (d *Database) AddMatchToTournament(tournamentID int64, matchID int64) error
 		return fmt.Errorf("no database is currently open")
 	}
 
-	_, err := d.db.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
 	if err != nil {
 		return err
 	}
 
 	// Update tournament's updated_at
-	_, err = d.db.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
+	_, err = tx.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
+	if err != nil {
+		return err
+	}
 
-	return err
+	return tx.Commit()
 }
 
 // RemoveMatchFromTournament removes a match from a tournament
@@ -12109,24 +12392,36 @@ func (d *Database) SetMatchTournamentByName(matchID int64, tournamentName string
 		return err
 	}
 
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
 	// Look for existing tournament with that name
 	var tournamentID int64
-	err := d.db.QueryRow(`SELECT id FROM tournament WHERE name = ?`, name).Scan(&tournamentID)
+	err = tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, name).Scan(&tournamentID)
 	if err != nil {
 		// Create new tournament
-		res, err2 := d.db.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, name)
+		res, err2 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, name)
 		if err2 != nil {
 			return err2
 		}
-		tournamentID, _ = res.LastInsertId()
+		tournamentID, err2 = res.LastInsertId()
+		if err2 != nil {
+			return err2
+		}
 	}
 
-	_, err = d.db.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+	_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
 	if err != nil {
 		return err
 	}
-	_, _ = d.db.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
-	return nil
+	_, err = tx.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
+	if err != nil {
+		return err
+	}
+	return tx.Commit()
 }
 
 // UpdateMatch updates editable metadata for a match (player names and date).
@@ -12208,6 +12503,55 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 		return fmt.Errorf("failed to swap move players: %w", err)
 	}
 
+	// 4. Update position state JSON to swap scores and cube owner
+	// Positions are stored normalized (player_on_roll = 0), but Score and Cube.Owner
+	// reflect the original player assignment and must be swapped.
+	posRows, err := tx.Query(`
+		SELECT DISTINCT p.id, p.state
+		FROM position p
+		INNER JOIN move m ON m.position_id = p.id
+		INNER JOIN game g ON m.game_id = g.id
+		WHERE g.match_id = ?
+	`, matchID)
+	if err != nil {
+		return fmt.Errorf("failed to query positions for swap: %w", err)
+	}
+	defer posRows.Close()
+
+	for posRows.Next() {
+		var posID int64
+		var stateJSON string
+		if err := posRows.Scan(&posID, &stateJSON); err != nil {
+			return fmt.Errorf("failed to scan position %d: %w", posID, err)
+		}
+
+		var pos Position
+		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
+			return fmt.Errorf("failed to unmarshal position %d: %w", posID, err)
+		}
+
+		// Swap scores
+		pos.Score[0], pos.Score[1] = pos.Score[1], pos.Score[0]
+
+		// Flip cube owner (if not centered)
+		if pos.Cube.Owner != None {
+			pos.Cube.Owner = 1 - pos.Cube.Owner
+		}
+
+		updatedJSON, err := json.Marshal(pos)
+		if err != nil {
+			return fmt.Errorf("failed to marshal updated position %d: %w", posID, err)
+		}
+
+		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedJSON), posID)
+		if err != nil {
+			return fmt.Errorf("failed to update position %d: %w", posID, err)
+		}
+	}
+	if err := posRows.Err(); err != nil {
+		return fmt.Errorf("error iterating positions for swap: %w", err)
+	}
+
 	return tx.Commit()
 }
 
@@ -12247,6 +12591,9 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 			m.TournamentID = &tid
 		}
 		matches = append(matches, m)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return matches, nil
@@ -12305,6 +12652,9 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 				matchIDs = append(matchIDs, matchID)
 			}
 		}
+		if err := rows.Err(); err != nil {
+			return err
+		}
 		rows.Close()
 	}
 
@@ -12325,6 +12675,9 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			if err := rows.Scan(&posID); err == nil {
 				positionIDsMap[posID] = true
 			}
+		}
+		if err := rows.Err(); err != nil {
+			return err
 		}
 		rows.Close()
 	}
@@ -12501,7 +12854,10 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		if err != nil {
 			continue
 		}
-		newID, _ := result.LastInsertId()
+		newID, err := result.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 		oldToNewID[posID] = newID
 
 		// Export analysis if requested
@@ -12540,7 +12896,10 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		if err != nil {
 			continue
 		}
-		newTournamentID, _ := result.LastInsertId()
+		newTournamentID, err := result.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 		tournamentIDMapping[tournamentID] = newTournamentID
 	}
 
@@ -12579,7 +12938,10 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 		if err != nil {
 			continue
 		}
-		newMatchID, _ := result.LastInsertId()
+		newMatchID, err := result.LastInsertId()
+		if err != nil {
+			return fmt.Errorf("failed to get last insert ID: %w", err)
+		}
 		matchIDMapping[matchID] = newMatchID
 
 		// Export games
@@ -12601,8 +12963,14 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			if err != nil {
 				continue
 			}
-			newGameID, _ := result.LastInsertId()
+			newGameID, err := result.LastInsertId()
+			if err != nil {
+				return fmt.Errorf("failed to get last insert ID: %w", err)
+			}
 			gameIDMapping[gameID] = newGameID
+		}
+		if err := gameRows.Err(); err != nil {
+			return err
 		}
 		gameRows.Close()
 
@@ -12634,7 +13002,10 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 				if err != nil {
 					continue
 				}
-				newMoveID, _ := result.LastInsertId()
+				newMoveID, err := result.LastInsertId()
+				if err != nil {
+					return fmt.Errorf("failed to get last insert ID: %w", err)
+				}
 
 				// Export move_analysis
 				analysisRows, err := d.db.Query(`SELECT analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate FROM move_analysis WHERE move_id = ?`, moveID)
@@ -12650,7 +13021,13 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 					_, _ = exportDB.Exec(`INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error, win_rate, gammon_rate, backgammon_rate, opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
 						newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, bgRate, oppWinRate, oppGammonRate, oppBgRate)
 				}
+				if err := analysisRows.Err(); err != nil {
+					return err
+				}
 				analysisRows.Close()
+			}
+			if err := moveRows.Err(); err != nil {
+				return err
 			}
 			moveRows.Close()
 		}
