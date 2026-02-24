@@ -11,6 +11,10 @@
         OpenImportDatabaseDialog,
         OpenExportDatabaseDialog,
         OpenPositionDialog,
+        OpenPositionFilesDialog,
+        OpenPositionFolderDialog,
+        CollectImportableFiles,
+        ReadFileContent,
         DeleteFile,
 
         ShowAlert
@@ -154,6 +158,7 @@
     import TakePoint4Modal from './components/TakePoint4Modal.svelte'; // Import TakePoint4Modal component
     import FilterLibraryPanel from './components/FilterLibraryPanel.svelte'; // Update import
     import ImportProgressModal from './components/ImportProgressModal.svelte'; // Import ImportProgressModal component
+    import FileImportProgressModal from './components/FileImportProgressModal.svelte'; // Import FileImportProgressModal component
     import ExportDatabaseModal from './components/ExportDatabaseModal.svelte'; // Import ExportDatabaseModal component
     import MatchPanel from './components/MatchPanel.svelte'; // Import MatchPanel component
     import CollectionPanel from './components/CollectionPanel.svelte'; // Import CollectionPanel component
@@ -192,6 +197,16 @@
         total: 0
     };
     let pendingImportPath = null;
+
+    // File import (multi-file/folder) state
+    let showFileImportModal = false;
+    let fileImportMode = 'idle'; // 'idle', 'importing', 'completed'
+    let fileImportTotalFiles = 0;
+    let fileImportCurrentIndex = 0;
+    let fileImportCurrentFile = '';
+    let fileImportResults = { succeeded: 0, failed: 0, skipped: 0, errors: [] };
+    let fileImportCancelled = false;
+
     let exportModalMode = 'preparing'; // 'preparing', 'metadata', 'exporting', 'completed'
     let exportPositionCount = 0;
     let exportMetadata = {
@@ -567,6 +582,8 @@
             exitApp();
         } else if(event.ctrlKey && event.shiftKey && event.code == 'KeyI') {
             importDatabase();
+        } else if(event.ctrlKey && event.shiftKey && event.code == 'KeyF') {
+            importFolder();
         } else if(event.ctrlKey && event.code == 'KeyI') {
             importPosition();
         } else if(event.ctrlKey && event.code == 'KeyC') {
@@ -1300,168 +1317,20 @@
             return;
         }
         try {
-            const response = await OpenPositionDialog();
+            // Show a choice: files or folder
+            const files = await OpenPositionFilesDialog();
 
-            if (response.error) {
-                console.error("Error:", response.error);
+            if (!files || files.length === 0) {
                 return;
             }
 
-            console.log("File path:", response.file_path);
-            
-            // Detect file type by extension
-            const filePath = response.file_path;
-            const lowerPath = filePath.toLowerCase();
-            const isXGFile = lowerPath.endsWith('.xg');
-            const isBGFFile = lowerPath.endsWith('.bgf');
-            // Check if .txt file is a Jellyfish match file (contains "N point match" header)
-            const isJellyfishTXT = lowerPath.endsWith('.txt') && response.content && /^\s*\d+\s+point\s+match\s*$/m.test(response.content);
-            const isGnuBGFile = lowerPath.endsWith('.sgf') || lowerPath.endsWith('.mat') || isJellyfishTXT;
-            
-            if (isXGFile) {
-                // Import XG match file
-                console.log("Importing XG match file:", filePath);
-                try {
-                    const matchID = await ImportXGMatch(filePath);
-                    console.log('XG match imported with ID:', matchID);
-                    setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
-                    
-                    // Trigger match panel refresh to display the imported match
-                    matchPanelRefreshTriggerStore.update(n => n + 1);
-                    
-                    // Show match panel to display the imported match
-                    showMatchPanelStore.set(true);
-                } catch (error) {
-                    console.error("Error importing XG match:", error);
-                    // Check if this is a duplicate match error
-                    const errorStr = String(error);
-                    if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
-                        // Just show in status bar, no popup for duplicates
-                        setStatusBarMessage('This match has already been imported');
-                    } else {
-                        setStatusBarMessage('Error importing XG match: ' + error);
-                        await ShowAlert('Error importing XG match: ' + error);
-                    }
-                }
-            } else if (isBGFFile) {
-                // Import BGBlitz BGF match file
-                console.log("Importing BGF match file:", filePath);
-                try {
-                    const matchID = await ImportBGFMatch(filePath);
-                    console.log('BGF match imported with ID:', matchID);
-                    setStatusBarMessage(`BGBlitz match imported successfully (ID: ${matchID})`);
-                    
-                    // Trigger match panel refresh to display the imported match
-                    matchPanelRefreshTriggerStore.update(n => n + 1);
-                    
-                    // Show match panel to display the imported match
-                    showMatchPanelStore.set(true);
-                } catch (error) {
-                    console.error("Error importing BGF match:", error);
-                    const errorStr = String(error);
-                    if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
-                        setStatusBarMessage('This match has already been imported');
-                    } else {
-                        setStatusBarMessage('Error importing BGBlitz match: ' + error);
-                        await ShowAlert('Error importing BGBlitz match: ' + error);
-                    }
-                }
-            } else if (isGnuBGFile) {
-                // Import GnuBG match file (.sgf, .mat, or Jellyfish .txt)
-                const formatName = lowerPath.endsWith('.sgf') ? 'GnuBG SGF' : (lowerPath.endsWith('.txt') ? 'Jellyfish TXT' : 'Jellyfish MAT');
-                console.log(`Importing ${formatName} match file:`, filePath);
-                try {
-                    const matchID = await ImportGnuBGMatch(filePath);
-                    console.log(`${formatName} match imported with ID:`, matchID);
-                    setStatusBarMessage(`${formatName} match imported successfully (ID: ${matchID})`);
-                    
-                    // Trigger match panel refresh to display the imported match
-                    matchPanelRefreshTriggerStore.update(n => n + 1);
-                    
-                    // Show match panel to display the imported match
-                    showMatchPanelStore.set(true);
-                } catch (error) {
-                    console.error(`Error importing ${formatName} match:`, error);
-                    const errorStr = String(error);
-                    if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
-                        setStatusBarMessage('This match has already been imported');
-                    } else {
-                        setStatusBarMessage(`Error importing ${formatName} match: ` + error);
-                        await ShowAlert(`Error importing ${formatName} match: ` + error);
-                    }
-                }
+            if (files.length === 1) {
+                // Single file: use the original inline import logic
+                const filePath = files[0];
+                await importSingleFile(filePath);
             } else {
-                // Check if this is a BGBlitz TXT position file
-                // BGBlitz files contain "Position-ID:" which is unique to BGBlitz
-                // XG text exports use the same board art but never have "Position-ID:"
-                const isBGBlitzTXT = response.content && response.content.includes('Position-ID:');
-
-                if (isBGBlitzTXT) {
-                    // Import BGBlitz TXT position via Go backend
-                    console.log("Importing BGBlitz TXT position:", filePath);
-                    try {
-                        const posID = await ImportBGFPosition(filePath);
-                        console.log('BGBlitz position imported with ID:', posID);
-                        setStatusBarMessage(`BGBlitz position imported successfully (ID: ${posID})`);
-                        await loadAllPositions();
-                    } catch (error) {
-                        console.error("Error importing BGBlitz position:", error);
-                        const errorStr = String(error);
-                        if (errorStr.includes('duplicate') || errorStr.includes('already exists')) {
-                            setStatusBarMessage('This position already exists');
-                        } else {
-                            setStatusBarMessage('Error importing BGBlitz position: ' + error);
-                            await ShowAlert('Error importing BGBlitz position: ' + error);
-                        }
-                    }
-                } else {
-                    // Import XG text position file via JS parser
-                    console.log("File content:", response.content);
-
-                    // Now you can parse and use the file content
-                    const { positionData, parsedAnalysis } = parsePosition(response.content);
-                    positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
-                    analysisStore.set({
-                        positionId: null,
-                        xgid: parsedAnalysis.xgid,
-                        player1: '',
-                        player2: '',
-                        analysisType: parsedAnalysis.analysisType,
-                        analysisEngineVersion: parsedAnalysis.analysisEngineVersion,
-                        checkerAnalysis: { moves: parsedAnalysis.checkerAnalysis },
-                        doublingCubeAnalysis: {
-                            analysisDepth: parsedAnalysis.doublingCubeAnalysis.analysisDepth || '',
-                            playerWinChances: parsedAnalysis.doublingCubeAnalysis.playerWinChances || 0,
-                            playerGammonChances: parsedAnalysis.doublingCubeAnalysis.playerGammonChances || 0,
-                            playerBackgammonChances: parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances || 0,
-                            opponentWinChances: parsedAnalysis.doublingCubeAnalysis.opponentWinChances || 0,
-                            opponentGammonChances: parsedAnalysis.doublingCubeAnalysis.opponentGammonChances || 0,
-                            opponentBackgammonChances: parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances || 0,
-                            cubelessNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity || 0,
-                            cubelessDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity || 0,
-                            cubefulNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity || 0,
-                            cubefulNoDoubleError: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError || 0,
-                            cubefulDoubleTakeEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0,
-                            cubefulDoubleTakeError: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError || 0,
-                            cubefulDoublePassEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity || 0,
-                            cubefulDoublePassError: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError || 0,
-                            bestCubeAction: parsedAnalysis.doublingCubeAnalysis.bestCubeAction || '',
-                            wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
-                            wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
-                        },
-                        allCubeAnalyses: [],
-                        playedMove: '',
-                        playedCubeAction: '',
-                        playedMoves: [],
-                        playedCubeActions: [],
-                        creationDate: '',
-                        lastModifiedDate: ''
-                    });
-                    console.log('positionStore:', $positionStore);
-                    console.log('analysisStore:', $analysisStore);
-
-                    await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
-                }
+                // Multiple files: batch import with progress
+                await importMultipleFiles(files);
             }
         } catch (error) {
             console.error("Error importing position:", error);
@@ -1480,6 +1349,331 @@
             previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
+    }
+
+    export async function importFolder() {
+        const isNormalMode = $statusBarModeStore === 'NORMAL' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL');
+        const isMatchMode = $statusBarModeStore === 'MATCH' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'MATCH');
+        if (!isNormalMode && !isMatchMode) {
+            setStatusBarMessage('Cannot import in current mode');
+            return;
+        }
+        const wasMatchMode = isMatchMode;
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            return;
+        }
+        try {
+            const dirPath = await OpenPositionFolderDialog();
+            if (!dirPath) {
+                return;
+            }
+
+            const files = await CollectImportableFiles(dirPath);
+            if (!files || files.length === 0) {
+                setStatusBarMessage('No importable files found in folder');
+                return;
+            }
+
+            await importMultipleFiles(files);
+        } catch (error) {
+            console.error("Error importing folder:", error);
+        } finally {
+            if (wasMatchMode) {
+                matchContextStore.set({
+                    isMatchMode: false,
+                    matchID: null,
+                    movePositions: [],
+                    currentIndex: 0,
+                    player1Name: '',
+                    player2Name: ''
+                });
+                loadAllPositions();
+            }
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        }
+    }
+
+    // Import a single file using the original logic (inline, with status bar messages and alerts)
+    async function importSingleFile(filePath) {
+        const lowerPath = filePath.toLowerCase();
+        const isXGFile = lowerPath.endsWith('.xg');
+        const isBGFFile = lowerPath.endsWith('.bgf');
+        const isSGFFile = lowerPath.endsWith('.sgf');
+        const isMATFile = lowerPath.endsWith('.mat');
+        const isTXTFile = lowerPath.endsWith('.txt');
+
+        if (isXGFile) {
+            console.log("Importing XG match file:", filePath);
+            try {
+                const matchID = await ImportXGMatch(filePath);
+                console.log('XG match imported with ID:', matchID);
+                setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
+                matchPanelRefreshTriggerStore.update(n => n + 1);
+                showMatchPanelStore.set(true);
+            } catch (error) {
+                console.error("Error importing XG match:", error);
+                const errorStr = String(error);
+                if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                    setStatusBarMessage('This match has already been imported');
+                } else {
+                    setStatusBarMessage('Error importing XG match: ' + error);
+                    await ShowAlert('Error importing XG match: ' + error);
+                }
+            }
+        } else if (isBGFFile) {
+            console.log("Importing BGF match file:", filePath);
+            try {
+                const matchID = await ImportBGFMatch(filePath);
+                console.log('BGF match imported with ID:', matchID);
+                setStatusBarMessage(`BGBlitz match imported successfully (ID: ${matchID})`);
+                matchPanelRefreshTriggerStore.update(n => n + 1);
+                showMatchPanelStore.set(true);
+            } catch (error) {
+                console.error("Error importing BGF match:", error);
+                const errorStr = String(error);
+                if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                    setStatusBarMessage('This match has already been imported');
+                } else {
+                    setStatusBarMessage('Error importing BGBlitz match: ' + error);
+                    await ShowAlert('Error importing BGBlitz match: ' + error);
+                }
+            }
+        } else if (isSGFFile || isMATFile) {
+            const formatName = isSGFFile ? 'GnuBG SGF' : 'Jellyfish MAT';
+            console.log(`Importing ${formatName} match file:`, filePath);
+            try {
+                const matchID = await ImportGnuBGMatch(filePath);
+                console.log(`${formatName} match imported with ID:`, matchID);
+                setStatusBarMessage(`${formatName} match imported successfully (ID: ${matchID})`);
+                matchPanelRefreshTriggerStore.update(n => n + 1);
+                showMatchPanelStore.set(true);
+            } catch (error) {
+                console.error(`Error importing ${formatName} match:`, error);
+                const errorStr = String(error);
+                if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                    setStatusBarMessage('This match has already been imported');
+                } else {
+                    setStatusBarMessage(`Error importing ${formatName} match: ` + error);
+                    await ShowAlert(`Error importing ${formatName} match: ` + error);
+                }
+            }
+        } else if (isTXTFile) {
+            await importTxtFile(filePath);
+        }
+    }
+
+    // Import a .txt file by reading its content and detecting the type
+    async function importTxtFile(filePath) {
+        const response = await ReadFileContent(filePath);
+        if (response.error) {
+            console.error("Error reading file:", response.error);
+            setStatusBarMessage('Error reading file: ' + response.error);
+            return;
+        }
+        const content = response.content;
+
+        const isJellyfishTXT = content && /^\s*\d+\s+point\s+match\s*$/m.test(content);
+        const isBGBlitzTXT = content && content.includes('Position-ID:');
+
+        if (isJellyfishTXT) {
+            console.log("Importing Jellyfish TXT match file:", filePath);
+            try {
+                const matchID = await ImportGnuBGMatch(filePath);
+                console.log('Jellyfish TXT match imported with ID:', matchID);
+                setStatusBarMessage(`Jellyfish TXT match imported successfully (ID: ${matchID})`);
+                matchPanelRefreshTriggerStore.update(n => n + 1);
+                showMatchPanelStore.set(true);
+            } catch (error) {
+                console.error("Error importing Jellyfish TXT match:", error);
+                const errorStr = String(error);
+                if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
+                    setStatusBarMessage('This match has already been imported');
+                } else {
+                    setStatusBarMessage('Error importing Jellyfish TXT match: ' + error);
+                    await ShowAlert('Error importing Jellyfish TXT match: ' + error);
+                }
+            }
+        } else if (isBGBlitzTXT) {
+            console.log("Importing BGBlitz TXT position:", filePath);
+            try {
+                const posID = await ImportBGFPosition(filePath);
+                console.log('BGBlitz position imported with ID:', posID);
+                setStatusBarMessage(`BGBlitz position imported successfully (ID: ${posID})`);
+                await loadAllPositions();
+            } catch (error) {
+                console.error("Error importing BGBlitz position:", error);
+                const errorStr = String(error);
+                if (errorStr.includes('duplicate') || errorStr.includes('already exists')) {
+                    setStatusBarMessage('This position already exists');
+                } else {
+                    setStatusBarMessage('Error importing BGBlitz position: ' + error);
+                    await ShowAlert('Error importing BGBlitz position: ' + error);
+                }
+            }
+        } else {
+            // XG text position file via JS parser
+            console.log("File content:", content);
+            const { positionData, parsedAnalysis } = parsePosition(content);
+            positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
+            analysisStore.set({
+                positionId: null,
+                xgid: parsedAnalysis.xgid,
+                player1: '',
+                player2: '',
+                analysisType: parsedAnalysis.analysisType,
+                analysisEngineVersion: parsedAnalysis.analysisEngineVersion,
+                checkerAnalysis: { moves: parsedAnalysis.checkerAnalysis },
+                doublingCubeAnalysis: {
+                    analysisDepth: parsedAnalysis.doublingCubeAnalysis.analysisDepth || '',
+                    playerWinChances: parsedAnalysis.doublingCubeAnalysis.playerWinChances || 0,
+                    playerGammonChances: parsedAnalysis.doublingCubeAnalysis.playerGammonChances || 0,
+                    playerBackgammonChances: parsedAnalysis.doublingCubeAnalysis.playerBackgammonChances || 0,
+                    opponentWinChances: parsedAnalysis.doublingCubeAnalysis.opponentWinChances || 0,
+                    opponentGammonChances: parsedAnalysis.doublingCubeAnalysis.opponentGammonChances || 0,
+                    opponentBackgammonChances: parsedAnalysis.doublingCubeAnalysis.opponentBackgammonChances || 0,
+                    cubelessNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessNoDoubleEquity || 0,
+                    cubelessDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubelessDoubleEquity || 0,
+                    cubefulNoDoubleEquity: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleEquity || 0,
+                    cubefulNoDoubleError: parsedAnalysis.doublingCubeAnalysis.cubefulNoDoubleError || 0,
+                    cubefulDoubleTakeEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeEquity || 0,
+                    cubefulDoubleTakeError: parsedAnalysis.doublingCubeAnalysis.cubefulDoubleTakeError || 0,
+                    cubefulDoublePassEquity: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassEquity || 0,
+                    cubefulDoublePassError: parsedAnalysis.doublingCubeAnalysis.cubefulDoublePassError || 0,
+                    bestCubeAction: parsedAnalysis.doublingCubeAnalysis.bestCubeAction || '',
+                    wrongPassPercentage: parsedAnalysis.doublingCubeAnalysis.wrongPassPercentage || 0,
+                    wrongTakePercentage: parsedAnalysis.doublingCubeAnalysis.wrongTakePercentage || 0
+                },
+                allCubeAnalyses: [],
+                playedMove: '',
+                playedCubeAction: '',
+                playedMoves: [],
+                playedCubeActions: [],
+                creationDate: '',
+                lastModifiedDate: ''
+            });
+            console.log('positionStore:', $positionStore);
+            console.log('analysisStore:', $analysisStore);
+            await savePositionAndAnalysis(positionData, parsedAnalysis, 'Imported position and analysis saved successfully');
+        }
+    }
+
+    // Import a single file in batch mode (no alerts, returns result string)
+    async function importSingleFileBatch(filePath) {
+        const lowerPath = filePath.toLowerCase();
+        const isXGFile = lowerPath.endsWith('.xg');
+        const isBGFFile = lowerPath.endsWith('.bgf');
+        const isSGFFile = lowerPath.endsWith('.sgf');
+        const isMATFile = lowerPath.endsWith('.mat');
+        const isTXTFile = lowerPath.endsWith('.txt');
+
+        if (isXGFile) {
+            const matchID = await ImportXGMatch(filePath);
+            return { type: 'match', id: matchID };
+        } else if (isBGFFile) {
+            const matchID = await ImportBGFMatch(filePath);
+            return { type: 'match', id: matchID };
+        } else if (isSGFFile || isMATFile) {
+            const matchID = await ImportGnuBGMatch(filePath);
+            return { type: 'match', id: matchID };
+        } else if (isTXTFile) {
+            return await importTxtFileBatch(filePath);
+        }
+        throw new Error('Unsupported file type');
+    }
+
+    // Import a .txt file in batch mode (no alerts, returns result)
+    async function importTxtFileBatch(filePath) {
+        const response = await ReadFileContent(filePath);
+        if (response.error) {
+            throw new Error(response.error);
+        }
+        const content = response.content;
+
+        const isJellyfishTXT = content && /^\s*\d+\s+point\s+match\s*$/m.test(content);
+        const isBGBlitzTXT = content && content.includes('Position-ID:');
+
+        if (isJellyfishTXT) {
+            const matchID = await ImportGnuBGMatch(filePath);
+            return { type: 'match', id: matchID };
+        } else if (isBGBlitzTXT) {
+            const posID = await ImportBGFPosition(filePath);
+            return { type: 'position', id: posID };
+        } else {
+            // XG text position via JS parser
+            const { positionData, parsedAnalysis } = parsePosition(content);
+            positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
+            await savePositionAndAnalysis(positionData, parsedAnalysis, '');
+            return { type: 'position', id: 0 };
+        }
+    }
+
+    // Batch import multiple files with progress modal
+    async function importMultipleFiles(files) {
+        fileImportCancelled = false;
+        fileImportTotalFiles = files.length;
+        fileImportCurrentIndex = 0;
+        fileImportCurrentFile = '';
+        fileImportResults = { succeeded: 0, failed: 0, skipped: 0, errors: [] };
+        fileImportMode = 'importing';
+        showFileImportModal = true;
+
+        let hadMatches = false;
+
+        for (let i = 0; i < files.length; i++) {
+            if (fileImportCancelled) {
+                break;
+            }
+            const filePath = files[i];
+            fileImportCurrentIndex = i + 1;
+            fileImportCurrentFile = filePath;
+
+            try {
+                const result = await importSingleFileBatch(filePath);
+                fileImportResults.succeeded++;
+                if (result && result.type === 'match') {
+                    hadMatches = true;
+                }
+            } catch (error) {
+                const errorStr = String(error);
+                if (errorStr.includes('duplicate match') || errorStr.includes('already been imported') ||
+                    errorStr.includes('duplicate') || errorStr.includes('already exists')) {
+                    fileImportResults.skipped++;
+                } else {
+                    fileImportResults.failed++;
+                    fileImportResults.errors.push({
+                        file: filePath,
+                        message: errorStr.replace(/^Error:\s*/, '')
+                    });
+                }
+            }
+            // Force Svelte reactivity update
+            fileImportResults = { ...fileImportResults };
+        }
+
+        fileImportMode = 'completed';
+
+        // Refresh data after batch import
+        if (hadMatches) {
+            matchPanelRefreshTriggerStore.update(n => n + 1);
+        }
+        await loadAllPositions();
+
+        const msg = `Import done: ${fileImportResults.succeeded} imported, ${fileImportResults.skipped} skipped, ${fileImportResults.failed} failed`;
+        setStatusBarMessage(msg);
+    }
+
+    function handleFileImportCancel() {
+        fileImportCancelled = true;
+        showFileImportModal = false;
+        fileImportMode = 'idle';
+        setStatusBarMessage('Import cancelled');
+    }
+
+    function handleFileImportClose() {
+        showFileImportModal = false;
+        fileImportMode = 'idle';
     }
 
     async function pastePosition() {
@@ -3626,6 +3820,7 @@ function togglePipcount() {
         onExportDatabase={exportDatabase}
         onExit={exitApp}
         onImportPosition={importPosition}
+        onImportFolder={importFolder}
         onCopyPosition={copyPosition}
         onPastePosition={pastePosition}
         onSavePosition={saveCurrentPosition}
@@ -3773,6 +3968,17 @@ function togglePipcount() {
         onCancel={handleImportCancel}
         onCommit={handleImportCommit}
         onClose={handleImportClose}
+    />
+
+    <FileImportProgressModal
+        visible={showFileImportModal}
+        mode={fileImportMode}
+        totalFiles={fileImportTotalFiles}
+        currentIndex={fileImportCurrentIndex}
+        currentFile={fileImportCurrentFile}
+        results={fileImportResults}
+        onCancel={handleFileImportCancel}
+        onClose={handleFileImportClose}
     />
 
     <ExportDatabaseModal
