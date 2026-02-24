@@ -10,7 +10,8 @@
         GetAllMatches,
         AddMatchToTournament,
         GetMatchMovePositions,
-        LoadAnalysis
+        LoadAnalysis,
+        SwapMatchPlayers
     } from '../../wailsjs/go/main/Database.js';
     import { showTournamentPanelStore, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
@@ -246,6 +247,42 @@
             await loadTournaments();
         } catch (error) {
             console.error('Error removing match:', error);
+        }
+    }
+
+    async function swapMatchPlayersInTournament(match) {
+        try {
+            await SwapMatchPlayers(match.id);
+            // Reload tournament matches
+            if (selectedTournament) {
+                const matches = await GetTournamentMatches(selectedTournament.id);
+                tournamentMatchesStore.set(matches || []);
+            }
+
+            // If we are currently viewing this match in match mode, update context
+            let currentContext = null;
+            const unsub = matchContextStore.subscribe(v => currentContext = v);
+            unsub();
+            if (currentContext && currentContext.isMatchMode && currentContext.matchID === match.id) {
+                const movePositions = await GetMatchMovePositions(match.id);
+                if (movePositions && movePositions.length > 0) {
+                    const currentIndex = Math.min(currentContext.currentIndex, movePositions.length - 1);
+                    matchContextStore.set({
+                        isMatchMode: true,
+                        matchID: match.id,
+                        movePositions: movePositions,
+                        currentIndex: currentIndex,
+                        player1Name: movePositions[0].player1_name,
+                        player2Name: movePositions[0].player2_name,
+                    });
+                    positionStore.set(movePositions[currentIndex].position);
+                }
+            }
+
+            statusBarTextStore.set('Swapped players for match');
+        } catch (error) {
+            console.error('Error swapping match players:', error);
+            statusBarTextStore.set('Error swapping match players');
         }
     }
 
@@ -508,6 +545,7 @@
                                         {match.player1_name} vs {match.player2_name}
                                     </span>
                                     <span class="match-detail">{match.match_length}pt</span>
+                                    <button class="icon-btn" on:click|stopPropagation={() => swapMatchPlayersInTournament(match)} title="Swap players">⇄</button>
                                     <button class="icon-btn delete" on:click|stopPropagation={() => removeMatch(match.id)} title="Remove from tournament">×</button>
                                 </div>
                             {/each}

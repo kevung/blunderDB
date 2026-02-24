@@ -12123,6 +12123,57 @@ func (d *Database) UpdateMatch(matchID int64, player1Name, player2Name, matchDat
 	return err
 }
 
+// SwapMatchPlayers swaps the two players in a match: player1 becomes player2 and vice versa.
+// This updates player names, game scores, game winners, and move player assignments.
+func (d *Database) SwapMatchPlayers(matchID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// 1. Swap player1_name and player2_name in the match table
+	_, err = tx.Exec(`
+		UPDATE match 
+		SET player1_name = player2_name, player2_name = player1_name
+		WHERE id = ?
+	`, matchID)
+	if err != nil {
+		return fmt.Errorf("failed to swap player names: %w", err)
+	}
+
+	// 2. Swap initial_score_1/initial_score_2 and flip winner in the game table
+	_, err = tx.Exec(`
+		UPDATE game
+		SET initial_score_1 = initial_score_2,
+		    initial_score_2 = initial_score_1,
+		    winner = -winner
+		WHERE match_id = ?
+	`, matchID)
+	if err != nil {
+		return fmt.Errorf("failed to swap game scores/winner: %w", err)
+	}
+
+	// 3. Flip player in the move table (XG encoding: 1 → -1, -1 → 1)
+	_, err = tx.Exec(`
+		UPDATE move
+		SET player = -player
+		WHERE game_id IN (SELECT id FROM game WHERE match_id = ?)
+	`, matchID)
+	if err != nil {
+		return fmt.Errorf("failed to swap move players: %w", err)
+	}
+
+	return tx.Commit()
+}
+
 // GetTournamentMatches returns all matches in a tournament
 func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 	d.mu.Lock()

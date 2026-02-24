@@ -314,6 +314,10 @@ export function SetMatchTournamentByName(arg1, arg2) {
   return window['go']['main']['Database']['SetMatchTournamentByName'](arg1, arg2);
 }
 
+export function SwapMatchPlayers(arg1) {
+  return window['go']['main']['Database']['SwapMatchPlayers'](arg1);
+}
+
 export function SetupDatabase(arg1) {
   return window['go']['main']['Database']['SetupDatabase'](arg1);
 }

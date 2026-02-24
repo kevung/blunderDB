@@ -7,7 +7,8 @@
         GetMatchMovePositions, 
         LoadAnalysis,
         GetAllTournaments,
-        SetMatchTournamentByName
+        SetMatchTournamentByName,
+        SwapMatchPlayers
     } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { statusBarModeStore, showMatchPanelStore, matchPanelRefreshTriggerStore, positionReloadTriggerStore, statusBarTextStore } from '../stores/uiStore';
@@ -359,6 +360,42 @@
         }
     }
 
+    async function swapMatchPlayers(match, event) {
+        event.stopPropagation();
+        try {
+            await SwapMatchPlayers(match.id);
+            await loadMatches();
+
+            // If we are currently viewing this match in match mode, update context
+            let currentContext = null;
+            const unsub = matchContextStore.subscribe(v => currentContext = v);
+            unsub();
+            if (currentContext && currentContext.isMatchMode && currentContext.matchID === match.id) {
+                // Reload match positions to reflect swapped players
+                const movePositions = await GetMatchMovePositions(match.id);
+                if (movePositions && movePositions.length > 0) {
+                    const currentIndex = Math.min(currentContext.currentIndex, movePositions.length - 1);
+                    matchContextStore.set({
+                        isMatchMode: true,
+                        matchID: match.id,
+                        movePositions: movePositions,
+                        currentIndex: currentIndex,
+                        player1Name: movePositions[0].player1_name,
+                        player2Name: movePositions[0].player2_name,
+                    });
+                    // Update the displayed position
+                    positionStore.set(movePositions[currentIndex].position);
+                    positionReloadTriggerStore.update(n => n + 1);
+                }
+            }
+
+            statusBarTextStore.set(`Swapped players for match`);
+        } catch (error) {
+            console.error('Error swapping match players:', error);
+            statusBarTextStore.set('Error swapping match players');
+        }
+    }
+
     function formatDate(dateStr) {
         if (!dateStr) return '-';
         const date = new Date(dateStr);
@@ -594,6 +631,7 @@
                                         <td class="narrow-col no-select">{match.match_length}</td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions">
+                                                <button class="icon-btn" on:click|stopPropagation={(e) => swapMatchPlayers(match, e)} title="Swap players">⇄</button>
                                                 <button class="icon-btn" on:click|stopPropagation={(e) => startEditMatch(match, e)} title="Edit">✎</button>
                                                 <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteMatchEntry(match, e)} title="Delete">×</button>
                                             </span>
@@ -730,9 +768,9 @@
     }
 
     .actions-col {
-        width: 36px;
-        min-width: 36px;
-        max-width: 36px;
+        width: 52px;
+        min-width: 52px;
+        max-width: 52px;
         white-space: nowrap;
         text-align: center;
         padding: 0 4px;
