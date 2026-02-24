@@ -78,7 +78,7 @@ Voici quelques exemples d'utilisation des filtres en mode COMMAND:
    "Décision de Take/Pass à -2 -4", "dés vides côté joueur du haut, score -2/-4", s s d
    "Envoi de too good", "dés vides côté joueur du bas", s d e>1000
    "Blitz avec au moins 20% de gammon", "portes dans le jan, hommes à la barre", s g>20
-   "Erreurs de plus de 40 millipoints", "", s E>40
+   "Erreurs du joueur 1 de plus de 40 millipoints", "", s E>40
    "Position du tournoi Aachen2024", "", s t\"Aachen2024\"
    "Un pion arriéré à ramener", "", "s k1,1"
    "Quitter le point 20", "point 20", s m\"20/\"
