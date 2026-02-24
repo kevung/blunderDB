@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	_ "modernc.org/sqlite"
@@ -211,6 +212,14 @@ func createOldDatabase(t *testing.T, path string, version string) {
 		}
 	}
 
+	// v1.7.0+: last_visited_position column on match
+	if version >= "1.7.0" {
+		_, err = db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+		if err != nil {
+			t.Fatalf("Error adding last_visited_position column: %v", err)
+		}
+	}
+
 	// Set the database version
 	_, err = db.Exec(`INSERT INTO metadata (key, value) VALUES ('database_version', ?)`, version)
 	if err != nil {
@@ -412,8 +421,29 @@ func TestMigrationFromV150(t *testing.T) {
 	}
 }
 
-// TestCurrentVersionNoMigration tests that a v1.6.0 database opens without migration
+// TestCurrentVersionNoMigration tests that a v1.7.0 database opens without migration
 func TestCurrentVersionNoMigration(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "test_v170.db")
+	createOldDatabase(t, dbPath, "1.7.0")
+
+	d := NewDatabase()
+	err := d.OpenDatabase(dbPath)
+	if err != nil {
+		t.Fatalf("Failed to open v1.7.0 database: %v", err)
+	}
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("Failed to get database version: %v", err)
+	}
+	if version != "1.7.0" {
+		t.Errorf("Expected version 1.7.0, got %s", version)
+	}
+}
+
+// TestMigrationFromV160 tests migration from v1.6.0 (has tournament table)
+func TestMigrationFromV160(t *testing.T) {
 	tmpDir := t.TempDir()
 	dbPath := filepath.Join(tmpDir, "test_v160.db")
 	createOldDatabase(t, dbPath, "1.6.0")
@@ -428,8 +458,14 @@ func TestCurrentVersionNoMigration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get database version: %v", err)
 	}
-	if version != "1.6.0" {
-		t.Errorf("Expected version 1.6.0, got %s", version)
+	if version != DatabaseVersion {
+		t.Errorf("Expected version %s after migration, got %s", DatabaseVersion, version)
+	}
+
+	for _, table := range allExpectedTables() {
+		if !tableExists(d.db, table) {
+			t.Errorf("Table %s should exist after migration from v1.6.0", table)
+		}
 	}
 }
 
@@ -513,7 +549,7 @@ func TestMigrationPreservesData(t *testing.T) {
 
 // TestMigrationChainVersionProgression tests version is correctly updated at each step
 func TestMigrationChainVersionProgression(t *testing.T) {
-	versions := []string{"1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0"}
+	versions := []string{"1.0.0", "1.1.0", "1.2.0", "1.3.0", "1.4.0", "1.5.0", "1.6.0"}
 
 	for _, startVersion := range versions {
 		t.Run(fmt.Sprintf("from_%s", startVersion), func(t *testing.T) {
@@ -576,6 +612,16 @@ func TestSetupThenOpen(t *testing.T) {
 	}
 	if version != DatabaseVersion {
 		t.Errorf("Expected version %s, got %s", DatabaseVersion, version)
+	}
+
+	// Verify last_visited_position column exists on fresh database
+	var colSQL string
+	err = d2.db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&colSQL)
+	if err != nil {
+		t.Fatalf("Failed to get match table schema: %v", err)
+	}
+	if !strings.Contains(colSQL, "last_visited_position") {
+		t.Errorf("Fresh database match table missing last_visited_position column. Schema: %s", colSQL)
 	}
 
 	// Cleanup

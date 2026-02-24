@@ -50,7 +50,10 @@
         GetAllCollections, // Import GetAllCollections
         GetCollectionPositions, // Import GetCollectionPositions
         GetAllTournaments, // Import GetAllTournaments
-        ComputeEPCFromPosition // Import ComputeEPCFromPosition
+        ComputeEPCFromPosition, // Import ComputeEPCFromPosition
+        SaveLastVisitedPosition, // Import SaveLastVisitedPosition
+        GetLastVisitedMatch, // Import GetLastVisitedMatch
+        GetMatchMovePositions // Import GetMatchMovePositions
     } from '../wailsjs/go/main/Database.js';
 
     import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
@@ -618,6 +621,9 @@
             toggleCollectionPanelAction();
         } else if(event.ctrlKey && event.code == 'KeyR') {
             loadAllPositions();
+        } else if(event.ctrlKey && event.code === 'Tab') {
+                event.preventDefault();
+                toggleMatchMode();
         } else if(!event.ctrlKey && event.code === 'Tab') {
                 toggleEditMode();
         } else if (!event.ctrlKey && event.code === 'Space') {        
@@ -2359,6 +2365,10 @@
                     currentIndex: matchCtx.currentIndex,
                     gameNumber: currentMovePos.game_number
                 });
+                // Persist to database
+                SaveLastVisitedPosition(matchCtx.matchID, matchCtx.currentIndex).catch(e => {
+                    console.error('Error persisting last visited position:', e);
+                });
             }
         }
     }
@@ -2521,6 +2531,14 @@
         // Special handling for MATCH mode: exit to NORMAL and reload all positions
         if ($statusBarModeStore === "MATCH") {
             console.log('Exiting MATCH mode to NORMAL mode');
+            // Save current position to DB before leaving
+            if ($matchContextStore.isMatchMode && $matchContextStore.matchID) {
+                try {
+                    await SaveLastVisitedPosition($matchContextStore.matchID, $matchContextStore.currentIndex);
+                } catch (e) {
+                    console.error('Error saving last visited position:', e);
+                }
+            }
             previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
             // Reset match context
@@ -2640,6 +2658,133 @@
         } catch (error) {
             console.error('Error computing EPC:', error);
             statusBarTextStore.set('EPC: Error computing');
+        }
+    }
+
+    // Toggle MATCH mode: enter match mode showing the last visited match/position
+    // or exit match mode back to NORMAL.
+    async function toggleMatchMode() {
+        console.log('toggleMatchMode');
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            return;
+        }
+
+        // If already in MATCH mode, exit to NORMAL
+        if ($statusBarModeStore === 'MATCH') {
+            console.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
+            // Save current position to DB before leaving
+            if ($matchContextStore.isMatchMode && $matchContextStore.matchID) {
+                try {
+                    await SaveLastVisitedPosition($matchContextStore.matchID, $matchContextStore.currentIndex);
+                } catch (e) {
+                    console.error('Error saving last visited position:', e);
+                }
+            }
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+            matchContextStore.set({
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0,
+                player1Name: '',
+                player2Name: ''
+            });
+            loadAllPositions();
+            return;
+        }
+
+        // Exit other modes first
+        if ($statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC' || $statusBarModeStore === 'COLLECTION') {
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        }
+
+        // Enter MATCH mode: get the last visited match from DB
+        try {
+            const match = await GetLastVisitedMatch();
+            if (!match) {
+                setStatusBarMessage('No matches in database');
+                return;
+            }
+
+            const movePositions = await GetMatchMovePositions(match.id);
+            if (!movePositions || movePositions.length === 0) {
+                setStatusBarMessage('No moves found in this match');
+                return;
+            }
+
+            // Determine start index: use last_visited_position from DB if valid, else 0
+            let startIndex = 0;
+            if (match.last_visited_position >= 0 && match.last_visited_position < movePositions.length) {
+                startIndex = match.last_visited_position;
+            }
+
+            matchContextStore.set({
+                isMatchMode: true,
+                matchID: match.id,
+                movePositions: movePositions,
+                currentIndex: startIndex,
+                player1Name: match.player1_name,
+                player2Name: match.player2_name,
+            });
+
+            const startMovePos = movePositions[startIndex];
+            positionStore.set(startMovePos.position);
+
+            let analysis = null;
+            try {
+                analysis = await LoadAnalysis(startMovePos.position.id);
+            } catch (error) {}
+
+            const currentPlayedMove = startMovePos.checker_move || '';
+            const currentPlayedCubeAction = startMovePos.cube_action || '';
+
+            analysisStore.set({
+                positionId: analysis?.positionId || null,
+                xgid: analysis?.xgid || '',
+                player1: analysis?.player1 || '',
+                player2: analysis?.player2 || '',
+                analysisType: analysis?.analysisType || '',
+                analysisEngineVersion: analysis?.analysisEngineVersion || '',
+                checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
+                doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
+                    analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
+                    playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
+                    opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
+                    cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
+                    cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
+                    bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
+                },
+                allCubeAnalyses: analysis?.allCubeAnalyses || [],
+                playedMove: currentPlayedMove,
+                playedCubeAction: currentPlayedCubeAction,
+                playedMoves: analysis?.playedMoves || [],
+                playedCubeActions: analysis?.playedCubeActions || [],
+                creationDate: analysis?.creationDate || '',
+                lastModifiedDate: analysis?.lastModifiedDate || ''
+            });
+
+            commentTextStore.set('');
+            selectedMoveStore.set(null);
+            statusBarModeStore.set('MATCH');
+            statusBarTextStore.set(`${match.player1_name} vs ${match.player2_name}`);
+
+            lastVisitedMatchStore.set({
+                matchID: match.id,
+                currentIndex: startIndex,
+                gameNumber: startMovePos.game_number
+            });
+
+        } catch (error) {
+            console.error('Error entering match mode:', error);
+            const errMsg = error?.toString() || '';
+            if (errMsg.includes('no matches')) {
+                setStatusBarMessage('No matches in database');
+            } else {
+                setStatusBarMessage('Error entering match mode');
+            }
         }
     }
 
@@ -3144,6 +3289,12 @@ function togglePipcount() {
             const positions = await LoadAllPositions(); // Remove databaseVersion
 
             // Set mode to NORMAL and reset match context BEFORE triggering position display
+            // Save last visited position to DB if exiting MATCH mode
+            if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode && $matchContextStore.matchID) {
+                SaveLastVisitedPosition($matchContextStore.matchID, $matchContextStore.currentIndex).catch(e => {
+                    console.error('Error persisting last visited position:', e);
+                });
+            }
             previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
             matchContextStore.set({
@@ -3479,6 +3630,7 @@ function togglePipcount() {
         onToggleCollectionPanel={toggleCollectionPanelAction}
         onToggleTournamentPanel={toggleTournamentPanel}
         onToggleEPCMode={toggleEPCMode}
+        onToggleMatchMode={toggleMatchMode}
     />
 
     <div class="scrollable-content">
@@ -3506,6 +3658,7 @@ function togglePipcount() {
             toggleMatchPanel={toggleMatchPanel}
             toggleCollectionPanel={toggleCollectionPanelAction}
             toggleEPCMode={toggleEPCMode}
+            toggleMatchMode={toggleMatchMode}
         />
 
     </div>

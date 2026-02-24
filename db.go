@@ -305,6 +305,10 @@ func (d *Database) SetupDatabase(path string) error {
 	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
 	// Ignore error if column already exists
 
+	// Add last_visited_position column to match table if it doesn't exist (v1.7.0)
+	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+	// Ignore error if column already exists
+
 	// Add canonical_hash column to match table if it doesn't exist
 	// canonical_hash is format-independent (same match imported from XG and SGF will have the same canonical_hash)
 	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
@@ -669,6 +673,21 @@ func (d *Database) OpenDatabase(path string) error {
 			dbVersion = "1.6.0"
 			fmt.Println("Database automatically upgraded from 1.5.0 to 1.6.0")
 		}
+	}
+
+	// Auto-migrate from 1.6.0 to 1.7.0
+	if dbVersion == "1.6.0" {
+		// Add last_visited_position column to match table
+		_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+		// Ignore error if column already exists
+
+		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.7.0")
+		if err != nil {
+			fmt.Println("Error updating database version:", err)
+			return err
+		}
+		dbVersion = "1.7.0"
+		fmt.Println("Database automatically upgraded from 1.6.0 to 1.7.0")
 	}
 
 	// Build required tables list based on the FINAL dbVersion (after all migrations)
@@ -4166,7 +4185,8 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			file_path TEXT,
 			game_count INTEGER DEFAULT 0,
 			match_hash TEXT,
-			tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL
+			tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL,
+			last_visited_position INTEGER DEFAULT -1
 		)
 	`)
 	if err != nil {
@@ -10976,7 +10996,8 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 	rows, err := d.db.Query(`
 		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round, 
 		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
-		       m.tournament_id, COALESCE(t.name, '') as tournament_name
+		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
+		       COALESCE(m.last_visited_position, -1) as last_visited_position
 		FROM match m
 		LEFT JOIN tournament t ON m.tournament_id = t.id
 		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
@@ -10992,7 +11013,7 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		var m Match
 		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
 			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
-			&m.TournamentID, &m.TournamentName)
+			&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
 		if err != nil {
 			fmt.Println("Error scanning match:", err)
 			continue
@@ -11014,17 +11035,87 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 	var m Match
 	err := d.db.QueryRow(`
 		SELECT id, player1_name, player2_name, event, location, round,
-		       match_length, match_date, import_date, file_path, game_count
+		       match_length, match_date, import_date, file_path, game_count,
+		       COALESCE(last_visited_position, -1) as last_visited_position
 		FROM match
 		WHERE id = ?
 	`, matchID).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount)
+		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &m.LastVisitedPosition)
 
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("match not found")
 		}
 		fmt.Println("Error loading match:", err)
+		return nil, err
+	}
+
+	return &m, nil
+}
+
+// SaveLastVisitedPosition saves the last visited position index for a match
+func (d *Database) SaveLastVisitedPosition(matchID int64, positionIndex int) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	_, err := d.db.Exec(`UPDATE match SET last_visited_position = ? WHERE id = ?`, positionIndex, matchID)
+	if err != nil {
+		fmt.Println("Error saving last visited position:", err)
+		return err
+	}
+	return nil
+}
+
+// GetLastVisitedMatch returns the most recently visited match (match with highest last_visited_position != -1)
+// If no match has been visited, returns the most recent match (first in date order)
+func (d *Database) GetLastVisitedMatch() (*Match, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	var m Match
+	// First try to find a match that has been visited (last_visited_position >= 0)
+	err := d.db.QueryRow(`
+		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
+		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
+		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
+		       COALESCE(m.last_visited_position, -1) as last_visited_position
+		FROM match m
+		LEFT JOIN tournament t ON m.tournament_id = t.id
+		WHERE m.last_visited_position >= 0
+		ORDER BY m.import_date DESC
+		LIMIT 1
+	`).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
+		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
+		&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
+
+	if err == nil {
+		return &m, nil
+	}
+
+	if err != sql.ErrNoRows {
+		fmt.Println("Error finding last visited match:", err)
+		return nil, err
+	}
+
+	// No visited match found, return the most recent match
+	err = d.db.QueryRow(`
+		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round,
+		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
+		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
+		       COALESCE(m.last_visited_position, -1) as last_visited_position
+		FROM match m
+		LEFT JOIN tournament t ON m.tournament_id = t.id
+		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
+		LIMIT 1
+	`).Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
+		&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
+		&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
+
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return nil, fmt.Errorf("no matches in database")
+		}
+		fmt.Println("Error finding most recent match:", err)
 		return nil, err
 	}
 
@@ -12016,7 +12107,8 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
 			file_path TEXT,
 			game_count INTEGER DEFAULT 0,
-			match_hash TEXT
+			match_hash TEXT,
+			last_visited_position INTEGER DEFAULT -1
 		)
 	`)
 	if err != nil {
@@ -12567,7 +12659,8 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 	rows, err := d.db.Query(`
 		SELECT 
 			id, player1_name, player2_name, event, location, round, 
-			match_length, match_date, import_date, file_path, game_count, tournament_id
+			match_length, match_date, import_date, file_path, game_count, tournament_id,
+			COALESCE(last_visited_position, -1) as last_visited_position
 		FROM match 
 		WHERE tournament_id = ?
 		ORDER BY match_date DESC
@@ -12582,7 +12675,7 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 		var m Match
 		var tournamentID sql.NullInt64
 		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &tournamentID)
+			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &tournamentID, &m.LastVisitedPosition)
 		if err != nil {
 			continue
 		}
@@ -12776,7 +12869,8 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			file_path TEXT,
 			game_count INTEGER DEFAULT 0,
 			match_hash TEXT,
-			tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL
+			tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL,
+			last_visited_position INTEGER DEFAULT -1
 		)
 	`)
 	if err != nil {

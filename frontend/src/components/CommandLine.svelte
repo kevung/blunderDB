@@ -29,6 +29,7 @@
    export let toggleMatchPanel; // Add the prop for match panel
    export let toggleCollectionPanel; // Add the prop for collection panel
    export let toggleEPCMode; // Add the prop for EPC mode
+   export let toggleMatchMode; // Add the prop for match mode
    let inputEl;
 
    let initialized = false;
@@ -303,6 +304,9 @@
             } else if (command === 'epc') {
                showCommandStore.set(false);
                toggleEPCMode();
+            } else if (command === 'm') {
+               showCommandStore.set(false);
+               toggleMatchMode();
             } else if (command === 'met') {
                showMetModalStore.set(true); // Show MET modal
             } else if (command === 'tp2_last') {

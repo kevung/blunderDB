@@ -70,6 +70,8 @@ export function GetDatabaseVersion():Promise<string>;
 
 export function GetGamesByMatch(arg1:number):Promise<Array<main.Game>>;
 
+export function GetLastVisitedMatch():Promise<main.Match>;
+
 export function GetMatchByID(arg1:number):Promise<main.Match>;
 
 export function GetMatchMovePositions(arg1:number):Promise<Array<main.MatchMovePosition>>;
@@ -149,6 +151,8 @@ export function SaveComment(arg1:number,arg2:string):Promise<void>;
 export function SaveEditPosition(arg1:string,arg2:string):Promise<void>;
 
 export function SaveFilter(arg1:string,arg2:string):Promise<void>;
+
+export function SaveLastVisitedPosition(arg1:number,arg2:number):Promise<void>;
 
 export function SaveMetadata(arg1:Record<string, string>):Promise<void>;
 

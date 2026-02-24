@@ -8,7 +8,8 @@
         LoadAnalysis,
         GetAllTournaments,
         SetMatchTournamentByName,
-        SwapMatchPlayers
+        SwapMatchPlayers,
+        SaveLastVisitedPosition
     } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { statusBarModeStore, showMatchPanelStore, matchPanelRefreshTriggerStore, positionReloadTriggerStore, statusBarTextStore } from '../stores/uiStore';
@@ -268,10 +269,13 @@
             }
 
             let startIndex = 0;
+            // First check in-memory store for same session, then check DB-persisted value
             if (lastVisitedMatch && lastVisitedMatch.matchID === match.id) {
                 if (lastVisitedMatch.currentIndex >= 0 && lastVisitedMatch.currentIndex < movePositions.length) {
                     startIndex = lastVisitedMatch.currentIndex;
                 }
+            } else if (match.last_visited_position >= 0 && match.last_visited_position < movePositions.length) {
+                startIndex = match.last_visited_position;
             }
 
             matchContextStore.set({
@@ -327,6 +331,11 @@
                 matchID: match.id,
                 currentIndex: startIndex,
                 gameNumber: startMovePos.game_number
+            });
+
+            // Persist last visited position to database
+            SaveLastVisitedPosition(match.id, startIndex).catch(e => {
+                console.error('Error persisting last visited position:', e);
             });
             
         } catch (error) {

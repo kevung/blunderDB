@@ -138,6 +138,10 @@ export function GetGamesByMatch(arg1) {
   return window['go']['main']['Database']['GetGamesByMatch'](arg1);
 }
 
+export function GetLastVisitedMatch() {
+  return window['go']['main']['Database']['GetLastVisitedMatch']();
+}
+
 export function GetMatchByID(arg1) {
   return window['go']['main']['Database']['GetMatchByID'](arg1);
 }
@@ -296,6 +300,10 @@ export function SaveEditPosition(arg1, arg2) {
 
 export function SaveFilter(arg1, arg2) {
   return window['go']['main']['Database']['SaveFilter'](arg1, arg2);
+}
+
+export function SaveLastVisitedPosition(arg1, arg2) {
+  return window['go']['main']['Database']['SaveLastVisitedPosition'](arg1, arg2);
 }
 
 export function SaveMetadata(arg1) {

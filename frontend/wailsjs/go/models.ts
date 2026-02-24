@@ -269,6 +269,7 @@ export namespace main {
 	    game_count: number;
 	    tournament_id?: number;
 	    tournament_name: string;
+	    last_visited_position: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -289,6 +290,7 @@ export namespace main {
 	        this.game_count = source["game_count"];
 	        this.tournament_id = source["tournament_id"];
 	        this.tournament_name = source["tournament_name"];
+	        this.last_visited_position = source["last_visited_position"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -241,6 +241,12 @@
                     <p>In EPC mode, you can freely add or remove checkers on the home-board points using the mouse (same controls as EDIT mode). The EPC value is displayed in real-time in the status bar, along with the pip count and wastage.</p>
                     <p>The <strong>EPC</strong> represents the average number of pips needed to bear off all checkers, accounting for the inefficiency (wastage) of actual dice rolls. <strong>Wastage</strong> is the difference between EPC and the raw pip count.</p>
                     <p>To exit EPC mode, press <strong>TAB</strong> or use the <strong>Reload All Positions</strong> button (Ctrl+R) to return to NORMAL mode.</p>
+
+                    <h3>MATCH Mode</h3>
+                    <p>MATCH mode allows browsing through the moves of an imported match. You can enter MATCH mode by pressing <strong>Ctrl+Tab</strong>, clicking the match mode button in the toolbar, or typing <strong>m</strong> in the command line.</p>
+                    <p>When entering MATCH mode, blunderDB opens the last visited match and restores the last visited position in that match. If no match has been visited yet, the most recent match is opened at its first position. The last visited position is persisted in the database.</p>
+                    <p>You can also enter MATCH mode by double-clicking a match in the Match Panel (Ctrl+T).</p>
+                    <p>To exit MATCH mode, press <strong>Tab</strong>, <strong>Ctrl+Tab</strong>, or use <strong>Ctrl+R</strong> to return to NORMAL mode.</p>
                 {/if}
 
                 {#if activeTab === 'shortcuts'}
@@ -433,6 +439,11 @@
                             <tr>
                                 <td>Tab</td>
                                 <td>Edit Mode / Exit MATCH mode to NORMAL</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + Tab</td>
+                                <td>Match Mode (enter/exit)</td>
                             </tr>
 
                             <tr>
@@ -803,6 +814,10 @@
                             <tr>
                                 <td>epc</td>
                                 <td>EPC Calculator (Effective Pip Count)</td>
+                            </tr>
+                            <tr>
+                                <td>m</td>
+                                <td>Match Mode (enter/exit last visited match)</td>
                             </tr>
                             <tr>
                                 <td>help, he, h</td>
