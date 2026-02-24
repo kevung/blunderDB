@@ -84,6 +84,7 @@ Modes
    :align: center
 
    "TAB", "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
+   "CTRL-TAB", "Basculer en mode MATCH (entrer/sortir)."
    "ESPACE", "Basculer en mode COMMAND."
 
 .. _raccourcis_outils:

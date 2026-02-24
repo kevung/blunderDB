@@ -50,6 +50,7 @@ Mode NORMAL
    "history, hi", "Afficher/cacher l'historique de recherche."
    "#tag1 tag2 ...", "Etiqueter la position courante."
    "e", "Charger toutes les positions de la base de données."
+   "m", "Basculer en mode MATCH (dernier match visité)."
 
 
 .. _cmd_edit:
