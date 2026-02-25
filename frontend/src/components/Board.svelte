@@ -217,16 +217,13 @@
         const color = (checkerPoint === 0 || checkerPoint === 25) ? (checkerPoint === 0 ? 1 : 0) : (button === 2 ? 1 : 0);
 
         positionStore.update(pos => {
-            // In EPC mode, cap total checkers of this color at 15
-            let effectiveMaxPerPoint = 5; // default visual cap
-            if (mode === "EPC") {
-                const totalOtherPoints = pos.board.points.reduce((acc, point, idx) => {
-                    if (idx !== checkerPoint && point.color === color) return acc + point.checkers;
-                    return acc;
-                }, 0);
-                effectiveMaxPerPoint = 15 - totalOtherPoints;
-                if (effectiveMaxPerPoint <= 0) return pos;
-            }
+            // Cap total checkers of this color at 15
+            const totalOtherPoints = pos.board.points.reduce((acc, point, idx) => {
+                if (idx !== checkerPoint && point.color === color) return acc + point.checkers;
+                return acc;
+            }, 0);
+            const effectiveMaxPerPoint = 15 - totalOtherPoints;
+            if (effectiveMaxPerPoint <= 0) return pos;
 
             pos.board.points = pos.board.points.map((point, index) => {
                 if (index === checkerPoint) {
@@ -571,10 +568,17 @@
         const bearoff2Ypos = boardOrigYpos - boardHeight / 2 + 3.7 * boardCheckerSize;
         const score2Ypos = boardOrigYpos - boardHeight / 2 - 0.2 * boardCheckerSize;
 
-        const isInsideTopPlayerRectangle = mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
+        // Exclude score areas from player rectangle detection to avoid overlap with handleScoreClick
+        const scoreHeight = 0.5 * boardCheckerSize;
+        const isInsideScore1 = mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
+            mouseY >= score1Ypos - scoreHeight / 2 && mouseY <= score1Ypos + scoreHeight / 2;
+        const isInsideScore2 = mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
+            mouseY >= score2Ypos - scoreHeight / 2 && mouseY <= score2Ypos + scoreHeight / 2;
+
+        const isInsideTopPlayerRectangle = !isInsideScore1 && mouseX >= bearoff1Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff1Xpos + 0.75 * boardCheckerSize &&
             mouseY >= Math.min(bearoff1Ypos, score1Ypos) && mouseY <= Math.max(bearoff1Ypos, score1Ypos);
 
-        const isInsideBottomPlayerRectangle = mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
+        const isInsideBottomPlayerRectangle = !isInsideScore2 && mouseX >= bearoff2Xpos - 0.75 * boardCheckerSize && mouseX <= bearoff2Xpos + 0.75 * boardCheckerSize &&
             mouseY >= Math.min(bearoff2Ypos, score2Ypos) && mouseY <= Math.max(bearoff2Ypos, score2Ypos);
 
         const rectangle1Xpos = bearoff1Xpos;
@@ -813,6 +817,12 @@
         
         // In EPC mode, always use position as-is (player_on_roll is always 0)
         if (mode === "EPC") {
+            return position;
+        }
+        
+        // In EDIT mode, show position as-is so editing coordinates match the display.
+        // The mirroring (if player2 is on roll) is handled at search time instead.
+        if (mode === "EDIT") {
             return position;
         }
         

@@ -3360,6 +3360,39 @@ function togglePipcount() {
         }
     }
 
+    // Mirror a position (swap players) for search purposes.
+    // When the user edits with player 2 on roll, the position must be
+    // normalized (player_on_roll = 0) before querying the database.
+    function mirrorPositionForSearch(pos) {
+        const mirrored = JSON.parse(JSON.stringify(pos)); // Deep copy
+
+        // Mirror the board points
+        const tempPoints = [...mirrored.board.points];
+        for (let i = 0; i < 26; i++) {
+            mirrored.board.points[25 - i] = {
+                color: tempPoints[i].color === -1 ? -1 : 1 - tempPoints[i].color,
+                checkers: tempPoints[i].checkers
+            };
+        }
+
+        // Swap bearoff
+        [mirrored.board.bearoff[0], mirrored.board.bearoff[1]] =
+            [mirrored.board.bearoff[1], mirrored.board.bearoff[0]];
+
+        // Swap player on roll
+        mirrored.player_on_roll = 1 - mirrored.player_on_roll;
+
+        // Swap scores
+        [mirrored.score[0], mirrored.score[1]] = [mirrored.score[1], mirrored.score[0]];
+
+        // Swap cube owner if owned
+        if (mirrored.cube.owner !== -1) {
+            mirrored.cube.owner = 1 - mirrored.cube.owner;
+        }
+
+        return mirrored;
+    }
+
 
     async function loadPositionsByFilters(
         filters,
@@ -3430,7 +3463,13 @@ function togglePipcount() {
         mirrorPositionFilter,
         moveErrorFilter);
         try {
-            const currentPosition = $positionStore;
+            let currentPosition = $positionStore;
+            
+            // If player 2 is on roll during editing, mirror the position before searching
+            // since all stored positions are normalized with player_on_roll = 0
+            if (currentPosition.player_on_roll === 1) {
+                currentPosition = mirrorPositionForSearch(currentPosition);
+            }
 
             // @ts-ignore
             const loadedPositions = await LoadPositionsByFilters(
