@@ -1397,24 +1397,33 @@ func (d *Database) LoadPositionsByFilters(
 				(moveErrorFilter == "" || pos.MatchesMoveErrorFilter(moveErrorFilter, d))
 		}
 
+		// addPosition adds a matched position to results, mirroring take/pass positions
+		// so player1 (the taker/passer) is shown at the bottom of the board.
+		addPosition := func(pos Position) {
+			if moveErrorFilter != "" && pos.DecisionType == CubeAction && pos.IsPlayer1TakePassCubeAction(d) {
+				pos = pos.Mirror()
+			}
+			positions = append(positions, pos)
+		}
+
 		// Check the original position
 		if matchesFilters(position) {
 			if movePatternFilter != "" {
 				if position.MatchesMovePattern(movePatternFilter, d) {
-					positions = append(positions, position)
+					addPosition(position)
 				}
 			} else {
-				positions = append(positions, position)
+				addPosition(position)
 			}
 		} else if mirrorFilter {
 			mirroredPosition := position.Mirror()
 			if matchesFilters(mirroredPosition) {
 				if movePatternFilter != "" {
 					if mirroredPosition.MatchesMovePattern(movePatternFilter, d) {
-						positions = append(positions, mirroredPosition)
+						addPosition(mirroredPosition)
 					}
 				} else {
-					positions = append(positions, mirroredPosition)
+					addPosition(mirroredPosition)
 				}
 			}
 		}
@@ -2311,6 +2320,22 @@ func (d *Database) getPlayer1MovesForPosition(positionID int64) ([]string, []str
 		cubeActionsList = append(cubeActionsList, a)
 	}
 	return checkerMovesList, cubeActionsList
+}
+
+// IsPlayer1TakePassCubeAction returns true if player1's cube action for this position
+// was a take or pass (as opposed to double or no-double).
+// This is used to determine board orientation: take/pass positions should be shown
+// from the taker's perspective (mirrored) so player1 appears at the bottom.
+func (p *Position) IsPlayer1TakePassCubeAction(d *Database) bool {
+	_, player1CubeActions := d.getPlayer1MovesForPosition(p.ID)
+	for _, action := range player1CubeActions {
+		actionLower := strings.ToLower(action)
+		if strings.Contains(actionLower, "take") || actionLower == "dt" ||
+			strings.Contains(actionLower, "pass") || strings.Contains(actionLower, "drop") || actionLower == "dp" {
+			return true
+		}
+	}
+	return false
 }
 
 // MatchesMoveErrorFilter filters positions by the equity error of the played move (in millipoints).
