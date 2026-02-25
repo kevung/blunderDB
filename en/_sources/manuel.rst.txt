@@ -27,7 +27,15 @@ Les principales interactions possibles avec blunderDB sont:
 
 * supprimer une position existante,
 
-* rechercher une ou plusieurs positions.
+* rechercher une ou plusieurs positions,
+
+* importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, Jellyfish),
+
+* naviguer dans les coups d'un match importé,
+
+* organiser les positions en collections,
+
+* organiser les matchs en tournois.
 
 Modes
 -----
@@ -38,7 +46,13 @@ Pour ce faire, l'utilisateur bascule dans des modes dédiés pour:
 
 * l'édition de positions (mode EDIT),
 
-* l'édition d'une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche).
+* l'édition d'une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche),
+
+* la navigation dans les coups d'un match importé (mode MATCH),
+
+* le calcul de l'EPC (Effective Pip Count) à partir d'une position (mode EPC),
+
+* la navigation dans une collection de positions (mode COLLECTION).
 
 L'utilisateur peut étiqueter librement les positions à l'aide de tags et les
 annoter via des commentaires.
@@ -62,15 +76,30 @@ L'interface de blunderDB est constituée de haut en bas par:
 
 Des panneaux peuvent être affichés pour:
 
-* afficher les données d'analyse associées à la position courante issues d'eXtreme Gammon (XG),
+* afficher les données d'analyse associées à la position courante issues
+  d'eXtreme Gammon (XG), GNUbg, ou BGBlitz,
 
-* afficher, ajouter ou modifier des commentaires
+* afficher, ajouter ou modifier des commentaires,
+
+* afficher la liste des matchs importés (panneau matchs),
+
+* afficher et gérer les collections de positions (panneau collections),
+
+* afficher et gérer les tournois (panneau tournois),
+
+* afficher la bibliothèque de filtres,
+
+* afficher l'historique des recherches.
 
 Des fenêtres modales peuvent s'afficher pour:
 
 * [mode EDIT uniquement] paramétrer les filtres de recherche,
 
-* afficher l'aide de blunderDB.
+* afficher l'aide de blunderDB,
+
+* paramétrer l'export de la base de données,
+
+* afficher les métadonnées de la base de données.
 
 La zone d'affichage principale met à disposition à l'utilisateur:
 
@@ -152,4 +181,69 @@ de l'utilisateur.
 
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste de commandes
    disponible en mode COMMAND.
+
+.. _mode_match:
+
+Le mode MATCH
+--------------
+
+Le mode MATCH permet de naviguer dans les coups d'un match importé.
+Il est activé en appuyant sur *CTRL-TAB* ou en exécutant la commande ``m``.
+
+Dans ce mode, l'utilisateur peut:
+
+* parcourir les coups d'un match en utilisant les touches *GAUCHE* et *DROITE*,
+
+* passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,
+
+* afficher l'analyse des coups (pions et cube) en appuyant sur *CTRL-L*,
+
+* basculer entre l'analyse des coups de pions et du cube avec la touche *d*,
+
+* voir le coup effectivement joué mis en évidence dans l'analyse.
+
+Lorsque l'utilisateur entre en mode MATCH, le dernier match visité est
+automatiquement chargé. La dernière position visitée dans chaque match
+est mémorisée et restaurée.
+
+.. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
+
+.. _mode_epc:
+
+Le mode EPC
+-----------
+
+Le mode EPC permet de calculer l'EPC (Effective Pip Count) d'une position
+de bearoff. Il est activé en exécutant la commande ``epc`` ou en cliquant
+sur le bouton correspondant dans la barre d'outils.
+
+Dans ce mode, l'utilisateur édite la position des pions dans le jan
+(6 derniers points) et les informations suivantes sont calculées
+en temps réel pour chaque joueur:
+
+* l'EPC (Effective Pip Count),
+
+* le nombre moyen de lancers nécessaires (Mean Rolls),
+
+* l'écart type (Standard Deviation),
+
+* le pip count,
+
+* le wastage (différence entre l'EPC et le pip count).
+
+.. note:: Le calcul repose sur la base de données interne de bearoff
+   à 6 points de GNUbg.
+
+.. _mode_collection:
+
+Le mode COLLECTION
+------------------
+
+Le mode COLLECTION permet de parcourir les positions d'une collection.
+Il est activé en double-cliquant sur une collection dans le panneau
+des collections (*CTRL-K*).
+
+Dans ce mode, l'utilisateur peut naviguer parmi les positions de la collection
+en utilisant les touches *GAUCHE* et *DROITE*. Pour quitter le mode COLLECTION
+et revenir au mode NORMAL, appuyer sur *TAB*.
 

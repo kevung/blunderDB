@@ -67,7 +67,7 @@
 
 \title{blunderDB}
 \date{Feb 25, 2026}
-\release{0.9.0}
+\release{0.10.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Release}
@@ -333,6 +333,70 @@ Keyboard shortcuts for import/export.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.10.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+25/02/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Match import from eXtreme Gammon (XG), GNUbg (SGF), Jellyfish (MAT/TXT) and BGBlitz (BGF/TXT).
+
+\sphinxAtStartPar
+MATCH mode: navigate through moves of an imported match, with played move highlighting.
+
+\sphinxAtStartPar
+Match panel: list, sort, inline editing, player swap, tournament assignment.
+
+\sphinxAtStartPar
+Recursive folder import and drag \& drop import.
+
+\sphinxAtStartPar
+EPC (Effective Pip Count) calculator with built\sphinxhyphen{}in GNUbg bearoff database.
+
+\sphinxAtStartPar
+Collections: custom position grouping with dedicated COLLECTION mode.
+
+\sphinxAtStartPar
+Tournaments: group matches by event.
+
+\sphinxAtStartPar
+Save and restore session state (last search, current position).
+
+\sphinxAtStartPar
+Automatic database schema migration.
+
+\sphinxAtStartPar
+Multi\sphinxhyphen{}engine display in analysis.
+
+\sphinxAtStartPar
+Player 1 error/blunder filter in searches.
+
+\sphinxAtStartPar
+Database export with granular selection (matches, collections, tournaments, played moves).
+
+\sphinxAtStartPar
+Toggle button for MATCH mode.
+
+\sphinxAtStartPar
+Pipcount display in MATCH mode.
+
+\sphinxAtStartPar
+Complete command\sphinxhyphen{}line interface (CLI).
+
+\sphinxAtStartPar
+Automatic reopening of the last database.
+
+\sphinxAtStartPar
+Improved toolbar and icons.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -354,15 +418,15 @@ The latest version of blunderDB is available under the MIT license:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.9.0.exe}
+for Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.10.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.9.0}
+for Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.10.0}
 
 \item {} 
 \sphinxAtStartPar
-for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.9.0.zip}
+for Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.10.0.zip}
 
 \end{itemize}
 
@@ -420,7 +484,23 @@ delete an existing position,
 
 \item {} 
 \sphinxAtStartPar
-search for one or more positions.
+search for one or more positions,
+
+\item {} 
+\sphinxAtStartPar
+import matches from various sources (XG, GNUbg, BGBlitz, Jellyfish),
+
+\item {} 
+\sphinxAtStartPar
+navigate through the moves of an imported match,
+
+\item {} 
+\sphinxAtStartPar
+organize positions into collections,
+
+\item {} 
+\sphinxAtStartPar
+organize matches into tournaments.
 
 \end{itemize}
 
@@ -440,7 +520,19 @@ editing positions (EDIT mode),
 
 \item {} 
 \sphinxAtStartPar
-editing a query to filter positions (COMMAND mode or search window).
+editing a query to filter positions (COMMAND mode or search window),
+
+\item {} 
+\sphinxAtStartPar
+navigating through the moves of an imported match (MATCH mode),
+
+\item {} 
+\sphinxAtStartPar
+computing the EPC (Effective Pip Count) from a position (EPC mode),
+
+\item {} 
+\sphinxAtStartPar
+browsing a collection of positions (COLLECTION mode).
 
 \end{itemize}
 
@@ -475,11 +567,31 @@ Panels can be displayed to:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-display the analysis data associated with the current position from eXtreme Gammon (XG),
+display the analysis data associated with the current position from eXtreme Gammon (XG), GNUbg, or BGBlitz,
 
 \item {} 
 \sphinxAtStartPar
-display, add, or modify comments
+display, add, or modify comments,
+
+\item {} 
+\sphinxAtStartPar
+display the list of imported matches (match panel),
+
+\item {} 
+\sphinxAtStartPar
+display and manage position collections (collections panel),
+
+\item {} 
+\sphinxAtStartPar
+display and manage tournaments (tournaments panel),
+
+\item {} 
+\sphinxAtStartPar
+display the filter library,
+
+\item {} 
+\sphinxAtStartPar
+display the search history.
 
 \end{itemize}
 
@@ -492,7 +604,15 @@ Modal windows can be displayed to:
 
 \item {} 
 \sphinxAtStartPar
-display the blunderDB help.
+display the blunderDB help,
+
+\item {} 
+\sphinxAtStartPar
+configure database export settings,
+
+\item {} 
+\sphinxAtStartPar
+display the database metadata.
 
 \end{itemize}
 
@@ -565,7 +685,7 @@ displaying, adding, and modifying comments on a position.
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
-Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Keyboard shortcuts}}}}} pour les raccourcis disponibles.
+Refer to {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Keyboard shortcuts}}}}} for available shortcuts.
 \end{sphinxadmonition}
 
 
@@ -576,7 +696,7 @@ EDIT mode allows you to edit a position with the option to either add it to the 
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
-Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Keyboard shortcuts}}}}} pour les raccourcis disponibles.
+Refer to {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Keyboard shortcuts}}}}} for available shortcuts.
 \end{sphinxadmonition}
 
 
@@ -595,6 +715,90 @@ blunderDB executes the queries sent by the user as long as they are valid and im
 \sphinxAtStartPar
 Refer to \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} for the list of available commands in COMMAND mode.
 \end{sphinxadmonition}
+
+
+\subsection{MATCH mode}
+\label{\detokenize{manuel:le-mode-match}}\label{\detokenize{manuel:mode-match}}
+\sphinxAtStartPar
+MATCH mode allows you to navigate through the moves of an imported match. It is activated by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}TAB} or by executing the \sphinxcode{\sphinxupquote{m}} command.
+
+\sphinxAtStartPar
+In this mode, the user can:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+browse through the moves of a match using the \sphinxstyleemphasis{LEFT} and \sphinxstyleemphasis{RIGHT} keys,
+
+\item {} 
+\sphinxAtStartPar
+switch between games using the \sphinxstyleemphasis{PageUp} and \sphinxstyleemphasis{PageDown} keys,
+
+\item {} 
+\sphinxAtStartPar
+display the move analysis (checker and cube) by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}L},
+
+\item {} 
+\sphinxAtStartPar
+toggle between checker move and cube analysis with the \sphinxstyleemphasis{d} key,
+
+\item {} 
+\sphinxAtStartPar
+see the actually played move highlighted in the analysis.
+
+\end{itemize}
+
+\sphinxAtStartPar
+When the user enters MATCH mode, the last visited match is automatically loaded. The last visited position in each match is saved and restored.
+
+\begin{sphinxadmonition}{tip}{Tip:}
+\sphinxAtStartPar
+Refer to {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Keyboard shortcuts}}}}} for available shortcuts.
+\end{sphinxadmonition}
+
+
+\subsection{EPC mode}
+\label{\detokenize{manuel:le-mode-epc}}\label{\detokenize{manuel:mode-epc}}
+\sphinxAtStartPar
+EPC mode allows you to calculate the EPC (Effective Pip Count) of a bearoff position. It is activated by executing the \sphinxcode{\sphinxupquote{epc}} command or by clicking the corresponding button in the toolbar.
+
+\sphinxAtStartPar
+In this mode, the user edits the checker positions in the home board (last 6 points) and the following information is computed in real time for each player:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+the EPC (Effective Pip Count),
+
+\item {} 
+\sphinxAtStartPar
+the average number of rolls needed (Mean Rolls),
+
+\item {} 
+\sphinxAtStartPar
+the standard deviation,
+
+\item {} 
+\sphinxAtStartPar
+the pip count,
+
+\item {} 
+\sphinxAtStartPar
+the wastage (difference between the EPC and the pip count).
+
+\end{itemize}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+The computation relies on the built\sphinxhyphen{}in 6\sphinxhyphen{}point bearoff database from GNUbg.
+\end{sphinxadmonition}
+
+
+\subsection{COLLECTION mode}
+\label{\detokenize{manuel:le-mode-collection}}\label{\detokenize{manuel:mode-collection}}
+\sphinxAtStartPar
+COLLECTION mode allows you to browse the positions of a collection. It is activated by double\sphinxhyphen{}clicking on a collection in the collections panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}).
+
+\sphinxAtStartPar
+In this mode, the user can navigate through the positions of the collection using the \sphinxstyleemphasis{LEFT} and \sphinxstyleemphasis{RIGHT} keys. To exit COLLECTION mode and return to NORMAL mode, press \sphinxstyleemphasis{TAB}.
 
 \sphinxstepscope
 
@@ -754,17 +958,311 @@ open blunderDB and press \sphinxstyleemphasis{CTRL\sphinxhyphen{}V}.
 
 \end{enumerate}
 
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+The automatic paste detects the source format (XG, GNUbg, BGBlitz).
+\end{sphinxadmonition}
+
+
+\subsection{Import a match}
+\label{\detokenize{guide_utilisateur:importer-un-match}}
+\sphinxAtStartPar
+blunderDB can import matches from various sources.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Supported formats:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+eXtreme Gammon (XG): \sphinxstyleemphasis{.xg} files
+
+\item {} 
+\sphinxAtStartPar
+GNUbg: \sphinxstyleemphasis{.sgf} files
+
+\item {} 
+\sphinxAtStartPar
+Jellyfish: \sphinxstyleemphasis{.mat} and \sphinxstyleemphasis{.txt} files
+
+\item {} 
+\sphinxAtStartPar
+BGBlitz: \sphinxstyleemphasis{.bgf} and \sphinxstyleemphasis{.txt} files
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{To import one or more match files:}
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}I} or click the “Import” button in the toolbar.
+
+\item {} 
+\sphinxAtStartPar
+Select one or more files to import.
+
+\item {} 
+\sphinxAtStartPar
+blunderDB automatically detects the format and imports the match.
+
+\item {} 
+\sphinxAtStartPar
+A progress window shows the number of imported, failed, and skipped (duplicate) files.
+
+\end{enumerate}
+
+\begin{sphinxadmonition}{tip}{Tip:}
+\sphinxAtStartPar
+Command: \sphinxcode{\sphinxupquote{i}}
+\end{sphinxadmonition}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+blunderDB automatically detects duplicates and prevents importing a match already present in the database.
+\end{sphinxadmonition}
+
+
+\subsection{Import a folder of matches}
+\label{\detokenize{guide_utilisateur:importer-un-dossier-de-matchs}}
+\sphinxAtStartPar
+To recursively import all match files contained in a folder and its subfolders:
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}SHIFT\sphinxhyphen{}F} or click the corresponding button in the toolbar.
+
+\item {} 
+\sphinxAtStartPar
+Select the folder containing the match files.
+
+\item {} 
+\sphinxAtStartPar
+blunderDB automatically collects and imports all recognized files (\sphinxstyleemphasis{.xg}, \sphinxstyleemphasis{.sgf}, \sphinxstyleemphasis{.mat}, \sphinxstyleemphasis{.txt}, \sphinxstyleemphasis{.bgf}).
+
+\end{enumerate}
+
+
+\subsection{Drag and drop}
+\label{\detokenize{guide_utilisateur:glisser-deposer}}
+\sphinxAtStartPar
+blunderDB supports drag and drop. You can drag and drop onto the blunderDB window:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+match or position files (\sphinxstyleemphasis{.xg}, \sphinxstyleemphasis{.sgf}, \sphinxstyleemphasis{.mat}, \sphinxstyleemphasis{.txt}, \sphinxstyleemphasis{.bgf}) to import them,
+
+\item {} 
+\sphinxAtStartPar
+database files (\sphinxstyleemphasis{.db}) to open or merge them with the current database,
+
+\item {} 
+\sphinxAtStartPar
+folders to recursively import all the files they contain.
+
+\end{itemize}
+
+
+\subsection{Navigate through a match}
+\label{\detokenize{guide_utilisateur:naviguer-dans-un-match}}
+\sphinxAtStartPar
+To navigate through an imported match:
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Open the match panel with \sphinxstyleemphasis{CTRL\sphinxhyphen{}T}.
+
+\item {} 
+\sphinxAtStartPar
+Double\sphinxhyphen{}click on a match to enter MATCH mode.
+
+\item {} 
+\sphinxAtStartPar
+Use the \sphinxstyleemphasis{LEFT} / \sphinxstyleemphasis{RIGHT} keys to browse through moves.
+
+\item {} 
+\sphinxAtStartPar
+Use \sphinxstyleemphasis{PageUp} / \sphinxstyleemphasis{PageDown} to switch between games.
+
+\item {} 
+\sphinxAtStartPar
+Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}L} to display the analysis.
+
+\item {} 
+\sphinxAtStartPar
+Press \sphinxstyleemphasis{d} to toggle between checker move analysis and cube analysis.
+
+\end{enumerate}
+
+\begin{sphinxadmonition}{tip}{Tip:}
+\sphinxAtStartPar
+Shortcut: \sphinxstyleemphasis{CTRL\sphinxhyphen{}TAB} to toggle MATCH mode / exit MATCH mode. Command: \sphinxcode{\sphinxupquote{m}}
+\end{sphinxadmonition}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+blunderDB remembers the last visited position in each match. When returning to a match, the last visited position is automatically restored.
+\end{sphinxadmonition}
+
+
+\subsection{Manage the match panel}
+\label{\detokenize{guide_utilisateur:gerer-le-panneau-des-matchs}}
+\sphinxAtStartPar
+The match panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}T}) allows you to:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+list all imported matches (sorted from most recent to oldest),
+
+\item {} 
+\sphinxAtStartPar
+sort matches by column (player 1, player 2, date, match length, tournament),
+
+\item {} 
+\sphinxAtStartPar
+edit player names or date by double\sphinxhyphen{}clicking on the fields,
+
+\item {} 
+\sphinxAtStartPar
+swap player 1 and player 2 using the swap button,
+
+\item {} 
+\sphinxAtStartPar
+assign a match to a tournament,
+
+\item {} 
+\sphinxAtStartPar
+delete a match using the \sphinxstyleemphasis{Del} key.
+
+\end{itemize}
+
+
+\subsection{Manage collections}
+\label{\detokenize{guide_utilisateur:gerer-les-collections}}
+\sphinxAtStartPar
+Collections allow you to organize positions into custom groups. To access the collections panel, press \sphinxstyleemphasis{CTRL\sphinxhyphen{}K}.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Create a collection:}
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Open the collections panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}).
+
+\item {} 
+\sphinxAtStartPar
+Enter the name of the new collection and click “Add”.
+
+\end{enumerate}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Add positions to a collection:}
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Select the desired positions.
+
+\item {} 
+\sphinxAtStartPar
+Add them to the collection from the collections panel.
+
+\end{enumerate}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Browse a collection:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Double\sphinxhyphen{}click on a collection to enter COLLECTION mode and browse its positions.
+
+\end{itemize}
+
+\begin{sphinxadmonition}{tip}{Tip:}
+\sphinxAtStartPar
+Command: \sphinxcode{\sphinxupquote{coll}}
+\end{sphinxadmonition}
+
+
+\subsection{Manage tournaments}
+\label{\detokenize{guide_utilisateur:gerer-les-tournois}}
+\sphinxAtStartPar
+Tournaments allow you to organize imported matches by event. To access the tournaments panel, press \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Create a tournament:}
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Open the tournaments panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}).
+
+\item {} 
+\sphinxAtStartPar
+Click “Add” and enter the tournament name.
+
+\end{enumerate}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Assign a match to a tournament:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+From the match panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}T}), use the dropdown menu in the tournament column to assign a match.
+
+\end{itemize}
+
+
+\subsection{Calculate the EPC}
+\label{\detokenize{guide_utilisateur:calculer-l-epc}}
+\sphinxAtStartPar
+The EPC (Effective Pip Count) calculator allows you to compute the bearoff statistics of a position.
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+Execute the \sphinxcode{\sphinxupquote{epc}} command or click the corresponding button in the toolbar.
+
+\item {} 
+\sphinxAtStartPar
+Edit the checker positions in the home board (last 6 points).
+
+\item {} 
+\sphinxAtStartPar
+Results are displayed in real time: EPC, average number of rolls, standard deviation, pip count, and wastage.
+
+\end{enumerate}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+The calculator works for both players simultaneously.
+\end{sphinxadmonition}
+
 
 \subsection{Display the analysis of a position imported from XG}
 \label{\detokenize{guide_utilisateur:afficher-l-analyse-d-une-position-importee-depuis-xg}}
 \sphinxAtStartPar
-If a position analyzed by XG has been imported into blunderDB, the XG analysis can be displayed by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}L}.
+If a position analyzed by XG, GNUbg, or BGBlitz has been imported into blunderDB, the analysis can be displayed by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}L}.
 
 \sphinxAtStartPar
 If the position corresponds to a checker decision, the five best moves are displayed on separate lines. For each line, the information provided is in this order: the associated checker move, the normalized equity, the error in equity of the move, the winning chances, gammon, and backgammon for the player, and the winning chances, gammon, and backgammon for the opponent, along with the level of analysis.
 
 \sphinxAtStartPar
 If the position corresponds to a cube decision, the cost of each decision is displayed along with the winning chances of the position.
+
+\sphinxAtStartPar
+When multiple analysis engines are present for the same position (for example XG and GNUbg), an additional column indicates the source engine of each analysis.
+
+\sphinxAtStartPar
+In MATCH mode, the actually played move is highlighted in the move list. In NORMAL mode, if the position was encountered in multiple matches, all played moves are indicated.
+
+\begin{sphinxadmonition}{tip}{Tip:}
+\sphinxAtStartPar
+By clicking on a move in the analysis panel, the corresponding arrows are displayed on the board.
+\end{sphinxadmonition}
 
 
 \subsection{Export a position to XG}
@@ -950,6 +1448,17 @@ Display database metadata.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+epc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Open the EPC (Effective Pip Count) calculator.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 met
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -1091,7 +1600,7 @@ import, i
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Import a position via a text file (txt).
+Import one or more positions/matches from file (xg, sgf, mat, txt, bgf).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1157,7 +1666,29 @@ history, hi
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher/cacher l’historique de recherche.
+Show/hide the search history.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+match, ma
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Show/hide the match panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+collection, coll
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Show/hide the collections panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1190,7 +1721,7 @@ m
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Basculer en mode MATCH (dernier match visité).
+Toggle MATCH mode (last visited match).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1517,7 +2048,7 @@ E\textgreater{}x
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-L’erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x.
+The error of the move played by player 1 (in millipoints) is greater than x.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1528,7 +2059,7 @@ E\textless{}x
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-L’erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x.
+The error of the move played by player 1 (in millipoints) is less than x.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1539,7 +2070,7 @@ Ex,y
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-L’erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x et y.
+The error of the move played by player 1 (in millipoints) is between x and y.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2188,43 +2719,15 @@ Clear the command history.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-migrate\_from\_1\_0\_to\_1\_1
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Migrate the database from version 1.0 to version 1.1.
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-migrate\_from\_1\_1\_to\_1\_2
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Migrate the database from version 1.1 to version 1.2.
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-migrate\_from\_1\_2\_to\_1\_3
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Migrate the database from version 1.2 to version 1.3.
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Database migrations are now performed automatically when opening a database.
+\end{sphinxadmonition}
 
 \sphinxstepscope
 
@@ -2351,7 +2854,18 @@ CTRL\sphinxhyphen{}I
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Import a position from a text file (txt).
+Import one or more positions/matches from file (xg, sgf, mat, txt, bgf).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}SHIFT\sphinxhyphen{}F
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Recursively import a folder of match/position files.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2373,7 +2887,7 @@ CTRL\sphinxhyphen{}V
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Paste a position from the clipboard.
+Paste a position from the clipboard (automatic format detection).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2660,7 +3174,7 @@ CTRL\sphinxhyphen{}TAB
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Basculer en mode MATCH (entrer/sortir).
+Toggle MATCH mode (enter/exit).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2758,6 +3272,39 @@ Show/hide the search history.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
+CTRL\sphinxhyphen{}T
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Show/hide the match panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}K
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Show/hide the collections panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}Y
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Show/hide the tournaments panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
 ?
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -2843,7 +3390,7 @@ Action
 \sphinxmidrule
 \sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Clic
+Click
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -2854,7 +3401,7 @@ Select/deselect a search (show position).
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Double\sphinxhyphen{}clic
+Double\sphinxhyphen{}click
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -2892,7 +3439,7 @@ Esc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le panneau.
+Deselect the search. If no search selected, close the panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2902,7 +3449,7 @@ Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le pan
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Panneau bibliothèque de filtres}
+\subsection{Filter Library Panel}
 \label{\detokenize{raccourcis:panneau-bibliotheque-de-filtres}}\label{\detokenize{raccourcis:raccourcis-filter-library}}
 
 \begin{savenotes}\sphinxattablestart
@@ -2924,23 +3471,23 @@ Action
 \sphinxmidrule
 \sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Clic
+Click
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Sélectionner/désélectionner un filtre (afficher la position).
+Select/deselect a filter (show position).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Double\sphinxhyphen{}clic
+Double\sphinxhyphen{}click
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Exécuter la recherche du filtre.
+Execute the filter search.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2951,7 +3498,7 @@ UP, k
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Sélectionner le filtre précédent (lorsqu’un filtre est sélectionné).
+Select previous filter (when a filter is selected).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2962,7 +3509,7 @@ DOWN, j
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Sélectionner le filtre suivant (lorsqu’un filtre est sélectionné).
+Select next filter (when a filter is selected).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -2973,7 +3520,7 @@ Esc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau.
+Deselect filter. If no filter selected, close the panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3005,7 +3552,7 @@ Action
 \sphinxmidrule
 \sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Clic
+Click
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3055,6 +3602,109 @@ Esc
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Deselect move. If no move selected, close the panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Match Panel}
+\label{\detokenize{raccourcis:panneau-des-matchs}}\label{\detokenize{raccourcis:raccourcis-match-panel}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{7}{27}\X{20}{27}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Shortcut
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Action
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Click
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Select a match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Double\sphinxhyphen{}click
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Enter MATCH mode.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+UP, k
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Select previous match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+DOWN, j
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Select next match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ENTER
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Load the selected match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Del
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Delete the selected match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Esc
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Deselect/close the panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3141,6 +3791,54 @@ During the merge, blunderDB avoids duplicates and intelligently merges analyses 
 \sphinxAtStartPar
 It is recommended to make a backup copy of your main database before importing another database.
 \end{sphinxadmonition}
+
+
+\subsection{Which match file formats are supported?}
+\label{\detokenize{faq:quels-formats-de-fichiers-de-match-sont-supportes}}
+\sphinxAtStartPar
+blunderDB supports the following match formats:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{eXtreme Gammon (XG)}: \sphinxstyleemphasis{.xg} files, with complete move analysis, cube decisions, played moves, and multi\sphinxhyphen{}engine support.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{GNUbg}: \sphinxstyleemphasis{.sgf} files (Smart Game Format), with analysis.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Jellyfish}: \sphinxstyleemphasis{.mat} and \sphinxstyleemphasis{.txt} files.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{BGBlitz}: \sphinxstyleemphasis{.bgf} files and text positions.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Import can be done via a single file, multiple selection, recursive folder, paste from clipboard, or drag and drop.
+
+\sphinxAtStartPar
+blunderDB automatically detects duplicates and prevents importing a match already present in the database.
+
+
+\subsection{What is a collection?}
+\label{\detokenize{faq:qu-est-ce-qu-une-collection}}
+\sphinxAtStartPar
+A collection is a custom grouping of positions. Unlike a filter search which is dynamic, a collection is a fixed set of positions manually chosen by the user. Collections allow, for example, grouping reference positions for a particular topic.
+
+
+\subsection{What is EPC?}
+\label{\detokenize{faq:qu-est-ce-que-l-epc}}
+\sphinxAtStartPar
+EPC (Effective Pip Count) is a more accurate measure than the simple pip count for evaluating bearoff positions. The blunderDB EPC calculator uses the GNUbg 6\sphinxhyphen{}point bearoff database and computes in real time the EPC, average number of rolls, standard deviation, pip count, and wastage.
+
+
+\subsection{Does blunderDB have a command\sphinxhyphen{}line interface?}
+\label{\detokenize{faq:blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande}}
+\sphinxAtStartPar
+Yes, blunderDB has a command\sphinxhyphen{}line interface (CLI) that allows performing without a graphical interface operations such as creating databases, importing matches, exporting, searching positions, displaying statistics, etc. Refer to the CLI documentation for more details.
 
 
 \subsection{Can I modify, copy, share blunderDB?}
@@ -3448,7 +4146,7 @@ s g\textgreater{}20
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Erreurs du joueur 1 de plus de 40 millipoints
+Player 1 errors greater than 40 millipoints
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -3902,6 +4600,91 @@ The other tables remain unchanged from version 1.2.0.
 
 \sphinxAtStartPar
 To migrate the database from version 1.2.0 to version 1.3.0, execute the command \sphinxcode{\sphinxupquote{migrate\_from\_1\_2\_to\_1\_3}} in blunderDB.
+
+
+\subsection{Version 1.4.0}
+\label{\detokenize{annexe_db_scheme:version-1-4-0}}
+\sphinxAtStartPar
+Version 1.4.0 of the database adds the following tables for match management:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{match}: Stores imported matches with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{player1\_name}, \sphinxtitleref{player2\_name}, \sphinxtitleref{event}, \sphinxtitleref{location}, \sphinxtitleref{round}, \sphinxtitleref{match\_length}, \sphinxtitleref{match\_date}, \sphinxtitleref{import\_date}, \sphinxtitleref{file\_path}, \sphinxtitleref{game\_count}, and \sphinxtitleref{match\_hash} (hash for duplicate detection).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{game}: Stores the games of a match with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{match\_id} (foreign key referencing \sphinxtitleref{match}), \sphinxtitleref{game\_number}, \sphinxtitleref{initial\_score\_1}, \sphinxtitleref{initial\_score\_2}, \sphinxtitleref{winner}, \sphinxtitleref{points\_won}, and \sphinxtitleref{move\_count}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{move}: Stores the moves of a game with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{game\_id} (foreign key referencing \sphinxtitleref{game}), \sphinxtitleref{move\_number}, \sphinxtitleref{move\_type}, \sphinxtitleref{position\_id} (foreign key referencing \sphinxtitleref{position}), \sphinxtitleref{player}, \sphinxtitleref{dice\_1}, \sphinxtitleref{dice\_2}, \sphinxtitleref{checker\_move}, and \sphinxtitleref{cube\_action}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{move\_analysis}: Stores the analysis of each move with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{move\_id} (foreign key referencing \sphinxtitleref{move}), \sphinxtitleref{analysis\_type}, \sphinxtitleref{depth}, \sphinxtitleref{equity}, \sphinxtitleref{equity\_error}, \sphinxtitleref{win\_rate}, \sphinxtitleref{gammon\_rate}, \sphinxtitleref{backgammon\_rate}, \sphinxtitleref{opponent\_win\_rate}, \sphinxtitleref{opponent\_gammon\_rate}, and \sphinxtitleref{opponent\_backgammon\_rate}.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Migration from 1.3.0 to 1.4.0 is automatic when opening the database.
+
+
+\subsection{Version 1.5.0}
+\label{\detokenize{annexe_db_scheme:version-1-5-0}}
+\sphinxAtStartPar
+Version 1.5.0 of the database adds the following tables for collection management:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{collection}: Stores position collections with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{name}, \sphinxtitleref{description}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at}, and \sphinxtitleref{updated\_at}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{collection\_position}: Junction table that associates positions with collections with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{collection\_id} (foreign key referencing \sphinxtitleref{collection}), \sphinxtitleref{position\_id} (foreign key referencing \sphinxtitleref{position}), \sphinxtitleref{sort\_order}, and \sphinxtitleref{added\_at}. The pair (\sphinxtitleref{collection\_id}, \sphinxtitleref{position\_id}) is unique.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Migration from 1.4.0 to 1.5.0 is automatic when opening the database.
+
+
+\subsection{Version 1.6.0}
+\label{\detokenize{annexe_db_scheme:version-1-6-0}}
+\sphinxAtStartPar
+Version 1.6.0 of the database adds the following table for tournament management:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{tournament}: Stores tournaments with the columns \sphinxtitleref{id} (primary key), \sphinxtitleref{name}, \sphinxtitleref{date}, \sphinxtitleref{location}, \sphinxtitleref{sort\_order}, \sphinxtitleref{created\_at}, and \sphinxtitleref{updated\_at}.
+
+\item {} 
+\sphinxAtStartPar
+Addition of the \sphinxtitleref{tournament\_id} column (foreign key referencing \sphinxtitleref{tournament}) in the \sphinxtitleref{match} table to assign a match to a tournament.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Migration from 1.5.0 to 1.6.0 is automatic when opening the database.
+
+
+\subsection{Version 1.7.0}
+\label{\detokenize{annexe_db_scheme:version-1-7-0}}
+\sphinxAtStartPar
+Version 1.7.0 of the database adds the following column:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Addition of the \sphinxtitleref{last\_visited\_position} column in the \sphinxtitleref{match} table to remember the last visited position in each match.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Migration from 1.6.0 to 1.7.0 is automatic when opening the database.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Since version 0.10.0, all database migrations are performed automatically when opening a database file.
+\end{sphinxadmonition}
 \sphinxcontribyoutube{https://youtu.be/}{Ln7XKVFqfUk}{}
 \sphinxcontribyoutube{https://youtu.be/}{HkY4iXjxMeI}{}
 

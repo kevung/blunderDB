@@ -75,6 +75,39 @@ Historique des versions
    Affichage de flèches pour les coups sélectionnés.
    
    Raccourcis clavier pour l'import/export."
+   0.10.0, 25/02/2026, "Import de matchs depuis eXtreme Gammon (XG), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).
+
+   Mode MATCH: navigation dans les coups d'un match importé, avec mise en évidence du coup joué.
+
+   Panneau des matchs: liste, tri, édition inline, permutation des joueurs, assignation de tournoi.
+
+   Import par dossier récursif et import par glisser-déposer.
+
+   Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée.
+
+   Collections: regroupement personnalisé de positions avec mode COLLECTION dédié.
+
+   Tournois: regroupement de matchs par événement.
+
+   Sauvegarde et restauration de l'état de session (dernière recherche, position courante).
+
+   Migration automatique du schéma de base de données.
+
+   Affichage multi-moteurs dans l'analyse.
+
+   Filtre d'erreurs/blunders du joueur 1 dans les recherches.
+
+   Export de la base de données avec sélection granulaire (matchs, collections, tournois, coups joués).
+
+   Bouton de basculement vers le mode MATCH.
+
+   Compte de course (pipcount) en mode MATCH.
+
+   Interface en ligne de commande (CLI) complète.
+
+   Réouverture automatique de la dernière base de données.
+
+   Amélioration de la barre d'outils et des icônes."
 
 Sommaire
 ========

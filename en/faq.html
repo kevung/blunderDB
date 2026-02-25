@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>6. Frequently Asked Questions (FAQ) &mdash; blunderDB 0.9.0 documentation</title>
+  <title>6. Frequently Asked Questions (FAQ) &mdash; blunderDB 0.10.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=39bb1c6d"></script>
+      <script src="_static/documentation_options.js?v=82662543"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -58,12 +58,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">6.3. How to save the state of the current database?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">6.4. Should I create different databases for different categories of positions?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#comment-fusionner-plusieurs-bases-de-donnees">6.5. How to merge multiple databases?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">6.6. Can I modify, copy, share blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">6.7. What data format does blunderDB use?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.8. What were the design principles of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">6.9. What is the software architecture of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.10. On which platforms does blunderDB run?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">6.11. Where does the blunderDB icon come from?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-formats-de-fichiers-de-match-sont-supportes">6.6. Which match file formats are supported?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qu-une-collection">6.7. What is a collection?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-que-l-epc">6.8. What is EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">6.9. Does blunderDB have a command-line interface?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">6.10. Can I modify, copy, share blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">6.11. What data format does blunderDB use?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.12. What were the design principles of blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">6.13. What is the software architecture of blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.14. On which platforms does blunderDB run?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">6.15. Where does the blunderDB icon come from?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">7. Annex: Advanced Filter Usage</a></li>
@@ -134,20 +138,44 @@
 <p>It is recommended to make a backup copy of your main database before importing another database.</p>
 </div>
 </section>
+<section id="quels-formats-de-fichiers-de-match-sont-supportes">
+<h2><span class="section-number">6.6. </span>Which match file formats are supported?<a class="headerlink" href="#quels-formats-de-fichiers-de-match-sont-supportes" title="Link to this heading"></a></h2>
+<p>blunderDB supports the following match formats:</p>
+<ul class="simple">
+<li><p><strong>eXtreme Gammon (XG)</strong>: <em>.xg</em> files, with complete move analysis, cube decisions, played moves, and multi-engine support.</p></li>
+<li><p><strong>GNUbg</strong>: <em>.sgf</em> files (Smart Game Format), with analysis.</p></li>
+<li><p><strong>Jellyfish</strong>: <em>.mat</em> and <em>.txt</em> files.</p></li>
+<li><p><strong>BGBlitz</strong>: <em>.bgf</em> files and text positions.</p></li>
+</ul>
+<p>Import can be done via a single file, multiple selection, recursive folder, paste from clipboard, or drag and drop.</p>
+<p>blunderDB automatically detects duplicates and prevents importing a match already present in the database.</p>
+</section>
+<section id="qu-est-ce-qu-une-collection">
+<h2><span class="section-number">6.7. </span>What is a collection?<a class="headerlink" href="#qu-est-ce-qu-une-collection" title="Link to this heading"></a></h2>
+<p>A collection is a custom grouping of positions. Unlike a filter search which is dynamic, a collection is a fixed set of positions manually chosen by the user. Collections allow, for example, grouping reference positions for a particular topic.</p>
+</section>
+<section id="qu-est-ce-que-l-epc">
+<h2><span class="section-number">6.8. </span>What is EPC?<a class="headerlink" href="#qu-est-ce-que-l-epc" title="Link to this heading"></a></h2>
+<p>EPC (Effective Pip Count) is a more accurate measure than the simple pip count for evaluating bearoff positions. The blunderDB EPC calculator uses the GNUbg 6-point bearoff database and computes in real time the EPC, average number of rolls, standard deviation, pip count, and wastage.</p>
+</section>
+<section id="blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">
+<h2><span class="section-number">6.9. </span>Does blunderDB have a command-line interface?<a class="headerlink" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>Yes, blunderDB has a command-line interface (CLI) that allows performing without a graphical interface operations such as creating databases, importing matches, exporting, searching positions, displaying statistics, etc. Refer to the CLI documentation for more details.</p>
+</section>
 <section id="puis-je-modifier-copier-partager-blunderdb">
-<h2><span class="section-number">6.6. </span>Can I modify, copy, share blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.10. </span>Can I modify, copy, share blunderDB?<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Link to this heading"></a></h2>
 <p>Yes, absolutely. blunderDB is licensed under the MIT license.</p>
 </section>
 <section id="quel-format-de-donnees-utilise-blunderdb">
-<h2><span class="section-number">6.7. </span>What data format does blunderDB use?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.11. </span>What data format does blunderDB use?<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Link to this heading"></a></h2>
 <p>The database is a simple SQLite file. In the absence of blunderDB, it can thus be opened with any SQLite file editor.</p>
 </section>
 <section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
-<h2><span class="section-number">6.8. </span>What were the design principles of blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.12. </span>What were the design principles of blunderDB?<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
 <p>The modal operation of blunderDB (NORMAL, EDIT, COMMAND) is inspired by the very powerful text editor <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>. I wanted blunderDB to be lightweight, standalone, installation-free, and available on multiple platforms, which led to my choice of the Go programming language and the Svelte library. For database serialization, the file format needed to be cross-platform and suitable for containing a database. The SQLite file format seemed like the perfect choice.</p>
 </section>
 <section id="quel-est-l-architecture-logicielle-de-blunderdb">
-<h2><span class="section-number">6.9. </span>What is the software architecture of blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.13. </span>What is the software architecture of blunderDB?<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>The backend is coded in <a class="reference external" href="https://go.dev/">Go</a>. It is responsible for all operations on the SQLite database that stores the positions.</p></li>
 <li><p>The frontend is coded in <a class="reference external" href="https://svelte.dev/">Svelte</a>. It is responsible for rendering the graphical interface and the Backgammon board.</p></li>
@@ -157,11 +185,11 @@
 <p>For more information, see the <a class="reference external" href="https://github.com/kevung/blunderDB">blunderDB GitHub repository</a>.</p>
 </section>
 <section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
-<h2><span class="section-number">6.10. </span>On which platforms does blunderDB run?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.14. </span>On which platforms does blunderDB run?<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
 <p>blunderDB runs on Windows, Linux and Mac.</p>
 </section>
 <section id="d-ou-vient-l-icone-de-blunderdb">
-<h2><span class="section-number">6.11. </span>Where does the blunderDB icon come from?<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Link to this heading"></a></h2>
+<h2><span class="section-number">6.15. </span>Where does the blunderDB icon come from?<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Link to this heading"></a></h2>
 <p>The blunderDB icon is the “goggling” emoticon from the  <a class="reference external" href="https://commons.wikimedia.org/wiki/SMirC">SMirC series</a>.</p>
 </section>
 </section>

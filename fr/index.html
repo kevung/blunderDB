@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.9.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.10.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b137f06f"></script>
+      <script src="_static/documentation_options.js?v=0aeac941"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -175,6 +175,27 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <p>Raccourcis clavier pour l’import/export.</p>
 </td>
 </tr>
+<tr class="row-odd"><td><p>0.10.0</p></td>
+<td><p>25/02/2026</p></td>
+<td><p>Import de matchs depuis eXtreme Gammon (XG), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).</p>
+<p>Mode MATCH: navigation dans les coups d’un match importé, avec mise en évidence du coup joué.</p>
+<p>Panneau des matchs: liste, tri, édition inline, permutation des joueurs, assignation de tournoi.</p>
+<p>Import par dossier récursif et import par glisser-déposer.</p>
+<p>Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée.</p>
+<p>Collections: regroupement personnalisé de positions avec mode COLLECTION dédié.</p>
+<p>Tournois: regroupement de matchs par événement.</p>
+<p>Sauvegarde et restauration de l’état de session (dernière recherche, position courante).</p>
+<p>Migration automatique du schéma de base de données.</p>
+<p>Affichage multi-moteurs dans l’analyse.</p>
+<p>Filtre d’erreurs/blunders du joueur 1 dans les recherches.</p>
+<p>Export de la base de données avec sélection granulaire (matchs, collections, tournois, coups joués).</p>
+<p>Bouton de basculement vers le mode MATCH.</p>
+<p>Compte de course (pipcount) en mode MATCH.</p>
+<p>Interface en ligne de commande (CLI) complète.</p>
+<p>Réouverture automatique de la dernière base de données.</p>
+<p>Amélioration de la barre d’outils et des icônes.</p>
+</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -191,6 +212,9 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-normal">2.5. Le mode NORMAL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-edit">2.6. Le mode EDIT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-command">2.7. Le mode COMMAND</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-match">2.8. Le mode MATCH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-epc">2.9. Le mode EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-collection">2.10. Le mode COLLECTION</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a><ul>
@@ -202,10 +226,18 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">3.6. Etiqueter une position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">3.7. Supprimer une position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">3.8. Import une position depuis XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.9. Afficher l’analyse d’une position importée depuis XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.10. Exporter une position vers XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.11. Visualiser les différentes positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.12. Rechercher des positions selon des critères</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-match">3.9. Importer un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-dossier-de-matchs">3.10. Importer un dossier de matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#glisser-deposer">3.11. Glisser-déposer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#naviguer-dans-un-match">3.12. Naviguer dans un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">3.13. Gérer le panneau des matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">3.14. Gérer les collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">3.15. Gérer les tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#calculer-l-epc">3.16. Calculer l’EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.17. Afficher l’analyse d’une position importée depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.18. Exporter une position vers XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.19. Visualiser les différentes positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.20. Rechercher des positions selon des critères</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a><ul>
@@ -227,6 +259,7 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-historique-de-recherche">5.8. Panneau historique de recherche</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-bibliotheque-de-filtres">5.9. Panneau bibliothèque de filtres</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.10. Panneau d’analyse</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.11. Panneau des matchs</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="faq.html">6. Foire aux questions</a><ul>
@@ -235,12 +268,16 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">6.3. Comment sauvegarder la base de données courante?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">6.4. Dois-je créer différentes bases de données pour différentes catégories de positions?</a></li>
 <li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">6.5. Comment fusionner plusieurs bases de données?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">6.6. Puis-je modifier, copier, partager blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">6.7. Quel format de données utilise blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.8. Quelles ont été les principes de conception de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">6.9. Quel est l’architecture logicielle de blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.10. Sur quelles plateformes blunderDB fonctionne-t’il?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">6.11. D’où vient l’icône de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">6.6. Quels formats de fichiers de match sont supportés?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">6.7. Qu’est-ce qu’une collection?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">6.8. Qu’est-ce que l’EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">6.9. blunderDB dispose-t-il d’une interface en ligne de commande?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">6.10. Puis-je modifier, copier, partager blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">6.11. Quel format de données utilise blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">6.12. Quelles ont été les principes de conception de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">6.13. Quel est l’architecture logicielle de blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">6.14. Sur quelles plateformes blunderDB fonctionne-t’il?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">6.15. D’où vient l’icône de blunderDB?</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">7. Annexe: Utilisation avancée des filtres</a><ul>
@@ -264,6 +301,10 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">10.2. Version 1.1.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">10.3. Version 1.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">10.4. Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">10.5. Version 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">10.6. Version 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">10.7. Version 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">10.8. Version 1.7.0</a></li>
 </ul>
 </li>
 </ul>

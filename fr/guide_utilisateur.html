@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3. Guide utilisateur &mdash; Documentation blunderDB 0.9.0</title>
+  <title>3. Guide utilisateur &mdash; Documentation blunderDB 0.10.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b137f06f"></script>
+      <script src="_static/documentation_options.js?v=0aeac941"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -59,10 +59,18 @@
 <li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">3.6. Etiqueter une position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">3.7. Supprimer une position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">3.8. Import une position depuis XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">3.9. Afficher l’analyse d’une position importée depuis XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">3.10. Exporter une position vers XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">3.11. Visualiser les différentes positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">3.12. Rechercher des positions selon des critères</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">3.9. Importer un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">3.10. Importer un dossier de matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">3.11. Glisser-déposer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">3.12. Naviguer dans un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">3.13. Gérer le panneau des matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">3.14. Gérer les collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">3.15. Gérer les tournois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculer-l-epc">3.16. Calculer l’EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">3.17. Afficher l’analyse d’une position importée depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">3.18. Exporter une position vers XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">3.19. Visualiser les différentes positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">3.20. Rechercher des positions selon des critères</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
@@ -215,11 +223,158 @@ aucune confirmation de la part de l’utilisateur.</p>
 <li><p>afficher dans XG la position à importer et appuyer <em>CTRL-C</em>,</p></li>
 <li><p>afficher blunderDB et appuyer <em>CTRL-V</em>.</p></li>
 </ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz).</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2><span class="section-number">3.9. </span>Importer un match<a class="headerlink" href="#importer-un-match" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB peut importer des matchs depuis différentes sources.</p>
+<p><strong>Formats supportés:</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): fichiers <em>.xg</em></p></li>
+<li><p>GNUbg: fichiers <em>.sgf</em></p></li>
+<li><p>Jellyfish: fichiers <em>.mat</em> et <em>.txt</em></p></li>
+<li><p>BGBlitz: fichiers <em>.bgf</em> et <em>.txt</em></p></li>
+</ul>
+<p><strong>Pour importer un ou plusieurs fichiers de match:</strong></p>
+<ol class="arabic simple">
+<li><p>Appuyer sur <em>CTRL-I</em> ou cliquer sur le bouton « Import » dans la barre d’outils.</p></li>
+<li><p>Sélectionner un ou plusieurs fichiers à importer.</p></li>
+<li><p>blunderDB détecte automatiquement le format et importe le match.</p></li>
+<li><p>Une fenêtre de progression affiche le nombre de fichiers importés, échoués
+et ignorés (doublons).</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Commande: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>blunderDB détecte automatiquement les doublons et empêche l’import d’un
+match déjà présent dans la base de données.</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2><span class="section-number">3.10. </span>Importer un dossier de matchs<a class="headerlink" href="#importer-un-dossier-de-matchs" title="Lien vers cette rubrique"></a></h2>
+<p>Pour importer récursivement tous les fichiers de matchs contenus dans un
+dossier et ses sous-dossiers:</p>
+<ol class="arabic simple">
+<li><p>Appuyer sur <em>CTRL-SHIFT-F</em> ou cliquer sur le bouton correspondant dans la
+barre d’outils.</p></li>
+<li><p>Sélectionner le dossier contenant les fichiers de matchs.</p></li>
+<li><p>blunderDB collecte et importe automatiquement tous les fichiers reconnus
+(<em>.xg</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>).</p></li>
+</ol>
+</section>
+<section id="glisser-deposer">
+<h2><span class="section-number">3.11. </span>Glisser-déposer<a class="headerlink" href="#glisser-deposer" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer
+sur la fenêtre de blunderDB:</p>
+<ul class="simple">
+<li><p>des fichiers de match ou de position (<em>.xg</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>)
+pour les importer,</p></li>
+<li><p>des fichiers de base de données (<em>.db</em>) pour les ouvrir ou les fusionner
+avec la base de données courante,</p></li>
+<li><p>des dossiers pour importer récursivement tous les fichiers qu’ils contiennent.</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2><span class="section-number">3.12. </span>Naviguer dans un match<a class="headerlink" href="#naviguer-dans-un-match" title="Lien vers cette rubrique"></a></h2>
+<p>Pour naviguer dans un match importé:</p>
+<ol class="arabic simple">
+<li><p>Ouvrir le panneau des matchs avec <em>CTRL-T</em>.</p></li>
+<li><p>Double-cliquer sur un match pour entrer en mode MATCH.</p></li>
+<li><p>Utiliser les touches <em>GAUCHE</em> / <em>DROITE</em> pour parcourir les coups.</p></li>
+<li><p>Utiliser <em>PageUp</em> / <em>PageDown</em> pour passer d’une partie à l’autre.</p></li>
+<li><p>Appuyer sur <em>CTRL-L</em> pour afficher l’analyse.</p></li>
+<li><p>Appuyer sur <em>d</em> pour basculer entre l’analyse des coups de pions et du cube.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Raccourci: <em>CTRL-TAB</em> pour basculer en mode MATCH / sortir du mode MATCH.
+Commande: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>blunderDB mémorise la dernière position visitée dans chaque match. En
+revenant sur un match, la dernière position consultée est automatiquement
+restaurée.</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2><span class="section-number">3.13. </span>Gérer le panneau des matchs<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau des matchs (<em>CTRL-T</em>) permet de:</p>
+<ul class="simple">
+<li><p>lister l’ensemble des matchs importés (triés du plus récent au plus ancien),</p></li>
+<li><p>trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du match,
+tournoi),</p></li>
+<li><p>modifier les noms des joueurs ou la date en double-cliquant sur les champs,</p></li>
+<li><p>permuter les joueurs 1 et 2 à l’aide du bouton de permutation,</p></li>
+<li><p>assigner un match à un tournoi,</p></li>
+<li><p>supprimer un match à l’aide de la touche <em>Del</em>.</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<h2><span class="section-number">3.14. </span>Gérer les collections<a class="headerlink" href="#gerer-les-collections" title="Lien vers cette rubrique"></a></h2>
+<p>Les collections permettent d’organiser des positions en groupes personnalisés.
+Pour accéder au panneau des collections, appuyer sur <em>CTRL-K</em>.</p>
+<p><strong>Créer une collection:</strong></p>
+<ol class="arabic simple">
+<li><p>Ouvrir le panneau des collections (<em>CTRL-K</em>).</p></li>
+<li><p>Saisir le nom de la nouvelle collection et cliquer sur « Add ».</p></li>
+</ol>
+<p><strong>Ajouter des positions à une collection:</strong></p>
+<ol class="arabic simple">
+<li><p>Sélectionner les positions souhaitées.</p></li>
+<li><p>Les ajouter à la collection depuis le panneau des collections.</p></li>
+</ol>
+<p><strong>Parcourir une collection:</strong></p>
+<ul class="simple">
+<li><p>Double-cliquer sur une collection pour entrer en mode COLLECTION et
+parcourir ses positions.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Commande: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2><span class="section-number">3.15. </span>Gérer les tournois<a class="headerlink" href="#gerer-les-tournois" title="Lien vers cette rubrique"></a></h2>
+<p>Les tournois permettent d’organiser les matchs importés par événement.
+Pour accéder au panneau des tournois, appuyer sur <em>CTRL-Y</em>.</p>
+<p><strong>Créer un tournoi:</strong></p>
+<ol class="arabic simple">
+<li><p>Ouvrir le panneau des tournois (<em>CTRL-Y</em>).</p></li>
+<li><p>Cliquer sur « Add » et saisir le nom du tournoi.</p></li>
+</ol>
+<p><strong>Assigner un match à un tournoi:</strong></p>
+<ul class="simple">
+<li><p>Depuis le panneau des matchs (<em>CTRL-T</em>), utiliser le menu déroulant
+de la colonne tournoi pour assigner un match.</p></li>
+</ul>
+</section>
+<section id="calculer-l-epc">
+<h2><span class="section-number">3.16. </span>Calculer l’EPC<a class="headerlink" href="#calculer-l-epc" title="Lien vers cette rubrique"></a></h2>
+<p>Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques de
+bearoff d’une position.</p>
+<ol class="arabic simple">
+<li><p>Exécuter la commande <code class="docutils literal notranslate"><span class="pre">epc</span></code> ou cliquer sur le bouton correspondant dans la
+barre d’outils.</p></li>
+<li><p>Éditer la position des pions dans le jan (6 derniers points).</p></li>
+<li><p>Les résultats sont affichés en temps réel: EPC, nombre moyen de lancers,
+écart type, pip count et wastage.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le calculateur fonctionne pour les deux joueurs simultanément.</p>
+</div>
 </section>
 <section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
-<h2><span class="section-number">3.9. </span>Afficher l’analyse d’une position importée depuis XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Lien vers cette rubrique"></a></h2>
-<p>Si une position analysée par XG a été importée dans blunderDB, l’analyse de XG
-peut être affichée en appuyant <em>CTRL-L</em>.</p>
+<h2><span class="section-number">3.17. </span>Afficher l’analyse d’une position importée depuis XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Lien vers cette rubrique"></a></h2>
+<p>Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans
+blunderDB, l’analyse peut être affichée en appuyant <em>CTRL-L</em>.</p>
 <p>Si la position correspond à une décision de pions, les cinq meilleurs coups
 sont affichés sur des lignes distinctes. Pour chaque ligne, les informations
 fournies sont dans cet ordre, le coup de pion associé, l’équité normalisée,
@@ -228,9 +383,20 @@ joueur, les chances de gain, gammon et backgammon de l’adversaire, le niveau
 d’analyse.</p>
 <p>Si la position correspond à une décision de cube, le coût de chaque décision
 est affiché ainsi que les chances de gain de la position.</p>
+<p>Lorsque plusieurs moteurs d’analyse sont présents pour la même position
+(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur
+d’origine de chaque analyse.</p>
+<p>En mode MATCH, le coup effectivement joué est mis en évidence dans la liste
+des coups. En mode NORMAL, si la position a été rencontrée dans plusieurs
+matchs, tous les coups joués sont indiqués.</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>En cliquant sur un coup dans le panneau d’analyse, les flèches
+correspondantes sont affichées sur le board.</p>
+</div>
 </section>
 <section id="exporter-une-position-vers-xg">
-<h2><span class="section-number">3.10. </span>Exporter une position vers XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.18. </span>Exporter une position vers XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Lien vers cette rubrique"></a></h2>
 <p>Pour exporter une position de blunderDB vers XG,</p>
 <ol class="arabic simple">
 <li><p>afficher dans blunderDB la position à exporter et appuyter <em>CTRL-C</em>,</p></li>
@@ -238,7 +404,7 @@ est affiché ainsi que les chances de gain de la position.</p>
 </ol>
 </section>
 <section id="visualiser-les-differentes-positions">
-<h2><span class="section-number">3.11. </span>Visualiser les différentes positions<a class="headerlink" href="#visualiser-les-differentes-positions" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.19. </span>Visualiser les différentes positions<a class="headerlink" href="#visualiser-les-differentes-positions" title="Lien vers cette rubrique"></a></h2>
 <p>Pour visualiser les différentes positions de la bibliothèque courante, utiliser
 les touches <em>GAUCHE</em> et <em>DROITE</em>. La touche <em>HOME</em> permet d’aller à la première
 position. La touche <em>FIN</em> permet d’aller à la dernière position.</p>
@@ -246,7 +412,7 @@ position. La touche <em>FIN</em> permet d’aller à la dernière position.</p>
 bearoff à droite, appuyer <em>CTRL-DROITE</em>.</p>
 </section>
 <section id="rechercher-des-positions-selon-des-criteres">
-<h2><span class="section-number">3.12. </span>Rechercher des positions selon des critères<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.20. </span>Rechercher des positions selon des critères<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Lien vers cette rubrique"></a></h2>
 <p>Pour rechercher des types de positions,</p>
 <ul class="simple">
 <li><p>basculer en mode EDIT en appuyant sur <em>TAB</em>,</p></li>

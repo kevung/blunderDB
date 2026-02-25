@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; blunderDB 0.9.0 documentation</title>
+  <title>2. Manual &mdash; blunderDB 0.10.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=39bb1c6d"></script>
+      <script src="_static/documentation_options.js?v=82662543"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -56,6 +56,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">2.5. NORMAL mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-edit">2.6. EDIT mode</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-command">2.7. COMMAND mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-match">2.8. MATCH mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-epc">2.9. EPC mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-collection">2.10. COLLECTION mode</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
@@ -105,7 +108,11 @@
 <li><p>add a new position,</p></li>
 <li><p>modify an existing position,</p></li>
 <li><p>delete an existing position,</p></li>
-<li><p>search for one or more positions.</p></li>
+<li><p>search for one or more positions,</p></li>
+<li><p>import matches from various sources (XG, GNUbg, BGBlitz, Jellyfish),</p></li>
+<li><p>navigate through the moves of an imported match,</p></li>
+<li><p>organize positions into collections,</p></li>
+<li><p>organize matches into tournaments.</p></li>
 </ul>
 </section>
 <section id="modes">
@@ -114,7 +121,10 @@
 <ul class="simple">
 <li><p>navigation and viewing positions (NORMAL mode),</p></li>
 <li><p>editing positions (EDIT mode),</p></li>
-<li><p>editing a query to filter positions (COMMAND mode or search window).</p></li>
+<li><p>editing a query to filter positions (COMMAND mode or search window),</p></li>
+<li><p>navigating through the moves of an imported match (MATCH mode),</p></li>
+<li><p>computing the EPC (Effective Pip Count) from a position (EPC mode),</p></li>
+<li><p>browsing a collection of positions (COLLECTION mode).</p></li>
 </ul>
 <p>The user can freely tag positions and annotate them with comments.</p>
 <p>In the following sections of the manual, the graphical interface and the main modes of blunderDB are described.</p>
@@ -129,13 +139,20 @@
 </ul>
 <p>Panels can be displayed to:</p>
 <ul class="simple">
-<li><p>display the analysis data associated with the current position from eXtreme Gammon (XG),</p></li>
-<li><p>display, add, or modify comments</p></li>
+<li><p>display the analysis data associated with the current position from eXtreme Gammon (XG), GNUbg, or BGBlitz,</p></li>
+<li><p>display, add, or modify comments,</p></li>
+<li><p>display the list of imported matches (match panel),</p></li>
+<li><p>display and manage position collections (collections panel),</p></li>
+<li><p>display and manage tournaments (tournaments panel),</p></li>
+<li><p>display the filter library,</p></li>
+<li><p>display the search history.</p></li>
 </ul>
 <p>Modal windows can be displayed to:</p>
 <ul class="simple">
 <li><p>[EDIT mode only] set search filters,</p></li>
-<li><p>display the blunderDB help.</p></li>
+<li><p>display the blunderDB help,</p></li>
+<li><p>configure database export settings,</p></li>
+<li><p>display the database metadata.</p></li>
 </ul>
 <p>The main display area provides the user with:</p>
 <ul class="simple">
@@ -166,7 +183,7 @@
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Se référer à <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> pour les raccourcis disponibles.</p>
+<p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
 </div>
 </section>
 <section id="le-mode-edit">
@@ -174,7 +191,7 @@
 <p>EDIT mode allows you to edit a position with the option to either add it to the database or define the type of position to search for. EDIT mode is activated by pressing the <em>TAB</em> key. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse (see <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Edit a position</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Se référer à <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> pour les raccourcis disponibles.</p>
+<p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
 </div>
 </section>
 <section id="le-mode-command">
@@ -186,6 +203,44 @@
 <p class="admonition-title">Tip</p>
 <p>Refer to <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> for the list of available commands in COMMAND mode.</p>
 </div>
+</section>
+<section id="le-mode-match">
+<span id="mode-match"></span><h2><span class="section-number">2.8. </span>MATCH mode<a class="headerlink" href="#le-mode-match" title="Link to this heading"></a></h2>
+<p>MATCH mode allows you to navigate through the moves of an imported match. It is activated by pressing <em>CTRL-TAB</em> or by executing the <code class="docutils literal notranslate"><span class="pre">m</span></code> command.</p>
+<p>In this mode, the user can:</p>
+<ul class="simple">
+<li><p>browse through the moves of a match using the <em>LEFT</em> and <em>RIGHT</em> keys,</p></li>
+<li><p>switch between games using the <em>PageUp</em> and <em>PageDown</em> keys,</p></li>
+<li><p>display the move analysis (checker and cube) by pressing <em>CTRL-L</em>,</p></li>
+<li><p>toggle between checker move and cube analysis with the <em>d</em> key,</p></li>
+<li><p>see the actually played move highlighted in the analysis.</p></li>
+</ul>
+<p>When the user enters MATCH mode, the last visited match is automatically loaded. The last visited position in each match is saved and restored.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
+</div>
+</section>
+<section id="le-mode-epc">
+<span id="mode-epc"></span><h2><span class="section-number">2.9. </span>EPC mode<a class="headerlink" href="#le-mode-epc" title="Link to this heading"></a></h2>
+<p>EPC mode allows you to calculate the EPC (Effective Pip Count) of a bearoff position. It is activated by executing the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command or by clicking the corresponding button in the toolbar.</p>
+<p>In this mode, the user edits the checker positions in the home board (last 6 points) and the following information is computed in real time for each player:</p>
+<ul class="simple">
+<li><p>the EPC (Effective Pip Count),</p></li>
+<li><p>the average number of rolls needed (Mean Rolls),</p></li>
+<li><p>the standard deviation,</p></li>
+<li><p>the pip count,</p></li>
+<li><p>the wastage (difference between the EPC and the pip count).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The computation relies on the built-in 6-point bearoff database from GNUbg.</p>
+</div>
+</section>
+<section id="le-mode-collection">
+<span id="mode-collection"></span><h2><span class="section-number">2.10. </span>COLLECTION mode<a class="headerlink" href="#le-mode-collection" title="Link to this heading"></a></h2>
+<p>COLLECTION mode allows you to browse the positions of a collection. It is activated by double-clicking on a collection in the collections panel (<em>CTRL-K</em>).</p>
+<p>In this mode, the user can navigate through the positions of the collection using the <em>LEFT</em> and <em>RIGHT</em> keys. To exit COLLECTION mode and return to NORMAL mode, press <em>TAB</em>.</p>
 </section>
 </section>
 

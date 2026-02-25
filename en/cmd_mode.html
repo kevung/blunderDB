@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. List of commands &mdash; blunderDB 0.9.0 documentation</title>
+  <title>4. List of commands &mdash; blunderDB 0.10.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=39bb1c6d"></script>
+      <script src="_static/documentation_options.js?v=82662543"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -125,34 +125,37 @@
 <tr class="row-even"><td><p>meta</p></td>
 <td><p>Display database metadata.</p></td>
 </tr>
-<tr class="row-odd"><td><p>met</p></td>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Open the EPC (Effective Pip Count) calculator.</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
 <td><p>Open the Kazaross-XG2 match equity table.</p></td>
 </tr>
-<tr class="row-even"><td><p>tp2</p></td>
+<tr class="row-odd"><td><p>tp2</p></td>
 <td><p>Open the takepoint table with a 2-cube.</p></td>
 </tr>
-<tr class="row-odd"><td><p>tp2_live</p></td>
+<tr class="row-even"><td><p>tp2_live</p></td>
 <td><p>Open the takepoint table with a 2-cube for long race positions.</p></td>
 </tr>
-<tr class="row-even"><td><p>tp2_last</p></td>
+<tr class="row-odd"><td><p>tp2_last</p></td>
 <td><p>Open the takepoint table with a 2-cube for last roll positions.</p></td>
 </tr>
-<tr class="row-odd"><td><p>tp4</p></td>
+<tr class="row-even"><td><p>tp4</p></td>
 <td><p>Open the takepoint table with a 4-cube.</p></td>
 </tr>
-<tr class="row-even"><td><p>tp4_live</p></td>
+<tr class="row-odd"><td><p>tp4_live</p></td>
 <td><p>Open the takepoint table with a 4-cube for long race positions.</p></td>
 </tr>
-<tr class="row-odd"><td><p>tp4_last</p></td>
+<tr class="row-even"><td><p>tp4_last</p></td>
 <td><p>Open the takepoint table with a 4-cube for last roll positions.</p></td>
 </tr>
-<tr class="row-even"><td><p>gv1</p></td>
+<tr class="row-odd"><td><p>gv1</p></td>
 <td><p>Open the gammon value table with a 1-cube.</p></td>
 </tr>
-<tr class="row-odd"><td><p>gv2</p></td>
+<tr class="row-even"><td><p>gv2</p></td>
 <td><p>Open the gammon value table with a 2-cube.</p></td>
 </tr>
-<tr class="row-even"><td><p>gv4</p></td>
+<tr class="row-odd"><td><p>gv4</p></td>
 <td><p>Open the gammon value table with a 4-cube.</p></td>
 </tr>
 </tbody>
@@ -172,7 +175,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>import, i</p></td>
-<td><p>Import a position via a text file (txt).</p></td>
+<td><p>Import one or more positions/matches from file (xg, sgf, mat, txt, bgf).</p></td>
 </tr>
 <tr class="row-odd"><td><p>delete, del, d</p></td>
 <td><p>Delete the current position.</p></td>
@@ -190,7 +193,13 @@
 <td><p>Show/hide the filter library.</p></td>
 </tr>
 <tr class="row-even"><td><p>history, hi</p></td>
-<td><p>Afficher/cacher l’historique de recherche.</p></td>
+<td><p>Show/hide the search history.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match, ma</p></td>
+<td><p>Show/hide the match panel.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection, coll</p></td>
+<td><p>Show/hide the collections panel.</p></td>
 </tr>
 <tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
 <td><p>Tag the current position.</p></td>
@@ -199,7 +208,7 @@
 <td><p>Load all positions from the database.</p></td>
 </tr>
 <tr class="row-odd"><td><p>m</p></td>
-<td><p>Basculer en mode MATCH (dernier match visité).</p></td>
+<td><p>Toggle MATCH mode (last visited match).</p></td>
 </tr>
 </tbody>
 </table>
@@ -313,13 +322,13 @@
 <td><p>The equity (in millipoints) of the position is between x and y.</p></td>
 </tr>
 <tr class="row-odd"><td><p>E&gt;x</p></td>
-<td><p>L’erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x.</p></td>
+<td><p>The error of the move played by player 1 (in millipoints) is greater than x.</p></td>
 </tr>
 <tr class="row-even"><td><p>E&lt;x</p></td>
-<td><p>L’erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x.</p></td>
+<td><p>The error of the move played by player 1 (in millipoints) is less than x.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Ex,y</p></td>
-<td><p>L’erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x et y.</p></td>
+<td><p>The error of the move played by player 1 (in millipoints) is between x and y.</p></td>
 </tr>
 <tr class="row-even"><td><p>w&gt;x</p></td>
 <td><p>The player has winning chances greater than x%.</p></td>
@@ -511,17 +520,12 @@
 <tr class="row-even"><td><p>clear, cl</p></td>
 <td><p>Clear the command history.</p></td>
 </tr>
-<tr class="row-odd"><td><p>migrate_from_1_0_to_1_1</p></td>
-<td><p>Migrate the database from version 1.0 to version 1.1.</p></td>
-</tr>
-<tr class="row-even"><td><p>migrate_from_1_1_to_1_2</p></td>
-<td><p>Migrate the database from version 1.1 to version 1.2.</p></td>
-</tr>
-<tr class="row-odd"><td><p>migrate_from_1_2_to_1_3</p></td>
-<td><p>Migrate the database from version 1.2 to version 1.3.</p></td>
-</tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Database migrations are now performed automatically when opening a database.</p>
+</div>
 </section>
 </section>
 

@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manuel &mdash; Documentation blunderDB 0.9.0</title>
+  <title>2. Manuel &mdash; Documentation blunderDB 0.10.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b137f06f"></script>
+      <script src="_static/documentation_options.js?v=0aeac941"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -57,6 +57,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">2.5. Le mode NORMAL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-edit">2.6. Le mode EDIT</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#le-mode-command">2.7. Le mode COMMAND</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-match">2.8. Le mode MATCH</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-epc">2.9. Le mode EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#le-mode-collection">2.10. Le mode COLLECTION</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
@@ -112,7 +115,11 @@ de positions de référence.</p>
 <li><p>ajouter une nouvelle position,</p></li>
 <li><p>modifier une position existante,</p></li>
 <li><p>supprimer une position existante,</p></li>
-<li><p>rechercher une ou plusieurs positions.</p></li>
+<li><p>rechercher une ou plusieurs positions,</p></li>
+<li><p>importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, Jellyfish),</p></li>
+<li><p>naviguer dans les coups d’un match importé,</p></li>
+<li><p>organiser les positions en collections,</p></li>
+<li><p>organiser les matchs en tournois.</p></li>
 </ul>
 </section>
 <section id="modes">
@@ -121,7 +128,10 @@ de positions de référence.</p>
 <ul class="simple">
 <li><p>la navigation et la visualisation de positions (mode NORMAL),</p></li>
 <li><p>l’édition de positions (mode EDIT),</p></li>
-<li><p>l’édition d’une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche).</p></li>
+<li><p>l’édition d’une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche),</p></li>
+<li><p>la navigation dans les coups d’un match importé (mode MATCH),</p></li>
+<li><p>le calcul de l’EPC (Effective Pip Count) à partir d’une position (mode EPC),</p></li>
+<li><p>la navigation dans une collection de positions (mode COLLECTION).</p></li>
 </ul>
 <p>L’utilisateur peut étiqueter librement les positions à l’aide de tags et les
 annoter via des commentaires.</p>
@@ -141,13 +151,21 @@ base de données ou la position courante.</p></li>
 </ul>
 <p>Des panneaux peuvent être affichés pour:</p>
 <ul class="simple">
-<li><p>afficher les données d’analyse associées à la position courante issues d’eXtreme Gammon (XG),</p></li>
-<li><p>afficher, ajouter ou modifier des commentaires</p></li>
+<li><p>afficher les données d’analyse associées à la position courante issues
+d’eXtreme Gammon (XG), GNUbg, ou BGBlitz,</p></li>
+<li><p>afficher, ajouter ou modifier des commentaires,</p></li>
+<li><p>afficher la liste des matchs importés (panneau matchs),</p></li>
+<li><p>afficher et gérer les collections de positions (panneau collections),</p></li>
+<li><p>afficher et gérer les tournois (panneau tournois),</p></li>
+<li><p>afficher la bibliothèque de filtres,</p></li>
+<li><p>afficher l’historique des recherches.</p></li>
 </ul>
 <p>Des fenêtres modales peuvent s’afficher pour:</p>
 <ul class="simple">
 <li><p>[mode EDIT uniquement] paramétrer les filtres de recherche,</p></li>
-<li><p>afficher l’aide de blunderDB.</p></li>
+<li><p>afficher l’aide de blunderDB,</p></li>
+<li><p>paramétrer l’export de la base de données,</p></li>
+<li><p>afficher les métadonnées de la base de données.</p></li>
 </ul>
 <p>La zone d’affichage principale met à disposition à l’utilisateur:</p>
 <ul class="simple">
@@ -220,6 +238,56 @@ de l’utilisateur.</p>
 <p>Se référer à la <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> pour la liste de commandes
 disponible en mode COMMAND.</p>
 </div>
+</section>
+<section id="le-mode-match">
+<span id="mode-match"></span><h2><span class="section-number">2.8. </span>Le mode MATCH<a class="headerlink" href="#le-mode-match" title="Lien vers cette rubrique"></a></h2>
+<p>Le mode MATCH permet de naviguer dans les coups d’un match importé.
+Il est activé en appuyant sur <em>CTRL-TAB</em> ou en exécutant la commande <code class="docutils literal notranslate"><span class="pre">m</span></code>.</p>
+<p>Dans ce mode, l’utilisateur peut:</p>
+<ul class="simple">
+<li><p>parcourir les coups d’un match en utilisant les touches <em>GAUCHE</em> et <em>DROITE</em>,</p></li>
+<li><p>passer d’une partie à l’autre à l’aide des touches <em>PageUp</em> et <em>PageDown</em>,</p></li>
+<li><p>afficher l’analyse des coups (pions et cube) en appuyant sur <em>CTRL-L</em>,</p></li>
+<li><p>basculer entre l’analyse des coups de pions et du cube avec la touche <em>d</em>,</p></li>
+<li><p>voir le coup effectivement joué mis en évidence dans l’analyse.</p></li>
+</ul>
+<p>Lorsque l’utilisateur entre en mode MATCH, le dernier match visité est
+automatiquement chargé. La dernière position visitée dans chaque match
+est mémorisée et restaurée.</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Se référer à <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Raccourcis clavier</span></a> pour les raccourcis disponibles.</p>
+</div>
+</section>
+<section id="le-mode-epc">
+<span id="mode-epc"></span><h2><span class="section-number">2.9. </span>Le mode EPC<a class="headerlink" href="#le-mode-epc" title="Lien vers cette rubrique"></a></h2>
+<p>Le mode EPC permet de calculer l’EPC (Effective Pip Count) d’une position
+de bearoff. Il est activé en exécutant la commande <code class="docutils literal notranslate"><span class="pre">epc</span></code> ou en cliquant
+sur le bouton correspondant dans la barre d’outils.</p>
+<p>Dans ce mode, l’utilisateur édite la position des pions dans le jan
+(6 derniers points) et les informations suivantes sont calculées
+en temps réel pour chaque joueur:</p>
+<ul class="simple">
+<li><p>l’EPC (Effective Pip Count),</p></li>
+<li><p>le nombre moyen de lancers nécessaires (Mean Rolls),</p></li>
+<li><p>l’écart type (Standard Deviation),</p></li>
+<li><p>le pip count,</p></li>
+<li><p>le wastage (différence entre l’EPC et le pip count).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le calcul repose sur la base de données interne de bearoff
+à 6 points de GNUbg.</p>
+</div>
+</section>
+<section id="le-mode-collection">
+<span id="mode-collection"></span><h2><span class="section-number">2.10. </span>Le mode COLLECTION<a class="headerlink" href="#le-mode-collection" title="Lien vers cette rubrique"></a></h2>
+<p>Le mode COLLECTION permet de parcourir les positions d’une collection.
+Il est activé en double-cliquant sur une collection dans le panneau
+des collections (<em>CTRL-K</em>).</p>
+<p>Dans ce mode, l’utilisateur peut naviguer parmi les positions de la collection
+en utilisant les touches <em>GAUCHE</em> et <em>DROITE</em>. Pour quitter le mode COLLECTION
+et revenir au mode NORMAL, appuyer sur <em>TAB</em>.</p>
 </section>
 </section>
 

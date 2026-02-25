@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. Liste des commandes &mdash; Documentation blunderDB 0.9.0</title>
+  <title>4. Liste des commandes &mdash; Documentation blunderDB 0.10.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b137f06f"></script>
+      <script src="_static/documentation_options.js?v=0aeac941"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -126,34 +126,37 @@
 <tr class="row-even"><td><p>meta</p></td>
 <td><p>Affiche les métadonnées de la base de données.</p></td>
 </tr>
-<tr class="row-odd"><td><p>met</p></td>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Ouvre le calculateur EPC (Effective Pip Count).</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
 <td><p>Ouvre la table d’équité de match Kazaross-XG2.</p></td>
 </tr>
-<tr class="row-even"><td><p>tp2</p></td>
+<tr class="row-odd"><td><p>tp2</p></td>
 <td><p>Ouvre la table des takepoints avec videau à 2.</p></td>
 </tr>
-<tr class="row-odd"><td><p>tp2_live</p></td>
+<tr class="row-even"><td><p>tp2_live</p></td>
 <td><p>Ouvre la table des takepoints avec videau à 2 pour les courses longues.</p></td>
 </tr>
-<tr class="row-even"><td><p>tp2_last</p></td>
+<tr class="row-odd"><td><p>tp2_last</p></td>
 <td><p>Ouvre la table des takepoints avec videau à 2 mort.</p></td>
 </tr>
-<tr class="row-odd"><td><p>tp4</p></td>
+<tr class="row-even"><td><p>tp4</p></td>
 <td><p>Ouvre la table des takepoints avec videau à 4.</p></td>
 </tr>
-<tr class="row-even"><td><p>tp4_live</p></td>
+<tr class="row-odd"><td><p>tp4_live</p></td>
 <td><p>Ouvre la table des takepoints avec videau à 4 pour les courses longues.</p></td>
 </tr>
-<tr class="row-odd"><td><p>tp4_last</p></td>
+<tr class="row-even"><td><p>tp4_last</p></td>
 <td><p>Ouvre la table des takepoints avec videau à 4 mort.</p></td>
 </tr>
-<tr class="row-even"><td><p>gv1</p></td>
+<tr class="row-odd"><td><p>gv1</p></td>
 <td><p>Ouvre la table des valeurs de gammon avec videau à 1.</p></td>
 </tr>
-<tr class="row-odd"><td><p>gv2</p></td>
+<tr class="row-even"><td><p>gv2</p></td>
 <td><p>Ouvre la table des valeurs de gammon avec videau à 2.</p></td>
 </tr>
-<tr class="row-even"><td><p>gv4</p></td>
+<tr class="row-odd"><td><p>gv4</p></td>
 <td><p>Ouvre la table des valeurs de gammon avec videau à 4.</p></td>
 </tr>
 </tbody>
@@ -173,7 +176,7 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>import, i</p></td>
-<td><p>Importe une position par fichier texte (txt).</p></td>
+<td><p>Importe une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt, bgf).</p></td>
 </tr>
 <tr class="row-odd"><td><p>delete, del, d</p></td>
 <td><p>Supprime la position courante.</p></td>
@@ -192,6 +195,12 @@
 </tr>
 <tr class="row-even"><td><p>history, hi</p></td>
 <td><p>Afficher/cacher l’historique de recherche.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match, ma</p></td>
+<td><p>Afficher/cacher le panneau des matchs.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection, coll</p></td>
+<td><p>Afficher/cacher le panneau des collections.</p></td>
 </tr>
 <tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
 <td><p>Etiqueter la position courante.</p></td>
@@ -528,17 +537,13 @@ zone, et l’adversaire a entre 2 et 3 pions arriérés.</p>
 <tr class="row-even"><td><p>clear, cl</p></td>
 <td><p>Efface l’historique des commandes.</p></td>
 </tr>
-<tr class="row-odd"><td><p>migrate_from_1_0_to_1_1</p></td>
-<td><p>Migre la base de données de la version 1.0 à la version 1.1.</p></td>
-</tr>
-<tr class="row-even"><td><p>migrate_from_1_1_to_1_2</p></td>
-<td><p>Migre la base de données de la version 1.1 à la version 1.2.</p></td>
-</tr>
-<tr class="row-odd"><td><p>migrate_from_1_2_to_1_3</p></td>
-<td><p>Migre la base de données de la version 1.2 à la version 1.3.</p></td>
-</tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Les migrations de base de données sont désormais effectuées
+automatiquement lors de l’ouverture d’une base de données.</p>
+</div>
 </section>
 </section>
 

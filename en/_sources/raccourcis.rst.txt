@@ -30,9 +30,10 @@ Position
    :widths: 7, 20
    :align: center
 
-   "CTRL-I", "Importer une position par fichier texte (txt)."
+   "CTRL-I", "Importer une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt, bgf)."
+   "CTRL-SHIFT-F", "Importer récursivement un dossier de fichiers de matchs/positions."
    "CTRL-C", "Copier une position dans le presse-papier."
-   "CTRL-V", "Coller une position depuis le presse-papier."
+   "CTRL-V", "Coller une position depuis le presse-papier (détection automatique du format)."
    "CTRL-S", "Enregistrer une position."
    "CTRL-U", "Mettre à jour une position."
    "Del", "Supprimer la position courante."
@@ -102,6 +103,9 @@ Outils
    "CTRL-B", "Afficher/cacher la bibliothèque de filtres."
    "CTRL-F", "Rechercher une position."
    "CTRL-H", "Afficher/cacher l'historique de recherche."
+   "CTRL-T", "Afficher/cacher le panneau des matchs."
+   "CTRL-K", "Afficher/cacher le panneau des collections."
+   "CTRL-Y", "Afficher/cacher le panneau des tournois."
    "?", "Afficher/cacher l'aide."
 
 .. _raccourcis_command:
@@ -164,6 +168,24 @@ Panneau d'analyse
    "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
    "d", "Basculer entre l'analyse des coups et du cube (mode MATCH uniquement)."
    "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+
+.. _raccourcis_match_panel:
+
+Panneau des matchs
+------------------
+
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "Clic", "Sélectionner un match."
+   "Double-clic", "Entrer en mode MATCH."
+   "HAUT, k", "Sélectionner le match précédent."
+   "BAS, j", "Sélectionner le match suivant."
+   "ENTREE", "Charger le match sélectionné."
+   "Del", "Supprimer le match sélectionné."
+   "Esc", "Désélectionner/fermer le panneau."
 
 
 

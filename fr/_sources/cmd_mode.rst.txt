@@ -20,6 +20,7 @@ Opérations globales
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
    "meta", "Affiche les métadonnées de la base de données."
+   "epc", "Ouvre le calculateur EPC (Effective Pip Count)."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."
@@ -41,13 +42,15 @@ Mode NORMAL
    :widths: 10, 20
    :align: center
 
-   "import, i", "Importe une position par fichier texte (txt)."
+   "import, i", "Importe une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt, bgf)."
    "delete, del, d", "Supprime la position courante."
    "[number]", "Aller à la position d'indice indiqué."
    "list, l", "Afficher l'analyse de la position courante."
    "comment, co", "Afficher/écrire des commentaires."
    "filter, fl", "Afficher/cacher la bibliothèque de filtres."
    "history, hi", "Afficher/cacher l'historique de recherche."
+   "match, ma", "Afficher/cacher le panneau des matchs."
+   "collection, coll", "Afficher/cacher le panneau des collections."
    "#tag1 tag2 ...", "Etiqueter la position courante."
    "e", "Charger toutes les positions de la base de données."
    "m", "Basculer en mode MATCH (dernier match visité)."
@@ -208,7 +211,7 @@ Commandes diverses
    :align: center
 
    "clear, cl", "Efface l'historique des commandes."
-   "migrate_from_1_0_to_1_1", "Migre la base de données de la version 1.0 à la version 1.1."
-   "migrate_from_1_1_to_1_2", "Migre la base de données de la version 1.1 à la version 1.2."
-   "migrate_from_1_2_to_1_3", "Migre la base de données de la version 1.2 à la version 1.3."
+
+.. note:: Les migrations de base de données sont désormais effectuées
+   automatiquement lors de l'ouverture d'une base de données.
 

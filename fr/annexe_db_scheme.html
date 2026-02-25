@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>10. Annexe: Schéma de la base de données &mdash; Documentation blunderDB 0.9.0</title>
+  <title>10. Annexe: Schéma de la base de données &mdash; Documentation blunderDB 0.10.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=b137f06f"></script>
+      <script src="_static/documentation_options.js?v=0aeac941"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -61,6 +61,10 @@
 <li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">10.2. Version 1.1.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">10.3. Version 1.2.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">10.4. Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">10.5. Version 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">10.6. Version 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">10.7. Version 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">10.8. Version 1.7.0</a></li>
 </ul>
 </li>
 </ul>
@@ -130,6 +134,49 @@
 </ul>
 <p>Les autres tables restent inchangées par rapport à la version 1.2.0.</p>
 <p>Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, exécutez la commande <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> dans blunderDB.</p>
+</section>
+<section id="version-1-4-0">
+<h2><span class="section-number">10.5. </span>Version 1.4.0<a class="headerlink" href="#version-1-4-0" title="Lien vers cette rubrique"></a></h2>
+<p>La version 1.4.0 de la base de données ajoute les tables suivantes pour la gestion des matchs :</p>
+<ul class="simple">
+<li><p><strong>match</strong> : Stocke les matchs importés avec les colonnes <cite>id</cite> (clé primaire), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite>, et <cite>match_hash</cite> (hash pour la détection de doublons).</p></li>
+<li><p><strong>game</strong> : Stocke les parties d’un match avec les colonnes <cite>id</cite> (clé primaire), <cite>match_id</cite> (clé étrangère vers <cite>match</cite>), <cite>game_number</cite>, <cite>initial_score_1</cite>, <cite>initial_score_2</cite>, <cite>winner</cite>, <cite>points_won</cite>, et <cite>move_count</cite>.</p></li>
+<li><p><strong>move</strong> : Stocke les coups d’une partie avec les colonnes <cite>id</cite> (clé primaire), <cite>game_id</cite> (clé étrangère vers <cite>game</cite>), <cite>move_number</cite>, <cite>move_type</cite>, <cite>position_id</cite> (clé étrangère vers <cite>position</cite>), <cite>player</cite>, <cite>dice_1</cite>, <cite>dice_2</cite>, <cite>checker_move</cite>, et <cite>cube_action</cite>.</p></li>
+<li><p><strong>move_analysis</strong> : Stocke l’analyse de chaque coup avec les colonnes <cite>id</cite> (clé primaire), <cite>move_id</cite> (clé étrangère vers <cite>move</cite>), <cite>analysis_type</cite>, <cite>depth</cite>, <cite>equity</cite>, <cite>equity_error</cite>, <cite>win_rate</cite>, <cite>gammon_rate</cite>, <cite>backgammon_rate</cite>, <cite>opponent_win_rate</cite>, <cite>opponent_gammon_rate</cite>, et <cite>opponent_backgammon_rate</cite>.</p></li>
+</ul>
+<p>La migration de 1.3.0 à 1.4.0 est automatique à l’ouverture de la base de données.</p>
+</section>
+<section id="version-1-5-0">
+<h2><span class="section-number">10.6. </span>Version 1.5.0<a class="headerlink" href="#version-1-5-0" title="Lien vers cette rubrique"></a></h2>
+<p>La version 1.5.0 de la base de données ajoute les tables suivantes pour la gestion des collections :</p>
+<ul class="simple">
+<li><p><strong>collection</strong> : Stocke les collections de positions avec les colonnes <cite>id</cite> (clé primaire), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite>, et <cite>updated_at</cite>.</p></li>
+<li><p><strong>collection_position</strong> : Table de liaison qui associe des positions aux collections avec les colonnes <cite>id</cite> (clé primaire), <cite>collection_id</cite> (clé étrangère vers <cite>collection</cite>), <cite>position_id</cite> (clé étrangère vers <cite>position</cite>), <cite>sort_order</cite>, et <cite>added_at</cite>. La paire (<cite>collection_id</cite>, <cite>position_id</cite>) est unique.</p></li>
+</ul>
+<p>La migration de 1.4.0 à 1.5.0 est automatique à l’ouverture de la base de données.</p>
+</section>
+<section id="version-1-6-0">
+<h2><span class="section-number">10.7. </span>Version 1.6.0<a class="headerlink" href="#version-1-6-0" title="Lien vers cette rubrique"></a></h2>
+<p>La version 1.6.0 de la base de données ajoute la table suivante pour la gestion des tournois :</p>
+<ul class="simple">
+<li><p><strong>tournament</strong> : Stocke les tournois avec les colonnes <cite>id</cite> (clé primaire), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite>, et <cite>updated_at</cite>.</p></li>
+<li><p>Ajout de la colonne <cite>tournament_id</cite> (clé étrangère vers <cite>tournament</cite>) dans la table <cite>match</cite> pour assigner un match à un tournoi.</p></li>
+</ul>
+<p>La migration de 1.5.0 à 1.6.0 est automatique à l’ouverture de la base de données.</p>
+</section>
+<section id="version-1-7-0">
+<h2><span class="section-number">10.8. </span>Version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Lien vers cette rubrique"></a></h2>
+<p>La version 1.7.0 de la base de données ajoute la colonne suivante :</p>
+<ul class="simple">
+<li><p>Ajout de la colonne <cite>last_visited_position</cite> dans la table <cite>match</cite> pour mémoriser la dernière position visitée dans chaque match.</p></li>
+</ul>
+<p>La migration de 1.6.0 à 1.7.0 est automatique à l’ouverture de la base de données.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Depuis la version 0.10.0, toutes les migrations de bases de données
+sont effectuées automatiquement lors de l’ouverture d’un fichier de base de
+données.</p>
+</div>
 </section>
 </section>
 

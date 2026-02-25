@@ -126,11 +126,176 @@ Pour importer une position directement depuis XG,
 
 #. afficher blunderDB et appuyer *CTRL-V*.
 
+.. note::
+   Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz).
+
+Importer un match
+-----------------
+
+blunderDB peut importer des matchs depuis différentes sources.
+
+**Formats supportés:**
+
+* eXtreme Gammon (XG): fichiers *.xg*
+* GNUbg: fichiers *.sgf*
+* Jellyfish: fichiers *.mat* et *.txt*
+* BGBlitz: fichiers *.bgf* et *.txt*
+
+**Pour importer un ou plusieurs fichiers de match:**
+
+#. Appuyer sur *CTRL-I* ou cliquer sur le bouton "Import" dans la barre d'outils.
+
+#. Sélectionner un ou plusieurs fichiers à importer.
+
+#. blunderDB détecte automatiquement le format et importe le match.
+
+#. Une fenêtre de progression affiche le nombre de fichiers importés, échoués
+   et ignorés (doublons).
+
+.. tip::
+   Commande: ``i``
+
+.. note::
+   blunderDB détecte automatiquement les doublons et empêche l'import d'un
+   match déjà présent dans la base de données.
+
+Importer un dossier de matchs
+------------------------------
+
+Pour importer récursivement tous les fichiers de matchs contenus dans un
+dossier et ses sous-dossiers:
+
+#. Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la
+   barre d'outils.
+
+#. Sélectionner le dossier contenant les fichiers de matchs.
+
+#. blunderDB collecte et importe automatiquement tous les fichiers reconnus
+   (*.xg*, *.sgf*, *.mat*, *.txt*, *.bgf*).
+
+Glisser-déposer
+----------------
+
+blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer
+sur la fenêtre de blunderDB:
+
+* des fichiers de match ou de position (*.xg*, *.sgf*, *.mat*, *.txt*, *.bgf*)
+  pour les importer,
+
+* des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner
+  avec la base de données courante,
+
+* des dossiers pour importer récursivement tous les fichiers qu'ils contiennent.
+
+Naviguer dans un match
+-----------------------
+
+Pour naviguer dans un match importé:
+
+#. Ouvrir le panneau des matchs avec *CTRL-T*.
+
+#. Double-cliquer sur un match pour entrer en mode MATCH.
+
+#. Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups.
+
+#. Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre.
+
+#. Appuyer sur *CTRL-L* pour afficher l'analyse.
+
+#. Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du cube.
+
+.. tip::
+   Raccourci: *CTRL-TAB* pour basculer en mode MATCH / sortir du mode MATCH.
+   Commande: ``m``
+
+.. note::
+   blunderDB mémorise la dernière position visitée dans chaque match. En
+   revenant sur un match, la dernière position consultée est automatiquement
+   restaurée.
+
+Gérer le panneau des matchs
+-----------------------------
+
+Le panneau des matchs (*CTRL-T*) permet de:
+
+* lister l'ensemble des matchs importés (triés du plus récent au plus ancien),
+
+* trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du match,
+  tournoi),
+
+* modifier les noms des joueurs ou la date en double-cliquant sur les champs,
+
+* permuter les joueurs 1 et 2 à l'aide du bouton de permutation,
+
+* assigner un match à un tournoi,
+
+* supprimer un match à l'aide de la touche *Del*.
+
+Gérer les collections
+---------------------
+
+Les collections permettent d'organiser des positions en groupes personnalisés.
+Pour accéder au panneau des collections, appuyer sur *CTRL-K*.
+
+**Créer une collection:**
+
+#. Ouvrir le panneau des collections (*CTRL-K*).
+
+#. Saisir le nom de la nouvelle collection et cliquer sur "Add".
+
+**Ajouter des positions à une collection:**
+
+#. Sélectionner les positions souhaitées.
+
+#. Les ajouter à la collection depuis le panneau des collections.
+
+**Parcourir une collection:**
+
+* Double-cliquer sur une collection pour entrer en mode COLLECTION et
+  parcourir ses positions.
+
+.. tip::
+   Commande: ``coll``
+
+Gérer les tournois
+------------------
+
+Les tournois permettent d'organiser les matchs importés par événement.
+Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*.
+
+**Créer un tournoi:**
+
+#. Ouvrir le panneau des tournois (*CTRL-Y*).
+
+#. Cliquer sur "Add" et saisir le nom du tournoi.
+
+**Assigner un match à un tournoi:**
+
+* Depuis le panneau des matchs (*CTRL-T*), utiliser le menu déroulant
+  de la colonne tournoi pour assigner un match.
+
+Calculer l'EPC
+--------------
+
+Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques de
+bearoff d'une position.
+
+#. Exécuter la commande ``epc`` ou cliquer sur le bouton correspondant dans la
+   barre d'outils.
+
+#. Éditer la position des pions dans le jan (6 derniers points).
+
+#. Les résultats sont affichés en temps réel: EPC, nombre moyen de lancers,
+   écart type, pip count et wastage.
+
+.. note::
+   Le calculateur fonctionne pour les deux joueurs simultanément.
+
 Afficher l'analyse d'une position importée depuis XG
 ----------------------------------------------------
 
-Si une position analysée par XG a été importée dans blunderDB, l'analyse de XG
-peut être affichée en appuyant *CTRL-L*.
+Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans
+blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*.
 
 Si la position correspond à une décision de pions, les cinq meilleurs coups
 sont affichés sur des lignes distinctes. Pour chaque ligne, les informations
@@ -141,6 +306,18 @@ d'analyse.
 
 Si la position correspond à une décision de cube, le coût de chaque décision
 est affiché ainsi que les chances de gain de la position.
+
+Lorsque plusieurs moteurs d'analyse sont présents pour la même position
+(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur
+d'origine de chaque analyse.
+
+En mode MATCH, le coup effectivement joué est mis en évidence dans la liste
+des coups. En mode NORMAL, si la position a été rencontrée dans plusieurs
+matchs, tous les coups joués sont indiqués.
+
+.. tip::
+   En cliquant sur un coup dans le panneau d'analyse, les flèches
+   correspondantes sont affichées sur le board.
 
 Exporter une position vers XG
 -----------------------------
