@@ -10,6 +10,10 @@ export function DeleteFile(arg1) {
   return window['go']['main']['App']['DeleteFile'](arg1);
 }
 
+export function IsDirectory(arg1) {
+  return window['go']['main']['App']['IsDirectory'](arg1);
+}
+
 export function OpenDatabaseDialog() {
   return window['go']['main']['App']['OpenDatabaseDialog']();
 }
@@ -48,4 +52,8 @@ export function SaveDatabaseDialog() {
 
 export function ShowAlert(arg1) {
   return window['go']['main']['App']['ShowAlert'](arg1);
+}
+
+export function ShowQuestionDialog(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['App']['ShowQuestionDialog'](arg1, arg2, arg3, arg4);
 }

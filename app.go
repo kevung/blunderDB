@@ -158,6 +158,15 @@ var supportedImportExtensions = map[string]bool{
 	".bgf": true,
 }
 
+// IsDirectory returns true if the given path is a directory.
+func (a *App) IsDirectory(path string) bool {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false
+	}
+	return info.IsDir()
+}
+
 // CollectImportableFiles recursively walks dirPath and returns all supported position/match files.
 func (a *App) CollectImportableFiles(dirPath string) ([]string, error) {
 	var files []string
@@ -197,6 +206,17 @@ func (a *App) ShowAlert(message string) {
 		Type:    runtime.InfoDialog,
 		Title:   "Alert",
 		Message: message,
+	})
+}
+
+// ShowQuestionDialog displays a question dialog with custom buttons and returns which button was clicked.
+func (a *App) ShowQuestionDialog(title, message string, buttons []string, defaultButton string) (string, error) {
+	return runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+		Type:          runtime.QuestionDialog,
+		Title:         title,
+		Message:       message,
+		Buttons:       buttons,
+		DefaultButton: defaultButton,
 	})
 }
 

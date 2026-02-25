@@ -6,6 +6,8 @@ export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
 export function DeleteFile(arg1:string):Promise<void>;
 
+export function IsDirectory(arg1:string):Promise<boolean>;
+
 export function OpenDatabaseDialog():Promise<string>;
 
 export function OpenExportDatabaseDialog():Promise<string>;
@@ -25,3 +27,5 @@ export function ReadFileContent(arg1:string):Promise<main.FileDialogResponse>;
 export function SaveDatabaseDialog():Promise<string>;
 
 export function ShowAlert(arg1:string):Promise<void>;
+
+export function ShowQuestionDialog(arg1:string,arg2:string,arg3:Array<string>,arg4:string):Promise<string>;

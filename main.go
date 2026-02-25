@@ -80,6 +80,10 @@ func runGUI() {
 		},
 		BackgroundColour: &options.RGBA{R: 240, G: 240, B: 240, A: 1},
 		OnStartup:        app.startup,
+		DragAndDrop: &options.DragAndDrop{
+			EnableFileDrop:     true,
+			DisableWebViewDrop: false, // Must be false on Linux: gtk_drag_dest_unset() prevents GTK drag signals from firing (Wails v2 bug #4743)
+		},
 		Bind: []interface{}{
 			app,
 			db,

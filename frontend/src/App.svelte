@@ -16,6 +16,8 @@
         CollectImportableFiles,
         ReadFileContent,
         DeleteFile,
+        ShowQuestionDialog,
+        IsDirectory,
 
         ShowAlert
 
@@ -61,7 +63,7 @@
         GetMatchMovePositions // Import GetMatchMovePositions
     } from '../wailsjs/go/main/Database.js';
 
-    import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize } from '../wailsjs/runtime/runtime.js';
+    import { WindowSetTitle, Quit, ClipboardGetText, WindowGetSize, OnFileDrop, OnFileDropOff } from '../wailsjs/runtime/runtime.js';
 
     import { SaveWindowDimensions, SaveLastDatabasePath, GetLastDatabasePath } from '../wailsjs/go/main/Config.js';
 
@@ -228,6 +230,11 @@
     };
     let exportMatches = []; // matches loaded for export selection
     let pendingExportPath = null;
+
+    // Drag and drop state
+    let showDropOverlay = false;
+    let dropOverlayMessage = 'Drop files here';
+
     let warningMessage = '';
     let databaseVersion = '';
     let applicationVersion = '';
@@ -3579,12 +3586,210 @@ function togglePipcount() {
         }
     }
 
+    // ── Drag & Drop ────────────────────────────────────────────────
+
+    /**
+     * Classifies dropped file paths by extension.
+     * Returns { dbFiles: string[], importFiles: string[], folders: string[], unsupported: string[] }
+     */
+    async function classifyDroppedFiles(paths) {
+        const dbFiles = [];
+        const importFiles = [];
+        const folders = [];
+        const unsupported = [];
+        for (const p of paths) {
+            const isDir = await IsDirectory(p);
+            if (isDir) {
+                folders.push(p);
+            } else {
+                const ext = p.toLowerCase().split('.').pop();
+                if (ext === 'db') {
+                    dbFiles.push(p);
+                } else if (['txt', 'xg', 'sgf', 'mat', 'bgf'].includes(ext)) {
+                    importFiles.push(p);
+                } else {
+                    unsupported.push(p);
+                }
+            }
+        }
+        return { dbFiles, importFiles, folders, unsupported };
+    }
+
+    /**
+     * Handle a .db file drop.
+     * - If no database is open: open it directly.
+     * - If a database is already open: ask user whether to open or merge.
+     */
+    async function handleDbFileDrop(dbPath) {
+        if (!$databasePathStore) {
+            // No database open — open it
+            await openDatabaseByPath(dbPath);
+        } else {
+            // Database already open — ask the user
+            const filename = dbPath.split('/').pop().split('\\').pop();
+            try {
+                const answer = await ShowQuestionDialog(
+                    'Database already open',
+                    `A database is already open.\n\nWhat would you like to do with "${filename}"?`,
+                    ['Open', 'Merge', 'Cancel'],
+                    'Merge'
+                );
+                if (answer === 'Open') {
+                    await openDatabaseByPath(dbPath);
+                } else if (answer === 'Merge') {
+                    await importDatabaseByPath(dbPath);
+                }
+                // 'Cancel' or dialog closed — do nothing
+            } catch (error) {
+                console.error('Error in DB drop dialog:', error);
+                setStatusBarMessage('Error handling dropped database');
+            }
+        }
+    }
+
+    /**
+     * Import a database by path (same logic as importDatabase but without the file dialog).
+     */
+    async function importDatabaseByPath(importFilePath) {
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened. Please open a database first.');
+            return;
+        }
+
+        try {
+            console.log('Analyzing import from:', importFilePath);
+
+            // Show modal in analyzing mode
+            showImportProgressModal = true;
+            importModalMode = 'analyzing';
+            pendingImportPath = importFilePath;
+
+            try {
+                const analysis = await AnalyzeImportDatabase(importFilePath);
+                console.log('Import analysis:', analysis);
+
+                importAnalysis = {
+                    toAdd: analysis.toAdd,
+                    toMerge: analysis.toMerge,
+                    toSkip: analysis.toSkip,
+                    total: analysis.total,
+                    importPath: importFilePath
+                };
+                importModalMode = 'preview';
+            } catch (analyzeError) {
+                showImportProgressModal = false;
+                throw analyzeError;
+            }
+        } catch (error) {
+            console.error('Error analyzing import:', error);
+            setStatusBarMessage(`Error analyzing import: ${error}`);
+            await ShowAlert(`Error analyzing import: ${error}`);
+            previousModeStore.set('NORMAL');
+            statusBarModeStore.set('NORMAL');
+        }
+    }
+
+    /**
+     * Main handler called by Wails when files are dropped onto the window.
+     */
+    async function handleFileDrop(x, y, paths) {
+        console.log('Files dropped:', paths);
+        showDropOverlay = false;
+
+        if (!paths || paths.length === 0) return;
+
+        const { dbFiles, importFiles, folders, unsupported } = await classifyDroppedFiles(paths);
+
+        if (unsupported.length > 0) {
+            const exts = [...new Set(unsupported.map(p => '.' + p.split('.').pop()))].join(', ');
+            console.warn('Unsupported file extensions dropped:', exts);
+        }
+
+        // Handle .db file(s) — use only the first one
+        if (dbFiles.length > 0) {
+            await handleDbFileDrop(dbFiles[0]);
+            if (importFiles.length === 0 && folders.length === 0) {
+                return;
+            }
+        }
+
+        // Expand folders into importable files
+        let allImportFiles = [...importFiles];
+        for (const folder of folders) {
+            try {
+                const folderFiles = await CollectImportableFiles(folder);
+                if (folderFiles && folderFiles.length > 0) {
+                    allImportFiles = allImportFiles.concat(folderFiles);
+                }
+            } catch (error) {
+                console.error('Error collecting files from folder:', folder, error);
+            }
+        }
+
+        // Handle importable files
+        if (allImportFiles.length > 0) {
+            if (!$databasePathStore) {
+                setStatusBarMessage('No database opened. Please open a database before importing files.');
+                await ShowAlert('No database opened. Please open or drop a database file first.');
+                return;
+            }
+
+            if (allImportFiles.length === 1) {
+                await importSingleFile(allImportFiles[0]);
+            } else {
+                await importMultipleFiles(allImportFiles);
+            }
+        }
+
+        // If only unsupported files were dropped (no folders, no db, no import files)
+        if (dbFiles.length === 0 && allImportFiles.length === 0 && unsupported.length > 0) {
+            const exts = [...new Set(unsupported.map(p => '.' + p.split('.').pop()))].join(', ');
+            setStatusBarMessage(`Unsupported file type(s): ${exts}`);
+        } else if (folders.length > 0 && allImportFiles.length === 0 && dbFiles.length === 0) {
+            setStatusBarMessage('No importable files found in dropped folder(s)');
+        }
+    }
+
+    // Visual drag-over feedback handlers
+    let dragCounter = 0;
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        if (!showDropOverlay) {
+            dragCounter++;
+            showDropOverlay = true;
+        }
+    }
+
+    function handleDragLeave(e) {
+        dragCounter--;
+        if (dragCounter <= 0) {
+            dragCounter = 0;
+            showDropOverlay = false;
+        }
+    }
+
+    function handleDragEnd(e) {
+        dragCounter = 0;
+        showDropOverlay = false;
+    }
+
     onMount(async () => {
         // @ts-ignore
         console.log('Wails runtime:', runtime);
         window.addEventListener("keydown", handleKeyDown);
         mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
         window.addEventListener("resize", handleResize);
+
+        // Register drag and drop handler
+        OnFileDrop((x, y, paths) => {
+            handleFileDrop(x, y, paths);
+        }, false);
+
+        // Visual feedback: show/hide drop overlay on native dragover/dragleave
+        window.addEventListener('dragover', handleDragOver);
+        window.addEventListener('dragleave', handleDragLeave);
+        window.addEventListener('drop', handleDragEnd);
 
         // Auto-reopen last database on startup
         try {
@@ -3604,6 +3809,10 @@ function togglePipcount() {
         window.removeEventListener("keydown", handleKeyDown);
         mainArea.removeEventListener("wheel", handleWheel); // Remove wheel event listener from main container
         window.removeEventListener("resize", handleResize);
+        window.removeEventListener('dragover', handleDragOver);
+        window.removeEventListener('dragleave', handleDragLeave);
+        window.removeEventListener('drop', handleDragEnd);
+        OnFileDropOff();
     });
 
     function toggleHelpModal() {
@@ -3812,6 +4021,21 @@ function togglePipcount() {
 </script>
 
 <main class="main-container" bind:this={mainArea}>
+
+    {#if showDropOverlay}
+        <div class="drop-overlay" transition:fade={{ duration: 150 }}>
+            <div class="drop-overlay-content">
+                <svg class="drop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                    <polyline points="7 10 12 15 17 10" />
+                    <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                <span>Drop files to import</span>
+                <span class="drop-hint">.db &middot; .xg &middot; .sgf &middot; .mat &middot; .bgf &middot; .txt</span>
+            </div>
+        </div>
+    {/if}
+
     <Toolbar
     on:click={() => {}}
         onNewDatabase={newDatabase}
@@ -4044,6 +4268,48 @@ function togglePipcount() {
         display: flex;
         flex-direction: column; /* Or row, depending on layout */
         height: 100%;
+    }
+
+    /* Drag & Drop overlay */
+    .drop-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 10000;
+        background: rgba(30, 60, 114, 0.85);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        pointer-events: none;
+    }
+
+    .drop-overlay-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+        color: #ffffff;
+        font-size: 1.3rem;
+        font-weight: 600;
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+        border: 3px dashed rgba(255, 255, 255, 0.6);
+        border-radius: 16px;
+        padding: 40px 60px;
+    }
+
+    .drop-icon {
+        width: 48px;
+        height: 48px;
+        color: #ffffff;
+        opacity: 0.9;
+    }
+
+    .drop-hint {
+        font-size: 0.8rem;
+        font-weight: 400;
+        opacity: 0.7;
     }
     
 </style>
