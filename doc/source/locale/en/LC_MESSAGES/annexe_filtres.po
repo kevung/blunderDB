@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-13 02:20+0100\n"
+"POT-Creation-Date: 2026-02-25 15:03+0700\n"
 "PO-Revision-Date: 2025-02-13 02:21+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.2\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_filtres.rst:4
 msgid "Annexe: Utilisation avancée des filtres"
@@ -247,6 +246,14 @@ msgid "s g>20"
 msgstr "s g>20"
 
 #: ../../source/annexe_filtres.rst:1
+msgid "Erreurs du joueur 1 de plus de 40 millipoints"
+msgstr "Player 1 errors greater than 40 millipoints"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s E>40"
+msgstr "s E>40"
+
+#: ../../source/annexe_filtres.rst:1
 msgid "Position du tournoi Aachen2024"
 msgstr "Positions from Aachen2024 tournment"
 
@@ -305,3 +312,4 @@ msgstr "Double with at least 20pip ahead"
 #: ../../source/annexe_filtres.rst:1
 msgid "s d p<-20"
 msgstr "s d p<-20"
+

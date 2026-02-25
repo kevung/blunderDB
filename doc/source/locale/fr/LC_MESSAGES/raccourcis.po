@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 02:09+0100\n"
+"POT-Creation-Date: 2026-02-25 15:29+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
@@ -92,7 +92,17 @@ msgid "CTRL-I"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Importer une position par fichier texte (txt)."
+msgid ""
+"Importer une ou plusieurs positions/matchs par fichier (xg, sgf, mat, "
+"txt, bgf)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-F"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer récursivement un dossier de fichiers de matchs/positions."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -108,7 +118,9 @@ msgid "CTRL-V"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Coller une position depuis le presse-papier."
+msgid ""
+"Coller une position depuis le presse-papier (détection automatique du "
+"format)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -151,7 +163,7 @@ msgstr ""
 msgid "Afficher les métadonnées de la position."
 msgstr ""
 
-#: ../../source/raccourcis.rst:45
+#: ../../source/raccourcis.rst:46
 msgid "Navigation"
 msgstr ""
 
@@ -168,7 +180,7 @@ msgid "PageUp, h"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Première position."
+msgid "Première position / Partie précédente (mode MATCH)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -208,7 +220,7 @@ msgid "PageDown, l"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Dernière position."
+msgid "Dernière position / Partie suivante (mode MATCH)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -227,7 +239,7 @@ msgstr ""
 msgid "Charger une position aléatoire."
 msgstr ""
 
-#: ../../source/raccourcis.rst:65
+#: ../../source/raccourcis.rst:66
 msgid "Affichage"
 msgstr ""
 
@@ -255,7 +267,7 @@ msgstr ""
 msgid "Afficher/cacher le compte de course."
 msgstr ""
 
-#: ../../source/raccourcis.rst:79
+#: ../../source/raccourcis.rst:80
 msgid "Modes"
 msgstr ""
 
@@ -264,7 +276,15 @@ msgid "TAB"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode EDIT."
+msgid "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-TAB"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Basculer en mode MATCH (entrer/sortir)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -275,7 +295,7 @@ msgstr ""
 msgid "Basculer en mode COMMAND."
 msgstr ""
 
-#: ../../source/raccourcis.rst:92
+#: ../../source/raccourcis.rst:94
 msgid "Outils"
 msgstr ""
 
@@ -320,6 +340,26 @@ msgid "Afficher/cacher l'historique de recherche."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-T"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des matchs."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des collections."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Y"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des tournois."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr ""
 
@@ -327,7 +367,7 @@ msgstr ""
 msgid "Afficher/cacher l'aide."
 msgstr ""
 
-#: ../../source/raccourcis.rst:109
+#: ../../source/raccourcis.rst:114
 msgid "Ligne de commande"
 msgstr ""
 
@@ -347,7 +387,7 @@ msgstr ""
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr ""
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:127
 msgid "Panneau historique de recherche"
 msgstr ""
 
@@ -380,10 +420,36 @@ msgid "Esc"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Fermer le panneau."
+msgid ""
+"Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
+"panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:138
+#: ../../source/raccourcis.rst:143
+msgid "Panneau bibliothèque de filtres"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un filtre (afficher la position)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche du filtre."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
+msgstr ""
+
+#: ../../source/raccourcis.rst:159
 msgid "Panneau d'analyse"
 msgstr ""
 
@@ -400,7 +466,51 @@ msgid "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "d"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Basculer entre l'analyse des coups et du cube (mode MATCH uniquement)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+msgstr ""
+
+#: ../../source/raccourcis.rst:175
+msgid "Panneau des matchs"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un match."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Entrer en mode MATCH."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match précédent."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match suivant."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Charger le match sélectionné."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer le match sélectionné."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner/fermer le panneau."
 msgstr ""
 
 #~ msgid "Raccourcis modaux"
@@ -578,5 +688,23 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "CTRL-H, ?"
+#~ msgstr ""
+
+#~ msgid "Importer une position par fichier texte (txt)."
+#~ msgstr ""
+
+#~ msgid "Coller une position depuis le presse-papier."
+#~ msgstr ""
+
+#~ msgid "Première position."
+#~ msgstr ""
+
+#~ msgid "Dernière position."
+#~ msgstr ""
+
+#~ msgid "Basculer en mode EDIT."
+#~ msgstr ""
+
+#~ msgid "Fermer le panneau."
 #~ msgstr ""
 

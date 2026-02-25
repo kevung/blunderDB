@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-03 02:09+0100\n"
+"POT-Creation-Date: 2026-02-25 15:03+0700\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/raccourcis.rst:4
 msgid "Raccourcis clavier"
@@ -91,8 +91,18 @@ msgid "CTRL-I"
 msgstr "CTRL-I"
 
 #: ../../source/raccourcis.rst:1
-msgid "Importer une position par fichier texte (txt)."
-msgstr "Import a position from a text file (txt)."
+msgid ""
+"Importer une ou plusieurs positions/matchs par fichier (xg, sgf, mat, "
+"txt, bgf)."
+msgstr "Import one or more positions/matches from file (xg, sgf, mat, txt, bgf)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-F"
+msgstr "CTRL-SHIFT-F"
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer récursivement un dossier de fichiers de matchs/positions."
+msgstr "Recursively import a folder of match/position files."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-C"
@@ -107,8 +117,10 @@ msgid "CTRL-V"
 msgstr "CTRL-V"
 
 #: ../../source/raccourcis.rst:1
-msgid "Coller une position depuis le presse-papier."
-msgstr "Paste a position from the clipboard."
+msgid ""
+"Coller une position depuis le presse-papier (détection automatique du "
+"format)."
+msgstr "Paste a position from the clipboard (automatic format detection)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-S"
@@ -150,7 +162,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Show the position metadata."
 
-#: ../../source/raccourcis.rst:45
+#: ../../source/raccourcis.rst:46
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -226,7 +238,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Load a random position."
 
-#: ../../source/raccourcis.rst:65
+#: ../../source/raccourcis.rst:66
 msgid "Affichage"
 msgstr "Display"
 
@@ -254,7 +266,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Show/hide pipcount."
 
-#: ../../source/raccourcis.rst:79
+#: ../../source/raccourcis.rst:80
 msgid "Modes"
 msgstr "Modes"
 
@@ -267,6 +279,14 @@ msgid "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
 msgstr "Switch to EDIT mode / Exit MATCH mode to NORMAL."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-TAB"
+msgstr "CTRL-TAB"
+
+#: ../../source/raccourcis.rst:1
+msgid "Basculer en mode MATCH (entrer/sortir)."
+msgstr "Toggle MATCH mode (enter/exit)."
+
+#: ../../source/raccourcis.rst:1
 msgid "ESPACE"
 msgstr "SPACE"
 
@@ -274,7 +294,7 @@ msgstr "SPACE"
 msgid "Basculer en mode COMMAND."
 msgstr "Switch to COMMAND mode."
 
-#: ../../source/raccourcis.rst:92
+#: ../../source/raccourcis.rst:94
 msgid "Outils"
 msgstr "Tools"
 
@@ -319,6 +339,26 @@ msgid "Afficher/cacher l'historique de recherche."
 msgstr "Show/hide the search history."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-T"
+msgstr "CTRL-T"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des matchs."
+msgstr "Show/hide the match panel."
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des collections."
+msgstr "Show/hide the collections panel."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Y"
+msgstr "CTRL-Y"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des tournois."
+msgstr "Show/hide the tournaments panel."
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr "?"
 
@@ -326,7 +366,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:109
+#: ../../source/raccourcis.rst:114
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -346,14 +386,13 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
 
-#: ../../source/raccourcis.rst:122
+#: ../../source/raccourcis.rst:127
 msgid "Panneau historique de recherche"
 msgstr "Search History Panel"
 
 #: ../../source/raccourcis.rst:1
-#, fuzzy
 msgid "Clic"
-msgstr "CTRL-I"
+msgstr "Click"
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner/désélectionner une recherche (afficher la position)."
@@ -361,7 +400,7 @@ msgstr "Select/deselect a search (show position)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Double-clic"
-msgstr ""
+msgstr "Double-click"
 
 #: ../../source/raccourcis.rst:1
 msgid "Exécuter la recherche et fermer le panneau."
@@ -376,15 +415,40 @@ msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
 msgstr "Select next search (older, below)."
 
 #: ../../source/raccourcis.rst:1
-#, fuzzy
 msgid "Esc"
-msgstr "SPACE"
+msgstr "Esc"
 
 #: ../../source/raccourcis.rst:1
-msgid "Fermer le panneau."
-msgstr "Close the panel."
+msgid ""
+"Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
+"panneau."
+msgstr "Deselect the search. If no search selected, close the panel."
 
-#: ../../source/raccourcis.rst:138
+#: ../../source/raccourcis.rst:143
+msgid "Panneau bibliothèque de filtres"
+msgstr "Filter Library Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un filtre (afficher la position)."
+msgstr "Select/deselect a filter (show position)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche du filtre."
+msgstr "Execute the filter search."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+msgstr "Select previous filter (when a filter is selected)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+msgstr "Select next filter (when a filter is selected)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
+msgstr "Deselect filter. If no filter selected, close the panel."
+
+#: ../../source/raccourcis.rst:159
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -411,6 +475,42 @@ msgstr "Toggle between checker and cube analysis (MATCH mode only)."
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
+
+#: ../../source/raccourcis.rst:175
+msgid "Panneau des matchs"
+msgstr "Match Panel"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un match."
+msgstr "Select a match."
+
+#: ../../source/raccourcis.rst:1
+msgid "Entrer en mode MATCH."
+msgstr "Enter MATCH mode."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match précédent."
+msgstr "Select previous match."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match suivant."
+msgstr "Select next match."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE"
+msgstr "ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Charger le match sélectionné."
+msgstr "Load the selected match."
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer le match sélectionné."
+msgstr "Delete the selected match."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner/fermer le panneau."
+msgstr "Deselect/close the panel."
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"

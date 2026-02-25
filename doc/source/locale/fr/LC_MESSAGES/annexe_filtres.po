@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-13 02:20+0100\n"
+"POT-Creation-Date: 2026-02-25 15:29+0700\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -17,7 +17,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_filtres.rst:4
 msgid "Annexe: Utilisation avancée des filtres"
@@ -228,6 +228,14 @@ msgstr ""
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s g>20"
+msgstr ""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Erreurs du joueur 1 de plus de 40 millipoints"
+msgstr ""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s E>40"
 msgstr ""
 
 #: ../../source/annexe_filtres.rst:1

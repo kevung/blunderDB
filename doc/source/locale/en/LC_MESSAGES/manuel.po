@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:48+0100\n"
+"POT-Creation-Date: 2026-02-25 15:03+0700\n"
 "PO-Revision-Date: 2025-01-20 13:37+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/manuel.rst:4
 msgid "Manuel"
@@ -69,38 +69,74 @@ msgid "supprimer une position existante,"
 msgstr "delete an existing position,"
 
 #: ../../source/manuel.rst:30
-msgid "rechercher une ou plusieurs positions."
-msgstr "search for one or more positions."
+msgid "rechercher une ou plusieurs positions,"
+msgstr "search for one or more positions,"
 
-#: ../../source/manuel.rst:33
+#: ../../source/manuel.rst:32
+msgid ""
+"importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, "
+"Jellyfish),"
+msgstr ""
+"import matches from various sources (XG, GNUbg, BGBlitz, "
+"Jellyfish),"
+
+#: ../../source/manuel.rst:34
+msgid "naviguer dans les coups d'un match importé,"
+msgstr "navigate through the moves of an imported match,"
+
+#: ../../source/manuel.rst:36
+msgid "organiser les positions en collections,"
+msgstr "organize positions into collections,"
+
+#: ../../source/manuel.rst:38
+msgid "organiser les matchs en tournois."
+msgstr "organize matches into tournaments."
+
+#: ../../source/manuel.rst:41
 msgid "Modes"
 msgstr "Modes"
 
-#: ../../source/manuel.rst:35
+#: ../../source/manuel.rst:43
 msgid "Pour ce faire, l'utilisateur bascule dans des modes dédiés pour:"
 msgstr "To do this, the user switches to dedicated modes for:"
 
-#: ../../source/manuel.rst:37
+#: ../../source/manuel.rst:45
 msgid "la navigation et la visualisation de positions (mode NORMAL),"
 msgstr "navigation and viewing positions (NORMAL mode),"
 
-#: ../../source/manuel.rst:39
+#: ../../source/manuel.rst:47
 msgid "l'édition de positions (mode EDIT),"
 msgstr "editing positions (EDIT mode),"
 
-#: ../../source/manuel.rst:41
+#: ../../source/manuel.rst:49
 msgid ""
 "l'édition d'une requête pour filtrer des positions (mode COMMAND ou "
-"fenêtre de recherche)."
-msgstr "editing a query to filter positions (COMMAND mode or search window)."
+"fenêtre de recherche),"
+msgstr "editing a query to filter positions (COMMAND mode or search window),"
 
-#: ../../source/manuel.rst:43
+#: ../../source/manuel.rst:51
+msgid "la navigation dans les coups d'un match importé (mode MATCH),"
+msgstr "navigating through the moves of an imported match (MATCH mode),"
+
+#: ../../source/manuel.rst:53
+msgid ""
+"le calcul de l'EPC (Effective Pip Count) à partir d'une position (mode "
+"EPC),"
+msgstr ""
+"computing the EPC (Effective Pip Count) from a position (EPC "
+"mode),"
+
+#: ../../source/manuel.rst:55
+msgid "la navigation dans une collection de positions (mode COLLECTION)."
+msgstr "browsing a collection of positions (COLLECTION mode)."
+
+#: ../../source/manuel.rst:57
 msgid ""
 "L'utilisateur peut étiqueter librement les positions à l'aide de tags et "
 "les annoter via des commentaires."
 msgstr "The user can freely tag positions and annotate them with comments."
 
-#: ../../source/manuel.rst:46
+#: ../../source/manuel.rst:60
 msgid ""
 "Dans la suite du manuel, il est décrit l'interface graphique ainsi que "
 "les principaux modes de blunderDB."
@@ -108,15 +144,15 @@ msgstr ""
 "In the following sections of the manual, the graphical interface and the "
 "main modes of blunderDB are described."
 
-#: ../../source/manuel.rst:50
+#: ../../source/manuel.rst:64
 msgid "Description de l'interface"
 msgstr "Description of the interface"
 
-#: ../../source/manuel.rst:52
+#: ../../source/manuel.rst:66
 msgid "L'interface de blunderDB est constituée de haut en bas par:"
 msgstr "The interface of blunderDB is composed, from top to bottom, of:"
 
-#: ../../source/manuel.rst:54
+#: ../../source/manuel.rst:68
 msgid ""
 "[en haut] la barre d'outils, qui rassemble l'ensemble des principales "
 "opérations réalisables sur la base de données,"
@@ -124,7 +160,7 @@ msgstr ""
 "[top] the toolbar, which gathers all the main operations that can be "
 "performed on the database,"
 
-#: ../../source/manuel.rst:57
+#: ../../source/manuel.rst:71
 msgid ""
 "[au milieu] la zone d'affichage principale, qui permet d'afficher ou "
 "d'éditer des positions de backgammon,"
@@ -132,7 +168,7 @@ msgstr ""
 "[in the middle] the main display area, which allows for displaying or "
 "editing backgammon positions,"
 
-#: ../../source/manuel.rst:60
+#: ../../source/manuel.rst:74
 msgid ""
 "[en bas] la barre d'état, qui présente différentes informations sur la "
 "base de données ou la position courante."
@@ -140,55 +176,83 @@ msgstr ""
 "[at the bottom] the status bar, which provides various information about "
 "the database or the current position."
 
-#: ../../source/manuel.rst:63
+#: ../../source/manuel.rst:77
 msgid "Des panneaux peuvent être affichés pour:"
 msgstr "Panels can be displayed to:"
 
-#: ../../source/manuel.rst:65
+#: ../../source/manuel.rst:79
 msgid ""
 "afficher les données d'analyse associées à la position courante issues "
-"d'eXtreme Gammon (XG),"
+"d'eXtreme Gammon (XG), GNUbg, ou BGBlitz,"
 msgstr ""
 "display the analysis data associated with the current position from "
-"eXtreme Gammon (XG),"
+"eXtreme Gammon (XG), GNUbg, or BGBlitz,"
 
-#: ../../source/manuel.rst:67
-msgid "afficher, ajouter ou modifier des commentaires"
-msgstr "display, add, or modify comments"
+#: ../../source/manuel.rst:82
+msgid "afficher, ajouter ou modifier des commentaires,"
+msgstr "display, add, or modify comments,"
 
-#: ../../source/manuel.rst:69
+#: ../../source/manuel.rst:84
+msgid "afficher la liste des matchs importés (panneau matchs),"
+msgstr "display the list of imported matches (match panel),"
+
+#: ../../source/manuel.rst:86
+msgid "afficher et gérer les collections de positions (panneau collections),"
+msgstr "display and manage position collections (collections panel),"
+
+#: ../../source/manuel.rst:88
+msgid "afficher et gérer les tournois (panneau tournois),"
+msgstr "display and manage tournaments (tournaments panel),"
+
+#: ../../source/manuel.rst:90
+msgid "afficher la bibliothèque de filtres,"
+msgstr "display the filter library,"
+
+#: ../../source/manuel.rst:92
+msgid "afficher l'historique des recherches."
+msgstr "display the search history."
+
+#: ../../source/manuel.rst:94
 msgid "Des fenêtres modales peuvent s'afficher pour:"
 msgstr "Modal windows can be displayed to:"
 
-#: ../../source/manuel.rst:71
+#: ../../source/manuel.rst:96
 msgid "[mode EDIT uniquement] paramétrer les filtres de recherche,"
 msgstr "[EDIT mode only] set search filters,"
 
-#: ../../source/manuel.rst:73
-msgid "afficher l'aide de blunderDB."
-msgstr "display the blunderDB help."
+#: ../../source/manuel.rst:98
+msgid "afficher l'aide de blunderDB,"
+msgstr "display the blunderDB help,"
 
-#: ../../source/manuel.rst:75
+#: ../../source/manuel.rst:100
+msgid "paramétrer l'export de la base de données,"
+msgstr "configure database export settings,"
+
+#: ../../source/manuel.rst:102
+msgid "afficher les métadonnées de la base de données."
+msgstr "display the database metadata."
+
+#: ../../source/manuel.rst:104
 msgid "La zone d'affichage principale met à disposition à l'utilisateur:"
 msgstr "The main display area provides the user with:"
 
-#: ../../source/manuel.rst:77
+#: ../../source/manuel.rst:106
 msgid "un board afin d'afficher ou d'éditer une position de backgammon,"
 msgstr "a board to display or edit a backgammon position,"
 
-#: ../../source/manuel.rst:79
+#: ../../source/manuel.rst:108
 msgid "le niveau et le propriétaire du cube,"
 msgstr "the level and owner of the cube,"
 
-#: ../../source/manuel.rst:81
+#: ../../source/manuel.rst:110
 msgid "le compte de course de chaque joueur,"
 msgstr "the pip count of each player,"
 
-#: ../../source/manuel.rst:83
+#: ../../source/manuel.rst:112
 msgid "le score de chaque joueur,"
 msgstr "the score of each player,"
 
-#: ../../source/manuel.rst:85
+#: ../../source/manuel.rst:114
 msgid ""
 "les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position"
 " des dés indique quel joueur a le trait et que la position est une "
@@ -198,7 +262,7 @@ msgstr ""
 " the dice indicates which player has the turn and that the position is a "
 "cube decision."
 
-#: ../../source/manuel.rst:89
+#: ../../source/manuel.rst:118
 msgid ""
 "La barre d'état est structurée de gauche à droite par les informations "
 "suivantes:"
@@ -206,15 +270,15 @@ msgstr ""
 "The status bar is structured from left to right with the following "
 "information:"
 
-#: ../../source/manuel.rst:92
+#: ../../source/manuel.rst:121
 msgid "le mode courant (NORMAL, EDIT, COMMAND),"
 msgstr "the current mode (NORMAL, EDIT, COMMAND),"
 
-#: ../../source/manuel.rst:94
+#: ../../source/manuel.rst:123
 msgid "un message d'information lié à une opération réalisée par l'utilisateur,"
 msgstr "an informational message related to an operation performed by the user,"
 
-#: ../../source/manuel.rst:96
+#: ../../source/manuel.rst:125
 msgid ""
 "l'index de la position courante, suivi du nombre de positions dans la "
 "bibliothèque courante."
@@ -222,7 +286,7 @@ msgstr ""
 "the index of the current position, followed by the number of positions in"
 " the current library."
 
-#: ../../source/manuel.rst:99
+#: ../../source/manuel.rst:128
 msgid ""
 "Dans le cas de positions issues d'une recherche par l'utilisateur, le "
 "nombre de positions indiqué dans la barre d'état correspond au nombre de "
@@ -232,36 +296,36 @@ msgstr ""
 "positions indicated in the status bar corresponds to the number of "
 "filtered positions."
 
-#: ../../source/manuel.rst:106
+#: ../../source/manuel.rst:135
 msgid "Le mode NORMAL"
 msgstr "NORMAL mode"
 
-#: ../../source/manuel.rst:108
+#: ../../source/manuel.rst:137
 msgid "Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:"
 msgstr "NORMAL mode is the default mode of blunderDB. It is used for:"
 
-#: ../../source/manuel.rst:110
+#: ../../source/manuel.rst:139
 msgid "faire défiler les différentes positions de la bibliothèque courante,"
 msgstr "scrolling through the different positions in the current library,"
 
-#: ../../source/manuel.rst:112
+#: ../../source/manuel.rst:141
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr "displaying the analysis information associated with a position."
 
-#: ../../source/manuel.rst:114
+#: ../../source/manuel.rst:143
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr "displaying, adding, and modifying comments on a position."
 
-#: ../../source/manuel.rst:116 ../../source/manuel.rst:129
-#, fuzzy
+#: ../../source/manuel.rst:145 ../../source/manuel.rst:158
+#: ../../source/manuel.rst:209
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
-msgstr "Refer to :numref:`raccourcis_edit` for EDIT mode shortcuts."
+msgstr "Refer to :ref:`raccourcis` for available shortcuts."
 
-#: ../../source/manuel.rst:121
+#: ../../source/manuel.rst:150
 msgid "Le mode EDIT"
 msgstr "EDIT mode"
 
-#: ../../source/manuel.rst:123
+#: ../../source/manuel.rst:152
 msgid ""
 "Le mode EDIT permet d'éditer une position en vue de l'ajouter à la base "
 "de données, ou de définir le type de position à rechercher. Le mode EDIT "
@@ -275,11 +339,11 @@ msgstr ""
 " cube, the score, and the turn can be modified using the mouse (see "
 ":ref:`guide_edit_position`)."
 
-#: ../../source/manuel.rst:134
+#: ../../source/manuel.rst:163
 msgid "Le mode COMMAND"
 msgstr "COMMAND mode"
 
-#: ../../source/manuel.rst:136
+#: ../../source/manuel.rst:165
 msgid ""
 "Le mode COMMAND permet de réaliser l'ensemble des fonctionalités de "
 "blunderDB disponibles à l'interface graphique: opérations générales sur "
@@ -297,7 +361,7 @@ msgstr ""
 "it is recommended to gradually use this mode for a powerful and smooth "
 "use of blunderDB, especially for position search functionalities."
 
-#: ../../source/manuel.rst:144
+#: ../../source/manuel.rst:173
 msgid ""
 "Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur la"
 " touche *ESPACE*. Pour envoyer une requête et quitter le mode COMMAND, "
@@ -306,7 +370,7 @@ msgstr ""
 "To switch to COMMAND mode from any other mode, press the *SPACE* key. To "
 "submit a query and exit COMMAND mode, press the *ENTER* key."
 
-#: ../../source/manuel.rst:148
+#: ../../source/manuel.rst:177
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -317,13 +381,139 @@ msgstr ""
 " and immediately modifies the state of the database if necessary. There "
 "are no explicit save actions required from the user."
 
-#: ../../source/manuel.rst:153
+#: ../../source/manuel.rst:182
 msgid ""
 "Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
 "en mode COMMAND."
 msgstr ""
 "Refer to :numref:`cmd_mode` for the list of available commands in COMMAND"
 " mode."
+
+#: ../../source/manuel.rst:188
+msgid "Le mode MATCH"
+msgstr "MATCH mode"
+
+#: ../../source/manuel.rst:190
+msgid ""
+"Le mode MATCH permet de naviguer dans les coups d'un match importé. Il "
+"est activé en appuyant sur *CTRL-TAB* ou en exécutant la commande ``m``."
+msgstr ""
+"MATCH mode allows you to navigate through the moves of an imported match. "
+"It is activated by pressing *CTRL-TAB* or by executing the ``m`` command."
+
+#: ../../source/manuel.rst:193
+msgid "Dans ce mode, l'utilisateur peut:"
+msgstr "In this mode, the user can:"
+
+#: ../../source/manuel.rst:195
+msgid ""
+"parcourir les coups d'un match en utilisant les touches *GAUCHE* et "
+"*DROITE*,"
+msgstr ""
+"browse through the moves of a match using the *LEFT* and "
+"*RIGHT* keys,"
+
+#: ../../source/manuel.rst:197
+msgid "passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,"
+msgstr "switch between games using the *PageUp* and *PageDown* keys,"
+
+#: ../../source/manuel.rst:199
+msgid "afficher l'analyse des coups (pions et cube) en appuyant sur *CTRL-L*,"
+msgstr "display the move analysis (checker and cube) by pressing *CTRL-L*,"
+
+#: ../../source/manuel.rst:201
+msgid "basculer entre l'analyse des coups de pions et du cube avec la touche *d*,"
+msgstr "toggle between checker move and cube analysis with the *d* key,"
+
+#: ../../source/manuel.rst:203
+msgid "voir le coup effectivement joué mis en évidence dans l'analyse."
+msgstr "see the actually played move highlighted in the analysis."
+
+#: ../../source/manuel.rst:205
+msgid ""
+"Lorsque l'utilisateur entre en mode MATCH, le dernier match visité est "
+"automatiquement chargé. La dernière position visitée dans chaque match "
+"est mémorisée et restaurée."
+msgstr ""
+"When the user enters MATCH mode, the last visited match is "
+"automatically loaded. The last visited position in each match "
+"is saved and restored."
+
+#: ../../source/manuel.rst:214
+msgid "Le mode EPC"
+msgstr "EPC mode"
+
+#: ../../source/manuel.rst:216
+msgid ""
+"Le mode EPC permet de calculer l'EPC (Effective Pip Count) d'une position"
+" de bearoff. Il est activé en exécutant la commande ``epc`` ou en "
+"cliquant sur le bouton correspondant dans la barre d'outils."
+msgstr ""
+"EPC mode allows you to calculate the EPC (Effective Pip Count) of a "
+"bearoff position. It is activated by executing the ``epc`` command or by "
+"clicking the corresponding button in the toolbar."
+
+#: ../../source/manuel.rst:220
+msgid ""
+"Dans ce mode, l'utilisateur édite la position des pions dans le jan (6 "
+"derniers points) et les informations suivantes sont calculées en temps "
+"réel pour chaque joueur:"
+msgstr ""
+"In this mode, the user edits the checker positions in the home board (last "
+"6 points) and the following information is computed in real time for "
+"each player:"
+
+#: ../../source/manuel.rst:224
+msgid "l'EPC (Effective Pip Count),"
+msgstr "the EPC (Effective Pip Count),"
+
+#: ../../source/manuel.rst:226
+msgid "le nombre moyen de lancers nécessaires (Mean Rolls),"
+msgstr "the average number of rolls needed (Mean Rolls),"
+
+#: ../../source/manuel.rst:228
+msgid "l'écart type (Standard Deviation),"
+msgstr "the standard deviation,"
+
+#: ../../source/manuel.rst:230
+msgid "le pip count,"
+msgstr "the pip count,"
+
+#: ../../source/manuel.rst:232
+msgid "le wastage (différence entre l'EPC et le pip count)."
+msgstr "the wastage (difference between the EPC and the pip count)."
+
+#: ../../source/manuel.rst:234
+msgid ""
+"Le calcul repose sur la base de données interne de bearoff à 6 points de "
+"GNUbg."
+msgstr ""
+"The computation relies on the built-in 6-point bearoff database from "
+"GNUbg."
+
+#: ../../source/manuel.rst:240
+msgid "Le mode COLLECTION"
+msgstr "COLLECTION mode"
+
+#: ../../source/manuel.rst:242
+msgid ""
+"Le mode COLLECTION permet de parcourir les positions d'une collection. Il"
+" est activé en double-cliquant sur une collection dans le panneau des "
+"collections (*CTRL-K*)."
+msgstr ""
+"COLLECTION mode allows you to browse the positions of a collection. It "
+"is activated by double-clicking on a collection in the collections panel "
+"(*CTRL-K*)."
+
+#: ../../source/manuel.rst:246
+msgid ""
+"Dans ce mode, l'utilisateur peut naviguer parmi les positions de la "
+"collection en utilisant les touches *GAUCHE* et *DROITE*. Pour quitter le"
+" mode COLLECTION et revenir au mode NORMAL, appuyer sur *TAB*."
+msgstr ""
+"In this mode, the user can navigate through the positions of the "
+"collection using the *LEFT* and *RIGHT* keys. To exit COLLECTION "
+"mode and return to NORMAL mode, press *TAB*."
 
 #~ msgid ""
 #~ "Pour ce faire, l'utilisateur bascule "

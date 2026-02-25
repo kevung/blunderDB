@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-02 04:26+0100\n"
+"POT-Creation-Date: 2026-02-25 15:03+0700\n"
 "PO-Revision-Date: 2025-02-13 00:02+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -16,7 +16,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/faq.rst:4
 msgid "Foire aux questions"
@@ -152,8 +152,7 @@ msgstr ""
 msgid ""
 "Ouvrez la base de données principale (celle qui recevra les positions "
 "importées)"
-msgstr ""
-"Open the main database (the one that will receive the imported positions)"
+msgstr "Open the main database (the one that will receive the imported positions)"
 
 #: ../../source/faq.rst:71
 msgid "Cliquez sur le bouton \"Import Database\" dans la barre d'outils"
@@ -187,20 +186,119 @@ msgstr ""
 "importing another database."
 
 #: ../../source/faq.rst:85
+msgid "Quels formats de fichiers de match sont supportés?"
+msgstr "Which match file formats are supported?"
+
+#: ../../source/faq.rst:87
+msgid "blunderDB supporte les formats de match suivants:"
+msgstr "blunderDB supports the following match formats:"
+
+#: ../../source/faq.rst:89
+msgid ""
+"**eXtreme Gammon (XG)**: fichiers *.xg*, avec l'analyse complète des "
+"coups, décisions de cube, coups joués et support multi-moteurs."
+msgstr ""
+"**eXtreme Gammon (XG)**: *.xg* files, with complete move analysis, "
+"cube decisions, played moves, and multi-engine support."
+
+#: ../../source/faq.rst:92
+msgid "**GNUbg**: fichiers *.sgf* (Smart Game Format), avec l'analyse."
+msgstr "**GNUbg**: *.sgf* files (Smart Game Format), with analysis."
+
+#: ../../source/faq.rst:94
+msgid "**Jellyfish**: fichiers *.mat* et *.txt*."
+msgstr "**Jellyfish**: *.mat* and *.txt* files."
+
+#: ../../source/faq.rst:96
+msgid "**BGBlitz**: fichiers *.bgf* et positions texte."
+msgstr "**BGBlitz**: *.bgf* files and text positions."
+
+#: ../../source/faq.rst:98
+msgid ""
+"L'import peut se faire par fichier unique, par sélection multiple, par "
+"dossier récursif, par collage depuis le presse-papier, ou par glisser-"
+"déposer."
+msgstr ""
+"Import can be done via a single file, multiple selection, recursive "
+"folder, paste from clipboard, or drag and drop."
+
+#: ../../source/faq.rst:101
+msgid ""
+"blunderDB détecte automatiquement les doublons et empêche l'import d'un "
+"match déjà présent dans la base de données."
+msgstr ""
+"blunderDB automatically detects duplicates and prevents importing a "
+"match already present in the database."
+
+#: ../../source/faq.rst:106
+msgid "Qu'est-ce qu'une collection?"
+msgstr "What is a collection?"
+
+#: ../../source/faq.rst:108
+msgid ""
+"Une collection est un regroupement personnalisé de positions. "
+"Contrairement à une recherche par filtres qui est dynamique, une "
+"collection est un ensemble fixe de positions choisies manuellement par "
+"l'utilisateur. Les collections permettent par exemple de regrouper des "
+"positions de référence pour une thématique particulière."
+msgstr ""
+"A collection is a custom grouping of positions. "
+"Unlike a filter search which is dynamic, a "
+"collection is a fixed set of positions manually chosen by "
+"the user. Collections allow, for example, grouping "
+"reference positions for a particular topic."
+
+#: ../../source/faq.rst:116
+msgid "Qu'est-ce que l'EPC?"
+msgstr "What is EPC?"
+
+#: ../../source/faq.rst:118
+msgid ""
+"L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip"
+" count pour évaluer les positions de bearoff. Le calculateur EPC de "
+"blunderDB utilise la base de données de bearoff à 6 points de GNUbg et "
+"calcule en temps réel l'EPC, le nombre moyen de lancers, l'écart type, le"
+" pip count et le wastage."
+msgstr ""
+"EPC (Effective Pip Count) is a more accurate measure than the simple pip"
+" count for evaluating bearoff positions. The blunderDB EPC calculator "
+"uses the GNUbg 6-point bearoff database and "
+"computes in real time the EPC, average number of rolls, standard deviation,"
+" pip count, and wastage."
+
+#: ../../source/faq.rst:125
+msgid "blunderDB dispose-t-il d'une interface en ligne de commande?"
+msgstr "Does blunderDB have a command-line interface?"
+
+#: ../../source/faq.rst:127
+msgid ""
+"Oui, blunderDB dispose d'une interface en ligne de commande (CLI) "
+"permettant d'effectuer sans interface graphique des opérations telles que"
+" la création de bases de données, l'import de matchs, l'export, la "
+"recherche de positions, l'affichage de statistiques, etc. Consulter la "
+"documentation CLI pour plus de détails."
+msgstr ""
+"Yes, blunderDB has a command-line interface (CLI) "
+"that allows performing without a graphical interface operations such as"
+" creating databases, importing matches, exporting, "
+"searching positions, displaying statistics, etc. Refer to the "
+"CLI documentation for more details."
+
+#: ../../source/faq.rst:135
 msgid "Puis-je modifier, copier, partager blunderDB?"
 msgstr "Can I modify, copy, share blunderDB?"
 
-#: ../../source/faq.rst:87
+#: ../../source/faq.rst:137
 msgid ""
 "Oui, tout à fait (et c'est même encouragé!). blunderDB est sous licence "
 "MIT."
 msgstr "Yes, absolutely. blunderDB is licensed under the MIT license."
 
-#: ../../source/faq.rst:91
+#: ../../source/faq.rst:141
 msgid "Quel format de données utilise blunderDB?"
 msgstr "What data format does blunderDB use?"
 
-#: ../../source/faq.rst:93
+#: ../../source/faq.rst:143
 msgid ""
 "La base de données est un simple fichier Sqlite. En l'absence de "
 "blunderDB, elle peut ainsi s'ouvrir avec tout éditeur de fichier sqlite."
@@ -208,11 +306,11 @@ msgstr ""
 "The database is a simple SQLite file. In the absence of blunderDB, it can"
 " thus be opened with any SQLite file editor."
 
-#: ../../source/faq.rst:98
+#: ../../source/faq.rst:148
 msgid "Quelles ont été les principes de conception de blunderDB?"
 msgstr "What were the design principles of blunderDB?"
 
-#: ../../source/faq.rst:100
+#: ../../source/faq.rst:150
 msgid ""
 "Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s'inspire du"
 " très puissant éditeur de texte `Vim "
@@ -232,11 +330,11 @@ msgstr ""
 "needed to be cross-platform and suitable for containing a database. The "
 "SQLite file format seemed like the perfect choice."
 
-#: ../../source/faq.rst:111
+#: ../../source/faq.rst:161
 msgid "Quel est l'architecture logicielle de blunderDB?"
 msgstr "What is the software architecture of blunderDB?"
 
-#: ../../source/faq.rst:113
+#: ../../source/faq.rst:163
 msgid ""
 "Le backend est codé en `Go <https://go.dev/>`_. Il est en charge de "
 "l'ensemble des opérations sur la base de données Sqlite qui stocke les "
@@ -245,7 +343,7 @@ msgstr ""
 "The backend is coded in `Go <https://go.dev/>`_. It is responsible for "
 "all operations on the SQLite database that stores the positions."
 
-#: ../../source/faq.rst:117
+#: ../../source/faq.rst:167
 msgid ""
 "Le frontend est codé en `Svelte <https://svelte.dev/>`_. Il est en charge"
 " du rendu de l'interface graphique et du board de Backgammon."
@@ -254,7 +352,7 @@ msgstr ""
 "responsible for rendering the graphical interface and the Backgammon "
 "board."
 
-#: ../../source/faq.rst:120
+#: ../../source/faq.rst:170
 msgid ""
 "L'application est encapsulée avec `Wails <https://wails.io/>`_, "
 "permettant la production d'applications Desktop natives, déclinables sous"
@@ -264,11 +362,11 @@ msgstr ""
 "enabling the production of native desktop applications that can run on "
 "both Windows and Linux."
 
-#: ../../source/faq.rst:123
+#: ../../source/faq.rst:173
 msgid "La base de données est gérée par `Sqlite <https://www.sqlite.org/>`_."
 msgstr "The database is managed by `SQLite <https://www.sqlite.org/>`_."
 
-#: ../../source/faq.rst:125
+#: ../../source/faq.rst:175
 msgid ""
 "Pour plus d'informations, voir le `dépôt Github de blunderDB "
 "<https://github.com/kevung/blunderDB>`_."
@@ -276,19 +374,19 @@ msgstr ""
 "For more information, see the `blunderDB GitHub repository "
 "<https://github.com/kevung/blunderDB>`_."
 
-#: ../../source/faq.rst:128
+#: ../../source/faq.rst:178
 msgid "Sur quelles plateformes blunderDB fonctionne-t'il?"
 msgstr "On which platforms does blunderDB run?"
 
-#: ../../source/faq.rst:130
+#: ../../source/faq.rst:180
 msgid "blunderDB fonctionne sur Windows, Linux et Mac."
 msgstr "blunderDB runs on Windows, Linux and Mac."
 
-#: ../../source/faq.rst:133
+#: ../../source/faq.rst:183
 msgid "D'où vient l'icône de blunderDB?"
 msgstr "Where does the blunderDB icon come from?"
 
-#: ../../source/faq.rst:135
+#: ../../source/faq.rst:185
 msgid ""
 "L'icône de blunderDB est l'émoticône \"goggling\" de la série `SMirC "
 "<https://commons.wikimedia.org/wiki/SMirC>`_."

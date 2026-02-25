@@ -81,6 +81,56 @@ mais leurs analyses et commentaires seront combinés.
    principale avant d'importer une autre base de données.
 
 
+Quels formats de fichiers de match sont supportés?
+--------------------------------------------------
+
+blunderDB supporte les formats de match suivants:
+
+* **eXtreme Gammon (XG)**: fichiers *.xg*, avec l'analyse complète des coups,
+  décisions de cube, coups joués et support multi-moteurs.
+
+* **GNUbg**: fichiers *.sgf* (Smart Game Format), avec l'analyse.
+
+* **Jellyfish**: fichiers *.mat* et *.txt*.
+
+* **BGBlitz**: fichiers *.bgf* et positions texte.
+
+L'import peut se faire par fichier unique, par sélection multiple, par dossier
+récursif, par collage depuis le presse-papier, ou par glisser-déposer.
+
+blunderDB détecte automatiquement les doublons et empêche l'import d'un match
+déjà présent dans la base de données.
+
+
+Qu'est-ce qu'une collection?
+-----------------------------
+
+Une collection est un regroupement personnalisé de positions. Contrairement
+à une recherche par filtres qui est dynamique, une collection est un ensemble
+fixe de positions choisies manuellement par l'utilisateur. Les collections
+permettent par exemple de regrouper des positions de référence pour une
+thématique particulière.
+
+
+Qu'est-ce que l'EPC?
+---------------------
+
+L'EPC (Effective Pip Count) est une mesure plus précise que le simple pip count
+pour évaluer les positions de bearoff. Le calculateur EPC de blunderDB utilise
+la base de données de bearoff à 6 points de GNUbg et calcule en temps réel
+l'EPC, le nombre moyen de lancers, l'écart type, le pip count et le wastage.
+
+
+blunderDB dispose-t-il d'une interface en ligne de commande?
+------------------------------------------------------------
+
+Oui, blunderDB dispose d'une interface en ligne de commande (CLI) permettant
+d'effectuer sans interface graphique des opérations telles que la création de
+bases de données, l'import de matchs, l'export, la recherche de positions,
+l'affichage de statistiques, etc. Consulter la documentation CLI pour plus
+de détails.
+
+
 Puis-je modifier, copier, partager blunderDB?
 ---------------------------------------------
 

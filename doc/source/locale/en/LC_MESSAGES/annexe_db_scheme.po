@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-02-12 23:58+0100\n"
+"POT-Creation-Date: 2026-02-25 15:03+0700\n"
 "PO-Revision-Date: 2025-02-13 00:00+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
 "Language-Team: English <kde-i18n-doc@kde.org>\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
-"X-Generator: Lokalize 24.12.2\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/annexe_db_scheme.rst:4
 msgid "Annexe: Schéma de la base de données"
@@ -118,9 +117,9 @@ msgid ""
 " au filtre), et `edit_position` (position éditée lors de l'enregistrement"
 " du filtre)."
 msgstr ""
-"**filter_library**: Stores search filters with the columns `id` (primary key),"
-" `name` (filter name), `command` (command associated with the filter), and `ed"
-"it_position` (position edited when saving the filter)."
+"**filter_library**: Stores search filters with the columns `id` (primary "
+"key), `name` (filter name), `command` (command associated with the "
+"filter), and `edit_position` (position edited when saving the filter)."
 
 #: ../../source/annexe_db_scheme.rst:38
 msgid "Les autres tables restent inchangées par rapport à la version 1.1.0."
@@ -134,34 +133,221 @@ msgstr ""
 "To migrate the database from version 1.1.0 to version 1.2.0, execute the "
 "command ``migrate_from_1_1_to_1_2`` in blunderDB."
 
-#: ../../source/annexe_db_scheme.rst:42
+#: ../../source/annexe_db_scheme.rst:43
 msgid "Version 1.3.0"
 msgstr "Version 1.3.0"
 
-#: ../../source/annexe_db_scheme.rst:44
+#: ../../source/annexe_db_scheme.rst:45
 msgid "La version 1.3.0 de la base de données ajoute la table suivante :"
 msgstr "Version 1.3.0 of the database adds the following table:"
 
-#: ../../source/annexe_db_scheme.rst:46
+#: ../../source/annexe_db_scheme.rst:47
 msgid ""
-"**search_history** : Stocke l'historique des recherches de positions avec "
-"les colonnes `id` (clé primaire), `command` (texte de la commande de recherche), "
-"`position` (état de la position au moment de la recherche), et `timestamp` "
-"(date et heure de la recherche)."
+"**search_history** : Stocke l'historique des recherches de positions avec"
+" les colonnes `id` (clé primaire), `command` (texte de la commande de "
+"recherche), `position` (état de la position au moment de la recherche), "
+"et `timestamp` (date et heure de la recherche)."
 msgstr ""
-"**search_history**: Stores position search history with the columns `id` (primary key), "
-"`command` (search command text), `position` (position state at the time of search), "
-"and `timestamp` (date and time of the search)."
+"**search_history**: Stores position search history with the columns `id` "
+"(primary key), `command` (search command text), `position` (position "
+"state at the time of search), and `timestamp` (date and time of the "
+"search)."
 
-#: ../../source/annexe_db_scheme.rst:48
+#: ../../source/annexe_db_scheme.rst:49
 msgid "Les autres tables restent inchangées par rapport à la version 1.2.0."
 msgstr "The other tables remain unchanged from version 1.2.0."
 
-#: ../../source/annexe_db_scheme.rst:50
+#: ../../source/annexe_db_scheme.rst:51
 msgid ""
 "Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, "
 "exécutez la commande ``migrate_from_1_2_to_1_3`` dans blunderDB."
 msgstr ""
 "To migrate the database from version 1.2.0 to version 1.3.0, execute the "
 "command ``migrate_from_1_2_to_1_3`` in blunderDB."
+
+#: ../../source/annexe_db_scheme.rst:54
+msgid "Version 1.4.0"
+msgstr "Version 1.4.0"
+
+#: ../../source/annexe_db_scheme.rst:56
+msgid ""
+"La version 1.4.0 de la base de données ajoute les tables suivantes pour "
+"la gestion des matchs :"
+msgstr ""
+"Version 1.4.0 of the database adds the following tables for "
+"match management:"
+
+#: ../../source/annexe_db_scheme.rst:58
+msgid ""
+"**match** : Stocke les matchs importés avec les colonnes `id` (clé "
+"primaire), `player1_name`, `player2_name`, `event`, `location`, `round`, "
+"`match_length`, `match_date`, `import_date`, `file_path`, `game_count`, "
+"et `match_hash` (hash pour la détection de doublons)."
+msgstr ""
+"**match**: Stores imported matches with the columns `id` (primary "
+"key), `player1_name`, `player2_name`, `event`, `location`, `round`, "
+"`match_length`, `match_date`, `import_date`, `file_path`, `game_count`, "
+"and `match_hash` (hash for duplicate detection)."
+
+#: ../../source/annexe_db_scheme.rst:59
+msgid ""
+"**game** : Stocke les parties d'un match avec les colonnes `id` (clé "
+"primaire), `match_id` (clé étrangère vers `match`), `game_number`, "
+"`initial_score_1`, `initial_score_2`, `winner`, `points_won`, et "
+"`move_count`."
+msgstr ""
+"**game**: Stores the games of a match with the columns `id` (primary "
+"key), `match_id` (foreign key referencing `match`), `game_number`, "
+"`initial_score_1`, `initial_score_2`, `winner`, `points_won`, and "
+"`move_count`."
+
+#: ../../source/annexe_db_scheme.rst:60
+msgid ""
+"**move** : Stocke les coups d'une partie avec les colonnes `id` (clé "
+"primaire), `game_id` (clé étrangère vers `game`), `move_number`, "
+"`move_type`, `position_id` (clé étrangère vers `position`), `player`, "
+"`dice_1`, `dice_2`, `checker_move`, et `cube_action`."
+msgstr ""
+"**move**: Stores the moves of a game with the columns `id` (primary "
+"key), `game_id` (foreign key referencing `game`), `move_number`, "
+"`move_type`, `position_id` (foreign key referencing `position`), `player`, "
+"`dice_1`, `dice_2`, `checker_move`, and `cube_action`."
+
+#: ../../source/annexe_db_scheme.rst:61
+msgid ""
+"**move_analysis** : Stocke l'analyse de chaque coup avec les colonnes "
+"`id` (clé primaire), `move_id` (clé étrangère vers `move`), "
+"`analysis_type`, `depth`, `equity`, `equity_error`, `win_rate`, "
+"`gammon_rate`, `backgammon_rate`, `opponent_win_rate`, "
+"`opponent_gammon_rate`, et `opponent_backgammon_rate`."
+msgstr ""
+"**move_analysis**: Stores the analysis of each move with the columns "
+"`id` (primary key), `move_id` (foreign key referencing `move`), "
+"`analysis_type`, `depth`, `equity`, `equity_error`, `win_rate`, "
+"`gammon_rate`, `backgammon_rate`, `opponent_win_rate`, "
+"`opponent_gammon_rate`, and `opponent_backgammon_rate`."
+
+#: ../../source/annexe_db_scheme.rst:63
+msgid ""
+"La migration de 1.3.0 à 1.4.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migration from 1.3.0 to 1.4.0 is automatic when opening the"
+" database."
+
+#: ../../source/annexe_db_scheme.rst:66
+msgid "Version 1.5.0"
+msgstr "Version 1.5.0"
+
+#: ../../source/annexe_db_scheme.rst:68
+msgid ""
+"La version 1.5.0 de la base de données ajoute les tables suivantes pour "
+"la gestion des collections :"
+msgstr ""
+"Version 1.5.0 of the database adds the following tables for "
+"collection management:"
+
+#: ../../source/annexe_db_scheme.rst:70
+msgid ""
+"**collection** : Stocke les collections de positions avec les colonnes "
+"`id` (clé primaire), `name`, `description`, `sort_order`, `created_at`, "
+"et `updated_at`."
+msgstr ""
+"**collection**: Stores position collections with the columns "
+"`id` (primary key), `name`, `description`, `sort_order`, `created_at`, "
+"and `updated_at`."
+
+#: ../../source/annexe_db_scheme.rst:71
+msgid ""
+"**collection_position** : Table de liaison qui associe des positions aux "
+"collections avec les colonnes `id` (clé primaire), `collection_id` (clé "
+"étrangère vers `collection`), `position_id` (clé étrangère vers "
+"`position`), `sort_order`, et `added_at`. La paire (`collection_id`, "
+"`position_id`) est unique."
+msgstr ""
+"**collection_position**: Junction table that associates positions with "
+"collections with the columns `id` (primary key), `collection_id` (foreign "
+"key referencing `collection`), `position_id` (foreign key referencing "
+"`position`), `sort_order`, and `added_at`. The pair (`collection_id`, "
+"`position_id`) is unique."
+
+#: ../../source/annexe_db_scheme.rst:73
+msgid ""
+"La migration de 1.4.0 à 1.5.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migration from 1.4.0 to 1.5.0 is automatic when opening the"
+" database."
+
+#: ../../source/annexe_db_scheme.rst:76
+msgid "Version 1.6.0"
+msgstr "Version 1.6.0"
+
+#: ../../source/annexe_db_scheme.rst:78
+msgid ""
+"La version 1.6.0 de la base de données ajoute la table suivante pour la "
+"gestion des tournois :"
+msgstr ""
+"Version 1.6.0 of the database adds the following table for "
+"tournament management:"
+
+#: ../../source/annexe_db_scheme.rst:80
+msgid ""
+"**tournament** : Stocke les tournois avec les colonnes `id` (clé "
+"primaire), `name`, `date`, `location`, `sort_order`, `created_at`, et "
+"`updated_at`."
+msgstr ""
+"**tournament**: Stores tournaments with the columns `id` (primary "
+"key), `name`, `date`, `location`, `sort_order`, `created_at`, and "
+"`updated_at`."
+
+#: ../../source/annexe_db_scheme.rst:81
+msgid ""
+"Ajout de la colonne `tournament_id` (clé étrangère vers `tournament`) "
+"dans la table `match` pour assigner un match à un tournoi."
+msgstr ""
+"Addition of the `tournament_id` column (foreign key referencing `tournament`) "
+"in the `match` table to assign a match to a tournament."
+
+#: ../../source/annexe_db_scheme.rst:83
+msgid ""
+"La migration de 1.5.0 à 1.6.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migration from 1.5.0 to 1.6.0 is automatic when opening the"
+" database."
+
+#: ../../source/annexe_db_scheme.rst:86
+msgid "Version 1.7.0"
+msgstr "Version 1.7.0"
+
+#: ../../source/annexe_db_scheme.rst:88
+msgid "La version 1.7.0 de la base de données ajoute la colonne suivante :"
+msgstr "Version 1.7.0 of the database adds the following column:"
+
+#: ../../source/annexe_db_scheme.rst:90
+msgid ""
+"Ajout de la colonne `last_visited_position` dans la table `match` pour "
+"mémoriser la dernière position visitée dans chaque match."
+msgstr ""
+"Addition of the `last_visited_position` column in the `match` table to "
+"remember the last visited position in each match."
+
+#: ../../source/annexe_db_scheme.rst:92
+msgid ""
+"La migration de 1.6.0 à 1.7.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migration from 1.6.0 to 1.7.0 is automatic when opening the"
+" database."
+
+#: ../../source/annexe_db_scheme.rst:94
+msgid ""
+"Depuis la version 0.10.0, toutes les migrations de bases de données sont "
+"effectuées automatiquement lors de l'ouverture d'un fichier de base de "
+"données."
+msgstr ""
+"Since version 0.10.0, all database migrations are "
+"performed automatically when opening a database "
+"file."
 
