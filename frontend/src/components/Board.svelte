@@ -308,14 +308,30 @@
 
     // Draw arrows for a move — arrows start from the top checker being picked up
     // and end where the checker will land on the destination stack.
-    // displayPosition is the already-mirrored position used by drawCheckers(),
-    // so point indices in the move notation map directly to display indices.
+    // displayPosition is the already-mirrored position used by drawCheckers().
+    // In match mode when player 2 is on roll, the display is mirrored (point i → 25-i),
+    // so we must also mirror the move notation point numbers to match.
     function drawMoveArrows(moveString, boardOrigXpos, boardOrigYpos, boardCheckerSize, boardHeight, boardWidth, displayPosition) {
-        const moves = parseMoveNotation(moveString);
+        let moves = parseMoveNotation(moveString);
         if (moves.length === 0) return;
         
+        // In match mode with player 2 on roll, the display position is mirrored
+        // but the move notation uses the original (normalized) point numbers.
+        // Mirror the move points so arrows match the displayed board.
+        const matchCtx = get(matchContextStore);
+        if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
+            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+            if (currentMovePos && currentMovePos.player_on_roll === 1) {
+                moves = moves.map(m => ({
+                    ...m,
+                    from: m.from === -1 ? -1 : 25 - m.from,
+                    to: m.to === -1 ? -1 : 25 - m.to,
+                }));
+            }
+        }
+        
         // Build simulated checker counts from the DISPLAY position
-        // (the same one drawCheckers uses — already mirrored when player 1 is on roll)
+        // (the same one drawCheckers uses — already mirrored when player 2 is on roll)
         const checkerCounts = {};
         displayPosition.board.points.forEach((point, index) => {
             checkerCounts[index] = point.checkers;
