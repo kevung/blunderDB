@@ -627,3 +627,150 @@ func TestSetupThenOpen(t *testing.T) {
 	// Cleanup
 	os.Remove(dbPath)
 }
+
+// TestOpenDatabaseMissingFilterLibrary reproduces the bug where databases at v1.7.0
+// are missing the filter_library table (skipped during a past migration path).
+// OpenDatabase must repair such databases instead of failing.
+func TestOpenDatabaseMissingFilterLibrary(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "missing_filter_library.db")
+
+	// Create a v1.7.0 database WITHOUT filter_library (simulates the real bug)
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("Error opening database: %v", err)
+	}
+
+	_, err = db.Exec(`
+		CREATE TABLE position (id INTEGER PRIMARY KEY AUTOINCREMENT, state TEXT);
+		CREATE TABLE analysis (id INTEGER PRIMARY KEY, position_id INTEGER, data JSON, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE);
+		CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE);
+		CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT);
+		CREATE TABLE command_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE search_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, position TEXT, timestamp INTEGER);
+		CREATE TABLE match (id INTEGER PRIMARY KEY AUTOINCREMENT, player1_name TEXT, player2_name TEXT, event TEXT, location TEXT, round TEXT, match_length INTEGER, match_date DATETIME, import_date DATETIME DEFAULT CURRENT_TIMESTAMP, file_path TEXT, game_count INTEGER DEFAULT 0, match_hash TEXT, tournament_id INTEGER, last_visited_position INTEGER DEFAULT -1);
+		CREATE INDEX idx_match_hash ON match(match_hash);
+		CREATE TABLE game (id INTEGER PRIMARY KEY AUTOINCREMENT, match_id INTEGER, game_number INTEGER, initial_score_1 INTEGER, initial_score_2 INTEGER, winner INTEGER, points_won INTEGER, move_count INTEGER DEFAULT 0, FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE);
+		CREATE TABLE move (id INTEGER PRIMARY KEY AUTOINCREMENT, game_id INTEGER, move_number INTEGER, move_type TEXT, position_id INTEGER, player INTEGER, dice_1 INTEGER, dice_2 INTEGER, checker_move TEXT, cube_action TEXT, FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL);
+		CREATE TABLE move_analysis (id INTEGER PRIMARY KEY AUTOINCREMENT, move_id INTEGER, analysis_type TEXT, depth TEXT, equity REAL, equity_error REAL, win_rate REAL, gammon_rate REAL, backgammon_rate REAL, opponent_win_rate REAL, opponent_gammon_rate REAL, opponent_backgammon_rate REAL, FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE);
+		CREATE TABLE collection (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE collection_position (id INTEGER PRIMARY KEY AUTOINCREMENT, collection_id INTEGER NOT NULL, position_id INTEGER NOT NULL, sort_order INTEGER DEFAULT 0, added_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE, UNIQUE(collection_id, position_id));
+		CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT, location TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		INSERT INTO metadata (key, value) VALUES ('database_version', '1.7.0');
+	`)
+	if err != nil {
+		t.Fatalf("Error creating test database: %v", err)
+	}
+
+	// Verify filter_library does NOT exist (reproducing the bug)
+	if tableExists(db, "filter_library") {
+		t.Fatal("Test setup error: filter_library should NOT exist yet")
+	}
+	db.Close()
+
+	// OpenDatabase should succeed and repair the missing table
+	d := NewDatabase()
+	err = d.OpenDatabase(dbPath)
+	if err != nil {
+		t.Fatalf("OpenDatabase failed on database missing filter_library: %v", err)
+	}
+
+	// Verify filter_library was created
+	if !tableExists(d.db, "filter_library") {
+		t.Error("filter_library table should have been created during OpenDatabase")
+	}
+
+	// Verify version is still correct
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("Failed to get version: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("Expected version %s, got %s", DatabaseVersion, version)
+	}
+}
+
+// TestOpenDatabaseMissingCanonicalHash tests that databases migrated to v1.7.0
+// without the canonical_hash column on match table get repaired.
+func TestOpenDatabaseMissingCanonicalHash(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "missing_canonical_hash.db")
+
+	// Create a v1.7.0 database without canonical_hash column
+	createOldDatabase(t, dbPath, "1.7.0")
+
+	// Verify canonical_hash does NOT exist
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("Error opening database: %v", err)
+	}
+	var colInfo string
+	err = db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&colInfo)
+	if err != nil {
+		t.Fatalf("Error getting match schema: %v", err)
+	}
+	if strings.Contains(colInfo, "canonical_hash") {
+		t.Fatal("Test setup error: canonical_hash should NOT exist in createOldDatabase v1.7.0")
+	}
+	db.Close()
+
+	// OpenDatabase should succeed and add the missing column
+	d := NewDatabase()
+	err = d.OpenDatabase(dbPath)
+	if err != nil {
+		t.Fatalf("OpenDatabase failed on database missing canonical_hash: %v", err)
+	}
+
+	// Verify canonical_hash was added
+	err = d.db.QueryRow(`SELECT sql FROM sqlite_master WHERE type='table' AND name='match'`).Scan(&colInfo)
+	if err != nil {
+		t.Fatalf("Error getting match schema after open: %v", err)
+	}
+	if !strings.Contains(colInfo, "canonical_hash") {
+		t.Errorf("canonical_hash column should have been added during OpenDatabase. Schema: %s", colInfo)
+	}
+}
+
+// TestOpenDatabaseMissingMultipleTables tests repair of a database missing
+// multiple tables (e.g. filter_library AND search_history).
+func TestOpenDatabaseMissingMultipleTables(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "missing_multiple.db")
+
+	// Create a minimal v1.7.0 database missing filter_library, search_history, and collection tables
+	db, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("Error opening database: %v", err)
+	}
+
+	_, err = db.Exec(`
+		CREATE TABLE position (id INTEGER PRIMARY KEY AUTOINCREMENT, state TEXT);
+		CREATE TABLE analysis (id INTEGER PRIMARY KEY, position_id INTEGER, data JSON, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE);
+		CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE);
+		CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT);
+		CREATE TABLE command_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE match (id INTEGER PRIMARY KEY AUTOINCREMENT, player1_name TEXT, player2_name TEXT, event TEXT, location TEXT, round TEXT, match_length INTEGER, match_date DATETIME, import_date DATETIME DEFAULT CURRENT_TIMESTAMP, file_path TEXT, game_count INTEGER DEFAULT 0, match_hash TEXT, tournament_id INTEGER, last_visited_position INTEGER DEFAULT -1);
+		CREATE TABLE game (id INTEGER PRIMARY KEY AUTOINCREMENT, match_id INTEGER, game_number INTEGER, initial_score_1 INTEGER, initial_score_2 INTEGER, winner INTEGER, points_won INTEGER, move_count INTEGER DEFAULT 0, FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE);
+		CREATE TABLE move (id INTEGER PRIMARY KEY AUTOINCREMENT, game_id INTEGER, move_number INTEGER, move_type TEXT, position_id INTEGER, player INTEGER, dice_1 INTEGER, dice_2 INTEGER, checker_move TEXT, cube_action TEXT, FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL);
+		CREATE TABLE move_analysis (id INTEGER PRIMARY KEY AUTOINCREMENT, move_id INTEGER, analysis_type TEXT, depth TEXT, equity REAL, equity_error REAL, win_rate REAL, gammon_rate REAL, backgammon_rate REAL, opponent_win_rate REAL, opponent_gammon_rate REAL, opponent_backgammon_rate REAL, FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE);
+		CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT, location TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		INSERT INTO metadata (key, value) VALUES ('database_version', '1.7.0');
+	`)
+	if err != nil {
+		t.Fatalf("Error creating test database: %v", err)
+	}
+	db.Close()
+
+	d := NewDatabase()
+	err = d.OpenDatabase(dbPath)
+	if err != nil {
+		t.Fatalf("OpenDatabase failed on database missing multiple tables: %v", err)
+	}
+
+	// Verify all missing tables were created
+	for _, table := range []string{"filter_library", "search_history", "collection", "collection_position"} {
+		if !tableExists(d.db, table) {
+			t.Errorf("Table %s should have been created during repair", table)
+		}
+	}
+}

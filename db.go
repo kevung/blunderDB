@@ -690,6 +690,14 @@ func (d *Database) OpenDatabase(path string) error {
 		fmt.Println("Database automatically upgraded from 1.6.0 to 1.7.0")
 	}
 
+	// Ensure all required tables and columns exist.
+	// This repairs databases that were migrated through versions that skipped
+	// creating some tables (e.g. filter_library was missing from some migration paths).
+	if err := d.ensureAllTablesExist(); err != nil {
+		fmt.Println("Error ensuring all tables exist:", err)
+		return err
+	}
+
 	// Build required tables list based on the FINAL dbVersion (after all migrations)
 	requiredTables := []string{"position", "analysis", "comment", "metadata"}
 	if dbVersion >= "1.1.0" {
@@ -736,6 +744,195 @@ func (d *Database) OpenDatabase(path string) error {
 			return fmt.Errorf("required metadata key %s does not exist", key)
 		}
 	}
+
+	return nil
+}
+
+// ensureAllTablesExist creates any missing tables and columns that should exist
+// at the current database version. This repairs databases that were migrated
+// through code paths that skipped creating some schema elements.
+func (d *Database) ensureAllTablesExist() error {
+	// v1.1.0: command_history
+	_, err := d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS command_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring command_history table: %w", err)
+	}
+
+	// v1.2.0: filter_library
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS filter_library (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT,
+			command TEXT,
+			edit_position TEXT
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring filter_library table: %w", err)
+	}
+
+	// v1.3.0: search_history
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS search_history (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			command TEXT,
+			position TEXT,
+			timestamp INTEGER
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring search_history table: %w", err)
+	}
+
+	// v1.4.0: match, game, move, move_analysis
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT,
+			player2_name TEXT,
+			event TEXT,
+			location TEXT,
+			round TEXT,
+			match_length INTEGER,
+			match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT,
+			game_count INTEGER DEFAULT 0,
+			match_hash TEXT
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring match table: %w", err)
+	}
+
+	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
+	if err != nil {
+		return fmt.Errorf("error ensuring match_hash index: %w", err)
+	}
+
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS game (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			match_id INTEGER,
+			game_number INTEGER,
+			initial_score_1 INTEGER,
+			initial_score_2 INTEGER,
+			winner INTEGER,
+			points_won INTEGER,
+			move_count INTEGER DEFAULT 0,
+			FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring game table: %w", err)
+	}
+
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS move (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			game_id INTEGER,
+			move_number INTEGER,
+			move_type TEXT,
+			position_id INTEGER,
+			player INTEGER,
+			dice_1 INTEGER,
+			dice_2 INTEGER,
+			checker_move TEXT,
+			cube_action TEXT,
+			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring move table: %w", err)
+	}
+
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS move_analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			move_id INTEGER,
+			analysis_type TEXT,
+			depth TEXT,
+			equity REAL,
+			equity_error REAL,
+			win_rate REAL,
+			gammon_rate REAL,
+			backgammon_rate REAL,
+			opponent_win_rate REAL,
+			opponent_gammon_rate REAL,
+			opponent_backgammon_rate REAL,
+			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring move_analysis table: %w", err)
+	}
+
+	// v1.5.0: collection, collection_position
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS collection (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			description TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring collection table: %w", err)
+	}
+
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS collection_position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			collection_id INTEGER NOT NULL,
+			position_id INTEGER NOT NULL,
+			sort_order INTEGER DEFAULT 0,
+			added_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE,
+			UNIQUE(collection_id, position_id)
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring collection_position table: %w", err)
+	}
+
+	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`)
+	if err != nil {
+		return fmt.Errorf("error ensuring collection_position index: %w", err)
+	}
+
+	// v1.6.0: tournament
+	_, err = d.db.Exec(`
+		CREATE TABLE IF NOT EXISTS tournament (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			name TEXT NOT NULL,
+			date TEXT,
+			location TEXT,
+			sort_order INTEGER DEFAULT 0,
+			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+		)
+	`)
+	if err != nil {
+		return fmt.Errorf("error ensuring tournament table: %w", err)
+	}
+
+	// Ensure columns added in later versions exist on match table
+	// tournament_id (v1.6.0)
+	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
+	// last_visited_position (v1.7.0)
+	d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+	// canonical_hash (v1.7.0)
+	d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
 
 	return nil
 }
