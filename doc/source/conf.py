@@ -44,6 +44,7 @@ html_context = {
 if release:
     latest_windows_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-{release}.exe"
     latest_linux_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-{release}"
+    latest_linux_webkit2gtk41_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-{release}"
     latest_mac_exe_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-{release}.zip"
     latest_fr_pdf_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-{release}-fr.pdf"
     latest_en_pdf_url = f"https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-{release}-en.pdf"
@@ -51,6 +52,7 @@ if release:
 else:
     latest_windows_exe_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
     latest_linux_exe_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
+    latest_linux_webkit2gtk41_exe_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
     latest_mac_exe_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
     latest_fr_pdf_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
     latest_en_pdf_url = "https://github.com/kevung/blunderDB/releases"  # Fallback URL
@@ -60,6 +62,7 @@ else:
 rst_prolog = f"""
 .. |latest_windows_exe| replace:: `{latest_windows_exe_url} <{latest_windows_exe_url}>`__
 .. |latest_linux_exe| replace:: `{latest_linux_exe_url} <{latest_linux_exe_url}>`__
+.. |latest_linux_webkit2gtk41_exe| replace:: `{latest_linux_webkit2gtk41_exe_url} <{latest_linux_webkit2gtk41_exe_url}>`__
 .. |latest_fr_pdf| replace:: `{latest_fr_pdf_url} <{latest_fr_pdf_url}>`__
 .. |latest_en_pdf| replace:: `{latest_en_pdf_url} <{latest_en_pdf_url}>`__
 .. |latest_mac_exe| replace:: `{latest_mac_exe_url} <{latest_mac_exe_url}>`__

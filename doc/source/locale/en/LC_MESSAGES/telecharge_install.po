@@ -78,6 +78,18 @@ msgstr ""
 
 #: ../../source/telecharge_install.rst:30
 msgid ""
+"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: "
+"cannot open shared object file``, votre distribution utilise "
+"webkit2gtk-4.1 au lieu de webkit2gtk-4.0. Téléchargez la version "
+"dédiée : |latest_linux_webkit2gtk41_exe|"
+msgstr ""
+"On Linux, if you get the error ``libwebkit2gtk-4.0.so.37: "
+"cannot open shared object file``, your distribution uses "
+"webkit2gtk-4.1 instead of webkit2gtk-4.0. Download the dedicated "
+"build: |latest_linux_webkit2gtk41_exe|"
+
+#: ../../source/telecharge_install.rst:35
+msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
 " pourquoi et contourner les éventuels blocages."

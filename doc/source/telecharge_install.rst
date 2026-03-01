@@ -27,6 +27,11 @@ La dernière version de blunderDB est disponible en licence MIT:
    téléchargement, exécuter dans un terminal la commande ``chmod +x
    ./blunderDB-linux-x.y.z`` où x, y, z correspond à la version téléchargée.
 
+.. note:: Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37:
+   cannot open shared object file``, votre distribution utilise
+   webkit2gtk-4.1 au lieu de webkit2gtk-4.0. Téléchargez la version
+   dédiée : |latest_linux_webkit2gtk41_exe|
+
 .. warning:: Sous Windows, il est possible que ce dernier émette des réticences
    à exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre
    pourquoi et contourner les éventuels blocages.
