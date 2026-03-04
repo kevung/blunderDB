@@ -1,28 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
     <dict>
         <key>CFBundlePackageType</key>
         <string>APPL</string>
+        <key>CFBundleDisplayName</key>
+        <string>blunderDB</string>
         <key>CFBundleName</key>
         <string>{{.Info.ProductName}}</string>
         <key>CFBundleExecutable</key>
         <string>{{.Name}}</string>
         <key>CFBundleIdentifier</key>
-        <string>com.wails.{{.Name}}</string>
+        <string>com.kevin.blunderdb</string>
         <key>CFBundleVersion</key>
         <string>{{.Info.ProductVersion}}</string>
-        <key>CFBundleGetInfoString</key>
-        <string>{{.Info.Comments}}</string>
         <key>CFBundleShortVersionString</key>
         <string>{{.Info.ProductVersion}}</string>
         <key>CFBundleIconFile</key>
-        <string>iconfile</string>
+        <string>iconfile.icns</string>
         <key>LSMinimumSystemVersion</key>
-        <string>10.13.0</string>
+        <string>11</string>
+        <key>LSApplicationCategoryType</key>
+        <string>public.app-category.education</string>
         <key>NSHighResolutionCapable</key>
-        <string>true</string>
+        <true/>
         <key>NSHumanReadableCopyright</key>
         <string>{{.Info.Copyright}}</string>
+        <key>ITSAppUsesNonExemptEncryption</key>
+        <false/>
         {{if .Info.FileAssociations}}
         <key>CFBundleDocumentTypes</key>
         <array>
@@ -48,7 +53,7 @@
           {{range .Info.Protocols}}
             <dict>
                 <key>CFBundleURLName</key>
-                <string>com.wails.{{.Scheme}}</string>
+                <string>com.kevin.{{.Scheme}}</string>
                 <key>CFBundleURLSchemes</key>
                 <array>
                     <string>{{.Scheme}}</string>

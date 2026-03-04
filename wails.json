@@ -9,5 +9,12 @@
   "author": {
     "name": "Kévin Unger",
     "email": "kevin.unger@proton.me"
+  },
+  "info": {
+    "companyName": "Kévin Unger",
+    "productName": "blunderDB",
+    "productVersion": "0.0.0",
+    "copyright": "© 2024-2026 Kévin Unger. All rights reserved.",
+    "comments": "blunderDB - Backgammon Blunder Analysis"
   }
 }
