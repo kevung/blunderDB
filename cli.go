@@ -1872,6 +1872,7 @@ func (cli *CLI) runSearch(args []string) error {
 		moveErrorFilter,    // moveErrorFilter
 		*matchIDsFlag,      // matchIDsFilter
 		*tournamentIDsFlag, // tournamentIDsFilter
+		"",                 // restrictToPositionIDs
 	)
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)

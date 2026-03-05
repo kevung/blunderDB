@@ -383,6 +383,21 @@ msgstr ""
 
 #: ../../source/manuel.rst:182
 msgid ""
+"Pour affiner une recherche parmi les positions actuellement filtrées, "
+"utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``, "
+"``ss E>40``). La commande ``ss`` fonctionne depuis le mode NORMAL, après "
+"une recherche préalable. La fenêtre de recherche (``CTRL-F``) propose "
+"également une case à cocher \"Search in current results\" pour la même "
+"fonctionnalité."
+msgstr ""
+"To refine a search among the currently filtered positions, use the "
+"``ss`` command followed by filters (e.g.: ``ss nc``, ``ss E>40``). The "
+"``ss`` command works from NORMAL mode, after a prior search. The search "
+"window (``CTRL-F``) also offers a \"Search in current results\" checkbox "
+"for the same functionality."
+
+#: ../../source/manuel.rst:188
+msgid ""
 "Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
 "en mode COMMAND."
 msgstr ""

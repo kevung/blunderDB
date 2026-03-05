@@ -1540,7 +1540,20 @@ func (d *Database) LoadPositionsByFilters(
 	moveErrorFilter string,
 	matchIDsFilter string,
 	tournamentIDsFilter string,
+	restrictToPositionIDs string,
 ) ([]Position, error) {
+	// Build set of restricted position IDs (search in current results)
+	var restrictedIDs map[int64]bool
+	if restrictToPositionIDs != "" {
+		restrictedIDs = make(map[int64]bool)
+		for _, idStr := range strings.Split(restrictToPositionIDs, ",") {
+			idStr = strings.TrimSpace(idStr)
+			if id, err := strconv.ParseInt(idStr, 10, 64); err == nil {
+				restrictedIDs[id] = true
+			}
+		}
+	}
+
 	// Build set of allowed position IDs based on match/tournament filters
 	var allowedPositionIDs map[int64]bool
 	if matchIDsFilter != "" || tournamentIDsFilter != "" {
@@ -1605,6 +1618,10 @@ func (d *Database) LoadPositionsByFilters(
 
 		// Function to check if a position matches all filters
 		matchesFilters := func(pos Position) bool {
+			// Restrict to current results: skip positions not in the restricted set
+			if restrictedIDs != nil && !restrictedIDs[pos.ID] {
+				return false
+			}
 			// Match/tournament filter: skip positions not linked to specified matches
 			if allowedPositionIDs != nil && !allowedPositionIDs[pos.ID] {
 				return false

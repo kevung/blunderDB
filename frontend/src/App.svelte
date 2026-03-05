@@ -3439,6 +3439,7 @@ function togglePipcount() {
         searchCommand = '',  // Optional: the original search command for session tracking
         matchIDsFilter = '',
         tournamentIDsFilter = '',
+        restrictToPositionIDs = '',
     ) {
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
@@ -3518,7 +3519,8 @@ function togglePipcount() {
                 mirrorPositionFilter,
                 moveErrorFilter,
                 matchIDsFilter,
-                tournamentIDsFilter);
+                tournamentIDsFilter,
+                restrictToPositionIDs);
                 
             // Set mode to NORMAL and reset match context BEFORE triggering position display
             // so that showPosition sees the correct mode and doesn't use stale match context

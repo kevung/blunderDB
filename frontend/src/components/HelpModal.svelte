@@ -234,6 +234,7 @@
                     <p>COMMAND mode allows performing all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions according to filters... After getting familiar with the interface, it is recommended to gradually use this mode, which allows powerful and smooth use of blunderDB, especially for position search functionalities.</p>
                     <p>To switch to COMMAND mode from any other mode, press the *SPACE* key. To send a query and exit COMMAND mode, press the *ENTER* key.</p>
                     <p>blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required by the user.</p>
+                    <p>To refine a search within previously filtered positions, use the <strong>ss</strong> command followed by filters (e.g., <strong>ss nc</strong>). This restricts the search to only the positions currently displayed, allowing progressive narrowing of results. The <strong>ss</strong> command works from NORMAL mode (after a prior search). The search modal also offers a "Search in current results" checkbox for the same functionality.</p>
 
                     <h3>EPC Mode</h3>
                     <p>EPC (Effective Pip Count) mode is a tool for computing the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database to compute exact EPC values.</p>
@@ -870,6 +871,10 @@
                             <tr>
                                 <td>s</td>
                                 <td>Search Positions with Filters</td>
+                            </tr>
+                            <tr>
+                                <td>ss</td>
+                                <td>Search in Current Results with Filters</td>
                             </tr>
                             <tr>
                                 <td>e</td>

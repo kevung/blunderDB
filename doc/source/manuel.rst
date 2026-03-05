@@ -179,6 +179,12 @@ qu'elles soient valides et modifie immédiatement l'état de la base de données
 le cas échéant. Il n'y a pas d'actions de sauvegarde explicite de la part
 de l'utilisateur.
 
+Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
+la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). La commande
+``ss`` fonctionne depuis le mode NORMAL, après une recherche préalable. La
+fenêtre de recherche (``CTRL-F``) propose également une case à cocher
+"Search in current results" pour la même fonctionnalité.
+
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste de commandes
    disponible en mode COMMAND.
 

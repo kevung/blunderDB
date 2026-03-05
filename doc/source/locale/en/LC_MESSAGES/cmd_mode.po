@@ -308,6 +308,14 @@ msgstr "s"
 msgid "Chercher des positions avec des filtres."
 msgstr "Search for positions with filters."
 
+#: ../../source/cmd_mode.rst:1
+msgid "ss"
+msgstr "ss"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Chercher parmi les positions actuellement filtrées."
+msgstr "Search among the currently filtered positions."
+
 #: ../../source/cmd_mode.rst:78
 msgid "Filtres de recherche"
 msgstr "Search Filters"

@@ -69,6 +69,7 @@ Mode EDIT
    "write, wr, w", "Enregistre la position courante."
    "write!, wr!, w!", "Mettre à jour la position courante."
    "s", "Chercher des positions avec des filtres."
+   "ss", "Chercher parmi les positions actuellement filtrées."
    
 
 

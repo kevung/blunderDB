@@ -313,3 +313,55 @@ msgstr "Double with at least 20pip ahead"
 msgid "s d p<-20"
 msgstr "s d p<-20"
 
+#: ../../source/annexe_filtres.rst:38
+msgid "Recherche dans les résultats courants"
+msgstr "Search in Current Results"
+
+#: ../../source/annexe_filtres.rst:41
+msgid ""
+"Il est possible d'affiner une recherche en cherchant parmi les positions "
+"actuellement filtrées. Cela permet de restreindre progressivement les "
+"résultats."
+msgstr ""
+"It is possible to refine a search by searching among the currently "
+"filtered positions. This allows you to progressively narrow down the "
+"results."
+
+#: ../../source/annexe_filtres.rst:44
+msgid ""
+"En mode COMMAND, utiliser la commande ``ss`` suivie de filtres (ex: "
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne depuis le mode "
+"NORMAL, après une recherche préalable."
+msgstr ""
+"In COMMAND mode, use the ``ss`` command followed by filters (e.g.: "
+"``ss nc``, ``ss E>40``). The ``ss`` command works from NORMAL mode, "
+"after a prior search."
+
+#: ../../source/annexe_filtres.rst:48
+msgid ""
+"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
+"\"Search in current results\" pour la même fonctionnalité."
+msgstr ""
+"The search window (``CTRL-F``) also offers a \"Search in current "
+"results\" checkbox for the same functionality."
+
+#: ../../source/annexe_filtres.rst:107
+msgid "Exemples de recherche dans les résultats courants:"
+msgstr "Examples of searching within current results:"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Scénario"
+msgstr "Scenario"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s nc``, chercher les petites courses"
+msgstr "After ``s nc``, search for short races"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s g>20``, ne garder que les erreurs"
+msgstr "After ``s g>20``, keep only errors"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s tn1``, chercher les décisions de cube"
+msgstr "After ``s tn1``, search for cube decisions"
+

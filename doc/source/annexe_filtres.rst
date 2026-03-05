@@ -35,6 +35,19 @@ Pour faire une recherche à l'aide de filtres,
    La liste des filtres disponibles en mode COMMAND est fournie dans la
    :numref:`cmd_filter`.
 
+Recherche dans les résultats courants
+-------------------------------------
+
+Il est possible d'affiner une recherche en cherchant parmi les positions
+actuellement filtrées. Cela permet de restreindre progressivement les résultats.
+
+En mode COMMAND, utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``,
+``ss E>40``). La commande ``ss`` fonctionne depuis le mode NORMAL,
+après une recherche préalable.
+
+La fenêtre de recherche (``CTRL-F``) propose également une case à cocher
+"Search in current results" pour la même fonctionnalité.
+
 Bibliothèque de filtres
 -----------------------
 
@@ -90,4 +103,15 @@ Voici quelques exemples d'utilisation des filtres en mode COMMAND:
    "Positions des matchs 23 et 43", "", s ma23 ma43
    "Positions du tournoi 1", "", s tn1
    "Erreurs dans le tournoi 2", "", s tn2 E>40
+
+Exemples de recherche dans les résultats courants:
+
+.. csv-table::
+   :header: "Scénario", "Commande"
+   :widths: 15, 20
+   :align: center
+
+   "Après ``s nc``, chercher les petites courses", ss P<70
+   "Après ``s g>20``, ne garder que les erreurs", ss E>40
+   "Après ``s tn1``, chercher les décisions de cube", ss d
 

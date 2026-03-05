@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher, onMount, onDestroy } from 'svelte';
     import { statusBarModeStore } from '../stores/uiStore';
-    import { positionStore } from '../stores/positionStore';
+    import { positionStore, positionsStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
 
@@ -44,6 +44,8 @@
 
     let matchIDsInput = '';  // Match IDs (comma-separated or range)
     let tournamentIDsInput = '';  // Tournament IDs (comma-separated or range)
+
+    let searchInCurrentResults = false;  // Search within currently filtered positions
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -375,6 +377,13 @@
             console.error('Error saving search history:', err);
         });
         
+        // Build restrictToPositionIDs if searching in current results
+        let restrictToPositionIDs = '';
+        if (searchInCurrentResults) {
+            const currentPositions = $positionsStore || [];
+            restrictToPositionIDs = currentPositions.map(p => p.id).filter(id => id != null).join(',');
+        }
+
         statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
             finalFilters,
@@ -409,7 +418,8 @@
             moveErrorFilter,
             '',  // searchCommand
             matchIDsFilter,
-            tournamentIDsFilter
+            tournamentIDsFilter,
+            restrictToPositionIDs
         );
         onClose();
     }
@@ -533,6 +543,7 @@
         mirrorPositionFilter = false;
         matchIDsInput = '';
         tournamentIDsInput = '';
+        searchInCurrentResults = false;
     }
 
     onMount(() => {
@@ -996,6 +1007,10 @@
                 </div>
             {/each}
             <div class="modal-buttons">
+                <label class="search-in-results-label">
+                    <input type="checkbox" bind:checked={searchInCurrentResults} />
+                    Search in current results
+                </label>
                 <button class="primary-button" on:click={handleSearch}>Search</button>
                 <button class="secondary-button" on:click={onClose}>Cancel</button>
                 <button class="secondary-button" on:click={clearFilters}>Clear Filters</button>
@@ -1118,7 +1133,22 @@
         margin-top: 10px;
         display: flex;
         justify-content: center;
+        align-items: center;
         gap: 10px; /* Add space between buttons */
+    }
+
+    .search-in-results-label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 14px;
+        color: #ccc;
+        cursor: pointer;
+        margin-right: 6px;
+    }
+
+    .search-in-results-label input[type="checkbox"] {
+        cursor: pointer;
     }
 
     .modal-buttons button {

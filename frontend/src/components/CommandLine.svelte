@@ -149,6 +149,156 @@
                onToggleHelp();
             } else if (command === 'e') {
                onLoadAllPositions();
+            } else if (command.startsWith('ss')) {
+               // Search in current results (from NORMAL mode after a prior search)
+               if ($previousModeStore === 'NORMAL' || $previousModeStore === 'EDIT') {
+                  if (positions.length === 0) {
+                     statusBarTextStore.set('No current results to search in.');
+                  } else {
+                     // Collect IDs of currently displayed positions
+                     const currentIDs = positions.map(p => p.id).filter(id => id != null).join(',');
+
+                     // Save to search history
+                     const searchHistoryEntry = {
+                        command: command,
+                        position: JSON.stringify($positionStore),
+                        timestamp: Date.now()
+                     };
+                     searchHistoryStore.update(history => {
+                        const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
+                        return newHistory;
+                     });
+                     SaveSearchHistory(command, JSON.stringify($positionStore)).catch(err => {
+                        console.error('Error saving search history:', err);
+                     });
+
+                     if (command === 'ss') {
+                        // ss with no extra filters: just reload current results (no-op effectively)
+                        onLoadPositionsByFilters([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, '', command, '', '', currentIDs);
+                     } else {
+                        // Parse filters from the command after "ss"
+                        const filters = command.slice(2).trim().split(' ').map(filter => filter.trim());
+                        const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
+                        const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
+                        const noContactFilter = filters.includes('nc');
+                        const decisionTypeFilter = filters.includes('d');
+                        const diceRollFilter = filters.includes('D');
+                        const mirrorPositionFilter = filters.includes('M');
+                        const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
+                        const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
+                        const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
+                        const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || (filter.startsWith('b') && !filter.startsWith('bo'))) && !filter.startsWith('bj'));
+                        const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
+                        const player2GammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
+                        const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B') && !filter.startsWith('BO')) && !filter.startsWith('BJ'));
+                        let player1CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
+                        if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
+                           player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`;
+                        }
+                        let player2CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('O>') || filter.startsWith('O<') || filter.startsWith('O')));
+                        if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
+                           player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`;
+                        }
+                        let player1BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('k>') || filter.startsWith('k<') || filter.startsWith('k')));
+                        if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
+                           player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`;
+                        }
+                        let player2BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
+                        if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
+                           player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`;
+                        }
+                        let player1CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('z>') || filter.startsWith('z<') || filter.startsWith('z')));
+                        if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
+                           player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`;
+                        }
+                        let player2CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('Z>') || filter.startsWith('Z<') || filter.startsWith('Z')));
+                        if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
+                           player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`;
+                        }
+                        const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
+                        const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
+                        const dateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('T>') || filter.startsWith('T<') || filter.startsWith('T')));
+                        const movePatternMatch = command.match(/m["'][^"']*["']/);
+                        const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
+                        const searchTextMatch = command.match(/t["'][^"']*["']/);
+                        const searchText = searchTextMatch ? searchTextMatch[0] : '';
+                        const player1OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bo>') || filter.startsWith('bo<') || filter.startsWith('bo')));
+                        const player2OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
+                        const player1JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
+                        const player2JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
+                        const moveErrorFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
+
+                        const matchIDTokens = filters.filter(f => typeof f === 'string' && /^ma\d/.test(f));
+                        let matchIDsFilter = '';
+                        if (matchIDTokens.length > 0) {
+                           const parts = [];
+                           for (const token of matchIDTokens) {
+                              const val = token.slice(2);
+                              if (val.includes(',')) {
+                                 parts.push(val);
+                              } else {
+                                 parts.push(val);
+                              }
+                           }
+                           matchIDsFilter = parts.join(';');
+                        }
+
+                        const tournamentIDTokens = filters.filter(f => typeof f === 'string' && /^tn\d/.test(f));
+                        let tournamentIDsFilter = '';
+                        if (tournamentIDTokens.length > 0) {
+                           const parts = [];
+                           for (const token of tournamentIDTokens) {
+                              const val = token.slice(2);
+                              if (val.includes(',')) {
+                                 parts.push(val);
+                              } else {
+                                 parts.push(val);
+                              }
+                           }
+                           tournamentIDsFilter = parts.join(';');
+                        }
+
+                        onLoadPositionsByFilters(
+                           filters,
+                           includeCube,
+                           includeScore,
+                           pipCountFilter,
+                           winRateFilter,
+                           gammonRateFilter,
+                           backgammonRateFilter,
+                           player2WinRateFilter,
+                           player2GammonRateFilter,
+                           player2BackgammonRateFilter,
+                           player1CheckerOffFilter,
+                           player2CheckerOffFilter,
+                           player1BackCheckerFilter,
+                           player2BackCheckerFilter,
+                           player1CheckerInZoneFilter,
+                           player2CheckerInZoneFilter,
+                           searchText,
+                           player1AbsolutePipCountFilter,
+                           equityFilter,
+                           decisionTypeFilter,
+                           diceRollFilter,
+                           movePatternFilter,
+                           dateFilter,
+                           player1OutfieldBlotFilter,
+                           player2OutfieldBlotFilter,
+                           player1JanBlotFilter,
+                           player2JanBlotFilter,
+                           noContactFilter,
+                           mirrorPositionFilter,
+                           moveErrorFilter,
+                           command,
+                           matchIDsFilter,
+                           tournamentIDsFilter,
+                           currentIDs
+                        );
+                     }
+                  }
+               } else {
+                  statusBarTextStore.set('Search in results requires NORMAL mode.');
+               }
             } else if (command.startsWith('s')) {
                if ($previousModeStore === 'EDIT') {
                   // Save to search history for all search commands
