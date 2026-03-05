@@ -171,7 +171,7 @@
         'Pipcount Difference',
         'Player Absolute Pipcount',
         'Equity (millipoints)',
-        'Move Error (millipoints)',
+        'Move Error (millipoints, Player 1)',
         'Win Rate',
         'Gammon Rate',
         'Backgammon Rate',
@@ -227,7 +227,7 @@
                     return player1AbsolutePipCountOption === 'min' ? `P>${player1AbsolutePipCountMin}` : player1AbsolutePipCountOption === 'max' ? `P<${player1AbsolutePipCountMax}` : `P${player1AbsolutePipCountRangeMin},${player1AbsolutePipCountRangeMax}`;
                 case 'Equity (millipoints)':
                     return equityOption === 'min' ? `e>${equityMin}` : equityOption === 'max' ? `e<${equityMax}` : `e${equityRangeMin},${equityRangeMax}`;
-                case 'Move Error (millipoints)':
+                case 'Move Error (millipoints, Player 1)':
                     return moveErrorOption === 'min' ? `E>${moveErrorMin}` : moveErrorOption === 'max' ? `E<${moveErrorMax}` : `E${moveErrorRangeMin},${moveErrorRangeMax}`;
                 case 'Win Rate':
                     return winRateOption === 'min' ? `w>${winRateMin}` : winRateOption === 'max' ? `w<${winRateMax}` : `w${winRateRangeMin},${winRateRangeMax}`;
@@ -623,7 +623,7 @@
                                 </div>
                             </div>
                         {/if}
-                        {#if filter === 'Move Error (millipoints)'}
+                        {#if filter === 'Move Error (millipoints, Player 1)'}
                             <div class="filter-options-container expanded">
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
