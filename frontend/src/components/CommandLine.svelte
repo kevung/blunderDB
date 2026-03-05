@@ -170,7 +170,7 @@
                   });
                   
                   if (command === 's') {
-                     onLoadPositionsByFilters([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, '', command);
+                     onLoadPositionsByFilters([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, '', command, '', '');
                   } else {
                      const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
                      const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
@@ -222,6 +222,40 @@
                      const player1JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
                      const player2JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
                      const moveErrorFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
+
+                     // Match ID filter: ma23, ma2,4 (range), multiple ma tokens joined with ";"
+                     const matchIDTokens = filters.filter(f => typeof f === 'string' && /^ma\d/.test(f));
+                     let matchIDsFilter = '';
+                     if (matchIDTokens.length > 0) {
+                        const parts = [];
+                        for (const token of matchIDTokens) {
+                           const val = token.slice(2); // remove 'ma' prefix
+                           if (val.includes(',')) {
+                              // Range: pass as-is (e.g., "2,4" means IDs 2 to 4)
+                              parts.push(val);
+                           } else {
+                              parts.push(val);
+                           }
+                        }
+                        // Multiple individual IDs separated by ";", ranges kept with ","
+                        matchIDsFilter = parts.join(';');
+                     }
+
+                     // Tournament ID filter: tn5, tn1,3 (range), multiple tn tokens joined with ";"
+                     const tournamentIDTokens = filters.filter(f => typeof f === 'string' && /^tn\d/.test(f));
+                     let tournamentIDsFilter = '';
+                     if (tournamentIDTokens.length > 0) {
+                        const parts = [];
+                        for (const token of tournamentIDTokens) {
+                           const val = token.slice(2); // remove 'tn' prefix
+                           if (val.includes(',')) {
+                              parts.push(val);
+                           } else {
+                              parts.push(val);
+                           }
+                        }
+                        tournamentIDsFilter = parts.join(';');
+                     }
 
                      console.log('Filters:', filters); // Add logging
                      console.log('Search Text:', searchText); // Add logging
@@ -287,7 +321,9 @@
                         noContactFilter,
                         mirrorPositionFilter,
                         moveErrorFilter,
-                        command  // Pass the original search command for session tracking
+                        command,  // Pass the original search command for session tracking
+                        matchIDsFilter,
+                        tournamentIDsFilter
                      );
                   }
                } else {

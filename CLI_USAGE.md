@@ -30,6 +30,7 @@ When you provide CLI commands (`import`, `export`, `list`, `delete`, `help`, `ve
 
 - `import` - Import data into the database
 - `export` - Export data from the database  
+- `search` - Search positions with filters
 - `list` - List database contents
 - `delete` - Delete data from the database
 - `help` - Show help message
@@ -123,6 +124,54 @@ Export only match data (with linked positions) to a new database:
 ```
 
 This creates a new database containing only the match structure and linked positions.
+
+## Search Command
+
+Search for positions in the database using filters.
+
+```bash
+./blunderdb search --db database.db [options]
+```
+
+**Options:**
+- `--db` - Path to the database file (required)
+- `--export` - Export results to a new database file
+- `--limit` - Maximum number of results (0 = no limit)
+- `--format` - Output format: `table`, `json`, `xgid` (default: table)
+- `--decision` - Filter by decision type: `checker`, `cube`
+- `--pip-min` / `--pip-max` - Pip count difference range
+- `--winrate-min` / `--winrate-max` - Win rate range (%)
+- `--cube` - Filter by cube value
+- `--score1` / `--score2` - Filter by player scores
+- `--match-length` - Filter by match length
+- `--error-min` - Minimum equity error
+- `--move-error-min` / `--move-error-max` - Played move error range (millipoints)
+- `--has-analysis` - Only positions with analysis
+- `--off1-min` / `--off2-min` - Minimum checkers off for player 1/2
+- `--match-ids` - Filter by match IDs (comma-separated, e.g. `1,3,5` or range `2,7`)
+- `--tournament-ids` - Filter by tournament IDs (comma-separated, e.g. `1,3` or range `1,5`)
+
+### Examples
+
+```bash
+# Search cube decisions
+./blunderdb search --db database.db --decision cube
+
+# Search positions with errors >= 0.1
+./blunderdb search --db database.db --error-min 0.1
+
+# Search in specific matches
+./blunderdb search --db database.db --match-ids 2,5
+
+# Search in a tournament
+./blunderdb search --db database.db --tournament-ids 1
+
+# Search and export to new database
+./blunderdb search --db database.db --decision cube --export cubes.db
+
+# Output as JSON
+./blunderdb search --db database.db --format json --limit 10
+```
 
 ## List Command
 

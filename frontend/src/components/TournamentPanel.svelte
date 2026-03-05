@@ -462,6 +462,7 @@
                         Tournaments ({tournaments.length})
                     </div>
                     <div class="col-header-row">
+                        <span class="col-h col-id">ID</span>
                         <span class="col-h col-name">Name</span>
                         <span class="col-h col-count">#</span>
                         <span class="col-h col-date sortable" on:click={() => toggleSort('date')}>
@@ -476,6 +477,7 @@
                         {#each tournaments as tournament, index}
                             {#if editingTournament && editingTournament.id === tournament.id}
                                 <div class="tournament-item editing">
+                                    <span class="col-cell col-id">{tournament.id}</span>
                                     <span class="col-cell col-name"><input type="text" bind:value={editName} class="edit-input" on:keydown|stopPropagation={(e) => e.key === 'Enter' && saveEdit()} /></span>
                                     <span class="col-cell col-count">{tournament.matchCount}</span>
                                     <span class="col-cell col-date"><input type="date" bind:value={editDate} class="edit-input" /></span>
@@ -493,6 +495,7 @@
                                     class:selected={selectedTournament?.id === tournament.id}
                                     on:click={() => selectTournament(tournament)}
                                 >
+                                    <span class="col-cell col-id">{tournament.id}</span>
                                     <span class="col-cell col-name" title={tournament.name}>{tournament.name}</span>
                                     <span class="col-cell col-count">{tournament.matchCount}</span>
                                     <span class="col-cell col-date">{tournament.date || '—'}</span>
@@ -704,6 +707,7 @@
         color: #333;
     }
 
+    .col-id { width: 30px; flex-shrink: 0; text-align: center; color: #888; font-size: 11px; }
     .col-name { width: 140px; min-width: 80px; flex-shrink: 0; text-align: left; }
     .col-count { width: 30px; flex-shrink: 0; text-align: right; padding-right: 8px; }
     .col-date { width: 90px; flex-shrink: 0; text-align: left; }

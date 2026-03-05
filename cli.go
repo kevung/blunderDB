@@ -1695,6 +1695,8 @@ func (cli *CLI) runSearch(args []string) error {
 	hasAnalysis := searchCmd.Bool("has-analysis", false, "Only positions with analysis")
 	checkerOff1Min := searchCmd.Int("off1-min", 0, "Minimum checkers off for player 1")
 	checkerOff2Min := searchCmd.Int("off2-min", 0, "Minimum checkers off for player 2")
+	matchIDsFlag := searchCmd.String("match-ids", "", "Filter by match IDs (comma-separated, e.g. '1,3,5' or range '2,7')")
+	tournamentIDsFlag := searchCmd.String("tournament-ids", "", "Filter by tournament IDs (comma-separated, e.g. '1,3' or range '1,5')")
 
 	searchCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb search [options]")
@@ -1722,6 +1724,12 @@ func (cli *CLI) runSearch(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Output as JSON")
 		fmt.Println("  blunderdb search --db database.db --format json --limit 10")
+		fmt.Println()
+		fmt.Println("  # Search in specific matches")
+		fmt.Println("  blunderdb search --db database.db --match-ids 2,5")
+		fmt.Println()
+		fmt.Println("  # Search in a tournament")
+		fmt.Println("  blunderdb search --db database.db --tournament-ids 1")
 	}
 
 	if err := searchCmd.Parse(args); err != nil {
@@ -1844,24 +1852,26 @@ func (cli *CLI) runSearch(args []string) error {
 		"", // player2BackgammonRateFilter
 		player1CheckerOffFilter,
 		player2CheckerOffFilter,
-		"",              // player1BackCheckerFilter
-		"",              // player2BackCheckerFilter
-		"",              // player1CheckerInZoneFilter
-		"",              // player2CheckerInZoneFilter
-		"",              // searchText
-		"",              // player1AbsolutePipCountFilter
-		"",              // equityFilter
-		false,           // decisionTypeFilter - we'll filter ourselves
-		false,           // diceRollFilter
-		"",              // movePatternFilter
-		"",              // dateFilter
-		"",              // player1OutfieldBlotFilter
-		"",              // player2OutfieldBlotFilter
-		"",              // player1JanBlotFilter
-		"",              // player2JanBlotFilter
-		false,           // noContactFilter
-		false,           // mirrorFilter
-		moveErrorFilter, // moveErrorFilter
+		"",                 // player1BackCheckerFilter
+		"",                 // player2BackCheckerFilter
+		"",                 // player1CheckerInZoneFilter
+		"",                 // player2CheckerInZoneFilter
+		"",                 // searchText
+		"",                 // player1AbsolutePipCountFilter
+		"",                 // equityFilter
+		false,              // decisionTypeFilter - we'll filter ourselves
+		false,              // diceRollFilter
+		"",                 // movePatternFilter
+		"",                 // dateFilter
+		"",                 // player1OutfieldBlotFilter
+		"",                 // player2OutfieldBlotFilter
+		"",                 // player1JanBlotFilter
+		"",                 // player2JanBlotFilter
+		false,              // noContactFilter
+		false,              // mirrorFilter
+		moveErrorFilter,    // moveErrorFilter
+		*matchIDsFlag,      // matchIDsFilter
+		*tournamentIDsFlag, // tournamentIDsFilter
 	)
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)

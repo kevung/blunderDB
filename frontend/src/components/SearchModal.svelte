@@ -42,6 +42,9 @@
     let creationDateRangeMax = ''; // Max value for creation date range
     let noContactFilter = false;
 
+    let matchIDsInput = '';  // Match IDs (comma-separated or range)
+    let tournamentIDsInput = '';  // Tournament IDs (comma-separated or range)
+
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
     let pipCountRangeMin = -375; // Min value for pip count range
@@ -187,7 +190,9 @@
         'Opponent Jan Blot',
         'Search Text',
         'Best Move or Cube Decision',
-        'Creation Date'
+        'Creation Date',
+        'Match IDs',
+        'Tournament IDs'
     ];
 
     function addFilter() {
@@ -263,6 +268,10 @@
                     return player1JanBlotOption === 'min' ? `bj>${player1JanBlotMin}` : player1JanBlotOption === 'max' ? `bj<${player1JanBlotMax}` : `bj${player1JanBlotRangeMin},${player1JanBlotRangeMax}`;
                 case 'Opponent Jan Blot':
                     return player2JanBlotOption === 'min' ? `BJ>${player2JanBlotMin}` : player2JanBlotOption === 'max' ? `BJ<${player2JanBlotMax}` : `BJ${player2JanBlotRangeMin},${player2JanBlotRangeMax}`;
+                case 'Match IDs':
+                    return matchIDsInput ? `ma${matchIDsInput}` : '';
+                case 'Tournament IDs':
+                    return tournamentIDsInput ? `tn${tournamentIDsInput}` : '';
                 default:
                     return '';
             }
@@ -292,6 +301,12 @@
         const player2OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('BO'));
         const player1JanBlotFilter = transformedFilters.find(filter => filter.startsWith('bj'));
         const player2JanBlotFilter = transformedFilters.find(filter => filter.startsWith('BJ'));
+
+        // Match/Tournament ID filters
+        const matchIDToken = transformedFilters.find(filter => filter.startsWith('ma'));
+        const matchIDsFilter = matchIDToken ? matchIDToken.slice(2) : '';
+        const tournamentIDToken = transformedFilters.find(filter => filter.startsWith('tn'));
+        const tournamentIDsFilter = tournamentIDToken ? tournamentIDToken.slice(2) : '';
 
         const decisionTypeFilter = transformedFilters.includes('d');
         const diceRollFilter = transformedFilters.includes('D');
@@ -391,7 +406,10 @@
             player2JanBlotFilter,
             noContactFilter,
             mirrorPositionFilter,
-            moveErrorFilter
+            moveErrorFilter,
+            '',  // searchCommand
+            matchIDsFilter,
+            tournamentIDsFilter
         );
         onClose();
     }
@@ -513,6 +531,8 @@
         player2JanBlotRangeMax = 15;
         noContactFilter = false;
         mirrorPositionFilter = false;
+        matchIDsInput = '';
+        tournamentIDsInput = '';
     }
 
     onMount(() => {
@@ -957,6 +977,18 @@
                                         <input type="date" bind:value={creationDateRangeMax} placeholder="Max" class="filter-input" disabled={creationDateOption !== 'range'} />
                                     </label>
                                 </div>
+                            </div>
+                        {/if}
+                        {#if filter === 'Match IDs'}
+                            <div class="search-text-container">
+                                <label for="matchIDs">(e.g. 3 or 2,5 for range)</label>
+                                <input type="text" id="matchIDs" bind:value={matchIDsInput} class="search-text-input" style="margin-left: 10px;" placeholder="ID or range" />
+                            </div>
+                        {/if}
+                        {#if filter === 'Tournament IDs'}
+                            <div class="search-text-container">
+                                <label for="tournamentIDs">(e.g. 1 or 1,3 for range)</label>
+                                <input type="text" id="tournamentIDs" bind:value={tournamentIDsInput} class="search-text-input" style="margin-left: 10px;" placeholder="ID or range" />
                             </div>
                         {/if}
                     </div>

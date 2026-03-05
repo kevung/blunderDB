@@ -956,6 +956,58 @@ msgstr "Tx,y"
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr "Date of position addition between x and y (YYYY/MM/DD)."
 
+#: ../../source/cmd_mode.rst:1
+msgid "max"
+msgstr "max"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans le match d'identifiant x (ex: ma3)."
+msgstr "Search in match with ID x (e.g. ma3)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "max,y"
+msgstr "max,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans les matchs d'identifiants x à y (ex: ma2,5)."
+msgstr "Search in matches with IDs from x to y (e.g. ma2,5)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tnx"
+msgstr "tnx"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
+msgstr "Search in tournament with ID x (e.g. tn1)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tnx,y"
+msgstr "tnx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
+msgstr "Search in tournaments with IDs from x to y (e.g. tn1,3)."
+
+#: ../../source/cmd_mode.rst
+msgid ""
+"Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
+"``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
+"même principe s'applique pour les tournois avec ``tn``."
+msgstr ""
+"To search in multiple non-contiguous matches, juxtapose the ``ma`` filter "
+"multiple times (e.g., ``s ma23 ma43`` for matches 23 and 43). The same "
+"principle applies for tournaments with ``tn``."
+
+#: ../../source/cmd_mode.rst
+msgid ""
+"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
+"des matchs du tournoi concerné. Les identifiants des matchs et des tournois "
+"sont visibles dans les colonnes ID des panneaux correspondants."
+msgstr ""
+"Searching in a tournament (``tn``) means searching in all the matches of "
+"that tournament. Match and tournament IDs are visible in the ID columns of "
+"the corresponding panels."
+
 #: ../../source/cmd_mode.rst:187
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "

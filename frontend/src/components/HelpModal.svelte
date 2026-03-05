@@ -1175,6 +1175,22 @@
                                 <td>Tx,y</td>
                                 <td>Creation date between x and y</td>
                             </tr>
+                            <tr>
+                                <td>max</td>
+                                <td>Search in match with ID x (e.g. ma3)</td>
+                            </tr>
+                            <tr>
+                                <td>max,y</td>
+                                <td>Search in matches with IDs from x to y (e.g. ma2,5)</td>
+                            </tr>
+                            <tr>
+                                <td>tnx</td>
+                                <td>Search in tournament with ID x (e.g. tn1)</td>
+                            </tr>
+                            <tr>
+                                <td>tnx,y</td>
+                                <td>Search in tournaments with IDs from x to y (e.g. tn1,3)</td>
+                            </tr>
                         </tbody>
                     </table>
                     <h3>Misc</h3>

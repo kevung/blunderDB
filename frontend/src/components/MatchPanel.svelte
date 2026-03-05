@@ -528,6 +528,7 @@
                         <thead>
                             <tr>
                                 <th class="no-select narrow-col">#</th>
+                                <th class="no-select narrow-col">ID</th>
                                 <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}>Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
                                 <th class="no-select sortable" on:click={() => handleSort('tournament')}>Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
                                 <th class="no-select sortable" on:click={() => handleSort('player1')}>Player 1 {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
@@ -541,6 +542,7 @@
                                 {#if editingMatchId === match.id}
                                     <tr class="match-editing-row" class:selected={selectedMatch === match}>
                                         <td class="index-cell narrow-col no-select">{index + 1}</td>
+                                        <td class="narrow-col no-select id-cell">{match.id}</td>
                                         <td class="narrow-col">
                                             <input
                                                 type="date"
@@ -608,6 +610,7 @@
                                         on:dblclick={() => handleDoubleClick(match)}
                                     >
                                         <td class="index-cell narrow-col no-select">{index + 1}</td>
+                                        <td class="narrow-col no-select id-cell">{match.id}</td>
                                         <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
                                         <td class="tournament-cell no-select" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
                                             {#if editingTournamentMatchId === match.id}
@@ -767,6 +770,12 @@
     .index-cell {
         text-align: center;
         color: #999;
+    }
+
+    .id-cell {
+        text-align: center;
+        color: #888;
+        font-size: 11px;
     }
 
     .narrow-col {
