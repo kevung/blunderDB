@@ -716,6 +716,9 @@ To switch to COMMAND mode from any other mode, press the \sphinxstyleemphasis{SP
 \sphinxAtStartPar
 blunderDB executes the queries sent by the user as long as they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required from the user.
 
+\sphinxAtStartPar
+To refine a search among the currently filtered positions, use the \sphinxcode{\sphinxupquote{ss}} command followed by filters (e.g.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). The \sphinxcode{\sphinxupquote{ss}} command works from NORMAL mode, after a prior search. The search window (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) also offers a “Search in current results” checkbox for the same functionality.
+
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
 Refer to \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} for the list of available commands in COMMAND mode.
@@ -1786,6 +1789,17 @@ s
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Search for positions with filters.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Search among the currently filtered positions.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4006,6 +4020,18 @@ The list of available filters in COMMAND mode is provided in \hyperref[\detokeni
 \end{sphinxadmonition}
 
 
+\subsection{Search in Current Results}
+\label{\detokenize{annexe_filtres:recherche-dans-les-resultats-courants}}
+\sphinxAtStartPar
+It is possible to refine a search by searching among the currently filtered positions. This allows you to progressively narrow down the results.
+
+\sphinxAtStartPar
+In COMMAND mode, use the \sphinxcode{\sphinxupquote{ss}} command followed by filters (e.g.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). The \sphinxcode{\sphinxupquote{ss}} command works from NORMAL mode, after a prior search.
+
+\sphinxAtStartPar
+The search window (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) also offers a “Search in current results” checkbox for the same functionality.
+
+
 \subsection{Filter Library}
 \label{\detokenize{annexe_filtres:bibliotheque-de-filtres}}
 \sphinxAtStartPar
@@ -4073,6 +4099,65 @@ Double\sphinxhyphen{}click on the filter to start the search.
 \label{\detokenize{annexe_filtres:exemples}}
 \sphinxAtStartPar
 Here are some examples of using filters in COMMAND mode:
+
+\sphinxAtStartPar
+Examples of searching within current results:
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{15}{35}\X{20}{35}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Scenario
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Command
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+After \sphinxcode{\sphinxupquote{s nc}}, search for short races
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss P\textless{}70
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+After \sphinxcode{\sphinxupquote{s g\textgreater{}20}}, keep only errors
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss E\textgreater{}40
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+After \sphinxcode{\sphinxupquote{s tn1}}, search for cube decisions
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss d
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
 
 \sphinxstepscope
 

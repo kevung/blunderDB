@@ -772,6 +772,13 @@ qu’elles soient valides et modifie immédiatement l’état de la base de donn
 le cas échéant. Il n’y a pas d’actions de sauvegarde explicite de la part
 de l’utilisateur.
 
+\sphinxAtStartPar
+Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
+la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). La commande
+\sphinxcode{\sphinxupquote{ss}} fonctionne depuis le mode NORMAL, après une recherche préalable. La
+fenêtre de recherche (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher
+« Search in current results » pour la même fonctionnalité.
+
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
 Se référer à la \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} pour la liste de commandes
@@ -1926,6 +1933,17 @@ s
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Chercher des positions avec des filtres.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Chercher parmi les positions actuellement filtrées.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4235,6 +4253,22 @@ La liste des filtres disponibles en mode COMMAND est fournie dans la
 \end{sphinxadmonition}
 
 
+\subsection{Recherche dans les résultats courants}
+\label{\detokenize{annexe_filtres:recherche-dans-les-resultats-courants}}
+\sphinxAtStartPar
+Il est possible d’affiner une recherche en cherchant parmi les positions
+actuellement filtrées. Cela permet de restreindre progressivement les résultats.
+
+\sphinxAtStartPar
+En mode COMMAND, utiliser la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}},
+\sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). La commande \sphinxcode{\sphinxupquote{ss}} fonctionne depuis le mode NORMAL,
+après une recherche préalable.
+
+\sphinxAtStartPar
+La fenêtre de recherche (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher
+« Search in current results » pour la même fonctionnalité.
+
+
 \subsection{Bibliothèque de filtres}
 \label{\detokenize{annexe_filtres:bibliotheque-de-filtres}}
 \sphinxAtStartPar
@@ -4304,6 +4338,65 @@ Double cliquer sur le filtre pour lancer la recherche.
 \label{\detokenize{annexe_filtres:exemples}}
 \sphinxAtStartPar
 Voici quelques exemples d’utilisation des filtres en mode COMMAND:
+
+\sphinxAtStartPar
+Exemples de recherche dans les résultats courants:
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{15}{35}\X{20}{35}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Scénario
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Commande
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Après \sphinxcode{\sphinxupquote{s nc}}, chercher les petites courses
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss P\textless{}70
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Après \sphinxcode{\sphinxupquote{s g\textgreater{}20}}, ne garder que les erreurs
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss E\textgreater{}40
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Après \sphinxcode{\sphinxupquote{s tn1}}, chercher les décisions de cube
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+ss d
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
 
 \sphinxstepscope
 

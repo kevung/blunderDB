@@ -33,7 +33,7 @@
 \contentsline {subsection}{\numberline {2.3.17}Display the analysis of a position imported from XG}{14}{subsection.2.3.17}%
 \contentsline {subsection}{\numberline {2.3.18}Export a position to XG}{14}{subsection.2.3.18}%
 \contentsline {subsection}{\numberline {2.3.19}View the different positions}{14}{subsection.2.3.19}%
-\contentsline {subsection}{\numberline {2.3.20}Search for positions based on criteria}{14}{subsection.2.3.20}%
+\contentsline {subsection}{\numberline {2.3.20}Search for positions based on criteria}{15}{subsection.2.3.20}%
 \contentsline {section}{\numberline {2.4}List of commands}{15}{section.2.4}%
 \contentsline {subsection}{\numberline {2.4.1}Global operations}{15}{subsection.2.4.1}%
 \contentsline {subsection}{\numberline {2.4.2}NORMAL Mode}{16}{subsection.2.4.2}%
@@ -70,21 +70,22 @@
 \contentsline {subsection}{\numberline {2.6.15}Where does the blunderDB icon come from?}{24}{subsection.2.6.15}%
 \contentsline {section}{\numberline {2.7}Annex: Advanced Filter Usage}{24}{section.2.7}%
 \contentsline {subsection}{\numberline {2.7.1}Command\sphinxhyphen {}line search for positions}{24}{subsection.2.7.1}%
-\contentsline {subsection}{\numberline {2.7.2}Filter Library}{25}{subsection.2.7.2}%
-\contentsline {subsection}{\numberline {2.7.3}Examples}{25}{subsection.2.7.3}%
-\contentsline {section}{\numberline {2.8}Windows Annex: False Detection of blunderDB as Malware}{25}{section.2.8}%
+\contentsline {subsection}{\numberline {2.7.2}Search in Current Results}{25}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}Filter Library}{25}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Examples}{25}{subsection.2.7.4}%
+\contentsline {section}{\numberline {2.8}Windows Annex: False Detection of blunderDB as Malware}{26}{section.2.8}%
 \contentsline {subsection}{\numberline {2.8.1}Windows SmartScreen Warning}{26}{subsection.2.8.1}%
-\contentsline {subsection}{\numberline {2.8.2}Windows Defender Blocking}{26}{subsection.2.8.2}%
-\contentsline {section}{\numberline {2.9}Mac Annex: Possible Blocking of blunderDB}{27}{section.2.9}%
+\contentsline {subsection}{\numberline {2.8.2}Windows Defender Blocking}{27}{subsection.2.8.2}%
+\contentsline {section}{\numberline {2.9}Mac Annex: Possible Blocking of blunderDB}{31}{section.2.9}%
 \contentsline {subsection}{\numberline {2.9.1}Installation of blunderDB}{35}{subsection.2.9.1}%
 \contentsline {subsection}{\numberline {2.9.2}Authorization to Run blunderDB}{35}{subsection.2.9.2}%
 \contentsline {section}{\numberline {2.10}Annex: Database Schema}{35}{section.2.10}%
 \contentsline {subsection}{\numberline {2.10.1}Version 1.0.0}{35}{subsection.2.10.1}%
-\contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{36}{subsection.2.10.2}%
+\contentsline {subsection}{\numberline {2.10.2}Version 1.1.0}{35}{subsection.2.10.2}%
 \contentsline {subsection}{\numberline {2.10.3}Version 1.2.0}{36}{subsection.2.10.3}%
 \contentsline {subsection}{\numberline {2.10.4}Version 1.3.0}{36}{subsection.2.10.4}%
 \contentsline {subsection}{\numberline {2.10.5}Version 1.4.0}{36}{subsection.2.10.5}%
-\contentsline {subsection}{\numberline {2.10.6}Version 1.5.0}{37}{subsection.2.10.6}%
+\contentsline {subsection}{\numberline {2.10.6}Version 1.5.0}{36}{subsection.2.10.6}%
 \contentsline {subsection}{\numberline {2.10.7}Version 1.6.0}{37}{subsection.2.10.7}%
 \contentsline {subsection}{\numberline {2.10.8}Version 1.7.0}{37}{subsection.2.10.8}%
 \contentsline {chapter}{\numberline {3}Contact}{39}{chapter.3}%
