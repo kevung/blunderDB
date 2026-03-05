@@ -2795,6 +2795,17 @@
             statusBarModeStore.set('EDIT');
             showCommentStore.set(false);
             showAnalysisStore.set(false);
+            // Clear the board when entering EDIT mode
+            positionStore.update(pos => {
+                pos.board.points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
+                pos.board.bearoff = [15, 15];
+                pos.cube = { owner: -1, value: 0 };
+                pos.score = [7, 7];
+                pos.dice = [3, 1];
+                pos.decision_type = 0;
+                pos.player_on_roll = 0;
+                return pos;
+            });
         } else {
             previousModeStore.set($statusBarModeStore);
             statusBarModeStore.set('NORMAL');
