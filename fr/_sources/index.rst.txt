@@ -108,6 +108,11 @@ Historique des versions
    Réouverture automatique de la dernière base de données.
 
    Amélioration de la barre d'outils et des icônes."
+   0.11.0, 06/03/2026, "Filtre de recherche dans les positions courantes.
+
+   Ajout de filtres par match et par tournoi.
+
+   Effacement automatique du plateau lors du passage en mode ÉDITION."
 
 Sommaire
 ========
