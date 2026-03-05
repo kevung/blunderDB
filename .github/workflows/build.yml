@@ -92,14 +92,20 @@ jobs:
       - name: Build App MacOS
         if: runner.os == 'macOS'
         run: |
-          # Inject the version into wails.json so Info.plist gets the correct CFBundleVersion
+          # Inject the version and output name into wails.json so Info.plist gets the correct
+          # CFBundleVersion and CFBundleExecutable ({{.Name}} must match the actual binary name)
           VERSION="${{ steps.vars.outputs.version }}"
+          OUTPUT_NAME="blunderDB-macos-${VERSION}"
           if command -v jq &> /dev/null; then
-            jq --arg v "$VERSION" '.info.productVersion = $v' wails.json > wails.json.tmp && mv wails.json.tmp wails.json
+            jq --arg v "$VERSION" --arg n "$OUTPUT_NAME" \
+              '.info.productVersion = $v | .name = $n | .outputfilename = $n' \
+              wails.json > wails.json.tmp && mv wails.json.tmp wails.json
           else
             sed -i '' "s/\"productVersion\": \"[^\"]*\"/\"productVersion\": \"$VERSION\"/" wails.json
+            sed -i '' "s/\"name\": \"[^\"]*\"/\"name\": \"$OUTPUT_NAME\"/" wails.json
+            sed -i '' "s/\"outputfilename\": \"[^\"]*\"/\"outputfilename\": \"$OUTPUT_NAME\"/" wails.json
           fi
-          wails build --platform 'darwin/universal' -o blunderDB-macos-${{ steps.vars.outputs.version }} -clean -tags webkit2_41
+          wails build --platform 'darwin/universal' -clean -tags webkit2_41
         shell: bash
         
       - name: Add Linux perms
@@ -109,9 +115,7 @@ jobs:
 
       - name: Add macOS perms
         if: runner.os == 'macOS'
-        run: |
-          chmod +x build/bin/*/Contents/MacOS/*
-          mv build/bin/blunderDB.app build/bin/blunderDB-macos-${{ steps.vars.outputs.version }}.app
+        run: chmod +x build/bin/*/Contents/MacOS/*
         shell: bash
 
       - name: Build .app zip file
