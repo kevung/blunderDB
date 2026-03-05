@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 15:29+0700\n"
+"POT-Creation-Date: 2026-03-06 00:00+0700\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -263,7 +263,6 @@ msgid "0.10.0"
 msgstr "0.10.0"
 
 #: ../../source/index.rst:1
-#, fuzzy
 msgid "25/02/2026"
 msgstr "February 25, 2026"
 
@@ -356,6 +355,26 @@ msgstr "Automatic reopening of the last database."
 #: ../../source/index.rst:33
 msgid "Amélioration de la barre d'outils et des icônes."
 msgstr "Improved toolbar and icons."
+
+#: ../../source/index.rst:1
+msgid "0.11.0"
+msgstr "0.11.0"
+
+#: ../../source/index.rst:1
+msgid "06/03/2026"
+msgstr "March 6, 2026"
+
+#: ../../source/index.rst:1
+msgid "Filtre de recherche dans les positions courantes."
+msgstr "Filter to search within currently filtered positions."
+
+#: ../../source/index.rst:3
+msgid "Ajout de filtres par match et par tournoi."
+msgstr "Add match and tournament filters."
+
+#: ../../source/index.rst:5
+msgid "Effacement automatique du plateau lors du passage en mode ÉDITION."
+msgstr "Automatic board clearing when switching to EDIT mode."
 
 #: ../../source/index.rst:113
 msgid "Sommaire"
