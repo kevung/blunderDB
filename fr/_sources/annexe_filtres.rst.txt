@@ -85,4 +85,9 @@ Voici quelques exemples d'utilisation des filtres en mode COMMAND:
    "Prime contre prime", "indiquer les primes", s
    "Ace-point bear-off", "point 1 pour l'adversaire", s P<60
    "Double avec au moins 20pip d'avance", "dés vides côté joueur du bas", s d p<-20
+   "Positions du match 5", "", s ma5
+   "Positions des matchs 2 à 4", "", s ma2,4
+   "Positions des matchs 23 et 43", "", s ma23 ma43
+   "Positions du tournoi 1", "", s tn1
+   "Erreurs dans le tournoi 2", "", s tn2 E>40
 

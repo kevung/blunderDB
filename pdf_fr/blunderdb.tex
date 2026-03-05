@@ -2820,6 +2820,50 @@ Date d’ajout de la position entre x et y (AAAA/MM/JJ).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+max
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Rechercher dans le match d’identifiant x (ex: ma3).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+max,y
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Rechercher dans les matchs d’identifiants x à y (ex: ma2,5).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+tnx
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Rechercher dans le tournoi d’identifiant x (ex: tn1).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+tnx,y
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Rechercher dans les tournois d’identifiants x à y (ex: tn1,3).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{longtable}
 \sphinxtableafterendhook
@@ -2839,6 +2883,20 @@ Pour le filtre de différence relative à la course (\sphinxtitleref{p\textgreat
 \sphinxtitleref{x\textgreater{}0} et en avance si \sphinxtitleref{x\textless{}0}. Exemple: \sphinxtitleref{p\textless{}\sphinxhyphen{}10} : le joueur a au moins 10 pips
 d’avance à la course. \sphinxtitleref{p50,70} : le joueur a entre 50 et 70 pips de retard à
 la course.
+\end{sphinxadmonition}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
+filtre \sphinxcode{\sphinxupquote{ma}} plusieurs fois (ex: \sphinxcode{\sphinxupquote{s ma23 ma43}} pour les matchs 23 et 43).
+Le même principe s’applique pour les tournois avec \sphinxcode{\sphinxupquote{tn}}.
+\end{sphinxadmonition}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Rechercher dans un tournoi (\sphinxcode{\sphinxupquote{tn}}) revient à rechercher dans
+l’ensemble des matchs du tournoi concerné. Les identifiants des matchs et des
+tournois sont visibles dans les colonnes ID des panneaux correspondants.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
@@ -4246,246 +4304,6 @@ Double cliquer sur le filtre pour lancer la recherche.
 \label{\detokenize{annexe_filtres:exemples}}
 \sphinxAtStartPar
 Voici quelques exemples d’utilisation des filtres en mode COMMAND:
-
-
-\begin{savenotes}\sphinxattablestart
-\sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{10}{40}\X{10}{40}\X{20}{40}}
-\sphinxtoprule
-\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Type de position
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Structure de pions
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Commande
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Courses
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s nc
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Courses petites
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s nc P\textless{}70
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Frapper au point 1
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s m"6/1*"
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Backgame 1\sphinxhyphen{}4
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-portes 24, 21
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s p\textgreater{}35
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Décision de Take/Pass à \sphinxhyphen{}2 \sphinxhyphen{}4
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-dés vides côté joueur du haut, score \sphinxhyphen{}2/\sphinxhyphen{}4
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s s d
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Envoi de too good
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-dés vides côté joueur du bas
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s d e\textgreater{}1000
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Blitz avec au moins 20\% de gammon
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-portes dans le jan, hommes à la barre
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s g\textgreater{}20
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Erreurs du joueur 1 de plus de 40 millipoints
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s E\textgreater{}40
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Position du tournoi Aachen2024
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s t"Aachen2024"
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Un pion arriéré à ramener
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s k1,1
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Quitter le point 20
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-point 20
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s m"20/"
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Prime contre prime
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-indiquer les primes
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Ace\sphinxhyphen{}point bear\sphinxhyphen{}off
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-point 1 pour l’adversaire
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s P\textless{}60
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Double avec au moins 20pip d’avance
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-dés vides côté joueur du bas
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-s d p\textless{}\sphinxhyphen{}20
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
 
 \sphinxstepscope
 

@@ -500,6 +500,18 @@ combinés.</p>
 <tr class="row-odd"><td><p>Tx,y</p></td>
 <td><p>Date d’ajout de la position entre x et y (AAAA/MM/JJ).</p></td>
 </tr>
+<tr class="row-even"><td><p>max</p></td>
+<td><p>Rechercher dans le match d’identifiant x (ex: ma3).</p></td>
+</tr>
+<tr class="row-odd"><td><p>max,y</p></td>
+<td><p>Rechercher dans les matchs d’identifiants x à y (ex: ma2,5).</p></td>
+</tr>
+<tr class="row-even"><td><p>tnx</p></td>
+<td><p>Rechercher dans le tournoi d’identifiant x (ex: tn1).</p></td>
+</tr>
+<tr class="row-odd"><td><p>tnx,y</p></td>
+<td><p>Rechercher dans les tournois d’identifiants x à y (ex: tn1,3).</p></td>
+</tr>
 </tbody>
 </table>
 <div class="admonition note">
@@ -514,6 +526,18 @@ fortiori</em> de filtrer les positions en fonction du type de décision (<cite>d
 <cite>x&gt;0</cite> et en avance si <cite>x&lt;0</cite>. Exemple: <cite>p&lt;-10</cite> : le joueur a au moins 10 pips
 d’avance à la course. <cite>p50,70</cite> : le joueur a entre 50 et 70 pips de retard à
 la course.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
+filtre <code class="docutils literal notranslate"><span class="pre">ma</span></code> plusieurs fois (ex: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> pour les matchs 23 et 43).
+Le même principe s’applique pour les tournois avec <code class="docutils literal notranslate"><span class="pre">tn</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Rechercher dans un tournoi (<code class="docutils literal notranslate"><span class="pre">tn</span></code>) revient à rechercher dans
+l’ensemble des matchs du tournoi concerné. Les identifiants des matchs et des
+tournois sont visibles dans les colonnes ID des panneaux correspondants.</p>
 </div>
 <p>Par exemple, la commande <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">s</span> <span class="pre">c</span> <span class="pre">p-20,-5</span> <span class="pre">w&gt;60</span> <span class="pre">z&gt;10</span> <span class="pre">K2,3</span></code> filtre toutes les
 positions en prenant en compte la structure des pions, le score et le cube

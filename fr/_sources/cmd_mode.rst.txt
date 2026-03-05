@@ -182,6 +182,10 @@ c'est-à-dire après le début de commande ``s``.
    "T>x", "Date d'ajout de la position après x (AAAA/MM/JJ)."
    "T<x", "Date d'ajout de la position avant x (AAAA/MM/JJ)."
    "Tx,y", "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
+   "max", "Rechercher dans le match d'identifiant x (ex: ma3)."
+   "max,y", "Rechercher dans les matchs d'identifiants x à y (ex: ma2,5)."
+   "tnx", "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
+   "tnx,y", "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
 
 
 .. note:: Filtrer les positions en fonction du lancer de dés (`D`) implique *a
@@ -192,6 +196,14 @@ c'est-à-dire après le début de commande ``s``.
    `x>0` et en avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips
    d'avance à la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à
    la course.
+
+.. note:: Pour rechercher dans plusieurs matchs non contigus, juxtaposer le
+   filtre ``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43).
+   Le même principe s'applique pour les tournois avec ``tn``.
+
+.. note:: Rechercher dans un tournoi (``tn``) revient à rechercher dans
+   l'ensemble des matchs du tournoi concerné. Les identifiants des matchs et des
+   tournois sont visibles dans les colonnes ID des panneaux correspondants.
 
 Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les
 positions en prenant en compte la structure des pions, le score et le cube
