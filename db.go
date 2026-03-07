@@ -2706,7 +2706,7 @@ func (p *Position) MatchesMoveErrorFilter(filter string, d *Database) bool {
 		// Find the played move in the analysis moves and get its error
 		for _, played := range playedMoves {
 			for i, m := range analysis.CheckerAnalysis.Moves {
-				if strings.EqualFold(strings.ReplaceAll(m.Move, " ", ""), strings.ReplaceAll(played, " ", "")) {
+				if strings.EqualFold(normalizeMove(m.Move), normalizeMove(played)) {
 					if i == 0 {
 						moveError = 0
 					} else if m.EquityError != nil {
