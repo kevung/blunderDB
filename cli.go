@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"regexp"
@@ -1901,15 +1902,15 @@ func (cli *CLI) runSearch(args []string) error {
 					hasError := false
 					if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 1 {
 						if analysis.CheckerAnalysis.Moves[1].EquityError != nil {
-							if *analysis.CheckerAnalysis.Moves[1].EquityError >= *errorMin {
+							if math.Round(*analysis.CheckerAnalysis.Moves[1].EquityError*1000)/1000 >= *errorMin {
 								hasError = true
 							}
 						}
 					}
 					if analysis.DoublingCubeAnalysis != nil {
-						if analysis.DoublingCubeAnalysis.CubefulNoDoubleError >= *errorMin ||
-							analysis.DoublingCubeAnalysis.CubefulDoubleTakeError >= *errorMin ||
-							analysis.DoublingCubeAnalysis.CubefulDoublePassError >= *errorMin {
+						if math.Round(analysis.DoublingCubeAnalysis.CubefulNoDoubleError*1000)/1000 >= *errorMin ||
+							math.Round(analysis.DoublingCubeAnalysis.CubefulDoubleTakeError*1000)/1000 >= *errorMin ||
+							math.Round(analysis.DoublingCubeAnalysis.CubefulDoublePassError*1000)/1000 >= *errorMin {
 							hasError = true
 						}
 					}

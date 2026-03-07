@@ -1890,6 +1890,16 @@ func (p *Position) MatchesPlayer2CheckerOff(filter string) bool {
 	return false
 }
 
+// roundToMillipoint rounds an equity value (in equity points) to the nearest millipoint (0.001).
+func roundToMillipoint(v float64) float64 {
+	return math.Round(v*1000) / 1000
+}
+
+// roundToHundredthPercent rounds a rate (in percent) to the nearest 0.01%.
+func roundToHundredthPercent(v float64) float64 {
+	return math.Round(v*100) / 100
+}
+
 // Add MatchesPlayer2BackgammonRate method to Position type
 func (p *Position) MatchesPlayer2BackgammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
@@ -1909,6 +1919,8 @@ func (p *Position) MatchesPlayer2BackgammonRate(filter string, d *Database) bool
 		fmt.Printf("Excluding position ID: %d due to no backgammon rate found\n", p.ID)
 		return false
 	}
+
+	backgammonRate = roundToHundredthPercent(backgammonRate)
 
 	if strings.HasPrefix(filter, "B>") && !strings.HasPrefix(filter, "BO>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
@@ -1966,6 +1978,8 @@ func (p *Position) MatchesPlayer2GammonRate(filter string, d *Database) bool {
 		fmt.Printf("Excluding position ID: %d due to no gammon rate found\n", p.ID)
 		return false
 	}
+
+	gammonRate = roundToHundredthPercent(gammonRate)
 
 	if strings.HasPrefix(filter, "G>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
@@ -2076,6 +2090,8 @@ func (p *Position) MatchesWinRate(filter string, d *Database) bool {
 		return false
 	}
 
+	winRate = roundToHundredthPercent(winRate)
+
 	if strings.HasPrefix(filter, "w>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
@@ -2132,6 +2148,8 @@ func (p *Position) MatchesPlayer2WinRate(filter string, d *Database) bool {
 		fmt.Printf("Excluding position ID: %d due to no win rate found\n", p.ID)
 		return false
 	}
+
+	winRate = roundToHundredthPercent(winRate)
 
 	if strings.HasPrefix(filter, "W>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
@@ -2190,6 +2208,8 @@ func (p *Position) MatchesGammonRate(filter string, d *Database) bool {
 		return false
 	}
 
+	gammonRate = roundToHundredthPercent(gammonRate)
+
 	if strings.HasPrefix(filter, "g>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
@@ -2246,6 +2266,8 @@ func (p *Position) MatchesBackgammonRate(filter string, d *Database) bool {
 		fmt.Printf("Excluding position ID: %d due to no backgammon rate found\n", p.ID)
 		return false
 	}
+
+	backgammonRate = roundToHundredthPercent(backgammonRate)
 
 	if strings.HasPrefix(filter, "b>") && !strings.HasPrefix(filter, "bo>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
@@ -2580,6 +2602,8 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 		return false
 	}
 
+	equity = roundToMillipoint(equity)
+
 	if strings.HasPrefix(filter, "e>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
@@ -2755,8 +2779,8 @@ func (p *Position) MatchesMoveErrorFilter(filter string, d *Database) bool {
 		return false
 	}
 
-	// Convert move error from equity points to millipoints for comparison
-	moveErrorMillipoints := moveError * 1000
+	// Convert move error from equity points to millipoints and round to nearest millipoint
+	moveErrorMillipoints := math.Round(moveError * 1000)
 
 	if strings.HasPrefix(filter, "E>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
