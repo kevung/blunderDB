@@ -75,7 +75,7 @@ Historique des versions
    Affichage de flèches pour les coups sélectionnés.
    
    Raccourcis clavier pour l'import/export."
-   0.10.0, 25/02/2026, "Import de matchs depuis eXtreme Gammon (XG), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).
+   0.10.0, 25/02/2026, "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).
 
    Mode MATCH: navigation dans les coups d'un match importé, avec mise en évidence du coup joué.
 
@@ -113,6 +113,7 @@ Historique des versions
    Ajout de filtres par match et par tournoi.
 
    Effacement automatique du plateau lors du passage en mode ÉDITION."
+   0.12.0, 19/03/2026, "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 
 Sommaire
 ========

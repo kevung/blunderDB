@@ -38,13 +38,22 @@ When you provide CLI commands (`import`, `export`, `list`, `delete`, `help`, `ve
 
 ## Import Command
 
-Import XG match files or position files into a database.
+Import match files (.xg, .sgf, .mat, .txt, .bgf) or XGP position files (.xgp) into a database.
 
-### Import XG Match
+### Import Match
 
 ```bash
 ./blunderdb import --db database.db --type match --file match.xg
 ```
+
+### Import XGP Position
+
+```bash
+./blunderdb import --db database.db --type match --file position.xgp
+```
+
+XGP files are single-position files exported from eXtreme Gammon. They contain
+the position along with its analysis (checker moves and/or cube decisions).
 
 **Options:**
 - `--db` - Path to the database file (required)
@@ -295,8 +304,8 @@ Deletes a match and all associated data (games, moves, analyses). Without `--con
 
 ```bash
 #!/bin/bash
-for xg_file in matches/*.xg; do
-    ./blunderdb import --db mymatches.db --type match --file "$xg_file"
+for file in matches/*.xg matches/*.xgp; do
+    ./blunderdb import --db mymatches.db --type match --file "$file"
 done
 ```
 

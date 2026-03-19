@@ -11,7 +11,7 @@ blunderDB now supports both GUI and CLI modes in a **single executable**.
 
 ### CLI Mode
 ```bash
-# Import an XG match
+# Import an XG match or XGP position
 ./blunderdb import --db matches.db --type match --file game.xg
 
 # List statistics  

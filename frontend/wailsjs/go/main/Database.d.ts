@@ -100,6 +100,8 @@ export function ImportGnuBGMatchFromText(arg1:string):Promise<number>;
 
 export function ImportXGMatch(arg1:string):Promise<number>;
 
+export function ImportXGPPosition(arg1:string):Promise<number>;
+
 export function LoadAllPositions():Promise<Array<main.Position>>;
 
 export function LoadAnalysis(arg1:number):Promise<main.PositionAnalysis>;

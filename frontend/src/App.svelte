@@ -50,6 +50,7 @@
         ImportBGFMatch, // Import ImportBGFMatch
         ImportBGFPosition, // Import ImportBGFPosition
         ImportBGFPositionFromText, // Import ImportBGFPositionFromText
+        ImportXGPPosition, // Import ImportXGPPosition
         GetAllMatches, // Import GetAllMatches
         SaveSessionState, // Import SaveSessionState
         LoadSessionState, // Import LoadSessionState
@@ -1406,12 +1407,25 @@
     async function importSingleFile(filePath) {
         const lowerPath = filePath.toLowerCase();
         const isXGFile = lowerPath.endsWith('.xg');
+        const isXGPFile = lowerPath.endsWith('.xgp');
         const isBGFFile = lowerPath.endsWith('.bgf');
         const isSGFFile = lowerPath.endsWith('.sgf');
         const isMATFile = lowerPath.endsWith('.mat');
         const isTXTFile = lowerPath.endsWith('.txt');
 
-        if (isXGFile) {
+        if (isXGPFile) {
+            console.log("Importing XGP position file:", filePath);
+            try {
+                const posID = await ImportXGPPosition(filePath);
+                console.log('XGP position imported with ID:', posID);
+                setStatusBarMessage(`XGP position imported successfully (ID: ${posID})`);
+                await loadAllPositions();
+            } catch (error) {
+                console.error("Error importing XGP position:", error);
+                setStatusBarMessage('Error importing XGP position: ' + error);
+                await ShowAlert('Error importing XGP position: ' + error);
+            }
+        } else if (isXGFile) {
             console.log("Importing XG match file:", filePath);
             try {
                 const matchID = await ImportXGMatch(filePath);
@@ -1570,12 +1584,16 @@
     async function importSingleFileBatch(filePath) {
         const lowerPath = filePath.toLowerCase();
         const isXGFile = lowerPath.endsWith('.xg');
+        const isXGPFile = lowerPath.endsWith('.xgp');
         const isBGFFile = lowerPath.endsWith('.bgf');
         const isSGFFile = lowerPath.endsWith('.sgf');
         const isMATFile = lowerPath.endsWith('.mat');
         const isTXTFile = lowerPath.endsWith('.txt');
 
-        if (isXGFile) {
+        if (isXGPFile) {
+            const posID = await ImportXGPPosition(filePath);
+            return { type: 'position', id: posID };
+        } else if (isXGFile) {
             const matchID = await ImportXGMatch(filePath);
             return { type: 'match', id: matchID };
         } else if (isBGFFile) {
@@ -3661,7 +3679,7 @@ function togglePipcount() {
                 const ext = p.toLowerCase().split('.').pop();
                 if (ext === 'db') {
                     dbFiles.push(p);
-                } else if (['txt', 'xg', 'sgf', 'mat', 'bgf'].includes(ext)) {
+                } else if (['txt', 'xg', 'xgp', 'sgf', 'mat', 'bgf'].includes(ext)) {
                     importFiles.push(p);
                 } else {
                     unsupported.push(p);

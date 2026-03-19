@@ -198,6 +198,10 @@ export function ImportXGMatch(arg1) {
   return window['go']['main']['Database']['ImportXGMatch'](arg1);
 }
 
+export function ImportXGPPosition(arg1) {
+  return window['go']['main']['Database']['ImportXGPPosition'](arg1);
+}
+
 export function LoadAllPositions() {
   return window['go']['main']['Database']['LoadAllPositions']();
 }

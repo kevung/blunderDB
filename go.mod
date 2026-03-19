@@ -6,7 +6,7 @@ require (
 	github.com/adrg/xdg v0.5.3
 	github.com/kevung/bgfparser v1.2.0
 	github.com/kevung/gnubgparser v1.2.0
-	github.com/kevung/xgparser v1.2.0
+	github.com/kevung/xgparser v1.2.1
 	github.com/wailsapp/wails/v2 v2.10.1
 	modernc.org/sqlite v1.34.5
 )

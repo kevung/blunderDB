@@ -136,7 +136,7 @@ blunderDB peut importer des matchs depuis différentes sources.
 
 **Formats supportés:**
 
-* eXtreme Gammon (XG): fichiers *.xg*
+* eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)
 * GNUbg: fichiers *.sgf*
 * Jellyfish: fichiers *.mat* et *.txt*
 * BGBlitz: fichiers *.bgf* et *.txt*
@@ -171,7 +171,7 @@ dossier et ses sous-dossiers:
 #. Sélectionner le dossier contenant les fichiers de matchs.
 
 #. blunderDB collecte et importe automatiquement tous les fichiers reconnus
-   (*.xg*, *.sgf*, *.mat*, *.txt*, *.bgf*).
+   (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*).
 
 Glisser-déposer
 ----------------
@@ -179,7 +179,7 @@ Glisser-déposer
 blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer
 sur la fenêtre de blunderDB:
 
-* des fichiers de match ou de position (*.xg*, *.sgf*, *.mat*, *.txt*, *.bgf*)
+* des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)
   pour les importer,
 
 * des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner

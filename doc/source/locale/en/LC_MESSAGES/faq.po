@@ -196,10 +196,12 @@ msgstr "blunderDB supports the following match formats:"
 #: ../../source/faq.rst:89
 msgid ""
 "**eXtreme Gammon (XG)**: fichiers *.xg*, avec l'analyse complète des "
-"coups, décisions de cube, coups joués et support multi-moteurs."
+"coups, décisions de cube, coups joués et support multi-moteurs. Fichiers *.xgp*"
+" pour l'import de positions individuelles avec analyse."
 msgstr ""
 "**eXtreme Gammon (XG)**: *.xg* files, with complete move analysis, "
-"cube decisions, played moves, and multi-engine support."
+"cube decisions, played moves, and multi-engine support. *.xgp* files"
+" for importing individual positions with analysis."
 
 #: ../../source/faq.rst:92
 msgid "**GNUbg**: fichiers *.sgf* (Smart Game Format), avec l'analyse."

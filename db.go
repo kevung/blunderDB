@@ -6567,6 +6567,14 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 		Moves: checkerMoves,
 	}
 
+	// Set played move on the analysis if available
+	if playedMove != nil {
+		playedMoveStr := d.convertXGMoveToStringWithHits(*playedMove, initialPosition, activePlayer)
+		if playedMoveStr != "" {
+			posAnalysis.PlayedMoves = []string{playedMoveStr}
+		}
+	}
+
 	// Save to analysis table
 	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
 }
@@ -11146,6 +11154,133 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 	if err := tx.Commit(); err != nil {
 		return 0, fmt.Errorf("failed to commit position with analysis: %w", err)
 	}
+	return positionID, nil
+}
+
+// ImportXGPPosition imports an XG position file (.xgp) as a standalone position with analysis.
+// XGP files use the same binary format as .xg match files but contain a single position.
+func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	// Parse the xgp file using the standard XG parser
+	match, err := xgparser.ParseXGFromFile(filePath)
+	if err != nil {
+		return 0, fmt.Errorf("failed to parse XGP file: %w", err)
+	}
+
+	if len(match.Games) == 0 || len(match.Games[0].Moves) == 0 {
+		return 0, fmt.Errorf("XGP file contains no position data")
+	}
+
+	game := &match.Games[0]
+	move := &game.Moves[0]
+
+	// Determine position type and create blunderDB position
+	var pos *Position
+
+	if move.MoveType == "checker" && move.CheckerMove != nil {
+		pos, err = d.createPositionFromXG(move.CheckerMove.Position, game, match.Metadata.MatchLength, 0, move.CheckerMove.ActivePlayer)
+		if err != nil {
+			return 0, fmt.Errorf("failed to create position from XGP: %w", err)
+		}
+		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CheckerMove.ActivePlayer)
+		pos.DecisionType = CheckerAction
+		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
+	} else if move.MoveType == "cube" && move.CubeMove != nil {
+		pos, err = d.createPositionFromXG(move.CubeMove.Position, game, match.Metadata.MatchLength, 0, move.CubeMove.ActivePlayer)
+		if err != nil {
+			return 0, fmt.Errorf("failed to create position from XGP: %w", err)
+		}
+		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
+		pos.DecisionType = CubeAction
+		pos.Dice = [2]int{0, 0}
+	} else {
+		return 0, fmt.Errorf("XGP file contains unsupported move type: %s", move.MoveType)
+	}
+
+	// Save position to database
+	normalizedPosition := pos.NormalizeForStorage()
+	positionJSON, err := json.Marshal(normalizedPosition)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal position: %w", err)
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return 0, fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	if err != nil {
+		return 0, fmt.Errorf("failed to insert position: %w", err)
+	}
+
+	positionID, err := result.LastInsertId()
+	if err != nil {
+		return 0, fmt.Errorf("failed to get position ID: %w", err)
+	}
+
+	normalizedPosition.ID = positionID
+	positionJSON, err = json.Marshal(normalizedPosition)
+	if err != nil {
+		return 0, fmt.Errorf("failed to marshal position with ID: %w", err)
+	}
+	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
+	if err != nil {
+		return 0, fmt.Errorf("failed to update position state: %w", err)
+	}
+
+	// Save analysis
+	if move.MoveType == "checker" && move.CheckerMove != nil && len(move.CheckerMove.Analysis) > 0 {
+		err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis,
+			&move.CheckerMove.Position, move.CheckerMove.ActivePlayer, &move.CheckerMove.PlayedMove)
+		if err != nil {
+			fmt.Printf("Warning: failed to save checker analysis for XGP position: %v\n", err)
+		}
+	} else if move.MoveType == "cube" && move.CubeMove != nil && move.CubeMove.Analysis != nil {
+		err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+		if err != nil {
+			fmt.Printf("Warning: failed to save cube analysis for XGP position: %v\n", err)
+		}
+	}
+
+	// If there's also a second move (e.g., checker move following a cube decision),
+	// save that analysis too on the same position
+	if len(game.Moves) > 1 {
+		secondMove := &game.Moves[1]
+		if secondMove.MoveType == "checker" && secondMove.CheckerMove != nil && len(secondMove.CheckerMove.Analysis) > 0 {
+			// Create the checker position to store as a separate position
+			checkerPos, err := d.createPositionFromXG(secondMove.CheckerMove.Position, game, match.Metadata.MatchLength, 1, secondMove.CheckerMove.ActivePlayer)
+			if err == nil {
+				checkerPos.PlayerOnRoll = convertXGPlayerToBlunderDB(secondMove.CheckerMove.ActivePlayer)
+				checkerPos.DecisionType = CheckerAction
+				checkerPos.Dice = [2]int{int(secondMove.CheckerMove.Dice[0]), int(secondMove.CheckerMove.Dice[1])}
+
+				normalizedChecker := checkerPos.NormalizeForStorage()
+				checkerJSON, err := json.Marshal(normalizedChecker)
+				if err == nil {
+					checkerResult, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(checkerJSON))
+					if err == nil {
+						checkerPosID, _ := checkerResult.LastInsertId()
+						normalizedChecker.ID = checkerPosID
+						checkerJSON, _ = json.Marshal(normalizedChecker)
+						tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(checkerJSON), checkerPosID)
+
+						d.saveCheckerAnalysisToPositionInTx(tx, checkerPosID, secondMove.CheckerMove.Analysis,
+							&secondMove.CheckerMove.Position, secondMove.CheckerMove.ActivePlayer, &secondMove.CheckerMove.PlayedMove)
+					}
+				}
+			}
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return 0, fmt.Errorf("failed to commit XGP position: %w", err)
+	}
+
+	fmt.Printf("Successfully imported XGP position (ID: %d) from %s\n", positionID, filePath)
 	return positionID, nil
 }
 
