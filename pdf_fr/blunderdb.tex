@@ -68,7 +68,7 @@
 
 
 \title{blunderDB}
-\date{07 mars 2026}
+\date{19 mars 2026}
 \release{0.11.1}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -355,7 +355,7 @@ Raccourcis clavier pour l’import/export.
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Import de matchs depuis eXtreme Gammon (XG), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).
+Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).
 
 \sphinxAtStartPar
 Mode MATCH: navigation dans les coups d’un match importé, avec mise en évidence du coup joué.
@@ -426,6 +426,22 @@ Ajout de filtres par match et par tournoi.
 
 \sphinxAtStartPar
 Effacement automatique du plateau lors du passage en mode ÉDITION.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.12.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+19/03/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Import de fichiers de position eXtreme Gammon (XGP) avec analyse.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1106,7 +1122,7 @@ blunderDB peut importer des matchs depuis différentes sources.
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-eXtreme Gammon (XG): fichiers \sphinxstyleemphasis{.xg}
+eXtreme Gammon (XG): fichiers \sphinxstyleemphasis{.xg} et \sphinxstyleemphasis{.xgp} (positions)
 
 \item {} 
 \sphinxAtStartPar
@@ -1176,7 +1192,7 @@ Sélectionner le dossier contenant les fichiers de matchs.
 \item {} 
 \sphinxAtStartPar
 blunderDB collecte et importe automatiquement tous les fichiers reconnus
-(\sphinxstyleemphasis{.xg}, \sphinxstyleemphasis{.sgf}, \sphinxstyleemphasis{.mat}, \sphinxstyleemphasis{.txt}, \sphinxstyleemphasis{.bgf}).
+(\sphinxstyleemphasis{.xg}, \sphinxstyleemphasis{.xgp}, \sphinxstyleemphasis{.sgf}, \sphinxstyleemphasis{.mat}, \sphinxstyleemphasis{.txt}, \sphinxstyleemphasis{.bgf}).
 
 \end{enumerate}
 
@@ -1189,7 +1205,7 @@ sur la fenêtre de blunderDB:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-des fichiers de match ou de position (\sphinxstyleemphasis{.xg}, \sphinxstyleemphasis{.sgf}, \sphinxstyleemphasis{.mat}, \sphinxstyleemphasis{.txt}, \sphinxstyleemphasis{.bgf})
+des fichiers de match ou de position (\sphinxstyleemphasis{.xg}, \sphinxstyleemphasis{.xgp}, \sphinxstyleemphasis{.sgf}, \sphinxstyleemphasis{.mat}, \sphinxstyleemphasis{.txt}, \sphinxstyleemphasis{.bgf})
 pour les importer,
 
 \item {} 
@@ -1774,7 +1790,7 @@ import, i
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Importe une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt, bgf).
+Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3114,7 +3130,7 @@ CTRL\sphinxhyphen{}I
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Importer une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt, bgf).
+Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4095,7 +4111,8 @@ blunderDB supporte les formats de match suivants:
 \item {} 
 \sphinxAtStartPar
 \sphinxstylestrong{eXtreme Gammon (XG)}: fichiers \sphinxstyleemphasis{.xg}, avec l’analyse complète des coups,
-décisions de cube, coups joués et support multi\sphinxhyphen{}moteurs.
+décisions de cube, coups joués et support multi\sphinxhyphen{}moteurs. Fichiers \sphinxstyleemphasis{.xgp}
+pour l’import de positions individuelles avec analyse.
 
 \item {} 
 \sphinxAtStartPar

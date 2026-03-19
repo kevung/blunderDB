@@ -87,7 +87,8 @@ Quels formats de fichiers de match sont supportés?
 blunderDB supporte les formats de match suivants:
 
 * **eXtreme Gammon (XG)**: fichiers *.xg*, avec l'analyse complète des coups,
-  décisions de cube, coups joués et support multi-moteurs.
+  décisions de cube, coups joués et support multi-moteurs. Fichiers *.xgp*
+  pour l'import de positions individuelles avec analyse.
 
 * **GNUbg**: fichiers *.sgf* (Smart Game Format), avec l'analyse.
 

@@ -30,7 +30,7 @@ Position
    :widths: 7, 20
    :align: center
 
-   "CTRL-I", "Importer une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt, bgf)."
+   "CTRL-I", "Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf)."
    "CTRL-SHIFT-F", "Importer récursivement un dossier de fichiers de matchs/positions."
    "CTRL-C", "Copier une position dans le presse-papier."
    "CTRL-V", "Coller une position depuis le presse-papier (détection automatique du format)."
