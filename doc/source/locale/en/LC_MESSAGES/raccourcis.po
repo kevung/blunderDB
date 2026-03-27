@@ -92,9 +92,9 @@ msgstr "CTRL-I"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Importer une ou plusieurs positions/matchs par fichier (xg, sgf, mat, "
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
 "txt, bgf)."
-msgstr "Import one or more positions/matches from file (xg, sgf, mat, txt, bgf)."
+msgstr "Import one or more positions/matches from file (xg, xgp, sgf, mat, txt, bgf)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-F"

@@ -145,9 +145,9 @@ func (cli *CLI) runImport(args []string) error {
 		importCmd.PrintDefaults()
 		fmt.Println()
 		fmt.Println("Import Types:")
-		fmt.Println("  match     Import a single XG match file (.xg)")
+		fmt.Println("  match     Import a single match file (.xg, .sgf, .mat, .txt, .bgf) or XGP position (.xgp)")
 		fmt.Println("  position  Import positions from a text file")
-		fmt.Println("  batch     Batch import all .xg files from a directory")
+		fmt.Println("  batch     Batch import all match/position files from a directory")
 		fmt.Println()
 		fmt.Println("Examples:")
 		fmt.Println("  # Import XG match file")
@@ -503,7 +503,7 @@ func (cli *CLI) initDatabase(dbPath string) error {
 	return nil
 }
 
-// importMatch imports a match file (XG, SGF, MAT, or TXT format)
+// importMatch imports a match file (XG, SGF, MAT, TXT, BGF) or XGP position file
 func (cli *CLI) importMatch(filePath string) error {
 	fmt.Printf("Importing match from: %s\n", filePath)
 
@@ -513,6 +513,14 @@ func (cli *CLI) importMatch(filePath string) error {
 	var err error
 
 	switch ext {
+	case ".xgp":
+		// XGP files are single-position files, not match files
+		posID, posErr := cli.db.ImportXGPPosition(filePath)
+		if posErr != nil {
+			return fmt.Errorf("failed to import XGP position: %v", posErr)
+		}
+		fmt.Printf("Successfully imported XGP position (ID: %d)\n", posID)
+		return nil
 	case ".xg":
 		matchID, err = cli.db.ImportXGMatch(filePath)
 	case ".sgf", ".mat", ".txt":
@@ -520,7 +528,7 @@ func (cli *CLI) importMatch(filePath string) error {
 	case ".bgf":
 		matchID, err = cli.db.ImportBGFMatch(filePath)
 	default:
-		return fmt.Errorf("invalid file type: %s (expected .xg, .sgf, .mat, .txt, or .bgf)", ext)
+		return fmt.Errorf("invalid file type: %s (expected .xg, .xgp, .sgf, .mat, .txt, or .bgf)", ext)
 	}
 
 	if err != nil {
@@ -1329,6 +1337,7 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 	// Supported match file extensions
 	supportedExts := map[string]bool{
 		".xg":  true,
+		".xgp": true,
 		".sgf": true,
 		".mat": true,
 		".txt": true,
@@ -1390,6 +1399,21 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 		ext := strings.ToLower(filepath.Ext(filePath))
 		var matchID int64
 		switch ext {
+		case ".xgp":
+			posID, posErr := cli.db.ImportXGPPosition(filePath)
+			if posErr != nil {
+				fmt.Printf(" ERROR: %v\n", posErr)
+				result.Error = posErr.Error()
+				failCount++
+			} else {
+				result.Success = true
+				result.Positions = 1
+				totalPositions++
+				successCount++
+				fmt.Printf(" OK (Position ID: %d)\n", posID)
+			}
+			results = append(results, result)
+			continue
 		case ".xg":
 			matchID, err = cli.db.ImportXGMatch(filePath)
 		case ".sgf", ".mat", ".txt":

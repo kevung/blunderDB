@@ -303,8 +303,8 @@ msgid "**Formats supportés:**"
 msgstr "**Supported formats:**"
 
 #: ../../source/guide_utilisateur.rst:139
-msgid "eXtreme Gammon (XG): fichiers *.xg*"
-msgstr "eXtreme Gammon (XG): *.xg* files"
+msgid "eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)"
+msgstr "eXtreme Gammon (XG): *.xg* and *.xgp* (positions) files"
 
 #: ../../source/guide_utilisateur.rst:140
 msgid "GNUbg: fichiers *.sgf*"
@@ -385,10 +385,10 @@ msgstr "Select the folder containing the match files."
 #: ../../source/guide_utilisateur.rst:173
 msgid ""
 "blunderDB collecte et importe automatiquement tous les fichiers reconnus "
-"(*.xg*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
+"(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 msgstr ""
 "blunderDB automatically collects and imports all recognized files "
-"(*.xg*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
+"(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 
 #: ../../source/guide_utilisateur.rst:177
 msgid "Glisser-déposer"
@@ -404,10 +404,10 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:182
 msgid ""
-"des fichiers de match ou de position (*.xg*, *.sgf*, *.mat*, *.txt*, "
+"des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, "
 "*.bgf*) pour les importer,"
 msgstr ""
-"match or position files (*.xg*, *.sgf*, *.mat*, *.txt*, "
+"match or position files (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, "
 "*.bgf*) to import them,"
 
 #: ../../source/guide_utilisateur.rst:185

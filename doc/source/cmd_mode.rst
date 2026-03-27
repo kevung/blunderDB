@@ -42,7 +42,7 @@ Mode NORMAL
    :widths: 10, 20
    :align: center
 
-   "import, i", "Importe une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt, bgf)."
+   "import, i", "Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf)."
    "delete, del, d", "Supprime la position courante."
    "[number]", "Aller à la position d'indice indiqué."
    "list, l", "Afficher l'analyse de la position courante."

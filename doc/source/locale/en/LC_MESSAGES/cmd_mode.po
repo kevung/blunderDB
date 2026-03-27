@@ -187,9 +187,9 @@ msgid "import, i"
 msgstr "import, i"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Importe une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt,"
+msgid "Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt,"
 " bgf)."
-msgstr "Import one or more positions/matches from file (xg, sgf, mat, txt,"
+msgstr "Import one or more positions/matches from file (xg, xgp, sgf, mat, txt,"
 " bgf)."
 
 #: ../../source/cmd_mode.rst:1

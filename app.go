@@ -89,9 +89,10 @@ func (a *App) OpenPositionDialog() (*FileDialogResponse, error) {
 	filePath, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import Position or Match File",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "All Supported Files (*.txt, *.xg, *.sgf, *.mat, *.bgf)", Pattern: "*.txt;*.xg;*.sgf;*.mat;*.bgf"},
+			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf"},
 			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
 			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
+			{DisplayName: "XG Position Files (*.xgp)", Pattern: "*.xgp"},
 			{DisplayName: "GnuBG Match Files (*.sgf)", Pattern: "*.sgf"},
 			{DisplayName: "Jellyfish Match Files (*.mat)", Pattern: "*.mat"},
 			{DisplayName: "BGBlitz Match Files (*.bgf)", Pattern: "*.bgf"},
@@ -131,9 +132,10 @@ func (a *App) OpenPositionFilesDialog() ([]string, error) {
 	return runtime.OpenMultipleFilesDialog(a.ctx, runtime.OpenDialogOptions{
 		Title: "Import Position or Match Files",
 		Filters: []runtime.FileFilter{
-			{DisplayName: "All Supported Files (*.txt, *.xg, *.sgf, *.mat, *.bgf)", Pattern: "*.txt;*.xg;*.sgf;*.mat;*.bgf"},
+			{DisplayName: "All Supported Files (*.txt, *.xg, *.xgp, *.sgf, *.mat, *.bgf)", Pattern: "*.txt;*.xg;*.xgp;*.sgf;*.mat;*.bgf"},
 			{DisplayName: "Position Files (*.txt)", Pattern: "*.txt"},
 			{DisplayName: "XG Match Files (*.xg)", Pattern: "*.xg"},
+			{DisplayName: "XG Position Files (*.xgp)", Pattern: "*.xgp"},
 			{DisplayName: "GnuBG Match Files (*.sgf)", Pattern: "*.sgf"},
 			{DisplayName: "Jellyfish Match Files (*.mat)", Pattern: "*.mat"},
 			{DisplayName: "BGBlitz Match Files (*.bgf)", Pattern: "*.bgf"},
@@ -153,6 +155,7 @@ func (a *App) OpenPositionFolderDialog() (string, error) {
 var supportedImportExtensions = map[string]bool{
 	".txt": true,
 	".xg":  true,
+	".xgp": true,
 	".sgf": true,
 	".mat": true,
 	".bgf": true,
