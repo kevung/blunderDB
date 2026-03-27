@@ -53,7 +53,7 @@
             event.preventDefault();
             if (event.key === 'Escape') {
                 onClose();
-            } else if (event.ctrlKey && event.code === 'KeyH') {
+            } else if (event.ctrlKey && event.code === 'KeyF') {
                 onClose();
             } else if (!event.ctrlKey && event.key === '?') {
                 onClose();
@@ -484,12 +484,7 @@
 
                             <tr>
                                 <td>Ctrl + F</td>
-                                <td>Find Position</td>
-                            </tr>
-
-                            <tr>
-                                <td>Ctrl + H</td>
-                                <td>Search History</td>
+                                <td>Search Panel</td>
                             </tr>
 
                             <tr>

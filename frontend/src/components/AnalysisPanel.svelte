@@ -389,11 +389,6 @@
         // Only toggle if both analyses available (MATCH mode)
         if (!showTabs) return;
         
-        // Don't toggle if clicking on close button
-        if (event.target.closest('.close-icon')) {
-            return;
-        }
-        
         // Check if clicking on table header (TH) or on a header row
         const clickedTH = event.target.closest('th');
         const clickedRow = event.target.closest('tr');
@@ -457,10 +452,7 @@
     $: showTabs = hasCheckerAnalysis && hasCubeAnalysis && $statusBarModeStore === 'MATCH' && matchCtx.isMatchMode && !isFirstPositionOfGame;
 </script>
 
-{#if visible}
-    <section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" on:keydown={handleKeyDown}>
-        <button type="button" class="close-icon" on:click={onClose} aria-label="Close" on:keydown={handleKeyDown}>×</button>
-        
+<section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" on:keydown={handleKeyDown}>
         <div class="analysis-content" on:click={handleContentClick} on:keydown={() => {}} role="button" tabindex="-1">
             {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
                 {#each cubeAnalysesList as cubeAnalysis, cubeIdx}
@@ -584,43 +576,17 @@
             {/if}
         </div>
     </section>
-{/if}
 
 <style>
     .analysis-panel {
-        position: fixed;
         width: 100%;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 178px; /* Set a fixed height */
+        height: 100%;
         overflow-y: auto;
         background-color: white;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
         padding: 10px;
-        padding-bottom: 30px; /* Extra space so content isn't hidden behind the status bar */
         box-sizing: border-box;
-        z-index: 5;
         outline: none;
         resize: none;
-    }
-
-    .close-icon {
-        position: absolute;
-        top: -6px;
-        right: 4px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #666;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-        transition: color 0.3s ease;
-    }
-
-    .close-icon:hover {
-        color: #333;
     }
 
     .analysis-content {

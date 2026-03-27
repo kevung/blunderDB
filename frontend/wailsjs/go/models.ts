@@ -135,6 +135,26 @@ export namespace main {
 	        this.positionCount = source["positionCount"];
 	    }
 	}
+	export class CommentEntry {
+	    id: number;
+	    positionId: number;
+	    text: string;
+	    createdAt: string;
+	    modifiedAt: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new CommentEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.positionId = source["positionId"];
+	        this.text = source["text"];
+	        this.createdAt = source["createdAt"];
+	        this.modifiedAt = source["modifiedAt"];
+	    }
+	}
 	export class Config {
 	    window_width: number;
 	    window_height: number;
@@ -521,6 +541,7 @@ export namespace main {
 	    lastPositionIndex: number;
 	    lastPositionIds: number[];
 	    hasActiveSearch: boolean;
+	    viewsJSON: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new SessionState(source);
@@ -533,6 +554,7 @@ export namespace main {
 	        this.lastPositionIndex = source["lastPositionIndex"];
 	        this.lastPositionIds = source["lastPositionIds"];
 	        this.hasActiveSearch = source["hasActiveSearch"];
+	        this.viewsJSON = source["viewsJSON"];
 	    }
 	}
 	export class Tournament {

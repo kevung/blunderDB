@@ -89,6 +89,10 @@
 
     function handleMouseDown(event) {
         event.preventDefault(); // Prevent text or element selection
+        // Blur any focused text field when clicking the board
+        if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
+            /** @type {HTMLElement} */ (document.activeElement).blur();
+        }
         if (mode !== "EDIT" && mode !== "EPC") return;
         // In EPC mode, only allow left-click (Black checkers)
         if (mode === "EPC" && event.button !== 0) return;
@@ -479,10 +483,18 @@
     }
 
     function resizeBoard() {
-        const actualWidth = canvas.clientWidth;
-        const actualHeight = actualWidth * canvasCfg.aspectFactor;
-        width = actualWidth;
-        height = actualHeight;
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        // Fit board within both width and height, maintaining aspect ratio
+        const heightFromWidth = containerWidth * canvasCfg.aspectFactor;
+        if (heightFromWidth <= containerHeight) {
+            width = containerWidth;
+            height = heightFromWidth;
+        } else {
+            height = containerHeight;
+            width = containerHeight / canvasCfg.aspectFactor;
+        }
         two.width = width;
         two.height = height;
         two.renderer.setSize(width, height);
@@ -759,13 +771,20 @@
         const params = { width: window.innerWidth, height: window.innerHeight };
         two = new Two(params).appendTo(canvas);
 
-        // Set the width and height based on the actual canvas dimensions after appending
-        const actualWidth = canvas.clientWidth;
-        const actualHeight = actualWidth * canvasCfg.aspectFactor;
-        width = actualWidth;
-        height = actualHeight;
+        // Set the width and height based on the actual container dimensions
+        const container = canvas.parentElement;
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const heightFromWidth = containerWidth * canvasCfg.aspectFactor;
+        if (heightFromWidth <= containerHeight) {
+            width = containerWidth;
+            height = heightFromWidth;
+        } else {
+            height = containerHeight;
+            width = containerHeight / canvasCfg.aspectFactor;
+        }
         two.width = width;
-        two.height = actualHeight;
+        two.height = height;
         two.renderer.setSize(width, height);
 
         canvas.addEventListener("mousedown", handleMouseDown);
@@ -1488,35 +1507,23 @@
 </div>
 
 <style>
-    body,
-    html {
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-    }
-
     .canvas-container {
         width: 100%;
         height: 100%;
         display: flex;
         justify-content: center;
         align-items: center;
-        margin: 0; /* Remove margin */
-        padding: 0; /* Remove padding */
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
     }
 
     #backgammon-board {
-        width: 100%;
-        height: auto; /* Maintain aspect ratio */
-        max-height: 100%; /* Ensure the board fits within the available height */
+        max-width: 100%;
+        max-height: 100%;
         box-sizing: border-box;
         padding: 0;
-        border: 1px solid black; /* Add border for debugging */
-        margin: 0; /* Remove margin */
-        user-select: none; /* Prevent text or element selection */
+        margin: 0;
+        user-select: none;
     }
 </style>

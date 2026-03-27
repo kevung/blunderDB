@@ -48,6 +48,15 @@ type Tournament struct {
 	MatchCount int    `json:"matchCount"`
 }
 
+// CommentEntry represents a comment for display in the comment wall
+type CommentEntry struct {
+	ID         int64  `json:"id"`
+	PositionID int64  `json:"positionId"`
+	Text       string `json:"text"`
+	CreatedAt  string `json:"createdAt"`
+	ModifiedAt string `json:"modifiedAt"`
+}
+
 type Point struct {
 	Checkers int `json:"checkers"`
 	Color    int `json:"color"`

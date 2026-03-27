@@ -102,61 +102,69 @@
 </script>
 
 <div class="status-bar">
-  <span class="mode">{$statusBarModeStore}</span>
-  <div class="separator"></div>
-  <span class="info-message">{$statusBarTextStore}</span>
-  <div class="separator"></div>
+  <span class="mode" class:mode-normal={$statusBarModeStore === 'NORMAL'} class:mode-edit={$statusBarModeStore === 'EDIT'} class:mode-match={$statusBarModeStore === 'MATCH'} class:mode-insert={$statusBarModeStore === 'INSERT'}>{$statusBarModeStore}</span>
+  <span class="info-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
   {#if $statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
     {@const checkerMoves = $matchContextStore.movePositions.filter(p => p.move_type === 'checker')}
     {@const currentCheckerIndex = $matchContextStore.movePositions.slice(0, $matchContextStore.currentIndex + 1).filter(p => p.move_type === 'checker').length}
-    <span class="position">{currentCheckerIndex} / {checkerMoves.length}</span>
-    <div class="separator"></div>
-    <span class="position">{$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1} / {Math.max(...$matchContextStore.movePositions.map(p => p.game_number))}</span>
+    <span class="position-info">move {currentCheckerIndex}/{checkerMoves.length}</span>
+    <span class="position-info">game {$matchContextStore.movePositions[$matchContextStore.currentIndex]?.game_number || 1}/{Math.max(...$matchContextStore.movePositions.map(p => p.game_number))}</span>
   {:else}
-    <span class="position">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
+    <span class="position-info">{$positionsStore.length > 0 ? $currentPositionIndexStore + 1 : 0} / {$positionsStore.length}</span>
   {/if}
 </div>
 
 <style>
   .status-bar {
     display: flex;
-    align-items: center; /* Center items vertically */
-    background-color: #f0f0f0;
-    border-bottom: 1px solid #ccc;
-    border-top: 1px solid #ccc;
-    padding: 4px 0px; /* Padding for the status bar */
-    position: fixed; /* Fixed position at the bottom */
-    bottom: 0; /* Align to bottom */
-    left: 0; /* Align to left */
-    right: 0; /* Align to right */
-    font-size: 14px; /* Font size */
-    z-index: 10;
+    align-items: center;
+    background: #f7f7f7;
+    border-top: 1px solid #e0e0e0;
+    padding: 2px 0;
+    flex-shrink: 0;
+    width: 100%;
+    font-size: 12px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    gap: 0;
+    user-select: none;
+    height: 22px;
   }
 
   .mode {
-      width: 84px; /* Fixed width for mode */
-      text-align: center;
-      justify-content: center;
+    padding: 0 10px;
+    font-weight: 600;
+    font-size: 11px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    border-right: 1px solid #e0e0e0;
+    line-height: 22px;
   }
+
+  .mode-normal { color: #555; }
+  .mode-edit { color: #c57600; }
+  .mode-match { color: #0b7a3e; }
+  .mode-insert { color: #1a73e8; }
 
   .info-message {
-      flex: 1; /* Allow this to expand and take available space */
-      text-align: center; /* Center text */
-      margin: 0 8px; /* Space on the sides */
+    flex: 1;
+    padding: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #555;
+    font-size: 12px;
+    line-height: 22px;
   }
 
-  .position {
-      width: 80px; /* Fixed width for position */
-      text-align: center;
-      justify-content: center;
+  .position-info {
+    padding: 0 10px;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    color: #555;
+    font-size: 12px;
+    border-left: 1px solid #e0e0e0;
+    line-height: 22px;
   }
-
-  .separator {
-      width: 1px; /* Width of the separator */
-      height: 20px; /* Height of the separator */
-      background-color: rgba(0, 0, 0, 0.2); /* Light color for the separator */
-      margin: 0 8px; /* Add some space between the separators */
-  }
-
 </style>
 

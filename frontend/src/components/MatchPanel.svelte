@@ -32,6 +32,7 @@
     let editTournamentValue = '';
     let showTournamentDropdown = false;
     let filteredTournaments = [];
+    let tournamentDropdownStyle = '';
 
     // Inline match editing (player names, date)
     let editingMatchId = null;
@@ -98,12 +99,27 @@
         event.stopPropagation();
         editingTournamentMatchId = match.id;
         editTournamentValue = match.tournament_name || match.event || '';
-        showTournamentDropdown = true;
         filteredTournaments = tournaments;
         setTimeout(() => {
             const input = document.querySelector('.tournament-edit-input');
-            if (input) input.focus();
+            if (input) {
+                input.focus();
+                computeTournamentDropdownPosition(input);
+            }
+            showTournamentDropdown = true;
         }, 50);
+    }
+
+    function computeTournamentDropdownPosition(inputEl) {
+        if (!inputEl) return;
+        const rect = inputEl.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        const maxH = 120;
+        if (spaceBelow < maxH && rect.top > spaceBelow) {
+            tournamentDropdownStyle = `position:fixed; bottom:${window.innerHeight - rect.top}px; left:${rect.left}px; width:${rect.width}px; max-height:${Math.min(maxH, rect.top)}px;`;
+        } else {
+            tournamentDropdownStyle = `position:fixed; top:${rect.bottom}px; left:${rect.left}px; width:${rect.width}px; max-height:${Math.min(maxH, spaceBelow)}px;`;
+        }
     }
 
     function filterTournaments() {
@@ -113,6 +129,8 @@
         } else {
             filteredTournaments = tournaments.filter(t => t.name.toLowerCase().includes(val));
         }
+        const input = document.querySelector('.tournament-edit-input');
+        if (input) computeTournamentDropdownPosition(input);
         showTournamentDropdown = true;
     }
 
@@ -145,11 +163,12 @@
     }
 
     function handleTournamentKeyDown(event) {
-        event.stopPropagation();
         if (event.key === 'Enter') {
+            event.stopPropagation();
             event.preventDefault();
             saveTournamentEdit();
         } else if (event.key === 'Escape') {
+            event.stopPropagation();
             event.preventDefault();
             cancelTournamentEdit();
         }
@@ -195,11 +214,12 @@
     }
 
     function handleMatchEditKeyDown(event) {
-        event.stopPropagation();
         if (event.key === 'Enter') {
+            event.stopPropagation();
             event.preventDefault();
             saveMatchEdit();
         } else if (event.key === 'Escape') {
+            event.stopPropagation();
             event.preventDefault();
             cancelMatchEdit();
         }
@@ -519,9 +539,7 @@
     });
 </script>
 
-{#if visible}
     <section class="match-panel" role="dialog" aria-modal="true" id="matchPanel" tabindex="-1">
-        <button type="button" class="close-icon" on:click={closePanel} aria-label="Close">×</button>
         <div class="match-panel-content">
                 <div class="match-table-container">
                     <table class="match-table">
@@ -564,7 +582,7 @@
                                                         placeholder="Tournament name"
                                                     />
                                                     {#if showTournamentDropdown && filteredTournaments.length > 0}
-                                                        <div class="tournament-dropdown">
+                                                        <div class="tournament-dropdown" style={tournamentDropdownStyle}>
                                                             {#each filteredTournaments as t}
                                                                 <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
                                                                     {t.name}
@@ -625,7 +643,7 @@
                                                         placeholder="Tournament name"
                                                     />
                                                     {#if showTournamentDropdown && filteredTournaments.length > 0}
-                                                        <div class="tournament-dropdown">
+                                                        <div class="tournament-dropdown" style={tournamentDropdownStyle}>
                                                             {#each filteredTournaments as t}
                                                                 <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
                                                                     {t.name}
@@ -656,46 +674,16 @@
                 </div>
         </div>
     </section>
-{/if}
 
 
 <style>
     .match-panel {
-        position: fixed;
         width: 100%;
-        bottom: 22px;
-        left: 0;
-        right: 0;
-        height: 178px;
+        height: 100%;
         background-color: white;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        z-index: 5;
         outline: none;
         user-select: none;
         -webkit-user-select: none;
-    }
-
-    .close-icon {
-        position: absolute;
-        top: 6px;
-        right: 12px;
-        background: none;
-        border: none;
-        font-size: 24px;
-        cursor: pointer;
-        color: #666;
-        line-height: 1;
-        padding: 0;
-        width: 24px;
-        height: 24px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 10;
-    }
-
-    .close-icon:hover {
-        color: #000;
     }
 
     .match-panel-content {
@@ -879,19 +867,12 @@
     }
 
     .tournament-dropdown {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        min-width: 160px;
+        overflow-y: auto;
         background: white;
         border: 1px solid #ccc;
-        border-top: none;
-        border-radius: 0 0 3px 3px;
-        max-height: 120px;
-        overflow-y: auto;
-        z-index: 30;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        border-radius: 3px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        z-index: 9999;
     }
 
     .tournament-dropdown-item {

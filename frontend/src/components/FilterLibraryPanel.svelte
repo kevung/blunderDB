@@ -412,9 +412,7 @@
     });
 </script>
 
-{#if visible}
     <section class="filter-library-panel" role="dialog" aria-modal="true" id="filterLibraryPanel" tabindex="-1">
-        <button type="button" class="close-icon" on:click={closePanel} aria-label="Close">×</button>
         <div class="filter-library-content">
             <div class="form-row">
                 <div class="form-group name-group">
@@ -450,43 +448,17 @@
             </div>
         </div>
     </section>
-{/if}
 
 <style>
     .filter-library-panel {
-        position: fixed;
         width: 100%;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 178px; /* Set a fixed height */
+        height: 100%;
         background-color: white;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
         padding: 10px;
         box-sizing: border-box;
-        z-index: 5;
         outline: none;
         resize: none;
-        overflow: hidden; /* Prevent overflow on the panel itself */
-    }
-
-    .close-icon {
-        position: absolute;
-        top: -6px; /* Same top position as analysis panel */
-        right: 4px; /* Same right position as analysis panel */
-        font-size: 24px;
-        font-weight: bold;
-        color: #666;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-        transition: color 0.3s ease;
-        z-index: 10; /* Ensure the close button is on top */
-    }
-
-    .close-icon:hover {
-        color: #333;
+        overflow: hidden;
     }
 
     .filter-library-content {

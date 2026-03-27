@@ -45,6 +45,7 @@
     let allMatches = [];
     let filteredMatches = [];
     let addMatchFocused = false;
+    let matchDropdownStyle = '';
 
     const unsubTournaments = tournamentsStore.subscribe(value => {
         tournaments = value || [];
@@ -102,6 +103,14 @@
             console.error('Error loading matches:', error);
             allMatches = [];
         }
+    }
+
+    function computeMatchDropdownPos(inputEl) {
+        if (!inputEl) return;
+        const rect = inputEl.getBoundingClientRect();
+        const spaceAbove = rect.top;
+        const maxH = 90;
+        matchDropdownStyle = `position:fixed; bottom:${window.innerHeight - rect.top}px; left:${rect.left}px; width:${rect.width}px; max-height:${Math.min(maxH, spaceAbove)}px;`;
     }
 
     function sortTournaments(list) {
@@ -450,483 +459,164 @@
     });
 </script>
 
-{#if visible}
-    <section class="tournament-panel" role="dialog" aria-modal="true" id="tournamentPanel" tabindex="-1">
-        <button type="button" class="close-icon" on:click={closePanel} aria-label="Close">×</button>
-        
+    <section class="tournament-panel" id="tournamentPanel" tabindex="-1">
         <div class="panel-content">
-            <div class="panels-container">
-                <!-- Left: Tournaments list -->
-                <div class="tournaments-list">
-                    <div class="panel-header">
-                        Tournaments ({tournaments.length})
+            <!-- Sub-tab sidebar -->
+            <div class="sub-tab-sidebar">
+                <button class="sub-tab-btn home-btn" class:active={!selectedTournament} on:click={() => { selectedTournamentStore.set(null); tournamentMatchesStore.set([]); addMatchSearch = ''; }} title="Tournaments">⌂</button>
+                {#if selectedTournament}
+                    <div class="sub-tab-btn named-tab" class:active={selectedTournament} role="button" tabindex="-1" on:click={() => {}} on:keydown={() => {}}>
+                        <span class="tab-name" title={selectedTournament.name}>{selectedTournament.name}</span>
+                        <button class="tab-close-btn" on:click|stopPropagation={() => { selectedTournamentStore.set(null); tournamentMatchesStore.set([]); addMatchSearch = ''; }} title="Close">×</button>
                     </div>
-                    <div class="col-header-row">
-                        <span class="col-h col-id">ID</span>
-                        <span class="col-h col-name">Name</span>
-                        <span class="col-h col-count">#</span>
-                        <span class="col-h col-date sortable" on:click={() => toggleSort('date')}>
-                            Date {sortBy === 'date' ? (sortOrder === 'desc' ? '↓' : '↑') : ''}
-                        </span>
-                        <span class="col-h col-location sortable" on:click={() => toggleSort('location')}>
-                            Location {sortBy === 'location' ? (sortOrder === 'desc' ? '↓' : '↑') : ''}
-                        </span>
-                        <span class="col-h col-acts"></span>
-                    </div>
-                    <div class="list-container">
-                        {#each tournaments as tournament, index}
-                            {#if editingTournament && editingTournament.id === tournament.id}
-                                <div class="tournament-item editing">
-                                    <span class="col-cell col-id">{tournament.id}</span>
-                                    <span class="col-cell col-name"><input type="text" bind:value={editName} class="edit-input" on:keydown|stopPropagation={(e) => e.key === 'Enter' && saveEdit()} /></span>
-                                    <span class="col-cell col-count">{tournament.matchCount}</span>
-                                    <span class="col-cell col-date"><input type="date" bind:value={editDate} class="edit-input" /></span>
-                                    <span class="col-cell col-location"><input type="text" bind:value={editLocation} class="edit-input" placeholder="Location" on:keydown|stopPropagation={(e) => e.key === 'Enter' && saveEdit()} /></span>
-                                    <span class="col-cell col-acts">
-                                        <div class="item-actions">
-                                            <button class="icon-btn" on:click={saveEdit} title="Save">✓</button>
-                                            <button class="icon-btn" on:click={cancelEdit} title="Cancel">✕</button>
-                                        </div>
-                                    </span>
-                                </div>
-                            {:else}
-                                <div 
-                                    class="tournament-item" 
-                                    class:selected={selectedTournament?.id === tournament.id}
-                                    on:click={() => selectTournament(tournament)}
-                                >
-                                    <span class="col-cell col-id">{tournament.id}</span>
-                                    <span class="col-cell col-name" title={tournament.name}>{tournament.name}</span>
-                                    <span class="col-cell col-count">{tournament.matchCount}</span>
-                                    <span class="col-cell col-date">{tournament.date || '—'}</span>
-                                    <span class="col-cell col-location" title={tournament.location || ''}>{tournament.location || '—'}</span>
-                                    <span class="col-cell col-acts">
-                                        <div class="item-actions">
+                {/if}
+            </div>
+
+            <div class="sub-tab-content">
+                {#if !selectedTournament}
+                    <!-- Tournaments list -->
+                    <div class="list-view">
+                        <div class="list-container">
+                            {#each tournaments as tournament, index}
+                                {#if editingTournament && editingTournament.id === tournament.id}
+                                    <div class="row editing">
+                                        <input class="row-input name" type="text" bind:value={editName} on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); saveEdit(); } if (e.key === 'Escape') { e.stopPropagation(); cancelEdit(); } }} autofocus />
+                                        <input class="row-input date" type="date" bind:value={editDate} on:keydown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); cancelEdit(); } }} />
+                                        <input class="row-input loc" type="text" bind:value={editLocation} placeholder="Location" on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); saveEdit(); } if (e.key === 'Escape') { e.stopPropagation(); cancelEdit(); } }} />
+                                        <span class="row-acts">
+                                            <button class="icon-btn" on:click={saveEdit}>✓</button>
+                                            <button class="icon-btn" on:click={cancelEdit}>✕</button>
+                                        </span>
+                                    </div>
+                                {:else}
+                                    <div class="row" on:click={() => selectTournament(tournament)} on:dblclick={() => selectTournament(tournament)}>
+                                        <span class="row-name" title={tournament.name}>{tournament.name}</span>
+                                        {#if tournament.matchCount > 0}
+                                            <span class="row-badge">{tournament.matchCount}</span>
+                                        {/if}
+                                        <span class="row-date">{tournament.date || ''}</span>
+                                        <span class="row-acts">
                                             <button class="icon-btn" on:click|stopPropagation={(e) => startEdit(tournament, e)} title="Edit">✎</button>
                                             <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteTournamentEntry(tournament, e)} title="Delete">×</button>
-                                        </div>
-                                    </span>
-                                </div>
-                            {/if}
-                        {/each}
-                        {#if tournaments.length === 0}
-                            <div class="empty-msg">No tournaments</div>
-                        {/if}
-                    </div>
-                    <div class="new-item-row">
-                        <input 
-                            type="text" 
-                            bind:value={newTournamentName} 
-                            placeholder="Name"
-                            on:keydown|stopPropagation={(e) => e.key === 'Enter' && createTournament()}
-                        />
-                        <input 
-                            type="date" 
-                            bind:value={newTournamentDate} 
-                            class="new-date-input"
-                            on:keydown|stopPropagation
-                        />
-                        <input 
-                            type="text" 
-                            bind:value={newTournamentLocation} 
-                            placeholder="Location"
-                            class="new-location-input"
-                            on:keydown|stopPropagation={(e) => e.key === 'Enter' && createTournament()}
-                        />
-                        <button 
-                            on:click={createTournament}
-                            disabled={!newTournamentName.trim()}
-                        >Add</button>
-                    </div>
-                </div>
-
-                <!-- Right: tournament matches -->
-                <div class="right-panel">
-                    {#if selectedTournament}
-                        <div class="panel-header">
-                            <span>{selectedTournament.name} — {tournamentMatches.length} match{tournamentMatches.length !== 1 ? 'es' : ''}</span>
+                                        </span>
+                                    </div>
+                                {/if}
+                            {/each}
+                            <!-- Inline add row -->
+                            <div class="row add-row">
+                                <input class="row-input name" type="text" bind:value={newTournamentName} placeholder="New tournament…" on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); createTournament(); } if (e.key === 'Escape') { e.stopPropagation(); e.currentTarget.blur(); } }} />
+                                <input class="row-input date" type="date" bind:value={newTournamentDate} on:keydown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); e.currentTarget.blur(); } }} />
+                                <input class="row-input loc" type="text" bind:value={newTournamentLocation} placeholder="Location" on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); createTournament(); } if (e.key === 'Escape') { e.stopPropagation(); e.currentTarget.blur(); } }} />
+                            </div>
                         </div>
+                    </div>
+                {:else}
+                    <!-- Matches for selected tournament -->
+                    <div class="list-view">
+                        <div class="list-header">{selectedTournament.name}</div>
                         <div class="list-container">
                             {#if tournamentMatches.length === 0}
-                                <div class="empty-msg">No matches in this tournament</div>
+                                <div class="empty-msg">No matches</div>
                             {/if}
                             {#each tournamentMatches as match}
-                                <div class="match-item" on:dblclick={() => openMatch(match)}>
-                                    <span class="match-players" title="{match.player1_name} vs {match.player2_name}">
-                                        {match.player1_name} vs {match.player2_name}
+                                <div class="row match-row" on:dblclick={() => openMatch(match)}>
+                                    <span class="row-name">{match.player1_name} vs {match.player2_name}</span>
+                                    <span class="row-detail">{match.match_length}pt</span>
+                                    <span class="row-acts">
+                                        <button class="icon-btn" on:click|stopPropagation={() => swapMatchPlayersInTournament(match)} title="Swap">⇄</button>
+                                        <button class="icon-btn delete" on:click|stopPropagation={() => removeMatch(match.id)} title="Remove">×</button>
                                     </span>
-                                    <span class="match-detail">{match.match_length}pt</span>
-                                    <button class="icon-btn" on:click|stopPropagation={() => swapMatchPlayersInTournament(match)} title="Swap players">⇄</button>
-                                    <button class="icon-btn delete" on:click|stopPropagation={() => removeMatch(match.id)} title="Remove from tournament">×</button>
                                 </div>
                             {/each}
                         </div>
-                        <div class="add-match-row">
-                            <div class="add-match-input-wrapper">
-                                <input 
+                        <div class="add-match-area">
+                            <div class="add-match-wrap">
+                                <input
                                     type="text"
                                     bind:value={addMatchSearch}
-                                    on:focus={() => { addMatchFocused = true; loadAllMatches().then(updateFilteredMatches); }}
+                                    on:focus={(e) => { addMatchFocused = true; computeMatchDropdownPos(e.currentTarget); loadAllMatches().then(updateFilteredMatches); }}
                                     on:blur={() => setTimeout(() => { addMatchFocused = false; }, 150)}
-                                    on:keydown|stopPropagation={(e) => { if (e.key === 'Escape') { addMatchSearch = ''; e.target.blur(); } }}
-                                    placeholder="Search match to add (player, pts)…"
+                                    on:keydown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); addMatchSearch = ''; e.currentTarget.blur(); } }}
+                                    placeholder="Add match…"
                                     class="add-match-input"
                                 />
                                 {#if addMatchFocused && filteredMatches.length > 0}
-                                    <div class="add-match-dropdown">
+                                    <div class="match-dropdown" style={matchDropdownStyle}>
                                         {#each filteredMatches as match}
-                                            <div class="add-match-item" on:mousedown|preventDefault={() => addMatchToTournament(match.id)}>
-                                                <span class="match-players">{match.player1_name} vs {match.player2_name}</span>
-                                                <span class="match-detail">{match.match_length}pt</span>
+                                            <div class="dropdown-item" on:mousedown|preventDefault={() => addMatchToTournament(match.id)}>
+                                                {match.player1_name} vs {match.player2_name} <span class="row-detail">{match.match_length}pt</span>
                                             </div>
                                         {/each}
                                     </div>
                                 {/if}
                             </div>
                         </div>
-                    {:else}
-                        <div class="panel-header">Matches</div>
-                        <div class="list-container">
-                            <div class="empty-msg">Select a tournament</div>
-                        </div>
-                    {/if}
-                </div>
+                    </div>
+                {/if}
             </div>
         </div>
     </section>
-{/if}
 
 <style>
-    .tournament-panel {
-        position: fixed;
-        width: 100%;
-        bottom: 22px;
-        left: 0;
-        right: 0;
-        height: 178px;
-        background-color: white;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 4px 10px;
-        box-sizing: border-box;
-        z-index: 5;
-        outline: none;
-        overflow: hidden;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-    }
+    .tournament-panel { width: 100%; height: 100%; background: white; box-sizing: border-box; outline: none; overflow: hidden; user-select: none; }
+    .panel-content { font-size: 12px; color: #333; height: 100%; display: flex; }
 
-    .close-icon {
-        position: absolute;
-        top: -4px;
-        right: 6px;
-        font-size: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        color: #333;
-        background: none;
-        border: none;
-        padding: 2px 6px;
-        z-index: 10;
-    }
+    .sub-tab-sidebar { display: flex; flex-direction: column; width: 70px; flex-shrink: 0; background: #f5f5f5; border-right: 1px solid #ddd; }
+    .sub-tab-btn { border: none; background: transparent; padding: 8px 4px; font-size: 11px; color: #666; cursor: pointer; border-left: 2px solid transparent; text-align: center; transition: background 0.15s; }
+    .sub-tab-btn:hover { background: #e8e8e8; }
+    .sub-tab-btn.active { color: #333; font-weight: 600; background: #fff; border-left-color: #555; }
+    .sub-tab-btn.home-btn { font-size: 16px; padding: 6px 4px; }
+    .sub-tab-btn.named-tab { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; position: relative; cursor: pointer; }
+    .tab-name { font-size: 9px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 62px; display: block; }
+    .tab-close-btn { border: none; background: none; font-size: 12px; color: #aaa; cursor: pointer; line-height: 1; padding: 0 2px; }
+    .tab-close-btn:hover { color: #c55; }
+    .sub-tab-content { flex: 1; min-width: 0; overflow: hidden; display: flex; }
 
-    .close-icon:hover {
-        color: #000;
-    }
+    .list-view { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .list-header { padding: 3px 10px; font-size: 11px; font-weight: 600; color: #555; border-bottom: 1px solid #eee; flex-shrink: 0; background: #fafafa; }
+    .list-container { flex: 1; overflow-y: auto; overflow-x: hidden; }
 
-    .panel-content {
-        font-size: 12px;
-        color: #333;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .panels-container {
-        display: flex;
-        gap: 6px;
-        flex: 1;
-        min-height: 0;
-    }
-
-    .tournaments-list {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ddd;
-        min-width: 0;
-        overflow: hidden;
-    }
-
-    .right-panel {
-        flex: 2;
-        min-width: 180px;
-        max-width: 350px;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ddd;
-        overflow: hidden;
-    }
-
-    .panel-header {
-        background-color: #f2f2f2;
-        padding: 2px 8px;
-        font-weight: bold;
-        font-size: 11px;
-        border-bottom: 1px solid #ddd;
-        flex-shrink: 0;
+    .row {
         display: flex;
         align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-    }
-
-    .col-header-row {
-        display: flex;
-        align-items: center;
-        background-color: #f8f8f8;
-        border-bottom: 1px solid #ddd;
-        padding: 1px 8px;
-        flex-shrink: 0;
-    }
-
-    .col-h {
-        font-size: 10px;
-        font-weight: 600;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
-
-    .col-h.sortable {
-        cursor: pointer;
-    }
-
-    .col-h.sortable:hover {
-        color: #333;
-    }
-
-    .col-id { width: 30px; flex-shrink: 0; text-align: center; color: #888; font-size: 11px; }
-    .col-name { width: 140px; min-width: 80px; flex-shrink: 0; text-align: left; }
-    .col-count { width: 30px; flex-shrink: 0; text-align: right; padding-right: 8px; }
-    .col-date { width: 90px; flex-shrink: 0; text-align: left; }
-    .col-location { flex: 1; min-width: 60px; text-align: left; }
-    .col-acts { width: 50px; flex-shrink: 0; text-align: right; }
-
-    .list-container {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    .tournament-item {
-        display: flex;
-        align-items: center;
-        padding: 2px 8px;
-        cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
-        min-height: 22px;
-    }
-
-    .tournament-item:hover {
-        background-color: #f5f5f5;
-    }
-
-    .tournament-item.selected {
-        background-color: #e3f2fd;
-    }
-
-    .tournament-item.editing {
-        background-color: #fff3cd;
-    }
-
-    .col-cell {
-        font-size: 11px;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .item-actions {
-        display: flex;
-        gap: 2px;
-        visibility: hidden;
-    }
-
-    .tournament-item:hover .item-actions,
-    .tournament-item.editing .item-actions {
-        visibility: visible;
-    }
-
-    .icon-btn {
-        background: none;
-        border: none;
-        cursor: pointer;
-        font-size: 12px;
-        color: #666;
-        padding: 0 3px;
-        line-height: 1;
-    }
-
-    .icon-btn:hover {
-        color: #000;
-    }
-
-    .icon-btn.delete:hover {
-        color: #c55;
-    }
-
-    .edit-input {
-        width: 100%;
-        padding: 1px 4px;
-        border: 1px solid #ccc;
-        border-radius: 2px;
-        font-size: 11px;
-        box-sizing: border-box;
-    }
-
-    .empty-msg {
-        text-align: center;
-        color: #999;
-        padding: 12px;
-        font-size: 11px;
-    }
-
-    .new-item-row {
-        display: flex;
-        gap: 4px;
-        padding: 3px 8px 8px 8px;
-        border-top: 1px solid #eee;
-        background: #fafafa;
-        flex-shrink: 0;
-    }
-
-    .new-item-row input {
-        flex: 1;
-        padding: 2px 6px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        font-size: 11px;
-        min-width: 0;
-    }
-
-    .new-date-input {
-        flex: 0 0 auto !important;
-        width: 110px;
-    }
-
-    .new-location-input {
-        flex: 0.7 !important;
-    }
-
-    .new-item-row button {
         padding: 2px 10px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        font-size: 11px;
         cursor: pointer;
-        background: white;
-    }
-
-    .new-item-row button:hover {
-        background: #f0f0f0;
-    }
-
-    .new-item-row button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    /* Right panel: match items */
-    .match-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 2px 8px;
-        cursor: pointer;
-        font-size: 11px;
-        border-bottom: 1px solid #f0f0f0;
-        min-height: 22px;
-    }
-
-    .match-item:hover {
-        background: #f5f5f5;
-    }
-
-    .match-players {
-        flex: 1;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    .match-detail {
-        color: #999;
-        font-size: 10px;
-        flex-shrink: 0;
-    }
-
-    .match-item .icon-btn {
-        visibility: hidden;
-    }
-
-    .match-item:hover .icon-btn {
-        visibility: visible;
-    }
-
-    /* Add match row */
-    .add-match-row {
-        border-top: 1px solid #eee;
-        background: #fafafa;
-        flex-shrink: 0;
-        padding: 3px 8px 8px 8px;
-    }
-
-    .add-match-input-wrapper {
-        position: relative;
-    }
-
-    .add-match-input {
-        width: 100%;
-        padding: 2px 6px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-        font-size: 11px;
-        box-sizing: border-box;
-        outline: none;
-    }
-
-    .add-match-input:focus {
-        border-color: #99c;
-    }
-
-    .add-match-dropdown {
-        position: absolute;
-        bottom: 100%;
-        left: 0;
-        right: 0;
-        max-height: 90px;
-        overflow-y: auto;
-        background: white;
-        border: 1px solid #ccc;
-        border-bottom: none;
-        border-radius: 3px 3px 0 0;
-        box-shadow: 0 -2px 6px rgba(0,0,0,0.1);
-        z-index: 20;
-    }
-
-    .add-match-item {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 2px 8px;
-        cursor: pointer;
-        font-size: 11px;
         border-bottom: 1px solid #f5f5f5;
+        min-height: 24px;
+        gap: 6px;
     }
+    .row:hover { background: #f5f8ff; }
+    .row.editing { background: #fefce8; cursor: default; }
+    .row.add-row { cursor: default; background: #fafafa; border-bottom: none; }
+    .row.add-row:hover { background: #fafafa; }
 
-    .add-match-item:hover {
-        background: #e3f2fd;
-    }
+    .row-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .row-badge { font-size: 9px; color: #888; background: #eee; border-radius: 8px; padding: 0 5px; flex-shrink: 0; }
+    .row-date { font-size: 10px; color: #999; flex-shrink: 0; width: 80px; text-align: right; }
+    .row-detail { font-size: 10px; color: #999; flex-shrink: 0; }
+    .row-acts { display: flex; gap: 2px; visibility: hidden; flex-shrink: 0; }
+    .row:hover .row-acts, .row.editing .row-acts { visibility: visible; }
+
+    .row-input { padding: 1px 4px; border: 1px solid #ccc; border-radius: 2px; font-size: 11px; outline: none; box-sizing: border-box; }
+    .row-input.name { flex: 1; min-width: 0; }
+    .row-input.date { width: 110px; flex-shrink: 0; }
+    .row-input.loc { width: 90px; flex-shrink: 0; }
+
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: #888; padding: 0 3px; line-height: 1; }
+    .icon-btn:hover { color: #333; }
+    .icon-btn.delete:hover { color: #c55; }
+
+    .empty-msg { text-align: center; color: #bbb; padding: 16px; font-size: 11px; font-style: italic; }
+
+    .match-row { cursor: default; }
+    .match-row:hover { background: #f5f8ff; }
+
+    .add-match-area { border-top: 1px solid #eee; padding: 3px 10px 6px; flex-shrink: 0; background: #fafafa; }
+    .add-match-wrap { position: relative; }
+    .add-match-input { width: 100%; padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 11px; box-sizing: border-box; outline: none; }
+    .add-match-input:focus { border-color: #99c; }
+
+    .match-dropdown { overflow-y: auto; background: white; border: 1px solid #ccc; border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); z-index: 9999; }
+    .dropdown-item { padding: 3px 8px; cursor: pointer; font-size: 11px; border-bottom: 1px solid #f5f5f5; }
+    .dropdown-item:hover { background: #e3f2fd; }
 </style>

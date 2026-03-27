@@ -327,16 +327,8 @@ msgid "CTRL-F"
 msgstr "CTRL-F"
 
 #: ../../source/raccourcis.rst:1
-msgid "Rechercher une position."
-msgstr "Search for a position."
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-H"
-msgstr "CTRL-H"
-
-#: ../../source/raccourcis.rst:1
-msgid "Afficher/cacher l'historique de recherche."
-msgstr "Show/hide the search history."
+msgid "Afficher/cacher le panneau de recherche."
+msgstr "Show/hide the search panel."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-T"

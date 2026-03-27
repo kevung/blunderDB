@@ -355,9 +355,7 @@
     });
 </script>
 
-{#if visible}
     <section class="search-history-panel" role="dialog" aria-modal="true" id="searchHistoryPanel" tabindex="-1">
-        <button type="button" class="close-icon" on:click={closePanel} aria-label="Close">×</button>
         <div class="search-history-content">
             {#if searchHistory.length === 0}
                 <p class="empty-message">No search history yet. Position searches starting with 's ' will appear here.</p>
@@ -437,43 +435,18 @@
             </div>
         </div>
     {/if}
-{/if}
+
 
 <style>
     .search-history-panel {
-        position: fixed;
         width: 100%;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 178px; /* Match FilterLibraryPanel height */
+        height: 100%;
         background-color: white;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
         padding: 10px;
         box-sizing: border-box;
-        z-index: 5;
         outline: none;
         resize: none;
         overflow: hidden;
-    }
-
-    .close-icon {
-        position: absolute;
-        top: -6px;
-        right: 4px;
-        font-size: 24px;
-        font-weight: bold;
-        color: #666;
-        cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-        transition: color 0.3s ease;
-        z-index: 10;
-    }
-
-    .close-icon:hover {
-        color: #333;
     }
 
     .search-history-content {

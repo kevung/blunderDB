@@ -9,6 +9,19 @@ export const commentTextStore = writable('');
 
 export const analysisDataStore = writable('This is where your analysis data will be displayed.');
 
+// Active tab in the bottom panel ('console', 'analysis', 'comments', 'filter-library', 'search', 'search-history', 'collections', 'matches', 'tournaments', 'logs')
+export const activeTabStore = writable('analysis');
+
+// Session log entries: array of { timestamp, message }
+export const logEntriesStore = writable([]);
+
+export function addLogEntry(message) {
+    logEntriesStore.update(entries => {
+        const entry = { timestamp: new Date(), message };
+        return [...entries, entry];
+    });
+}
+
 export const currentPositionIndexStore = writable(0); // Add current position index store
 
 export const showSearchModalStore = writable(false); // Add store for search modal visibility

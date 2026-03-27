@@ -3,6 +3,7 @@
     // svelte functions
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
+    import { get } from 'svelte/store';
 
     // import backend functions
     import {
@@ -121,7 +122,9 @@
         showCollectionPanelStore, // Import showCollectionPanelStore
         showTournamentPanelStore, // Import showTournamentPanelStore
         showPipcountStore,
-        showExportDatabaseModalStore // Import showExportDatabaseModalStore
+        showExportDatabaseModalStore, // Import showExportDatabaseModalStore
+        activeTabStore,
+        addLogEntry
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -138,33 +141,26 @@
     // import components
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
-    import CommandLine from './components/CommandLine.svelte';
+    import ViewTabs from './components/ViewTabs.svelte';
+    import { viewStore } from './stores/viewStore';
+    import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
-    import AnalysisPanel from './components/AnalysisPanel.svelte';
-    import CommentPanel from './components/CommentPanel.svelte';
     import HelpModal from './components/HelpModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
-    import SearchModal from './components/SearchModal.svelte'; // Import SearchModal component
-    import SearchHistoryPanel from './components/SearchHistoryPanel.svelte'; // Import SearchHistoryPanel component
-    import MetModal from './components/MetModal.svelte'; // Import MetModal component
-    import TakePoint2LastModal from './components/TakePoint2LastModal.svelte'; // Import TakePoint2LastModal component
-    import TakePoint2LiveModal from './components/TakePoint2LiveModal.svelte'; // Import TakePoint2LiveModal component
-    import TakePoint4LastModal from './components/TakePoint4LastModal.svelte'; // Import TakePoint4LastModal component
-    import TakePoint4LiveModal from './components/TakePoint4LiveModal.svelte'; // Import TakePoint4LiveModal component
-    import GammonValue1Modal from './components/GammonValue1Modal.svelte'; // Import GammonValue1Modal component
-    import GammonValue2Modal from './components/GammonValue2Modal.svelte'; // Import GammonValue2Modal component
-    import GammonValue4Modal from './components/GammonValue4Modal.svelte'; // Import GammonValue4Modal component
-    import WarningModal from './components/WarningModal.svelte'; // Import WarningModal component
-    import MetadataModal from './components/MetadataModal.svelte'; // Import MetadataModal component
-    import TakePoint2Modal from './components/TakePoint2Modal.svelte'; // Import TakePoint2Modal component
-    import TakePoint4Modal from './components/TakePoint4Modal.svelte'; // Import TakePoint4Modal component
-    import FilterLibraryPanel from './components/FilterLibraryPanel.svelte'; // Update import
-    import ImportProgressModal from './components/ImportProgressModal.svelte'; // Import ImportProgressModal component
-    import FileImportProgressModal from './components/FileImportProgressModal.svelte'; // Import FileImportProgressModal component
-    import ExportDatabaseModal from './components/ExportDatabaseModal.svelte'; // Import ExportDatabaseModal component
-    import MatchPanel from './components/MatchPanel.svelte'; // Import MatchPanel component
-    import CollectionPanel from './components/CollectionPanel.svelte'; // Import CollectionPanel component
-    import TournamentPanel from './components/TournamentPanel.svelte'; // Import TournamentPanel component
+    import MetModal from './components/MetModal.svelte';
+    import TakePoint2LastModal from './components/TakePoint2LastModal.svelte';
+    import TakePoint2LiveModal from './components/TakePoint2LiveModal.svelte';
+    import TakePoint4LastModal from './components/TakePoint4LastModal.svelte';
+    import TakePoint4LiveModal from './components/TakePoint4LiveModal.svelte';
+    import GammonValue1Modal from './components/GammonValue1Modal.svelte';
+    import GammonValue2Modal from './components/GammonValue2Modal.svelte';
+    import GammonValue4Modal from './components/GammonValue4Modal.svelte';
+    import WarningModal from './components/WarningModal.svelte';
+    import TakePoint2Modal from './components/TakePoint2Modal.svelte';
+    import TakePoint4Modal from './components/TakePoint4Modal.svelte';
+    import ImportProgressModal from './components/ImportProgressModal.svelte';
+    import FileImportProgressModal from './components/FileImportProgressModal.svelte';
+    import ExportDatabaseModal from './components/ExportDatabaseModal.svelte';
 
     // Visibility variables
     let showSearchModal = false;
@@ -327,7 +323,41 @@
 
     // Reference for various elements.
     let mainArea;
-    let commandInput;
+    let tabbedPanelRef;
+
+    // Resizable panel state
+    let panelHeight = 250; // default panel height in pixels
+    let isResizing = false;
+
+    function onResizeHandleMouseDown(e) {
+        e.preventDefault();
+        isResizing = true;
+        document.body.style.cursor = 'ns-resize';
+        document.body.style.userSelect = 'none';
+        const startY = e.clientY;
+        const startHeight = panelHeight;
+
+        function onMouseMove(e) {
+            const delta = startY - e.clientY;
+            const newHeight = Math.max(80, startHeight + delta);
+            // Leave at least 120px for the board area (toolbar ~40px + statusbar ~24px)
+            const maxHeight = window.innerHeight - 160;
+            panelHeight = Math.min(newHeight, maxHeight);
+            // Trigger board resize
+            window.dispatchEvent(new Event('resize'));
+        }
+
+        function onMouseUp() {
+            isResizing = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+            window.removeEventListener('mousemove', onMouseMove);
+            window.removeEventListener('mouseup', onMouseUp);
+        }
+
+        window.addEventListener('mousemove', onMouseMove);
+        window.addEventListener('mouseup', onMouseUp);
+    }
 
     let currentPositionIndex = 0;
 
@@ -495,32 +525,21 @@
     function handleKeyDown(event) {
         event.stopPropagation();
 
-        // Debug logging for Ctrl-H
-        if (event.ctrlKey && event.code === 'KeyH') {
-            console.log('DEBUG: Ctrl-H pressed');
-            console.log('  - isAnyModalOpenStore:', $isAnyModalOpenStore);
-            console.log('  - activeElement:', document.activeElement);
-            console.log('  - closest filter-library-panel:', document.activeElement.closest('.filter-library-panel'));
-            console.log('  - closest search-history-panel:', document.activeElement.closest('.search-history-panel'));
-            console.log('  - showComment:', showComment);
-            console.log('  - showSearchHistoryPanel:', $showSearchHistoryPanelStore);
-        }
-
         // Prevent shortcuts if any modal is open
         if ($isAnyModalOpenStore) {
             console.log('DEBUG: Returning because modal is open');
             return;
         }
 
-        // Allow normal typing in input fields and textareas (only process Ctrl shortcuts)
-        if (document.activeElement.matches('input, textarea, [contenteditable]') && !event.ctrlKey) {
+        // Allow normal typing in input fields and textareas (only process Ctrl shortcuts, Escape, and Tab)
+        if (document.activeElement.matches('input, textarea, [contenteditable]') && !event.ctrlKey && event.key !== 'Escape' && event.key !== 'Tab') {
             return;
         }
 
         // Special handling for analysis panel
         if (document.activeElement.closest('.analysis-panel')) {
             // Analysis panel has focus
-            if (event.ctrlKey) {
+            if (event.ctrlKey || event.key === 'Escape' || event.key === 'Tab') {
                 // Don't return, let the shortcut be processed below
             } else {
                 // Check if a move is selected in the analysis panel
@@ -546,6 +565,8 @@
                 console.log('DEBUG: Inside panel, but Ctrl key pressed - allowing shortcut');
                 event.preventDefault();
                 // Don't return, let the shortcut be processed below
+            } else if (event.key === 'Escape' || event.key === 'Tab') {
+                // Allow Escape and Tab to switch tabs
             } else if (event.code === 'Space') {
                 // Allow Space key to open command line even when panels are open
                 console.log('DEBUG: Inside panel, but Space key pressed - allowing command line to open');
@@ -581,6 +602,13 @@
         if (event.key === 'Escape') {
             event.preventDefault();
             event.stopPropagation();
+            // If any text field is focused, blur it first
+            if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
+                /** @type {HTMLElement} */ (document.activeElement).blur();
+            } else {
+                // Switch to console tab and focus prompt
+                tabbedPanelRef?.focusConsole();
+            }
         } else if(event.ctrlKey && event.code == 'KeyN') {
             newDatabase();
         } else if(event.ctrlKey && event.code == 'KeyO') {
@@ -648,12 +676,14 @@
             loadAllPositions();
         } else if(event.ctrlKey && event.code === 'Tab') {
                 event.preventDefault();
-                toggleMatchMode();
+                activeTabStore.set('matches');
         } else if(!event.ctrlKey && event.code === 'Tab') {
-                toggleEditMode();
+                event.preventDefault();
+                activeTabStore.set('search');
         } else if (!event.ctrlKey && event.code === 'Space') {        
                 event.preventDefault();
-                showCommandStore.set(true); // Show command line
+                previousModeStore.set($statusBarModeStore);
+                tabbedPanelRef?.focusConsole();
         } else if (event.ctrlKey && event.code === 'KeyL') {
             event.preventDefault();
             if (showComment) {
@@ -664,14 +694,7 @@
                 event.preventDefault();
                 toggleCommentPanel();
         } else if (event.ctrlKey && event.code === 'KeyF') {
-            if ($statusBarModeStore === 'EDIT') {
-                findPosition();
-            } else {
-                setStatusBarMessage('Search is only available in edit mode');
-            }
-        } else if (event.ctrlKey && event.code === 'KeyH') {
-            console.log('DEBUG: Calling toggleSearchHistoryPanel');
-            toggleSearchHistoryPanel(); // Changed to toggleSearchHistoryPanel
+            toggleSearchHistoryPanel();
         } else if (!event.ctrlKey && event.key === '?') {
             toggleHelpModal(); // Keep '?' for help modal
         } else if (event.ctrlKey && event.code === 'KeyM') {
@@ -679,10 +702,20 @@
         } else if (event.ctrlKey && event.code === 'KeyB') {
             toggleFilterLibraryPanel();
         } else if (event.ctrlKey && event.code === 'KeyT') {
-            toggleMatchPanel();
+            event.preventDefault();
+            viewStore.addView();
+        } else if (event.ctrlKey && event.code === 'KeyW') {
+            event.preventDefault();
+            viewStore.closeView(get(viewStore.activeViewId));
         } else if (event.ctrlKey && event.code === 'KeyY') {
             event.preventDefault();
             toggleTournamentPanel();
+        } else if (event.ctrlKey && event.key === 'PageUp' || !event.ctrlKey && event.code === 'KeyJ') {
+            event.preventDefault();
+            viewStore.selectPreviousView();
+        } else if (event.ctrlKey && event.key === 'PageDown' || !event.ctrlKey && event.code === 'KeyK') {
+            event.preventDefault();
+            viewStore.selectNextView();
         } else if (!event.ctrlKey && event.code === 'KeyP') {
             togglePipcount();
         } else if (!event.ctrlKey && event.code === 'KeyR') {
@@ -840,6 +873,20 @@
         try {
             const sessionState = await LoadSessionState();
             console.log('Loaded session state:', sessionState);
+
+            // Try restoring view tabs first
+            if (sessionState && sessionState.viewsJSON) {
+                const viewsRestored = await viewStore.deserialize(sessionState.viewsJSON, LoadAllPositions);
+                if (viewsRestored) {
+                    // Also restore search context for the active view
+                    lastSearchCommand = sessionState.lastSearchCommand || '';
+                    lastSearchPosition = sessionState.lastSearchPosition ? JSON.parse(sessionState.lastSearchPosition) : null;
+                    hasActiveSearch = sessionState.hasActiveSearch || false;
+                    setStatusBarMessage('Session restored with views');
+                    console.log('Session restored with views');
+                    return;
+                }
+            }
             
             if (sessionState && sessionState.hasActiveSearch && sessionState.lastPositionIds && sessionState.lastPositionIds.length > 0) {
                 // Restore the session state
@@ -898,7 +945,8 @@
                 lastSearchPosition: lastSearchPosition ? JSON.stringify(lastSearchPosition) : '',
                 lastPositionIndex: currentPositionIndex,
                 lastPositionIds: positionIds,
-                hasActiveSearch: hasActiveSearch
+                hasActiveSearch: hasActiveSearch,
+                viewsJSON: viewStore.serialize()
             };
             
             await SaveSessionState(sessionState);
@@ -2740,7 +2788,7 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        showSearchModalStore.set(true); // Show the search modal
+        activeTabStore.set('search');
     }
 
     async function toggleEditMode() {
@@ -3028,45 +3076,7 @@
             return;
         }
         console.log('toggleAnalysisPanel');
-        const wasOpen = showAnalysis;
-        const inCollectionOrMatch = $statusBarModeStore === 'MATCH' || $statusBarModeStore === 'COLLECTION';
-        showAnalysisStore.set(!wasOpen);
-        
-        if (!wasOpen) {
-            // Panel is now opening - close other panels
-            if (!inCollectionOrMatch) {
-                statusBarModeStore.set('NORMAL');
-            }
-            // Don't close collection panel when in COLLECTION mode
-            if ($statusBarModeStore !== 'COLLECTION') {
-                showCollectionPanelStore.set(false);
-            }
-            showFilterLibraryPanelStore.set(false);
-            showCommentStore.set(false);
-            showSearchHistoryPanelStore.set(false);
-            setTimeout(() => {
-                const analysisPanel = document.querySelector('.analysis-panel');
-                if (analysisPanel) {
-                    analysisPanel.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            }, 0);
-        } else {
-            setTimeout(() => {
-                mainArea.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }, 0);
-        }
-
-        // Don't change mode to NORMAL if we're in MATCH or COLLECTION mode
-        if (!inCollectionOrMatch) {
-            previousModeStore.set('NORMAL');
-            statusBarModeStore.set('NORMAL');
-        }
+        activeTabStore.set('analysis');
     }
 
     function toggleCommentPanel() {
@@ -3079,55 +3089,15 @@
             return;
         }
         console.log('toggleCommentPanel called');
-        const wasOpen = showComment;
-        const inCollectionOrMatch = $statusBarModeStore === 'MATCH' || $statusBarModeStore === 'COLLECTION';
-        showCommentStore.set(!wasOpen);
-
-        if (!wasOpen) {
-            // Panel is now opening - close other panels
-            // Don't close collection panel when in COLLECTION mode
-            if ($statusBarModeStore !== 'COLLECTION') {
-                showCollectionPanelStore.set(false);
-            }
-            if (!inCollectionOrMatch) {
-                statusBarModeStore.set('NORMAL');
-            }
-            showAnalysisStore.set(false);
-            showFilterLibraryPanelStore.set(false);
-            showSearchHistoryPanelStore.set(false);
-            showCommandStore.set(false);
-            const currentIndex = $currentPositionIndexStore;
-            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
-            currentPositionIndexStore.set(currentIndex); // Set back to the original value
-            setTimeout(() => {
-                const commentPanel = document.querySelector('.comment-panel');
-                if (commentPanel) {
-                    commentPanel.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            }, 0);
-        } else {
-            SaveComment(parseInt(positions[currentPositionIndex].id), $commentTextStore);
-            mainArea.scrollIntoView({
-                behavior: 'smooth'
-            });
-        }
-
-        // Don't change mode to NORMAL if we're in MATCH or COLLECTION mode
-        if (!inCollectionOrMatch) {
-            previousModeStore.set('NORMAL');
-            statusBarModeStore.set('NORMAL');
-        }
+        activeTabStore.set('comments');
     }
 
     function toggleMetadataModal() {
         if (databaseLoaded) {
             if (mode === 'EDIT') {
-                setStatusBarMessage('Cannot show metadata modal in edit mode');
+                setStatusBarMessage('Cannot show metadata in edit mode');
             } else {
-                showMetadataModalStore.set(!showMetadataModal);
+                activeTabStore.set('metadata');
             }
         }
     }
@@ -3138,28 +3108,7 @@
             statusBarTextStore.set('No database loaded');
             return;
         }
-        const wasOpen = showFilterLibraryPanel;
-        showFilterLibraryPanelStore.set(!wasOpen);
-        if (!wasOpen) {
-            // Opening filter library exits COLLECTION mode
-            if ($statusBarModeStore === 'COLLECTION') {
-                exitCollectionMode();
-            }
-            // Panel is now opening - close other panels
-            statusBarModeStore.set('NORMAL');
-            showCommentStore.set(false);
-            showAnalysisStore.set(false);
-            showSearchHistoryPanelStore.set(false);
-            showMatchPanelStore.set(false);
-            showCollectionPanelStore.set(false);
-            // Refresh board and display position associated with currentPositionIndexStore
-            const currentIndex = $currentPositionIndexStore;
-            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
-            currentPositionIndexStore.set(currentIndex); // Set back to the original value
-        }
-
-        previousModeStore.set('NORMAL');
-        statusBarModeStore.set('NORMAL');
+        activeTabStore.set('search');
     }
 
     function toggleMatchPanel() {
@@ -3168,30 +3117,7 @@
             statusBarTextStore.set('No database loaded');
             return;
         }
-        const wasOpen = showMatchPanel;
-        showMatchPanelStore.set(!wasOpen);
-        if (!wasOpen) {
-            // Opening match panel exits COLLECTION mode
-            if ($statusBarModeStore === 'COLLECTION') {
-                exitCollectionMode();
-            }
-            // Panel is now opening - close other panels
-            // Don't change mode if we're in MATCH mode
-            if ($statusBarModeStore !== 'MATCH') {
-                statusBarModeStore.set('NORMAL');
-                previousModeStore.set('NORMAL');
-            }
-            showCommentStore.set(false);
-            showAnalysisStore.set(false);
-            showSearchHistoryPanelStore.set(false);
-            showFilterLibraryPanelStore.set(false);
-            showCollectionPanelStore.set(false);
-            showTournamentPanelStore.set(false);
-            // Refresh board and display position associated with currentPositionIndexStore
-            const currentIndex = $currentPositionIndexStore;
-            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
-            currentPositionIndexStore.set(currentIndex); // Set back to the original value
-        }
+        activeTabStore.set('matches');
     }
 
     function toggleCollectionPanelAction() {
@@ -3200,25 +3126,7 @@
             statusBarTextStore.set('No database loaded');
             return;
         }
-        const wasOpen = showCollectionPanel;
-        showCollectionPanelStore.set(!wasOpen);
-        if (!wasOpen) {
-            // Panel is now opening - close other panels
-            if ($statusBarModeStore !== 'COLLECTION') {
-                statusBarModeStore.set('NORMAL');
-                previousModeStore.set('NORMAL');
-            }
-            showCommentStore.set(false);
-            showAnalysisStore.set(false);
-            showSearchHistoryPanelStore.set(false);
-            showFilterLibraryPanelStore.set(false);
-            showMatchPanelStore.set(false);
-            showTournamentPanelStore.set(false);
-            // Refresh board and display position associated with currentPositionIndexStore
-            const currentIndex = $currentPositionIndexStore;
-            currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(currentIndex);
-        }
+        activeTabStore.set('collections');
     }
 
     function toggleTournamentPanel() {
@@ -3227,27 +3135,7 @@
             statusBarTextStore.set('No database loaded');
             return;
         }
-        const wasOpen = showTournamentPanel;
-        showTournamentPanelStore.set(!wasOpen);
-        if (!wasOpen) {
-            // Opening tournament panel exits COLLECTION mode
-            if ($statusBarModeStore === 'COLLECTION') {
-                exitCollectionMode();
-            }
-            // Panel is now opening - close other panels
-            statusBarModeStore.set('NORMAL');
-            previousModeStore.set('NORMAL');
-            showCommentStore.set(false);
-            showAnalysisStore.set(false);
-            showSearchHistoryPanelStore.set(false);
-            showFilterLibraryPanelStore.set(false);
-            showMatchPanelStore.set(false);
-            showCollectionPanelStore.set(false);
-            // Refresh board and display position associated with currentPositionIndexStore
-            const currentIndex = $currentPositionIndexStore;
-            currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(currentIndex);
-        }
+        activeTabStore.set('tournaments');
     }
 
     // Exit COLLECTION mode: reload all positions and navigate to last viewed position
@@ -3903,18 +3791,7 @@ function togglePipcount() {
             setStatusBarMessage('Search history requires an open database');
             return;
         }
-        const wasOpen = $showSearchHistoryPanelStore;
-        showSearchHistoryPanelStore.set(!wasOpen);
-        if (!wasOpen) {
-            // Panel is now opening - close other panels
-            statusBarModeStore.set('NORMAL');
-            showCommentStore.set(false);
-            showAnalysisStore.set(false);
-            showFilterLibraryPanelStore.set(false);
-        }
-
-        previousModeStore.set('NORMAL');
-        statusBarModeStore.set('NORMAL');
+        activeTabStore.set('search');
     }
 
     async function addSearchToFilterLibrary(filterName, filterCommand, positionJson) {
@@ -4029,28 +3906,20 @@ function togglePipcount() {
     }
 
     // Function to handle mouse wheel events
+    // Board area: position browsing. Panel area: normal scrolling.
     function handleWheel(event) {
         if ($isAnyModalOpenStore || $statusBarModeStore === 'EDIT') {
-            return; // Prevent changing position when any modal is open or in edit mode
-        }
-
-        // Prevent changing position when scrolling in the analysis panel, comment panel, filter panel, match panel, collection panel, or tournament panel
-        const analysisPanel = document.querySelector('.analysis-panel');
-        const commentPanel = document.querySelector('.comment-panel');
-        const filterPanel = document.querySelector('.filter-library-panel'); // Ensure correct class name
-        const matchPanel = document.querySelector('.match-panel');
-        const collectionPanel = document.querySelector('.collection-panel');
-        const tournamentPanel = document.querySelector('.tournament-panel');
-        if ((analysisPanel && analysisPanel.contains(event.target)) || 
-            (commentPanel && commentPanel.contains(event.target)) || 
-            (filterPanel && filterPanel.contains(event.target)) ||
-            (matchPanel && matchPanel.contains(event.target)) ||
-            (collectionPanel && collectionPanel.contains(event.target)) ||
-            (tournamentPanel && tournamentPanel.contains(event.target))) { // Check all panels
             return;
         }
 
+        // Only browse positions when scrolling in the board area (scrollable-content)
+        const boardArea = mainArea?.querySelector('.scrollable-content');
+        if (!boardArea || !boardArea.contains(event.target)) {
+            return; // Let panel area scroll normally
+        }
+
         if (positions && positions.length > 0) {
+            event.preventDefault();
             if (event.deltaY < 0) {
                 previousPosition();
             } else if (event.deltaY > 0) {
@@ -4114,75 +3983,55 @@ function togglePipcount() {
         onTogglePipcount={togglePipcount}
         onRandomPosition={loadRandomPosition}
         onToggleEditMode={toggleEditMode}
-        onToggleCommandMode={() => showCommandStore.set(true)}
-        onShowAnalysis={toggleAnalysisPanel}
-        onShowComment={toggleCommentPanel}
-        onFindPosition={findPosition}
+        onToggleCommandMode={() => tabbedPanelRef?.focusConsole()}
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
-        onShowMetadata={toggleMetadataModal}
-        onToggleFilterLibraryPanel={toggleFilterLibraryPanel}
-        onToggleSearchHistory={toggleSearchHistoryPanel}
-        onToggleMatchPanel={toggleMatchPanel}
-        onToggleCollectionPanel={toggleCollectionPanelAction}
-        onToggleTournamentPanel={toggleTournamentPanel}
         onToggleEPCMode={toggleEPCMode}
         onToggleMatchMode={toggleMatchMode}
     />
 
+    <ViewTabs />
+
     <div class="scrollable-content">
-
         <Board />
-
-        <CommandLine
-            onToggleHelp={toggleHelpModal}
-            bind:this={commandInput}
-            onNewDatabase={newDatabase}
-            onOpenDatabase={openDatabase}
-            onImportDatabase={importDatabase}
-            onExportDatabase={exportDatabase}
-            importPosition={importPosition}
-            onSavePosition={saveCurrentPosition}
-            onUpdatePosition={updatePosition}
-            onDeletePosition={deletePosition}
-            onToggleAnalysis={toggleAnalysisPanel}
-            onToggleComment={toggleCommentPanel}
-            exitApp={exitApp}
-            onLoadPositionsByFilters={loadPositionsByFilters}
-            onLoadAllPositions={loadAllPositions}
-            toggleFilterLibraryPanel={toggleFilterLibraryPanel}
-            toggleSearchHistoryPanel={toggleSearchHistoryPanel}
-            toggleMatchPanel={toggleMatchPanel}
-            toggleCollectionPanel={toggleCollectionPanelAction}
-            toggleEPCMode={toggleEPCMode}
-            toggleMatchMode={toggleMatchMode}
-        />
-
     </div>
 
-    <div class="panel-container">
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
+    <div class="resize-handle" on:mousedown={onResizeHandleMouseDown}></div>
 
-        <CommentPanel
-            visible={showComment}
-            onClose={toggleCommentPanel}
-        />
-
-        <AnalysisPanel
-            visible={showAnalysis}
-            onClose={toggleAnalysisPanel}
-        /> 
-
+    <div class="panel-wrapper" style="height: {panelHeight}px;">
+    <TabbedPanel
+        bind:this={tabbedPanelRef}
+        onToggleHelp={toggleHelpModal}
+        onNewDatabase={newDatabase}
+        onOpenDatabase={openDatabase}
+        onImportDatabase={importDatabase}
+        onExportDatabase={exportDatabase}
+        importPosition={importPosition}
+        onSavePosition={saveCurrentPosition}
+        onUpdatePosition={updatePosition}
+        onDeletePosition={deletePosition}
+        onToggleAnalysis={toggleAnalysisPanel}
+        onToggleComment={toggleCommentPanel}
+        exitApp={exitApp}
+        onLoadPositionsByFilters={loadPositionsByFilters}
+        onLoadAllPositions={loadAllPositions}
+        toggleFilterLibraryPanel={toggleFilterLibraryPanel}
+        toggleSearchHistoryPanel={toggleSearchHistoryPanel}
+        toggleMatchPanel={toggleMatchPanel}
+        toggleCollectionPanel={toggleCollectionPanelAction}
+        toggleEPCMode={toggleEPCMode}
+        toggleMatchMode={toggleMatchMode}
+        onCloseAnalysis={toggleAnalysisPanel}
+        onCloseComment={toggleCommentPanel}
+        onOpenCollection={handleOpenCollection}
+        onAddToFilterLibrary={addSearchToFilterLibrary}
+    />
     </div>
 
     <GoToPositionModal
         visible={showGoToPositionModal}
         onClose={() => showGoToPositionModalStore.set(false)}
-    />
-
-    <SearchModal
-        visible={showSearchModal}
-        onClose={() => showSearchModalStore.set(false)}
-        onLoadPositionsByFilters={loadPositionsByFilters}
     />
 
     <MetModal
@@ -4231,11 +4080,6 @@ function togglePipcount() {
         onClose={closeWarningModal}
     />
 
-    <MetadataModal
-        visible={showMetadataModal}
-        onClose={() => showMetadataModalStore.set(false)}
-    />
-
     <TakePoint2Modal/>
 
     <TakePoint4Modal/>
@@ -4273,23 +4117,10 @@ function togglePipcount() {
         onClose={handleExportClose}
     />
 
-    <FilterLibraryPanel onLoadPositionsByFilters={loadPositionsByFilters} />
-
-    <MatchPanel />
-
-    <CollectionPanel onOpenCollection={handleOpenCollection} />
-
-    <TournamentPanel />
-
     <HelpModal
         visible={showHelp}
         onClose={toggleHelpModal}
         handleGlobalKeydown={handleKeyDown}
-    />
-
-    <SearchHistoryPanel
-        onLoadPositionsByFilters={loadPositionsByFilters}
-        onAddToFilterLibrary={addSearchToFilterLibrary}
     />
 
     <StatusBar />
@@ -4300,30 +4131,46 @@ function togglePipcount() {
     .main-container {
         display: flex;
         flex-direction: column;
-        min-height: 100vh;
-        padding: 0; /* No padding so content fills entire viewport */
+        height: 100vh;
+        padding: 0;
         box-sizing: border-box;
         position: relative;
-        overflow: hidden; /* Hide overflow initially */
-        width: 100vw; /* Ensure it takes the full viewport width */
+        overflow: hidden;
+        width: 100vw;
     }
 
     .scrollable-content {
-        flex-grow: 1;
-        overflow-y: auto; /* Allow vertical scrolling */
-        overflow-x: hidden; /* Disable horizontal scrolling */
-        padding: 0; /* Remove padding */
+        flex: 1;
+        min-height: 0;
+        overflow: hidden;
+        padding: 0;
         width: 100%;
         box-sizing: border-box;
         display: flex;
-        justify-content: center; /* Center the board initially */
+        justify-content: center;
+        align-items: center;
     }
 
+    .resize-handle {
+        flex-shrink: 0;
+        height: 2px;
+        background: #e0e0e0;
+        cursor: ns-resize;
+        position: relative;
+        z-index: 10;
+        transition: background 0.15s;
+    }
 
-    .panel-container {
+    .resize-handle:hover,
+    .resize-handle:active {
+        background: #aaa;
+    }
+
+    .panel-wrapper {
+        flex-shrink: 0;
+        overflow: hidden;
         display: flex;
-        flex-direction: column; /* Or row, depending on layout */
-        height: 100%;
+        flex-direction: column;
     }
 
     /* Drag & Drop overlay */

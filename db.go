@@ -97,6 +97,8 @@ func (d *Database) SetupDatabase(path string) error {
             id INTEGER PRIMARY KEY,
             position_id INTEGER,
             text TEXT,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            modified_at DATETIME,
             FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
         )
     `)
@@ -690,6 +692,36 @@ func (d *Database) OpenDatabase(path string) error {
 		fmt.Println("Database automatically upgraded from 1.6.0 to 1.7.0")
 	}
 
+	// Auto-migrate from 1.7.0 to 1.8.0
+	if dbVersion == "1.7.0" {
+		// Add created_at column to comment table
+		d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
+		// Backfill existing rows that have NULL created_at
+		d.db.Exec(`UPDATE comment SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL`)
+
+		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.8.0")
+		if err != nil {
+			fmt.Println("Error updating database version:", err)
+			return err
+		}
+		dbVersion = "1.8.0"
+		fmt.Println("Database automatically upgraded from 1.7.0 to 1.8.0")
+	}
+
+	// Auto-migrate from 1.8.0 to 1.9.0
+	if dbVersion == "1.8.0" {
+		// Add modified_at column to comment table
+		d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
+
+		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.9.0")
+		if err != nil {
+			fmt.Println("Error updating database version:", err)
+			return err
+		}
+		dbVersion = "1.9.0"
+		fmt.Println("Database automatically upgraded from 1.8.0 to 1.9.0")
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).
@@ -933,6 +965,12 @@ func (d *Database) ensureAllTablesExist() error {
 	d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
 	// canonical_hash (v1.7.0)
 	d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
+
+	// Ensure columns added in later versions exist on comment table
+	// created_at (v1.8.0)
+	d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
+	// modified_at (v1.9.0)
+	d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
 
 	return nil
 }
@@ -1458,6 +1496,53 @@ func (d *Database) DeleteComment(positionID int64) error {
 	return nil
 }
 
+// AddComment inserts a new comment entry for a position (allows multiple per position)
+func (d *Database) AddComment(positionID int64, text string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	_, err := d.db.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, text)
+	if err != nil {
+		fmt.Println("Error inserting comment:", err)
+		return err
+	}
+	return nil
+}
+
+// UpdateCommentEntry updates a specific comment by its ID
+func (d *Database) UpdateCommentEntry(commentID int64, text string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.commentTableHasTimestamps() {
+		_, err := d.db.Exec(`UPDATE comment SET text = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ?`, text, commentID)
+		if err != nil {
+			fmt.Println("Error updating comment:", err)
+			return err
+		}
+	} else {
+		_, err := d.db.Exec(`UPDATE comment SET text = ? WHERE id = ?`, text, commentID)
+		if err != nil {
+			fmt.Println("Error updating comment:", err)
+			return err
+		}
+	}
+	return nil
+}
+
+// DeleteCommentEntry deletes a specific comment by its ID
+func (d *Database) DeleteCommentEntry(commentID int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	_, err := d.db.Exec(`DELETE FROM comment WHERE id = ?`, commentID)
+	if err != nil {
+		fmt.Println("Error deleting comment:", err)
+		return err
+	}
+	return nil
+}
+
 // SaveComment saves a comment for a given position ID
 func (d *Database) SaveComment(positionID int64, text string) error {
 	d.mu.Lock()         // Lock the mutex
@@ -1505,6 +1590,122 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 		return "", err
 	}
 	return text, nil
+}
+
+// commentTableHasTimestamps checks whether the comment table has created_at/modified_at columns.
+func (d *Database) commentTableHasTimestamps() bool {
+	var dummy string
+	err := d.db.QueryRow(`SELECT COALESCE(created_at, '') FROM comment LIMIT 1`).Scan(&dummy)
+	// If the column doesn't exist, the error message contains "no such column"
+	if err != nil && err != sql.ErrNoRows {
+		return false
+	}
+	return true
+}
+
+// GetCommentsByPosition returns all non-empty comments for a given position, ordered by comment ID descending
+func (d *Database) GetCommentsByPosition(positionID int64) ([]CommentEntry, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	var rows *sql.Rows
+	var err error
+	hasTS := d.commentTableHasTimestamps()
+	if hasTS {
+		rows, err = d.db.Query(`SELECT id, position_id, text, COALESCE(created_at, ''), COALESCE(modified_at, '') FROM comment WHERE position_id = ? AND text != '' ORDER BY id DESC`, positionID)
+	} else {
+		rows, err = d.db.Query(`SELECT id, position_id, text FROM comment WHERE position_id = ? AND text != '' ORDER BY id DESC`, positionID)
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var entries []CommentEntry
+	for rows.Next() {
+		var e CommentEntry
+		if hasTS {
+			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt); err != nil {
+				return nil, err
+			}
+		} else {
+			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text); err != nil {
+				return nil, err
+			}
+		}
+		entries = append(entries, e)
+	}
+	return entries, rows.Err()
+}
+
+// GetAllComments returns all non-empty comments, ordered by comment ID descending (most recent first)
+func (d *Database) GetAllComments() ([]CommentEntry, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	var rows *sql.Rows
+	var err error
+	hasTS := d.commentTableHasTimestamps()
+	if hasTS {
+		rows, err = d.db.Query(`SELECT id, position_id, text, COALESCE(created_at, ''), COALESCE(modified_at, '') FROM comment WHERE text != '' ORDER BY id DESC`)
+	} else {
+		rows, err = d.db.Query(`SELECT id, position_id, text FROM comment WHERE text != '' ORDER BY id DESC`)
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var entries []CommentEntry
+	for rows.Next() {
+		var e CommentEntry
+		if hasTS {
+			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt); err != nil {
+				return nil, err
+			}
+		} else {
+			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text); err != nil {
+				return nil, err
+			}
+		}
+		entries = append(entries, e)
+	}
+	return entries, rows.Err()
+}
+
+// SearchComments searches for comments containing the given query string (case-insensitive)
+func (d *Database) SearchComments(query string) ([]CommentEntry, error) {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	var rows *sql.Rows
+	var err error
+	hasTS := d.commentTableHasTimestamps()
+	if hasTS {
+		rows, err = d.db.Query(`SELECT id, position_id, text, COALESCE(created_at, ''), COALESCE(modified_at, '') FROM comment WHERE text != '' AND text LIKE '%' || ? || '%' ORDER BY id DESC`, query)
+	} else {
+		rows, err = d.db.Query(`SELECT id, position_id, text FROM comment WHERE text != '' AND text LIKE '%' || ? || '%' ORDER BY id DESC`, query)
+	}
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var entries []CommentEntry
+	for rows.Next() {
+		var e CommentEntry
+		if hasTS {
+			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text, &e.CreatedAt, &e.ModifiedAt); err != nil {
+				return nil, err
+			}
+		} else {
+			if err := rows.Scan(&e.ID, &e.PositionID, &e.Text); err != nil {
+				return nil, err
+			}
+		}
+		entries = append(entries, e)
+	}
+	return entries, rows.Err()
 }
 
 func (d *Database) LoadPositionsByFilters(
@@ -3412,6 +3613,7 @@ type SessionState struct {
 	LastPositionIndex  int     `json:"lastPositionIndex"`  // The index of the last viewed position in results
 	LastPositionIDs    []int64 `json:"lastPositionIds"`    // The list of position IDs from the last search
 	HasActiveSearch    bool    `json:"hasActiveSearch"`    // Whether there was an active search session
+	ViewsJSON          string  `json:"viewsJSON"`          // Serialized view tabs state
 }
 
 // SaveSessionState saves the current session state to the metadata table
@@ -3468,6 +3670,12 @@ func (d *Database) SaveSessionState(state SessionState) error {
 	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_has_active_search', ?)`, hasActiveSearchStr)
 	if err != nil {
 		fmt.Println("Error saving session_has_active_search:", err)
+		return err
+	}
+
+	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_views', ?)`, state.ViewsJSON)
+	if err != nil {
+		fmt.Println("Error saving session_views:", err)
 		return err
 	}
 
@@ -3546,6 +3754,17 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 		state.HasActiveSearch = hasActiveSearch.String == "true"
 	}
 
+	// Load views JSON
+	var viewsJSON sql.NullString
+	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_views'`).Scan(&viewsJSON)
+	if err != nil && err != sql.ErrNoRows {
+		fmt.Println("Error loading session_views:", err)
+		return nil, err
+	}
+	if viewsJSON.Valid {
+		state.ViewsJSON = viewsJSON.String
+	}
+
 	return state, nil
 }
 
@@ -3564,6 +3783,7 @@ func (d *Database) ClearSessionState() error {
 		"session_last_position_index",
 		"session_last_position_ids",
 		"session_has_active_search",
+		"session_views",
 	}
 
 	tx, err := d.db.Begin()

@@ -56,6 +56,9 @@
     let renamingCollectionId = null;
     let renamingName = '';
 
+    // Sub-tab: 'list' (collections list) or 'positions' (positions in active collection) or 'add' (add to collection)
+    let activeSubTab = (mode === 'COLLECTION' && activeCollection) ? 'positions' : 'list';
+
     // Multi-select for positions
     let selectedPositionIndices = new Set();
 
@@ -99,6 +102,9 @@
 
     const unsubMode = statusBarModeStore.subscribe(value => {
         mode = value;
+        if (value === 'COLLECTION' && activeCollection) {
+            activeSubTab = 'positions';
+        }
     });
 
     // Sync position selection when navigating with j/k in COLLECTION mode
@@ -215,6 +221,21 @@
         }
     }
 
+    // Inline add row in collections list
+    let inlineNewName = '';
+    async function createCollectionInline() {
+        if (!inlineNewName.trim()) return;
+        try {
+            await CreateCollection(inlineNewName.trim(), '');
+            await loadCollections();
+            statusBarTextStore.set(`Collection "${inlineNewName.trim()}" created`);
+            inlineNewName = '';
+        } catch (error) {
+            console.error('Error creating collection:', error);
+            statusBarTextStore.set('Error creating collection');
+        }
+    }
+
     async function selectCollection(collection) {
         // In COLLECTION mode, don't allow deselecting the active collection
         if (mode === 'COLLECTION' && activeCollection) {
@@ -306,10 +327,11 @@
     }
 
     function handleRenameKeyDown(event, collection) {
-        event.stopPropagation();
         if (event.key === 'Enter') {
+            event.stopPropagation();
             finishRename(collection);
         } else if (event.key === 'Escape') {
+            event.stopPropagation();
             renamingCollectionId = null;
         }
     }
@@ -327,10 +349,11 @@
     }
 
     function handleDescriptionKeyDown(event) {
-        event.stopPropagation();
         if (event.key === 'Enter') {
+            event.stopPropagation();
             saveDescription();
         } else if (event.key === 'Escape') {
+            event.stopPropagation();
             descriptionText = activeCollection?.description || '';
             editingDescription = false;
         }
@@ -361,10 +384,11 @@
     }
 
     function handleListDescriptionKeyDown(event, collection) {
-        event.stopPropagation();
         if (event.key === 'Enter') {
+            event.stopPropagation();
             saveListDescription(collection);
         } else if (event.key === 'Escape') {
+            event.stopPropagation();
             editingDescriptionId = null;
         }
     }
@@ -741,38 +765,39 @@
     });
 </script>
 
-{#if visible}
-    <section class="collection-panel" role="dialog" aria-modal="true" id="collectionPanel" tabindex="-1">
-        <button type="button" class="close-icon" on:click={closePanel} aria-label="Close">×</button>
-        
+    <section class="collection-panel" id="collectionPanel" tabindex="-1">
         <div class="collection-content">
-            <div class="panels-container">
-                <!-- Left: Collections list -->
-                <div class="collections-list">
-                    <div class="panel-header">Collections ({collections.length})</div>
-                    <div class="col-header-row">
-                        <span class="col-h col-name">Name</span>
-                        <span class="col-h col-count">#</span>
-                        <span class="col-h col-desc">Description</span>
-                        <span class="col-h col-acts"></span>
+            <!-- Sub-tab sidebar -->
+            <div class="sub-tab-sidebar">
+                <button class="sub-tab-btn home-btn" class:active={activeSubTab === 'list'} on:click={() => activeSubTab = 'list'} title="Collections">⌂</button>
+                {#if mode === 'COLLECTION' && activeCollection}
+                    <div class="sub-tab-btn named-tab" class:active={activeSubTab === 'positions'} on:click={() => activeSubTab = 'positions'} on:keydown={() => {}} role="button" tabindex="-1">
+                        <span class="tab-name" title={activeCollection.name}>{activeCollection.name}</span>
+                        <button class="tab-close-btn" on:click|stopPropagation={() => { activeSubTab = 'list'; }} title="Close">×</button>
                     </div>
-                    <div class="list-container">
-                        {#each collections as collection, index}
-                            <div 
-                                class="collection-item" 
-                                class:selected={selectedCollection?.id === collection.id}
-                                class:active={activeCollection?.id === collection.id}
-                                class:drag-over={dragType === 'collection' && dragOverIndex === index && dragStartIndex !== index}
-                                on:click={() => selectCollection(collection)}
-                                on:dblclick={() => openCollection(collection)}
-                                draggable="true"
-                                on:dragstart={(e) => onCollectionDragStart(e, index)}
-                                on:dragover={(e) => onCollectionDragOver(e, index)}
-                                on:drop={(e) => onCollectionDrop(e, index)}
-                                on:dragend={onDragEnd}
-                            >
-                                {#if renamingCollectionId === collection.id}
-                                    <span class="col-cell col-name">
+                {/if}
+            </div>
+
+            <div class="sub-tab-content">
+                {#if activeSubTab === 'list'}
+                    <!-- Collections list -->
+                    <div class="list-view">
+                        <div class="list-container">
+                            {#each collections as collection, index}
+                                <div
+                                    class="row"
+                                    class:selected={selectedCollection?.id === collection.id}
+                                    class:active={activeCollection?.id === collection.id}
+                                    class:drag-over={dragType === 'collection' && dragOverIndex === index && dragStartIndex !== index}
+                                    on:click={() => selectCollection(collection)}
+                                    on:dblclick={() => openCollection(collection)}
+                                    draggable="true"
+                                    on:dragstart={(e) => onCollectionDragStart(e, index)}
+                                    on:dragover={(e) => onCollectionDragOver(e, index)}
+                                    on:drop={(e) => onCollectionDrop(e, index)}
+                                    on:dragend={onDragEnd}
+                                >
+                                    {#if renamingCollectionId === collection.id}
                                         <input
                                             class="rename-input"
                                             type="text"
@@ -783,82 +808,53 @@
                                             on:dblclick|stopPropagation
                                             autofocus
                                         />
-                                    </span>
-                                {:else}
-                                    <span class="col-cell col-name" title={collection.name}>{collection.name}</span>
-                                {/if}
-                                <span class="col-cell col-count">{collection.positionCount}</span>
-                                <span class="col-cell col-desc">
-                                    {#if editingDescriptionId === collection.id}
-                                        <input
-                                            class="desc-input"
-                                            type="text"
-                                            bind:value={editingDescriptionText}
-                                            on:blur={() => saveListDescription(collection)}
-                                            on:keydown={(e) => handleListDescriptionKeyDown(e, collection)}
-                                            on:click|stopPropagation
-                                            on:dblclick|stopPropagation
-                                            placeholder="Add description..."
-                                            autofocus
-                                        />
                                     {:else}
-                                        <span 
-                                            class="desc-text"
-                                            on:click|stopPropagation={(e) => startEditDescription(collection, e)}
-                                            title={collection.description || 'Click to edit'}
-                                        >{collection.description || '—'}</span>
+                                        <span class="row-name" title={collection.name}>{collection.name}</span>
                                     {/if}
-                                </span>
-                                <span class="col-cell col-acts">
-                                    <div class="collection-actions">
+                                    {#if collection.positionCount > 0}
+                                        <span class="row-badge">{collection.positionCount}</span>
+                                    {/if}
+                                    {#if collection.description}
+                                        <span class="row-desc" title={collection.description}>{collection.description}</span>
+                                    {/if}
+                                    <span class="row-acts">
                                         <button class="icon-btn" on:click|stopPropagation={(e) => startRename(collection, e)} title="Rename">✎</button>
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionDown(index, e)} disabled={index === collections.length - 1} title="Move down">▼</button>
                                         <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteCollection(collection, e)} title="Delete">×</button>
-                                    </div>
-                                </span>
+                                    </span>
+                                </div>
+                            {/each}
+                            <!-- Inline add row -->
+                            <div class="row add-row">
+                                <input class="row-input name" type="text" bind:value={inlineNewName} placeholder="New collection…" on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()} />
                             </div>
-                        {/each}
-                        {#if collections.length === 0}
-                            <div class="empty-msg">No collections</div>
-                        {/if}
-                    </div>
-                </div>
-
-                <!-- Right panel -->
-                <div class="right-panel">
-                    {#if mode === 'COLLECTION' && activeCollection}
-                        <div class="panel-header">
-                            <span>{activeCollection.name} — {collectionPositions.length} pos.</span>
+                            {#if collections.length === 0}
+                                <div class="empty-msg">No collections</div>
+                            {/if}
                         </div>
-                        <div class="description-row">
+                    </div>
+                {:else if activeSubTab === 'positions' && mode === 'COLLECTION' && activeCollection}
+                    <!-- Positions in active collection -->
+                    <div class="list-view">
+                        <div class="list-header">
+                            <span>{activeCollection.name}</span>
                             {#if editingDescription}
                                 <input
-                                    class="desc-input"
+                                    class="desc-inline-input"
                                     type="text"
                                     bind:value={descriptionText}
                                     on:blur={saveDescription}
                                     on:keydown={handleDescriptionKeyDown}
-                                    placeholder="Add description..."
+                                    placeholder="description…"
                                     autofocus
                                 />
                             {:else}
-                                <span 
-                                    class="desc-text desc-editable" 
-                                    on:click={() => { editingDescription = true; }}
-                                    title="Click to edit description"
-                                >{descriptionText || '— click to add description'}</span>
+                                <span class="desc-inline" on:click={() => { editingDescription = true; }} title="Click to edit description">{descriptionText || ''}</span>
                             {/if}
-                        </div>
-                        <div class="col-header-row">
-                            <span class="col-h col-pos-order">#</span>
-                            <span class="col-h col-pos-id">ID</span>
-                            <span class="col-h col-pos-fill"></span>
                         </div>
                         <div class="list-container">
                             {#each collectionPositions as position, index}
-                                <div 
-                                    class="position-item"
+                                <div
+                                    class="row pos-row"
                                     class:current={$currentPositionIndexStore === index}
                                     class:multi-selected={selectedPositionIndices.has(index)}
                                     class:drag-over={dragType === 'position' && dragOverIndex === index && dragStartIndex !== index}
@@ -869,411 +865,87 @@
                                     on:drop={(e) => onPositionDrop(e, index)}
                                     on:dragend={onDragEnd}
                                 >
-                                    <span class="col-cell col-pos-order">{index + 1}</span>
-                                    <span class="col-cell col-pos-id">{positionIndexMap[position.id] || '?'}</span>
-                                    <span class="col-cell col-pos-fill"></span>
-                                    <div class="position-actions">
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionDown(index, e)} disabled={index === collectionPositions.length - 1} title="Move down">▼</button>
-                                        <button class="icon-btn delete" on:click|stopPropagation={(e) => removePositionFromRow(index, e)} title="Remove">×</button>
-                                    </div>
+                                    <span class="pos-idx">{index + 1}</span>
+                                    <span class="pos-id">id {positionIndexMap[position.id] || '?'}</span>
+                                    <span class="row-acts">
+                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionUp(index, e)} disabled={index === 0}>▲</button>
+                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionDown(index, e)} disabled={index === collectionPositions.length - 1}>▼</button>
+                                        <button class="icon-btn delete" on:click|stopPropagation={(e) => removePositionFromRow(index, e)}>×</button>
+                                    </span>
                                 </div>
                             {/each}
                             {#if collectionPositions.length === 0}
                                 <div class="empty-msg">Empty collection</div>
                             {/if}
                         </div>
-                    {:else}
-                        <div class="panel-header">Add to collection</div>
-                        <div class="list-container">
-                            <div class="add-section">
-                                {#each collections as collection}
-                                    <label class="add-checkbox">
-                                        <input 
-                                            type="checkbox" 
-                                            checked={positionCollectionIds.includes(collection.id)}
-                                            on:change={() => togglePositionInCollection(collection.id)}
-                                            disabled={!currentPosition || !currentPosition.id}
-                                        />
-                                        <span class="add-label">{collection.name}</span>
-                                        <span class="add-count">({collection.positionCount})</span>
-                                    </label>
-                                {/each}
-                                <div class="new-collection-row">
-                                    <input 
-                                        type="text" 
-                                        bind:value={newCollectionName} 
-                                        placeholder="New collection..."
-                                        on:keydown|stopPropagation={(e) => e.key === 'Enter' && createAndAddToCollection()}
-                                    />
-                                    <button 
-                                        on:click={createAndAddToCollection}
-                                        disabled={!newCollectionName.trim() || !currentPosition || !currentPosition.id}
-                                    >Add</button>
-                                </div>
-                            </div>
-                        </div>
-                    {/if}
-                </div>
+                    </div>
+                {/if}
             </div>
         </div>
     </section>
-{/if}
 
 <style>
-    .collection-panel {
-        position: fixed;
-        width: 100%;
-        bottom: 22px;
-        left: 0;
-        right: 0;
-        height: 178px;
-        background-color: white;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
-        padding: 4px 10px;
-        box-sizing: border-box;
-        z-index: 5;
-        outline: none;
-        overflow: hidden;
-        user-select: none;
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-    }
+    .collection-panel { width: 100%; height: 100%; background: white; box-sizing: border-box; outline: none; overflow: hidden; user-select: none; }
+    .collection-content { font-size: 12px; color: #333; height: 100%; display: flex; }
 
-    .close-icon {
-        position: absolute;
-        top: -4px;
-        right: 6px;
-        font-size: 20px;
-        font-weight: bold;
-        color: #888;
+    .sub-tab-sidebar { display: flex; flex-direction: column; width: 70px; flex-shrink: 0; background: #f5f5f5; border-right: 1px solid #ddd; }
+    .sub-tab-btn { border: none; background: transparent; padding: 8px 4px; font-size: 11px; color: #666; cursor: pointer; border-left: 2px solid transparent; text-align: center; transition: background 0.15s; }
+    .sub-tab-btn:hover { background: #e8e8e8; }
+    .sub-tab-btn.active { color: #333; font-weight: 600; background: #fff; border-left-color: #555; }
+    .sub-tab-btn.home-btn { font-size: 16px; padding: 6px 4px; }
+    .sub-tab-btn.named-tab { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; position: relative; cursor: pointer; }
+    .tab-name { font-size: 9px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 62px; display: block; }
+    .tab-close-btn { border: none; background: none; font-size: 12px; color: #aaa; cursor: pointer; line-height: 1; padding: 0 2px; }
+    .tab-close-btn:hover { color: #c55; }
+    .sub-tab-content { flex: 1; min-width: 0; overflow: hidden; display: flex; }
+
+    .list-view { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
+    .list-header { padding: 3px 10px; font-size: 11px; font-weight: 600; color: #555; border-bottom: 1px solid #eee; flex-shrink: 0; background: #fafafa; display: flex; align-items: center; gap: 8px; }
+    .list-container { flex: 1; overflow-y: auto; overflow-x: hidden; }
+
+    .row {
+        display: flex;
+        align-items: center;
+        padding: 2px 10px;
         cursor: pointer;
-        background: none;
-        border: none;
-        padding: 0;
-        z-index: 10;
-    }
-
-    .close-icon:hover {
-        color: #333;
-    }
-
-    .collection-content {
-        font-size: 12px;
-        color: #333;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-    }
-
-    .panels-container {
-        display: flex;
+        border-bottom: 1px solid #f5f5f5;
+        min-height: 24px;
         gap: 6px;
-        flex: 1;
-        min-height: 0;
     }
+    .row:hover { background: #f5f8ff; }
+    .row.selected { background: #e3f2fd; }
+    .row.active { background: #dce9f7; }
+    .row.drag-over { border-top: 2px solid #999; }
+    .row.add-row { cursor: default; background: #fafafa; border-bottom: none; }
+    .row.add-row:hover { background: #fafafa; }
 
-    .collections-list {
-        flex: 3;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ddd;
-        min-width: 0;
-        overflow: hidden;
-    }
+    .row-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
+    .row-badge { font-size: 9px; color: #888; background: #eee; border-radius: 8px; padding: 0 5px; flex-shrink: 0; }
+    .row-desc { font-size: 10px; color: #aaa; font-style: italic; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
+    .row-acts { display: flex; gap: 2px; visibility: hidden; flex-shrink: 0; }
+    .row:hover .row-acts { visibility: visible; }
 
-    .right-panel {
-        flex: 1;
-        min-width: 180px;
-        max-width: 280px;
-        display: flex;
-        flex-direction: column;
-        border: 1px solid #ddd;
-        overflow: hidden;
-    }
+    .rename-input { flex: 1; font-size: 12px; padding: 1px 4px; border: 1px solid #999; outline: none; box-sizing: border-box; }
+    .row-input { padding: 1px 4px; border: 1px solid #ccc; border-radius: 2px; font-size: 11px; outline: none; box-sizing: border-box; }
+    .row-input.name { flex: 1; min-width: 0; }
 
-    .panel-header {
-        background-color: #f2f2f2;
-        padding: 2px 8px;
-        font-weight: bold;
-        font-size: 11px;
-        border-bottom: 1px solid #ddd;
-        flex-shrink: 0;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        white-space: nowrap;
-    }
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 10px; color: #888; padding: 0 3px; line-height: 1; }
+    .icon-btn:hover:not(:disabled) { color: #333; }
+    .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .icon-btn.delete:hover:not(:disabled) { color: #c55; }
 
-    /* Column header row */
-    .col-header-row {
-        display: flex;
-        align-items: center;
-        background-color: #f8f8f8;
-        border-bottom: 1px solid #ddd;
-        padding: 1px 8px;
-        flex-shrink: 0;
-    }
+    .empty-msg { text-align: center; color: #bbb; padding: 16px; font-size: 11px; font-style: italic; }
 
-    .col-h {
-        font-size: 10px;
-        font-weight: 600;
-        color: #888;
-        text-transform: uppercase;
-        letter-spacing: 0.3px;
-    }
+    /* Positions */
+    .pos-row { cursor: pointer; }
+    .pos-row.current { background: #dce9f7; }
+    .pos-row.multi-selected { background: #dce9f7; }
+    .pos-row.drag-over { border-top: 2px solid #999; }
+    .pos-idx { font-size: 10px; color: #aaa; width: 24px; text-align: right; flex-shrink: 0; }
+    .pos-id { font-size: 11px; color: #666; flex: 1; }
 
-    /* Column widths — collections */
-    .col-name { width: 140px; min-width: 80px; flex-shrink: 0; text-align: left; }
-    .col-count { width: 30px; flex-shrink: 0; text-align: right; padding-right: 8px; }
-    .col-desc { flex: 1; min-width: 0; text-align: left; }
-    .col-acts { width: 70px; flex-shrink: 0; }
-
-    /* Column widths — positions */
-    .col-pos-order { width: 32px; flex-shrink: 0; text-align: right; padding-right: 8px; }
-    .col-pos-id { width: 50px; flex-shrink: 0; text-align: right; padding-right: 8px; }
-    .col-pos-fill { flex: 1; }
-
-    .col-cell {
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-
-    /* Description */
-    .description-row {
-        padding: 2px 8px;
-        border-bottom: 1px solid #eee;
-        flex-shrink: 0;
-    }
-
-    .desc-text {
-        color: #666;
-        font-style: italic;
-        font-size: 11px;
-        cursor: default;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        display: block;
-        text-align: left;
-    }
-
-    .desc-editable {
-        cursor: pointer;
-    }
-
-    .desc-editable:hover {
-        color: #333;
-    }
-
-    .desc-input {
-        width: 100%;
-        font-size: 11px;
-        padding: 1px 4px;
-        border: 1px solid #999;
-        outline: none;
-        box-sizing: border-box;
-        user-select: text;
-        -webkit-user-select: text;
-    }
-
-    .list-container {
-        flex: 1;
-        overflow-y: auto;
-        overflow-x: hidden;
-        min-height: 0;
-    }
-
-    /* Collection items */
-    .collection-item {
-        display: flex;
-        align-items: center;
-        padding: 1px 8px;
-        cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .collection-item:hover {
-        background-color: #f0f5ff;
-    }
-
-    .collection-item.selected {
-        background-color: #dce9f7;
-    }
-
-    .collection-item.active {
-        background-color: #dce9f7;
-    }
-
-    .collection-item.selected .desc-text,
-    .collection-item.active .desc-text {
-        color: #444;
-    }
-
-    .collection-item.drag-over {
-        border-top: 2px solid #999;
-    }
-
-    .collection-actions {
-        display: flex;
-        gap: 1px;
-        visibility: hidden;
-        flex-shrink: 0;
-    }
-
-    .collection-item:hover .collection-actions {
-        visibility: visible;
-    }
-
-    .rename-input {
-        width: 100%;
-        font-size: 12px;
-        padding: 1px 4px;
-        border: 1px solid #999;
-        outline: none;
-        box-sizing: border-box;
-        user-select: text;
-        -webkit-user-select: text;
-    }
-
-    /* Icon buttons */
-    .icon-btn {
-        font-size: 10px;
-        padding: 0 3px;
-        border: 1px solid #ddd;
-        background-color: #f5f5f5;
-        cursor: pointer;
-        line-height: 1.4;
-        color: #666;
-    }
-
-    .icon-btn:hover:not(:disabled) {
-        background-color: #e0e0e0;
-        color: #333;
-    }
-
-    .icon-btn:disabled {
-        opacity: 0.3;
-        cursor: not-allowed;
-    }
-
-    .icon-btn.delete:hover:not(:disabled) {
-        background-color: #fdd;
-        border-color: #c00;
-        color: #c00;
-    }
-
-    /* Position items */
-    .position-item {
-        display: flex;
-        align-items: center;
-        padding: 1px 8px;
-        cursor: pointer;
-        border-bottom: 1px solid #f0f0f0;
-    }
-
-    .position-item:hover {
-        background-color: #f0f5ff;
-    }
-
-    .position-item.current {
-        background-color: #dce9f7;
-    }
-
-    .position-item.multi-selected {
-        background-color: #dce9f7;
-    }
-
-    .position-item.drag-over {
-        border-top: 2px solid #999;
-    }
-
-    .position-actions {
-        display: flex;
-        gap: 1px;
-        visibility: hidden;
-        margin-left: auto;
-    }
-
-    .position-item:hover .position-actions {
-        visibility: visible;
-    }
-
-    /* Add section */
-    .add-section {
-        padding: 4px;
-    }
-
-    .add-checkbox {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        padding: 2px 4px;
-        cursor: pointer;
-        font-size: 12px;
-    }
-
-    .add-checkbox:hover {
-        background-color: #f5f5f5;
-    }
-
-    .add-checkbox input[type="checkbox"] {
-        width: 13px;
-        height: 13px;
-        cursor: pointer;
-    }
-
-    .add-label {
-        flex: 1;
-    }
-
-    .add-count {
-        color: #999;
-        font-size: 11px;
-    }
-
-    .new-collection-row {
-        display: flex;
-        gap: 4px;
-        padding: 4px 4px 0;
-        margin-top: 4px;
-        border-top: 1px solid #eee;
-    }
-
-    .new-collection-row input {
-        flex: 1;
-        font-size: 12px;
-        padding: 2px 4px;
-        border: 1px solid #ddd;
-        user-select: text;
-        -webkit-user-select: text;
-    }
-
-    .new-collection-row button {
-        font-size: 12px;
-        padding: 2px 8px;
-        border: 1px solid #ddd;
-        background-color: #f5f5f5;
-        cursor: pointer;
-        white-space: nowrap;
-    }
-
-    .new-collection-row button:hover:not(:disabled) {
-        background-color: #e0e0e0;
-    }
-
-    .new-collection-row button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-    }
-
-    .empty-msg {
-        padding: 10px;
-        text-align: center;
-        color: #999;
-        font-style: italic;
-        font-size: 11px;
-    }
+    /* Description inline */
+    .desc-inline { font-size: 10px; color: #aaa; font-style: italic; cursor: pointer; }
+    .desc-inline:hover { color: #666; }
+    .desc-inline-input { font-size: 10px; border: 1px solid #ccc; outline: none; padding: 1px 4px; flex: 1; min-width: 0; }
 </style>
