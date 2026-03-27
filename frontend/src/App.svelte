@@ -3401,6 +3401,9 @@ function togglePipcount() {
                 }
                 currentPositionIndexStore.set(0); // Ensure the first matching position is displayed
                 
+                // Switch to analysis tab to show results
+                activeTabStore.set('analysis');
+                
                 // Track session state for search results
                 hasActiveSearch = true;
                 lastSearchCommand = searchCommand || '';
@@ -3450,6 +3453,9 @@ function togglePipcount() {
             if (positions && positions.length > 0) {
                 currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw board
                 currentPositionIndexStore.set(positions.length - 1);
+                
+                // Switch to analysis tab to show results
+                activeTabStore.set('analysis');
                 
                 // When loading all positions, clear the active search state
                 hasActiveSearch = false;

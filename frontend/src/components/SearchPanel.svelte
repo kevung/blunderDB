@@ -231,8 +231,6 @@
             p1czFilter, p2czFilter, searchText ? `t"${searchText}"` : '', p1apcFilter, eqFilter, dtFilter, drFilter, movePattern ? `m"${movePattern}"` : '',
             cdFilter, p1obFilter, p2obFilter, p1jbFilter, p2jbFilter, ncFilter, mirFilter, meFilter,
             '', matchIDs, tournamentIDs, restrictToPositionIDs);
-
-        loadHistory();
     }
 
     function clearFilters() {
