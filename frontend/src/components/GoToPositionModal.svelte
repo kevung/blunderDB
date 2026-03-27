@@ -115,8 +115,8 @@
         inputField.select(); // Select the text to allow direct replacement
     }
 
-    $: if (visible && $statusBarModeStore !== 'NORMAL' && $statusBarModeStore !== 'MATCH') {
-        onClose(); // Close the modal if not in normal or match mode
+    $: if (visible && $statusBarModeStore === 'EDIT') {
+        onClose(); // Close the modal if in edit mode
     }
 </script>
 

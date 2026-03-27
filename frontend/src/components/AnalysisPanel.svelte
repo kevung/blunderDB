@@ -1,7 +1,7 @@
 <script>
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
-    import { showAnalysisStore, showFilterLibraryPanelStore, showCommentStore, statusBarModeStore } from '../stores/uiStore'; // Import showAnalysisStore
+    import { showAnalysisStore, showFilterLibraryPanelStore, showCommentStore } from '../stores/uiStore'; // Import showAnalysisStore
     export let visible = false;
     export let onClose;
 
@@ -19,7 +19,7 @@
         matchCtx = value;
         // Auto-switch tab based on current move type in match mode
         // But only if no move is currently selected (to avoid interfering with move navigation)
-        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode && matchCtx.movePositions.length > 0 && !$selectedMoveStore) {
+        if (matchCtx.isMatchMode && matchCtx.movePositions.length > 0 && !$selectedMoveStore) {
             const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
             if (currentMovePos) {
                 // If it's the first position of a game (move_number 0 or 1), force checker tab and clear cube data
@@ -52,7 +52,7 @@
         visible = value;
         if(visible) {
             // Pre-load cube analysis in match mode if current position is checker
-            if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+            if (matchCtx.isMatchMode) {
                 const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
                 if (currentMovePos && currentMovePos.move_type === 'checker') {
                     // If it's the first position of a game (move_number 0 or 1), clear cube data immediately
@@ -227,7 +227,7 @@
         const normalizedMoveStr = normalizeMoveString(move.move);
         
         // In MATCH mode, only highlight the current match's specific move
-        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+        if (matchCtx.isMatchMode) {
             // Use the single playedMove field which contains the current match's move
             if (analysisData.playedMove) {
                 return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
@@ -269,7 +269,7 @@
         const actionParts = normalizeCubeAction(action);
 
         // In MATCH mode, only highlight the current match's specific cube action
-        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+        if (matchCtx.isMatchMode) {
             if (analysisData.playedCubeAction) {
                 const playedParts = normalizeCubeAction(analysisData.playedCubeAction);
                 return actionParts.every(a => playedParts.includes(a));
@@ -305,7 +305,7 @@
         activeTab = tab;
         
         // When switching to cube tab in match mode, load the cube analysis and update position
-        if (tab === 'cube' && $statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+        if (tab === 'cube' && matchCtx.isMatchMode) {
             await loadCubeAnalysisForCurrentPosition(true); // true = update position to show cube position
         }
     }
@@ -365,7 +365,7 @@
 
     // When switching back to checker tab, restore checker position
     async function restoreCheckerPosition() {
-        if ($statusBarModeStore === 'MATCH' && matchCtx.isMatchMode) {
+        if (matchCtx.isMatchMode) {
             const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
             if (currentMovePos && currentMovePos.move_type === 'checker') {
                 positionStore.set(currentMovePos.position);
@@ -449,7 +449,7 @@
                                  matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
     // Only show tabs in MATCH mode where checker and cube are separate positions
     // BUT not on the first position of a game (cube decision not possible)
-    $: showTabs = hasCheckerAnalysis && hasCubeAnalysis && $statusBarModeStore === 'MATCH' && matchCtx.isMatchMode && !isFirstPositionOfGame;
+    $: showTabs = hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame;
 </script>
 
 <section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" on:keydown={handleKeyDown}>

@@ -1,6 +1,6 @@
 <script>
    import { onMount, tick } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore, commandTextStore, previousModeStore, statusBarModeStore, showCommandStore, statusBarTextStore, activeTabStore, logEntriesStore } from '../stores/uiStore';
+   import { commentTextStore, currentPositionIndexStore, commandTextStore, statusBarModeStore, showCommandStore, statusBarTextStore, activeTabStore, logEntriesStore } from '../stores/uiStore';
    import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../../wailsjs/go/main/Database.js';
    import { positionsStore, positionStore } from '../stores/positionStore';
    import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
@@ -252,7 +252,7 @@
    }
 
    function handleSubSearch(command) {
-      if ($previousModeStore === 'NORMAL' || $previousModeStore === 'EDIT') {
+      if ($statusBarModeStore === 'NORMAL' || $statusBarModeStore === 'EDIT') {
          if (positions.length === 0) {
             statusBarTextStore.set('No current results to search in.');
             return;
@@ -292,12 +292,12 @@
             );
          }
       } else {
-         statusBarTextStore.set('Search in results requires NORMAL mode.');
+         statusBarTextStore.set('Search in results is not available in current mode.');
       }
    }
 
    function handleSearch(command) {
-      if ($previousModeStore === 'NORMAL' || $previousModeStore === 'EDIT') {
+      if ($statusBarModeStore === 'NORMAL' || $statusBarModeStore === 'EDIT') {
          const searchHistoryEntry = {
             command: command,
             position: JSON.stringify($positionStore),

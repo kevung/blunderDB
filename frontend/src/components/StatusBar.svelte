@@ -1,5 +1,5 @@
 <script>
-  import { statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
+  import { statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore';
   import { positionsStore, matchContextStore } from '../stores/positionStore';
   import { analysisStore } from '../stores/analysisStore';
   import { tableData as metTable } from '../stores/metTable';
@@ -94,17 +94,14 @@
 
   window.addEventListener('keydown', (event) => {
     if (event.ctrlKey && event.key === 'g') {
-      if (get(statusBarModeStore) === 'NORMAL') {
-        showDatesAndMetadata();
-      }
+      showDatesAndMetadata();
     }
   });
 </script>
 
 <div class="status-bar">
-  <span class="mode" class:mode-normal={$statusBarModeStore === 'NORMAL'} class:mode-edit={$statusBarModeStore === 'EDIT'} class:mode-match={$statusBarModeStore === 'MATCH'} class:mode-insert={$statusBarModeStore === 'INSERT'}>{$statusBarModeStore}</span>
   <span class="info-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
-  {#if $statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
+  {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
     {@const checkerMoves = $matchContextStore.movePositions.filter(p => p.move_type === 'checker')}
     {@const currentCheckerIndex = $matchContextStore.movePositions.slice(0, $matchContextStore.currentIndex + 1).filter(p => p.move_type === 'checker').length}
     <span class="position-info">move {currentCheckerIndex}/{checkerMoves.length}</span>
@@ -129,22 +126,6 @@
     user-select: none;
     height: 22px;
   }
-
-  .mode {
-    padding: 0 10px;
-    font-weight: 600;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    text-transform: uppercase;
-    flex-shrink: 0;
-    border-right: 1px solid #e0e0e0;
-    line-height: 22px;
-  }
-
-  .mode-normal { color: #555; }
-  .mode-edit { color: #c57600; }
-  .mode-match { color: #0b7a3e; }
-  .mode-insert { color: #1a73e8; }
 
   .info-message {
     flex: 1;

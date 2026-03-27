@@ -115,7 +115,7 @@
         showTakePoint2ModalStore, // Import showTakePoint2ModalStore
         isAnyModalOrPanelOpenStore, // Import the derived store
         isAnyModalOpenStore, // Import the derived store
-        previousModeStore, // Import previousModeStore
+
         showFilterLibraryPanelStore, // Import showFilterLibraryPanelStore
         showMatchPanelStore, // Import showMatchPanelStore
         matchPanelRefreshTriggerStore, // Import matchPanelRefreshTriggerStore
@@ -522,6 +522,25 @@
         mode = value;
     });
 
+    // Auto-drive mode based on active tab
+    let tabInitialized = false;
+    let previousTab = '';
+    activeTabStore.subscribe(tab => {
+        if (!tabInitialized) {
+            tabInitialized = true;
+            previousTab = tab;
+            return;
+        }
+        const prevTab = previousTab;
+        previousTab = tab;
+
+        if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') {
+            enterEditMode();
+        } else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') {
+            exitEditMode();
+        }
+    });
+
     //Global shortcuts
     function handleKeyDown(event) {
         event.stopPropagation();
@@ -683,7 +702,6 @@
                 activeTabStore.set('search');
         } else if (!event.ctrlKey && event.code === 'Space') {        
                 event.preventDefault();
-                previousModeStore.set($statusBarModeStore);
                 tabbedPanelRef?.focusConsole();
         } else if (event.ctrlKey && event.code === 'KeyL') {
             event.preventDefault();
@@ -806,7 +824,6 @@
             console.error('Error opening file dialog:', error);
             setStatusBarMessage('Error creating new database');
         } finally {
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -864,7 +881,6 @@
             console.error('Error opening database:', error);
             setStatusBarMessage('Error opening database');
         } finally {
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -1008,7 +1024,6 @@
             console.error('Error analyzing import:', error);
             setStatusBarMessage(`Error analyzing import: ${error}`);
             await ShowAlert(`Error analyzing import: ${error}`);
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -1049,7 +1064,6 @@
             showImportProgressModal = false;
             setStatusBarMessage(`Error committing import: ${error}`);
             await ShowAlert(`Error committing import: ${error}`);
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         } finally {
             pendingImportPath = null;
@@ -1071,7 +1085,6 @@
         pendingImportPath = null;
         importModalMode = 'analyzing';
         setStatusBarMessage('Import cancelled');
-        previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
 
@@ -1080,7 +1093,6 @@
         showImportProgressModal = false;
         pendingImportPath = null;
         importModalMode = 'analyzing';
-        previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
 
@@ -1142,7 +1154,6 @@
             console.error('Error during export preparation:', error);
             setStatusBarMessage(`Error preparing export: ${error}`);
             await ShowAlert(`Error preparing export: ${error}`);
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -1194,7 +1205,6 @@
             showExportDatabaseModalStore.set(false);
             setStatusBarMessage(`Error committing export: ${error}`);
             await ShowAlert(`Error committing export: ${error}`);
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         } finally {
             // Reset metadata for next export
@@ -1244,7 +1254,6 @@
         };
         exportMatches = [];
         setStatusBarMessage('Export cancelled');
-        previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
 
@@ -1271,7 +1280,6 @@
             collectionIDs: []
         };
         exportMatches = [];
-        previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
     }
 
@@ -1361,13 +1369,7 @@
     }
 
     export async function importPosition() {
-        const isNormalMode = $statusBarModeStore === 'NORMAL' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL');
-        const isMatchMode = $statusBarModeStore === 'MATCH' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'MATCH');
-        if (!isNormalMode && !isMatchMode) {
-            setStatusBarMessage('Cannot import position in current mode');
-            return;
-        }
-        const wasMatchMode = isMatchMode;
+        const wasMatchMode = $statusBarModeStore === 'MATCH';
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1402,19 +1404,12 @@
                 });
                 loadAllPositions();
             }
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
 
     export async function importFolder() {
-        const isNormalMode = $statusBarModeStore === 'NORMAL' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL');
-        const isMatchMode = $statusBarModeStore === 'MATCH' || ($statusBarModeStore === 'COMMAND' && $previousModeStore === 'MATCH');
-        if (!isNormalMode && !isMatchMode) {
-            setStatusBarMessage('Cannot import in current mode');
-            return;
-        }
-        const wasMatchMode = isMatchMode;
+        const wasMatchMode = $statusBarModeStore === 'MATCH';
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1446,7 +1441,6 @@
                 });
                 loadAllPositions();
             }
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -1750,10 +1744,6 @@
     }
 
     async function pastePosition() {
-        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
-            setStatusBarMessage('Cannot paste position in current mode');
-            return;
-        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
@@ -1818,7 +1808,7 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if ($statusBarModeStore !== 'EDIT' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'EDIT')) {
+        if ($statusBarModeStore !== 'EDIT') {
             setStatusBarMessage('Save is only possible in edit mode');
             return;
         }
@@ -1863,7 +1853,6 @@
 
         await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
         statusBarModeStore.set('NORMAL');
-        previousModeStore.set('NORMAL');
     }
 
     function parsePosition(fileContent) {
@@ -2304,17 +2293,8 @@
     }
 
     function copyPosition() {
-        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
-            setStatusBarMessage('Cannot copy position in current mode');
-            return;
-        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
-            return;
-        }
-        // @ts-ignore
-        if ($statusBarModeStore === 'EDIT') {
-            setStatusBarMessage('Cannot copy position in edit mode');
             return;
         }
         console.log('copyPosition');
@@ -2447,19 +2427,11 @@
     }
 
     async function deletePosition() {
-        if ($statusBarModeStore !== 'NORMAL' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'NORMAL')) {
-            setStatusBarMessage('Cannot delete position in current mode');
-            return;
-        }
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
             return;
         }
         console.log('deletePosition');
-        if ($statusBarModeStore !== 'NORMAL' && $statusBarModeStore !== 'COMMAND') {
-            setStatusBarMessage('Cannot delete position in current mode');
-            return;
-        }
 
         if (!positions || positions.length === 0) {
             setStatusBarMessage('No positions to delete');
@@ -2478,7 +2450,6 @@
             console.error('Error deleting position and associated analysis:', error);
             setStatusBarMessage('Error deleting position and associated analysis');
         } finally {
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -2488,7 +2459,7 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if ($statusBarModeStore !== 'EDIT' && !($statusBarModeStore === 'COMMAND' && $previousModeStore === 'EDIT')) {
+        if ($statusBarModeStore !== 'EDIT') {
             setStatusBarMessage('Update is only possible in edit mode');
             return;
         }
@@ -2589,7 +2560,6 @@
             console.error('Error updating position and analysis:', error);
             setStatusBarMessage('Error updating position and analysis');
         } finally {
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -2793,8 +2763,8 @@
             setStatusBarMessage('No database opened');
             return;
         }
-        if ($statusBarModeStore !== 'NORMAL' && $statusBarModeStore !== 'MATCH') {
-            setStatusBarMessage('Cannot go to position in current mode');
+        if ($statusBarModeStore === 'EDIT') {
+            setStatusBarMessage('Cannot go to position in edit mode');
             return;
         }
         showGoToPositionModalStore.set(true);
@@ -2809,18 +2779,15 @@
         activeTabStore.set('search');
     }
 
-    async function toggleEditMode() {
-        console.log('toggleEditMode');
+    async function enterEditMode() {
+        console.log('enterEditMode');
         if (!$databasePathStore) {
-            setStatusBarMessage('No database opened');
-            statusBarModeStore.set('NORMAL');
             return;
         }
         
-        // Special handling for MATCH mode: exit to NORMAL and reload all positions
+        // Exit MATCH mode first if active
         if ($statusBarModeStore === "MATCH") {
-            console.log('Exiting MATCH mode to NORMAL mode');
-            // Save current position to DB before leaving
+            console.log('Exiting MATCH mode to enter EDIT');
             if ($matchContextStore.isMatchMode && $matchContextStore.matchID) {
                 try {
                     await SaveLastVisitedPosition($matchContextStore.matchID, $matchContextStore.currentIndex);
@@ -2828,9 +2795,6 @@
                     console.error('Error saving last visited position:', e);
                 }
             }
-            previousModeStore.set('NORMAL');
-            statusBarModeStore.set('NORMAL');
-            // Reset match context
             matchContextStore.set({
                 isMatchMode: false,
                 matchID: null,
@@ -2839,25 +2803,20 @@
                 player1Name: '',
                 player2Name: ''
             });
-            // Reload all positions from database
             loadAllPositions();
-            return;
         }
 
-        // Special handling for COLLECTION mode: exit to NORMAL and reload all positions
+        // Exit COLLECTION mode first if active
         if ($statusBarModeStore === "COLLECTION") {
             await exitCollectionMode();
-            return;
         }
 
-        // Special handling for EPC mode: exit to NORMAL and restore saved state
+        // Exit EPC mode first if active
         if ($statusBarModeStore === "EPC") {
-            toggleEPCMode(); // toggleEPCMode handles exit when already in EPC mode
-            return;
+            toggleEPCMode();
         }
         
         if ($statusBarModeStore !== "EDIT") {
-            previousModeStore.set($statusBarModeStore);
             statusBarModeStore.set('EDIT');
             showCommentStore.set(false);
             showAnalysisStore.set(false);
@@ -2872,13 +2831,16 @@
                 pos.player_on_roll = 0;
                 return pos;
             });
-        } else {
-            previousModeStore.set($statusBarModeStore);
+        }
+    }
+
+    function exitEditMode() {
+        if ($statusBarModeStore === 'EDIT') {
             statusBarModeStore.set('NORMAL');
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
-            currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
-            currentPositionIndexStore.set(currentIndex); // Set back to the original value
+            currentPositionIndexStore.set(-1);
+            currentPositionIndexStore.set(currentIndex);
         }
     }
 
@@ -2888,7 +2850,6 @@
         if ($statusBarModeStore === 'EPC') {
             // Exit EPC mode: restore previous state
             statusBarModeStore.set('NORMAL');
-            previousModeStore.set('NORMAL');
             statusBarTextStore.set('');
             if (savedPositionsBeforeEPC) {
                 positionsStore.set(savedPositionsBeforeEPC);
@@ -2936,7 +2897,6 @@
             has_beaver: 0,
         };
 
-        previousModeStore.set($statusBarModeStore);
         statusBarModeStore.set('EPC');
         showCommentStore.set(false);
         showAnalysisStore.set(false);
@@ -2981,7 +2941,6 @@
                     console.error('Error saving last visited position:', e);
                 }
             }
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
             matchContextStore.set({
                 isMatchMode: false,
@@ -2997,7 +2956,6 @@
 
         // Exit other modes first
         if ($statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC' || $statusBarModeStore === 'COLLECTION') {
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
 
@@ -3161,7 +3119,6 @@
         console.log('Exiting COLLECTION mode to NORMAL mode');
         // Capture the last viewed position in collection mode before clearing stores
         const lastViewedPosition = $positionStore;
-        previousModeStore.set('NORMAL');
         statusBarModeStore.set('NORMAL');
         activeCollectionStore.set(null);
         selectedCollectionStore.set(null);
@@ -3220,7 +3177,6 @@
         }
 
         // Switch to COLLECTION mode
-        previousModeStore.set('NORMAL');
         statusBarModeStore.set('COLLECTION');
 
         // Load positions in main view
@@ -3238,20 +3194,18 @@ function togglePipcount() {
         console.log('togglePipcount');
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
-            statusBarModeStore.set('NORMAL');
             return;
         }
-        if ($statusBarModeStore == "NORMAL") {
-            showPipcountStore.set(!showPipcount);
+        showPipcountStore.set(!showPipcount);
+        if ($statusBarModeStore === 'MATCH') {
+            // Refresh board by triggering a positionStore update
+            const currentPosition = $positionStore;
+            positionStore.set({ ...currentPosition });
+        } else {
             // Refresh board and display position associated with currentPositionIndexStore
             const currentIndex = $currentPositionIndexStore;
             currentPositionIndexStore.set(-1); // Temporarily set to a different value to force redraw
             currentPositionIndexStore.set(currentIndex); // Set back to the original value
-        } else if ($statusBarModeStore == "MATCH") {
-            showPipcountStore.set(!showPipcount);
-            // Refresh board by triggering a positionStore update
-            const currentPosition = $positionStore;
-            positionStore.set({ ...currentPosition });
         }
     }
 
@@ -3259,10 +3213,9 @@ function togglePipcount() {
         console.log('loadRandomPosition');
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
-            statusBarModeStore.set('NORMAL');
             return;
         }
-        if ($statusBarModeStore == "NORMAL") {
+        if (positions && positions.length > 0) {
             // Load a random position from the position store
             let randomIndex = Math.floor(Math.random() * positions.length);
             // ensure that the random index is not the same as the current index
@@ -3430,7 +3383,6 @@ function togglePipcount() {
                 
             // Set mode to NORMAL and reset match context BEFORE triggering position display
             // so that showPosition sees the correct mode and doesn't use stale match context
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
             matchContextStore.set({
                 isMatchMode: false,
@@ -3480,7 +3432,6 @@ function togglePipcount() {
                     console.error('Error persisting last visited position:', e);
                 });
             }
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
             matchContextStore.set({
                 isMatchMode: false,
@@ -3646,7 +3597,6 @@ function togglePipcount() {
             console.error('Error analyzing import:', error);
             setStatusBarMessage(`Error analyzing import: ${error}`);
             await ShowAlert(`Error analyzing import: ${error}`);
-            previousModeStore.set('NORMAL');
             statusBarModeStore.set('NORMAL');
         }
     }
@@ -3926,7 +3876,7 @@ function togglePipcount() {
     // Function to handle mouse wheel events
     // Board area: position browsing. Panel area: normal scrolling.
     function handleWheel(event) {
-        if ($isAnyModalOpenStore || $statusBarModeStore === 'EDIT') {
+        if ($isAnyModalOpenStore || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC') {
             return;
         }
 
@@ -4000,12 +3950,10 @@ function togglePipcount() {
         onGoToPosition={gotoPosition}
         onTogglePipcount={togglePipcount}
         onRandomPosition={loadRandomPosition}
-        onToggleEditMode={toggleEditMode}
         onToggleCommandMode={() => tabbedPanelRef?.focusConsole()}
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
         onToggleEPCMode={toggleEPCMode}
-        onToggleMatchMode={toggleMatchMode}
     />
 
     <ViewTabs />

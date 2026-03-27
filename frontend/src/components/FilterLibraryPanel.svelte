@@ -1,7 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
-    import { showFilterLibraryPanelStore, statusBarTextStore, statusBarModeStore, currentPositionIndexStore, showCommentStore } from '../stores/uiStore';
+    import { showFilterLibraryPanelStore, statusBarTextStore, activeTabStore, currentPositionIndexStore, showCommentStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters, SaveEditPosition, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
@@ -416,16 +416,16 @@
         <div class="filter-library-content">
             <div class="form-row">
                 <div class="form-group name-group">
-                    <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$statusBarModeStore !== 'EDIT'} />
+                    <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$activeTabStore !== 'search'} />
                 </div>
                 <div class="form-group command-group">
-                    <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$statusBarModeStore !== 'EDIT'} on:keydown={handleCommandKeyDown} />
+                    <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$activeTabStore !== 'search'} on:keydown={handleCommandKeyDown} />
                 </div>
                 <div class="form-actions">
-                    <button on:click={saveFilter} disabled={filterExists || $statusBarModeStore !== 'EDIT'}>Add</button>
-                    <button on:click={updateFilter} disabled={!filterExists || $statusBarModeStore !== 'EDIT'}>Update</button>
+                    <button on:click={saveFilter} disabled={filterExists || $activeTabStore !== 'search'}>Add</button>
+                    <button on:click={updateFilter} disabled={!filterExists || $activeTabStore !== 'search'}>Update</button>
                     <button on:click={deleteFilter} disabled={!selectedFilter}>Delete</button>
-                    <button on:click={saveLastSearch} disabled={$statusBarModeStore !== 'EDIT'} title="Load last search">Last Search</button>
+                    <button on:click={saveLastSearch} disabled={$activeTabStore !== 'search'} title="Load last search">Last Search</button>
                 </div>
             </div>
             <div class="filter-table-container">

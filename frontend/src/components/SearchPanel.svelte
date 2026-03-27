@@ -1,6 +1,6 @@
 <script>
     import { onMount, onDestroy, tick } from 'svelte';
-    import { statusBarModeStore, statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
+    import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
@@ -226,7 +226,6 @@
             restrictToPositionIDs = currentPositions.map(p => p.id).filter(id => id != null).join(',');
         }
 
-        statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(activeFilters.length > 0 ? transformedFilters : [], incCube, incScore, pcFilter, wrFilter, grFilter, bgFilter,
             p2wrFilter, p2grFilter, p2bgFilter, p1coFilter, p2coFilter, p1bcFilter, p2bcFilter,
             p1czFilter, p2czFilter, searchText ? `t"${searchText}"` : '', p1apcFilter, eqFilter, dtFilter, drFilter, movePattern ? `m"${movePattern}"` : '',

@@ -1,6 +1,5 @@
 <script>
     import { createEventDispatcher, onMount, onDestroy } from 'svelte';
-    import { statusBarModeStore } from '../stores/uiStore';
     import { positionStore, positionsStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
@@ -384,7 +383,6 @@
             restrictToPositionIDs = currentPositions.map(p => p.id).filter(id => id != null).join(',');
         }
 
-        statusBarModeStore.set('NORMAL');
         onLoadPositionsByFilters(
             finalFilters,
             includeCube,

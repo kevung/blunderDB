@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
-    import { statusBarModeStore, statusBarTextStore, showSearchHistoryPanelStore, currentPositionIndexStore } from '../stores/uiStore';
+    import { statusBarTextStore, showSearchHistoryPanelStore, currentPositionIndexStore } from '../stores/uiStore';
     import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/main/Database.js';
 
     export let onLoadPositionsByFilters;

@@ -1,7 +1,7 @@
 import { writable, get } from 'svelte/store';
 import { positionStore, positionsStore, matchContextStore } from './positionStore';
 import { analysisStore, selectedMoveStore } from './analysisStore';
-import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore, previousModeStore } from './uiStore';
+import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
 
 function createDefaultPosition() {
     return {
@@ -54,7 +54,6 @@ function createDefaultView(id) {
         activeTab: 'analysis',
         commentText: '',
         mode: 'NORMAL',
-        previousMode: 'NORMAL',
         matchContext: createDefaultMatchContext()
     };
 }
@@ -79,7 +78,6 @@ function createViewStore() {
                     activeTab: get(activeTabStore),
                     commentText: get(commentTextStore),
                     mode: get(statusBarModeStore),
-                    previousMode: get(previousModeStore),
                     matchContext: JSON.parse(JSON.stringify(get(matchContextStore)))
                 };
             }
@@ -95,7 +93,6 @@ function createViewStore() {
         activeTabStore.set(view.activeTab || 'analysis');
         commentTextStore.set(view.commentText || '');
         statusBarModeStore.set(view.mode || 'NORMAL');
-        previousModeStore.set(view.previousMode || 'NORMAL');
         matchContextStore.set(view.matchContext || createDefaultMatchContext());
         currentPositionIndexStore.set(-1);
         currentPositionIndexStore.set(view.positionIndex || 0);

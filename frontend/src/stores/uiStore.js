@@ -58,7 +58,7 @@ export const showSearchHistoryPanelStore = writable(false); // Add store for sea
 export const showTakePoint2ModalStore = writable(false);
 export const showTakePoint4ModalStore = writable(false);
 
-export const previousModeStore = writable('NORMAL');
+// previousModeStore removed — mode is now auto-driven by active tab context
 
 export const showFilterLibraryPanelStore = writable(false);
 
