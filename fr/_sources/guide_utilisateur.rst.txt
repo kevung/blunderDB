@@ -235,11 +235,11 @@ Gérer les collections
 ---------------------
 
 Les collections permettent d'organiser des positions en groupes personnalisés.
-Pour accéder au panneau des collections, appuyer sur *CTRL-K*.
+Pour accéder au panneau des collections, appuyer sur *CTRL-B*.
 
 **Créer une collection:**
 
-#. Ouvrir le panneau des collections (*CTRL-K*).
+#. Ouvrir le panneau des collections (*CTRL-B*).
 
 #. Saisir le nom de la nouvelle collection et cliquer sur "Add".
 
