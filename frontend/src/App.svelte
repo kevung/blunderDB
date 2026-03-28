@@ -139,6 +139,8 @@
 
     import { tournamentsStore } from './stores/tournamentStore'; // Import tournament store
 
+    import { epcDataStore } from './stores/epcStore'; // Import EPC data store
+
     // import components
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
@@ -540,6 +542,13 @@
             exitEditMode();
         }
 
+        // Sync EPC mode with active tab
+        if (tab === 'epc' && $statusBarModeStore !== 'EPC') {
+            enterEPCMode();
+        } else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') {
+            exitEPCMode();
+        }
+
         // Sync showMatchPanelStore with active tab
         showMatchPanelStore.set(tab === 'matches');
     });
@@ -732,6 +741,9 @@
         } else if (event.ctrlKey && event.code === 'KeyY') {
             event.preventDefault();
             toggleTournamentPanel();
+        } else if (event.ctrlKey && event.code === 'KeyE') {
+            event.preventDefault();
+            toggleEPCMode();
         } else if (event.ctrlKey && event.key === 'PageUp' || !event.ctrlKey && event.code === 'KeyJ') {
             event.preventDefault();
             viewStore.selectPreviousView();
@@ -2848,27 +2860,16 @@
     }
 
     function toggleEPCMode() {
-        console.log('toggleEPCMode');
-
         if ($statusBarModeStore === 'EPC') {
-            // Exit EPC mode: restore previous state
-            statusBarModeStore.set('NORMAL');
-            statusBarTextStore.set('');
-            if (savedPositionsBeforeEPC) {
-                positionsStore.set(savedPositionsBeforeEPC);
-                if (savedPositionBeforeEPC) {
-                    positionStore.set(savedPositionBeforeEPC);
-                    currentPositionIndexStore.set(savedPositionIndexBeforeEPC);
-                }
-                savedPositionsBeforeEPC = null;
-                savedPositionBeforeEPC = null;
-                savedPositionIndexBeforeEPC = -1;
-            } else {
-                // Reload all positions
-                loadAllPositions();
-            }
-            return;
+            exitEPCMode();
+            activeTabStore.set('console');
+        } else {
+            activeTabStore.set('epc');
         }
+    }
+
+    function enterEPCMode() {
+        if ($statusBarModeStore === 'EPC') return;
 
         // Save current state before entering EPC mode
         savedPositionBeforeEPC = $positionStore ? { ...$positionStore } : null;
@@ -2909,17 +2910,45 @@
         currentPositionIndexStore.set(0);
     }
 
+    function exitEPCMode() {
+        if ($statusBarModeStore !== 'EPC') return;
+
+        statusBarModeStore.set('NORMAL');
+        statusBarTextStore.set('');
+        epcDataStore.set({ bottomEPC: null, topEPC: null, error: null });
+        if (savedPositionsBeforeEPC) {
+            positionsStore.set(savedPositionsBeforeEPC);
+            if (savedPositionBeforeEPC) {
+                positionStore.set(savedPositionBeforeEPC);
+                currentPositionIndexStore.set(savedPositionIndexBeforeEPC);
+            }
+            savedPositionsBeforeEPC = null;
+            savedPositionBeforeEPC = null;
+            savedPositionIndexBeforeEPC = -1;
+        } else {
+            // Reload all positions
+            loadAllPositions();
+        }
+    }
+
     async function updateEPC(position) {
         try {
             const result = await ComputeEPCFromPosition(position);
             if (result && result.bottomEPC) {
+                epcDataStore.set({
+                    bottomEPC: result.bottomEPC,
+                    topEPC: result.topEPC || null,
+                    error: null
+                });
                 const epc = result.bottomEPC;
                 statusBarTextStore.set(`EPC: ${epc.epc.toFixed(2)} | Pips: ${epc.pipCount} | Wastage: ${epc.wastage.toFixed(2)} | Avg rolls: ${epc.meanRolls.toFixed(3)}`);
             } else {
+                epcDataStore.set({ bottomEPC: null, topEPC: null, error: null });
                 statusBarTextStore.set('EPC: N/A (checkers not all in home board)');
             }
         } catch (error) {
             console.error('Error computing EPC:', error);
+            epcDataStore.set({ bottomEPC: null, topEPC: null, error: 'Error computing EPC' });
             statusBarTextStore.set('EPC: Error computing');
         }
     }

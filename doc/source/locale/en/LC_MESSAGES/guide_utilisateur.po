@@ -627,11 +627,12 @@ msgstr ""
 
 #: ../../source/guide_utilisateur.rst:283
 msgid ""
-"Exécuter la commande ``epc`` ou cliquer sur le bouton correspondant dans "
+"Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, "
+"exécuter la commande ``epc`` ou cliquer sur le bouton correspondant dans "
 "la barre d'outils."
 msgstr ""
-"Execute the ``epc`` command or click the corresponding button in "
-"the toolbar."
+"Press *CTRL-E*, click the EPC tab in the bottom panel, execute the "
+"``epc`` command, or click the corresponding button in the toolbar."
 
 #: ../../source/guide_utilisateur.rst:286
 msgid "Éditer la position des pions dans le jan (6 derniers points)."
@@ -639,11 +640,11 @@ msgstr "Edit the checker positions in the home board (last 6 points)."
 
 #: ../../source/guide_utilisateur.rst:288
 msgid ""
-"Les résultats sont affichés en temps réel: EPC, nombre moyen de lancers, "
-"écart type, pip count et wastage."
+"Les résultats sont affichés en temps réel dans le panneau EPC dédié: "
+"EPC, nombre moyen de lancers, écart type, pip count et wastage."
 msgstr ""
-"Results are displayed in real time: EPC, average number of rolls, "
-"standard deviation, pip count, and wastage."
+"Results are displayed in real time in the dedicated EPC panel: EPC, "
+"average number of rolls, standard deviation, pip count, and wastage."
 
 #: ../../source/guide_utilisateur.rst:292
 msgid "Le calculateur fonctionne pour les deux joueurs simultanément."

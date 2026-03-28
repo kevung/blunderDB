@@ -95,8 +95,8 @@ msgid "epc"
 msgstr "epc"
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre le calculateur EPC (Effective Pip Count)."
-msgstr "Open the EPC (Effective Pip Count) calculator."
+msgid "Ouvre le panneau EPC (Effective Pip Count)."
+msgstr "Open the EPC (Effective Pip Count) panel."
 
 #: ../../source/cmd_mode.rst:1
 msgid "met"

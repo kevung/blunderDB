@@ -238,10 +238,17 @@
 
                     <h3>EPC Mode</h3>
                     <p>EPC (Effective Pip Count) mode is a tool for computing the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database to compute exact EPC values.</p>
-                    <p>To enter EPC mode, click the calculator icon in the toolbar or type <strong>epc</strong> in the command line. The board is initialized with a closed jan (2 checkers on each of the 6 home-board points) plus 3 extra checkers on points 4, 5, and 6 (15 checkers total).</p>
-                    <p>In EPC mode, you can freely add or remove checkers on the home-board points using the mouse (same controls as EDIT mode). The EPC value is displayed in real-time in the status bar, along with the pip count and wastage.</p>
-                    <p>The <strong>EPC</strong> represents the average number of pips needed to bear off all checkers, accounting for the inefficiency (wastage) of actual dice rolls. <strong>Wastage</strong> is the difference between EPC and the raw pip count.</p>
-                    <p>To exit EPC mode, press <strong>TAB</strong> or use the <strong>Reload All Positions</strong> button (Ctrl+R) to return to NORMAL mode.</p>
+                    <p>To enter EPC mode, press <strong>Ctrl+E</strong>, click the EPC tab in the bottom panel, click the calculator icon in the toolbar, or type <strong>epc</strong> in the command line. The board is initialized with a closed jan (2 checkers on each of the 6 home-board points) plus 3 extra checkers on points 4, 5, and 6 (15 checkers total).</p>
+                    <p>In EPC mode, you can freely add or remove checkers on the home-board points using the mouse (same controls as EDIT mode). The EPC values are displayed in real-time in the dedicated EPC panel, showing for each player:</p>
+                    <ul>
+                        <li><strong>EPC</strong>: the average number of pips needed to bear off all checkers,</li>
+                        <li><strong>Pip Count</strong>: the raw pip count,</li>
+                        <li><strong>Wastage</strong>: the difference between EPC and pip count,</li>
+                        <li><strong>Avg Rolls</strong>: average number of rolls to bear off,</li>
+                        <li><strong>Std Dev</strong>: standard deviation of the number of rolls.</li>
+                    </ul>
+                    <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
+                    <p>To exit EPC mode, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
 
                     <h3>MATCH Mode</h3>
                     <p>MATCH mode allows browsing through the moves of an imported match. You can enter MATCH mode by pressing <strong>Ctrl+Tab</strong>, clicking the match mode button in the toolbar, or typing <strong>m</strong> in the command line.</p>
@@ -500,6 +507,11 @@
                             <tr>
                                 <td>Ctrl + Y</td>
                                 <td>Tournaments Panel</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + E</td>
+                                <td>EPC Panel</td>
                             </tr>
 
                             <tr>

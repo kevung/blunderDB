@@ -351,6 +351,14 @@ msgid "Afficher/cacher le panneau des tournois."
 msgstr "Show/hide the tournaments panel."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-E"
+msgstr "CTRL-E"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau EPC."
+msgstr "Show/hide the EPC panel."
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr "?"
 

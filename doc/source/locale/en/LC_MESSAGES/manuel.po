@@ -461,22 +461,24 @@ msgstr "EPC mode"
 #: ../../source/manuel.rst:216
 msgid ""
 "Le mode EPC permet de calculer l'EPC (Effective Pip Count) d'une position"
-" de bearoff. Il est activé en exécutant la commande ``epc`` ou en "
-"cliquant sur le bouton correspondant dans la barre d'outils."
+" de bearoff. Il est activé en appuyant *CTRL-E*, en cliquant sur l'onglet"
+" EPC dans le panneau inférieur, en exécutant la commande ``epc`` ou en"
+" cliquant sur le bouton correspondant dans la barre d'outils."
 msgstr ""
 "EPC mode allows you to calculate the EPC (Effective Pip Count) of a "
-"bearoff position. It is activated by executing the ``epc`` command or by "
-"clicking the corresponding button in the toolbar."
+"bearoff position. It is activated by pressing *CTRL-E*, clicking the EPC "
+"tab in the bottom panel, executing the ``epc`` command, or clicking the "
+"corresponding button in the toolbar."
 
 #: ../../source/manuel.rst:220
 msgid ""
 "Dans ce mode, l'utilisateur édite la position des pions dans le jan (6 "
-"derniers points) et les informations suivantes sont calculées en temps "
-"réel pour chaque joueur:"
+"derniers points) et les informations suivantes sont affichées en temps "
+"réel dans le panneau EPC dédié pour chaque joueur:"
 msgstr ""
 "In this mode, the user edits the checker positions in the home board (last "
-"6 points) and the following information is computed in real time for "
-"each player:"
+"6 points) and the following information is displayed in real time in the "
+"dedicated EPC panel for each player:"
 
 #: ../../source/manuel.rst:224
 msgid "l'EPC (Effective Pip Count),"
@@ -499,6 +501,21 @@ msgid "le wastage (différence entre l'EPC et le pip count)."
 msgstr "the wastage (difference between the EPC and the pip count)."
 
 #: ../../source/manuel.rst:234
+msgid ""
+"Lorsque les deux joueurs ont des pions dans leur jan, une section de "
+"comparaison affiche les différences d'EPC et de pip count."
+msgstr ""
+"When both players have checkers in their home board, a comparison section "
+"shows the EPC and pip count differences."
+
+#: ../../source/manuel.rst:237
+msgid ""
+"Pour quitter le mode EPC, appuyer sur *CTRL-E* ou basculer sur un autre "
+"onglet."
+msgstr ""
+"To exit EPC mode, press *CTRL-E* or switch to another tab."
+
+#: ../../source/manuel.rst:240
 msgid ""
 "Le calcul repose sur la base de données interne de bearoff à 6 points de "
 "GNUbg."
