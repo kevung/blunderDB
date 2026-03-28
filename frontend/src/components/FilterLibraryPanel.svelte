@@ -547,10 +547,6 @@
         width: 470px; /* Restore previous width for filter column */
     }
 
-    .filter-table tr {
-        cursor: pointer;
-    }
-
     .filter-table tr:hover {
         background-color: #e6f2ff; /* Light blue hover effect */
     }

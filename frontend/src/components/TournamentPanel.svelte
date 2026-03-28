@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { dragReorder } from '../utils/dragReorder.js';
     import { 
         GetAllTournaments, 
         CreateTournament, 
@@ -58,9 +59,7 @@
     let editingTournamentComment = false;
     let tournamentCommentText = '';
 
-    // Drag-and-drop reordering
-    let dragIndex = null;
-    let dragOverIndex = null;
+    // Pointer-based drag reorder (no state variables needed)
 
     const unsubTournaments = tournamentsStore.subscribe(value => {
         tournaments = value || [];
@@ -362,46 +361,18 @@
         editingTournamentComment = false;
     }
 
-    // Drag-and-drop
-    function handleDragStart(index, event) {
-        dragIndex = index;
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', String(index));
-    }
-
-    function handleDragOver(index, event) {
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-        dragOverIndex = index;
-    }
-
-    function handleDragLeave() {
-        dragOverIndex = null;
-    }
-
-    async function handleDrop(index, event) {
-        event.preventDefault();
-        if (dragIndex === null || dragIndex === index || !selectedTournament) {
-            dragIndex = null;
-            dragOverIndex = null;
-            return;
-        }
+    // Pointer-based drag reorder callback
+    async function handleMatchReorder(fromIndex, toIndex) {
+        if (!selectedTournament) return;
         const newList = [...tournamentMatches];
-        const [moved] = newList.splice(dragIndex, 1);
-        newList.splice(index, 0, moved);
+        const [moved] = newList.splice(fromIndex, 1);
+        newList.splice(toIndex, 0, moved);
         tournamentMatchesStore.set(newList);
-        dragIndex = null;
-        dragOverIndex = null;
         try {
             await ReorderTournamentMatches(selectedTournament.id, newList.map(m => m.id));
         } catch (error) {
             console.error('Error reordering matches:', error);
         }
-    }
-
-    function handleDragEnd() {
-        dragIndex = null;
-        dragOverIndex = null;
     }
 
     async function swapMatchPlayersInTournament(match) {
@@ -704,17 +675,10 @@
                                     <th class="no-select actions-col"></th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody use:dragReorder={{ onReorder: handleMatchReorder }}>
                                 {#each tournamentMatches as match, index}
                                     <tr
                                         on:dblclick={() => openMatch(match)}
-                                        draggable="true"
-                                        on:dragstart={(e) => handleDragStart(index, e)}
-                                        on:dragover={(e) => handleDragOver(index, e)}
-                                        on:dragleave={handleDragLeave}
-                                        on:drop={(e) => handleDrop(index, e)}
-                                        on:dragend={handleDragEnd}
-                                        class:drag-over={dragOverIndex === index && dragIndex !== index}
                                     >
                                         <td class="index-cell narrow-col no-select">{index + 1}</td>
                                         <td class="no-select">{match.player1_name}</td>
@@ -796,7 +760,7 @@
     .tournament-table th.sortable:hover { background-color: #e8e8e8; }
     .sort-arrow { font-size: 9px; margin-left: 3px; color: #1976d2; }
 
-    .tournament-table tbody tr { cursor: pointer; transition: background-color 0.1s; }
+    .tournament-table tbody tr { transition: background-color 0.1s; }
     .tournament-table tbody tr:hover { background-color: #f9f9f9; }
     .tournament-table tbody tr.editing-row { background-color: #fefce8; cursor: default; }
 
@@ -857,7 +821,6 @@
     .comment-text:hover { color: #1976d2; }
 
     /* Drag-and-drop */
-    .tournament-table tbody tr.drag-over { border-top: 2px solid #1976d2; }
-    .tournament-table tbody tr[draggable="true"] { cursor: grab; }
-    .tournament-table tbody tr[draggable="true"]:active { cursor: grabbing; }
+    .tournament-table tbody :global(tr.drag-over) { border-top: 2px solid #1976d2; }
+    .tournament-table tbody :global(tr.dragging) { opacity: 0.5; }
 </style>

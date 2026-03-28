@@ -556,7 +556,6 @@
                                 class:selected={$selectedMoveStore === move.move}
                                 class:played={isPlayedMove(move)}
                                 on:click={() => handleMoveRowClick(move)}
-                                style="cursor: pointer;"
                             >
                                 <td>{move.move}</td>
                                 <td>{formatEquity(move.equity || 0)}</td>

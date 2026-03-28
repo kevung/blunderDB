@@ -1,5 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { dragReorder } from '../utils/dragReorder.js';
     import { 
         collectionsStore, 
         selectedCollectionStore, 
@@ -61,10 +62,7 @@
     // Inline new description
     let inlineNewDescription = '';
 
-    // Drag state
-    let dragType = null;
-    let dragStartIndex = -1;
-    let dragOverIndex = -1;
+
 
     const unsubCollections = collectionsStore.subscribe(value => {
         collections = value || [];
@@ -497,33 +495,12 @@
         }
     }
 
-    // Drag & Drop collections
-    function onCollectionDragStart(event, index) {
-        dragType = 'collection';
-        dragStartIndex = index;
-        dragOverIndex = index;
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', String(index));
-    }
-
-    function onCollectionDragOver(event, index) {
-        if (dragType !== 'collection') return;
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-        dragOverIndex = index;
-    }
-
-    async function onCollectionDrop(event, index) {
-        event.preventDefault();
-        if (dragType !== 'collection' || dragStartIndex === index) {
-            resetDrag();
-            return;
-        }
+    // Pointer-based drag reorder for collections
+    async function handleCollectionReorder(fromIndex, toIndex) {
         const newOrder = [...collections];
-        const [moved] = newOrder.splice(dragStartIndex, 1);
-        newOrder.splice(index, 0, moved);
+        const [moved] = newOrder.splice(fromIndex, 1);
+        newOrder.splice(toIndex, 0, moved);
         collectionsStore.set(newOrder);
-        resetDrag();
         try {
             await ReorderCollections(newOrder.map(c => c.id));
         } catch (error) {
@@ -531,35 +508,16 @@
         }
     }
 
-    // Drag & Drop positions
-    function onPositionDragStart(event, index) {
-        dragType = 'position';
-        dragStartIndex = index;
-        dragOverIndex = index;
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', String(index));
-    }
+    // Pointer-based drag reorder for positions within a collection
+    async function handlePositionReorder(fromIndex, toIndex) {
+        if (!activeCollection) return;
 
-    function onPositionDragOver(event, index) {
-        if (dragType !== 'position') return;
-        event.preventDefault();
-        event.dataTransfer.dropEffect = 'move';
-        dragOverIndex = index;
-    }
-
-    async function onPositionDrop(event, index) {
-        event.preventDefault();
-        if (dragType !== 'position' || !activeCollection || dragStartIndex === index) {
-            resetDrag();
-            return;
-        }
-
-        if (selectedPositionIndices.size > 1 && selectedPositionIndices.has(dragStartIndex)) {
+        if (selectedPositionIndices.size > 1 && selectedPositionIndices.has(fromIndex)) {
             const sorted = [...selectedPositionIndices].sort((a, b) => a - b);
             const items = sorted.map(i => collectionPositions[i]);
             const newOrder = collectionPositions.filter((_, i) => !selectedPositionIndices.has(i));
-            let insertAt = index;
-            const removedBefore = sorted.filter(i => i < index).length;
+            let insertAt = toIndex;
+            const removedBefore = sorted.filter(i => i < toIndex).length;
             insertAt -= removedBefore;
             if (insertAt < 0) insertAt = 0;
             newOrder.splice(insertAt, 0, ...items);
@@ -569,7 +527,6 @@
                 newSelected.add(insertAt + i);
             }
             selectedPositionIndices = newSelected;
-            resetDrag();
             try {
                 await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
             } catch (error) {
@@ -577,29 +534,18 @@
             }
         } else {
             const newOrder = [...collectionPositions];
-            const [moved] = newOrder.splice(dragStartIndex, 1);
-            newOrder.splice(index, 0, moved);
+            const [moved] = newOrder.splice(fromIndex, 1);
+            newOrder.splice(toIndex, 0, moved);
             collectionPositionsStore.set(newOrder);
-            if (selectedPositionIndices.has(dragStartIndex)) {
-                selectedPositionIndices = new Set([index]);
+            if (selectedPositionIndices.has(fromIndex)) {
+                selectedPositionIndices = new Set([toIndex]);
             }
-            resetDrag();
             try {
                 await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
             } catch (error) {
                 console.error('Error reordering positions:', error);
             }
         }
-    }
-
-    function resetDrag() {
-        dragType = null;
-        dragStartIndex = -1;
-        dragOverIndex = -1;
-    }
-
-    function onDragEnd() {
-        resetDrag();
     }
 
     function closePanel() {
@@ -703,19 +649,13 @@
                             <th class="no-select actions-col"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody use:dragReorder={{ onReorder: handleCollectionReorder }}>
                         {#each collections as collection, index}
                             <tr
                                 class:selected={selectedCollection?.id === collection.id}
                                 class:in-collection={positionCollectionIds.includes(collection.id)}
-                                class:drag-over={dragType === 'collection' && dragOverIndex === index && dragStartIndex !== index}
                                 on:click={(e) => togglePositionInCollection(collection.id, e)}
                                 on:dblclick={() => openCollection(collection)}
-                                draggable="true"
-                                on:dragstart={(e) => onCollectionDragStart(e, index)}
-                                on:dragover={(e) => onCollectionDragOver(e, index)}
-                                on:drop={(e) => onCollectionDrop(e, index)}
-                                on:dragend={onDragEnd}
                             >
                                 <td class="name-cell">
                                     {#if editingCollectionId === collection.id}
@@ -813,18 +753,12 @@
                             <th class="no-select actions-col"></th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody use:dragReorder={{ onReorder: handlePositionReorder }}>
                         {#each collectionPositions as position, index}
                             <tr
                                 class:current={$currentPositionIndexStore === index}
                                 class:multi-selected={selectedPositionIndices.has(index)}
-                                class:drag-over={dragType === 'position' && dragOverIndex === index && dragStartIndex !== index}
                                 on:click={(e) => selectAndDisplayPosition(index, e)}
-                                draggable="true"
-                                on:dragstart={(e) => onPositionDragStart(e, index)}
-                                on:dragover={(e) => onPositionDragOver(e, index)}
-                                on:drop={(e) => onPositionDrop(e, index)}
-                                on:dragend={onDragEnd}
                             >
                                 <td class="narrow-col idx-cell">{index + 1}</td>
                                 <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
@@ -847,7 +781,9 @@
     </section>
 
 <style>
-    .collection-panel { width: 100%; height: 100%; background: white; box-sizing: border-box; outline: none; overflow: hidden; user-select: none; }
+    .collection-panel { width: 100%; height: 100%; background: white; box-sizing: border-box; outline: none; overflow: hidden; user-select: none; -webkit-user-select: none; }
+    .collection-panel * { user-select: none; -webkit-user-select: none; }
+    .collection-panel input, .collection-panel textarea { user-select: text; -webkit-user-select: text; }
 
     .table-wrapper { height: 100%; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 
@@ -867,12 +803,13 @@
     .date-cell { font-size: 10px; color: #999; }
 
     /* Row styles */
-    .coll-table tbody tr { cursor: pointer; transition: background-color 0.1s; }
+    .coll-table tbody tr { transition: background-color 0.1s; }
     .coll-table tbody tr:hover { background-color: #f9f9f9; }
     .coll-table tbody tr.selected { background-color: #e3f2fd; }
     .coll-table tbody tr.selected:hover { background-color: #bbdefb; }
     .coll-table tbody tr.in-collection { border-left: 3px solid #4a8; }
-    .coll-table tbody tr.drag-over { border-top: 2px solid #999; }
+    .coll-table tbody :global(tr.drag-over) { border-top: 2px solid #999; }
+    .coll-table tbody :global(tr.dragging) { opacity: 0.5; }
     .coll-table tbody tr.current { background-color: #dce9f7; }
     .coll-table tbody tr.multi-selected { background-color: #dce9f7; }
 

@@ -987,7 +987,6 @@
     }
 
     .match-table tbody tr {
-        cursor: pointer;
         transition: background-color 0.1s;
     }
 

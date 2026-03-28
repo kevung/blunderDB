@@ -500,7 +500,6 @@
     }
 
     .history-table tbody tr {
-        cursor: pointer;
         transition: background-color 0.2s;
     }
 
