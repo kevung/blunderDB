@@ -954,6 +954,10 @@ func (d *Database) ensureAllTablesExist() error {
 		return fmt.Errorf("error ensuring collection_position index: %w", err)
 	}
 
+	// Ensure collection timestamps are not NULL (repair old databases)
+	d.db.Exec(`UPDATE collection SET created_at = datetime('now') WHERE created_at IS NULL OR created_at = ''`)
+	d.db.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE updated_at IS NULL OR updated_at = ''`)
+
 	// v1.6.0: tournament
 	_, err = d.db.Exec(`
 		CREATE TABLE IF NOT EXISTS tournament (
@@ -5414,7 +5418,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			var name, description string
 			var sortOrder int
 			var createdAt, updatedAt string
-			err := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, created_at, updated_at FROM collection WHERE id = ?`, collectionID).
+			err := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, COALESCE(strftime('%Y-%m-%d %H:%M:%S', created_at), ''), COALESCE(strftime('%Y-%m-%d %H:%M:%S', updated_at), '') FROM collection WHERE id = ?`, collectionID).
 				Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
 			if err != nil {
 				fmt.Printf("Error reading collection %d: %v\n", collectionID, err)
@@ -12272,8 +12276,8 @@ func (d *Database) GetAllCollections() ([]Collection, error) {
 			c.name,
 			COALESCE(c.description, ''),
 			c.sort_order,
-			c.created_at,
-			c.updated_at,
+			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.created_at), ''),
+			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.updated_at), ''),
 			COUNT(cp.id) as position_count
 		FROM collection c
 		LEFT JOIN collection_position cp ON c.id = cp.collection_id
@@ -12695,8 +12699,8 @@ func (d *Database) GetCollectionByID(id int64) (*Collection, error) {
 			c.name,
 			COALESCE(c.description, ''),
 			c.sort_order,
-			c.created_at,
-			c.updated_at,
+			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.created_at), ''),
+			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.updated_at), ''),
 			COUNT(cp.id) as position_count
 		FROM collection c
 		LEFT JOIN collection_position cp ON c.id = cp.collection_id
@@ -12725,8 +12729,8 @@ func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error
 			c.name,
 			COALESCE(c.description, ''),
 			c.sort_order,
-			c.created_at,
-			c.updated_at
+			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.created_at), ''),
+			COALESCE(strftime('%Y-%m-%d %H:%M:%S', c.updated_at), '')
 		FROM collection c
 		INNER JOIN collection_position cp ON c.id = cp.collection_id
 		WHERE cp.position_id = ?

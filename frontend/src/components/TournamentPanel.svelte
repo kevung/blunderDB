@@ -805,9 +805,7 @@
     .narrow-col { width: 1px; white-space: nowrap; padding-left: 6px; padding-right: 6px; }
     .actions-col { width: 80px; min-width: 80px; max-width: 80px; white-space: nowrap; text-align: center; padding: 0 4px; }
 
-    .item-actions { display: inline-flex; gap: 2px; visibility: hidden; vertical-align: middle; }
-    .editing-actions { visibility: visible; }
-    .tournament-table tbody tr:hover .item-actions { visibility: visible; }
+    .item-actions { display: inline-flex; gap: 2px; vertical-align: middle; }
 
     .icon-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: #666; padding: 0 3px; line-height: 1; }
     .icon-btn:hover:not(:disabled) { color: #000; }

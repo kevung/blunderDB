@@ -100,10 +100,10 @@ Outils
 
    "CTRL-L", "Afficher/cacher l'analyse."
    "CTRL-P", "Afficher/cacher les commentaires."
-   "CTRL-B", "Afficher/cacher la bibliothèque de filtres."
+   "CTRL-K", "Afficher/cacher la bibliothèque de filtres."
    "CTRL-F", "Afficher/cacher le panneau de recherche."
    "CTRL-T", "Afficher/cacher le panneau des matchs."
-   "CTRL-K", "Afficher/cacher le panneau des collections."
+   "CTRL-B", "Afficher/cacher le panneau des collections."
    "CTRL-Y", "Afficher/cacher le panneau des tournois."
    "CTRL-E", "Afficher/cacher le panneau EPC."
    "?", "Afficher/cacher l'aide."

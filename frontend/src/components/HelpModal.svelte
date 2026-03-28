@@ -485,7 +485,7 @@
                             </tr>
 
                             <tr>
-                                <td>Ctrl + B</td>
+                                <td>Ctrl + K</td>
                                 <td>Show Filter Library</td>
                             </tr>
 
@@ -500,7 +500,7 @@
                             </tr>
 
                             <tr>
-                                <td>Ctrl + K</td>
+                                <td>Ctrl + B</td>
                                 <td>Collection Panel</td>
                             </tr>
 

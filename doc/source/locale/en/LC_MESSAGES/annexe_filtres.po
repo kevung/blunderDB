@@ -113,8 +113,8 @@ msgid "Basculer dans le mode EDIT."
 msgstr "Switch to EDIT mode."
 
 #: ../../source/annexe_filtres.rst:47 ../../source/annexe_filtres.rst:60
-msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-B``."
-msgstr "Open the filter library by pressing ``CTRL-B``."
+msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+msgstr "Open the filter library by pressing ``CTRL-K``."
 
 #: ../../source/annexe_filtres.rst:49
 msgid "Donner un nom au filtre."

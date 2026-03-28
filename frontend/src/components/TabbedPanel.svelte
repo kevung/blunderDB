@@ -22,7 +22,7 @@
       { id: 'analysis', label: 'Analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
       { id: 'comments', label: 'Comments', icon: 'comments', shortcut: 'Ctrl+P' },
       { id: 'search', label: 'Search', icon: 'search', shortcut: 'Ctrl+F' },
-      { id: 'collections', label: 'Collections', icon: 'collections', shortcut: 'Ctrl+K' },
+      { id: 'collections', label: 'Collections', icon: 'collections', shortcut: 'Ctrl+B' },
       { id: 'matches', label: 'Matchs', icon: 'matches', shortcut: 'Ctrl+Tab' },
       { id: 'tournaments', label: 'Tournaments', icon: 'tournaments', shortcut: 'Ctrl+Y' },
       { id: 'epc', label: 'EPC', icon: 'epc', shortcut: 'Ctrl+E' },

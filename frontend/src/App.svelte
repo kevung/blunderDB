@@ -699,7 +699,7 @@
             if (!showComment) {
                 lastPosition();
             }
-        } else if(event.ctrlKey && event.code == 'KeyK') {
+        } else if(event.ctrlKey && event.code == 'KeyB') {
             event.preventDefault();
             toggleCollectionPanelAction();
         } else if(event.ctrlKey && event.code == 'KeyR') {
@@ -728,7 +728,7 @@
             toggleHelpModal(); // Keep '?' for help modal
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
-        } else if (event.ctrlKey && event.code === 'KeyB') {
+        } else if (event.ctrlKey && event.code === 'KeyK') {
             toggleFilterLibraryPanel();
         } else if (event.ctrlKey && event.code === 'KeyT') {
             event.preventDefault();
@@ -2988,6 +2988,7 @@
         if ($statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC' || $statusBarModeStore === 'COLLECTION') {
             statusBarModeStore.set('NORMAL');
         }
+        activeCollectionStore.set(null);
 
         // Enter MATCH mode: get the last visited match from DB
         try {
@@ -3422,6 +3423,7 @@ function togglePipcount() {
                 player1Name: '',
                 player2Name: ''
             });
+            activeCollectionStore.set(null);
 
             positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
 
@@ -3478,6 +3480,7 @@ function togglePipcount() {
             savedPositionsBeforeEPC = null;
             savedPositionBeforeEPC = null;
             savedPositionIndexBeforeEPC = -1;
+            activeCollectionStore.set(null);
 
             positionsStore.set(Array.isArray(positions) ? positions : []);
             if (positions && positions.length > 0) {

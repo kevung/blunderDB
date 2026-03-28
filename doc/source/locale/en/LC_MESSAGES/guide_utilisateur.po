@@ -532,18 +532,18 @@ msgstr "Manage collections"
 msgid ""
 "Les collections permettent d'organiser des positions en groupes "
 "personnalisés. Pour accéder au panneau des collections, appuyer sur "
-"*CTRL-K*."
+"*CTRL-B*."
 msgstr ""
 "Collections allow you to organize positions into custom groups. "
-"To access the collections panel, press *CTRL-K*."
+"To access the collections panel, press *CTRL-B*."
 
 #: ../../source/guide_utilisateur.rst:240
 msgid "**Créer une collection:**"
 msgstr "**Create a collection:**"
 
 #: ../../source/guide_utilisateur.rst:242
-msgid "Ouvrir le panneau des collections (*CTRL-K*)."
-msgstr "Open the collections panel (*CTRL-K*)."
+msgid "Ouvrir le panneau des collections (*CTRL-B*)."
+msgstr "Open the collections panel (*CTRL-B*)."
 
 #: ../../source/guide_utilisateur.rst:244
 msgid "Saisir le nom de la nouvelle collection et cliquer sur \"Add\"."

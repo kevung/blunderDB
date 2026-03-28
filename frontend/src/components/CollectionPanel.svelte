@@ -42,28 +42,24 @@
     let mode = 'NORMAL';
     
     let positionCollectionIds = [];
-    let newCollectionName = '';
 
-    // Description editing (for COLLECTION mode header)
-    let editingDescription = false;
-    let descriptionText = '';
+    // View: 'list' (all collections) or 'detail' (positions in active collection)
+    let view = 'list';
 
-    // Description editing in collection list (NORMAL mode)
-    let editingDescriptionId = null;
-    let editingDescriptionText = '';
-
-    // Renaming
-    let renamingCollectionId = null;
-    let renamingName = '';
-
-    // Sub-tab: 'list' (collections list) or 'positions' (positions in active collection) or 'add' (add to collection)
-    let activeSubTab = (mode === 'COLLECTION' && activeCollection) ? 'positions' : 'list';
+    // Collection editing (unified: name + description at the same time)
+    let editingCollectionId = null;
+    let editingName = '';
+    let editingDescription = '';
+    let inlineNewName = '';
 
     // Multi-select for positions
     let selectedPositionIndices = new Set();
 
     // Position index map (position_id -> 1-based index in DB)
     let positionIndexMap = {};
+
+    // Inline new description
+    let inlineNewDescription = '';
 
     // Drag state
     let dragType = null;
@@ -85,25 +81,41 @@
     const unsubActive = activeCollectionStore.subscribe(value => {
         activeCollection = value;
         if (value) {
-            descriptionText = value.description || '';
+            view = 'detail';
+        } else {
+            view = 'list';
         }
     });
 
-    const unsubDb = databaseLoadedStore.subscribe(value => {
+    const unsubDb = databaseLoadedStore.subscribe(async value => {
+        const wasLoaded = databaseLoaded;
         databaseLoaded = value;
+        if (value && !wasLoaded) {
+            await loadCollections();
+            await loadPositionIndexMap();
+            if (currentPosition && currentPosition.id) {
+                await loadPositionCollections(currentPosition.id);
+            }
+        }
     });
 
     const unsubPosition = positionStore.subscribe(value => {
+        const prevId = currentPosition ? currentPosition.id : null;
         currentPosition = value;
-        if (visible && value && value.id) {
-            loadPositionCollections(value.id);
+        const newId = value ? value.id : null;
+        if (newId && newId !== prevId) {
+            // Reset immediately so checkboxes don't show stale state
+            positionCollectionIds = [];
+            loadPositionCollections(newId);
+        } else if (!newId) {
+            positionCollectionIds = [];
         }
     });
 
     const unsubMode = statusBarModeStore.subscribe(value => {
         mode = value;
         if (value === 'COLLECTION' && activeCollection) {
-            activeSubTab = 'positions';
+            view = 'detail';
         }
     });
 
@@ -115,29 +127,7 @@
     });
 
     const unsubVisible = showCollectionPanelStore.subscribe(async value => {
-        const wasVisible = visible;
         visible = value;
-        if (visible && !wasVisible) {
-            await loadCollections();
-            await loadPositionIndexMap();
-            // In COLLECTION mode, reload the active collection's positions
-            if (mode === 'COLLECTION' && activeCollection && activeCollection.id) {
-                try {
-                    const positions = await GetCollectionPositions(activeCollection.id);
-                    collectionPositionsStore.set(positions || []);
-                } catch (error) {
-                    console.error('Error reloading active collection positions:', error);
-                }
-            }
-            if (currentPosition && currentPosition.id) {
-                await loadPositionCollections(currentPosition.id);
-            }
-        } else if (!visible && wasVisible) {
-            selectedCollectionStore.set(null);
-            collectionPositionsStore.set([]);
-            renamingCollectionId = null;
-            selectedPositionIndices = new Set();
-        }
     });
 
     onDestroy(() => {
@@ -179,7 +169,27 @@
         }
     }
 
-    async function togglePositionInCollection(collectionId) {
+    function isDuplicateName(name, excludeId = null) {
+        const lower = name.trim().toLowerCase();
+        return collections.some(c => c.name.toLowerCase() === lower && c.id !== excludeId);
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        // Handle multiple date formats: "YYYY-MM-DD HH:MM:SS", "YYYY-MM-DDTHH:MM:SSZ", or Go time.Time string format
+        let normalized = dateStr;
+        if (!normalized.includes('T')) {
+            // SQLite format "YYYY-MM-DD HH:MM:SS" — take only the first 19 chars to avoid timezone suffix
+            normalized = normalized.substring(0, 19).replace(' ', 'T') + 'Z';
+        }
+        const d = new Date(normalized);
+        if (isNaN(d.getTime())) return '';
+        const pad = n => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    async function togglePositionInCollection(collectionId, event) {
+        if (event) event.stopPropagation();
         if (!currentPosition || !currentPosition.id || currentPosition.id === 0) {
             statusBarTextStore.set('No position selected');
             return;
@@ -188,48 +198,36 @@
             if (positionCollectionIds.includes(collectionId)) {
                 await RemovePositionFromCollection(collectionId, currentPosition.id);
                 positionCollectionIds = positionCollectionIds.filter(id => id !== collectionId);
+                statusBarTextStore.set('Position removed from collection');
             } else {
                 await AddPositionToCollection(collectionId, currentPosition.id);
                 positionCollectionIds = [...positionCollectionIds, collectionId];
+                statusBarTextStore.set('Position added to collection');
             }
             await loadCollections();
+            await loadPositionIndexMap();
+            if (activeCollection && activeCollection.id === collectionId) {
+                const positions = await GetCollectionPositions(collectionId);
+                collectionPositionsStore.set(positions || []);
+            }
         } catch (error) {
             console.error('Error toggling position in collection:', error);
             statusBarTextStore.set('Error updating collection');
         }
     }
 
-    async function createAndAddToCollection() {
-        if (!newCollectionName.trim()) return;
-        if (!currentPosition || !currentPosition.id || currentPosition.id === 0) {
-            statusBarTextStore.set('No position selected');
+    async function createCollectionInline() {
+        if (!inlineNewName.trim()) return;
+        if (isDuplicateName(inlineNewName)) {
+            statusBarTextStore.set(`A collection named "${inlineNewName.trim()}" already exists`);
             return;
         }
         try {
-            await CreateCollection(newCollectionName.trim(), '');
-            await loadCollections();
-            const newColl = collections.find(c => c.name === newCollectionName.trim());
-            if (newColl) {
-                await AddPositionToCollection(newColl.id, currentPosition.id);
-                positionCollectionIds = [...positionCollectionIds, newColl.id];
-                await loadCollections();
-            }
-            newCollectionName = '';
-        } catch (error) {
-            console.error('Error creating collection:', error);
-            statusBarTextStore.set('Error creating collection');
-        }
-    }
-
-    // Inline add row in collections list
-    let inlineNewName = '';
-    async function createCollectionInline() {
-        if (!inlineNewName.trim()) return;
-        try {
-            await CreateCollection(inlineNewName.trim(), '');
+            await CreateCollection(inlineNewName.trim(), inlineNewDescription.trim());
             await loadCollections();
             statusBarTextStore.set(`Collection "${inlineNewName.trim()}" created`);
             inlineNewName = '';
+            inlineNewDescription = '';
         } catch (error) {
             console.error('Error creating collection:', error);
             statusBarTextStore.set('Error creating collection');
@@ -237,20 +235,12 @@
     }
 
     async function selectCollection(collection) {
-        // In COLLECTION mode, don't allow deselecting the active collection
-        if (mode === 'COLLECTION' && activeCollection) {
-            return;
-        }
-        // Toggle off if clicking the same collection
+        if (mode === 'COLLECTION' && activeCollection) return;
         if (selectedCollection && selectedCollection.id === collection.id) {
             selectedCollectionStore.set(null);
             collectionPositionsStore.set([]);
             return;
         }
-        // Deselect any other collection first
-        selectedCollectionStore.set(null);
-        collectionPositionsStore.set([]);
-        // Now select the new one
         selectedCollectionStore.set(collection);
         try {
             const positions = await GetCollectionPositions(collection.id);
@@ -261,8 +251,7 @@
     }
 
     async function openCollection(collection) {
-        // Don't open if we're in rename mode for this collection
-        if (renamingCollectionId === collection.id) return;
+        if (editingCollectionId === collection.id) return;
         try {
             const positions = await GetCollectionPositions(collection.id);
             if (!positions || positions.length === 0) {
@@ -272,8 +261,8 @@
             selectedCollectionStore.set(collection);
             collectionPositionsStore.set(positions);
             activeCollectionStore.set(collection);
-            descriptionText = collection.description || '';
             selectedPositionIndices = new Set();
+            view = 'detail';
             await loadPositionIndexMap();
             if (onOpenCollection) {
                 onOpenCollection(collection, positions);
@@ -281,6 +270,10 @@
         } catch (error) {
             console.error('Error opening collection:', error);
         }
+    }
+
+    function goBackToList() {
+        view = 'list';
     }
 
     async function deleteCollection(collection, event) {
@@ -293,6 +286,7 @@
             }
             if (activeCollection && activeCollection.id === collection.id) {
                 activeCollectionStore.set(null);
+                view = 'list';
             }
             await loadCollections();
             if (currentPosition && currentPosition.id) {
@@ -303,96 +297,57 @@
         }
     }
 
-    function startRename(collection, event) {
-        event.stopPropagation();
-        event.preventDefault();
-        renamingCollectionId = collection.id;
-        renamingName = collection.name;
+    function startEditing(collection, event) {
+        if (event) event.stopPropagation();
+        editingCollectionId = collection.id;
+        editingName = collection.name;
+        editingDescription = collection.description || '';
     }
 
-    async function finishRename(collection) {
-        if (renamingCollectionId !== collection.id) return;
-        if (renamingName.trim() && renamingName.trim() !== collection.name) {
+    async function finishEditing(collection) {
+        if (editingCollectionId !== collection.id) return;
+        const newName = editingName.trim() || collection.name;
+        const newDesc = editingDescription.trim();
+        if (newName !== collection.name || newDesc !== (collection.description || '')) {
+            if (newName !== collection.name && isDuplicateName(newName, collection.id)) {
+                statusBarTextStore.set(`A collection named "${newName}" already exists`);
+                editingCollectionId = null;
+                return;
+            }
             try {
-                await UpdateCollection(collection.id, renamingName.trim(), collection.description || '');
+                await UpdateCollection(collection.id, newName, newDesc);
                 await loadCollections();
                 if (activeCollection && activeCollection.id === collection.id) {
-                    activeCollectionStore.set({ ...activeCollection, name: renamingName.trim() });
+                    activeCollectionStore.set({ ...activeCollection, name: newName, description: newDesc });
                 }
             } catch (error) {
-                console.error('Error renaming collection:', error);
+                console.error('Error updating collection:', error);
             }
         }
-        renamingCollectionId = null;
+        editingCollectionId = null;
     }
 
-    function handleRenameKeyDown(event, collection) {
+    function handleEditingBlur(collection, event) {
+        // Delay to check if focus moved to another input in the same editing row
+        setTimeout(() => {
+            const active = document.activeElement;
+            const row = event.target.closest('tr') || event.target.closest('.desc-bar');
+            if (row && row.contains(active)) return; // focus still in same row
+            finishEditing(collection);
+        }, 50);
+    }
+
+    function handleEditingKeyDown(event, collection) {
         if (event.key === 'Enter') {
             event.stopPropagation();
-            finishRename(collection);
+            finishEditing(collection);
         } else if (event.key === 'Escape') {
             event.stopPropagation();
-            renamingCollectionId = null;
+            editingCollectionId = null;
         }
     }
 
-    async function saveDescription() {
-        if (!activeCollection) return;
-        try {
-            await UpdateCollection(activeCollection.id, activeCollection.name, descriptionText);
-            activeCollectionStore.set({ ...activeCollection, description: descriptionText });
-            editingDescription = false;
-            await loadCollections();
-        } catch (error) {
-            console.error('Error saving description:', error);
-        }
-    }
-
-    function handleDescriptionKeyDown(event) {
-        if (event.key === 'Enter') {
-            event.stopPropagation();
-            saveDescription();
-        } else if (event.key === 'Escape') {
-            event.stopPropagation();
-            descriptionText = activeCollection?.description || '';
-            editingDescription = false;
-        }
-    }
-
-    // Description editing for collections in the list (NORMAL mode)
-    function startEditDescription(collection, event) {
-        event.stopPropagation();
-        editingDescriptionId = collection.id;
-        editingDescriptionText = collection.description || '';
-    }
-
-    async function saveListDescription(collection) {
-        if (editingDescriptionId !== collection.id) return;
-        if (editingDescriptionText.trim() !== (collection.description || '')) {
-            try {
-                await UpdateCollection(collection.id, collection.name, editingDescriptionText.trim());
-                await loadCollections();
-                if (activeCollection && activeCollection.id === collection.id) {
-                    activeCollectionStore.set({ ...activeCollection, description: editingDescriptionText.trim() });
-                    descriptionText = editingDescriptionText.trim();
-                }
-            } catch (error) {
-                console.error('Error saving description:', error);
-            }
-        }
-        editingDescriptionId = null;
-    }
-
-    function handleListDescriptionKeyDown(event, collection) {
-        if (event.key === 'Enter') {
-            event.stopPropagation();
-            saveListDescription(collection);
-        } else if (event.key === 'Escape') {
-            event.stopPropagation();
-            editingDescriptionId = null;
-        }
-    }
-
+    // Collection reorder
     async function moveCollectionUp(index, event) {
         event.stopPropagation();
         if (index <= 0) return;
@@ -447,44 +402,9 @@
         }
         selectedPositionIndices = newSet;
 
-        // Always navigate to the clicked position to display it
         const position = collectionPositions[index];
         if (position) {
             navigateToPosition(position, index);
-        }
-    }
-
-    async function moveSelectedUp() {
-        if (!activeCollection || selectedPositionIndices.size === 0) return;
-        const sorted = [...selectedPositionIndices].sort((a, b) => a - b);
-        if (sorted[0] <= 0) return;
-        const newOrder = [...collectionPositions];
-        for (const idx of sorted) {
-            [newOrder[idx - 1], newOrder[idx]] = [newOrder[idx], newOrder[idx - 1]];
-        }
-        collectionPositionsStore.set(newOrder);
-        selectedPositionIndices = new Set(sorted.map(i => i - 1));
-        try {
-            await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
-        } catch (error) {
-            console.error('Error reordering positions:', error);
-        }
-    }
-
-    async function moveSelectedDown() {
-        if (!activeCollection || selectedPositionIndices.size === 0) return;
-        const sorted = [...selectedPositionIndices].sort((a, b) => b - a);
-        if (sorted[0] >= collectionPositions.length - 1) return;
-        const newOrder = [...collectionPositions];
-        for (const idx of sorted) {
-            [newOrder[idx], newOrder[idx + 1]] = [newOrder[idx + 1], newOrder[idx]];
-        }
-        collectionPositionsStore.set(newOrder);
-        selectedPositionIndices = new Set([...selectedPositionIndices].map(i => i + 1));
-        try {
-            await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
-        } catch (error) {
-            console.error('Error reordering positions:', error);
         }
     }
 
@@ -507,14 +427,12 @@
         }
     }
 
-    // Move a single position up (from row button)
     async function movePositionUp(index, event) {
         event.stopPropagation();
         if (!activeCollection || index <= 0) return;
         const newOrder = [...collectionPositions];
         [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
         collectionPositionsStore.set(newOrder);
-        // Update selection if this position was selected
         if (selectedPositionIndices.has(index)) {
             const newSet = new Set(selectedPositionIndices);
             newSet.delete(index);
@@ -528,7 +446,6 @@
         }
     }
 
-    // Move a single position down (from row button)
     async function movePositionDown(index, event) {
         event.stopPropagation();
         if (!activeCollection || index >= collectionPositions.length - 1) return;
@@ -548,7 +465,6 @@
         }
     }
 
-    // Remove single position from row button
     async function removePositionFromRow(index, event) {
         event.stopPropagation();
         if (!activeCollection) return;
@@ -686,16 +602,6 @@
         resetDrag();
     }
 
-    function formatDate(dateStr) {
-        if (!dateStr) return '';
-        try {
-            const d = new Date(dateStr);
-            return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' });
-        } catch {
-            return '';
-        }
-    }
-
     function closePanel() {
         showCollectionPanelStore.set(false);
     }
@@ -704,7 +610,7 @@
         if (!visible) return;
         if (event.target.matches('input, textarea')) return;
 
-        // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+K to toggle panel)
+        // Let Ctrl+key combos pass through to global handler
         if (event.ctrlKey) return;
 
         // Let navigation keys pass through to global handler for position browsing
@@ -718,7 +624,9 @@
         event.stopPropagation();
 
         if (event.key === 'Escape') {
-            if (selectedCollection) {
+            if (view === 'detail' && mode !== 'COLLECTION') {
+                view = 'list';
+            } else if (selectedCollection) {
                 selectedCollectionStore.set(null);
                 collectionPositionsStore.set([]);
             } else {
@@ -756,8 +664,23 @@
         }
     }
 
-    onMount(() => {
+    onMount(async () => {
         document.addEventListener('keydown', handleKeyDown);
+        // Load collections when component mounts (tab activated)
+        await loadCollections();
+        await loadPositionIndexMap();
+        if (mode === 'COLLECTION' && activeCollection && activeCollection.id) {
+            view = 'detail';
+            try {
+                const positions = await GetCollectionPositions(activeCollection.id);
+                collectionPositionsStore.set(positions || []);
+            } catch (error) {
+                console.error('Error reloading active collection positions:', error);
+            }
+        }
+        if (currentPosition && currentPosition.id) {
+            await loadPositionCollections(currentPosition.id);
+        }
     });
 
     onDestroy(() => {
@@ -766,186 +689,238 @@
 </script>
 
     <section class="collection-panel" id="collectionPanel" tabindex="-1">
-        <div class="collection-content">
-            <!-- Sub-tab sidebar -->
-            <div class="sub-tab-sidebar">
-                <button class="sub-tab-btn home-btn" class:active={activeSubTab === 'list'} on:click={() => activeSubTab = 'list'} title="Collections">⌂</button>
-                {#if mode === 'COLLECTION' && activeCollection}
-                    <div class="sub-tab-btn named-tab" class:active={activeSubTab === 'positions'} on:click={() => activeSubTab = 'positions'} on:keydown={() => {}} role="button" tabindex="-1">
-                        <span class="tab-name" title={activeCollection.name}>{activeCollection.name}</span>
-                        <button class="tab-close-btn" on:click|stopPropagation={() => { activeSubTab = 'list'; }} title="Close">×</button>
-                    </div>
-                {/if}
-            </div>
-
-            <div class="sub-tab-content">
-                {#if activeSubTab === 'list'}
-                    <!-- Collections list -->
-                    <div class="list-view">
-                        <div class="list-container">
-                            {#each collections as collection, index}
-                                <div
-                                    class="row"
-                                    class:selected={selectedCollection?.id === collection.id}
-                                    class:active={activeCollection?.id === collection.id}
-                                    class:drag-over={dragType === 'collection' && dragOverIndex === index && dragStartIndex !== index}
-                                    on:click={() => selectCollection(collection)}
-                                    on:dblclick={() => openCollection(collection)}
-                                    draggable="true"
-                                    on:dragstart={(e) => onCollectionDragStart(e, index)}
-                                    on:dragover={(e) => onCollectionDragOver(e, index)}
-                                    on:drop={(e) => onCollectionDrop(e, index)}
-                                    on:dragend={onDragEnd}
-                                >
-                                    {#if renamingCollectionId === collection.id}
+        {#if view === 'list'}
+            <!-- Collections list -->
+            <div class="table-wrapper">
+                <table class="coll-table">
+                    <thead>
+                        <tr>
+                            <th class="no-select">Name</th>
+                            <th class="no-select narrow-col">Pos</th>
+                            <th class="no-select">Description</th>
+                            <th class="no-select narrow-col">Modified</th>
+                            <th class="no-select narrow-col toggle-header" title="Add/remove current position">Pos ✓</th>
+                            <th class="no-select actions-col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each collections as collection, index}
+                            <tr
+                                class:selected={selectedCollection?.id === collection.id}
+                                class:in-collection={positionCollectionIds.includes(collection.id)}
+                                class:drag-over={dragType === 'collection' && dragOverIndex === index && dragStartIndex !== index}
+                                on:click={(e) => togglePositionInCollection(collection.id, e)}
+                                on:dblclick={() => openCollection(collection)}
+                                draggable="true"
+                                on:dragstart={(e) => onCollectionDragStart(e, index)}
+                                on:dragover={(e) => onCollectionDragOver(e, index)}
+                                on:drop={(e) => onCollectionDrop(e, index)}
+                                on:dragend={onDragEnd}
+                            >
+                                <td class="name-cell">
+                                    {#if editingCollectionId === collection.id}
                                         <input
-                                            class="rename-input"
+                                            class="inline-edit"
                                             type="text"
-                                            bind:value={renamingName}
-                                            on:blur={() => finishRename(collection)}
-                                            on:keydown={(e) => handleRenameKeyDown(e, collection)}
+                                            bind:value={editingName}
+                                            on:blur={(e) => handleEditingBlur(collection, e)}
+                                            on:keydown={(e) => handleEditingKeyDown(e, collection)}
                                             on:click|stopPropagation
                                             on:dblclick|stopPropagation
                                             autofocus
                                         />
                                     {:else}
-                                        <span class="row-name" title={collection.name}>{collection.name}</span>
+                                        <span title={collection.name}>{collection.name}</span>
                                     {/if}
-                                    {#if collection.positionCount > 0}
-                                        <span class="row-badge">{collection.positionCount}</span>
+                                </td>
+                                <td class="narrow-col count-cell">{collection.positionCount || 0}</td>
+                                <td class="desc-cell">
+                                    {#if editingCollectionId === collection.id}
+                                        <input
+                                            class="inline-edit"
+                                            type="text"
+                                            bind:value={editingDescription}
+                                            on:blur={(e) => handleEditingBlur(collection, e)}
+                                            on:keydown={(e) => handleEditingKeyDown(e, collection)}
+                                            on:click|stopPropagation
+                                            on:dblclick|stopPropagation
+                                            placeholder="description…"
+                                        />
+                                    {:else}
+                                        <span class="desc-text" title={collection.description || ''}>{collection.description || ''}</span>
                                     {/if}
-                                    {#if collection.description}
-                                        <span class="row-desc" title={collection.description}>{collection.description}</span>
+                                </td>
+                                <td class="narrow-col date-cell">{formatDate(collection.updatedAt)}</td>
+                                <td class="narrow-col toggle-cell">
+                                    {#if currentPosition && currentPosition.id}
+                                        <input type="checkbox" checked={positionCollectionIds.includes(collection.id)} on:click|stopPropagation={(e) => togglePositionInCollection(collection.id, e)} title={positionCollectionIds.includes(collection.id) ? 'Remove position from collection' : 'Add position to collection'} />
                                     {/if}
-                                    <span class="row-acts">
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => startRename(collection, e)} title="Rename">✎</button>
+                                </td>
+                                <td class="actions-col">
+                                    <span class="item-actions">
+                                        <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
+                                        <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionDown(index, e)} disabled={index === collections.length - 1} title="Move down">▼</button>
+                                        <button class="icon-btn" on:click|stopPropagation={(e) => startEditing(collection, e)} title="Edit">✎</button>
                                         <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteCollection(collection, e)} title="Delete">×</button>
                                     </span>
-                                </div>
-                            {/each}
-                            <!-- Inline add row -->
-                            <div class="row add-row">
-                                <input class="row-input name" type="text" bind:value={inlineNewName} placeholder="New collection…" on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()} />
-                            </div>
-                            {#if collections.length === 0}
-                                <div class="empty-msg">No collections</div>
-                            {/if}
-                        </div>
-                    </div>
-                {:else if activeSubTab === 'positions' && mode === 'COLLECTION' && activeCollection}
-                    <!-- Positions in active collection -->
-                    <div class="list-view">
-                        <div class="list-header">
-                            <span>{activeCollection.name}</span>
-                            {#if editingDescription}
-                                <input
-                                    class="desc-inline-input"
-                                    type="text"
-                                    bind:value={descriptionText}
-                                    on:blur={saveDescription}
-                                    on:keydown={handleDescriptionKeyDown}
-                                    placeholder="description…"
-                                    autofocus
-                                />
-                            {:else}
-                                <span class="desc-inline" on:click={() => { editingDescription = true; }} title="Click to edit description">{descriptionText || ''}</span>
-                            {/if}
-                        </div>
-                        <div class="list-container">
-                            {#each collectionPositions as position, index}
-                                <div
-                                    class="row pos-row"
-                                    class:current={$currentPositionIndexStore === index}
-                                    class:multi-selected={selectedPositionIndices.has(index)}
-                                    class:drag-over={dragType === 'position' && dragOverIndex === index && dragStartIndex !== index}
-                                    on:click={(e) => selectAndDisplayPosition(index, e)}
-                                    draggable="true"
-                                    on:dragstart={(e) => onPositionDragStart(e, index)}
-                                    on:dragover={(e) => onPositionDragOver(e, index)}
-                                    on:drop={(e) => onPositionDrop(e, index)}
-                                    on:dragend={onDragEnd}
-                                >
-                                    <span class="pos-idx">{index + 1}</span>
-                                    <span class="pos-id">id {positionIndexMap[position.id] || '?'}</span>
-                                    <span class="row-acts">
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionUp(index, e)} disabled={index === 0}>▲</button>
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionDown(index, e)} disabled={index === collectionPositions.length - 1}>▼</button>
-                                        <button class="icon-btn delete" on:click|stopPropagation={(e) => removePositionFromRow(index, e)}>×</button>
-                                    </span>
-                                </div>
-                            {/each}
-                            {#if collectionPositions.length === 0}
-                                <div class="empty-msg">Empty collection</div>
-                            {/if}
-                        </div>
-                    </div>
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                <!-- Inline add row below table -->
+                <div class="add-row">
+                    <input class="add-input" type="text" bind:value={inlineNewName} placeholder="New collection…" on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()} />
+                    <input class="add-input desc" type="text" bind:value={inlineNewDescription} placeholder="Description…" on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()} />
+                </div>
+                {#if collections.length === 0}
+                    <div class="empty-msg">No collections</div>
                 {/if}
             </div>
-        </div>
+        {:else if view === 'detail' && activeCollection}
+            <!-- Positions in active collection -->
+            <div class="table-wrapper">
+                <div class="detail-header">
+                    <button class="back-btn" on:click={goBackToList} title="Back to collections">←</button>
+                    <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
+                    <span class="detail-count">{collectionPositions.length} pos</span>
+                    {#if currentPosition && currentPosition.id}
+                        <input type="checkbox" checked={positionCollectionIds.includes(activeCollection.id)} on:click={(e) => togglePositionInCollection(activeCollection.id, e)} title={positionCollectionIds.includes(activeCollection.id) ? 'Remove position from collection' : 'Add position to collection'} />
+                    {/if}
+                </div>
+                {#if editingCollectionId === activeCollection.id}
+                    <div class="desc-bar">
+                        <input
+                            class="inline-edit full-width"
+                            type="text"
+                            bind:value={editingDescription}
+                            on:blur={(e) => handleEditingBlur(activeCollection, e)}
+                            on:keydown={(e) => handleEditingKeyDown(e, activeCollection)}
+                            placeholder="description…"
+                            autofocus
+                        />
+                    </div>
+                {:else}
+                    <div class="desc-bar clickable" on:click={(e) => startEditing(activeCollection, e)}>
+                        <span class="desc-text" title="Click to edit">{activeCollection.description || 'Add a description…'}</span>
+                    </div>
+                {/if}
+                <table class="coll-table">
+                    <thead>
+                        <tr>
+                            <th class="no-select narrow-col">#</th>
+                            <th class="no-select narrow-col">ID</th>
+                            <th class="no-select actions-col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each collectionPositions as position, index}
+                            <tr
+                                class:current={$currentPositionIndexStore === index}
+                                class:multi-selected={selectedPositionIndices.has(index)}
+                                class:drag-over={dragType === 'position' && dragOverIndex === index && dragStartIndex !== index}
+                                on:click={(e) => selectAndDisplayPosition(index, e)}
+                                draggable="true"
+                                on:dragstart={(e) => onPositionDragStart(e, index)}
+                                on:dragover={(e) => onPositionDragOver(e, index)}
+                                on:drop={(e) => onPositionDrop(e, index)}
+                                on:dragend={onDragEnd}
+                            >
+                                <td class="narrow-col idx-cell">{index + 1}</td>
+                                <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
+                                <td class="actions-col">
+                                    <span class="item-actions">
+                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
+                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionDown(index, e)} disabled={index === collectionPositions.length - 1} title="Move down">▼</button>
+                                        <button class="icon-btn delete" on:click|stopPropagation={(e) => removePositionFromRow(index, e)} title="Remove from collection">×</button>
+                                    </span>
+                                </td>
+                            </tr>
+                        {/each}
+                    </tbody>
+                </table>
+                {#if collectionPositions.length === 0}
+                    <div class="empty-msg">Empty collection</div>
+                {/if}
+            </div>
+        {/if}
     </section>
 
 <style>
     .collection-panel { width: 100%; height: 100%; background: white; box-sizing: border-box; outline: none; overflow: hidden; user-select: none; }
-    .collection-content { font-size: 12px; color: #333; height: 100%; display: flex; }
 
-    .sub-tab-sidebar { display: flex; flex-direction: column; width: 70px; flex-shrink: 0; background: #f5f5f5; border-right: 1px solid #ddd; }
-    .sub-tab-btn { border: none; background: transparent; padding: 8px 4px; font-size: 11px; color: #666; cursor: pointer; border-left: 2px solid transparent; text-align: center; transition: background 0.15s; }
-    .sub-tab-btn:hover { background: #e8e8e8; }
-    .sub-tab-btn.active { color: #333; font-weight: 600; background: #fff; border-left-color: #555; }
-    .sub-tab-btn.home-btn { font-size: 16px; padding: 6px 4px; }
-    .sub-tab-btn.named-tab { display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 2px; position: relative; cursor: pointer; }
-    .tab-name { font-size: 9px; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 62px; display: block; }
-    .tab-close-btn { border: none; background: none; font-size: 12px; color: #aaa; cursor: pointer; line-height: 1; padding: 0 2px; }
-    .tab-close-btn:hover { color: #c55; }
-    .sub-tab-content { flex: 1; min-width: 0; overflow: hidden; display: flex; }
+    .table-wrapper { height: 100%; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; }
 
-    .list-view { flex: 1; display: flex; flex-direction: column; min-height: 0; overflow: hidden; }
-    .list-header { padding: 3px 10px; font-size: 11px; font-weight: 600; color: #555; border-bottom: 1px solid #eee; flex-shrink: 0; background: #fafafa; display: flex; align-items: center; gap: 8px; }
-    .list-container { flex: 1; overflow-y: auto; overflow-x: hidden; }
+    /* Table layout (same pattern as Match/Tournament panels) */
+    .coll-table { width: 100%; border-collapse: collapse; font-size: 12px; }
 
-    .row {
-        display: flex;
-        align-items: center;
-        padding: 2px 10px;
-        cursor: pointer;
-        border-bottom: 1px solid #f5f5f5;
-        min-height: 24px;
-        gap: 6px;
-    }
-    .row:hover { background: #f5f8ff; }
-    .row.selected { background: #e3f2fd; }
-    .row.active { background: #dce9f7; }
-    .row.drag-over { border-top: 2px solid #999; }
-    .row.add-row { cursor: default; background: #fafafa; border-bottom: none; }
-    .row.add-row:hover { background: #fafafa; }
+    .coll-table thead { position: sticky; top: 0; background-color: #f5f5f5; z-index: 1; }
 
-    .row-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 12px; }
-    .row-badge { font-size: 9px; color: #888; background: #eee; border-radius: 8px; padding: 0 5px; flex-shrink: 0; }
-    .row-desc { font-size: 10px; color: #aaa; font-style: italic; flex-shrink: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 120px; }
-    .row-acts { display: flex; gap: 2px; visibility: hidden; flex-shrink: 0; }
-    .row:hover .row-acts { visibility: visible; }
+    .coll-table th, .coll-table td { padding: 4px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; }
 
-    .rename-input { flex: 1; font-size: 12px; padding: 1px 4px; border: 1px solid #999; outline: none; box-sizing: border-box; }
-    .row-input { padding: 1px 4px; border: 1px solid #ccc; border-radius: 2px; font-size: 11px; outline: none; box-sizing: border-box; }
-    .row-input.name { flex: 1; min-width: 0; }
+    .coll-table th { font-weight: 600; color: #333; font-size: 11px; }
 
-    .icon-btn { background: none; border: none; cursor: pointer; font-size: 10px; color: #888; padding: 0 3px; line-height: 1; }
-    .icon-btn:hover:not(:disabled) { color: #333; }
+    .narrow-col { width: 1px; white-space: nowrap; padding-left: 6px; padding-right: 6px; }
+
+    .actions-col { width: 90px; min-width: 90px; max-width: 90px; white-space: nowrap; text-align: center; padding: 0 4px; }
+
+    .date-cell { font-size: 10px; color: #999; }
+
+    /* Row styles */
+    .coll-table tbody tr { cursor: pointer; transition: background-color 0.1s; }
+    .coll-table tbody tr:hover { background-color: #f9f9f9; }
+    .coll-table tbody tr.selected { background-color: #e3f2fd; }
+    .coll-table tbody tr.selected:hover { background-color: #bbdefb; }
+    .coll-table tbody tr.in-collection { border-left: 3px solid #4a8; }
+    .coll-table tbody tr.drag-over { border-top: 2px solid #999; }
+    .coll-table tbody tr.current { background-color: #dce9f7; }
+    .coll-table tbody tr.multi-selected { background-color: #dce9f7; }
+
+    /* Cell styles */
+    .name-cell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
+    .count-cell { text-align: center; color: #666; }
+    .desc-cell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
+    .desc-text { color: #888; font-style: italic; cursor: pointer; font-size: 11px; }
+    .desc-text:hover { color: #555; }
+    .idx-cell { text-align: right; color: #999; }
+    .id-cell { color: #666; }
+
+    .inline-edit { width: 100%; font-size: 12px; padding: 1px 4px; border: 1px solid #999; outline: none; box-sizing: border-box; }
+
+    .toggle-header { text-align: center; color: #4a8; }
+    .toggle-cell { text-align: center; }
+    .toggle-cell input[type="checkbox"] { cursor: pointer; margin: 0; width: 15px; height: 15px; accent-color: #4a8; }
+
+    /* Action buttons - always visible */
+    .item-actions { display: inline-flex; gap: 2px; vertical-align: middle; }
+
+    .icon-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: #666; padding: 2px 4px; line-height: 1; }
+    .icon-btn:hover:not(:disabled) { color: #000; }
     .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .icon-btn.delete:hover:not(:disabled) { color: #c55; }
 
+
+    /* Add row */
+    .add-row { padding: 4px 8px; background: #fafafa; border-top: 1px solid #e0e0e0; flex-shrink: 0; }
+    .add-row { display: flex; gap: 4px; }
+    .add-input { flex: 1; padding: 3px 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; box-sizing: border-box; }
+    .add-input.desc { flex: 1; font-size: 11px; color: #666; }
+    .add-input:focus { border-color: #999; }
+
     .empty-msg { text-align: center; color: #bbb; padding: 16px; font-size: 11px; font-style: italic; }
 
-    /* Positions */
-    .pos-row { cursor: pointer; }
-    .pos-row.current { background: #dce9f7; }
-    .pos-row.multi-selected { background: #dce9f7; }
-    .pos-row.drag-over { border-top: 2px solid #999; }
-    .pos-idx { font-size: 10px; color: #aaa; width: 24px; text-align: right; flex-shrink: 0; }
-    .pos-id { font-size: 11px; color: #666; flex: 1; }
+    /* Detail header */
+    .detail-header { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; flex-shrink: 0; }
+    .back-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #666; padding: 2px 6px; line-height: 1; }
+    .back-btn:hover { color: #333; }
+    .detail-title { font-size: 13px; font-weight: 600; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+    .detail-count { font-size: 11px; color: #888; flex-shrink: 0; }
 
-    /* Description inline */
-    .desc-inline { font-size: 10px; color: #aaa; font-style: italic; cursor: pointer; }
-    .desc-inline:hover { color: #666; }
-    .desc-inline-input { font-size: 10px; border: 1px solid #ccc; outline: none; padding: 1px 4px; flex: 1; min-width: 0; }
+    /* Description bar */
+    .desc-bar { padding: 3px 8px 3px 32px; border-bottom: 1px solid #eee; flex-shrink: 0; }
+    .desc-bar.clickable { cursor: pointer; }
+    .desc-bar .desc-text { font-size: 11px; }
+    .full-width { width: 100%; }
+
+    .no-select { user-select: none; }
 </style>

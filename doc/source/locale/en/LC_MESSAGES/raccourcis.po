@@ -315,10 +315,6 @@ msgid "Afficher/cacher les commentaires."
 msgstr "Show/hide the comments."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-B"
-msgstr "CTRL-B"
-
-#: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher la bibliothèque de filtres."
 msgstr "Show/hide the filter library."
 
@@ -337,6 +333,10 @@ msgstr "CTRL-T"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher le panneau des matchs."
 msgstr "Show/hide the match panel."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-B"
+msgstr "CTRL-B"
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher le panneau des collections."

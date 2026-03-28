@@ -1027,16 +1027,7 @@
     .item-actions {
         display: inline-flex;
         gap: 2px;
-        visibility: hidden;
         vertical-align: middle;
-    }
-
-    .editing-actions {
-        visibility: visible;
-    }
-
-    .match-table tbody tr:hover .item-actions {
-        visibility: visible;
     }
 
     .icon-btn {
