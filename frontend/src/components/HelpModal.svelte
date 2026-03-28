@@ -232,7 +232,7 @@
                     
                     <h3>COMMAND Mode</h3>
                     <p>COMMAND mode allows performing all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions according to filters... After getting familiar with the interface, it is recommended to gradually use this mode, which allows powerful and smooth use of blunderDB, especially for position search functionalities.</p>
-                    <p>To switch to COMMAND mode from any other mode, press the *SPACE* key. To send a query and exit COMMAND mode, press the *ENTER* key.</p>
+                    <p>To open the command input, press the *SPACE* key. A command prompt appears in the status bar. Type your command and press *ENTER* to execute. Press *ESCAPE* to cancel. Command history and results are logged in the *Log* panel.</p>
                     <p>blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required by the user.</p>
                     <p>To refine a search within previously filtered positions, use the <strong>ss</strong> command followed by filters (e.g., <strong>ss nc</strong>). This restricts the search to only the positions currently displayed, allowing progressive narrowing of results. The <strong>ss</strong> command works from NORMAL mode (after a prior search). The search modal also offers a "Search in current results" checkbox for the same functionality.</p>
 
@@ -456,7 +456,7 @@
 
                             <tr>
                                 <td>Space</td>
-                                <td>Command Mode</td>
+                                <td>Command Input</td>
                             </tr>
 
                         </tbody>

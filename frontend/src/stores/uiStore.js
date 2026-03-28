@@ -9,18 +9,22 @@ export const commentTextStore = writable('');
 
 export const analysisDataStore = writable('This is where your analysis data will be displayed.');
 
-// Active tab in the bottom panel ('console', 'analysis', 'comments', 'filter-library', 'search', 'search-history', 'collections', 'matches', 'tournaments', 'logs')
+// Active tab in the bottom panel ('log', 'analysis', 'comments', 'filter-library', 'search', 'search-history', 'collections', 'matches', 'tournaments')
 export const activeTabStore = writable('analysis');
 
-// Session log entries: array of { timestamp, message }
+// Session log entries: array of { timestamp, type, message }
+// type: 'info' (default), 'command', 'result', 'error'
 export const logEntriesStore = writable([]);
 
-export function addLogEntry(message) {
+export function addLogEntry(message, type = 'info') {
     logEntriesStore.update(entries => {
-        const entry = { timestamp: new Date(), message };
+        const entry = { timestamp: new Date(), type, message };
         return [...entries, entry];
     });
 }
+
+// Whether the command input is active in the status bar
+export const showCommandInputStore = writable(false);
 
 export const currentPositionIndexStore = writable(0); // Add current position index store
 

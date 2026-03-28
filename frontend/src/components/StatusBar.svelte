@@ -1,5 +1,6 @@
 <script>
-  import { statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore';
+  import { tick } from 'svelte';
+  import { statusBarTextStore, currentPositionIndexStore, commandTextStore, showCommandInputStore, addLogEntry } from '../stores/uiStore';
   import { positionsStore, matchContextStore } from '../stores/positionStore';
   import { analysisStore } from '../stores/analysisStore';
   import { tableData as metTable } from '../stores/metTable';
@@ -10,7 +11,91 @@
   import { gammonValue4Table } from '../stores/gammonValue4Table';
   import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
   import { takePoint4LastTable } from '../stores/takePoint4LastTable';
+  import { commandHistoryStore } from '../stores/commandHistoryStore';
+  import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/main/Database.js';
   import { get } from 'svelte/store';
+
+  /** @type {function(string): void} */
+  export let onCommand = (cmd) => {};
+
+  let inputEl;
+  let showInput = false;
+  let commandHistory = [];
+  let historyIndex = -1;
+
+  commandHistoryStore.subscribe(value => commandHistory = value);
+
+  showCommandInputStore.subscribe(async value => {
+    showInput = value;
+    if (value) {
+      await loadHistory();
+      await tick();
+      inputEl?.focus();
+    }
+  });
+
+  async function loadHistory() {
+    const history = await LoadCommandHistory();
+    commandHistoryStore.set((history || []).reverse());
+    historyIndex = -1;
+  }
+
+  export function focusInput() {
+    showCommandInputStore.set(true);
+  }
+
+  function hideInput() {
+    showCommandInputStore.set(false);
+    commandTextStore.set('');
+    historyIndex = -1;
+  }
+
+  function handleKeyDown(event) {
+    if (event.code === 'ArrowUp') {
+      event.stopPropagation();
+      event.preventDefault();
+      if (historyIndex < commandHistory.length - 1) {
+        historyIndex++;
+        commandTextStore.set(commandHistory[historyIndex]);
+        requestAnimationFrame(() => {
+          inputEl?.setSelectionRange(inputEl.value.length, inputEl.value.length);
+        });
+      }
+    } else if (event.code === 'ArrowDown') {
+      event.stopPropagation();
+      event.preventDefault();
+      if (historyIndex > 0) {
+        historyIndex--;
+        commandTextStore.set(commandHistory[historyIndex]);
+        requestAnimationFrame(() => {
+          inputEl?.setSelectionRange(inputEl.value.length, inputEl.value.length);
+        });
+      } else {
+        historyIndex = -1;
+        commandTextStore.set('');
+      }
+    } else if (event.code === 'Escape') {
+      event.stopPropagation();
+      event.preventDefault();
+      hideInput();
+    } else if (event.code === 'Enter') {
+      event.stopPropagation();
+      event.preventDefault();
+      const command = ($commandTextStore || '').trim();
+      if (command) {
+        addLogEntry(`> ${command}`, 'command');
+        commandHistoryStore.update(history => {
+          history = history || [];
+          history.unshift(command);
+          return history;
+        });
+        historyIndex = -1;
+        SaveCommand(command);
+        onCommand(command);
+      }
+      hideInput();
+    }
+  }
 
   function showDatesAndMetadata() {
     const analysis = get(analysisStore);
@@ -100,7 +185,22 @@
 </script>
 
 <div class="status-bar">
-  <span class="info-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
+  {#if showInput}
+    <div class="command-input-row">
+      <span class="prompt-char">&gt;</span>
+      <input
+        type="text"
+        bind:this={inputEl}
+        bind:value={$commandTextStore}
+        class="command-input"
+        placeholder="Type command..."
+        on:keydown={handleKeyDown}
+        on:blur={hideInput}
+      />
+    </div>
+  {:else}
+    <span class="info-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
+  {/if}
   {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
     {@const checkerMoves = $matchContextStore.movePositions.filter(p => p.move_type === 'checker')}
     {@const currentCheckerIndex = $matchContextStore.movePositions.slice(0, $matchContextStore.currentIndex + 1).filter(p => p.move_type === 'checker').length}
@@ -146,6 +246,40 @@
     font-size: 12px;
     border-left: 1px solid #e0e0e0;
     line-height: 22px;
+  }
+
+  .command-input-row {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    padding: 0 6px;
+    min-width: 0;
+  }
+
+  .prompt-char {
+    color: #1a73e8;
+    font-weight: bold;
+    margin-right: 4px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    line-height: 22px;
+  }
+
+  .command-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: #333;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-size: 12px;
+    padding: 0;
+    line-height: 22px;
+    height: 22px;
+  }
+
+  .command-input::placeholder {
+    color: #aaa;
   }
 </style>
 

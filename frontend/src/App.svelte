@@ -125,7 +125,8 @@
         showPipcountStore,
         showExportDatabaseModalStore, // Import showExportDatabaseModalStore
         activeTabStore,
-        addLogEntry
+        addLogEntry,
+        showCommandInputStore
     } from './stores/uiStore';
 
     import { metaStore } from './stores/metaStore'; // Import metaStore
@@ -148,6 +149,7 @@
     import { viewStore } from './stores/viewStore';
     import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
+    import { initCommandProcessor, processCommand } from './commandProcessor.js';
     import HelpModal from './components/HelpModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import MetModal from './components/MetModal.svelte';
@@ -326,7 +328,6 @@
 
     // Reference for various elements.
     let mainArea;
-    let tabbedPanelRef;
 
     // Resizable panel state
     let panelHeight = 250; // default panel height in pixels
@@ -637,9 +638,6 @@
             // If any text field is focused, blur it first
             if (document.activeElement && document.activeElement.matches('input, textarea, [contenteditable]')) {
                 /** @type {HTMLElement} */ (document.activeElement).blur();
-            } else {
-                // Switch to console tab and focus prompt
-                tabbedPanelRef?.focusConsole();
             }
         } else if(event.ctrlKey && event.code == 'KeyN') {
             newDatabase();
@@ -714,7 +712,7 @@
                 activeTabStore.set('search');
         } else if (!event.ctrlKey && event.code === 'Space') {        
                 event.preventDefault();
-                tabbedPanelRef?.focusConsole();
+                showCommandInputStore.set(true);
         } else if (event.ctrlKey && event.code === 'KeyL') {
             event.preventDefault();
             if (showComment) {
@@ -2862,7 +2860,7 @@
     function toggleEPCMode() {
         if ($statusBarModeStore === 'EPC') {
             exitEPCMode();
-            activeTabStore.set('console');
+            activeTabStore.set('analysis');
         } else {
             activeTabStore.set('epc');
         }
@@ -3727,6 +3725,31 @@ function togglePipcount() {
     onMount(async () => {
         // @ts-ignore
         console.log('Wails runtime:', runtime);
+
+        // Initialize command processor with callbacks
+        initCommandProcessor({
+            onToggleHelp: toggleHelpModal,
+            onNewDatabase: newDatabase,
+            onOpenDatabase: openDatabase,
+            onImportDatabase: importDatabase,
+            onExportDatabase: exportDatabase,
+            importPosition: importPosition,
+            onSavePosition: saveCurrentPosition,
+            onUpdatePosition: updatePosition,
+            onDeletePosition: deletePosition,
+            onToggleAnalysis: toggleAnalysisPanel,
+            onToggleComment: toggleCommentPanel,
+            exitApp: exitApp,
+            onLoadPositionsByFilters: loadPositionsByFilters,
+            onLoadAllPositions: loadAllPositions,
+            toggleFilterLibraryPanel: toggleFilterLibraryPanel,
+            toggleSearchHistoryPanel: toggleSearchHistoryPanel,
+            toggleMatchPanel: toggleMatchPanel,
+            toggleCollectionPanel: toggleCollectionPanelAction,
+            toggleEPCMode: toggleEPCMode,
+            toggleMatchMode: toggleMatchMode,
+        });
+
         window.addEventListener("keydown", handleKeyDown);
         mainArea.addEventListener("wheel", handleWheel); // Add wheel event listener to main container
         window.addEventListener("resize", handleResize);
@@ -3988,7 +4011,7 @@ function togglePipcount() {
         onGoToPosition={gotoPosition}
         onTogglePipcount={togglePipcount}
         onRandomPosition={loadRandomPosition}
-        onToggleCommandMode={() => tabbedPanelRef?.focusConsole()}
+        onToggleCommandMode={() => showCommandInputStore.set(true)}
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
         onToggleEPCMode={toggleEPCMode}
@@ -4005,27 +4028,7 @@ function togglePipcount() {
 
     <div class="panel-wrapper" style="height: {panelHeight}px;">
     <TabbedPanel
-        bind:this={tabbedPanelRef}
-        onToggleHelp={toggleHelpModal}
-        onNewDatabase={newDatabase}
-        onOpenDatabase={openDatabase}
-        onImportDatabase={importDatabase}
-        onExportDatabase={exportDatabase}
-        importPosition={importPosition}
-        onSavePosition={saveCurrentPosition}
-        onUpdatePosition={updatePosition}
-        onDeletePosition={deletePosition}
-        onToggleAnalysis={toggleAnalysisPanel}
-        onToggleComment={toggleCommentPanel}
-        exitApp={exitApp}
         onLoadPositionsByFilters={loadPositionsByFilters}
-        onLoadAllPositions={loadAllPositions}
-        toggleFilterLibraryPanel={toggleFilterLibraryPanel}
-        toggleSearchHistoryPanel={toggleSearchHistoryPanel}
-        toggleMatchPanel={toggleMatchPanel}
-        toggleCollectionPanel={toggleCollectionPanelAction}
-        toggleEPCMode={toggleEPCMode}
-        toggleMatchMode={toggleMatchMode}
         onCloseAnalysis={toggleAnalysisPanel}
         onCloseComment={toggleCommentPanel}
         onOpenCollection={handleOpenCollection}
@@ -4127,7 +4130,7 @@ function togglePipcount() {
         handleGlobalKeydown={handleKeyDown}
     />
 
-    <StatusBar />
+    <StatusBar onCommand={(cmd) => processCommand(cmd)} />
 
 </main>
 

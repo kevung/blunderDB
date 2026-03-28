@@ -12,32 +12,11 @@
    import EPCPanel from './EPCPanel.svelte';
 
    // Props passed through to panels
-   export let onToggleHelp;
-   export let onNewDatabase;
-   export let onOpenDatabase;
-   export let onImportDatabase;
-   export let onExportDatabase;
-   export let importPosition;
-   export let onSavePosition;
-   export let onUpdatePosition;
-   export let onDeletePosition;
-   export let onToggleAnalysis;
-   export let onToggleComment;
-   export let exitApp;
    export let onLoadPositionsByFilters;
-   export let onLoadAllPositions;
-   export let toggleFilterLibraryPanel;
-   export let toggleSearchHistoryPanel;
-   export let toggleMatchPanel;
-   export let toggleCollectionPanel;
-   export let toggleEPCMode;
-   export let toggleMatchMode;
    export let onCloseAnalysis;
    export let onCloseComment;
    export let onOpenCollection;
    export let onAddToFilterLibrary;
-
-   let consolePanelRef;
 
    const tabs = [
       { id: 'analysis', label: 'Analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
@@ -48,18 +27,11 @@
       { id: 'tournaments', label: 'Tournaments', icon: 'tournaments', shortcut: 'Ctrl+Y' },
       { id: 'epc', label: 'EPC', icon: 'epc', shortcut: 'Ctrl+E' },
       { id: 'metadata', label: 'Metadata', icon: 'metadata', shortcut: 'Ctrl+M' },
-      { id: 'console', label: 'Console', icon: 'console', shortcut: 'Esc' },
+      { id: 'log', label: 'Log', icon: 'log', shortcut: '' },
    ];
 
    function selectTab(tabId) {
       activeTabStore.set(tabId);
-   }
-
-   export function focusConsole() {
-      activeTabStore.set('console');
-      setTimeout(() => {
-         consolePanelRef?.focusInput();
-      }, 50);
    }
 </script>
 
@@ -73,8 +45,8 @@
             title={tab.shortcut ? `${tab.label} (${tab.shortcut})` : tab.label}
          >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
-               {#if tab.icon === 'console'}
-                  <path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
+               {#if tab.icon === 'log'}
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
                {:else if tab.icon === 'analysis'}
                   <path stroke-linecap="round" stroke-linejoin="round" d="M8.242 5.992h12m-12 6.003H20.24m-12 5.999h12M4.117 7.495v-3.75H2.99m1.125 3.75H2.99m1.125 0H5.24m-1.92 2.577a1.125 1.125 0 1 1 1.591 1.59l-1.83 1.83h2.16M2.99 15.745h1.125a1.125 1.125 0 0 1 0 2.25H3.74m0-.002h.375a1.125 1.125 0 0 1 0 2.25H2.99" />
                {:else if tab.icon === 'comments'}
@@ -124,30 +96,8 @@
          <EPCPanel />
       {:else if $activeTabStore === 'metadata'}
          <MetadataPanel />
-      {:else if $activeTabStore === 'console'}
-         <ConsolePanel
-            bind:this={consolePanelRef}
-            onToggleHelp={onToggleHelp}
-            onNewDatabase={onNewDatabase}
-            onOpenDatabase={onOpenDatabase}
-            onImportDatabase={onImportDatabase}
-            onExportDatabase={onExportDatabase}
-            importPosition={importPosition}
-            onSavePosition={onSavePosition}
-            onUpdatePosition={onUpdatePosition}
-            onDeletePosition={onDeletePosition}
-            onToggleAnalysis={onToggleAnalysis}
-            onToggleComment={onToggleComment}
-            exitApp={exitApp}
-            onLoadPositionsByFilters={onLoadPositionsByFilters}
-            onLoadAllPositions={onLoadAllPositions}
-            toggleFilterLibraryPanel={toggleFilterLibraryPanel}
-            toggleSearchHistoryPanel={toggleSearchHistoryPanel}
-            toggleMatchPanel={toggleMatchPanel}
-            toggleCollectionPanel={toggleCollectionPanel}
-            toggleEPCMode={toggleEPCMode}
-            toggleMatchMode={toggleMatchMode}
-         />
+      {:else if $activeTabStore === 'log'}
+         <ConsolePanel />
       {/if}
    </div>
 </div>
