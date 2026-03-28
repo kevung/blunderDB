@@ -46,6 +46,7 @@ type Tournament struct {
 	CreatedAt  string `json:"createdAt"`
 	UpdatedAt  string `json:"updatedAt"`
 	MatchCount int    `json:"matchCount"`
+	Comment    string `json:"comment"`
 }
 
 // CommentEntry represents a comment for display in the comment wall
@@ -199,6 +200,8 @@ type Match struct {
 	TournamentID        *int64    `json:"tournament_id,omitempty"`
 	TournamentName      string    `json:"tournament_name"`
 	LastVisitedPosition int       `json:"last_visited_position"`
+	Comment             string    `json:"comment"`
+	TournamentSortOrder int       `json:"tournament_sort_order"`
 }
 
 type Game struct {

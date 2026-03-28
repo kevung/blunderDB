@@ -316,6 +316,18 @@ func (d *Database) SetupDatabase(path string) error {
 	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
 	// Ignore error if column already exists
 
+	// Add comment column to match table
+	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
+	// Ignore error if column already exists
+
+	// Add tournament_sort_order column to match table (ordering within a tournament)
+	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
+	// Ignore error if column already exists
+
+	// Add comment column to tournament table
+	_, err = d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
+	// Ignore error if column already exists
+
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
@@ -965,6 +977,13 @@ func (d *Database) ensureAllTablesExist() error {
 	d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
 	// canonical_hash (v1.7.0)
 	d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
+
+	// match comment
+	d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
+	// tournament_sort_order (ordering within a tournament)
+	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
+	// tournament comment
+	d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
 
 	// Ensure columns added in later versions exist on comment table
 	// created_at (v1.8.0)
@@ -11765,7 +11784,8 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round, 
 		       m.match_length, m.match_date, m.import_date, m.file_path, m.game_count,
 		       m.tournament_id, COALESCE(t.name, '') as tournament_name,
-		       COALESCE(m.last_visited_position, -1) as last_visited_position
+		       COALESCE(m.last_visited_position, -1) as last_visited_position,
+		       COALESCE(m.comment, '') as comment
 		FROM match m
 		LEFT JOIN tournament t ON m.tournament_id = t.id
 		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
@@ -11781,7 +11801,7 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		var m Match
 		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
 			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
-			&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition)
+			&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition, &m.Comment)
 		if err != nil {
 			fmt.Println("Error scanning match:", err)
 			continue
@@ -13116,7 +13136,8 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 			t.sort_order,
 			t.created_at,
 			t.updated_at,
-			COUNT(m.id) as match_count
+			COUNT(m.id) as match_count,
+			COALESCE(t.comment, '')
 		FROM tournament t
 		LEFT JOIN match m ON t.id = m.tournament_id
 		GROUP BY t.id
@@ -13130,7 +13151,7 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 	var tournaments []Tournament
 	for rows.Next() {
 		var t Tournament
-		err := rows.Scan(&t.ID, &t.Name, &t.Date, &t.Location, &t.SortOrder, &t.CreatedAt, &t.UpdatedAt, &t.MatchCount)
+		err := rows.Scan(&t.ID, &t.Name, &t.Date, &t.Location, &t.SortOrder, &t.CreatedAt, &t.UpdatedAt, &t.MatchCount, &t.Comment)
 		if err != nil {
 			continue
 		}
@@ -13208,7 +13229,14 @@ func (d *Database) AddMatchToTournament(tournamentID int64, matchID int64) error
 	}
 	defer tx.Rollback()
 
-	_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
+	// Get the max sort order for this tournament
+	var maxOrder int
+	err = tx.QueryRow(`SELECT COALESCE(MAX(tournament_sort_order), -1) FROM match WHERE tournament_id = ?`, tournamentID).Scan(&maxOrder)
+	if err != nil {
+		maxOrder = -1
+	}
+
+	_, err = tx.Exec(`UPDATE match SET tournament_id = ?, tournament_sort_order = ? WHERE id = ?`, tournamentID, maxOrder+1, matchID)
 	if err != nil {
 		return err
 	}
@@ -13231,8 +13259,65 @@ func (d *Database) RemoveMatchFromTournament(matchID int64) error {
 		return fmt.Errorf("no database is currently open")
 	}
 
-	_, err := d.db.Exec(`UPDATE match SET tournament_id = NULL WHERE id = ?`, matchID)
+	_, err := d.db.Exec(`UPDATE match SET tournament_id = NULL, tournament_sort_order = 0 WHERE id = ?`, matchID)
 	return err
+}
+
+// UpdateMatchComment updates the comment of a match
+func (d *Database) UpdateMatchComment(matchID int64, comment string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`UPDATE match SET comment = ? WHERE id = ?`, comment, matchID)
+	return err
+}
+
+// UpdateTournamentComment updates the comment of a tournament
+func (d *Database) UpdateTournamentComment(tournamentID int64, comment string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	_, err := d.db.Exec(`UPDATE tournament SET comment = ?, updated_at = datetime('now') WHERE id = ?`, comment, tournamentID)
+	return err
+}
+
+// ReorderTournamentMatches sets the sort order for matches in a tournament.
+// matchIDs should be in the desired order.
+func (d *Database) ReorderTournamentMatches(tournamentID int64, matchIDs []int64) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	for i, matchID := range matchIDs {
+		_, err := tx.Exec(`UPDATE match SET tournament_sort_order = ? WHERE id = ? AND tournament_id = ?`, i, matchID, tournamentID)
+		if err != nil {
+			return err
+		}
+	}
+
+	_, err = tx.Exec(`UPDATE tournament SET updated_at = datetime('now') WHERE id = ?`, tournamentID)
+	if err != nil {
+		return err
+	}
+
+	return tx.Commit()
 }
 
 // SetMatchTournamentByName assigns a match to a tournament by name.
@@ -13428,10 +13513,12 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 		SELECT 
 			id, player1_name, player2_name, event, location, round, 
 			match_length, match_date, import_date, file_path, game_count, tournament_id,
-			COALESCE(last_visited_position, -1) as last_visited_position
+			COALESCE(last_visited_position, -1) as last_visited_position,
+			COALESCE(comment, '') as comment,
+			COALESCE(tournament_sort_order, 0) as tournament_sort_order
 		FROM match 
 		WHERE tournament_id = ?
-		ORDER BY match_date DESC
+		ORDER BY tournament_sort_order ASC, match_date DESC
 	`, tournamentID)
 	if err != nil {
 		return nil, err
@@ -13443,7 +13530,8 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 		var m Match
 		var tournamentID sql.NullInt64
 		err := rows.Scan(&m.ID, &m.Player1Name, &m.Player2Name, &m.Event, &m.Location, &m.Round,
-			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &tournamentID, &m.LastVisitedPosition)
+			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount, &tournamentID, &m.LastVisitedPosition,
+			&m.Comment, &m.TournamentSortOrder)
 		if err != nil {
 			continue
 		}

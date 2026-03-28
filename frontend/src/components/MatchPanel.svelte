@@ -4,6 +4,7 @@
         GetAllMatches, 
         DeleteMatch, 
         UpdateMatch,
+        UpdateMatchComment,
         GetMatchMovePositions, 
         GetGamesByMatch,
         LoadAnalysis,
@@ -47,6 +48,10 @@
     let editPlayer1Value = '';
     let editPlayer2Value = '';
     let editDateValue = '';
+
+    // Inline match comment editing
+    let editingDetailComment = false;
+    let editDetailCommentText = '';
 
     lastVisitedMatchStore.subscribe(value => {
         lastVisitedMatch = value;
@@ -223,6 +228,44 @@
         editPlayer1Value = '';
         editPlayer2Value = '';
         editDateValue = '';
+    }
+
+    function startEditDetailComment() {
+        editDetailCommentText = detailMatch.comment || '';
+        editingDetailComment = true;
+    }
+
+    async function saveDetailComment() {
+        if (!detailMatch) return;
+        try {
+            await UpdateMatchComment(detailMatch.id, editDetailCommentText);
+            detailMatch.comment = editDetailCommentText;
+            const m = matches.find(x => x.id === detailMatch.id);
+            if (m) m.comment = editDetailCommentText;
+            matches = matches;
+            statusBarTextStore.set('Comment updated');
+        } catch (error) {
+            console.error('Error updating comment:', error);
+            statusBarTextStore.set('Error updating comment');
+        }
+        editingDetailComment = false;
+    }
+
+    function cancelDetailComment() {
+        editingDetailComment = false;
+        editDetailCommentText = '';
+    }
+
+    function handleDetailCommentKeyDown(event) {
+        if (event.key === 'Enter' && !event.shiftKey) {
+            event.stopPropagation();
+            event.preventDefault();
+            saveDetailComment();
+        } else if (event.key === 'Escape') {
+            event.stopPropagation();
+            event.preventDefault();
+            cancelDetailComment();
+        }
     }
 
     function handleMatchEditKeyDown(event) {
@@ -800,6 +843,26 @@
                                     <tr><td class="meta-label">Games</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
                                     <tr><td class="meta-label">Date</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
                                     <tr>
+                                        <td class="meta-label">Comment</td>
+                                        <td class="meta-value">
+                                            {#if editingDetailComment}
+                                                <input
+                                                    type="text"
+                                                    class="match-comment-input"
+                                                    bind:value={editDetailCommentText}
+                                                    on:keydown={handleDetailCommentKeyDown}
+                                                    on:blur={saveDetailComment}
+                                                />
+                                            {:else}
+                                                <!-- svelte-ignore a11y_click_events_have_key_events -->
+                                                <!-- svelte-ignore a11y_no_static_element_interactions -->
+                                                <span class="match-comment-display" on:click={startEditDetailComment} title="Click to add comment">
+                                                    {detailMatch.comment || 'Add comment…'}
+                                                </span>
+                                            {/if}
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td class="meta-label">Tournament</td>
                                         <td class="meta-value tournament-meta-cell" on:click|stopPropagation={(e) => startEditTournament(detailMatch, e)}>
                                             {#if editingTournamentMatchId === detailMatch.id}
@@ -1329,5 +1392,29 @@
 
     .tournament-dropdown-item:hover {
         background: #e3f2fd;
+    }
+
+    .match-comment-display {
+        cursor: pointer;
+        padding: 1px 3px;
+        border-radius: 3px;
+        min-width: 40px;
+        display: inline-block;
+        color: #bbb;
+        font-style: italic;
+    }
+
+    .match-comment-display:hover {
+        background: #e8f0fe;
+    }
+
+    .match-comment-input {
+        width: 100%;
+        padding: 1px 3px;
+        font-size: 11px;
+        border: 1px solid #4a90d9;
+        border-radius: 3px;
+        outline: none;
+        box-sizing: border-box;
     }
 </style>

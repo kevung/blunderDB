@@ -154,6 +154,8 @@ export function ReorderCollectionPositions(arg1:number,arg2:Array<number>):Promi
 
 export function ReorderCollections(arg1:Array<number>):Promise<void>;
 
+export function ReorderTournamentMatches(arg1:number,arg2:Array<number>):Promise<void>;
+
 export function SaveAnalysis(arg1:number,arg2:main.PositionAnalysis):Promise<void>;
 
 export function SaveCommand(arg1:string):Promise<void>;
@@ -190,6 +192,10 @@ export function UpdateFilter(arg1:number,arg2:string,arg3:string):Promise<void>;
 
 export function UpdateMatch(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
 
+export function UpdateMatchComment(arg1:number,arg2:string):Promise<void>;
+
 export function UpdatePosition(arg1:main.Position):Promise<void>;
 
 export function UpdateTournament(arg1:number,arg2:string,arg3:string,arg4:string):Promise<void>;
+
+export function UpdateTournamentComment(arg1:number,arg2:string):Promise<void>;

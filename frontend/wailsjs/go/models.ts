@@ -290,6 +290,8 @@ export namespace main {
 	    tournament_id?: number;
 	    tournament_name: string;
 	    last_visited_position: number;
+	    comment: string;
+	    tournament_sort_order: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -311,6 +313,8 @@ export namespace main {
 	        this.tournament_id = source["tournament_id"];
 	        this.tournament_name = source["tournament_name"];
 	        this.last_visited_position = source["last_visited_position"];
+	        this.comment = source["comment"];
+	        this.tournament_sort_order = source["tournament_sort_order"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -566,6 +570,7 @@ export namespace main {
 	    createdAt: string;
 	    updatedAt: string;
 	    matchCount: number;
+	    comment: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Tournament(source);
@@ -581,6 +586,7 @@ export namespace main {
 	        this.createdAt = source["createdAt"];
 	        this.updatedAt = source["updatedAt"];
 	        this.matchCount = source["matchCount"];
+	        this.comment = source["comment"];
 	    }
 	}
 

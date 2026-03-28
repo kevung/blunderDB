@@ -306,6 +306,10 @@ export function ReorderCollections(arg1) {
   return window['go']['main']['Database']['ReorderCollections'](arg1);
 }
 
+export function ReorderTournamentMatches(arg1, arg2) {
+  return window['go']['main']['Database']['ReorderTournamentMatches'](arg1, arg2);
+}
+
 export function SaveAnalysis(arg1, arg2) {
   return window['go']['main']['Database']['SaveAnalysis'](arg1, arg2);
 }
@@ -378,10 +382,18 @@ export function UpdateMatch(arg1, arg2, arg3, arg4) {
   return window['go']['main']['Database']['UpdateMatch'](arg1, arg2, arg3, arg4);
 }
 
+export function UpdateMatchComment(arg1, arg2) {
+  return window['go']['main']['Database']['UpdateMatchComment'](arg1, arg2);
+}
+
 export function UpdatePosition(arg1) {
   return window['go']['main']['Database']['UpdatePosition'](arg1);
 }
 
 export function UpdateTournament(arg1, arg2, arg3, arg4) {
   return window['go']['main']['Database']['UpdateTournament'](arg1, arg2, arg3, arg4);
+}
+
+export function UpdateTournamentComment(arg1, arg2) {
+  return window['go']['main']['Database']['UpdateTournamentComment'](arg1, arg2);
 }
