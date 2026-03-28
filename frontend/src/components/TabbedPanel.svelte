@@ -18,7 +18,7 @@
    export let onOpenCollection;
    export let onAddToFilterLibrary;
 
-   const tabs = [
+   let tabs = [
       { id: 'analysis', label: 'Analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
       { id: 'comments', label: 'Comments', icon: 'comments', shortcut: 'Ctrl+P' },
       { id: 'search', label: 'Search', icon: 'search', shortcut: 'Ctrl+F' },
@@ -30,19 +30,77 @@
       { id: 'log', label: 'Log', icon: 'log', shortcut: '' },
    ];
 
+   let draggedIndex = null;
+   let dragOverIndex = null;
+   let isDragging = false;
+   let dragStartX = 0;
+   let tabBarEl;
+
    function selectTab(tabId) {
       activeTabStore.set(tabId);
+   }
+
+   function getTabIndexAtX(clientX) {
+      if (!tabBarEl) return null;
+      const buttons = tabBarEl.children;
+      for (let i = 0; i < buttons.length; i++) {
+         const rect = buttons[i].getBoundingClientRect();
+         if (clientX >= rect.left && clientX <= rect.right) {
+            return i;
+         }
+      }
+      return null;
+   }
+
+   function handleMouseDown(e, index) {
+      e.preventDefault();
+      draggedIndex = index;
+      dragStartX = e.clientX;
+      isDragging = false;
+
+      function onMouseMove(ev) {
+         ev.preventDefault();
+         if (Math.abs(ev.clientX - dragStartX) > 4) {
+            isDragging = true;
+         }
+         if (isDragging) {
+            dragOverIndex = getTabIndexAtX(ev.clientX);
+         }
+      }
+
+      function onMouseUp(ev) {
+         window.removeEventListener('mousemove', onMouseMove);
+         window.removeEventListener('mouseup', onMouseUp);
+
+         if (isDragging && draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+            const reordered = [...tabs];
+            const [moved] = reordered.splice(draggedIndex, 1);
+            reordered.splice(dragOverIndex, 0, moved);
+            tabs = reordered;
+         } else if (!isDragging) {
+            // Simple click - select the tab
+            selectTab(tabs[index].id);
+         }
+         draggedIndex = null;
+         dragOverIndex = null;
+         isDragging = false;
+      }
+
+      window.addEventListener('mousemove', onMouseMove);
+      window.addEventListener('mouseup', onMouseUp);
    }
 </script>
 
 <div class="tabbed-panel">
-   <div class="tab-bar">
-      {#each tabs as tab}
+   <div class="tab-bar" bind:this={tabBarEl}>
+      {#each tabs as tab, i}
          <button
             class="tab-button"
             class:active={$activeTabStore === tab.id}
-            on:click={() => selectTab(tab.id)}
+            class:drag-over={dragOverIndex === i && draggedIndex !== i}
+            class:dragging={draggedIndex === i && isDragging}
             title={tab.shortcut ? `${tab.label} (${tab.shortcut})` : tab.label}
+            on:mousedown={(e) => handleMouseDown(e, i)}
          >
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
                {#if tab.icon === 'log'}
@@ -120,6 +178,8 @@
       overflow-x: auto;
       flex-shrink: 0;
       height: 28px;
+      user-select: none;
+      -webkit-user-select: none;
    }
 
    .tab-button {
@@ -136,6 +196,16 @@
       white-space: nowrap;
       height: 100%;
       transition: background-color 0.15s, border-color 0.15s;
+      user-select: none;
+      -webkit-user-select: none;
+   }
+
+   .tab-button.drag-over {
+      border-left: 2px solid #1a73e8;
+   }
+
+   .tab-button.dragging {
+      opacity: 0.5;
    }
 
    .tab-button:hover {

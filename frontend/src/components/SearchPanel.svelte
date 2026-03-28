@@ -617,9 +617,10 @@
 {/if}
 
 <style>
-    .search-panel { display: flex; height: 100%; background: white; overflow: hidden; font-size: 12px; }
+    .search-panel { display: flex; height: 100%; background: white; overflow: hidden; font-size: 12px; user-select: none; -webkit-user-select: none; }
+    .search-panel input, .search-panel textarea { user-select: text; -webkit-user-select: text; }
     .sub-tab-sidebar { display: flex; flex-direction: column; width: 70px; flex-shrink: 0; background: #f5f5f5; border-right: 1px solid #ddd; }
-    .sub-tab-btn { border: none; background: transparent; padding: 8px 4px; font-size: 11px; color: #666; cursor: pointer; border-left: 2px solid transparent; text-align: center; transition: background 0.15s; }
+    .sub-tab-btn { border: none; background: transparent; padding: 8px 4px; font-size: 11px; color: #666; cursor: pointer; border-left: 2px solid transparent; text-align: center; transition: background 0.15s; user-select: none; -webkit-user-select: none; }
     .sub-tab-btn:hover { background: #e8e8e8; }
     .sub-tab-btn.active { color: #333; font-weight: 600; background: #fff; border-left-color: #555; }
     .sub-tab-content { flex: 1; min-width: 0; overflow-y: auto; overflow-x: hidden; }
@@ -627,7 +628,7 @@
     .top-action-bar { position: sticky; top: 0; background: white; z-index: 2; border-bottom: 1px solid #ddd; padding: 6px 8px; }
     .filter-groups { flex: 1; overflow-y: auto; padding: 4px 8px 8px; }
     .filter-group { margin-bottom: 2px; }
-    .group-header { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 0 2px; border-bottom: 1px solid #eee; margin-bottom: 2px; }
+    .group-header { font-size: 11px; font-weight: 700; color: #555; text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 0 2px; border-bottom: 1px solid #eee; margin-bottom: 2px; user-select: none; -webkit-user-select: none; }
     .filter-item { padding: 2px 0 2px 4px; border-radius: 3px; }
     .filter-item.active { background: #f0f7ff; }
     .filter-checkbox { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 1px 0; }
@@ -637,13 +638,13 @@
     .filter-params { margin: 2px 0 4px 22px; }
     .action-bar { display: flex; align-items: center; gap: 8px; }
     .active-count { font-size: 11px; color: #888; margin-right: auto; }
-    .search-in-results { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #666; cursor: pointer; }
+    .search-in-results { display: flex; align-items: center; gap: 3px; font-size: 11px; color: #666; cursor: pointer; user-select: none; -webkit-user-select: none; }
     .btn-search { padding: 4px 12px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; background: #6c757d; color: white; }
     .btn-search:hover { background: #5a6268; }
     .btn-clear { padding: 4px 12px; border: none; border-radius: 3px; cursor: pointer; font-size: 12px; background: #ccc; color: #333; }
     .btn-clear:hover { background: #999; }
     .minmax-controls { display: flex; flex-direction: column; gap: 2px; }
-    .minmax-controls label { display: flex; align-items: center; gap: 4px; font-size: 12px; }
+    .minmax-controls label { display: flex; align-items: center; gap: 4px; font-size: 12px; user-select: none; -webkit-user-select: none; }
     .num-input { width: 60px; font-size: 12px; padding: 2px 3px; }
     .date-input { font-size: 12px; padding: 2px 3px; }
     .text-control { display: flex; align-items: center; gap: 6px; }
@@ -682,7 +683,7 @@
     .save-dialog h3 { margin: 0 0 12px; font-size: 14px; }
     .command-preview { background: #f5f5f5; padding: 8px; border-radius: 4px; font-family: monospace; font-size: 12px; margin-bottom: 12px; word-break: break-all; }
     .dialog-form { margin-bottom: 12px; }
-    .dialog-form label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 12px; }
+    .dialog-form label { display: block; margin-bottom: 4px; font-weight: bold; font-size: 12px; user-select: none; -webkit-user-select: none; }
     .dialog-form input { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 4px; font-size: 13px; box-sizing: border-box; }
     .dialog-actions { display: flex; justify-content: flex-end; gap: 8px; }
 </style>

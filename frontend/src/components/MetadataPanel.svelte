@@ -105,12 +105,8 @@
         color: #888;
         text-transform: uppercase;
         letter-spacing: 0.3px;
-    }
-
-    input, textarea {
-        padding: 3px 6px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
+    user-select: none;
+    -webkit-user-select: none;
         font-size: 12px;
         font-family: inherit;
     }
