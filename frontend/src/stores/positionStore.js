@@ -39,3 +39,6 @@ export const lastVisitedMatchStore = writable({
     currentIndex: 0,            // Last position index in that match
     gameNumber: 1,              // Last game number viewed
 });
+
+// Internal clipboard for copy/paste position to search board
+export const clipboardPositionStore = writable(null);

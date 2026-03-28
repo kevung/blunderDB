@@ -321,12 +321,12 @@
 
                             <tr>
                                 <td>Ctrl + C</td>
-                                <td>Copy Position</td>
+                                <td>Copy Position (also copies to board clipboard)</td>
                             </tr>
 
                             <tr>
                                 <td>Ctrl + V</td>
-                                <td>Paste Position</td>
+                                <td>Paste Position (in EDIT mode: paste to board)</td>
                             </tr>
 
                             <tr>

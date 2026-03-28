@@ -82,7 +82,8 @@
         positionBeforeFilterLibraryStore, // Import position before filter library store
         positionIndexBeforeFilterLibraryStore, // Import position index before filter library store
         matchContextStore, // Import matchContextStore
-        lastVisitedMatchStore // Import lastVisitedMatchStore
+        lastVisitedMatchStore, // Import lastVisitedMatchStore
+        clipboardPositionStore // Import clipboardPositionStore
     } from './stores/positionStore';
 
     import {
@@ -1762,6 +1763,13 @@
             return;
         }
         console.log('pastePosition');
+
+        // In EDIT mode: paste position into the editable board (not into DB)
+        if ($statusBarModeStore === 'EDIT') {
+            await pastePositionToBoard();
+            return;
+        }
+
         let promise = ClipboardGetText();
         promise.then(
             async (result) => {
@@ -1814,6 +1822,60 @@
             .catch((error) => {
                 console.error('Error pasting from clipboard:', error);
             });
+    }
+
+    // Paste a position into the editable board (EDIT mode)
+    async function pastePositionToBoard() {
+        try {
+            // First try system clipboard for XGID
+            const clipboardText = await ClipboardGetText();
+            if (clipboardText && clipboardText.includes('XGID=')) {
+                try {
+                    const { positionData } = parsePosition(clipboardText);
+                    applyPositionToBoard(positionData);
+                    setStatusBarMessage('Position pasted to board from clipboard');
+                    return;
+                } catch (e) {
+                    console.log('Clipboard text has XGID but parse failed, trying internal clipboard:', e);
+                }
+            }
+
+            // Fall back to internal clipboard store
+            const clipboardPosition = $clipboardPositionStore;
+            if (clipboardPosition) {
+                applyPositionToBoard(clipboardPosition);
+                setStatusBarMessage('Position pasted to board');
+                return;
+            }
+
+            setStatusBarMessage('No position to paste (use Ctrl-C to copy a position first)');
+        } catch (error) {
+            // System clipboard read failed, try internal clipboard
+            const clipboardPosition = $clipboardPositionStore;
+            if (clipboardPosition) {
+                applyPositionToBoard(clipboardPosition);
+                setStatusBarMessage('Position pasted to board');
+                return;
+            }
+            console.error('Error pasting position to board:', error);
+            setStatusBarMessage('No position to paste');
+        }
+    }
+
+    // Apply position data to the editable board
+    function applyPositionToBoard(posData) {
+        positionStore.update(pos => {
+            pos.board.points = posData.board.points.map(p => ({ checkers: p.checkers, color: p.color }));
+            pos.board.bearoff = [...posData.board.bearoff];
+            pos.cube = { owner: posData.cube.owner, value: posData.cube.value };
+            pos.dice = [...posData.dice];
+            pos.score = [...posData.score];
+            pos.player_on_roll = posData.player_on_roll;
+            pos.decision_type = posData.decision_type;
+            if (posData.has_jacoby !== undefined) pos.has_jacoby = posData.has_jacoby;
+            if (posData.has_beaver !== undefined) pos.has_beaver = posData.has_beaver;
+            return pos;
+        });
     }
 
     async function saveCurrentPosition() {
@@ -2314,6 +2376,18 @@
         const position = $positionStore;
         const analysis = $analysisStore;
         const comment = $commentTextStore;
+
+        // Store a deep copy of the position in the internal clipboard for paste-to-board
+        clipboardPositionStore.set(JSON.parse(JSON.stringify({
+            board: position.board,
+            cube: position.cube,
+            dice: position.dice,
+            score: position.score,
+            player_on_roll: position.player_on_roll,
+            decision_type: position.decision_type,
+            has_jacoby: position.has_jacoby,
+            has_beaver: position.has_beaver,
+        })));
 
         // Generate XGID if not present in the analysis
         const xgid = analysis.xgid || generateXGID(position);
