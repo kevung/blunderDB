@@ -870,13 +870,14 @@ Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\
 \label{\detokenize{manuel:le-mode-epc}}\label{\detokenize{manuel:mode-epc}}
 \sphinxAtStartPar
 Le mode EPC permet de calculer l’EPC (Effective Pip Count) d’une position
-de bearoff. Il est activé en exécutant la commande \sphinxcode{\sphinxupquote{epc}} ou en cliquant
-sur le bouton correspondant dans la barre d’outils.
+de bearoff. Il est activé en appuyant \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, en cliquant sur l’onglet
+EPC dans le panneau inférieur, en exécutant la commande \sphinxcode{\sphinxupquote{epc}} ou en
+cliquant sur le bouton correspondant dans la barre d’outils.
 
 \sphinxAtStartPar
 Dans ce mode, l’utilisateur édite la position des pions dans le jan
-(6 derniers points) et les informations suivantes sont calculées
-en temps réel pour chaque joueur:
+(6 derniers points) et les informations suivantes sont affichées
+en temps réel dans le panneau EPC dédié pour chaque joueur:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -899,6 +900,14 @@ le pip count,
 le wastage (différence entre l’EPC et le pip count).
 
 \end{itemize}
+
+\sphinxAtStartPar
+Lorsque les deux joueurs ont des pions dans leur jan, une section
+de comparaison affiche les différences d’EPC et de pip count.
+
+\sphinxAtStartPar
+Pour quitter le mode EPC, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur
+un autre onglet.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
@@ -1389,7 +1398,8 @@ bearoff d’une position.
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Exécuter la commande \sphinxcode{\sphinxupquote{epc}} ou cliquer sur le bouton correspondant dans la
+Appuyer \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliquer sur l’onglet EPC dans le panneau inférieur,
+exécuter la commande \sphinxcode{\sphinxupquote{epc}} ou cliquer sur le bouton correspondant dans la
 barre d’outils.
 
 \item {} 
@@ -1398,8 +1408,8 @@ barre d’outils.
 
 \item {} 
 \sphinxAtStartPar
-Les résultats sont affichés en temps réel: EPC, nombre moyen de lancers,
-écart type, pip count et wastage.
+Les résultats sont affichés en temps réel dans le panneau EPC dédié:
+EPC, nombre moyen de lancers, écart type, pip count et wastage.
 
 \end{enumerate}
 
@@ -1643,7 +1653,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Ouvre le calculateur EPC (Effective Pip Count).
+Ouvre le panneau EPC (Effective Pip Count).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3565,6 +3575,17 @@ CTRL\sphinxhyphen{}Y
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Afficher/cacher le panneau des tournois.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}E
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Afficher/cacher le panneau EPC.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

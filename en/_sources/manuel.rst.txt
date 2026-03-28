@@ -220,12 +220,13 @@ Le mode EPC
 -----------
 
 Le mode EPC permet de calculer l'EPC (Effective Pip Count) d'une position
-de bearoff. Il est activé en exécutant la commande ``epc`` ou en cliquant
-sur le bouton correspondant dans la barre d'outils.
+de bearoff. Il est activé en appuyant *CTRL-E*, en cliquant sur l'onglet
+EPC dans le panneau inférieur, en exécutant la commande ``epc`` ou en
+cliquant sur le bouton correspondant dans la barre d'outils.
 
 Dans ce mode, l'utilisateur édite la position des pions dans le jan
-(6 derniers points) et les informations suivantes sont calculées
-en temps réel pour chaque joueur:
+(6 derniers points) et les informations suivantes sont affichées
+en temps réel dans le panneau EPC dédié pour chaque joueur:
 
 * l'EPC (Effective Pip Count),
 
@@ -236,6 +237,12 @@ en temps réel pour chaque joueur:
 * le pip count,
 
 * le wastage (différence entre l'EPC et le pip count).
+
+Lorsque les deux joueurs ont des pions dans leur jan, une section
+de comparaison affiche les différences d'EPC et de pip count.
+
+Pour quitter le mode EPC, appuyer sur *CTRL-E* ou basculer sur
+un autre onglet.
 
 .. note:: Le calcul repose sur la base de données interne de bearoff
    à 6 points de GNUbg.

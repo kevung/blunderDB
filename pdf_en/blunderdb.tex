@@ -805,10 +805,10 @@ Refer to {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{
 \subsection{EPC mode}
 \label{\detokenize{manuel:le-mode-epc}}\label{\detokenize{manuel:mode-epc}}
 \sphinxAtStartPar
-EPC mode allows you to calculate the EPC (Effective Pip Count) of a bearoff position. It is activated by executing the \sphinxcode{\sphinxupquote{epc}} command or by clicking the corresponding button in the toolbar.
+EPC mode allows you to calculate the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, clicking the EPC tab in the bottom panel, executing the \sphinxcode{\sphinxupquote{epc}} command, or clicking the corresponding button in the toolbar.
 
 \sphinxAtStartPar
-In this mode, the user edits the checker positions in the home board (last 6 points) and the following information is computed in real time for each player:
+In this mode, the user edits the checker positions in the home board (last 6 points) and the following information is displayed in real time in the dedicated EPC panel for each player:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -831,6 +831,12 @@ the pip count,
 the wastage (difference between the EPC and the pip count).
 
 \end{itemize}
+
+\sphinxAtStartPar
+When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.
+
+\sphinxAtStartPar
+To exit EPC mode, press \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} or switch to another tab.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
@@ -1270,7 +1276,7 @@ The EPC (Effective Pip Count) calculator allows you to compute the bearoff stati
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Execute the \sphinxcode{\sphinxupquote{epc}} command or click the corresponding button in the toolbar.
+Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, click the EPC tab in the bottom panel, execute the \sphinxcode{\sphinxupquote{epc}} command, or click the corresponding button in the toolbar.
 
 \item {} 
 \sphinxAtStartPar
@@ -1278,7 +1284,7 @@ Edit the checker positions in the home board (last 6 points).
 
 \item {} 
 \sphinxAtStartPar
-Results are displayed in real time: EPC, average number of rolls, standard deviation, pip count, and wastage.
+Results are displayed in real time in the dedicated EPC panel: EPC, average number of rolls, standard deviation, pip count, and wastage.
 
 \end{enumerate}
 
@@ -1499,7 +1505,7 @@ epc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Open the EPC (Effective Pip Count) calculator.
+Open the EPC (Effective Pip Count) panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3400,6 +3406,17 @@ CTRL\sphinxhyphen{}Y
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
 Show/hide the tournaments panel.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+CTRL\sphinxhyphen{}E
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Show/hide the EPC panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

@@ -280,13 +280,14 @@ Calculer l'EPC
 Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques de
 bearoff d'une position.
 
-#. Exécuter la commande ``epc`` ou cliquer sur le bouton correspondant dans la
+#. Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur,
+   exécuter la commande ``epc`` ou cliquer sur le bouton correspondant dans la
    barre d'outils.
 
 #. Éditer la position des pions dans le jan (6 derniers points).
 
-#. Les résultats sont affichés en temps réel: EPC, nombre moyen de lancers,
-   écart type, pip count et wastage.
+#. Les résultats sont affichés en temps réel dans le panneau EPC dédié:
+   EPC, nombre moyen de lancers, écart type, pip count et wastage.
 
 .. note::
    Le calculateur fonctionne pour les deux joueurs simultanément.

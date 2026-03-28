@@ -20,7 +20,7 @@ Opérations globales
    "quit, q", "Ferme blunderDB."
    "help, he, h", "Ouvre l'aide de blunderDB."
    "meta", "Affiche les métadonnées de la base de données."
-   "epc", "Ouvre le calculateur EPC (Effective Pip Count)."
+   "epc", "Ouvre le panneau EPC (Effective Pip Count)."
    "met", "Ouvre la table d'équité de match Kazaross-XG2."
    "tp2", "Ouvre la table des takepoints avec videau à 2."
    "tp2_live", "Ouvre la table des takepoints avec videau à 2 pour les courses longues."

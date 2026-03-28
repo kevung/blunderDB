@@ -267,11 +267,12 @@ est mémorisée et restaurée.</p>
 <section id="le-mode-epc">
 <span id="mode-epc"></span><h2><span class="section-number">2.9. </span>Le mode EPC<a class="headerlink" href="#le-mode-epc" title="Lien vers cette rubrique"></a></h2>
 <p>Le mode EPC permet de calculer l’EPC (Effective Pip Count) d’une position
-de bearoff. Il est activé en exécutant la commande <code class="docutils literal notranslate"><span class="pre">epc</span></code> ou en cliquant
-sur le bouton correspondant dans la barre d’outils.</p>
+de bearoff. Il est activé en appuyant <em>CTRL-E</em>, en cliquant sur l’onglet
+EPC dans le panneau inférieur, en exécutant la commande <code class="docutils literal notranslate"><span class="pre">epc</span></code> ou en
+cliquant sur le bouton correspondant dans la barre d’outils.</p>
 <p>Dans ce mode, l’utilisateur édite la position des pions dans le jan
-(6 derniers points) et les informations suivantes sont calculées
-en temps réel pour chaque joueur:</p>
+(6 derniers points) et les informations suivantes sont affichées
+en temps réel dans le panneau EPC dédié pour chaque joueur:</p>
 <ul class="simple">
 <li><p>l’EPC (Effective Pip Count),</p></li>
 <li><p>le nombre moyen de lancers nécessaires (Mean Rolls),</p></li>
@@ -279,6 +280,10 @@ en temps réel pour chaque joueur:</p>
 <li><p>le pip count,</p></li>
 <li><p>le wastage (différence entre l’EPC et le pip count).</p></li>
 </ul>
+<p>Lorsque les deux joueurs ont des pions dans leur jan, une section
+de comparaison affiche les différences d’EPC et de pip count.</p>
+<p>Pour quitter le mode EPC, appuyer sur <em>CTRL-E</em> ou basculer sur
+un autre onglet.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Le calcul repose sur la base de données interne de bearoff

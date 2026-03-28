@@ -105,6 +105,7 @@ Outils
    "CTRL-T", "Afficher/cacher le panneau des matchs."
    "CTRL-K", "Afficher/cacher le panneau des collections."
    "CTRL-Y", "Afficher/cacher le panneau des tournois."
+   "CTRL-E", "Afficher/cacher le panneau EPC."
    "?", "Afficher/cacher l'aide."
 
 .. _raccourcis_command:
