@@ -539,6 +539,9 @@
         } else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') {
             exitEditMode();
         }
+
+        // Sync showMatchPanelStore with active tab
+        showMatchPanelStore.set(tab === 'matches');
     });
 
     //Global shortcuts
