@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 15:03+0700\n"
+"POT-Creation-Date: 2026-03-29 10:21+0200\n"
 "PO-Revision-Date: 2024-12-31 00:25+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -139,13 +139,14 @@ msgstr "Edit a position"
 
 #: ../../source/guide_utilisateur.rst:66
 msgid ""
-"Pour éditer une position, basculer en mode EDIT à l'aide de la touche "
-"*TAB*. Editer la position à la souris:"
+"Pour éditer une position, appuyer sur la touche *TAB* pour ouvrir le "
+"panneau de recherche et l'éditeur de position. Editer la position à la "
+"souris:"
 msgstr ""
-"To edit a position, switch to EDIT mode by pressing the *TAB* key. Edit "
-"the position with the mouse:"
+"To edit a position, press the *TAB* key to open the search panel and the "
+"position editor. Edit the position with the mouse:"
 
-#: ../../source/guide_utilisateur.rst:69
+#: ../../source/guide_utilisateur.rst:70
 msgid ""
 "cliquer sur les points pour ajouter des pions. Le clic gauche attribue "
 "les pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour"
@@ -158,7 +159,7 @@ msgstr ""
 "click on the starting point, hold down the button, and release on the "
 "endpoint. Click on the bar to place checkers in the bar."
 
-#: ../../source/guide_utilisateur.rst:75
+#: ../../source/guide_utilisateur.rst:76
 msgid ""
 "pour effacer la position, double-clic sur une zone vide en dehors du "
 "board ou appuyer sur la touche *RETOUR ARRIERE*."
@@ -166,7 +167,7 @@ msgstr ""
 "To clear the position, double-click on an empty area outside the board or"
 " press the *BACKSPACE* key."
 
-#: ../../source/guide_utilisateur.rst:78
+#: ../../source/guide_utilisateur.rst:79
 msgid ""
 "pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour "
 "envoyer le cube vers le joueur 2, click droit sur le cube."
@@ -174,13 +175,13 @@ msgstr ""
 "To send the cube to Player 1, left-click on the cube. To send the cube to"
 " Player 2, right-click on the cube."
 
-#: ../../source/guide_utilisateur.rst:81
+#: ../../source/guide_utilisateur.rst:82
 msgid ""
 "pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des"
 " dés."
 msgstr "To indicate the player who is to move, click on the designated dice area."
 
-#: ../../source/guide_utilisateur.rst:83
+#: ../../source/guide_utilisateur.rst:84
 msgid ""
 "pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
 "droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela"
@@ -190,7 +191,7 @@ msgstr ""
 "to decrease the value of a die. If the dice faces are empty, it means the"
 " position is a cube decision."
 
-#: ../../source/guide_utilisateur.rst:87
+#: ../../source/guide_utilisateur.rst:88
 msgid ""
 "pour éditer le score des joueurs, clic gauche pour augmenter le score, "
 "clic droit pour réduire le score."
@@ -198,7 +199,7 @@ msgstr ""
 "To edit the players' score, left-click to increase the score, right-click"
 " to decrease the score."
 
-#: ../../source/guide_utilisateur.rst:90
+#: ../../source/guide_utilisateur.rst:91
 msgid ""
 "La saisie de la position avec la souris pour les pions se fait de la même"
 " manière que dans XG."
@@ -206,47 +207,45 @@ msgstr ""
 "The input of the position with the mouse for the checkers is done in the "
 "same way as in XG."
 
-#: ../../source/guide_utilisateur.rst:94
+#: ../../source/guide_utilisateur.rst:95
 msgid "Ajouter une position à la base de données"
 msgstr "Add a position to the database"
 
-#: ../../source/guide_utilisateur.rst:96
-msgid ""
-"Après l'édition de la position précédente, blunderDB est dans le mode "
-"EDIT."
-msgstr "After editing the previous position, blunderDB is in EDIT mode."
+#: ../../source/guide_utilisateur.rst:97
+msgid "Après l'édition de la position, le panneau de recherche est ouvert."
+msgstr "After editing the position, the search panel is open."
 
-#: ../../source/guide_utilisateur.rst:98
+#: ../../source/guide_utilisateur.rst:99
 msgid ""
 "Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou "
-"appuiyer dans la barre d'outils sur le bouton \"Save Position\"."
+"appuyer dans la barre d'outils sur le bouton \"Save Position\"."
 msgstr ""
 "To save the previously obtained position, press *CTRL-S* or click the "
 "\"Save Position\" button in the toolbar."
 
-#: ../../source/guide_utilisateur.rst:101
-msgid "Depuis le mode EDIT, basculer en mode COMMAND et exécuter: ``w``"
-msgstr "From EDIT mode, switch to COMMAND mode and execute: ``w``"
+#: ../../source/guide_utilisateur.rst:102
+msgid "Ouvrir la ligne de commande et exécuter: ``w``"
+msgstr "Open the command line and execute: ``w``"
 
-#: ../../source/guide_utilisateur.rst:104
+#: ../../source/guide_utilisateur.rst:105
 msgid "Etiqueter une position"
 msgstr "Tag a position"
 
-#: ../../source/guide_utilisateur.rst:106
+#: ../../source/guide_utilisateur.rst:107
 msgid ""
-"Pour ajouter un tag *toto* à la position courante, basculer en mode "
-"COMMAND en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande "
-"en appuyant sur *ENTREE*."
+"Pour ajouter un tag *toto* à la position courante, ouvrir la ligne de "
+"commande en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande"
+" en appuyant sur *ENTREE*."
 msgstr ""
-"To add a tag *toto* to the current position, switch to COMMAND mode by "
+"To add a tag *toto* to the current position, open the command line by "
 "pressing *SPACE*, type ``#toto``, and confirm the command by pressing "
 "*ENTER*."
 
-#: ../../source/guide_utilisateur.rst:110
+#: ../../source/guide_utilisateur.rst:111
 msgid "Supprimer une position"
 msgstr "Delete a position"
 
-#: ../../source/guide_utilisateur.rst:112
+#: ../../source/guide_utilisateur.rst:113
 msgid ""
 "Pour supprimer la position courante de la base de données, faire *Del* ou"
 " clicker dans la barre d'outils sur le bouton \"Delete Position\""
@@ -254,11 +253,11 @@ msgstr ""
 "To delete the current position from the database, press *Del* or click "
 "the \"Delete Position\" button in the toolbar."
 
-#: ../../source/guide_utilisateur.rst:115
-msgid "En mode COMMAND, exécuter ``d``."
-msgstr "In COMMAND mode, execute ``d``."
+#: ../../source/guide_utilisateur.rst:116
+msgid "En ligne de commande, exécuter ``d``."
+msgstr "In the command line, execute ``d``."
 
-#: ../../source/guide_utilisateur.rst:117
+#: ../../source/guide_utilisateur.rst:118
 msgid ""
 "La suppression de la position est définitive et ne nécessite aucune "
 "confirmation de la part de l'utilisateur."
@@ -266,237 +265,219 @@ msgstr ""
 "The deletion of the position is final and does not require any user "
 "confirmation."
 
-#: ../../source/guide_utilisateur.rst:121
+#: ../../source/guide_utilisateur.rst:122
 msgid "Import une position depuis XG"
 msgstr "Import a position from XG"
 
-#: ../../source/guide_utilisateur.rst:123
+#: ../../source/guide_utilisateur.rst:124
 msgid "Pour importer une position directement depuis XG,"
 msgstr "To import a position directly from XG,"
 
-#: ../../source/guide_utilisateur.rst:125
+#: ../../source/guide_utilisateur.rst:126
 msgid "afficher dans XG la position à importer et appuyer *CTRL-C*,"
 msgstr "display the position to import in XG and press *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:127
+#: ../../source/guide_utilisateur.rst:128
 msgid "afficher blunderDB et appuyer *CTRL-V*."
 msgstr "open blunderDB and press *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:130
+#: ../../source/guide_utilisateur.rst:131
 msgid ""
 "Le collage automatique détecte le format de la source (XG, GNUbg, "
 "BGBlitz)."
-msgstr ""
-"The automatic paste detects the source format (XG, GNUbg, "
-"BGBlitz)."
+msgstr "The automatic paste detects the source format (XG, GNUbg, BGBlitz)."
 
-#: ../../source/guide_utilisateur.rst:133
+#: ../../source/guide_utilisateur.rst:134
 msgid "Importer un match"
 msgstr "Import a match"
 
-#: ../../source/guide_utilisateur.rst:135
+#: ../../source/guide_utilisateur.rst:136
 msgid "blunderDB peut importer des matchs depuis différentes sources."
 msgstr "blunderDB can import matches from various sources."
 
-#: ../../source/guide_utilisateur.rst:137
+#: ../../source/guide_utilisateur.rst:138
 msgid "**Formats supportés:**"
 msgstr "**Supported formats:**"
 
-#: ../../source/guide_utilisateur.rst:139
+#: ../../source/guide_utilisateur.rst:140
 msgid "eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)"
 msgstr "eXtreme Gammon (XG): *.xg* and *.xgp* (positions) files"
 
-#: ../../source/guide_utilisateur.rst:140
+#: ../../source/guide_utilisateur.rst:141
 msgid "GNUbg: fichiers *.sgf*"
 msgstr "GNUbg: *.sgf* files"
 
-#: ../../source/guide_utilisateur.rst:141
+#: ../../source/guide_utilisateur.rst:142
 msgid "Jellyfish: fichiers *.mat* et *.txt*"
 msgstr "Jellyfish: *.mat* and *.txt* files"
 
-#: ../../source/guide_utilisateur.rst:142
+#: ../../source/guide_utilisateur.rst:143
 msgid "BGBlitz: fichiers *.bgf* et *.txt*"
 msgstr "BGBlitz: *.bgf* and *.txt* files"
 
-#: ../../source/guide_utilisateur.rst:144
+#: ../../source/guide_utilisateur.rst:145
 msgid "**Pour importer un ou plusieurs fichiers de match:**"
 msgstr "**To import one or more match files:**"
 
-#: ../../source/guide_utilisateur.rst:146
+#: ../../source/guide_utilisateur.rst:147
 msgid ""
 "Appuyer sur *CTRL-I* ou cliquer sur le bouton \"Import\" dans la barre "
 "d'outils."
-msgstr ""
-"Press *CTRL-I* or click the \"Import\" button in the "
-"toolbar."
+msgstr "Press *CTRL-I* or click the \"Import\" button in the toolbar."
 
-#: ../../source/guide_utilisateur.rst:148
+#: ../../source/guide_utilisateur.rst:149
 msgid "Sélectionner un ou plusieurs fichiers à importer."
 msgstr "Select one or more files to import."
 
-#: ../../source/guide_utilisateur.rst:150
+#: ../../source/guide_utilisateur.rst:151
 msgid "blunderDB détecte automatiquement le format et importe le match."
 msgstr "blunderDB automatically detects the format and imports the match."
 
-#: ../../source/guide_utilisateur.rst:152
+#: ../../source/guide_utilisateur.rst:153
 msgid ""
 "Une fenêtre de progression affiche le nombre de fichiers importés, "
 "échoués et ignorés (doublons)."
 msgstr ""
-"A progress window shows the number of imported, failed, "
-"and skipped (duplicate) files."
+"A progress window shows the number of imported, failed, and skipped "
+"(duplicate) files."
 
-#: ../../source/guide_utilisateur.rst:156
+#: ../../source/guide_utilisateur.rst:157
 msgid "Commande: ``i``"
 msgstr "Command: ``i``"
 
-#: ../../source/guide_utilisateur.rst:159
+#: ../../source/guide_utilisateur.rst:160
 msgid ""
 "blunderDB détecte automatiquement les doublons et empêche l'import d'un "
 "match déjà présent dans la base de données."
 msgstr ""
-"blunderDB automatically detects duplicates and prevents importing a "
-"match already present in the database."
+"blunderDB automatically detects duplicates and prevents importing a match"
+" already present in the database."
 
-#: ../../source/guide_utilisateur.rst:163
+#: ../../source/guide_utilisateur.rst:164
 msgid "Importer un dossier de matchs"
 msgstr "Import a folder of matches"
 
-#: ../../source/guide_utilisateur.rst:165
+#: ../../source/guide_utilisateur.rst:166
 msgid ""
 "Pour importer récursivement tous les fichiers de matchs contenus dans un "
 "dossier et ses sous-dossiers:"
 msgstr ""
-"To recursively import all match files contained in a "
-"folder and its subfolders:"
+"To recursively import all match files contained in a folder and its "
+"subfolders:"
 
-#: ../../source/guide_utilisateur.rst:168
+#: ../../source/guide_utilisateur.rst:169
 msgid ""
 "Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la"
 " barre d'outils."
-msgstr ""
-"Press *CTRL-SHIFT-F* or click the corresponding button in the"
-" toolbar."
+msgstr "Press *CTRL-SHIFT-F* or click the corresponding button in the toolbar."
 
-#: ../../source/guide_utilisateur.rst:171
+#: ../../source/guide_utilisateur.rst:172
 msgid "Sélectionner le dossier contenant les fichiers de matchs."
 msgstr "Select the folder containing the match files."
 
-#: ../../source/guide_utilisateur.rst:173
+#: ../../source/guide_utilisateur.rst:174
 msgid ""
 "blunderDB collecte et importe automatiquement tous les fichiers reconnus "
 "(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 msgstr ""
-"blunderDB automatically collects and imports all recognized files "
-"(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
+"blunderDB automatically collects and imports all recognized files (*.xg*,"
+" *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
 
-#: ../../source/guide_utilisateur.rst:177
+#: ../../source/guide_utilisateur.rst:178
 msgid "Glisser-déposer"
 msgstr "Drag and drop"
 
-#: ../../source/guide_utilisateur.rst:179
+#: ../../source/guide_utilisateur.rst:180
 msgid ""
 "blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer"
 " sur la fenêtre de blunderDB:"
 msgstr ""
-"blunderDB supports drag and drop. You can drag and drop"
-" onto the blunderDB window:"
+"blunderDB supports drag and drop. You can drag and drop onto the "
+"blunderDB window:"
 
-#: ../../source/guide_utilisateur.rst:182
+#: ../../source/guide_utilisateur.rst:183
 msgid ""
-"des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, "
-"*.bgf*) pour les importer,"
+"des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, "
+"*.txt*, *.bgf*) pour les importer,"
 msgstr ""
-"match or position files (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, "
-"*.bgf*) to import them,"
+"match or position files (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*) "
+"to import them,"
 
-#: ../../source/guide_utilisateur.rst:185
+#: ../../source/guide_utilisateur.rst:186
 msgid ""
 "des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
 "avec la base de données courante,"
-msgstr ""
-"database files (*.db*) to open or merge them "
-"with the current database,"
+msgstr "database files (*.db*) to open or merge them with the current database,"
 
-#: ../../source/guide_utilisateur.rst:188
+#: ../../source/guide_utilisateur.rst:189
 msgid ""
 "des dossiers pour importer récursivement tous les fichiers qu'ils "
 "contiennent."
-msgstr ""
-"folders to recursively import all the files they "
-"contain."
+msgstr "folders to recursively import all the files they contain."
 
-#: ../../source/guide_utilisateur.rst:191
+#: ../../source/guide_utilisateur.rst:192
 msgid "Naviguer dans un match"
 msgstr "Navigate through a match"
 
-#: ../../source/guide_utilisateur.rst:193
+#: ../../source/guide_utilisateur.rst:194
 msgid "Pour naviguer dans un match importé:"
 msgstr "To navigate through an imported match:"
 
-#: ../../source/guide_utilisateur.rst:195
+#: ../../source/guide_utilisateur.rst:196
 msgid "Ouvrir le panneau des matchs avec *CTRL-T*."
 msgstr "Open the match panel with *CTRL-T*."
 
-#: ../../source/guide_utilisateur.rst:197
-msgid "Double-cliquer sur un match pour entrer en mode MATCH."
-msgstr "Double-click on a match to enter MATCH mode."
+#: ../../source/guide_utilisateur.rst:198
+msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
+msgstr "Double-click on a match or press *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:199
+#: ../../source/guide_utilisateur.rst:200
 msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
 msgstr "Use the *LEFT* / *RIGHT* keys to browse through moves."
 
-#: ../../source/guide_utilisateur.rst:201
+#: ../../source/guide_utilisateur.rst:202
 msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
 msgstr "Use *PageUp* / *PageDown* to switch between games."
 
-#: ../../source/guide_utilisateur.rst:203
+#: ../../source/guide_utilisateur.rst:204
 msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
 msgstr "Press *CTRL-L* to display the analysis."
 
-#: ../../source/guide_utilisateur.rst:205
+#: ../../source/guide_utilisateur.rst:206
 msgid ""
 "Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du "
 "cube."
-msgstr ""
-"Press *d* to toggle between checker move analysis and cube "
-"analysis."
+msgstr "Press *d* to toggle between checker move analysis and cube analysis."
 
-#: ../../source/guide_utilisateur.rst:208
-msgid ""
-"Raccourci: *CTRL-TAB* pour basculer en mode MATCH / sortir du mode MATCH."
-" Commande: ``m``"
-msgstr ""
-"Shortcut: *CTRL-TAB* to toggle MATCH mode / exit MATCH mode."
-" Command: ``m``"
+#: ../../source/guide_utilisateur.rst:209
+msgid "Raccourci: *CTRL-T* pour ouvrir le panneau des matchs. Commande: ``m``"
+msgstr "Shortcut: *CTRL-T* to open the match panel. Command: ``m``"
 
-#: ../../source/guide_utilisateur.rst:212
+#: ../../source/guide_utilisateur.rst:213
 msgid ""
 "blunderDB mémorise la dernière position visitée dans chaque match. En "
 "revenant sur un match, la dernière position consultée est automatiquement"
 " restaurée."
 msgstr ""
 "blunderDB remembers the last visited position in each match. When "
-"returning to a match, the last visited position is automatically"
-" restored."
+"returning to a match, the last visited position is automatically "
+"restored."
 
-#: ../../source/guide_utilisateur.rst:217
+#: ../../source/guide_utilisateur.rst:218
 msgid "Gérer le panneau des matchs"
 msgstr "Manage the match panel"
 
-#: ../../source/guide_utilisateur.rst:219
+#: ../../source/guide_utilisateur.rst:220
 msgid "Le panneau des matchs (*CTRL-T*) permet de:"
 msgstr "The match panel (*CTRL-T*) allows you to:"
 
-#: ../../source/guide_utilisateur.rst:221
+#: ../../source/guide_utilisateur.rst:222
 msgid ""
 "lister l'ensemble des matchs importés (triés du plus récent au plus "
 "ancien),"
-msgstr ""
-"list all imported matches (sorted from most recent to "
-"oldest),"
+msgstr "list all imported matches (sorted from most recent to oldest),"
 
-#: ../../source/guide_utilisateur.rst:223
+#: ../../source/guide_utilisateur.rst:224
 msgid ""
 "trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du "
 "match, tournoi),"
@@ -504,120 +485,118 @@ msgstr ""
 "sort matches by column (player 1, player 2, date, match length, "
 "tournament),"
 
-#: ../../source/guide_utilisateur.rst:226
+#: ../../source/guide_utilisateur.rst:227
 msgid ""
 "modifier les noms des joueurs ou la date en double-cliquant sur les "
 "champs,"
-msgstr ""
-"edit player names or date by double-clicking on the "
-"fields,"
+msgstr "edit player names or date by double-clicking on the fields,"
 
-#: ../../source/guide_utilisateur.rst:228
+#: ../../source/guide_utilisateur.rst:229
 msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
 msgstr "swap player 1 and player 2 using the swap button,"
 
-#: ../../source/guide_utilisateur.rst:230
+#: ../../source/guide_utilisateur.rst:231
 msgid "assigner un match à un tournoi,"
 msgstr "assign a match to a tournament,"
 
-#: ../../source/guide_utilisateur.rst:232
+#: ../../source/guide_utilisateur.rst:233
 msgid "supprimer un match à l'aide de la touche *Del*."
 msgstr "delete a match using the *Del* key."
 
-#: ../../source/guide_utilisateur.rst:235
+#: ../../source/guide_utilisateur.rst:236
 msgid "Gérer les collections"
 msgstr "Manage collections"
 
-#: ../../source/guide_utilisateur.rst:237
+#: ../../source/guide_utilisateur.rst:238
 msgid ""
 "Les collections permettent d'organiser des positions en groupes "
 "personnalisés. Pour accéder au panneau des collections, appuyer sur "
 "*CTRL-B*."
 msgstr ""
-"Collections allow you to organize positions into custom groups. "
-"To access the collections panel, press *CTRL-B*."
+"Collections allow you to organize positions into custom groups. To access"
+" the collections panel, press *CTRL-B*."
 
-#: ../../source/guide_utilisateur.rst:240
+#: ../../source/guide_utilisateur.rst:241
 msgid "**Créer une collection:**"
 msgstr "**Create a collection:**"
 
-#: ../../source/guide_utilisateur.rst:242
+#: ../../source/guide_utilisateur.rst:243
 msgid "Ouvrir le panneau des collections (*CTRL-B*)."
 msgstr "Open the collections panel (*CTRL-B*)."
 
-#: ../../source/guide_utilisateur.rst:244
+#: ../../source/guide_utilisateur.rst:245
 msgid "Saisir le nom de la nouvelle collection et cliquer sur \"Add\"."
 msgstr "Enter the name of the new collection and click \"Add\"."
 
-#: ../../source/guide_utilisateur.rst:246
+#: ../../source/guide_utilisateur.rst:247
 msgid "**Ajouter des positions à une collection:**"
 msgstr "**Add positions to a collection:**"
 
-#: ../../source/guide_utilisateur.rst:248
+#: ../../source/guide_utilisateur.rst:249
 msgid "Sélectionner les positions souhaitées."
 msgstr "Select the desired positions."
 
-#: ../../source/guide_utilisateur.rst:250
+#: ../../source/guide_utilisateur.rst:251
 msgid "Les ajouter à la collection depuis le panneau des collections."
 msgstr "Add them to the collection from the collections panel."
 
-#: ../../source/guide_utilisateur.rst:252
+#: ../../source/guide_utilisateur.rst:253
 msgid "**Parcourir une collection:**"
 msgstr "**Browse a collection:**"
 
-#: ../../source/guide_utilisateur.rst:254
+#: ../../source/guide_utilisateur.rst:255
 msgid ""
-"Double-cliquer sur une collection pour entrer en mode COLLECTION et "
-"parcourir ses positions."
+"Double-cliquer sur une collection pour parcourir ses positions. L'ordre "
+"des collections et des positions peut être modifié par glisser-déposer."
 msgstr ""
-"Double-click on a collection to enter COLLECTION mode and "
-"browse its positions."
+"Double-click on a collection to browse its positions. The order of "
+"collections and positions can be changed by drag and drop."
 
-#: ../../source/guide_utilisateur.rst:258
+#: ../../source/guide_utilisateur.rst:260
 msgid "Commande: ``coll``"
 msgstr "Command: ``coll``"
 
-#: ../../source/guide_utilisateur.rst:261
+#: ../../source/guide_utilisateur.rst:263
 msgid "Gérer les tournois"
 msgstr "Manage tournaments"
 
-#: ../../source/guide_utilisateur.rst:263
+#: ../../source/guide_utilisateur.rst:265
 msgid ""
 "Les tournois permettent d'organiser les matchs importés par événement. "
 "Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*."
 msgstr ""
-"Tournaments allow you to organize imported matches by event. "
-"To access the tournaments panel, press *CTRL-Y*."
+"Tournaments allow you to organize imported matches by event. To access "
+"the tournaments panel, press *CTRL-Y*."
 
-#: ../../source/guide_utilisateur.rst:266
+#: ../../source/guide_utilisateur.rst:268
 msgid "**Créer un tournoi:**"
 msgstr "**Create a tournament:**"
 
-#: ../../source/guide_utilisateur.rst:268
+#: ../../source/guide_utilisateur.rst:270
 msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
 msgstr "Open the tournaments panel (*CTRL-Y*)."
 
-#: ../../source/guide_utilisateur.rst:270
+#: ../../source/guide_utilisateur.rst:272
 msgid "Cliquer sur \"Add\" et saisir le nom du tournoi."
 msgstr "Click \"Add\" and enter the tournament name."
 
-#: ../../source/guide_utilisateur.rst:272
+#: ../../source/guide_utilisateur.rst:274
 msgid "**Assigner un match à un tournoi:**"
 msgstr "**Assign a match to a tournament:**"
 
-#: ../../source/guide_utilisateur.rst:274
+#: ../../source/guide_utilisateur.rst:276
 msgid ""
 "Depuis le panneau des matchs (*CTRL-T*), utiliser le menu déroulant de la"
 " colonne tournoi pour assigner un match."
 msgstr ""
-"From the match panel (*CTRL-T*), use the dropdown menu in the"
-" tournament column to assign a match."
+"From the match panel (*CTRL-T*), use the dropdown menu in the tournament "
+"column to assign a match."
 
-#: ../../source/guide_utilisateur.rst:278
+#: ../../source/guide_utilisateur.rst:280
 msgid "Calculer l'EPC"
 msgstr "Calculate the EPC"
 
-#: ../../source/guide_utilisateur.rst:280
+#: ../../source/guide_utilisateur.rst:282
 msgid ""
 "Le calculateur EPC (Effective Pip Count) permet de calculer les "
 "statistiques de bearoff d'une position."
@@ -625,36 +604,35 @@ msgstr ""
 "The EPC (Effective Pip Count) calculator allows you to compute the "
 "bearoff statistics of a position."
 
-#: ../../source/guide_utilisateur.rst:283
+#: ../../source/guide_utilisateur.rst:285
 msgid ""
-"Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, "
-"exécuter la commande ``epc`` ou cliquer sur le bouton correspondant dans "
-"la barre d'outils."
+"Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, ou "
+"exécuter la commande ``epc``."
 msgstr ""
-"Press *CTRL-E*, click the EPC tab in the bottom panel, execute the "
-"``epc`` command, or click the corresponding button in the toolbar."
+"Press *CTRL-E*, click the EPC tab in the bottom panel, or execute the "
+"``epc`` command."
 
-#: ../../source/guide_utilisateur.rst:286
+#: ../../source/guide_utilisateur.rst:288
 msgid "Éditer la position des pions dans le jan (6 derniers points)."
 msgstr "Edit the checker positions in the home board (last 6 points)."
 
-#: ../../source/guide_utilisateur.rst:288
+#: ../../source/guide_utilisateur.rst:290
 msgid ""
-"Les résultats sont affichés en temps réel dans le panneau EPC dédié: "
-"EPC, nombre moyen de lancers, écart type, pip count et wastage."
+"Les résultats sont affichés en temps réel dans le panneau EPC dédié: EPC,"
+" nombre moyen de lancers, écart type, pip count et wastage."
 msgstr ""
 "Results are displayed in real time in the dedicated EPC panel: EPC, "
 "average number of rolls, standard deviation, pip count, and wastage."
 
-#: ../../source/guide_utilisateur.rst:292
+#: ../../source/guide_utilisateur.rst:294
 msgid "Le calculateur fonctionne pour les deux joueurs simultanément."
 msgstr "The calculator works for both players simultaneously."
 
-#: ../../source/guide_utilisateur.rst:295
+#: ../../source/guide_utilisateur.rst:297
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "Display the analysis of a position imported from XG"
 
-#: ../../source/guide_utilisateur.rst:297
+#: ../../source/guide_utilisateur.rst:299
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -662,7 +640,7 @@ msgstr ""
 "If a position analyzed by XG, GNUbg, or BGBlitz has been imported into "
 "blunderDB, the analysis can be displayed by pressing *CTRL-L*."
 
-#: ../../source/guide_utilisateur.rst:300
+#: ../../source/guide_utilisateur.rst:302
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -678,7 +656,7 @@ msgstr ""
 " for the player, and the winning chances, gammon, and backgammon for the "
 "opponent, along with the level of analysis."
 
-#: ../../source/guide_utilisateur.rst:307
+#: ../../source/guide_utilisateur.rst:309
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
@@ -686,55 +664,55 @@ msgstr ""
 "If the position corresponds to a cube decision, the cost of each decision"
 " is displayed along with the winning chances of the position."
 
-#: ../../source/guide_utilisateur.rst:310
+#: ../../source/guide_utilisateur.rst:312
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
 "d'origine de chaque analyse."
 msgstr ""
-"When multiple analysis engines are present for the same position "
-"(for example XG and GNUbg), an additional column indicates the "
-"source engine of each analysis."
+"When multiple analysis engines are present for the same position (for "
+"example XG and GNUbg), an additional column indicates the source engine "
+"of each analysis."
 
-#: ../../source/guide_utilisateur.rst:314
+#: ../../source/guide_utilisateur.rst:316
 msgid ""
-"En mode MATCH, le coup effectivement joué est mis en évidence dans la "
-"liste des coups. En mode NORMAL, si la position a été rencontrée dans "
-"plusieurs matchs, tous les coups joués sont indiqués."
+"Lors de la navigation dans un match, le coup effectivement joué est mis "
+"en évidence dans la liste des coups. Si la position a été rencontrée dans"
+" plusieurs matchs, tous les coups joués sont indiqués."
 msgstr ""
-"In MATCH mode, the actually played move is highlighted in the "
-"move list. In NORMAL mode, if the position was encountered in "
-"multiple matches, all played moves are indicated."
+"When navigating a match, the actually played move is highlighted in the "
+"move list. If the position was encountered in multiple matches, all "
+"played moves are indicated."
 
-#: ../../source/guide_utilisateur.rst:319
+#: ../../source/guide_utilisateur.rst:321
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
 msgstr ""
-"By clicking on a move in the analysis panel, the corresponding "
-"arrows are displayed on the board."
+"By clicking on a move in the analysis panel, the corresponding arrows are"
+" displayed on the board."
 
-#: ../../source/guide_utilisateur.rst:323
+#: ../../source/guide_utilisateur.rst:325
 msgid "Exporter une position vers XG"
 msgstr "Export a position to XG"
 
-#: ../../source/guide_utilisateur.rst:325
+#: ../../source/guide_utilisateur.rst:327
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "To export a position from blunderDB to XG,"
 
-#: ../../source/guide_utilisateur.rst:327
+#: ../../source/guide_utilisateur.rst:329
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "display the position to export in blunderDB and press *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:329
+#: ../../source/guide_utilisateur.rst:331
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "open XG and press *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:332
+#: ../../source/guide_utilisateur.rst:334
 msgid "Visualiser les différentes positions"
 msgstr "View the different positions"
 
-#: ../../source/guide_utilisateur.rst:334
+#: ../../source/guide_utilisateur.rst:336
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -745,7 +723,7 @@ msgstr ""
 "and *RIGHT* keys. The *HOME* key allows you to go to the first position, "
 "and the *END* key lets you go to the last position."
 
-#: ../../source/guide_utilisateur.rst:338
+#: ../../source/guide_utilisateur.rst:340
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
@@ -753,19 +731,19 @@ msgstr ""
 "To display the bearoff on the left, press *CTRL-LEFT*. To display the "
 "bearoff on the right, press *CTRL-RIGHT*."
 
-#: ../../source/guide_utilisateur.rst:342
+#: ../../source/guide_utilisateur.rst:344
 msgid "Rechercher des positions selon des critères"
 msgstr "Search for positions based on criteria"
 
-#: ../../source/guide_utilisateur.rst:344
+#: ../../source/guide_utilisateur.rst:346
 msgid "Pour rechercher des types de positions,"
 msgstr "To search for types of positions,"
 
-#: ../../source/guide_utilisateur.rst:346
-msgid "basculer en mode EDIT en appuyant sur *TAB*,"
-msgstr "switch to EDIT mode by pressing *TAB*,"
-
 #: ../../source/guide_utilisateur.rst:348
+msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
+msgstr "press *TAB* to open the search panel,"
+
+#: ../../source/guide_utilisateur.rst:350
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -778,31 +756,31 @@ msgstr ""
 " maximize results, clear the position by pressing the *BACKSPACE* key. "
 "Edit the cube position and the score if necessary."
 
-#: ../../source/guide_utilisateur.rst:354
+#: ../../source/guide_utilisateur.rst:356
 msgid "Méthode 1 (simple):"
 msgstr "Method 1 (simple):"
 
-#: ../../source/guide_utilisateur.rst:356
+#: ../../source/guide_utilisateur.rst:358
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "Open the search window (*CTRL-F*)"
 
-#: ../../source/guide_utilisateur.rst:358
+#: ../../source/guide_utilisateur.rst:360
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "Add and set the search filters"
 
-#: ../../source/guide_utilisateur.rst:360
+#: ../../source/guide_utilisateur.rst:362
 msgid "Valider en cliquant sur \"Search\"."
 msgstr "Confirm by clicking on \"Search\"."
 
-#: ../../source/guide_utilisateur.rst:362
+#: ../../source/guide_utilisateur.rst:364
 msgid "Méthode 2 (avancée):"
 msgstr "Method 2 (advanced):"
 
-#: ../../source/guide_utilisateur.rst:365
-msgid "basculer en mode COMMAND en appuyant sur *ESPACE*,"
-msgstr "switch to COMMAND mode by pressing *SPACE*,"
-
 #: ../../source/guide_utilisateur.rst:367
+msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
+msgstr "open the command line by pressing *SPACE*,"
+
+#: ../../source/guide_utilisateur.rst:369
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
@@ -813,11 +791,11 @@ msgstr ""
 "to consider the cube and score, respectively. See :numref:`cmd_filter` "
 "for a comprehensive list of available filters)."
 
-#: ../../source/guide_utilisateur.rst:372
+#: ../../source/guide_utilisateur.rst:374
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "confirm the request by pressing *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:374
+#: ../../source/guide_utilisateur.rst:376
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."
@@ -925,4 +903,7 @@ msgstr ""
 #~ "To reverse the orientation of the "
 #~ "board, press *CTRL-UP* or *CTRL-"
 #~ "DOWN*."
+
+#~ msgid "basculer en mode EDIT en appuyant sur *TAB*,"
+#~ msgstr "switch to EDIT mode by pressing *TAB*,"
 

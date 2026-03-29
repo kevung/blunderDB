@@ -173,35 +173,32 @@
                         <li>adding a new position,</li>
                         <li>modifying an existing position,</li>
                         <li>deleting an existing position,</li>
-                        <li>searching for one or more positions.</li>
-                    </ul>
-                    
-                    <h3>Modes</h3>
-                    <p>To do this, the user switches to dedicated modes for:</p>
-                    <ul>
-                        <li>navigating and viewing positions (NORMAL mode),</li>
-                        <li>editing positions (EDIT mode),</li>
-                        <li>editing a query to filter positions (COMMAND mode or search window).</li>
+                        <li>searching for one or more positions,</li>
+                        <li>importing matches from various sources (XG, GNUbg, BGBlitz, Jellyfish),</li>
+                        <li>browsing the moves of an imported match,</li>
+                        <li>organizing positions into collections,</li>
+                        <li>organizing matches into tournaments.</li>
                     </ul>
                     <p>The user can freely tag positions and annotate them with comments.</p>
-                    <p>The rest of the manual describes the graphical interface and the main modes of blunderDB.</p>
                     
                     <h3>Description of the GUI</h3>
                     <p>The blunderDB GUI is structured from top to bottom as follows:</p>
                     <ul>
-                        <li>[at the top] the menu bar, which gathers all the main operations that can be performed on the database,</li>
+                        <li>[at the top] the toolbar, which gathers all the main operations that can be performed on the database,</li>
                         <li>[in the middle] the main display area, which allows displaying or editing backgammon positions,</li>
-                        <li>[at the bottom] the status bar, which presents various information about the database or the current position.</li>
+                        <li>[at the bottom] the status bar, which integrates the command line and presents various information about the current position.</li>
                     </ul>
                     <p>Panels can be displayed to:</p>
                     <ul>
-                        <li>display analysis data associated with the current position from eXtreme Gammon (XG),</li>
-                        <li>display, add, or modify comments</li>
-                    </ul>
-                    <p>Modal windows can be displayed to:</p>
-                    <ul>
-                        <li>[EDIT mode only] set search filters,</li>
-                        <li>display the blunderDB help.</li>
+                        <li>display analysis data associated with the current position (from XG, GNUbg, or BGBlitz),</li>
+                        <li>display, add, or modify comments,</li>
+                        <li>browse imported matches and navigate through their moves (Match panel),</li>
+                        <li>manage collections of positions (Collection panel),</li>
+                        <li>manage tournaments (Tournament panel),</li>
+                        <li>compute EPC values for bearoff positions (EPC panel),</li>
+                        <li>browse saved search filters (Filter Library panel),</li>
+                        <li>browse search history (Search History panel),</li>
+                        <li>view operation logs (Log panel).</li>
                     </ul>
                     <p>The main display area provides the user with:</p>
                     <ul>
@@ -211,35 +208,35 @@
                         <li>the score of each player,</li>
                         <li>the dice to be played. If no value is displayed on the dice, the position of the dice indicates which player has the turn and that the position is a cube decision.</li>
                     </ul>
-                    <p>The status bar is structured from left to right with the following information:</p>
+                    <p>The status bar displays from left to right:</p>
                     <ul>
-                        <li>the current mode (NORMAL, EDIT, COMMAND),</li>
-                        <li>an information message related to an operation performed by the user,</li>
-                        <li>the index of the current position, followed by the number of positions in the current library.</li>
+                        <li>the command line (press <strong>Space</strong> to open),</li>
+                        <li>an information message related to the last operation performed,</li>
+                        <li>the index of the current position, followed by the total number of positions (or move/game info when navigating a match).</li>
                     </ul>
                     <p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
                     
-                    <h3>NORMAL Mode</h3>
-                    <p>NORMAL mode is the default mode of blunderDB. It is used to:</p>
+                    <h3>Browsing Positions</h3>
+                    <p>By default, blunderDB allows you to:</p>
                     <ul>
                         <li>scroll through the different positions in the current library,</li>
                         <li>display analysis information associated with a position,</li>
                         <li>display, add, and modify comments on a position.</li>
                     </ul>
                     
-                    <h3>EDIT Mode</h3>
-                    <p>EDIT mode allows editing a position to add it to the database or to define the type of position to search for. EDIT mode is activated by pressing the *TAB* key. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse.</p>
+                    <h3>Editing Positions</h3>
+                    <p>Pressing the <strong>Tab</strong> key opens the search panel and allows editing a position on the board to add it to the database or to define a position structure to search for. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse.</p>
                     
-                    <h3>COMMAND Mode</h3>
-                    <p>COMMAND mode allows performing all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions according to filters... After getting familiar with the interface, it is recommended to gradually use this mode, which allows powerful and smooth use of blunderDB, especially for position search functionalities.</p>
-                    <p>To open the command input, press the *SPACE* key. A command prompt appears in the status bar. Type your command and press *ENTER* to execute. Press *ESCAPE* to cancel. Command history and results are logged in the *Log* panel.</p>
+                    <h3>Command Line</h3>
+                    <p>The command line, integrated in the status bar, allows performing all the functionalities of blunderDB: database operations, position navigation, displaying analysis and comments, searching for positions with filters... After getting familiar with the interface, it is recommended to gradually use the command line, which allows powerful and smooth use of blunderDB, especially for position search functionalities.</p>
+                    <p>To open the command line, press the <strong>Space</strong> key. A prompt appears in the status bar. Type your command and press <strong>Enter</strong> to execute. Press <strong>Escape</strong> to cancel. Command history and results are logged in the <strong>Log</strong> panel.</p>
                     <p>blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required by the user.</p>
-                    <p>To refine a search within previously filtered positions, use the <strong>ss</strong> command followed by filters (e.g., <strong>ss nc</strong>). This restricts the search to only the positions currently displayed, allowing progressive narrowing of results. The <strong>ss</strong> command works from NORMAL mode (after a prior search). The search modal also offers a "Search in current results" checkbox for the same functionality.</p>
+                    <p>To refine a search within previously filtered positions, use the <strong>ss</strong> command followed by filters (e.g., <strong>ss nc</strong>). This restricts the search to only the positions currently displayed, allowing progressive narrowing of results. The search panel (<strong>Ctrl+F</strong>) also offers a "Search in current results" checkbox for the same functionality.</p>
 
-                    <h3>EPC Mode</h3>
-                    <p>EPC (Effective Pip Count) mode is a tool for computing the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database to compute exact EPC values.</p>
-                    <p>To enter EPC mode, press <strong>Ctrl+E</strong>, click the EPC tab in the bottom panel, click the calculator icon in the toolbar, or type <strong>epc</strong> in the command line. The board is initialized with a closed jan (2 checkers on each of the 6 home-board points) plus 3 extra checkers on points 4, 5, and 6 (15 checkers total).</p>
-                    <p>In EPC mode, you can freely add or remove checkers on the home-board points using the mouse (same controls as EDIT mode). The EPC values are displayed in real-time in the dedicated EPC panel, showing for each player:</p>
+                    <h3>EPC Calculator</h3>
+                    <p>The EPC (Effective Pip Count) calculator computes the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database for exact EPC values.</p>
+                    <p>To open the EPC panel, press <strong>Ctrl+E</strong>, click the EPC tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard bearoff configuration (15 checkers).</p>
+                    <p>You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated EPC panel, showing for each player:</p>
                     <ul>
                         <li><strong>EPC</strong>: the average number of pips needed to bear off all checkers,</li>
                         <li><strong>Pip Count</strong>: the raw pip count,</li>
@@ -248,13 +245,18 @@
                         <li><strong>Std Dev</strong>: standard deviation of the number of rolls.</li>
                     </ul>
                     <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
-                    <p>To exit EPC mode, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
+                    <p>To close the EPC panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
 
-                    <h3>MATCH Mode</h3>
-                    <p>MATCH mode allows browsing through the moves of an imported match. You can enter MATCH mode by pressing <strong>Ctrl+Tab</strong>, clicking the match mode button in the toolbar, or typing <strong>m</strong> in the command line.</p>
-                    <p>When entering MATCH mode, blunderDB opens the last visited match and restores the last visited position in that match. If no match has been visited yet, the most recent match is opened at its first position. The last visited position is persisted in the database.</p>
-                    <p>You can also enter MATCH mode by double-clicking a match in the Match Panel (Ctrl+T).</p>
-                    <p>To exit MATCH mode, press <strong>Tab</strong>, <strong>Ctrl+Tab</strong>, or use <strong>Ctrl+R</strong> to return to NORMAL mode.</p>
+                    <h3>Match Navigation</h3>
+                    <p>blunderDB allows browsing through the moves of imported matches. Open the Match panel with <strong>Ctrl+T</strong> and double-click a match (or press <strong>Enter</strong>) to load its positions.</p>
+                    <p>When navigating a match, the last visited position is automatically saved and restored. Use the <strong>Left</strong>/<strong>Right</strong> keys to move between positions, and <strong>PageUp</strong>/<strong>PageDown</strong> to jump between games.</p>
+                    <p>The analysis panel (<strong>Ctrl+L</strong>) shows the analysis for each move, with the played move highlighted. Press <strong>d</strong> to toggle between checker and cube analysis.</p>
+
+                    <h3>Collections</h3>
+                    <p>Collections allow organizing positions into custom groups. Open the Collection panel with <strong>Ctrl+B</strong>, then double-click a collection to browse its positions. Collections and positions within them can be reordered by drag-and-drop.</p>
+
+                    <h3>Tournaments</h3>
+                    <p>Tournaments allow grouping matches by event. Open the Tournament panel with <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.</p>
                 {/if}
 
                 {#if activeTab === 'shortcuts'}
@@ -326,7 +328,7 @@
 
                             <tr>
                                 <td>Ctrl + V</td>
-                                <td>Paste Position (in EDIT mode: paste to board)</td>
+                                <td>Paste Position (in search panel: paste to board)</td>
                             </tr>
 
                             <tr>
@@ -376,7 +378,7 @@
 
                             <tr>
                                 <td>PageUp, h</td>
-                                <td>First Position / Previous Game (MATCH mode)</td>
+                                <td>First Position / Previous Game (match navigation)</td>
                             </tr>
 
                             <tr>
@@ -391,7 +393,7 @@
 
                             <tr>
                                 <td>PageDown, l</td>
-                                <td>Last Position / Next Game (MATCH mode)</td>
+                                <td>Last Position / Next Game (match navigation)</td>
                             </tr>
 
                             <tr>
@@ -432,7 +434,7 @@
                         </tbody>
                     </table>
 
-                    <h3>Modes</h3>
+                    <h3>Actions</h3>
 
                     <table>
                         <thead>
@@ -446,17 +448,12 @@
 
                             <tr>
                                 <td>Tab</td>
-                                <td>Edit Mode / Exit MATCH mode to NORMAL</td>
-                            </tr>
-
-                            <tr>
-                                <td>Ctrl + Tab</td>
-                                <td>Match Mode (enter/exit)</td>
+                                <td>Open Search Panel (position editor)</td>
                             </tr>
 
                             <tr>
                                 <td>Space</td>
-                                <td>Command Input</td>
+                                <td>Open Command Line</td>
                             </tr>
 
                         </tbody>
@@ -565,7 +562,7 @@
                             </tr>
                             <tr>
                                 <td>d</td>
-                                <td>Toggle between checker and cube analysis (MATCH mode only)</td>
+                                <td>Toggle between checker and cube analysis (match navigation only)</td>
                             </tr>
                             <tr>
                                 <td>Esc</td>
@@ -689,15 +686,11 @@
                             </tr>
                             <tr>
                                 <td>Double-click</td>
-                                <td>Open collection in COLLECTION mode (Tab to exit)</td>
+                                <td>Open collection and browse its positions</td>
                             </tr>
                             <tr>
                                 <td>Del</td>
-                                <td>Remove current position from active collection (COLLECTION mode)</td>
-                            </tr>
-                            <tr>
-                                <td>Tab</td>
-                                <td>Exit COLLECTION mode, return to NORMAL</td>
+                                <td>Remove current position from active collection</td>
                             </tr>
                             <tr>
                                 <td>Esc</td>
@@ -825,7 +818,7 @@
                             </tr>
                             <tr>
                                 <td>m</td>
-                                <td>Match Mode (enter/exit last visited match)</td>
+                                <td>Navigate last visited match</td>
                             </tr>
                             <tr>
                                 <td>help, he, h</td>

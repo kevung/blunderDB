@@ -10,19 +10,19 @@ Annexe: Utilisation avancée des filtres
 
 Les filtres sont au coeur de l'analyse des positions dans blunderDB.
 Leur utilisation permet de rechercher des positions spécifiques relativement
-précisément. Dans cette section, l'utilisation des filtres via le mode COMMAND
-est détaillée. Le mode COMMAND est accessible en appuyant sur la touche ``ESPACE``.
-Il permet de combiner avec l'habitude très rapidement des filtres et d'utiliser 
-la bibliothèque de filtres.
+précisément. Dans cette section, l'utilisation des filtres via la ligne de
+commande est détaillée. La ligne de commande est accessible en appuyant sur
+la touche ``ESPACE``. Elle permet de combiner avec l'habitude très rapidement
+des filtres et d'utiliser la bibliothèque de filtres.
 
 Recherche de positions en ligne de commande
 -------------------------------------------
 
 Pour faire une recherche à l'aide de filtres, 
 
-1. Basculer en mode EDIT avec la touche ``TAB``.
+1. Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche.
 2. Editer la position courante.
-3. Basculer en mode COMMAND avec la touche ``ESPACE``.
+3. Ouvrir la ligne de commande avec la touche ``ESPACE``.
 4. Utiliser la commande ``s`` suivie éventuellement de filtres.
 5. Lancer la recherche avec la touche ``ENTREE``.
 
@@ -32,7 +32,7 @@ Pour faire une recherche à l'aide de filtres,
    risque de filtrer abusivement des structures de pions.
 
 .. note:: 
-   La liste des filtres disponibles en mode COMMAND est fournie dans la
+   La liste des filtres disponibles en ligne de commande est fournie dans la
    :numref:`cmd_filter`.
 
 Recherche dans les résultats courants
@@ -41,9 +41,8 @@ Recherche dans les résultats courants
 Il est possible d'affiner une recherche en cherchant parmi les positions
 actuellement filtrées. Cela permet de restreindre progressivement les résultats.
 
-En mode COMMAND, utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``,
-``ss E>40``). La commande ``ss`` fonctionne depuis le mode NORMAL,
-après une recherche préalable.
+En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``,
+``ss E>40``). La commande ``ss`` fonctionne après une recherche préalable.
 
 La fenêtre de recherche (``CTRL-F``) propose également une case à cocher
 "Search in current results" pour la même fonctionnalité.
@@ -56,7 +55,7 @@ afin de faciliter ses études thématiques.
 
 Pour ajouter un filtre à la bibliothèque,
 
-1. Basculer dans le mode EDIT. 
+1. Appuyer sur ``TAB`` pour ouvrir le panneau de recherche.
 2. Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``.
 3. Editer la position courante.
 4. Donner un nom au filtre.
@@ -69,15 +68,14 @@ Pour ajouter un filtre à la bibliothèque,
 
 Pour utiliser un filtre enregistré dans la bibliothèque,
 
-1. Basculer en mode NORMAL.
-2. Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``.
-3. Rechercher le filtre souhaité.
-4. Double cliquer sur le filtre pour lancer la recherche.
+1. Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``.
+2. Rechercher le filtre souhaité.
+3. Double cliquer sur le filtre pour lancer la recherche.
 
 Exemples
 --------
 
-Voici quelques exemples d'utilisation des filtres en mode COMMAND:
+Voici quelques exemples d'utilisation des filtres en ligne de commande:
 
 .. csv-table::
    :header: "Type de position", "Structure de pions", "Commande"

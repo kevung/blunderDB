@@ -34,8 +34,8 @@ Opérations globales
 
 .. _cmd_normal:
 
-Mode NORMAL
------------
+Positions et navigation
+-----------------------
 
 .. csv-table::
    :header: "Commande", "Action"
@@ -53,13 +53,13 @@ Mode NORMAL
    "collection, coll", "Afficher/cacher le panneau des collections."
    "#tag1 tag2 ...", "Etiqueter la position courante."
    "e", "Charger toutes les positions de la base de données."
-   "m", "Basculer en mode MATCH (dernier match visité)."
+   "m", "Naviguer dans le dernier match visité."
 
 
 .. _cmd_edit:
 
-Mode EDIT
----------
+Édition et recherche
+--------------------
 
 .. csv-table::
    :header: "Commande", "Action"
@@ -87,6 +87,11 @@ c'est-à-dire après le début de commande ``s``.
    compte la structure de pions courante, ignore la position du videau, du
    score et des dés. Pour prendre en compte la position du videau, du score,
    des dés, il faut le mentionner explicitement dans la recherche.
+
+.. note::
+   La commande de recherche ``s`` est disponible dans le panneau de recherche
+   (touche ``TAB``). La commande ``ss`` permet de chercher parmi les
+   résultats actuellement filtrés.
 
 .. note::
    blunderDB considère qu'un pion arriéré (backchecker) est un pion

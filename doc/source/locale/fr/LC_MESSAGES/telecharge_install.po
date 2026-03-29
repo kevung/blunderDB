@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2025-02-03 16:04+0100\n"
+"POT-Creation-Date: 2026-03-29 10:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.16.0\n"
+"Generated-By: Babel 2.18.0\n"
 
 #: ../../source/telecharge_install.rst:4
 msgid "Téléchargement et installation"
@@ -67,12 +67,20 @@ msgstr ""
 
 #: ../../source/telecharge_install.rst:30
 msgid ""
+"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
+"open shared object file``, votre distribution utilise webkit2gtk-4.1 au "
+"lieu de webkit2gtk-4.0. Téléchargez la version dédiée : "
+"|latest_linux_webkit2gtk41_exe|"
+msgstr ""
+
+#: ../../source/telecharge_install.rst:35
+msgid ""
 "Sous Windows, il est possible que ce dernier émette des réticences à "
 "exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
 " pourquoi et contourner les éventuels blocages."
 msgstr ""
 
-#: ../../source/telecharge_install.rst:34
+#: ../../source/telecharge_install.rst:39
 msgid ""
 "Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
 " blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"

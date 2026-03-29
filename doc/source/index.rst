@@ -77,7 +77,7 @@ Historique des versions
    Raccourcis clavier pour l'import/export."
    0.10.0, 25/02/2026, "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).
 
-   Mode MATCH: navigation dans les coups d'un match importé, avec mise en évidence du coup joué.
+   Navigation dans les matchs: parcours des coups d'un match importé, avec mise en évidence du coup joué.
 
    Panneau des matchs: liste, tri, édition inline, permutation des joueurs, assignation de tournoi.
 
@@ -85,7 +85,7 @@ Historique des versions
 
    Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée.
 
-   Collections: regroupement personnalisé de positions avec mode COLLECTION dédié.
+   Collections: regroupement personnalisé de positions.
 
    Tournois: regroupement de matchs par événement.
 
@@ -99,9 +99,9 @@ Historique des versions
 
    Export de la base de données avec sélection granulaire (matchs, collections, tournois, coups joués).
 
-   Bouton de basculement vers le mode MATCH.
+   Bouton de navigation dans les matchs.
 
-   Compte de course (pipcount) en mode MATCH.
+   Compte de course (pipcount) dans la navigation des matchs.
 
    Interface en ligne de commande (CLI) complète.
 
@@ -112,8 +112,23 @@ Historique des versions
 
    Ajout de filtres par match et par tournoi.
 
-   Effacement automatique du plateau lors du passage en mode ÉDITION."
+   Effacement automatique du plateau lors de l'ouverture du panneau de recherche."
    0.12.0, 19/03/2026, "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
+   0.13.0, 28/03/2026, "Simplification de l'interface: la navigation dans les matchs et les collections se fait directement via les panneaux.
+
+   Ligne de commande intégrée dans la barre d'état.
+
+   Panneau Console renommé en panneau Log.
+
+   Panneau EPC dédié dans le panneau inférieur.
+
+   Copier/coller de position dans le panneau de recherche.
+
+   Glisser-déposer pour réordonner les collections, les positions dans les collections, et les matchs dans les tournois.
+
+   Colonne tournoi dans le panneau des matchs avec édition inline.
+
+   Affichage automatique du panneau d'analyse après une recherche."
 
 Sommaire
 ========

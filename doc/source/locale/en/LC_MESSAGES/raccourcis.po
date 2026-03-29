@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 15:03+0700\n"
+"POT-Creation-Date: 2026-03-29 10:21+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -92,9 +92,11 @@ msgstr "CTRL-I"
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
-"txt, bgf)."
-msgstr "Import one or more positions/matches from file (xg, xgp, sgf, mat, txt, bgf)."
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, "
+"mat, txt, bgf)."
+msgstr ""
+"Import one or more positions/matches from file (xg, xgp, sgf, mat, txt, "
+"bgf)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-SHIFT-F"
@@ -179,8 +181,8 @@ msgid "PageUp, h"
 msgstr "PageUp, h"
 
 #: ../../source/raccourcis.rst:1
-msgid "Première position / Partie précédente (mode MATCH)."
-msgstr "First position / Previous game (MATCH mode)."
+msgid "Première position / Partie précédente (navigation match)."
+msgstr "First position / Previous game (match navigation)."
 
 #: ../../source/raccourcis.rst:1
 msgid "GAUCHE, k"
@@ -219,16 +221,8 @@ msgid "PageDown, l"
 msgstr "PageDown, l"
 
 #: ../../source/raccourcis.rst:1
-msgid "Dernière position / Partie suivante (mode MATCH)."
-msgstr "Last position / Next game (MATCH mode)."
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-K"
-msgstr "CTRL-K"
-
-#: ../../source/raccourcis.rst:1
-msgid "Aller à une position spécifique."
-msgstr "Go to a specific position."
+msgid "Dernière position / Partie suivante (navigation match)."
+msgstr "Last position / Next game (match navigation)."
 
 #: ../../source/raccourcis.rst:1
 msgid "r"
@@ -238,7 +232,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Load a random position."
 
-#: ../../source/raccourcis.rst:66
+#: ../../source/raccourcis.rst:65
 msgid "Affichage"
 msgstr "Display"
 
@@ -266,35 +260,27 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Show/hide pipcount."
 
-#: ../../source/raccourcis.rst:80
-msgid "Modes"
-msgstr "Modes"
+#: ../../source/raccourcis.rst:79
+msgid "Actions"
+msgstr "Actions"
 
 #: ../../source/raccourcis.rst:1
 msgid "TAB"
 msgstr "TAB"
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
-msgstr "Switch to EDIT mode / Exit MATCH mode to NORMAL."
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-TAB"
-msgstr "CTRL-TAB"
-
-#: ../../source/raccourcis.rst:1
-msgid "Basculer en mode MATCH (entrer/sortir)."
-msgstr "Toggle MATCH mode (enter/exit)."
+msgid "Ouvrir le panneau de recherche (éditeur de position)."
+msgstr "Open the search panel (position editor)."
 
 #: ../../source/raccourcis.rst:1
 msgid "ESPACE"
 msgstr "SPACE"
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode COMMAND."
-msgstr "Switch to COMMAND mode."
+msgid "Ouvrir la ligne de commande."
+msgstr "Open the command line."
 
-#: ../../source/raccourcis.rst:94
+#: ../../source/raccourcis.rst:92
 msgid "Outils"
 msgstr "Tools"
 
@@ -313,6 +299,10 @@ msgstr "CTRL-P"
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher les commentaires."
 msgstr "Show/hide the comments."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-K"
+msgstr "CTRL-K"
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher la bibliothèque de filtres."
@@ -366,7 +356,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:114
+#: ../../source/raccourcis.rst:112
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -386,7 +376,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
 
-#: ../../source/raccourcis.rst:127
+#: ../../source/raccourcis.rst:125
 msgid "Panneau historique de recherche"
 msgstr "Search History Panel"
 
@@ -424,7 +414,7 @@ msgid ""
 "panneau."
 msgstr "Deselect the search. If no search selected, close the panel."
 
-#: ../../source/raccourcis.rst:143
+#: ../../source/raccourcis.rst:141
 msgid "Panneau bibliothèque de filtres"
 msgstr "Filter Library Panel"
 
@@ -448,7 +438,7 @@ msgstr "Select next filter (when a filter is selected)."
 msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr "Deselect filter. If no filter selected, close the panel."
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:157
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -469,14 +459,16 @@ msgid "d"
 msgstr "d"
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer entre l'analyse des coups et du cube (mode MATCH uniquement)."
-msgstr "Toggle between checker and cube analysis (MATCH mode only)."
+msgid ""
+"Basculer entre l'analyse des coups et du cube (navigation match "
+"uniquement)."
+msgstr "Toggle between checker and cube analysis (match navigation only)."
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:173
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -485,8 +477,8 @@ msgid "Sélectionner un match."
 msgstr "Select a match."
 
 #: ../../source/raccourcis.rst:1
-msgid "Entrer en mode MATCH."
-msgstr "Enter MATCH mode."
+msgid "Naviguer dans le match."
+msgstr "Navigate the match."
 
 #: ../../source/raccourcis.rst:1
 msgid "Sélectionner le match précédent."
@@ -673,4 +665,13 @@ msgstr "Deselect/close the panel."
 
 #~ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 #~ msgstr "Deselect move. If no move selected, close the panel."
+
+#~ msgid "Aller à une position spécifique."
+#~ msgstr "Go to a specific position."
+
+#~ msgid "Modes"
+#~ msgstr "Modes"
+
+#~ msgid "Basculer en mode EDIT."
+#~ msgstr "Switch to EDIT mode."
 

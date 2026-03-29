@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 15:29+0700\n"
+"POT-Creation-Date: 2026-03-29 10:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -93,8 +93,8 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid ""
-"Importer une ou plusieurs positions/matchs par fichier (xg, sgf, mat, "
-"txt, bgf)."
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, "
+"mat, txt, bgf)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -180,7 +180,7 @@ msgid "PageUp, h"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Première position / Partie précédente (mode MATCH)."
+msgid "Première position / Partie précédente (navigation match)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -220,15 +220,7 @@ msgid "PageDown, l"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Dernière position / Partie suivante (mode MATCH)."
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-K"
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
-msgid "Aller à une position spécifique."
+msgid "Dernière position / Partie suivante (navigation match)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -239,7 +231,7 @@ msgstr ""
 msgid "Charger une position aléatoire."
 msgstr ""
 
-#: ../../source/raccourcis.rst:66
+#: ../../source/raccourcis.rst:65
 msgid "Affichage"
 msgstr ""
 
@@ -267,8 +259,8 @@ msgstr ""
 msgid "Afficher/cacher le compte de course."
 msgstr ""
 
-#: ../../source/raccourcis.rst:80
-msgid "Modes"
+#: ../../source/raccourcis.rst:79
+msgid "Actions"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -276,15 +268,7 @@ msgid "TAB"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
-msgid "CTRL-TAB"
-msgstr ""
-
-#: ../../source/raccourcis.rst:1
-msgid "Basculer en mode MATCH (entrer/sortir)."
+msgid "Ouvrir le panneau de recherche (éditeur de position)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -292,10 +276,10 @@ msgid "ESPACE"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer en mode COMMAND."
+msgid "Ouvrir la ligne de commande."
 msgstr ""
 
-#: ../../source/raccourcis.rst:94
+#: ../../source/raccourcis.rst:92
 msgid "Outils"
 msgstr ""
 
@@ -316,7 +300,7 @@ msgid "Afficher/cacher les commentaires."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-B"
+msgid "CTRL-K"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -340,6 +324,10 @@ msgid "Afficher/cacher le panneau des matchs."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-B"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher le panneau des collections."
 msgstr ""
 
@@ -352,6 +340,14 @@ msgid "Afficher/cacher le panneau des tournois."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-E"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau EPC."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "?"
 msgstr ""
 
@@ -359,7 +355,7 @@ msgstr ""
 msgid "Afficher/cacher l'aide."
 msgstr ""
 
-#: ../../source/raccourcis.rst:114
+#: ../../source/raccourcis.rst:112
 msgid "Ligne de commande"
 msgstr ""
 
@@ -379,7 +375,7 @@ msgstr ""
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr ""
 
-#: ../../source/raccourcis.rst:127
+#: ../../source/raccourcis.rst:125
 msgid "Panneau historique de recherche"
 msgstr ""
 
@@ -417,7 +413,7 @@ msgid ""
 "panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:143
+#: ../../source/raccourcis.rst:141
 msgid "Panneau bibliothèque de filtres"
 msgstr ""
 
@@ -441,7 +437,7 @@ msgstr ""
 msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:157
 msgid "Panneau d'analyse"
 msgstr ""
 
@@ -462,14 +458,16 @@ msgid "d"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Basculer entre l'analyse des coups et du cube (mode MATCH uniquement)."
+msgid ""
+"Basculer entre l'analyse des coups et du cube (navigation match "
+"uniquement)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:173
 msgid "Panneau des matchs"
 msgstr ""
 
@@ -478,7 +476,7 @@ msgid "Sélectionner un match."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Entrer en mode MATCH."
+msgid "Naviguer dans le match."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -698,5 +696,41 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Fermer le panneau."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Importer une ou plusieurs positions/matchs "
+#~ "par fichier (xg, sgf, mat, txt, "
+#~ "bgf)."
+#~ msgstr ""
+
+#~ msgid "Première position / Partie précédente (mode MATCH)."
+#~ msgstr ""
+
+#~ msgid "Dernière position / Partie suivante (mode MATCH)."
+#~ msgstr ""
+
+#~ msgid "Aller à une position spécifique."
+#~ msgstr ""
+
+#~ msgid "Modes"
+#~ msgstr ""
+
+#~ msgid "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
+#~ msgstr ""
+
+#~ msgid "CTRL-TAB"
+#~ msgstr ""
+
+#~ msgid "Basculer en mode MATCH (entrer/sortir)."
+#~ msgstr ""
+
+#~ msgid "Basculer en mode COMMAND."
+#~ msgstr ""
+
+#~ msgid "Basculer entre l'analyse des coups et du cube (mode MATCH uniquement)."
+#~ msgstr ""
+
+#~ msgid "Entrer en mode MATCH."
 #~ msgstr ""
 

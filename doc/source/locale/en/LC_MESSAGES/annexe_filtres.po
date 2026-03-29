@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 15:03+0700\n"
+"POT-Creation-Date: 2026-03-29 10:21+0200\n"
 "PO-Revision-Date: 2025-02-13 02:21+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -35,15 +35,16 @@ msgstr ""
 msgid ""
 "Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur"
 " utilisation permet de rechercher des positions spécifiques relativement "
-"précisément. Dans cette section, l'utilisation des filtres via le mode "
-"COMMAND est détaillée. Le mode COMMAND est accessible en appuyant sur la "
-"touche ``ESPACE``. Il permet de combiner avec l'habitude très rapidement "
-"des filtres et d'utiliser la bibliothèque de filtres."
+"précisément. Dans cette section, l'utilisation des filtres via la ligne "
+"de commande est détaillée. La ligne de commande est accessible en "
+"appuyant sur la touche ``ESPACE``. Elle permet de combiner avec "
+"l'habitude très rapidement des filtres et d'utiliser la bibliothèque de "
+"filtres."
 msgstr ""
 "Filters are at the heart of position analysis in blunderDB. Their use "
 "allows for searching specific positions with great precision. In this "
-"section, the use of filters through the COMMAND mode is detailed. The "
-"COMMAND mode can be accessed by pressing the ``SPACE`` key. It allows "
+"section, the use of filters through the command line is detailed. The "
+"command line can be accessed by pressing the ``SPACE`` key. It allows "
 "users to quickly combine filters and use the filter library with ease."
 
 #: ../../source/annexe_filtres.rst:19
@@ -55,16 +56,16 @@ msgid "Pour faire une recherche à l'aide de filtres,"
 msgstr "To perform a search using filters,"
 
 #: ../../source/annexe_filtres.rst:23
-msgid "Basculer en mode EDIT avec la touche ``TAB``."
-msgstr "Switch to EDIT mode using the ``TAB`` key."
+msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "Press the ``TAB`` key to open the search panel."
 
-#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
 msgid "Editer la position courante."
 msgstr "Edit the current position."
 
 #: ../../source/annexe_filtres.rst:25
-msgid "Basculer en mode COMMAND avec la touche ``ESPACE``."
-msgstr "Switch to COMMAND mode using the ``SPACE`` key."
+msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
+msgstr "Open the command line using the ``SPACE`` key."
 
 #: ../../source/annexe_filtres.rst:26
 msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
@@ -86,234 +87,13 @@ msgstr ""
 
 #: ../../source/annexe_filtres.rst:35
 msgid ""
-"La liste des filtres disponibles en mode COMMAND est fournie dans la "
-":numref:`cmd_filter`."
+"La liste des filtres disponibles en ligne de commande est fournie dans la"
+" :numref:`cmd_filter`."
 msgstr ""
-"The list of available filters in COMMAND mode is provided in "
+"The list of available filters in the command line is provided in "
 ":numref:`cmd_filter`."
 
 #: ../../source/annexe_filtres.rst:39
-msgid "Bibliothèque de filtres"
-msgstr "Filter Library"
-
-#: ../../source/annexe_filtres.rst:41
-msgid ""
-"La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
-"commandes de recherche afin de faciliter ses études thématiques."
-msgstr ""
-"The filter library allows the user to save search commands to facilitate "
-"their thematic studies."
-
-#: ../../source/annexe_filtres.rst:44
-msgid "Pour ajouter un filtre à la bibliothèque,"
-msgstr "To add a filter to the library,"
-
-#: ../../source/annexe_filtres.rst:46
-msgid "Basculer dans le mode EDIT."
-msgstr "Switch to EDIT mode."
-
-#: ../../source/annexe_filtres.rst:47 ../../source/annexe_filtres.rst:60
-msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
-msgstr "Open the filter library by pressing ``CTRL-K``."
-
-#: ../../source/annexe_filtres.rst:49
-msgid "Donner un nom au filtre."
-msgstr "Give a name to the filter."
-
-#: ../../source/annexe_filtres.rst:50
-msgid "Editer la commande de recherche."
-msgstr "Edit the search command."
-
-#: ../../source/annexe_filtres.rst:51
-msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
-msgstr "Save the search command using the \"Add\" button."
-
-#: ../../source/annexe_filtres.rst:54
-msgid ""
-"Lors de l'édition de la commande, il est possible d'utiliser les touches "
-"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
-msgstr ""
-"While editing the command, you can use the ``UP`` and ``DOWN`` arrow keys"
-" to navigate through the command history."
-
-#: ../../source/annexe_filtres.rst:57
-msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
-msgstr "To use a filter saved in the library,"
-
-#: ../../source/annexe_filtres.rst:59
-msgid "Basculer en mode NORMAL."
-msgstr "Switch to NORMAL mode."
-
-#: ../../source/annexe_filtres.rst:61
-msgid "Rechercher le filtre souhaité."
-msgstr "Search for the desired filter."
-
-#: ../../source/annexe_filtres.rst:62
-msgid "Double cliquer sur le filtre pour lancer la recherche."
-msgstr "Double-click on the filter to start the search."
-
-#: ../../source/annexe_filtres.rst:65
-msgid "Exemples"
-msgstr "Examples"
-
-#: ../../source/annexe_filtres.rst:67
-msgid "Voici quelques exemples d'utilisation des filtres en mode COMMAND:"
-msgstr "Here are some examples of using filters in COMMAND mode:"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Type de position"
-msgstr "Type of position"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Structure de pions"
-msgstr "Checker structure"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Commande"
-msgstr "Command"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Courses"
-msgstr "Races"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s nc"
-msgstr "s nc"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Courses petites"
-msgstr "Short races"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s nc P<70"
-msgstr "s nc P<70"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Frapper au point 1"
-msgstr "Hit to point 1"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s m\\\"6/1*\\\""
-msgstr "s m\\\"6/1*\\\""
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Backgame 1-4"
-msgstr "Backgame 1-4"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "portes 24, 21"
-msgstr "points 24, 21"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s p>35"
-msgstr "s p>35"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Décision de Take/Pass à -2 -4"
-msgstr "Take/Pass decision at 2-away 4-away"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "dés vides côté joueur du haut, score -2/-4"
-msgstr "empty dice for top player, score 2a-4a"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s s d"
-msgstr "s s d"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Envoi de too good"
-msgstr "Too Good doubles"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "dés vides côté joueur du bas"
-msgstr "empty dice for bottom player"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s d e>1000"
-msgstr "s d e>1000"
-
-#: ../../source/annexe_filtres.rst:1
-#, python-format
-msgid "Blitz avec au moins 20% de gammon"
-msgstr "Blitz with at least 20% gammon"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "portes dans le jan, hommes à la barre"
-msgstr "point in jan, checkers on the bar"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s g>20"
-msgstr "s g>20"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Erreurs du joueur 1 de plus de 40 millipoints"
-msgstr "Player 1 errors greater than 40 millipoints"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s E>40"
-msgstr "s E>40"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Position du tournoi Aachen2024"
-msgstr "Positions from Aachen2024 tournment"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s t\\\"Aachen2024\\\""
-msgstr "s t\\\"Aachen2024\\\""
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Un pion arriéré à ramener"
-msgstr "One backchecker to bring back"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s k1,1"
-msgstr "s k1,1"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Quitter le point 20"
-msgstr "Leave the 20-point anchor"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "point 20"
-msgstr "point 20"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s m\\\"20/\\\""
-msgstr "s m\\\"20/\\\""
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Prime contre prime"
-msgstr "Prime vs prime"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "indiquer les primes"
-msgstr "Set the primes"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s"
-msgstr "s"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Ace-point bear-off"
-msgstr "Ace-point bear-off"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "point 1 pour l'adversaire"
-msgstr "point 1 for the opponent"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s P<60"
-msgstr "s P<60"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "Double avec au moins 20pip d'avance"
-msgstr "Double with at least 20pip ahead"
-
-#: ../../source/annexe_filtres.rst:1
-msgid "s d p<-20"
-msgstr "s d p<-20"
-
-#: ../../source/annexe_filtres.rst:38
 msgid "Recherche dans les résultats courants"
 msgstr "Search in Current Results"
 
@@ -329,15 +109,14 @@ msgstr ""
 
 #: ../../source/annexe_filtres.rst:44
 msgid ""
-"En mode COMMAND, utiliser la commande ``ss`` suivie de filtres (ex: "
-"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne depuis le mode "
-"NORMAL, après une recherche préalable."
+"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
+"recherche préalable."
 msgstr ""
-"In COMMAND mode, use the ``ss`` command followed by filters (e.g.: "
-"``ss nc``, ``ss E>40``). The ``ss`` command works from NORMAL mode, "
-"after a prior search."
+"In the command line, use the ``ss`` command followed by filters (e.g.: "
+"``ss nc``, ``ss E>40``). The ``ss`` command works after a prior search."
 
-#: ../../source/annexe_filtres.rst:48
+#: ../../source/annexe_filtres.rst:47
 msgid ""
 "La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
 "\"Search in current results\" pour la même fonctionnalité."
@@ -345,7 +124,71 @@ msgstr ""
 "The search window (``CTRL-F``) also offers a \"Search in current "
 "results\" checkbox for the same functionality."
 
-#: ../../source/annexe_filtres.rst:107
+#: ../../source/annexe_filtres.rst:51
+msgid "Bibliothèque de filtres"
+msgstr "Filter Library"
+
+#: ../../source/annexe_filtres.rst:53
+msgid ""
+"La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
+"commandes de recherche afin de faciliter ses études thématiques."
+msgstr ""
+"The filter library allows the user to save search commands to facilitate "
+"their thematic studies."
+
+#: ../../source/annexe_filtres.rst:56
+msgid "Pour ajouter un filtre à la bibliothèque,"
+msgstr "To add a filter to the library,"
+
+#: ../../source/annexe_filtres.rst:58
+msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "Press ``TAB`` to open the search panel."
+
+#: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
+msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+msgstr "Open the filter library by pressing ``CTRL-K``."
+
+#: ../../source/annexe_filtres.rst:61
+msgid "Donner un nom au filtre."
+msgstr "Give a name to the filter."
+
+#: ../../source/annexe_filtres.rst:62
+msgid "Editer la commande de recherche."
+msgstr "Edit the search command."
+
+#: ../../source/annexe_filtres.rst:63
+msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+msgstr "Save the search command using the \"Add\" button."
+
+#: ../../source/annexe_filtres.rst:66
+msgid ""
+"Lors de l'édition de la commande, il est possible d'utiliser les touches "
+"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
+msgstr ""
+"While editing the command, you can use the ``UP`` and ``DOWN`` arrow keys"
+" to navigate through the command history."
+
+#: ../../source/annexe_filtres.rst:69
+msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
+msgstr "To use a filter saved in the library,"
+
+#: ../../source/annexe_filtres.rst:72
+msgid "Rechercher le filtre souhaité."
+msgstr "Search for the desired filter."
+
+#: ../../source/annexe_filtres.rst:73
+msgid "Double cliquer sur le filtre pour lancer la recherche."
+msgstr "Double-click on the filter to start the search."
+
+#: ../../source/annexe_filtres.rst:76
+msgid "Exemples"
+msgstr "Examples"
+
+#: ../../source/annexe_filtres.rst:78
+msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+msgstr "Here are some examples of using filters in the command line:"
+
+#: ../../source/annexe_filtres.rst:105
 msgid "Exemples de recherche dans les résultats courants:"
 msgstr "Examples of searching within current results:"
 
@@ -354,14 +197,141 @@ msgid "Scénario"
 msgstr "Scenario"
 
 #: ../../source/annexe_filtres.rst:1
+msgid "Commande"
+msgstr "Command"
+
+#: ../../source/annexe_filtres.rst:1
 msgid "Après ``s nc``, chercher les petites courses"
 msgstr "After ``s nc``, search for short races"
+
+#: ../../source/annexe_filtres.rst:1
+
+msgid "ss P<70"
+msgstr "ss P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Après ``s g>20``, ne garder que les erreurs"
 msgstr "After ``s g>20``, keep only errors"
 
 #: ../../source/annexe_filtres.rst:1
+
+msgid "ss E>40"
+msgstr "ss E>40"
+
+#: ../../source/annexe_filtres.rst:1
 msgid "Après ``s tn1``, chercher les décisions de cube"
 msgstr "After ``s tn1``, search for cube decisions"
+
+#: ../../source/annexe_filtres.rst:1
+
+msgid "ss d"
+msgstr "ss d"
+
+#~ msgid "Basculer en mode EDIT avec la touche ``TAB``."
+#~ msgstr "Switch to EDIT mode using the ``TAB`` key."
+
+#~ msgid "Basculer dans le mode EDIT."
+#~ msgstr "Switch to EDIT mode."
+
+#~ msgid "Type de position"
+#~ msgstr "Type of position"
+
+#~ msgid "Structure de pions"
+#~ msgstr "Checker structure"
+
+#~ msgid "Courses"
+#~ msgstr "Races"
+
+#~ msgid "s nc"
+#~ msgstr "s nc"
+
+#~ msgid "Courses petites"
+#~ msgstr "Short races"
+
+#~ msgid "s nc P<70"
+#~ msgstr "s nc P<70"
+
+#~ msgid "Frapper au point 1"
+#~ msgstr "Hit to point 1"
+
+#~ msgid "s m\\\"6/1*\\\""
+#~ msgstr "s m\\\"6/1*\\\""
+
+#~ msgid "Backgame 1-4"
+#~ msgstr "Backgame 1-4"
+
+#~ msgid "portes 24, 21"
+#~ msgstr "points 24, 21"
+
+#~ msgid "s p>35"
+#~ msgstr "s p>35"
+
+#~ msgid "Décision de Take/Pass à -2 -4"
+#~ msgstr "Take/Pass decision at 2-away 4-away"
+
+#~ msgid "dés vides côté joueur du haut, score -2/-4"
+#~ msgstr "empty dice for top player, score 2a-4a"
+
+#~ msgid "Envoi de too good"
+#~ msgstr "Too Good doubles"
+
+#~ msgid "dés vides côté joueur du bas"
+#~ msgstr "empty dice for bottom player"
+
+#~ msgid "s d e>1000"
+#~ msgstr "s d e>1000"
+
+#~ msgid "Blitz avec au moins 20% de gammon"
+#~ msgstr "Blitz with at least 20% gammon"
+
+#~ msgid "portes dans le jan, hommes à la barre"
+#~ msgstr "point in jan, checkers on the bar"
+
+#~ msgid "s g>20"
+#~ msgstr "s g>20"
+
+#~ msgid "Erreurs du joueur 1 de plus de 40 millipoints"
+#~ msgstr "Player 1 errors greater than 40 millipoints"
+
+#~ msgid "Position du tournoi Aachen2024"
+#~ msgstr "Positions from Aachen2024 tournment"
+
+#~ msgid "s t\\\"Aachen2024\\\""
+#~ msgstr "s t\\\"Aachen2024\\\""
+
+#~ msgid "Un pion arriéré à ramener"
+#~ msgstr "One backchecker to bring back"
+
+#~ msgid "s k1,1"
+#~ msgstr "s k1,1"
+
+#~ msgid "Quitter le point 20"
+#~ msgstr "Leave the 20-point anchor"
+
+#~ msgid "point 20"
+#~ msgstr "point 20"
+
+#~ msgid "s m\\\"20/\\\""
+#~ msgstr "s m\\\"20/\\\""
+
+#~ msgid "Prime contre prime"
+#~ msgstr "Prime vs prime"
+
+#~ msgid "indiquer les primes"
+#~ msgstr "Set the primes"
+
+#~ msgid "s"
+#~ msgstr "s"
+
+#~ msgid "Ace-point bear-off"
+#~ msgstr "Ace-point bear-off"
+
+#~ msgid "point 1 pour l'adversaire"
+#~ msgstr "point 1 for the opponent"
+
+#~ msgid "Double avec au moins 20pip d'avance"
+#~ msgstr "Double with at least 20pip ahead"
+
+#~ msgid "s d p<-20"
+#~ msgstr "s d p<-20"
 

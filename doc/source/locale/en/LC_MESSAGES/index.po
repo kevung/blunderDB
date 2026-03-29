@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-06 00:00+0700\n"
+"POT-Creation-Date: 2026-03-29 10:21+0200\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -271,16 +271,16 @@ msgid ""
 "Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
 "(MAT/TXT) et BGBlitz (BGF/TXT)."
 msgstr ""
-"Match import from eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) "
-"and BGBlitz (BGF/TXT)."
+"Match import from eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
+"(MAT/TXT) and BGBlitz (BGF/TXT)."
 
 #: ../../source/index.rst:3
 msgid ""
-"Mode MATCH: navigation dans les coups d'un match importé, avec mise en "
-"évidence du coup joué."
+"Navigation dans les matchs: parcours des coups d'un match importé, avec "
+"mise en évidence du coup joué."
 msgstr ""
-"MATCH mode: navigate through moves of an imported match, with played move"
-" highlighting."
+"Match navigation: browse through moves of an imported match, with played "
+"move highlighting."
 
 #: ../../source/index.rst:5
 msgid ""
@@ -301,10 +301,8 @@ msgid ""
 msgstr "EPC (Effective Pip Count) calculator with built-in GNUbg bearoff database."
 
 #: ../../source/index.rst:11
-msgid ""
-"Collections: regroupement personnalisé de positions avec mode COLLECTION "
-"dédié."
-msgstr "Collections: custom position grouping with dedicated COLLECTION mode."
+msgid "Collections: regroupement personnalisé de positions."
+msgstr "Collections: custom position grouping."
 
 #: ../../source/index.rst:13
 msgid "Tournois: regroupement de matchs par événement."
@@ -337,12 +335,12 @@ msgstr ""
 "tournaments, played moves)."
 
 #: ../../source/index.rst:25
-msgid "Bouton de basculement vers le mode MATCH."
-msgstr "Toggle button for MATCH mode."
+msgid "Bouton de navigation dans les matchs."
+msgstr "Match navigation button."
 
 #: ../../source/index.rst:27
-msgid "Compte de course (pipcount) en mode MATCH."
-msgstr "Pipcount display in MATCH mode."
+msgid "Compte de course (pipcount) dans la navigation des matchs."
+msgstr "Pipcount display in match navigation."
 
 #: ../../source/index.rst:29
 msgid "Interface en ligne de commande (CLI) complète."
@@ -373,8 +371,11 @@ msgid "Ajout de filtres par match et par tournoi."
 msgstr "Add match and tournament filters."
 
 #: ../../source/index.rst:5
-msgid "Effacement automatique du plateau lors du passage en mode ÉDITION."
-msgstr "Automatic board clearing when switching to EDIT mode."
+
+msgid ""
+"Effacement automatique du plateau lors de l'ouverture du panneau de "
+"recherche."
+msgstr "Automatic board clearing when opening the search panel."
 
 #: ../../source/index.rst:1
 msgid "0.12.0"
@@ -388,15 +389,64 @@ msgstr "March 19, 2026"
 msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
 msgstr "Import eXtreme Gammon position files (XGP) with analysis."
 
-#: ../../source/index.rst:113
+#: ../../source/index.rst:1
+msgid "0.13.0"
+msgstr "0.13.0"
+
+#: ../../source/index.rst:1
+msgid "28/03/2026"
+msgstr "March 28, 2026"
+
+#: ../../source/index.rst:1
+
+msgid ""
+"Simplification de l'interface: la navigation dans les matchs et les "
+"collections se fait directement via les panneaux."
+msgstr ""
+"Interface simplification: match and collection navigation is now done "
+"directly through panels."
+
+#: ../../source/index.rst:3
+msgid "Ligne de commande intégrée dans la barre d'état."
+msgstr "Command line integrated into the status bar."
+
+#: ../../source/index.rst:5
+msgid "Panneau Console renommé en panneau Log."
+msgstr "Console panel renamed to Log panel."
+
+#: ../../source/index.rst:7
+msgid "Panneau EPC dédié dans le panneau inférieur."
+msgstr "Dedicated EPC panel in the bottom panel."
+
+#: ../../source/index.rst:9
+msgid "Copier/coller de position dans le panneau de recherche."
+msgstr "Copy/paste position in the search panel."
+
+#: ../../source/index.rst:11
+msgid ""
+"Glisser-déposer pour réordonner les collections, les positions dans les "
+"collections, et les matchs dans les tournois."
+msgstr ""
+"Drag and drop to reorder collections, positions within collections, and "
+"matches within tournaments."
+
+#: ../../source/index.rst:13
+msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
+msgstr "Tournament column in the match panel with inline editing."
+
+#: ../../source/index.rst:15
+msgid "Affichage automatique du panneau d'analyse après une recherche."
+msgstr "Automatic display of the analysis panel after a search."
+
+#: ../../source/index.rst:134
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:143
+#: ../../source/index.rst:164
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:145
+#: ../../source/index.rst:166
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -404,7 +454,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:148
+#: ../../source/index.rst:169
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -419,41 +469,41 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:155
+#: ../../source/index.rst:176
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:157
+#: ../../source/index.rst:178
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:159
+#: ../../source/index.rst:180
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:161
+#: ../../source/index.rst:182
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:163
+#: ../../source/index.rst:184
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:165
+#: ../../source/index.rst:186
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:167
+#: ../../source/index.rst:188
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:171
+#: ../../source/index.rst:192
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:173
+#: ../../source/index.rst:194
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -461,19 +511,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:175
+#: ../../source/index.rst:196
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:177
+#: ../../source/index.rst:198
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:180
+#: ../../source/index.rst:201
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:182
+#: ../../source/index.rst:203
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -481,7 +531,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:206
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -492,7 +542,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:190
+#: ../../source/index.rst:211
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-25 15:29+0700\n"
+"POT-Creation-Date: 2026-03-29 10:21+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -96,7 +96,7 @@ msgid "epc"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "Ouvre le calculateur EPC (Effective Pip Count)."
+msgid "Ouvre le panneau EPC (Effective Pip Count)."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -180,7 +180,7 @@ msgid "Ouvre la table des valeurs de gammon avec videau à 4."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:38
-msgid "Mode NORMAL"
+msgid "Positions et navigation"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -189,8 +189,8 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid ""
-"Importe une ou plusieurs positions/matchs par fichier (xg, sgf, mat, txt,"
-" bgf)."
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat,"
+" txt, bgf)."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -278,11 +278,11 @@ msgid "m"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "Basculer en mode MATCH (dernier match visité)."
+msgid "Naviguer dans le dernier match visité."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:62
-msgid "Mode EDIT"
+msgid "Édition et recherche"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -309,17 +309,25 @@ msgstr ""
 msgid "Chercher des positions avec des filtres."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:78
+#: ../../source/cmd_mode.rst:1
+msgid "ss"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Chercher parmi les positions actuellement filtrées."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:79
 msgid "Filtres de recherche"
 msgstr ""
 
-#: ../../source/cmd_mode.rst:80
+#: ../../source/cmd_mode.rst:81
 msgid ""
 "Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, "
 "c'est-à-dire après le début de commande ``s``."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:85
+#: ../../source/cmd_mode.rst:86
 msgid ""
 "Dans la recherche de positions, par défaut, blunderDB prend en compte la "
 "structure de pions courante, ignore la position du videau, du score et "
@@ -327,29 +335,36 @@ msgid ""
 " il faut le mentionner explicitement dans la recherche."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:91
+#: ../../source/cmd_mode.rst:92
+msgid ""
+"La commande de recherche ``s`` est disponible dans le panneau de "
+"recherche (touche ``TAB``). La commande ``ss`` permet de chercher parmi "
+"les résultats actuellement filtrés."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:97
 msgid ""
 "blunderDB considère qu'un pion arriéré (backchecker) est un pion situé "
 "entre le point 24 et le point 19."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:95
+#: ../../source/cmd_mode.rst:101
 msgid ""
 "blunderDB considère que le nombre de pions dans la zone est le nombre de "
 "pions situés entre le point 12 et le point 1."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:99
+#: ../../source/cmd_mode.rst:105
 msgid ""
 "blunderDB considère que l'outfield s'étend entre le point 18 et le point "
 "7."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:102
+#: ../../source/cmd_mode.rst:108
 msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:105
+#: ../../source/cmd_mode.rst:111
 msgid ""
 "Les paramètres pour filtrer des positions peuvent être arbitrairement "
 "combinés."
@@ -945,13 +960,45 @@ msgstr ""
 msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:187
+#: ../../source/cmd_mode.rst:1
+msgid "max"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans le match d'identifiant x (ex: ma3)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "max,y"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans les matchs d'identifiants x à y (ex: ma2,5)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tnx"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "tnx,y"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:197
 msgid ""
 "Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
 "fortiori* de filtrer les positions en fonction du type de décision (`d`)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:190
+#: ../../source/cmd_mode.rst:200
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -960,7 +1007,21 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:196
+#: ../../source/cmd_mode.rst:206
+msgid ""
+"Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
+"``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
+"même principe s'applique pour les tournois avec ``tn``."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:210
+msgid ""
+"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
+"des matchs du tournoi concerné. Les identifiants des matchs et des "
+"tournois sont visibles dans les colonnes ID des panneaux correspondants."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:214
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -970,7 +1031,7 @@ msgid ""
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:206
+#: ../../source/cmd_mode.rst:224
 msgid "Commandes diverses"
 msgstr ""
 
@@ -982,7 +1043,7 @@ msgstr ""
 msgid "Efface l'historique des commandes."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:215
+#: ../../source/cmd_mode.rst:233
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
@@ -1443,5 +1504,23 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Migre la base de données de la version 1.2 à la version 1.3."
+#~ msgstr ""
+
+#~ msgid "Ouvre le calculateur EPC (Effective Pip Count)."
+#~ msgstr ""
+
+#~ msgid "Mode NORMAL"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Importe une ou plusieurs positions/matchs "
+#~ "par fichier (xg, sgf, mat, txt, "
+#~ "bgf)."
+#~ msgstr ""
+
+#~ msgid "Basculer en mode MATCH (dernier match visité)."
+#~ msgstr ""
+
+#~ msgid "Mode EDIT"
 #~ msgstr ""
 
