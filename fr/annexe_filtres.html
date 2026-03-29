@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7. Annexe: Utilisation avancée des filtres &mdash; Documentation blunderDB 0.12.0</title>
+  <title>7. Annexe: Utilisation avancée des filtres &mdash; Documentation blunderDB 0.13.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e9405df3"></script>
+      <script src="_static/documentation_options.js?v=989517aa"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -98,17 +98,17 @@ exploiter pleinement les fonctionnalités de recherche de positions.</p>
 </div>
 <p>Les filtres sont au coeur de l’analyse des positions dans blunderDB.
 Leur utilisation permet de rechercher des positions spécifiques relativement
-précisément. Dans cette section, l’utilisation des filtres via le mode COMMAND
-est détaillée. Le mode COMMAND est accessible en appuyant sur la touche <code class="docutils literal notranslate"><span class="pre">ESPACE</span></code>.
-Il permet de combiner avec l’habitude très rapidement des filtres et d’utiliser
-la bibliothèque de filtres.</p>
+précisément. Dans cette section, l’utilisation des filtres via la ligne de
+commande est détaillée. La ligne de commande est accessible en appuyant sur
+la touche <code class="docutils literal notranslate"><span class="pre">ESPACE</span></code>. Elle permet de combiner avec l’habitude très rapidement
+des filtres et d’utiliser la bibliothèque de filtres.</p>
 <section id="recherche-de-positions-en-ligne-de-commande">
 <h2><span class="section-number">7.1. </span>Recherche de positions en ligne de commande<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Lien vers cette rubrique"></a></h2>
 <p>Pour faire une recherche à l’aide de filtres,</p>
 <ol class="arabic simple">
-<li><p>Basculer en mode EDIT avec la touche <code class="docutils literal notranslate"><span class="pre">TAB</span></code>.</p></li>
+<li><p>Appuyer sur la touche <code class="docutils literal notranslate"><span class="pre">TAB</span></code> pour ouvrir le panneau de recherche.</p></li>
 <li><p>Editer la position courante.</p></li>
-<li><p>Basculer en mode COMMAND avec la touche <code class="docutils literal notranslate"><span class="pre">ESPACE</span></code>.</p></li>
+<li><p>Ouvrir la ligne de commande avec la touche <code class="docutils literal notranslate"><span class="pre">ESPACE</span></code>.</p></li>
 <li><p>Utiliser la commande <code class="docutils literal notranslate"><span class="pre">s</span></code> suivie éventuellement de filtres.</p></li>
 <li><p>Lancer la recherche avec la touche <code class="docutils literal notranslate"><span class="pre">ENTREE</span></code>.</p></li>
 </ol>
@@ -120,7 +120,7 @@ risque de filtrer abusivement des structures de pions.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>La liste des filtres disponibles en mode COMMAND est fournie dans la
+<p>La liste des filtres disponibles en ligne de commande est fournie dans la
 <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Section 4.4</span></a>.</p>
 </div>
 </section>
@@ -128,9 +128,8 @@ risque de filtrer abusivement des structures de pions.</p>
 <h2><span class="section-number">7.2. </span>Recherche dans les résultats courants<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Lien vers cette rubrique"></a></h2>
 <p>Il est possible d’affiner une recherche en cherchant parmi les positions
 actuellement filtrées. Cela permet de restreindre progressivement les résultats.</p>
-<p>En mode COMMAND, utiliser la commande <code class="docutils literal notranslate"><span class="pre">ss</span></code> suivie de filtres (ex: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>,
-<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). La commande <code class="docutils literal notranslate"><span class="pre">ss</span></code> fonctionne depuis le mode NORMAL,
-après une recherche préalable.</p>
+<p>En ligne de commande, utiliser la commande <code class="docutils literal notranslate"><span class="pre">ss</span></code> suivie de filtres (ex: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). La commande <code class="docutils literal notranslate"><span class="pre">ss</span></code> fonctionne après une recherche préalable.</p>
 <p>La fenêtre de recherche (<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) propose également une case à cocher
 « Search in current results » pour la même fonctionnalité.</p>
 </section>
@@ -140,7 +139,7 @@ après une recherche préalable.</p>
 afin de faciliter ses études thématiques.</p>
 <p>Pour ajouter un filtre à la bibliothèque,</p>
 <ol class="arabic simple">
-<li><p>Basculer dans le mode EDIT.</p></li>
+<li><p>Appuyer sur <code class="docutils literal notranslate"><span class="pre">TAB</span></code> pour ouvrir le panneau de recherche.</p></li>
 <li><p>Ouvrir la bibliothèque de filtres en appuyant sur <code class="docutils literal notranslate"><span class="pre">CTRL-K</span></code>.</p></li>
 <li><p>Editer la position courante.</p></li>
 <li><p>Donner un nom au filtre.</p></li>
@@ -154,7 +153,6 @@ afin de faciliter ses études thématiques.</p>
 </div>
 <p>Pour utiliser un filtre enregistré dans la bibliothèque,</p>
 <ol class="arabic simple">
-<li><p>Basculer en mode NORMAL.</p></li>
 <li><p>Ouvrir la bibliothèque de filtres en appuyant sur <code class="docutils literal notranslate"><span class="pre">CTRL-K</span></code>.</p></li>
 <li><p>Rechercher le filtre souhaité.</p></li>
 <li><p>Double cliquer sur le filtre pour lancer la recherche.</p></li>
@@ -162,7 +160,7 @@ afin de faciliter ses études thématiques.</p>
 </section>
 <section id="exemples">
 <h2><span class="section-number">7.4. </span>Exemples<a class="headerlink" href="#exemples" title="Lien vers cette rubrique"></a></h2>
-<p>Voici quelques exemples d’utilisation des filtres en mode COMMAND:</p>
+<p>Voici quelques exemples d’utilisation des filtres en ligne de commande:</p>
 <p>Exemples de recherche dans les résultats courants:</p>
 <table class="docutils align-center">
 <colgroup>

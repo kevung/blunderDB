@@ -51,13 +51,12 @@ Navigation
    :align: center
 
    "CTRL-R", "Recharger toutes les positions de la base de données."
-   "PageUp, h", "Première position / Partie précédente (mode MATCH)."
+   "PageUp, h", "Première position / Partie précédente (navigation match)."
    "GAUCHE, k", "Position précédente."
    "DROITE, j", "Position suivante."
    "HAUT, k", "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
    "BAS, j", "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
-   "PageDown, l", "Dernière position / Partie suivante (mode MATCH)."
-   "CTRL-K", "Aller à une position spécifique."
+   "PageDown, l", "Dernière position / Partie suivante (navigation match)."
    "r", "Charger une position aléatoire."
 
 .. _raccourcis_affichage:
@@ -76,17 +75,16 @@ Affichage
 
 .. _raccourcis_modes:
 
-Modes
------
+Actions
+-------
 
 .. csv-table::
    :header: "Raccourci", "Action"
    :widths: 7, 20
    :align: center
 
-   "TAB", "Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL."
-   "CTRL-TAB", "Basculer en mode MATCH (entrer/sortir)."
-   "ESPACE", "Basculer en mode COMMAND."
+   "TAB", "Ouvrir le panneau de recherche (éditeur de position)."
+   "ESPACE", "Ouvrir la ligne de commande."
 
 .. _raccourcis_outils:
 
@@ -166,7 +164,7 @@ Panneau d'analyse
    "Clic", "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
    "HAUT, k", "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
    "BAS, j", "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
-   "d", "Basculer entre l'analyse des coups et du cube (mode MATCH uniquement)."
+   "d", "Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
    "Esc", "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 
 .. _raccourcis_match_panel:
@@ -180,7 +178,7 @@ Panneau des matchs
    :align: center
 
    "Clic", "Sélectionner un match."
-   "Double-clic", "Entrer en mode MATCH."
+   "Double-clic", "Naviguer dans le match."
    "HAUT, k", "Sélectionner le match précédent."
    "BAS, j", "Sélectionner le match suivant."
    "ENTREE", "Charger le match sélectionné."

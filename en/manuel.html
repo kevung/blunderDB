@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>2. Manual &mdash; blunderDB 0.12.0 documentation</title>
+  <title>2. Manual &mdash; blunderDB 0.13.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=61ccb1f1"></script>
+      <script src="_static/documentation_options.js?v=1019fba8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -51,14 +51,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">2. Manual</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Main Interactions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#modes">2.3. Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.4. Description of the interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-normal">2.5. NORMAL mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-edit">2.6. EDIT mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-command">2.7. COMMAND mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-match">2.8. MATCH mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-epc">2.9. EPC mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#le-mode-collection">2.10. COLLECTION mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Description of the interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.4. Browsing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.5. Editing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.6. The command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-matchs">2.7. Match navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculateur-epc">2.8. EPC Calculator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-collections">2.9. Collection navigation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
@@ -114,42 +113,31 @@
 <li><p>organize positions into collections,</p></li>
 <li><p>organize matches into tournaments.</p></li>
 </ul>
-</section>
-<section id="modes">
-<h2><span class="section-number">2.3. </span>Modes<a class="headerlink" href="#modes" title="Link to this heading"></a></h2>
-<p>To do this, the user switches to dedicated modes for:</p>
-<ul class="simple">
-<li><p>navigation and viewing positions (NORMAL mode),</p></li>
-<li><p>editing positions (EDIT mode),</p></li>
-<li><p>editing a query to filter positions (COMMAND mode or search window),</p></li>
-<li><p>navigating through the moves of an imported match (MATCH mode),</p></li>
-<li><p>computing the EPC (Effective Pip Count) from a position (EPC mode),</p></li>
-<li><p>browsing a collection of positions (COLLECTION mode).</p></li>
-</ul>
 <p>The user can freely tag positions and annotate them with comments.</p>
-<p>In the following sections of the manual, the graphical interface and the main modes of blunderDB are described.</p>
 </section>
 <section id="description-de-l-interface">
-<h2><span class="section-number">2.4. </span>Description of the interface<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.3. </span>Description of the interface<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
 <p>The interface of blunderDB is composed, from top to bottom, of:</p>
 <ul class="simple">
 <li><p>[top] the toolbar, which gathers all the main operations that can be performed on the database,</p></li>
 <li><p>[in the middle] the main display area, which allows for displaying or editing backgammon positions,</p></li>
-<li><p>[at the bottom] the status bar, which provides various information about the database or the current position.</p></li>
+<li><p>[at the bottom] the status bar, which provides various information about the database or the current position, and integrates the command line.</p></li>
 </ul>
 <p>Panels can be displayed to:</p>
 <ul class="simple">
 <li><p>display the analysis data associated with the current position from eXtreme Gammon (XG), GNUbg, or BGBlitz,</p></li>
 <li><p>display, add, or modify comments,</p></li>
-<li><p>display the list of imported matches (match panel),</p></li>
+<li><p>display the list of imported matches and navigate through the moves of a match (match panel),</p></li>
 <li><p>display and manage position collections (collections panel),</p></li>
 <li><p>display and manage tournaments (tournaments panel),</p></li>
+<li><p>compute the EPC (Effective Pip Count) of a bearoff position (EPC panel),</p></li>
+<li><p>display the database metadata (metadata panel),</p></li>
 <li><p>display the filter library,</p></li>
-<li><p>display the search history.</p></li>
+<li><p>display the search history,</p></li>
+<li><p>display the operation log (log panel).</p></li>
 </ul>
 <p>Modal windows can be displayed to:</p>
 <ul class="simple">
-<li><p>[EDIT mode only] set search filters,</p></li>
 <li><p>display the blunderDB help,</p></li>
 <li><p>configure database export settings,</p></li>
 <li><p>display the database metadata.</p></li>
@@ -164,18 +152,18 @@
 </ul>
 <p>The status bar is structured from left to right with the following information:</p>
 <ul class="simple">
-<li><p>the current mode (NORMAL, EDIT, COMMAND),</p></li>
+<li><p>the command line, accessible by pressing the <em>SPACE</em> key,</p></li>
 <li><p>an informational message related to an operation performed by the user,</p></li>
-<li><p>the index of the current position, followed by the number of positions in the current library.</p></li>
+<li><p>the index of the current position, followed by the number of positions in the current library (or move/game info when navigating a match).</p></li>
 </ul>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
 </div>
 </section>
-<section id="le-mode-normal">
-<span id="mode-normal"></span><h2><span class="section-number">2.5. </span>NORMAL mode<a class="headerlink" href="#le-mode-normal" title="Link to this heading"></a></h2>
-<p>NORMAL mode is the default mode of blunderDB. It is used for:</p>
+<section id="navigation-dans-les-positions">
+<span id="mode-normal"></span><h2><span class="section-number">2.4. </span>Browsing positions<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<p>By default, blunderDB allows you to:</p>
 <ul class="simple">
 <li><p>scrolling through the different positions in the current library,</p></li>
 <li><p>displaying the analysis information associated with a position.</p></li>
@@ -186,29 +174,29 @@
 <p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
 </div>
 </section>
-<section id="le-mode-edit">
-<span id="mode-edit"></span><h2><span class="section-number">2.6. </span>EDIT mode<a class="headerlink" href="#le-mode-edit" title="Link to this heading"></a></h2>
-<p>EDIT mode allows you to edit a position with the option to either add it to the database or define the type of position to search for. EDIT mode is activated by pressing the <em>TAB</em> key. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse (see <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Edit a position</span></a>).</p>
+<section id="edition-de-positions">
+<span id="mode-edit"></span><h2><span class="section-number">2.5. </span>Editing positions<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<p>Pressing the <em>TAB</em> key opens the search panel and allows editing a position on the board to add it to the database or to define a position structure to search for. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse (see <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Edit a position</span></a>).</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
 </div>
 </section>
-<section id="le-mode-command">
-<span id="mode-command"></span><h2><span class="section-number">2.7. </span>COMMAND mode<a class="headerlink" href="#le-mode-command" title="Link to this heading"></a></h2>
-<p>COMMAND mode allows you to perform all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions based on filters… After getting familiar with the interface, it is recommended to gradually use this mode for a powerful and smooth use of blunderDB, especially for position search functionalities.</p>
-<p>To switch to COMMAND mode from any other mode, press the <em>SPACE</em> key. To submit a query and exit COMMAND mode, press the <em>ENTER</em> key.</p>
+<section id="la-ligne-de-commande">
+<span id="mode-command"></span><h2><span class="section-number">2.6. </span>The command line<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>The command line, integrated into the status bar, allows you to perform all the functionalities of blunderDB available in the graphical interface: general operations on the database, position navigation, displaying analysis and/or comments, searching for positions based on filters… After getting familiar with the interface, it is recommended to gradually use the command line for a powerful and smooth use of blunderDB, especially for position search functionalities.</p>
+<p>To open the command line, press the <em>SPACE</em> key. To submit a query and close the command line, press the <em>ENTER</em> key.</p>
 <p>blunderDB executes the queries sent by the user as long as they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required from the user.</p>
-<p>To refine a search among the currently filtered positions, use the <code class="docutils literal notranslate"><span class="pre">ss</span></code> command followed by filters (e.g.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). The <code class="docutils literal notranslate"><span class="pre">ss</span></code> command works from NORMAL mode, after a prior search. The search window (<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) also offers a “Search in current results” checkbox for the same functionality.</p>
+<p>To refine a search among the currently filtered positions, use the <code class="docutils literal notranslate"><span class="pre">ss</span></code> command followed by filters (e.g.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). The <code class="docutils literal notranslate"><span class="pre">ss</span></code> command works after a prior search. The search window (<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) also offers a “Search in current results” checkbox for the same functionality.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Refer to <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> for the list of available commands in COMMAND mode.</p>
+<p>Refer to <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a> for the list of available commands in the command line.</p>
 </div>
 </section>
-<section id="le-mode-match">
-<span id="mode-match"></span><h2><span class="section-number">2.8. </span>MATCH mode<a class="headerlink" href="#le-mode-match" title="Link to this heading"></a></h2>
-<p>MATCH mode allows you to navigate through the moves of an imported match. It is activated by pressing <em>CTRL-TAB</em> or by executing the <code class="docutils literal notranslate"><span class="pre">m</span></code> command.</p>
-<p>In this mode, the user can:</p>
+<section id="navigation-dans-les-matchs">
+<span id="mode-match"></span><h2><span class="section-number">2.7. </span>Match navigation<a class="headerlink" href="#navigation-dans-les-matchs" title="Link to this heading"></a></h2>
+<p>Match navigation allows you to browse through the moves of an imported match. It is activated from the match panel (<em>CTRL-T</em>) by double-clicking on a match or pressing <em>ENTER</em>. The <code class="docutils literal notranslate"><span class="pre">m</span></code> command also allows resuming navigation in the last visited match.</p>
+<p>The user can:</p>
 <ul class="simple">
 <li><p>browse through the moves of a match using the <em>LEFT</em> and <em>RIGHT</em> keys,</p></li>
 <li><p>switch between games using the <em>PageUp</em> and <em>PageDown</em> keys,</p></li>
@@ -216,16 +204,16 @@
 <li><p>toggle between checker move and cube analysis with the <em>d</em> key,</p></li>
 <li><p>see the actually played move highlighted in the analysis.</p></li>
 </ul>
-<p>When the user enters MATCH mode, the last visited match is automatically loaded. The last visited position in each match is saved and restored.</p>
+<p>The last visited position in each match is saved and restored automatically.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>Refer to <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Keyboard shortcuts</span></a> for available shortcuts.</p>
 </div>
 </section>
-<section id="le-mode-epc">
-<span id="mode-epc"></span><h2><span class="section-number">2.9. </span>EPC mode<a class="headerlink" href="#le-mode-epc" title="Link to this heading"></a></h2>
-<p>EPC mode allows you to calculate the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing <em>CTRL-E</em>, clicking the EPC tab in the bottom panel, executing the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command, or clicking the corresponding button in the toolbar.</p>
-<p>In this mode, the user edits the checker positions in the home board (last 6 points) and the following information is displayed in real time in the dedicated EPC panel for each player:</p>
+<section id="calculateur-epc">
+<span id="mode-epc"></span><h2><span class="section-number">2.8. </span>EPC Calculator<a class="headerlink" href="#calculateur-epc" title="Link to this heading"></a></h2>
+<p>The EPC panel allows computing the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing <em>CTRL-E</em>, clicking the EPC tab in the bottom panel, or executing the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command.</p>
+<p>In this panel, the user edits the checker positions in the home board (last 6 points) and the following information is displayed in real time in the dedicated EPC panel for each player:</p>
 <ul class="simple">
 <li><p>the EPC (Effective Pip Count),</p></li>
 <li><p>the average number of rolls needed (Mean Rolls),</p></li>
@@ -234,16 +222,16 @@
 <li><p>the wastage (difference between the EPC and the pip count).</p></li>
 </ul>
 <p>When both players have checkers in their home board, a comparison section shows the EPC and pip count differences.</p>
-<p>To exit EPC mode, press <em>CTRL-E</em> or switch to another tab.</p>
+<p>To close the EPC panel, press <em>CTRL-E</em> or switch to another tab.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The computation relies on the built-in 6-point bearoff database from GNUbg.</p>
 </div>
 </section>
-<section id="le-mode-collection">
-<span id="mode-collection"></span><h2><span class="section-number">2.10. </span>COLLECTION mode<a class="headerlink" href="#le-mode-collection" title="Link to this heading"></a></h2>
-<p>COLLECTION mode allows you to browse the positions of a collection. It is activated by double-clicking on a collection in the collections panel (<em>CTRL-K</em>).</p>
-<p>In this mode, the user can navigate through the positions of the collection using the <em>LEFT</em> and <em>RIGHT</em> keys. To exit COLLECTION mode and return to NORMAL mode, press <em>TAB</em>.</p>
+<section id="navigation-dans-les-collections">
+<span id="mode-collection"></span><h2><span class="section-number">2.9. </span>Collection navigation<a class="headerlink" href="#navigation-dans-les-collections" title="Link to this heading"></a></h2>
+<p>Collection navigation allows you to browse the positions of a collection. It is activated by double-clicking on a collection in the collections panel (<em>CTRL-B</em>).</p>
+<p>The user can navigate through the positions of the collection using the <em>LEFT</em> and <em>RIGHT</em> keys. The order of collections and positions within collections can be changed by drag and drop.</p>
 </section>
 </section>
 

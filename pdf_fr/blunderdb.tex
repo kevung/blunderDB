@@ -69,7 +69,7 @@
 
 \title{blunderDB}
 \date{29 mars 2026}
-\release{0.12.0}
+\release{0.13.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
@@ -358,7 +358,7 @@ Raccourcis clavier pour l’import/export.
 Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).
 
 \sphinxAtStartPar
-Mode MATCH: navigation dans les coups d’un match importé, avec mise en évidence du coup joué.
+Navigation dans les matchs: parcours des coups d’un match importé, avec mise en évidence du coup joué.
 
 \sphinxAtStartPar
 Panneau des matchs: liste, tri, édition inline, permutation des joueurs, assignation de tournoi.
@@ -370,7 +370,7 @@ Import par dossier récursif et import par glisser\sphinxhyphen{}déposer.
 Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée.
 
 \sphinxAtStartPar
-Collections: regroupement personnalisé de positions avec mode COLLECTION dédié.
+Collections: regroupement personnalisé de positions.
 
 \sphinxAtStartPar
 Tournois: regroupement de matchs par événement.
@@ -391,10 +391,10 @@ Filtre d’erreurs/blunders du joueur 1 dans les recherches.
 Export de la base de données avec sélection granulaire (matchs, collections, tournois, coups joués).
 
 \sphinxAtStartPar
-Bouton de basculement vers le mode MATCH.
+Bouton de navigation dans les matchs.
 
 \sphinxAtStartPar
-Compte de course (pipcount) en mode MATCH.
+Compte de course (pipcount) dans la navigation des matchs.
 
 \sphinxAtStartPar
 Interface en ligne de commande (CLI) complète.
@@ -425,7 +425,7 @@ Filtre de recherche dans les positions courantes.
 Ajout de filtres par match et par tournoi.
 
 \sphinxAtStartPar
-Effacement automatique du plateau lors du passage en mode ÉDITION.
+Effacement automatique du plateau lors de l’ouverture du panneau de recherche.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -442,6 +442,43 @@ Effacement automatique du plateau lors du passage en mode ÉDITION.
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
 Import de fichiers de position eXtreme Gammon (XGP) avec analyse.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.13.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+28/03/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Simplification de l’interface: la navigation dans les matchs et les collections se fait directement via les panneaux.
+
+\sphinxAtStartPar
+Ligne de commande intégrée dans la barre d’état.
+
+\sphinxAtStartPar
+Panneau Console renommé en panneau Log.
+
+\sphinxAtStartPar
+Panneau EPC dédié dans le panneau inférieur.
+
+\sphinxAtStartPar
+Copier/coller de position dans le panneau de recherche.
+
+\sphinxAtStartPar
+Glisser\sphinxhyphen{}déposer pour réordonner les collections, les positions dans les collections, et les matchs dans les tournois.
+
+\sphinxAtStartPar
+Colonne tournoi dans le panneau des matchs avec édition inline.
+
+\sphinxAtStartPar
+Affichage automatique du panneau d’analyse après une recherche.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -466,15 +503,15 @@ La dernière version de blunderDB est disponible en licence MIT:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.12.0.exe}
+pour Windows: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-windows-0.13.0.exe}
 
 \item {} 
 \sphinxAtStartPar
-pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.12.0}
+pour Linux: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-0.13.0}
 
 \item {} 
 \sphinxAtStartPar
-pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.12.0.zip}
+pour Mac: \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-macos-0.13.0.zip}
 
 \end{itemize}
 
@@ -499,7 +536,7 @@ téléchargement, exécuter dans un terminal la commande \sphinxcode{\sphinxupqu
 Sous Linux, si vous obtenez l’erreur \sphinxcode{\sphinxupquote{libwebkit2gtk\sphinxhyphen{}4.0.so.37:
 cannot open shared object file}}, votre distribution utilise
 webkit2gtk\sphinxhyphen{}4.1 au lieu de webkit2gtk\sphinxhyphen{}4.0. Téléchargez la version
-dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.12.0}
+dédiée : \sphinxurl{https://github.com/kevung/blunderDB/releases/latest/download/blunderDB-linux-webkit2gtk-4.1-0.13.0}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{warning}{Avertissement:}
@@ -576,45 +613,9 @@ organiser les matchs en tournois.
 
 \end{itemize}
 
-
-\subsection{Modes}
-\label{\detokenize{manuel:modes}}
-\sphinxAtStartPar
-Pour ce faire, l’utilisateur bascule dans des modes dédiés pour:
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-la navigation et la visualisation de positions (mode NORMAL),
-
-\item {} 
-\sphinxAtStartPar
-l’édition de positions (mode EDIT),
-
-\item {} 
-\sphinxAtStartPar
-l’édition d’une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche),
-
-\item {} 
-\sphinxAtStartPar
-la navigation dans les coups d’un match importé (mode MATCH),
-
-\item {} 
-\sphinxAtStartPar
-le calcul de l’EPC (Effective Pip Count) à partir d’une position (mode EPC),
-
-\item {} 
-\sphinxAtStartPar
-la navigation dans une collection de positions (mode COLLECTION).
-
-\end{itemize}
-
 \sphinxAtStartPar
 L’utilisateur peut étiqueter librement les positions à l’aide de tags et les
 annoter via des commentaires.
-
-\sphinxAtStartPar
-Dans la suite du manuel, il est décrit l’interface graphique ainsi que
-les principaux modes de blunderDB.
 
 
 \subsection{Description de l’interface}
@@ -635,7 +636,7 @@ positions de backgammon,
 \item {} 
 \sphinxAtStartPar
 {[}en bas{]} la barre d’état, qui présente différentes informations sur la
-base de données ou la position courante.
+base de données ou la position courante, et intègre la ligne de commande.
 
 \end{itemize}
 
@@ -653,7 +654,7 @@ afficher, ajouter ou modifier des commentaires,
 
 \item {} 
 \sphinxAtStartPar
-afficher la liste des matchs importés (panneau matchs),
+afficher la liste des matchs importés et naviguer dans les coups d’un match (panneau matchs),
 
 \item {} 
 \sphinxAtStartPar
@@ -665,21 +666,29 @@ afficher et gérer les tournois (panneau tournois),
 
 \item {} 
 \sphinxAtStartPar
+calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau EPC),
+
+\item {} 
+\sphinxAtStartPar
+afficher les métadonnées de la base de données (panneau métadonnées),
+
+\item {} 
+\sphinxAtStartPar
 afficher la bibliothèque de filtres,
 
 \item {} 
 \sphinxAtStartPar
-afficher l’historique des recherches.
+afficher l’historique des recherches,
+
+\item {} 
+\sphinxAtStartPar
+afficher le journal des opérations (panneau log).
 
 \end{itemize}
 
 \sphinxAtStartPar
 Des fenêtres modales peuvent s’afficher pour:
 \begin{itemize}
-\item {} 
-\sphinxAtStartPar
-{[}mode EDIT uniquement{]} paramétrer les filtres de recherche,
-
 \item {} 
 \sphinxAtStartPar
 afficher l’aide de blunderDB,
@@ -727,7 +736,7 @@ suivantes:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-le mode courant (NORMAL, EDIT, COMMAND),
+la ligne de commande, accessible en appuyant sur la touche \sphinxstyleemphasis{ESPACE},
 
 \item {} 
 \sphinxAtStartPar
@@ -736,7 +745,8 @@ un message d’information lié à une opération réalisée par l’utilisateur
 \item {} 
 \sphinxAtStartPar
 l’index de la position courante, suivi du nombre de positions dans la
-bibliothèque courante.
+bibliothèque courante (ou les informations de coup/partie lors de la
+navigation dans un match).
 
 \end{itemize}
 
@@ -748,10 +758,10 @@ positions filtrées.
 \end{sphinxadmonition}
 
 
-\subsection{Le mode NORMAL}
-\label{\detokenize{manuel:le-mode-normal}}\label{\detokenize{manuel:mode-normal}}
+\subsection{Navigation dans les positions}
+\label{\detokenize{manuel:navigation-dans-les-positions}}\label{\detokenize{manuel:mode-normal}}
 \sphinxAtStartPar
-Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:
+Par défaut, blunderDB permet de:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -773,12 +783,12 @@ Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\
 \end{sphinxadmonition}
 
 
-\subsection{Le mode EDIT}
-\label{\detokenize{manuel:le-mode-edit}}\label{\detokenize{manuel:mode-edit}}
+\subsection{Édition de positions}
+\label{\detokenize{manuel:edition-de-positions}}\label{\detokenize{manuel:mode-edit}}
 \sphinxAtStartPar
-Le mode EDIT permet d’éditer une position en vue de l’ajouter à
-la base de données, ou de définir le type de position à rechercher.
-Le mode EDIT est activé en appuyant sur la touche \sphinxstyleemphasis{TAB}.
+L’appui sur la touche \sphinxstyleemphasis{TAB} ouvre le panneau de recherche et permet
+d’éditer une position sur le plateau pour l’ajouter à la base de données
+ou pour définir une structure de position à rechercher.
 La distribution des pions, du videau, du score, et du trait peuvent être
 modifiés à l’aide de la souris (voir {\hyperref[\detokenize{guide_utilisateur:guide-edit-position}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Editer une position}}}}}).
 
@@ -788,21 +798,22 @@ Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\
 \end{sphinxadmonition}
 
 
-\subsection{Le mode COMMAND}
-\label{\detokenize{manuel:le-mode-command}}\label{\detokenize{manuel:mode-command}}
+\subsection{La ligne de commande}
+\label{\detokenize{manuel:la-ligne-de-commande}}\label{\detokenize{manuel:mode-command}}
 \sphinxAtStartPar
-Le mode COMMAND permet de réaliser l’ensemble des fonctionalités de blunderDB
-disponibles à l’interface graphique: opérations générales sur la base de
-données, navigation de position, affichage de l’analyse et/ou des commentaires,
-recherche de positions selon des filtres… Après une première prise en main de
-l’interface, il est recommandé de progressivement utiliser ce mode qui permet
-une utilisation puissante et fluide de blunderDB, notamment pour les
-fonctionnalités de recherche de positions.
+La ligne de commande, intégrée dans la barre d’état, permet de réaliser
+l’ensemble des fonctionalités de blunderDB disponibles à l’interface
+graphique: opérations générales sur la base de données, navigation de
+position, affichage de l’analyse et/ou des commentaires, recherche de
+positions selon des filtres… Après une première prise en main de
+l’interface, il est recommandé de progressivement utiliser la ligne de
+commande qui permet une utilisation puissante et fluide de blunderDB,
+notamment pour les fonctionnalités de recherche de positions.
 
 \sphinxAtStartPar
-Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur
-la touche \sphinxstyleemphasis{ESPACE}. Pour envoyer une requête et quitter le mode COMMAND,
-appuyer sur la touche \sphinxstyleemphasis{ENTREE}.
+Pour ouvrir la ligne de commande, appuyer sur
+la touche \sphinxstyleemphasis{ESPACE}. Pour envoyer une requête et fermer la ligne de
+commande, appuyer sur la touche \sphinxstyleemphasis{ENTREE}.
 
 \sphinxAtStartPar
 blunderDB exécute les requêtes envoyées par l’utilisateur sous réserve
@@ -813,25 +824,27 @@ de l’utilisateur.
 \sphinxAtStartPar
 Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
 la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). La commande
-\sphinxcode{\sphinxupquote{ss}} fonctionne depuis le mode NORMAL, après une recherche préalable. La
-fenêtre de recherche (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher
-« Search in current results » pour la même fonctionnalité.
+\sphinxcode{\sphinxupquote{ss}} fonctionne après une recherche préalable. La fenêtre de recherche
+(\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher « Search in current results »
+pour la même fonctionnalité.
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
 Se référer à la \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} pour la liste de commandes
-disponible en mode COMMAND.
+disponible en ligne de commande.
 \end{sphinxadmonition}
 
 
-\subsection{Le mode MATCH}
-\label{\detokenize{manuel:le-mode-match}}\label{\detokenize{manuel:mode-match}}
+\subsection{Navigation dans les matchs}
+\label{\detokenize{manuel:navigation-dans-les-matchs}}\label{\detokenize{manuel:mode-match}}
 \sphinxAtStartPar
-Le mode MATCH permet de naviguer dans les coups d’un match importé.
-Il est activé en appuyant sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}TAB} ou en exécutant la commande \sphinxcode{\sphinxupquote{m}}.
+La navigation dans les matchs permet de parcourir les coups d’un match importé.
+Elle est activée depuis le panneau des matchs (\sphinxstyleemphasis{CTRL\sphinxhyphen{}T}) en double\sphinxhyphen{}cliquant
+sur un match ou en appuyant sur \sphinxstyleemphasis{ENTREE}. La commande \sphinxcode{\sphinxupquote{m}} permet également
+de reprendre la navigation dans le dernier match visité.
 
 \sphinxAtStartPar
-Dans ce mode, l’utilisateur peut:
+L’utilisateur peut:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -856,9 +869,8 @@ voir le coup effectivement joué mis en évidence dans l’analyse.
 \end{itemize}
 
 \sphinxAtStartPar
-Lorsque l’utilisateur entre en mode MATCH, le dernier match visité est
-automatiquement chargé. La dernière position visitée dans chaque match
-est mémorisée et restaurée.
+La dernière position visitée dans chaque match est mémorisée et restaurée
+automatiquement.
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
@@ -866,16 +878,15 @@ Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\
 \end{sphinxadmonition}
 
 
-\subsection{Le mode EPC}
-\label{\detokenize{manuel:le-mode-epc}}\label{\detokenize{manuel:mode-epc}}
+\subsection{Calculateur EPC}
+\label{\detokenize{manuel:calculateur-epc}}\label{\detokenize{manuel:mode-epc}}
 \sphinxAtStartPar
-Le mode EPC permet de calculer l’EPC (Effective Pip Count) d’une position
+Le panneau EPC permet de calculer l’EPC (Effective Pip Count) d’une position
 de bearoff. Il est activé en appuyant \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, en cliquant sur l’onglet
-EPC dans le panneau inférieur, en exécutant la commande \sphinxcode{\sphinxupquote{epc}} ou en
-cliquant sur le bouton correspondant dans la barre d’outils.
+EPC dans le panneau inférieur, ou en exécutant la commande \sphinxcode{\sphinxupquote{epc}}.
 
 \sphinxAtStartPar
-Dans ce mode, l’utilisateur édite la position des pions dans le jan
+Dans ce panneau, l’utilisateur édite la position des pions dans le jan
 (6 derniers points) et les informations suivantes sont affichées
 en temps réel dans le panneau EPC dédié pour chaque joueur:
 \begin{itemize}
@@ -906,7 +917,7 @@ Lorsque les deux joueurs ont des pions dans leur jan, une section
 de comparaison affiche les différences d’EPC et de pip count.
 
 \sphinxAtStartPar
-Pour quitter le mode EPC, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur
+Pour quitter le panneau EPC, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur
 un autre onglet.
 
 \begin{sphinxadmonition}{note}{Note:}
@@ -916,17 +927,17 @@ Le calcul repose sur la base de données interne de bearoff
 \end{sphinxadmonition}
 
 
-\subsection{Le mode COLLECTION}
-\label{\detokenize{manuel:le-mode-collection}}\label{\detokenize{manuel:mode-collection}}
+\subsection{Navigation dans les collections}
+\label{\detokenize{manuel:navigation-dans-les-collections}}\label{\detokenize{manuel:mode-collection}}
 \sphinxAtStartPar
-Le mode COLLECTION permet de parcourir les positions d’une collection.
-Il est activé en double\sphinxhyphen{}cliquant sur une collection dans le panneau
-des collections (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}).
+La navigation dans les collections permet de parcourir les positions d’une collection.
+Elle est activée en double\sphinxhyphen{}cliquant sur une collection dans le panneau
+des collections (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}).
 
 \sphinxAtStartPar
-Dans ce mode, l’utilisateur peut naviguer parmi les positions de la collection
-en utilisant les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. Pour quitter le mode COLLECTION
-et revenir au mode NORMAL, appuyer sur \sphinxstyleemphasis{TAB}.
+L’utilisateur peut naviguer parmi les positions de la collection
+en utilisant les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections
+et des positions dans les collections peut être modifié par glisser\sphinxhyphen{}déposer.
 
 \sphinxstepscope
 
@@ -1014,7 +1025,8 @@ une autre base de données.
 \subsection{Editer une position}
 \label{\detokenize{guide_utilisateur:editer-une-position}}\label{\detokenize{guide_utilisateur:guide-edit-position}}
 \sphinxAtStartPar
-Pour éditer une position, basculer en mode EDIT à l’aide de la touche \sphinxstyleemphasis{TAB}.
+Pour éditer une position, appuyer sur la touche \sphinxstyleemphasis{TAB} pour ouvrir le
+panneau de recherche et l’éditeur de position.
 Editer la position à la souris:
 \begin{itemize}
 \item {} 
@@ -1062,22 +1074,22 @@ même manière que dans XG.
 \subsection{Ajouter une position à la base de données}
 \label{\detokenize{guide_utilisateur:ajouter-une-position-a-la-base-de-donnees}}
 \sphinxAtStartPar
-Après l’édition de la position précédente, blunderDB est dans le mode EDIT.
+Après l’édition de la position, le panneau de recherche est ouvert.
 
 \sphinxAtStartPar
-Pour enregistrer la position obtenue précédemment, faire \sphinxstyleemphasis{CTRL\sphinxhyphen{}S} ou appuiyer
+Pour enregistrer la position obtenue précédemment, faire \sphinxstyleemphasis{CTRL\sphinxhyphen{}S} ou appuyer
 dans la barre d’outils sur le bouton « Save Position ».
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
-Depuis le mode EDIT, basculer en mode COMMAND et exécuter: \sphinxcode{\sphinxupquote{w}}
+Ouvrir la ligne de commande et exécuter: \sphinxcode{\sphinxupquote{w}}
 \end{sphinxadmonition}
 
 
 \subsection{Etiqueter une position}
 \label{\detokenize{guide_utilisateur:etiqueter-une-position}}
 \sphinxAtStartPar
-Pour ajouter un tag \sphinxstyleemphasis{toto} à la position courante, basculer en mode COMMAND en appuyant sur \sphinxstyleemphasis{ESPACE},
+Pour ajouter un tag \sphinxstyleemphasis{toto} à la position courante, ouvrir la ligne de commande en appuyant sur \sphinxstyleemphasis{ESPACE},
 taper \sphinxcode{\sphinxupquote{\#toto}} et valider la commande en appuyant sur \sphinxstyleemphasis{ENTREE}.
 
 
@@ -1089,7 +1101,7 @@ clicker dans la barre d’outils sur le bouton « Delete Position »
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
-En mode COMMAND, exécuter \sphinxcode{\sphinxupquote{d}}.
+En ligne de commande, exécuter \sphinxcode{\sphinxupquote{d}}.
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{caution}{Prudence:}
@@ -1241,7 +1253,7 @@ Ouvrir le panneau des matchs avec \sphinxstyleemphasis{CTRL\sphinxhyphen{}T}.
 
 \item {} 
 \sphinxAtStartPar
-Double\sphinxhyphen{}cliquer sur un match pour entrer en mode MATCH.
+Double\sphinxhyphen{}cliquer sur un match ou appuyer sur \sphinxstyleemphasis{ENTREE}.
 
 \item {} 
 \sphinxAtStartPar
@@ -1263,7 +1275,7 @@ Appuyer sur \sphinxstyleemphasis{d} pour basculer entre l’analyse des coups de
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
-Raccourci: \sphinxstyleemphasis{CTRL\sphinxhyphen{}TAB} pour basculer en mode MATCH / sortir du mode MATCH.
+Raccourci: \sphinxstyleemphasis{CTRL\sphinxhyphen{}T} pour ouvrir le panneau des matchs.
 Commande: \sphinxcode{\sphinxupquote{m}}
 \end{sphinxadmonition}
 
@@ -1347,8 +1359,9 @@ Les ajouter à la collection depuis le panneau des collections.
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Double\sphinxhyphen{}cliquer sur une collection pour entrer en mode COLLECTION et
-parcourir ses positions.
+Double\sphinxhyphen{}cliquer sur une collection pour parcourir ses positions.
+L’ordre des collections et des positions peut être modifié par
+glisser\sphinxhyphen{}déposer.
 
 \end{itemize}
 
@@ -1399,8 +1412,7 @@ bearoff d’une position.
 \item {} 
 \sphinxAtStartPar
 Appuyer \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, cliquer sur l’onglet EPC dans le panneau inférieur,
-exécuter la commande \sphinxcode{\sphinxupquote{epc}} ou cliquer sur le bouton correspondant dans la
-barre d’outils.
+ou exécuter la commande \sphinxcode{\sphinxupquote{epc}}.
 
 \item {} 
 \sphinxAtStartPar
@@ -1443,8 +1455,8 @@ Lorsque plusieurs moteurs d’analyse sont présents pour la même position
 d’origine de chaque analyse.
 
 \sphinxAtStartPar
-En mode MATCH, le coup effectivement joué est mis en évidence dans la liste
-des coups. En mode NORMAL, si la position a été rencontrée dans plusieurs
+Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste
+des coups. Si la position a été rencontrée dans plusieurs
 matchs, tous les coups joués sont indiqués.
 
 \begin{sphinxadmonition}{tip}{Astuce:}
@@ -1490,7 +1502,7 @@ Pour rechercher des types de positions,
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-basculer en mode EDIT en appuyant sur \sphinxstyleemphasis{TAB},
+appuyer sur \sphinxstyleemphasis{TAB} pour ouvrir le panneau de recherche,
 
 \item {} 
 \sphinxAtStartPar
@@ -1524,7 +1536,7 @@ Méthode 2 (avancée):
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-basculer en mode COMMAND en appuyant sur \sphinxstyleemphasis{ESPACE},
+ouvrir la ligne de commande en appuyant sur \sphinxstyleemphasis{ESPACE},
 
 \item {} 
 \sphinxAtStartPar
@@ -1773,8 +1785,8 @@ Ouvre la table des valeurs de gammon avec videau à 4.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Mode NORMAL}
-\label{\detokenize{cmd_mode:mode-normal}}\label{\detokenize{cmd_mode:cmd-normal}}
+\subsection{Positions et navigation}
+\label{\detokenize{cmd_mode:positions-et-navigation}}\label{\detokenize{cmd_mode:cmd-normal}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -1921,7 +1933,7 @@ m
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Basculer en mode MATCH (dernier match visité).
+Naviguer dans le dernier match visité.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1931,8 +1943,8 @@ Basculer en mode MATCH (dernier match visité).
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Mode EDIT}
-\label{\detokenize{cmd_mode:mode-edit}}\label{\detokenize{cmd_mode:cmd-edit}}
+\subsection{Édition et recherche}
+\label{\detokenize{cmd_mode:edition-et-recherche}}\label{\detokenize{cmd_mode:cmd-edit}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -2014,6 +2026,13 @@ Dans la recherche de positions, par défaut, blunderDB prend en
 compte la structure de pions courante, ignore la position du videau, du
 score et des dés. Pour prendre en compte la position du videau, du score,
 des dés, il faut le mentionner explicitement dans la recherche.
+\end{sphinxadmonition}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+La commande de recherche \sphinxcode{\sphinxupquote{s}} est disponible dans le panneau de recherche
+(touche \sphinxcode{\sphinxupquote{TAB}}). La commande \sphinxcode{\sphinxupquote{ss}} permet de chercher parmi les
+résultats actuellement filtrés.
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Note:}
@@ -3276,7 +3295,7 @@ PageUp, h
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Première position / Partie précédente (mode MATCH).
+Première position / Partie précédente (navigation match).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3331,18 +3350,7 @@ PageDown, l
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Dernière position / Partie suivante (mode MATCH).
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}K
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Aller à une position spécifique.
+Dernière position / Partie suivante (navigation match).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3422,8 +3430,8 @@ Afficher/cacher le compte de course.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Modes}
-\label{\detokenize{raccourcis:modes}}\label{\detokenize{raccourcis:raccourcis-modes}}
+\subsection{Actions}
+\label{\detokenize{raccourcis:actions}}\label{\detokenize{raccourcis:raccourcis-modes}}
 
 \begin{savenotes}\sphinxattablestart
 \sphinxthistablewithglobalstyle
@@ -3449,18 +3457,7 @@ TAB
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Basculer en mode EDIT / Sortir du mode MATCH vers NORMAL.
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-CTRL\sphinxhyphen{}TAB
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Basculer en mode MATCH (entrer/sortir).
+Ouvrir le panneau de recherche (éditeur de position).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3471,7 +3468,7 @@ ESPACE
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Basculer en mode COMMAND.
+Ouvrir la ligne de commande.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3876,7 +3873,7 @@ d
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Basculer entre l’analyse des coups et du cube (mode MATCH uniquement).
+Basculer entre l’analyse des coups et du cube (navigation match uniquement).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3935,7 +3932,7 @@ Double\sphinxhyphen{}clic
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Entrer en mode MATCH.
+Naviguer dans le match.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4192,7 +4189,7 @@ blunderDB, elle peut ainsi s’ouvrir avec tout éditeur de fichier sqlite.
 \subsection{Quelles ont été les principes de conception de blunderDB?}
 \label{\detokenize{faq:quelles-ont-ete-les-principes-de-conception-de-blunderdb}}
 \sphinxAtStartPar
-Le fonctionnement modal de blunderDB (NORMAL, EDIT, COMMAND) s’inspire du très
+Le fonctionnement modal de blunderDB (NORMAL, EDIT) s’inspire du très
 puissant éditeur de texte \sphinxhref{https://en.wikipedia.org/wiki/Vim\_(text\_editor)}{Vim}. Je souhaitais blunderDB
 léger, autonome, sans installation et disponible pour différentes plateformes,
 d’où mon choix du langage Go et de la bibliothèque Svelte. Pour la
@@ -4254,10 +4251,10 @@ exploiter pleinement les fonctionnalités de recherche de positions.
 \sphinxAtStartPar
 Les filtres sont au coeur de l’analyse des positions dans blunderDB.
 Leur utilisation permet de rechercher des positions spécifiques relativement
-précisément. Dans cette section, l’utilisation des filtres via le mode COMMAND
-est détaillée. Le mode COMMAND est accessible en appuyant sur la touche \sphinxcode{\sphinxupquote{ESPACE}}.
-Il permet de combiner avec l’habitude très rapidement des filtres et d’utiliser
-la bibliothèque de filtres.
+précisément. Dans cette section, l’utilisation des filtres via la ligne de
+commande est détaillée. La ligne de commande est accessible en appuyant sur
+la touche \sphinxcode{\sphinxupquote{ESPACE}}. Elle permet de combiner avec l’habitude très rapidement
+des filtres et d’utiliser la bibliothèque de filtres.
 
 
 \subsection{Recherche de positions en ligne de commande}
@@ -4268,7 +4265,7 @@ Pour faire une recherche à l’aide de filtres,
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Basculer en mode EDIT avec la touche \sphinxcode{\sphinxupquote{TAB}}.
+Appuyer sur la touche \sphinxcode{\sphinxupquote{TAB}} pour ouvrir le panneau de recherche.
 
 \item {} 
 \sphinxAtStartPar
@@ -4276,7 +4273,7 @@ Editer la position courante.
 
 \item {} 
 \sphinxAtStartPar
-Basculer en mode COMMAND avec la touche \sphinxcode{\sphinxupquote{ESPACE}}.
+Ouvrir la ligne de commande avec la touche \sphinxcode{\sphinxupquote{ESPACE}}.
 
 \item {} 
 \sphinxAtStartPar
@@ -4297,7 +4294,7 @@ risque de filtrer abusivement des structures de pions.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-La liste des filtres disponibles en mode COMMAND est fournie dans la
+La liste des filtres disponibles en ligne de commande est fournie dans la
 \hyperref[\detokenize{cmd_mode:cmd-filter}]{Section \ref{\detokenize{cmd_mode:cmd-filter}}}.
 \end{sphinxadmonition}
 
@@ -4309,9 +4306,8 @@ Il est possible d’affiner une recherche en cherchant parmi les positions
 actuellement filtrées. Cela permet de restreindre progressivement les résultats.
 
 \sphinxAtStartPar
-En mode COMMAND, utiliser la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}},
-\sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). La commande \sphinxcode{\sphinxupquote{ss}} fonctionne depuis le mode NORMAL,
-après une recherche préalable.
+En ligne de commande, utiliser la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}},
+\sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). La commande \sphinxcode{\sphinxupquote{ss}} fonctionne après une recherche préalable.
 
 \sphinxAtStartPar
 La fenêtre de recherche (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher
@@ -4330,7 +4326,7 @@ Pour ajouter un filtre à la bibliothèque,
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Basculer dans le mode EDIT.
+Appuyer sur \sphinxcode{\sphinxupquote{TAB}} pour ouvrir le panneau de recherche.
 
 \item {} 
 \sphinxAtStartPar
@@ -4366,10 +4362,6 @@ Pour utiliser un filtre enregistré dans la bibliothèque,
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Basculer en mode NORMAL.
-
-\item {} 
-\sphinxAtStartPar
 Ouvrir la bibliothèque de filtres en appuyant sur \sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}K}}.
 
 \item {} 
@@ -4386,7 +4378,7 @@ Double cliquer sur le filtre pour lancer la recherche.
 \subsection{Exemples}
 \label{\detokenize{annexe_filtres:exemples}}
 \sphinxAtStartPar
-Voici quelques exemples d’utilisation des filtres en mode COMMAND:
+Voici quelques exemples d’utilisation des filtres en ligne de commande:
 
 \sphinxAtStartPar
 Exemples de recherche dans les résultats courants:

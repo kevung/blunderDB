@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. List of commands &mdash; blunderDB 0.12.0 documentation</title>
+  <title>4. List of commands &mdash; blunderDB 0.13.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=61ccb1f1"></script>
+      <script src="_static/documentation_options.js?v=1019fba8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -52,8 +52,8 @@
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">4. List of commands</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Global operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mode-normal">4.2. NORMAL Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mode-edit">4.3. EDIT Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">4.2. Positions and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">4.3. Editing and search</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Search Filters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Various commands</a></li>
 </ul>
@@ -161,8 +161,8 @@
 </tbody>
 </table>
 </section>
-<section id="mode-normal">
-<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>NORMAL Mode<a class="headerlink" href="#mode-normal" title="Link to this heading"></a></h2>
+<section id="positions-et-navigation">
+<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Positions and navigation<a class="headerlink" href="#positions-et-navigation" title="Link to this heading"></a></h2>
 <table class="docutils align-center">
 <colgroup>
 <col style="width: 33.3%" />
@@ -208,13 +208,13 @@
 <td><p>Load all positions from the database.</p></td>
 </tr>
 <tr class="row-odd"><td><p>m</p></td>
-<td><p>Toggle MATCH mode (last visited match).</p></td>
+<td><p>Navigate to the last visited match.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="mode-edit">
-<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>EDIT Mode<a class="headerlink" href="#mode-edit" title="Link to this heading"></a></h2>
+<section id="edition-et-recherche">
+<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Editing and search<a class="headerlink" href="#edition-et-recherche" title="Link to this heading"></a></h2>
 <table class="docutils align-center">
 <colgroup>
 <col style="width: 33.3%" />
@@ -247,6 +247,10 @@
 <div class="admonition warning" id="cmd-filter-pos">
 <p class="admonition-title">Warning</p>
 <p>In the position search, by default, blunderDB takes into account the current checker structure, ignoring the position of the cube, the score, and the dice. To consider the position of the cube, the score, and the dice, it must be explicitly mentioned in the search.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The search command <code class="docutils literal notranslate"><span class="pre">s</span></code> is available in the search panel (<code class="docutils literal notranslate"><span class="pre">TAB</span></code> key). The <code class="docutils literal notranslate"><span class="pre">ss</span></code> command allows searching among the currently filtered results.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>

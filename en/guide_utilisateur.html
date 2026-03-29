@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3. User Guide &mdash; blunderDB 0.12.0 documentation</title>
+  <title>3. User Guide &mdash; blunderDB 0.13.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=61ccb1f1"></script>
+      <script src="_static/documentation_options.js?v=1019fba8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -147,7 +147,7 @@
 </section>
 <section id="editer-une-position">
 <span id="guide-edit-position"></span><h2><span class="section-number">3.4. </span>Edit a position<a class="headerlink" href="#editer-une-position" title="Link to this heading"></a></h2>
-<p>To edit a position, switch to EDIT mode by pressing the <em>TAB</em> key. Edit the position with the mouse:</p>
+<p>To edit a position, press the <em>TAB</em> key to open the search panel and the position editor. Edit the position with the mouse:</p>
 <ul class="simple">
 <li><p>Click on the points to add checkers. A left-click assigns checkers to player 1. A right-click assigns checkers to player 2. To insert a prime, click on the starting point, hold down the button, and release on the endpoint. Click on the bar to place checkers in the bar.</p></li>
 <li><p>To clear the position, double-click on an empty area outside the board or press the <em>BACKSPACE</em> key.</p></li>
@@ -163,23 +163,23 @@
 </section>
 <section id="ajouter-une-position-a-la-base-de-donnees">
 <h2><span class="section-number">3.5. </span>Add a position to the database<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Link to this heading"></a></h2>
-<p>After editing the previous position, blunderDB is in EDIT mode.</p>
+<p>After editing the position, the search panel is open.</p>
 <p>To save the previously obtained position, press <em>CTRL-S</em> or click the “Save Position” button in the toolbar.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>From EDIT mode, switch to COMMAND mode and execute: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
+<p>Open the command line and execute: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
 </div>
 </section>
 <section id="etiqueter-une-position">
 <h2><span class="section-number">3.6. </span>Tag a position<a class="headerlink" href="#etiqueter-une-position" title="Link to this heading"></a></h2>
-<p>To add a tag <em>toto</em> to the current position, switch to COMMAND mode by pressing <em>SPACE</em>, type <code class="docutils literal notranslate"><span class="pre">#toto</span></code>, and confirm the command by pressing <em>ENTER</em>.</p>
+<p>To add a tag <em>toto</em> to the current position, open the command line by pressing <em>SPACE</em>, type <code class="docutils literal notranslate"><span class="pre">#toto</span></code>, and confirm the command by pressing <em>ENTER</em>.</p>
 </section>
 <section id="supprimer-une-position">
 <h2><span class="section-number">3.7. </span>Delete a position<a class="headerlink" href="#supprimer-une-position" title="Link to this heading"></a></h2>
 <p>To delete the current position from the database, press <em>Del</em> or click the “Delete Position” button in the toolbar.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>In COMMAND mode, execute <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+<p>In the command line, execute <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
 </div>
 <div class="admonition caution">
 <p class="admonition-title">Caution</p>
@@ -247,7 +247,7 @@
 <p>To navigate through an imported match:</p>
 <ol class="arabic simple">
 <li><p>Open the match panel with <em>CTRL-T</em>.</p></li>
-<li><p>Double-click on a match to enter MATCH mode.</p></li>
+<li><p>Double-click on a match or press <em>ENTER</em>.</p></li>
 <li><p>Use the <em>LEFT</em> / <em>RIGHT</em> keys to browse through moves.</p></li>
 <li><p>Use <em>PageUp</em> / <em>PageDown</em> to switch between games.</p></li>
 <li><p>Press <em>CTRL-L</em> to display the analysis.</p></li>
@@ -255,7 +255,7 @@
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Shortcut: <em>CTRL-TAB</em> to toggle MATCH mode / exit MATCH mode. Command: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+<p>Shortcut: <em>CTRL-T</em> to open the match panel. Command: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -289,7 +289,7 @@
 </ol>
 <p><strong>Browse a collection:</strong></p>
 <ul class="simple">
-<li><p>Double-click on a collection to enter COLLECTION mode and browse its positions.</p></li>
+<li><p>Double-click on a collection to browse its positions. The order of collections and positions can be changed by drag and drop.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -313,7 +313,7 @@
 <h2><span class="section-number">3.16. </span>Calculate the EPC<a class="headerlink" href="#calculer-l-epc" title="Link to this heading"></a></h2>
 <p>The EPC (Effective Pip Count) calculator allows you to compute the bearoff statistics of a position.</p>
 <ol class="arabic simple">
-<li><p>Press <em>CTRL-E</em>, click the EPC tab in the bottom panel, execute the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command, or click the corresponding button in the toolbar.</p></li>
+<li><p>Press <em>CTRL-E</em>, click the EPC tab in the bottom panel, or execute the <code class="docutils literal notranslate"><span class="pre">epc</span></code> command.</p></li>
 <li><p>Edit the checker positions in the home board (last 6 points).</p></li>
 <li><p>Results are displayed in real time in the dedicated EPC panel: EPC, average number of rolls, standard deviation, pip count, and wastage.</p></li>
 </ol>
@@ -328,7 +328,7 @@
 <p>If the position corresponds to a checker decision, the five best moves are displayed on separate lines. For each line, the information provided is in this order: the associated checker move, the normalized equity, the error in equity of the move, the winning chances, gammon, and backgammon for the player, and the winning chances, gammon, and backgammon for the opponent, along with the level of analysis.</p>
 <p>If the position corresponds to a cube decision, the cost of each decision is displayed along with the winning chances of the position.</p>
 <p>When multiple analysis engines are present for the same position (for example XG and GNUbg), an additional column indicates the source engine of each analysis.</p>
-<p>In MATCH mode, the actually played move is highlighted in the move list. In NORMAL mode, if the position was encountered in multiple matches, all played moves are indicated.</p>
+<p>When navigating a match, the actually played move is highlighted in the move list. If the position was encountered in multiple matches, all played moves are indicated.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>By clicking on a move in the analysis panel, the corresponding arrows are displayed on the board.</p>
@@ -351,7 +351,7 @@
 <h2><span class="section-number">3.20. </span>Search for positions based on criteria<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Link to this heading"></a></h2>
 <p>To search for types of positions,</p>
 <ul class="simple">
-<li><p>switch to EDIT mode by pressing <em>TAB</em>,</p></li>
+<li><p>press <em>TAB</em> to open the search panel,</p></li>
 <li><p>edit the structure of the position to search for. blunderDB will filter positions that have at least the entered checker structure. If unsure, to maximize results, clear the position by pressing the <em>BACKSPACE</em> key. Edit the cube position and the score if necessary.</p></li>
 </ul>
 <p>Method 1 (simple):</p>
@@ -362,7 +362,7 @@
 </ul>
 <p>Method 2 (advanced):</p>
 <ul class="simple">
-<li><p>switch to COMMAND mode by pressing <em>SPACE</em>,</p></li>
+<li><p>open the command line by pressing <em>SPACE</em>,</p></li>
 <li><p>type <em>s</em>, and add any additional filters (for example, <em>cube</em> or <em>score</em> to consider the cube and score, respectively. See <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Section 4.4</span></a> for a comprehensive list of available filters).</p></li>
 <li><p>confirm the request by pressing <em>ENTER</em>.</p></li>
 </ul>

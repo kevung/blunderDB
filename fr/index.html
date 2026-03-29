@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.12.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.13.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e9405df3"></script>
+      <script src="_static/documentation_options.js?v=989517aa"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -178,19 +178,19 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <tr class="row-odd"><td><p>0.10.0</p></td>
 <td><p>25/02/2026</p></td>
 <td><p>Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) et BGBlitz (BGF/TXT).</p>
-<p>Mode MATCH: navigation dans les coups d’un match importé, avec mise en évidence du coup joué.</p>
+<p>Navigation dans les matchs: parcours des coups d’un match importé, avec mise en évidence du coup joué.</p>
 <p>Panneau des matchs: liste, tri, édition inline, permutation des joueurs, assignation de tournoi.</p>
 <p>Import par dossier récursif et import par glisser-déposer.</p>
 <p>Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg intégrée.</p>
-<p>Collections: regroupement personnalisé de positions avec mode COLLECTION dédié.</p>
+<p>Collections: regroupement personnalisé de positions.</p>
 <p>Tournois: regroupement de matchs par événement.</p>
 <p>Sauvegarde et restauration de l’état de session (dernière recherche, position courante).</p>
 <p>Migration automatique du schéma de base de données.</p>
 <p>Affichage multi-moteurs dans l’analyse.</p>
 <p>Filtre d’erreurs/blunders du joueur 1 dans les recherches.</p>
 <p>Export de la base de données avec sélection granulaire (matchs, collections, tournois, coups joués).</p>
-<p>Bouton de basculement vers le mode MATCH.</p>
-<p>Compte de course (pipcount) en mode MATCH.</p>
+<p>Bouton de navigation dans les matchs.</p>
+<p>Compte de course (pipcount) dans la navigation des matchs.</p>
 <p>Interface en ligne de commande (CLI) complète.</p>
 <p>Réouverture automatique de la dernière base de données.</p>
 <p>Amélioration de la barre d’outils et des icônes.</p>
@@ -200,12 +200,24 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <td><p>06/03/2026</p></td>
 <td><p>Filtre de recherche dans les positions courantes.</p>
 <p>Ajout de filtres par match et par tournoi.</p>
-<p>Effacement automatique du plateau lors du passage en mode ÉDITION.</p>
+<p>Effacement automatique du plateau lors de l’ouverture du panneau de recherche.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>0.12.0</p></td>
 <td><p>19/03/2026</p></td>
 <td><p>Import de fichiers de position eXtreme Gammon (XGP) avec analyse.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.13.0</p></td>
+<td><p>28/03/2026</p></td>
+<td><p>Simplification de l’interface: la navigation dans les matchs et les collections se fait directement via les panneaux.</p>
+<p>Ligne de commande intégrée dans la barre d’état.</p>
+<p>Panneau Console renommé en panneau Log.</p>
+<p>Panneau EPC dédié dans le panneau inférieur.</p>
+<p>Copier/coller de position dans le panneau de recherche.</p>
+<p>Glisser-déposer pour réordonner les collections, les positions dans les collections, et les matchs dans les tournois.</p>
+<p>Colonne tournoi dans le panneau des matchs avec édition inline.</p>
+<p>Affichage automatique du panneau d’analyse après une recherche.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -218,14 +230,13 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuel</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Interactions principales</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#modes">2.3. Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.4. Description de l’interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-normal">2.5. Le mode NORMAL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-edit">2.6. Le mode EDIT</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-command">2.7. Le mode COMMAND</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-match">2.8. Le mode MATCH</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-epc">2.9. Le mode EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-collection">2.10. Le mode COLLECTION</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Description de l’interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.4. Navigation dans les positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.5. Édition de positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.6. La ligne de commande</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-matchs">2.7. Navigation dans les matchs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#calculateur-epc">2.8. Calculateur EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-collections">2.9. Navigation dans les collections</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a><ul>
@@ -253,8 +264,8 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Opérations globales</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#mode-normal">4.2. Mode NORMAL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#mode-edit">4.3. Mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. Positions et navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. Édition et recherche</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Filtres de recherche</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. Commandes diverses</a></li>
 </ul>
@@ -264,7 +275,7 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. Position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. Navigation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. Affichage</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#modes">5.5. Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. Actions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. Outils</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.7. Ligne de commande</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-historique-de-recherche">5.8. Panneau historique de recherche</a></li>

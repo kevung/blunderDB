@@ -37,28 +37,8 @@ Les principales interactions possibles avec blunderDB sont:
 
 * organiser les matchs en tournois.
 
-Modes
------
-
-Pour ce faire, l'utilisateur bascule dans des modes dédiés pour:
-
-* la navigation et la visualisation de positions (mode NORMAL),
-
-* l'édition de positions (mode EDIT),
-
-* l'édition d'une requête pour filtrer des positions (mode COMMAND ou fenêtre de recherche),
-
-* la navigation dans les coups d'un match importé (mode MATCH),
-
-* le calcul de l'EPC (Effective Pip Count) à partir d'une position (mode EPC),
-
-* la navigation dans une collection de positions (mode COLLECTION).
-
 L'utilisateur peut étiqueter librement les positions à l'aide de tags et les
 annoter via des commentaires.
-
-Dans la suite du manuel, il est décrit l'interface graphique ainsi que
-les principaux modes de blunderDB.
 
 Description de l'interface
 --------------------------
@@ -72,7 +52,7 @@ L'interface de blunderDB est constituée de haut en bas par:
   positions de backgammon,
 
 * [en bas] la barre d'état, qui présente différentes informations sur la
-  base de données ou la position courante.
+  base de données ou la position courante, et intègre la ligne de commande.
 
 Des panneaux peuvent être affichés pour:
 
@@ -81,19 +61,23 @@ Des panneaux peuvent être affichés pour:
 
 * afficher, ajouter ou modifier des commentaires,
 
-* afficher la liste des matchs importés (panneau matchs),
+* afficher la liste des matchs importés et naviguer dans les coups d'un match (panneau matchs),
 
 * afficher et gérer les collections de positions (panneau collections),
 
 * afficher et gérer les tournois (panneau tournois),
 
+* calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau EPC),
+
+* afficher les métadonnées de la base de données (panneau métadonnées),
+
 * afficher la bibliothèque de filtres,
 
-* afficher l'historique des recherches.
+* afficher l'historique des recherches,
+
+* afficher le journal des opérations (panneau log).
 
 Des fenêtres modales peuvent s'afficher pour:
-
-* [mode EDIT uniquement] paramétrer les filtres de recherche,
 
 * afficher l'aide de blunderDB,
 
@@ -118,12 +102,13 @@ La zone d'affichage principale met à disposition à l'utilisateur:
 La barre d'état est structurée de gauche à droite par les informations
 suivantes:
 
-* le mode courant (NORMAL, EDIT, COMMAND),
+* la ligne de commande, accessible en appuyant sur la touche *ESPACE*,
 
 * un message d'information lié à une opération réalisée par l'utilisateur,
 
 * l'index de la position courante, suivi du nombre de positions dans la
-  bibliothèque courante.
+  bibliothèque courante (ou les informations de coup/partie lors de la
+  navigation dans un match).
 
 .. note:: Dans le cas de positions issues d'une recherche par l'utilisateur, le
    nombre de positions indiqué dans la barre d'état correspond au nombre de
@@ -131,10 +116,10 @@ suivantes:
 
 .. _mode_normal:
 
-Le mode NORMAL
---------------
+Navigation dans les positions
+-----------------------------
 
-Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:
+Par défaut, blunderDB permet de:
 
 * faire défiler les différentes positions de la bibliothèque courante,
 
@@ -146,12 +131,12 @@ Le mode NORMAL est le mode par défaut de blunderDB. Il est utilisé pour:
 
 .. _mode_edit:
 
-Le mode EDIT
-------------
+Édition de positions
+--------------------
 
-Le mode EDIT permet d'éditer une position en vue de l'ajouter à
-la base de données, ou de définir le type de position à rechercher.
-Le mode EDIT est activé en appuyant sur la touche *TAB*.
+L'appui sur la touche *TAB* ouvre le panneau de recherche et permet
+d'éditer une position sur le plateau pour l'ajouter à la base de données
+ou pour définir une structure de position à rechercher.
 La distribution des pions, du videau, du score, et du trait peuvent être
 modifiés à l'aide de la souris (voir :ref:`guide_edit_position`).
 
@@ -159,20 +144,21 @@ modifiés à l'aide de la souris (voir :ref:`guide_edit_position`).
 
 .. _mode_command:
 
-Le mode COMMAND
----------------
+La ligne de commande
+--------------------
 
-Le mode COMMAND permet de réaliser l'ensemble des fonctionalités de blunderDB
-disponibles à l'interface graphique: opérations générales sur la base de
-données, navigation de position, affichage de l'analyse et/ou des commentaires,
-recherche de positions selon des filtres... Après une première prise en main de
-l'interface, il est recommandé de progressivement utiliser ce mode qui permet
-une utilisation puissante et fluide de blunderDB, notamment pour les
-fonctionnalités de recherche de positions.
+La ligne de commande, intégrée dans la barre d'état, permet de réaliser
+l'ensemble des fonctionalités de blunderDB disponibles à l'interface
+graphique: opérations générales sur la base de données, navigation de
+position, affichage de l'analyse et/ou des commentaires, recherche de
+positions selon des filtres... Après une première prise en main de
+l'interface, il est recommandé de progressivement utiliser la ligne de
+commande qui permet une utilisation puissante et fluide de blunderDB,
+notamment pour les fonctionnalités de recherche de positions.
 
-Pour basculer dans le mode COMMAND depuis tout autre mode, appuyer sur
-la touche *ESPACE*. Pour envoyer une requête et quitter le mode COMMAND,
-appuyer sur la touche *ENTREE*.
+Pour ouvrir la ligne de commande, appuyer sur
+la touche *ESPACE*. Pour envoyer une requête et fermer la ligne de
+commande, appuyer sur la touche *ENTREE*.
 
 blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve
 qu'elles soient valides et modifie immédiatement l'état de la base de données
@@ -181,22 +167,24 @@ de l'utilisateur.
 
 Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
 la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). La commande
-``ss`` fonctionne depuis le mode NORMAL, après une recherche préalable. La
-fenêtre de recherche (``CTRL-F``) propose également une case à cocher
-"Search in current results" pour la même fonctionnalité.
+``ss`` fonctionne après une recherche préalable. La fenêtre de recherche
+(``CTRL-F``) propose également une case à cocher "Search in current results"
+pour la même fonctionnalité.
 
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste de commandes
-   disponible en mode COMMAND.
+   disponible en ligne de commande.
 
 .. _mode_match:
 
-Le mode MATCH
---------------
+Navigation dans les matchs
+--------------------------
 
-Le mode MATCH permet de naviguer dans les coups d'un match importé.
-Il est activé en appuyant sur *CTRL-TAB* ou en exécutant la commande ``m``.
+La navigation dans les matchs permet de parcourir les coups d'un match importé.
+Elle est activée depuis le panneau des matchs (*CTRL-T*) en double-cliquant
+sur un match ou en appuyant sur *ENTREE*. La commande ``m`` permet également
+de reprendre la navigation dans le dernier match visité.
 
-Dans ce mode, l'utilisateur peut:
+L'utilisateur peut:
 
 * parcourir les coups d'un match en utilisant les touches *GAUCHE* et *DROITE*,
 
@@ -208,23 +196,21 @@ Dans ce mode, l'utilisateur peut:
 
 * voir le coup effectivement joué mis en évidence dans l'analyse.
 
-Lorsque l'utilisateur entre en mode MATCH, le dernier match visité est
-automatiquement chargé. La dernière position visitée dans chaque match
-est mémorisée et restaurée.
+La dernière position visitée dans chaque match est mémorisée et restaurée
+automatiquement.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
 .. _mode_epc:
 
-Le mode EPC
------------
+Calculateur EPC
+---------------
 
-Le mode EPC permet de calculer l'EPC (Effective Pip Count) d'une position
+Le panneau EPC permet de calculer l'EPC (Effective Pip Count) d'une position
 de bearoff. Il est activé en appuyant *CTRL-E*, en cliquant sur l'onglet
-EPC dans le panneau inférieur, en exécutant la commande ``epc`` ou en
-cliquant sur le bouton correspondant dans la barre d'outils.
+EPC dans le panneau inférieur, ou en exécutant la commande ``epc``.
 
-Dans ce mode, l'utilisateur édite la position des pions dans le jan
+Dans ce panneau, l'utilisateur édite la position des pions dans le jan
 (6 derniers points) et les informations suivantes sont affichées
 en temps réel dans le panneau EPC dédié pour chaque joueur:
 
@@ -241,7 +227,7 @@ en temps réel dans le panneau EPC dédié pour chaque joueur:
 Lorsque les deux joueurs ont des pions dans leur jan, une section
 de comparaison affiche les différences d'EPC et de pip count.
 
-Pour quitter le mode EPC, appuyer sur *CTRL-E* ou basculer sur
+Pour quitter le panneau EPC, appuyer sur *CTRL-E* ou basculer sur
 un autre onglet.
 
 .. note:: Le calcul repose sur la base de données interne de bearoff
@@ -249,14 +235,14 @@ un autre onglet.
 
 .. _mode_collection:
 
-Le mode COLLECTION
-------------------
+Navigation dans les collections
+-------------------------------
 
-Le mode COLLECTION permet de parcourir les positions d'une collection.
-Il est activé en double-cliquant sur une collection dans le panneau
-des collections (*CTRL-K*).
+La navigation dans les collections permet de parcourir les positions d'une collection.
+Elle est activée en double-cliquant sur une collection dans le panneau
+des collections (*CTRL-B*).
 
-Dans ce mode, l'utilisateur peut naviguer parmi les positions de la collection
-en utilisant les touches *GAUCHE* et *DROITE*. Pour quitter le mode COLLECTION
-et revenir au mode NORMAL, appuyer sur *TAB*.
+L'utilisateur peut naviguer parmi les positions de la collection
+en utilisant les touches *GAUCHE* et *DROITE*. L'ordre des collections
+et des positions dans les collections peut être modifié par glisser-déposer.
 

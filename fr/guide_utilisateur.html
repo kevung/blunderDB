@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>3. Guide utilisateur &mdash; Documentation blunderDB 0.12.0</title>
+  <title>3. Guide utilisateur &mdash; Documentation blunderDB 0.13.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e9405df3"></script>
+      <script src="_static/documentation_options.js?v=989517aa"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -162,7 +162,8 @@ une autre base de données.</p>
 </section>
 <section id="editer-une-position">
 <span id="guide-edit-position"></span><h2><span class="section-number">3.4. </span>Editer une position<a class="headerlink" href="#editer-une-position" title="Lien vers cette rubrique"></a></h2>
-<p>Pour éditer une position, basculer en mode EDIT à l’aide de la touche <em>TAB</em>.
+<p>Pour éditer une position, appuyer sur la touche <em>TAB</em> pour ouvrir le
+panneau de recherche et l’éditeur de position.
 Editer la position à la souris:</p>
 <ul class="simple">
 <li><p>cliquer sur les points pour ajouter des pions. Le clic gauche attribue les
@@ -189,17 +190,17 @@ même manière que dans XG.</p>
 </section>
 <section id="ajouter-une-position-a-la-base-de-donnees">
 <h2><span class="section-number">3.5. </span>Ajouter une position à la base de données<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
-<p>Après l’édition de la position précédente, blunderDB est dans le mode EDIT.</p>
-<p>Pour enregistrer la position obtenue précédemment, faire <em>CTRL-S</em> ou appuiyer
+<p>Après l’édition de la position, le panneau de recherche est ouvert.</p>
+<p>Pour enregistrer la position obtenue précédemment, faire <em>CTRL-S</em> ou appuyer
 dans la barre d’outils sur le bouton « Save Position ».</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>Depuis le mode EDIT, basculer en mode COMMAND et exécuter: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
+<p>Ouvrir la ligne de commande et exécuter: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
 </div>
 </section>
 <section id="etiqueter-une-position">
 <h2><span class="section-number">3.6. </span>Etiqueter une position<a class="headerlink" href="#etiqueter-une-position" title="Lien vers cette rubrique"></a></h2>
-<p>Pour ajouter un tag <em>toto</em> à la position courante, basculer en mode COMMAND en appuyant sur <em>ESPACE</em>,
+<p>Pour ajouter un tag <em>toto</em> à la position courante, ouvrir la ligne de commande en appuyant sur <em>ESPACE</em>,
 taper <code class="docutils literal notranslate"><span class="pre">#toto</span></code> et valider la commande en appuyant sur <em>ENTREE</em>.</p>
 </section>
 <section id="supprimer-une-position">
@@ -208,7 +209,7 @@ taper <code class="docutils literal notranslate"><span class="pre">#toto</span><
 clicker dans la barre d’outils sur le bouton « Delete Position »</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>En mode COMMAND, exécuter <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+<p>En ligne de commande, exécuter <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
 </div>
 <div class="admonition caution">
 <p class="admonition-title">Prudence</p>
@@ -285,7 +286,7 @@ avec la base de données courante,</p></li>
 <p>Pour naviguer dans un match importé:</p>
 <ol class="arabic simple">
 <li><p>Ouvrir le panneau des matchs avec <em>CTRL-T</em>.</p></li>
-<li><p>Double-cliquer sur un match pour entrer en mode MATCH.</p></li>
+<li><p>Double-cliquer sur un match ou appuyer sur <em>ENTREE</em>.</p></li>
 <li><p>Utiliser les touches <em>GAUCHE</em> / <em>DROITE</em> pour parcourir les coups.</p></li>
 <li><p>Utiliser <em>PageUp</em> / <em>PageDown</em> pour passer d’une partie à l’autre.</p></li>
 <li><p>Appuyer sur <em>CTRL-L</em> pour afficher l’analyse.</p></li>
@@ -293,7 +294,7 @@ avec la base de données courante,</p></li>
 </ol>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
-<p>Raccourci: <em>CTRL-TAB</em> pour basculer en mode MATCH / sortir du mode MATCH.
+<p>Raccourci: <em>CTRL-T</em> pour ouvrir le panneau des matchs.
 Commande: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
 </div>
 <div class="admonition note">
@@ -332,8 +333,9 @@ Pour accéder au panneau des collections, appuyer sur <em>CTRL-B</em>.</p>
 </ol>
 <p><strong>Parcourir une collection:</strong></p>
 <ul class="simple">
-<li><p>Double-cliquer sur une collection pour entrer en mode COLLECTION et
-parcourir ses positions.</p></li>
+<li><p>Double-cliquer sur une collection pour parcourir ses positions.
+L’ordre des collections et des positions peut être modifié par
+glisser-déposer.</p></li>
 </ul>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
@@ -361,8 +363,7 @@ de la colonne tournoi pour assigner un match.</p></li>
 bearoff d’une position.</p>
 <ol class="arabic simple">
 <li><p>Appuyer <em>CTRL-E</em>, cliquer sur l’onglet EPC dans le panneau inférieur,
-exécuter la commande <code class="docutils literal notranslate"><span class="pre">epc</span></code> ou cliquer sur le bouton correspondant dans la
-barre d’outils.</p></li>
+ou exécuter la commande <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p></li>
 <li><p>Éditer la position des pions dans le jan (6 derniers points).</p></li>
 <li><p>Les résultats sont affichés en temps réel dans le panneau EPC dédié:
 EPC, nombre moyen de lancers, écart type, pip count et wastage.</p></li>
@@ -387,8 +388,8 @@ est affiché ainsi que les chances de gain de la position.</p>
 <p>Lorsque plusieurs moteurs d’analyse sont présents pour la même position
 (par exemple XG et GNUbg), une colonne supplémentaire indique le moteur
 d’origine de chaque analyse.</p>
-<p>En mode MATCH, le coup effectivement joué est mis en évidence dans la liste
-des coups. En mode NORMAL, si la position a été rencontrée dans plusieurs
+<p>Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste
+des coups. Si la position a été rencontrée dans plusieurs
 matchs, tous les coups joués sont indiqués.</p>
 <div class="admonition tip">
 <p class="admonition-title">Astuce</p>
@@ -416,7 +417,7 @@ bearoff à droite, appuyer <em>CTRL-DROITE</em>.</p>
 <h2><span class="section-number">3.20. </span>Rechercher des positions selon des critères<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Lien vers cette rubrique"></a></h2>
 <p>Pour rechercher des types de positions,</p>
 <ul class="simple">
-<li><p>basculer en mode EDIT en appuyant sur <em>TAB</em>,</p></li>
+<li><p>appuyer sur <em>TAB</em> pour ouvrir le panneau de recherche,</p></li>
 <li><p>éditer la structure de position à rechercher. blunderDB va filtrer les
 positions ayant <em>a minima</em> la structure de pions saisie. Dans le
 doute, afin d’obtenir le maximum de résultats, effacer la position
@@ -431,7 +432,7 @@ position du cube et le score.</p></li>
 </ul>
 <p>Méthode 2 (avancée):</p>
 <ul class="simple">
-<li><p>basculer en mode COMMAND en appuyant sur <em>ESPACE</em>,</p></li>
+<li><p>ouvrir la ligne de commande en appuyant sur <em>ESPACE</em>,</p></li>
 <li><p>écrire <em>s</em>, ajouter d’éventuels filtres supplémentaires (par exemple
 <em>cube</em> ou <em>score</em> pour prendre respectivement en compte le cube et le
 score. Voir <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Section 4.4</span></a> pour une liste exhaustive des

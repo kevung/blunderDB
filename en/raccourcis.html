@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>5. Keyboard shortcuts &mdash; blunderDB 0.12.0 documentation</title>
+  <title>5. Keyboard shortcuts &mdash; blunderDB 0.13.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=61ccb1f1"></script>
+      <script src="_static/documentation_options.js?v=1019fba8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -56,7 +56,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#position">5.2. Position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation">5.3. Navigation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#affichage">5.4. Display</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#modes">5.5. Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#actions">5.5. Actions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#outils">5.6. Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#ligne-de-commande">5.7. Command Line</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#panneau-historique-de-recherche">5.8. Search History Panel</a></li>
@@ -191,7 +191,7 @@
 <td><p>Reload all the positions from the database.</p></td>
 </tr>
 <tr class="row-odd"><td><p>PageUp, h</p></td>
-<td><p>First position / Previous game (MATCH mode).</p></td>
+<td><p>First position / Previous game (match navigation).</p></td>
 </tr>
 <tr class="row-even"><td><p>LEFT, k</p></td>
 <td><p>Previous position.</p></td>
@@ -206,12 +206,9 @@
 <td><p>Next move (when a move is selected in the analysis).</p></td>
 </tr>
 <tr class="row-even"><td><p>PageDown, l</p></td>
-<td><p>Last position / Next game (MATCH mode).</p></td>
+<td><p>Last position / Next game (match navigation).</p></td>
 </tr>
-<tr class="row-odd"><td><p>CTRL-K</p></td>
-<td><p>Go to a specific position.</p></td>
-</tr>
-<tr class="row-even"><td><p>r</p></td>
+<tr class="row-odd"><td><p>r</p></td>
 <td><p>Load a random position.</p></td>
 </tr>
 </tbody>
@@ -242,8 +239,8 @@
 </tbody>
 </table>
 </section>
-<section id="modes">
-<span id="raccourcis-modes"></span><h2><span class="section-number">5.5. </span>Modes<a class="headerlink" href="#modes" title="Link to this heading"></a></h2>
+<section id="actions">
+<span id="raccourcis-modes"></span><h2><span class="section-number">5.5. </span>Actions<a class="headerlink" href="#actions" title="Link to this heading"></a></h2>
 <table class="docutils align-center">
 <colgroup>
 <col style="width: 25.9%" />
@@ -256,13 +253,10 @@
 </thead>
 <tbody>
 <tr class="row-even"><td><p>TAB</p></td>
-<td><p>Switch to EDIT mode / Exit MATCH mode to NORMAL.</p></td>
+<td><p>Open the search panel (position editor).</p></td>
 </tr>
-<tr class="row-odd"><td><p>CTRL-TAB</p></td>
-<td><p>Toggle MATCH mode (enter/exit).</p></td>
-</tr>
-<tr class="row-even"><td><p>SPACE</p></td>
-<td><p>Switch to COMMAND mode.</p></td>
+<tr class="row-odd"><td><p>SPACE</p></td>
+<td><p>Open the command line.</p></td>
 </tr>
 </tbody>
 </table>
@@ -417,7 +411,7 @@
 <td><p>Select next move (when a move is selected).</p></td>
 </tr>
 <tr class="row-odd"><td><p>d</p></td>
-<td><p>Toggle between checker and cube analysis (MATCH mode only).</p></td>
+<td><p>Toggle between checker and cube analysis (match navigation only).</p></td>
 </tr>
 <tr class="row-even"><td><p>Esc</p></td>
 <td><p>Deselect move. If no move selected, close the panel.</p></td>
@@ -442,7 +436,7 @@
 <td><p>Select a match.</p></td>
 </tr>
 <tr class="row-odd"><td><p>Double-click</p></td>
-<td><p>Enter MATCH mode.</p></td>
+<td><p>Navigate the match.</p></td>
 </tr>
 <tr class="row-even"><td><p>UP, k</p></td>
 <td><p>Select previous match.</p></td>

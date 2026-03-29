@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.12.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.13.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=61ccb1f1"></script>
+      <script src="_static/documentation_options.js?v=1019fba8"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -169,19 +169,19 @@
 <tr class="row-odd"><td><p>0.10.0</p></td>
 <td><p>February 25, 2026</p></td>
 <td><p>Match import from eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) and BGBlitz (BGF/TXT).</p>
-<p>MATCH mode: navigate through moves of an imported match, with played move highlighting.</p>
+<p>Match navigation: browse through moves of an imported match, with played move highlighting.</p>
 <p>Match panel: list, sort, inline editing, player swap, tournament assignment.</p>
 <p>Recursive folder import and drag &amp; drop import.</p>
 <p>EPC (Effective Pip Count) calculator with built-in GNUbg bearoff database.</p>
-<p>Collections: custom position grouping with dedicated COLLECTION mode.</p>
+<p>Collections: custom position grouping.</p>
 <p>Tournaments: group matches by event.</p>
 <p>Save and restore session state (last search, current position).</p>
 <p>Automatic database schema migration.</p>
 <p>Multi-engine display in analysis.</p>
 <p>Player 1 error/blunder filter in searches.</p>
 <p>Database export with granular selection (matches, collections, tournaments, played moves).</p>
-<p>Toggle button for MATCH mode.</p>
-<p>Pipcount display in MATCH mode.</p>
+<p>Match navigation button.</p>
+<p>Pipcount display in match navigation.</p>
 <p>Complete command-line interface (CLI).</p>
 <p>Automatic reopening of the last database.</p>
 <p>Improved toolbar and icons.</p>
@@ -191,12 +191,24 @@
 <td><p>March 6, 2026</p></td>
 <td><p>Filter to search within currently filtered positions.</p>
 <p>Add match and tournament filters.</p>
-<p>Automatic board clearing when switching to EDIT mode.</p>
+<p>Automatic board clearing when opening the search panel.</p>
 </td>
 </tr>
 <tr class="row-odd"><td><p>0.12.0</p></td>
 <td><p>March 19, 2026</p></td>
 <td><p>Import eXtreme Gammon position files (XGP) with analysis.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.13.0</p></td>
+<td><p>March 28, 2026</p></td>
+<td><p>Interface simplification: match and collection navigation is now done directly through panels.</p>
+<p>Command line integrated into the status bar.</p>
+<p>Console panel renamed to Log panel.</p>
+<p>Dedicated EPC panel in the bottom panel.</p>
+<p>Copy/paste position in the search panel.</p>
+<p>Drag and drop to reorder collections, positions within collections, and matches within tournaments.</p>
+<p>Tournament column in the match panel with inline editing.</p>
+<p>Automatic display of the analysis panel after a search.</p>
+</td>
 </tr>
 </tbody>
 </table>
@@ -209,14 +221,13 @@
 <li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manual</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Introduction</a></li>
 <li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Main Interactions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#modes">2.3. Modes</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.4. Description of the interface</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-normal">2.5. NORMAL mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-edit">2.6. EDIT mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-command">2.7. COMMAND mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-match">2.8. MATCH mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-epc">2.9. EPC mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="manuel.html#le-mode-collection">2.10. COLLECTION mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Description of the interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.4. Browsing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.5. Editing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.6. The command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-matchs">2.7. Match navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#calculateur-epc">2.8. EPC Calculator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-collections">2.9. Collection navigation</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a><ul>
@@ -244,8 +255,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Global operations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#mode-normal">4.2. NORMAL Mode</a></li>
-<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#mode-edit">4.3. EDIT Mode</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. Positions and navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. Editing and search</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Search Filters</a></li>
 <li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. Various commands</a></li>
 </ul>
@@ -255,7 +266,7 @@
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. Position</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. Navigation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. Display</a></li>
-<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#modes">5.5. Modes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. Actions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.7. Command Line</a></li>
 <li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-historique-de-recherche">5.8. Search History Panel</a></li>

@@ -63,7 +63,8 @@ blunderDB va fusionner intelligemment les deux bases de données:
 Editer une position
 -------------------
 
-Pour éditer une position, basculer en mode EDIT à l'aide de la touche *TAB*.
+Pour éditer une position, appuyer sur la touche *TAB* pour ouvrir le
+panneau de recherche et l'éditeur de position.
 Editer la position à la souris:
 
 * cliquer sur les points pour ajouter des pions. Le clic gauche attribue les
@@ -93,17 +94,17 @@ Editer la position à la souris:
 Ajouter une position à la base de données
 -----------------------------------------
 
-Après l'édition de la position précédente, blunderDB est dans le mode EDIT.
+Après l'édition de la position, le panneau de recherche est ouvert.
 
-Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou appuiyer
+Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou appuyer
 dans la barre d'outils sur le bouton "Save Position".
 
-.. tip:: Depuis le mode EDIT, basculer en mode COMMAND et exécuter: ``w``
+.. tip:: Ouvrir la ligne de commande et exécuter: ``w``
 
 Etiqueter une position
 ----------------------
 
-Pour ajouter un tag *toto* à la position courante, basculer en mode COMMAND en appuyant sur *ESPACE*,
+Pour ajouter un tag *toto* à la position courante, ouvrir la ligne de commande en appuyant sur *ESPACE*,
 taper ``#toto`` et valider la commande en appuyant sur *ENTREE*.
 
 Supprimer une position
@@ -112,7 +113,7 @@ Supprimer une position
 Pour supprimer la position courante de la base de données, faire *Del* ou
 clicker dans la barre d'outils sur le bouton "Delete Position"
 
-.. tip:: En mode COMMAND, exécuter ``d``.
+.. tip:: En ligne de commande, exécuter ``d``.
 
 .. caution:: La suppression de la position est définitive et ne nécessite
    aucune confirmation de la part de l'utilisateur.
@@ -194,7 +195,7 @@ Pour naviguer dans un match importé:
 
 #. Ouvrir le panneau des matchs avec *CTRL-T*.
 
-#. Double-cliquer sur un match pour entrer en mode MATCH.
+#. Double-cliquer sur un match ou appuyer sur *ENTREE*.
 
 #. Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups.
 
@@ -205,7 +206,7 @@ Pour naviguer dans un match importé:
 #. Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du cube.
 
 .. tip::
-   Raccourci: *CTRL-TAB* pour basculer en mode MATCH / sortir du mode MATCH.
+   Raccourci: *CTRL-T* pour ouvrir le panneau des matchs.
    Commande: ``m``
 
 .. note::
@@ -251,8 +252,9 @@ Pour accéder au panneau des collections, appuyer sur *CTRL-B*.
 
 **Parcourir une collection:**
 
-* Double-cliquer sur une collection pour entrer en mode COLLECTION et
-  parcourir ses positions.
+* Double-cliquer sur une collection pour parcourir ses positions.
+  L'ordre des collections et des positions peut être modifié par
+  glisser-déposer.
 
 .. tip::
    Commande: ``coll``
@@ -281,8 +283,7 @@ Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques de
 bearoff d'une position.
 
 #. Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur,
-   exécuter la commande ``epc`` ou cliquer sur le bouton correspondant dans la
-   barre d'outils.
+   ou exécuter la commande ``epc``.
 
 #. Éditer la position des pions dans le jan (6 derniers points).
 
@@ -312,8 +313,8 @@ Lorsque plusieurs moteurs d'analyse sont présents pour la même position
 (par exemple XG et GNUbg), une colonne supplémentaire indique le moteur
 d'origine de chaque analyse.
 
-En mode MATCH, le coup effectivement joué est mis en évidence dans la liste
-des coups. En mode NORMAL, si la position a été rencontrée dans plusieurs
+Lors de la navigation dans un match, le coup effectivement joué est mis en évidence dans la liste
+des coups. Si la position a été rencontrée dans plusieurs
 matchs, tous les coups joués sont indiqués.
 
 .. tip::
@@ -344,7 +345,7 @@ Rechercher des positions selon des critères
 
 Pour rechercher des types de positions,
 
-* basculer en mode EDIT en appuyant sur *TAB*,
+* appuyer sur *TAB* pour ouvrir le panneau de recherche,
 
 * éditer la structure de position à rechercher. blunderDB va filtrer les
   positions ayant *a minima* la structure de pions saisie. Dans le
@@ -363,7 +364,7 @@ Méthode 1 (simple):
 Méthode 2 (avancée):
 
 
-* basculer en mode COMMAND en appuyant sur *ESPACE*,
+* ouvrir la ligne de commande en appuyant sur *ESPACE*,
 
 * écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple
   *cube* ou *score* pour prendre respectivement en compte le cube et le

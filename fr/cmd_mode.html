@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>4. Liste des commandes &mdash; Documentation blunderDB 0.12.0</title>
+  <title>4. Liste des commandes &mdash; Documentation blunderDB 0.13.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=e9405df3"></script>
+      <script src="_static/documentation_options.js?v=989517aa"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -53,8 +53,8 @@
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">4. Liste des commandes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Opérations globales</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mode-normal">4.2. Mode NORMAL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mode-edit">4.3. Mode EDIT</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">4.2. Positions et navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">4.3. Édition et recherche</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Filtres de recherche</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Commandes diverses</a></li>
 </ul>
@@ -162,8 +162,8 @@
 </tbody>
 </table>
 </section>
-<section id="mode-normal">
-<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Mode NORMAL<a class="headerlink" href="#mode-normal" title="Lien vers cette rubrique"></a></h2>
+<section id="positions-et-navigation">
+<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Positions et navigation<a class="headerlink" href="#positions-et-navigation" title="Lien vers cette rubrique"></a></h2>
 <table class="docutils align-center">
 <colgroup>
 <col style="width: 33.3%" />
@@ -209,13 +209,13 @@
 <td><p>Charger toutes les positions de la base de données.</p></td>
 </tr>
 <tr class="row-odd"><td><p>m</p></td>
-<td><p>Basculer en mode MATCH (dernier match visité).</p></td>
+<td><p>Naviguer dans le dernier match visité.</p></td>
 </tr>
 </tbody>
 </table>
 </section>
-<section id="mode-edit">
-<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Mode EDIT<a class="headerlink" href="#mode-edit" title="Lien vers cette rubrique"></a></h2>
+<section id="edition-et-recherche">
+<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Édition et recherche<a class="headerlink" href="#edition-et-recherche" title="Lien vers cette rubrique"></a></h2>
 <table class="docutils align-center">
 <colgroup>
 <col style="width: 33.3%" />
@@ -252,6 +252,12 @@ c’est-à-dire après le début de commande <code class="docutils literal notra
 compte la structure de pions courante, ignore la position du videau, du
 score et des dés. Pour prendre en compte la position du videau, du score,
 des dés, il faut le mentionner explicitement dans la recherche.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>La commande de recherche <code class="docutils literal notranslate"><span class="pre">s</span></code> est disponible dans le panneau de recherche
+(touche <code class="docutils literal notranslate"><span class="pre">TAB</span></code>). La commande <code class="docutils literal notranslate"><span class="pre">ss</span></code> permet de chercher parmi les
+résultats actuellement filtrés.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
