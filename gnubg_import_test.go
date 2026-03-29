@@ -1128,3 +1128,73 @@ func TestMATImportCheckerCounts(t *testing.T) {
 		t.Logf("All %d positions have correct checker counts (15 per player) ✓", posCount)
 	}
 }
+
+// TestImportXGComments tests that XG file comments are imported into the comment table.
+func TestImportXGComments(t *testing.T) {
+	db, cleanup := setupTestDB(t)
+	defer cleanup()
+
+	testFile := filepath.Join("testdata", "match_with_comment.xg")
+	if _, err := os.Stat(testFile); os.IsNotExist(err) {
+		t.Skip("match_with_comment.xg not found in testdata/")
+	}
+
+	matchID, err := db.ImportXGMatch(testFile)
+	if err != nil {
+		t.Fatalf("ImportXGMatch failed: %v", err)
+	}
+	t.Logf("Imported match ID: %d", matchID)
+
+	// Query all comments
+	rows, err := db.db.Query(`
+		SELECT c.id, c.position_id, c.text
+		FROM comment c
+		ORDER BY c.id
+	`)
+	if err != nil {
+		t.Fatalf("Failed to query comments: %v", err)
+	}
+	defer rows.Close()
+
+	type commentRow struct {
+		id         int64
+		positionID int64
+		text       string
+	}
+	var comments []commentRow
+	for rows.Next() {
+		var c commentRow
+		if err := rows.Scan(&c.id, &c.positionID, &c.text); err != nil {
+			t.Fatalf("Failed to scan comment: %v", err)
+		}
+		comments = append(comments, c)
+		t.Logf("Comment %d (position_id=%d): %q", c.id, c.positionID, c.text)
+	}
+
+	if len(comments) != 2 {
+		t.Fatalf("Expected 2 comments, got %d", len(comments))
+	}
+
+	// Verify comment content
+	expectedComments := []string{
+		"coup assez difficile",
+		"les double 66 sont toujpurs difficiles à trouver",
+	}
+	for i, expected := range expectedComments {
+		if comments[i].text != expected {
+			t.Errorf("Comment %d: got %q, want %q", i, comments[i].text, expected)
+		}
+	}
+
+	// Verify comments are linked to valid positions
+	for _, c := range comments {
+		var count int
+		err := db.db.QueryRow(`SELECT COUNT(*) FROM position WHERE id = ?`, c.positionID).Scan(&count)
+		if err != nil {
+			t.Errorf("Failed to check position for comment %d: %v", c.id, err)
+		}
+		if count != 1 {
+			t.Errorf("Comment %d references non-existent position %d", c.id, c.positionID)
+		}
+	}
+}

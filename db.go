@@ -5751,6 +5751,14 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 							fmt.Printf("Warning: failed to save analysis for canonical duplicate: %v\n", err)
 						}
 					}
+
+					// Save comment from XG file if present
+					if move.Comment != "" {
+						_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, posID, move.Comment)
+						if err != nil {
+							fmt.Printf("Warning: failed to save XG comment for canonical duplicate: %v\n", err)
+						}
+					}
 				} else if move.MoveType == "cube" && move.CubeMove != nil && move.CubeMove.Analysis != nil {
 					pos, err := d.createPositionFromXG(move.CubeMove.Position, &game, int32(match.Metadata.MatchLength), 0, move.CubeMove.ActivePlayer)
 					if err != nil {
@@ -5768,6 +5776,14 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					err = d.saveCubeAnalysisToPositionInTx(tx, posID, move.CubeMove.Analysis)
 					if err != nil {
 						fmt.Printf("Warning: failed to save cube analysis for canonical duplicate: %v\n", err)
+					}
+
+					// Save comment from XG file if present
+					if move.Comment != "" {
+						_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, posID, move.Comment)
+						if err != nil {
+							fmt.Printf("Warning: failed to save XG comment for canonical duplicate: %v\n", err)
+						}
 					}
 				}
 			}
@@ -6201,6 +6217,14 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
 				}
 			}
+		}
+	}
+
+	// Save comment from XG file if present
+	if move.Comment != "" && positionID > 0 {
+		_, err := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, move.Comment)
+		if err != nil {
+			fmt.Printf("Warning: failed to save XG comment: %v\n", err)
 		}
 	}
 
