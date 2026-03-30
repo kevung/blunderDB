@@ -33,6 +33,7 @@ Position
    "CTRL-I", "Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, txt, bgf)."
    "CTRL-SHIFT-F", "Importer récursivement un dossier de fichiers de matchs/positions."
    "CTRL-C", "Copier une position dans le presse-papier."
+   "CTRL-X", "Copier l'image du board dans le presse-papier (PNG)."
    "CTRL-V", "Coller une position depuis le presse-papier (détection automatique du format)."
    "CTRL-S", "Enregistrer une position."
    "CTRL-U", "Mettre à jour une position."
