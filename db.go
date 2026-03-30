@@ -5839,8 +5839,30 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	if isCanonicalDuplicate {
 		// Canonical duplicate: import analysis to existing positions, create genuinely new ones
 		for _, game := range match.Games {
-			for _, move := range game.Moves {
+			var pendingCubeComment string // Comment from a skipped "No Double" cube decision
+			for i, move := range game.Moves {
+				// Detect "No Double" cube decisions that will be skipped
+				if move.MoveType == "cube" && move.Comment != "" {
+					isSkipped := move.CubeMove == nil || move.CubeMove.Analysis == nil
+					if isSkipped {
+						pendingCubeComment = move.Comment
+					}
+				}
+
 				if move.MoveType == "checker" && move.CheckerMove != nil {
+					// Carry forward comment from a skipped "No Double" cube decision
+					if pendingCubeComment != "" {
+						if move.Comment == "" {
+							game.Moves[i].Comment = pendingCubeComment
+							move.Comment = pendingCubeComment
+						} else {
+							combined := pendingCubeComment + "\n" + move.Comment
+							game.Moves[i].Comment = combined
+							move.Comment = combined
+						}
+						pendingCubeComment = ""
+					}
+
 					pos, err := d.createPositionFromXG(move.CheckerMove.Position, &game, int32(match.Metadata.MatchLength), 0, move.CheckerMove.ActivePlayer)
 					if err != nil {
 						continue
@@ -5935,6 +5957,7 @@ func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgpar
 
 		cubeIdx := 0
 		var lastCubeAnalysis *RawCubeAction
+		var pendingCubeComment string // Comment from a skipped "No Double" cube decision
 
 		for moveIdx, move := range game.Moves {
 			var rawCube *RawCubeAction
@@ -5946,9 +5969,31 @@ func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgpar
 					lastCubeAnalysis = rc
 				}
 				cubeIdx++
+
+				// Check if this is a "No Double" that will be skipped by importMoveWithCacheAndRawCube.
+				// If it has a comment, carry it forward to the next checker move.
+				isNoDouble := false
+				if rawCube != nil {
+					isNoDouble = (rawCube.Double != 1)
+				} else if move.CubeMove != nil {
+					isNoDouble = (move.CubeMove.CubeAction == 0)
+				}
+				if isNoDouble && move.Comment != "" {
+					pendingCubeComment = move.Comment
+				}
 			} else if move.MoveType == "checker" {
 				rawCube = lastCubeAnalysis
 				lastCubeAnalysis = nil
+
+				// Carry forward comment from a skipped "No Double" cube decision
+				if pendingCubeComment != "" {
+					if move.Comment == "" {
+						move.Comment = pendingCubeComment
+					} else {
+						move.Comment = pendingCubeComment + "\n" + move.Comment
+					}
+					pendingCubeComment = ""
+				}
 			}
 
 			err := d.importMoveWithCacheAndRawCube(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), positionCache, rawCube)
