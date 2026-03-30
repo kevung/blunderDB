@@ -129,6 +129,9 @@ Historique des versions
    Colonne tournoi dans le panneau des matchs avec édition inline.
 
    Affichage automatique du panneau d'analyse après une recherche."
+   0.14.0, 30/03/2026, "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS).
+
+   Import des commentaires depuis les fichiers XG."
 
 Sommaire
 ========

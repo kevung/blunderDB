@@ -174,7 +174,7 @@
                         <li>modifying an existing position,</li>
                         <li>deleting an existing position,</li>
                         <li>searching for one or more positions,</li>
-                        <li>importing matches from various sources (XG, GNUbg, BGBlitz, Jellyfish),</li>
+                        <li>importing matches from various sources (XG, GNUbg, BGBlitz, Jellyfish), including comments from XG files,</li>
                         <li>browsing the moves of an imported match,</li>
                         <li>organizing positions into collections,</li>
                         <li>organizing matches into tournaments.</li>

@@ -411,6 +411,23 @@ msgstr ""
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr ""
 
+#: ../../source/index.rst:1
+msgid "0.14.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "30/03/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
+msgstr ""
+
+#: ../../source/index.rst:3
+msgid "Import des commentaires depuis les fichiers XG."
+msgstr ""
+
 #: ../../source/index.rst:134
 msgid "Sommaire"
 msgstr ""

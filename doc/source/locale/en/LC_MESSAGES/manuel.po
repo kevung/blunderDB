@@ -75,8 +75,10 @@ msgstr "search for one or more positions,"
 #: ../../source/manuel.rst:32
 msgid ""
 "importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, "
-"Jellyfish),"
-msgstr "import matches from various sources (XG, GNUbg, BGBlitz, Jellyfish),"
+"Jellyfish), y compris les commentaires depuis les fichiers XG,"
+msgstr ""
+"import matches from various sources (XG, GNUbg, BGBlitz, Jellyfish), "
+"including comments from XG files,"
 
 #: ../../source/manuel.rst:34
 msgid "naviguer dans les coups d'un match importé,"

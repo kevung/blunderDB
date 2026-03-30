@@ -70,7 +70,7 @@ msgstr ""
 #: ../../source/manuel.rst:32
 msgid ""
 "importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, "
-"Jellyfish),"
+"Jellyfish), y compris les commentaires depuis les fichiers XG,"
 msgstr ""
 
 #: ../../source/manuel.rst:34

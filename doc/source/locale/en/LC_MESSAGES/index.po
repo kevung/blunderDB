@@ -438,6 +438,24 @@ msgstr "Tournament column in the match panel with inline editing."
 msgid "Affichage automatique du panneau d'analyse après une recherche."
 msgstr "Automatic display of the analysis panel after a search."
 
+#: ../../source/index.rst:1
+msgid "0.14.0"
+msgstr "0.14.0"
+
+#: ../../source/index.rst:1
+msgid "30/03/2026"
+msgstr "March 30, 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
+msgstr ""
+"Dedicated Anki panel for spaced repetition study (FSRS algorithm)."
+
+#: ../../source/index.rst:3
+msgid "Import des commentaires depuis les fichiers XG."
+msgstr "Import comments from XG files."
+
 #: ../../source/index.rst:134
 msgid "Sommaire"
 msgstr "Table of contents"
