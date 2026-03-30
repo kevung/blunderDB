@@ -65,6 +65,8 @@ Des panneaux peuvent être affichés pour:
 
 * afficher et gérer les collections de positions (panneau collections),
 
+* étudier les positions par répétition espacée (panneau Anki),
+
 * afficher et gérer les tournois (panneau tournois),
 
 * calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau EPC),
@@ -245,4 +247,32 @@ des collections (*CTRL-B*).
 L'utilisateur peut naviguer parmi les positions de la collection
 en utilisant les touches *GAUCHE* et *DROITE*. L'ordre des collections
 et des positions dans les collections peut être modifié par glisser-déposer.
+
+.. _mode_anki:
+
+Répétition espacée (Anki)
+-------------------------
+
+Le panneau Anki (*CTRL-K*) permet d'étudier des positions par répétition espacée
+en utilisant l'algorithme FSRS. L'utilisateur peut créer des paquets à partir
+de collections ou de résultats de recherche.
+
+**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à partir
+d'une collection ou des résultats de recherche courants. Les paquets basés sur
+une recherche se synchronisent automatiquement à l'activation de l'onglet Anki.
+
+**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou double-cliquez
+sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
+la position correspondante sur le plateau. Évaluez votre rappel avec les touches
+*1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
+pour arrêter et revenir à la liste des paquets.
+
+**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à tout moment
+avec *Esc*. Le bouton change en *Resume* et affiche votre progression.
+Cliquez dessus pour reprendre là où vous vous êtes arrêté.
+
+**Gestion des paquets :** Utilisez les boutons d'action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
+(rétention cible, intervalle maximum, aléa) peuvent être configurés par
+paquet dans les Paramètres (icône engrenage).
 

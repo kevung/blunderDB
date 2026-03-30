@@ -58,6 +58,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-matchs">2.7. Match navigation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculateur-epc">2.8. EPC Calculator</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-collections">2.9. Collection navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repetition-espacee-anki">2.10. Spaced Repetition (Anki)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
@@ -129,6 +130,7 @@
 <li><p>display, add, or modify comments,</p></li>
 <li><p>display the list of imported matches and navigate through the moves of a match (match panel),</p></li>
 <li><p>display and manage position collections (collections panel),</p></li>
+<li><p>study positions with spaced repetition (Anki panel),</p></li>
 <li><p>display and manage tournaments (tournaments panel),</p></li>
 <li><p>compute the EPC (Effective Pip Count) of a bearoff position (EPC panel),</p></li>
 <li><p>display the database metadata (metadata panel),</p></li>
@@ -232,6 +234,25 @@
 <span id="mode-collection"></span><h2><span class="section-number">2.9. </span>Collection navigation<a class="headerlink" href="#navigation-dans-les-collections" title="Link to this heading"></a></h2>
 <p>Collection navigation allows you to browse the positions of a collection. It is activated by double-clicking on a collection in the collections panel (<em>CTRL-B</em>).</p>
 <p>The user can navigate through the positions of the collection using the <em>LEFT</em> and <em>RIGHT</em> keys. The order of collections and positions within collections can be changed by drag and drop.</p>
+</section>
+<section id="repetition-espacee-anki">
+<span id="mode-anki"></span><h2><span class="section-number">2.10. </span>Spaced Repetition (Anki)<a class="headerlink" href="#repetition-espacee-anki" title="Link to this heading"></a></h2>
+<p>The Anki panel (<em>CTRL-K</em>) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.</p>
+<p><strong>Création de paquets :</strong> Cliquez sur <em>New Deck</em> pour créer un paquet à partir
+d’une collection ou des résultats de recherche courants. Les paquets basés sur
+une recherche se synchronisent automatiquement à l’activation de l’onglet Anki.</p>
+<p><strong>Révision :</strong> Sélectionnez un paquet puis cliquez sur <em>Study</em> (ou double-cliquez
+sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
+la position correspondante sur le plateau. Évaluez votre rappel avec les touches
+<em>1</em> (À revoir), <em>2</em> (Difficile), <em>3</em> (Bien), ou <em>4</em> (Facile). Appuyez sur <em>Esc</em>
+pour arrêter et revenir à la liste des paquets.</p>
+<p><strong>Arrêt/Reprise :</strong> Vous pouvez interrompre une session de révision à tout moment
+avec <em>Esc</em>. Le bouton change en <em>Resume</em> et affiche votre progression.
+Cliquez dessus pour reprendre là où vous vous êtes arrêté.</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
+(rétention cible, intervalle maximum, aléa) peuvent être configurés par
+paquet dans les Paramètres (icône engrenage).</p>
 </section>
 </section>
 

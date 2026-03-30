@@ -59,6 +59,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-matchs">2.7. Navigation dans les matchs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#calculateur-epc">2.8. Calculateur EPC</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-collections">2.9. Navigation dans les collections</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#repetition-espacee-anki">2.10. Répétition espacée (Anki)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
@@ -141,6 +142,7 @@ d’eXtreme Gammon (XG), GNUbg, ou BGBlitz,</p></li>
 <li><p>afficher, ajouter ou modifier des commentaires,</p></li>
 <li><p>afficher la liste des matchs importés et naviguer dans les coups d’un match (panneau matchs),</p></li>
 <li><p>afficher et gérer les collections de positions (panneau collections),</p></li>
+<li><p>étudier les positions par répétition espacée (panneau Anki),</p></li>
 <li><p>afficher et gérer les tournois (panneau tournois),</p></li>
 <li><p>calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau EPC),</p></li>
 <li><p>afficher les métadonnées de la base de données (panneau métadonnées),</p></li>
@@ -287,6 +289,27 @@ des collections (<em>CTRL-B</em>).</p>
 <p>L’utilisateur peut naviguer parmi les positions de la collection
 en utilisant les touches <em>GAUCHE</em> et <em>DROITE</em>. L’ordre des collections
 et des positions dans les collections peut être modifié par glisser-déposer.</p>
+</section>
+<section id="repetition-espacee-anki">
+<span id="mode-anki"></span><h2><span class="section-number">2.10. </span>Répétition espacée (Anki)<a class="headerlink" href="#repetition-espacee-anki" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau Anki (<em>CTRL-K</em>) permet d’étudier des positions par répétition espacée
+en utilisant l’algorithme FSRS. L’utilisateur peut créer des paquets à partir
+de collections ou de résultats de recherche.</p>
+<p><strong>Création de paquets :</strong> Cliquez sur <em>New Deck</em> pour créer un paquet à partir
+d’une collection ou des résultats de recherche courants. Les paquets basés sur
+une recherche se synchronisent automatiquement à l’activation de l’onglet Anki.</p>
+<p><strong>Révision :</strong> Sélectionnez un paquet puis cliquez sur <em>Study</em> (ou double-cliquez
+sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
+la position correspondante sur le plateau. Évaluez votre rappel avec les touches
+<em>1</em> (À revoir), <em>2</em> (Difficile), <em>3</em> (Bien), ou <em>4</em> (Facile). Appuyez sur <em>Esc</em>
+pour arrêter et revenir à la liste des paquets.</p>
+<p><strong>Arrêt/Reprise :</strong> Vous pouvez interrompre une session de révision à tout moment
+avec <em>Esc</em>. Le bouton change en <em>Resume</em> et affiche votre progression.
+Cliquez dessus pour reprendre là où vous vous êtes arrêté.</p>
+<p><strong>Gestion des paquets :</strong> Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
+(rétention cible, intervalle maximum, aléa) peuvent être configurés par
+paquet dans les Paramètres (icône engrenage).</p>
 </section>
 </section>
 
