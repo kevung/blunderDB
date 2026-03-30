@@ -1,4 +1,4 @@
-.. _telecharge_install::
+.. _telecharge_install:
 
 Téléchargement et installation
 ==============================

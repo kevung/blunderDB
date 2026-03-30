@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7. Annex: Advanced Filter Usage &mdash; blunderDB 0.13.0 documentation</title>
+  <title>7. Annex: Advanced Filter Usage &mdash; blunderDB 0.14.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=1019fba8"></script>
+      <script src="_static/documentation_options.js?v=9e420a66"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -146,6 +146,97 @@
 <section id="exemples">
 <h2><span class="section-number">7.4. </span>Examples<a class="headerlink" href="#exemples" title="Link to this heading"></a></h2>
 <p>Here are some examples of using filters in the command line:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Type de position</p></th>
+<th class="head"><p>Structure de pions</p></th>
+<th class="head"><p>Command</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Courses</p></td>
+<td></td>
+<td><p>s nc</p></td>
+</tr>
+<tr class="row-odd"><td><p>Courses petites</p></td>
+<td></td>
+<td><p>s nc P&lt;70</p></td>
+</tr>
+<tr class="row-even"><td><p>Frapper au point 1</p></td>
+<td></td>
+<td><p>s m&quot;6/1*&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Backgame 1-4</p></td>
+<td><p>portes 24, 21</p></td>
+<td><p>s p&gt;35</p></td>
+</tr>
+<tr class="row-even"><td><p>Décision de Take/Pass à -2 -4</p></td>
+<td><p>dés vides côté joueur du haut, score -2/-4</p></td>
+<td><p>s s d</p></td>
+</tr>
+<tr class="row-odd"><td><p>Envoi de too good</p></td>
+<td><p>dés vides côté joueur du bas</p></td>
+<td><p>s d e&gt;1000</p></td>
+</tr>
+<tr class="row-even"><td><p>Blitz avec au moins 20% de gammon</p></td>
+<td><p>portes dans le jan, hommes à la barre</p></td>
+<td><p>s g&gt;20</p></td>
+</tr>
+<tr class="row-odd"><td><p>Erreurs du joueur 1 de plus de 40 millipoints</p></td>
+<td></td>
+<td><p>s E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>Position du tournoi Aachen2024</p></td>
+<td></td>
+<td><p>s t&quot;Aachen2024&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Un pion arriéré à ramener</p></td>
+<td></td>
+<td><p>s k1,1</p></td>
+</tr>
+<tr class="row-even"><td><p>Quitter le point 20</p></td>
+<td><p>point 20</p></td>
+<td><p>s m&quot;20/&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Prime contre prime</p></td>
+<td><p>indiquer les primes</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Ace-point bear-off</p></td>
+<td><p>point 1 pour l’adversaire</p></td>
+<td><p>s P&lt;60</p></td>
+</tr>
+<tr class="row-odd"><td><p>Double avec au moins 20pip d’avance</p></td>
+<td><p>dés vides côté joueur du bas</p></td>
+<td><p>s d p&lt;-20</p></td>
+</tr>
+<tr class="row-even"><td><p>Positions du match 5</p></td>
+<td></td>
+<td><p>s ma5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Positions des matchs 2 à 4</p></td>
+<td></td>
+<td><p>s ma2,4</p></td>
+</tr>
+<tr class="row-even"><td><p>Positions des matchs 23 et 43</p></td>
+<td></td>
+<td><p>s ma23 ma43</p></td>
+</tr>
+<tr class="row-odd"><td><p>Positions du tournoi 1</p></td>
+<td></td>
+<td><p>s tn1</p></td>
+</tr>
+<tr class="row-even"><td><p>Erreurs dans le tournoi 2</p></td>
+<td></td>
+<td><p>s tn2 E&gt;40</p></td>
+</tr>
+</tbody>
+</table>
 <p>Examples of searching within current results:</p>
 <table class="docutils align-center">
 <colgroup>

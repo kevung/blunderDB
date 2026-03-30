@@ -29,7 +29,7 @@ Les principales interactions possibles avec blunderDB sont:
 
 * rechercher une ou plusieurs positions,
 
-* importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, Jellyfish),
+* importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, Jellyfish), y compris les commentaires depuis les fichiers XG,
 
 * naviguer dans les coups d'un match importé,
 
