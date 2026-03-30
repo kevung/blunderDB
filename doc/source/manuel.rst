@@ -25,6 +25,8 @@ Les principales interactions possibles avec blunderDB sont:
 
 * modifier une position existante,
 
+* copier l'image du board dans le presse-papier (PNG) via **Ctrl+X**,
+
 * supprimer une position existante,
 
 * rechercher une ou plusieurs positions,

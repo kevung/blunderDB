@@ -172,6 +172,7 @@
                     <ul>
                         <li>adding a new position,</li>
                         <li>modifying an existing position,</li>
+                        <li>copying the board as a PNG image to the clipboard (<strong>Ctrl+X</strong>),</li>
                         <li>deleting an existing position,</li>
                         <li>searching for one or more positions,</li>
                         <li>importing matches from various sources (XG, GNUbg, BGBlitz, Jellyfish), including comments from XG files,</li>
@@ -332,6 +333,11 @@
                             <tr>
                                 <td>Ctrl + C</td>
                                 <td>Copy Position (also copies to board clipboard)</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + X</td>
+                                <td>Copy Board Image to Clipboard (PNG)</td>
                             </tr>
 
                             <tr>

@@ -4,6 +4,8 @@ import {main} from '../models';
 
 export function CollectImportableFiles(arg1:string):Promise<Array<string>>;
 
+export function CopyImageToClipboard(arg1:string):Promise<void>;
+
 export function DeleteFile(arg1:string):Promise<void>;
 
 export function IsDirectory(arg1:string):Promise<boolean>;

@@ -1,10 +1,14 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	goruntime "runtime"
 	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -227,4 +231,75 @@ func (a *App) ShowQuestionDialog(title, message string, buttons []string, defaul
 // so we can call the runtime methods
 func (a *App) startup(ctx context.Context) {
 	a.ctx = ctx
+}
+
+// CopyImageToClipboard takes base64-encoded PNG data and copies it to the system clipboard.
+func (a *App) CopyImageToClipboard(base64Data string) error {
+	pngData, err := base64.StdEncoding.DecodeString(base64Data)
+	if err != nil {
+		return fmt.Errorf("failed to decode base64 data: %w", err)
+	}
+
+	switch goruntime.GOOS {
+	case "linux":
+		// Try xclip first (supports MIME types)
+		if path, err := exec.LookPath("xclip"); err == nil {
+			cmd := exec.Command(path, "-selection", "clipboard", "-t", "image/png")
+			cmd.Stdin = bytes.NewReader(pngData)
+			if err := cmd.Run(); err != nil {
+				return fmt.Errorf("xclip failed: %w", err)
+			}
+			return nil
+		}
+		// Try wl-copy for Wayland
+		if path, err := exec.LookPath("wl-copy"); err == nil {
+			cmd := exec.Command(path, "--type", "image/png")
+			cmd.Stdin = bytes.NewReader(pngData)
+			if err := cmd.Run(); err != nil {
+				return fmt.Errorf("wl-copy failed: %w", err)
+			}
+			return nil
+		}
+		return fmt.Errorf("no clipboard tool found (install xclip or wl-copy)")
+
+	case "darwin":
+		// Use osascript to set clipboard to PNG via a temp file
+		tmpFile, err := os.CreateTemp("", "blunderdb-clipboard-*.png")
+		if err != nil {
+			return fmt.Errorf("failed to create temp file: %w", err)
+		}
+		defer os.Remove(tmpFile.Name())
+		if _, err := tmpFile.Write(pngData); err != nil {
+			tmpFile.Close()
+			return fmt.Errorf("failed to write temp file: %w", err)
+		}
+		tmpFile.Close()
+		cmd := exec.Command("osascript", "-e", fmt.Sprintf(`set the clipboard to (read (POSIX file "%s") as «class PNGf»)`, tmpFile.Name()))
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("osascript failed: %w", err)
+		}
+		return nil
+
+	case "windows":
+		// Write to temp file and use PowerShell
+		tmpFile, err := os.CreateTemp("", "blunderdb-clipboard-*.png")
+		if err != nil {
+			return fmt.Errorf("failed to create temp file: %w", err)
+		}
+		defer os.Remove(tmpFile.Name())
+		if _, err := tmpFile.Write(pngData); err != nil {
+			tmpFile.Close()
+			return fmt.Errorf("failed to write temp file: %w", err)
+		}
+		tmpFile.Close()
+		script := fmt.Sprintf(`Add-Type -AssemblyName System.Windows.Forms; [System.Windows.Forms.Clipboard]::SetImage([System.Drawing.Image]::FromFile('%s'))`, tmpFile.Name())
+		cmd := exec.Command("powershell", "-Command", script)
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("powershell clipboard failed: %w", err)
+		}
+		return nil
+
+	default:
+		return fmt.Errorf("unsupported OS: %s", goruntime.GOOS)
+	}
 }

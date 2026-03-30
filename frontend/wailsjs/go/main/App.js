@@ -6,6 +6,10 @@ export function CollectImportableFiles(arg1) {
   return window['go']['main']['App']['CollectImportableFiles'](arg1);
 }
 
+export function CopyImageToClipboard(arg1) {
+  return window['go']['main']['App']['CopyImageToClipboard'](arg1);
+}
+
 export function DeleteFile(arg1) {
   return window['go']['main']['App']['DeleteFile'](arg1);
 }

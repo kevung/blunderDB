@@ -20,7 +20,8 @@
         ShowQuestionDialog,
         IsDirectory,
 
-        ShowAlert
+        ShowAlert,
+        CopyImageToClipboard
 
     } from '../wailsjs/go/main/App.js';
     import {
@@ -676,6 +677,9 @@
             importPosition();
         } else if(event.ctrlKey && event.code == 'KeyC') {
             copyPosition();
+        } else if(event.ctrlKey && event.code == 'KeyX') {
+            event.preventDefault();
+            copyBoardImage();
         } else if(event.ctrlKey && event.code == 'KeyV') {
             pastePosition();
         } else if(event.ctrlKey && event.shiftKey && event.code == 'KeyS') {
@@ -2399,6 +2403,97 @@
         // Combine all parts to form the XGID
         const xgid = `${positionPart}:${cubeValue}:${cubeOwner}:${playerOnRoll}:${dicePart}:${actualScore1}:${actualScore2}:${isCrawford}:${matchLength}:${dummy}`;
         return xgid;
+    }
+
+    async function copyBoardImage() {
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            return;
+        }
+        try {
+            const boardEl = document.getElementById('backgammon-board');
+            if (!boardEl) {
+                setStatusBarMessage('Board element not found');
+                return;
+            }
+            const svgEl = boardEl.querySelector('svg');
+            if (!svgEl) {
+                setStatusBarMessage('Board SVG not found');
+                return;
+            }
+            const svgWidth = parseInt(svgEl.getAttribute('width')) || svgEl.clientWidth;
+            const svgHeight = parseInt(svgEl.getAttribute('height')) || svgEl.clientHeight;
+
+            // Clone SVG and prepare for standalone rendering
+            const clonedSvg = /** @type {SVGSVGElement} */ (svgEl.cloneNode(true));
+            clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            clonedSvg.setAttribute('width', String(svgWidth));
+            clonedSvg.setAttribute('height', String(svgHeight));
+
+            // Inline computed styles from the live DOM onto every cloned element.
+            // This is necessary because the SVG will be rendered outside the page
+            // context (as a standalone image) and won't inherit CSS properties.
+            const origElements = svgEl.querySelectorAll('*');
+            const clonedElements = clonedSvg.querySelectorAll('*');
+            const styleProps = ['fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
+                                'stroke-miterlimit', 'opacity', 'font-family', 'font-size', 'font-weight',
+                                'font-style', 'text-anchor', 'dominant-baseline', 'visibility', 'display'];
+            for (let i = 0; i < origElements.length; i++) {
+                const orig = origElements[i];
+                const cloned = clonedElements[i];
+                if (!cloned || !(cloned instanceof SVGElement)) continue;
+                const computed = window.getComputedStyle(orig);
+                for (const prop of styleProps) {
+                    const val = computed.getPropertyValue(prop);
+                    if (val) {
+                        cloned.style.setProperty(prop, val);
+                    }
+                }
+            }
+
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(clonedSvg);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = async () => {
+                const scale = 2;
+                const canvas = document.createElement('canvas');
+                canvas.width = svgWidth * scale;
+                canvas.height = svgHeight * scale;
+                const ctx = canvas.getContext('2d');
+                ctx.scale(scale, scale);
+
+                // Fill with the page background color so the image is not transparent.
+                // The board SVG itself has no background fill; the visible background
+                // in the app comes from the CSS of the page container.
+                ctx.fillStyle = '#f7f0e6';
+                ctx.fillRect(0, 0, svgWidth, svgHeight);
+
+                // Draw the SVG on top
+                ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
+                URL.revokeObjectURL(url);
+
+                const dataUrl = canvas.toDataURL('image/png');
+                const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
+                try {
+                    await CopyImageToClipboard(base64Data);
+                    setStatusBarMessage('Board image copied to clipboard');
+                } catch (err) {
+                    console.error('Failed to copy image to clipboard:', err);
+                    setStatusBarMessage('Failed to copy image to clipboard: ' + err);
+                }
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                setStatusBarMessage('Failed to render board image');
+            };
+            img.src = url;
+        } catch (error) {
+            console.error('Error copying board image:', error);
+            setStatusBarMessage('Error copying board image');
+        }
     }
 
     function copyPosition() {
@@ -4137,6 +4232,7 @@ function togglePipcount() {
         onGoToPosition={gotoPosition}
         onTogglePipcount={togglePipcount}
         onRandomPosition={loadRandomPosition}
+        onCopyBoardImage={copyBoardImage}
         onToggleCommandMode={() => showCommandInputStore.set(true)}
         onToggleHelp={toggleHelpModal}
         onLoadAllPositions={loadAllPositions}
