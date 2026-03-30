@@ -98,7 +98,7 @@ Outils
 
    "CTRL-L", "Afficher/cacher l'analyse."
    "CTRL-P", "Afficher/cacher les commentaires."
-   "CTRL-K", "Afficher/cacher la bibliothèque de filtres."
+   "CTRL-K", "Afficher/cacher le panneau Anki (répétition espacée)."
    "CTRL-F", "Afficher/cacher le panneau de recherche."
    "CTRL-T", "Afficher/cacher le panneau des matchs."
    "CTRL-B", "Afficher/cacher le panneau des collections."
@@ -185,6 +185,19 @@ Panneau des matchs
    "Del", "Supprimer le match sélectionné."
    "Esc", "Désélectionner/fermer le panneau."
 
+.. _raccourcis_anki_panel:
 
+Panneau Anki (répétition espacée)
+----------------------------------
 
+.. csv-table::
+   :header: "Raccourci", "Action"
+   :widths: 7, 20
+   :align: center
+
+   "1", "Évaluer : À revoir (échec, revoir bientôt)."
+   "2", "Évaluer : Difficile."
+   "3", "Évaluer : Bien."
+   "4", "Évaluer : Facile."
+   "Esc", "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 

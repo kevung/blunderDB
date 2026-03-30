@@ -33,8 +33,63 @@ const (
 )
 
 const (
-	DatabaseVersion = "1.7.0"
+	DatabaseVersion = "1.8.0"
 )
+
+// Anki deck source types
+const (
+	AnkiSourceCollection = "collection"
+	AnkiSourceSearch     = "search"
+)
+
+// AnkiDeck represents a spaced repetition deck
+type AnkiDeck struct {
+	ID               int64   `json:"id"`
+	Name             string  `json:"name"`
+	Description      string  `json:"description"`
+	SourceType       string  `json:"sourceType"`       // "collection" or "search"
+	SourceID         int64   `json:"sourceId"`         // collection ID (if source is collection)
+	SourceCommand    string  `json:"sourceCommand"`    // search command (if source is search)
+	RequestRetention float64 `json:"requestRetention"` // target retention rate (0.7-0.99)
+	MaximumInterval  float64 `json:"maximumInterval"`  // max days between reviews
+	EnableFuzz       bool    `json:"enableFuzz"`       // add randomness to intervals
+	CardCount        int     `json:"cardCount"`        // total cards
+	DueCount         int     `json:"dueCount"`         // cards due for review
+	NewCount         int     `json:"newCount"`         // new cards not yet reviewed
+	CreatedAt        string  `json:"createdAt"`
+	UpdatedAt        string  `json:"updatedAt"`
+}
+
+// AnkiCard represents a single FSRS card linked to a position
+type AnkiCard struct {
+	ID            int64   `json:"id"`
+	DeckID        int64   `json:"deckId"`
+	PositionID    int64   `json:"positionId"`
+	Due           string  `json:"due"`
+	Stability     float64 `json:"stability"`
+	Difficulty    float64 `json:"difficulty"`
+	ElapsedDays   int     `json:"elapsedDays"`
+	ScheduledDays int     `json:"scheduledDays"`
+	Reps          int     `json:"reps"`
+	Lapses        int     `json:"lapses"`
+	State         int     `json:"state"` // 0=New, 1=Learning, 2=Review, 3=Relearning
+	LastReview    string  `json:"lastReview"`
+}
+
+// AnkiReviewCard is the card plus position data sent to the frontend for review
+type AnkiReviewCard struct {
+	Card     AnkiCard `json:"card"`
+	Position Position `json:"position"`
+}
+
+// AnkiDeckStats holds review statistics
+type AnkiDeckStats struct {
+	NewCount      int `json:"newCount"`
+	LearningCount int `json:"learningCount"`
+	ReviewCount   int `json:"reviewCount"`
+	DueCount      int `json:"dueCount"`
+	TotalCount    int `json:"totalCount"`
+}
 
 // Tournament represents a tournament that organizes matches
 type Tournament struct {

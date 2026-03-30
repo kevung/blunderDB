@@ -58,6 +58,10 @@ export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['main']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
 
+export function CreateAnkiDeck(arg1, arg2, arg3, arg4, arg5) {
+  return window['go']['main']['Database']['CreateAnkiDeck'](arg1, arg2, arg3, arg4, arg5);
+}
+
 export function CreateCollection(arg1, arg2) {
   return window['go']['main']['Database']['CreateCollection'](arg1, arg2);
 }
@@ -68,6 +72,10 @@ export function CreateTournament(arg1, arg2, arg3) {
 
 export function DeleteAnalysis(arg1) {
   return window['go']['main']['Database']['DeleteAnalysis'](arg1);
+}
+
+export function DeleteAnkiDeck(arg1) {
+  return window['go']['main']['Database']['DeleteAnkiDeck'](arg1);
 }
 
 export function DeleteCollection(arg1) {
@@ -114,6 +122,10 @@ export function ExportTournaments(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['Database']['ExportTournaments'](arg1, arg2, arg3, arg4, arg5);
 }
 
+export function GetAllAnkiDecks() {
+  return window['go']['main']['Database']['GetAllAnkiDecks']();
+}
+
 export function GetAllCollections() {
   return window['go']['main']['Database']['GetAllCollections']();
 }
@@ -128,6 +140,14 @@ export function GetAllMatches() {
 
 export function GetAllTournaments() {
   return window['go']['main']['Database']['GetAllTournaments']();
+}
+
+export function GetAnkiDeckPositions(arg1) {
+  return window['go']['main']['Database']['GetAnkiDeckPositions'](arg1);
+}
+
+export function GetAnkiDeckStats(arg1) {
+  return window['go']['main']['Database']['GetAnkiDeckStats'](arg1);
 }
 
 export function GetCollectionByID(arg1) {
@@ -172,6 +192,10 @@ export function GetMatchTournament(arg1) {
 
 export function GetMovesByGame(arg1) {
   return window['go']['main']['Database']['GetMovesByGame'](arg1);
+}
+
+export function GetNextAnkiCard(arg1) {
+  return window['go']['main']['Database']['GetNextAnkiCard'](arg1);
 }
 
 export function GetPositionCollections(arg1) {
@@ -310,6 +334,14 @@ export function ReorderTournamentMatches(arg1, arg2) {
   return window['go']['main']['Database']['ReorderTournamentMatches'](arg1, arg2);
 }
 
+export function ResetAnkiDeck(arg1) {
+  return window['go']['main']['Database']['ResetAnkiDeck'](arg1);
+}
+
+export function ReviewAnkiCard(arg1, arg2) {
+  return window['go']['main']['Database']['ReviewAnkiCard'](arg1, arg2);
+}
+
 export function SaveAnalysis(arg1, arg2) {
   return window['go']['main']['Database']['SaveAnalysis'](arg1, arg2);
 }
@@ -364,6 +396,22 @@ export function SetupDatabase(arg1) {
 
 export function SwapMatchPlayers(arg1) {
   return window['go']['main']['Database']['SwapMatchPlayers'](arg1);
+}
+
+export function SyncAnkiDeck(arg1) {
+  return window['go']['main']['Database']['SyncAnkiDeck'](arg1);
+}
+
+export function SyncAnkiDeckWithPositions(arg1, arg2) {
+  return window['go']['main']['Database']['SyncAnkiDeckWithPositions'](arg1, arg2);
+}
+
+export function UpdateAnkiDeck(arg1, arg2, arg3) {
+  return window['go']['main']['Database']['UpdateAnkiDeck'](arg1, arg2, arg3);
+}
+
+export function UpdateAnkiDeckParams(arg1, arg2, arg3, arg4) {
+  return window['go']['main']['Database']['UpdateAnkiDeckParams'](arg1, arg2, arg3, arg4);
 }
 
 export function UpdateCollection(arg1, arg2, arg3) {

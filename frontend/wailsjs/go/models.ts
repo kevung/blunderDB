@@ -1,5 +1,111 @@
 export namespace main {
 	
+	export class AnkiCard {
+	    id: number;
+	    deckId: number;
+	    positionId: number;
+	    due: string;
+	    stability: number;
+	    difficulty: number;
+	    elapsedDays: number;
+	    scheduledDays: number;
+	    reps: number;
+	    lapses: number;
+	    state: number;
+	    lastReview: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiCard(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.deckId = source["deckId"];
+	        this.positionId = source["positionId"];
+	        this.due = source["due"];
+	        this.stability = source["stability"];
+	        this.difficulty = source["difficulty"];
+	        this.elapsedDays = source["elapsedDays"];
+	        this.scheduledDays = source["scheduledDays"];
+	        this.reps = source["reps"];
+	        this.lapses = source["lapses"];
+	        this.state = source["state"];
+	        this.lastReview = source["lastReview"];
+	    }
+	}
+	export class AnkiDeck {
+	    id: number;
+	    name: string;
+	    description: string;
+	    sourceType: string;
+	    sourceId: number;
+	    sourceCommand: string;
+	    requestRetention: number;
+	    maximumInterval: number;
+	    enableFuzz: boolean;
+	    cardCount: number;
+	    dueCount: number;
+	    newCount: number;
+	    createdAt: string;
+	    updatedAt: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiDeck(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.description = source["description"];
+	        this.sourceType = source["sourceType"];
+	        this.sourceId = source["sourceId"];
+	        this.sourceCommand = source["sourceCommand"];
+	        this.requestRetention = source["requestRetention"];
+	        this.maximumInterval = source["maximumInterval"];
+	        this.enableFuzz = source["enableFuzz"];
+	        this.cardCount = source["cardCount"];
+	        this.dueCount = source["dueCount"];
+	        this.newCount = source["newCount"];
+	        this.createdAt = source["createdAt"];
+	        this.updatedAt = source["updatedAt"];
+	    }
+	}
+	export class AnkiDeckStats {
+	    newCount: number;
+	    learningCount: number;
+	    reviewCount: number;
+	    dueCount: number;
+	    totalCount: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiDeckStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.newCount = source["newCount"];
+	        this.learningCount = source["learningCount"];
+	        this.reviewCount = source["reviewCount"];
+	        this.dueCount = source["dueCount"];
+	        this.totalCount = source["totalCount"];
+	    }
+	}
+	export class Cube {
+	    owner: number;
+	    value: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Cube(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.owner = source["owner"];
+	        this.value = source["value"];
+	    }
+	}
 	export class Point {
 	    checkers: number;
 	    color: number;
@@ -46,6 +152,85 @@ export namespace main {
 		    return a;
 		}
 	}
+	export class Position {
+	    id: number;
+	    board: Board;
+	    cube: Cube;
+	    dice: number[];
+	    score: number[];
+	    player_on_roll: number;
+	    decision_type: number;
+	    has_jacoby: number;
+	    has_beaver: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new Position(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.board = this.convertValues(source["board"], Board);
+	        this.cube = this.convertValues(source["cube"], Cube);
+	        this.dice = source["dice"];
+	        this.score = source["score"];
+	        this.player_on_roll = source["player_on_roll"];
+	        this.decision_type = source["decision_type"];
+	        this.has_jacoby = source["has_jacoby"];
+	        this.has_beaver = source["has_beaver"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class AnkiReviewCard {
+	    card: AnkiCard;
+	    position: Position;
+	
+	    static createFrom(source: any = {}) {
+	        return new AnkiReviewCard(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.card = this.convertValues(source["card"], AnkiCard);
+	        this.position = this.convertValues(source["position"], Position);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class CheckerMove {
 	    index: number;
 	    analysisDepth: string;
@@ -171,20 +356,7 @@ export namespace main {
 	        this.last_database_path = source["last_database_path"];
 	    }
 	}
-	export class Cube {
-	    owner: number;
-	    value: number;
 	
-	    static createFrom(source: any = {}) {
-	        return new Cube(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.owner = source["owner"];
-	        this.value = source["value"];
-	    }
-	}
 	export class DoublingCubeAnalysis {
 	    analysisDepth: string;
 	    analysisEngine?: string;
@@ -315,52 +487,6 @@ export namespace main {
 	        this.last_visited_position = source["last_visited_position"];
 	        this.comment = source["comment"];
 	        this.tournament_sort_order = source["tournament_sort_order"];
-	    }
-	
-		convertValues(a: any, classs: any, asMap: boolean = false): any {
-		    if (!a) {
-		        return a;
-		    }
-		    if (a.slice && a.map) {
-		        return (a as any[]).map(elem => this.convertValues(elem, classs));
-		    } else if ("object" === typeof a) {
-		        if (asMap) {
-		            for (const key of Object.keys(a)) {
-		                a[key] = new classs(a[key]);
-		            }
-		            return a;
-		        }
-		        return new classs(a);
-		    }
-		    return a;
-		}
-	}
-	export class Position {
-	    id: number;
-	    board: Board;
-	    cube: Cube;
-	    dice: number[];
-	    score: number[];
-	    player_on_roll: number;
-	    decision_type: number;
-	    has_jacoby: number;
-	    has_beaver: number;
-	
-	    static createFrom(source: any = {}) {
-	        return new Position(source);
-	    }
-	
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["id"];
-	        this.board = this.convertValues(source["board"], Board);
-	        this.cube = this.convertValues(source["cube"], Cube);
-	        this.dice = source["dice"];
-	        this.score = source["score"];
-	        this.player_on_roll = source["player_on_roll"];
-	        this.decision_type = source["decision_type"];
-	        this.has_jacoby = source["has_jacoby"];
-	        this.has_beaver = source["has_beaver"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

@@ -230,7 +230,7 @@
             p2wrFilter, p2grFilter, p2bgFilter, p1coFilter, p2coFilter, p1bcFilter, p2bcFilter,
             p1czFilter, p2czFilter, searchText ? `t"${searchText}"` : '', p1apcFilter, eqFilter, dtFilter, drFilter, movePattern ? `m"${movePattern}"` : '',
             cdFilter, p1obFilter, p2obFilter, p1jbFilter, p2jbFilter, ncFilter, mirFilter, meFilter,
-            '', matchIDs, tournamentIDs, restrictToPositionIDs);
+            searchCommand, matchIDs, tournamentIDs, restrictToPositionIDs);
     }
 
     function clearFilters() {

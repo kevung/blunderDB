@@ -194,6 +194,7 @@
                         <li>display, add, or modify comments,</li>
                         <li>browse imported matches and navigate through their moves (Match panel),</li>
                         <li>manage collections of positions (Collection panel),</li>
+                        <li>study positions with spaced repetition (Anki panel),</li>
                         <li>manage tournaments (Tournament panel),</li>
                         <li>compute EPC values for bearoff positions (EPC panel),</li>
                         <li>browse saved search filters (Filter Library panel),</li>
@@ -254,6 +255,13 @@
 
                     <h3>Collections</h3>
                     <p>Collections allow organizing positions into custom groups. Open the Collection panel with <strong>Ctrl+B</strong>, then double-click a collection to browse its positions. Collections and positions within them can be reordered by drag-and-drop.</p>
+
+                    <h3>Anki (Spaced Repetition)</h3>
+                    <p>The Anki panel (<strong>Ctrl+K</strong>) provides spaced repetition for studying backgammon positions using the FSRS algorithm.</p>
+                    <p><strong>Creating decks:</strong> Click <em>New Deck</em> to create a deck from a collection or from the current search results. Search-based decks automatically sync when the Anki tab is activated.</p>
+                    <p><strong>Reviewing:</strong> Select a deck and click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card displays the corresponding position on the board. Rate your recall with keys <strong>1</strong> (Again), <strong>2</strong> (Hard), <strong>3</strong> (Good), or <strong>4</strong> (Easy). Press <strong>Esc</strong> to stop and return to the deck list.</p>
+                    <p><strong>Stop/Resume:</strong> You can stop a review session at any time by pressing <strong>Esc</strong>. The button changes to <em>Resume</em> showing your progress. Click it to continue where you left off.</p>
+                    <p><strong>Deck management:</strong> Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (retention target, max interval, fuzz) can be configured per deck in Settings (gear icon).</p>
 
                     <h3>Tournaments</h3>
                     <p>Tournaments allow grouping matches by event. Open the Tournament panel with <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.</p>
@@ -483,7 +491,7 @@
 
                             <tr>
                                 <td>Ctrl + K</td>
-                                <td>Show Filter Library</td>
+                                <td>Show Anki Panel</td>
                             </tr>
 
                             <tr>
@@ -695,6 +703,38 @@
                             <tr>
                                 <td>Esc</td>
                                 <td>Deselect collection. If no collection selected, close the panel.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h3>Anki Panel</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Shortcut</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Rate: Again (review failed, show again soon)</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Rate: Hard (difficult recall)</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Rate: Good (correct recall)</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Rate: Easy (effortless recall)</td>
+                            </tr>
+                            <tr>
+                                <td>Esc</td>
+                                <td>Stop review and return to deck list (can resume later)</td>
                             </tr>
                         </tbody>
                     </table>

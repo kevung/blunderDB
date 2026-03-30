@@ -157,6 +157,10 @@ msgid "afficher et gérer les collections de positions (panneau collections),"
 msgstr "display and manage position collections (collections panel),"
 
 #: ../../source/manuel.rst:68
+msgid "étudier les positions par répétition espacée (panneau Anki),"
+msgstr "study positions with spaced repetition (Anki panel),"
+
+#: ../../source/manuel.rst:70
 msgid "afficher et gérer les tournois (panneau tournois),"
 msgstr "display and manage tournaments (tournaments panel),"
 
@@ -512,6 +516,31 @@ msgstr ""
 "The user can navigate through the positions of the collection using the "
 "*LEFT* and *RIGHT* keys. The order of collections and positions within "
 "collections can be changed by drag and drop."
+
+#: ../../source/manuel.rst:252
+msgid "Répétition espacée (Anki)"
+msgstr "Spaced Repetition (Anki)"
+
+#: ../../source/manuel.rst:255
+msgid ""
+"Le panneau Anki (*CTRL-K*) permet d'étudier des positions par répétition espacée "
+"en utilisant l'algorithme FSRS. L'utilisateur peut créer des paquets à partir "
+"de collections ou de résultats de recherche."
+msgstr ""
+"The Anki panel (*CTRL-K*) allows studying positions with spaced repetition "
+"using the FSRS algorithm. Users can create decks from collections or "
+"search results."
+
+#: ../../source/manuel.rst:259
+msgid ""
+"Pendant la révision, appuyez sur *ESPACE* pour révéler la réponse, puis "
+"évaluez votre rappel avec les touches *1* (À revoir), *2* (Difficile), "
+"*3* (Bien), ou *4* (Facile). Les paramètres FSRS (rétention, intervalle "
+"maximum, aléa) peuvent être configurés par paquet."
+msgstr ""
+"During review, press *SPACE* to reveal the answer, then rate your recall "
+"with keys *1* (Again), *2* (Hard), *3* (Good), or *4* (Easy). FSRS parameters "
+"(retention, maximum interval, fuzz) can be configured per deck."
 
 #~ msgid ""
 #~ "Pour ce faire, l'utilisateur bascule "

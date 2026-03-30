@@ -224,7 +224,7 @@ function handleSearch(command) {
     }
 }
 
-function parseFilters(filters, command) {
+export function parseFilters(filters, command) {
     const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
     const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
     const noContactFilter = filters.includes('nc');

@@ -30,11 +30,15 @@ export function ComputeEPCFromPosition(arg1:main.Position):Promise<Record<string
 
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
+export function CreateAnkiDeck(arg1:string,arg2:string,arg3:string,arg4:number,arg5:string):Promise<number>;
+
 export function CreateCollection(arg1:string,arg2:string):Promise<number>;
 
 export function CreateTournament(arg1:string,arg2:string,arg3:string):Promise<number>;
 
 export function DeleteAnalysis(arg1:number):Promise<void>;
+
+export function DeleteAnkiDeck(arg1:number):Promise<void>;
 
 export function DeleteCollection(arg1:number):Promise<void>;
 
@@ -58,6 +62,8 @@ export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record
 
 export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean):Promise<void>;
 
+export function GetAllAnkiDecks():Promise<Array<main.AnkiDeck>>;
+
 export function GetAllCollections():Promise<Array<main.Collection>>;
 
 export function GetAllComments():Promise<Array<main.CommentEntry>>;
@@ -65,6 +71,10 @@ export function GetAllComments():Promise<Array<main.CommentEntry>>;
 export function GetAllMatches():Promise<Array<main.Match>>;
 
 export function GetAllTournaments():Promise<Array<main.Tournament>>;
+
+export function GetAnkiDeckPositions(arg1:number):Promise<Array<main.Position>>;
+
+export function GetAnkiDeckStats(arg1:number):Promise<main.AnkiDeckStats>;
 
 export function GetCollectionByID(arg1:number):Promise<main.Collection>;
 
@@ -87,6 +97,8 @@ export function GetMatchMovePositions(arg1:number):Promise<Array<main.MatchMoveP
 export function GetMatchTournament(arg1:number):Promise<main.Tournament>;
 
 export function GetMovesByGame(arg1:number):Promise<Array<main.Move>>;
+
+export function GetNextAnkiCard(arg1:number):Promise<main.AnkiReviewCard>;
 
 export function GetPositionCollections(arg1:number):Promise<Array<main.Collection>>;
 
@@ -156,6 +168,10 @@ export function ReorderCollections(arg1:Array<number>):Promise<void>;
 
 export function ReorderTournamentMatches(arg1:number,arg2:Array<number>):Promise<void>;
 
+export function ResetAnkiDeck(arg1:number):Promise<void>;
+
+export function ReviewAnkiCard(arg1:number,arg2:number):Promise<main.AnkiReviewCard>;
+
 export function SaveAnalysis(arg1:number,arg2:main.PositionAnalysis):Promise<void>;
 
 export function SaveCommand(arg1:string):Promise<void>;
@@ -183,6 +199,14 @@ export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
+
+export function SyncAnkiDeck(arg1:number):Promise<void>;
+
+export function SyncAnkiDeckWithPositions(arg1:number,arg2:Array<number>):Promise<void>;
+
+export function UpdateAnkiDeck(arg1:number,arg2:string,arg3:string):Promise<void>;
+
+export function UpdateAnkiDeckParams(arg1:number,arg2:number,arg3:number,arg4:boolean):Promise<void>;
 
 export function UpdateCollection(arg1:number,arg2:string,arg3:string):Promise<void>;
 

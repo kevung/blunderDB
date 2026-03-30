@@ -143,6 +143,17 @@
 
     import { epcDataStore } from './stores/epcStore'; // Import EPC data store
 
+    import {
+        ankiDecksStore,
+        selectedAnkiDeckStore,
+        ankiReviewCardStore,
+        ankiDeckStatsStore,
+        ankiViewModeStore,
+        ankiReviewActionStore
+    } from './stores/ankiStore'; // Import Anki stores
+
+    import { lastSearchStore } from './stores/searchHistoryStore'; // Import last search store
+
     // import components
     import Toolbar from './components/Toolbar.svelte';
     import Board from './components/Board.svelte';
@@ -565,6 +576,17 @@
             return;
         }
 
+        // During Anki review on the Anki tab, route review keys and block position browsing
+        if ($ankiViewModeStore === 'review' && !event.ctrlKey && $activeTabStore === 'anki') {
+            if (event.code === 'Digit1' || event.code === 'Numpad1') { event.preventDefault(); ankiReviewActionStore.set(1); }
+            else if (event.code === 'Digit2' || event.code === 'Numpad2') { event.preventDefault(); ankiReviewActionStore.set(2); }
+            else if (event.code === 'Digit3' || event.code === 'Numpad3') { event.preventDefault(); ankiReviewActionStore.set(3); }
+            else if (event.code === 'Digit4' || event.code === 'Numpad4') { event.preventDefault(); ankiReviewActionStore.set(4); }
+            else if (event.code === 'Escape') { event.preventDefault(); ankiReviewActionStore.set('back'); }
+            else if (event.code === 'KeyP') { togglePipcount(); }
+            return;
+        }
+
         // Allow normal typing in input fields and textareas (only process Ctrl shortcuts, Escape, and Tab)
         if (document.activeElement.matches('input, textarea, [contenteditable]') && !event.ctrlKey && event.key !== 'Escape' && event.key !== 'Tab') {
             return;
@@ -730,7 +752,7 @@
         } else if (event.ctrlKey && event.code === 'KeyM') {
             toggleMetadataModal();
         } else if (event.ctrlKey && event.code === 'KeyK') {
-            toggleFilterLibraryPanel();
+            toggleAnkiPanel();
         } else if (event.ctrlKey && event.code === 'KeyT') {
             event.preventDefault();
             viewStore.addView();
@@ -758,6 +780,15 @@
 
     function getFilenameFromPath(filePath) {
         return filePath.split('/').pop();
+    }
+
+    // Helper function to reset Anki stores
+    function resetAnkiStores() {
+        ankiDecksStore.set([]);
+        selectedAnkiDeckStore.set(null);
+        ankiReviewCardStore.set(null);
+        ankiDeckStatsStore.set(null);
+        ankiViewModeStore.set('list');
     }
 
     // Helper function to reset analysis and comment stores
@@ -813,6 +844,7 @@
             if (filePath) {
                 // Reset analysis and comment stores before creating new database
                 resetAnalysisAndCommentStores();
+                resetAnkiStores();
 
                 // Check if the file exists and delete it
                 try {
@@ -863,6 +895,7 @@
         try {
             // Reset analysis and comment stores before opening new database
             resetAnalysisAndCommentStores();
+            resetAnkiStores();
 
             databasePathStore.set(filePath);
             console.log('databasePathStore:', $databasePathStore);
@@ -957,6 +990,7 @@
             hasActiveSearch = false;
             lastSearchCommand = '';
             lastSearchPosition = null;
+            lastSearchStore.set(null);
             await loadAllPositions();
         } catch (error) {
             console.error('Error restoring session state:', error);
@@ -3192,6 +3226,15 @@
         activeTabStore.set('search');
     }
 
+    function toggleAnkiPanel() {
+        console.log('toggleAnkiPanel');
+        if (!databaseLoaded) {
+            statusBarTextStore.set('No database loaded');
+            return;
+        }
+        activeTabStore.set('anki');
+    }
+
     function toggleMatchPanel() {
         console.log('toggleMatchPanel');
         if (!databaseLoaded) {
@@ -3251,6 +3294,7 @@
                 hasActiveSearch = false;
                 lastSearchCommand = '';
                 lastSearchPosition = null;
+                lastSearchStore.set(null);
             }
         } catch (error) {
             console.error('Error reloading positions after collection exit:', error);
@@ -3449,6 +3493,9 @@ function togglePipcount() {
                 currentPosition = mirrorPositionForSearch(currentPosition);
             }
 
+            // Save the search filter position BEFORE results change positionStore
+            const searchFilterPositionJSON = JSON.stringify(currentPosition);
+
             // @ts-ignore
             const loadedPositions = await LoadPositionsByFilters(
                 // @ts-ignore
@@ -3513,7 +3560,8 @@ function togglePipcount() {
                 // Track session state for search results
                 hasActiveSearch = true;
                 lastSearchCommand = searchCommand || '';
-                lastSearchPosition = JSON.parse(JSON.stringify($positionStore));
+                lastSearchPosition = JSON.parse(searchFilterPositionJSON);
+                lastSearchStore.set({ command: lastSearchCommand, position: searchFilterPositionJSON });
                 
                 // Save session state after successful search
                 saveSessionState();
@@ -3568,6 +3616,7 @@ function togglePipcount() {
                 hasActiveSearch = false;
                 lastSearchCommand = '';
                 lastSearchPosition = null;
+                lastSearchStore.set(null);
                 saveSessionState();
             } else {
                 currentPositionIndexStore.set(-1);

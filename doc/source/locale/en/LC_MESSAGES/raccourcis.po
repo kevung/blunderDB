@@ -305,8 +305,8 @@ msgid "CTRL-K"
 msgstr "CTRL-K"
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher/cacher la bibliothèque de filtres."
-msgstr "Show/hide the filter library."
+msgid "Afficher/cacher le panneau Anki (répétition espacée)."
+msgstr "Show/hide the Anki panel (spaced repetition)."
 
 #: ../../source/raccourcis.rst:1
 msgid "CTRL-F"
