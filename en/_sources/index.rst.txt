@@ -132,6 +132,7 @@ Historique des versions
    0.14.0, 30/03/2026, "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS).
 
    Import des commentaires depuis les fichiers XG."
+   0.15.0, 31/03/2026, "Export de la position en image PNG dans le presse-papier (board seul via Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
 
 Sommaire
 ========
