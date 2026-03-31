@@ -456,6 +456,22 @@ msgstr ""
 msgid "Import des commentaires depuis les fichiers XG."
 msgstr "Import comments from XG files."
 
+#: ../../source/index.rst:1
+msgid "0.15.0"
+msgstr "0.15.0"
+
+#: ../../source/index.rst:1
+msgid "31/03/2026"
+msgstr "March 31, 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Export de la position en image PNG dans le presse-papier (board seul via "
+"Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
+msgstr ""
+"Export position as PNG image to clipboard (board only via Ctrl+X, or "
+"board with analysis via Ctrl+X Ctrl+X)."
+
 #: ../../source/index.rst:134
 msgid "Sommaire"
 msgstr "Table of contents"
