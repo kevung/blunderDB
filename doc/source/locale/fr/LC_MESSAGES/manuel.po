@@ -60,6 +60,12 @@ msgid "modifier une position existante,"
 msgstr ""
 
 #: ../../source/manuel.rst:28
+msgid ""
+"copier l'image du board dans le presse-papier (PNG) via **Ctrl+X**, ou "
+"avec l'analyse complète via **Ctrl+X Ctrl+X**,"
+msgstr ""
+
+#: ../../source/manuel.rst:28
 msgid "supprimer une position existante,"
 msgstr ""
 

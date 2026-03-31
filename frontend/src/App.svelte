@@ -264,6 +264,7 @@
     let showCollectionPanel = false; // Add collection panel visibility variable
     let showTournamentPanel = false; // Add tournament panel visibility variable
     let showPipcount = true; // Update variable
+    let lastCtrlXTime = 0; // Track last Ctrl-X press for double-press detection
 
     // EPC mode state
     let savedPositionBeforeEPC = null;
@@ -679,7 +680,14 @@
             copyPosition();
         } else if(event.ctrlKey && event.code == 'KeyX') {
             event.preventDefault();
-            copyBoardImage();
+            const now = Date.now();
+            if (now - lastCtrlXTime < 500) {
+                lastCtrlXTime = 0;
+                copyBoardWithAnalysisImage();
+            } else {
+                lastCtrlXTime = now;
+                copyBoardImage();
+            }
         } else if(event.ctrlKey && event.code == 'KeyV') {
             pastePosition();
         } else if(event.ctrlKey && event.shiftKey && event.code == 'KeyS') {
@@ -2493,6 +2501,417 @@
         } catch (error) {
             console.error('Error copying board image:', error);
             setStatusBarMessage('Error copying board image');
+        }
+    }
+
+    async function copyBoardWithAnalysisImage() {
+        if (!$databasePathStore) {
+            setStatusBarMessage('No database opened');
+            return;
+        }
+        try {
+            const boardEl = document.getElementById('backgammon-board');
+            if (!boardEl) {
+                setStatusBarMessage('Board element not found');
+                return;
+            }
+            const svgEl = boardEl.querySelector('svg');
+            if (!svgEl) {
+                setStatusBarMessage('Board SVG not found');
+                return;
+            }
+
+            const analysis = get(analysisStore);
+            const position = get(positionStore);
+            if (!analysis || (!analysis.checkerAnalysis?.moves?.length && !analysis.doublingCubeAnalysis)) {
+                setStatusBarMessage('No analysis data to export');
+                return;
+            }
+
+            const svgWidth = parseInt(svgEl.getAttribute('width')) || svgEl.clientWidth;
+            const svgHeight = parseInt(svgEl.getAttribute('height')) || svgEl.clientHeight;
+
+            // Clone SVG and inline styles (same as copyBoardImage)
+            const clonedSvg = /** @type {SVGSVGElement} */ (svgEl.cloneNode(true));
+            clonedSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+            clonedSvg.setAttribute('width', String(svgWidth));
+            clonedSvg.setAttribute('height', String(svgHeight));
+            const origElements = svgEl.querySelectorAll('*');
+            const clonedElements = clonedSvg.querySelectorAll('*');
+            const styleProps = ['fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
+                                'stroke-miterlimit', 'opacity', 'font-family', 'font-size', 'font-weight',
+                                'font-style', 'text-anchor', 'dominant-baseline', 'visibility', 'display'];
+            for (let i = 0; i < origElements.length; i++) {
+                const orig = origElements[i];
+                const cloned = clonedElements[i];
+                if (!cloned || !(cloned instanceof SVGElement)) continue;
+                const computed = window.getComputedStyle(orig);
+                for (const prop of styleProps) {
+                    const val = computed.getPropertyValue(prop);
+                    if (val) cloned.style.setProperty(prop, val);
+                }
+            }
+
+            const serializer = new XMLSerializer();
+            const svgString = serializer.serializeToString(clonedSvg);
+            const svgBlob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+            const url = URL.createObjectURL(svgBlob);
+
+            const img = new Image();
+            img.onload = async () => {
+                const scale = 2;
+                const bgColor = '#f7f0e6';
+                const font = '12px monospace';
+                const headerFont = 'bold 12px monospace';
+                const charWidth = 7.2; // approximate monospace char width at 12px
+                const rowHeight = 18;
+                const padding = 10;
+                const tablePadding = 4;
+
+                // Determine analysis type to render
+                const cubeValue = position.cube?.value || 1;
+                const isCubeAnalysis = analysis.analysisType === 'DoublingCube' ||
+                    (!analysis.checkerAnalysis?.moves?.length && analysis.doublingCubeAnalysis);
+
+                let analysisHeight = 0;
+                let analysisWidth = svgWidth;
+
+                if (isCubeAnalysis && analysis.doublingCubeAnalysis) {
+                    // Cube analysis: 3 tables side by side, ~8 rows max
+                    analysisHeight = padding + rowHeight * 9 + padding;
+                } else if (analysis.checkerAnalysis?.moves?.length) {
+                    // Checker analysis: header + up to 6 moves
+                    const moveCount = Math.min(analysis.checkerAnalysis.moves.length, 6);
+                    analysisHeight = padding + rowHeight * (moveCount + 1) + padding;
+                }
+
+                const totalHeight = svgHeight + analysisHeight;
+                const canvas = document.createElement('canvas');
+                canvas.width = analysisWidth * scale;
+                canvas.height = totalHeight * scale;
+                const ctx = canvas.getContext('2d');
+                ctx.scale(scale, scale);
+
+                // Fill background
+                ctx.fillStyle = bgColor;
+                ctx.fillRect(0, 0, analysisWidth, totalHeight);
+
+                // Draw board SVG
+                ctx.drawImage(img, 0, 0, svgWidth, svgHeight);
+                URL.revokeObjectURL(url);
+
+                // Draw analysis below the board
+                const startY = svgHeight + padding;
+                ctx.font = font;
+                ctx.textBaseline = 'middle';
+
+                if (isCubeAnalysis && analysis.doublingCubeAnalysis) {
+                    drawCubeAnalysis(ctx, analysis.doublingCubeAnalysis, cubeValue, startY, analysisWidth, rowHeight, tablePadding, headerFont, font, charWidth);
+                } else if (analysis.checkerAnalysis?.moves?.length) {
+                    drawCheckerAnalysis(ctx, analysis, startY, analysisWidth, rowHeight, tablePadding, headerFont, font, charWidth);
+                }
+
+                const dataUrl = canvas.toDataURL('image/png');
+                const base64Data = dataUrl.replace(/^data:image\/png;base64,/, '');
+                try {
+                    await CopyImageToClipboard(base64Data);
+                    setStatusBarMessage('Board + analysis image copied to clipboard');
+                } catch (err) {
+                    console.error('Failed to copy image to clipboard:', err);
+                    setStatusBarMessage('Failed to copy image to clipboard: ' + err);
+                }
+            };
+            img.onerror = () => {
+                URL.revokeObjectURL(url);
+                setStatusBarMessage('Failed to render board image');
+            };
+            img.src = url;
+        } catch (error) {
+            console.error('Error copying board+analysis image:', error);
+            setStatusBarMessage('Error copying board+analysis image');
+        }
+    }
+
+    function drawCubeAnalysis(ctx, cube, cubeValue, startY, totalWidth, rowHeight, pad, headerFont, font, charWidth) {
+        const formatEq = (v) => (v >= 0 ? '+' : '') + (v || 0).toFixed(3);
+        const getDecLabel = (d) => cubeValue >= 1 ? d.replace('Double', 'Redouble') : d;
+
+        const colWidth = Math.floor(totalWidth / 3);
+        const borderColor = '#ddd';
+        const headerBg = '#f2f2f2';
+        const whiteBg = '#ffffff';
+        const playedBg = '#fff3cd';
+
+        // Helper: draw a cell with border (always fills background, white by default)
+        function drawCell(x, y, w, h, text, opts = {}) {
+            // Background - always fill (white default so page bg doesn't bleed through)
+            ctx.fillStyle = opts.bg || whiteBg;
+            ctx.fillRect(x, y, w, h);
+            // Border
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 0.5;
+            ctx.strokeRect(x, y, w, h);
+            // Text
+            ctx.fillStyle = '#000';
+            ctx.font = opts.bold ? headerFont : font;
+            ctx.textAlign = opts.align || 'center';
+            const tx = opts.align === 'left' ? x + pad : x + w / 2;
+            ctx.fillText(text, tx, y + h / 2);
+        }
+
+        // Determine played cube actions for highlighting
+        const analysis = get(analysisStore);
+        const matchCtx = get(matchContextStore);
+        function normCubeAction(action) {
+            const s = action.toLowerCase().replace(/\s+/g, '');
+            if (s === 'double/take' || s === 'doubletake') return ['double', 'take'];
+            if (s === 'double/pass' || s === 'doublepass') return ['double', 'pass'];
+            if (s === 'nodouble' || s === 'nodoubleorredouble' || s === 'noredouble') return ['nodouble'];
+            if (s === 'redouble') return ['double'];
+            return [s];
+        }
+        function isPlayedAction(action) {
+            const aParts = normCubeAction(action);
+            if (matchCtx.isMatchMode) {
+                if (analysis.playedCubeAction) {
+                    const pp = normCubeAction(analysis.playedCubeAction);
+                    return aParts.every(a => pp.includes(a));
+                }
+                return false;
+            }
+            const allParts = new Set();
+            if (analysis.playedCubeActions?.length) {
+                for (const pa of analysis.playedCubeActions) {
+                    for (const p of normCubeAction(pa)) allParts.add(p);
+                }
+            }
+            if (allParts.size === 0 && analysis.playedCubeAction) {
+                for (const p of normCubeAction(analysis.playedCubeAction)) allParts.add(p);
+            }
+            return allParts.size > 0 && aParts.every(a => allParts.has(a));
+        }
+
+        let y = startY;
+
+        // --- Left table: W/G/B probabilities + ND/D equities ---
+        const leftX = 0;
+        const leftW = colWidth;
+        const cellW = Math.floor(leftW / 3);
+
+        // Header row: "", "P", "O"
+        drawCell(leftX, y, cellW, rowHeight, '', { bg: headerBg, bold: true });
+        drawCell(leftX + cellW, y, cellW, rowHeight, 'P', { bg: headerBg, bold: true });
+        drawCell(leftX + cellW * 2, y, cellW, rowHeight, 'O', { bg: headerBg, bold: true });
+        y += rowHeight;
+
+        // W row
+        drawCell(leftX, y, cellW, rowHeight, 'W', { bold: true });
+        drawCell(leftX + cellW, y, cellW, rowHeight, (cube.playerWinChances || 0).toFixed(2));
+        drawCell(leftX + cellW * 2, y, cellW, rowHeight, (cube.opponentWinChances || 0).toFixed(2));
+        y += rowHeight;
+
+        // G row
+        drawCell(leftX, y, cellW, rowHeight, 'G', { bold: true });
+        drawCell(leftX + cellW, y, cellW, rowHeight, (cube.playerGammonChances || 0).toFixed(2));
+        drawCell(leftX + cellW * 2, y, cellW, rowHeight, (cube.opponentGammonChances || 0).toFixed(2));
+        y += rowHeight;
+
+        // B row
+        drawCell(leftX, y, cellW, rowHeight, 'B', { bold: true });
+        drawCell(leftX + cellW, y, cellW, rowHeight, (cube.playerBackgammonChances || 0).toFixed(2));
+        drawCell(leftX + cellW * 2, y, cellW, rowHeight, (cube.opponentBackgammonChances || 0).toFixed(2));
+        y += rowHeight;
+
+        // ND Eq
+        drawCell(leftX, y, cellW, rowHeight, 'ND Eq', { bold: true });
+        drawCell(leftX + cellW, y, cellW * 2, rowHeight, formatEq(cube.cubelessNoDoubleEquity));
+        y += rowHeight;
+
+        // D Eq
+        drawCell(leftX, y, cellW, rowHeight, 'D Eq', { bold: true });
+        drawCell(leftX + cellW, y, cellW * 2, rowHeight, formatEq(cube.cubelessDoubleEquity));
+
+        // --- Right table: Decision / Equity / Error ---
+        y = startY;
+        const rightX = colWidth;
+        const rightW = colWidth;
+        const decW = Math.floor(rightW * 0.4);
+        const eqW = Math.floor(rightW * 0.3);
+        const errW = rightW - decW - eqW;
+
+        // Header
+        drawCell(rightX, y, decW, rowHeight, 'Decision', { bg: headerBg, bold: true });
+        drawCell(rightX + decW, y, eqW, rowHeight, 'Equity', { bg: headerBg, bold: true });
+        drawCell(rightX + decW + eqW, y, errW, rowHeight, 'Error', { bg: headerBg, bold: true });
+        y += rowHeight;
+
+        // No Double
+        const ndPlayed = isPlayedAction('No Double');
+        const ndBg = ndPlayed ? playedBg : whiteBg;
+        drawCell(rightX, y, decW, rowHeight, getDecLabel('No Double'), { bg: ndBg });
+        drawCell(rightX + decW, y, eqW, rowHeight, formatEq(cube.cubefulNoDoubleEquity), { bg: ndBg });
+        drawCell(rightX + decW + eqW, y, errW, rowHeight, formatEq(cube.cubefulNoDoubleError), { bg: ndBg });
+        y += rowHeight;
+
+        // Double/Take
+        const dtPlayed = isPlayedAction('Double') && isPlayedAction('Take');
+        const dtBg = dtPlayed ? playedBg : whiteBg;
+        drawCell(rightX, y, decW, rowHeight, getDecLabel('Double/Take'), { bg: dtBg });
+        drawCell(rightX + decW, y, eqW, rowHeight, formatEq(cube.cubefulDoubleTakeEquity), { bg: dtBg });
+        drawCell(rightX + decW + eqW, y, errW, rowHeight, formatEq(cube.cubefulDoubleTakeError), { bg: dtBg });
+        y += rowHeight;
+
+        // Double/Pass
+        const dpPlayed = isPlayedAction('Double') && isPlayedAction('Pass');
+        const dpBg = dpPlayed ? playedBg : whiteBg;
+        drawCell(rightX, y, decW, rowHeight, getDecLabel('Double/Pass'), { bg: dpBg });
+        drawCell(rightX + decW, y, eqW, rowHeight, formatEq(cube.cubefulDoublePassEquity), { bg: dpBg });
+        drawCell(rightX + decW + eqW, y, errW, rowHeight, formatEq(cube.cubefulDoublePassError), { bg: dpBg });
+        y += rowHeight;
+
+        // Best Action
+        drawCell(rightX, y, decW, rowHeight, 'Best Action', { bold: true });
+        drawCell(rightX + decW, y, eqW + errW, rowHeight, cube.bestCubeAction || '', { bold: true });
+
+        // --- Info table: Depth + Engine ---
+        y = startY;
+        const infoX = colWidth * 2;
+        const infoW = totalWidth - infoX;
+        const infoLabelW = Math.floor(infoW * 0.5);
+        const infoValW = infoW - infoLabelW;
+
+        drawCell(infoX, y, infoLabelW, rowHeight, 'Analysis Depth', { bg: headerBg, bold: true });
+        drawCell(infoX + infoLabelW, y, infoValW, rowHeight, cube.analysisDepth || '');
+        y += rowHeight;
+
+        drawCell(infoX, y, infoLabelW, rowHeight, 'Engine', { bg: headerBg, bold: true });
+        drawCell(infoX + infoLabelW, y, infoValW, rowHeight, cube.analysisEngine || get(analysisStore).analysisEngineVersion || '');
+    }
+
+    function drawCheckerAnalysis(ctx, analysis, startY, totalWidth, rowHeight, pad, headerFont, font, charWidth) {
+        const formatEq = (v) => (v >= 0 ? '+' : '') + (v || 0).toFixed(3);
+        const borderColor = '#ddd';
+        const headerBg = '#f2f2f2';
+        const playedBg = '#fff3cd';
+        const evenBg = '#fdfdfd';
+        const sectionBorder = '#ccc';
+
+        // Column definitions: name, width fraction
+        const cols = [
+            { label: 'Move', frac: 0.18 },
+            { label: 'Equity', frac: 0.08 },
+            { label: 'Error', frac: 0.08 },
+            { label: 'P W', frac: 0.07 },
+            { label: 'P G', frac: 0.07 },
+            { label: 'P B', frac: 0.07 },
+            { label: 'O W', frac: 0.07 },
+            { label: 'O G', frac: 0.07 },
+            { label: 'O B', frac: 0.07 },
+            { label: 'Depth', frac: 0.10 },
+            { label: 'Engine', frac: 0.14 },
+        ];
+
+        // Calculate column positions
+        let colPositions = [];
+        let x = 0;
+        for (const col of cols) {
+            const w = Math.floor(totalWidth * col.frac);
+            colPositions.push({ x, w, label: col.label });
+            x += w;
+        }
+        // Adjust last column to fill remaining space
+        colPositions[colPositions.length - 1].w = totalWidth - colPositions[colPositions.length - 1].x;
+
+        // Section border columns (after Move, Error, PB, OB)
+        const sectionBorders = [0, 2, 5, 8]; // column indices after which to draw thicker border
+
+        function drawCell(cx, cy, cw, ch, text, opts = {}) {
+            if (opts.bg) {
+                ctx.fillStyle = opts.bg;
+                ctx.fillRect(cx, cy, cw, ch);
+            }
+            ctx.strokeStyle = borderColor;
+            ctx.lineWidth = 0.5;
+            ctx.strokeRect(cx, cy, cw, ch);
+            ctx.fillStyle = '#000';
+            ctx.font = opts.bold ? headerFont : font;
+            ctx.textAlign = opts.align || 'center';
+            const tx = opts.align === 'left' ? cx + pad : cx + cw / 2;
+            ctx.fillText(text, tx, cy + ch / 2);
+        }
+
+        function drawSectionBorders(cy) {
+            ctx.strokeStyle = sectionBorder;
+            ctx.lineWidth = 1.5;
+            for (const colIdx of sectionBorders) {
+                const col = colPositions[colIdx];
+                const rx = col.x + col.w;
+                ctx.beginPath();
+                ctx.moveTo(rx, cy);
+                ctx.lineTo(rx, cy + rowHeight);
+                ctx.stroke();
+            }
+        }
+
+        // Determine played move for highlighting
+        const matchCtx = get(matchContextStore);
+        function normMove(m) {
+            return m ? m.split(' ').sort().join(' ') : '';
+        }
+        function isPlayed(move) {
+            if (!move.move) return false;
+            const nm = normMove(move.move);
+            if (matchCtx.isMatchMode) {
+                return analysis.playedMove ? normMove(analysis.playedMove) === nm : false;
+            }
+            if (analysis.playedMoves?.length) {
+                for (const pm of analysis.playedMoves) {
+                    if (normMove(pm) === nm) return true;
+                }
+            }
+            if (analysis.playedMove) return normMove(analysis.playedMove) === nm;
+            return false;
+        }
+
+        let y = startY;
+
+        // Sort moves by equity descending (same as default AnalysisPanel)
+        const moves = [...analysis.checkerAnalysis.moves].sort((a, b) => (b.equity || 0) - (a.equity || 0));
+        const displayMoves = moves.slice(0, 6);
+
+        // Draw header
+        for (const col of colPositions) {
+            drawCell(col.x, y, col.w, rowHeight, col.label, { bg: headerBg, bold: true });
+        }
+        drawSectionBorders(y);
+        y += rowHeight;
+
+        // Draw move rows
+        for (let i = 0; i < displayMoves.length; i++) {
+            const move = displayMoves[i];
+            const played = isPlayed(move);
+            const rowBg = played ? playedBg : (i % 2 === 1 ? evenBg : '#ffffff');
+
+            const values = [
+                move.move || '',
+                formatEq(move.equity),
+                formatEq(move.equityError),
+                (move.playerWinChance || 0).toFixed(2),
+                (move.playerGammonChance || 0).toFixed(2),
+                (move.playerBackgammonChance || 0).toFixed(2),
+                (move.opponentWinChance || 0).toFixed(2),
+                (move.opponentGammonChance || 0).toFixed(2),
+                (move.opponentBackgammonChance || 0).toFixed(2),
+                move.analysisDepth || '',
+                move.analysisEngine || '',
+            ];
+
+            for (let j = 0; j < colPositions.length; j++) {
+                const col = colPositions[j];
+                drawCell(col.x, y, col.w, rowHeight, values[j], { bg: rowBg, align: j === 0 ? 'left' : 'center' });
+            }
+            drawSectionBorders(y);
+            y += rowHeight;
         }
     }
 

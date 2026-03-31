@@ -114,6 +114,22 @@ msgid "Copier une position dans le presse-papier."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-X"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier l'image du board dans le presse-papier (PNG)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-X CTRL-X"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier l'image du board avec l'analyse dans le presse-papier (PNG)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-V"
 msgstr ""
 
