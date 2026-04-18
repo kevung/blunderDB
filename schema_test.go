@@ -62,14 +62,19 @@ func TestSchemaV200_Indexes(t *testing.T) {
 		"idx_position_zobrist",
 		"idx_position_decision_pip",
 		"idx_position_decision_dice",
+		"idx_position_pip_diff",
+		"idx_position_dice",
 		"idx_position_off",
 		"idx_position_score",
+		"idx_position_score_cube",
 		"idx_analysis_position",
+		"idx_analysis_win_gammon",
 		"idx_analysis_win1",
 		"idx_analysis_cube_error",
 		"idx_analysis_move_error",
 		"idx_move_position",
 		"idx_move_game",
+		"idx_game_match",
 	}
 	rows, err := d.db.Query(`SELECT name FROM sqlite_master WHERE type='index'`)
 	if err != nil {

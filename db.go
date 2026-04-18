@@ -346,17 +346,22 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 	// 5. Create indexes
 	// -----------------------------------------------------------------
 	v2indexes := []string{
-		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist       ON position(zobrist_hash)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip  ON position(decision_type, pip_diff)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_off           ON position(off_1, off_2)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_score         ON position(match_length, score_1, score_2)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_position      ON analysis(position_id)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1          ON analysis(player1_win_rate)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error    ON analysis(cube_error)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error    ON analysis(best_move_equity_error)`,
-		`CREATE        INDEX IF NOT EXISTS idx_move_position          ON move(position_id)`,
-		`CREATE        INDEX IF NOT EXISTS idx_move_game              ON move(game_id)`,
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
 	}
 	for _, idx := range v2indexes {
 		if _, err := d.db.Exec(idx); err != nil {
@@ -793,18 +798,23 @@ func (d *Database) SetupDatabase(path string) error {
 
 	// v2.0.0 indexes — position search acceleration
 	v2indexes := []string{
-		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist       ON position(zobrist_hash)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip  ON position(decision_type, pip_diff)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_off           ON position(off_1, off_2)`,
-		`CREATE        INDEX IF NOT EXISTS idx_position_score         ON position(match_length, score_1, score_2)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_position      ON analysis(position_id)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1          ON analysis(player1_win_rate)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error    ON analysis(cube_error)`,
-		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error    ON analysis(best_move_equity_error)`,
-		`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical        ON match(canonical_hash)`,
-		`CREATE        INDEX IF NOT EXISTS idx_move_position          ON move(position_id)`,
-		`CREATE        INDEX IF NOT EXISTS idx_move_game              ON move(game_id)`,
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
 	}
 	for _, idx := range v2indexes {
 		if _, err = d.db.Exec(idx); err != nil {
@@ -1589,16 +1599,21 @@ func (d *Database) ensureAllTablesExist() error {
 
 	// v2.0.0 indexes — non-unique ones are safe to add to existing DBs
 	v2indexesSafe := []string{
-		`CREATE INDEX IF NOT EXISTS idx_position_decision_pip  ON position(decision_type, pip_diff)`,
-		`CREATE INDEX IF NOT EXISTS idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
-		`CREATE INDEX IF NOT EXISTS idx_position_off           ON position(off_1, off_2)`,
-		`CREATE INDEX IF NOT EXISTS idx_position_score         ON position(match_length, score_1, score_2)`,
-		`CREATE INDEX IF NOT EXISTS idx_analysis_position      ON analysis(position_id)`,
-		`CREATE INDEX IF NOT EXISTS idx_analysis_win1          ON analysis(player1_win_rate)`,
-		`CREATE INDEX IF NOT EXISTS idx_analysis_cube_error    ON analysis(cube_error)`,
-		`CREATE INDEX IF NOT EXISTS idx_analysis_move_error    ON analysis(best_move_equity_error)`,
-		`CREATE INDEX IF NOT EXISTS idx_move_position          ON move(position_id)`,
-		`CREATE INDEX IF NOT EXISTS idx_move_game              ON move(game_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		`CREATE INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
 	}
 	for _, idx := range v2indexesSafe {
 		d.db.Exec(idx) // ignore error: index may already exist or column may be NULL
