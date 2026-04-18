@@ -1870,9 +1870,9 @@ func (cli *CLI) runSearch(args []string) error {
 		}
 	}
 
-	// For CLI, we apply decision type filter ourselves since db filter also checks PlayerOnRoll
-	// Load positions without decision type filter, we'll apply it manually
-	positions, err := cli.db.LoadPositionsByFilters(
+	// Use the core implementation to get analysis data in the same query, avoiding
+	// per-row LoadAnalysis calls for errorMin and hasAnalysis filtering.
+	positions, analysisMap, err := cli.db.loadPositionsByFiltersCore(
 		filter,
 		includeCube,
 		includeScore,
@@ -1892,7 +1892,7 @@ func (cli *CLI) runSearch(args []string) error {
 		"",                 // searchText
 		"",                 // player1AbsolutePipCountFilter
 		"",                 // equityFilter
-		false,              // decisionTypeFilter - we'll filter ourselves
+		decisionTypeFilter, // pushed to SQL (player_on_roll=0 for all stored positions)
 		false,              // diceRollFilter
 		"",                 // movePatternFilter
 		"",                 // dateFilter
@@ -1911,44 +1911,33 @@ func (cli *CLI) runSearch(args []string) error {
 		return fmt.Errorf("failed to search positions: %v", err)
 	}
 
-	// Apply additional filters that aren't supported by LoadPositionsByFilters
+	// Apply errorMin / hasAnalysis using the analysis map from the JOIN (no extra DB queries).
 	var filteredPositions []Position
 	for _, pos := range positions {
-		// Filter by decision type (CLI only compares DecisionType, not PlayerOnRoll)
-		if decisionTypeFilter {
-			if pos.DecisionType != filter.DecisionType {
-				continue
-			}
-		}
-
-		// Filter by error minimum if specified
 		if *errorMin > 0 || *hasAnalysis {
-			analysis, err := cli.db.LoadAnalysis(pos.ID)
-			if err != nil || analysis == nil {
+			analysis := analysisMap[pos.ID]
+			if analysis == nil {
 				if *hasAnalysis {
 					continue
 				}
-			} else {
-				if *errorMin > 0 {
-					// Check if this position has an error >= errorMin
-					hasError := false
-					if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 1 {
-						if analysis.CheckerAnalysis.Moves[1].EquityError != nil {
-							if math.Round(*analysis.CheckerAnalysis.Moves[1].EquityError*1000)/1000 >= *errorMin {
-								hasError = true
-							}
-						}
-					}
-					if analysis.DoublingCubeAnalysis != nil {
-						if math.Round(analysis.DoublingCubeAnalysis.CubefulNoDoubleError*1000)/1000 >= *errorMin ||
-							math.Round(analysis.DoublingCubeAnalysis.CubefulDoubleTakeError*1000)/1000 >= *errorMin ||
-							math.Round(analysis.DoublingCubeAnalysis.CubefulDoublePassError*1000)/1000 >= *errorMin {
+			} else if *errorMin > 0 {
+				hasError := false
+				if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 1 {
+					if analysis.CheckerAnalysis.Moves[1].EquityError != nil {
+						if math.Round(*analysis.CheckerAnalysis.Moves[1].EquityError*1000)/1000 >= *errorMin {
 							hasError = true
 						}
 					}
-					if !hasError {
-						continue
+				}
+				if analysis.DoublingCubeAnalysis != nil {
+					if math.Round(analysis.DoublingCubeAnalysis.CubefulNoDoubleError*1000)/1000 >= *errorMin ||
+						math.Round(analysis.DoublingCubeAnalysis.CubefulDoubleTakeError*1000)/1000 >= *errorMin ||
+						math.Round(analysis.DoublingCubeAnalysis.CubefulDoublePassError*1000)/1000 >= *errorMin {
+						hasError = true
 					}
+				}
+				if !hasError {
+					continue
 				}
 			}
 		}

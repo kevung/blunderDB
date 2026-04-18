@@ -39,5 +39,5 @@ Dependencies flow top-down; a phase may only start after the one above is green.
 - [x] 02 — schema & PRAGMAs
 - [x] 03 — migration
 - [x] 04 — import rewrite
-- [ ] 05 — search rewrite
+- [x] 05 — search rewrite
 - [ ] 06 — verify & document

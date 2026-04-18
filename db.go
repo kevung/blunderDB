@@ -2540,6 +2540,697 @@ func (d *Database) SearchComments(query string) ([]CommentEntry, error) {
 	return entries, rows.Err()
 }
 
+// parseIntFilterExpr parses prefixed integer filter strings (e.g. "p>5", "p<20", "p3,10").
+// Returns min, max (inclusive bounds) and flags indicating which bound is set.
+func parseIntFilterExpr(filter, prefix string) (min, max int, hasMin, hasMax bool) {
+	if !strings.HasPrefix(filter, prefix) {
+		return
+	}
+	rest := filter[len(prefix):]
+	if strings.HasPrefix(rest, ">") {
+		v, err := strconv.Atoi(strings.TrimSpace(rest[1:]))
+		if err != nil {
+			return
+		}
+		return v, 0, true, false
+	}
+	if strings.HasPrefix(rest, "<") {
+		v, err := strconv.Atoi(strings.TrimSpace(rest[1:]))
+		if err != nil {
+			return
+		}
+		return 0, v, false, true
+	}
+	parts := strings.SplitN(rest, ",", 2)
+	if len(parts) == 1 {
+		v, err := strconv.Atoi(strings.TrimSpace(rest))
+		if err != nil {
+			return
+		}
+		return v, v, true, true
+	}
+	v1, e1 := strconv.Atoi(strings.TrimSpace(parts[0]))
+	v2, e2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+	if e1 != nil || e2 != nil {
+		return
+	}
+	if v1 > v2 {
+		v1, v2 = v2, v1
+	}
+	return v1, v2, true, true
+}
+
+// parseFloatFilterExpr is the float64 variant of parseIntFilterExpr.
+func parseFloatFilterExpr(filter, prefix string) (min, max float64, hasMin, hasMax bool) {
+	if !strings.HasPrefix(filter, prefix) {
+		return
+	}
+	rest := filter[len(prefix):]
+	if strings.HasPrefix(rest, ">") {
+		v, err := strconv.ParseFloat(strings.TrimSpace(rest[1:]), 64)
+		if err != nil {
+			return
+		}
+		return v, 0, true, false
+	}
+	if strings.HasPrefix(rest, "<") {
+		v, err := strconv.ParseFloat(strings.TrimSpace(rest[1:]), 64)
+		if err != nil {
+			return
+		}
+		return 0, v, false, true
+	}
+	parts := strings.SplitN(rest, ",", 2)
+	if len(parts) == 1 {
+		v, err := strconv.ParseFloat(strings.TrimSpace(rest), 64)
+		if err != nil {
+			return
+		}
+		return v, v, true, true
+	}
+	v1, e1 := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
+	v2, e2 := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+	if e1 != nil || e2 != nil {
+		return
+	}
+	if v1 > v2 {
+		v1, v2 = v2, v1
+	}
+	return v1, v2, true, true
+}
+
+// appendIntRangeSQL appends "AND column op ?" to where and the bound(s) to args.
+func appendIntRangeSQL(column string, min, max int, hasMin, hasMax bool, where *strings.Builder, args *[]any) {
+	if !hasMin && !hasMax {
+		return
+	}
+	if hasMin && hasMax {
+		if min == max {
+			where.WriteString(" AND " + column + " = ?")
+			*args = append(*args, min)
+		} else {
+			where.WriteString(" AND " + column + " BETWEEN ? AND ?")
+			*args = append(*args, min, max)
+		}
+	} else if hasMin {
+		where.WriteString(" AND " + column + " >= ?")
+		*args = append(*args, min)
+	} else {
+		where.WriteString(" AND " + column + " <= ?")
+		*args = append(*args, max)
+	}
+}
+
+// appendFloatRangeSQL is the float64 variant of appendIntRangeSQL.
+func appendFloatRangeSQL(column string, min, max float64, hasMin, hasMax bool, where *strings.Builder, args *[]any) {
+	if !hasMin && !hasMax {
+		return
+	}
+	if hasMin && hasMax {
+		where.WriteString(" AND " + column + " BETWEEN ? AND ?")
+		*args = append(*args, min, max)
+	} else if hasMin {
+		where.WriteString(" AND " + column + " >= ?")
+		*args = append(*args, min)
+	} else {
+		where.WriteString(" AND " + column + " <= ?")
+		*args = append(*args, max)
+	}
+}
+
+// hasBoardFilter returns true if at least one point in b has non-empty checkers.
+func hasBoardFilter(b Board) bool {
+	for _, p := range b.Points {
+		if p.Checkers > 0 && p.Color >= 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// analysisMatchesFloatFilter checks value against a prefixed float filter string.
+// Returns true when filter is empty or the (rounded) value satisfies the expression.
+func analysisMatchesFloatFilter(filter, prefix string, value float64) bool {
+	if filter == "" {
+		return true
+	}
+	mn, mx, hasMin, hasMax := parseFloatFilterExpr(filter, prefix)
+	if !hasMin && !hasMax {
+		return true
+	}
+	value = roundToHundredthPercent(value)
+	if hasMin && value < mn {
+		return false
+	}
+	if hasMax && value > mx {
+		return false
+	}
+	return true
+}
+
+// analysisMatchesEquityFilter checks the best-move equity of ana against the "e"-prefixed filter.
+func analysisMatchesEquityFilter(filter string, ana *PositionAnalysis) bool {
+	if filter == "" {
+		return true
+	}
+	if ana == nil {
+		return false
+	}
+	var equity float64
+	if ana.AnalysisType == "DoublingCube" && ana.DoublingCubeAnalysis != nil {
+		equity = ana.DoublingCubeAnalysis.CubefulNoDoubleEquity
+	} else if ana.AnalysisType == "CheckerMove" && ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+		equity = ana.CheckerAnalysis.Moves[0].Equity
+	} else {
+		return false
+	}
+	equity = roundToMillipoint(equity)
+	mn, mx, hasMin, hasMax := parseFloatFilterExpr(filter, "e")
+	if !hasMin && !hasMax {
+		return true
+	}
+	// Filter values are in millipoints; stored equity is in equity points.
+	if hasMin && equity < mn/1000.0 {
+		return false
+	}
+	if hasMax && equity > mx/1000.0 {
+		return false
+	}
+	return true
+}
+
+// analysisMatchesMovePattern checks a move-pattern filter against pre-fetched analysis,
+// avoiding a LoadAnalysis round-trip.
+func analysisMatchesMovePattern(filter string, ana *PositionAnalysis) bool {
+	if filter == "" {
+		return true
+	}
+	if ana == nil {
+		return false
+	}
+	movePatternMatch := strings.Trim(filter, `m"'`)
+	movePatterns := strings.Split(strings.ToLower(movePatternMatch), ";")
+	if ana.AnalysisType == "CheckerMove" && ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+		move := strings.ToLower(ana.CheckerAnalysis.Moves[0].Move)
+		for _, pattern := range movePatterns {
+			if strings.Contains(move, pattern) {
+				return true
+			}
+		}
+	} else if ana.AnalysisType == "DoublingCube" && ana.DoublingCubeAnalysis != nil {
+		for _, pattern := range movePatterns {
+			switch pattern {
+			case "nd":
+				if ana.DoublingCubeAnalysis.CubefulNoDoubleError == 0 {
+					return true
+				}
+			case "dt":
+				if ana.DoublingCubeAnalysis.CubefulDoubleTakeError == 0 {
+					return true
+				}
+			case "dp":
+				if ana.DoublingCubeAnalysis.CubefulDoublePassError == 0 {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// loadPositionsByFiltersCore is the internal implementation behind LoadPositionsByFilters.
+// It returns matching positions and a map[positionID]*PositionAnalysis built from the LEFT
+// JOIN, so callers can inspect analysis data without extra LoadAnalysis round-trips.
+//
+// When mirrorFilter is false, every cheap predicate is pushed to SQL (one LEFT JOIN query).
+// When mirrorFilter is true, orientation-specific SQL clauses are disabled and all checks
+// fall back to Go-side evaluation on the already-narrowed result set.
+func (d *Database) loadPositionsByFiltersCore(
+	filter Position,
+	includeCube bool,
+	includeScore bool,
+	pipCountFilter string,
+	winRateFilter string,
+	gammonRateFilter string,
+	backgammonRateFilter string,
+	player2WinRateFilter string,
+	player2GammonRateFilter string,
+	player2BackgammonRateFilter string,
+	player1CheckerOffFilter string,
+	player2CheckerOffFilter string,
+	player1BackCheckerFilter string,
+	player2BackCheckerFilter string,
+	player1CheckerInZoneFilter string,
+	player2CheckerInZoneFilter string,
+	searchText string,
+	player1AbsolutePipCountFilter string,
+	equityFilter string,
+	decisionTypeFilter bool,
+	diceRollFilter bool,
+	movePatternFilter string,
+	dateFilter string,
+	player1OutfieldBlotFilter string,
+	player2OutfieldBlotFilter string,
+	player1JanBlotFilter string,
+	player2JanBlotFilter string,
+	noContactFilter bool,
+	mirrorFilter bool,
+	moveErrorFilter string,
+	matchIDsFilter string,
+	tournamentIDsFilter string,
+	restrictToPositionIDs string,
+) ([]Position, map[int64]*PositionAnalysis, error) {
+	// Push orientation-specific predicates to SQL only when mirrorFilter is off.
+	// Mirror search needs both orientations checked; disabling SQL-side orientation
+	// clauses and evaluating them in Go is correct (if slower) for that rare path.
+	useSQLFilters := !mirrorFilter
+
+	// -----------------------------------------------------------------------
+	// 1. Build the SQL WHERE clause
+	// -----------------------------------------------------------------------
+	var where strings.Builder
+	var args []any
+	where.WriteString("1=1")
+
+	// --- match / tournament filters (orientation-neutral: always pushed to SQL) ---
+	if matchIDsFilter != "" || tournamentIDsFilter != "" {
+		var allMatchIDs []int64
+		if matchIDsFilter != "" {
+			if ids, err := parseFilterIDList(matchIDsFilter); err == nil {
+				allMatchIDs = append(allMatchIDs, ids...)
+			}
+		}
+		if tournamentIDsFilter != "" {
+			if tIDs, err := parseFilterIDList(tournamentIDsFilter); err == nil {
+				for _, tID := range tIDs {
+					if matchIDs, err := d.getMatchIDsForTournament(tID); err == nil {
+						allMatchIDs = append(allMatchIDs, matchIDs...)
+					}
+				}
+			}
+		}
+		if len(allMatchIDs) > 0 {
+			placeholders := strings.Repeat("?,", len(allMatchIDs))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(
+				" AND p.id IN (SELECT m.position_id FROM move m" +
+					" WHERE m.game_id IN (SELECT id FROM game WHERE match_id IN (" + placeholders + ")))")
+			for _, id := range allMatchIDs {
+				args = append(args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1") // no matching IDs: force empty result
+		}
+	}
+
+	// --- restrict to specific position IDs (e.g. "search in current results") ---
+	if restrictToPositionIDs != "" {
+		var ids []int64
+		for _, idStr := range strings.Split(restrictToPositionIDs, ",") {
+			if id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64); err == nil {
+				ids = append(ids, id)
+			}
+		}
+		if len(ids) > 0 {
+			placeholders := strings.Repeat("?,", len(ids))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(" AND p.id IN (" + placeholders + ")")
+			for _, id := range ids {
+				args = append(args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1")
+		}
+	}
+
+	// --- orientation-specific SQL filters (disabled when mirrorFilter=true) ---
+	var bitboardTight bool
+	if useSQLFilters {
+		if decisionTypeFilter {
+			where.WriteString(" AND p.decision_type = ? AND p.player_on_roll = ?")
+			args = append(args, filter.DecisionType, filter.PlayerOnRoll)
+		}
+		if diceRollFilter {
+			d1, d2 := filter.Dice[0], filter.Dice[1]
+			if d1 == d2 {
+				where.WriteString(" AND p.dice_1 = ? AND p.dice_2 = ? AND p.player_on_roll = ? AND p.decision_type = ?")
+				args = append(args, d1, d2, filter.PlayerOnRoll, filter.DecisionType)
+			} else {
+				where.WriteString(" AND ((p.dice_1 = ? AND p.dice_2 = ?) OR (p.dice_1 = ? AND p.dice_2 = ?)) AND p.player_on_roll = ? AND p.decision_type = ?")
+				args = append(args, d1, d2, d2, d1, filter.PlayerOnRoll, filter.DecisionType)
+			}
+		}
+		if includeCube {
+			if filter.Cube.Value == 0 {
+				where.WriteString(" AND p.cube_value IS NULL")
+			} else {
+				where.WriteString(" AND p.cube_value = ? AND p.cube_owner = ?")
+				args = append(args, filter.Cube.Value, filter.Cube.Owner)
+			}
+		}
+		if includeScore {
+			where.WriteString(" AND p.score_1 = ? AND p.score_2 = ?")
+			args = append(args, filter.Score[0], filter.Score[1])
+		}
+		if noContactFilter {
+			where.WriteString(" AND p.no_contact = 1")
+		}
+
+		// Integer range filters on position scalar columns.
+		pMin, pMax, pHasMin, pHasMax := parseIntFilterExpr(pipCountFilter, "p")
+		appendIntRangeSQL("p.pip_diff", pMin, pMax, pHasMin, pHasMax, &where, &args)
+		PMin, PMax, PHasMin, PHasMax := parseIntFilterExpr(player1AbsolutePipCountFilter, "P")
+		appendIntRangeSQL("p.pip_1", PMin, PMax, PHasMin, PHasMax, &where, &args)
+		oMin, oMax, oHasMin, oHasMax := parseIntFilterExpr(player1CheckerOffFilter, "o")
+		appendIntRangeSQL("p.off_1", oMin, oMax, oHasMin, oHasMax, &where, &args)
+		OMin, OMax, OHasMin, OHasMax := parseIntFilterExpr(player2CheckerOffFilter, "O")
+		appendIntRangeSQL("p.off_2", OMin, OMax, OHasMin, OHasMax, &where, &args)
+		kMin, kMax, kHasMin, kHasMax := parseIntFilterExpr(player1BackCheckerFilter, "k")
+		appendIntRangeSQL("p.back_checkers_1", kMin, kMax, kHasMin, kHasMax, &where, &args)
+		KMin, KMax, KHasMin, KHasMax := parseIntFilterExpr(player2BackCheckerFilter, "K")
+		appendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
+
+		// Float range filters on analysis scalar columns (LEFT JOIN; NULL rows are excluded
+		// by the BETWEEN/>=/<= comparisons, which is correct: no analysis → no rate).
+		wMin, wMax, wHasMin, wHasMax := parseFloatFilterExpr(winRateFilter, "w")
+		appendFloatRangeSQL("a.player1_win_rate", wMin, wMax, wHasMin, wHasMax, &where, &args)
+		gMin, gMax, gHasMin, gHasMax := parseFloatFilterExpr(gammonRateFilter, "g")
+		appendFloatRangeSQL("a.player1_gammon_rate", gMin, gMax, gHasMin, gHasMax, &where, &args)
+		bMin, bMax, bHasMin, bHasMax := parseFloatFilterExpr(backgammonRateFilter, "b")
+		appendFloatRangeSQL("a.player1_backgammon_rate", bMin, bMax, bHasMin, bHasMax, &where, &args)
+		WMin, WMax, WHasMin, WHasMax := parseFloatFilterExpr(player2WinRateFilter, "W")
+		appendFloatRangeSQL("a.player2_win_rate", WMin, WMax, WHasMin, WHasMax, &where, &args)
+		GMin, GMax, GHasMin, GHasMax := parseFloatFilterExpr(player2GammonRateFilter, "G")
+		appendFloatRangeSQL("a.player2_gammon_rate", GMin, GMax, GHasMin, GHasMax, &where, &args)
+		BMin, BMax, BHasMin, BHasMax := parseFloatFilterExpr(player2BackgammonRateFilter, "B")
+		appendFloatRangeSQL("a.player2_backgammon_rate", BMin, BMax, BHasMin, BHasMax, &where, &args)
+
+		// Move-error filter: "E"-prefixed values are millipoints; convert to equity points.
+		if moveErrorFilter != "" {
+			eMin, eMax, eHasMin, eHasMax := parseFloatFilterExpr(moveErrorFilter, "E")
+			if eHasMin {
+				eqMin := eMin / 1000.0
+				where.WriteString(" AND (a.best_move_equity_error >= ? OR a.cube_error >= ?)")
+				args = append(args, eqMin, eqMin)
+			} else if eHasMax {
+				eqMax := eMax / 1000.0
+				where.WriteString(" AND (a.best_move_equity_error <= ? OR a.cube_error <= ?)")
+				args = append(args, eqMax, eqMax)
+			}
+		}
+
+		// Bitboard pre-filter for checker-structure patterns.
+		if hasBoardFilter(filter.Board) {
+			occ1Req, pt1Req, occ2Req, pt2Req, tight := CheckerStructureMasks(filter)
+			bitboardTight = tight
+			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
+			where.WriteString(" AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?")
+			args = append(args,
+				int64(occ1Req), int64(occ1Req), int64(pt1Req), int64(pt1Req),
+				int64(occ2Req), int64(occ2Req), int64(pt2Req), int64(pt2Req))
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// 2. Execute the single LEFT JOIN query
+	// -----------------------------------------------------------------------
+	query := `SELECT p.id, p.state,
+		a.id, a.data,
+		a.cube_error, a.best_move_equity_error,
+		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
+		a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
+		a.best_cube_action
+	FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + where.String() + ` ORDER BY p.id`
+
+	d.mu.Lock()
+	rows, err := d.db.Query(query, args...)
+	d.mu.Unlock()
+	if err != nil {
+		return nil, nil, fmt.Errorf("search query: %w", err)
+	}
+	defer rows.Close()
+
+	// -----------------------------------------------------------------------
+	// 3. Scan rows and apply Go-side filters on the shrunk result set
+	// -----------------------------------------------------------------------
+	var positions []Position
+	analysisMap := make(map[int64]*PositionAnalysis)
+
+	for rows.Next() {
+		var posID int64
+		var posJSON string
+		var anaID sql.NullInt64
+		var anaJSON sql.NullString
+		var cubeError, moveError sql.NullFloat64
+		var p1Win, p1Gammon, p1BG, p2Win, p2Gammon, p2BG sql.NullFloat64
+		var bestCubeAction sql.NullString
+
+		if err := rows.Scan(
+			&posID, &posJSON,
+			&anaID, &anaJSON,
+			&cubeError, &moveError,
+			&p1Win, &p1Gammon, &p1BG,
+			&p2Win, &p2Gammon, &p2BG,
+			&bestCubeAction,
+		); err != nil {
+			return nil, nil, err
+		}
+
+		var position Position
+		if err := json.Unmarshal([]byte(posJSON), &position); err != nil {
+			return nil, nil, err
+		}
+		position.ID = posID
+
+		// Parse analysis from the JOIN — one unmarshal per row, no extra DB round-trip.
+		var ana *PositionAnalysis
+		if anaID.Valid && anaJSON.Valid && anaJSON.String != "" {
+			var a PositionAnalysis
+			if jsonErr := json.Unmarshal([]byte(anaJSON.String), &a); jsonErr == nil {
+				ana = &a
+				analysisMap[posID] = ana
+			}
+		}
+
+		// matchesGoFilters evaluates the predicates that cannot be (or were not)
+		// pushed to SQL: tight checker-structure, orientation-specific filters in
+		// mirror mode, and always-Go-side filters (zone, blot, searchText, equity).
+		matchesGoFilters := func(pos Position) bool {
+			// Checker structure: re-check when bitboard pre-filter couldn't fully
+			// discriminate (tight=true: exact count > 2) or when SQL was disabled.
+			if hasBoardFilter(filter.Board) {
+				if !useSQLFilters || bitboardTight {
+					if !pos.MatchesCheckerPosition(filter) {
+						return false
+					}
+				}
+			}
+
+			// Orientation-specific filters evaluated in Go when mirrorFilter=true.
+			if !useSQLFilters {
+				if !pos.MatchesCheckerPosition(filter) {
+					return false
+				}
+				if includeCube && !pos.MatchesCubePosition(filter) {
+					return false
+				}
+				if includeScore && !pos.MatchesScorePosition(filter) {
+					return false
+				}
+				if decisionTypeFilter && !pos.MatchesDecisionType(filter) {
+					return false
+				}
+				if diceRollFilter && !pos.MatchesDiceRoll(filter) {
+					return false
+				}
+				if noContactFilter && !pos.MatchesNoContact() {
+					return false
+				}
+				if pipCountFilter != "" && !pos.MatchesPipCountFilter(pipCountFilter) {
+					return false
+				}
+				if player1AbsolutePipCountFilter != "" && !pos.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter) {
+					return false
+				}
+				if player1CheckerOffFilter != "" && !pos.MatchesPlayer1CheckerOff(player1CheckerOffFilter) {
+					return false
+				}
+				if player2CheckerOffFilter != "" && !pos.MatchesPlayer2CheckerOff(player2CheckerOffFilter) {
+					return false
+				}
+				if player1BackCheckerFilter != "" && !pos.MatchesPlayer1BackChecker(player1BackCheckerFilter) {
+					return false
+				}
+				if player2BackCheckerFilter != "" && !pos.MatchesPlayer2BackChecker(player2BackCheckerFilter) {
+					return false
+				}
+				// Analysis-rate filters in mirror mode: use pre-fetched analysis.
+				if winRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var wr float64
+					if ana.DoublingCubeAnalysis != nil {
+						wr = ana.DoublingCubeAnalysis.PlayerWinChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						wr = ana.CheckerAnalysis.Moves[0].PlayerWinChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(winRateFilter, "w", wr) {
+						return false
+					}
+				}
+				if gammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var gr float64
+					if ana.DoublingCubeAnalysis != nil {
+						gr = ana.DoublingCubeAnalysis.PlayerGammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						gr = ana.CheckerAnalysis.Moves[0].PlayerGammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(gammonRateFilter, "g", gr) {
+						return false
+					}
+				}
+				if backgammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var bgr float64
+					if ana.DoublingCubeAnalysis != nil {
+						bgr = ana.DoublingCubeAnalysis.PlayerBackgammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						bgr = ana.CheckerAnalysis.Moves[0].PlayerBackgammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(backgammonRateFilter, "b", bgr) {
+						return false
+					}
+				}
+				if player2WinRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var wr float64
+					if ana.DoublingCubeAnalysis != nil {
+						wr = ana.DoublingCubeAnalysis.OpponentWinChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						wr = ana.CheckerAnalysis.Moves[0].OpponentWinChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(player2WinRateFilter, "W", wr) {
+						return false
+					}
+				}
+				if player2GammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var gr float64
+					if ana.DoublingCubeAnalysis != nil {
+						gr = ana.DoublingCubeAnalysis.OpponentGammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						gr = ana.CheckerAnalysis.Moves[0].OpponentGammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(player2GammonRateFilter, "G", gr) {
+						return false
+					}
+				}
+				if player2BackgammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var bgr float64
+					if ana.DoublingCubeAnalysis != nil {
+						bgr = ana.DoublingCubeAnalysis.OpponentBackgammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						bgr = ana.CheckerAnalysis.Moves[0].OpponentBackgammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(player2BackgammonRateFilter, "B", bgr) {
+						return false
+					}
+				}
+				// Move-error in mirror mode: fall back to the existing method.
+				if moveErrorFilter != "" && !pos.MatchesMoveErrorFilter(moveErrorFilter, d) {
+					return false
+				}
+			}
+
+			// Always Go-side: zone, blot, searchText, dateFilter, equityFilter.
+			if player1CheckerInZoneFilter != "" && !pos.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter) {
+				return false
+			}
+			if player2CheckerInZoneFilter != "" && !pos.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter) {
+				return false
+			}
+			if player1OutfieldBlotFilter != "" && !pos.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter) {
+				return false
+			}
+			if player2OutfieldBlotFilter != "" && !pos.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter) {
+				return false
+			}
+			if player1JanBlotFilter != "" && !pos.MatchesPlayer1JanBlot(player1JanBlotFilter) {
+				return false
+			}
+			if player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(player2JanBlotFilter) {
+				return false
+			}
+			if searchText != "" && !pos.MatchesSearchText(searchText, d) {
+				return false
+			}
+			if dateFilter != "" && !pos.MatchesDateFilter(dateFilter, d) {
+				return false
+			}
+			if equityFilter != "" && !analysisMatchesEquityFilter(equityFilter, ana) {
+				return false
+			}
+			return true
+		}
+
+		// addPosition mirrors take/pass cube positions so player1 appears at the bottom.
+		addPosition := func(pos Position) {
+			if moveErrorFilter != "" && pos.DecisionType == CubeAction && pos.IsPlayer1TakePassCubeAction(d) {
+				pos = pos.Mirror()
+			}
+			positions = append(positions, pos)
+		}
+
+		if matchesGoFilters(position) {
+			if analysisMatchesMovePattern(movePatternFilter, ana) {
+				addPosition(position)
+			}
+		} else if mirrorFilter {
+			mirrored := position.Mirror()
+			if matchesGoFilters(mirrored) {
+				if analysisMatchesMovePattern(movePatternFilter, ana) {
+					addPosition(mirrored)
+				}
+			}
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	return positions, analysisMap, nil
+}
+
+// LoadPositionsByFilters returns positions matching the supplied filters.
+// This is the public Wails-bound method; its 33-parameter signature is stable.
+// Internally it delegates to loadPositionsByFiltersCore and discards the analysis map.
 func (d *Database) LoadPositionsByFilters(
 	filter Position,
 	includeCube bool,
@@ -2575,156 +3266,22 @@ func (d *Database) LoadPositionsByFilters(
 	tournamentIDsFilter string,
 	restrictToPositionIDs string,
 ) ([]Position, error) {
-	// Build set of restricted position IDs (search in current results)
-	var restrictedIDs map[int64]bool
-	if restrictToPositionIDs != "" {
-		restrictedIDs = make(map[int64]bool)
-		for _, idStr := range strings.Split(restrictToPositionIDs, ",") {
-			idStr = strings.TrimSpace(idStr)
-			if id, err := strconv.ParseInt(idStr, 10, 64); err == nil {
-				restrictedIDs[id] = true
-			}
-		}
-	}
-
-	// Build set of allowed position IDs based on match/tournament filters
-	var allowedPositionIDs map[int64]bool
-	if matchIDsFilter != "" || tournamentIDsFilter != "" {
-		allowedPositionIDs = make(map[int64]bool)
-
-		// Collect all match IDs (from direct match filter + tournament expansion)
-		var allMatchIDs []int64
-
-		if matchIDsFilter != "" {
-			ids, err := parseFilterIDList(matchIDsFilter)
-			if err == nil {
-				allMatchIDs = append(allMatchIDs, ids...)
-			}
-		}
-
-		if tournamentIDsFilter != "" {
-			tIDs, err := parseFilterIDList(tournamentIDsFilter)
-			if err == nil {
-				// Expand tournament IDs to match IDs
-				for _, tID := range tIDs {
-					matchIDs, err := d.getMatchIDsForTournament(tID)
-					if err == nil {
-						allMatchIDs = append(allMatchIDs, matchIDs...)
-					}
-				}
-			}
-		}
-
-		// Get position IDs for all collected match IDs
-		for _, mID := range allMatchIDs {
-			posIDs, err := d.getPositionIDsForMatch(mID)
-			if err == nil {
-				for _, pID := range posIDs {
-					allowedPositionIDs[pID] = true
-				}
-			}
-		}
-	}
-
-	d.mu.Lock()
-	rows, err := d.db.Query(`SELECT id, state FROM position`)
-	d.mu.Unlock()
-	if err != nil {
-		fmt.Println("Error loading positions:", err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	var positions []Position
-	for rows.Next() {
-		var id int64
-		var stateJSON string
-		if err = rows.Scan(&id, &stateJSON); err != nil {
-			return nil, err
-		}
-
-		var position Position
-		if err = json.Unmarshal([]byte(stateJSON), &position); err != nil {
-			return nil, err
-		}
-		position.ID = id // Ensure the ID is set
-
-		// Function to check if a position matches all filters
-		matchesFilters := func(pos Position) bool {
-			// Restrict to current results: skip positions not in the restricted set
-			if restrictedIDs != nil && !restrictedIDs[pos.ID] {
-				return false
-			}
-			// Match/tournament filter: skip positions not linked to specified matches
-			if allowedPositionIDs != nil && !allowedPositionIDs[pos.ID] {
-				return false
-			}
-			return pos.MatchesCheckerPosition(filter) &&
-				(!includeCube || pos.MatchesCubePosition(filter)) &&
-				(!includeScore || pos.MatchesScorePosition(filter)) &&
-				(!decisionTypeFilter || pos.MatchesDecisionType(filter)) &&
-				(pipCountFilter == "" || pos.MatchesPipCountFilter(pipCountFilter)) &&
-				(winRateFilter == "" || pos.MatchesWinRate(winRateFilter, d)) &&
-				(gammonRateFilter == "" || pos.MatchesGammonRate(gammonRateFilter, d)) &&
-				(backgammonRateFilter == "" || pos.MatchesBackgammonRate(backgammonRateFilter, d)) &&
-				(player2WinRateFilter == "" || pos.MatchesPlayer2WinRate(player2WinRateFilter, d)) &&
-				(player2GammonRateFilter == "" || pos.MatchesPlayer2GammonRate(player2GammonRateFilter, d)) &&
-				(player2BackgammonRateFilter == "" || pos.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
-				(player1CheckerOffFilter == "" || pos.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
-				(player2CheckerOffFilter == "" || pos.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
-				(player1BackCheckerFilter == "" || pos.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
-				(player2BackCheckerFilter == "" || pos.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
-				(player1CheckerInZoneFilter == "" || pos.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
-				(player2CheckerInZoneFilter == "" || pos.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
-				(searchText == "" || pos.MatchesSearchText(searchText, d)) &&
-				(player1AbsolutePipCountFilter == "" || pos.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
-				(equityFilter == "" || pos.MatchesEquityFilter(equityFilter, d)) &&
-				(!diceRollFilter || pos.MatchesDiceRoll(filter)) &&
-				(dateFilter == "" || pos.MatchesDateFilter(dateFilter, d)) &&
-				(player1OutfieldBlotFilter == "" || pos.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
-				(player2OutfieldBlotFilter == "" || pos.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
-				(player1JanBlotFilter == "" || pos.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
-				(player2JanBlotFilter == "" || pos.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
-				(!noContactFilter || pos.MatchesNoContact()) &&
-				(moveErrorFilter == "" || pos.MatchesMoveErrorFilter(moveErrorFilter, d))
-		}
-
-		// addPosition adds a matched position to results, mirroring take/pass positions
-		// so player1 (the taker/passer) is shown at the bottom of the board.
-		addPosition := func(pos Position) {
-			if moveErrorFilter != "" && pos.DecisionType == CubeAction && pos.IsPlayer1TakePassCubeAction(d) {
-				pos = pos.Mirror()
-			}
-			positions = append(positions, pos)
-		}
-
-		// Check the original position
-		if matchesFilters(position) {
-			if movePatternFilter != "" {
-				if position.MatchesMovePattern(movePatternFilter, d) {
-					addPosition(position)
-				}
-			} else {
-				addPosition(position)
-			}
-		} else if mirrorFilter {
-			mirroredPosition := position.Mirror()
-			if matchesFilters(mirroredPosition) {
-				if movePatternFilter != "" {
-					if mirroredPosition.MatchesMovePattern(movePatternFilter, d) {
-						addPosition(mirroredPosition)
-					}
-				} else {
-					addPosition(mirroredPosition)
-				}
-			}
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return positions, nil
+	positions, _, err := d.loadPositionsByFiltersCore(
+		filter, includeCube, includeScore,
+		pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter,
+		player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter,
+		player1CheckerOffFilter, player2CheckerOffFilter,
+		player1BackCheckerFilter, player2BackCheckerFilter,
+		player1CheckerInZoneFilter, player2CheckerInZoneFilter,
+		searchText, player1AbsolutePipCountFilter, equityFilter,
+		decisionTypeFilter, diceRollFilter,
+		movePatternFilter, dateFilter,
+		player1OutfieldBlotFilter, player2OutfieldBlotFilter,
+		player1JanBlotFilter, player2JanBlotFilter,
+		noContactFilter, mirrorFilter, moveErrorFilter,
+		matchIDsFilter, tournamentIDsFilter, restrictToPositionIDs,
+	)
+	return positions, err
 }
 
 // parseFilterIDList parses a match/tournament ID filter string.

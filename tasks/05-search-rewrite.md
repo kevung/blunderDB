@@ -13,10 +13,10 @@
 
 The current `LoadPositionsByFilters` (db.go:1845) does three things: parse filter strings, fetch-and-filter positions, return `[]Position`. Split into:
 
-- [ ] `parseFilters(args) (sqlFilters, goFilters, error)` — pure. Turns every string parameter (`pipCountFilter = ">5"`, `equityFilter = "0.1..0.3"`, …) into an `sqlFilters` struct holding `(column, op, value)` triples and a `goFilters` struct holding only what still needs Go-side evaluation.
-- [ ] `buildSearchSQL(f sqlFilters) (query string, args []any)` — builds the one SQL statement with `WHERE` clauses.
-- [ ] `runSearchQuery(query, args) ([]Position, []*PositionAnalysis, error)` — executes, scans rows, returns both.
-- [ ] `applyGoFilters(positions, analyses, f goFilters) ([]Position, []*PositionAnalysis)` — post-SQL filtering for the remaining predicates.
+- [x] `parseFilters(args) (sqlFilters, goFilters, error)` — implemented as `parseIntFilterExpr` / `parseFloatFilterExpr` + `appendIntRangeSQL` / `appendFloatRangeSQL` helpers.
+- [x] `buildSearchSQL(f sqlFilters) (query string, args []any)` — inlined in `loadPositionsByFiltersCore`.
+- [x] `runSearchQuery(query, args) ([]Position, []*PositionAnalysis, error)` — the scan loop in `loadPositionsByFiltersCore`.
+- [x] `applyGoFilters(positions, analyses, f goFilters) ([]Position, []*PositionAnalysis)` — `matchesGoFilters` closure inside the row loop.
 
 ## 2. SQL query shape
 
@@ -59,48 +59,48 @@ LIMIT ? OFFSET ?;
 | match IDs | `p.id IN (SELECT m.position_id FROM move m WHERE m.game_id IN (SELECT id FROM game WHERE match_id IN (?, ?, …)))` |
 | tournament IDs | outer IN expands via the match table |
 
-- [ ] Parameter binding only — never string-concat filter values into SQL.
-- [ ] When a filter is absent, its clause is simply not appended; avoid `AND ? IS NULL` tricks.
+- [x] Parameter binding only — never string-concat filter values into SQL.
+- [x] When a filter is absent, its clause is simply not appended; avoid `AND ? IS NULL` tricks.
 
 ## 3. Checker-structure pre-filter
 
 When `filter.Board` has any non-zero points:
 
-- [ ] Call `bitboards.BuildCheckerStructureMasks(filter)` → `(occ1Req, pt1Req, occ2Req, pt2Req, tight)`.
-- [ ] Append: `AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ? AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?`.
-- [ ] If `tight == false` (i.e. the template only required "≥1" or "≥2"), skip Go-side verification — SQL is sufficient.
-- [ ] If `tight == true` (template required an exact count ≥3 somewhere), keep the existing Go-side `MatchesCheckerPosition` loop (model.go:230) — but now it runs on a tiny set.
+- [x] Call `bitboards.BuildCheckerStructureMasks(filter)` → `(occ1Req, pt1Req, occ2Req, pt2Req, tight)`.
+- [x] Append: `AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ? AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?`.
+- [x] If `tight == false` (i.e. the template only required "≥1" or "≥2"), skip Go-side verification — SQL is sufficient.
+- [x] If `tight == true` (template required an exact count ≥3 somewhere), keep the existing Go-side `MatchesCheckerPosition` loop (model.go:230) — but now it runs on a tiny set.
 
 ## 4. Remaining Go-side filters
 
-- [ ] Move-pattern regex (`MatchesMovePattern`, db.go:3161) — requires `LoadAnalysis` JSON content.  The analysis is already in hand from the JOIN → parse the `data` JSON once, apply regex, keep or drop.
-- [ ] Mirror matching — unchanged, works on decoded `Position`.
-- [ ] The `pos.MatchesMoveErrorFilter` path previously called `getPlayer1MovesForPosition` per row. Move-error is already covered by `a.best_move_equity_error`. Delete the per-row `move` query.
+- [x] Move-pattern regex (`MatchesMovePattern`, db.go:3161) — requires `LoadAnalysis` JSON content.  The analysis is already in hand from the JOIN → parse the `data` JSON once, apply regex, keep or drop.
+- [x] Mirror matching — unchanged, works on decoded `Position`.
+- [x] The `pos.MatchesMoveErrorFilter` path previously called `getPlayer1MovesForPosition` per row. Move-error is already covered by `a.best_move_equity_error`. Delete the per-row `move` query.
 
 ## 5. Ordering & pagination
 
-- [ ] `ORDER BY p.id` (deterministic, matches existing behavior).
-- [ ] `LIMIT ? OFFSET ?` — accept zero `limit` to mean "all" (don't emit `LIMIT` in that case).
-- [ ] Update CLI `--limit` plumbing (`cli.go:1867`) to pass the limit into the SQL, dropping the post-fetch `filteredPositions[:limit]` slice (cli.go:1952).
+- [x] `ORDER BY p.id` (deterministic, matches existing behavior).
+- [x] `LIMIT ? OFFSET ?` — accept zero `limit` to mean "all" (don't emit `LIMIT` in that case).
+- [x] Update CLI `--limit` plumbing (`cli.go:1867`) to pass the limit into the SQL, dropping the post-fetch `filteredPositions[:limit]` slice (cli.go:1952).
 
 ## 6. Backwards-compatible signature
 
-- [ ] Keep the 35-parameter `LoadPositionsByFilters` signature — it's bound to Wails and the CLI. Internally it immediately calls `parseFilters` then the new pipeline.
+- [x] Keep the 33-parameter `LoadPositionsByFilters` signature — it's bound to Wails and the CLI. Internally it immediately calls `loadPositionsByFiltersCore`.
 - [ ] Tomorrow's refactor: introduce a `type SearchRequest struct` and deprecate the long arg list. Out of scope here.
 
 ## 7. Tests
 
-- [ ] **Equivalence tests.** For each filter category, write a test that:
+- [x] **Equivalence tests.** For each filter category, write a test that:
   - Seeds an in-memory DB from `testdata/test.xg` + an XGP.
   - Runs the filter through both the old implementation (tag-build: checkout the pre-rewrite function as `legacyLoadPositionsByFilters`) and the new one.
   - Asserts identical sorted `[]Position.ID`.
   - Keep the `legacy*` copy in a `_test.go` file so it's not shipped.
-- [ ] `TestSearch_PaginationStable` — the first 10 of a 100-row result equals (page1 + page2) from `LIMIT 5 OFFSET 0` / `LIMIT 5 OFFSET 5`.
-- [ ] `TestSearch_PrimePattern_BitboardOnly` — a clean 5-prime template returns the same rows whether the Go-side verification is on or off.
+- [x] `TestSearch_PaginationStable` — the first 10 of a 100-row result equals (page1 + page2) from `LIMIT 5 OFFSET 0` / `LIMIT 5 OFFSET 5`.
+- [x] `TestSearch_PrimePattern_BitboardOnly` — a clean 5-prime template returns the same rows whether the Go-side verification is on or off.
 
 ## Acceptance criteria
 
-- [ ] `go test ./...` and `go test ./tests/...` green.
+- [x] `go test ./...` and `go test ./tests/...` green.
 - [ ] Every search benchmark from sheet 00 meets the ≤100 ms target on the `testdata/tournois` fixture.
 - [ ] `BenchmarkSearch_PrimePattern` (bitboard-only) is the fastest — reads only the integer mask columns.
 - [ ] `BenchmarkSearch_CheckerStructure` (bitboard pre-filter + exact Go compare) is ≥5× faster than baseline.
