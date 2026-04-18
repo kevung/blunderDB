@@ -36,7 +36,7 @@
 
 ### Stability test (`zobrist_test.go`)
 
-- [ ] Table-driven test with ≥5 well-known positions (initial position, bar checker, bearoff endgame, a double-hit, money game). Freeze their expected `uint64` hashes in the test.
+- [ ] Table-driven test with **32 well-known positions** (initial position, bar checker, bearoff endgame, a double-hit, money game, various cube/score/match-length combos, race positions, blitz, prime vs prime, back game, etc.). Freeze their expected `uint64` hashes in the test — any accidental constant change in the key table fails CI.
 - [ ] Equivalence test: a position with `PlayerOnRoll=0` and its mirror with `PlayerOnRoll=1` hash to the **same** value.
 - [ ] Cross-format test: import the same match twice (once from `testdata/test.xg`, once from `testdata/test.sgf` if the same game exists in both), pull two equivalent positions, assert equal hashes.
 

@@ -50,6 +50,7 @@ The existing function (db.go around 6688) normalizes JSON, does the map lookup, 
   - Compute all column values via `populatePositionColumns`.
   - `stmts.insertPosition.Exec(...)` — `INSERT OR IGNORE`.
   - `stmts.selectPositionID.QueryRow(zobristHash)` to get the id (works both for new and existing rows).
+  - **Structural verification on dedup hit**: when `wasNew == false`, fetch the existing row's `state` JSON, decode it, and compare the board/cube/score fields to the incoming position. If they differ, it's a genuine Zobrist collision — log a warning and fall back to inserting with a disambiguated key (or skip with an error). This guards against the ~2⁻⁴⁴ collision risk identified in the plan.
   - Update cache, return.
 - [ ] Callers in `importXGGamesAndMoves` / GnuBG / BGF analogues switch to the new helper.
 - [ ] The old `state` JSON column is still written (phase 02 requirement). Keep it — the detail panel and any code not yet migrated still reads it.

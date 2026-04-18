@@ -71,6 +71,11 @@ ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL;
 - [ ] In `SetupDatabase` use a single `CREATE TABLE` with all columns (no ALTERs needed for fresh DBs). The same ALTER list moves to phase 03 for existing DBs.
 - [ ] Update `SaveAnalysis` (db.go:1265) to populate every new column via `populateAnalysisColumns`. Keep writing `data` JSON unchanged.
 
+## 3b. Debug assertion: column ↔ JSON drift guard
+
+- [ ] In `SavePosition` and `SaveAnalysis`, add a debug assertion gated by `testing.Short() == false` (or a build-tag/env-var guard so it doesn't run in production): recompute every denormalized column from the JSON blob and compare to the values about to be written. Panic on mismatch. This catches any future code path that updates the JSON without updating the columns (or vice versa).
+- [ ] Add a unit test `TestColumnJsonDriftGuard` that exercises the assertion path on a handful of positions + analyses.
+
 ## 4. Indexes
 
 Add after table creation in `SetupDatabase`, also in `ensureAllTablesExist` guarded by `CREATE INDEX IF NOT EXISTS`:
