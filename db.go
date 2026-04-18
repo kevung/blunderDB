@@ -33,6 +33,32 @@ func NewDatabase() *Database {
 	return &Database{}
 }
 
+// applyPragmas sets the SQLite performance and safety PRAGMAs.
+// WAL journal mode is skipped for in-memory databases (":memory:")
+// because WAL requires a real filesystem.
+func (d *Database) applyPragmas(path string) error {
+	if path != ":memory:" {
+		var mode string
+		if err := d.db.QueryRow(`PRAGMA journal_mode = WAL`).Scan(&mode); err != nil {
+			return fmt.Errorf("PRAGMA journal_mode=WAL: %w", err)
+		}
+		fmt.Printf("PRAGMA journal_mode = %s\n", mode)
+	}
+	pragmas := []string{
+		`PRAGMA synchronous  = NORMAL`,
+		`PRAGMA cache_size   = -65536`,
+		`PRAGMA temp_store   = MEMORY`,
+		`PRAGMA mmap_size    = 268435456`,
+		`PRAGMA foreign_keys = ON`,
+	}
+	for _, p := range pragmas {
+		if _, err := d.db.Exec(p); err != nil {
+			return fmt.Errorf("%s: %w", p, err)
+		}
+	}
+	return nil
+}
+
 func (d *Database) SetupDatabase(path string) error {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
@@ -49,10 +75,9 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
-	// Enable foreign key constraints
-	_, err = d.db.Exec("PRAGMA foreign_keys = ON")
-	if err != nil {
-		fmt.Println("Error enabling foreign keys:", err)
+	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
+	if err = d.applyPragmas(path); err != nil {
+		fmt.Println("Error applying PRAGMAs:", err)
 		return err
 	}
 
@@ -71,8 +96,32 @@ func (d *Database) SetupDatabase(path string) error {
 
 	_, err = d.db.Exec(`
         CREATE TABLE IF NOT EXISTS position (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            state TEXT
+            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            zobrist_hash      INTEGER,
+            decision_type     INTEGER,
+            player_on_roll    INTEGER,
+            dice_1            INTEGER,
+            dice_2            INTEGER,
+            cube_value        INTEGER,
+            cube_owner        INTEGER,
+            score_1           INTEGER,
+            score_2           INTEGER,
+            match_length      INTEGER,
+            has_jacoby        INTEGER,
+            has_beaver        INTEGER,
+            pip_1             INTEGER,
+            pip_2             INTEGER,
+            pip_diff          INTEGER,
+            off_1             INTEGER,
+            off_2             INTEGER,
+            back_checkers_1   INTEGER,
+            back_checkers_2   INTEGER,
+            no_contact        INTEGER,
+            occupancy_1       INTEGER,
+            occupancy_2       INTEGER,
+            point_mask_1      INTEGER,
+            point_mask_2      INTEGER,
+            state             TEXT    NOT NULL
         )
     `)
 	if err != nil {
@@ -82,9 +131,18 @@ func (d *Database) SetupDatabase(path string) error {
 
 	_, err = d.db.Exec(`
         CREATE TABLE IF NOT EXISTS analysis (
-            id INTEGER PRIMARY KEY,
-            position_id INTEGER,
-            data JSON,
+            id                          INTEGER PRIMARY KEY,
+            position_id                 INTEGER,
+            data                        JSON,
+            best_cube_action            TEXT,
+            cube_error                  REAL,
+            best_move_equity_error      REAL,
+            player1_win_rate            REAL,
+            player1_gammon_rate         REAL,
+            player1_backgammon_rate     REAL,
+            player2_win_rate            REAL,
+            player2_gammon_rate         REAL,
+            player2_backgammon_rate     REAL,
             FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
         )
     `)
@@ -386,6 +444,28 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	// v2.0.0 indexes — position search acceleration
+	v2indexes := []string{
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist       ON position(zobrist_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip  ON position(decision_type, pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_off           ON position(off_1, off_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score         ON position(match_length, score_1, score_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_position      ON analysis(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1          ON analysis(player1_win_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error    ON analysis(cube_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error    ON analysis(best_move_equity_error)`,
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical        ON match(canonical_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_position          ON move(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_game              ON move(game_id)`,
+	}
+	for _, idx := range v2indexes {
+		if _, err = d.db.Exec(idx); err != nil {
+			fmt.Println("Error creating v2.0.0 index:", idx, err)
+			return err
+		}
+	}
+
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
@@ -412,10 +492,9 @@ func (d *Database) OpenDatabase(path string) error {
 		return err
 	}
 
-	// Enable foreign key constraints
-	_, err = d.db.Exec("PRAGMA foreign_keys = ON")
-	if err != nil {
-		fmt.Println("Error enabling foreign keys:", err)
+	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
+	if err = d.applyPragmas(path); err != nil {
+		fmt.Println("Error applying PRAGMAs:", err)
 		return err
 	}
 
@@ -792,6 +871,19 @@ func (d *Database) OpenDatabase(path string) error {
 		fmt.Println("Database automatically upgraded from 1.8.0 to 1.9.0")
 	}
 
+	// Auto-migrate from 1.9.0 to 2.0.0
+	// Adds new position/analysis scalar columns and supporting indexes.
+	// Column additions are handled by ensureAllTablesExist (called below).
+	if dbVersion == "1.9.0" {
+		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "2.0.0")
+		if err != nil {
+			fmt.Println("Error updating database version:", err)
+			return err
+		}
+		dbVersion = "2.0.0"
+		fmt.Println("Database automatically upgraded from 1.9.0 to 2.0.0")
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).
@@ -1106,6 +1198,71 @@ func (d *Database) ensureAllTablesExist() error {
 		return fmt.Errorf("error ensuring anki_card due index: %w", err)
 	}
 
+	// v2.0.0: ensure new position/analysis columns exist (ALTER TABLE is a no-op if column already exists)
+	newPositionCols := []string{
+		`ALTER TABLE position ADD COLUMN zobrist_hash    INTEGER`,
+		`ALTER TABLE position ADD COLUMN decision_type  INTEGER`,
+		`ALTER TABLE position ADD COLUMN player_on_roll INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_1         INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_2         INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_value     INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_owner     INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_1        INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_2        INTEGER`,
+		`ALTER TABLE position ADD COLUMN match_length   INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_jacoby     INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_beaver     INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_diff       INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_1 INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_2 INTEGER`,
+		`ALTER TABLE position ADD COLUMN no_contact     INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_1    INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_2    INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_1   INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
+	}
+	for _, stmt := range newPositionCols {
+		d.db.Exec(stmt) // ignore error: column may already exist
+	}
+
+	newAnalysisCols := []string{
+		`ALTER TABLE analysis ADD COLUMN best_cube_action        TEXT`,
+		`ALTER TABLE analysis ADD COLUMN cube_error              REAL`,
+		`ALTER TABLE analysis ADD COLUMN best_move_equity_error  REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_backgammon_rate REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
+	}
+	for _, stmt := range newAnalysisCols {
+		d.db.Exec(stmt) // ignore error: column may already exist
+	}
+
+	// v2.0.0 indexes — non-unique ones are safe to add to existing DBs
+	v2indexesSafe := []string{
+		`CREATE INDEX IF NOT EXISTS idx_position_decision_pip  ON position(decision_type, pip_diff)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_off           ON position(off_1, off_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_score         ON position(match_length, score_1, score_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_position      ON analysis(position_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_win1          ON analysis(player1_win_rate)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_cube_error    ON analysis(cube_error)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_move_error    ON analysis(best_move_equity_error)`,
+		`CREATE INDEX IF NOT EXISTS idx_move_position          ON move(position_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_move_game              ON move(game_id)`,
+	}
+	for _, idx := range v2indexesSafe {
+		d.db.Exec(idx) // ignore error: index may already exist or column may be NULL
+	}
+	// idx_position_zobrist (UNIQUE) and idx_match_canonical (UNIQUE) are only safe on fresh DBs
+	// or after a dedup migration; they're handled in phase 03 for existing DBs.
+
 	return nil
 }
 
@@ -1348,7 +1505,29 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 		return 0, err
 	}
 
-	result, err := d.db.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	cols := populatePositionColumns(position)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
+	}
+
+	result, err := d.db.Exec(`
+		INSERT INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		string(positionJSON))
 	if err != nil {
 		fmt.Println("Error inserting position:", err)
 		return 0, err
@@ -1497,7 +1676,27 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			fmt.Println("Error marshalling analysis:", err)
 			return err
 		}
-		_, err = d.db.Exec(`UPDATE analysis SET data = ? WHERE id = ?`, string(analysisJSON), existingID)
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = d.db.Exec(`UPDATE analysis SET
+			data=?, best_cube_action=?, cube_error=?,
+			best_move_equity_error=?,
+			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			WHERE id=?`,
+			string(analysisJSON),
+			aCols.BestCubeAction, aCols.CubeError,
+			aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			existingID)
 		if err != nil {
 			fmt.Println("Error updating analysis:", err)
 			return err
@@ -1542,7 +1741,25 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			fmt.Println("Error marshalling analysis:", err)
 			return err
 		}
-		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = d.db.Exec(`INSERT INTO analysis (
+			position_id, data,
+			best_cube_action, cube_error, best_move_equity_error,
+			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
+			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
+			positionID, string(analysisJSON),
+			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
 		if err != nil {
 			fmt.Println("Error inserting analysis:", err)
 			return err
@@ -6839,7 +7056,28 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, pos
 	}
 
 	// Position doesn't exist, create new one
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	cols := populatePositionColumns(position)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
+	}
+	result, err := tx.Exec(`
+		INSERT INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		string(positionJSON))
 	if err != nil {
 		return 0, err
 	}
@@ -6900,7 +7138,28 @@ func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, positio
 	}
 
 	// Genuinely new position — create it
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	cols := populatePositionColumns(position)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
+	}
+	result, err := tx.Exec(`
+		INSERT INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		string(positionJSON))
 	if err != nil {
 		return 0, err
 	}
@@ -6975,7 +7234,28 @@ func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, erro
 	}
 
 	// Position doesn't exist, create new one
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	cols := populatePositionColumns(position)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
+	}
+	result, err := tx.Exec(`
+		INSERT INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		string(positionJSON))
 	if err != nil {
 		return 0, err
 	}
@@ -7576,7 +7856,27 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE id = ?`, string(analysisJSON), existingID)
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = tx.Exec(`UPDATE analysis SET
+			data=?, best_cube_action=?, cube_error=?,
+			best_move_equity_error=?,
+			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			WHERE id=?`,
+			string(analysisJSON),
+			aCols.BestCubeAction, aCols.CubeError,
+			aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			existingID)
 		if err != nil {
 			return err
 		}
@@ -7619,7 +7919,25 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = tx.Exec(`INSERT INTO analysis (
+			position_id, data,
+			best_cube_action, cube_error, best_move_equity_error,
+			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
+			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
+			positionID, string(analysisJSON),
+			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
 		if err != nil {
 			return err
 		}

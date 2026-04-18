@@ -421,7 +421,7 @@ func TestMigrationFromV150(t *testing.T) {
 	}
 }
 
-// TestCurrentVersionNoMigration tests that a v1.7.0 database opens without migration
+// TestCurrentVersionNoMigration tests that an old database opens and migrates to current version
 func TestCurrentVersionNoMigration(t *testing.T) {
 	tmpDir := t.TempDir()
 	dbPath := filepath.Join(tmpDir, "test_v170.db")
@@ -437,8 +437,8 @@ func TestCurrentVersionNoMigration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get database version: %v", err)
 	}
-	if version != "1.7.0" {
-		t.Errorf("Expected version 1.7.0, got %s", version)
+	if version != DatabaseVersion {
+		t.Errorf("Expected version %s (auto-migrated), got %s", DatabaseVersion, version)
 	}
 }
 
