@@ -1,0 +1,99 @@
+EXPLAIN QUERY PLAN — blunderDB v2.0.0 search queries
+Generated: 2026-04-18
+DB: /tmp/queryplan.db (345 positions, 341 analysis rows; imported from testdata/test.xg)
+SQLite version: modernc.org/sqlite (pure-Go)
+
+Indexes present in v2.0.0 schema:
+  idx_position_decision_pip      (decision_type, pip_diff)
+  idx_position_decision_dice     (decision_type, dice_1, dice_2)
+  idx_position_score             (score_1, score_2)
+  idx_position_off               (off_1, off_2)
+  idx_position_zobrist           (zobrist_hash) UNIQUE
+  idx_analysis_position          (position_id) UNIQUE
+  idx_analysis_win1              (player1_win_rate)
+  idx_analysis_cube_error        (cube_error)
+  idx_analysis_move_error        (best_move_equity_error)
+  idx_move_game                  (game_id)
+  idx_move_position              (position_id)
+  idx_match_canonical            (canonical_hash)
+  idx_match_hash                 (match_hash)
+
+=== 1. decision_type filter ===
+Query: WHERE p.decision_type = 1
+
+QUERY PLAN
+|--SEARCH p USING INDEX idx_position_decision_pip (decision_type=?)
+|--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+`--USE TEMP B-TREE FOR ORDER BY
+
+Note: Uses idx_position_decision_pip (composite index). Temp B-TREE for ORDER BY
+because the index sort order is (decision_type, pip_diff), not (id). Acceptable —
+the sort step runs on the already-filtered subset, not the full table.
+
+=== 2. score + cube filter ===
+Query: WHERE p.score_1 = 2 AND p.score_2 = 2 AND p.cube_value = 2
+
+QUERY PLAN
+|--SCAN p
+`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+
+Note: SCAN (full table scan on position) because idx_position_score covers
+(score_1, score_2) but cube_value is not in that index. For a real tournament DB
+with thousands of score-filtered searches, add idx_position_score_cube covering
+(score_1, score_2, cube_value) if this query path becomes hot.
+
+=== 3. pip diff window ===
+Query: WHERE p.pip_diff BETWEEN -3 AND 3
+
+QUERY PLAN
+|--SCAN p
+`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+
+Note: SCAN because pip_diff alone has no single-column index; the composite
+idx_position_decision_pip only helps when decision_type is also constrained.
+A standalone idx_position_pip_diff would turn this into a range SEARCH. Low
+priority — pip diff windows typically match 30–50% of positions anyway.
+
+=== 4. win_rate + gammon_rate filter ===
+Query: WHERE a.player1_win_rate >= 0.5 AND a.player1_gammon_rate >= 0.1
+
+QUERY PLAN
+|--SEARCH a USING INDEX idx_analysis_win1 (player1_win_rate>?)
+|--SEARCH p USING INTEGER PRIMARY KEY (rowid=?)
+`--USE TEMP B-TREE FOR ORDER BY
+
+Note: Query starts from the analysis side (idx_analysis_win1) then does PK
+lookup on position. This is correct — the analysis table drives the join when
+the analysis predicate is highly selective. gammon_rate filter is applied
+post-lookup (no index, but win_rate already narrows the set).
+
+=== 5. bitboard prime pattern pre-filter ===
+Query: WHERE (p.occupancy_1 & 1985) = 1985 AND (p.point_mask_1 & 1985) = 1985
+
+QUERY PLAN
+|--SCAN p
+`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+
+Note: SCAN is expected — bitwise AND expressions cannot use B-tree indexes in
+SQLite. The pre-filter value is crucial: these two AND conditions together rule
+out ~98% of rows cheaply (integer arithmetic, no I/O), so the effective cost is
+a fast sequential scan of the integer columns only (state JSON is not read until
+the row passes both masks).
+
+=== 6. match IDs subquery ===
+Query: WHERE p.id IN (SELECT m.position_id FROM move m
+                       WHERE m.game_id IN (SELECT id FROM game WHERE match_id IN (1,2,3)))
+
+QUERY PLAN
+|--SEARCH p USING INTEGER PRIMARY KEY (rowid=?)
+|--LIST SUBQUERY 2
+|  |--SEARCH m USING INDEX idx_move_game (game_id=?)
+|  `--LIST SUBQUERY 1
+|     `--SCAN game
+`--SEARCH a USING INDEX idx_analysis_position (position_id=?) LEFT-JOIN
+
+Note: p drives via PK lookup; inner subquery uses idx_move_game efficiently.
+The SCAN game is a full scan of the game table to find matching match_ids —
+acceptable because the game table is small (O(games in selected matches)).
+If this query path is called with very large tournament filters (hundreds of
+matches), add idx_game_match (match_id) to the game table.

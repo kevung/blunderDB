@@ -40,4 +40,4 @@ Dependencies flow top-down; a phase may only start after the one above is green.
 - [x] 03 — migration
 - [x] 04 — import rewrite
 - [x] 05 — search rewrite
-- [ ] 06 — verify & document
+- [x] 06 — verify & document
