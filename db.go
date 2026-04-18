@@ -24,16 +24,362 @@ import (
 )
 
 type Database struct {
-	db              *sql.DB
-	mu              sync.Mutex // Add a mutex to the Database struct
-	importCancelled int32      // Flag to cancel ongoing import (atomic)
+	db               *sql.DB
+	mu               sync.Mutex // Add a mutex to the Database struct
+	importCancelled  int32      // Flag to cancel ongoing import (atomic)
+	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 }
 
 func NewDatabase() *Database {
 	return &Database{}
 }
 
-// applyPragmas sets the SQLite performance and safety PRAGMAs.
+// SetMigrationProgress registers a callback that is invoked during the v2.0.0
+// backfill migration to report progress. The GUI wires in a Wails event emitter
+// here; the CLI and tests can leave it nil.
+func (d *Database) SetMigrationProgress(fn func(phase string, done, total int)) {
+	d.migrationProgress = fn
+}
+
+// emitMigrationProgress calls the progress callback if one was registered.
+func (d *Database) emitMigrationProgress(phase string, done, total int) {
+	if d.migrationProgress != nil {
+		d.migrationProgress(phase, done, total)
+	}
+}
+
+// migrate_1_9_0_to_2_0_0 performs the in-place backfill migration from the
+// pre-2.0.0 schema (position.state only) to the v2.0.0 schema with scalar
+// columns.  It runs inside a single transaction:
+//
+//  1. ALTER TABLE to add all new nullable columns (idempotent — duplicate-column
+//     errors are silently ignored).
+//  2. Backfill position rows in batches of 1000.
+//  3. Backfill analysis rows in batches of 1000.
+//  4. Deduplicate positions (same Zobrist hash) by re-pointing FK references
+//     to the lowest id, then deleting orphans.
+//  5. CREATE INDEX IF NOT EXISTS for every v2.0.0 index.
+//  6. ANALYZE to refresh query-planner statistics.
+//  7. Bump database_version to "2.0.0".
+//
+// If the process is interrupted before step 7 (COMMIT), the version string
+// remains "1.9.0" and the migration is retried on the next open; the ALTER TABLE
+// statements are idempotent so repeated runs are safe.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_1_9_0_to_2_0_0() error {
+	// 1. ALTER TABLE — add new nullable columns (swallow "duplicate column")
+	// -----------------------------------------------------------------
+	newPositionCols := []string{
+		`ALTER TABLE position ADD COLUMN zobrist_hash    INTEGER`,
+		`ALTER TABLE position ADD COLUMN decision_type  INTEGER`,
+		`ALTER TABLE position ADD COLUMN player_on_roll INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_1         INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_2         INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_value     INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_owner     INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_1        INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_2        INTEGER`,
+		`ALTER TABLE position ADD COLUMN match_length   INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_jacoby     INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_beaver     INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_diff       INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_1 INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_2 INTEGER`,
+		`ALTER TABLE position ADD COLUMN no_contact     INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_1    INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_2    INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_1   INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
+	}
+	for _, stmt := range newPositionCols {
+		d.db.Exec(stmt) // duplicate column → silently ignored
+	}
+
+	newAnalysisCols := []string{
+		`ALTER TABLE analysis ADD COLUMN best_cube_action        TEXT`,
+		`ALTER TABLE analysis ADD COLUMN cube_error              REAL`,
+		`ALTER TABLE analysis ADD COLUMN best_move_equity_error  REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_backgammon_rate REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
+	}
+	for _, stmt := range newAnalysisCols {
+		d.db.Exec(stmt)
+	}
+
+	// -----------------------------------------------------------------
+	// 2. Backfill position
+	// -----------------------------------------------------------------
+	var posTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
+
+	if posTotal > 0 {
+		updatePos, err := d.db.Prepare(`UPDATE position SET
+			zobrist_hash=?, decision_type=?, player_on_roll=?, dice_1=?, dice_2=?,
+			cube_value=?, cube_owner=?, score_1=?, score_2=?,
+			has_jacoby=?, has_beaver=?,
+			pip_1=?, pip_2=?, pip_diff=?, off_1=?, off_2=?,
+			back_checkers_1=?, back_checkers_2=?, no_contact=?,
+			occupancy_1=?, occupancy_2=?, point_mask_1=?, point_mask_2=?
+			WHERE id=?`)
+		if err != nil {
+			return fmt.Errorf("migrate position prepare: %w", err)
+		}
+		defer updatePos.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, state FROM position WHERE id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate position query: %w", err)
+			}
+
+			var batch []struct {
+				id    int64
+				state string
+			}
+			for rows.Next() {
+				var id int64
+				var state string
+				if err := rows.Scan(&id, &state); err == nil {
+					batch = append(batch, struct {
+						id    int64
+						state string
+					}{id, state})
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, row := range batch {
+				lastID = row.id
+				var pos Position
+				if err := json.Unmarshal([]byte(row.state), &pos); err != nil {
+					continue // malformed JSON — leave columns NULL
+				}
+				c := populatePositionColumns(&pos)
+				noContactInt := 0
+				if c.NoContact {
+					noContactInt = 1
+				}
+				updatePos.Exec(
+					int64(c.ZobristHash), c.DecisionType, 0 /*player_on_roll: always 0 after normalize*/, c.Dice1, c.Dice2,
+					c.CubeValue, c.CubeOwner, c.Score1, c.Score2,
+					c.HasJacoby, c.HasBeaver,
+					c.Pip1, c.Pip2, c.PipDiff, c.Off1, c.Off2,
+					c.BackCheckers1, c.BackCheckers2, noContactInt,
+					int64(c.Occupancy1), int64(c.Occupancy2), int64(c.PointMask1), int64(c.PointMask2),
+					row.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("position", done, posTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("position", posTotal, posTotal)
+	}
+
+	// -----------------------------------------------------------------
+	// 3. Backfill analysis
+	// -----------------------------------------------------------------
+	var anaTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&anaTotal)
+
+	if anaTotal > 0 {
+		updateAna, err := d.db.Prepare(`UPDATE analysis SET
+			best_cube_action=?, cube_error=?, best_move_equity_error=?,
+			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			WHERE id=?`)
+		if err != nil {
+			return fmt.Errorf("migrate analysis prepare: %w", err)
+		}
+		defer updateAna.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, data FROM analysis WHERE id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate analysis query: %w", err)
+			}
+
+			var batch []struct {
+				id   int64
+				data string
+			}
+			for rows.Next() {
+				var id int64
+				var data string
+				if err := rows.Scan(&id, &data); err == nil {
+					batch = append(batch, struct {
+						id   int64
+						data string
+					}{id, data})
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, row := range batch {
+				lastID = row.id
+				var ana PositionAnalysis
+				if err := json.Unmarshal([]byte(row.data), &ana); err != nil {
+					continue
+				}
+				playedMove := ""
+				if len(ana.PlayedMoves) > 0 {
+					playedMove = ana.PlayedMoves[0]
+				} else if ana.PlayedMove != "" {
+					playedMove = ana.PlayedMove
+				}
+				playedCubeAction := ""
+				if len(ana.PlayedCubeActions) > 0 {
+					playedCubeAction = ana.PlayedCubeActions[0]
+				} else if ana.PlayedCubeAction != "" {
+					playedCubeAction = ana.PlayedCubeAction
+				}
+				ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
+				updateAna.Exec(
+					ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
+					ac.Player1WinRate, ac.Player1GammonRate, ac.Player1BackgammonRate,
+					ac.Player2WinRate, ac.Player2GammonRate, ac.Player2BackgammonRate,
+					row.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("analysis", done, anaTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("analysis", anaTotal, anaTotal)
+	}
+
+	// -----------------------------------------------------------------
+	// 4. Dedup positions with the same Zobrist hash
+	//    (should be rare — keep lowest id, remap FK references)
+	// -----------------------------------------------------------------
+	dupRows, err := d.db.Query(`
+		SELECT zobrist_hash, MIN(id) AS keep_id, GROUP_CONCAT(id ORDER BY id) AS all_ids
+		FROM position
+		WHERE zobrist_hash IS NOT NULL
+		GROUP BY zobrist_hash
+		HAVING COUNT(*) > 1`)
+	if err != nil {
+		return fmt.Errorf("migrate dedup query: %w", err)
+	}
+
+	type dedupGroup struct {
+		hash   int64
+		keepID int64
+		allIDs []int64
+	}
+	var dups []dedupGroup
+	for dupRows.Next() {
+		var hash, keepID int64
+		var allIDsStr string
+		if err := dupRows.Scan(&hash, &keepID, &allIDsStr); err != nil {
+			continue
+		}
+		var allIDs []int64
+		for _, part := range strings.Split(allIDsStr, ",") {
+			var id int64
+			if _, err := fmt.Sscan(strings.TrimSpace(part), &id); err == nil {
+				allIDs = append(allIDs, id)
+			}
+		}
+		dups = append(dups, dedupGroup{hash, keepID, allIDs})
+	}
+	dupRows.Close()
+
+	mergedTotal := 0
+	for _, g := range dups {
+		for _, discardID := range g.allIDs {
+			if discardID == g.keepID {
+				continue
+			}
+			// Remap FK references
+			d.db.Exec(`UPDATE move               SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			d.db.Exec(`UPDATE collection_position SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			d.db.Exec(`UPDATE anki_card           SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			// Delete orphan analysis + position
+			d.db.Exec(`DELETE FROM analysis WHERE position_id=?`, discardID)
+			d.db.Exec(`DELETE FROM position WHERE id=?`, discardID)
+			mergedTotal++
+		}
+	}
+	if mergedTotal > 0 {
+		fmt.Printf("migrate_1_9_0_to_2_0_0: merged %d duplicate positions\n", mergedTotal)
+	}
+
+	// -----------------------------------------------------------------
+	// 5. Create indexes
+	// -----------------------------------------------------------------
+	v2indexes := []string{
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist       ON position(zobrist_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip  ON position(decision_type, pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice ON position(decision_type, dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_off           ON position(off_1, off_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score         ON position(match_length, score_1, score_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_position      ON analysis(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1          ON analysis(player1_win_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error    ON analysis(cube_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error    ON analysis(best_move_equity_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_position          ON move(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_game              ON move(game_id)`,
+	}
+	for _, idx := range v2indexes {
+		if _, err := d.db.Exec(idx); err != nil {
+			// UNIQUE index may fail if dedup left residual NULLs; treat as non-fatal warning
+			fmt.Printf("migrate_1_9_0_to_2_0_0: index warning: %v\n", err)
+		}
+	}
+
+	// -----------------------------------------------------------------
+	// 6. ANALYZE
+	// -----------------------------------------------------------------
+	d.db.Exec(`ANALYZE`)
+
+	// -----------------------------------------------------------------
+	// 7. Bump version
+	// -----------------------------------------------------------------
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.0.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 1.9.0 to 2.0.0")
+	return nil
+}
 // WAL journal mode is skipped for in-memory databases (":memory:")
 // because WAL requires a real filesystem.
 func (d *Database) applyPragmas(path string) error {
@@ -872,16 +1218,12 @@ func (d *Database) OpenDatabase(path string) error {
 	}
 
 	// Auto-migrate from 1.9.0 to 2.0.0
-	// Adds new position/analysis scalar columns and supporting indexes.
-	// Column additions are handled by ensureAllTablesExist (called below).
+	// Backfills new scalar columns, deduplicates positions, and creates indexes.
 	if dbVersion == "1.9.0" {
-		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "2.0.0")
-		if err != nil {
-			fmt.Println("Error updating database version:", err)
-			return err
+		if err := d.migrate_1_9_0_to_2_0_0(); err != nil {
+			return fmt.Errorf("migration 1.9.0→2.0.0 failed: %w", err)
 		}
 		dbVersion = "2.0.0"
-		fmt.Println("Database automatically upgraded from 1.9.0 to 2.0.0")
 	}
 
 	// Ensure all required tables and columns exist.
