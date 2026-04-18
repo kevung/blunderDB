@@ -1,0 +1,17 @@
+goos: linux
+goarch: amd64
+pkg: blunderdb
+cpu: AMD Ryzen 7 PRO 6850U with Radeon Graphics
+bench fixture: 156 files, 18590044 bytes
+BenchmarkImport_TournoisCold-16                        5        456767215447 ns/op
+BenchmarkImport_TournoisIncremental-16                 5           3395968 ns/op
+BenchmarkSearch_DecisionCube-16                        5         611603212 ns/op
+BenchmarkSearch_ErrorAboveTenth-16                     5        1160577796 ns/op
+BenchmarkSearch_PipWindow-16                           5         946333624 ns/op
+BenchmarkSearch_WinGammonCombo-16                      5        1119513117 ns/op
+BenchmarkSearch_ScoreSpecific-16                       5         617453502 ns/op
+BenchmarkSearch_DiceAndPlayer-16                       5         617668919 ns/op
+BenchmarkSearch_CheckerStructure-16                    5         604936625 ns/op
+BenchmarkSearch_PrimePattern-16                        5         605572226 ns/op
+PASS
+ok      blunderdb       3311.582s
