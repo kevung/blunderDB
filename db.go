@@ -24,9 +24,9 @@ import (
 )
 
 type Database struct {
-	db               *sql.DB
-	mu               sync.Mutex // Add a mutex to the Database struct
-	importCancelled  int32      // Flag to cancel ongoing import (atomic)
+	db                *sql.DB
+	mu                sync.Mutex                          // Add a mutex to the Database struct
+	importCancelled   int32                               // Flag to cancel ongoing import (atomic)
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 }
 
@@ -380,6 +380,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 	fmt.Println("Database automatically upgraded from 1.9.0 to 2.0.0")
 	return nil
 }
+
 // WAL journal mode is skipped for in-memory databases (":memory:")
 // because WAL requires a real filesystem.
 func (d *Database) applyPragmas(path string) error {
@@ -6494,44 +6495,10 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		}
 	}
 
-	// Build a position cache for deduplication
-	positionCache := make(map[string]int64) // map[positionJSON]positionID
-	semanticCache := make(map[string]int64) // map[semanticKey]positionID
-
-	// Load existing positions into cache
-	existingRows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, fmt.Errorf("failed to load existing positions: %w", err)
-	}
-
-	for existingRows.Next() {
-		var existingID int64
-		var existingStateJSON string
-		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
-			continue
-		}
-
-		var existingPosition Position
-		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
-			continue
-		}
-
-		// Normalize for comparison (positions are now stored normalized, but older ones might not be)
-		normalizedPosition := existingPosition.NormalizeForStorage()
-		normalizedPosition.ID = 0
-		normalizedJSON, err := json.Marshal(normalizedPosition)
-		if err != nil {
-			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		positionCache[string(normalizedJSON)] = existingID
-		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
-	}
-	if err := existingRows.Err(); err != nil {
-		return 0, err
-	}
-	existingRows.Close()
-
-	fmt.Printf("Loaded %d existing positions into cache\n", len(positionCache))
+	// Build a per-import deduplication cache keyed by Zobrist hash.
+	// The preload of all existing positions is no longer needed — the UNIQUE index
+	// on position.zobrist_hash handles cross-import dedup via INSERT OR IGNORE.
+	cache := newImportCache()
 
 	if isCanonicalDuplicate {
 		// Canonical duplicate: import analysis to existing positions, create genuinely new ones
@@ -6568,7 +6535,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					pos.DecisionType = CheckerAction
 					pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
-					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 					if err != nil {
 						continue
 					}
@@ -6598,7 +6565,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					pos.DecisionType = CubeAction
 					pos.Dice = [2]int{0, 0}
 
-					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 					if err != nil {
 						continue
 					}
@@ -6620,7 +6587,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		}
 	} else {
 		// Normal import: create game/move records and import everything
-		if err := d.importXGGamesAndMoves(tx, matchID, match, rawCubeInfo, positionCache); err != nil {
+		if err := d.importXGGamesAndMoves(tx, matchID, match, rawCubeInfo, cache); err != nil {
 			return 0, err
 		}
 	}
@@ -6645,7 +6612,7 @@ type RawCubeAction struct {
 }
 
 // importXGGamesAndMoves imports all games, moves, and analysis from an XG match
-func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgparser.Match, rawCubeInfo map[string]*RawCubeAction, positionCache map[string]int64) error {
+func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgparser.Match, rawCubeInfo map[string]*RawCubeAction, cache *importCache) error {
 	for gameIdx, game := range match.Games {
 		gameID, err := d.importGame(tx, matchID, &game)
 		if err != nil {
@@ -6657,6 +6624,11 @@ func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgpar
 		var pendingCubeComment string // Comment from a skipped "No Double" cube decision
 
 		for moveIdx, move := range game.Moves {
+			// Cancellation check at the top of every move iteration.
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("import cancelled")
+			}
+
 			var rawCube *RawCubeAction
 
 			if move.MoveType == "cube" {
@@ -6693,7 +6665,7 @@ func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgpar
 				}
 			}
 
-			err := d.importMoveWithCacheAndRawCube(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), positionCache, rawCube)
+			err := d.importMoveWithCacheAndRawCube(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), cache, rawCube)
 			if err != nil {
 				return fmt.Errorf("failed to import move %d in game %d: %w", moveIdx, game.GameNumber, err)
 			}
@@ -6719,7 +6691,7 @@ func (d *Database) importGame(tx *sql.Tx, matchID int64, game *xgparser.Game) (i
 }
 
 // importMoveWithCache imports a move using a position cache for deduplication
-func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, positionCache map[string]int64) error {
+func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, cache *importCache) error {
 	var positionID int64
 	var player int32
 	var dice [2]int32
@@ -6740,7 +6712,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
 		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -6798,7 +6770,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 		pos.Dice = [2]int{0, 0} // No dice for cube decisions
 
 		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -6842,7 +6814,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 }
 
 // importMoveWithCacheAndRawCube imports a move with raw cube data for complete action info
-func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, positionCache map[string]int64, rawCube *RawCubeAction) error {
+func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, cache *importCache, rawCube *RawCubeAction) error {
 	var positionID int64
 	var player int32
 	var dice [2]int32
@@ -6863,7 +6835,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
 		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -6948,7 +6920,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			pos1.Dice = [2]int{0, 0}
 
 			// Save position 1 (doubling decision)
-			posID1, err := d.savePositionInTxWithCache(tx, pos1, positionCache)
+			posID1, err := d.savePositionInTxWithCache(tx, pos1, cache)
 			if err != nil {
 				return fmt.Errorf("failed to save doubling position: %w", err)
 			}
@@ -6993,7 +6965,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			pos2.Cube.Owner = -1                    // Cube still in center (decision not yet executed)
 
 			// Save position 2 (take decision)
-			posID2, err := d.savePositionInTxWithCache(tx, &pos2, positionCache)
+			posID2, err := d.savePositionInTxWithCache(tx, &pos2, cache)
 			if err != nil {
 				return fmt.Errorf("failed to save take position: %w", err)
 			}
@@ -7029,7 +7001,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			pos.Dice = [2]int{0, 0}
 
 			// Save position
-			posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+			posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 			if err != nil {
 				return fmt.Errorf("failed to save position: %w", err)
 			}
@@ -7380,113 +7352,54 @@ func convertBlunderDBPlayerToXG(blunderDBPlayer int) int32 {
 	return -1 // Player 2
 }
 
-// savePositionInTxWithCache saves a position within a transaction using a cache for deduplication
-// Positions are normalized before storage (player_on_roll = 0) to prevent storing duplicates.
-func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, positionCache map[string]int64) (int64, error) {
-	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
-	normalizedPosition := position.NormalizeForStorage()
-	normalizedPosition.ID = 0 // Exclude ID for comparison
-
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, err
-	}
-
-	// Check cache first
-	if existingID, exists := positionCache[string(positionJSON)]; exists {
-		return existingID, nil
-	}
-
-	// Position doesn't exist, create new one
-	cols := populatePositionColumns(position)
-	noContactInt := 0
-	if cols.NoContact {
-		noContactInt = 1
-	}
-	result, err := tx.Exec(`
-		INSERT INTO position (
-			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
-			cube_value, cube_owner, score_1, score_2,
-			has_jacoby, has_beaver,
-			pip_1, pip_2, pip_diff, off_1, off_2,
-			back_checkers_1, back_checkers_2, no_contact,
-			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
-			state
-		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
-		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
-		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby, cols.HasBeaver,
-		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
-		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
-		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		string(positionJSON))
-	if err != nil {
-		return 0, err
-	}
-
-	positionID, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	// Update position with ID
-	normalizedPosition.ID = positionID
-	positionJSONWithID, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
-	if err != nil {
-		return 0, err
-	}
-
-	// Add to cache for future lookups
-	positionCache[string(positionJSON)] = positionID
-
-	return positionID, nil
+// importCache is a per-import Zobrist-hash → position-ID lookup table.
+// It prevents redundant SQL round-trips for positions that appear more than once
+// inside a single match (common in bearoff analyses and canonical-duplicate imports).
+type importCache struct {
+	m map[uint64]int64 // zobristHash → positionID
 }
 
-// positionSemanticKey generates a cache key based on the fields that define position identity:
-// board checker layout, cube state, score, player on roll, decision type, and dice.
-// This enables matching positions across different format parsers that may produce
-// different metadata (HasJacoby, HasBeaver) for the same physical board state.
-func positionSemanticKey(pos *Position) string {
-	return fmt.Sprintf("%v|%v|%v|%d|%d|%v",
-		pos.Board, pos.Cube, pos.Score,
-		pos.PlayerOnRoll, pos.DecisionType, pos.Dice)
+func newImportCache() *importCache {
+	return &importCache{m: make(map[uint64]int64)}
 }
 
-// findOrCreatePositionForCanonicalDuplicate looks up a position by semantic key during
-// canonical duplicate imports. If the position already exists (by board, cube, score,
-// player on roll, decision type, dice), returns the existing ID. If it's genuinely new,
-// creates it in the database and returns the new ID.
-func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, position *Position, positionCache map[string]int64, semanticCache map[string]int64) (int64, error) {
+// savePositionInTxWithCache saves a position within a transaction using a Zobrist-hash
+// based cache for deduplication.  Positions are normalized before storage
+// (player_on_roll = 0) to prevent storing duplicates.
+//
+// Algorithm:
+//  1. Local cache hit  → return immediately (no SQL).
+//  2. INSERT OR IGNORE → no-ops silently if zobrist_hash already exists (UNIQUE index).
+//  3. SELECT id+state  → fetches the id whether we just inserted or it already existed.
+//  4. Dedup hit        → verify the stored board matches the incoming position to detect
+//     the ~2⁻⁴⁴ Zobrist-collision corner case; log a warning if they differ.
+//  5. New row          → UPDATE state to embed the assigned ID (backwards-compat readers).
+func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, cache *importCache) (int64, error) {
+	// Normalize: always store from the perspective of player on roll (player_on_roll == 0).
 	normalizedPosition := position.NormalizeForStorage()
 	normalizedPosition.ID = 0
 
-	// Check exact match first (fast path)
+	cols := populatePositionColumns(&normalizedPosition)
+	hash := cols.ZobristHash
+
+	// 1. Local cache hit — no SQL needed.
+	if id, ok := cache.m[hash]; ok {
+		return id, nil
+	}
+
 	positionJSON, err := json.Marshal(normalizedPosition)
 	if err != nil {
 		return 0, err
 	}
-	if existingID, exists := positionCache[string(positionJSON)]; exists {
-		return existingID, nil
-	}
 
-	// Check semantic match (board, cube, score, player_on_roll, decision_type, dice)
-	semKey := positionSemanticKey(&normalizedPosition)
-	if existingID, exists := semanticCache[semKey]; exists {
-		return existingID, nil
-	}
-
-	// Genuinely new position — create it
-	cols := populatePositionColumns(position)
 	noContactInt := 0
 	if cols.NoContact {
 		noContactInt = 1
 	}
-	result, err := tx.Exec(`
-		INSERT INTO position (
+
+	// 2. INSERT OR IGNORE — idempotent thanks to the UNIQUE index on zobrist_hash.
+	res, err := tx.Exec(`
+		INSERT OR IGNORE INTO position (
 			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
 			cube_value, cube_owner, score_1, score_2,
 			has_jacoby, has_beaver,
@@ -7495,7 +7408,7 @@ func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, positio
 			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
 			state
 		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
-		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		int64(hash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
 		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
 		cols.HasJacoby, cols.HasBeaver,
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
@@ -7505,117 +7418,60 @@ func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, positio
 	if err != nil {
 		return 0, err
 	}
+	rowsAffected, _ := res.RowsAffected()
 
-	positionID, err := result.LastInsertId()
+	// 3. Fetch the id and stored state in a single query.
+	var positionID int64
+	var storedState string
+	err = tx.QueryRow(`SELECT id, state FROM position WHERE zobrist_hash = ?`, int64(hash)).Scan(&positionID, &storedState)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to fetch position by zobrist_hash: %w", err)
 	}
 
-	normalizedPosition.ID = positionID
-	positionJSONWithID, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
-	if err != nil {
-		return 0, err
+	if rowsAffected == 1 {
+		// 5. New row: update state JSON to embed the assigned id (backwards-compat).
+		normalizedPosition.ID = positionID
+		positionJSONWithID, err := json.Marshal(normalizedPosition)
+		if err != nil {
+			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
+		}
+		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
+		if err != nil {
+			return 0, err
+		}
+	} else {
+		// 4. Dedup hit: structural collision guard.
+		// Re-decode stored state (zeroing ID) and compare to incoming normalised position.
+		// A mismatch signals a genuine Zobrist collision (probability ≈ 2⁻⁴⁴).
+		var storedPos Position
+		if jsonErr := json.Unmarshal([]byte(storedState), &storedPos); jsonErr == nil {
+			storedPos.ID = 0
+			storedRecheck, _ := json.Marshal(storedPos)
+			if string(storedRecheck) != string(positionJSON) {
+				fmt.Fprintf(os.Stderr,
+					"WARNING: Zobrist collision for hash %d — stored board differs from incoming; returning existing id %d\n",
+					hash, positionID)
+			}
+		}
 	}
 
-	// Add to both caches
-	positionCache[string(positionJSON)] = positionID
-	semanticCache[semKey] = positionID
-
+	cache.m[hash] = positionID
 	return positionID, nil
 }
 
-// savePositionInTx saves a position within a transaction, checking for duplicates first
-// Positions are normalized before storage (player_on_roll = 0) to prevent storing duplicates.
+// findOrCreatePositionForCanonicalDuplicate looks up or creates a position during
+// canonical-duplicate imports (same match re-imported from a different format).
+// Delegates to savePositionInTxWithCache which uses the Zobrist hash index and the
+// per-import cache for efficient deduplication.
+func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, position *Position, cache *importCache) (int64, error) {
+	return d.savePositionInTxWithCache(tx, position, cache)
+}
+
+// savePositionInTx saves a position within a transaction checking for duplicates via
+// the Zobrist-hash unique index (no external cache — one INSERT+SELECT roundtrip each call).
 func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, error) {
-	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
-	normalizedPosition := position.NormalizeForStorage()
-	normalizedPosition.ID = 0 // Exclude ID for comparison
-
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, err
-	}
-
-	// Query existing positions to check for duplicates
-	rows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var stateJSON string
-		var positionID int64
-		if err = rows.Scan(&positionID, &stateJSON); err != nil {
-			continue
-		}
-
-		var existingPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &existingPosition); err != nil {
-			continue
-		}
-
-		// Compare positions excluding the ID field
-		existingPosition.ID = 0
-		existingPositionJSON, err := json.Marshal(existingPosition)
-		if err != nil {
-			continue
-		}
-
-		if string(positionJSON) == string(existingPositionJSON) {
-			// Position already exists, return existing ID
-			return positionID, nil
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return 0, err
-	}
-
-	// Position doesn't exist, create new one
-	cols := populatePositionColumns(position)
-	noContactInt := 0
-	if cols.NoContact {
-		noContactInt = 1
-	}
-	result, err := tx.Exec(`
-		INSERT INTO position (
-			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
-			cube_value, cube_owner, score_1, score_2,
-			has_jacoby, has_beaver,
-			pip_1, pip_2, pip_diff, off_1, off_2,
-			back_checkers_1, back_checkers_2, no_contact,
-			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
-			state
-		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
-		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
-		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
-		cols.HasJacoby, cols.HasBeaver,
-		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
-		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
-		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		string(positionJSON))
-	if err != nil {
-		return 0, err
-	}
-
-	positionID, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	// Update position with ID
-	normalizedPosition.ID = positionID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-
-	return positionID, err
+	cache := newImportCache()
+	return d.savePositionInTxWithCache(tx, position, cache)
 }
 
 // saveMoveAnalysisInTx saves checker move analysis within a transaction
@@ -9152,43 +9008,8 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 		}
 	}
 
-	// Build a position cache for deduplication
-	positionCache := make(map[string]int64) // map[positionJSON]positionID
-	semanticCache := make(map[string]int64) // map[semanticKey]positionID
-
-	// Load existing positions into cache
-	existingRows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, fmt.Errorf("failed to load existing positions: %w", err)
-	}
-
-	for existingRows.Next() {
-		var existingID int64
-		var existingStateJSON string
-		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
-			continue
-		}
-
-		var existingPosition Position
-		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
-			continue
-		}
-
-		normalizedPosition := existingPosition.NormalizeForStorage()
-		normalizedPosition.ID = 0
-		normalizedJSON, err := json.Marshal(normalizedPosition)
-		if err != nil {
-			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		positionCache[string(normalizedJSON)] = existingID
-		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
-	}
-	if err := existingRows.Err(); err != nil {
-		return 0, err
-	}
-	existingRows.Close()
-
-	fmt.Printf("Loaded %d existing positions into cache for GnuBG import\n", len(positionCache))
+	// Per-import deduplication cache keyed by Zobrist hash.
+	cache := newImportCache()
 
 	if isCanonicalDuplicate {
 		// Canonical duplicate: import analysis to existing positions, create genuinely new ones
@@ -9231,7 +9052,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 						pos.DecisionType = CheckerAction
 						pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
 
-						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 						if err != nil {
 							continue
 						}
@@ -9256,7 +9077,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 							pos.PlayerOnRoll = moveRec.Player
 							pos.DecisionType = CheckerAction
 							pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
-							posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+							posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 							if err == nil {
 								// Convert MWC to EMG for match play (copy to avoid mutating original)
 								cubeAnalysis := *moveRec.CubeAnalysis
@@ -9279,7 +9100,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 						pos.DecisionType = CubeAction
 						pos.Dice = [2]int{0, 0}
 
-						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 						if err != nil {
 							continue
 						}
@@ -9339,6 +9160,11 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 
 			moveNumber := int32(0)
 			for i := range game.Moves {
+				// Cancellation check at the top of every move iteration.
+				if atomic.LoadInt32(&d.importCancelled) != 0 {
+					return 0, fmt.Errorf("import cancelled")
+				}
+
 				moveRec := &game.Moves[i]
 
 				switch string(moveRec.Type) {
@@ -9381,7 +9207,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 					}
 				}
 
-				err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, positionCache, isSGF, cubeAction)
+				err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, cache, isSGF, cubeAction)
 				if err != nil {
 					fmt.Printf("Warning: failed to import move %d in game %d: %v\n", moveNumber, game.GameNumber, err)
 					moveNumber++
@@ -9435,14 +9261,14 @@ func (d *Database) importGnuBGGame(tx *sql.Tx, matchID int64, game *gnubgparser.
 
 // importGnuBGMove imports a single move record from gnubgparser data
 // isSGF indicates SGF format where moves use absolute coordinates (Player 0's system)
-func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, isSGF bool, cubeAction string) error {
+func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, cache *importCache, isSGF bool, cubeAction string) error {
 	switch moveRec.Type {
 	case "move":
-		return d.importGnuBGCheckerMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, isSGF)
+		return d.importGnuBGCheckerMove(tx, gameID, moveNumber, moveRec, game, matchLength, cache, isSGF)
 	case "double":
 		// cubeAction is determined by the caller based on the opponent's response
 		// ("Double/Take" or "Double/Pass")
-		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, cubeAction, isSGF)
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, cache, cubeAction, isSGF)
 	case "take", "drop":
 		// Skip take/drop as separate entries — the "double" entry already captures
 		// the full cube decision (like XG's single "Double/Pass" or "Double/Take")
@@ -9458,7 +9284,7 @@ func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, m
 
 // importGnuBGCheckerMove handles importing a checker move from gnubgparser
 // isSGF indicates SGF format where moves use absolute coordinates and MoveString is in letter format
-func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, isSGF bool) error {
+func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, cache *importCache, isSGF bool) error {
 	player := moveRec.Player // 0 or 1, maps directly to blunderDB
 
 	// Convert player to XG-style encoding for DB storage consistency
@@ -9493,7 +9319,7 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 		pos.DecisionType = CheckerAction
 		pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
 
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -9561,7 +9387,7 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 }
 
 // importGnuBGCubeMove handles importing a cube move (double/take/drop) from gnubgparser
-func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, cubeAction string, isSGF bool) error {
+func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, cache *importCache, cubeAction string, isSGF bool) error {
 	player := moveRec.Player // 0 or 1
 
 	// Convert player to XG-style encoding for DB storage consistency
@@ -9578,7 +9404,7 @@ func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int3
 		pos.DecisionType = CubeAction
 		pos.Dice = [2]int{0, 0} // No dice for cube decisions
 
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -10859,41 +10685,8 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 		}
 	}
 
-	// Build a position cache for deduplication
-	positionCache := make(map[string]int64)
-	semanticCache := make(map[string]int64) // map[semanticKey]positionID
-
-	// Load existing positions into cache
-	existingRows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, fmt.Errorf("failed to load existing positions: %w", err)
-	}
-
-	for existingRows.Next() {
-		var existingID int64
-		var existingStateJSON string
-		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
-			continue
-		}
-		var existingPosition Position
-		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
-			continue
-		}
-		normalizedPosition := existingPosition.NormalizeForStorage()
-		normalizedPosition.ID = 0
-		normalizedJSON, err := json.Marshal(normalizedPosition)
-		if err != nil {
-			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		positionCache[string(normalizedJSON)] = existingID
-		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
-	}
-	if err := existingRows.Err(); err != nil {
-		return 0, err
-	}
-	existingRows.Close()
-
-	fmt.Printf("Loaded %d existing positions into cache for BGF import\n", len(positionCache))
+	// Per-import deduplication cache keyed by Zobrist hash.
+	cache := newImportCache()
 
 	// Process each game
 	for gameIdx, gameRaw := range gamesData {
@@ -10943,6 +10736,11 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			moveNumber := int32(0)
 			pendingCubeDouble := false // tracks if previous move was a cube double encoded as amove
 			for moveIdx, moveRaw := range movesData {
+				// Cancellation check at the top of every move iteration.
+				if atomic.LoadInt32(&d.importCancelled) != 0 {
+					return 0, fmt.Errorf("import cancelled")
+				}
+
 				moveData, ok := moveRaw.(map[string]interface{})
 				if !ok {
 					continue
@@ -11001,7 +10799,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							break
 						}
 
-						err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+						err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 						if err != nil {
 							fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
 						}
@@ -11010,7 +10808,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 					}
 
 					// Normal checker move
-					err := d.importBGFCheckerMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache)
+					err := d.importBGFCheckerMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache)
 					if err != nil {
 						fmt.Printf("Warning: failed to import BGF move %d in game %d: %v\n", moveIdx, gameIdx+1, err)
 					}
@@ -11044,7 +10842,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 						}
 					}
 
-					err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+					err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 					if err != nil {
 						fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
 					}
@@ -11131,11 +10929,11 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							}
 							break
 						}
-						d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache, cubeAction)
+						d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 						continue
 					}
 
-					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache)
+					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache)
 					// Skip board update for green=7 moves (unplayable die - analysis data only)
 					greenDie := bgfGetInt(moveData, "green")
 					if greenDie != 7 {
@@ -11158,7 +10956,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							break
 						}
 					}
-					d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache, cubeAction)
+					d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 
 				case "atake":
 					if cubeValue == 1 {
@@ -11186,7 +10984,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 }
 
 // importBGFCheckerMove imports a single checker move from a BGF file
-func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64) error {
+func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache) error {
 	player := bgfGetInt(moveData, "player") // -1 = Green, 1 = Red
 
 	// Convert BGF player to blunderDB player encoding
@@ -11255,7 +11053,7 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 	pos.Dice = [2]int{die1, die2}
 
 	// Save position
-	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 	if err != nil {
 		return fmt.Errorf("failed to save position: %w", err)
 	}
@@ -11325,7 +11123,7 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 }
 
 // importBGFCubeMove imports a cube double/take/pass move from a BGF file
-func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, cubeAction string) error {
+func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache, cubeAction string) error {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -11336,7 +11134,7 @@ func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32,
 	pos.Dice = [2]int{0, 0}
 
 	// Save position
-	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 	if err != nil {
 		return fmt.Errorf("failed to save position: %w", err)
 	}
@@ -11380,7 +11178,7 @@ func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32,
 }
 
 // importBGFCheckerAnalysisOnly imports only analysis for a canonical duplicate
-func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, semanticCache map[string]int64) {
+func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -11392,7 +11190,7 @@ func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]
 	pos.DecisionType = CheckerAction
 	pos.Dice = [2]int{dieGreen, dieRed}
 
-	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 	if err != nil {
 		return
 	}
@@ -11413,7 +11211,7 @@ func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]
 }
 
 // importBGFCubeAnalysisOnly imports only cube analysis for a canonical duplicate
-func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, semanticCache map[string]int64, cubeAction string) {
+func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache, cubeAction string) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -11422,7 +11220,7 @@ func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]int
 	pos.DecisionType = CubeAction
 	pos.Dice = [2]int{0, 0}
 
-	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 	if err != nil {
 		return
 	}
@@ -12420,37 +12218,16 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 		return 0, fmt.Errorf("XGP file contains unsupported move type: %s", move.MoveType)
 	}
 
-	// Save position to database
-	normalizedPosition := pos.NormalizeForStorage()
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position: %w", err)
-	}
-
+	// Save position to database using the proper column-populating path.
 	tx, err := d.db.Begin()
 	if err != nil {
 		return 0, fmt.Errorf("failed to begin transaction: %w", err)
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	positionID, err := d.savePositionInTx(tx, pos)
 	if err != nil {
-		return 0, fmt.Errorf("failed to insert position: %w", err)
-	}
-
-	positionID, err := result.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("failed to get position ID: %w", err)
-	}
-
-	normalizedPosition.ID = positionID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position with ID: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-	if err != nil {
-		return 0, fmt.Errorf("failed to update position state: %w", err)
+		return 0, fmt.Errorf("failed to save position: %w", err)
 	}
 
 	// Save analysis
@@ -12479,19 +12256,10 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 				checkerPos.DecisionType = CheckerAction
 				checkerPos.Dice = [2]int{int(secondMove.CheckerMove.Dice[0]), int(secondMove.CheckerMove.Dice[1])}
 
-				normalizedChecker := checkerPos.NormalizeForStorage()
-				checkerJSON, err := json.Marshal(normalizedChecker)
+				checkerPosID, err := d.savePositionInTx(tx, checkerPos)
 				if err == nil {
-					checkerResult, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(checkerJSON))
-					if err == nil {
-						checkerPosID, _ := checkerResult.LastInsertId()
-						normalizedChecker.ID = checkerPosID
-						checkerJSON, _ = json.Marshal(normalizedChecker)
-						tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(checkerJSON), checkerPosID)
-
-						d.saveCheckerAnalysisToPositionInTx(tx, checkerPosID, secondMove.CheckerMove.Analysis,
-							&secondMove.CheckerMove.Position, secondMove.CheckerMove.ActivePlayer, &secondMove.CheckerMove.PlayedMove)
-					}
+					d.saveCheckerAnalysisToPositionInTx(tx, checkerPosID, secondMove.CheckerMove.Analysis,
+						&secondMove.CheckerMove.Position, secondMove.CheckerMove.ActivePlayer, &secondMove.CheckerMove.PlayedMove)
 				}
 			}
 		}

@@ -1456,7 +1456,15 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 		}
 
 		results = append(results, result)
+
+		// After each successful match import, checkpoint the WAL to keep file size bounded.
+		if result.Success && result.MatchID > 0 {
+			cli.db.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+		}
 	}
+
+	// After all imports, update query planner statistics.
+	cli.db.db.Exec("ANALYZE")
 
 	// Print summary table
 	fmt.Println("\n" + strings.Repeat("=", 100))

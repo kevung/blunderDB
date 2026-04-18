@@ -34,10 +34,10 @@ Dependencies flow top-down; a phase may only start after the one above is green.
 
 ## Current status
 
-- [ ] 00 — baseline benchmarks
-- [ ] 01 — foundation utilities
-- [ ] 02 — schema & PRAGMAs
-- [ ] 03 — migration
-- [ ] 04 — import rewrite
+- [x] 00 — baseline benchmarks
+- [x] 01 — foundation utilities
+- [x] 02 — schema & PRAGMAs
+- [x] 03 — migration
+- [x] 04 — import rewrite
 - [ ] 05 — search rewrite
 - [ ] 06 — verify & document
