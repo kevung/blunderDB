@@ -1197,6 +1197,144 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 	return map[string]interface{}{"id": 0, "exists": false}, nil
 }
 
+// positionColumns holds the derived scalar columns that will be stored
+// alongside the position JSON in the v2 schema. populatePositionColumns
+// computes them from a (already-normalized) Position without hitting the DB.
+// This helper is intentionally dead code until phase 02 adds the columns.
+type positionColumns struct {
+	ZobristHash   uint64
+	DecisionType  int
+	Dice1, Dice2  int
+	Pip1, Pip2    int
+	PipDiff       int
+	Off1, Off2    int
+	BackCheckers1 int
+	BackCheckers2 int
+	NoContact     bool
+	Occupancy1    uint32
+	Occupancy2    uint32
+	PointMask1    uint32
+	PointMask2    uint32
+	// mirrors of Position fields for indexed columns
+	CubeValue    int
+	CubeOwner    int
+	Score1       int
+	Score2       int
+	HasJacoby    int
+	HasBeaver    int
+}
+
+// populatePositionColumns computes every derived column value for a Position.
+// The input should already be normalized (PlayerOnRoll == 0); if it isn't the
+// function normalizes it internally.
+func populatePositionColumns(p *Position) positionColumns {
+	norm := p.NormalizeForStorage()
+	var c positionColumns
+
+	c.ZobristHash = ZobristHash(&norm)
+	c.DecisionType = norm.DecisionType
+	c.Dice1 = norm.Dice[0]
+	c.Dice2 = norm.Dice[1]
+
+	c.Pip1, c.Pip2 = PipCounts(norm.Board)
+	c.PipDiff = c.Pip1 - c.Pip2
+
+	c.Off1 = norm.Board.Bearoff[0]
+	c.Off2 = norm.Board.Bearoff[1]
+
+	// Back checkers: Black's (player-on-roll's) are in the opponent's home board (points 19-24);
+	// White's are in Black's home board (points 1-6).
+	for i := 19; i <= 24; i++ {
+		if norm.Board.Points[i].Color == Black && norm.Board.Points[i].Checkers > 0 {
+			c.BackCheckers1 += norm.Board.Points[i].Checkers
+		}
+	}
+	for i := 1; i <= 6; i++ {
+		if norm.Board.Points[i].Color == White && norm.Board.Points[i].Checkers > 0 {
+			c.BackCheckers2 += norm.Board.Points[i].Checkers
+		}
+	}
+
+	c.NoContact = norm.MatchesNoContact()
+
+	c.Occupancy1, c.Occupancy2, c.PointMask1, c.PointMask2 = OccupancyMasks(&norm.Board)
+
+	c.CubeValue = norm.Cube.Value
+	c.CubeOwner = norm.Cube.Owner
+	c.Score1 = norm.Score[0]
+	c.Score2 = norm.Score[1]
+	c.HasJacoby = norm.HasJacoby
+	c.HasBeaver = norm.HasBeaver
+
+	return c
+}
+
+// analysisColumns holds the derived scalar columns computed from a PositionAnalysis.
+// These will be stored as indexed columns in the v2 schema (phase 02).
+// This helper is intentionally dead code until phase 02 adds the columns.
+//
+// Win/gammon/backgammon rates follow the on-roll convention: "player1" is always
+// the player on roll (PlayerOnRoll==0 after normalization), "player2" is the opponent.
+type analysisColumns struct {
+	BestCubeAction      string
+	CubeError           float64 // equity loss of the played cube action vs best; 0 if no played action
+	BestMoveEquityError float64 // equity loss of played checker move vs best; 0 if no played move
+	// Win/gammon/backgammon rates from the DoublingCubeAnalysis (on-roll perspective)
+	Player1WinRate          float64
+	Player1GammonRate       float64
+	Player1BackgammonRate   float64
+	Player2WinRate          float64
+	Player2GammonRate       float64
+	Player2BackgammonRate   float64
+}
+
+// populateAnalysisColumns computes scalar analysis columns from a PositionAnalysis.
+// playedCubeAction and playedMove are the actions taken in this position (may be empty).
+func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction string) analysisColumns {
+	var c analysisColumns
+	if a == nil {
+		return c
+	}
+
+	if dca := a.DoublingCubeAnalysis; dca != nil {
+		c.BestCubeAction = dca.BestCubeAction
+
+		// Win/gammon/backgammon rates — player1 = player on roll.
+		c.Player1WinRate = dca.PlayerWinChances
+		c.Player1GammonRate = dca.PlayerGammonChances
+		c.Player1BackgammonRate = dca.PlayerBackgammonChances
+		c.Player2WinRate = dca.OpponentWinChances
+		c.Player2GammonRate = dca.OpponentGammonChances
+		c.Player2BackgammonRate = dca.OpponentBackgammonChances
+
+		// Cube error: equity loss of the played cube action vs the best action.
+		if playedCubeAction != "" {
+			switch playedCubeAction {
+			case "NoDouble":
+				c.CubeError = dca.CubefulNoDoubleError
+			case "Double", "Double/Take":
+				c.CubeError = dca.CubefulDoubleTakeError
+			case "Double/Pass":
+				c.CubeError = dca.CubefulDoublePassError
+			default:
+				c.CubeError = 0
+			}
+		}
+	}
+
+	// Best-move equity error: the equity error of the played checker move vs Moves[0].
+	if playedMove != "" && a.CheckerAnalysis != nil {
+		for _, m := range a.CheckerAnalysis.Moves {
+			if m.Move == playedMove && m.EquityError != nil {
+				c.BestMoveEquityError = *m.EquityError
+				break
+			}
+		}
+	}
+
+	return c
+}
+
 func (d *Database) SavePosition(position *Position) (int64, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
