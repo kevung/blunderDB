@@ -8,12 +8,12 @@ import "math/rand"
 var (
 	zobristPoint        [26][16][2]uint64 // [point_index 0..25][checker_count 1..15][color 0=Black 1=White]
 	zobristPlayerOnRoll [2]uint64
-	zobristDice         [7][7]uint64  // [die1][die2] indices 1..6; [0][0] = no dice
-	zobristCubeValue    [11]uint64    // cube values 1,2,4,8,16,32,64,128,256,512,1024 → indices 0..10
-	zobristCubeOwner    [3]uint64     // 0=Black, 1=White, 2=None (maps -1 → 2)
+	zobristDice         [7][7]uint64 // [die1][die2] indices 1..6; [0][0] = no dice
+	zobristCubeValue    [11]uint64   // cube values 1,2,4,8,16,32,64,128,256,512,1024 → indices 0..10
+	zobristCubeOwner    [3]uint64    // 0=Black, 1=White, 2=None (maps -1 → 2)
 	zobristScore1       [64]uint64
 	zobristScore2       [64]uint64
-	zobristMatchLength  [64]uint64    // reserved for future match-length field
+	zobristMatchLength  [64]uint64 // reserved for future match-length field
 	zobristHasJacoby    uint64
 	zobristHasBeaver    uint64
 	zobristDecisionType [2]uint64     // [0]=CheckerAction, [1]=CubeAction

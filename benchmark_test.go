@@ -218,12 +218,12 @@ func BenchmarkSearch_DecisionCube(b *testing.B) {
 			"",     // date
 			"", "", // p1OutfieldBlot, p2OutfieldBlot
 			"", "", // p1JanBlot, p2JanBlot
-			false,  // noContact
-			false,  // mirror
-			"",     // moveError
-			"",     // matchIDs
-			"",     // tournamentIDs
-			"",     // restrictToPositionIDs
+			false, // noContact
+			false, // mirror
+			"",    // moveError
+			"",    // matchIDs
+			"",    // tournamentIDs
+			"",    // restrictToPositionIDs
 		)
 	}
 }

@@ -3,10 +3,10 @@ package main
 // OccupancyMasks computes four 26-bit occupancy and point masks from a Board.
 // Bit i is set if the condition holds for point index i (0=WhiteBar, 1-24=board, 25=BlackBar).
 //
-//   occ1 (Black occupancy): bit i set if Black has ≥1 checker at point i.
-//   occ2 (White occupancy): bit i set if White has ≥1 checker at point i.
-//   pt1  (Black point mask): bit i set if Black has ≥2 checkers at point i (a "made point").
-//   pt2  (White point mask): bit i set if White has ≥2 checkers at point i.
+//	occ1 (Black occupancy): bit i set if Black has ≥1 checker at point i.
+//	occ2 (White occupancy): bit i set if White has ≥1 checker at point i.
+//	pt1  (Black point mask): bit i set if Black has ≥2 checkers at point i (a "made point").
+//	pt2  (White point mask): bit i set if White has ≥2 checkers at point i.
 //
 // All four masks are returned as uint32 (26 bits fit, MSB unused).
 func OccupancyMasks(b *Board) (occ1, occ2, pt1, pt2 uint32) {
@@ -33,10 +33,10 @@ func OccupancyMasks(b *Board) (occ1, occ2, pt1, pt2 uint32) {
 // CheckerStructureMasks compiles a template Position (used as a board-pattern
 // filter in the search UI) into four occupancy/point-mask requirements.
 //
-//   occ1Req: Black must have ≥1 checker on each set bit.
-//   pt1Req:  Black must have ≥2 checkers on each set bit.
-//   occ2Req: White must have ≥1 checker on each set bit.
-//   pt2Req:  White must have ≥2 checkers on each set bit.
+//	occ1Req: Black must have ≥1 checker on each set bit.
+//	pt1Req:  Black must have ≥2 checkers on each set bit.
+//	occ2Req: White must have ≥1 checker on each set bit.
+//	pt2Req:  White must have ≥2 checkers on each set bit.
 //
 // tight is true when the template contains exact checker counts > 2, which
 // require an additional Go-side check beyond the bitmask test.

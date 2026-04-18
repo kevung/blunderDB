@@ -1373,12 +1373,12 @@ type positionColumns struct {
 	PointMask1    uint32
 	PointMask2    uint32
 	// mirrors of Position fields for indexed columns
-	CubeValue    int
-	CubeOwner    int
-	Score1       int
-	Score2       int
-	HasJacoby    int
-	HasBeaver    int
+	CubeValue int
+	CubeOwner int
+	Score1    int
+	Score2    int
+	HasJacoby int
+	HasBeaver int
 }
 
 // populatePositionColumns computes every derived column value for a Position.
@@ -1437,12 +1437,12 @@ type analysisColumns struct {
 	CubeError           float64 // equity loss of the played cube action vs best; 0 if no played action
 	BestMoveEquityError float64 // equity loss of played checker move vs best; 0 if no played move
 	// Win/gammon/backgammon rates from the DoublingCubeAnalysis (on-roll perspective)
-	Player1WinRate          float64
-	Player1GammonRate       float64
-	Player1BackgammonRate   float64
-	Player2WinRate          float64
-	Player2GammonRate       float64
-	Player2BackgammonRate   float64
+	Player1WinRate        float64
+	Player1GammonRate     float64
+	Player1BackgammonRate float64
+	Player2WinRate        float64
+	Player2GammonRate     float64
+	Player2BackgammonRate float64
 }
 
 // populateAnalysisColumns computes scalar analysis columns from a PositionAnalysis.
