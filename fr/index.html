@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.16.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.17.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=f56472d6"></script>
+      <script src="_static/documentation_options.js?v=84b1388f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -232,6 +232,10 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <tr class="row-odd"><td><p>0.16.0</p></td>
 <td><p>18/04/2026</p></td>
 <td><p>Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL. Import par lot &gt;=3x plus rapide, recherche filtrée &lt;=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d’abord).</p></td>
+</tr>
+<tr class="row-even"><td><p>0.17.0</p></td>
+<td><p>20/04/2026</p></td>
+<td><p>Optimisation du stockage : compression zlib des données d’analyse (~80% de réduction), encodage compact des positions (~90% de réduction de la taille). Ajout de 5 index manquants pour améliorer les performances de recherche. Correction de la recherche par erreur de cube. Correction du mode EDIT après une recherche sans résultats. Restauration de l’état du panneau de recherche lors du changement d’onglets. Suppression de 62 instructions de débogage des chemins critiques.</p></td>
 </tr>
 </tbody>
 </table>

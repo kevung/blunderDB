@@ -134,6 +134,7 @@ Historique des versions
    Import des commentaires depuis les fichiers XG."
    0.15.0, 31/03/2026, "Export de la position en image PNG dans le presse-papier (board seul via Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
    0.16.0, 18/04/2026, "Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL. Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d'abord)."
+   0.17.0, 20/04/2026, "Optimisation du stockage : compression zlib des données d'analyse (~80% de réduction), encodage compact des positions (~90% de réduction de la taille). Ajout de 5 index manquants pour améliorer les performances de recherche. Correction de la recherche par erreur de cube. Correction du mode EDIT après une recherche sans résultats. Restauration de l'état du panneau de recherche lors du changement d'onglets. Suppression de 62 instructions de débogage des chemins critiques."
 
 Sommaire
 ========
