@@ -143,7 +143,7 @@ func TestSchemaV200_DatabaseVersion(t *testing.T) {
 	if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key='database_version'`).Scan(&version); err != nil {
 		t.Fatalf("could not read version: %v", err)
 	}
-	if version != "2.0.0" {
-		t.Errorf("expected DatabaseVersion 2.0.0, got %s", version)
+	if version != "2.1.0" {
+		t.Errorf("expected DatabaseVersion 2.1.0, got %s", version)
 	}
 }

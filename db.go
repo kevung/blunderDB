@@ -386,6 +386,124 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 	return nil
 }
 
+// migrate_2_0_0_to_2_1_0 converts analysis and move_analysis scalar columns
+// from REAL to integer-scaled INTEGER values and re-rounds all JSON blobs.
+//
+// Encoding:
+//   - Win/gammon/backgammon rates: stored as rate × 100 (hundredths of percent).
+//   - Equity and errors: stored as value × 1000 (millipoints).
+//
+// JSON blobs are re-parsed, rounded via roundAnalysisForStorage, and re-serialised.
+// Analysis scalar columns are re-computed from the rounded JSON via populateAnalysisColumns.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_0_0_to_2_1_0() error {
+	// -----------------------------------------------------------------
+	// 1. Convert move_analysis REAL columns to integer scale via SQL.
+	// -----------------------------------------------------------------
+	d.emitMigrationProgress("move_analysis", 0, 1)
+	_, err := d.db.Exec(`
+		UPDATE move_analysis SET
+			equity                  = ROUND(equity * 1000),
+			equity_error            = ROUND(equity_error * 1000),
+			win_rate                = ROUND(win_rate * 100),
+			gammon_rate             = ROUND(gammon_rate * 100),
+			backgammon_rate         = ROUND(backgammon_rate * 100),
+			opponent_win_rate       = ROUND(opponent_win_rate * 100),
+			opponent_gammon_rate    = ROUND(opponent_gammon_rate * 100),
+			opponent_backgammon_rate = ROUND(opponent_backgammon_rate * 100)
+	`)
+	if err != nil {
+		return fmt.Errorf("migrate move_analysis to integer: %w", err)
+	}
+	d.emitMigrationProgress("move_analysis", 1, 1)
+
+	// -----------------------------------------------------------------
+	// 2. Re-round JSON blobs and rebuild analysis scalar columns.
+	// -----------------------------------------------------------------
+	rows, err := d.db.Query(`SELECT id, data FROM analysis WHERE data IS NOT NULL AND data != ''`)
+	if err != nil {
+		return fmt.Errorf("migrate analysis query: %w", err)
+	}
+
+	type anaRow struct {
+		id   int64
+		data string
+	}
+	var batch []anaRow
+	for rows.Next() {
+		var r anaRow
+		if err := rows.Scan(&r.id, &r.data); err != nil {
+			continue
+		}
+		batch = append(batch, r)
+	}
+	rows.Close()
+
+	anaTotal := len(batch)
+	d.emitMigrationProgress("analysis", 0, anaTotal)
+
+	updateStmt, err := d.db.Prepare(`UPDATE analysis SET
+		data=?, best_cube_action=?, cube_error=?, best_move_equity_error=?,
+		player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+		player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+		WHERE id=?`)
+	if err != nil {
+		return fmt.Errorf("migrate prepare update: %w", err)
+	}
+	defer updateStmt.Close()
+
+	for i, r := range batch {
+		var ana PositionAnalysis
+		if err := json.Unmarshal([]byte(r.data), &ana); err != nil {
+			continue
+		}
+		roundAnalysisForStorage(&ana)
+		newJSON, err := json.Marshal(ana)
+		if err != nil {
+			continue
+		}
+		playedMove := ""
+		if len(ana.PlayedMoves) > 0 {
+			playedMove = ana.PlayedMoves[0]
+		} else if ana.PlayedMove != "" {
+			playedMove = ana.PlayedMove
+		}
+		playedCubeAction := ""
+		if len(ana.PlayedCubeActions) > 0 {
+			playedCubeAction = ana.PlayedCubeActions[0]
+		} else if ana.PlayedCubeAction != "" {
+			playedCubeAction = ana.PlayedCubeAction
+		}
+		ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
+		updateStmt.Exec(
+			string(newJSON),
+			ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
+			ac.Player1WinRate, ac.Player1GammonRate, ac.Player1BackgammonRate,
+			ac.Player2WinRate, ac.Player2GammonRate, ac.Player2BackgammonRate,
+			r.id)
+		if (i+1)%200 == 0 {
+			d.emitMigrationProgress("analysis", i+1, anaTotal)
+		}
+	}
+	d.emitMigrationProgress("analysis", anaTotal, anaTotal)
+
+	// -----------------------------------------------------------------
+	// 3. ANALYZE
+	// -----------------------------------------------------------------
+	d.db.Exec(`ANALYZE`)
+
+	// -----------------------------------------------------------------
+	// 4. Bump version
+	// -----------------------------------------------------------------
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.1.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 2.0.0 to 2.1.0")
+	return nil
+}
+
 // WAL journal mode is skipped for in-memory databases (":memory:")
 // because WAL requires a real filesystem.
 func (d *Database) applyPragmas(path string) error {
@@ -487,14 +605,14 @@ func (d *Database) SetupDatabase(path string) error {
             position_id                 INTEGER,
             data                        JSON,
             best_cube_action            TEXT,
-            cube_error                  REAL,
-            best_move_equity_error      REAL,
-            player1_win_rate            REAL,
-            player1_gammon_rate         REAL,
-            player1_backgammon_rate     REAL,
-            player2_win_rate            REAL,
-            player2_gammon_rate         REAL,
-            player2_backgammon_rate     REAL,
+            cube_error                  INTEGER,
+            best_move_equity_error      INTEGER,
+            player1_win_rate            INTEGER,
+            player1_gammon_rate         INTEGER,
+            player1_backgammon_rate     INTEGER,
+            player2_win_rate            INTEGER,
+            player2_gammon_rate         INTEGER,
+            player2_backgammon_rate     INTEGER,
             FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
         )
     `)
@@ -641,14 +759,14 @@ func (d *Database) SetupDatabase(path string) error {
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)
@@ -1237,6 +1355,16 @@ func (d *Database) OpenDatabase(path string) error {
 		dbVersion = "2.0.0"
 	}
 
+	// Auto-migrate from 2.0.0 to 2.1.0
+	// Converts analysis/move_analysis REAL columns to integer-scaled INTEGER values
+	// and re-rounds all JSON blobs for compact storage.
+	if dbVersion == "2.0.0" {
+		if err := d.migrate_2_0_0_to_2_1_0(); err != nil {
+			return fmt.Errorf("migration 2.0.0→2.1.0 failed: %w", err)
+		}
+		dbVersion = "2.1.0"
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).
@@ -1406,14 +1534,14 @@ func (d *Database) ensureAllTablesExist() error {
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)
@@ -1792,19 +1920,20 @@ func populatePositionColumns(p *Position) positionColumns {
 // the player on roll (PlayerOnRoll==0 after normalization), "player2" is the opponent.
 type analysisColumns struct {
 	BestCubeAction      string
-	CubeError           float64 // equity loss of the played cube action vs best; 0 if no played action
-	BestMoveEquityError float64 // equity loss of played checker move vs best; 0 if no played move
-	// Win/gammon/backgammon rates from the DoublingCubeAnalysis (on-roll perspective)
-	Player1WinRate        float64
-	Player1GammonRate     float64
-	Player1BackgammonRate float64
-	Player2WinRate        float64
-	Player2GammonRate     float64
-	Player2BackgammonRate float64
+	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
+	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
+	// Win/gammon/backgammon rates × 100 (hundredths of percent, on-roll perspective)
+	Player1WinRate        int64
+	Player1GammonRate     int64
+	Player1BackgammonRate int64
+	Player2WinRate        int64
+	Player2GammonRate     int64
+	Player2BackgammonRate int64
 }
 
 // populateAnalysisColumns computes scalar analysis columns from a PositionAnalysis.
 // playedCubeAction and playedMove are the actions taken in this position (may be empty).
+// Rates are stored as integer × 100 (hundredths of percent) and equities as × 1000 (millipoints).
 func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction string) analysisColumns {
 	var c analysisColumns
 	if a == nil {
@@ -1814,43 +1943,43 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 	if dca := a.DoublingCubeAnalysis; dca != nil {
 		c.BestCubeAction = dca.BestCubeAction
 
-		// Win/gammon/backgammon rates — player1 = player on roll.
-		c.Player1WinRate = dca.PlayerWinChances
-		c.Player1GammonRate = dca.PlayerGammonChances
-		c.Player1BackgammonRate = dca.PlayerBackgammonChances
-		c.Player2WinRate = dca.OpponentWinChances
-		c.Player2GammonRate = dca.OpponentGammonChances
-		c.Player2BackgammonRate = dca.OpponentBackgammonChances
+		// Win/gammon/backgammon rates — player1 = player on roll, scaled × 100.
+		c.Player1WinRate = int64(math.Round(dca.PlayerWinChances * 100))
+		c.Player1GammonRate = int64(math.Round(dca.PlayerGammonChances * 100))
+		c.Player1BackgammonRate = int64(math.Round(dca.PlayerBackgammonChances * 100))
+		c.Player2WinRate = int64(math.Round(dca.OpponentWinChances * 100))
+		c.Player2GammonRate = int64(math.Round(dca.OpponentGammonChances * 100))
+		c.Player2BackgammonRate = int64(math.Round(dca.OpponentBackgammonChances * 100))
 
-		// Cube error: equity loss of the played cube action vs the best action.
+		// Cube error: equity loss of the played cube action vs the best action, scaled × 1000.
 		if playedCubeAction != "" {
 			switch playedCubeAction {
 			case "NoDouble":
-				c.CubeError = dca.CubefulNoDoubleError
+				c.CubeError = int64(math.Round(dca.CubefulNoDoubleError * 1000))
 			case "Double", "Double/Take":
-				c.CubeError = dca.CubefulDoubleTakeError
+				c.CubeError = int64(math.Round(dca.CubefulDoubleTakeError * 1000))
 			case "Double/Pass":
-				c.CubeError = dca.CubefulDoublePassError
+				c.CubeError = int64(math.Round(dca.CubefulDoublePassError * 1000))
 			default:
 				c.CubeError = 0
 			}
 		}
 	} else if ca := a.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
-		// Fall back to checker analysis best move for win/gammon/backgammon rates.
+		// Fall back to checker analysis best move for win/gammon/backgammon rates, scaled × 100.
 		best := ca.Moves[0]
-		c.Player1WinRate = best.PlayerWinChance
-		c.Player1GammonRate = best.PlayerGammonChance
-		c.Player1BackgammonRate = best.PlayerBackgammonChance
-		c.Player2WinRate = best.OpponentWinChance
-		c.Player2GammonRate = best.OpponentGammonChance
-		c.Player2BackgammonRate = best.OpponentBackgammonChance
+		c.Player1WinRate = int64(math.Round(best.PlayerWinChance * 100))
+		c.Player1GammonRate = int64(math.Round(best.PlayerGammonChance * 100))
+		c.Player1BackgammonRate = int64(math.Round(best.PlayerBackgammonChance * 100))
+		c.Player2WinRate = int64(math.Round(best.OpponentWinChance * 100))
+		c.Player2GammonRate = int64(math.Round(best.OpponentGammonChance * 100))
+		c.Player2BackgammonRate = int64(math.Round(best.OpponentBackgammonChance * 100))
 	}
 
-	// Best-move equity error: the equity error of the played checker move vs Moves[0].
+	// Best-move equity error: the equity error of the played checker move vs Moves[0], scaled × 1000.
 	if playedMove != "" && a.CheckerAnalysis != nil {
 		for _, m := range a.CheckerAnalysis.Moves {
 			if m.Move == playedMove && m.EquityError != nil {
-				c.BestMoveEquityError = *m.EquityError
+				c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
 				break
 			}
 		}
@@ -2038,6 +2167,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		}
 
 		// Update the existing analysis
+		roundAnalysisForStorage(&analysis)
 		analysisJSON, err := json.Marshal(analysis)
 		if err != nil {
 			fmt.Println("Error marshalling analysis:", err)
@@ -2103,6 +2233,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		}
 
 		// Insert a new analysis
+		roundAnalysisForStorage(&analysis)
 		analysisJSON, err := json.Marshal(analysis)
 		if err != nil {
 			fmt.Println("Error marshalling analysis:", err)
@@ -2934,30 +3065,31 @@ func (d *Database) loadPositionsByFiltersCore(
 		KMin, KMax, KHasMin, KHasMax := parseIntFilterExpr(player2BackCheckerFilter, "K")
 		appendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
 
-		// Float range filters on analysis scalar columns (LEFT JOIN; NULL rows are excluded
+		// Integer range filters on analysis scalar columns (LEFT JOIN; NULL rows are excluded
 		// by the BETWEEN/>=/<= comparisons, which is correct: no analysis → no rate).
+		// Rates are stored as integer × 100 (hundredths of percent); scale user input accordingly.
 		wMin, wMax, wHasMin, wHasMax := parseFloatFilterExpr(winRateFilter, "w")
-		appendFloatRangeSQL("a.player1_win_rate", wMin, wMax, wHasMin, wHasMax, &where, &args)
+		appendIntRangeSQL("a.player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &where, &args)
 		gMin, gMax, gHasMin, gHasMax := parseFloatFilterExpr(gammonRateFilter, "g")
-		appendFloatRangeSQL("a.player1_gammon_rate", gMin, gMax, gHasMin, gHasMax, &where, &args)
+		appendIntRangeSQL("a.player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &where, &args)
 		bMin, bMax, bHasMin, bHasMax := parseFloatFilterExpr(backgammonRateFilter, "b")
-		appendFloatRangeSQL("a.player1_backgammon_rate", bMin, bMax, bHasMin, bHasMax, &where, &args)
+		appendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
 		WMin, WMax, WHasMin, WHasMax := parseFloatFilterExpr(player2WinRateFilter, "W")
-		appendFloatRangeSQL("a.player2_win_rate", WMin, WMax, WHasMin, WHasMax, &where, &args)
+		appendIntRangeSQL("a.player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &where, &args)
 		GMin, GMax, GHasMin, GHasMax := parseFloatFilterExpr(player2GammonRateFilter, "G")
-		appendFloatRangeSQL("a.player2_gammon_rate", GMin, GMax, GHasMin, GHasMax, &where, &args)
+		appendIntRangeSQL("a.player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &where, &args)
 		BMin, BMax, BHasMin, BHasMax := parseFloatFilterExpr(player2BackgammonRateFilter, "B")
-		appendFloatRangeSQL("a.player2_backgammon_rate", BMin, BMax, BHasMin, BHasMax, &where, &args)
+		appendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
 
-		// Move-error filter: "E"-prefixed values are millipoints; convert to equity points.
+		// Move-error filter: "E"-prefixed values are millipoints; columns are now integer millipoints.
 		if moveErrorFilter != "" {
 			eMin, eMax, eHasMin, eHasMax := parseFloatFilterExpr(moveErrorFilter, "E")
 			if eHasMin {
-				eqMin := eMin / 1000.0
+				eqMin := int(math.Round(eMin))
 				where.WriteString(" AND (a.best_move_equity_error >= ? OR a.cube_error >= ?)")
 				args = append(args, eqMin, eqMin)
 			} else if eHasMax {
-				eqMax := eMax / 1000.0
+				eqMax := int(math.Round(eMax))
 				where.WriteString(" AND (a.best_move_equity_error <= ? OR a.cube_error <= ?)")
 				args = append(args, eqMax, eqMax)
 			}
@@ -3512,6 +3644,55 @@ func roundToMillipoint(v float64) float64 {
 // roundToHundredthPercent rounds a rate (in percent) to the nearest 0.01%.
 func roundToHundredthPercent(v float64) float64 {
 	return math.Round(v*100) / 100
+}
+
+// roundAnalysisForStorage rounds all float fields in a PositionAnalysis for compact JSON storage.
+// Rates (win/gammon/backgammon chances) → 2 decimal places.
+// Equities and errors → 3 decimal places (millipoint precision).
+func roundAnalysisForStorage(a *PositionAnalysis) {
+	if a == nil {
+		return
+	}
+	roundDCA := func(dca *DoublingCubeAnalysis) {
+		dca.PlayerWinChances = roundToHundredthPercent(dca.PlayerWinChances)
+		dca.PlayerGammonChances = roundToHundredthPercent(dca.PlayerGammonChances)
+		dca.PlayerBackgammonChances = roundToHundredthPercent(dca.PlayerBackgammonChances)
+		dca.OpponentWinChances = roundToHundredthPercent(dca.OpponentWinChances)
+		dca.OpponentGammonChances = roundToHundredthPercent(dca.OpponentGammonChances)
+		dca.OpponentBackgammonChances = roundToHundredthPercent(dca.OpponentBackgammonChances)
+		dca.CubelessNoDoubleEquity = roundToMillipoint(dca.CubelessNoDoubleEquity)
+		dca.CubelessDoubleEquity = roundToMillipoint(dca.CubelessDoubleEquity)
+		dca.CubefulNoDoubleEquity = roundToMillipoint(dca.CubefulNoDoubleEquity)
+		dca.CubefulNoDoubleError = roundToMillipoint(dca.CubefulNoDoubleError)
+		dca.CubefulDoubleTakeEquity = roundToMillipoint(dca.CubefulDoubleTakeEquity)
+		dca.CubefulDoubleTakeError = roundToMillipoint(dca.CubefulDoubleTakeError)
+		dca.CubefulDoublePassEquity = roundToMillipoint(dca.CubefulDoublePassEquity)
+		dca.CubefulDoublePassError = roundToMillipoint(dca.CubefulDoublePassError)
+		dca.WrongPassPercentage = roundToHundredthPercent(dca.WrongPassPercentage)
+		dca.WrongTakePercentage = roundToHundredthPercent(dca.WrongTakePercentage)
+	}
+	if a.DoublingCubeAnalysis != nil {
+		roundDCA(a.DoublingCubeAnalysis)
+	}
+	for i := range a.AllCubeAnalyses {
+		roundDCA(&a.AllCubeAnalyses[i])
+	}
+	if ca := a.CheckerAnalysis; ca != nil {
+		for i := range ca.Moves {
+			m := &ca.Moves[i]
+			m.Equity = roundToMillipoint(m.Equity)
+			if m.EquityError != nil {
+				rounded := roundToMillipoint(*m.EquityError)
+				m.EquityError = &rounded
+			}
+			m.PlayerWinChance = roundToHundredthPercent(m.PlayerWinChance)
+			m.PlayerGammonChance = roundToHundredthPercent(m.PlayerGammonChance)
+			m.PlayerBackgammonChance = roundToHundredthPercent(m.PlayerBackgammonChance)
+			m.OpponentWinChance = roundToHundredthPercent(m.OpponentWinChance)
+			m.OpponentGammonChance = roundToHundredthPercent(m.OpponentGammonChance)
+			m.OpponentBackgammonChance = roundToHundredthPercent(m.OpponentBackgammonChance)
+		}
+	}
 }
 
 // Add MatchesPlayer2BackgammonRate method to Position type
@@ -6315,14 +6496,14 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)
@@ -8057,9 +8238,9 @@ func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, erro
 
 // saveMoveAnalysisInTx saves checker move analysis within a transaction
 func (d *Database) saveMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgparser.CheckerAnalysis) error {
-	// Calculate win rates (player1 is player on roll)
-	player1WinRate := analysis.Player1WinRate * 100.0 // Convert to percentage
-	player2WinRate := (1.0 - analysis.Player1WinRate) * 100.0
+	// Calculate win rates (player1 is player on roll) — stored as integer × 100
+	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -8067,18 +8248,18 @@ func (d *Database) saveMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "checker", translateAnalysisDepth(int(analysis.AnalysisDepth)),
-		analysis.Equity, 0.0, // No separate equity error in CheckerAnalysis
-		player1WinRate, analysis.Player1GammonRate*100.0, analysis.Player1BgRate*100.0,
-		player2WinRate, analysis.Player2GammonRate*100.0, analysis.Player2BgRate*100.0)
+		int64(math.Round(float64(analysis.Equity)*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BgRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BgRate)*100.0*100)))
 
 	return err
 }
 
 // saveCubeAnalysisInTx saves cube analysis within a transaction
 func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgparser.CubeAnalysis) error {
-	// Calculate win rates
-	player1WinRate := analysis.Player1WinRate * 100.0
-	player2WinRate := (1.0 - analysis.Player1WinRate) * 100.0
+	// Calculate win rates — stored as integer × 100
+	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -8086,9 +8267,9 @@ func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "cube", translateAnalysisDepth(int(analysis.AnalysisDepth)),
-		analysis.CubefulNoDouble, 0.0,
-		player1WinRate, analysis.Player1GammonRate*100.0, analysis.Player1BgRate*100.0,
-		player2WinRate, analysis.Player2GammonRate*100.0, analysis.Player2BgRate*100.0)
+		int64(math.Round(float64(analysis.CubefulNoDouble)*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BgRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BgRate)*100.0*100)))
 
 	return err
 }
@@ -8631,6 +8812,7 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		}
 
 		// Update the existing analysis
+		roundAnalysisForStorage(&analysis)
 		analysisJSON, err := json.Marshal(analysis)
 		if err != nil {
 			return err
@@ -8694,6 +8876,7 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		}
 
 		// Insert a new analysis
+		roundAnalysisForStorage(&analysis)
 		analysisJSON, err := json.Marshal(analysis)
 		if err != nil {
 			return err
@@ -10352,9 +10535,9 @@ func formatGnuBGMoveItems(move [8]int, player int, formatPoint func(int, int) st
 
 // saveGnuBGMoveAnalysisInTx saves a gnubgparser MoveOption to the move_analysis table
 func (d *Database) saveGnuBGMoveAnalysisInTx(tx *sql.Tx, moveID int64, moveOpt *gnubgparser.MoveOption) error {
-	// gnubgparser rates are 0-1 fractions; convert to percentages
-	player1WinRate := float64(moveOpt.Player1WinRate) * 100.0
-	player2WinRate := float64(moveOpt.Player2WinRate) * 100.0
+	// gnubgparser rates are 0-1 fractions; convert to integer × 100 of percentage
+	player1WinRate := int64(math.Round(float64(moveOpt.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(moveOpt.Player2WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -10362,9 +10545,9 @@ func (d *Database) saveGnuBGMoveAnalysisInTx(tx *sql.Tx, moveID int64, moveOpt *
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "checker", translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth),
-		moveOpt.Equity, 0.0,
-		player1WinRate, float64(moveOpt.Player1GammonRate)*100.0, float64(moveOpt.Player1BackgammonRate)*100.0,
-		player2WinRate, float64(moveOpt.Player2GammonRate)*100.0, float64(moveOpt.Player2BackgammonRate)*100.0)
+		int64(math.Round(moveOpt.Equity*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(moveOpt.Player1GammonRate)*100.0*100)), int64(math.Round(float64(moveOpt.Player1BackgammonRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(moveOpt.Player2GammonRate)*100.0*100)), int64(math.Round(float64(moveOpt.Player2BackgammonRate)*100.0*100)))
 
 	return err
 }
@@ -10783,8 +10966,8 @@ func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1
 
 // saveGnuBGCubeMoveAnalysisInTx saves gnubgparser CubeAnalysis to the move_analysis table
 func (d *Database) saveGnuBGCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *gnubgparser.CubeAnalysis) error {
-	player1WinRate := float64(analysis.Player1WinRate) * 100.0
-	player2WinRate := float64(analysis.Player2WinRate) * 100.0
+	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(analysis.Player2WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -10792,9 +10975,9 @@ func (d *Database) saveGnuBGCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, analy
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "cube", translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
-		analysis.CubefulNoDouble, 0.0,
-		player1WinRate, float64(analysis.Player1GammonRate)*100.0, float64(analysis.Player1BackgammonRate)*100.0,
-		player2WinRate, float64(analysis.Player2GammonRate)*100.0, float64(analysis.Player2BackgammonRate)*100.0)
+		int64(math.Round(analysis.CubefulNoDouble*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BackgammonRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BackgammonRate)*100.0*100)))
 
 	return err
 }
@@ -12093,12 +12276,12 @@ func (d *Database) saveBGFMoveAnalysisInTx(tx *sql.Tx, moveID int64, maData map[
 
 	ply := bgfGetInt(maData, "ply")
 
-	playerWin := bgfGetFloat(eq, "myWins") * 100.0
-	playerGammon := bgfGetFloat(eq, "myGammon") * 100.0
-	playerBg := bgfGetFloat(eq, "myBackGammon") * 100.0
-	opponentWin := bgfGetFloat(eq, "oppWins") * 100.0
-	opponentGammon := bgfGetFloat(eq, "oppGammon") * 100.0
-	opponentBg := bgfGetFloat(eq, "oppBackGammon") * 100.0
+	playerWin := int64(math.Round(bgfGetFloat(eq, "myWins") * 100.0 * 100))
+	playerGammon := int64(math.Round(bgfGetFloat(eq, "myGammon") * 100.0 * 100))
+	playerBg := int64(math.Round(bgfGetFloat(eq, "myBackGammon") * 100.0 * 100))
+	opponentWin := int64(math.Round(bgfGetFloat(eq, "oppWins") * 100.0 * 100))
+	opponentGammon := int64(math.Round(bgfGetFloat(eq, "oppGammon") * 100.0 * 100))
+	opponentBg := int64(math.Round(bgfGetFloat(eq, "oppBackGammon") * 100.0 * 100))
 
 	equity := bgfGetFloat(eq, "emg")
 	if !bgfGetBool(eq, "hasEMG") {
@@ -12111,7 +12294,7 @@ func (d *Database) saveBGFMoveAnalysisInTx(tx *sql.Tx, moveID int64, maData map[
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "checker", translateBGFAnalysisDepth(ply),
-		equity, 0.0,
+		int64(math.Round(equity*1000)), int64(0),
 		playerWin, playerGammon, playerBg,
 		opponentWin, opponentGammon, opponentBg)
 
@@ -12203,14 +12386,14 @@ func (d *Database) saveBGFCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID i
 
 // saveBGFCubeMoveAnalysisInTx saves BGF cube analysis to move_analysis table
 func (d *Database) saveBGFCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
-	playerWin := bgfGetFloat(equity, "myWins") * 100.0
-	playerGammon := bgfGetFloat(equity, "myGammon") * 100.0
-	playerBg := bgfGetFloat(equity, "myBackGammon") * 100.0
-	opponentWin := bgfGetFloat(equity, "oppWins") * 100.0
-	opponentGammon := bgfGetFloat(equity, "oppGammon") * 100.0
-	opponentBg := bgfGetFloat(equity, "oppBackGammon") * 100.0
+	playerWin := int64(math.Round(bgfGetFloat(equity, "myWins") * 100.0 * 100))
+	playerGammon := int64(math.Round(bgfGetFloat(equity, "myGammon") * 100.0 * 100))
+	playerBg := int64(math.Round(bgfGetFloat(equity, "myBackGammon") * 100.0 * 100))
+	opponentWin := int64(math.Round(bgfGetFloat(equity, "oppWins") * 100.0 * 100))
+	opponentGammon := int64(math.Round(bgfGetFloat(equity, "oppGammon") * 100.0 * 100))
+	opponentBg := int64(math.Round(bgfGetFloat(equity, "oppBackGammon") * 100.0 * 100))
 
-	eqNoDouble := bgfGetFloat(cubeDecision, "eqNoDouble")
+	eqNoDouble := int64(math.Round(bgfGetFloat(cubeDecision, "eqNoDouble") * 1000))
 
 	ply := 0 // Cube analysis doesn't have a ply field in BGF, use the move level
 	if pVal, ok := equity["ply"]; ok {
@@ -12223,7 +12406,7 @@ func (d *Database) saveBGFCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, equity 
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "cube", translateBGFAnalysisDepth(ply),
-		eqNoDouble, 0.0,
+		eqNoDouble, int64(0),
 		playerWin, playerGammon, playerBg,
 		opponentWin, opponentGammon, opponentBg)
 
@@ -12658,6 +12841,7 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 			Moves: checkerMoves,
 		}
 
+		roundAnalysisForStorage(&posAnalysis)
 		analysisJSON, err := json.Marshal(posAnalysis)
 		if err != nil {
 			return 0, fmt.Errorf("failed to marshal checker analysis: %w", err)
@@ -12741,6 +12925,7 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 
 		posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 
+		roundAnalysisForStorage(&posAnalysis)
 		analysisJSON, err := json.Marshal(posAnalysis)
 		if err != nil {
 			return 0, fmt.Errorf("failed to marshal cube analysis: %w", err)
@@ -14272,14 +14457,14 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		move_id INTEGER,
 		analysis_type TEXT,
 		depth TEXT,
-		equity REAL,
-		equity_error REAL,
-		win_rate REAL,
-		gammon_rate REAL,
-		backgammon_rate REAL,
-		opponent_win_rate REAL,
-		opponent_gammon_rate REAL,
-		opponent_backgammon_rate REAL,
+		equity INTEGER,
+		equity_error INTEGER,
+		win_rate INTEGER,
+		gammon_rate INTEGER,
+		backgammon_rate INTEGER,
+		opponent_win_rate INTEGER,
+		opponent_gammon_rate INTEGER,
+		opponent_backgammon_rate INTEGER,
 		FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 	)`)
 	if err != nil {
@@ -15107,14 +15292,14 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)

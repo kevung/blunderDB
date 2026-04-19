@@ -145,19 +145,20 @@ func TestPopulateAnalysisColumns_WinRates(t *testing.T) {
 	if c.BestCubeAction != "NoDouble" {
 		t.Errorf("BestCubeAction: got %q, want %q", c.BestCubeAction, "NoDouble")
 	}
-	if !nearlyEqual(c.Player1WinRate, 0.62, 1e-9) {
-		t.Errorf("Player1WinRate: got %f, want 0.62", c.Player1WinRate)
+	// Values are integer-scaled: rates ×100, equities ×1000
+	if c.Player1WinRate != 62 {
+		t.Errorf("Player1WinRate: got %d, want 62", c.Player1WinRate)
 	}
-	if !nearlyEqual(c.Player2WinRate, 0.38, 1e-9) {
-		t.Errorf("Player2WinRate: got %f, want 0.38", c.Player2WinRate)
+	if c.Player2WinRate != 38 {
+		t.Errorf("Player2WinRate: got %d, want 38", c.Player2WinRate)
 	}
 	// NoDouble is the best action → error should be 0
-	if c.CubeError != 0.0 {
-		t.Errorf("CubeError for correct NoDouble: got %f, want 0.0", c.CubeError)
+	if c.CubeError != 0 {
+		t.Errorf("CubeError for correct NoDouble: got %d, want 0", c.CubeError)
 	}
-	// Played move is Moves[1] with EquityError=0.12
-	if !nearlyEqual(c.BestMoveEquityError, 0.12, 1e-9) {
-		t.Errorf("BestMoveEquityError: got %f, want 0.12", c.BestMoveEquityError)
+	// Played move is Moves[1] with EquityError=0.12 → 120 millipoints
+	if c.BestMoveEquityError != 120 {
+		t.Errorf("BestMoveEquityError: got %d, want 120", c.BestMoveEquityError)
 	}
 }
 
@@ -173,8 +174,8 @@ func TestPopulateAnalysisColumns_CubeError(t *testing.T) {
 
 	// Played "NoDouble" but best is "Double/Take" → error = 0.25
 	c := populateAnalysisColumns(a, "", "NoDouble")
-	if !nearlyEqual(c.CubeError, 0.25, 1e-9) {
-		t.Errorf("CubeError for wrong NoDouble: got %f, want 0.25", c.CubeError)
+	if c.CubeError != 250 {
+		t.Errorf("CubeError for wrong NoDouble: got %d, want 250", c.CubeError)
 	}
 }
 
@@ -188,6 +189,6 @@ func TestPopulateAnalysisColumns_NoPlayedMove(t *testing.T) {
 	}
 	c := populateAnalysisColumns(a, "", "")
 	if c.BestMoveEquityError != 0 {
-		t.Errorf("BestMoveEquityError should be 0 when no played move, got %f", c.BestMoveEquityError)
+		t.Errorf("BestMoveEquityError should be 0 when no played move, got %d", c.BestMoveEquityError)
 	}
 }
