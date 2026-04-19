@@ -51,6 +51,24 @@ func init() {
 	}
 }
 
+// PipCounts returns the pip counts for both players from a Board.
+// pip1 is Black's pip count (player on roll when PlayerOnRoll==0),
+// pip2 is White's pip count. The pip count is purely positional and
+// does not require the bearoff database.
+func PipCounts(b Board) (pip1, pip2 int) {
+	for i, pt := range b.Points {
+		if pt.Checkers <= 0 || pt.Color < 0 {
+			continue
+		}
+		if pt.Color == Black {
+			pip1 += pt.Checkers * i
+		} else {
+			pip2 += pt.Checkers * (25 - i)
+		}
+	}
+	return
+}
+
 // combination computes C(n, k) using iterative multiplication.
 func combination(n, k int) int {
 	if k > n {

@@ -3,6 +3,7 @@ bgfparser/
 gnubg/
 gnubgparser/
 xgparser/
+testdata/tournois
 
 src/__pycache__
 tmp
@@ -10,4 +11,6 @@ build/bin/
 frontend/dist/
 frontend/node_modules/
 *.db
+*.db-wal
+*.db-shm
 

@@ -4,6 +4,7 @@
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
+    import { searchParamsStore } from '../stores/searchParamsStore';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, SaveFilter, UpdateFilter, DeleteFilter, SaveEditPosition, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
 
     export let onLoadPositionsByFilters;
@@ -83,10 +84,21 @@
         { name: 'Other', filters: ['Creation Date', 'Match IDs', 'Tournament IDs'] }
     ];
 
-    // Initialize all filters as disabled
+    // Initialize all filters as disabled, then restore previous search state if available
     availableFilters.forEach(f => filterEnabled[f] = false);
+    restoreSearchState();
 
     $: activeFilterCount = availableFilters.filter(f => filterEnabled[f]).length;
+
+    // Track board position only while the search tab is active.
+    // When the user switches away, App.svelte's exitEditMode() fires synchronously
+    // and updates positionStore to a DB position before onDestroy runs.
+    // This reactive block stops updating once $activeTabStore !== 'search',
+    // so savedSearchPosition always holds the last board the user saw on this panel.
+    let savedSearchPosition = null;
+    $: if ($activeTabStore === 'search') {
+        savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
+    }
 
     activeTabStore.subscribe(async value => {
         if (value === 'search') {
@@ -231,6 +243,8 @@
             p1czFilter, p2czFilter, searchText ? `t"${searchText}"` : '', p1apcFilter, eqFilter, dtFilter, drFilter, movePattern ? `m"${movePattern}"` : '',
             cdFilter, p1obFilter, p2obFilter, p1jbFilter, p2jbFilter, ncFilter, mirFilter, meFilter,
             searchCommand, matchIDs, tournamentIDs, restrictToPositionIDs);
+
+        saveSearchState();
     }
 
     function clearFilters() {
@@ -444,11 +458,75 @@
         // Allow all keys to propagate to the global handler for position navigation
     }
 
+    function saveSearchState() {
+        searchParamsStore.set({
+            position: savedSearchPosition,
+            filterEnabled: { ...filterEnabled },
+            searchInCurrentResults,
+            searchText, movePattern, matchIDsInput, tournamentIDsInput,
+            pipCountOption, pipCountMin, pipCountMax, pipCountRangeMin, pipCountRangeMax,
+            winRateOption, winRateMin, winRateMax, winRateRangeMin, winRateRangeMax,
+            gammonRateOption, gammonRateMin, gammonRateMax, gammonRateRangeMin, gammonRateRangeMax,
+            backgammonRateOption, backgammonRateMin, backgammonRateMax, backgammonRateRangeMin, backgammonRateRangeMax,
+            player2WinRateOption, player2WinRateMin, player2WinRateMax, player2WinRateRangeMin, player2WinRateRangeMax,
+            player2GammonRateOption, player2GammonRateMin, player2GammonRateMax, player2GammonRateRangeMin, player2GammonRateRangeMax,
+            player2BackgammonRateOption, player2BackgammonRateMin, player2BackgammonRateMax, player2BackgammonRateRangeMin, player2BackgammonRateRangeMax,
+            player1CheckerOffOption, player1CheckerOffMin, player1CheckerOffMax, player1CheckerOffRangeMin, player1CheckerOffRangeMax,
+            player2CheckerOffOption, player2CheckerOffMin, player2CheckerOffMax, player2CheckerOffRangeMin, player2CheckerOffRangeMax,
+            player1BackCheckerOption, player1BackCheckerMin, player1BackCheckerMax, player1BackCheckerRangeMin, player1BackCheckerRangeMax,
+            player2BackCheckerOption, player2BackCheckerMin, player2BackCheckerMax, player2BackCheckerRangeMin, player2BackCheckerRangeMax,
+            player1CheckerInZoneOption, player1CheckerInZoneMin, player1CheckerInZoneMax, player1CheckerInZoneRangeMin, player1CheckerInZoneRangeMax,
+            player2CheckerInZoneOption, player2CheckerInZoneMin, player2CheckerInZoneMax, player2CheckerInZoneRangeMin, player2CheckerInZoneRangeMax,
+            player1AbsolutePipCountOption, player1AbsolutePipCountMin, player1AbsolutePipCountMax, player1AbsolutePipCountRangeMin, player1AbsolutePipCountRangeMax,
+            equityOption, equityMin, equityMax, equityRangeMin, equityRangeMax,
+            moveErrorOption, moveErrorMin, moveErrorMax, moveErrorRangeMin, moveErrorRangeMax,
+            player1OutfieldBlotOption, player1OutfieldBlotMin, player1OutfieldBlotMax, player1OutfieldBlotRangeMin, player1OutfieldBlotRangeMax,
+            player2OutfieldBlotOption, player2OutfieldBlotMin, player2OutfieldBlotMax, player2OutfieldBlotRangeMin, player2OutfieldBlotRangeMax,
+            player1JanBlotOption, player1JanBlotMin, player1JanBlotMax, player1JanBlotRangeMin, player1JanBlotRangeMax,
+            player2JanBlotOption, player2JanBlotMin, player2JanBlotMax, player2JanBlotRangeMin, player2JanBlotRangeMax,
+            creationDateOption, creationDateMin, creationDateMax, creationDateRangeMin, creationDateRangeMax,
+        });
+    }
+
+    function restoreSearchState() {
+        const saved = $searchParamsStore;
+        if (!saved) return;
+        if (saved.position) {
+            positionStore.set(JSON.parse(JSON.stringify(saved.position)));
+        }
+        filterEnabled = { ...saved.filterEnabled };
+        searchInCurrentResults = saved.searchInCurrentResults;
+        searchText = saved.searchText; movePattern = saved.movePattern;
+        matchIDsInput = saved.matchIDsInput; tournamentIDsInput = saved.tournamentIDsInput;
+        pipCountOption = saved.pipCountOption; pipCountMin = saved.pipCountMin; pipCountMax = saved.pipCountMax; pipCountRangeMin = saved.pipCountRangeMin; pipCountRangeMax = saved.pipCountRangeMax;
+        winRateOption = saved.winRateOption; winRateMin = saved.winRateMin; winRateMax = saved.winRateMax; winRateRangeMin = saved.winRateRangeMin; winRateRangeMax = saved.winRateRangeMax;
+        gammonRateOption = saved.gammonRateOption; gammonRateMin = saved.gammonRateMin; gammonRateMax = saved.gammonRateMax; gammonRateRangeMin = saved.gammonRateRangeMin; gammonRateRangeMax = saved.gammonRateRangeMax;
+        backgammonRateOption = saved.backgammonRateOption; backgammonRateMin = saved.backgammonRateMin; backgammonRateMax = saved.backgammonRateMax; backgammonRateRangeMin = saved.backgammonRateRangeMin; backgammonRateRangeMax = saved.backgammonRateRangeMax;
+        player2WinRateOption = saved.player2WinRateOption; player2WinRateMin = saved.player2WinRateMin; player2WinRateMax = saved.player2WinRateMax; player2WinRateRangeMin = saved.player2WinRateRangeMin; player2WinRateRangeMax = saved.player2WinRateRangeMax;
+        player2GammonRateOption = saved.player2GammonRateOption; player2GammonRateMin = saved.player2GammonRateMin; player2GammonRateMax = saved.player2GammonRateMax; player2GammonRateRangeMin = saved.player2GammonRateRangeMin; player2GammonRateRangeMax = saved.player2GammonRateRangeMax;
+        player2BackgammonRateOption = saved.player2BackgammonRateOption; player2BackgammonRateMin = saved.player2BackgammonRateMin; player2BackgammonRateMax = saved.player2BackgammonRateMax; player2BackgammonRateRangeMin = saved.player2BackgammonRateRangeMin; player2BackgammonRateRangeMax = saved.player2BackgammonRateRangeMax;
+        player1CheckerOffOption = saved.player1CheckerOffOption; player1CheckerOffMin = saved.player1CheckerOffMin; player1CheckerOffMax = saved.player1CheckerOffMax; player1CheckerOffRangeMin = saved.player1CheckerOffRangeMin; player1CheckerOffRangeMax = saved.player1CheckerOffRangeMax;
+        player2CheckerOffOption = saved.player2CheckerOffOption; player2CheckerOffMin = saved.player2CheckerOffMin; player2CheckerOffMax = saved.player2CheckerOffMax; player2CheckerOffRangeMin = saved.player2CheckerOffRangeMin; player2CheckerOffRangeMax = saved.player2CheckerOffRangeMax;
+        player1BackCheckerOption = saved.player1BackCheckerOption; player1BackCheckerMin = saved.player1BackCheckerMin; player1BackCheckerMax = saved.player1BackCheckerMax; player1BackCheckerRangeMin = saved.player1BackCheckerRangeMin; player1BackCheckerRangeMax = saved.player1BackCheckerRangeMax;
+        player2BackCheckerOption = saved.player2BackCheckerOption; player2BackCheckerMin = saved.player2BackCheckerMin; player2BackCheckerMax = saved.player2BackCheckerMax; player2BackCheckerRangeMin = saved.player2BackCheckerRangeMin; player2BackCheckerRangeMax = saved.player2BackCheckerRangeMax;
+        player1CheckerInZoneOption = saved.player1CheckerInZoneOption; player1CheckerInZoneMin = saved.player1CheckerInZoneMin; player1CheckerInZoneMax = saved.player1CheckerInZoneMax; player1CheckerInZoneRangeMin = saved.player1CheckerInZoneRangeMin; player1CheckerInZoneRangeMax = saved.player1CheckerInZoneRangeMax;
+        player2CheckerInZoneOption = saved.player2CheckerInZoneOption; player2CheckerInZoneMin = saved.player2CheckerInZoneMin; player2CheckerInZoneMax = saved.player2CheckerInZoneMax; player2CheckerInZoneRangeMin = saved.player2CheckerInZoneRangeMin; player2CheckerInZoneRangeMax = saved.player2CheckerInZoneRangeMax;
+        player1AbsolutePipCountOption = saved.player1AbsolutePipCountOption; player1AbsolutePipCountMin = saved.player1AbsolutePipCountMin; player1AbsolutePipCountMax = saved.player1AbsolutePipCountMax; player1AbsolutePipCountRangeMin = saved.player1AbsolutePipCountRangeMin; player1AbsolutePipCountRangeMax = saved.player1AbsolutePipCountRangeMax;
+        equityOption = saved.equityOption; equityMin = saved.equityMin; equityMax = saved.equityMax; equityRangeMin = saved.equityRangeMin; equityRangeMax = saved.equityRangeMax;
+        moveErrorOption = saved.moveErrorOption; moveErrorMin = saved.moveErrorMin; moveErrorMax = saved.moveErrorMax; moveErrorRangeMin = saved.moveErrorRangeMin; moveErrorRangeMax = saved.moveErrorRangeMax;
+        player1OutfieldBlotOption = saved.player1OutfieldBlotOption; player1OutfieldBlotMin = saved.player1OutfieldBlotMin; player1OutfieldBlotMax = saved.player1OutfieldBlotMax; player1OutfieldBlotRangeMin = saved.player1OutfieldBlotRangeMin; player1OutfieldBlotRangeMax = saved.player1OutfieldBlotRangeMax;
+        player2OutfieldBlotOption = saved.player2OutfieldBlotOption; player2OutfieldBlotMin = saved.player2OutfieldBlotMin; player2OutfieldBlotMax = saved.player2OutfieldBlotMax; player2OutfieldBlotRangeMin = saved.player2OutfieldBlotRangeMin; player2OutfieldBlotRangeMax = saved.player2OutfieldBlotRangeMax;
+        player1JanBlotOption = saved.player1JanBlotOption; player1JanBlotMin = saved.player1JanBlotMin; player1JanBlotMax = saved.player1JanBlotMax; player1JanBlotRangeMin = saved.player1JanBlotRangeMin; player1JanBlotRangeMax = saved.player1JanBlotRangeMax;
+        player2JanBlotOption = saved.player2JanBlotOption; player2JanBlotMin = saved.player2JanBlotMin; player2JanBlotMax = saved.player2JanBlotMax; player2JanBlotRangeMin = saved.player2JanBlotRangeMin; player2JanBlotRangeMax = saved.player2JanBlotRangeMax;
+        creationDateOption = saved.creationDateOption; creationDateMin = saved.creationDateMin; creationDateMax = saved.creationDateMax; creationDateRangeMin = saved.creationDateRangeMin; creationDateRangeMax = saved.creationDateRangeMax;
+    }
+
     onMount(() => {
         document.addEventListener('keydown', handleKeyDown);
     });
 
     onDestroy(() => {
+        saveSearchState();
         document.removeEventListener('keydown', handleKeyDown);
     });
 </script>

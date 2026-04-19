@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"compress/zlib"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"path/filepath"
@@ -24,13 +27,796 @@ import (
 )
 
 type Database struct {
-	db              *sql.DB
-	mu              sync.Mutex // Add a mutex to the Database struct
-	importCancelled int32      // Flag to cancel ongoing import (atomic)
+	db                *sql.DB
+	mu                sync.Mutex                          // Add a mutex to the Database struct
+	importCancelled   int32                               // Flag to cancel ongoing import (atomic)
+	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 }
 
 func NewDatabase() *Database {
 	return &Database{}
+}
+
+// ---------------------------------------------------------------------------
+// Analysis data compression helpers
+// ---------------------------------------------------------------------------
+
+// compressAnalysisData compresses raw JSON bytes using zlib (best compression).
+func compressAnalysisData(jsonData []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	w, err := zlib.NewWriterLevel(&buf, zlib.BestCompression)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := w.Write(jsonData); err != nil {
+		w.Close()
+		return nil, err
+	}
+	if err := w.Close(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// decompressAnalysisData auto-detects zlib-compressed data vs raw JSON.
+// If the first byte is '{' the data is returned as-is (raw JSON).
+// Otherwise it attempts zlib decompression.
+func decompressAnalysisData(data []byte) ([]byte, error) {
+	if len(data) == 0 {
+		return data, nil
+	}
+	// Raw JSON always starts with '{'; zlib starts with 0x78.
+	if data[0] == '{' {
+		return data, nil
+	}
+	r, err := zlib.NewReader(bytes.NewReader(data))
+	if err != nil {
+		// Not zlib — return as-is (might be legacy text).
+		return data, nil
+	}
+	defer r.Close()
+	return io.ReadAll(r)
+}
+
+// encodeAnalysisForStorage marshals a PositionAnalysis to JSON and compresses it.
+func encodeAnalysisForStorage(a *PositionAnalysis) ([]byte, error) {
+	jsonData, err := json.Marshal(a)
+	if err != nil {
+		return nil, err
+	}
+	return compressAnalysisData(jsonData)
+}
+
+// decodeAnalysisFromStorage decompresses (if needed) and unmarshals analysis data.
+func decodeAnalysisFromStorage(data []byte) (PositionAnalysis, error) {
+	var a PositionAnalysis
+	jsonData, err := decompressAnalysisData(data)
+	if err != nil {
+		return a, err
+	}
+	err = json.Unmarshal(jsonData, &a)
+	return a, err
+}
+
+// recompressAnalysisData ensures data is in compressed format.
+// If it's already compressed, returns as-is. If raw JSON, compresses it.
+func recompressAnalysisData(data []byte) ([]byte, error) {
+	if len(data) == 0 {
+		return data, nil
+	}
+	if data[0] != '{' {
+		// Already compressed (or at least not raw JSON)
+		return data, nil
+	}
+	return compressAnalysisData(data)
+}
+
+// SetMigrationProgress registers a callback that is invoked during the v2.0.0
+// backfill migration to report progress. The GUI wires in a Wails event emitter
+// here; the CLI and tests can leave it nil.
+func (d *Database) SetMigrationProgress(fn func(phase string, done, total int)) {
+	d.migrationProgress = fn
+}
+
+// emitMigrationProgress calls the progress callback if one was registered.
+func (d *Database) emitMigrationProgress(phase string, done, total int) {
+	if d.migrationProgress != nil {
+		d.migrationProgress(phase, done, total)
+	}
+}
+
+// migrate_1_9_0_to_2_0_0 performs the in-place backfill migration from the
+// pre-2.0.0 schema (position.state only) to the v2.0.0 schema with scalar
+// columns.  It runs inside a single transaction:
+//
+//  1. ALTER TABLE to add all new nullable columns (idempotent — duplicate-column
+//     errors are silently ignored).
+//  2. Backfill position rows in batches of 1000.
+//  3. Backfill analysis rows in batches of 1000.
+//  4. Deduplicate positions (same Zobrist hash) by re-pointing FK references
+//     to the lowest id, then deleting orphans.
+//  5. CREATE INDEX IF NOT EXISTS for every v2.0.0 index.
+//  6. ANALYZE to refresh query-planner statistics.
+//  7. Bump database_version to "2.0.0".
+//
+// If the process is interrupted before step 7 (COMMIT), the version string
+// remains "1.9.0" and the migration is retried on the next open; the ALTER TABLE
+// statements are idempotent so repeated runs are safe.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_1_9_0_to_2_0_0() error {
+	// 1. ALTER TABLE — add new nullable columns (swallow "duplicate column")
+	// -----------------------------------------------------------------
+	newPositionCols := []string{
+		`ALTER TABLE position ADD COLUMN zobrist_hash    INTEGER`,
+		`ALTER TABLE position ADD COLUMN decision_type  INTEGER`,
+		`ALTER TABLE position ADD COLUMN player_on_roll INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_1         INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_2         INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_value     INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_owner     INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_1        INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_2        INTEGER`,
+		`ALTER TABLE position ADD COLUMN match_length   INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_jacoby     INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_beaver     INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_diff       INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_1 INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_2 INTEGER`,
+		`ALTER TABLE position ADD COLUMN no_contact     INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_1    INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_2    INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_1   INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
+	}
+	for _, stmt := range newPositionCols {
+		d.db.Exec(stmt) // duplicate column → silently ignored
+	}
+
+	newAnalysisCols := []string{
+		`ALTER TABLE analysis ADD COLUMN best_cube_action        TEXT`,
+		`ALTER TABLE analysis ADD COLUMN cube_error              REAL`,
+		`ALTER TABLE analysis ADD COLUMN best_move_equity_error  REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_backgammon_rate REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
+	}
+	for _, stmt := range newAnalysisCols {
+		d.db.Exec(stmt)
+	}
+
+	// -----------------------------------------------------------------
+	// 2. Backfill position
+	// -----------------------------------------------------------------
+	var posTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
+
+	if posTotal > 0 {
+		updatePos, err := d.db.Prepare(`UPDATE position SET
+			zobrist_hash=?, decision_type=?, player_on_roll=?, dice_1=?, dice_2=?,
+			cube_value=?, cube_owner=?, score_1=?, score_2=?,
+			has_jacoby=?, has_beaver=?,
+			pip_1=?, pip_2=?, pip_diff=?, off_1=?, off_2=?,
+			back_checkers_1=?, back_checkers_2=?, no_contact=?,
+			occupancy_1=?, occupancy_2=?, point_mask_1=?, point_mask_2=?
+			WHERE id=?`)
+		if err != nil {
+			return fmt.Errorf("migrate position prepare: %w", err)
+		}
+		defer updatePos.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, state FROM position WHERE id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate position query: %w", err)
+			}
+
+			var batch []struct {
+				id    int64
+				state string
+			}
+			for rows.Next() {
+				var id int64
+				var state string
+				if err := rows.Scan(&id, &state); err == nil {
+					batch = append(batch, struct {
+						id    int64
+						state string
+					}{id, state})
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, row := range batch {
+				lastID = row.id
+				var pos Position
+				if err := json.Unmarshal([]byte(row.state), &pos); err != nil {
+					continue // malformed JSON — leave columns NULL
+				}
+				c := populatePositionColumns(&pos)
+				noContactInt := 0
+				if c.NoContact {
+					noContactInt = 1
+				}
+				updatePos.Exec(
+					int64(c.ZobristHash), c.DecisionType, 0 /*player_on_roll: always 0 after normalize*/, c.Dice1, c.Dice2,
+					c.CubeValue, c.CubeOwner, c.Score1, c.Score2,
+					c.HasJacoby, c.HasBeaver,
+					c.Pip1, c.Pip2, c.PipDiff, c.Off1, c.Off2,
+					c.BackCheckers1, c.BackCheckers2, noContactInt,
+					int64(c.Occupancy1), int64(c.Occupancy2), int64(c.PointMask1), int64(c.PointMask2),
+					row.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("position", done, posTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("position", posTotal, posTotal)
+	}
+
+	// -----------------------------------------------------------------
+	// 3. Backfill analysis
+	// -----------------------------------------------------------------
+	var anaTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&anaTotal)
+
+	if anaTotal > 0 {
+		updateAna, err := d.db.Prepare(`UPDATE analysis SET
+			best_cube_action=?, cube_error=?, best_move_equity_error=?,
+			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			WHERE id=?`)
+		if err != nil {
+			return fmt.Errorf("migrate analysis prepare: %w", err)
+		}
+		defer updateAna.Close()
+
+		// Prepare statement to look up the played cube action from the move table
+		// when the analysis JSON doesn't have it.
+		lookupCubeAction, err := d.db.Prepare(`
+			SELECT m.cube_action FROM move m
+			WHERE m.position_id = (SELECT a2.position_id FROM analysis a2 WHERE a2.id = ?)
+			  AND m.move_type = 'cube' AND m.cube_action != ''
+			LIMIT 1`)
+		if err != nil {
+			return fmt.Errorf("migrate cube action lookup prepare: %w", err)
+		}
+		defer lookupCubeAction.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, data FROM analysis WHERE id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate analysis query: %w", err)
+			}
+
+			var batch []struct {
+				id   int64
+				data string
+			}
+			for rows.Next() {
+				var id int64
+				var data string
+				if err := rows.Scan(&id, &data); err == nil {
+					batch = append(batch, struct {
+						id   int64
+						data string
+					}{id, data})
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, row := range batch {
+				lastID = row.id
+				var ana PositionAnalysis
+				if err := json.Unmarshal([]byte(row.data), &ana); err != nil {
+					continue
+				}
+				playedMove := ""
+				if len(ana.PlayedMoves) > 0 {
+					playedMove = ana.PlayedMoves[0]
+				} else if ana.PlayedMove != "" {
+					playedMove = ana.PlayedMove
+				}
+				playedCubeAction := ""
+				if len(ana.PlayedCubeActions) > 0 {
+					playedCubeAction = ana.PlayedCubeActions[0]
+				} else if ana.PlayedCubeAction != "" {
+					playedCubeAction = ana.PlayedCubeAction
+				}
+				// If the analysis JSON doesn't have the played cube action but has
+				// cube analysis, look it up from the move table.
+				if playedCubeAction == "" && ana.DoublingCubeAnalysis != nil {
+					var ca sql.NullString
+					if err := lookupCubeAction.QueryRow(row.id).Scan(&ca); err == nil && ca.Valid {
+						playedCubeAction = ca.String
+					}
+				}
+				ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
+				updateAna.Exec(
+					ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
+					ac.Player1WinRate, ac.Player1GammonRate, ac.Player1BackgammonRate,
+					ac.Player2WinRate, ac.Player2GammonRate, ac.Player2BackgammonRate,
+					row.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("analysis", done, anaTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("analysis", anaTotal, anaTotal)
+	}
+
+	// -----------------------------------------------------------------
+	// 4. Dedup positions with the same Zobrist hash
+	//    (should be rare — keep lowest id, remap FK references)
+	// -----------------------------------------------------------------
+	dupRows, err := d.db.Query(`
+		SELECT zobrist_hash, MIN(id) AS keep_id, GROUP_CONCAT(id ORDER BY id) AS all_ids
+		FROM position
+		WHERE zobrist_hash IS NOT NULL
+		GROUP BY zobrist_hash
+		HAVING COUNT(*) > 1`)
+	if err != nil {
+		return fmt.Errorf("migrate dedup query: %w", err)
+	}
+
+	type dedupGroup struct {
+		hash   int64
+		keepID int64
+		allIDs []int64
+	}
+	var dups []dedupGroup
+	for dupRows.Next() {
+		var hash, keepID int64
+		var allIDsStr string
+		if err := dupRows.Scan(&hash, &keepID, &allIDsStr); err != nil {
+			continue
+		}
+		var allIDs []int64
+		for _, part := range strings.Split(allIDsStr, ",") {
+			var id int64
+			if _, err := fmt.Sscan(strings.TrimSpace(part), &id); err == nil {
+				allIDs = append(allIDs, id)
+			}
+		}
+		dups = append(dups, dedupGroup{hash, keepID, allIDs})
+	}
+	dupRows.Close()
+
+	mergedTotal := 0
+	for _, g := range dups {
+		for _, discardID := range g.allIDs {
+			if discardID == g.keepID {
+				continue
+			}
+			// Remap FK references
+			d.db.Exec(`UPDATE move               SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			d.db.Exec(`UPDATE collection_position SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			d.db.Exec(`UPDATE anki_card           SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			// Delete orphan analysis + position
+			d.db.Exec(`DELETE FROM analysis WHERE position_id=?`, discardID)
+			d.db.Exec(`DELETE FROM position WHERE id=?`, discardID)
+			mergedTotal++
+		}
+	}
+	if mergedTotal > 0 {
+		fmt.Printf("migrate_1_9_0_to_2_0_0: merged %d duplicate positions\n", mergedTotal)
+	}
+
+	// -----------------------------------------------------------------
+	// 5. Create indexes
+	// -----------------------------------------------------------------
+	v2indexes := []string{
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
+	}
+	for _, idx := range v2indexes {
+		if _, err := d.db.Exec(idx); err != nil {
+			// UNIQUE index may fail if dedup left residual NULLs; treat as non-fatal warning
+			fmt.Printf("migrate_1_9_0_to_2_0_0: index warning: %v\n", err)
+		}
+	}
+
+	// -----------------------------------------------------------------
+	// 6. ANALYZE
+	// -----------------------------------------------------------------
+	d.db.Exec(`ANALYZE`)
+
+	// -----------------------------------------------------------------
+	// 7. Bump version
+	// -----------------------------------------------------------------
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.0.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 1.9.0 to 2.0.0")
+	return nil
+}
+
+// migrate_2_0_0_to_2_1_0 converts analysis and move_analysis scalar columns
+// from REAL to integer-scaled INTEGER values and re-rounds all JSON blobs.
+//
+// Encoding:
+//   - Win/gammon/backgammon rates: stored as rate × 100 (hundredths of percent).
+//   - Equity and errors: stored as value × 1000 (millipoints).
+//
+// JSON blobs are re-parsed, rounded via roundAnalysisForStorage, and re-serialised.
+// Analysis scalar columns are re-computed from the rounded JSON via populateAnalysisColumns.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_0_0_to_2_1_0() error {
+	// -----------------------------------------------------------------
+	// 1. Convert move_analysis REAL columns to integer scale via SQL.
+	// -----------------------------------------------------------------
+	d.emitMigrationProgress("move_analysis", 0, 1)
+	_, err := d.db.Exec(`
+		UPDATE move_analysis SET
+			equity                  = ROUND(equity * 1000),
+			equity_error            = ROUND(equity_error * 1000),
+			win_rate                = ROUND(win_rate * 100),
+			gammon_rate             = ROUND(gammon_rate * 100),
+			backgammon_rate         = ROUND(backgammon_rate * 100),
+			opponent_win_rate       = ROUND(opponent_win_rate * 100),
+			opponent_gammon_rate    = ROUND(opponent_gammon_rate * 100),
+			opponent_backgammon_rate = ROUND(opponent_backgammon_rate * 100)
+	`)
+	if err != nil {
+		return fmt.Errorf("migrate move_analysis to integer: %w", err)
+	}
+	d.emitMigrationProgress("move_analysis", 1, 1)
+
+	// -----------------------------------------------------------------
+	// 2. Re-round JSON blobs and rebuild analysis scalar columns.
+	// -----------------------------------------------------------------
+	rows, err := d.db.Query(`SELECT id, data FROM analysis WHERE data IS NOT NULL AND data != ''`)
+	if err != nil {
+		return fmt.Errorf("migrate analysis query: %w", err)
+	}
+
+	type anaRow struct {
+		id   int64
+		data string
+	}
+	var batch []anaRow
+	for rows.Next() {
+		var r anaRow
+		if err := rows.Scan(&r.id, &r.data); err != nil {
+			continue
+		}
+		batch = append(batch, r)
+	}
+	rows.Close()
+
+	anaTotal := len(batch)
+	d.emitMigrationProgress("analysis", 0, anaTotal)
+
+	updateStmt, err := d.db.Prepare(`UPDATE analysis SET
+		data=?, best_cube_action=?, cube_error=?, best_move_equity_error=?,
+		player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+		player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+		WHERE id=?`)
+	if err != nil {
+		return fmt.Errorf("migrate prepare update: %w", err)
+	}
+	defer updateStmt.Close()
+
+	// Look up the played cube action from the move table when analysis JSON lacks it.
+	lookupCubeAction2, err := d.db.Prepare(`
+		SELECT m.cube_action FROM move m
+		WHERE m.position_id = (SELECT a2.position_id FROM analysis a2 WHERE a2.id = ?)
+		  AND m.move_type = 'cube' AND m.cube_action != ''
+		LIMIT 1`)
+	if err != nil {
+		return fmt.Errorf("migrate cube action lookup prepare: %w", err)
+	}
+	defer lookupCubeAction2.Close()
+
+	for i, r := range batch {
+		var ana PositionAnalysis
+		if err := json.Unmarshal([]byte(r.data), &ana); err != nil {
+			continue
+		}
+		roundAnalysisForStorage(&ana)
+		newJSON, err := json.Marshal(ana)
+		if err != nil {
+			continue
+		}
+		playedMove := ""
+		if len(ana.PlayedMoves) > 0 {
+			playedMove = ana.PlayedMoves[0]
+		} else if ana.PlayedMove != "" {
+			playedMove = ana.PlayedMove
+		}
+		playedCubeAction := ""
+		if len(ana.PlayedCubeActions) > 0 {
+			playedCubeAction = ana.PlayedCubeActions[0]
+		} else if ana.PlayedCubeAction != "" {
+			playedCubeAction = ana.PlayedCubeAction
+		}
+		if playedCubeAction == "" && ana.DoublingCubeAnalysis != nil {
+			var ca sql.NullString
+			if err := lookupCubeAction2.QueryRow(r.id).Scan(&ca); err == nil && ca.Valid {
+				playedCubeAction = ca.String
+			}
+		}
+		ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
+		updateStmt.Exec(
+			string(newJSON),
+			ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
+			ac.Player1WinRate, ac.Player1GammonRate, ac.Player1BackgammonRate,
+			ac.Player2WinRate, ac.Player2GammonRate, ac.Player2BackgammonRate,
+			r.id)
+		if (i+1)%200 == 0 {
+			d.emitMigrationProgress("analysis", i+1, anaTotal)
+		}
+	}
+	d.emitMigrationProgress("analysis", anaTotal, anaTotal)
+
+	// -----------------------------------------------------------------
+	// 3. ANALYZE
+	// -----------------------------------------------------------------
+	d.db.Exec(`ANALYZE`)
+
+	// -----------------------------------------------------------------
+	// 4. Bump version
+	// -----------------------------------------------------------------
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.1.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 2.0.0 to 2.1.0")
+	return nil
+}
+
+// migrate_2_1_0_to_2_2_0 compacts the position.state column from full Position
+// JSON (~800 bytes) to a compact board-only array (~60-80 bytes). All non-board
+// fields (cube, dice, score, flags) are already stored in the denormalized
+// columns added in v2.0.0, so the JSON blob is redundant for those fields.
+//
+// This reduces the position table size by ~85-90% on the state column.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_1_0_to_2_2_0() error {
+	var posTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
+
+	if posTotal > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE position SET state = ? WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate prepare: %w", err)
+		}
+		defer updateStmt.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, state FROM position WHERE id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate query: %w", err)
+			}
+
+			type row struct {
+				id    int64
+				state string
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.state); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				// Skip if already compact
+				if isCompactState(r.state) {
+					done++
+					continue
+				}
+
+				var pos Position
+				if err := json.Unmarshal([]byte(r.state), &pos); err != nil {
+					done++
+					continue // malformed JSON — leave as-is
+				}
+				compact := encodeBoardCompact(pos.Board)
+				updateStmt.Exec(compact, r.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("compact_state", done, posTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("compact_state", posTotal, posTotal)
+	}
+
+	// Prune command_history to last 1000 entries
+	d.db.Exec(`
+		DELETE FROM command_history
+		WHERE id NOT IN (
+			SELECT id FROM command_history
+			ORDER BY timestamp DESC
+			LIMIT 1000
+		)
+	`)
+
+	d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.2.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 2.1.0 to 2.2.0")
+	return nil
+}
+
+// migrate_2_2_0_to_2_3_0 compresses analysis.data JSON blobs with zlib.
+// The analysis table's scalar filter columns are unchanged; only the data
+// column is re-encoded. This reduces analysis storage by ~60-80%.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_2_0_to_2_3_0() error {
+	var anaTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE data IS NOT NULL AND data != ''`).Scan(&anaTotal)
+
+	if anaTotal > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET data = ? WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate prepare: %w", err)
+		}
+		defer updateStmt.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, data FROM analysis WHERE id > ? AND data IS NOT NULL AND data != '' ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate query: %w", err)
+			}
+
+			type row struct {
+				id   int64
+				data []byte
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				// Skip if already compressed (not raw JSON)
+				if len(r.data) > 0 && r.data[0] != '{' {
+					done++
+					continue
+				}
+				compressed, err := compressAnalysisData(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+				updateStmt.Exec(compressed, r.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("compress_analysis", done, anaTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("compress_analysis", anaTotal, anaTotal)
+	}
+
+	d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.3.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 2.2.0 to 2.3.0")
+	return nil
+}
+
+// WAL journal mode is skipped for in-memory databases (":memory:")
+// because WAL requires a real filesystem.
+func (d *Database) applyPragmas(path string) error {
+	if path != ":memory:" {
+		var mode string
+		if err := d.db.QueryRow(`PRAGMA journal_mode = WAL`).Scan(&mode); err != nil {
+			return fmt.Errorf("PRAGMA journal_mode=WAL: %w", err)
+		}
+	}
+	pragmas := []string{
+		`PRAGMA synchronous  = NORMAL`,
+		`PRAGMA cache_size   = -65536`,
+		`PRAGMA temp_store   = MEMORY`,
+		`PRAGMA mmap_size    = 268435456`,
+		`PRAGMA foreign_keys = ON`,
+	}
+	for _, p := range pragmas {
+		if _, err := d.db.Exec(p); err != nil {
+			return fmt.Errorf("%s: %w", p, err)
+		}
+	}
+	return nil
 }
 
 func (d *Database) SetupDatabase(path string) error {
@@ -49,10 +835,9 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
-	// Enable foreign key constraints
-	_, err = d.db.Exec("PRAGMA foreign_keys = ON")
-	if err != nil {
-		fmt.Println("Error enabling foreign keys:", err)
+	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
+	if err = d.applyPragmas(path); err != nil {
+		fmt.Println("Error applying PRAGMAs:", err)
 		return err
 	}
 
@@ -71,8 +856,32 @@ func (d *Database) SetupDatabase(path string) error {
 
 	_, err = d.db.Exec(`
         CREATE TABLE IF NOT EXISTS position (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            state TEXT
+            id                INTEGER PRIMARY KEY AUTOINCREMENT,
+            zobrist_hash      INTEGER,
+            decision_type     INTEGER,
+            player_on_roll    INTEGER,
+            dice_1            INTEGER,
+            dice_2            INTEGER,
+            cube_value        INTEGER,
+            cube_owner        INTEGER,
+            score_1           INTEGER,
+            score_2           INTEGER,
+            match_length      INTEGER,
+            has_jacoby        INTEGER,
+            has_beaver        INTEGER,
+            pip_1             INTEGER,
+            pip_2             INTEGER,
+            pip_diff          INTEGER,
+            off_1             INTEGER,
+            off_2             INTEGER,
+            back_checkers_1   INTEGER,
+            back_checkers_2   INTEGER,
+            no_contact        INTEGER,
+            occupancy_1       INTEGER,
+            occupancy_2       INTEGER,
+            point_mask_1      INTEGER,
+            point_mask_2      INTEGER,
+            state             TEXT    NOT NULL
         )
     `)
 	if err != nil {
@@ -82,9 +891,18 @@ func (d *Database) SetupDatabase(path string) error {
 
 	_, err = d.db.Exec(`
         CREATE TABLE IF NOT EXISTS analysis (
-            id INTEGER PRIMARY KEY,
-            position_id INTEGER,
-            data JSON,
+            id                          INTEGER PRIMARY KEY,
+            position_id                 INTEGER,
+            data                        JSON,
+            best_cube_action            TEXT,
+            cube_error                  INTEGER,
+            best_move_equity_error      INTEGER,
+            player1_win_rate            INTEGER,
+            player1_gammon_rate         INTEGER,
+            player1_backgammon_rate     INTEGER,
+            player2_win_rate            INTEGER,
+            player2_gammon_rate         INTEGER,
+            player2_backgammon_rate     INTEGER,
             FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
         )
     `)
@@ -231,14 +1049,14 @@ func (d *Database) SetupDatabase(path string) error {
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)
@@ -386,6 +1204,33 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	// v2.0.0 indexes — position search acceleration
+	v2indexes := []string{
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist        ON position(zobrist_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		`CREATE        INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
+		`CREATE        INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
+	}
+	for _, idx := range v2indexes {
+		if _, err = d.db.Exec(idx); err != nil {
+			fmt.Println("Error creating v2.0.0 index:", idx, err)
+			return err
+		}
+	}
+
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
@@ -412,10 +1257,9 @@ func (d *Database) OpenDatabase(path string) error {
 		return err
 	}
 
-	// Enable foreign key constraints
-	_, err = d.db.Exec("PRAGMA foreign_keys = ON")
-	if err != nil {
-		fmt.Println("Error enabling foreign keys:", err)
+	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
+	if err = d.applyPragmas(path); err != nil {
+		fmt.Println("Error applying PRAGMAs:", err)
 		return err
 	}
 
@@ -792,6 +1636,45 @@ func (d *Database) OpenDatabase(path string) error {
 		fmt.Println("Database automatically upgraded from 1.8.0 to 1.9.0")
 	}
 
+	// Auto-migrate from 1.9.0 to 2.0.0
+	// Backfills new scalar columns, deduplicates positions, and creates indexes.
+	if dbVersion == "1.9.0" {
+		if err := d.migrate_1_9_0_to_2_0_0(); err != nil {
+			return fmt.Errorf("migration 1.9.0→2.0.0 failed: %w", err)
+		}
+		dbVersion = "2.0.0"
+	}
+
+	// Auto-migrate from 2.0.0 to 2.1.0
+	// Converts analysis/move_analysis REAL columns to integer-scaled INTEGER values
+	// and re-rounds all JSON blobs for compact storage.
+	if dbVersion == "2.0.0" {
+		if err := d.migrate_2_0_0_to_2_1_0(); err != nil {
+			return fmt.Errorf("migration 2.0.0→2.1.0 failed: %w", err)
+		}
+		dbVersion = "2.1.0"
+	}
+
+	// Auto-migrate from 2.1.0 to 2.2.0
+	// Compacts position.state from full Position JSON to board-only array,
+	// reducing storage by ~85-90% on the state column. Also prunes command history.
+	if dbVersion == "2.1.0" {
+		if err := d.migrate_2_1_0_to_2_2_0(); err != nil {
+			return fmt.Errorf("migration 2.1.0→2.2.0 failed: %w", err)
+		}
+		dbVersion = "2.2.0"
+	}
+
+	// Auto-migrate from 2.2.0 to 2.3.0
+	// Compresses analysis.data JSON blobs with zlib, reducing analysis storage
+	// by ~60-80%. Scalar filter columns are unchanged.
+	if dbVersion == "2.2.0" {
+		if err := d.migrate_2_2_0_to_2_3_0(); err != nil {
+			return fmt.Errorf("migration 2.2.0→2.3.0 failed: %w", err)
+		}
+		dbVersion = "2.3.0"
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).
@@ -961,14 +1844,14 @@ func (d *Database) ensureAllTablesExist() error {
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)
@@ -1106,6 +1989,76 @@ func (d *Database) ensureAllTablesExist() error {
 		return fmt.Errorf("error ensuring anki_card due index: %w", err)
 	}
 
+	// v2.0.0: ensure new position/analysis columns exist (ALTER TABLE is a no-op if column already exists)
+	newPositionCols := []string{
+		`ALTER TABLE position ADD COLUMN zobrist_hash    INTEGER`,
+		`ALTER TABLE position ADD COLUMN decision_type  INTEGER`,
+		`ALTER TABLE position ADD COLUMN player_on_roll INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_1         INTEGER`,
+		`ALTER TABLE position ADD COLUMN dice_2         INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_value     INTEGER`,
+		`ALTER TABLE position ADD COLUMN cube_owner     INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_1        INTEGER`,
+		`ALTER TABLE position ADD COLUMN score_2        INTEGER`,
+		`ALTER TABLE position ADD COLUMN match_length   INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_jacoby     INTEGER`,
+		`ALTER TABLE position ADD COLUMN has_beaver     INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN pip_diff       INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_1          INTEGER`,
+		`ALTER TABLE position ADD COLUMN off_2          INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_1 INTEGER`,
+		`ALTER TABLE position ADD COLUMN back_checkers_2 INTEGER`,
+		`ALTER TABLE position ADD COLUMN no_contact     INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_1    INTEGER`,
+		`ALTER TABLE position ADD COLUMN occupancy_2    INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_1   INTEGER`,
+		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
+	}
+	for _, stmt := range newPositionCols {
+		d.db.Exec(stmt) // ignore error: column may already exist
+	}
+
+	newAnalysisCols := []string{
+		`ALTER TABLE analysis ADD COLUMN best_cube_action        TEXT`,
+		`ALTER TABLE analysis ADD COLUMN cube_error              REAL`,
+		`ALTER TABLE analysis ADD COLUMN best_move_equity_error  REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player1_backgammon_rate REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_win_rate        REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_gammon_rate     REAL`,
+		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
+	}
+	for _, stmt := range newAnalysisCols {
+		d.db.Exec(stmt) // ignore error: column may already exist
+	}
+
+	// v2.0.0 indexes — non-unique ones are safe to add to existing DBs
+	v2indexesSafe := []string{
+		`CREATE INDEX IF NOT EXISTS idx_position_decision_pip   ON position(decision_type, pip_diff)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_decision_dice  ON position(decision_type, dice_1, dice_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_pip_diff       ON position(pip_diff)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_dice           ON position(dice_1, dice_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_off            ON position(off_1, off_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_score          ON position(match_length, score_1, score_2)`,
+		`CREATE INDEX IF NOT EXISTS idx_position_score_cube     ON position(match_length, score_1, score_2, cube_value)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_position       ON analysis(position_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_win_gammon     ON analysis(player1_win_rate, player1_gammon_rate)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
+		`CREATE INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		`CREATE INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
+	}
+	for _, idx := range v2indexesSafe {
+		d.db.Exec(idx) // ignore error: index may already exist or column may be NULL
+	}
+	// idx_position_zobrist (UNIQUE) and idx_match_canonical (UNIQUE) are only safe on fresh DBs
+	// or after a dedup migration; they're handled in phase 03 for existing DBs.
+
 	return nil
 }
 
@@ -1157,7 +2110,7 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 		return nil, err
 	}
 
-	rows, err := d.db.Query(`SELECT id, state FROM position`)
+	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error querying positions:", err)
 		return nil, err
@@ -1165,18 +2118,12 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 	defer rows.Close()
 
 	for rows.Next() {
-		var stateJSON string
-		var positionID int64
-		if err = rows.Scan(&positionID, &stateJSON); err != nil {
+		existingPosition, err := scanPositionRow(rows)
+		if err != nil {
 			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
-
-		var existingPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &existingPosition); err != nil {
-			fmt.Println("Error unmarshalling position:", err)
-			return nil, err
-		}
+		positionID := existingPosition.ID
 
 		// Compare the positions excluding the ID field inside the state
 		existingPosition.ID = 0
@@ -1197,6 +2144,264 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 	return map[string]interface{}{"id": 0, "exists": false}, nil
 }
 
+// positionColumns holds the derived scalar columns that will be stored
+// alongside the position JSON in the v2 schema. populatePositionColumns
+// computes them from a (already-normalized) Position without hitting the DB.
+// This helper is intentionally dead code until phase 02 adds the columns.
+type positionColumns struct {
+	ZobristHash   uint64
+	DecisionType  int
+	Dice1, Dice2  int
+	Pip1, Pip2    int
+	PipDiff       int
+	Off1, Off2    int
+	BackCheckers1 int
+	BackCheckers2 int
+	NoContact     bool
+	Occupancy1    uint32
+	Occupancy2    uint32
+	PointMask1    uint32
+	PointMask2    uint32
+	// mirrors of Position fields for indexed columns
+	CubeValue int
+	CubeOwner int
+	Score1    int
+	Score2    int
+	HasJacoby int
+	HasBeaver int
+}
+
+// populatePositionColumns computes every derived column value for a Position.
+// The input should already be normalized (PlayerOnRoll == 0); if it isn't the
+// function normalizes it internally.
+func populatePositionColumns(p *Position) positionColumns {
+	norm := p.NormalizeForStorage()
+	var c positionColumns
+
+	c.ZobristHash = ZobristHash(&norm)
+	c.DecisionType = norm.DecisionType
+	c.Dice1 = norm.Dice[0]
+	c.Dice2 = norm.Dice[1]
+
+	c.Pip1, c.Pip2 = PipCounts(norm.Board)
+	c.PipDiff = c.Pip1 - c.Pip2
+
+	c.Off1 = norm.Board.Bearoff[0]
+	c.Off2 = norm.Board.Bearoff[1]
+
+	// Back checkers: Black's (player-on-roll's) are in the opponent's home board (points 19-24);
+	// White's are in Black's home board (points 1-6).
+	for i := 19; i <= 24; i++ {
+		if norm.Board.Points[i].Color == Black && norm.Board.Points[i].Checkers > 0 {
+			c.BackCheckers1 += norm.Board.Points[i].Checkers
+		}
+	}
+	for i := 1; i <= 6; i++ {
+		if norm.Board.Points[i].Color == White && norm.Board.Points[i].Checkers > 0 {
+			c.BackCheckers2 += norm.Board.Points[i].Checkers
+		}
+	}
+
+	c.NoContact = norm.MatchesNoContact()
+
+	c.Occupancy1, c.Occupancy2, c.PointMask1, c.PointMask2 = OccupancyMasks(&norm.Board)
+
+	c.CubeValue = norm.Cube.Value
+	c.CubeOwner = norm.Cube.Owner
+	c.Score1 = norm.Score[0]
+	c.Score2 = norm.Score[1]
+	c.HasJacoby = norm.HasJacoby
+	c.HasBeaver = norm.HasBeaver
+
+	return c
+}
+
+// analysisColumns holds the derived scalar columns computed from a PositionAnalysis.
+// These will be stored as indexed columns in the v2 schema (phase 02).
+// This helper is intentionally dead code until phase 02 adds the columns.
+//
+// Win/gammon/backgammon rates follow the on-roll convention: "player1" is always
+// the player on roll (PlayerOnRoll==0 after normalization), "player2" is the opponent.
+type analysisColumns struct {
+	BestCubeAction      string
+	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
+	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
+	// Win/gammon/backgammon rates × 100 (hundredths of percent, on-roll perspective)
+	Player1WinRate        int64
+	Player1GammonRate     int64
+	Player1BackgammonRate int64
+	Player2WinRate        int64
+	Player2GammonRate     int64
+	Player2BackgammonRate int64
+}
+
+// populateAnalysisColumns computes scalar analysis columns from a PositionAnalysis.
+// playedCubeAction and playedMove are the actions taken in this position (may be empty).
+// Rates are stored as integer × 100 (hundredths of percent) and equities as × 1000 (millipoints).
+func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction string) analysisColumns {
+	var c analysisColumns
+	if a == nil {
+		return c
+	}
+
+	if dca := a.DoublingCubeAnalysis; dca != nil {
+		c.BestCubeAction = dca.BestCubeAction
+
+		// Win/gammon/backgammon rates — player1 = player on roll, scaled × 100.
+		c.Player1WinRate = int64(math.Round(dca.PlayerWinChances * 100))
+		c.Player1GammonRate = int64(math.Round(dca.PlayerGammonChances * 100))
+		c.Player1BackgammonRate = int64(math.Round(dca.PlayerBackgammonChances * 100))
+		c.Player2WinRate = int64(math.Round(dca.OpponentWinChances * 100))
+		c.Player2GammonRate = int64(math.Round(dca.OpponentGammonChances * 100))
+		c.Player2BackgammonRate = int64(math.Round(dca.OpponentBackgammonChances * 100))
+
+		// Cube error: equity loss of the played cube action vs the best action, scaled × 1000.
+		// Stored as absolute value (>= 0) so the sign convention matches best_move_equity_error.
+		if playedCubeAction != "" {
+			var raw float64
+			switch playedCubeAction {
+			case "NoDouble", "No Double":
+				raw = dca.CubefulNoDoubleError
+			case "Double", "Double/Take":
+				raw = dca.CubefulDoubleTakeError
+			case "Double/Pass":
+				raw = dca.CubefulDoublePassError
+			}
+			c.CubeError = int64(math.Round(math.Abs(raw) * 1000))
+		}
+	} else if ca := a.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
+		// Fall back to checker analysis best move for win/gammon/backgammon rates, scaled × 100.
+		best := ca.Moves[0]
+		c.Player1WinRate = int64(math.Round(best.PlayerWinChance * 100))
+		c.Player1GammonRate = int64(math.Round(best.PlayerGammonChance * 100))
+		c.Player1BackgammonRate = int64(math.Round(best.PlayerBackgammonChance * 100))
+		c.Player2WinRate = int64(math.Round(best.OpponentWinChance * 100))
+		c.Player2GammonRate = int64(math.Round(best.OpponentGammonChance * 100))
+		c.Player2BackgammonRate = int64(math.Round(best.OpponentBackgammonChance * 100))
+	}
+
+	// Best-move equity error: the equity error of the played checker move vs Moves[0], scaled × 1000.
+	if playedMove != "" && a.CheckerAnalysis != nil {
+		for _, m := range a.CheckerAnalysis.Moves {
+			if m.Move == playedMove && m.EquityError != nil {
+				c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
+				break
+			}
+		}
+	}
+
+	return c
+}
+
+// ---------------------------------------------------------------------------
+// Compact board encoding (v2.2.0)
+//
+// The state column stores ONLY the board layout as a JSON array of 28 signed
+// integers. Indices 0-25 correspond to Board.Points: positive values mean
+// White checkers, negative mean Black, zero means empty. Indices 26-27 are
+// Board.Bearoff[0] and Bearoff[1]. All other Position fields (cube, dice,
+// score, decision_type, flags) are reconstructed from the denormalised
+// columns on the same row.
+//
+// Format detection: state[0]=='[' → compact, state[0]=='{' → legacy JSON.
+// ---------------------------------------------------------------------------
+
+// encodeBoardCompact encodes a Board as a compact JSON array of 28 signed ints.
+func encodeBoardCompact(b Board) string {
+	var vals [28]int
+	for i := 0; i < NumPoints+2; i++ {
+		p := b.Points[i]
+		if p.Checkers > 0 {
+			if p.Color == White {
+				vals[i] = p.Checkers
+			} else {
+				vals[i] = -p.Checkers
+			}
+		}
+	}
+	vals[26] = b.Bearoff[0]
+	vals[27] = b.Bearoff[1]
+	data, _ := json.Marshal(vals)
+	return string(data)
+}
+
+// decodeBoardCompact decodes a compact JSON array back into a Board.
+func decodeBoardCompact(s string) Board {
+	var vals [28]int
+	json.Unmarshal([]byte(s), &vals)
+	var b Board
+	for i := 0; i < NumPoints+2; i++ {
+		v := vals[i]
+		if v > 0 {
+			b.Points[i] = Point{v, White}
+		} else if v < 0 {
+			b.Points[i] = Point{-v, Black}
+		}
+	}
+	b.Bearoff[0] = vals[26]
+	b.Bearoff[1] = vals[27]
+	return b
+}
+
+// isCompactState returns true if the state string uses the compact array format.
+func isCompactState(s string) bool {
+	return len(s) > 0 && s[0] == '['
+}
+
+// reconstructPosition rebuilds a full Position from the compact state string
+// and denormalised column values. For legacy JSON state it unmarshals the full
+// Position but still overwrites with the column values (they are authoritative
+// in the v2 schema).
+func reconstructPosition(id int64, state string, decisionType, playerOnRoll, dice1, dice2, cubeValue, cubeOwner, score1, score2, hasJacoby, hasBeaver int) Position {
+	var pos Position
+	if isCompactState(state) {
+		pos.Board = decodeBoardCompact(state)
+	} else {
+		json.Unmarshal([]byte(state), &pos)
+	}
+	pos.ID = id
+	pos.DecisionType = decisionType
+	pos.PlayerOnRoll = playerOnRoll
+	pos.Dice = [2]int{dice1, dice2}
+	pos.Cube = Cube{cubeOwner, cubeValue}
+	pos.Score = [2]int{score1, score2}
+	pos.HasJacoby = hasJacoby
+	pos.HasBeaver = hasBeaver
+	return pos
+}
+
+// positionSelectCols is the standard column list for reading a position row.
+// Use with reconstructPosition after scanning the values.
+const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver`
+
+// positionSelectColsP is positionSelectCols with "p." table prefix for JOINs.
+const positionSelectColsP = `p.id, p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2, p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver`
+
+// scanPositionRow scans a sql.Row / sql.Rows into a Position using the column
+// order from positionSelectCols. NULLs are treated as zero (safe for v2+).
+func scanPositionRow(scanner interface {
+	Scan(dest ...interface{}) error
+}) (Position, error) {
+	var id int64
+	var state string
+	var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
+	err := scanner.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb)
+	if err != nil {
+		return Position{}, err
+	}
+	return reconstructPosition(id, state,
+		int(dt.Int64), int(por.Int64), int(d1.Int64), int(d2.Int64),
+		int(cv.Int64), int(co.Int64), int(s1.Int64), int(s2.Int64),
+		int(hj.Int64), int(hb.Int64)), nil
+}
+
+// fullPositionJSON reconstructs a full Position from DB row values and marshals
+// it to JSON. Used by export functions to produce backwards-compatible state blobs.
+func fullPositionJSON(pos Position) string {
+	data, _ := json.Marshal(pos)
+	return string(data)
+}
+
 func (d *Database) SavePosition(position *Position) (int64, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
@@ -1204,13 +2409,31 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
 	normalizedPosition := position.NormalizeForStorage()
 
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		fmt.Println("Error marshalling position:", err)
-		return 0, err
+	compactState := encodeBoardCompact(normalizedPosition.Board)
+
+	cols := populatePositionColumns(position)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
 	}
 
-	result, err := d.db.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	result, err := d.db.Exec(`
+		INSERT INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		compactState)
 	if err != nil {
 		fmt.Println("Error inserting position:", err)
 		return 0, err
@@ -1224,19 +2447,6 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 
 	normalizedPosition.ID = positionID // Update the position ID
 
-	// Update the state with the new ID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		fmt.Println("Error marshalling position with ID:", err)
-		return 0, err
-	}
-
-	_, err = d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-	if err != nil {
-		fmt.Println("Error updating position with ID:", err)
-		return 0, err
-	}
-
 	// Update the original position with the saved ID and normalized state
 	*position = normalizedPosition
 
@@ -1247,13 +2457,30 @@ func (d *Database) UpdatePosition(position Position) error {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	positionJSON, err := json.Marshal(position)
-	if err != nil {
-		fmt.Println("Error marshalling position:", err)
-		return err
+	compactState := encodeBoardCompact(position.Board)
+
+	cols := populatePositionColumns(&position)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
 	}
 
-	_, err = d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), position.ID)
+	_, err := d.db.Exec(`UPDATE position SET state = ?,
+		zobrist_hash=?, decision_type=?, player_on_roll=?, dice_1=?, dice_2=?,
+		cube_value=?, cube_owner=?, score_1=?, score_2=?,
+		has_jacoby=?, has_beaver=?,
+		pip_1=?, pip_2=?, pip_diff=?, off_1=?, off_2=?,
+		back_checkers_1=?, back_checkers_2=?, no_contact=?,
+		occupancy_1=?, occupancy_2=?, point_mask_1=?, point_mask_2=?
+		WHERE id = ?`,
+		compactState,
+		int64(cols.ZobristHash), cols.DecisionType, position.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		position.ID)
 	if err != nil {
 		fmt.Println("Error updating position:", err)
 		return err
@@ -1274,8 +2501,8 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 
 	// Check if an analysis already exists for the given position ID
 	var existingID int64
-	var existingAnalysisJSON string
-	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	var existingAnalysisData []byte
+	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println("Error querying analysis:", err)
 		return err
@@ -1283,8 +2510,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 
 	if existingID > 0 {
 		// Parse existing analysis
-		var existingAnalysis PositionAnalysis
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
+		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			fmt.Println("Error unmarshalling existing analysis:", err)
 			return err
@@ -1354,12 +2580,33 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		}
 
 		// Update the existing analysis
-		analysisJSON, err := json.Marshal(analysis)
+		roundAnalysisForStorage(&analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			fmt.Println("Error marshalling analysis:", err)
 			return err
 		}
-		_, err = d.db.Exec(`UPDATE analysis SET data = ? WHERE id = ?`, string(analysisJSON), existingID)
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = d.db.Exec(`UPDATE analysis SET
+			data=?, best_cube_action=?, cube_error=?,
+			best_move_equity_error=?,
+			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			WHERE id=?`,
+			analysisData,
+			aCols.BestCubeAction, aCols.CubeError,
+			aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			existingID)
 		if err != nil {
 			fmt.Println("Error updating analysis:", err)
 			return err
@@ -1399,12 +2646,31 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		}
 
 		// Insert a new analysis
-		analysisJSON, err := json.Marshal(analysis)
+		roundAnalysisForStorage(&analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			fmt.Println("Error marshalling analysis:", err)
 			return err
 		}
-		_, err = d.db.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = d.db.Exec(`INSERT INTO analysis (
+			position_id, data,
+			best_cube_action, cube_error, best_move_equity_error,
+			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
+			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
+			positionID, analysisData,
+			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
 		if err != nil {
 			fmt.Println("Error inserting analysis:", err)
 			return err
@@ -1418,30 +2684,22 @@ func (d *Database) LoadPosition(id int) (*Position, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	var stateJSON string
-
-	err := d.db.QueryRow(`SELECT state from position WHERE id = ?`, id).Scan(&stateJSON)
+	row := d.db.QueryRow(`SELECT `+positionSelectCols+` FROM position WHERE id = ?`, id)
+	pos, err := scanPositionRow(row)
 	if err != nil {
 		fmt.Println("Error loading position:", err)
 		return nil, err
 	}
 
-	var state Position
-	err = json.Unmarshal([]byte(stateJSON), &state)
-	if err != nil {
-		fmt.Println("Error unmarshalling position:", err)
-		return nil, err
-	}
-
-	return &state, nil
+	return &pos, nil
 }
 
 func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	var analysisJSON string
-	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisJSON)
+	var analysisData []byte
+	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisData)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -1450,8 +2708,7 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 		return nil, err
 	}
 
-	var analysis PositionAnalysis
-	err = json.Unmarshal([]byte(analysisJSON), &analysis)
+	analysis, err := decodeAnalysisFromStorage(analysisData)
 	if err != nil {
 		fmt.Println("Error unmarshalling analysis:", err)
 		return nil, err
@@ -1556,7 +2813,7 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	rows, err := d.db.Query(`SELECT id, state FROM position`)
+	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
 		return nil, err
@@ -1565,30 +2822,17 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 
 	var positions []Position
 	for rows.Next() {
-		var id int64
-		var stateJSON string
-		if err = rows.Scan(&id, &stateJSON); err != nil {
+		position, err := scanPositionRow(rows)
+		if err != nil {
 			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
-
-		var position Position
-		if err = json.Unmarshal([]byte(stateJSON), &position); err != nil {
-			fmt.Println("Error unmarshalling position:", err)
-			return nil, err
-		}
-		position.ID = id // Ensure the ID is set
 		positions = append(positions, position)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	if len(positions) == 0 {
-		fmt.Println("No positions found, returning empty array.")
-	}
-
-	fmt.Println("Loaded positions:", positions)
 	return positions, nil
 }
 
@@ -1842,6 +3086,713 @@ func (d *Database) SearchComments(query string) ([]CommentEntry, error) {
 	return entries, rows.Err()
 }
 
+// parseIntFilterExpr parses prefixed integer filter strings (e.g. "p>5", "p<20", "p3,10").
+// Returns min, max (inclusive bounds) and flags indicating which bound is set.
+func parseIntFilterExpr(filter, prefix string) (min, max int, hasMin, hasMax bool) {
+	if !strings.HasPrefix(filter, prefix) {
+		return
+	}
+	rest := filter[len(prefix):]
+	if strings.HasPrefix(rest, ">") {
+		v, err := strconv.Atoi(strings.TrimSpace(rest[1:]))
+		if err != nil {
+			return
+		}
+		return v, 0, true, false
+	}
+	if strings.HasPrefix(rest, "<") {
+		v, err := strconv.Atoi(strings.TrimSpace(rest[1:]))
+		if err != nil {
+			return
+		}
+		return 0, v, false, true
+	}
+	parts := strings.SplitN(rest, ",", 2)
+	if len(parts) == 1 {
+		v, err := strconv.Atoi(strings.TrimSpace(rest))
+		if err != nil {
+			return
+		}
+		return v, v, true, true
+	}
+	v1, e1 := strconv.Atoi(strings.TrimSpace(parts[0]))
+	v2, e2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+	if e1 != nil || e2 != nil {
+		return
+	}
+	if v1 > v2 {
+		v1, v2 = v2, v1
+	}
+	return v1, v2, true, true
+}
+
+// parseFloatFilterExpr is the float64 variant of parseIntFilterExpr.
+func parseFloatFilterExpr(filter, prefix string) (min, max float64, hasMin, hasMax bool) {
+	if !strings.HasPrefix(filter, prefix) {
+		return
+	}
+	rest := filter[len(prefix):]
+	if strings.HasPrefix(rest, ">") {
+		v, err := strconv.ParseFloat(strings.TrimSpace(rest[1:]), 64)
+		if err != nil {
+			return
+		}
+		return v, 0, true, false
+	}
+	if strings.HasPrefix(rest, "<") {
+		v, err := strconv.ParseFloat(strings.TrimSpace(rest[1:]), 64)
+		if err != nil {
+			return
+		}
+		return 0, v, false, true
+	}
+	parts := strings.SplitN(rest, ",", 2)
+	if len(parts) == 1 {
+		v, err := strconv.ParseFloat(strings.TrimSpace(rest), 64)
+		if err != nil {
+			return
+		}
+		return v, v, true, true
+	}
+	v1, e1 := strconv.ParseFloat(strings.TrimSpace(parts[0]), 64)
+	v2, e2 := strconv.ParseFloat(strings.TrimSpace(parts[1]), 64)
+	if e1 != nil || e2 != nil {
+		return
+	}
+	if v1 > v2 {
+		v1, v2 = v2, v1
+	}
+	return v1, v2, true, true
+}
+
+// appendIntRangeSQL appends "AND column op ?" to where and the bound(s) to args.
+func appendIntRangeSQL(column string, min, max int, hasMin, hasMax bool, where *strings.Builder, args *[]any) {
+	if !hasMin && !hasMax {
+		return
+	}
+	if hasMin && hasMax {
+		if min == max {
+			where.WriteString(" AND " + column + " = ?")
+			*args = append(*args, min)
+		} else {
+			where.WriteString(" AND " + column + " BETWEEN ? AND ?")
+			*args = append(*args, min, max)
+		}
+	} else if hasMin {
+		where.WriteString(" AND " + column + " >= ?")
+		*args = append(*args, min)
+	} else {
+		where.WriteString(" AND " + column + " <= ?")
+		*args = append(*args, max)
+	}
+}
+
+// appendFloatRangeSQL is the float64 variant of appendIntRangeSQL.
+func appendFloatRangeSQL(column string, min, max float64, hasMin, hasMax bool, where *strings.Builder, args *[]any) {
+	if !hasMin && !hasMax {
+		return
+	}
+	if hasMin && hasMax {
+		where.WriteString(" AND " + column + " BETWEEN ? AND ?")
+		*args = append(*args, min, max)
+	} else if hasMin {
+		where.WriteString(" AND " + column + " >= ?")
+		*args = append(*args, min)
+	} else {
+		where.WriteString(" AND " + column + " <= ?")
+		*args = append(*args, max)
+	}
+}
+
+// hasBoardFilter returns true if at least one point in b has non-empty checkers.
+func hasBoardFilter(b Board) bool {
+	for _, p := range b.Points {
+		if p.Checkers > 0 && p.Color >= 0 {
+			return true
+		}
+	}
+	return false
+}
+
+// analysisMatchesFloatFilter checks value against a prefixed float filter string.
+// Returns true when filter is empty or the (rounded) value satisfies the expression.
+func analysisMatchesFloatFilter(filter, prefix string, value float64) bool {
+	if filter == "" {
+		return true
+	}
+	mn, mx, hasMin, hasMax := parseFloatFilterExpr(filter, prefix)
+	if !hasMin && !hasMax {
+		return true
+	}
+	value = roundToHundredthPercent(value)
+	if hasMin && value < mn {
+		return false
+	}
+	if hasMax && value > mx {
+		return false
+	}
+	return true
+}
+
+// analysisMatchesEquityFilter checks the best-move equity of ana against the "e"-prefixed filter.
+func analysisMatchesEquityFilter(filter string, ana *PositionAnalysis) bool {
+	if filter == "" {
+		return true
+	}
+	if ana == nil {
+		return false
+	}
+	var equity float64
+	if ana.AnalysisType == "DoublingCube" && ana.DoublingCubeAnalysis != nil {
+		equity = ana.DoublingCubeAnalysis.CubefulNoDoubleEquity
+	} else if ana.AnalysisType == "CheckerMove" && ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+		equity = ana.CheckerAnalysis.Moves[0].Equity
+	} else {
+		return false
+	}
+	equity = roundToMillipoint(equity)
+	mn, mx, hasMin, hasMax := parseFloatFilterExpr(filter, "e")
+	if !hasMin && !hasMax {
+		return true
+	}
+	// Filter values are in millipoints; stored equity is in equity points.
+	if hasMin && equity < mn/1000.0 {
+		return false
+	}
+	if hasMax && equity > mx/1000.0 {
+		return false
+	}
+	return true
+}
+
+// analysisMatchesMovePattern checks a move-pattern filter against pre-fetched analysis,
+// avoiding a LoadAnalysis round-trip.
+func analysisMatchesMovePattern(filter string, ana *PositionAnalysis) bool {
+	if filter == "" {
+		return true
+	}
+	if ana == nil {
+		return false
+	}
+	movePatternMatch := strings.Trim(filter, `m"'`)
+	movePatterns := strings.Split(strings.ToLower(movePatternMatch), ";")
+	if ana.AnalysisType == "CheckerMove" && ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+		move := strings.ToLower(ana.CheckerAnalysis.Moves[0].Move)
+		for _, pattern := range movePatterns {
+			if strings.Contains(move, pattern) {
+				return true
+			}
+		}
+	} else if ana.AnalysisType == "DoublingCube" && ana.DoublingCubeAnalysis != nil {
+		for _, pattern := range movePatterns {
+			switch pattern {
+			case "nd":
+				if ana.DoublingCubeAnalysis.CubefulNoDoubleError == 0 {
+					return true
+				}
+			case "dt":
+				if ana.DoublingCubeAnalysis.CubefulDoubleTakeError == 0 {
+					return true
+				}
+			case "dp":
+				if ana.DoublingCubeAnalysis.CubefulDoublePassError == 0 {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+// loadPositionsByFiltersCore is the internal implementation behind LoadPositionsByFilters.
+// It returns matching positions and a map[positionID]*PositionAnalysis built from the LEFT
+// JOIN, so callers can inspect analysis data without extra LoadAnalysis round-trips.
+//
+// When mirrorFilter is false, every cheap predicate is pushed to SQL (one LEFT JOIN query).
+// When mirrorFilter is true, orientation-specific SQL clauses are disabled and all checks
+// fall back to Go-side evaluation on the already-narrowed result set.
+func (d *Database) loadPositionsByFiltersCore(
+	filter Position,
+	includeCube bool,
+	includeScore bool,
+	pipCountFilter string,
+	winRateFilter string,
+	gammonRateFilter string,
+	backgammonRateFilter string,
+	player2WinRateFilter string,
+	player2GammonRateFilter string,
+	player2BackgammonRateFilter string,
+	player1CheckerOffFilter string,
+	player2CheckerOffFilter string,
+	player1BackCheckerFilter string,
+	player2BackCheckerFilter string,
+	player1CheckerInZoneFilter string,
+	player2CheckerInZoneFilter string,
+	searchText string,
+	player1AbsolutePipCountFilter string,
+	equityFilter string,
+	decisionTypeFilter bool,
+	diceRollFilter bool,
+	movePatternFilter string,
+	dateFilter string,
+	player1OutfieldBlotFilter string,
+	player2OutfieldBlotFilter string,
+	player1JanBlotFilter string,
+	player2JanBlotFilter string,
+	noContactFilter bool,
+	mirrorFilter bool,
+	moveErrorFilter string,
+	matchIDsFilter string,
+	tournamentIDsFilter string,
+	restrictToPositionIDs string,
+) ([]Position, map[int64]*PositionAnalysis, error) {
+	// Push orientation-specific predicates to SQL only when mirrorFilter is off.
+	// Mirror search needs both orientations checked; disabling SQL-side orientation
+	// clauses and evaluating them in Go is correct (if slower) for that rare path.
+	useSQLFilters := !mirrorFilter
+
+	// -----------------------------------------------------------------------
+	// 1. Build the SQL WHERE clause
+	// -----------------------------------------------------------------------
+	var where strings.Builder
+	var args []any
+	where.WriteString("1=1")
+
+	// --- match / tournament filters (orientation-neutral: always pushed to SQL) ---
+	if matchIDsFilter != "" || tournamentIDsFilter != "" {
+		var allMatchIDs []int64
+		if matchIDsFilter != "" {
+			if ids, err := parseFilterIDList(matchIDsFilter); err == nil {
+				allMatchIDs = append(allMatchIDs, ids...)
+			}
+		}
+		if tournamentIDsFilter != "" {
+			if tIDs, err := parseFilterIDList(tournamentIDsFilter); err == nil {
+				for _, tID := range tIDs {
+					if matchIDs, err := d.getMatchIDsForTournament(tID); err == nil {
+						allMatchIDs = append(allMatchIDs, matchIDs...)
+					}
+				}
+			}
+		}
+		if len(allMatchIDs) > 0 {
+			placeholders := strings.Repeat("?,", len(allMatchIDs))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(
+				" AND p.id IN (SELECT m.position_id FROM move m" +
+					" WHERE m.game_id IN (SELECT id FROM game WHERE match_id IN (" + placeholders + ")))")
+			for _, id := range allMatchIDs {
+				args = append(args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1") // no matching IDs: force empty result
+		}
+	}
+
+	// --- restrict to specific position IDs (e.g. "search in current results") ---
+	if restrictToPositionIDs != "" {
+		var ids []int64
+		for _, idStr := range strings.Split(restrictToPositionIDs, ",") {
+			if id, err := strconv.ParseInt(strings.TrimSpace(idStr), 10, 64); err == nil {
+				ids = append(ids, id)
+			}
+		}
+		if len(ids) > 0 {
+			placeholders := strings.Repeat("?,", len(ids))
+			placeholders = placeholders[:len(placeholders)-1]
+			where.WriteString(" AND p.id IN (" + placeholders + ")")
+			for _, id := range ids {
+				args = append(args, id)
+			}
+		} else {
+			where.WriteString(" AND 0=1")
+		}
+	}
+
+	// --- orientation-specific SQL filters (disabled when mirrorFilter=true) ---
+	var bitboardTight bool
+	if useSQLFilters {
+		if decisionTypeFilter {
+			where.WriteString(" AND p.decision_type = ? AND p.player_on_roll = ?")
+			args = append(args, filter.DecisionType, filter.PlayerOnRoll)
+		}
+		if diceRollFilter {
+			d1, d2 := filter.Dice[0], filter.Dice[1]
+			if d1 == d2 {
+				where.WriteString(" AND p.dice_1 = ? AND p.dice_2 = ? AND p.player_on_roll = ? AND p.decision_type = ?")
+				args = append(args, d1, d2, filter.PlayerOnRoll, filter.DecisionType)
+			} else {
+				where.WriteString(" AND ((p.dice_1 = ? AND p.dice_2 = ?) OR (p.dice_1 = ? AND p.dice_2 = ?)) AND p.player_on_roll = ? AND p.decision_type = ?")
+				args = append(args, d1, d2, d2, d1, filter.PlayerOnRoll, filter.DecisionType)
+			}
+		}
+		if includeCube {
+			if filter.Cube.Value == 0 {
+				where.WriteString(" AND p.cube_value IS NULL")
+			} else {
+				where.WriteString(" AND p.cube_value = ? AND p.cube_owner = ?")
+				args = append(args, filter.Cube.Value, filter.Cube.Owner)
+			}
+		}
+		if includeScore {
+			where.WriteString(" AND p.score_1 = ? AND p.score_2 = ?")
+			args = append(args, filter.Score[0], filter.Score[1])
+		}
+		if noContactFilter {
+			where.WriteString(" AND p.no_contact = 1")
+		}
+
+		// Integer range filters on position scalar columns.
+		pMin, pMax, pHasMin, pHasMax := parseIntFilterExpr(pipCountFilter, "p")
+		appendIntRangeSQL("p.pip_diff", pMin, pMax, pHasMin, pHasMax, &where, &args)
+		PMin, PMax, PHasMin, PHasMax := parseIntFilterExpr(player1AbsolutePipCountFilter, "P")
+		appendIntRangeSQL("p.pip_1", PMin, PMax, PHasMin, PHasMax, &where, &args)
+		oMin, oMax, oHasMin, oHasMax := parseIntFilterExpr(player1CheckerOffFilter, "o")
+		appendIntRangeSQL("p.off_1", oMin, oMax, oHasMin, oHasMax, &where, &args)
+		OMin, OMax, OHasMin, OHasMax := parseIntFilterExpr(player2CheckerOffFilter, "O")
+		appendIntRangeSQL("p.off_2", OMin, OMax, OHasMin, OHasMax, &where, &args)
+		kMin, kMax, kHasMin, kHasMax := parseIntFilterExpr(player1BackCheckerFilter, "k")
+		appendIntRangeSQL("p.back_checkers_1", kMin, kMax, kHasMin, kHasMax, &where, &args)
+		KMin, KMax, KHasMin, KHasMax := parseIntFilterExpr(player2BackCheckerFilter, "K")
+		appendIntRangeSQL("p.back_checkers_2", KMin, KMax, KHasMin, KHasMax, &where, &args)
+
+		// Integer range filters on analysis scalar columns (LEFT JOIN; NULL rows are excluded
+		// by the BETWEEN/>=/<= comparisons, which is correct: no analysis → no rate).
+		// Rates are stored as integer × 100 (hundredths of percent); scale user input accordingly.
+		wMin, wMax, wHasMin, wHasMax := parseFloatFilterExpr(winRateFilter, "w")
+		appendIntRangeSQL("a.player1_win_rate", int(math.Round(wMin*100)), int(math.Round(wMax*100)), wHasMin, wHasMax, &where, &args)
+		gMin, gMax, gHasMin, gHasMax := parseFloatFilterExpr(gammonRateFilter, "g")
+		appendIntRangeSQL("a.player1_gammon_rate", int(math.Round(gMin*100)), int(math.Round(gMax*100)), gHasMin, gHasMax, &where, &args)
+		bMin, bMax, bHasMin, bHasMax := parseFloatFilterExpr(backgammonRateFilter, "b")
+		appendIntRangeSQL("a.player1_backgammon_rate", int(math.Round(bMin*100)), int(math.Round(bMax*100)), bHasMin, bHasMax, &where, &args)
+		WMin, WMax, WHasMin, WHasMax := parseFloatFilterExpr(player2WinRateFilter, "W")
+		appendIntRangeSQL("a.player2_win_rate", int(math.Round(WMin*100)), int(math.Round(WMax*100)), WHasMin, WHasMax, &where, &args)
+		GMin, GMax, GHasMin, GHasMax := parseFloatFilterExpr(player2GammonRateFilter, "G")
+		appendIntRangeSQL("a.player2_gammon_rate", int(math.Round(GMin*100)), int(math.Round(GMax*100)), GHasMin, GHasMax, &where, &args)
+		BMin, BMax, BHasMin, BHasMax := parseFloatFilterExpr(player2BackgammonRateFilter, "B")
+		appendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
+
+		// Move-error filter: "E"-prefixed values are millipoints; columns are now integer millipoints.
+		// Both best_move_equity_error and cube_error are stored as non-negative absolute values.
+		// Use the appropriate column based on decision type to avoid false positives
+		// (e.g. cube positions always have best_move_equity_error=0, which would match range 0-N).
+		if moveErrorFilter != "" {
+			eMin, eMax, eHasMin, eHasMax := parseFloatFilterExpr(moveErrorFilter, "E")
+			eqMin := int(math.Round(eMin))
+			eqMax := int(math.Round(eMax))
+			// Pick the error column that matches the position's decision type:
+			// decision_type=0 (checker) → best_move_equity_error
+			// decision_type=1 (cube)    → cube_error
+			// When no decision_type filter is active, check both with CASE.
+			errExpr := "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
+			if eHasMin && eHasMax {
+				where.WriteString(" AND " + errExpr + " BETWEEN ? AND ?")
+				args = append(args, eqMin, eqMax)
+			} else if eHasMin {
+				where.WriteString(" AND " + errExpr + " >= ?")
+				args = append(args, eqMin)
+			} else if eHasMax {
+				where.WriteString(" AND " + errExpr + " <= ?")
+				args = append(args, eqMax)
+			}
+		}
+
+		// Bitboard pre-filter for checker-structure patterns.
+		if hasBoardFilter(filter.Board) {
+			occ1Req, pt1Req, occ2Req, pt2Req, tight := CheckerStructureMasks(filter)
+			bitboardTight = tight
+			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
+			where.WriteString(" AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?")
+			args = append(args,
+				int64(occ1Req), int64(occ1Req), int64(pt1Req), int64(pt1Req),
+				int64(occ2Req), int64(occ2Req), int64(pt2Req), int64(pt2Req))
+		}
+	}
+
+	// -----------------------------------------------------------------------
+	// 2. Execute the single LEFT JOIN query
+	// -----------------------------------------------------------------------
+	query := `SELECT p.id, p.state,
+		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
+		p.cube_value, p.cube_owner, p.score_1, p.score_2,
+		p.has_jacoby, p.has_beaver,
+		a.id, a.data,
+		a.cube_error, a.best_move_equity_error,
+		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
+		a.player2_win_rate, a.player2_gammon_rate, a.player2_backgammon_rate,
+		a.best_cube_action
+	FROM position p
+	LEFT JOIN analysis a ON a.position_id = p.id
+	WHERE ` + where.String() + ` ORDER BY p.id`
+
+	d.mu.Lock()
+	rows, err := d.db.Query(query, args...)
+	d.mu.Unlock()
+	if err != nil {
+		return nil, nil, fmt.Errorf("search query: %w", err)
+	}
+	defer rows.Close()
+
+	// -----------------------------------------------------------------------
+	// 3. Scan rows and apply Go-side filters on the shrunk result set
+	// -----------------------------------------------------------------------
+	var positions []Position
+	analysisMap := make(map[int64]*PositionAnalysis)
+
+	for rows.Next() {
+		var posID int64
+		var posJSON string
+		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
+		var anaID sql.NullInt64
+		var anaJSON sql.NullString
+		var cubeError, moveError sql.NullFloat64
+		var p1Win, p1Gammon, p1BG, p2Win, p2Gammon, p2BG sql.NullFloat64
+		var bestCubeAction sql.NullString
+
+		if err := rows.Scan(
+			&posID, &posJSON,
+			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
+			&anaID, &anaJSON,
+			&cubeError, &moveError,
+			&p1Win, &p1Gammon, &p1BG,
+			&p2Win, &p2Gammon, &p2BG,
+			&bestCubeAction,
+		); err != nil {
+			return nil, nil, err
+		}
+
+		position := reconstructPosition(posID, posJSON,
+			int(pDT.Int64), int(pPOR.Int64), int(pD1.Int64), int(pD2.Int64),
+			int(pCV.Int64), int(pCO.Int64), int(pS1.Int64), int(pS2.Int64),
+			int(pHJ.Int64), int(pHB.Int64))
+
+		// Parse analysis from the JOIN — one unmarshal per row, no extra DB round-trip.
+		var ana *PositionAnalysis
+		if anaID.Valid && anaJSON.Valid && anaJSON.String != "" {
+			var a PositionAnalysis
+			if jsonErr := json.Unmarshal([]byte(anaJSON.String), &a); jsonErr == nil {
+				ana = &a
+				analysisMap[posID] = ana
+			}
+		}
+
+		// matchesGoFilters evaluates the predicates that cannot be (or were not)
+		// pushed to SQL: tight checker-structure, orientation-specific filters in
+		// mirror mode, and always-Go-side filters (zone, blot, searchText, equity).
+		matchesGoFilters := func(pos Position) bool {
+			// Checker structure: re-check when bitboard pre-filter couldn't fully
+			// discriminate (tight=true: exact count > 2) or when SQL was disabled.
+			if hasBoardFilter(filter.Board) {
+				if !useSQLFilters || bitboardTight {
+					if !pos.MatchesCheckerPosition(filter) {
+						return false
+					}
+				}
+			}
+
+			// Orientation-specific filters evaluated in Go when mirrorFilter=true.
+			if !useSQLFilters {
+				if !pos.MatchesCheckerPosition(filter) {
+					return false
+				}
+				if includeCube && !pos.MatchesCubePosition(filter) {
+					return false
+				}
+				if includeScore && !pos.MatchesScorePosition(filter) {
+					return false
+				}
+				if decisionTypeFilter && !pos.MatchesDecisionType(filter) {
+					return false
+				}
+				if diceRollFilter && !pos.MatchesDiceRoll(filter) {
+					return false
+				}
+				if noContactFilter && !pos.MatchesNoContact() {
+					return false
+				}
+				if pipCountFilter != "" && !pos.MatchesPipCountFilter(pipCountFilter) {
+					return false
+				}
+				if player1AbsolutePipCountFilter != "" && !pos.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter) {
+					return false
+				}
+				if player1CheckerOffFilter != "" && !pos.MatchesPlayer1CheckerOff(player1CheckerOffFilter) {
+					return false
+				}
+				if player2CheckerOffFilter != "" && !pos.MatchesPlayer2CheckerOff(player2CheckerOffFilter) {
+					return false
+				}
+				if player1BackCheckerFilter != "" && !pos.MatchesPlayer1BackChecker(player1BackCheckerFilter) {
+					return false
+				}
+				if player2BackCheckerFilter != "" && !pos.MatchesPlayer2BackChecker(player2BackCheckerFilter) {
+					return false
+				}
+				// Analysis-rate filters in mirror mode: use pre-fetched analysis.
+				if winRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var wr float64
+					if ana.DoublingCubeAnalysis != nil {
+						wr = ana.DoublingCubeAnalysis.PlayerWinChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						wr = ana.CheckerAnalysis.Moves[0].PlayerWinChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(winRateFilter, "w", wr) {
+						return false
+					}
+				}
+				if gammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var gr float64
+					if ana.DoublingCubeAnalysis != nil {
+						gr = ana.DoublingCubeAnalysis.PlayerGammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						gr = ana.CheckerAnalysis.Moves[0].PlayerGammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(gammonRateFilter, "g", gr) {
+						return false
+					}
+				}
+				if backgammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var bgr float64
+					if ana.DoublingCubeAnalysis != nil {
+						bgr = ana.DoublingCubeAnalysis.PlayerBackgammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						bgr = ana.CheckerAnalysis.Moves[0].PlayerBackgammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(backgammonRateFilter, "b", bgr) {
+						return false
+					}
+				}
+				if player2WinRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var wr float64
+					if ana.DoublingCubeAnalysis != nil {
+						wr = ana.DoublingCubeAnalysis.OpponentWinChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						wr = ana.CheckerAnalysis.Moves[0].OpponentWinChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(player2WinRateFilter, "W", wr) {
+						return false
+					}
+				}
+				if player2GammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var gr float64
+					if ana.DoublingCubeAnalysis != nil {
+						gr = ana.DoublingCubeAnalysis.OpponentGammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						gr = ana.CheckerAnalysis.Moves[0].OpponentGammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(player2GammonRateFilter, "G", gr) {
+						return false
+					}
+				}
+				if player2BackgammonRateFilter != "" {
+					if ana == nil {
+						return false
+					}
+					var bgr float64
+					if ana.DoublingCubeAnalysis != nil {
+						bgr = ana.DoublingCubeAnalysis.OpponentBackgammonChances
+					} else if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) > 0 {
+						bgr = ana.CheckerAnalysis.Moves[0].OpponentBackgammonChance
+					} else {
+						return false
+					}
+					if !analysisMatchesFloatFilter(player2BackgammonRateFilter, "B", bgr) {
+						return false
+					}
+				}
+				// Move-error in mirror mode: fall back to the existing method.
+				if moveErrorFilter != "" && !pos.MatchesMoveErrorFilter(moveErrorFilter, d) {
+					return false
+				}
+			}
+
+			// Always Go-side: zone, blot, searchText, dateFilter, equityFilter.
+			if player1CheckerInZoneFilter != "" && !pos.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter) {
+				return false
+			}
+			if player2CheckerInZoneFilter != "" && !pos.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter) {
+				return false
+			}
+			if player1OutfieldBlotFilter != "" && !pos.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter) {
+				return false
+			}
+			if player2OutfieldBlotFilter != "" && !pos.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter) {
+				return false
+			}
+			if player1JanBlotFilter != "" && !pos.MatchesPlayer1JanBlot(player1JanBlotFilter) {
+				return false
+			}
+			if player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(player2JanBlotFilter) {
+				return false
+			}
+			if searchText != "" && !pos.MatchesSearchText(searchText, d) {
+				return false
+			}
+			if dateFilter != "" && !pos.MatchesDateFilter(dateFilter, d) {
+				return false
+			}
+			if equityFilter != "" && !analysisMatchesEquityFilter(equityFilter, ana) {
+				return false
+			}
+			return true
+		}
+
+		// addPosition mirrors take/pass cube positions so player1 appears at the bottom.
+		addPosition := func(pos Position) {
+			if moveErrorFilter != "" && pos.DecisionType == CubeAction && pos.IsPlayer1TakePassCubeAction(d) {
+				pos = pos.Mirror()
+			}
+			positions = append(positions, pos)
+		}
+
+		if matchesGoFilters(position) {
+			if analysisMatchesMovePattern(movePatternFilter, ana) {
+				addPosition(position)
+			}
+		} else if mirrorFilter {
+			mirrored := position.Mirror()
+			if matchesGoFilters(mirrored) {
+				if analysisMatchesMovePattern(movePatternFilter, ana) {
+					addPosition(mirrored)
+				}
+			}
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, nil, err
+	}
+
+	return positions, analysisMap, nil
+}
+
+// LoadPositionsByFilters returns positions matching the supplied filters.
+// This is the public Wails-bound method; its 33-parameter signature is stable.
+// Internally it delegates to loadPositionsByFiltersCore and discards the analysis map.
 func (d *Database) LoadPositionsByFilters(
 	filter Position,
 	includeCube bool,
@@ -1877,156 +3828,22 @@ func (d *Database) LoadPositionsByFilters(
 	tournamentIDsFilter string,
 	restrictToPositionIDs string,
 ) ([]Position, error) {
-	// Build set of restricted position IDs (search in current results)
-	var restrictedIDs map[int64]bool
-	if restrictToPositionIDs != "" {
-		restrictedIDs = make(map[int64]bool)
-		for _, idStr := range strings.Split(restrictToPositionIDs, ",") {
-			idStr = strings.TrimSpace(idStr)
-			if id, err := strconv.ParseInt(idStr, 10, 64); err == nil {
-				restrictedIDs[id] = true
-			}
-		}
-	}
-
-	// Build set of allowed position IDs based on match/tournament filters
-	var allowedPositionIDs map[int64]bool
-	if matchIDsFilter != "" || tournamentIDsFilter != "" {
-		allowedPositionIDs = make(map[int64]bool)
-
-		// Collect all match IDs (from direct match filter + tournament expansion)
-		var allMatchIDs []int64
-
-		if matchIDsFilter != "" {
-			ids, err := parseFilterIDList(matchIDsFilter)
-			if err == nil {
-				allMatchIDs = append(allMatchIDs, ids...)
-			}
-		}
-
-		if tournamentIDsFilter != "" {
-			tIDs, err := parseFilterIDList(tournamentIDsFilter)
-			if err == nil {
-				// Expand tournament IDs to match IDs
-				for _, tID := range tIDs {
-					matchIDs, err := d.getMatchIDsForTournament(tID)
-					if err == nil {
-						allMatchIDs = append(allMatchIDs, matchIDs...)
-					}
-				}
-			}
-		}
-
-		// Get position IDs for all collected match IDs
-		for _, mID := range allMatchIDs {
-			posIDs, err := d.getPositionIDsForMatch(mID)
-			if err == nil {
-				for _, pID := range posIDs {
-					allowedPositionIDs[pID] = true
-				}
-			}
-		}
-	}
-
-	d.mu.Lock()
-	rows, err := d.db.Query(`SELECT id, state FROM position`)
-	d.mu.Unlock()
-	if err != nil {
-		fmt.Println("Error loading positions:", err)
-		return nil, err
-	}
-	defer rows.Close()
-
-	var positions []Position
-	for rows.Next() {
-		var id int64
-		var stateJSON string
-		if err = rows.Scan(&id, &stateJSON); err != nil {
-			return nil, err
-		}
-
-		var position Position
-		if err = json.Unmarshal([]byte(stateJSON), &position); err != nil {
-			return nil, err
-		}
-		position.ID = id // Ensure the ID is set
-
-		// Function to check if a position matches all filters
-		matchesFilters := func(pos Position) bool {
-			// Restrict to current results: skip positions not in the restricted set
-			if restrictedIDs != nil && !restrictedIDs[pos.ID] {
-				return false
-			}
-			// Match/tournament filter: skip positions not linked to specified matches
-			if allowedPositionIDs != nil && !allowedPositionIDs[pos.ID] {
-				return false
-			}
-			return pos.MatchesCheckerPosition(filter) &&
-				(!includeCube || pos.MatchesCubePosition(filter)) &&
-				(!includeScore || pos.MatchesScorePosition(filter)) &&
-				(!decisionTypeFilter || pos.MatchesDecisionType(filter)) &&
-				(pipCountFilter == "" || pos.MatchesPipCountFilter(pipCountFilter)) &&
-				(winRateFilter == "" || pos.MatchesWinRate(winRateFilter, d)) &&
-				(gammonRateFilter == "" || pos.MatchesGammonRate(gammonRateFilter, d)) &&
-				(backgammonRateFilter == "" || pos.MatchesBackgammonRate(backgammonRateFilter, d)) &&
-				(player2WinRateFilter == "" || pos.MatchesPlayer2WinRate(player2WinRateFilter, d)) &&
-				(player2GammonRateFilter == "" || pos.MatchesPlayer2GammonRate(player2GammonRateFilter, d)) &&
-				(player2BackgammonRateFilter == "" || pos.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
-				(player1CheckerOffFilter == "" || pos.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
-				(player2CheckerOffFilter == "" || pos.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
-				(player1BackCheckerFilter == "" || pos.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
-				(player2BackCheckerFilter == "" || pos.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
-				(player1CheckerInZoneFilter == "" || pos.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
-				(player2CheckerInZoneFilter == "" || pos.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
-				(searchText == "" || pos.MatchesSearchText(searchText, d)) &&
-				(player1AbsolutePipCountFilter == "" || pos.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
-				(equityFilter == "" || pos.MatchesEquityFilter(equityFilter, d)) &&
-				(!diceRollFilter || pos.MatchesDiceRoll(filter)) &&
-				(dateFilter == "" || pos.MatchesDateFilter(dateFilter, d)) &&
-				(player1OutfieldBlotFilter == "" || pos.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
-				(player2OutfieldBlotFilter == "" || pos.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
-				(player1JanBlotFilter == "" || pos.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
-				(player2JanBlotFilter == "" || pos.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
-				(!noContactFilter || pos.MatchesNoContact()) &&
-				(moveErrorFilter == "" || pos.MatchesMoveErrorFilter(moveErrorFilter, d))
-		}
-
-		// addPosition adds a matched position to results, mirroring take/pass positions
-		// so player1 (the taker/passer) is shown at the bottom of the board.
-		addPosition := func(pos Position) {
-			if moveErrorFilter != "" && pos.DecisionType == CubeAction && pos.IsPlayer1TakePassCubeAction(d) {
-				pos = pos.Mirror()
-			}
-			positions = append(positions, pos)
-		}
-
-		// Check the original position
-		if matchesFilters(position) {
-			if movePatternFilter != "" {
-				if position.MatchesMovePattern(movePatternFilter, d) {
-					addPosition(position)
-				}
-			} else {
-				addPosition(position)
-			}
-		} else if mirrorFilter {
-			mirroredPosition := position.Mirror()
-			if matchesFilters(mirroredPosition) {
-				if movePatternFilter != "" {
-					if mirroredPosition.MatchesMovePattern(movePatternFilter, d) {
-						addPosition(mirroredPosition)
-					}
-				} else {
-					addPosition(mirroredPosition)
-				}
-			}
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-
-	return positions, nil
+	positions, _, err := d.loadPositionsByFiltersCore(
+		filter, includeCube, includeScore,
+		pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter,
+		player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter,
+		player1CheckerOffFilter, player2CheckerOffFilter,
+		player1BackCheckerFilter, player2BackCheckerFilter,
+		player1CheckerInZoneFilter, player2CheckerInZoneFilter,
+		searchText, player1AbsolutePipCountFilter, equityFilter,
+		decisionTypeFilter, diceRollFilter,
+		movePatternFilter, dateFilter,
+		player1OutfieldBlotFilter, player2OutfieldBlotFilter,
+		player1JanBlotFilter, player2JanBlotFilter,
+		noContactFilter, mirrorFilter, moveErrorFilter,
+		matchIDsFilter, tournamentIDsFilter, restrictToPositionIDs,
+	)
+	return positions, err
 }
 
 // parseFilterIDList parses a match/tournament ID filter string.
@@ -2235,23 +4052,68 @@ func roundToHundredthPercent(v float64) float64 {
 	return math.Round(v*100) / 100
 }
 
+// roundAnalysisForStorage rounds all float fields in a PositionAnalysis for compact JSON storage.
+// Rates (win/gammon/backgammon chances) → 2 decimal places.
+// Equities and errors → 3 decimal places (millipoint precision).
+func roundAnalysisForStorage(a *PositionAnalysis) {
+	if a == nil {
+		return
+	}
+	roundDCA := func(dca *DoublingCubeAnalysis) {
+		dca.PlayerWinChances = roundToHundredthPercent(dca.PlayerWinChances)
+		dca.PlayerGammonChances = roundToHundredthPercent(dca.PlayerGammonChances)
+		dca.PlayerBackgammonChances = roundToHundredthPercent(dca.PlayerBackgammonChances)
+		dca.OpponentWinChances = roundToHundredthPercent(dca.OpponentWinChances)
+		dca.OpponentGammonChances = roundToHundredthPercent(dca.OpponentGammonChances)
+		dca.OpponentBackgammonChances = roundToHundredthPercent(dca.OpponentBackgammonChances)
+		dca.CubelessNoDoubleEquity = roundToMillipoint(dca.CubelessNoDoubleEquity)
+		dca.CubelessDoubleEquity = roundToMillipoint(dca.CubelessDoubleEquity)
+		dca.CubefulNoDoubleEquity = roundToMillipoint(dca.CubefulNoDoubleEquity)
+		dca.CubefulNoDoubleError = roundToMillipoint(dca.CubefulNoDoubleError)
+		dca.CubefulDoubleTakeEquity = roundToMillipoint(dca.CubefulDoubleTakeEquity)
+		dca.CubefulDoubleTakeError = roundToMillipoint(dca.CubefulDoubleTakeError)
+		dca.CubefulDoublePassEquity = roundToMillipoint(dca.CubefulDoublePassEquity)
+		dca.CubefulDoublePassError = roundToMillipoint(dca.CubefulDoublePassError)
+		dca.WrongPassPercentage = roundToHundredthPercent(dca.WrongPassPercentage)
+		dca.WrongTakePercentage = roundToHundredthPercent(dca.WrongTakePercentage)
+	}
+	if a.DoublingCubeAnalysis != nil {
+		roundDCA(a.DoublingCubeAnalysis)
+	}
+	for i := range a.AllCubeAnalyses {
+		roundDCA(&a.AllCubeAnalyses[i])
+	}
+	if ca := a.CheckerAnalysis; ca != nil {
+		for i := range ca.Moves {
+			m := &ca.Moves[i]
+			m.Equity = roundToMillipoint(m.Equity)
+			if m.EquityError != nil {
+				rounded := roundToMillipoint(*m.EquityError)
+				m.EquityError = &rounded
+			}
+			m.PlayerWinChance = roundToHundredthPercent(m.PlayerWinChance)
+			m.PlayerGammonChance = roundToHundredthPercent(m.PlayerGammonChance)
+			m.PlayerBackgammonChance = roundToHundredthPercent(m.PlayerBackgammonChance)
+			m.OpponentWinChance = roundToHundredthPercent(m.OpponentWinChance)
+			m.OpponentGammonChance = roundToHundredthPercent(m.OpponentGammonChance)
+			m.OpponentBackgammonChance = roundToHundredthPercent(m.OpponentBackgammonChance)
+		}
+	}
+}
+
 // Add MatchesPlayer2BackgammonRate method to Position type
 func (p *Position) MatchesPlayer2BackgammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var backgammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		backgammonRate = analysis.DoublingCubeAnalysis.OpponentBackgammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 2 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		backgammonRate = analysis.CheckerAnalysis.Moves[0].OpponentBackgammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 2 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no backgammon rate found\n", p.ID)
 		return false
 	}
 
@@ -2298,19 +4160,15 @@ func (p *Position) MatchesPlayer2BackgammonRate(filter string, d *Database) bool
 func (p *Position) MatchesPlayer2GammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var gammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		gammonRate = analysis.DoublingCubeAnalysis.OpponentGammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 2 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		gammonRate = analysis.CheckerAnalysis.Moves[0].OpponentGammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 2 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no gammon rate found\n", p.ID)
 		return false
 	}
 
@@ -2366,8 +4224,6 @@ func (p *Position) MatchesCubePosition(filter Position) bool {
 // Add MatchesPipCountFilter method to Position type
 func (p *Position) MatchesPipCountFilter(filter string) bool {
 	pipCountDiff := p.PipCountDifference()
-	player1PipCount, player2PipCount := p.ComputePipCounts()
-	fmt.Printf("Checking pip count filter: %s, Player 1 Pip Count: %d, Player 2 Pip Count: %d, Pip count difference: %d\n", filter, player1PipCount, player2PipCount, pipCountDiff)
 	if strings.HasPrefix(filter, "p>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
@@ -2409,19 +4265,15 @@ func (p *Position) MatchesPipCountFilter(filter string) bool {
 func (p *Position) MatchesWinRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var winRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		winRate = analysis.DoublingCubeAnalysis.PlayerWinChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 1 Win Rate: %f\n", p.ID, winRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		winRate = analysis.CheckerAnalysis.Moves[0].PlayerWinChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 1 Win Rate: %f\n", p.ID, winRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no win rate found\n", p.ID)
 		return false
 	}
 
@@ -2468,19 +4320,15 @@ func (p *Position) MatchesWinRate(filter string, d *Database) bool {
 func (p *Position) MatchesPlayer2WinRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var winRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		winRate = analysis.DoublingCubeAnalysis.OpponentWinChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 2 Win Rate: %f\n", p.ID, winRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		winRate = analysis.CheckerAnalysis.Moves[0].OpponentWinChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 2 Win Rate: %f\n", p.ID, winRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no win rate found\n", p.ID)
 		return false
 	}
 
@@ -2527,19 +4375,15 @@ func (p *Position) MatchesPlayer2WinRate(filter string, d *Database) bool {
 func (p *Position) MatchesGammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var gammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		gammonRate = analysis.DoublingCubeAnalysis.PlayerGammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 1 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		gammonRate = analysis.CheckerAnalysis.Moves[0].PlayerGammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 1 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no gammon rate found\n", p.ID)
 		return false
 	}
 
@@ -2586,19 +4430,15 @@ func (p *Position) MatchesGammonRate(filter string, d *Database) bool {
 func (p *Position) MatchesBackgammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var backgammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		backgammonRate = analysis.DoublingCubeAnalysis.PlayerBackgammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 1 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		backgammonRate = analysis.CheckerAnalysis.Moves[0].PlayerBackgammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 1 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no backgammon rate found\n", p.ID)
 		return false
 	}
 
@@ -2665,7 +4505,6 @@ func (p *Position) ComputePipCounts() (int, int) {
 
 // Add MatchesPlayer1BackChecker method to Position type with logging
 func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
-	fmt.Printf("MatchesPlayer1BackChecker called with filter: %s\n", filter) // Add logging
 
 	backCheckers := 0
 	for i := 19; i <= 24; i++ {
@@ -2673,7 +4512,6 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 			backCheckers += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking back checkers filter: %s, Player 1 Back Checkers: %d\n", filter, backCheckers)
 
 	if strings.HasPrefix(filter, "k>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -2717,7 +4555,6 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 
 // Add MatchesPlayer2BackChecker method to Position type with logging
 func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
-	fmt.Printf("MatchesPlayer2BackChecker called with filter: %s\n", filter) // Add logging
 
 	backCheckers := 0
 	for i := 1; i <= 6; i++ {
@@ -2725,7 +4562,6 @@ func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
 			backCheckers += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking back checkers filter: %s, Player 2 Back Checkers: %d\n", filter, backCheckers)
 
 	if strings.HasPrefix(filter, "K>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -2769,7 +4605,6 @@ func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
 
 // Add MatchesPlayer1CheckerInZone method to Position type with logging
 func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
-	fmt.Printf("MatchesPlayer1CheckerInZone called with filter: %s\n", filter) // Add logging
 
 	checkersInZone := 0
 	for i := 0; i <= 12; i++ {
@@ -2777,7 +4612,6 @@ func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
 			checkersInZone += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking checkers in zone filter: %s, Player 1 Checkers in Zone: %d\n", filter, checkersInZone)
 
 	if strings.HasPrefix(filter, "z>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -2821,7 +4655,6 @@ func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
 
 // Add MatchesPlayer2CheckerInZone method to Position type with logging
 func (p *Position) MatchesPlayer2CheckerInZone(filter string) bool {
-	fmt.Printf("MatchesPlayer2CheckerInZone called with filter: %s\n", filter) // Add logging
 
 	checkersInZone := 0
 	for i := 13; i <= 25; i++ {
@@ -2829,7 +4662,6 @@ func (p *Position) MatchesPlayer2CheckerInZone(filter string) bool {
 			checkersInZone += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking checkers in zone filter: %s, Player 2 Checkers in Zone: %d\n", filter, checkersInZone)
 
 	if strings.HasPrefix(filter, "Z>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -2921,19 +4753,15 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var equity float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		equity = analysis.DoublingCubeAnalysis.CubefulNoDoubleEquity
-		fmt.Printf("Position ID: %d, Doubling decision, Equity: %f\n", p.ID, equity)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		equity = analysis.CheckerAnalysis.Moves[0].Equity
-		fmt.Printf("Position ID: %d, Checker decision, Equity: %f\n", p.ID, equity)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no equity found\n", p.ID)
 		return false
 	}
 
@@ -2946,7 +4774,6 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 			return false
 		}
 		value /= 1000 // Convert millipoints to points
-		fmt.Printf("Equity filter condition: >, value: %f\n", value)
 		return equity >= value
 	} else if strings.HasPrefix(filter, "e<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
@@ -2955,7 +4782,6 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 			return false
 		}
 		value /= 1000 // Convert millipoints to points
-		fmt.Printf("Equity filter condition: <, value: %f\n", value)
 		return equity <= value
 	} else if strings.HasPrefix(filter, "e") {
 		values := strings.Split(filter[1:], ",")
@@ -2977,7 +4803,6 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 			minValue = value2
 			maxValue = value1
 		}
-		fmt.Printf("Equity filter condition: BETWEEN, values: %f, %f\n", minValue, maxValue)
 		return equity >= minValue && equity <= maxValue
 	}
 	return false
@@ -3161,7 +4986,6 @@ func (p *Position) MatchesDiceRoll(filter Position) bool {
 func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
@@ -3173,7 +4997,6 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 		move := strings.ToLower(analysis.CheckerAnalysis.Moves[0].Move)
 		for _, pattern := range movePatterns {
 			if strings.Contains(move, pattern) {
-				fmt.Printf("Position ID: %d, Checker decision, Move: %s, Filter: %s\n", p.ID, move, pattern) // Add logging
 				return true
 			}
 		}
@@ -3182,23 +5005,19 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 			switch pattern {
 			case "nd":
 				if analysis.DoublingCubeAnalysis.CubefulNoDoubleError == 0 {
-					fmt.Printf("Position ID: %d, Doubling decision, No Double Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulNoDoubleError, pattern) // Add logging
 					return true
 				}
 			case "dt":
 				if analysis.DoublingCubeAnalysis.CubefulDoubleTakeError == 0 {
-					fmt.Printf("Position ID: %d, Doubling decision, Double Take Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoubleTakeError, pattern) // Add logging
 					return true
 				}
 			case "dp":
 				if analysis.DoublingCubeAnalysis.CubefulDoublePassError == 0 {
-					fmt.Printf("Position ID: %d, Doubling decision, Double Pass Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoublePassError, pattern) // Add logging
 					return true
 				}
 			}
 		}
 	}
-	fmt.Printf("Position ID: %d does not match move pattern filter: %s\n", p.ID, filter) // Add logging
 	return false
 }
 
@@ -3260,12 +5079,10 @@ func (d *Database) SaveMetadata(metadata map[string]string) error {
 func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	creationDate := analysis.CreationDate
-	fmt.Printf("Position ID: %d, Creation Date: %s\n", p.ID, creationDate)
 
 	if strings.HasPrefix(filter, "T>") {
 		dateStr := filter[2:]
@@ -3274,9 +5091,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			fmt.Printf("Error parsing date filter value: %s\n", dateStr)
 			return false
 		}
-		fmt.Printf("Filter: T>, Date: %s\n", date)
 		match := creationDate.After(date) || creationDate.Equal(date)
-		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
 	} else if strings.HasPrefix(filter, "T<") {
 		dateStr := filter[2:]
@@ -3286,9 +5101,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			return false
 		}
 		date = date.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
-		fmt.Printf("Filter: T<, Date: %s\n", date)
 		match := creationDate.Before(date)
-		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
 	} else if strings.HasPrefix(filter, "T") {
 		dateRange := strings.Split(filter[1:], ",")
@@ -3306,9 +5119,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			startDate, endDate = endDate, startDate // Swap to ensure correct order
 		}
 		endDate = endDate.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
-		fmt.Printf("Filter: T, Start Date: %s, End Date: %s\n", startDate, endDate)
 		match := (creationDate.After(startDate) || creationDate.Equal(startDate)) && (creationDate.Before(endDate) || creationDate.Equal(endDate))
-		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
 	}
 	return false
@@ -3581,6 +5392,17 @@ func (d *Database) SaveCommand(command string) error {
 		fmt.Println("Error saving command:", err)
 		return err
 	}
+
+	// Keep only the last 1000 entries to prevent unbounded growth
+	_, _ = d.db.Exec(`
+		DELETE FROM command_history
+		WHERE id NOT IN (
+			SELECT id FROM command_history
+			ORDER BY timestamp DESC
+			LIMIT 1000
+		)
+	`)
+
 	return nil
 }
 
@@ -4316,23 +6138,18 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
 	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
-	currentRows, err := d.db.Query(`SELECT id, state FROM position`)
+	currentRows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error querying current database positions:", err)
 		return nil, err
 	}
 
 	for currentRows.Next() {
-		var currentID int64
-		var currentStateJSON string
-		if err = currentRows.Scan(&currentID, &currentStateJSON); err != nil {
+		currentPosition, err := scanPositionRow(currentRows)
+		if err != nil {
 			continue
 		}
-
-		var currentPosition Position
-		if err = json.Unmarshal([]byte(currentStateJSON), &currentPosition); err != nil {
-			continue
-		}
+		positionID := currentPosition.ID
 
 		// Reset ID for comparison
 		currentPosition.ID = 0
@@ -4340,7 +6157,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
 		}
-		currentPositionsMap[string(currentPositionJSON)] = currentID
+		currentPositionsMap[string(currentPositionJSON)] = positionID
 	}
 	if err := currentRows.Err(); err != nil {
 		return nil, err
@@ -4371,7 +6188,9 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		}
 
 		var importPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
+		if isCompactState(stateJSON) {
+			importPosition.Board = decodeBoardCompact(stateJSON)
+		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
 			fmt.Println("Error unmarshalling position:", err)
 			positionsToSkip++
 			continue
@@ -4392,21 +6211,19 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			hasNewData := false
 
 			// Check for analysis to merge
-			var importAnalysisJSON string
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisJSON)
+			var importAnalysisData []byte
+			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
 			if err == nil {
-				var existingAnalysisJSON string
-				existingErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisJSON)
+				var existingAnalysisData []byte
+				existingErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
 
 				if existingErr == sql.ErrNoRows {
 					// New analysis to add
 					hasNewData = true
 				} else if existingErr == nil {
 					// Check if import has better analysis
-					var existingAnalysis PositionAnalysis
-					var importAnalysis PositionAnalysis
-					json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
-					json.Unmarshal([]byte(importAnalysisJSON), &importAnalysis)
+					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
+					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
 
 					if existingAnalysis.AnalysisType == "" && importAnalysis.AnalysisType != "" {
 						hasNewData = true
@@ -4533,23 +6350,18 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
 	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
-	currentRows, err := tx.Query(`SELECT id, state FROM position`)
+	currentRows, err := tx.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error querying current database positions:", err)
 		return nil, err
 	}
 
 	for currentRows.Next() {
-		var currentID int64
-		var currentStateJSON string
-		if err = currentRows.Scan(&currentID, &currentStateJSON); err != nil {
+		currentPosition, err := scanPositionRow(currentRows)
+		if err != nil {
 			continue
 		}
-
-		var currentPosition Position
-		if err = json.Unmarshal([]byte(currentStateJSON), &currentPosition); err != nil {
-			continue
-		}
+		positionID := currentPosition.ID
 
 		// Reset ID for comparison
 		currentPosition.ID = 0
@@ -4557,7 +6369,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
 		}
-		currentPositionsMap[string(currentPositionJSON)] = currentID
+		currentPositionsMap[string(currentPositionJSON)] = positionID
 	}
 	if err := currentRows.Err(); err != nil {
 		return nil, err
@@ -4593,7 +6405,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		}
 
 		var importPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
+		if isCompactState(stateJSON) {
+			importPosition.Board = decodeBoardCompact(stateJSON)
+		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
 			fmt.Println("Error unmarshalling position:", err)
 			continue
 		}
@@ -4613,17 +6427,21 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			hasMerged := false
 
 			// Merge analysis if it exists
-			var importAnalysisJSON string
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisJSON)
+			var importAnalysisData []byte
+			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
 
 			if err == nil {
 				// Load existing analysis from current database (using transaction)
-				var existingAnalysisJSON string
-				existingErr := tx.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisJSON)
+				var existingAnalysisData []byte
+				existingErr := tx.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
 
 				if existingErr == sql.ErrNoRows {
-					// No existing analysis, insert the imported one
-					_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, importAnalysisJSON)
+					// No existing analysis, insert the imported one (re-compress for current format)
+					recompressed, compErr := recompressAnalysisData(importAnalysisData)
+					if compErr != nil {
+						recompressed = importAnalysisData
+					}
+					_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, recompressed)
 					if err != nil {
 						fmt.Printf("Error inserting analysis for position %d: %v\n", existingPositionID, err)
 					} else {
@@ -4631,15 +6449,16 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 					}
 				} else if existingErr == nil {
 					// Both have analysis - keep the existing one unless it's empty
-					var existingAnalysis PositionAnalysis
-					var importAnalysis PositionAnalysis
-
-					json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
-					json.Unmarshal([]byte(importAnalysisJSON), &importAnalysis)
+					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
+					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
 
 					// If import has analysis but existing doesn't, use import
 					if existingAnalysis.AnalysisType == "" && importAnalysis.AnalysisType != "" {
-						_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, importAnalysisJSON, existingPositionID)
+						recompressed, compErr := recompressAnalysisData(importAnalysisData)
+						if compErr != nil {
+							recompressed = importAnalysisData
+						}
+						_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, recompressed, existingPositionID)
 						if err != nil {
 							fmt.Printf("Error updating analysis for position %d: %v\n", existingPositionID, err)
 						} else {
@@ -4694,7 +6513,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			}
 		} else {
 			// Position doesn't exist, add it (using transaction)
-			result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, stateJSON)
+			// Store as full JSON (import DB may not have denormalized columns)
+			fullJSON := fullPositionJSON(importPosition)
+			result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, fullJSON)
 			if err != nil {
 				fmt.Println("Error inserting position:", err)
 				positionsSkipped++
@@ -4708,31 +6529,19 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				continue
 			}
 
-			// Update the position ID in the state JSON
-			importPosition.ID = newPositionID
-			updatedStateJSON, err := json.Marshal(importPosition)
-			if err != nil {
-				return nil, fmt.Errorf("failed to marshal JSON: %w", err)
-			}
-			_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedStateJSON), newPositionID)
-			if err != nil {
-				fmt.Println("Error updating position with ID:", err)
-			}
-
 			// Copy analysis if it exists
-			var importAnalysisJSON string
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisJSON)
+			var importAnalysisData []byte
+			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
 			if err == nil {
 				// Update position_id in the analysis JSON
-				var analysis PositionAnalysis
-				json.Unmarshal([]byte(importAnalysisJSON), &analysis)
+				analysis, _ := decodeAnalysisFromStorage(importAnalysisData)
 				analysis.PositionID = int(newPositionID)
-				updatedAnalysisJSON, err := json.Marshal(analysis)
+				updatedAnalysisData, err := encodeAnalysisForStorage(&analysis)
 				if err != nil {
-					return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+					return nil, fmt.Errorf("failed to marshal analysis: %w", err)
 				}
 
-				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON))
+				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, updatedAnalysisData)
 				if err != nil {
 					fmt.Printf("Error inserting analysis for new position %d: %v\n", newPositionID, err)
 				}
@@ -5036,14 +6845,14 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)
@@ -5100,15 +6909,11 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		// Reset the ID for the new database
 		position.ID = 0
 
-		// Marshal the position
-		positionJSON, err := json.Marshal(position)
-		if err != nil {
-			fmt.Printf("Error marshalling position %d: %v\n", oldPositionID, err)
-			continue
-		}
+		// Marshal the full position (export uses full JSON for backward compatibility)
+		positionJSON := fullPositionJSON(position)
 
 		// Insert the position into the export database
-		result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+		result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, positionJSON)
 		if err != nil {
 			fmt.Printf("Error inserting position %d into export database: %v\n", oldPositionID, err)
 			continue
@@ -5120,28 +6925,17 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			continue
 		}
 
-		// Update the position ID in the state JSON
-		position.ID = newPositionID
-		updatedPositionJSON, err := json.Marshal(position)
-		if err != nil {
-			return fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedPositionJSON), newPositionID)
-		if err != nil {
-			fmt.Printf("Error updating position %d with new ID: %v\n", newPositionID, err)
-		}
-
 		// Store the ID mapping
 		idMapping[oldPositionID] = newPositionID
 
 		// Export analysis if it exists and if includeAnalysis is true
 		if includeAnalysis {
-			var analysisJSON string
-			analysisErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, oldPositionID).Scan(&analysisJSON)
+			var analysisData []byte
+			analysisErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, oldPositionID).Scan(&analysisData)
 			if analysisErr == nil {
 				// Update position_id in the analysis JSON
-				var analysis PositionAnalysis
-				if unmarshalErr := json.Unmarshal([]byte(analysisJSON), &analysis); unmarshalErr == nil {
+				analysis, unmarshalErr := decodeAnalysisFromStorage(analysisData)
+				if unmarshalErr == nil {
 					analysis.PositionID = int(newPositionID)
 
 					// Handle played moves
@@ -5797,44 +7591,10 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		}
 	}
 
-	// Build a position cache for deduplication
-	positionCache := make(map[string]int64) // map[positionJSON]positionID
-	semanticCache := make(map[string]int64) // map[semanticKey]positionID
-
-	// Load existing positions into cache
-	existingRows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, fmt.Errorf("failed to load existing positions: %w", err)
-	}
-
-	for existingRows.Next() {
-		var existingID int64
-		var existingStateJSON string
-		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
-			continue
-		}
-
-		var existingPosition Position
-		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
-			continue
-		}
-
-		// Normalize for comparison (positions are now stored normalized, but older ones might not be)
-		normalizedPosition := existingPosition.NormalizeForStorage()
-		normalizedPosition.ID = 0
-		normalizedJSON, err := json.Marshal(normalizedPosition)
-		if err != nil {
-			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		positionCache[string(normalizedJSON)] = existingID
-		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
-	}
-	if err := existingRows.Err(); err != nil {
-		return 0, err
-	}
-	existingRows.Close()
-
-	fmt.Printf("Loaded %d existing positions into cache\n", len(positionCache))
+	// Build a per-import deduplication cache keyed by Zobrist hash.
+	// The preload of all existing positions is no longer needed — the UNIQUE index
+	// on position.zobrist_hash handles cross-import dedup via INSERT OR IGNORE.
+	cache := newImportCache()
 
 	if isCanonicalDuplicate {
 		// Canonical duplicate: import analysis to existing positions, create genuinely new ones
@@ -5871,7 +7631,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					pos.DecisionType = CheckerAction
 					pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
-					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 					if err != nil {
 						continue
 					}
@@ -5901,12 +7661,12 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					pos.DecisionType = CubeAction
 					pos.Dice = [2]int{0, 0}
 
-					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+					posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 					if err != nil {
 						continue
 					}
 
-					err = d.saveCubeAnalysisToPositionInTx(tx, posID, move.CubeMove.Analysis)
+					err = d.saveCubeAnalysisToPositionInTx(tx, posID, move.CubeMove.Analysis, d.convertCubeAction(move.CubeMove.CubeAction))
 					if err != nil {
 						fmt.Printf("Warning: failed to save cube analysis for canonical duplicate: %v\n", err)
 					}
@@ -5923,7 +7683,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		}
 	} else {
 		// Normal import: create game/move records and import everything
-		if err := d.importXGGamesAndMoves(tx, matchID, match, rawCubeInfo, positionCache); err != nil {
+		if err := d.importXGGamesAndMoves(tx, matchID, match, rawCubeInfo, cache); err != nil {
 			return 0, err
 		}
 	}
@@ -5948,7 +7708,7 @@ type RawCubeAction struct {
 }
 
 // importXGGamesAndMoves imports all games, moves, and analysis from an XG match
-func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgparser.Match, rawCubeInfo map[string]*RawCubeAction, positionCache map[string]int64) error {
+func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgparser.Match, rawCubeInfo map[string]*RawCubeAction, cache *importCache) error {
 	for gameIdx, game := range match.Games {
 		gameID, err := d.importGame(tx, matchID, &game)
 		if err != nil {
@@ -5960,6 +7720,11 @@ func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgpar
 		var pendingCubeComment string // Comment from a skipped "No Double" cube decision
 
 		for moveIdx, move := range game.Moves {
+			// Cancellation check at the top of every move iteration.
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("import cancelled")
+			}
+
 			var rawCube *RawCubeAction
 
 			if move.MoveType == "cube" {
@@ -5996,7 +7761,7 @@ func (d *Database) importXGGamesAndMoves(tx *sql.Tx, matchID int64, match *xgpar
 				}
 			}
 
-			err := d.importMoveWithCacheAndRawCube(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), positionCache, rawCube)
+			err := d.importMoveWithCacheAndRawCube(tx, gameID, int32(moveIdx), &move, &game, int32(match.Metadata.MatchLength), cache, rawCube)
 			if err != nil {
 				return fmt.Errorf("failed to import move %d in game %d: %w", moveIdx, game.GameNumber, err)
 			}
@@ -6022,7 +7787,7 @@ func (d *Database) importGame(tx *sql.Tx, matchID int64, game *xgparser.Game) (i
 }
 
 // importMoveWithCache imports a move using a position cache for deduplication
-func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, positionCache map[string]int64) error {
+func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, cache *importCache) error {
 	var positionID int64
 	var player int32
 	var dice [2]int32
@@ -6043,7 +7808,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
 		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -6101,7 +7866,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 		pos.Dice = [2]int{0, 0} // No dice for cube decisions
 
 		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -6134,7 +7899,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 			}
 
 			// Also save to position analysis table (for UI compatibility)
-			err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+			err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, cubeActionStr)
 			if err != nil {
 				fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
 			}
@@ -6145,7 +7910,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 }
 
 // importMoveWithCacheAndRawCube imports a move with raw cube data for complete action info
-func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, positionCache map[string]int64, rawCube *RawCubeAction) error {
+func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, cache *importCache, rawCube *RawCubeAction) error {
 	var positionID int64
 	var player int32
 	var dice [2]int32
@@ -6166,7 +7931,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
 
 		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -6251,7 +8016,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			pos1.Dice = [2]int{0, 0}
 
 			// Save position 1 (doubling decision)
-			posID1, err := d.savePositionInTxWithCache(tx, pos1, positionCache)
+			posID1, err := d.savePositionInTxWithCache(tx, pos1, cache)
 			if err != nil {
 				return fmt.Errorf("failed to save doubling position: %w", err)
 			}
@@ -6278,7 +8043,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 				if err != nil {
 					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
 				}
-				err = d.saveCubeAnalysisToPositionInTx(tx, posID1, move.CubeMove.Analysis)
+				err = d.saveCubeAnalysisToPositionInTx(tx, posID1, move.CubeMove.Analysis, "Double/Take")
 				if err != nil {
 					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
 				}
@@ -6296,7 +8061,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			pos2.Cube.Owner = -1                    // Cube still in center (decision not yet executed)
 
 			// Save position 2 (take decision)
-			posID2, err := d.savePositionInTxWithCache(tx, &pos2, positionCache)
+			posID2, err := d.savePositionInTxWithCache(tx, &pos2, cache)
 			if err != nil {
 				return fmt.Errorf("failed to save take position: %w", err)
 			}
@@ -6332,7 +8097,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			pos.Dice = [2]int{0, 0}
 
 			// Save position
-			posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+			posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 			if err != nil {
 				return fmt.Errorf("failed to save position: %w", err)
 			}
@@ -6368,7 +8133,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
 				}
 
-				err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+				err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, cubeActionStr)
 				if err != nil {
 					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
 				}
@@ -6683,186 +8448,122 @@ func convertBlunderDBPlayerToXG(blunderDBPlayer int) int32 {
 	return -1 // Player 2
 }
 
-// savePositionInTxWithCache saves a position within a transaction using a cache for deduplication
-// Positions are normalized before storage (player_on_roll = 0) to prevent storing duplicates.
-func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, positionCache map[string]int64) (int64, error) {
-	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
-	normalizedPosition := position.NormalizeForStorage()
-	normalizedPosition.ID = 0 // Exclude ID for comparison
-
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, err
-	}
-
-	// Check cache first
-	if existingID, exists := positionCache[string(positionJSON)]; exists {
-		return existingID, nil
-	}
-
-	// Position doesn't exist, create new one
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
-	if err != nil {
-		return 0, err
-	}
-
-	positionID, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	// Update position with ID
-	normalizedPosition.ID = positionID
-	positionJSONWithID, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
-	if err != nil {
-		return 0, err
-	}
-
-	// Add to cache for future lookups
-	positionCache[string(positionJSON)] = positionID
-
-	return positionID, nil
+// importCache is a per-import Zobrist-hash → position-ID lookup table.
+// It prevents redundant SQL round-trips for positions that appear more than once
+// inside a single match (common in bearoff analyses and canonical-duplicate imports).
+type importCache struct {
+	m map[uint64]int64 // zobristHash → positionID
 }
 
-// positionSemanticKey generates a cache key based on the fields that define position identity:
-// board checker layout, cube state, score, player on roll, decision type, and dice.
-// This enables matching positions across different format parsers that may produce
-// different metadata (HasJacoby, HasBeaver) for the same physical board state.
-func positionSemanticKey(pos *Position) string {
-	return fmt.Sprintf("%v|%v|%v|%d|%d|%v",
-		pos.Board, pos.Cube, pos.Score,
-		pos.PlayerOnRoll, pos.DecisionType, pos.Dice)
+func newImportCache() *importCache {
+	return &importCache{m: make(map[uint64]int64)}
 }
 
-// findOrCreatePositionForCanonicalDuplicate looks up a position by semantic key during
-// canonical duplicate imports. If the position already exists (by board, cube, score,
-// player on roll, decision type, dice), returns the existing ID. If it's genuinely new,
-// creates it in the database and returns the new ID.
-func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, position *Position, positionCache map[string]int64, semanticCache map[string]int64) (int64, error) {
+// savePositionInTxWithCache saves a position within a transaction using a Zobrist-hash
+// based cache for deduplication.  Positions are normalized before storage
+// (player_on_roll = 0) to prevent storing duplicates.
+//
+// Algorithm:
+//  1. Local cache hit  → return immediately (no SQL).
+//  2. INSERT OR IGNORE → no-ops silently if zobrist_hash already exists (UNIQUE index).
+//  3. SELECT id+state  → fetches the id whether we just inserted or it already existed.
+//  4. Dedup hit        → verify the stored board matches the incoming position to detect
+//     the ~2⁻⁴⁴ Zobrist-collision corner case; log a warning if they differ.
+//  5. New row          → UPDATE state to embed the assigned ID (backwards-compat readers).
+func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, cache *importCache) (int64, error) {
+	// Normalize: always store from the perspective of player on roll (player_on_roll == 0).
 	normalizedPosition := position.NormalizeForStorage()
 	normalizedPosition.ID = 0
 
-	// Check exact match first (fast path)
-	positionJSON, err := json.Marshal(normalizedPosition)
+	cols := populatePositionColumns(&normalizedPosition)
+	hash := cols.ZobristHash
+
+	// 1. Local cache hit — no SQL needed.
+	if id, ok := cache.m[hash]; ok {
+		return id, nil
+	}
+
+	compactState := encodeBoardCompact(normalizedPosition.Board)
+
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
+	}
+
+	// 2. INSERT OR IGNORE — idempotent thanks to the UNIQUE index on zobrist_hash.
+	res, err := tx.Exec(`
+		INSERT OR IGNORE INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(hash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		compactState)
 	if err != nil {
 		return 0, err
 	}
-	if existingID, exists := positionCache[string(positionJSON)]; exists {
-		return existingID, nil
-	}
+	rowsAffected, _ := res.RowsAffected()
 
-	// Check semantic match (board, cube, score, player_on_roll, decision_type, dice)
-	semKey := positionSemanticKey(&normalizedPosition)
-	if existingID, exists := semanticCache[semKey]; exists {
-		return existingID, nil
-	}
-
-	// Genuinely new position — create it
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	// 3. Fetch the id (state not needed — board is compared via compact string).
+	var positionID int64
+	var storedState string
+	err = tx.QueryRow(`SELECT id, state FROM position WHERE zobrist_hash = ?`, int64(hash)).Scan(&positionID, &storedState)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("failed to fetch position by zobrist_hash: %w", err)
 	}
 
-	positionID, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
+	if rowsAffected == 0 {
+		// 4. Dedup hit: structural collision guard.
+		// Compare compact board strings — if they differ we have a genuine Zobrist
+		// collision (probability ≈ 2⁻⁴⁴). For legacy JSON state, decode and
+		// re-encode to compact for a fair comparison.
+		storedBoard := storedState
+		if !isCompactState(storedState) {
+			var storedPos Position
+			if jsonErr := json.Unmarshal([]byte(storedState), &storedPos); jsonErr == nil {
+				storedBoard = encodeBoardCompact(storedPos.Board)
+			}
+		}
+		if storedBoard != compactState {
+			fmt.Fprintf(os.Stderr,
+				"WARNING: Zobrist collision for hash %d — stored board differs from incoming; returning existing id %d\n",
+				hash, positionID)
+		}
 	}
 
-	normalizedPosition.ID = positionID
-	positionJSONWithID, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
-	if err != nil {
-		return 0, err
-	}
-
-	// Add to both caches
-	positionCache[string(positionJSON)] = positionID
-	semanticCache[semKey] = positionID
-
+	cache.m[hash] = positionID
 	return positionID, nil
 }
 
-// savePositionInTx saves a position within a transaction, checking for duplicates first
-// Positions are normalized before storage (player_on_roll = 0) to prevent storing duplicates.
+// findOrCreatePositionForCanonicalDuplicate looks up or creates a position during
+// canonical-duplicate imports (same match re-imported from a different format).
+// Delegates to savePositionInTxWithCache which uses the Zobrist hash index and the
+// per-import cache for efficient deduplication.
+func (d *Database) findOrCreatePositionForCanonicalDuplicate(tx *sql.Tx, position *Position, cache *importCache) (int64, error) {
+	return d.savePositionInTxWithCache(tx, position, cache)
+}
+
+// savePositionInTx saves a position within a transaction checking for duplicates via
+// the Zobrist-hash unique index (no external cache — one INSERT+SELECT roundtrip each call).
 func (d *Database) savePositionInTx(tx *sql.Tx, position *Position) (int64, error) {
-	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
-	normalizedPosition := position.NormalizeForStorage()
-	normalizedPosition.ID = 0 // Exclude ID for comparison
-
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, err
-	}
-
-	// Query existing positions to check for duplicates
-	rows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var stateJSON string
-		var positionID int64
-		if err = rows.Scan(&positionID, &stateJSON); err != nil {
-			continue
-		}
-
-		var existingPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &existingPosition); err != nil {
-			continue
-		}
-
-		// Compare positions excluding the ID field
-		existingPosition.ID = 0
-		existingPositionJSON, err := json.Marshal(existingPosition)
-		if err != nil {
-			continue
-		}
-
-		if string(positionJSON) == string(existingPositionJSON) {
-			// Position already exists, return existing ID
-			return positionID, nil
-		}
-	}
-	if err := rows.Err(); err != nil {
-		return 0, err
-	}
-
-	// Position doesn't exist, create new one
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
-	if err != nil {
-		return 0, err
-	}
-
-	positionID, err := result.LastInsertId()
-	if err != nil {
-		return 0, err
-	}
-
-	// Update position with ID
-	normalizedPosition.ID = positionID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-
-	return positionID, err
+	cache := newImportCache()
+	return d.savePositionInTxWithCache(tx, position, cache)
 }
 
 // saveMoveAnalysisInTx saves checker move analysis within a transaction
 func (d *Database) saveMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgparser.CheckerAnalysis) error {
-	// Calculate win rates (player1 is player on roll)
-	player1WinRate := analysis.Player1WinRate * 100.0 // Convert to percentage
-	player2WinRate := (1.0 - analysis.Player1WinRate) * 100.0
+	// Calculate win rates (player1 is player on roll) — stored as integer × 100
+	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -6870,18 +8571,18 @@ func (d *Database) saveMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "checker", translateAnalysisDepth(int(analysis.AnalysisDepth)),
-		analysis.Equity, 0.0, // No separate equity error in CheckerAnalysis
-		player1WinRate, analysis.Player1GammonRate*100.0, analysis.Player1BgRate*100.0,
-		player2WinRate, analysis.Player2GammonRate*100.0, analysis.Player2BgRate*100.0)
+		int64(math.Round(float64(analysis.Equity)*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BgRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BgRate)*100.0*100)))
 
 	return err
 }
 
 // saveCubeAnalysisInTx saves cube analysis within a transaction
 func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgparser.CubeAnalysis) error {
-	// Calculate win rates
-	player1WinRate := analysis.Player1WinRate * 100.0
-	player2WinRate := (1.0 - analysis.Player1WinRate) * 100.0
+	// Calculate win rates — stored as integer × 100
+	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -6889,9 +8590,9 @@ func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgpa
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "cube", translateAnalysisDepth(int(analysis.AnalysisDepth)),
-		analysis.CubefulNoDouble, 0.0,
-		player1WinRate, analysis.Player1GammonRate*100.0, analysis.Player1BgRate*100.0,
-		player2WinRate, analysis.Player2GammonRate*100.0, analysis.Player2BgRate*100.0)
+		int64(math.Round(float64(analysis.CubefulNoDouble)*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BgRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BgRate)*100.0*100)))
 
 	return err
 }
@@ -7002,8 +8703,11 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
 }
 
-// saveCubeAnalysisToPositionInTx converts XG cube analysis to PositionAnalysis and saves it
-func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *xgparser.CubeAnalysis) error {
+// saveCubeAnalysisToPositionInTx converts XG cube analysis to PositionAnalysis and saves it.
+// playedCubeAction is the cube action the player actually took (e.g. "No Double", "Double/Take",
+// "Double/Pass", "Double"). When non-empty it is stored in PlayedCubeActions so that
+// populateAnalysisColumns can compute cube_error.
+func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *xgparser.CubeAnalysis, playedCubeAction string) error {
 	if analysis == nil {
 		return nil
 	}
@@ -7015,6 +8719,9 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 		AnalysisEngineVersion: "XG",
 		CreationDate:          time.Now(),
 		LastModifiedDate:      time.Now(),
+	}
+	if playedCubeAction != "" {
+		posAnalysis.PlayedCubeActions = []string{playedCubeAction}
 	}
 
 	cubefulNoDouble := float64(analysis.CubefulNoDouble)
@@ -7083,14 +8790,14 @@ func (d *Database) saveCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID
 	doubled := rawCube.Doubled
 
 	// Try to load existing analysis for this position
-	var existingAnalysisJSON string
+	var existingAnalysisData []byte
 	var existingID int64
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 
 	var posAnalysis PositionAnalysis
 	if err == nil && existingID > 0 {
 		// Existing analysis found - merge cube info with it
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &posAnalysis)
+		posAnalysis, err = decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			return err
 		}
@@ -7321,16 +9028,15 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 
 	// Check if an analysis already exists for the given position ID
 	var existingID int64
-	var existingAnalysisJSON string
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	var existingAnalysisData []byte
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
 
 	if existingID > 0 {
 		// Parse existing analysis
-		var existingAnalysis PositionAnalysis
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
+		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			return err
 		}
@@ -7434,11 +9140,32 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		}
 
 		// Update the existing analysis
-		analysisJSON, err := json.Marshal(analysis)
+		roundAnalysisForStorage(&analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE id = ?`, string(analysisJSON), existingID)
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = tx.Exec(`UPDATE analysis SET
+			data=?, best_cube_action=?, cube_error=?,
+			best_move_equity_error=?,
+			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			WHERE id=?`,
+			analysisData,
+			aCols.BestCubeAction, aCols.CubeError,
+			aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			existingID)
 		if err != nil {
 			return err
 		}
@@ -7477,11 +9204,30 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 		}
 
 		// Insert a new analysis
-		analysisJSON, err := json.Marshal(analysis)
+		roundAnalysisForStorage(&analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			return err
 		}
-		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		playedMove := ""
+		if len(analysis.PlayedMoves) > 0 {
+			playedMove = analysis.PlayedMoves[0]
+		}
+		playedCubeAction := ""
+		if len(analysis.PlayedCubeActions) > 0 {
+			playedCubeAction = analysis.PlayedCubeActions[0]
+		}
+		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
+		_, err = tx.Exec(`INSERT INTO analysis (
+			position_id, data,
+			best_cube_action, cube_error, best_move_equity_error,
+			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
+			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
+			positionID, analysisData,
+			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
+			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
 		if err != nil {
 			return err
 		}
@@ -8354,43 +10100,8 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 		}
 	}
 
-	// Build a position cache for deduplication
-	positionCache := make(map[string]int64) // map[positionJSON]positionID
-	semanticCache := make(map[string]int64) // map[semanticKey]positionID
-
-	// Load existing positions into cache
-	existingRows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, fmt.Errorf("failed to load existing positions: %w", err)
-	}
-
-	for existingRows.Next() {
-		var existingID int64
-		var existingStateJSON string
-		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
-			continue
-		}
-
-		var existingPosition Position
-		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
-			continue
-		}
-
-		normalizedPosition := existingPosition.NormalizeForStorage()
-		normalizedPosition.ID = 0
-		normalizedJSON, err := json.Marshal(normalizedPosition)
-		if err != nil {
-			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		positionCache[string(normalizedJSON)] = existingID
-		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
-	}
-	if err := existingRows.Err(); err != nil {
-		return 0, err
-	}
-	existingRows.Close()
-
-	fmt.Printf("Loaded %d existing positions into cache for GnuBG import\n", len(positionCache))
+	// Per-import deduplication cache keyed by Zobrist hash.
+	cache := newImportCache()
 
 	if isCanonicalDuplicate {
 		// Canonical duplicate: import analysis to existing positions, create genuinely new ones
@@ -8433,7 +10144,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 						pos.DecisionType = CheckerAction
 						pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
 
-						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 						if err != nil {
 							continue
 						}
@@ -8458,7 +10169,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 							pos.PlayerOnRoll = moveRec.Player
 							pos.DecisionType = CheckerAction
 							pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
-							posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+							posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 							if err == nil {
 								// Convert MWC to EMG for match play (copy to avoid mutating original)
 								cubeAnalysis := *moveRec.CubeAnalysis
@@ -8481,7 +10192,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 						pos.DecisionType = CubeAction
 						pos.Dice = [2]int{0, 0}
 
-						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+						posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 						if err != nil {
 							continue
 						}
@@ -8541,6 +10252,11 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 
 			moveNumber := int32(0)
 			for i := range game.Moves {
+				// Cancellation check at the top of every move iteration.
+				if atomic.LoadInt32(&d.importCancelled) != 0 {
+					return 0, fmt.Errorf("import cancelled")
+				}
+
 				moveRec := &game.Moves[i]
 
 				switch string(moveRec.Type) {
@@ -8583,7 +10299,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 					}
 				}
 
-				err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, positionCache, isSGF, cubeAction)
+				err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, cache, isSGF, cubeAction)
 				if err != nil {
 					fmt.Printf("Warning: failed to import move %d in game %d: %v\n", moveNumber, game.GameNumber, err)
 					moveNumber++
@@ -8637,14 +10353,14 @@ func (d *Database) importGnuBGGame(tx *sql.Tx, matchID int64, game *gnubgparser.
 
 // importGnuBGMove imports a single move record from gnubgparser data
 // isSGF indicates SGF format where moves use absolute coordinates (Player 0's system)
-func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, isSGF bool, cubeAction string) error {
+func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, cache *importCache, isSGF bool, cubeAction string) error {
 	switch moveRec.Type {
 	case "move":
-		return d.importGnuBGCheckerMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, isSGF)
+		return d.importGnuBGCheckerMove(tx, gameID, moveNumber, moveRec, game, matchLength, cache, isSGF)
 	case "double":
 		// cubeAction is determined by the caller based on the opponent's response
 		// ("Double/Take" or "Double/Pass")
-		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, positionCache, cubeAction, isSGF)
+		return d.importGnuBGCubeMove(tx, gameID, moveNumber, moveRec, game, matchLength, cache, cubeAction, isSGF)
 	case "take", "drop":
 		// Skip take/drop as separate entries — the "double" entry already captures
 		// the full cube decision (like XG's single "Double/Pass" or "Double/Take")
@@ -8660,7 +10376,7 @@ func (d *Database) importGnuBGMove(tx *sql.Tx, gameID int64, moveNumber int32, m
 
 // importGnuBGCheckerMove handles importing a checker move from gnubgparser
 // isSGF indicates SGF format where moves use absolute coordinates and MoveString is in letter format
-func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, isSGF bool) error {
+func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, cache *importCache, isSGF bool) error {
 	player := moveRec.Player // 0 or 1, maps directly to blunderDB
 
 	// Convert player to XG-style encoding for DB storage consistency
@@ -8695,7 +10411,7 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 		pos.DecisionType = CheckerAction
 		pos.Dice = [2]int{moveRec.Dice[0], moveRec.Dice[1]}
 
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -8763,7 +10479,7 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 }
 
 // importGnuBGCubeMove handles importing a cube move (double/take/drop) from gnubgparser
-func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, positionCache map[string]int64, cubeAction string, isSGF bool) error {
+func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveRec *gnubgparser.MoveRecord, game *gnubgparser.Game, matchLength int, cache *importCache, cubeAction string, isSGF bool) error {
 	player := moveRec.Player // 0 or 1
 
 	// Convert player to XG-style encoding for DB storage consistency
@@ -8780,7 +10496,7 @@ func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int3
 		pos.DecisionType = CubeAction
 		pos.Dice = [2]int{0, 0} // No dice for cube decisions
 
-		posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 		if err != nil {
 			return fmt.Errorf("failed to save position: %w", err)
 		}
@@ -9147,9 +10863,9 @@ func formatGnuBGMoveItems(move [8]int, player int, formatPoint func(int, int) st
 
 // saveGnuBGMoveAnalysisInTx saves a gnubgparser MoveOption to the move_analysis table
 func (d *Database) saveGnuBGMoveAnalysisInTx(tx *sql.Tx, moveID int64, moveOpt *gnubgparser.MoveOption) error {
-	// gnubgparser rates are 0-1 fractions; convert to percentages
-	player1WinRate := float64(moveOpt.Player1WinRate) * 100.0
-	player2WinRate := float64(moveOpt.Player2WinRate) * 100.0
+	// gnubgparser rates are 0-1 fractions; convert to integer × 100 of percentage
+	player1WinRate := int64(math.Round(float64(moveOpt.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(moveOpt.Player2WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -9157,9 +10873,9 @@ func (d *Database) saveGnuBGMoveAnalysisInTx(tx *sql.Tx, moveID int64, moveOpt *
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "checker", translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth),
-		moveOpt.Equity, 0.0,
-		player1WinRate, float64(moveOpt.Player1GammonRate)*100.0, float64(moveOpt.Player1BackgammonRate)*100.0,
-		player2WinRate, float64(moveOpt.Player2GammonRate)*100.0, float64(moveOpt.Player2BackgammonRate)*100.0)
+		int64(math.Round(moveOpt.Equity*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(moveOpt.Player1GammonRate)*100.0*100)), int64(math.Round(float64(moveOpt.Player1BackgammonRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(moveOpt.Player2GammonRate)*100.0*100)), int64(math.Round(float64(moveOpt.Player2BackgammonRate)*100.0*100)))
 
 	return err
 }
@@ -9578,8 +11294,8 @@ func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1
 
 // saveGnuBGCubeMoveAnalysisInTx saves gnubgparser CubeAnalysis to the move_analysis table
 func (d *Database) saveGnuBGCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *gnubgparser.CubeAnalysis) error {
-	player1WinRate := float64(analysis.Player1WinRate) * 100.0
-	player2WinRate := float64(analysis.Player2WinRate) * 100.0
+	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
+	player2WinRate := int64(math.Round(float64(analysis.Player2WinRate) * 100.0 * 100))
 
 	_, err := tx.Exec(`
 		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
@@ -9587,9 +11303,9 @@ func (d *Database) saveGnuBGCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, analy
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "cube", translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
-		analysis.CubefulNoDouble, 0.0,
-		player1WinRate, float64(analysis.Player1GammonRate)*100.0, float64(analysis.Player1BackgammonRate)*100.0,
-		player2WinRate, float64(analysis.Player2GammonRate)*100.0, float64(analysis.Player2BackgammonRate)*100.0)
+		int64(math.Round(analysis.CubefulNoDouble*1000)), int64(0),
+		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BackgammonRate)*100.0*100)),
+		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BackgammonRate)*100.0*100)))
 
 	return err
 }
@@ -10061,41 +11777,8 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 		}
 	}
 
-	// Build a position cache for deduplication
-	positionCache := make(map[string]int64)
-	semanticCache := make(map[string]int64) // map[semanticKey]positionID
-
-	// Load existing positions into cache
-	existingRows, err := tx.Query(`SELECT id, state FROM position`)
-	if err != nil {
-		return 0, fmt.Errorf("failed to load existing positions: %w", err)
-	}
-
-	for existingRows.Next() {
-		var existingID int64
-		var existingStateJSON string
-		if err := existingRows.Scan(&existingID, &existingStateJSON); err != nil {
-			continue
-		}
-		var existingPosition Position
-		if err := json.Unmarshal([]byte(existingStateJSON), &existingPosition); err != nil {
-			continue
-		}
-		normalizedPosition := existingPosition.NormalizeForStorage()
-		normalizedPosition.ID = 0
-		normalizedJSON, err := json.Marshal(normalizedPosition)
-		if err != nil {
-			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		positionCache[string(normalizedJSON)] = existingID
-		semanticCache[positionSemanticKey(&normalizedPosition)] = existingID
-	}
-	if err := existingRows.Err(); err != nil {
-		return 0, err
-	}
-	existingRows.Close()
-
-	fmt.Printf("Loaded %d existing positions into cache for BGF import\n", len(positionCache))
+	// Per-import deduplication cache keyed by Zobrist hash.
+	cache := newImportCache()
 
 	// Process each game
 	for gameIdx, gameRaw := range gamesData {
@@ -10145,6 +11828,11 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			moveNumber := int32(0)
 			pendingCubeDouble := false // tracks if previous move was a cube double encoded as amove
 			for moveIdx, moveRaw := range movesData {
+				// Cancellation check at the top of every move iteration.
+				if atomic.LoadInt32(&d.importCancelled) != 0 {
+					return 0, fmt.Errorf("import cancelled")
+				}
+
 				moveData, ok := moveRaw.(map[string]interface{})
 				if !ok {
 					continue
@@ -10203,7 +11891,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							break
 						}
 
-						err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+						err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 						if err != nil {
 							fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
 						}
@@ -10212,7 +11900,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 					}
 
 					// Normal checker move
-					err := d.importBGFCheckerMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache)
+					err := d.importBGFCheckerMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache)
 					if err != nil {
 						fmt.Printf("Warning: failed to import BGF move %d in game %d: %v\n", moveIdx, gameIdx+1, err)
 					}
@@ -10246,7 +11934,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 						}
 					}
 
-					err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, cubeAction)
+					err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 					if err != nil {
 						fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
 					}
@@ -10333,11 +12021,11 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							}
 							break
 						}
-						d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache, cubeAction)
+						d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 						continue
 					}
 
-					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache)
+					d.importBGFCheckerAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache)
 					// Skip board update for green=7 moves (unplayable die - analysis data only)
 					greenDie := bgfGetInt(moveData, "green")
 					if greenDie != 7 {
@@ -10360,7 +12048,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 							break
 						}
 					}
-					d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, positionCache, semanticCache, cubeAction)
+					d.importBGFCubeAnalysisOnly(tx, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 
 				case "atake":
 					if cubeValue == 1 {
@@ -10388,7 +12076,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 }
 
 // importBGFCheckerMove imports a single checker move from a BGF file
-func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64) error {
+func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache) error {
 	player := bgfGetInt(moveData, "player") // -1 = Green, 1 = Red
 
 	// Convert BGF player to blunderDB player encoding
@@ -10457,7 +12145,7 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 	pos.Dice = [2]int{die1, die2}
 
 	// Save position
-	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 	if err != nil {
 		return fmt.Errorf("failed to save position: %w", err)
 	}
@@ -10527,7 +12215,7 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 }
 
 // importBGFCubeMove imports a cube double/take/pass move from a BGF file
-func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, cubeAction string) error {
+func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache, cubeAction string) error {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -10538,7 +12226,7 @@ func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32,
 	pos.Dice = [2]int{0, 0}
 
 	// Save position
-	posID, err := d.savePositionInTxWithCache(tx, pos, positionCache)
+	posID, err := d.savePositionInTxWithCache(tx, pos, cache)
 	if err != nil {
 		return fmt.Errorf("failed to save position: %w", err)
 	}
@@ -10582,7 +12270,7 @@ func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32,
 }
 
 // importBGFCheckerAnalysisOnly imports only analysis for a canonical duplicate
-func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, semanticCache map[string]int64) {
+func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -10594,7 +12282,7 @@ func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]
 	pos.DecisionType = CheckerAction
 	pos.Dice = [2]int{dieGreen, dieRed}
 
-	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 	if err != nil {
 		return
 	}
@@ -10615,7 +12303,7 @@ func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]
 }
 
 // importBGFCubeAnalysisOnly imports only cube analysis for a canonical duplicate
-func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, positionCache map[string]int64, semanticCache map[string]int64, cubeAction string) {
+func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]interface{}, gameData map[string]interface{}, matchLen int, boardState [28]int, cubeValue int, cubeOwner int, isCrawford bool, cache *importCache, cubeAction string) {
 	player := bgfGetInt(moveData, "player")
 	blunderDBPlayer := bgfPlayerToBlunderDB(player)
 
@@ -10624,7 +12312,7 @@ func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]int
 	pos.DecisionType = CubeAction
 	pos.Dice = [2]int{0, 0}
 
-	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, positionCache, semanticCache)
+	posID, err := d.findOrCreatePositionForCanonicalDuplicate(tx, pos, cache)
 	if err != nil {
 		return
 	}
@@ -10916,12 +12604,12 @@ func (d *Database) saveBGFMoveAnalysisInTx(tx *sql.Tx, moveID int64, maData map[
 
 	ply := bgfGetInt(maData, "ply")
 
-	playerWin := bgfGetFloat(eq, "myWins") * 100.0
-	playerGammon := bgfGetFloat(eq, "myGammon") * 100.0
-	playerBg := bgfGetFloat(eq, "myBackGammon") * 100.0
-	opponentWin := bgfGetFloat(eq, "oppWins") * 100.0
-	opponentGammon := bgfGetFloat(eq, "oppGammon") * 100.0
-	opponentBg := bgfGetFloat(eq, "oppBackGammon") * 100.0
+	playerWin := int64(math.Round(bgfGetFloat(eq, "myWins") * 100.0 * 100))
+	playerGammon := int64(math.Round(bgfGetFloat(eq, "myGammon") * 100.0 * 100))
+	playerBg := int64(math.Round(bgfGetFloat(eq, "myBackGammon") * 100.0 * 100))
+	opponentWin := int64(math.Round(bgfGetFloat(eq, "oppWins") * 100.0 * 100))
+	opponentGammon := int64(math.Round(bgfGetFloat(eq, "oppGammon") * 100.0 * 100))
+	opponentBg := int64(math.Round(bgfGetFloat(eq, "oppBackGammon") * 100.0 * 100))
 
 	equity := bgfGetFloat(eq, "emg")
 	if !bgfGetBool(eq, "hasEMG") {
@@ -10934,7 +12622,7 @@ func (d *Database) saveBGFMoveAnalysisInTx(tx *sql.Tx, moveID int64, maData map[
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "checker", translateBGFAnalysisDepth(ply),
-		equity, 0.0,
+		int64(math.Round(equity*1000)), int64(0),
 		playerWin, playerGammon, playerBg,
 		opponentWin, opponentGammon, opponentBg)
 
@@ -11026,14 +12714,14 @@ func (d *Database) saveBGFCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID i
 
 // saveBGFCubeMoveAnalysisInTx saves BGF cube analysis to move_analysis table
 func (d *Database) saveBGFCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
-	playerWin := bgfGetFloat(equity, "myWins") * 100.0
-	playerGammon := bgfGetFloat(equity, "myGammon") * 100.0
-	playerBg := bgfGetFloat(equity, "myBackGammon") * 100.0
-	opponentWin := bgfGetFloat(equity, "oppWins") * 100.0
-	opponentGammon := bgfGetFloat(equity, "oppGammon") * 100.0
-	opponentBg := bgfGetFloat(equity, "oppBackGammon") * 100.0
+	playerWin := int64(math.Round(bgfGetFloat(equity, "myWins") * 100.0 * 100))
+	playerGammon := int64(math.Round(bgfGetFloat(equity, "myGammon") * 100.0 * 100))
+	playerBg := int64(math.Round(bgfGetFloat(equity, "myBackGammon") * 100.0 * 100))
+	opponentWin := int64(math.Round(bgfGetFloat(equity, "oppWins") * 100.0 * 100))
+	opponentGammon := int64(math.Round(bgfGetFloat(equity, "oppGammon") * 100.0 * 100))
+	opponentBg := int64(math.Round(bgfGetFloat(equity, "oppBackGammon") * 100.0 * 100))
 
-	eqNoDouble := bgfGetFloat(cubeDecision, "eqNoDouble")
+	eqNoDouble := int64(math.Round(bgfGetFloat(cubeDecision, "eqNoDouble") * 1000))
 
 	ply := 0 // Cube analysis doesn't have a ply field in BGF, use the move level
 	if pVal, ok := equity["ply"]; ok {
@@ -11046,7 +12734,7 @@ func (d *Database) saveBGFCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, equity 
 		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
 		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 	`, moveID, "cube", translateBGFAnalysisDepth(ply),
-		eqNoDouble, 0.0,
+		eqNoDouble, int64(0),
 		playerWin, playerGammon, playerBg,
 		opponentWin, opponentGammon, opponentBg)
 
@@ -11136,13 +12824,13 @@ func (d *Database) saveBGFCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 // saveBGFCubeAnalysisForCheckerPositionInTx saves cube analysis from equity field to a checker position
 func (d *Database) saveBGFCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
 	// Try to load existing analysis for this position
-	var existingAnalysisJSON string
+	var existingAnalysisData []byte
 	var existingID int64
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 
 	var posAnalysis PositionAnalysis
 	if err == nil && existingID > 0 {
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &posAnalysis)
+		posAnalysis, err = decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			return err
 		}
@@ -11408,9 +13096,12 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 
 	// Save position to database (inline, since caller already holds the mutex)
 	normalizedPosition := pos.NormalizeForStorage()
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position: %w", err)
+	compactState := encodeBoardCompact(normalizedPosition.Board)
+
+	cols := populatePositionColumns(pos)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
 	}
 
 	tx, err := d.db.Begin()
@@ -11419,7 +13110,23 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	result, err := tx.Exec(`
+		INSERT INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		compactState)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert position: %w", err)
 	}
@@ -11427,16 +13134,6 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 	positionID, err := result.LastInsertId()
 	if err != nil {
 		return 0, fmt.Errorf("failed to get position ID: %w", err)
-	}
-
-	normalizedPosition.ID = positionID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position with ID: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-	if err != nil {
-		return 0, fmt.Errorf("failed to update position state: %w", err)
 	}
 
 	// Save checker evaluation analysis if available
@@ -11481,11 +13178,12 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 			Moves: checkerMoves,
 		}
 
-		analysisJSON, err := json.Marshal(posAnalysis)
+		roundAnalysisForStorage(&posAnalysis)
+		analysisData, err := encodeAnalysisForStorage(&posAnalysis)
 		if err != nil {
 			return 0, fmt.Errorf("failed to marshal checker analysis: %w", err)
 		}
-		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, analysisData)
 		if err != nil {
 			return 0, fmt.Errorf("failed to save checker analysis for BGBlitz position: %w", err)
 		}
@@ -11564,11 +13262,12 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 
 		posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 
-		analysisJSON, err := json.Marshal(posAnalysis)
+		roundAnalysisForStorage(&posAnalysis)
+		analysisData, err := encodeAnalysisForStorage(&posAnalysis)
 		if err != nil {
 			return 0, fmt.Errorf("failed to marshal cube analysis: %w", err)
 		}
-		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, analysisData)
 		if err != nil {
 			return 0, fmt.Errorf("failed to save cube analysis for BGBlitz position: %w", err)
 		}
@@ -11622,37 +13321,16 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 		return 0, fmt.Errorf("XGP file contains unsupported move type: %s", move.MoveType)
 	}
 
-	// Save position to database
-	normalizedPosition := pos.NormalizeForStorage()
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position: %w", err)
-	}
-
+	// Save position to database using the proper column-populating path.
 	tx, err := d.db.Begin()
 	if err != nil {
 		return 0, fmt.Errorf("failed to begin transaction: %w", err)
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	positionID, err := d.savePositionInTx(tx, pos)
 	if err != nil {
-		return 0, fmt.Errorf("failed to insert position: %w", err)
-	}
-
-	positionID, err := result.LastInsertId()
-	if err != nil {
-		return 0, fmt.Errorf("failed to get position ID: %w", err)
-	}
-
-	normalizedPosition.ID = positionID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position with ID: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-	if err != nil {
-		return 0, fmt.Errorf("failed to update position state: %w", err)
+		return 0, fmt.Errorf("failed to save position: %w", err)
 	}
 
 	// Save analysis
@@ -11663,7 +13341,7 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 			fmt.Printf("Warning: failed to save checker analysis for XGP position: %v\n", err)
 		}
 	} else if move.MoveType == "cube" && move.CubeMove != nil && move.CubeMove.Analysis != nil {
-		err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+		err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, d.convertCubeAction(move.CubeMove.CubeAction))
 		if err != nil {
 			fmt.Printf("Warning: failed to save cube analysis for XGP position: %v\n", err)
 		}
@@ -11681,19 +13359,10 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 				checkerPos.DecisionType = CheckerAction
 				checkerPos.Dice = [2]int{int(secondMove.CheckerMove.Dice[0]), int(secondMove.CheckerMove.Dice[1])}
 
-				normalizedChecker := checkerPos.NormalizeForStorage()
-				checkerJSON, err := json.Marshal(normalizedChecker)
+				checkerPosID, err := d.savePositionInTx(tx, checkerPos)
 				if err == nil {
-					checkerResult, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(checkerJSON))
-					if err == nil {
-						checkerPosID, _ := checkerResult.LastInsertId()
-						normalizedChecker.ID = checkerPosID
-						checkerJSON, _ = json.Marshal(normalizedChecker)
-						tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(checkerJSON), checkerPosID)
-
-						d.saveCheckerAnalysisToPositionInTx(tx, checkerPosID, secondMove.CheckerMove.Analysis,
-							&secondMove.CheckerMove.Position, secondMove.CheckerMove.ActivePlayer, &secondMove.CheckerMove.PlayedMove)
-					}
+					d.saveCheckerAnalysisToPositionInTx(tx, checkerPosID, secondMove.CheckerMove.Analysis,
+						&secondMove.CheckerMove.Position, secondMove.CheckerMove.ActivePlayer, &secondMove.CheckerMove.PlayedMove)
 				}
 			}
 		}
@@ -12274,6 +13943,9 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			m.player,
 			m.position_id,
 			p.state as position_state,
+			p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
+			p.cube_value, p.cube_owner, p.score_1, p.score_2,
+			p.has_jacoby, p.has_beaver,
 			COALESCE(m.checker_move, '') as checker_move,
 			COALESCE(m.cube_action, '') as cube_action
 		FROM move m
@@ -12292,20 +13964,21 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 		var moveID, gameID, positionID int64
 		var gameNumber, moveNumber, player int32
 		var moveType, positionState, checkerMove, cubeAction string
+		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
 
-		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState, &checkerMove, &cubeAction)
+		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState,
+			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
+			&checkerMove, &cubeAction)
 		if err != nil {
 			fmt.Printf("Error scanning move: %v\n", err)
 			continue
 		}
 
-		// Unmarshal position
-		var position Position
-		err = json.Unmarshal([]byte(positionState), &position)
-		if err != nil {
-			fmt.Printf("Error unmarshalling position: %v\n", err)
-			continue
-		}
+		// Reconstruct position from compact state + denormalized columns
+		position := reconstructPosition(positionID, positionState,
+			int(pDT.Int64), int(pPOR.Int64), int(pD1.Int64), int(pD2.Int64),
+			int(pCV.Int64), int(pCO.Int64), int(pS1.Int64), int(pS2.Int64),
+			int(pHJ.Int64), int(pHB.Int64))
 
 		// Convert player from XG encoding (-1, 1) to blunderDB encoding (0, 1)
 		playerBlunderDB := convertXGPlayerToBlunderDB(player)
@@ -12737,7 +14410,7 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 	}
 
 	rows, err := d.db.Query(`
-		SELECT p.id, p.state
+		SELECT `+positionSelectColsP+`
 		FROM position p
 		INNER JOIN collection_position cp ON p.id = cp.position_id
 		WHERE cp.collection_id = ?
@@ -12750,19 +14423,10 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 
 	var positions []Position
 	for rows.Next() {
-		var id int64
-		var state string
-		err := rows.Scan(&id, &state)
+		position, err := scanPositionRow(rows)
 		if err != nil {
 			continue
 		}
-
-		var position Position
-		err = json.Unmarshal([]byte(state), &position)
-		if err != nil {
-			continue
-		}
-		position.ID = id
 		positions = append(positions, position)
 	}
 	if err := rows.Err(); err != nil {
@@ -13125,14 +14789,14 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 		move_id INTEGER,
 		analysis_type TEXT,
 		depth TEXT,
-		equity REAL,
-		equity_error REAL,
-		win_rate REAL,
-		gammon_rate REAL,
-		backgammon_rate REAL,
-		opponent_win_rate REAL,
-		opponent_gammon_rate REAL,
-		opponent_backgammon_rate REAL,
+		equity INTEGER,
+		equity_error INTEGER,
+		win_rate INTEGER,
+		gammon_rate INTEGER,
+		backgammon_rate INTEGER,
+		opponent_win_rate INTEGER,
+		opponent_gammon_rate INTEGER,
+		opponent_backgammon_rate INTEGER,
 		FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 	)`)
 	if err != nil {
@@ -13173,13 +14837,12 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 	// Export positions and create ID mapping
 	oldToNewID := make(map[int64]int64)
 	for _, posID := range positionIDs {
-		var state string
-		err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, posID).Scan(&state)
+		pos, err := d.loadPositionByIDUnlocked(posID)
 		if err != nil {
 			continue
 		}
 
-		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, state)
+		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, fullPositionJSON(pos))
 		if err != nil {
 			continue
 		}
@@ -13191,10 +14854,12 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 
 		// Export analysis if requested
 		if includeAnalysis {
-			var analysisData string
+			var analysisData []byte
 			err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&analysisData)
 			if err == nil {
-				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, analysisData)
+				// Decompress for export compatibility
+				jsonData, _ := decompressAnalysisData(analysisData)
+				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, string(jsonData))
 			}
 		}
 
@@ -13632,53 +15297,21 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 		return fmt.Errorf("failed to swap move players: %w", err)
 	}
 
-	// 4. Update position state JSON to swap scores and cube owner
-	// Positions are stored normalized (player_on_roll = 0), but Score and Cube.Owner
-	// reflect the original player assignment and must be swapped.
-	posRows, err := tx.Query(`
-		SELECT DISTINCT p.id, p.state
-		FROM position p
-		INNER JOIN move m ON m.position_id = p.id
-		INNER JOIN game g ON m.game_id = g.id
-		WHERE g.match_id = ?
+	// 4. Update position denormalized columns to swap scores and cube owner.
+	// The board (state) is unchanged; only the score_1/score_2 and cube_owner
+	// columns need updating.
+	_, err = tx.Exec(`
+		UPDATE position SET
+			score_1 = score_2, score_2 = score_1,
+			cube_owner = CASE WHEN cube_owner = -1 THEN -1 WHEN cube_owner IS NULL THEN NULL ELSE 1 - cube_owner END
+		WHERE id IN (
+			SELECT DISTINCT m.position_id FROM move m
+			INNER JOIN game g ON m.game_id = g.id
+			WHERE g.match_id = ?
+		)
 	`, matchID)
 	if err != nil {
-		return fmt.Errorf("failed to query positions for swap: %w", err)
-	}
-	defer posRows.Close()
-
-	for posRows.Next() {
-		var posID int64
-		var stateJSON string
-		if err := posRows.Scan(&posID, &stateJSON); err != nil {
-			return fmt.Errorf("failed to scan position %d: %w", posID, err)
-		}
-
-		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-			return fmt.Errorf("failed to unmarshal position %d: %w", posID, err)
-		}
-
-		// Swap scores
-		pos.Score[0], pos.Score[1] = pos.Score[1], pos.Score[0]
-
-		// Flip cube owner (if not centered)
-		if pos.Cube.Owner != None {
-			pos.Cube.Owner = 1 - pos.Cube.Owner
-		}
-
-		updatedJSON, err := json.Marshal(pos)
-		if err != nil {
-			return fmt.Errorf("failed to marshal updated position %d: %w", posID, err)
-		}
-
-		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedJSON), posID)
-		if err != nil {
-			return fmt.Errorf("failed to update position %d: %w", posID, err)
-		}
-	}
-	if err := posRows.Err(); err != nil {
-		return fmt.Errorf("error iterating positions for swap: %w", err)
+		return fmt.Errorf("failed to swap position scores/cube: %w", err)
 	}
 
 	return tx.Commit()
@@ -13960,14 +15593,14 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 			move_id INTEGER,
 			analysis_type TEXT,
 			depth TEXT,
-			equity REAL,
-			equity_error REAL,
-			win_rate REAL,
-			gammon_rate REAL,
-			backgammon_rate REAL,
-			opponent_win_rate REAL,
-			opponent_gammon_rate REAL,
-			opponent_backgammon_rate REAL,
+			equity INTEGER,
+			equity_error INTEGER,
+			win_rate INTEGER,
+			gammon_rate INTEGER,
+			backgammon_rate INTEGER,
+			opponent_win_rate INTEGER,
+			opponent_gammon_rate INTEGER,
+			opponent_backgammon_rate INTEGER,
 			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
 		)
 	`)
@@ -13978,13 +15611,12 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 	// Export positions
 	oldToNewID := make(map[int64]int64)
 	for _, posID := range positionIDs {
-		var state string
-		err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, posID).Scan(&state)
+		pos, err := d.loadPositionByIDUnlocked(posID)
 		if err != nil {
 			continue
 		}
 
-		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, state)
+		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, fullPositionJSON(pos))
 		if err != nil {
 			continue
 		}
@@ -13996,10 +15628,12 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 
 		// Export analysis if requested
 		if includeAnalysis {
-			var analysisData string
+			var analysisData []byte
 			err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&analysisData)
 			if err == nil {
-				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, analysisData)
+				// Decompress for export compatibility
+				jsonData, _ := decompressAnalysisData(analysisData)
+				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, string(jsonData))
 			}
 		}
 
@@ -14407,7 +16041,7 @@ func (d *Database) GetAnkiDeckPositions(deckID int64) ([]Position, error) {
 	defer d.mu.Unlock()
 
 	rows, err := d.db.Query(`
-		SELECT p.id, p.state
+		SELECT `+positionSelectColsP+`
 		FROM anki_card ac
 		JOIN position p ON p.id = ac.position_id
 		WHERE ac.deck_id = ?
@@ -14420,16 +16054,10 @@ func (d *Database) GetAnkiDeckPositions(deckID int64) ([]Position, error) {
 
 	var positions []Position
 	for rows.Next() {
-		var id int64
-		var stateJSON string
-		if err := rows.Scan(&id, &stateJSON); err != nil {
+		pos, err := scanPositionRow(rows)
+		if err != nil {
 			return nil, err
 		}
-		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-			return nil, err
-		}
-		pos.ID = id
 		positions = append(positions, pos)
 	}
 	return positions, rows.Err()
@@ -14510,19 +16138,8 @@ func (d *Database) GetNextAnkiCard(deckID int64) (*AnkiReviewCard, error) {
 
 // loadPositionByIDUnlocked loads a position without locking (caller must hold lock)
 func (d *Database) loadPositionByIDUnlocked(positionID int64) (Position, error) {
-	var pos Position
-	var stateJSON string
-
-	err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, positionID).Scan(&stateJSON)
-	if err != nil {
-		return pos, err
-	}
-
-	if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-		return pos, fmt.Errorf("error unmarshalling position: %w", err)
-	}
-
-	return pos, nil
+	row := d.db.QueryRow(`SELECT `+positionSelectCols+` FROM position WHERE id = ?`, positionID)
+	return scanPositionRow(row)
 }
 
 // ReviewAnkiCard submits a review rating for a card and updates its FSRS state

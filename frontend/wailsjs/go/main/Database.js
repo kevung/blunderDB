@@ -390,6 +390,10 @@ export function SetMatchTournamentByName(arg1, arg2) {
   return window['go']['main']['Database']['SetMatchTournamentByName'](arg1, arg2);
 }
 
+export function SetMigrationProgress(arg1) {
+  return window['go']['main']['Database']['SetMigrationProgress'](arg1);
+}
+
 export function SetupDatabase(arg1) {
   return window['go']['main']['Database']['SetupDatabase'](arg1);
 }

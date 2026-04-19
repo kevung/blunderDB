@@ -29,14 +29,11 @@ func TestCountPositionsAfterImports(t *testing.T) {
 	// countSemanticDuplicates checks that no two positions share the same semantic key
 	// (board, cube, score, player_on_roll, decision_type, dice)
 	countSemanticDuplicates := func() int {
-		rows, _ := db.db.Query(`SELECT state FROM position`)
+		rows, _ := db.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 		defer rows.Close()
 		seen := make(map[string]int)
 		for rows.Next() {
-			var stateJSON string
-			rows.Scan(&stateJSON)
-			var pos Position
-			json.Unmarshal([]byte(stateJSON), &pos)
+			pos, _ := scanPositionRow(rows)
 			key := fmt.Sprintf("%v|%v|%v|%d|%d|%v",
 				pos.Board, pos.Cube, pos.Score,
 				pos.PlayerOnRoll, pos.DecisionType, pos.Dice)
@@ -117,14 +114,11 @@ func TestDiagnosePositionDifferences(t *testing.T) {
 
 	// Load all positions from both
 	loadAllPositions := func(db *Database) []Position {
-		rows, _ := db.db.Query(`SELECT state FROM position`)
+		rows, _ := db.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 		defer rows.Close()
 		var positions []Position
 		for rows.Next() {
-			var stateJSON string
-			rows.Scan(&stateJSON)
-			var pos Position
-			json.Unmarshal([]byte(stateJSON), &pos)
+			pos, _ := scanPositionRow(rows)
 			positions = append(positions, pos)
 		}
 		return positions

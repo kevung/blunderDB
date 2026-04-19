@@ -1,0 +1,1076 @@
+Successfully imported match 1 with 8 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/01-cdf-2022-2023-main-round1-denardi-unger.xg
+Successfully imported match 2 with 5 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/02-cdf-2022-2023-main-round2-zarkadan-unger.xg
+Successfully imported match 3 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/03-cdf-2022-2023-main-round3-arbandstephane-unger.xg
+Successfully imported match 4 with 7 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/04-cdf-2022-2023-main-round4-pinsoneric-unger.xg
+Successfully imported match 5 with 10 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/05-cdf-2022-2023-main-round5-rottembergphilippe-unger.xg
+Successfully imported match 6 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/06-cdf-2022-2023-main-round6-soulimanidavid-unger.xg
+Successfully imported match 7 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/11-cdf-2022-2023-double-round2-kricksebastien-hostachyetienne-bocheuxromainungerkevin.xg
+Successfully imported match 8 with 9 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/1-HSBT-Lyon-main1-7pts-UngerKevin-FrancouRemy.xg
+Successfully imported match 9 with 8 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/2-HSBT-Lyon-main2-7pts-UngerKevin-PrevelThierry.xg
+Successfully imported match 10 with 4 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/3-HSBT-Lyon-main3-7pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 11 with 5 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/4-HSBT-Lyon-main4-7pts-UngerKevin-BenchalochMeir.xg
+Successfully imported match 12 with 6 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part1.xg
+Successfully imported match 13 with 3 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part2.xg
+Successfully imported match 14 with 10 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/6-HSBT-Lyon-or1-9pts-UngerKevin-LeThiNgocPatricia.xg
+Successfully imported match 15 with 7 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/7-HSBT-Lyon-or2-9pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 16 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Eric Benichou-Kevin Unger Match en 7 points 15-10-2023.xg
+Successfully imported match 17 with 6 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Geoffrey Menez Match en 7 points 10-15-2023.xg
+Successfully imported match 18 with 7 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Marc Le Campion Match en 7 points 10-15-2023.xg
+Successfully imported match 19 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Wilfried Benotmane Match en 7 points 10-15-2023.xg
+Successfully imported match 20 with 5 games from testdata/tournois/2023-10-15_VBC2_5x7p/Steeve Korn-Kévin Unger Match en 7 points 10-16-2023.xg
+Successfully imported match 21 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde1-UngerKevin-FlamionOlivier-7pt.xg
+Successfully imported match 22 with 3 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde2-UngerKevin-LourencoThomas-7pt.xg
+Successfully imported match 23 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde3-UngerKevin-KlimovaTania-7pt.xg
+Successfully imported match 24 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde4-UngerKevin-VanMiddelemGuy-7pt.xg
+Successfully imported match 25 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde5-UngerKevin-SavaryEtienne-7pt.xg
+Successfully imported match 26 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde2-KevinUnger-MaxenceJob.xg
+Successfully imported match 27 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde3-KevinUnger-DanielRozenberg.xg
+Successfully imported match 28 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde4-KevinUnger-YannickCoupannec.xg
+Successfully imported match 29 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde5-KevinUnger-BernardBailleul.xg
+Successfully imported match 30 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde6-KevinUnger-StephaneCheneviere.xg
+Successfully imported match 31 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/1-KevinUnger-EricGuedj-7pts.xg
+Successfully imported match 32 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/2-KevinUnger-KamelGuerbaa-7pts.xg
+Successfully imported match 33 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/3-KevinUnger-GeoffroyMenez-7pts.xg
+Successfully imported match 34 with 4 games from testdata/tournois/2023-12-17_VBC3_5x7p/4-KevinUnger-SarahPartouche-7pts.xg
+Successfully imported match 35 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/5-KevinUnger-WilfriedBenotmane-7pts.xg
+Successfully imported match 36 with 6 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde1-KevinUnger-SarahPartouche.xg
+Successfully imported match 37 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde2-KevinUnger-ArthurMenez.xg
+Successfully imported match 38 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde3-KevinUnger-GeoMenez.xg
+Successfully imported match 39 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde4-KevinUnger-GildasBouilland.xg
+Successfully imported match 40 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde5-KevinUnger-SamiTamin.xg
+Successfully imported match 41 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-1-KevinUnger-ErwanBloyet-7pts.xg
+Successfully imported match 42 with 4 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-2-KevinUnger-NoemieBrichard-7pts.xg
+Successfully imported match 43 with 5 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-3-KevinUnger-KathleenCastro-7pts.xg
+Successfully imported match 44 with 3 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-4-KevinUnger-SimonAyzac-7pts.xg
+Successfully imported match 45 with 8 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-5-KevinUnger-PhilibertCini-7pts.xg
+Successfully imported match 46 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-6-KevinUnger-TristanRemille-7pts.xg
+Successfully imported match 47 with 4 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25498 Kévin Unger-Sarah Partouche.xg
+Successfully imported match 48 with 7 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25505 Simon Barget-Kévin Unger.xg
+Successfully imported match 49 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25507 Kévin Unger-Wil Benotmane.xg
+Successfully imported match 50 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25516 Kévin Unger-Geoffroy Menez.xg
+Successfully imported match 51 with 8 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25532 Kévin Unger-Kamel Guerbaa.xg
+Successfully imported match 52 with 7 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde1-KevinUnger-FranckTouboul.xg
+Successfully imported match 53 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde2-KevinUnger-KamelGuerbaa.xg
+Successfully imported match 54 with 9 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde3-KevinUnger-MarcWainberg.xg
+Successfully imported match 55 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde4-KevinUnger-SarahPartouche.xg
+Successfully imported match 56 with 10 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde5-KevinUnger-WilfriedBenotmane.xg
+Successfully imported match 57 with 8 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde1-KevinUnger-AxelleRoyer-7p.xg
+Successfully imported match 58 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde2-KevinUnger-EmmanuelLardy-7p.xg
+Successfully imported match 59 with 9 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde3-KevinUnger-JeanMarcPages-7p.xg
+Successfully imported match 60 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde4-KevinUnger-GuillaumeGalle-7p.xg
+Successfully imported match 61 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 62 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde2-KevinUnger-MirgenaKorbi-7p.xg
+Successfully imported match 63 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde3-KevinUnger-NataliaAlbota-7p.xg
+Successfully imported match 64 with 7 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde4-KevinUnger-JeanClaudeNogales-9p.xg
+Successfully imported match 65 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde5-KevinUnger-GerardSaklislian-11p.xg
+Successfully imported match 66 with 7 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Lux Heuler-Franzosen 7 point match 12.08.2024.xg
+Successfully imported match 67 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg
+Successfully imported match 68 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde1-UngerHarmand-FriebeJacobi-7pt.xg
+Successfully imported match 69 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde3-UngerHarmand-HuyckLarsen.xg
+Successfully imported match 70 with 5 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/1-Intermediate-Round1-Unger-Kozoman-11pt.xg
+Successfully imported match 71 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/2-Intermediate-Round2-Unger-Lahme-7pt.xg
+Successfully imported match 72 with 9 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde1-KevinUnger-GeoffroyMenez-9p.xg
+Successfully imported match 73 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde2-KevinUnger-MaximePeytavin-9p.xg
+Successfully imported match 74 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde3-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 75 with 2 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-tableauOr-ronde1-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 76 with 3 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde1-KevinUnger-KamelGuerbaa-7pt.xg
+Successfully imported match 77 with 4 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde2-KevinUnger-MarcLeCampion-7pt.xg
+Successfully imported match 78 with 7 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde3-KevinUnger-MarcWainberg-7pt.xg
+Successfully imported match 79 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde4-KevinUnger-OlivierCroisille-7pt.xg
+Successfully imported match 80 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde5-KevinUnger-Elias Baltassis-7pt.xg
+Successfully imported match 81 with 12 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-final16th-KevinUnger-JeanClaudeBensaid-9p.xg
+Successfully imported match 82 with 10 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round1-KevinUnger-DavidSoulimani-9p.xg
+Successfully imported match 83 with 2 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round2-KevinUnger-OlivierLafon-9p.xg
+Successfully imported match 84 with 8 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round3-KevinUnger-PatriceDeSainteMarie-9p.xg
+Successfully imported match 85 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round4-KevinUnger-ThomasLourenco-9p.xg
+Successfully imported match 86 with 9 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round5-KevinUnger-GuillaumeGalle-9p.xg
+Successfully imported match 87 with 5 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round6-KevinUnger-MichelMoll-9p.xg
+Successfully imported match 88 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round7-KevinUnger-FelipeDruy-9p.xg
+Successfully imported match 89 with 10 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde1-KevinUnger-EliasBaltassis-7p.xg
+Successfully imported match 90 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde2-KevinUnger-SamiTamimElJarkas-7p.xg
+Successfully imported match 91 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde3-KevinUnger-OscarFuchs-7p.xg
+Successfully imported match 92 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde4-KevinUnger-PaulCourtois-7p.xg
+Successfully imported match 93 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde5-KevinUnger-MarcLeCampion-7p.xg
+Successfully imported match 94 with 3 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde1-KevinUnger-FabriceAbitbol-7p.xg
+Successfully imported match 95 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde2-KevinUnger-CarolineKhayat-7p.xg
+Successfully imported match 96 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde3-KevinUnger-JulienCamurat-7p.xg
+Successfully imported match 97 with 7 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde4-KevinUnger-VeroniqueChamazDehon-7p.xg
+Successfully imported match 98 with 4 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde5-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 99 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde6-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 100 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde7-KevinUnger-ValentinMarotte-7p.xg
+Successfully imported match 101 with 9 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde1-KevinUnger-JeromePoirier-7p.xg
+Successfully imported match 102 with 3 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde2-KevinUnger-GregoireSergent-7p.xg
+Successfully imported match 103 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde3-KevinUnger-MaxDePaz-7p.xg
+Successfully imported match 104 with 8 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde4-KevinUnger-EricAlarcon-7p.xg
+Successfully imported match 105 with 7 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde5-KevinUnger-JeromeServot-7p.xg
+Successfully imported match 106 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde2-KevinUnger-MarcLeCampion-7p.xg.xg
+Successfully imported match 107 with 5 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde3-KevinUnger-RemyFrancou-7p.xg.xg
+Successfully imported match 108 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/1-KevinUnger-BrunoMayerGrossi-5p.xg
+Successfully imported match 109 with 6 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/2-KevinUnger-OyaTercan-5p.xg
+Successfully imported match 110 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/3-KevinUnger-LaurentHoyau-5p.xg
+Successfully imported match 111 with 4 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/4-KevinUnger-SamiTaminElJarkas-5p.xg
+Successfully imported match 112 with 6 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde1_UngerKevin_PavicevicNina_7p.xg
+Successfully imported match 113 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde2_UngerKevin_MauduitEric_7p.xg
+Successfully imported match 114 with 3 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde3_UngerKevin_BourgnonEvan_7p.xg
+Successfully imported match 115 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg
+Successfully imported match 116 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde5_UngerKevin_BessilaOuarda_7p.xg
+Successfully imported match 117 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde1_UngerKevin_HanotinDenis_7p.xg
+Successfully imported match 118 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde2_UngerKevin_BaudryThierry_7p.xg
+Successfully imported match 119 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde3_UngerKevin_GalleGuillaume_7p.xg
+Successfully imported match 120 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde4_UngerKevin_AntoniettiChristophe_7p.xg
+Successfully imported match 121 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde5_UngerKevin_HarmandNicolas_7p.xg
+Successfully imported match 122 with 3 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde1-KevinUnger-OscarFuchs-9p.xg
+Successfully imported match 123 with 7 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde2-KevinUnger-MarcWainberg-9p.xg
+Successfully imported match 124 with 9 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 125 with 8 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde4-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 126 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde1-KevinUnger-EricBenichou-9p.xg
+Successfully imported match 127 with 9 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde2-KevinUnger-JacquesRavier-9p.xg
+Successfully imported match 128 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde3-KevinUnger-ArthurMenez-9p.xg
+Successfully imported match 129 with 11 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde4-KevinUnger-GillesDeshayes-9p.xg
+Successfully imported match 130 with 7 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/Kévin et Nicolas-Laurence et Jacques 7 point match 11-11-2025.xg
+Successfully imported match 131 with 6 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde1-KevinUnger-SarahPartouche-9p.xg
+Successfully imported match 132 with 8 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde2-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 133 with 9 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 134 with 10 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde4-KevinUnger-WilfriedBenotmane-9p.xg
+Successfully imported match 135 with 10 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde1_KevinUnger_ChristopheGuicheteau_9p.xg
+Successfully imported match 136 with 3 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde2_KevinUnger_PhilippeVouhe_9p.xg
+Successfully imported match 137 with 7 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde3_KevinUnger_NicolasHarmand_9p.xg
+Successfully imported match 138 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde4_KevinUnger_MaxDePaz_9p.xg
+Successfully imported match 139 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_rondeargent1_KevinUnger_PatriciaLeThinNgoc_9p.xg
+Successfully imported match 140 with 8 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde1_KevinUnger_JamesMcNaughtan_11p.xg
+Successfully imported match 141 with 12 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde2_KevinUnger_DanielRozenberg_11p.xg
+Successfully imported match 142 with 4 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde3_KevinUnger_YurikaUeno_11p.xg
+Successfully imported match 143 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde1-KevinUnger-PhilippeLevasseur-7p.xg
+Successfully imported match 144 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde2-KevinUnger-StephaneCheneviere-7p.xg
+Successfully imported match 145 with 10 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde3-KevinUnger-MarieAnneJeannel-7p.xg
+Successfully imported match 146 with 8 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde4-KevinUnger-NicolasJully-7p.xg
+Successfully imported match 147 with 3 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 148 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde1-KevinUnger-ChristopherFilosa-7p.xg
+Successfully imported match 149 with 9 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde2-KevinUnger-YurikaUeno-7p.xg
+Successfully imported match 150 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde3-KevinUnger-FredericPicot-7p.xg
+Successfully imported match 151 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde4-KevinUnger-OlivierFlamion-7p.xg
+bench fixture: 156 files, 18590044 bytes
+Successfully imported match 1 with 8 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/01-cdf-2022-2023-main-round1-denardi-unger.xg
+Successfully imported match 2 with 5 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/02-cdf-2022-2023-main-round2-zarkadan-unger.xg
+Successfully imported match 3 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/03-cdf-2022-2023-main-round3-arbandstephane-unger.xg
+Successfully imported match 4 with 7 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/04-cdf-2022-2023-main-round4-pinsoneric-unger.xg
+Successfully imported match 5 with 10 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/05-cdf-2022-2023-main-round5-rottembergphilippe-unger.xg
+Successfully imported match 6 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/06-cdf-2022-2023-main-round6-soulimanidavid-unger.xg
+Successfully imported match 7 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/11-cdf-2022-2023-double-round2-kricksebastien-hostachyetienne-bocheuxromainungerkevin.xg
+Successfully imported match 8 with 9 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/1-HSBT-Lyon-main1-7pts-UngerKevin-FrancouRemy.xg
+Successfully imported match 9 with 8 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/2-HSBT-Lyon-main2-7pts-UngerKevin-PrevelThierry.xg
+Successfully imported match 10 with 4 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/3-HSBT-Lyon-main3-7pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 11 with 5 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/4-HSBT-Lyon-main4-7pts-UngerKevin-BenchalochMeir.xg
+Successfully imported match 12 with 6 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part1.xg
+Successfully imported match 13 with 3 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part2.xg
+Successfully imported match 14 with 10 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/6-HSBT-Lyon-or1-9pts-UngerKevin-LeThiNgocPatricia.xg
+Successfully imported match 15 with 7 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/7-HSBT-Lyon-or2-9pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 16 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Eric Benichou-Kevin Unger Match en 7 points 15-10-2023.xg
+Successfully imported match 17 with 6 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Geoffrey Menez Match en 7 points 10-15-2023.xg
+Successfully imported match 18 with 7 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Marc Le Campion Match en 7 points 10-15-2023.xg
+Successfully imported match 19 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Wilfried Benotmane Match en 7 points 10-15-2023.xg
+Successfully imported match 20 with 5 games from testdata/tournois/2023-10-15_VBC2_5x7p/Steeve Korn-Kévin Unger Match en 7 points 10-16-2023.xg
+Successfully imported match 21 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde1-UngerKevin-FlamionOlivier-7pt.xg
+Successfully imported match 22 with 3 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde2-UngerKevin-LourencoThomas-7pt.xg
+Successfully imported match 23 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde3-UngerKevin-KlimovaTania-7pt.xg
+Successfully imported match 24 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde4-UngerKevin-VanMiddelemGuy-7pt.xg
+Successfully imported match 25 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde5-UngerKevin-SavaryEtienne-7pt.xg
+Successfully imported match 26 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde2-KevinUnger-MaxenceJob.xg
+Successfully imported match 27 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde3-KevinUnger-DanielRozenberg.xg
+Successfully imported match 28 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde4-KevinUnger-YannickCoupannec.xg
+Successfully imported match 29 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde5-KevinUnger-BernardBailleul.xg
+Successfully imported match 30 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde6-KevinUnger-StephaneCheneviere.xg
+Successfully imported match 31 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/1-KevinUnger-EricGuedj-7pts.xg
+Successfully imported match 32 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/2-KevinUnger-KamelGuerbaa-7pts.xg
+Successfully imported match 33 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/3-KevinUnger-GeoffroyMenez-7pts.xg
+Successfully imported match 34 with 4 games from testdata/tournois/2023-12-17_VBC3_5x7p/4-KevinUnger-SarahPartouche-7pts.xg
+Successfully imported match 35 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/5-KevinUnger-WilfriedBenotmane-7pts.xg
+Successfully imported match 36 with 6 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde1-KevinUnger-SarahPartouche.xg
+Successfully imported match 37 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde2-KevinUnger-ArthurMenez.xg
+Successfully imported match 38 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde3-KevinUnger-GeoMenez.xg
+Successfully imported match 39 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde4-KevinUnger-GildasBouilland.xg
+Successfully imported match 40 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde5-KevinUnger-SamiTamin.xg
+Successfully imported match 41 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-1-KevinUnger-ErwanBloyet-7pts.xg
+Successfully imported match 42 with 4 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-2-KevinUnger-NoemieBrichard-7pts.xg
+Successfully imported match 43 with 5 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-3-KevinUnger-KathleenCastro-7pts.xg
+Successfully imported match 44 with 3 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-4-KevinUnger-SimonAyzac-7pts.xg
+Successfully imported match 45 with 8 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-5-KevinUnger-PhilibertCini-7pts.xg
+Successfully imported match 46 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-6-KevinUnger-TristanRemille-7pts.xg
+Successfully imported match 47 with 4 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25498 Kévin Unger-Sarah Partouche.xg
+Successfully imported match 48 with 7 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25505 Simon Barget-Kévin Unger.xg
+Successfully imported match 49 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25507 Kévin Unger-Wil Benotmane.xg
+Successfully imported match 50 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25516 Kévin Unger-Geoffroy Menez.xg
+Successfully imported match 51 with 8 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25532 Kévin Unger-Kamel Guerbaa.xg
+Successfully imported match 52 with 7 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde1-KevinUnger-FranckTouboul.xg
+Successfully imported match 53 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde2-KevinUnger-KamelGuerbaa.xg
+Successfully imported match 54 with 9 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde3-KevinUnger-MarcWainberg.xg
+Successfully imported match 55 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde4-KevinUnger-SarahPartouche.xg
+Successfully imported match 56 with 10 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde5-KevinUnger-WilfriedBenotmane.xg
+Successfully imported match 57 with 8 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde1-KevinUnger-AxelleRoyer-7p.xg
+Successfully imported match 58 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde2-KevinUnger-EmmanuelLardy-7p.xg
+Successfully imported match 59 with 9 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde3-KevinUnger-JeanMarcPages-7p.xg
+Successfully imported match 60 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde4-KevinUnger-GuillaumeGalle-7p.xg
+Successfully imported match 61 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 62 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde2-KevinUnger-MirgenaKorbi-7p.xg
+Successfully imported match 63 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde3-KevinUnger-NataliaAlbota-7p.xg
+Successfully imported match 64 with 7 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde4-KevinUnger-JeanClaudeNogales-9p.xg
+Successfully imported match 65 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde5-KevinUnger-GerardSaklislian-11p.xg
+Successfully imported match 66 with 7 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Lux Heuler-Franzosen 7 point match 12.08.2024.xg
+Successfully imported match 67 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg
+Successfully imported match 68 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde1-UngerHarmand-FriebeJacobi-7pt.xg
+Successfully imported match 69 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde3-UngerHarmand-HuyckLarsen.xg
+Successfully imported match 70 with 5 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/1-Intermediate-Round1-Unger-Kozoman-11pt.xg
+Successfully imported match 71 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/2-Intermediate-Round2-Unger-Lahme-7pt.xg
+Successfully imported match 72 with 9 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde1-KevinUnger-GeoffroyMenez-9p.xg
+Successfully imported match 73 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde2-KevinUnger-MaximePeytavin-9p.xg
+Successfully imported match 74 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde3-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 75 with 2 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-tableauOr-ronde1-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 76 with 3 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde1-KevinUnger-KamelGuerbaa-7pt.xg
+Successfully imported match 77 with 4 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde2-KevinUnger-MarcLeCampion-7pt.xg
+Successfully imported match 78 with 7 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde3-KevinUnger-MarcWainberg-7pt.xg
+Successfully imported match 79 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde4-KevinUnger-OlivierCroisille-7pt.xg
+Successfully imported match 80 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde5-KevinUnger-Elias Baltassis-7pt.xg
+Successfully imported match 81 with 12 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-final16th-KevinUnger-JeanClaudeBensaid-9p.xg
+Successfully imported match 82 with 10 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round1-KevinUnger-DavidSoulimani-9p.xg
+Successfully imported match 83 with 2 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round2-KevinUnger-OlivierLafon-9p.xg
+Successfully imported match 84 with 8 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round3-KevinUnger-PatriceDeSainteMarie-9p.xg
+Successfully imported match 85 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round4-KevinUnger-ThomasLourenco-9p.xg
+Successfully imported match 86 with 9 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round5-KevinUnger-GuillaumeGalle-9p.xg
+Successfully imported match 87 with 5 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round6-KevinUnger-MichelMoll-9p.xg
+Successfully imported match 88 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round7-KevinUnger-FelipeDruy-9p.xg
+Successfully imported match 89 with 10 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde1-KevinUnger-EliasBaltassis-7p.xg
+Successfully imported match 90 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde2-KevinUnger-SamiTamimElJarkas-7p.xg
+Successfully imported match 91 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde3-KevinUnger-OscarFuchs-7p.xg
+Successfully imported match 92 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde4-KevinUnger-PaulCourtois-7p.xg
+Successfully imported match 93 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde5-KevinUnger-MarcLeCampion-7p.xg
+Successfully imported match 94 with 3 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde1-KevinUnger-FabriceAbitbol-7p.xg
+Successfully imported match 95 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde2-KevinUnger-CarolineKhayat-7p.xg
+Successfully imported match 96 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde3-KevinUnger-JulienCamurat-7p.xg
+Successfully imported match 97 with 7 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde4-KevinUnger-VeroniqueChamazDehon-7p.xg
+Successfully imported match 98 with 4 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde5-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 99 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde6-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 100 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde7-KevinUnger-ValentinMarotte-7p.xg
+Successfully imported match 101 with 9 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde1-KevinUnger-JeromePoirier-7p.xg
+Successfully imported match 102 with 3 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde2-KevinUnger-GregoireSergent-7p.xg
+Successfully imported match 103 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde3-KevinUnger-MaxDePaz-7p.xg
+Successfully imported match 104 with 8 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde4-KevinUnger-EricAlarcon-7p.xg
+Successfully imported match 105 with 7 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde5-KevinUnger-JeromeServot-7p.xg
+Successfully imported match 106 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde2-KevinUnger-MarcLeCampion-7p.xg.xg
+Successfully imported match 107 with 5 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde3-KevinUnger-RemyFrancou-7p.xg.xg
+Successfully imported match 108 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/1-KevinUnger-BrunoMayerGrossi-5p.xg
+Successfully imported match 109 with 6 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/2-KevinUnger-OyaTercan-5p.xg
+Successfully imported match 110 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/3-KevinUnger-LaurentHoyau-5p.xg
+Successfully imported match 111 with 4 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/4-KevinUnger-SamiTaminElJarkas-5p.xg
+Successfully imported match 112 with 6 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde1_UngerKevin_PavicevicNina_7p.xg
+Successfully imported match 113 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde2_UngerKevin_MauduitEric_7p.xg
+Successfully imported match 114 with 3 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde3_UngerKevin_BourgnonEvan_7p.xg
+Successfully imported match 115 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg
+Successfully imported match 116 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde5_UngerKevin_BessilaOuarda_7p.xg
+Successfully imported match 117 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde1_UngerKevin_HanotinDenis_7p.xg
+Successfully imported match 118 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde2_UngerKevin_BaudryThierry_7p.xg
+Successfully imported match 119 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde3_UngerKevin_GalleGuillaume_7p.xg
+Successfully imported match 120 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde4_UngerKevin_AntoniettiChristophe_7p.xg
+Successfully imported match 121 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde5_UngerKevin_HarmandNicolas_7p.xg
+Successfully imported match 122 with 3 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde1-KevinUnger-OscarFuchs-9p.xg
+Successfully imported match 123 with 7 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde2-KevinUnger-MarcWainberg-9p.xg
+Successfully imported match 124 with 9 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 125 with 8 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde4-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 126 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde1-KevinUnger-EricBenichou-9p.xg
+Successfully imported match 127 with 9 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde2-KevinUnger-JacquesRavier-9p.xg
+Successfully imported match 128 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde3-KevinUnger-ArthurMenez-9p.xg
+Successfully imported match 129 with 11 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde4-KevinUnger-GillesDeshayes-9p.xg
+Successfully imported match 130 with 7 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/Kévin et Nicolas-Laurence et Jacques 7 point match 11-11-2025.xg
+Successfully imported match 131 with 6 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde1-KevinUnger-SarahPartouche-9p.xg
+Successfully imported match 132 with 8 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde2-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 133 with 9 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 134 with 10 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde4-KevinUnger-WilfriedBenotmane-9p.xg
+Successfully imported match 135 with 10 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde1_KevinUnger_ChristopheGuicheteau_9p.xg
+Successfully imported match 136 with 3 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde2_KevinUnger_PhilippeVouhe_9p.xg
+Successfully imported match 137 with 7 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde3_KevinUnger_NicolasHarmand_9p.xg
+Successfully imported match 138 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde4_KevinUnger_MaxDePaz_9p.xg
+Successfully imported match 139 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_rondeargent1_KevinUnger_PatriciaLeThinNgoc_9p.xg
+Successfully imported match 140 with 8 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde1_KevinUnger_JamesMcNaughtan_11p.xg
+Successfully imported match 141 with 12 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde2_KevinUnger_DanielRozenberg_11p.xg
+Successfully imported match 142 with 4 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde3_KevinUnger_YurikaUeno_11p.xg
+Successfully imported match 143 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde1-KevinUnger-PhilippeLevasseur-7p.xg
+Successfully imported match 144 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde2-KevinUnger-StephaneCheneviere-7p.xg
+Successfully imported match 145 with 10 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde3-KevinUnger-MarieAnneJeannel-7p.xg
+Successfully imported match 146 with 8 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde4-KevinUnger-NicolasJully-7p.xg
+Successfully imported match 147 with 3 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 148 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde1-KevinUnger-ChristopherFilosa-7p.xg
+Successfully imported match 149 with 9 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde2-KevinUnger-YurikaUeno-7p.xg
+Successfully imported match 150 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde3-KevinUnger-FredericPicot-7p.xg
+Successfully imported match 151 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde4-KevinUnger-OlivierFlamion-7p.xg
+goos: linux
+goarch: amd64
+pkg: blunderdb
+cpu: AMD Ryzen 7 PRO 6850U with Radeon Graphics     
+BenchmarkImport_TournoisCold-16           	Successfully imported match 1 with 8 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/01-cdf-2022-2023-main-round1-denardi-unger.xg
+Successfully imported match 2 with 5 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/02-cdf-2022-2023-main-round2-zarkadan-unger.xg
+Successfully imported match 3 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/03-cdf-2022-2023-main-round3-arbandstephane-unger.xg
+Successfully imported match 4 with 7 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/04-cdf-2022-2023-main-round4-pinsoneric-unger.xg
+Successfully imported match 5 with 10 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/05-cdf-2022-2023-main-round5-rottembergphilippe-unger.xg
+Successfully imported match 6 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/06-cdf-2022-2023-main-round6-soulimanidavid-unger.xg
+Successfully imported match 7 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/11-cdf-2022-2023-double-round2-kricksebastien-hostachyetienne-bocheuxromainungerkevin.xg
+Successfully imported match 8 with 9 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/1-HSBT-Lyon-main1-7pts-UngerKevin-FrancouRemy.xg
+Successfully imported match 9 with 8 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/2-HSBT-Lyon-main2-7pts-UngerKevin-PrevelThierry.xg
+Successfully imported match 10 with 4 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/3-HSBT-Lyon-main3-7pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 11 with 5 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/4-HSBT-Lyon-main4-7pts-UngerKevin-BenchalochMeir.xg
+Successfully imported match 12 with 6 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part1.xg
+Successfully imported match 13 with 3 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part2.xg
+Successfully imported match 14 with 10 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/6-HSBT-Lyon-or1-9pts-UngerKevin-LeThiNgocPatricia.xg
+Successfully imported match 15 with 7 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/7-HSBT-Lyon-or2-9pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 16 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Eric Benichou-Kevin Unger Match en 7 points 15-10-2023.xg
+Successfully imported match 17 with 6 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Geoffrey Menez Match en 7 points 10-15-2023.xg
+Successfully imported match 18 with 7 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Marc Le Campion Match en 7 points 10-15-2023.xg
+Successfully imported match 19 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Wilfried Benotmane Match en 7 points 10-15-2023.xg
+Successfully imported match 20 with 5 games from testdata/tournois/2023-10-15_VBC2_5x7p/Steeve Korn-Kévin Unger Match en 7 points 10-16-2023.xg
+Successfully imported match 21 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde1-UngerKevin-FlamionOlivier-7pt.xg
+Successfully imported match 22 with 3 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde2-UngerKevin-LourencoThomas-7pt.xg
+Successfully imported match 23 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde3-UngerKevin-KlimovaTania-7pt.xg
+Successfully imported match 24 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde4-UngerKevin-VanMiddelemGuy-7pt.xg
+Successfully imported match 25 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde5-UngerKevin-SavaryEtienne-7pt.xg
+Successfully imported match 26 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde2-KevinUnger-MaxenceJob.xg
+Successfully imported match 27 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde3-KevinUnger-DanielRozenberg.xg
+Successfully imported match 28 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde4-KevinUnger-YannickCoupannec.xg
+Successfully imported match 29 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde5-KevinUnger-BernardBailleul.xg
+Successfully imported match 30 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde6-KevinUnger-StephaneCheneviere.xg
+Successfully imported match 31 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/1-KevinUnger-EricGuedj-7pts.xg
+Successfully imported match 32 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/2-KevinUnger-KamelGuerbaa-7pts.xg
+Successfully imported match 33 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/3-KevinUnger-GeoffroyMenez-7pts.xg
+Successfully imported match 34 with 4 games from testdata/tournois/2023-12-17_VBC3_5x7p/4-KevinUnger-SarahPartouche-7pts.xg
+Successfully imported match 35 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/5-KevinUnger-WilfriedBenotmane-7pts.xg
+Successfully imported match 36 with 6 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde1-KevinUnger-SarahPartouche.xg
+Successfully imported match 37 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde2-KevinUnger-ArthurMenez.xg
+Successfully imported match 38 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde3-KevinUnger-GeoMenez.xg
+Successfully imported match 39 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde4-KevinUnger-GildasBouilland.xg
+Successfully imported match 40 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde5-KevinUnger-SamiTamin.xg
+Successfully imported match 41 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-1-KevinUnger-ErwanBloyet-7pts.xg
+Successfully imported match 42 with 4 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-2-KevinUnger-NoemieBrichard-7pts.xg
+Successfully imported match 43 with 5 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-3-KevinUnger-KathleenCastro-7pts.xg
+Successfully imported match 44 with 3 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-4-KevinUnger-SimonAyzac-7pts.xg
+Successfully imported match 45 with 8 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-5-KevinUnger-PhilibertCini-7pts.xg
+Successfully imported match 46 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-6-KevinUnger-TristanRemille-7pts.xg
+Successfully imported match 47 with 4 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25498 Kévin Unger-Sarah Partouche.xg
+Successfully imported match 48 with 7 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25505 Simon Barget-Kévin Unger.xg
+Successfully imported match 49 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25507 Kévin Unger-Wil Benotmane.xg
+Successfully imported match 50 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25516 Kévin Unger-Geoffroy Menez.xg
+Successfully imported match 51 with 8 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25532 Kévin Unger-Kamel Guerbaa.xg
+Successfully imported match 52 with 7 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde1-KevinUnger-FranckTouboul.xg
+Successfully imported match 53 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde2-KevinUnger-KamelGuerbaa.xg
+Successfully imported match 54 with 9 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde3-KevinUnger-MarcWainberg.xg
+Successfully imported match 55 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde4-KevinUnger-SarahPartouche.xg
+Successfully imported match 56 with 10 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde5-KevinUnger-WilfriedBenotmane.xg
+Successfully imported match 57 with 8 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde1-KevinUnger-AxelleRoyer-7p.xg
+Successfully imported match 58 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde2-KevinUnger-EmmanuelLardy-7p.xg
+Successfully imported match 59 with 9 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde3-KevinUnger-JeanMarcPages-7p.xg
+Successfully imported match 60 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde4-KevinUnger-GuillaumeGalle-7p.xg
+Successfully imported match 61 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 62 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde2-KevinUnger-MirgenaKorbi-7p.xg
+Successfully imported match 63 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde3-KevinUnger-NataliaAlbota-7p.xg
+Successfully imported match 64 with 7 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde4-KevinUnger-JeanClaudeNogales-9p.xg
+Successfully imported match 65 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde5-KevinUnger-GerardSaklislian-11p.xg
+Successfully imported match 66 with 7 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Lux Heuler-Franzosen 7 point match 12.08.2024.xg
+Successfully imported match 67 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg
+Successfully imported match 68 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde1-UngerHarmand-FriebeJacobi-7pt.xg
+Successfully imported match 69 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde3-UngerHarmand-HuyckLarsen.xg
+Successfully imported match 70 with 5 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/1-Intermediate-Round1-Unger-Kozoman-11pt.xg
+Successfully imported match 71 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/2-Intermediate-Round2-Unger-Lahme-7pt.xg
+Successfully imported match 72 with 9 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde1-KevinUnger-GeoffroyMenez-9p.xg
+Successfully imported match 73 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde2-KevinUnger-MaximePeytavin-9p.xg
+Successfully imported match 74 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde3-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 75 with 2 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-tableauOr-ronde1-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 76 with 3 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde1-KevinUnger-KamelGuerbaa-7pt.xg
+Successfully imported match 77 with 4 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde2-KevinUnger-MarcLeCampion-7pt.xg
+Successfully imported match 78 with 7 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde3-KevinUnger-MarcWainberg-7pt.xg
+Successfully imported match 79 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde4-KevinUnger-OlivierCroisille-7pt.xg
+Successfully imported match 80 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde5-KevinUnger-Elias Baltassis-7pt.xg
+Successfully imported match 81 with 12 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-final16th-KevinUnger-JeanClaudeBensaid-9p.xg
+Successfully imported match 82 with 10 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round1-KevinUnger-DavidSoulimani-9p.xg
+Successfully imported match 83 with 2 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round2-KevinUnger-OlivierLafon-9p.xg
+Successfully imported match 84 with 8 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round3-KevinUnger-PatriceDeSainteMarie-9p.xg
+Successfully imported match 85 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round4-KevinUnger-ThomasLourenco-9p.xg
+Successfully imported match 86 with 9 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round5-KevinUnger-GuillaumeGalle-9p.xg
+Successfully imported match 87 with 5 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round6-KevinUnger-MichelMoll-9p.xg
+Successfully imported match 88 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round7-KevinUnger-FelipeDruy-9p.xg
+Successfully imported match 89 with 10 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde1-KevinUnger-EliasBaltassis-7p.xg
+Successfully imported match 90 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde2-KevinUnger-SamiTamimElJarkas-7p.xg
+Successfully imported match 91 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde3-KevinUnger-OscarFuchs-7p.xg
+Successfully imported match 92 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde4-KevinUnger-PaulCourtois-7p.xg
+Successfully imported match 93 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde5-KevinUnger-MarcLeCampion-7p.xg
+Successfully imported match 94 with 3 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde1-KevinUnger-FabriceAbitbol-7p.xg
+Successfully imported match 95 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde2-KevinUnger-CarolineKhayat-7p.xg
+Successfully imported match 96 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde3-KevinUnger-JulienCamurat-7p.xg
+Successfully imported match 97 with 7 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde4-KevinUnger-VeroniqueChamazDehon-7p.xg
+Successfully imported match 98 with 4 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde5-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 99 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde6-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 100 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde7-KevinUnger-ValentinMarotte-7p.xg
+Successfully imported match 101 with 9 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde1-KevinUnger-JeromePoirier-7p.xg
+Successfully imported match 102 with 3 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde2-KevinUnger-GregoireSergent-7p.xg
+Successfully imported match 103 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde3-KevinUnger-MaxDePaz-7p.xg
+Successfully imported match 104 with 8 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde4-KevinUnger-EricAlarcon-7p.xg
+Successfully imported match 105 with 7 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde5-KevinUnger-JeromeServot-7p.xg
+Successfully imported match 106 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde2-KevinUnger-MarcLeCampion-7p.xg.xg
+Successfully imported match 107 with 5 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde3-KevinUnger-RemyFrancou-7p.xg.xg
+Successfully imported match 108 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/1-KevinUnger-BrunoMayerGrossi-5p.xg
+Successfully imported match 109 with 6 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/2-KevinUnger-OyaTercan-5p.xg
+Successfully imported match 110 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/3-KevinUnger-LaurentHoyau-5p.xg
+Successfully imported match 111 with 4 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/4-KevinUnger-SamiTaminElJarkas-5p.xg
+Successfully imported match 112 with 6 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde1_UngerKevin_PavicevicNina_7p.xg
+Successfully imported match 113 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde2_UngerKevin_MauduitEric_7p.xg
+Successfully imported match 114 with 3 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde3_UngerKevin_BourgnonEvan_7p.xg
+Successfully imported match 115 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg
+Successfully imported match 116 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde5_UngerKevin_BessilaOuarda_7p.xg
+Successfully imported match 117 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde1_UngerKevin_HanotinDenis_7p.xg
+Successfully imported match 118 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde2_UngerKevin_BaudryThierry_7p.xg
+Successfully imported match 119 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde3_UngerKevin_GalleGuillaume_7p.xg
+Successfully imported match 120 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde4_UngerKevin_AntoniettiChristophe_7p.xg
+Successfully imported match 121 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde5_UngerKevin_HarmandNicolas_7p.xg
+Successfully imported match 122 with 3 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde1-KevinUnger-OscarFuchs-9p.xg
+Successfully imported match 123 with 7 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde2-KevinUnger-MarcWainberg-9p.xg
+Successfully imported match 124 with 9 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 125 with 8 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde4-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 126 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde1-KevinUnger-EricBenichou-9p.xg
+Successfully imported match 127 with 9 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde2-KevinUnger-JacquesRavier-9p.xg
+Successfully imported match 128 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde3-KevinUnger-ArthurMenez-9p.xg
+Successfully imported match 129 with 11 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde4-KevinUnger-GillesDeshayes-9p.xg
+Successfully imported match 130 with 7 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/Kévin et Nicolas-Laurence et Jacques 7 point match 11-11-2025.xg
+Successfully imported match 131 with 6 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde1-KevinUnger-SarahPartouche-9p.xg
+Successfully imported match 132 with 8 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde2-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 133 with 9 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 134 with 10 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde4-KevinUnger-WilfriedBenotmane-9p.xg
+Successfully imported match 135 with 10 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde1_KevinUnger_ChristopheGuicheteau_9p.xg
+Successfully imported match 136 with 3 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde2_KevinUnger_PhilippeVouhe_9p.xg
+Successfully imported match 137 with 7 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde3_KevinUnger_NicolasHarmand_9p.xg
+Successfully imported match 138 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde4_KevinUnger_MaxDePaz_9p.xg
+Successfully imported match 139 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_rondeargent1_KevinUnger_PatriciaLeThinNgoc_9p.xg
+Successfully imported match 140 with 8 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde1_KevinUnger_JamesMcNaughtan_11p.xg
+Successfully imported match 141 with 12 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde2_KevinUnger_DanielRozenberg_11p.xg
+Successfully imported match 142 with 4 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde3_KevinUnger_YurikaUeno_11p.xg
+Successfully imported match 143 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde1-KevinUnger-PhilippeLevasseur-7p.xg
+Successfully imported match 144 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde2-KevinUnger-StephaneCheneviere-7p.xg
+Successfully imported match 145 with 10 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde3-KevinUnger-MarieAnneJeannel-7p.xg
+Successfully imported match 146 with 8 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde4-KevinUnger-NicolasJully-7p.xg
+Successfully imported match 147 with 3 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 148 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde1-KevinUnger-ChristopherFilosa-7p.xg
+Successfully imported match 149 with 9 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde2-KevinUnger-YurikaUeno-7p.xg
+Successfully imported match 150 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde3-KevinUnger-FredericPicot-7p.xg
+Successfully imported match 151 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde4-KevinUnger-OlivierFlamion-7p.xg
+Successfully imported match 1 with 8 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/01-cdf-2022-2023-main-round1-denardi-unger.xg
+Successfully imported match 2 with 5 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/02-cdf-2022-2023-main-round2-zarkadan-unger.xg
+Successfully imported match 3 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/03-cdf-2022-2023-main-round3-arbandstephane-unger.xg
+Successfully imported match 4 with 7 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/04-cdf-2022-2023-main-round4-pinsoneric-unger.xg
+Successfully imported match 5 with 10 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/05-cdf-2022-2023-main-round5-rottembergphilippe-unger.xg
+Successfully imported match 6 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/06-cdf-2022-2023-main-round6-soulimanidavid-unger.xg
+Successfully imported match 7 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/11-cdf-2022-2023-double-round2-kricksebastien-hostachyetienne-bocheuxromainungerkevin.xg
+Successfully imported match 8 with 9 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/1-HSBT-Lyon-main1-7pts-UngerKevin-FrancouRemy.xg
+Successfully imported match 9 with 8 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/2-HSBT-Lyon-main2-7pts-UngerKevin-PrevelThierry.xg
+Successfully imported match 10 with 4 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/3-HSBT-Lyon-main3-7pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 11 with 5 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/4-HSBT-Lyon-main4-7pts-UngerKevin-BenchalochMeir.xg
+Successfully imported match 12 with 6 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part1.xg
+Successfully imported match 13 with 3 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part2.xg
+Successfully imported match 14 with 10 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/6-HSBT-Lyon-or1-9pts-UngerKevin-LeThiNgocPatricia.xg
+Successfully imported match 15 with 7 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/7-HSBT-Lyon-or2-9pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 16 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Eric Benichou-Kevin Unger Match en 7 points 15-10-2023.xg
+Successfully imported match 17 with 6 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Geoffrey Menez Match en 7 points 10-15-2023.xg
+Successfully imported match 18 with 7 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Marc Le Campion Match en 7 points 10-15-2023.xg
+Successfully imported match 19 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Wilfried Benotmane Match en 7 points 10-15-2023.xg
+Successfully imported match 20 with 5 games from testdata/tournois/2023-10-15_VBC2_5x7p/Steeve Korn-Kévin Unger Match en 7 points 10-16-2023.xg
+Successfully imported match 21 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde1-UngerKevin-FlamionOlivier-7pt.xg
+Successfully imported match 22 with 3 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde2-UngerKevin-LourencoThomas-7pt.xg
+Successfully imported match 23 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde3-UngerKevin-KlimovaTania-7pt.xg
+Successfully imported match 24 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde4-UngerKevin-VanMiddelemGuy-7pt.xg
+Successfully imported match 25 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde5-UngerKevin-SavaryEtienne-7pt.xg
+Successfully imported match 26 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde2-KevinUnger-MaxenceJob.xg
+Successfully imported match 27 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde3-KevinUnger-DanielRozenberg.xg
+Successfully imported match 28 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde4-KevinUnger-YannickCoupannec.xg
+Successfully imported match 29 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde5-KevinUnger-BernardBailleul.xg
+Successfully imported match 30 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde6-KevinUnger-StephaneCheneviere.xg
+Successfully imported match 31 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/1-KevinUnger-EricGuedj-7pts.xg
+Successfully imported match 32 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/2-KevinUnger-KamelGuerbaa-7pts.xg
+Successfully imported match 33 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/3-KevinUnger-GeoffroyMenez-7pts.xg
+Successfully imported match 34 with 4 games from testdata/tournois/2023-12-17_VBC3_5x7p/4-KevinUnger-SarahPartouche-7pts.xg
+Successfully imported match 35 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/5-KevinUnger-WilfriedBenotmane-7pts.xg
+Successfully imported match 36 with 6 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde1-KevinUnger-SarahPartouche.xg
+Successfully imported match 37 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde2-KevinUnger-ArthurMenez.xg
+Successfully imported match 38 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde3-KevinUnger-GeoMenez.xg
+Successfully imported match 39 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde4-KevinUnger-GildasBouilland.xg
+Successfully imported match 40 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde5-KevinUnger-SamiTamin.xg
+Successfully imported match 41 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-1-KevinUnger-ErwanBloyet-7pts.xg
+Successfully imported match 42 with 4 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-2-KevinUnger-NoemieBrichard-7pts.xg
+Successfully imported match 43 with 5 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-3-KevinUnger-KathleenCastro-7pts.xg
+Successfully imported match 44 with 3 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-4-KevinUnger-SimonAyzac-7pts.xg
+Successfully imported match 45 with 8 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-5-KevinUnger-PhilibertCini-7pts.xg
+Successfully imported match 46 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-6-KevinUnger-TristanRemille-7pts.xg
+Successfully imported match 47 with 4 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25498 Kévin Unger-Sarah Partouche.xg
+Successfully imported match 48 with 7 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25505 Simon Barget-Kévin Unger.xg
+Successfully imported match 49 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25507 Kévin Unger-Wil Benotmane.xg
+Successfully imported match 50 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25516 Kévin Unger-Geoffroy Menez.xg
+Successfully imported match 51 with 8 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25532 Kévin Unger-Kamel Guerbaa.xg
+Successfully imported match 52 with 7 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde1-KevinUnger-FranckTouboul.xg
+Successfully imported match 53 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde2-KevinUnger-KamelGuerbaa.xg
+Successfully imported match 54 with 9 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde3-KevinUnger-MarcWainberg.xg
+Successfully imported match 55 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde4-KevinUnger-SarahPartouche.xg
+Successfully imported match 56 with 10 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde5-KevinUnger-WilfriedBenotmane.xg
+Successfully imported match 57 with 8 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde1-KevinUnger-AxelleRoyer-7p.xg
+Successfully imported match 58 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde2-KevinUnger-EmmanuelLardy-7p.xg
+Successfully imported match 59 with 9 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde3-KevinUnger-JeanMarcPages-7p.xg
+Successfully imported match 60 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde4-KevinUnger-GuillaumeGalle-7p.xg
+Successfully imported match 61 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 62 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde2-KevinUnger-MirgenaKorbi-7p.xg
+Successfully imported match 63 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde3-KevinUnger-NataliaAlbota-7p.xg
+Successfully imported match 64 with 7 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde4-KevinUnger-JeanClaudeNogales-9p.xg
+Successfully imported match 65 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde5-KevinUnger-GerardSaklislian-11p.xg
+Successfully imported match 66 with 7 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Lux Heuler-Franzosen 7 point match 12.08.2024.xg
+Successfully imported match 67 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg
+Successfully imported match 68 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde1-UngerHarmand-FriebeJacobi-7pt.xg
+Successfully imported match 69 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde3-UngerHarmand-HuyckLarsen.xg
+Successfully imported match 70 with 5 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/1-Intermediate-Round1-Unger-Kozoman-11pt.xg
+Successfully imported match 71 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/2-Intermediate-Round2-Unger-Lahme-7pt.xg
+Successfully imported match 72 with 9 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde1-KevinUnger-GeoffroyMenez-9p.xg
+Successfully imported match 73 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde2-KevinUnger-MaximePeytavin-9p.xg
+Successfully imported match 74 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde3-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 75 with 2 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-tableauOr-ronde1-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 76 with 3 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde1-KevinUnger-KamelGuerbaa-7pt.xg
+Successfully imported match 77 with 4 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde2-KevinUnger-MarcLeCampion-7pt.xg
+Successfully imported match 78 with 7 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde3-KevinUnger-MarcWainberg-7pt.xg
+Successfully imported match 79 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde4-KevinUnger-OlivierCroisille-7pt.xg
+Successfully imported match 80 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde5-KevinUnger-Elias Baltassis-7pt.xg
+Successfully imported match 81 with 12 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-final16th-KevinUnger-JeanClaudeBensaid-9p.xg
+Successfully imported match 82 with 10 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round1-KevinUnger-DavidSoulimani-9p.xg
+Successfully imported match 83 with 2 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round2-KevinUnger-OlivierLafon-9p.xg
+Successfully imported match 84 with 8 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round3-KevinUnger-PatriceDeSainteMarie-9p.xg
+Successfully imported match 85 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round4-KevinUnger-ThomasLourenco-9p.xg
+Successfully imported match 86 with 9 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round5-KevinUnger-GuillaumeGalle-9p.xg
+Successfully imported match 87 with 5 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round6-KevinUnger-MichelMoll-9p.xg
+Successfully imported match 88 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round7-KevinUnger-FelipeDruy-9p.xg
+Successfully imported match 89 with 10 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde1-KevinUnger-EliasBaltassis-7p.xg
+Successfully imported match 90 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde2-KevinUnger-SamiTamimElJarkas-7p.xg
+Successfully imported match 91 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde3-KevinUnger-OscarFuchs-7p.xg
+Successfully imported match 92 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde4-KevinUnger-PaulCourtois-7p.xg
+Successfully imported match 93 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde5-KevinUnger-MarcLeCampion-7p.xg
+Successfully imported match 94 with 3 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde1-KevinUnger-FabriceAbitbol-7p.xg
+Successfully imported match 95 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde2-KevinUnger-CarolineKhayat-7p.xg
+Successfully imported match 96 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde3-KevinUnger-JulienCamurat-7p.xg
+Successfully imported match 97 with 7 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde4-KevinUnger-VeroniqueChamazDehon-7p.xg
+Successfully imported match 98 with 4 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde5-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 99 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde6-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 100 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde7-KevinUnger-ValentinMarotte-7p.xg
+Successfully imported match 101 with 9 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde1-KevinUnger-JeromePoirier-7p.xg
+Successfully imported match 102 with 3 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde2-KevinUnger-GregoireSergent-7p.xg
+Successfully imported match 103 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde3-KevinUnger-MaxDePaz-7p.xg
+Successfully imported match 104 with 8 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde4-KevinUnger-EricAlarcon-7p.xg
+Successfully imported match 105 with 7 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde5-KevinUnger-JeromeServot-7p.xg
+Successfully imported match 106 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde2-KevinUnger-MarcLeCampion-7p.xg.xg
+Successfully imported match 107 with 5 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde3-KevinUnger-RemyFrancou-7p.xg.xg
+Successfully imported match 108 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/1-KevinUnger-BrunoMayerGrossi-5p.xg
+Successfully imported match 109 with 6 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/2-KevinUnger-OyaTercan-5p.xg
+Successfully imported match 110 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/3-KevinUnger-LaurentHoyau-5p.xg
+Successfully imported match 111 with 4 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/4-KevinUnger-SamiTaminElJarkas-5p.xg
+Successfully imported match 112 with 6 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde1_UngerKevin_PavicevicNina_7p.xg
+Successfully imported match 113 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde2_UngerKevin_MauduitEric_7p.xg
+Successfully imported match 114 with 3 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde3_UngerKevin_BourgnonEvan_7p.xg
+Successfully imported match 115 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg
+Successfully imported match 116 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde5_UngerKevin_BessilaOuarda_7p.xg
+Successfully imported match 117 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde1_UngerKevin_HanotinDenis_7p.xg
+Successfully imported match 118 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde2_UngerKevin_BaudryThierry_7p.xg
+Successfully imported match 119 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde3_UngerKevin_GalleGuillaume_7p.xg
+Successfully imported match 120 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde4_UngerKevin_AntoniettiChristophe_7p.xg
+Successfully imported match 121 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde5_UngerKevin_HarmandNicolas_7p.xg
+Successfully imported match 122 with 3 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde1-KevinUnger-OscarFuchs-9p.xg
+Successfully imported match 123 with 7 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde2-KevinUnger-MarcWainberg-9p.xg
+Successfully imported match 124 with 9 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 125 with 8 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde4-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 126 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde1-KevinUnger-EricBenichou-9p.xg
+Successfully imported match 127 with 9 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde2-KevinUnger-JacquesRavier-9p.xg
+Successfully imported match 128 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde3-KevinUnger-ArthurMenez-9p.xg
+Successfully imported match 129 with 11 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde4-KevinUnger-GillesDeshayes-9p.xg
+Successfully imported match 130 with 7 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/Kévin et Nicolas-Laurence et Jacques 7 point match 11-11-2025.xg
+Successfully imported match 131 with 6 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde1-KevinUnger-SarahPartouche-9p.xg
+Successfully imported match 132 with 8 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde2-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 133 with 9 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 134 with 10 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde4-KevinUnger-WilfriedBenotmane-9p.xg
+Successfully imported match 135 with 10 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde1_KevinUnger_ChristopheGuicheteau_9p.xg
+Successfully imported match 136 with 3 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde2_KevinUnger_PhilippeVouhe_9p.xg
+Successfully imported match 137 with 7 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde3_KevinUnger_NicolasHarmand_9p.xg
+Successfully imported match 138 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde4_KevinUnger_MaxDePaz_9p.xg
+Successfully imported match 139 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_rondeargent1_KevinUnger_PatriciaLeThinNgoc_9p.xg
+Successfully imported match 140 with 8 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde1_KevinUnger_JamesMcNaughtan_11p.xg
+Successfully imported match 141 with 12 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde2_KevinUnger_DanielRozenberg_11p.xg
+Successfully imported match 142 with 4 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde3_KevinUnger_YurikaUeno_11p.xg
+Successfully imported match 143 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde1-KevinUnger-PhilippeLevasseur-7p.xg
+Successfully imported match 144 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde2-KevinUnger-StephaneCheneviere-7p.xg
+Successfully imported match 145 with 10 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde3-KevinUnger-MarieAnneJeannel-7p.xg
+Successfully imported match 146 with 8 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde4-KevinUnger-NicolasJully-7p.xg
+Successfully imported match 147 with 3 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 148 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde1-KevinUnger-ChristopherFilosa-7p.xg
+Successfully imported match 149 with 9 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde2-KevinUnger-YurikaUeno-7p.xg
+Successfully imported match 150 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde3-KevinUnger-FredericPicot-7p.xg
+Successfully imported match 151 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde4-KevinUnger-OlivierFlamion-7p.xg
+Successfully imported match 1 with 8 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/01-cdf-2022-2023-main-round1-denardi-unger.xg
+Successfully imported match 2 with 5 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/02-cdf-2022-2023-main-round2-zarkadan-unger.xg
+Successfully imported match 3 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/03-cdf-2022-2023-main-round3-arbandstephane-unger.xg
+Successfully imported match 4 with 7 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/04-cdf-2022-2023-main-round4-pinsoneric-unger.xg
+Successfully imported match 5 with 10 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/05-cdf-2022-2023-main-round5-rottembergphilippe-unger.xg
+Successfully imported match 6 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/06-cdf-2022-2023-main-round6-soulimanidavid-unger.xg
+Successfully imported match 7 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/11-cdf-2022-2023-double-round2-kricksebastien-hostachyetienne-bocheuxromainungerkevin.xg
+Successfully imported match 8 with 9 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/1-HSBT-Lyon-main1-7pts-UngerKevin-FrancouRemy.xg
+Successfully imported match 9 with 8 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/2-HSBT-Lyon-main2-7pts-UngerKevin-PrevelThierry.xg
+Successfully imported match 10 with 4 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/3-HSBT-Lyon-main3-7pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 11 with 5 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/4-HSBT-Lyon-main4-7pts-UngerKevin-BenchalochMeir.xg
+Successfully imported match 12 with 6 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part1.xg
+Successfully imported match 13 with 3 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part2.xg
+Successfully imported match 14 with 10 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/6-HSBT-Lyon-or1-9pts-UngerKevin-LeThiNgocPatricia.xg
+Successfully imported match 15 with 7 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/7-HSBT-Lyon-or2-9pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 16 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Eric Benichou-Kevin Unger Match en 7 points 15-10-2023.xg
+Successfully imported match 17 with 6 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Geoffrey Menez Match en 7 points 10-15-2023.xg
+Successfully imported match 18 with 7 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Marc Le Campion Match en 7 points 10-15-2023.xg
+Successfully imported match 19 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Wilfried Benotmane Match en 7 points 10-15-2023.xg
+Successfully imported match 20 with 5 games from testdata/tournois/2023-10-15_VBC2_5x7p/Steeve Korn-Kévin Unger Match en 7 points 10-16-2023.xg
+Successfully imported match 21 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde1-UngerKevin-FlamionOlivier-7pt.xg
+Successfully imported match 22 with 3 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde2-UngerKevin-LourencoThomas-7pt.xg
+Successfully imported match 23 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde3-UngerKevin-KlimovaTania-7pt.xg
+Successfully imported match 24 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde4-UngerKevin-VanMiddelemGuy-7pt.xg
+Successfully imported match 25 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde5-UngerKevin-SavaryEtienne-7pt.xg
+Successfully imported match 26 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde2-KevinUnger-MaxenceJob.xg
+Successfully imported match 27 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde3-KevinUnger-DanielRozenberg.xg
+Successfully imported match 28 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde4-KevinUnger-YannickCoupannec.xg
+Successfully imported match 29 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde5-KevinUnger-BernardBailleul.xg
+Successfully imported match 30 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde6-KevinUnger-StephaneCheneviere.xg
+Successfully imported match 31 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/1-KevinUnger-EricGuedj-7pts.xg
+Successfully imported match 32 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/2-KevinUnger-KamelGuerbaa-7pts.xg
+Successfully imported match 33 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/3-KevinUnger-GeoffroyMenez-7pts.xg
+Successfully imported match 34 with 4 games from testdata/tournois/2023-12-17_VBC3_5x7p/4-KevinUnger-SarahPartouche-7pts.xg
+Successfully imported match 35 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/5-KevinUnger-WilfriedBenotmane-7pts.xg
+Successfully imported match 36 with 6 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde1-KevinUnger-SarahPartouche.xg
+Successfully imported match 37 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde2-KevinUnger-ArthurMenez.xg
+Successfully imported match 38 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde3-KevinUnger-GeoMenez.xg
+Successfully imported match 39 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde4-KevinUnger-GildasBouilland.xg
+Successfully imported match 40 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde5-KevinUnger-SamiTamin.xg
+Successfully imported match 41 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-1-KevinUnger-ErwanBloyet-7pts.xg
+Successfully imported match 42 with 4 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-2-KevinUnger-NoemieBrichard-7pts.xg
+Successfully imported match 43 with 5 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-3-KevinUnger-KathleenCastro-7pts.xg
+Successfully imported match 44 with 3 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-4-KevinUnger-SimonAyzac-7pts.xg
+Successfully imported match 45 with 8 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-5-KevinUnger-PhilibertCini-7pts.xg
+Successfully imported match 46 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-6-KevinUnger-TristanRemille-7pts.xg
+Successfully imported match 47 with 4 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25498 Kévin Unger-Sarah Partouche.xg
+Successfully imported match 48 with 7 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25505 Simon Barget-Kévin Unger.xg
+Successfully imported match 49 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25507 Kévin Unger-Wil Benotmane.xg
+Successfully imported match 50 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25516 Kévin Unger-Geoffroy Menez.xg
+Successfully imported match 51 with 8 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25532 Kévin Unger-Kamel Guerbaa.xg
+Successfully imported match 52 with 7 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde1-KevinUnger-FranckTouboul.xg
+Successfully imported match 53 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde2-KevinUnger-KamelGuerbaa.xg
+Successfully imported match 54 with 9 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde3-KevinUnger-MarcWainberg.xg
+Successfully imported match 55 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde4-KevinUnger-SarahPartouche.xg
+Successfully imported match 56 with 10 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde5-KevinUnger-WilfriedBenotmane.xg
+Successfully imported match 57 with 8 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde1-KevinUnger-AxelleRoyer-7p.xg
+Successfully imported match 58 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde2-KevinUnger-EmmanuelLardy-7p.xg
+Successfully imported match 59 with 9 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde3-KevinUnger-JeanMarcPages-7p.xg
+Successfully imported match 60 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde4-KevinUnger-GuillaumeGalle-7p.xg
+Successfully imported match 61 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 62 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde2-KevinUnger-MirgenaKorbi-7p.xg
+Successfully imported match 63 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde3-KevinUnger-NataliaAlbota-7p.xg
+Successfully imported match 64 with 7 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde4-KevinUnger-JeanClaudeNogales-9p.xg
+Successfully imported match 65 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde5-KevinUnger-GerardSaklislian-11p.xg
+Successfully imported match 66 with 7 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Lux Heuler-Franzosen 7 point match 12.08.2024.xg
+Successfully imported match 67 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg
+Successfully imported match 68 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde1-UngerHarmand-FriebeJacobi-7pt.xg
+Successfully imported match 69 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde3-UngerHarmand-HuyckLarsen.xg
+Successfully imported match 70 with 5 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/1-Intermediate-Round1-Unger-Kozoman-11pt.xg
+Successfully imported match 71 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/2-Intermediate-Round2-Unger-Lahme-7pt.xg
+Successfully imported match 72 with 9 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde1-KevinUnger-GeoffroyMenez-9p.xg
+Successfully imported match 73 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde2-KevinUnger-MaximePeytavin-9p.xg
+Successfully imported match 74 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde3-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 75 with 2 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-tableauOr-ronde1-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 76 with 3 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde1-KevinUnger-KamelGuerbaa-7pt.xg
+Successfully imported match 77 with 4 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde2-KevinUnger-MarcLeCampion-7pt.xg
+Successfully imported match 78 with 7 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde3-KevinUnger-MarcWainberg-7pt.xg
+Successfully imported match 79 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde4-KevinUnger-OlivierCroisille-7pt.xg
+Successfully imported match 80 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde5-KevinUnger-Elias Baltassis-7pt.xg
+Successfully imported match 81 with 12 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-final16th-KevinUnger-JeanClaudeBensaid-9p.xg
+Successfully imported match 82 with 10 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round1-KevinUnger-DavidSoulimani-9p.xg
+Successfully imported match 83 with 2 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round2-KevinUnger-OlivierLafon-9p.xg
+Successfully imported match 84 with 8 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round3-KevinUnger-PatriceDeSainteMarie-9p.xg
+Successfully imported match 85 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round4-KevinUnger-ThomasLourenco-9p.xg
+Successfully imported match 86 with 9 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round5-KevinUnger-GuillaumeGalle-9p.xg
+Successfully imported match 87 with 5 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round6-KevinUnger-MichelMoll-9p.xg
+Successfully imported match 88 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round7-KevinUnger-FelipeDruy-9p.xg
+Successfully imported match 89 with 10 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde1-KevinUnger-EliasBaltassis-7p.xg
+Successfully imported match 90 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde2-KevinUnger-SamiTamimElJarkas-7p.xg
+Successfully imported match 91 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde3-KevinUnger-OscarFuchs-7p.xg
+Successfully imported match 92 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde4-KevinUnger-PaulCourtois-7p.xg
+Successfully imported match 93 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde5-KevinUnger-MarcLeCampion-7p.xg
+Successfully imported match 94 with 3 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde1-KevinUnger-FabriceAbitbol-7p.xg
+Successfully imported match 95 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde2-KevinUnger-CarolineKhayat-7p.xg
+Successfully imported match 96 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde3-KevinUnger-JulienCamurat-7p.xg
+Successfully imported match 97 with 7 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde4-KevinUnger-VeroniqueChamazDehon-7p.xg
+Successfully imported match 98 with 4 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde5-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 99 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde6-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 100 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde7-KevinUnger-ValentinMarotte-7p.xg
+Successfully imported match 101 with 9 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde1-KevinUnger-JeromePoirier-7p.xg
+Successfully imported match 102 with 3 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde2-KevinUnger-GregoireSergent-7p.xg
+Successfully imported match 103 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde3-KevinUnger-MaxDePaz-7p.xg
+Successfully imported match 104 with 8 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde4-KevinUnger-EricAlarcon-7p.xg
+Successfully imported match 105 with 7 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde5-KevinUnger-JeromeServot-7p.xg
+Successfully imported match 106 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde2-KevinUnger-MarcLeCampion-7p.xg.xg
+Successfully imported match 107 with 5 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde3-KevinUnger-RemyFrancou-7p.xg.xg
+Successfully imported match 108 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/1-KevinUnger-BrunoMayerGrossi-5p.xg
+Successfully imported match 109 with 6 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/2-KevinUnger-OyaTercan-5p.xg
+Successfully imported match 110 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/3-KevinUnger-LaurentHoyau-5p.xg
+Successfully imported match 111 with 4 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/4-KevinUnger-SamiTaminElJarkas-5p.xg
+Successfully imported match 112 with 6 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde1_UngerKevin_PavicevicNina_7p.xg
+Successfully imported match 113 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde2_UngerKevin_MauduitEric_7p.xg
+Successfully imported match 114 with 3 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde3_UngerKevin_BourgnonEvan_7p.xg
+Successfully imported match 115 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg
+Successfully imported match 116 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde5_UngerKevin_BessilaOuarda_7p.xg
+Successfully imported match 117 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde1_UngerKevin_HanotinDenis_7p.xg
+Successfully imported match 118 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde2_UngerKevin_BaudryThierry_7p.xg
+Successfully imported match 119 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde3_UngerKevin_GalleGuillaume_7p.xg
+Successfully imported match 120 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde4_UngerKevin_AntoniettiChristophe_7p.xg
+Successfully imported match 121 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde5_UngerKevin_HarmandNicolas_7p.xg
+Successfully imported match 122 with 3 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde1-KevinUnger-OscarFuchs-9p.xg
+Successfully imported match 123 with 7 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde2-KevinUnger-MarcWainberg-9p.xg
+Successfully imported match 124 with 9 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 125 with 8 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde4-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 126 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde1-KevinUnger-EricBenichou-9p.xg
+Successfully imported match 127 with 9 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde2-KevinUnger-JacquesRavier-9p.xg
+Successfully imported match 128 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde3-KevinUnger-ArthurMenez-9p.xg
+Successfully imported match 129 with 11 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde4-KevinUnger-GillesDeshayes-9p.xg
+Successfully imported match 130 with 7 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/Kévin et Nicolas-Laurence et Jacques 7 point match 11-11-2025.xg
+Successfully imported match 131 with 6 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde1-KevinUnger-SarahPartouche-9p.xg
+Successfully imported match 132 with 8 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde2-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 133 with 9 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 134 with 10 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde4-KevinUnger-WilfriedBenotmane-9p.xg
+Successfully imported match 135 with 10 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde1_KevinUnger_ChristopheGuicheteau_9p.xg
+Successfully imported match 136 with 3 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde2_KevinUnger_PhilippeVouhe_9p.xg
+Successfully imported match 137 with 7 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde3_KevinUnger_NicolasHarmand_9p.xg
+Successfully imported match 138 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde4_KevinUnger_MaxDePaz_9p.xg
+Successfully imported match 139 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_rondeargent1_KevinUnger_PatriciaLeThinNgoc_9p.xg
+Successfully imported match 140 with 8 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde1_KevinUnger_JamesMcNaughtan_11p.xg
+Successfully imported match 141 with 12 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde2_KevinUnger_DanielRozenberg_11p.xg
+Successfully imported match 142 with 4 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde3_KevinUnger_YurikaUeno_11p.xg
+Successfully imported match 143 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde1-KevinUnger-PhilippeLevasseur-7p.xg
+Successfully imported match 144 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde2-KevinUnger-StephaneCheneviere-7p.xg
+Successfully imported match 145 with 10 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde3-KevinUnger-MarieAnneJeannel-7p.xg
+Successfully imported match 146 with 8 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde4-KevinUnger-NicolasJully-7p.xg
+Successfully imported match 147 with 3 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 148 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde1-KevinUnger-ChristopherFilosa-7p.xg
+Successfully imported match 149 with 9 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde2-KevinUnger-YurikaUeno-7p.xg
+Successfully imported match 150 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde3-KevinUnger-FredericPicot-7p.xg
+Successfully imported match 151 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde4-KevinUnger-OlivierFlamion-7p.xg
+Successfully imported match 1 with 8 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/01-cdf-2022-2023-main-round1-denardi-unger.xg
+Successfully imported match 2 with 5 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/02-cdf-2022-2023-main-round2-zarkadan-unger.xg
+Successfully imported match 3 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/03-cdf-2022-2023-main-round3-arbandstephane-unger.xg
+Successfully imported match 4 with 7 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/04-cdf-2022-2023-main-round4-pinsoneric-unger.xg
+Successfully imported match 5 with 10 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/05-cdf-2022-2023-main-round5-rottembergphilippe-unger.xg
+Successfully imported match 6 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/06-cdf-2022-2023-main-round6-soulimanidavid-unger.xg
+Successfully imported match 7 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/11-cdf-2022-2023-double-round2-kricksebastien-hostachyetienne-bocheuxromainungerkevin.xg
+Successfully imported match 8 with 9 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/1-HSBT-Lyon-main1-7pts-UngerKevin-FrancouRemy.xg
+Successfully imported match 9 with 8 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/2-HSBT-Lyon-main2-7pts-UngerKevin-PrevelThierry.xg
+Successfully imported match 10 with 4 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/3-HSBT-Lyon-main3-7pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 11 with 5 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/4-HSBT-Lyon-main4-7pts-UngerKevin-BenchalochMeir.xg
+Successfully imported match 12 with 6 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part1.xg
+Successfully imported match 13 with 3 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part2.xg
+Successfully imported match 14 with 10 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/6-HSBT-Lyon-or1-9pts-UngerKevin-LeThiNgocPatricia.xg
+Successfully imported match 15 with 7 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/7-HSBT-Lyon-or2-9pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 16 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Eric Benichou-Kevin Unger Match en 7 points 15-10-2023.xg
+Successfully imported match 17 with 6 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Geoffrey Menez Match en 7 points 10-15-2023.xg
+Successfully imported match 18 with 7 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Marc Le Campion Match en 7 points 10-15-2023.xg
+Successfully imported match 19 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Wilfried Benotmane Match en 7 points 10-15-2023.xg
+Successfully imported match 20 with 5 games from testdata/tournois/2023-10-15_VBC2_5x7p/Steeve Korn-Kévin Unger Match en 7 points 10-16-2023.xg
+Successfully imported match 21 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde1-UngerKevin-FlamionOlivier-7pt.xg
+Successfully imported match 22 with 3 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde2-UngerKevin-LourencoThomas-7pt.xg
+Successfully imported match 23 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde3-UngerKevin-KlimovaTania-7pt.xg
+Successfully imported match 24 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde4-UngerKevin-VanMiddelemGuy-7pt.xg
+Successfully imported match 25 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde5-UngerKevin-SavaryEtienne-7pt.xg
+Successfully imported match 26 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde2-KevinUnger-MaxenceJob.xg
+Successfully imported match 27 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde3-KevinUnger-DanielRozenberg.xg
+Successfully imported match 28 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde4-KevinUnger-YannickCoupannec.xg
+Successfully imported match 29 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde5-KevinUnger-BernardBailleul.xg
+Successfully imported match 30 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde6-KevinUnger-StephaneCheneviere.xg
+Successfully imported match 31 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/1-KevinUnger-EricGuedj-7pts.xg
+Successfully imported match 32 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/2-KevinUnger-KamelGuerbaa-7pts.xg
+Successfully imported match 33 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/3-KevinUnger-GeoffroyMenez-7pts.xg
+Successfully imported match 34 with 4 games from testdata/tournois/2023-12-17_VBC3_5x7p/4-KevinUnger-SarahPartouche-7pts.xg
+Successfully imported match 35 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/5-KevinUnger-WilfriedBenotmane-7pts.xg
+Successfully imported match 36 with 6 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde1-KevinUnger-SarahPartouche.xg
+Successfully imported match 37 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde2-KevinUnger-ArthurMenez.xg
+Successfully imported match 38 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde3-KevinUnger-GeoMenez.xg
+Successfully imported match 39 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde4-KevinUnger-GildasBouilland.xg
+Successfully imported match 40 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde5-KevinUnger-SamiTamin.xg
+Successfully imported match 41 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-1-KevinUnger-ErwanBloyet-7pts.xg
+Successfully imported match 42 with 4 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-2-KevinUnger-NoemieBrichard-7pts.xg
+Successfully imported match 43 with 5 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-3-KevinUnger-KathleenCastro-7pts.xg
+Successfully imported match 44 with 3 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-4-KevinUnger-SimonAyzac-7pts.xg
+Successfully imported match 45 with 8 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-5-KevinUnger-PhilibertCini-7pts.xg
+Successfully imported match 46 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-6-KevinUnger-TristanRemille-7pts.xg
+Successfully imported match 47 with 4 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25498 Kévin Unger-Sarah Partouche.xg
+Successfully imported match 48 with 7 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25505 Simon Barget-Kévin Unger.xg
+Successfully imported match 49 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25507 Kévin Unger-Wil Benotmane.xg
+Successfully imported match 50 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25516 Kévin Unger-Geoffroy Menez.xg
+Successfully imported match 51 with 8 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25532 Kévin Unger-Kamel Guerbaa.xg
+Successfully imported match 52 with 7 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde1-KevinUnger-FranckTouboul.xg
+Successfully imported match 53 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde2-KevinUnger-KamelGuerbaa.xg
+Successfully imported match 54 with 9 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde3-KevinUnger-MarcWainberg.xg
+Successfully imported match 55 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde4-KevinUnger-SarahPartouche.xg
+Successfully imported match 56 with 10 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde5-KevinUnger-WilfriedBenotmane.xg
+Successfully imported match 57 with 8 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde1-KevinUnger-AxelleRoyer-7p.xg
+Successfully imported match 58 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde2-KevinUnger-EmmanuelLardy-7p.xg
+Successfully imported match 59 with 9 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde3-KevinUnger-JeanMarcPages-7p.xg
+Successfully imported match 60 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde4-KevinUnger-GuillaumeGalle-7p.xg
+Successfully imported match 61 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 62 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde2-KevinUnger-MirgenaKorbi-7p.xg
+Successfully imported match 63 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde3-KevinUnger-NataliaAlbota-7p.xg
+Successfully imported match 64 with 7 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde4-KevinUnger-JeanClaudeNogales-9p.xg
+Successfully imported match 65 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde5-KevinUnger-GerardSaklislian-11p.xg
+Successfully imported match 66 with 7 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Lux Heuler-Franzosen 7 point match 12.08.2024.xg
+Successfully imported match 67 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg
+Successfully imported match 68 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde1-UngerHarmand-FriebeJacobi-7pt.xg
+Successfully imported match 69 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde3-UngerHarmand-HuyckLarsen.xg
+Successfully imported match 70 with 5 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/1-Intermediate-Round1-Unger-Kozoman-11pt.xg
+Successfully imported match 71 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/2-Intermediate-Round2-Unger-Lahme-7pt.xg
+Successfully imported match 72 with 9 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde1-KevinUnger-GeoffroyMenez-9p.xg
+Successfully imported match 73 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde2-KevinUnger-MaximePeytavin-9p.xg
+Successfully imported match 74 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde3-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 75 with 2 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-tableauOr-ronde1-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 76 with 3 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde1-KevinUnger-KamelGuerbaa-7pt.xg
+Successfully imported match 77 with 4 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde2-KevinUnger-MarcLeCampion-7pt.xg
+Successfully imported match 78 with 7 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde3-KevinUnger-MarcWainberg-7pt.xg
+Successfully imported match 79 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde4-KevinUnger-OlivierCroisille-7pt.xg
+Successfully imported match 80 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde5-KevinUnger-Elias Baltassis-7pt.xg
+Successfully imported match 81 with 12 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-final16th-KevinUnger-JeanClaudeBensaid-9p.xg
+Successfully imported match 82 with 10 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round1-KevinUnger-DavidSoulimani-9p.xg
+Successfully imported match 83 with 2 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round2-KevinUnger-OlivierLafon-9p.xg
+Successfully imported match 84 with 8 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round3-KevinUnger-PatriceDeSainteMarie-9p.xg
+Successfully imported match 85 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round4-KevinUnger-ThomasLourenco-9p.xg
+Successfully imported match 86 with 9 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round5-KevinUnger-GuillaumeGalle-9p.xg
+Successfully imported match 87 with 5 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round6-KevinUnger-MichelMoll-9p.xg
+Successfully imported match 88 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round7-KevinUnger-FelipeDruy-9p.xg
+Successfully imported match 89 with 10 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde1-KevinUnger-EliasBaltassis-7p.xg
+Successfully imported match 90 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde2-KevinUnger-SamiTamimElJarkas-7p.xg
+Successfully imported match 91 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde3-KevinUnger-OscarFuchs-7p.xg
+Successfully imported match 92 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde4-KevinUnger-PaulCourtois-7p.xg
+Successfully imported match 93 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde5-KevinUnger-MarcLeCampion-7p.xg
+Successfully imported match 94 with 3 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde1-KevinUnger-FabriceAbitbol-7p.xg
+Successfully imported match 95 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde2-KevinUnger-CarolineKhayat-7p.xg
+Successfully imported match 96 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde3-KevinUnger-JulienCamurat-7p.xg
+Successfully imported match 97 with 7 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde4-KevinUnger-VeroniqueChamazDehon-7p.xg
+Successfully imported match 98 with 4 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde5-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 99 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde6-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 100 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde7-KevinUnger-ValentinMarotte-7p.xg
+Successfully imported match 101 with 9 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde1-KevinUnger-JeromePoirier-7p.xg
+Successfully imported match 102 with 3 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde2-KevinUnger-GregoireSergent-7p.xg
+Successfully imported match 103 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde3-KevinUnger-MaxDePaz-7p.xg
+Successfully imported match 104 with 8 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde4-KevinUnger-EricAlarcon-7p.xg
+Successfully imported match 105 with 7 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde5-KevinUnger-JeromeServot-7p.xg
+Successfully imported match 106 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde2-KevinUnger-MarcLeCampion-7p.xg.xg
+Successfully imported match 107 with 5 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde3-KevinUnger-RemyFrancou-7p.xg.xg
+Successfully imported match 108 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/1-KevinUnger-BrunoMayerGrossi-5p.xg
+Successfully imported match 109 with 6 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/2-KevinUnger-OyaTercan-5p.xg
+Successfully imported match 110 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/3-KevinUnger-LaurentHoyau-5p.xg
+Successfully imported match 111 with 4 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/4-KevinUnger-SamiTaminElJarkas-5p.xg
+Successfully imported match 112 with 6 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde1_UngerKevin_PavicevicNina_7p.xg
+Successfully imported match 113 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde2_UngerKevin_MauduitEric_7p.xg
+Successfully imported match 114 with 3 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde3_UngerKevin_BourgnonEvan_7p.xg
+Successfully imported match 115 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg
+Successfully imported match 116 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde5_UngerKevin_BessilaOuarda_7p.xg
+Successfully imported match 117 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde1_UngerKevin_HanotinDenis_7p.xg
+Successfully imported match 118 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde2_UngerKevin_BaudryThierry_7p.xg
+Successfully imported match 119 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde3_UngerKevin_GalleGuillaume_7p.xg
+Successfully imported match 120 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde4_UngerKevin_AntoniettiChristophe_7p.xg
+Successfully imported match 121 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde5_UngerKevin_HarmandNicolas_7p.xg
+Successfully imported match 122 with 3 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde1-KevinUnger-OscarFuchs-9p.xg
+Successfully imported match 123 with 7 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde2-KevinUnger-MarcWainberg-9p.xg
+Successfully imported match 124 with 9 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 125 with 8 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde4-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 126 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde1-KevinUnger-EricBenichou-9p.xg
+Successfully imported match 127 with 9 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde2-KevinUnger-JacquesRavier-9p.xg
+Successfully imported match 128 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde3-KevinUnger-ArthurMenez-9p.xg
+Successfully imported match 129 with 11 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde4-KevinUnger-GillesDeshayes-9p.xg
+Successfully imported match 130 with 7 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/Kévin et Nicolas-Laurence et Jacques 7 point match 11-11-2025.xg
+Successfully imported match 131 with 6 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde1-KevinUnger-SarahPartouche-9p.xg
+Successfully imported match 132 with 8 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde2-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 133 with 9 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 134 with 10 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde4-KevinUnger-WilfriedBenotmane-9p.xg
+Successfully imported match 135 with 10 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde1_KevinUnger_ChristopheGuicheteau_9p.xg
+Successfully imported match 136 with 3 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde2_KevinUnger_PhilippeVouhe_9p.xg
+Successfully imported match 137 with 7 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde3_KevinUnger_NicolasHarmand_9p.xg
+Successfully imported match 138 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde4_KevinUnger_MaxDePaz_9p.xg
+Successfully imported match 139 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_rondeargent1_KevinUnger_PatriciaLeThinNgoc_9p.xg
+Successfully imported match 140 with 8 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde1_KevinUnger_JamesMcNaughtan_11p.xg
+Successfully imported match 141 with 12 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde2_KevinUnger_DanielRozenberg_11p.xg
+Successfully imported match 142 with 4 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde3_KevinUnger_YurikaUeno_11p.xg
+Successfully imported match 143 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde1-KevinUnger-PhilippeLevasseur-7p.xg
+Successfully imported match 144 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde2-KevinUnger-StephaneCheneviere-7p.xg
+Successfully imported match 145 with 10 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde3-KevinUnger-MarieAnneJeannel-7p.xg
+Successfully imported match 146 with 8 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde4-KevinUnger-NicolasJully-7p.xg
+Successfully imported match 147 with 3 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 148 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde1-KevinUnger-ChristopherFilosa-7p.xg
+Successfully imported match 149 with 9 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde2-KevinUnger-YurikaUeno-7p.xg
+Successfully imported match 150 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde3-KevinUnger-FredericPicot-7p.xg
+Successfully imported match 151 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde4-KevinUnger-OlivierFlamion-7p.xg
+Successfully imported match 1 with 8 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/01-cdf-2022-2023-main-round1-denardi-unger.xg
+Successfully imported match 2 with 5 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/02-cdf-2022-2023-main-round2-zarkadan-unger.xg
+Successfully imported match 3 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/03-cdf-2022-2023-main-round3-arbandstephane-unger.xg
+Successfully imported match 4 with 7 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/04-cdf-2022-2023-main-round4-pinsoneric-unger.xg
+Successfully imported match 5 with 10 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/05-cdf-2022-2023-main-round5-rottembergphilippe-unger.xg
+Successfully imported match 6 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/06-cdf-2022-2023-main-round6-soulimanidavid-unger.xg
+Successfully imported match 7 with 6 games from testdata/tournois/2022-10-28-CDF_6x9p-3x9p-2x7p/11-cdf-2022-2023-double-round2-kricksebastien-hostachyetienne-bocheuxromainungerkevin.xg
+Successfully imported match 8 with 9 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/1-HSBT-Lyon-main1-7pts-UngerKevin-FrancouRemy.xg
+Successfully imported match 9 with 8 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/2-HSBT-Lyon-main2-7pts-UngerKevin-PrevelThierry.xg
+Successfully imported match 10 with 4 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/3-HSBT-Lyon-main3-7pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 11 with 5 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/4-HSBT-Lyon-main4-7pts-UngerKevin-BenchalochMeir.xg
+Successfully imported match 12 with 6 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part1.xg
+Successfully imported match 13 with 3 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/5-HSBT-Lyon-main5-7pts-UngerKevin-HarmandNicolas-part2.xg
+Successfully imported match 14 with 10 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/6-HSBT-Lyon-or1-9pts-UngerKevin-LeThiNgocPatricia.xg
+Successfully imported match 15 with 7 games from testdata/tournois/2023-02-25_HSBTLyon_5x7p-2x9p/7-HSBT-Lyon-or2-9pts-UngerKevin-SekriNicolas.xg
+Successfully imported match 16 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Eric Benichou-Kevin Unger Match en 7 points 15-10-2023.xg
+Successfully imported match 17 with 6 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Geoffrey Menez Match en 7 points 10-15-2023.xg
+Successfully imported match 18 with 7 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Marc Le Campion Match en 7 points 10-15-2023.xg
+Successfully imported match 19 with 4 games from testdata/tournois/2023-10-15_VBC2_5x7p/Kévin Unger-Wilfried Benotmane Match en 7 points 10-15-2023.xg
+Successfully imported match 20 with 5 games from testdata/tournois/2023-10-15_VBC2_5x7p/Steeve Korn-Kévin Unger Match en 7 points 10-16-2023.xg
+Successfully imported match 21 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde1-UngerKevin-FlamionOlivier-7pt.xg
+Successfully imported match 22 with 3 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde2-UngerKevin-LourencoThomas-7pt.xg
+Successfully imported match 23 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde3-UngerKevin-KlimovaTania-7pt.xg
+Successfully imported match 24 with 5 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde4-UngerKevin-VanMiddelemGuy-7pt.xg
+Successfully imported match 25 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-25-ronde5-UngerKevin-SavaryEtienne-7pt.xg
+Successfully imported match 26 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde2-KevinUnger-MaxenceJob.xg
+Successfully imported match 27 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde3-KevinUnger-DanielRozenberg.xg
+Successfully imported match 28 with 7 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde4-KevinUnger-YannickCoupannec.xg
+Successfully imported match 29 with 9 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde5-KevinUnger-BernardBailleul.xg
+Successfully imported match 30 with 4 games from testdata/tournois/2023-11-24_HSBTParis_10x7p/2023-11-26-ronde6-KevinUnger-StephaneCheneviere.xg
+Successfully imported match 31 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/1-KevinUnger-EricGuedj-7pts.xg
+Successfully imported match 32 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/2-KevinUnger-KamelGuerbaa-7pts.xg
+Successfully imported match 33 with 5 games from testdata/tournois/2023-12-17_VBC3_5x7p/3-KevinUnger-GeoffroyMenez-7pts.xg
+Successfully imported match 34 with 4 games from testdata/tournois/2023-12-17_VBC3_5x7p/4-KevinUnger-SarahPartouche-7pts.xg
+Successfully imported match 35 with 6 games from testdata/tournois/2023-12-17_VBC3_5x7p/5-KevinUnger-WilfriedBenotmane-7pts.xg
+Successfully imported match 36 with 6 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde1-KevinUnger-SarahPartouche.xg
+Successfully imported match 37 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde2-KevinUnger-ArthurMenez.xg
+Successfully imported match 38 with 3 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde3-KevinUnger-GeoMenez.xg
+Successfully imported match 39 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde4-KevinUnger-GildasBouilland.xg
+Successfully imported match 40 with 9 games from testdata/tournois/2024-02-04_VBC4_5x7p/2024-02-04-ronde5-KevinUnger-SamiTamin.xg
+Successfully imported match 41 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-1-KevinUnger-ErwanBloyet-7pts.xg
+Successfully imported match 42 with 4 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-2-KevinUnger-NoemieBrichard-7pts.xg
+Successfully imported match 43 with 5 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-3-KevinUnger-KathleenCastro-7pts.xg
+Successfully imported match 44 with 3 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-4-KevinUnger-SimonAyzac-7pts.xg
+Successfully imported match 45 with 8 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-5-KevinUnger-PhilibertCini-7pts.xg
+Successfully imported match 46 with 7 games from testdata/tournois/2024-02-24_HSBTLyon_6x7p/hsbt-lyon-2024-6-KevinUnger-TristanRemille-7pts.xg
+Successfully imported match 47 with 4 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25498 Kévin Unger-Sarah Partouche.xg
+Successfully imported match 48 with 7 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25505 Simon Barget-Kévin Unger.xg
+Successfully imported match 49 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25507 Kévin Unger-Wil Benotmane.xg
+Successfully imported match 50 with 3 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25516 Kévin Unger-Geoffroy Menez.xg
+Successfully imported match 51 with 8 games from testdata/tournois/2024-03-10_VBC5_5x7p/2024-03-10#25532 Kévin Unger-Kamel Guerbaa.xg
+Successfully imported match 52 with 7 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde1-KevinUnger-FranckTouboul.xg
+Successfully imported match 53 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde2-KevinUnger-KamelGuerbaa.xg
+Successfully imported match 54 with 9 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde3-KevinUnger-MarcWainberg.xg
+Successfully imported match 55 with 6 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde4-KevinUnger-SarahPartouche.xg
+Successfully imported match 56 with 10 games from testdata/tournois/2024-05-05_VBC6_5x7p/2024-05-05-vbc6-ronde5-KevinUnger-WilfriedBenotmane.xg
+Successfully imported match 57 with 8 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde1-KevinUnger-AxelleRoyer-7p.xg
+Successfully imported match 58 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde2-KevinUnger-EmmanuelLardy-7p.xg
+Successfully imported match 59 with 9 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde3-KevinUnger-JeanMarcPages-7p.xg
+Successfully imported match 60 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde4-KevinUnger-GuillaumeGalle-7p.xg
+Successfully imported match 61 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-25-marseille-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 62 with 1 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde2-KevinUnger-MirgenaKorbi-7p.xg
+Successfully imported match 63 with 6 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde3-KevinUnger-NataliaAlbota-7p.xg
+Successfully imported match 64 with 7 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde4-KevinUnger-JeanClaudeNogales-9p.xg
+Successfully imported match 65 with 10 games from testdata/tournois/2024-05-25_HSBTMarseille_7x7p-1x9p-1x11p/2024-05-26-marseille-ronde5-KevinUnger-GerardSaklislian-11p.xg
+Successfully imported match 66 with 7 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Lux Heuler-Franzosen 7 point match 12.08.2024.xg
+Successfully imported match 67 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg
+Successfully imported match 68 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde1-UngerHarmand-FriebeJacobi-7pt.xg
+Successfully imported match 69 with 4 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/ronde3-UngerHarmand-HuyckLarsen.xg
+Successfully imported match 70 with 5 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/1-Intermediate-Round1-Unger-Kozoman-11pt.xg
+Successfully imported match 71 with 8 games from testdata/tournois/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/main-intermediate/2-Intermediate-Round2-Unger-Lahme-7pt.xg
+Successfully imported match 72 with 9 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde1-KevinUnger-GeoffroyMenez-9p.xg
+Successfully imported match 73 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde2-KevinUnger-MaximePeytavin-9p.xg
+Successfully imported match 74 with 8 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-ronde3-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 75 with 2 games from testdata/tournois/2024-09-14-Masters_4x9p/2024-09-14-masters-tableauOr-ronde1-KevinUnger-MichelChabrol-9p.xg
+Successfully imported match 76 with 3 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde1-KevinUnger-KamelGuerbaa-7pt.xg
+Successfully imported match 77 with 4 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde2-KevinUnger-MarcLeCampion-7pt.xg
+Successfully imported match 78 with 7 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde3-KevinUnger-MarcWainberg-7pt.xg
+Successfully imported match 79 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde4-KevinUnger-OlivierCroisille-7pt.xg
+Successfully imported match 80 with 6 games from testdata/tournois/2024-09-29_VBC8_5x7p/2024-09-29-vbc8-ronde5-KevinUnger-Elias Baltassis-7pt.xg
+Successfully imported match 81 with 12 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-final16th-KevinUnger-JeanClaudeBensaid-9p.xg
+Successfully imported match 82 with 10 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round1-KevinUnger-DavidSoulimani-9p.xg
+Successfully imported match 83 with 2 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round2-KevinUnger-OlivierLafon-9p.xg
+Successfully imported match 84 with 8 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round3-KevinUnger-PatriceDeSainteMarie-9p.xg
+Successfully imported match 85 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round4-KevinUnger-ThomasLourenco-9p.xg
+Successfully imported match 86 with 9 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round5-KevinUnger-GuillaumeGalle-9p.xg
+Successfully imported match 87 with 5 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round6-KevinUnger-MichelMoll-9p.xg
+Successfully imported match 88 with 7 games from testdata/tournois/2024-11-01-CDF-7x9p-1x11p/2024-11-01-CDF-round7-KevinUnger-FelipeDruy-9p.xg
+Successfully imported match 89 with 10 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde1-KevinUnger-EliasBaltassis-7p.xg
+Successfully imported match 90 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde2-KevinUnger-SamiTamimElJarkas-7p.xg
+Successfully imported match 91 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde3-KevinUnger-OscarFuchs-7p.xg
+Successfully imported match 92 with 7 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde4-KevinUnger-PaulCourtois-7p.xg
+Successfully imported match 93 with 6 games from testdata/tournois/2024-11-17-VBC9-5x9p/2024-11-17-VBC9-ronde5-KevinUnger-MarcLeCampion-7p.xg
+Successfully imported match 94 with 3 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde1-KevinUnger-FabriceAbitbol-7p.xg
+Successfully imported match 95 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde2-KevinUnger-CarolineKhayat-7p.xg
+Successfully imported match 96 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde3-KevinUnger-JulienCamurat-7p.xg
+Successfully imported match 97 with 7 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde4-KevinUnger-VeroniqueChamazDehon-7p.xg
+Successfully imported match 98 with 4 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde5-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 99 with 5 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde6-KevinUnger-LaurenceSinitzky-7p.xg
+Successfully imported match 100 with 6 games from testdata/tournois/2024-11-30-hsbt-paris-7x7p/HsbtParis-ronde7-KevinUnger-ValentinMarotte-7p.xg
+Successfully imported match 101 with 9 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde1-KevinUnger-JeromePoirier-7p.xg
+Successfully imported match 102 with 3 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde2-KevinUnger-GregoireSergent-7p.xg
+Successfully imported match 103 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde3-KevinUnger-MaxDePaz-7p.xg
+Successfully imported match 104 with 8 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde4-KevinUnger-EricAlarcon-7p.xg
+Successfully imported match 105 with 7 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_22-main-ronde5-KevinUnger-JeromeServot-7p.xg
+Successfully imported match 106 with 2 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde2-KevinUnger-MarcLeCampion-7p.xg.xg
+Successfully imported match 107 with 5 games from testdata/tournois/2025-02-22_HSBTLyon_7x7p/2025_02_23-or-ronde3-KevinUnger-RemyFrancou-7p.xg.xg
+Successfully imported match 108 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/1-KevinUnger-BrunoMayerGrossi-5p.xg
+Successfully imported match 109 with 6 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/2-KevinUnger-OyaTercan-5p.xg
+Successfully imported match 110 with 7 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/3-KevinUnger-LaurentHoyau-5p.xg
+Successfully imported match 111 with 4 games from testdata/tournois/2025-04-10-barbes-nico-4x5p/4-KevinUnger-SamiTaminElJarkas-5p.xg
+Successfully imported match 112 with 6 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde1_UngerKevin_PavicevicNina_7p.xg
+Successfully imported match 113 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde2_UngerKevin_MauduitEric_7p.xg
+Successfully imported match 114 with 3 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde3_UngerKevin_BourgnonEvan_7p.xg
+Successfully imported match 115 with 5 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg
+Successfully imported match 116 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_main_ronde5_UngerKevin_BessilaOuarda_7p.xg
+Successfully imported match 117 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde1_UngerKevin_HanotinDenis_7p.xg
+Successfully imported match 118 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde2_UngerKevin_BaudryThierry_7p.xg
+Successfully imported match 119 with 4 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde3_UngerKevin_GalleGuillaume_7p.xg
+Successfully imported match 120 with 2 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde4_UngerKevin_AntoniettiChristophe_7p.xg
+Successfully imported match 121 with 7 games from testdata/tournois/2025-05-24-HsbtMarseille/HsbtMarseille_or_ronde5_UngerKevin_HarmandNicolas_7p.xg
+Successfully imported match 122 with 3 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde1-KevinUnger-OscarFuchs-9p.xg
+Successfully imported match 123 with 7 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde2-KevinUnger-MarcWainberg-9p.xg
+Successfully imported match 124 with 9 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 125 with 8 games from testdata/tournois/2025-07-06-vbc14-4x9p/20250706-vbc14-ronde4-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 126 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde1-KevinUnger-EricBenichou-9p.xg
+Successfully imported match 127 with 9 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde2-KevinUnger-JacquesRavier-9p.xg
+Successfully imported match 128 with 3 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde3-KevinUnger-ArthurMenez-9p.xg
+Successfully imported match 129 with 11 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/2025_10_24-ronde4-KevinUnger-GillesDeshayes-9p.xg
+Successfully imported match 130 with 7 games from testdata/tournois/2025-10-23-cdfAngers-4x9p-1x7p/Kévin et Nicolas-Laurence et Jacques 7 point match 11-11-2025.xg
+Successfully imported match 131 with 6 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde1-KevinUnger-SarahPartouche-9p.xg
+Successfully imported match 132 with 8 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde2-KevinUnger-JamesMacNaughtan-9p.xg
+Successfully imported match 133 with 9 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde3-KevinUnger-KamelGuerbaa-9p.xg
+Successfully imported match 134 with 10 games from testdata/tournois/2025_09_14-VBC15-4x9p/vbc15-20250914-ronde4-KevinUnger-WilfriedBenotmane-9p.xg
+Successfully imported match 135 with 10 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde1_KevinUnger_ChristopheGuicheteau_9p.xg
+Successfully imported match 136 with 3 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde2_KevinUnger_PhilippeVouhe_9p.xg
+Successfully imported match 137 with 7 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde3_KevinUnger_NicolasHarmand_9p.xg
+Successfully imported match 138 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_ronde4_KevinUnger_MaxDePaz_9p.xg
+Successfully imported match 139 with 8 games from testdata/tournois/2025_09_20-masters-5x9p/20250920_masters_rondeargent1_KevinUnger_PatriciaLeThinNgoc_9p.xg
+Successfully imported match 140 with 8 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde1_KevinUnger_JamesMcNaughtan_11p.xg
+Successfully imported match 141 with 12 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde2_KevinUnger_DanielRozenberg_11p.xg
+Successfully imported match 142 with 4 games from testdata/tournois/2025_10_05-VBC-3x11p/20251006_vbc_ronde3_KevinUnger_YurikaUeno_11p.xg
+Successfully imported match 143 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde1-KevinUnger-PhilippeLevasseur-7p.xg
+Successfully imported match 144 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde2-KevinUnger-StephaneCheneviere-7p.xg
+Successfully imported match 145 with 10 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde3-KevinUnger-MarieAnneJeannel-7p.xg
+Successfully imported match 146 with 8 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde4-KevinUnger-NicolasJully-7p.xg
+Successfully imported match 147 with 3 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251115-ronde5-KevinUnger-NicolasPaoli-7p.xg
+Successfully imported match 148 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde1-KevinUnger-ChristopherFilosa-7p.xg
+Successfully imported match 149 with 9 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde2-KevinUnger-YurikaUeno-7p.xg
+Successfully imported match 150 with 5 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde3-KevinUnger-FredericPicot-7p.xg
+Successfully imported match 151 with 6 games from testdata/tournois/2025_11_15-hsbtParis-9x7p/20251116-ronde4-KevinUnger-OlivierFlamion-7p.xg
+       5	16339256138 ns/op
+BenchmarkImport_TournoisIncremental-16    	       5	   3433697 ns/op
+BenchmarkSearch_DecisionCube-16           	       5	  45473597 ns/op
+BenchmarkSearch_ErrorAboveTenth-16        	       5	  67261079 ns/op
+BenchmarkSearch_PipWindow-16              	       5	 228344136 ns/op
+BenchmarkSearch_WinGammonCombo-16         	       5	1236288906 ns/op
+BenchmarkSearch_ScoreSpecific-16          	       5	  31372052 ns/op
+BenchmarkSearch_DiceAndPlayer-16          	       5	 122268893 ns/op
+BenchmarkSearch_CheckerStructure-16       	       5	 178222399 ns/op
+BenchmarkSearch_PrimePattern-16           	       5	  61533183 ns/op
+PASS
+ok  	blunderdb	125.969s
+PASS
+ok  	blunderdb/tests	0.003s

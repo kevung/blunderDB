@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-29 10:21+0200\n"
+"POT-Creation-Date: 2026-04-20 00:25+0200\n"
 "PO-Revision-Date: 2025-11-01 23:50+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -180,7 +180,7 @@ msgstr "CTRL-G"
 msgid "Afficher les métadonnées de la position."
 msgstr "Show the position metadata."
 
-#: ../../source/raccourcis.rst:46
+#: ../../source/raccourcis.rst:48
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -248,7 +248,7 @@ msgstr "r"
 msgid "Charger une position aléatoire."
 msgstr "Load a random position."
 
-#: ../../source/raccourcis.rst:65
+#: ../../source/raccourcis.rst:67
 msgid "Affichage"
 msgstr "Display"
 
@@ -276,7 +276,7 @@ msgstr "p"
 msgid "Afficher/cacher le compte de course."
 msgstr "Show/hide pipcount."
 
-#: ../../source/raccourcis.rst:79
+#: ../../source/raccourcis.rst:81
 msgid "Actions"
 msgstr "Actions"
 
@@ -296,7 +296,7 @@ msgstr "SPACE"
 msgid "Ouvrir la ligne de commande."
 msgstr "Open the command line."
 
-#: ../../source/raccourcis.rst:92
+#: ../../source/raccourcis.rst:94
 msgid "Outils"
 msgstr "Tools"
 
@@ -372,7 +372,7 @@ msgstr "?"
 msgid "Afficher/cacher l'aide."
 msgstr "Show/hide the help."
 
-#: ../../source/raccourcis.rst:112
+#: ../../source/raccourcis.rst:114
 msgid "Ligne de commande"
 msgstr "Command Line"
 
@@ -392,7 +392,7 @@ msgstr "DOWN"
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr "Browse command history down."
 
-#: ../../source/raccourcis.rst:125
+#: ../../source/raccourcis.rst:127
 msgid "Panneau historique de recherche"
 msgstr "Search History Panel"
 
@@ -430,7 +430,7 @@ msgid ""
 "panneau."
 msgstr "Deselect the search. If no search selected, close the panel."
 
-#: ../../source/raccourcis.rst:141
+#: ../../source/raccourcis.rst:143
 msgid "Panneau bibliothèque de filtres"
 msgstr "Filter Library Panel"
 
@@ -454,7 +454,7 @@ msgstr "Select next filter (when a filter is selected)."
 msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr "Deselect filter. If no filter selected, close the panel."
 
-#: ../../source/raccourcis.rst:157
+#: ../../source/raccourcis.rst:159
 msgid "Panneau d'analyse"
 msgstr "Analysis Panel"
 
@@ -484,7 +484,7 @@ msgstr "Toggle between checker and cube analysis (match navigation only)."
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr "Deselect move. If no move selected, close the panel."
 
-#: ../../source/raccourcis.rst:173
+#: ../../source/raccourcis.rst:175
 msgid "Panneau des matchs"
 msgstr "Match Panel"
 
@@ -519,6 +519,47 @@ msgstr "Delete the selected match."
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
+
+#: ../../source/raccourcis.rst:193
+#, fuzzy
+msgid "Panneau Anki (répétition espacée)"
+msgstr "Show/hide the Anki panel (spaced repetition)."
+
+#: ../../source/raccourcis.rst:1
+msgid "1"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : À revoir (échec, revoir bientôt)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "2"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Difficile."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "3"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Bien."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "4"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Facile."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
+msgstr ""
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"

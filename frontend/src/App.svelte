@@ -4081,10 +4081,18 @@ function togglePipcount() {
                 saveSessionState();
             } else {
                 setStatusBarMessage('No matching positions found');
+                // Restore EDIT mode so the board stays editable for a new search
+                if ($activeTabStore === 'search') {
+                    statusBarModeStore.set('EDIT');
+                }
             }
         } catch (error) {
             console.error('Error loading positions by filters:', error);
             setStatusBarMessage('Error loading positions by filters');
+            // Restore EDIT mode on error too, if still on the search tab
+            if ($activeTabStore === 'search') {
+                statusBarModeStore.set('EDIT');
+            }
         }
     }
 
