@@ -1835,6 +1835,15 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 				c.CubeError = 0
 			}
 		}
+	} else if ca := a.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
+		// Fall back to checker analysis best move for win/gammon/backgammon rates.
+		best := ca.Moves[0]
+		c.Player1WinRate = best.PlayerWinChance
+		c.Player1GammonRate = best.PlayerGammonChance
+		c.Player1BackgammonRate = best.PlayerBackgammonChance
+		c.Player2WinRate = best.OpponentWinChance
+		c.Player2GammonRate = best.OpponentGammonChance
+		c.Player2BackgammonRate = best.OpponentBackgammonChance
 	}
 
 	// Best-move equity error: the equity error of the played checker move vs Moves[0].
