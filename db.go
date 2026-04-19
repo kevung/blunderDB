@@ -608,7 +608,6 @@ func (d *Database) applyPragmas(path string) error {
 		if err := d.db.QueryRow(`PRAGMA journal_mode = WAL`).Scan(&mode); err != nil {
 			return fmt.Errorf("PRAGMA journal_mode=WAL: %w", err)
 		}
-		fmt.Printf("PRAGMA journal_mode = %s\n", mode)
 	}
 	pragmas := []string{
 		`PRAGMA synchronous  = NORMAL`,
@@ -2174,7 +2173,9 @@ const positionSelectColsP = `p.id, p.state, p.decision_type, p.player_on_roll, p
 
 // scanPositionRow scans a sql.Row / sql.Rows into a Position using the column
 // order from positionSelectCols. NULLs are treated as zero (safe for v2+).
-func scanPositionRow(scanner interface{ Scan(dest ...interface{}) error }) (Position, error) {
+func scanPositionRow(scanner interface {
+	Scan(dest ...interface{}) error
+}) (Position, error) {
 	var id int64
 	var state string
 	var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
@@ -2628,11 +2629,6 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 		return nil, err
 	}
 
-	if len(positions) == 0 {
-		fmt.Println("No positions found, returning empty array.")
-	}
-
-	fmt.Println("Loaded positions:", positions)
 	return positions, nil
 }
 
@@ -3894,19 +3890,15 @@ func roundAnalysisForStorage(a *PositionAnalysis) {
 func (p *Position) MatchesPlayer2BackgammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var backgammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		backgammonRate = analysis.DoublingCubeAnalysis.OpponentBackgammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 2 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		backgammonRate = analysis.CheckerAnalysis.Moves[0].OpponentBackgammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 2 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no backgammon rate found\n", p.ID)
 		return false
 	}
 
@@ -3953,19 +3945,15 @@ func (p *Position) MatchesPlayer2BackgammonRate(filter string, d *Database) bool
 func (p *Position) MatchesPlayer2GammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var gammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		gammonRate = analysis.DoublingCubeAnalysis.OpponentGammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 2 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		gammonRate = analysis.CheckerAnalysis.Moves[0].OpponentGammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 2 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no gammon rate found\n", p.ID)
 		return false
 	}
 
@@ -4021,8 +4009,6 @@ func (p *Position) MatchesCubePosition(filter Position) bool {
 // Add MatchesPipCountFilter method to Position type
 func (p *Position) MatchesPipCountFilter(filter string) bool {
 	pipCountDiff := p.PipCountDifference()
-	player1PipCount, player2PipCount := p.ComputePipCounts()
-	fmt.Printf("Checking pip count filter: %s, Player 1 Pip Count: %d, Player 2 Pip Count: %d, Pip count difference: %d\n", filter, player1PipCount, player2PipCount, pipCountDiff)
 	if strings.HasPrefix(filter, "p>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
@@ -4064,19 +4050,15 @@ func (p *Position) MatchesPipCountFilter(filter string) bool {
 func (p *Position) MatchesWinRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var winRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		winRate = analysis.DoublingCubeAnalysis.PlayerWinChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 1 Win Rate: %f\n", p.ID, winRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		winRate = analysis.CheckerAnalysis.Moves[0].PlayerWinChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 1 Win Rate: %f\n", p.ID, winRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no win rate found\n", p.ID)
 		return false
 	}
 
@@ -4123,19 +4105,15 @@ func (p *Position) MatchesWinRate(filter string, d *Database) bool {
 func (p *Position) MatchesPlayer2WinRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var winRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		winRate = analysis.DoublingCubeAnalysis.OpponentWinChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 2 Win Rate: %f\n", p.ID, winRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		winRate = analysis.CheckerAnalysis.Moves[0].OpponentWinChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 2 Win Rate: %f\n", p.ID, winRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no win rate found\n", p.ID)
 		return false
 	}
 
@@ -4182,19 +4160,15 @@ func (p *Position) MatchesPlayer2WinRate(filter string, d *Database) bool {
 func (p *Position) MatchesGammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var gammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		gammonRate = analysis.DoublingCubeAnalysis.PlayerGammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 1 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		gammonRate = analysis.CheckerAnalysis.Moves[0].PlayerGammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 1 Gammon Rate: %f\n", p.ID, gammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no gammon rate found\n", p.ID)
 		return false
 	}
 
@@ -4241,19 +4215,15 @@ func (p *Position) MatchesGammonRate(filter string, d *Database) bool {
 func (p *Position) MatchesBackgammonRate(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var backgammonRate float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		backgammonRate = analysis.DoublingCubeAnalysis.PlayerBackgammonChances
-		fmt.Printf("Position ID: %d, Doubling decision, Player 1 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		backgammonRate = analysis.CheckerAnalysis.Moves[0].PlayerBackgammonChance
-		fmt.Printf("Position ID: %d, Checker decision, Player 1 Backgammon Rate: %f\n", p.ID, backgammonRate)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no backgammon rate found\n", p.ID)
 		return false
 	}
 
@@ -4320,7 +4290,6 @@ func (p *Position) ComputePipCounts() (int, int) {
 
 // Add MatchesPlayer1BackChecker method to Position type with logging
 func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
-	fmt.Printf("MatchesPlayer1BackChecker called with filter: %s\n", filter) // Add logging
 
 	backCheckers := 0
 	for i := 19; i <= 24; i++ {
@@ -4328,7 +4297,6 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 			backCheckers += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking back checkers filter: %s, Player 1 Back Checkers: %d\n", filter, backCheckers)
 
 	if strings.HasPrefix(filter, "k>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -4372,7 +4340,6 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 
 // Add MatchesPlayer2BackChecker method to Position type with logging
 func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
-	fmt.Printf("MatchesPlayer2BackChecker called with filter: %s\n", filter) // Add logging
 
 	backCheckers := 0
 	for i := 1; i <= 6; i++ {
@@ -4380,7 +4347,6 @@ func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
 			backCheckers += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking back checkers filter: %s, Player 2 Back Checkers: %d\n", filter, backCheckers)
 
 	if strings.HasPrefix(filter, "K>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -4424,7 +4390,6 @@ func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
 
 // Add MatchesPlayer1CheckerInZone method to Position type with logging
 func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
-	fmt.Printf("MatchesPlayer1CheckerInZone called with filter: %s\n", filter) // Add logging
 
 	checkersInZone := 0
 	for i := 0; i <= 12; i++ {
@@ -4432,7 +4397,6 @@ func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
 			checkersInZone += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking checkers in zone filter: %s, Player 1 Checkers in Zone: %d\n", filter, checkersInZone)
 
 	if strings.HasPrefix(filter, "z>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -4476,7 +4440,6 @@ func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
 
 // Add MatchesPlayer2CheckerInZone method to Position type with logging
 func (p *Position) MatchesPlayer2CheckerInZone(filter string) bool {
-	fmt.Printf("MatchesPlayer2CheckerInZone called with filter: %s\n", filter) // Add logging
 
 	checkersInZone := 0
 	for i := 13; i <= 25; i++ {
@@ -4484,7 +4447,6 @@ func (p *Position) MatchesPlayer2CheckerInZone(filter string) bool {
 			checkersInZone += p.Board.Points[i].Checkers
 		}
 	}
-	fmt.Printf("Checking checkers in zone filter: %s, Player 2 Checkers in Zone: %d\n", filter, checkersInZone)
 
 	if strings.HasPrefix(filter, "Z>") {
 		value, err := strconv.Atoi(filter[2:])
@@ -4576,19 +4538,15 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	var equity float64
 	if analysis.AnalysisType == "DoublingCube" && analysis.DoublingCubeAnalysis != nil {
 		equity = analysis.DoublingCubeAnalysis.CubefulNoDoubleEquity
-		fmt.Printf("Position ID: %d, Doubling decision, Equity: %f\n", p.ID, equity)
 	} else if analysis.AnalysisType == "CheckerMove" && analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
 		equity = analysis.CheckerAnalysis.Moves[0].Equity
-		fmt.Printf("Position ID: %d, Checker decision, Equity: %f\n", p.ID, equity)
 	} else {
-		fmt.Printf("Excluding position ID: %d due to no equity found\n", p.ID)
 		return false
 	}
 
@@ -4601,7 +4559,6 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 			return false
 		}
 		value /= 1000 // Convert millipoints to points
-		fmt.Printf("Equity filter condition: >, value: %f\n", value)
 		return equity >= value
 	} else if strings.HasPrefix(filter, "e<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
@@ -4610,7 +4567,6 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 			return false
 		}
 		value /= 1000 // Convert millipoints to points
-		fmt.Printf("Equity filter condition: <, value: %f\n", value)
 		return equity <= value
 	} else if strings.HasPrefix(filter, "e") {
 		values := strings.Split(filter[1:], ",")
@@ -4632,7 +4588,6 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 			minValue = value2
 			maxValue = value1
 		}
-		fmt.Printf("Equity filter condition: BETWEEN, values: %f, %f\n", minValue, maxValue)
 		return equity >= minValue && equity <= maxValue
 	}
 	return false
@@ -4816,7 +4771,6 @@ func (p *Position) MatchesDiceRoll(filter Position) bool {
 func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
@@ -4828,7 +4782,6 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 		move := strings.ToLower(analysis.CheckerAnalysis.Moves[0].Move)
 		for _, pattern := range movePatterns {
 			if strings.Contains(move, pattern) {
-				fmt.Printf("Position ID: %d, Checker decision, Move: %s, Filter: %s\n", p.ID, move, pattern) // Add logging
 				return true
 			}
 		}
@@ -4837,23 +4790,19 @@ func (p *Position) MatchesMovePattern(filter string, d *Database) bool {
 			switch pattern {
 			case "nd":
 				if analysis.DoublingCubeAnalysis.CubefulNoDoubleError == 0 {
-					fmt.Printf("Position ID: %d, Doubling decision, No Double Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulNoDoubleError, pattern) // Add logging
 					return true
 				}
 			case "dt":
 				if analysis.DoublingCubeAnalysis.CubefulDoubleTakeError == 0 {
-					fmt.Printf("Position ID: %d, Doubling decision, Double Take Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoubleTakeError, pattern) // Add logging
 					return true
 				}
 			case "dp":
 				if analysis.DoublingCubeAnalysis.CubefulDoublePassError == 0 {
-					fmt.Printf("Position ID: %d, Doubling decision, Double Pass Error: %f, Filter: %s\n", p.ID, analysis.DoublingCubeAnalysis.CubefulDoublePassError, pattern) // Add logging
 					return true
 				}
 			}
 		}
 	}
-	fmt.Printf("Position ID: %d does not match move pattern filter: %s\n", p.ID, filter) // Add logging
 	return false
 }
 
@@ -4915,12 +4864,10 @@ func (d *Database) SaveMetadata(metadata map[string]string) error {
 func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 	analysis, err := d.LoadAnalysis(p.ID)
 	if err != nil || analysis == nil {
-		fmt.Printf("Excluding position ID: %d due to error: %v\n", p.ID, err)
 		return false
 	}
 
 	creationDate := analysis.CreationDate
-	fmt.Printf("Position ID: %d, Creation Date: %s\n", p.ID, creationDate)
 
 	if strings.HasPrefix(filter, "T>") {
 		dateStr := filter[2:]
@@ -4929,9 +4876,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			fmt.Printf("Error parsing date filter value: %s\n", dateStr)
 			return false
 		}
-		fmt.Printf("Filter: T>, Date: %s\n", date)
 		match := creationDate.After(date) || creationDate.Equal(date)
-		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
 	} else if strings.HasPrefix(filter, "T<") {
 		dateStr := filter[2:]
@@ -4941,9 +4886,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			return false
 		}
 		date = date.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
-		fmt.Printf("Filter: T<, Date: %s\n", date)
 		match := creationDate.Before(date)
-		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
 	} else if strings.HasPrefix(filter, "T") {
 		dateRange := strings.Split(filter[1:], ",")
@@ -4961,9 +4904,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 			startDate, endDate = endDate, startDate // Swap to ensure correct order
 		}
 		endDate = endDate.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
-		fmt.Printf("Filter: T, Start Date: %s, End Date: %s\n", startDate, endDate)
 		match := (creationDate.After(startDate) || creationDate.Equal(startDate)) && (creationDate.Before(endDate) || creationDate.Equal(endDate))
-		fmt.Printf("Position ID: %d, Matches: %v\n", p.ID, match)
 		return match
 	}
 	return false
