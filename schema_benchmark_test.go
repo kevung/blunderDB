@@ -509,6 +509,116 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 
 	sqlDB190s.Close()
 
+	// v2.2.0-style: same indexed search but with raw JSON analysis
+	t.Log("\n  --- v2.2.0 (indexed search, raw JSON analysis) ---")
+	db220obj := NewDatabase()
+	if err := db220obj.OpenDatabase(dbPath220); err != nil {
+		t.Fatalf("open v2.2.0 DB: %v", err)
+	}
+
+	for _, sc := range cases {
+		start := time.Now()
+		var resultCount int
+		for j := 0; j < searchIters; j++ {
+			results, _ := db220obj.LoadPositionsByFilters(
+				sc.filter,
+				sc.args.includeCube, sc.args.includeScore,
+				sc.args.pipCountFilter,
+				sc.args.winRateFilter, sc.args.gammonRateFilter, sc.args.backgammonRateFilter,
+				sc.args.player2WinRateFilter, sc.args.player2GammonRateFilter, sc.args.player2BackgammonRateFilter,
+				sc.args.player1CheckerOffFilter, sc.args.player2CheckerOffFilter,
+				sc.args.player1BackCheckerFilter, sc.args.player2BackCheckerFilter,
+				sc.args.player1CheckerInZoneFilter, sc.args.player2CheckerInZoneFilter,
+				sc.args.searchText,
+				sc.args.player1AbsolutePipCountFilter,
+				sc.args.equityFilter,
+				sc.args.decisionTypeFilter, sc.args.diceRollFilter,
+				sc.args.movePatternFilter, sc.args.dateFilter,
+				sc.args.player1OutfieldBlotFilter, sc.args.player2OutfieldBlotFilter,
+				sc.args.player1JanBlotFilter, sc.args.player2JanBlotFilter,
+				sc.args.noContactFilter, sc.args.mirrorFilter,
+				sc.args.moveErrorFilter,
+				sc.args.matchIDsFilter, sc.args.tournamentIDsFilter,
+				sc.args.restrictToPositionIDs,
+			)
+			resultCount = len(results)
+		}
+		elapsed := time.Since(start)
+		avgMs := float64(elapsed.Microseconds()) / float64(searchIters) / 1000.0
+		t.Logf("  %-25s %6d results   %8.2f ms/search", sc.name+"(v2.2)", resultCount, avgMs)
+	}
+	db220obj.db.Close()
+
+	// ─────────────────────────────────────────────────────────────────────
+	// Phase 6b: Analysis load latency (v2.3.0 compressed vs v2.2.0 raw)
+	// ─────────────────────────────────────────────────────────────────────
+	t.Log("\n══════════════════════════════════════════════════════════")
+	t.Log("Phase 6b: Analysis load latency (compressed vs raw)")
+	t.Log("══════════════════════════════════════════════════════════")
+
+	const analysisIters = 5
+	// Sample 1000 analysis IDs spread across the range
+	var sampleAnalysisIDs []int64
+	func() {
+		db, _ := sql.Open("sqlite", dbPath230)
+		defer db.Close()
+		rows, _ := db.Query(`SELECT position_id FROM analysis ORDER BY id LIMIT 1000`)
+		for rows.Next() {
+			var id int64
+			rows.Scan(&id)
+			sampleAnalysisIDs = append(sampleAnalysisIDs, id)
+		}
+		rows.Close()
+	}()
+
+	// v2.3.0: read + decompress
+	func() {
+		db, _ := sql.Open("sqlite", dbPath230)
+		db.Exec(`PRAGMA cache_size = -65536`)
+		db.Exec(`PRAGMA mmap_size = 268435456`)
+		defer db.Close()
+
+		start := time.Now()
+		for i := 0; i < analysisIters; i++ {
+			for _, pid := range sampleAnalysisIDs {
+				var data []byte
+				db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, pid).Scan(&data)
+				if len(data) > 0 {
+					decodeAnalysisFromStorage(data)
+				}
+			}
+		}
+		elapsed := time.Since(start)
+		t.Logf("  v2.3.0 (compressed): %d loads × %d iters in %v (%.1f µs/load)",
+			len(sampleAnalysisIDs), analysisIters, elapsed,
+			float64(elapsed.Microseconds())/float64(len(sampleAnalysisIDs)*analysisIters))
+	}()
+
+	// v2.2.0: read raw JSON
+	func() {
+		db, _ := sql.Open("sqlite", dbPath220)
+		db.Exec(`PRAGMA cache_size = -65536`)
+		db.Exec(`PRAGMA mmap_size = 268435456`)
+		defer db.Close()
+
+		start := time.Now()
+		for i := 0; i < analysisIters; i++ {
+			for _, pid := range sampleAnalysisIDs {
+				var data string
+				db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, pid).Scan(&data)
+				if data != "" {
+					var ana PositionAnalysis
+					json.Unmarshal([]byte(data), &ana)
+					_ = ana
+				}
+			}
+		}
+		elapsed := time.Since(start)
+		t.Logf("  v2.2.0 (raw JSON):   %d loads × %d iters in %v (%.1f µs/load)",
+			len(sampleAnalysisIDs), analysisIters, elapsed,
+			float64(elapsed.Microseconds())/float64(len(sampleAnalysisIDs)*analysisIters))
+	}()
+
 	// ─────────────────────────────────────────────────────────────────────
 	// Phase 7: LoadAllPositions benchmark
 	// ─────────────────────────────────────────────────────────────────────

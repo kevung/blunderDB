@@ -40,7 +40,7 @@ func TestCompressDecompressRoundTrip(t *testing.T) {
 				},
 			},
 		},
-		PlayedMoves: []string{"13/7 8/4"},
+		PlayedMoves:  []string{"13/7 8/4"},
 		CreationDate: time.Now(),
 	}
 
@@ -489,7 +489,7 @@ func TestAnalysisCompressionSavings(t *testing.T) {
 	var totalCompressed int
 	for i := 0; i < 50; i++ {
 		pos := initialPosition()
-		pos.Dice = [2]int{(i % 6) + 1, (i%5 + i%3)%6 + 1}
+		pos.Dice = [2]int{(i % 6) + 1, (i%5+i%3)%6 + 1}
 		pos.Score = [2]int{i % 9, (i + 3) % 9}
 		pos.Cube.Value = i + 1 // ensure unique zobrist hash
 		posID, err := d.SavePosition(&pos)
@@ -505,12 +505,12 @@ func TestAnalysisCompressionSavings(t *testing.T) {
 			eqErr := float64(j) * 0.01
 			moves[j] = CheckerMove{
 				Index: j, AnalysisDepth: "3-ply",
-				Move: fmt.Sprintf("%d/%d %d/%d", 24-j, 18-j, 13-j, 7-j),
+				Move:   fmt.Sprintf("%d/%d %d/%d", 24-j, 18-j, 13-j, 7-j),
 				Equity: eq, PlayerWinChance: 50 + float64(j),
-				PlayerGammonChance: 10 + float64(j%5),
-				PlayerBackgammonChance: float64(j % 3),
-				OpponentWinChance: 50 - float64(j),
-				OpponentGammonChance: 10 - float64(j%5),
+				PlayerGammonChance:       10 + float64(j%5),
+				PlayerBackgammonChance:   float64(j % 3),
+				OpponentWinChance:        50 - float64(j),
+				OpponentGammonChance:     10 - float64(j%5),
 				OpponentBackgammonChance: float64(j % 2),
 			}
 			if j > 0 {
