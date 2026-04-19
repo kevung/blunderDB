@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.15.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.16.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=671bac3d"></script>
+      <script src="_static/documentation_options.js?v=f56472d6"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -228,6 +228,10 @@ clavier permettent une utilisation efficace de blunderDB.</p></li>
 <tr class="row-even"><td><p>0.15.0</p></td>
 <td><p>31/03/2026</p></td>
 <td><p>Export de la position en image PNG dans le presse-papier (board seul via Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X).</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.16.0</p></td>
+<td><p>18/04/2026</p></td>
+<td><p>Database schema v2.0.0: Zobrist-hashed position dedup, denormalized filter columns, bitboard pattern pre-filter, WAL journaling. Batch import &gt;=3x faster, filtered search &lt;=100 ms on 10k+ positions. NOTE: DB files created with v0.16.0 cannot be opened by older versions; old DBs are auto-migrated in place (back up first).</p></td>
 </tr>
 </tbody>
 </table>
