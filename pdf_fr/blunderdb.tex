@@ -529,7 +529,7 @@ Export de la position en image PNG dans le presse\sphinxhyphen{}papier (board se
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Database schema v2.0.0: Zobrist\sphinxhyphen{}hashed position dedup, denormalized filter columns, bitboard pattern pre\sphinxhyphen{}filter, WAL journaling. Batch import \textgreater{}=3x faster, filtered search \textless{}=100 ms on 10k+ positions. NOTE: DB files created with v0.16.0 cannot be opened by older versions; old DBs are auto\sphinxhyphen{}migrated in place (back up first).
+Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL. Import par lot \textgreater{}=3x plus rapide, recherche filtrée \textless{}=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d’abord).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\

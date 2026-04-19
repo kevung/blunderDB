@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.19)  19 APR 2026 22:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.19)  19 APR 2026 23:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -860,7 +860,7 @@ File: ts1qtm.fd 2009/09/25 v1.2 font definition file for TS1/qtm
 ]
 Chapter 1.
 [3]
-Overfull \vbox (514.70886pt too high) has occurred while \output is active []
+Overfull \vbox (538.70886pt too high) has occurred while \output is active []
 
 
 [4]
@@ -1015,7 +1015,7 @@ s/type1/public/tex-gyre/qhvbi.pfb></usr/share/texmf/fonts/type1/public/tex-gyre
 xmf/fonts/type1/public/tex-gyre/qtmr.pfb></usr/share/texmf/fonts/type1/public/t
 ex-gyre/qtmri.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/txfonts/t1x
 tt.pfb>
-Output written on blunderdb.pdf (49 pages, 499864 bytes).
+Output written on blunderdb.pdf (49 pages, 499908 bytes).
 PDF statistics:
  808 PDF objects out of 1000 (max. 8388607)
  716 compressed objects within 8 object streams
