@@ -3962,6 +3962,7 @@ function togglePipcount() {
         matchIDsFilter = '',
         tournamentIDsFilter = '',
         restrictToPositionIDs = '',
+        openInNewTab = false,
     ) {
         if (!$databasePathStore) {
             setStatusBarMessage('No database opened');
@@ -4056,6 +4057,11 @@ function togglePipcount() {
                 restrictToPositionIDs);
                 
             if (loadedPositions && loadedPositions.length > 0) {
+                // If openInNewTab is requested, create a new view tab before setting results
+                if (openInNewTab) {
+                    viewStore.addView();
+                }
+
                 // Set mode to NORMAL and reset match context BEFORE triggering position display
                 // so that showPosition sees the correct mode and doesn't use stale match context
                 statusBarModeStore.set('NORMAL');

@@ -16,6 +16,7 @@
     // Filter state
     let filterEnabled = {};
     let searchInCurrentResults = false;
+    let openInNewTab = false;
 
     let searchText = '';
     let movePattern = '';
@@ -242,7 +243,7 @@
             p2wrFilter, p2grFilter, p2bgFilter, p1coFilter, p2coFilter, p1bcFilter, p2bcFilter,
             p1czFilter, p2czFilter, searchText ? `t"${searchText}"` : '', p1apcFilter, eqFilter, dtFilter, drFilter, movePattern ? `m"${movePattern}"` : '',
             cdFilter, p1obFilter, p2obFilter, p1jbFilter, p2jbFilter, ncFilter, mirFilter, meFilter,
-            searchCommand, matchIDs, tournamentIDs, restrictToPositionIDs);
+            searchCommand, matchIDs, tournamentIDs, restrictToPositionIDs, openInNewTab);
 
         saveSearchState();
     }
@@ -546,6 +547,7 @@
             <div class="filter-section">
                 <div class="action-bar top-action-bar">
                     <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> In results</label>
+                    <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> New tab</label>
                     <span class="active-count">{activeFilterCount} active</span>
                     <button class="btn-search" on:click={handleSearch}>Search</button>
                     <button class="btn-clear" on:click={clearFilters}>Clear</button>
