@@ -460,6 +460,25 @@ msgid ""
 "sauvegarde d'abord)."
 msgstr ""
 
+#: ../../source/index.rst:1
+msgid "0.17.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "20/04/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Optimisation du stockage : compression zlib des données d'analyse (~80% "
+"de réduction), encodage compact des positions (~90% de réduction de la "
+"taille). Ajout de 5 index manquants pour améliorer les performances de "
+"recherche. Correction de la recherche par erreur de cube. Correction du "
+"mode EDIT après une recherche sans résultats. Restauration de l'état du "
+"panneau de recherche lors du changement d'onglets. Suppression de 62 "
+"instructions de débogage des chemins critiques."
+msgstr ""
+
 #: ../../source/index.rst:139
 msgid "Sommaire"
 msgstr ""
