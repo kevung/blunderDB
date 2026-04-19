@@ -398,14 +398,14 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 		}
 
 		var analysisID int64
-		var analysisJSON string
+		var analysisData []byte
 		err := db.db.QueryRow(`
 			SELECT a.id, a.data FROM analysis a
 			INNER JOIN move m ON m.position_id = a.position_id
 			INNER JOIN game g ON m.game_id = g.id
 			WHERE g.match_id = ? AND a.position_id IS NOT NULL
 			ORDER BY g.game_number, m.move_number LIMIT 1`, matchID).
-			Scan(&analysisID, &analysisJSON)
+			Scan(&analysisID, &analysisData)
 		if err != nil {
 			if err == sql.ErrNoRows {
 				t.Skip("No analysis data found (may be expected for some games)")
@@ -413,9 +413,9 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 			t.Fatalf("Failed to query analysis: %v", err)
 		}
 
-		var analysis PositionAnalysis
-		if err := json.Unmarshal([]byte(analysisJSON), &analysis); err != nil {
-			t.Fatalf("Failed to unmarshal analysis: %v", err)
+		analysis, err := decodeAnalysisFromStorage(analysisData)
+		if err != nil {
+			t.Fatalf("Failed to decode analysis: %v", err)
 		}
 
 		t.Logf("Analysis: type=%q, depth=%q", analysis.AnalysisType, analysis.CheckerAnalysis.Moves[0].AnalysisDepth)
@@ -952,7 +952,7 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 				FROM move m
 				JOIN game g ON m.game_id = g.id
 				JOIN analysis a ON a.position_id = m.position_id
-				WHERE g.match_id = ? AND m.move_type = 'cube' AND a.data LIKE '%DoublingCube%'
+				WHERE g.match_id = ? AND m.move_type = 'cube'
 				ORDER BY g.game_number, m.move_number
 			`, matchID)
 			if err != nil {
@@ -963,18 +963,20 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 			var result []cubeInfo
 			for rows.Next() {
 				var ci cubeInfo
-				var analysisJSON string
-				rows.Scan(&ci.gameNumber, &ci.moveNumber, &ci.cubeAction, &analysisJSON)
+				var analysisData []byte
+				rows.Scan(&ci.gameNumber, &ci.moveNumber, &ci.cubeAction, &analysisData)
 
-				var posAnalysis PositionAnalysis
-				json.Unmarshal([]byte(analysisJSON), &posAnalysis)
+				posAnalysis, err := decodeAnalysisFromStorage(analysisData)
+				if err != nil {
+					continue
+				}
 				if posAnalysis.DoublingCubeAnalysis != nil {
 					ci.bestAction = posAnalysis.DoublingCubeAnalysis.BestCubeAction
 					ci.ndEquity = posAnalysis.DoublingCubeAnalysis.CubefulNoDoubleEquity
 					ci.dtEquity = posAnalysis.DoublingCubeAnalysis.CubefulDoubleTakeEquity
 					ci.dpEquity = posAnalysis.DoublingCubeAnalysis.CubefulDoublePassEquity
+					result = append(result, ci)
 				}
-				result = append(result, ci)
 			}
 			return result
 		}

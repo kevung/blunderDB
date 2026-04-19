@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bytes"
+	"compress/zlib"
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io"
 	"math"
 	"os"
 	"path/filepath"
@@ -32,6 +35,80 @@ type Database struct {
 
 func NewDatabase() *Database {
 	return &Database{}
+}
+
+// ---------------------------------------------------------------------------
+// Analysis data compression helpers
+// ---------------------------------------------------------------------------
+
+// compressAnalysisData compresses raw JSON bytes using zlib (best compression).
+func compressAnalysisData(jsonData []byte) ([]byte, error) {
+	var buf bytes.Buffer
+	w, err := zlib.NewWriterLevel(&buf, zlib.BestCompression)
+	if err != nil {
+		return nil, err
+	}
+	if _, err := w.Write(jsonData); err != nil {
+		w.Close()
+		return nil, err
+	}
+	if err := w.Close(); err != nil {
+		return nil, err
+	}
+	return buf.Bytes(), nil
+}
+
+// decompressAnalysisData auto-detects zlib-compressed data vs raw JSON.
+// If the first byte is '{' the data is returned as-is (raw JSON).
+// Otherwise it attempts zlib decompression.
+func decompressAnalysisData(data []byte) ([]byte, error) {
+	if len(data) == 0 {
+		return data, nil
+	}
+	// Raw JSON always starts with '{'; zlib starts with 0x78.
+	if data[0] == '{' {
+		return data, nil
+	}
+	r, err := zlib.NewReader(bytes.NewReader(data))
+	if err != nil {
+		// Not zlib — return as-is (might be legacy text).
+		return data, nil
+	}
+	defer r.Close()
+	return io.ReadAll(r)
+}
+
+// encodeAnalysisForStorage marshals a PositionAnalysis to JSON and compresses it.
+func encodeAnalysisForStorage(a *PositionAnalysis) ([]byte, error) {
+	jsonData, err := json.Marshal(a)
+	if err != nil {
+		return nil, err
+	}
+	return compressAnalysisData(jsonData)
+}
+
+// decodeAnalysisFromStorage decompresses (if needed) and unmarshals analysis data.
+func decodeAnalysisFromStorage(data []byte) (PositionAnalysis, error) {
+	var a PositionAnalysis
+	jsonData, err := decompressAnalysisData(data)
+	if err != nil {
+		return a, err
+	}
+	err = json.Unmarshal(jsonData, &a)
+	return a, err
+}
+
+// recompressAnalysisData ensures data is in compressed format.
+// If it's already compressed, returns as-is. If raw JSON, compresses it.
+func recompressAnalysisData(data []byte) ([]byte, error) {
+	if len(data) == 0 {
+		return data, nil
+	}
+	if data[0] != '{' {
+		// Already compressed (or at least not raw JSON)
+		return data, nil
+	}
+	return compressAnalysisData(data)
 }
 
 // SetMigrationProgress registers a callback that is invoked during the v2.0.0
@@ -597,6 +674,87 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 	}
 
 	fmt.Println("Database automatically upgraded from 2.1.0 to 2.2.0")
+	return nil
+}
+
+// migrate_2_2_0_to_2_3_0 compresses analysis.data JSON blobs with zlib.
+// The analysis table's scalar filter columns are unchanged; only the data
+// column is re-encoded. This reduces analysis storage by ~60-80%.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_2_0_to_2_3_0() error {
+	var anaTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE data IS NOT NULL AND data != ''`).Scan(&anaTotal)
+
+	if anaTotal > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET data = ? WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate prepare: %w", err)
+		}
+		defer updateStmt.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, data FROM analysis WHERE id > ? AND data IS NOT NULL AND data != '' ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate query: %w", err)
+			}
+
+			type row struct {
+				id   int64
+				data []byte
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				// Skip if already compressed (not raw JSON)
+				if len(r.data) > 0 && r.data[0] != '{' {
+					done++
+					continue
+				}
+				compressed, err := compressAnalysisData(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+				updateStmt.Exec(compressed, r.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("compress_analysis", done, anaTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("compress_analysis", anaTotal, anaTotal)
+	}
+
+	d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.3.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 2.2.0 to 2.3.0")
 	return nil
 }
 
@@ -1470,6 +1628,16 @@ func (d *Database) OpenDatabase(path string) error {
 		dbVersion = "2.2.0"
 	}
 
+	// Auto-migrate from 2.2.0 to 2.3.0
+	// Compresses analysis.data JSON blobs with zlib, reducing analysis storage
+	// by ~60-80%. Scalar filter columns are unchanged.
+	if dbVersion == "2.2.0" {
+		if err := d.migrate_2_2_0_to_2_3_0(); err != nil {
+			return fmt.Errorf("migration 2.2.0→2.3.0 failed: %w", err)
+		}
+		dbVersion = "2.3.0"
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).
@@ -2295,8 +2463,8 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 
 	// Check if an analysis already exists for the given position ID
 	var existingID int64
-	var existingAnalysisJSON string
-	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	var existingAnalysisData []byte
+	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 	if err != nil && err != sql.ErrNoRows {
 		fmt.Println("Error querying analysis:", err)
 		return err
@@ -2304,8 +2472,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 
 	if existingID > 0 {
 		// Parse existing analysis
-		var existingAnalysis PositionAnalysis
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
+		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			fmt.Println("Error unmarshalling existing analysis:", err)
 			return err
@@ -2376,7 +2543,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 
 		// Update the existing analysis
 		roundAnalysisForStorage(&analysis)
-		analysisJSON, err := json.Marshal(analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			fmt.Println("Error marshalling analysis:", err)
 			return err
@@ -2396,7 +2563,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
 			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
 			WHERE id=?`,
-			string(analysisJSON),
+			analysisData,
 			aCols.BestCubeAction, aCols.CubeError,
 			aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
@@ -2442,7 +2609,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 
 		// Insert a new analysis
 		roundAnalysisForStorage(&analysis)
-		analysisJSON, err := json.Marshal(analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			fmt.Println("Error marshalling analysis:", err)
 			return err
@@ -2462,7 +2629,7 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
 		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
-			positionID, string(analysisJSON),
+			positionID, analysisData,
 			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
@@ -2493,8 +2660,8 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	var analysisJSON string
-	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisJSON)
+	var analysisData []byte
+	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisData)
 	if err != nil {
 		if err == sql.ErrNoRows {
 			return nil, err
@@ -2503,8 +2670,7 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 		return nil, err
 	}
 
-	var analysis PositionAnalysis
-	err = json.Unmarshal([]byte(analysisJSON), &analysis)
+	analysis, err := decodeAnalysisFromStorage(analysisData)
 	if err != nil {
 		fmt.Println("Error unmarshalling analysis:", err)
 		return nil, err
@@ -5996,21 +6162,19 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 			hasNewData := false
 
 			// Check for analysis to merge
-			var importAnalysisJSON string
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisJSON)
+			var importAnalysisData []byte
+			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
 			if err == nil {
-				var existingAnalysisJSON string
-				existingErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisJSON)
+				var existingAnalysisData []byte
+				existingErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
 
 				if existingErr == sql.ErrNoRows {
 					// New analysis to add
 					hasNewData = true
 				} else if existingErr == nil {
 					// Check if import has better analysis
-					var existingAnalysis PositionAnalysis
-					var importAnalysis PositionAnalysis
-					json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
-					json.Unmarshal([]byte(importAnalysisJSON), &importAnalysis)
+					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
+					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
 
 					if existingAnalysis.AnalysisType == "" && importAnalysis.AnalysisType != "" {
 						hasNewData = true
@@ -6214,17 +6378,21 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			hasMerged := false
 
 			// Merge analysis if it exists
-			var importAnalysisJSON string
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisJSON)
+			var importAnalysisData []byte
+			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
 
 			if err == nil {
 				// Load existing analysis from current database (using transaction)
-				var existingAnalysisJSON string
-				existingErr := tx.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisJSON)
+				var existingAnalysisData []byte
+				existingErr := tx.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, existingPositionID).Scan(&existingAnalysisData)
 
 				if existingErr == sql.ErrNoRows {
-					// No existing analysis, insert the imported one
-					_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, importAnalysisJSON)
+					// No existing analysis, insert the imported one (re-compress for current format)
+					recompressed, compErr := recompressAnalysisData(importAnalysisData)
+					if compErr != nil {
+						recompressed = importAnalysisData
+					}
+					_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, recompressed)
 					if err != nil {
 						fmt.Printf("Error inserting analysis for position %d: %v\n", existingPositionID, err)
 					} else {
@@ -6232,15 +6400,16 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 					}
 				} else if existingErr == nil {
 					// Both have analysis - keep the existing one unless it's empty
-					var existingAnalysis PositionAnalysis
-					var importAnalysis PositionAnalysis
-
-					json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
-					json.Unmarshal([]byte(importAnalysisJSON), &importAnalysis)
+					existingAnalysis, _ := decodeAnalysisFromStorage(existingAnalysisData)
+					importAnalysis, _ := decodeAnalysisFromStorage(importAnalysisData)
 
 					// If import has analysis but existing doesn't, use import
 					if existingAnalysis.AnalysisType == "" && importAnalysis.AnalysisType != "" {
-						_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, importAnalysisJSON, existingPositionID)
+						recompressed, compErr := recompressAnalysisData(importAnalysisData)
+						if compErr != nil {
+							recompressed = importAnalysisData
+						}
+						_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, recompressed, existingPositionID)
 						if err != nil {
 							fmt.Printf("Error updating analysis for position %d: %v\n", existingPositionID, err)
 						} else {
@@ -6312,19 +6481,18 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			}
 
 			// Copy analysis if it exists
-			var importAnalysisJSON string
-			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisJSON)
+			var importAnalysisData []byte
+			err = importDB.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, id).Scan(&importAnalysisData)
 			if err == nil {
 				// Update position_id in the analysis JSON
-				var analysis PositionAnalysis
-				json.Unmarshal([]byte(importAnalysisJSON), &analysis)
+				analysis, _ := decodeAnalysisFromStorage(importAnalysisData)
 				analysis.PositionID = int(newPositionID)
-				updatedAnalysisJSON, err := json.Marshal(analysis)
+				updatedAnalysisData, err := encodeAnalysisForStorage(&analysis)
 				if err != nil {
-					return nil, fmt.Errorf("failed to marshal JSON: %w", err)
+					return nil, fmt.Errorf("failed to marshal analysis: %w", err)
 				}
 
-				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON))
+				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, updatedAnalysisData)
 				if err != nil {
 					fmt.Printf("Error inserting analysis for new position %d: %v\n", newPositionID, err)
 				}
@@ -6713,12 +6881,12 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 
 		// Export analysis if it exists and if includeAnalysis is true
 		if includeAnalysis {
-			var analysisJSON string
-			analysisErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, oldPositionID).Scan(&analysisJSON)
+			var analysisData []byte
+			analysisErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, oldPositionID).Scan(&analysisData)
 			if analysisErr == nil {
 				// Update position_id in the analysis JSON
-				var analysis PositionAnalysis
-				if unmarshalErr := json.Unmarshal([]byte(analysisJSON), &analysis); unmarshalErr == nil {
+				analysis, unmarshalErr := decodeAnalysisFromStorage(analysisData)
+				if unmarshalErr == nil {
 					analysis.PositionID = int(newPositionID)
 
 					// Handle played moves
@@ -8567,14 +8735,14 @@ func (d *Database) saveCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID
 	doubled := rawCube.Doubled
 
 	// Try to load existing analysis for this position
-	var existingAnalysisJSON string
+	var existingAnalysisData []byte
 	var existingID int64
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 
 	var posAnalysis PositionAnalysis
 	if err == nil && existingID > 0 {
 		// Existing analysis found - merge cube info with it
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &posAnalysis)
+		posAnalysis, err = decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			return err
 		}
@@ -8805,16 +8973,15 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 
 	// Check if an analysis already exists for the given position ID
 	var existingID int64
-	var existingAnalysisJSON string
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	var existingAnalysisData []byte
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
 
 	if existingID > 0 {
 		// Parse existing analysis
-		var existingAnalysis PositionAnalysis
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &existingAnalysis)
+		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			return err
 		}
@@ -8919,7 +9086,7 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 
 		// Update the existing analysis
 		roundAnalysisForStorage(&analysis)
-		analysisJSON, err := json.Marshal(analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			return err
 		}
@@ -8938,7 +9105,7 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
 			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
 			WHERE id=?`,
-			string(analysisJSON),
+			analysisData,
 			aCols.BestCubeAction, aCols.CubeError,
 			aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
@@ -8983,7 +9150,7 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 
 		// Insert a new analysis
 		roundAnalysisForStorage(&analysis)
-		analysisJSON, err := json.Marshal(analysis)
+		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
 			return err
 		}
@@ -9002,7 +9169,7 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
 		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
-			positionID, string(analysisJSON),
+			positionID, analysisData,
 			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
@@ -12602,13 +12769,13 @@ func (d *Database) saveBGFCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 // saveBGFCubeAnalysisForCheckerPositionInTx saves cube analysis from equity field to a checker position
 func (d *Database) saveBGFCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
 	// Try to load existing analysis for this position
-	var existingAnalysisJSON string
+	var existingAnalysisData []byte
 	var existingID int64
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisJSON)
+	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 
 	var posAnalysis PositionAnalysis
 	if err == nil && existingID > 0 {
-		err = json.Unmarshal([]byte(existingAnalysisJSON), &posAnalysis)
+		posAnalysis, err = decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
 			return err
 		}
@@ -12957,11 +13124,11 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 		}
 
 		roundAnalysisForStorage(&posAnalysis)
-		analysisJSON, err := json.Marshal(posAnalysis)
+		analysisData, err := encodeAnalysisForStorage(&posAnalysis)
 		if err != nil {
 			return 0, fmt.Errorf("failed to marshal checker analysis: %w", err)
 		}
-		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, analysisData)
 		if err != nil {
 			return 0, fmt.Errorf("failed to save checker analysis for BGBlitz position: %w", err)
 		}
@@ -13041,11 +13208,11 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 		posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 
 		roundAnalysisForStorage(&posAnalysis)
-		analysisJSON, err := json.Marshal(posAnalysis)
+		analysisData, err := encodeAnalysisForStorage(&posAnalysis)
 		if err != nil {
 			return 0, fmt.Errorf("failed to marshal cube analysis: %w", err)
 		}
-		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, string(analysisJSON))
+		_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, positionID, analysisData)
 		if err != nil {
 			return 0, fmt.Errorf("failed to save cube analysis for BGBlitz position: %w", err)
 		}
@@ -14632,10 +14799,12 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 
 		// Export analysis if requested
 		if includeAnalysis {
-			var analysisData string
+			var analysisData []byte
 			err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&analysisData)
 			if err == nil {
-				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, analysisData)
+				// Decompress for export compatibility
+				jsonData, _ := decompressAnalysisData(analysisData)
+				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, string(jsonData))
 			}
 		}
 
@@ -15404,10 +15573,12 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 
 		// Export analysis if requested
 		if includeAnalysis {
-			var analysisData string
+			var analysisData []byte
 			err := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, posID).Scan(&analysisData)
 			if err == nil {
-				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, analysisData)
+				// Decompress for export compatibility
+				jsonData, _ := decompressAnalysisData(analysisData)
+				_, _ = exportDB.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newID, string(jsonData))
 			}
 		}
 

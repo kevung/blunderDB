@@ -924,10 +924,10 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 		t.Fatalf("OpenDatabase failed: %v", err)
 	}
 
-	// Version must be 2.2.0 (auto-migrated through 2.0.0 → 2.1.0 → 2.2.0)
+	// Version must be 2.3.0 (auto-migrated through 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0)
 	ver, _ := d.CheckDatabaseVersion()
-	if ver != "2.2.0" {
-		t.Fatalf("expected version 2.2.0, got %s", ver)
+	if ver != "2.3.0" {
+		t.Fatalf("expected version 2.3.0, got %s", ver)
 	}
 
 	// Every position row must have non-NULL zobrist_hash and pip_1
@@ -1096,8 +1096,8 @@ func TestMigrate_Idempotent(t *testing.T) {
 	}
 
 	ver, _ := d2.CheckDatabaseVersion()
-	if ver != "2.2.0" {
-		t.Errorf("expected version 2.2.0, got %s", ver)
+	if ver != "2.3.0" {
+		t.Errorf("expected version 2.3.0, got %s", ver)
 	}
 
 	var posCount2 int

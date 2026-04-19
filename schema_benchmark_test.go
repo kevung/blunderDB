@@ -14,9 +14,10 @@ import (
 )
 
 // TestSchemaBenchmark_CrossVersion is a comprehensive benchmark comparing
-// v1.9.0 (pre-denormalization), v2.1.0 (denorm + full JSON state) and
-// v2.2.0 (denorm + compact board encoding) across import speed, search
-// latency, disk storage, position loading, and export.
+// v1.9.0 (pre-denormalization), v2.1.0 (denorm + full JSON state),
+// v2.2.0 (denorm + compact board encoding), and v2.3.0 (compact board +
+// compressed analysis) across import speed, search latency, disk storage,
+// position loading, and export.
 //
 // Run with:
 //
@@ -49,17 +50,17 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	tmpDir := t.TempDir()
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 1: Import into v2.2.0 (current schema) and measure time
+	// Phase 1: Import into v2.3.0 (current schema) and measure time
 	// ─────────────────────────────────────────────────────────────────────
-	dbPath220 := filepath.Join(tmpDir, "v220.db")
+	dbPath230 := filepath.Join(tmpDir, "v230.db")
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 1: Import into v2.2.0 (compact board encoding)")
+	t.Log("Phase 1: Import into v2.3.0 (compact board + compressed analysis)")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	importStart := time.Now()
-	db220 := NewDatabase()
-	if err := db220.SetupDatabase(dbPath220); err != nil {
-		t.Fatalf("setup v2.2.0: %v", err)
+	db230 := NewDatabase()
+	if err := db230.SetupDatabase(dbPath230); err != nil {
+		t.Fatalf("setup v2.3.0: %v", err)
 	}
 	importCount := 0
 	for _, f := range files {
@@ -67,11 +68,11 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		var importErr error
 		switch ext {
 		case ".xg":
-			_, importErr = db220.ImportXGMatch(f)
+			_, importErr = db230.ImportXGMatch(f)
 		case ".sgf", ".mat":
-			_, importErr = db220.ImportGnuBGMatch(f)
+			_, importErr = db230.ImportGnuBGMatch(f)
 		case ".bgf":
-			_, importErr = db220.ImportBGFMatch(f)
+			_, importErr = db230.ImportBGFMatch(f)
 		}
 		if importErr == nil {
 			importCount++
@@ -79,28 +80,77 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	}
 	importDuration := time.Since(importStart)
 
-	var posCount220, analysisCount, matchCount, moveCount int
-	db220.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount220)
-	db220.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount)
-	db220.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&matchCount)
-	db220.db.QueryRow(`SELECT COUNT(*) FROM move`).Scan(&moveCount)
+	var posCount230, analysisCount, matchCount, moveCount int
+	db230.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount230)
+	db230.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&analysisCount)
+	db230.db.QueryRow(`SELECT COUNT(*) FROM match`).Scan(&matchCount)
+	db230.db.QueryRow(`SELECT COUNT(*) FROM move`).Scan(&moveCount)
 
 	t.Logf("  Import: %d files → %d matches, %d positions, %d analyses, %d moves",
-		importCount, matchCount, posCount220, analysisCount, moveCount)
+		importCount, matchCount, posCount230, analysisCount, moveCount)
 	t.Logf("  Import time: %v (%.0f positions/sec)", importDuration,
-		float64(posCount220)/importDuration.Seconds())
+		float64(posCount230)/importDuration.Seconds())
 
 	// Close and measure disk size
-	db220.db.Exec(`VACUUM`)
-	db220.db.Close()
+	db230.db.Exec(`VACUUM`)
+	db230.db.Close()
+	size230 := fileSize(t, dbPath230)
+	t.Logf("  Disk size (vacuumed): %s", humanBytes(size230))
+
+	// ─────────────────────────────────────────────────────────────────────
+	// Phase 2: Create v2.2.0 clone (decompress analysis data → raw JSON)
+	// ─────────────────────────────────────────────────────────────────────
+	t.Log("\n══════════════════════════════════════════════════════════")
+	t.Log("Phase 2: Create v2.2.0 clone (raw JSON analysis)")
+	t.Log("══════════════════════════════════════════════════════════")
+
+	dbPath220 := filepath.Join(tmpDir, "v220.db")
+	copyFile(t, dbPath230, dbPath220)
+
+	sqlDB220, err := sql.Open("sqlite", dbPath220)
+	if err != nil {
+		t.Fatalf("open v2.2.0 clone: %v", err)
+	}
+	sqlDB220.Exec(`PRAGMA journal_mode = WAL`)
+	sqlDB220.Exec(`PRAGMA synchronous = NORMAL`)
+	sqlDB220.Exec(`PRAGMA cache_size = -65536`)
+
+	// Decompress all analysis data back to raw JSON
+	decompressStart := time.Now()
+	analysisRows220, err := sqlDB220.Query(`SELECT id, data FROM analysis WHERE data IS NOT NULL`)
+	if err != nil {
+		t.Fatalf("query v2.2.0 analysis: %v", err)
+	}
+	updateStmt220, _ := sqlDB220.Prepare(`UPDATE analysis SET data = ? WHERE id = ?`)
+	decompCount := 0
+	for analysisRows220.Next() {
+		var id int64
+		var data []byte
+		analysisRows220.Scan(&id, &data)
+		if len(data) > 0 && data[0] != '{' {
+			decompressed, err := decompressAnalysisData(data)
+			if err == nil {
+				updateStmt220.Exec(string(decompressed), id)
+				decompCount++
+			}
+		}
+	}
+	analysisRows220.Close()
+	updateStmt220.Close()
+	sqlDB220.Exec(`UPDATE metadata SET value='2.2.0' WHERE key='database_version'`)
+	sqlDB220.Exec(`VACUUM`)
+	sqlDB220.Close()
+	decompressDuration := time.Since(decompressStart)
+
 	size220 := fileSize(t, dbPath220)
+	t.Logf("  Decompressed %d analysis rows: %v", decompCount, decompressDuration)
 	t.Logf("  Disk size (vacuumed): %s", humanBytes(size220))
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 2: Create v2.1.0 clone (revert compact state → full JSON)
+	// Phase 3: Create v2.1.0 clone (revert compact state → full JSON)
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 2: Create v2.1.0 clone (full JSON state)")
+	t.Log("Phase 3: Create v2.1.0 clone (full JSON state)")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	dbPath210 := filepath.Join(tmpDir, "v210.db")
@@ -165,10 +215,10 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	t.Logf("  Disk size (vacuumed): %s", humanBytes(size210))
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 3: Create v1.9.0 clone (drop denorm columns + indexes)
+	// Phase 4: Create v1.9.0 clone (drop denorm columns + indexes)
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 3: Create v1.9.0 clone (no denorm columns, no indexes)")
+	t.Log("Phase 4: Create v1.9.0 clone (no denorm columns, no indexes)")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	dbPath190 := filepath.Join(tmpDir, "v190.db")
@@ -223,10 +273,10 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	t.Logf("  Disk size (vacuumed): %s", humanBytes(size190))
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 4: Size breakdown per table
+	// Phase 5: Size breakdown per table
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 4: Per-table size breakdown")
+	t.Log("Phase 5: Per-table size breakdown")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	for _, variant := range []struct {
@@ -235,6 +285,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		{"v1.9.0", dbPath190},
 		{"v2.1.0", dbPath210},
 		{"v2.2.0", dbPath220},
+		{"v2.3.0", dbPath230},
 	} {
 		db, _ := sql.Open("sqlite", variant.path)
 		t.Logf("\n  --- %s ---", variant.name)
@@ -283,16 +334,16 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	}
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 5: Search benchmarks (v2.2.0 indexed search)
+	// Phase 6: Search benchmarks (v2.3.0 indexed search)
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 5: Search latency — v2.2.0 (indexed + compact)")
+	t.Log("Phase 6: Search latency — v2.3.0 (indexed + compact + compressed)")
 	t.Log("══════════════════════════════════════════════════════════")
 
-	// Re-open v2.2.0 as Database object
-	db220obj := NewDatabase()
-	if err := db220obj.OpenDatabase(dbPath220); err != nil {
-		t.Fatalf("open v2.2.0 DB: %v", err)
+	// Re-open v2.3.0 as Database object
+	db230obj := NewDatabase()
+	if err := db230obj.OpenDatabase(dbPath230); err != nil {
+		t.Fatalf("open v2.3.0 DB: %v", err)
 	}
 
 	type searchCase struct {
@@ -384,7 +435,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		start := time.Now()
 		var resultCount int
 		for j := 0; j < searchIters; j++ {
-			results, _ := db220obj.LoadPositionsByFilters(
+			results, _ := db230obj.LoadPositionsByFilters(
 				sc.filter,
 				sc.args.includeCube, sc.args.includeScore,
 				sc.args.pipCountFilter,
@@ -459,25 +510,25 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	sqlDB190s.Close()
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 6: LoadAllPositions benchmark
+	// Phase 7: LoadAllPositions benchmark
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 6: LoadAllPositions (full scan + deserialize)")
+	t.Log("Phase 7: LoadAllPositions (full scan + deserialize)")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	const loadIters = 5
 	start := time.Now()
 	for i := 0; i < loadIters; i++ {
-		positions, err := db220obj.LoadAllPositions()
+		positions, err := db230obj.LoadAllPositions()
 		if err != nil {
 			t.Fatalf("LoadAllPositions: %v", err)
 		}
 		if i == 0 {
-			t.Logf("  v2.2.0 LoadAllPositions: %d positions", len(positions))
+			t.Logf("  v2.3.0 LoadAllPositions: %d positions", len(positions))
 		}
 	}
-	elapsed220Load := time.Since(start)
-	t.Logf("  v2.2.0 avg: %.2f ms", float64(elapsed220Load.Microseconds())/float64(loadIters)/1000.0)
+	elapsed230Load := time.Since(start)
+	t.Logf("  v2.3.0 avg: %.2f ms", float64(elapsed230Load.Microseconds())/float64(loadIters)/1000.0)
 
 	// Compare with v1.9.0-style full JSON scan (simulate by reading state+unmarshal)
 	sqlDB190b, _ := sql.Open("sqlite", dbPath190)
@@ -534,32 +585,32 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	sqlDB210b.Close()
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 7: Single position load benchmark
+	// Phase 8: Single position load benchmark
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 7: Single LoadPosition by ID")
+	t.Log("Phase 8: Single LoadPosition by ID")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	const singleIters = 1000
 	// Pick position IDs spread across the range
-	testIDs := []int{1, posCount220 / 4, posCount220 / 2, posCount220 * 3 / 4, posCount220}
+	testIDs := []int{1, posCount230 / 4, posCount230 / 2, posCount230 * 3 / 4, posCount230}
 
 	start = time.Now()
 	for i := 0; i < singleIters; i++ {
 		for _, id := range testIDs {
-			db220obj.LoadPosition(id)
+			db230obj.LoadPosition(id)
 		}
 	}
-	elapsed220Single := time.Since(start)
-	t.Logf("  v2.2.0: %d loads in %v (%.1f µs/load)",
-		singleIters*len(testIDs), elapsed220Single,
-		float64(elapsed220Single.Microseconds())/float64(singleIters*len(testIDs)))
+	elapsed230Single := time.Since(start)
+	t.Logf("  v2.3.0: %d loads in %v (%.1f µs/load)",
+		singleIters*len(testIDs), elapsed230Single,
+		float64(elapsed230Single.Microseconds())/float64(singleIters*len(testIDs)))
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 8: Import speed (cold import measurement)
+	// Phase 9: Import speed (cold import measurement)
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 8: Cold import speed (subset)")
+	t.Log("Phase 9: Cold import speed (subset)")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	// Use first 10 .xg files for a repeatable import speed test
@@ -602,16 +653,16 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	t.Logf("  Avg import time: %v (over %d runs)", totalImport/time.Duration(importIters), importIters)
 
 	// ─────────────────────────────────────────────────────────────────────
-	// Phase 9: Export benchmark
+	// Phase 10: Export benchmark
 	// ─────────────────────────────────────────────────────────────────────
 	t.Log("\n══════════════════════════════════════════════════════════")
-	t.Log("Phase 9: ExportDatabase speed")
+	t.Log("Phase 10: ExportDatabase speed")
 	t.Log("══════════════════════════════════════════════════════════")
 
 	exportPath := filepath.Join(tmpDir, "export_test.db")
-	allPositions, _ := db220obj.LoadAllPositions()
+	allPositions, _ := db230obj.LoadAllPositions()
 	start = time.Now()
-	db220obj.ExportDatabase(exportPath, allPositions, map[string]string{}, true, true, false, true, true, false, nil, nil, nil)
+	db230obj.ExportDatabase(exportPath, allPositions, map[string]string{}, true, true, false, true, true, false, nil, nil, nil)
 	exportDuration := time.Since(start)
 	exportSize := fileSize(t, exportPath)
 	t.Logf("  Export: %v, disk size: %s", exportDuration, humanBytes(exportSize))
@@ -624,24 +675,26 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	t.Log("SUMMARY")
 	t.Log("══════════════════════════════════════════════════════════")
 	t.Logf("Dataset: %d files, %d positions, %d analyses, %d moves",
-		len(files), posCount220, analysisCount, moveCount)
+		len(files), posCount230, analysisCount, moveCount)
 	t.Log("")
 	t.Logf("Disk size:")
-	t.Logf("  v1.9.0 (full JSON, no indexes):   %s", humanBytes(size190))
-	t.Logf("  v2.1.0 (full JSON + denorm cols):  %s", humanBytes(size210))
-	t.Logf("  v2.2.0 (compact board + denorm):   %s", humanBytes(size220))
+	t.Logf("  v1.9.0 (full JSON, no indexes):          %s", humanBytes(size190))
+	t.Logf("  v2.1.0 (full JSON + denorm cols):         %s", humanBytes(size210))
+	t.Logf("  v2.2.0 (compact board + raw analysis):    %s", humanBytes(size220))
+	t.Logf("  v2.3.0 (compact board + compressed anal): %s", humanBytes(size230))
 	if size190 > 0 {
 		t.Logf("  v2.1.0 vs v1.9.0: %+.1f%%", (float64(size210)-float64(size190))/float64(size190)*100)
 		t.Logf("  v2.2.0 vs v1.9.0: %+.1f%%", (float64(size220)-float64(size190))/float64(size190)*100)
-		t.Logf("  v2.2.0 vs v2.1.0: %+.1f%%", (float64(size220)-float64(size210))/float64(size210)*100)
+		t.Logf("  v2.3.0 vs v1.9.0: %+.1f%%", (float64(size230)-float64(size190))/float64(size190)*100)
+		t.Logf("  v2.3.0 vs v2.2.0: %+.1f%%", (float64(size230)-float64(size220))/float64(size220)*100)
 	}
 	t.Log("")
 	t.Logf("LoadAllPositions (avg):")
 	t.Logf("  v1.9.0: %.2f ms", float64(elapsed190Load.Microseconds())/float64(loadIters)/1000.0)
 	t.Logf("  v2.1.0: %.2f ms", float64(elapsed210Load.Microseconds())/float64(loadIters)/1000.0)
-	t.Logf("  v2.2.0: %.2f ms", float64(elapsed220Load.Microseconds())/float64(loadIters)/1000.0)
+	t.Logf("  v2.3.0: %.2f ms", float64(elapsed230Load.Microseconds())/float64(loadIters)/1000.0)
 
-	db220obj.db.Close()
+	db230obj.db.Close()
 }
 
 // searchArgs bundles the many filter parameters for LoadPositionsByFilters
