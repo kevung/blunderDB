@@ -3,6 +3,7 @@ bgfparser/
 gnubg/
 gnubgparser/
 xgparser/
+testdata/tournois
 
 src/__pycache__
 tmp
