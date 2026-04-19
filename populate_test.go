@@ -172,10 +172,31 @@ func TestPopulateAnalysisColumns_CubeError(t *testing.T) {
 		},
 	}
 
-	// Played "NoDouble" but best is "Double/Take" → error = 0.25
+	// Played "NoDouble" but best is "Double/Take" → error = |0.25| = 250 millipoints
 	c := populateAnalysisColumns(a, "", "NoDouble")
 	if c.CubeError != 250 {
 		t.Errorf("CubeError for wrong NoDouble: got %d, want 250", c.CubeError)
+	}
+
+	// Same with space-separated form used by XG import
+	c2 := populateAnalysisColumns(a, "", "No Double")
+	if c2.CubeError != 250 {
+		t.Errorf("CubeError for wrong 'No Double' (with space): got %d, want 250", c2.CubeError)
+	}
+
+	// Real XG data stores cube errors as negative (thisAction - bestEquity).
+	// populateAnalysisColumns must take the absolute value.
+	a2 := &PositionAnalysis{
+		DoublingCubeAnalysis: &DoublingCubeAnalysis{
+			BestCubeAction:         "Double, Take",
+			CubefulNoDoubleError:   -0.120, // negative in raw XG convention
+			CubefulDoubleTakeError: 0.0,
+			CubefulDoublePassError: -0.05,
+		},
+	}
+	c3 := populateAnalysisColumns(a2, "", "No Double")
+	if c3.CubeError != 120 {
+		t.Errorf("CubeError for negative raw error: got %d, want 120", c3.CubeError)
 	}
 }
 

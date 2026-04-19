@@ -293,6 +293,18 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 		}
 		defer updateAna.Close()
 
+		// Prepare statement to look up the played cube action from the move table
+		// when the analysis JSON doesn't have it.
+		lookupCubeAction, err := d.db.Prepare(`
+			SELECT m.cube_action FROM move m
+			WHERE m.position_id = (SELECT a2.position_id FROM analysis a2 WHERE a2.id = ?)
+			  AND m.move_type = 'cube' AND m.cube_action != ''
+			LIMIT 1`)
+		if err != nil {
+			return fmt.Errorf("migrate cube action lookup prepare: %w", err)
+		}
+		defer lookupCubeAction.Close()
+
 		const batchSize = 1000
 		var lastID int64 = 0
 		done := 0
@@ -346,6 +358,14 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 					playedCubeAction = ana.PlayedCubeActions[0]
 				} else if ana.PlayedCubeAction != "" {
 					playedCubeAction = ana.PlayedCubeAction
+				}
+				// If the analysis JSON doesn't have the played cube action but has
+				// cube analysis, look it up from the move table.
+				if playedCubeAction == "" && ana.DoublingCubeAnalysis != nil {
+					var ca sql.NullString
+					if err := lookupCubeAction.QueryRow(row.id).Scan(&ca); err == nil && ca.Valid {
+						playedCubeAction = ca.String
+					}
 				}
 				ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
 				updateAna.Exec(
@@ -530,6 +550,17 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 	}
 	defer updateStmt.Close()
 
+	// Look up the played cube action from the move table when analysis JSON lacks it.
+	lookupCubeAction2, err := d.db.Prepare(`
+		SELECT m.cube_action FROM move m
+		WHERE m.position_id = (SELECT a2.position_id FROM analysis a2 WHERE a2.id = ?)
+		  AND m.move_type = 'cube' AND m.cube_action != ''
+		LIMIT 1`)
+	if err != nil {
+		return fmt.Errorf("migrate cube action lookup prepare: %w", err)
+	}
+	defer lookupCubeAction2.Close()
+
 	for i, r := range batch {
 		var ana PositionAnalysis
 		if err := json.Unmarshal([]byte(r.data), &ana); err != nil {
@@ -551,6 +582,12 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 			playedCubeAction = ana.PlayedCubeActions[0]
 		} else if ana.PlayedCubeAction != "" {
 			playedCubeAction = ana.PlayedCubeAction
+		}
+		if playedCubeAction == "" && ana.DoublingCubeAnalysis != nil {
+			var ca sql.NullString
+			if err := lookupCubeAction2.QueryRow(r.id).Scan(&ca); err == nil && ca.Valid {
+				playedCubeAction = ca.String
+			}
 		}
 		ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
 		updateStmt.Exec(
@@ -2219,17 +2256,18 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 		c.Player2BackgammonRate = int64(math.Round(dca.OpponentBackgammonChances * 100))
 
 		// Cube error: equity loss of the played cube action vs the best action, scaled × 1000.
+		// Stored as absolute value (>= 0) so the sign convention matches best_move_equity_error.
 		if playedCubeAction != "" {
+			var raw float64
 			switch playedCubeAction {
-			case "NoDouble":
-				c.CubeError = int64(math.Round(dca.CubefulNoDoubleError * 1000))
+			case "NoDouble", "No Double":
+				raw = dca.CubefulNoDoubleError
 			case "Double", "Double/Take":
-				c.CubeError = int64(math.Round(dca.CubefulDoubleTakeError * 1000))
+				raw = dca.CubefulDoubleTakeError
 			case "Double/Pass":
-				c.CubeError = int64(math.Round(dca.CubefulDoublePassError * 1000))
-			default:
-				c.CubeError = 0
+				raw = dca.CubefulDoublePassError
 			}
+			c.CubeError = int64(math.Round(math.Abs(raw) * 1000))
 		}
 	} else if ca := a.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
 		// Fall back to checker analysis best move for win/gammon/backgammon rates, scaled × 100.
@@ -3435,16 +3473,27 @@ func (d *Database) loadPositionsByFiltersCore(
 		appendIntRangeSQL("a.player2_backgammon_rate", int(math.Round(BMin*100)), int(math.Round(BMax*100)), BHasMin, BHasMax, &where, &args)
 
 		// Move-error filter: "E"-prefixed values are millipoints; columns are now integer millipoints.
+		// Both best_move_equity_error and cube_error are stored as non-negative absolute values.
+		// Use the appropriate column based on decision type to avoid false positives
+		// (e.g. cube positions always have best_move_equity_error=0, which would match range 0-N).
 		if moveErrorFilter != "" {
 			eMin, eMax, eHasMin, eHasMax := parseFloatFilterExpr(moveErrorFilter, "E")
-			if eHasMin {
-				eqMin := int(math.Round(eMin))
-				where.WriteString(" AND (a.best_move_equity_error >= ? OR a.cube_error >= ?)")
-				args = append(args, eqMin, eqMin)
+			eqMin := int(math.Round(eMin))
+			eqMax := int(math.Round(eMax))
+			// Pick the error column that matches the position's decision type:
+			// decision_type=0 (checker) → best_move_equity_error
+			// decision_type=1 (cube)    → cube_error
+			// When no decision_type filter is active, check both with CASE.
+			errExpr := "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
+			if eHasMin && eHasMax {
+				where.WriteString(" AND " + errExpr + " BETWEEN ? AND ?")
+				args = append(args, eqMin, eqMax)
+			} else if eHasMin {
+				where.WriteString(" AND " + errExpr + " >= ?")
+				args = append(args, eqMin)
 			} else if eHasMax {
-				eqMax := int(math.Round(eMax))
-				where.WriteString(" AND (a.best_move_equity_error <= ? OR a.cube_error <= ?)")
-				args = append(args, eqMax, eqMax)
+				where.WriteString(" AND " + errExpr + " <= ?")
+				args = append(args, eqMax)
 			}
 		}
 
@@ -7617,7 +7666,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 						continue
 					}
 
-					err = d.saveCubeAnalysisToPositionInTx(tx, posID, move.CubeMove.Analysis)
+					err = d.saveCubeAnalysisToPositionInTx(tx, posID, move.CubeMove.Analysis, d.convertCubeAction(move.CubeMove.CubeAction))
 					if err != nil {
 						fmt.Printf("Warning: failed to save cube analysis for canonical duplicate: %v\n", err)
 					}
@@ -7850,7 +7899,7 @@ func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int3
 			}
 
 			// Also save to position analysis table (for UI compatibility)
-			err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+			err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, cubeActionStr)
 			if err != nil {
 				fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
 			}
@@ -7994,7 +8043,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 				if err != nil {
 					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
 				}
-				err = d.saveCubeAnalysisToPositionInTx(tx, posID1, move.CubeMove.Analysis)
+				err = d.saveCubeAnalysisToPositionInTx(tx, posID1, move.CubeMove.Analysis, "Double/Take")
 				if err != nil {
 					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
 				}
@@ -8084,7 +8133,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
 				}
 
-				err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+				err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, cubeActionStr)
 				if err != nil {
 					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
 				}
@@ -8654,8 +8703,11 @@ func (d *Database) saveCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
 }
 
-// saveCubeAnalysisToPositionInTx converts XG cube analysis to PositionAnalysis and saves it
-func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *xgparser.CubeAnalysis) error {
+// saveCubeAnalysisToPositionInTx converts XG cube analysis to PositionAnalysis and saves it.
+// playedCubeAction is the cube action the player actually took (e.g. "No Double", "Double/Take",
+// "Double/Pass", "Double"). When non-empty it is stored in PlayedCubeActions so that
+// populateAnalysisColumns can compute cube_error.
+func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, analysis *xgparser.CubeAnalysis, playedCubeAction string) error {
 	if analysis == nil {
 		return nil
 	}
@@ -8667,6 +8719,9 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 		AnalysisEngineVersion: "XG",
 		CreationDate:          time.Now(),
 		LastModifiedDate:      time.Now(),
+	}
+	if playedCubeAction != "" {
+		posAnalysis.PlayedCubeActions = []string{playedCubeAction}
 	}
 
 	cubefulNoDouble := float64(analysis.CubefulNoDouble)
@@ -13286,7 +13341,7 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 			fmt.Printf("Warning: failed to save checker analysis for XGP position: %v\n", err)
 		}
 	} else if move.MoveType == "cube" && move.CubeMove != nil && move.CubeMove.Analysis != nil {
-		err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis)
+		err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, d.convertCubeAction(move.CubeMove.CubeAction))
 		if err != nil {
 			fmt.Printf("Warning: failed to save cube analysis for XGP position: %v\n", err)
 		}
