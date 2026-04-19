@@ -29,6 +29,24 @@ func setupTestDB(t *testing.T) (*Database, func()) {
 	}
 }
 
+// testUnmarshalPositionState unmarshals a position state string that may be
+// either compact board encoding ([28]int array) or legacy full-JSON.
+// For compact states, only the Board is reconstructed; the caller must load
+// other fields from denormalized columns if needed.
+func testUnmarshalPositionState(stateJSON string, pos *Position) error {
+	if isCompactState(stateJSON) {
+		pos.Board = decodeBoardCompact(stateJSON)
+		return nil
+	}
+	return json.Unmarshal([]byte(stateJSON), pos)
+}
+
+// testLoadPositionFromRow loads a full Position from the DB by scanning id+state
+// plus all denormalized columns. Use when test needs all position fields.
+func testLoadPositionFromRow(db *Database, id int64) (Position, error) {
+	return db.loadPositionByIDUnlocked(id)
+}
+
 // TestImportGnuBGSGF tests importing a GnuBG SGF match file.
 func TestImportGnuBGSGF(t *testing.T) {
 	db, cleanup := setupTestDB(t)
@@ -321,21 +339,20 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 		}
 
 		var posID int64
-		var stateJSON string
 		err := db.db.QueryRow(`
-			SELECT p.id, p.state FROM position p
+			SELECT p.id FROM position p
 			INNER JOIN move m ON m.position_id = p.id
 			INNER JOIN game g ON m.game_id = g.id
 			WHERE g.match_id = ? AND m.position_id IS NOT NULL
 			ORDER BY g.game_number, m.move_number LIMIT 1`, matchID).
-			Scan(&posID, &stateJSON)
+			Scan(&posID)
 		if err != nil {
 			t.Fatalf("Failed to query position: %v", err)
 		}
 
-		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-			t.Fatalf("Failed to unmarshal position: %v", err)
+		pos, err := testLoadPositionFromRow(db, posID)
+		if err != nil {
+			t.Fatalf("Failed to load position: %v", err)
 		}
 
 		t.Logf("First position: player_on_roll=%d, cube_value=%d, cube_owner=%d",
@@ -842,7 +859,7 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 				var stateJSON string
 				rows.Scan(&stateJSON)
 				var pos Position
-				json.Unmarshal([]byte(stateJSON), &pos)
+				testUnmarshalPositionState(stateJSON, &pos)
 				positions = append(positions, pos)
 			}
 			return positions
@@ -1089,7 +1106,7 @@ func TestMATImportCheckerCounts(t *testing.T) {
 		}
 
 		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
+		if err := testUnmarshalPositionState(stateJSON, &pos); err != nil {
 			t.Fatalf("Unmarshal failed: %v", err)
 		}
 

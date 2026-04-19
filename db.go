@@ -504,6 +504,102 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 	return nil
 }
 
+// migrate_2_1_0_to_2_2_0 compacts the position.state column from full Position
+// JSON (~800 bytes) to a compact board-only array (~60-80 bytes). All non-board
+// fields (cube, dice, score, flags) are already stored in the denormalized
+// columns added in v2.0.0, so the JSON blob is redundant for those fields.
+//
+// This reduces the position table size by ~85-90% on the state column.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_1_0_to_2_2_0() error {
+	var posTotal int
+	d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
+
+	if posTotal > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE position SET state = ? WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate prepare: %w", err)
+		}
+		defer updateStmt.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, state FROM position WHERE id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate query: %w", err)
+			}
+
+			type row struct {
+				id    int64
+				state string
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.state); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				// Skip if already compact
+				if isCompactState(r.state) {
+					done++
+					continue
+				}
+
+				var pos Position
+				if err := json.Unmarshal([]byte(r.state), &pos); err != nil {
+					done++
+					continue // malformed JSON — leave as-is
+				}
+				compact := encodeBoardCompact(pos.Board)
+				updateStmt.Exec(compact, r.id)
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("compact_state", done, posTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("compact_state", posTotal, posTotal)
+	}
+
+	// Prune command_history to last 1000 entries
+	d.db.Exec(`
+		DELETE FROM command_history
+		WHERE id NOT IN (
+			SELECT id FROM command_history
+			ORDER BY timestamp DESC
+			LIMIT 1000
+		)
+	`)
+
+	d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.2.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	fmt.Println("Database automatically upgraded from 2.1.0 to 2.2.0")
+	return nil
+}
+
 // WAL journal mode is skipped for in-memory databases (":memory:")
 // because WAL requires a real filesystem.
 func (d *Database) applyPragmas(path string) error {
@@ -1365,6 +1461,16 @@ func (d *Database) OpenDatabase(path string) error {
 		dbVersion = "2.1.0"
 	}
 
+	// Auto-migrate from 2.1.0 to 2.2.0
+	// Compacts position.state from full Position JSON to board-only array,
+	// reducing storage by ~85-90% on the state column. Also prunes command history.
+	if dbVersion == "2.1.0" {
+		if err := d.migrate_2_1_0_to_2_2_0(); err != nil {
+			return fmt.Errorf("migration 2.1.0→2.2.0 failed: %w", err)
+		}
+		dbVersion = "2.2.0"
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).
@@ -1800,7 +1906,7 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 		return nil, err
 	}
 
-	rows, err := d.db.Query(`SELECT id, state FROM position`)
+	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error querying positions:", err)
 		return nil, err
@@ -1808,18 +1914,12 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 	defer rows.Close()
 
 	for rows.Next() {
-		var stateJSON string
-		var positionID int64
-		if err = rows.Scan(&positionID, &stateJSON); err != nil {
+		existingPosition, err := scanPositionRow(rows)
+		if err != nil {
 			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
-
-		var existingPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &existingPosition); err != nil {
-			fmt.Println("Error unmarshalling position:", err)
-			return nil, err
-		}
+		positionID := existingPosition.ID
 
 		// Compare the positions excluding the ID field inside the state
 		existingPosition.ID = 0
@@ -1988,6 +2088,113 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 	return c
 }
 
+// ---------------------------------------------------------------------------
+// Compact board encoding (v2.2.0)
+//
+// The state column stores ONLY the board layout as a JSON array of 28 signed
+// integers. Indices 0-25 correspond to Board.Points: positive values mean
+// White checkers, negative mean Black, zero means empty. Indices 26-27 are
+// Board.Bearoff[0] and Bearoff[1]. All other Position fields (cube, dice,
+// score, decision_type, flags) are reconstructed from the denormalised
+// columns on the same row.
+//
+// Format detection: state[0]=='[' → compact, state[0]=='{' → legacy JSON.
+// ---------------------------------------------------------------------------
+
+// encodeBoardCompact encodes a Board as a compact JSON array of 28 signed ints.
+func encodeBoardCompact(b Board) string {
+	var vals [28]int
+	for i := 0; i < NumPoints+2; i++ {
+		p := b.Points[i]
+		if p.Checkers > 0 {
+			if p.Color == White {
+				vals[i] = p.Checkers
+			} else {
+				vals[i] = -p.Checkers
+			}
+		}
+	}
+	vals[26] = b.Bearoff[0]
+	vals[27] = b.Bearoff[1]
+	data, _ := json.Marshal(vals)
+	return string(data)
+}
+
+// decodeBoardCompact decodes a compact JSON array back into a Board.
+func decodeBoardCompact(s string) Board {
+	var vals [28]int
+	json.Unmarshal([]byte(s), &vals)
+	var b Board
+	for i := 0; i < NumPoints+2; i++ {
+		v := vals[i]
+		if v > 0 {
+			b.Points[i] = Point{v, White}
+		} else if v < 0 {
+			b.Points[i] = Point{-v, Black}
+		}
+	}
+	b.Bearoff[0] = vals[26]
+	b.Bearoff[1] = vals[27]
+	return b
+}
+
+// isCompactState returns true if the state string uses the compact array format.
+func isCompactState(s string) bool {
+	return len(s) > 0 && s[0] == '['
+}
+
+// reconstructPosition rebuilds a full Position from the compact state string
+// and denormalised column values. For legacy JSON state it unmarshals the full
+// Position but still overwrites with the column values (they are authoritative
+// in the v2 schema).
+func reconstructPosition(id int64, state string, decisionType, playerOnRoll, dice1, dice2, cubeValue, cubeOwner, score1, score2, hasJacoby, hasBeaver int) Position {
+	var pos Position
+	if isCompactState(state) {
+		pos.Board = decodeBoardCompact(state)
+	} else {
+		json.Unmarshal([]byte(state), &pos)
+	}
+	pos.ID = id
+	pos.DecisionType = decisionType
+	pos.PlayerOnRoll = playerOnRoll
+	pos.Dice = [2]int{dice1, dice2}
+	pos.Cube = Cube{cubeOwner, cubeValue}
+	pos.Score = [2]int{score1, score2}
+	pos.HasJacoby = hasJacoby
+	pos.HasBeaver = hasBeaver
+	return pos
+}
+
+// positionSelectCols is the standard column list for reading a position row.
+// Use with reconstructPosition after scanning the values.
+const positionSelectCols = `id, state, decision_type, player_on_roll, dice_1, dice_2, cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver`
+
+// positionSelectColsP is positionSelectCols with "p." table prefix for JOINs.
+const positionSelectColsP = `p.id, p.state, p.decision_type, p.player_on_roll, p.dice_1, p.dice_2, p.cube_value, p.cube_owner, p.score_1, p.score_2, p.has_jacoby, p.has_beaver`
+
+// scanPositionRow scans a sql.Row / sql.Rows into a Position using the column
+// order from positionSelectCols. NULLs are treated as zero (safe for v2+).
+func scanPositionRow(scanner interface{ Scan(dest ...interface{}) error }) (Position, error) {
+	var id int64
+	var state string
+	var dt, por, d1, d2, cv, co, s1, s2, hj, hb sql.NullInt64
+	err := scanner.Scan(&id, &state, &dt, &por, &d1, &d2, &cv, &co, &s1, &s2, &hj, &hb)
+	if err != nil {
+		return Position{}, err
+	}
+	return reconstructPosition(id, state,
+		int(dt.Int64), int(por.Int64), int(d1.Int64), int(d2.Int64),
+		int(cv.Int64), int(co.Int64), int(s1.Int64), int(s2.Int64),
+		int(hj.Int64), int(hb.Int64)), nil
+}
+
+// fullPositionJSON reconstructs a full Position from DB row values and marshals
+// it to JSON. Used by export functions to produce backwards-compatible state blobs.
+func fullPositionJSON(pos Position) string {
+	data, _ := json.Marshal(pos)
+	return string(data)
+}
+
 func (d *Database) SavePosition(position *Position) (int64, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
@@ -1995,11 +2202,7 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 	// Normalize position for storage - always store from player on roll's perspective (player_on_roll = 0)
 	normalizedPosition := position.NormalizeForStorage()
 
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		fmt.Println("Error marshalling position:", err)
-		return 0, err
-	}
+	compactState := encodeBoardCompact(normalizedPosition.Board)
 
 	cols := populatePositionColumns(position)
 	noContactInt := 0
@@ -2023,7 +2226,7 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		string(positionJSON))
+		compactState)
 	if err != nil {
 		fmt.Println("Error inserting position:", err)
 		return 0, err
@@ -2037,19 +2240,6 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 
 	normalizedPosition.ID = positionID // Update the position ID
 
-	// Update the state with the new ID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		fmt.Println("Error marshalling position with ID:", err)
-		return 0, err
-	}
-
-	_, err = d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-	if err != nil {
-		fmt.Println("Error updating position with ID:", err)
-		return 0, err
-	}
-
 	// Update the original position with the saved ID and normalized state
 	*position = normalizedPosition
 
@@ -2060,13 +2250,30 @@ func (d *Database) UpdatePosition(position Position) error {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	positionJSON, err := json.Marshal(position)
-	if err != nil {
-		fmt.Println("Error marshalling position:", err)
-		return err
+	compactState := encodeBoardCompact(position.Board)
+
+	cols := populatePositionColumns(&position)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
 	}
 
-	_, err = d.db.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), position.ID)
+	_, err := d.db.Exec(`UPDATE position SET state = ?,
+		zobrist_hash=?, decision_type=?, player_on_roll=?, dice_1=?, dice_2=?,
+		cube_value=?, cube_owner=?, score_1=?, score_2=?,
+		has_jacoby=?, has_beaver=?,
+		pip_1=?, pip_2=?, pip_diff=?, off_1=?, off_2=?,
+		back_checkers_1=?, back_checkers_2=?, no_contact=?,
+		occupancy_1=?, occupancy_2=?, point_mask_1=?, point_mask_2=?
+		WHERE id = ?`,
+		compactState,
+		int64(cols.ZobristHash), cols.DecisionType, position.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		position.ID)
 	if err != nil {
 		fmt.Println("Error updating position:", err)
 		return err
@@ -2271,22 +2478,14 @@ func (d *Database) LoadPosition(id int) (*Position, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	var stateJSON string
-
-	err := d.db.QueryRow(`SELECT state from position WHERE id = ?`, id).Scan(&stateJSON)
+	row := d.db.QueryRow(`SELECT `+positionSelectCols+` FROM position WHERE id = ?`, id)
+	pos, err := scanPositionRow(row)
 	if err != nil {
 		fmt.Println("Error loading position:", err)
 		return nil, err
 	}
 
-	var state Position
-	err = json.Unmarshal([]byte(stateJSON), &state)
-	if err != nil {
-		fmt.Println("Error unmarshalling position:", err)
-		return nil, err
-	}
-
-	return &state, nil
+	return &pos, nil
 }
 
 func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
@@ -2409,7 +2608,7 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 	d.mu.Lock()         // Lock the mutex
 	defer d.mu.Unlock() // Unlock the mutex when the function returns
 
-	rows, err := d.db.Query(`SELECT id, state FROM position`)
+	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error loading positions:", err)
 		return nil, err
@@ -2418,19 +2617,11 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 
 	var positions []Position
 	for rows.Next() {
-		var id int64
-		var stateJSON string
-		if err = rows.Scan(&id, &stateJSON); err != nil {
+		position, err := scanPositionRow(rows)
+		if err != nil {
 			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
-
-		var position Position
-		if err = json.Unmarshal([]byte(stateJSON), &position); err != nil {
-			fmt.Println("Error unmarshalling position:", err)
-			return nil, err
-		}
-		position.ID = id // Ensure the ID is set
 		positions = append(positions, position)
 	}
 	if err := rows.Err(); err != nil {
@@ -3111,6 +3302,9 @@ func (d *Database) loadPositionsByFiltersCore(
 	// 2. Execute the single LEFT JOIN query
 	// -----------------------------------------------------------------------
 	query := `SELECT p.id, p.state,
+		p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
+		p.cube_value, p.cube_owner, p.score_1, p.score_2,
+		p.has_jacoby, p.has_beaver,
 		a.id, a.data,
 		a.cube_error, a.best_move_equity_error,
 		a.player1_win_rate, a.player1_gammon_rate, a.player1_backgammon_rate,
@@ -3137,6 +3331,7 @@ func (d *Database) loadPositionsByFiltersCore(
 	for rows.Next() {
 		var posID int64
 		var posJSON string
+		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
 		var anaID sql.NullInt64
 		var anaJSON sql.NullString
 		var cubeError, moveError sql.NullFloat64
@@ -3145,6 +3340,7 @@ func (d *Database) loadPositionsByFiltersCore(
 
 		if err := rows.Scan(
 			&posID, &posJSON,
+			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
 			&anaID, &anaJSON,
 			&cubeError, &moveError,
 			&p1Win, &p1Gammon, &p1BG,
@@ -3154,11 +3350,10 @@ func (d *Database) loadPositionsByFiltersCore(
 			return nil, nil, err
 		}
 
-		var position Position
-		if err := json.Unmarshal([]byte(posJSON), &position); err != nil {
-			return nil, nil, err
-		}
-		position.ID = posID
+		position := reconstructPosition(posID, posJSON,
+			int(pDT.Int64), int(pPOR.Int64), int(pD1.Int64), int(pD2.Int64),
+			int(pCV.Int64), int(pCO.Int64), int(pS1.Int64), int(pS2.Int64),
+			int(pHJ.Int64), int(pHB.Int64))
 
 		// Parse analysis from the JOIN — one unmarshal per row, no extra DB round-trip.
 		var ana *PositionAnalysis
@@ -5041,6 +5236,17 @@ func (d *Database) SaveCommand(command string) error {
 		fmt.Println("Error saving command:", err)
 		return err
 	}
+
+	// Keep only the last 1000 entries to prevent unbounded growth
+	_, _ = d.db.Exec(`
+		DELETE FROM command_history
+		WHERE id NOT IN (
+			SELECT id FROM command_history
+			ORDER BY timestamp DESC
+			LIMIT 1000
+		)
+	`)
+
 	return nil
 }
 
@@ -5776,23 +5982,18 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
 	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
-	currentRows, err := d.db.Query(`SELECT id, state FROM position`)
+	currentRows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error querying current database positions:", err)
 		return nil, err
 	}
 
 	for currentRows.Next() {
-		var currentID int64
-		var currentStateJSON string
-		if err = currentRows.Scan(&currentID, &currentStateJSON); err != nil {
+		currentPosition, err := scanPositionRow(currentRows)
+		if err != nil {
 			continue
 		}
-
-		var currentPosition Position
-		if err = json.Unmarshal([]byte(currentStateJSON), &currentPosition); err != nil {
-			continue
-		}
+		positionID := currentPosition.ID
 
 		// Reset ID for comparison
 		currentPosition.ID = 0
@@ -5800,7 +6001,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
 		}
-		currentPositionsMap[string(currentPositionJSON)] = currentID
+		currentPositionsMap[string(currentPositionJSON)] = positionID
 	}
 	if err := currentRows.Err(); err != nil {
 		return nil, err
@@ -5831,7 +6032,9 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		}
 
 		var importPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
+		if isCompactState(stateJSON) {
+			importPosition.Board = decodeBoardCompact(stateJSON)
+		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
 			fmt.Println("Error unmarshalling position:", err)
 			positionsToSkip++
 			continue
@@ -5993,23 +6196,18 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// OPTIMIZATION: Build a hash map of all current positions ONCE
 	// This converts O(n²) to O(n) complexity
 	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
-	currentRows, err := tx.Query(`SELECT id, state FROM position`)
+	currentRows, err := tx.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
 		fmt.Println("Error querying current database positions:", err)
 		return nil, err
 	}
 
 	for currentRows.Next() {
-		var currentID int64
-		var currentStateJSON string
-		if err = currentRows.Scan(&currentID, &currentStateJSON); err != nil {
+		currentPosition, err := scanPositionRow(currentRows)
+		if err != nil {
 			continue
 		}
-
-		var currentPosition Position
-		if err = json.Unmarshal([]byte(currentStateJSON), &currentPosition); err != nil {
-			continue
-		}
+		positionID := currentPosition.ID
 
 		// Reset ID for comparison
 		currentPosition.ID = 0
@@ -6017,7 +6215,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		if err != nil {
 			return nil, fmt.Errorf("failed to marshal JSON: %w", err)
 		}
-		currentPositionsMap[string(currentPositionJSON)] = currentID
+		currentPositionsMap[string(currentPositionJSON)] = positionID
 	}
 	if err := currentRows.Err(); err != nil {
 		return nil, err
@@ -6053,7 +6251,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		}
 
 		var importPosition Position
-		if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
+		if isCompactState(stateJSON) {
+			importPosition.Board = decodeBoardCompact(stateJSON)
+		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
 			fmt.Println("Error unmarshalling position:", err)
 			continue
 		}
@@ -6154,7 +6354,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			}
 		} else {
 			// Position doesn't exist, add it (using transaction)
-			result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, stateJSON)
+			// Store as full JSON (import DB may not have denormalized columns)
+			fullJSON := fullPositionJSON(importPosition)
+			result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, fullJSON)
 			if err != nil {
 				fmt.Println("Error inserting position:", err)
 				positionsSkipped++
@@ -6166,17 +6368,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				fmt.Println("Error getting last insert ID:", err)
 				positionsSkipped++
 				continue
-			}
-
-			// Update the position ID in the state JSON
-			importPosition.ID = newPositionID
-			updatedStateJSON, err := json.Marshal(importPosition)
-			if err != nil {
-				return nil, fmt.Errorf("failed to marshal JSON: %w", err)
-			}
-			_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedStateJSON), newPositionID)
-			if err != nil {
-				fmt.Println("Error updating position with ID:", err)
 			}
 
 			// Copy analysis if it exists
@@ -6560,15 +6751,11 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		// Reset the ID for the new database
 		position.ID = 0
 
-		// Marshal the position
-		positionJSON, err := json.Marshal(position)
-		if err != nil {
-			fmt.Printf("Error marshalling position %d: %v\n", oldPositionID, err)
-			continue
-		}
+		// Marshal the full position (export uses full JSON for backward compatibility)
+		positionJSON := fullPositionJSON(position)
 
 		// Insert the position into the export database
-		result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+		result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, positionJSON)
 		if err != nil {
 			fmt.Printf("Error inserting position %d into export database: %v\n", oldPositionID, err)
 			continue
@@ -6578,17 +6765,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		if err != nil {
 			fmt.Printf("Error getting last insert ID for position %d: %v\n", oldPositionID, err)
 			continue
-		}
-
-		// Update the position ID in the state JSON
-		position.ID = newPositionID
-		updatedPositionJSON, err := json.Marshal(position)
-		if err != nil {
-			return fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedPositionJSON), newPositionID)
-		if err != nil {
-			fmt.Printf("Error updating position %d with new ID: %v\n", newPositionID, err)
 		}
 
 		// Store the ID mapping
@@ -8149,10 +8325,7 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, cac
 		return id, nil
 	}
 
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, err
-	}
+	compactState := encodeBoardCompact(normalizedPosition.Board)
 
 	noContactInt := 0
 	if cols.NoContact {
@@ -8176,13 +8349,13 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, cac
 		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
 		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
-		string(positionJSON))
+		compactState)
 	if err != nil {
 		return 0, err
 	}
 	rowsAffected, _ := res.RowsAffected()
 
-	// 3. Fetch the id and stored state in a single query.
+	// 3. Fetch the id (state not needed — board is compared via compact string).
 	var positionID int64
 	var storedState string
 	err = tx.QueryRow(`SELECT id, state FROM position WHERE zobrist_hash = ?`, int64(hash)).Scan(&positionID, &storedState)
@@ -8190,30 +8363,22 @@ func (d *Database) savePositionInTxWithCache(tx *sql.Tx, position *Position, cac
 		return 0, fmt.Errorf("failed to fetch position by zobrist_hash: %w", err)
 	}
 
-	if rowsAffected == 1 {
-		// 5. New row: update state JSON to embed the assigned id (backwards-compat).
-		normalizedPosition.ID = positionID
-		positionJSONWithID, err := json.Marshal(normalizedPosition)
-		if err != nil {
-			return 0, fmt.Errorf("failed to marshal JSON: %w", err)
-		}
-		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSONWithID), positionID)
-		if err != nil {
-			return 0, err
-		}
-	} else {
+	if rowsAffected == 0 {
 		// 4. Dedup hit: structural collision guard.
-		// Re-decode stored state (zeroing ID) and compare to incoming normalised position.
-		// A mismatch signals a genuine Zobrist collision (probability ≈ 2⁻⁴⁴).
-		var storedPos Position
-		if jsonErr := json.Unmarshal([]byte(storedState), &storedPos); jsonErr == nil {
-			storedPos.ID = 0
-			storedRecheck, _ := json.Marshal(storedPos)
-			if string(storedRecheck) != string(positionJSON) {
-				fmt.Fprintf(os.Stderr,
-					"WARNING: Zobrist collision for hash %d — stored board differs from incoming; returning existing id %d\n",
-					hash, positionID)
+		// Compare compact board strings — if they differ we have a genuine Zobrist
+		// collision (probability ≈ 2⁻⁴⁴). For legacy JSON state, decode and
+		// re-encode to compact for a fair comparison.
+		storedBoard := storedState
+		if !isCompactState(storedState) {
+			var storedPos Position
+			if jsonErr := json.Unmarshal([]byte(storedState), &storedPos); jsonErr == nil {
+				storedBoard = encodeBoardCompact(storedPos.Board)
 			}
+		}
+		if storedBoard != compactState {
+			fmt.Fprintf(os.Stderr,
+				"WARNING: Zobrist collision for hash %d — stored board differs from incoming; returning existing id %d\n",
+				hash, positionID)
 		}
 	}
 
@@ -12768,9 +12933,12 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 
 	// Save position to database (inline, since caller already holds the mutex)
 	normalizedPosition := pos.NormalizeForStorage()
-	positionJSON, err := json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position: %w", err)
+	compactState := encodeBoardCompact(normalizedPosition.Board)
+
+	cols := populatePositionColumns(pos)
+	noContactInt := 0
+	if cols.NoContact {
+		noContactInt = 1
 	}
 
 	tx, err := d.db.Begin()
@@ -12779,7 +12947,23 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 	}
 	defer tx.Rollback()
 
-	result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, string(positionJSON))
+	result, err := tx.Exec(`
+		INSERT INTO position (
+			zobrist_hash, decision_type, player_on_roll, dice_1, dice_2,
+			cube_value, cube_owner, score_1, score_2,
+			has_jacoby, has_beaver,
+			pip_1, pip_2, pip_diff, off_1, off_2,
+			back_checkers_1, back_checkers_2, no_contact,
+			occupancy_1, occupancy_2, point_mask_1, point_mask_2,
+			state
+		) VALUES (?,?,?,?,?, ?,?,?,?,  ?,?,  ?,?,?,?,?,  ?,?,?,  ?,?,?,?,  ?)`,
+		int64(cols.ZobristHash), cols.DecisionType, normalizedPosition.PlayerOnRoll, cols.Dice1, cols.Dice2,
+		cols.CubeValue, cols.CubeOwner, cols.Score1, cols.Score2,
+		cols.HasJacoby, cols.HasBeaver,
+		cols.Pip1, cols.Pip2, cols.PipDiff, cols.Off1, cols.Off2,
+		cols.BackCheckers1, cols.BackCheckers2, noContactInt,
+		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
+		compactState)
 	if err != nil {
 		return 0, fmt.Errorf("failed to insert position: %w", err)
 	}
@@ -12787,16 +12971,6 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 	positionID, err := result.LastInsertId()
 	if err != nil {
 		return 0, fmt.Errorf("failed to get position ID: %w", err)
-	}
-
-	normalizedPosition.ID = positionID
-	positionJSON, err = json.Marshal(normalizedPosition)
-	if err != nil {
-		return 0, fmt.Errorf("failed to marshal position with ID: %w", err)
-	}
-	_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(positionJSON), positionID)
-	if err != nil {
-		return 0, fmt.Errorf("failed to update position state: %w", err)
 	}
 
 	// Save checker evaluation analysis if available
@@ -13606,6 +13780,9 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			m.player,
 			m.position_id,
 			p.state as position_state,
+			p.decision_type, p.player_on_roll, p.dice_1, p.dice_2,
+			p.cube_value, p.cube_owner, p.score_1, p.score_2,
+			p.has_jacoby, p.has_beaver,
 			COALESCE(m.checker_move, '') as checker_move,
 			COALESCE(m.cube_action, '') as cube_action
 		FROM move m
@@ -13624,20 +13801,21 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 		var moveID, gameID, positionID int64
 		var gameNumber, moveNumber, player int32
 		var moveType, positionState, checkerMove, cubeAction string
+		var pDT, pPOR, pD1, pD2, pCV, pCO, pS1, pS2, pHJ, pHB sql.NullInt64
 
-		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState, &checkerMove, &cubeAction)
+		err := rows.Scan(&moveID, &gameID, &gameNumber, &moveNumber, &moveType, &player, &positionID, &positionState,
+			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
+			&checkerMove, &cubeAction)
 		if err != nil {
 			fmt.Printf("Error scanning move: %v\n", err)
 			continue
 		}
 
-		// Unmarshal position
-		var position Position
-		err = json.Unmarshal([]byte(positionState), &position)
-		if err != nil {
-			fmt.Printf("Error unmarshalling position: %v\n", err)
-			continue
-		}
+		// Reconstruct position from compact state + denormalized columns
+		position := reconstructPosition(positionID, positionState,
+			int(pDT.Int64), int(pPOR.Int64), int(pD1.Int64), int(pD2.Int64),
+			int(pCV.Int64), int(pCO.Int64), int(pS1.Int64), int(pS2.Int64),
+			int(pHJ.Int64), int(pHB.Int64))
 
 		// Convert player from XG encoding (-1, 1) to blunderDB encoding (0, 1)
 		playerBlunderDB := convertXGPlayerToBlunderDB(player)
@@ -14069,7 +14247,7 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 	}
 
 	rows, err := d.db.Query(`
-		SELECT p.id, p.state
+		SELECT `+positionSelectColsP+`
 		FROM position p
 		INNER JOIN collection_position cp ON p.id = cp.position_id
 		WHERE cp.collection_id = ?
@@ -14082,19 +14260,10 @@ func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error
 
 	var positions []Position
 	for rows.Next() {
-		var id int64
-		var state string
-		err := rows.Scan(&id, &state)
+		position, err := scanPositionRow(rows)
 		if err != nil {
 			continue
 		}
-
-		var position Position
-		err = json.Unmarshal([]byte(state), &position)
-		if err != nil {
-			continue
-		}
-		position.ID = id
 		positions = append(positions, position)
 	}
 	if err := rows.Err(); err != nil {
@@ -14505,13 +14674,12 @@ func (d *Database) ExportCollections(exportPath string, collectionIDs []int64, m
 	// Export positions and create ID mapping
 	oldToNewID := make(map[int64]int64)
 	for _, posID := range positionIDs {
-		var state string
-		err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, posID).Scan(&state)
+		pos, err := d.loadPositionByIDUnlocked(posID)
 		if err != nil {
 			continue
 		}
 
-		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, state)
+		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, fullPositionJSON(pos))
 		if err != nil {
 			continue
 		}
@@ -14964,53 +15132,21 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 		return fmt.Errorf("failed to swap move players: %w", err)
 	}
 
-	// 4. Update position state JSON to swap scores and cube owner
-	// Positions are stored normalized (player_on_roll = 0), but Score and Cube.Owner
-	// reflect the original player assignment and must be swapped.
-	posRows, err := tx.Query(`
-		SELECT DISTINCT p.id, p.state
-		FROM position p
-		INNER JOIN move m ON m.position_id = p.id
-		INNER JOIN game g ON m.game_id = g.id
-		WHERE g.match_id = ?
+	// 4. Update position denormalized columns to swap scores and cube owner.
+	// The board (state) is unchanged; only the score_1/score_2 and cube_owner
+	// columns need updating.
+	_, err = tx.Exec(`
+		UPDATE position SET
+			score_1 = score_2, score_2 = score_1,
+			cube_owner = CASE WHEN cube_owner = -1 THEN -1 WHEN cube_owner IS NULL THEN NULL ELSE 1 - cube_owner END
+		WHERE id IN (
+			SELECT DISTINCT m.position_id FROM move m
+			INNER JOIN game g ON m.game_id = g.id
+			WHERE g.match_id = ?
+		)
 	`, matchID)
 	if err != nil {
-		return fmt.Errorf("failed to query positions for swap: %w", err)
-	}
-	defer posRows.Close()
-
-	for posRows.Next() {
-		var posID int64
-		var stateJSON string
-		if err := posRows.Scan(&posID, &stateJSON); err != nil {
-			return fmt.Errorf("failed to scan position %d: %w", posID, err)
-		}
-
-		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-			return fmt.Errorf("failed to unmarshal position %d: %w", posID, err)
-		}
-
-		// Swap scores
-		pos.Score[0], pos.Score[1] = pos.Score[1], pos.Score[0]
-
-		// Flip cube owner (if not centered)
-		if pos.Cube.Owner != None {
-			pos.Cube.Owner = 1 - pos.Cube.Owner
-		}
-
-		updatedJSON, err := json.Marshal(pos)
-		if err != nil {
-			return fmt.Errorf("failed to marshal updated position %d: %w", posID, err)
-		}
-
-		_, err = tx.Exec(`UPDATE position SET state = ? WHERE id = ?`, string(updatedJSON), posID)
-		if err != nil {
-			return fmt.Errorf("failed to update position %d: %w", posID, err)
-		}
-	}
-	if err := posRows.Err(); err != nil {
-		return fmt.Errorf("error iterating positions for swap: %w", err)
+		return fmt.Errorf("failed to swap position scores/cube: %w", err)
 	}
 
 	return tx.Commit()
@@ -15310,13 +15446,12 @@ func (d *Database) ExportTournaments(exportPath string, tournamentIDs []int64, m
 	// Export positions
 	oldToNewID := make(map[int64]int64)
 	for _, posID := range positionIDs {
-		var state string
-		err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, posID).Scan(&state)
+		pos, err := d.loadPositionByIDUnlocked(posID)
 		if err != nil {
 			continue
 		}
 
-		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, state)
+		result, err := exportDB.Exec(`INSERT INTO position (state) VALUES (?)`, fullPositionJSON(pos))
 		if err != nil {
 			continue
 		}
@@ -15739,7 +15874,7 @@ func (d *Database) GetAnkiDeckPositions(deckID int64) ([]Position, error) {
 	defer d.mu.Unlock()
 
 	rows, err := d.db.Query(`
-		SELECT p.id, p.state
+		SELECT `+positionSelectColsP+`
 		FROM anki_card ac
 		JOIN position p ON p.id = ac.position_id
 		WHERE ac.deck_id = ?
@@ -15752,16 +15887,10 @@ func (d *Database) GetAnkiDeckPositions(deckID int64) ([]Position, error) {
 
 	var positions []Position
 	for rows.Next() {
-		var id int64
-		var stateJSON string
-		if err := rows.Scan(&id, &stateJSON); err != nil {
+		pos, err := scanPositionRow(rows)
+		if err != nil {
 			return nil, err
 		}
-		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-			return nil, err
-		}
-		pos.ID = id
 		positions = append(positions, pos)
 	}
 	return positions, rows.Err()
@@ -15842,19 +15971,8 @@ func (d *Database) GetNextAnkiCard(deckID int64) (*AnkiReviewCard, error) {
 
 // loadPositionByIDUnlocked loads a position without locking (caller must hold lock)
 func (d *Database) loadPositionByIDUnlocked(positionID int64) (Position, error) {
-	var pos Position
-	var stateJSON string
-
-	err := d.db.QueryRow(`SELECT state FROM position WHERE id = ?`, positionID).Scan(&stateJSON)
-	if err != nil {
-		return pos, err
-	}
-
-	if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-		return pos, fmt.Errorf("error unmarshalling position: %w", err)
-	}
-
-	return pos, nil
+	row := d.db.QueryRow(`SELECT `+positionSelectCols+` FROM position WHERE id = ?`, positionID)
+	return scanPositionRow(row)
 }
 
 // ReviewAnkiCard submits a review rating for a card and updates its FSRS state

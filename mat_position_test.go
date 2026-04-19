@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -78,7 +77,7 @@ func TestCompareTXTvsXGPositions(t *testing.T) {
 				MoveStr string
 			}
 			rows.Scan(&stateJSON, &r.MoveNum, &r.Player, &r.Dice1, &r.Dice2, &r.MoveStr)
-			json.Unmarshal([]byte(stateJSON), &r.Pos)
+			testUnmarshalPositionState(stateJSON, &r.Pos)
 			results = append(results, r)
 		}
 		return results
@@ -225,7 +224,7 @@ func TestCompareMATvsXGPositions(t *testing.T) {
 				MoveStr string
 			}
 			rows.Scan(&stateJSON, &r.MoveNum, &r.Player, &r.Dice1, &r.Dice2, &r.MoveStr)
-			json.Unmarshal([]byte(stateJSON), &r.Pos)
+			testUnmarshalPositionState(stateJSON, &r.Pos)
 			results = append(results, r)
 		}
 		return results
@@ -345,7 +344,7 @@ func TestImportMatchFromText(t *testing.T) {
 				rows.Scan(&stateJSON, &moveNum, &gameNum)
 
 				var pos Position
-				json.Unmarshal([]byte(stateJSON), &pos)
+				testUnmarshalPositionState(stateJSON, &pos)
 
 				totalPositions++
 

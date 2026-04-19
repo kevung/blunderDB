@@ -107,10 +107,18 @@ func legacyLoadPositionsByFilters(
 			return nil, err
 		}
 		var position Position
-		if err = jsonUnmarshal(stateJSON, &position); err != nil {
-			return nil, err
+		if isCompactState(stateJSON) {
+			// Need to load full position via the proper path
+			position, err = d.loadPositionByIDUnlocked(id)
+			if err != nil {
+				return nil, err
+			}
+		} else {
+			if err = jsonUnmarshal(stateJSON, &position); err != nil {
+				return nil, err
+			}
+			position.ID = id
 		}
-		position.ID = id
 
 		matchesFilters := func(pos Position) bool {
 			if restrictedIDs != nil && !restrictedIDs[pos.ID] {
