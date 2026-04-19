@@ -196,6 +196,8 @@ export function SearchComments(arg1:string):Promise<Array<main.CommentEntry>>;
 
 export function SetMatchTournamentByName(arg1:number,arg2:string):Promise<void>;
 
+export function SetMigrationProgress(arg1:any):Promise<void>;
+
 export function SetupDatabase(arg1:string):Promise<void>;
 
 export function SwapMatchPlayers(arg1:number):Promise<void>;
