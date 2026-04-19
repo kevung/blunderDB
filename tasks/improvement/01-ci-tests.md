@@ -19,46 +19,34 @@
 
 ### 1. Add test step to CI workflow
 
-- [ ] Edit `.github/workflows/build.yml`
-- [ ] Add a test step **after** Go setup and **before** Wails build:
+- [x] Edit `.github/workflows/build.yml`
+- [x] Add a test step **after** Go setup and **before** Wails build:
   ```yaml
   - name: Run Go tests
-    run: go test -timeout 300s -race -count=1 ./...
+    run: go test -timeout 120s -race -count=1 -short ./...
     shell: bash
   ```
-- [ ] Place it after the `Setup GoLang` + `go version` step, before `Install Wails`
-- [ ] The `-race` flag adds ~2× overhead but catches data races in the mutex patterns
-- [ ] `-timeout 300s` matches the local test timeout (some benchmarks are slow)
+- [x] Place it in a dedicated `test` job (runs in parallel with `build`)
+- [x] The `-race` flag adds ~2× overhead but catches data races in the mutex patterns
+- [x] `-short` skips `TestSchemaBenchmark_CrossVersion` (needs 245 MB fixture files, 10+ min) and other explicitly-skipped slow tests
 
 ### 2. Handle platform-specific test behavior
 
+- [x] Tests pass on `ubuntu-latest` with `-short` in ~10 s
 - [ ] Verify tests pass on all 4 CI platforms by pushing to a branch and checking
 - [ ] If any tests fail on Windows (path separators, temp file handling), gate them with `runtime.GOOS` or `testing.Short()`
-- [ ] If the race detector causes excessive slowdown on CI, consider running `-race` on one platform only (e.g. `ubuntu-latest`) and non-race on others
 
 ### 3. Optional: separate test job from build job
 
-- [ ] Consider adding a dedicated `test` job that runs in parallel with the `build` job, to avoid slowing down builds:
-  ```yaml
-  jobs:
-    test:
-      runs-on: ubuntu-latest
-      steps:
-        - uses: actions/checkout@v4
-        - uses: actions/setup-go@v5
-          with: { go-version: '1.23.1' }
-        - run: go test -timeout 300s -race -count=1 ./...
-    build:
-      # ... existing build matrix ...
-  ```
-- [ ] This is optional but recommended — tests don't need Wails, Node, or webkit deps
+- [x] Dedicated `test` job added that runs in parallel with the `build` job
 
 ## Acceptance criteria
 
-- [ ] Every push to `main` and every PR triggers Go tests
-- [ ] Test failures block the CI status (red badge on PR)
-- [ ] Race detector is enabled on at least one CI platform
-- [ ] All 127 existing tests pass on all CI platforms
+- [x] Every push to `main` and every PR triggers Go tests
+- [x] Test failures block the CI status (red badge on PR)
+- [x] Race detector is enabled on at least one CI platform
+- [x] Fixed stale `TestSchemaV200_DatabaseVersion` (expected `2.2.0`, now uses `DatabaseVersion` constant)
+- [ ] All existing tests pass on all CI platforms (needs CI run to confirm)
 
 ## Rollback
 

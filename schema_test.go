@@ -131,7 +131,7 @@ func TestSchemaV200_SavePositionColumns(t *testing.T) {
 	}
 }
 
-// TestSchemaV200_DatabaseVersion verifies that SetupDatabase writes DatabaseVersion 2.0.0.
+// TestSchemaV200_DatabaseVersion verifies that SetupDatabase writes the current DatabaseVersion.
 func TestSchemaV200_DatabaseVersion(t *testing.T) {
 	d := NewDatabase()
 	if err := d.SetupDatabase(":memory:"); err != nil {
@@ -143,7 +143,7 @@ func TestSchemaV200_DatabaseVersion(t *testing.T) {
 	if err := d.db.QueryRow(`SELECT value FROM metadata WHERE key='database_version'`).Scan(&version); err != nil {
 		t.Fatalf("could not read version: %v", err)
 	}
-	if version != "2.2.0" {
-		t.Errorf("expected DatabaseVersion 2.2.0, got %s", version)
+	if version != DatabaseVersion {
+		t.Errorf("expected DatabaseVersion %s, got %s", DatabaseVersion, version)
 	}
 }
