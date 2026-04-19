@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-29 10:21+0200\n"
+"POT-Creation-Date: 2026-04-20 00:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -179,7 +179,7 @@ msgstr ""
 msgid "Afficher les métadonnées de la position."
 msgstr ""
 
-#: ../../source/raccourcis.rst:46
+#: ../../source/raccourcis.rst:48
 msgid "Navigation"
 msgstr ""
 
@@ -247,7 +247,7 @@ msgstr ""
 msgid "Charger une position aléatoire."
 msgstr ""
 
-#: ../../source/raccourcis.rst:65
+#: ../../source/raccourcis.rst:67
 msgid "Affichage"
 msgstr ""
 
@@ -275,7 +275,7 @@ msgstr ""
 msgid "Afficher/cacher le compte de course."
 msgstr ""
 
-#: ../../source/raccourcis.rst:79
+#: ../../source/raccourcis.rst:81
 msgid "Actions"
 msgstr ""
 
@@ -295,7 +295,7 @@ msgstr ""
 msgid "Ouvrir la ligne de commande."
 msgstr ""
 
-#: ../../source/raccourcis.rst:92
+#: ../../source/raccourcis.rst:94
 msgid "Outils"
 msgstr ""
 
@@ -320,7 +320,7 @@ msgid "CTRL-K"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "Afficher/cacher la bibliothèque de filtres."
+msgid "Afficher/cacher le panneau Anki (répétition espacée)."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -371,7 +371,7 @@ msgstr ""
 msgid "Afficher/cacher l'aide."
 msgstr ""
 
-#: ../../source/raccourcis.rst:112
+#: ../../source/raccourcis.rst:114
 msgid "Ligne de commande"
 msgstr ""
 
@@ -391,7 +391,7 @@ msgstr ""
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr ""
 
-#: ../../source/raccourcis.rst:125
+#: ../../source/raccourcis.rst:127
 msgid "Panneau historique de recherche"
 msgstr ""
 
@@ -429,7 +429,7 @@ msgid ""
 "panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:141
+#: ../../source/raccourcis.rst:143
 msgid "Panneau bibliothèque de filtres"
 msgstr ""
 
@@ -453,7 +453,7 @@ msgstr ""
 msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:157
+#: ../../source/raccourcis.rst:159
 msgid "Panneau d'analyse"
 msgstr ""
 
@@ -483,7 +483,7 @@ msgstr ""
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:173
+#: ../../source/raccourcis.rst:175
 msgid "Panneau des matchs"
 msgstr ""
 
@@ -517,6 +517,46 @@ msgstr ""
 
 #: ../../source/raccourcis.rst:1
 msgid "Désélectionner/fermer le panneau."
+msgstr ""
+
+#: ../../source/raccourcis.rst:193
+msgid "Panneau Anki (répétition espacée)"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "1"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : À revoir (échec, revoir bientôt)."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "2"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Difficile."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "3"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Bien."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "4"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Facile."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
 msgstr ""
 
 #~ msgid "Raccourcis modaux"
@@ -748,5 +788,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Entrer en mode MATCH."
+#~ msgstr ""
+
+#~ msgid "Afficher/cacher la bibliothèque de filtres."
 #~ msgstr ""
 

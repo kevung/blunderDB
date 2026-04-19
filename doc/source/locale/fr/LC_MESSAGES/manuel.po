@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-29 10:21+0200\n"
+"POT-Creation-Date: 2026-04-20 00:25+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -65,215 +65,219 @@ msgid ""
 "avec l'analyse complète via **Ctrl+X Ctrl+X**,"
 msgstr ""
 
-#: ../../source/manuel.rst:28
+#: ../../source/manuel.rst:30
 msgid "supprimer une position existante,"
 msgstr ""
 
-#: ../../source/manuel.rst:30
+#: ../../source/manuel.rst:32
 msgid "rechercher une ou plusieurs positions,"
 msgstr ""
 
-#: ../../source/manuel.rst:32
+#: ../../source/manuel.rst:34
 msgid ""
 "importer des matchs depuis différentes sources (XG, GNUbg, BGBlitz, "
 "Jellyfish), y compris les commentaires depuis les fichiers XG,"
 msgstr ""
 
-#: ../../source/manuel.rst:34
+#: ../../source/manuel.rst:36
 msgid "naviguer dans les coups d'un match importé,"
 msgstr ""
 
-#: ../../source/manuel.rst:36
+#: ../../source/manuel.rst:38
 msgid "organiser les positions en collections,"
 msgstr ""
 
-#: ../../source/manuel.rst:38
+#: ../../source/manuel.rst:40
 msgid "organiser les matchs en tournois."
 msgstr ""
 
-#: ../../source/manuel.rst:40
+#: ../../source/manuel.rst:42
 msgid ""
 "L'utilisateur peut étiqueter librement les positions à l'aide de tags et "
 "les annoter via des commentaires."
 msgstr ""
 
-#: ../../source/manuel.rst:44
+#: ../../source/manuel.rst:46
 msgid "Description de l'interface"
 msgstr ""
 
-#: ../../source/manuel.rst:46
+#: ../../source/manuel.rst:48
 msgid "L'interface de blunderDB est constituée de haut en bas par:"
 msgstr ""
 
-#: ../../source/manuel.rst:48
+#: ../../source/manuel.rst:50
 msgid ""
 "[en haut] la barre d'outils, qui rassemble l'ensemble des principales "
 "opérations réalisables sur la base de données,"
 msgstr ""
 
-#: ../../source/manuel.rst:51
+#: ../../source/manuel.rst:53
 msgid ""
 "[au milieu] la zone d'affichage principale, qui permet d'afficher ou "
 "d'éditer des positions de backgammon,"
 msgstr ""
 
-#: ../../source/manuel.rst:54
+#: ../../source/manuel.rst:56
 msgid ""
 "[en bas] la barre d'état, qui présente différentes informations sur la "
 "base de données ou la position courante, et intègre la ligne de commande."
 msgstr ""
 
-#: ../../source/manuel.rst:57
+#: ../../source/manuel.rst:59
 msgid "Des panneaux peuvent être affichés pour:"
 msgstr ""
 
-#: ../../source/manuel.rst:59
+#: ../../source/manuel.rst:61
 msgid ""
 "afficher les données d'analyse associées à la position courante issues "
 "d'eXtreme Gammon (XG), GNUbg, ou BGBlitz,"
 msgstr ""
 
-#: ../../source/manuel.rst:62
+#: ../../source/manuel.rst:64
 msgid "afficher, ajouter ou modifier des commentaires,"
 msgstr ""
 
-#: ../../source/manuel.rst:64
+#: ../../source/manuel.rst:66
 msgid ""
 "afficher la liste des matchs importés et naviguer dans les coups d'un "
 "match (panneau matchs),"
 msgstr ""
 
-#: ../../source/manuel.rst:66
+#: ../../source/manuel.rst:68
 msgid "afficher et gérer les collections de positions (panneau collections),"
 msgstr ""
 
-#: ../../source/manuel.rst:68
+#: ../../source/manuel.rst:70
+msgid "étudier les positions par répétition espacée (panneau Anki),"
+msgstr ""
+
+#: ../../source/manuel.rst:72
 msgid "afficher et gérer les tournois (panneau tournois),"
 msgstr ""
 
-#: ../../source/manuel.rst:70
+#: ../../source/manuel.rst:74
 msgid ""
 "calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau "
 "EPC),"
 msgstr ""
 
-#: ../../source/manuel.rst:72
+#: ../../source/manuel.rst:76
 msgid "afficher les métadonnées de la base de données (panneau métadonnées),"
 msgstr ""
 
-#: ../../source/manuel.rst:74
+#: ../../source/manuel.rst:78
 msgid "afficher la bibliothèque de filtres,"
 msgstr ""
 
-#: ../../source/manuel.rst:76
+#: ../../source/manuel.rst:80
 msgid "afficher l'historique des recherches,"
 msgstr ""
 
-#: ../../source/manuel.rst:78
+#: ../../source/manuel.rst:82
 msgid "afficher le journal des opérations (panneau log)."
 msgstr ""
 
-#: ../../source/manuel.rst:80
+#: ../../source/manuel.rst:84
 msgid "Des fenêtres modales peuvent s'afficher pour:"
 msgstr ""
 
-#: ../../source/manuel.rst:82
+#: ../../source/manuel.rst:86
 msgid "afficher l'aide de blunderDB,"
 msgstr ""
 
-#: ../../source/manuel.rst:84
+#: ../../source/manuel.rst:88
 msgid "paramétrer l'export de la base de données,"
 msgstr ""
 
-#: ../../source/manuel.rst:86
+#: ../../source/manuel.rst:90
 msgid "afficher les métadonnées de la base de données."
 msgstr ""
 
-#: ../../source/manuel.rst:88
+#: ../../source/manuel.rst:92
 msgid "La zone d'affichage principale met à disposition à l'utilisateur:"
 msgstr ""
 
-#: ../../source/manuel.rst:90
+#: ../../source/manuel.rst:94
 msgid "un board afin d'afficher ou d'éditer une position de backgammon,"
 msgstr ""
 
-#: ../../source/manuel.rst:92
+#: ../../source/manuel.rst:96
 msgid "le niveau et le propriétaire du cube,"
 msgstr ""
 
-#: ../../source/manuel.rst:94
+#: ../../source/manuel.rst:98
 msgid "le compte de course de chaque joueur,"
 msgstr ""
 
-#: ../../source/manuel.rst:96
+#: ../../source/manuel.rst:100
 msgid "le score de chaque joueur,"
 msgstr ""
 
-#: ../../source/manuel.rst:98
+#: ../../source/manuel.rst:102
 msgid ""
 "les dés à jouer. Si aucune valeur n'est affichée sur les dés, la position"
 " des dés indique quel joueur a le trait et que la position est une "
 "décision de cube."
 msgstr ""
 
-#: ../../source/manuel.rst:102
+#: ../../source/manuel.rst:106
 msgid ""
 "La barre d'état est structurée de gauche à droite par les informations "
 "suivantes:"
 msgstr ""
 
-#: ../../source/manuel.rst:105
+#: ../../source/manuel.rst:109
 msgid "la ligne de commande, accessible en appuyant sur la touche *ESPACE*,"
 msgstr ""
 
-#: ../../source/manuel.rst:107
+#: ../../source/manuel.rst:111
 msgid "un message d'information lié à une opération réalisée par l'utilisateur,"
 msgstr ""
 
-#: ../../source/manuel.rst:109
+#: ../../source/manuel.rst:113
 msgid ""
 "l'index de la position courante, suivi du nombre de positions dans la "
 "bibliothèque courante (ou les informations de coup/partie lors de la "
 "navigation dans un match)."
 msgstr ""
 
-#: ../../source/manuel.rst:113
+#: ../../source/manuel.rst:117
 msgid ""
 "Dans le cas de positions issues d'une recherche par l'utilisateur, le "
 "nombre de positions indiqué dans la barre d'état correspond au nombre de "
 "positions filtrées."
 msgstr ""
 
-#: ../../source/manuel.rst:120
+#: ../../source/manuel.rst:124
 msgid "Navigation dans les positions"
 msgstr ""
 
-#: ../../source/manuel.rst:122
+#: ../../source/manuel.rst:126
 msgid "Par défaut, blunderDB permet de:"
 msgstr ""
 
-#: ../../source/manuel.rst:124
+#: ../../source/manuel.rst:128
 msgid "faire défiler les différentes positions de la bibliothèque courante,"
 msgstr ""
 
-#: ../../source/manuel.rst:126
+#: ../../source/manuel.rst:130
 msgid "afficher les informations d'analyse associées à une position,"
 msgstr ""
 
-#: ../../source/manuel.rst:128
+#: ../../source/manuel.rst:132
 msgid "afficher, ajouter et modifier les commentaires d'une position."
 msgstr ""
 
-#: ../../source/manuel.rst:130 ../../source/manuel.rst:143
-#: ../../source/manuel.rst:202
+#: ../../source/manuel.rst:134 ../../source/manuel.rst:147
+#: ../../source/manuel.rst:206
 msgid "Se référer à :ref:`raccourcis` pour les raccourcis disponibles."
 msgstr ""
 
-#: ../../source/manuel.rst:135
+#: ../../source/manuel.rst:139
 msgid "Édition de positions"
 msgstr ""
 
-#: ../../source/manuel.rst:137
+#: ../../source/manuel.rst:141
 msgid ""
 "L'appui sur la touche *TAB* ouvre le panneau de recherche et permet "
 "d'éditer une position sur le plateau pour l'ajouter à la base de données "
@@ -282,11 +286,11 @@ msgid ""
 "l'aide de la souris (voir :ref:`guide_edit_position`)."
 msgstr ""
 
-#: ../../source/manuel.rst:148
+#: ../../source/manuel.rst:152
 msgid "La ligne de commande"
 msgstr ""
 
-#: ../../source/manuel.rst:150
+#: ../../source/manuel.rst:154
 msgid ""
 "La ligne de commande, intégrée dans la barre d'état, permet de réaliser "
 "l'ensemble des fonctionalités de blunderDB disponibles à l'interface "
@@ -298,14 +302,14 @@ msgid ""
 "notamment pour les fonctionnalités de recherche de positions."
 msgstr ""
 
-#: ../../source/manuel.rst:159
+#: ../../source/manuel.rst:163
 msgid ""
 "Pour ouvrir la ligne de commande, appuyer sur la touche *ESPACE*. Pour "
 "envoyer une requête et fermer la ligne de commande, appuyer sur la touche"
 " *ENTREE*."
 msgstr ""
 
-#: ../../source/manuel.rst:163
+#: ../../source/manuel.rst:167
 msgid ""
 "blunderDB exécute les requêtes envoyées par l'utilisateur sous réserve "
 "qu'elles soient valides et modifie immédiatement l'état de la base de "
@@ -313,7 +317,7 @@ msgid ""
 " la part de l'utilisateur."
 msgstr ""
 
-#: ../../source/manuel.rst:168
+#: ../../source/manuel.rst:172
 msgid ""
 "Pour affiner une recherche parmi les positions actuellement filtrées, "
 "utiliser la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss "
@@ -322,17 +326,17 @@ msgid ""
 "\"Search in current results\" pour la même fonctionnalité."
 msgstr ""
 
-#: ../../source/manuel.rst:174
+#: ../../source/manuel.rst:178
 msgid ""
 "Se référer à la :numref:`cmd_mode` pour la liste de commandes disponible "
 "en ligne de commande."
 msgstr ""
 
-#: ../../source/manuel.rst:180
+#: ../../source/manuel.rst:184
 msgid "Navigation dans les matchs"
 msgstr ""
 
-#: ../../source/manuel.rst:182
+#: ../../source/manuel.rst:186
 msgid ""
 "La navigation dans les matchs permet de parcourir les coups d'un match "
 "importé. Elle est activée depuis le panneau des matchs (*CTRL-T*) en "
@@ -341,43 +345,43 @@ msgid ""
 "visité."
 msgstr ""
 
-#: ../../source/manuel.rst:187
+#: ../../source/manuel.rst:191
 msgid "L'utilisateur peut:"
 msgstr ""
 
-#: ../../source/manuel.rst:189
+#: ../../source/manuel.rst:193
 msgid ""
 "parcourir les coups d'un match en utilisant les touches *GAUCHE* et "
 "*DROITE*,"
 msgstr ""
 
-#: ../../source/manuel.rst:191
+#: ../../source/manuel.rst:195
 msgid "passer d'une partie à l'autre à l'aide des touches *PageUp* et *PageDown*,"
 msgstr ""
 
-#: ../../source/manuel.rst:193
+#: ../../source/manuel.rst:197
 msgid "afficher l'analyse des coups (pions et cube) en appuyant sur *CTRL-L*,"
 msgstr ""
 
-#: ../../source/manuel.rst:195
+#: ../../source/manuel.rst:199
 msgid "basculer entre l'analyse des coups de pions et du cube avec la touche *d*,"
 msgstr ""
 
-#: ../../source/manuel.rst:197
+#: ../../source/manuel.rst:201
 msgid "voir le coup effectivement joué mis en évidence dans l'analyse."
 msgstr ""
 
-#: ../../source/manuel.rst:199
+#: ../../source/manuel.rst:203
 msgid ""
 "La dernière position visitée dans chaque match est mémorisée et restaurée"
 " automatiquement."
 msgstr ""
 
-#: ../../source/manuel.rst:207
+#: ../../source/manuel.rst:211
 msgid "Calculateur EPC"
 msgstr ""
 
-#: ../../source/manuel.rst:209
+#: ../../source/manuel.rst:213
 msgid ""
 "Le panneau EPC permet de calculer l'EPC (Effective Pip Count) d'une "
 "position de bearoff. Il est activé en appuyant *CTRL-E*, en cliquant sur "
@@ -385,67 +389,111 @@ msgid ""
 "``epc``."
 msgstr ""
 
-#: ../../source/manuel.rst:213
+#: ../../source/manuel.rst:217
 msgid ""
 "Dans ce panneau, l'utilisateur édite la position des pions dans le jan (6"
 " derniers points) et les informations suivantes sont affichées en temps "
 "réel dans le panneau EPC dédié pour chaque joueur:"
 msgstr ""
 
-#: ../../source/manuel.rst:217
+#: ../../source/manuel.rst:221
 msgid "l'EPC (Effective Pip Count),"
 msgstr ""
 
-#: ../../source/manuel.rst:219
+#: ../../source/manuel.rst:223
 msgid "le nombre moyen de lancers nécessaires (Mean Rolls),"
 msgstr ""
 
-#: ../../source/manuel.rst:221
+#: ../../source/manuel.rst:225
 msgid "l'écart type (Standard Deviation),"
 msgstr ""
 
-#: ../../source/manuel.rst:223
+#: ../../source/manuel.rst:227
 msgid "le pip count,"
 msgstr ""
 
-#: ../../source/manuel.rst:225
+#: ../../source/manuel.rst:229
 msgid "le wastage (différence entre l'EPC et le pip count)."
 msgstr ""
 
-#: ../../source/manuel.rst:227
+#: ../../source/manuel.rst:231
 msgid ""
 "Lorsque les deux joueurs ont des pions dans leur jan, une section de "
 "comparaison affiche les différences d'EPC et de pip count."
 msgstr ""
 
-#: ../../source/manuel.rst:230
+#: ../../source/manuel.rst:234
 msgid ""
 "Pour quitter le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un "
 "autre onglet."
 msgstr ""
 
-#: ../../source/manuel.rst:233
+#: ../../source/manuel.rst:237
 msgid ""
 "Le calcul repose sur la base de données interne de bearoff à 6 points de "
 "GNUbg."
 msgstr ""
 
-#: ../../source/manuel.rst:239
+#: ../../source/manuel.rst:243
 msgid "Navigation dans les collections"
 msgstr ""
 
-#: ../../source/manuel.rst:241
+#: ../../source/manuel.rst:245
 msgid ""
 "La navigation dans les collections permet de parcourir les positions "
 "d'une collection. Elle est activée en double-cliquant sur une collection "
 "dans le panneau des collections (*CTRL-B*)."
 msgstr ""
 
-#: ../../source/manuel.rst:245
+#: ../../source/manuel.rst:249
 msgid ""
 "L'utilisateur peut naviguer parmi les positions de la collection en "
 "utilisant les touches *GAUCHE* et *DROITE*. L'ordre des collections et "
 "des positions dans les collections peut être modifié par glisser-déposer."
+msgstr ""
+
+#: ../../source/manuel.rst:256
+msgid "Répétition espacée (Anki)"
+msgstr ""
+
+#: ../../source/manuel.rst:258
+msgid ""
+"Le panneau Anki (*CTRL-K*) permet d'étudier des positions par répétition "
+"espacée en utilisant l'algorithme FSRS. L'utilisateur peut créer des "
+"paquets à partir de collections ou de résultats de recherche."
+msgstr ""
+
+#: ../../source/manuel.rst:262
+msgid ""
+"**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à "
+"partir d'une collection ou des résultats de recherche courants. Les "
+"paquets basés sur une recherche se synchronisent automatiquement à "
+"l'activation de l'onglet Anki."
+msgstr ""
+
+#: ../../source/manuel.rst:266
+msgid ""
+"**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou "
+"double-cliquez sur un paquet) pour commencer la révision des cartes dues."
+" Chaque carte affiche la position correspondante sur le plateau. Évaluez "
+"votre rappel avec les touches *1* (À revoir), *2* (Difficile), *3* "
+"(Bien), ou *4* (Facile). Appuyez sur *Esc* pour arrêter et revenir à la "
+"liste des paquets."
+msgstr ""
+
+#: ../../source/manuel.rst:272
+msgid ""
+"**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à "
+"tout moment avec *Esc*. Le bouton change en *Resume* et affiche votre "
+"progression. Cliquez dessus pour reprendre là où vous vous êtes arrêté."
+msgstr ""
+
+#: ../../source/manuel.rst:276
+msgid ""
+"**Gestion des paquets :** Utilisez les boutons d'action pour renommer, "
+"synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS"
+" (rétention cible, intervalle maximum, aléa) peuvent être configurés par "
+"paquet dans les Paramètres (icône engrenage)."
 msgstr ""
 
 #~ msgid ""

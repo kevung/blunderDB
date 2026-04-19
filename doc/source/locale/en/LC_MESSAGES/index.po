@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-29 10:21+0200\n"
+"POT-Creation-Date: 2026-04-20 00:25+0200\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -371,7 +371,6 @@ msgid "Ajout de filtres par match et par tournoi."
 msgstr "Add match and tournament filters."
 
 #: ../../source/index.rst:5
-
 msgid ""
 "Effacement automatique du plateau lors de l'ouverture du panneau de "
 "recherche."
@@ -398,7 +397,6 @@ msgid "28/03/2026"
 msgstr "March 28, 2026"
 
 #: ../../source/index.rst:1
-
 msgid ""
 "Simplification de l'interface: la navigation dans les matchs et les "
 "collections se fait directement via les panneaux."
@@ -447,10 +445,8 @@ msgid "30/03/2026"
 msgstr "March 30, 2026"
 
 #: ../../source/index.rst:1
-msgid ""
-"Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
-msgstr ""
-"Dedicated Anki panel for spaced repetition study (FSRS algorithm)."
+msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
+msgstr "Dedicated Anki panel for spaced repetition study (FSRS algorithm)."
 
 #: ../../source/index.rst:3
 msgid "Import des commentaires depuis les fichiers XG."
@@ -472,15 +468,39 @@ msgstr ""
 "Export position as PNG image to clipboard (board only via Ctrl+X, or "
 "board with analysis via Ctrl+X Ctrl+X)."
 
-#: ../../source/index.rst:134
+#: ../../source/index.rst:1
+msgid "0.16.0"
+msgstr "0.16.0"
+
+#: ../../source/index.rst:1
+msgid "18/04/2026"
+msgstr "April 18, 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Schéma de base de données v2.0.0 : déduplication des positions via hash "
+"Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
+"bitboard, journalisation WAL. Import par lot >=3x plus rapide, recherche "
+"filtrée <=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la"
+" v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; "
+"les anciennes DB sont migrées automatiquement sur place (faire une "
+"sauvegarde d'abord)."
+msgstr ""
+"Database schema v2.0.0: Zobrist-hashed position deduplication, denormalized "
+"filter columns, bitboard pattern pre-filter, WAL journaling. Batch import "
+">=3x faster, filtered search <=100 ms on 10k+ positions. NOTE: DB files "
+"created with v0.16.0 cannot be opened by older versions; old DBs are auto-"
+"migrated in place (back up first)."
+
+#: ../../source/index.rst:139
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:164
+#: ../../source/index.rst:169
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:166
+#: ../../source/index.rst:171
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -488,7 +508,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:169
+#: ../../source/index.rst:174
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -503,41 +523,41 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:176
+#: ../../source/index.rst:181
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:178
+#: ../../source/index.rst:183
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:180
+#: ../../source/index.rst:185
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:182
+#: ../../source/index.rst:187
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:184
+#: ../../source/index.rst:189
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:186
+#: ../../source/index.rst:191
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:188
+#: ../../source/index.rst:193
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:192
+#: ../../source/index.rst:197
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:194
+#: ../../source/index.rst:199
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -545,19 +565,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:196
+#: ../../source/index.rst:201
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:198
+#: ../../source/index.rst:203
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:206
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:208
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -565,7 +585,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:211
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -576,7 +596,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:216
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
