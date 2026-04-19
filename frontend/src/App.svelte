@@ -4007,6 +4007,14 @@ function togglePipcount() {
                 currentPosition = mirrorPositionForSearch(currentPosition);
             }
 
+            // Ensure integer fields are not boolean (legacy positions may have has_jacoby/has_beaver as false)
+            currentPosition = {
+                ...currentPosition,
+                has_jacoby: currentPosition.has_jacoby ? 1 : 0,
+                has_beaver: currentPosition.has_beaver ? 1 : 0,
+                decision_type: typeof currentPosition.decision_type === 'string' ? (currentPosition.decision_type ? 1 : 0) : (currentPosition.decision_type || 0),
+            };
+
             // Save the search filter position BEFORE results change positionStore
             const searchFilterPositionJSON = JSON.stringify(currentPosition);
 
@@ -4047,22 +4055,22 @@ function togglePipcount() {
                 tournamentIDsFilter,
                 restrictToPositionIDs);
                 
-            // Set mode to NORMAL and reset match context BEFORE triggering position display
-            // so that showPosition sees the correct mode and doesn't use stale match context
-            statusBarModeStore.set('NORMAL');
-            matchContextStore.set({
-                isMatchMode: false,
-                matchID: null,
-                movePositions: [],
-                currentIndex: 0,
-                player1Name: '',
-                player2Name: ''
-            });
-            activeCollectionStore.set(null);
-
-            positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
-
             if (loadedPositions && loadedPositions.length > 0) {
+                // Set mode to NORMAL and reset match context BEFORE triggering position display
+                // so that showPosition sees the correct mode and doesn't use stale match context
+                statusBarModeStore.set('NORMAL');
+                matchContextStore.set({
+                    isMatchMode: false,
+                    matchID: null,
+                    movePositions: [],
+                    currentIndex: 0,
+                    player1Name: '',
+                    player2Name: ''
+                });
+                activeCollectionStore.set(null);
+
+                positionsStore.set(Array.isArray(loadedPositions) ? loadedPositions : []);
+
                 if ($currentPositionIndexStore === 0) {
                     currentPositionIndexStore.set(1); // Temporarily set to a different value to force redraw board
                 }

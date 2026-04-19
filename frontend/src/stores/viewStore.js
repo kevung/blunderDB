@@ -15,8 +15,8 @@ function createDefaultPosition() {
         score: [-1, -1],
         player_on_roll: 1,
         decision_type: '',
-        has_jacoby: false,
-        has_beaver: false
+        has_jacoby: 0,
+        has_beaver: 0
     };
 }
 
