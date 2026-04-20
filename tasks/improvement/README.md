@@ -84,4 +84,4 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 21 — README
 - [x] 22 — CLI docs
 - [x] 23 — Stale docs
-- [ ] 24 — CI benchmarks
+- [x] 24 — CI benchmarks

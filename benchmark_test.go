@@ -104,10 +104,10 @@ func setupBenchDB(tb testing.TB) *Database {
 		sharedBenchDB = db
 	})
 	if benchSetupErr != nil {
-		tb.Fatalf("bench setup failed: %v", benchSetupErr)
+		tb.Skipf("bench setup skipped: %v", benchSetupErr)
 	}
 	if sharedBenchDB == nil {
-		tb.Fatal("bench setup: database is nil")
+		tb.Skip("bench setup: database is nil")
 	}
 	return sharedBenchDB
 }
@@ -296,5 +296,186 @@ func BenchmarkSearch_PrimePattern(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		db.LoadPositionsByFilters(SearchFilters{Filter: filter})
+	}
+}
+
+// ── CI-friendly benchmarks (use committed fixtures or pure computation) ──
+
+// BenchmarkEPC benchmarks the bearoff-database EPC computation.
+func BenchmarkEPC(b *testing.B) {
+	boards := [][6]int{
+		{2, 2, 2, 3, 3, 3}, // full jan + extra checkers
+		{2, 2, 2, 2, 2, 2}, // full jan
+		{6, 0, 0, 0, 0, 0}, // all on ace
+		{0, 0, 0, 0, 0, 5}, // 5 on 6-point
+		{1, 1, 1, 1, 1, 1}, // sparse
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for _, bd := range boards {
+			ComputeEPC(bd)
+		}
+	}
+}
+
+// BenchmarkZobristHash benchmarks Zobrist hash computation for typical positions.
+func BenchmarkZobristHash(b *testing.B) {
+	positions := []Position{
+		{
+			Board: Board{Points: func() [26]Point {
+				var pts [26]Point
+				// Standard opening position
+				pts[1] = Point{Checkers: 2, Color: White}
+				pts[6] = Point{Checkers: 5, Color: Black}
+				pts[8] = Point{Checkers: 3, Color: Black}
+				pts[12] = Point{Checkers: 5, Color: White}
+				pts[13] = Point{Checkers: 5, Color: Black}
+				pts[17] = Point{Checkers: 3, Color: White}
+				pts[19] = Point{Checkers: 5, Color: White}
+				pts[24] = Point{Checkers: 2, Color: Black}
+				return pts
+			}()},
+			Dice:         [2]int{3, 1},
+			DecisionType: CheckerAction,
+		},
+		{
+			Board: Board{Points: func() [26]Point {
+				var pts [26]Point
+				pts[1] = Point{Checkers: 3, Color: Black}
+				pts[2] = Point{Checkers: 2, Color: Black}
+				pts[3] = Point{Checkers: 4, Color: Black}
+				pts[4] = Point{Checkers: 3, Color: Black}
+				pts[5] = Point{Checkers: 3, Color: Black}
+				pts[22] = Point{Checkers: 4, Color: White}
+				pts[23] = Point{Checkers: 5, Color: White}
+				pts[24] = Point{Checkers: 6, Color: White}
+				return pts
+			}()},
+			Cube:         Cube{Value: 2, Owner: 0},
+			DecisionType: CubeAction,
+		},
+	}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		for j := range positions {
+			ZobristHash(&positions[j])
+		}
+	}
+}
+
+// BenchmarkOccupancyMasks benchmarks bitboard mask computation.
+func BenchmarkOccupancyMasks(b *testing.B) {
+	board := &Board{Points: func() [26]Point {
+		var pts [26]Point
+		pts[1] = Point{Checkers: 2, Color: White}
+		pts[6] = Point{Checkers: 5, Color: Black}
+		pts[8] = Point{Checkers: 3, Color: Black}
+		pts[12] = Point{Checkers: 5, Color: White}
+		pts[13] = Point{Checkers: 5, Color: Black}
+		pts[17] = Point{Checkers: 3, Color: White}
+		pts[19] = Point{Checkers: 5, Color: White}
+		pts[24] = Point{Checkers: 2, Color: Black}
+		return pts
+	}()}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		OccupancyMasks(board)
+	}
+}
+
+// BenchmarkPipCounts benchmarks pip count computation.
+func BenchmarkPipCounts(b *testing.B) {
+	board := Board{Points: func() [26]Point {
+		var pts [26]Point
+		pts[1] = Point{Checkers: 2, Color: White}
+		pts[6] = Point{Checkers: 5, Color: Black}
+		pts[8] = Point{Checkers: 3, Color: Black}
+		pts[12] = Point{Checkers: 5, Color: White}
+		pts[13] = Point{Checkers: 5, Color: Black}
+		pts[17] = Point{Checkers: 3, Color: White}
+		pts[19] = Point{Checkers: 5, Color: White}
+		pts[24] = Point{Checkers: 2, Color: Black}
+		return pts
+	}()}
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		PipCounts(board)
+	}
+}
+
+// BenchmarkImport_SingleXG benchmarks importing a single committed XG match file.
+func BenchmarkImport_SingleXG(b *testing.B) {
+	fixture := filepath.Join("testdata", "test.xg")
+	if _, err := os.Stat(fixture); os.IsNotExist(err) {
+		b.Skip("testdata/test.xg not found")
+	}
+
+	restore := silenceLogs()
+	defer restore()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		db := NewDatabase()
+		if err := db.SetupDatabase(":memory:"); err != nil {
+			b.Fatal(err)
+		}
+		if _, err := db.ImportXGMatch(fixture); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// BenchmarkImport_SingleSGF benchmarks importing a single committed SGF match file.
+func BenchmarkImport_SingleSGF(b *testing.B) {
+	fixture := filepath.Join("testdata", "test.sgf")
+	if _, err := os.Stat(fixture); os.IsNotExist(err) {
+		b.Skip("testdata/test.sgf not found")
+	}
+
+	restore := silenceLogs()
+	defer restore()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		db := NewDatabase()
+		if err := db.SetupDatabase(":memory:"); err != nil {
+			b.Fatal(err)
+		}
+		if _, err := db.ImportGnuBGMatch(fixture); err != nil {
+			b.Fatal(err)
+		}
+	}
+}
+
+// BenchmarkSearch_SmallDB benchmarks search on a small dataset built from committed fixtures.
+func BenchmarkSearch_SmallDB(b *testing.B) {
+	fixtures := []string{
+		filepath.Join("testdata", "test.xg"),
+		filepath.Join("testdata", "test.sgf"),
+		filepath.Join("testdata", "test.mat"),
+	}
+	db := NewDatabase()
+	if err := db.SetupDatabase(":memory:"); err != nil {
+		b.Fatal(err)
+	}
+	for _, f := range fixtures {
+		if _, err := os.Stat(f); os.IsNotExist(err) {
+			continue
+		}
+		ext := strings.ToLower(filepath.Ext(f))
+		switch ext {
+		case ".xg":
+			db.ImportXGMatch(f)
+		case ".sgf", ".mat":
+			db.ImportGnuBGMatch(f)
+		}
+	}
+
+	filter := emptyFilter()
+	filter.DecisionType = CheckerAction
+
+	restore := silenceLogs()
+	defer restore()
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		db.LoadPositionsByFilters(SearchFilters{Filter: filter, DecisionTypeFilter: true})
 	}
 }
