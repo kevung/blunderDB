@@ -66,7 +66,7 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 03 — Fix exit-zero
 - [x] 04 — CLI tests
 - [x] 05 — CRUD tests
-- [ ] 06 — Split db.go
+- [x] 06 — Split db.go
 - [ ] 07 — slog logging
 - [ ] 08 — SearchFilters struct
 - [ ] 09 — ExportOptions struct
