@@ -575,6 +575,9 @@
         // Let Space pass through so the command line can be opened from global handler
         if (event.code === 'Space') return;
 
+        // Let ? pass through so the help modal can be opened
+        if (event.key === '?') return;
+
         // Stop all keyboard events from propagating to global handlers
         event.stopPropagation();
 
@@ -596,6 +599,18 @@
                 closePanel();
             }
             return;
+        }
+
+        if (sortedMatches.length > 0) {
+            if ((event.key === 'j' || event.key === 'ArrowDown') && !selectedMatch) {
+                event.preventDefault();
+                selectMatch(sortedMatches[0]);
+                setTimeout(() => {
+                    const selectedRow = document.querySelector('.match-panel tr.selected');
+                    if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 0);
+                return;
+            }
         }
 
         if (selectedMatch && sortedMatches.length > 0) {

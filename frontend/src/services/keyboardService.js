@@ -99,6 +99,8 @@ export function handleKeyDown(event) {
             // Allow
         } else if (event.code === 'Space') {
             // Allow command line to open
+        } else if (event.key === '?') {
+            // Allow help modal to open
         } else {
             const isNavigationKey = (event.key === 'j' || event.key === 'k' ||
                                     event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
