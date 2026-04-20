@@ -46,7 +46,7 @@ Dépendances top-down ; une phase ne peut démarrer qu'après celles dont elle d
 
 ## Current status
 
-- [ ] 01 — backend stats
+- [x] 01 — backend stats
 - [ ] 02 — MWC conversion
 - [ ] 03 — drill-down backend
 - [ ] 04 — Wails + store

@@ -358,7 +358,7 @@ func (d *Database) loadPositionsByFiltersCore(
 			// decision_type=0 (checker) → best_move_equity_error
 			// decision_type=1 (cube)    → cube_error
 			// When no decision_type f.Filter is active, check both with CASE.
-			errExpr := "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
+			errExpr := statsErrExpr
 			if eHasMin && eHasMax {
 				where.WriteString(" AND " + errExpr + " BETWEEN ? AND ?")
 				args = append(args, eqMin, eqMax)
