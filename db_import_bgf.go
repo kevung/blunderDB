@@ -664,14 +664,14 @@ func (d *Database) importBGFCheckerAnalysisOnly(tx *sql.Tx, moveData map[string]
 	moveAnalysis, ok := moveData["moveAnalysis"].([]interface{})
 	if ok && len(moveAnalysis) > 0 {
 		checkerMoveStr := bgfConvertMoveToString(moveData, player)
-		d.saveBGFCheckerAnalysisToPositionInTx(tx, posID, moveAnalysis, blunderDBPlayer, checkerMoveStr)
+		_ = d.saveBGFCheckerAnalysisToPositionInTx(tx, posID, moveAnalysis, blunderDBPlayer, checkerMoveStr)
 	}
 
 	equity := bgfGetMap(moveData, "equity")
 	if equity != nil {
 		cubeDecision := bgfGetMap(equity, "cubeDecision")
 		if cubeDecision != nil && bgfGetString(cubeDecision, "stateOnMove") != "" {
-			d.saveBGFCubeAnalysisForCheckerPositionInTx(tx, posID, equity, cubeDecision)
+			_ = d.saveBGFCubeAnalysisForCheckerPositionInTx(tx, posID, equity, cubeDecision)
 		}
 	}
 }
@@ -695,7 +695,7 @@ func (d *Database) importBGFCubeAnalysisOnly(tx *sql.Tx, moveData map[string]int
 	if equity != nil {
 		cubeDecision := bgfGetMap(equity, "cubeDecision")
 		if cubeDecision != nil {
-			d.saveBGFCubeAnalysisToPositionInTx(tx, posID, equity, cubeDecision, cubeAction)
+			_ = d.saveBGFCubeAnalysisToPositionInTx(tx, posID, equity, cubeDecision, cubeAction)
 		}
 	}
 }
@@ -1731,7 +1731,7 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 
 				checkerPosID, err := d.savePositionInTx(tx, checkerPos)
 				if err == nil {
-					d.saveCheckerAnalysisToPositionInTx(tx, checkerPosID, secondMove.CheckerMove.Analysis,
+					_ = d.saveCheckerAnalysisToPositionInTx(tx, checkerPosID, secondMove.CheckerMove.Analysis,
 						&secondMove.CheckerMove.Position, secondMove.CheckerMove.ActivePlayer, &secondMove.CheckerMove.PlayedMove)
 				}
 			}

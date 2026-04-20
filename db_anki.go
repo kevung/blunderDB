@@ -198,13 +198,13 @@ func (d *Database) SyncAnkiDeck(deckID int64) error {
 
 	now := time.Now().UTC().Format("2006-01-02 15:04:05")
 	for _, pid := range positionIDs {
-		d.db.Exec(`
+		_, _ = d.db.Exec(`
 			INSERT OR IGNORE INTO anki_card (deck_id, position_id, due, state)
 			VALUES (?, ?, ?, 0)
 		`, deckID, pid, now)
 	}
 
-	d.db.Exec(`UPDATE anki_deck SET updated_at = datetime('now') WHERE id = ?`, deckID)
+	_, _ = d.db.Exec(`UPDATE anki_deck SET updated_at = datetime('now') WHERE id = ?`, deckID)
 
 	return nil
 }
@@ -220,13 +220,13 @@ func (d *Database) SyncAnkiDeckWithPositions(deckID int64, positionIDs []int64) 
 
 	now := time.Now().UTC().Format("2006-01-02 15:04:05")
 	for _, pid := range positionIDs {
-		d.db.Exec(`
+		_, _ = d.db.Exec(`
 			INSERT OR IGNORE INTO anki_card (deck_id, position_id, due, state)
 			VALUES (?, ?, ?, 0)
 		`, deckID, pid, now)
 	}
 
-	d.db.Exec(`UPDATE anki_deck SET updated_at = datetime('now') WHERE id = ?`, deckID)
+	_, _ = d.db.Exec(`UPDATE anki_deck SET updated_at = datetime('now') WHERE id = ?`, deckID)
 
 	return nil
 }

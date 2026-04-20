@@ -247,7 +247,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 								if gnuMatch.Metadata.MatchLength > 0 && moveRec.Position != nil {
 									convertGnuBGCubeMWCToEMG(&cubeAnalysis, game.Score[0], game.Score[1], moveRec.Player, moveRec.Position.CubeValue, gnuMatch.Metadata.MatchLength)
 								}
-								d.saveGnuBGCubeAnalysisForCheckerPositionInTx(tx, posID, &cubeAnalysis)
+								_ = d.saveGnuBGCubeAnalysisForCheckerPositionInTx(tx, posID, &cubeAnalysis)
 							}
 						}
 					}

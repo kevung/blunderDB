@@ -72,7 +72,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
 	}
 	for _, stmt := range newPositionCols {
-		d.db.Exec(stmt) // duplicate column → silently ignored
+		_, _ = d.db.Exec(stmt) // duplicate column → silently ignored
 	}
 
 	newAnalysisCols := []string{
