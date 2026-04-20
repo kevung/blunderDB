@@ -6,8 +6,7 @@ A backgammon blunder analysis tool. Desktop app (GUI + CLI) for importing, stori
 [![Documentation](https://img.shields.io/badge/docs-passing-brightgreen.svg)](https://kevung.github.io/blunderDB/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-<!-- TODO: add a screenshot — save as doc/source/_static/screenshot.png -->
-<!-- ![blunderDB screenshot](doc/source/_static/screenshot.png) -->
+![blunderDB screenshot](doc/source/_static/screenshot.png)
 
 ## Features
 
