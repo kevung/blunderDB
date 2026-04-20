@@ -4020,9 +4020,8 @@ function togglePipcount() {
             const searchFilterPositionJSON = JSON.stringify(currentPosition);
 
             // @ts-ignore
-            const loadedPositions = await LoadPositionsByFilters(
-                // @ts-ignore
-                currentPosition,
+            const loadedPositions = await LoadPositionsByFilters({
+                filter: currentPosition,
                 includeCube,
                 includeScore,
                 pipCountFilter,
@@ -4050,11 +4049,12 @@ function togglePipcount() {
                 player1JanBlotFilter,
                 player2JanBlotFilter,
                 noContactFilter,
-                mirrorPositionFilter,
+                mirrorFilter: mirrorPositionFilter,
                 moveErrorFilter,
                 matchIDsFilter,
                 tournamentIDsFilter,
-                restrictToPositionIDs);
+                restrictToPositionIDs,
+            });
                 
             if (loadedPositions && loadedPositions.length > 0) {
                 // If openInNewTab is requested, create a new view tab before setting results

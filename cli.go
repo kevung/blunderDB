@@ -1846,41 +1846,19 @@ func (cli *CLI) runSearch(args []string) error {
 
 	// Use the core implementation to get analysis data in the same query, avoiding
 	// per-row LoadAnalysis calls for errorMin and hasAnalysis filtering.
-	positions, analysisMap, err := cli.db.loadPositionsByFiltersCore(
-		filter,
-		includeCube,
-		includeScore,
-		pipCountFilter,
-		winRateFilter,
-		"", // gammonRateFilter
-		"", // backgammonRateFilter
-		"", // player2WinRateFilter
-		"", // player2GammonRateFilter
-		"", // player2BackgammonRateFilter
-		player1CheckerOffFilter,
-		player2CheckerOffFilter,
-		"",                 // player1BackCheckerFilter
-		"",                 // player2BackCheckerFilter
-		"",                 // player1CheckerInZoneFilter
-		"",                 // player2CheckerInZoneFilter
-		"",                 // searchText
-		"",                 // player1AbsolutePipCountFilter
-		"",                 // equityFilter
-		decisionTypeFilter, // pushed to SQL (player_on_roll=0 for all stored positions)
-		false,              // diceRollFilter
-		"",                 // movePatternFilter
-		"",                 // dateFilter
-		"",                 // player1OutfieldBlotFilter
-		"",                 // player2OutfieldBlotFilter
-		"",                 // player1JanBlotFilter
-		"",                 // player2JanBlotFilter
-		false,              // noContactFilter
-		false,              // mirrorFilter
-		moveErrorFilter,    // moveErrorFilter
-		*matchIDsFlag,      // matchIDsFilter
-		*tournamentIDsFlag, // tournamentIDsFilter
-		"",                 // restrictToPositionIDs
-	)
+	positions, analysisMap, err := cli.db.loadPositionsByFiltersCore(SearchFilters{
+		Filter:                  filter,
+		IncludeCube:             includeCube,
+		IncludeScore:            includeScore,
+		PipCountFilter:          pipCountFilter,
+		WinRateFilter:           winRateFilter,
+		MoveErrorFilter:         moveErrorFilter,
+		Player1CheckerOffFilter: player1CheckerOffFilter,
+		Player2CheckerOffFilter: player2CheckerOffFilter,
+		DecisionTypeFilter:      decisionTypeFilter,
+		MatchIDsFilter:          *matchIDsFlag,
+		TournamentIDsFilter:     *tournamentIDsFlag,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)
 	}

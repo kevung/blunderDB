@@ -586,6 +586,100 @@ export namespace main {
 	    }
 	}
 	
+	export class SearchFilters {
+	    filter: Position;
+	    includeCube: boolean;
+	    includeScore: boolean;
+	    pipCountFilter: string;
+	    winRateFilter: string;
+	    gammonRateFilter: string;
+	    backgammonRateFilter: string;
+	    player2WinRateFilter: string;
+	    player2GammonRateFilter: string;
+	    player2BackgammonRateFilter: string;
+	    player1CheckerOffFilter: string;
+	    player2CheckerOffFilter: string;
+	    player1BackCheckerFilter: string;
+	    player2BackCheckerFilter: string;
+	    player1CheckerInZoneFilter: string;
+	    player2CheckerInZoneFilter: string;
+	    searchText: string;
+	    player1AbsolutePipCountFilter: string;
+	    equityFilter: string;
+	    decisionTypeFilter: boolean;
+	    diceRollFilter: boolean;
+	    movePatternFilter: string;
+	    dateFilter: string;
+	    player1OutfieldBlotFilter: string;
+	    player2OutfieldBlotFilter: string;
+	    player1JanBlotFilter: string;
+	    player2JanBlotFilter: string;
+	    noContactFilter: boolean;
+	    mirrorFilter: boolean;
+	    moveErrorFilter: string;
+	    matchIDsFilter: string;
+	    tournamentIDsFilter: string;
+	    restrictToPositionIDs: string;
+
+	    static createFrom(source: any = {}) {
+	        return new SearchFilters(source);
+	    }
+
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.filter = this.convertValues(source["filter"], Position);
+	        this.includeCube = source["includeCube"];
+	        this.includeScore = source["includeScore"];
+	        this.pipCountFilter = source["pipCountFilter"];
+	        this.winRateFilter = source["winRateFilter"];
+	        this.gammonRateFilter = source["gammonRateFilter"];
+	        this.backgammonRateFilter = source["backgammonRateFilter"];
+	        this.player2WinRateFilter = source["player2WinRateFilter"];
+	        this.player2GammonRateFilter = source["player2GammonRateFilter"];
+	        this.player2BackgammonRateFilter = source["player2BackgammonRateFilter"];
+	        this.player1CheckerOffFilter = source["player1CheckerOffFilter"];
+	        this.player2CheckerOffFilter = source["player2CheckerOffFilter"];
+	        this.player1BackCheckerFilter = source["player1BackCheckerFilter"];
+	        this.player2BackCheckerFilter = source["player2BackCheckerFilter"];
+	        this.player1CheckerInZoneFilter = source["player1CheckerInZoneFilter"];
+	        this.player2CheckerInZoneFilter = source["player2CheckerInZoneFilter"];
+	        this.searchText = source["searchText"];
+	        this.player1AbsolutePipCountFilter = source["player1AbsolutePipCountFilter"];
+	        this.equityFilter = source["equityFilter"];
+	        this.decisionTypeFilter = source["decisionTypeFilter"];
+	        this.diceRollFilter = source["diceRollFilter"];
+	        this.movePatternFilter = source["movePatternFilter"];
+	        this.dateFilter = source["dateFilter"];
+	        this.player1OutfieldBlotFilter = source["player1OutfieldBlotFilter"];
+	        this.player2OutfieldBlotFilter = source["player2OutfieldBlotFilter"];
+	        this.player1JanBlotFilter = source["player1JanBlotFilter"];
+	        this.player2JanBlotFilter = source["player2JanBlotFilter"];
+	        this.noContactFilter = source["noContactFilter"];
+	        this.mirrorFilter = source["mirrorFilter"];
+	        this.moveErrorFilter = source["moveErrorFilter"];
+	        this.matchIDsFilter = source["matchIDsFilter"];
+	        this.tournamentIDsFilter = source["tournamentIDsFilter"];
+	        this.restrictToPositionIDs = source["restrictToPositionIDs"];
+	    }
+
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
 	
 	export class PositionAnalysis {
 	    positionId: number;

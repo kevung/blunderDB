@@ -46,7 +46,7 @@ Internal `loadPositionsByFiltersCore` has the same 33 params + an extra `mirrorP
 
 ### 1. Define `SearchFilters` struct
 
-- [ ] Add to `model.go`:
+- [x] Add to `model.go`:
   ```go
   type SearchFilters struct {
       Filter                          Position `json:"filter"`
@@ -84,20 +84,20 @@ Internal `loadPositionsByFiltersCore` has the same 33 params + an extra `mirrorP
       RestrictToPositionIDs           string   `json:"restrictToPositionIDs"`
   }
   ```
-- [ ] JSON tags must match the JavaScript property names for Wails binding compatibility
+- [x] JSON tags must match the JavaScript property names for Wails binding compatibility
 
 ### 2. Update Go function signatures
 
-- [ ] Update `LoadPositionsByFilters(f SearchFilters) ([]Position, error)`:
+- [x] Update `LoadPositionsByFilters(f SearchFilters) ([]Position, error)`:
   - Replace all 33 parameter references with `f.FieldName`
-- [ ] Update `loadPositionsByFiltersCore(f SearchFilters, mirrorPass bool) ([]Position, map[int64]*PositionAnalysis, error)`:
+- [x] Update `loadPositionsByFiltersCore(f SearchFilters, mirrorPass bool) ([]Position, map[int64]*PositionAnalysis, error)`:
   - Same: replace parameter references with `f.FieldName`
-- [ ] Verify all internal references compile
+- [x] Verify all internal references compile
 
 ### 3. Update CLI call sites
 
-- [ ] Search `cli.go` for calls to `LoadPositionsByFilters`
-- [ ] Replace positional arguments with struct literal:
+- [x] Search `cli.go` for calls to `LoadPositionsByFilters`
+- [x] Replace positional arguments with struct literal:
   ```go
   results, err := c.db.LoadPositionsByFilters(SearchFilters{
       Filter: filter,
@@ -105,11 +105,11 @@ Internal `loadPositionsByFiltersCore` has the same 33 params + an extra `mirrorP
       // ...
   })
   ```
-- [ ] The `runSearch` and `getSearchResults` methods in cli.go are the main call sites
+- [x] The `runSearch` and `getSearchResults` methods in cli.go are the main call sites
 
 ### 4. Update frontend call sites
 
-- [ ] After `wails dev` regenerates bindings, update JS/Svelte code to pass a single object:
+- [x] After `wails dev` regenerates bindings, update JS/Svelte code to pass a single object:
   ```js
   // Before (33 positional args):
   const results = await LoadPositionsByFilters(filter, includeCube, includeScore, ...);
@@ -122,23 +122,23 @@ Internal `loadPositionsByFiltersCore` has the same 33 params + an extra `mirrorP
       // ...
   });
   ```
-- [ ] Search `App.svelte` and `commandProcessor.js` for all call sites
-- [ ] Wails auto-generates TypeScript types for the struct — verify `.d.ts` file is correct
+- [x] Search `App.svelte` and `commandProcessor.js` for all call sites
+- [x] Wails auto-generates TypeScript types for the struct — verify `.d.ts` file is correct
 
 ### 5. Update tests
 
-- [ ] Search all `*_test.go` for calls to `LoadPositionsByFilters`
-- [ ] Update to use struct literal syntax
-- [ ] `search_rewrite_test.go` is the main test file
+- [x] Search all `*_test.go` for calls to `LoadPositionsByFilters`
+- [x] Update to use struct literal syntax
+- [x] `search_rewrite_test.go` is the main test file
 
 ## Acceptance criteria
 
-- [ ] `LoadPositionsByFilters` accepts a single `SearchFilters` struct
-- [ ] `loadPositionsByFiltersCore` accepts `SearchFilters` + `mirrorPass`
-- [ ] All Go tests pass
-- [ ] `wails build` succeeds
-- [ ] Frontend search functionality works (manual smoke test)
-- [ ] Adding a new filter field = adding one struct field + one `if` block — no signature changes
+- [x] `LoadPositionsByFilters` accepts a single `SearchFilters` struct
+- [x] `loadPositionsByFiltersCore` accepts `SearchFilters` + `mirrorPass`
+- [x] All Go tests pass
+- [x] `wails build` succeeds
+- [x] Frontend search functionality works (manual smoke test)
+- [x] Adding a new filter field = adding one struct field + one `if` block — no signature changes
 
 ## Rollback
 

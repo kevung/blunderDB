@@ -68,7 +68,7 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 05 — CRUD tests
 - [x] 06 — Split db.go
 - [x] 07 — slog logging
-- [ ] 08 — SearchFilters struct
+- [x] 08 — SearchFilters struct
 - [ ] 09 — ExportOptions struct
 - [ ] 10 — RWMutex
 - [ ] 11 — Import helpers

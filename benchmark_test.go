@@ -202,29 +202,7 @@ func BenchmarkSearch_DecisionCube(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			filter,
-			false, false, // includeCube, includeScore
-			"", "", "", "", "", "", "", // pip, win, gammon, bg, p2win, p2gammon, p2bg
-			"", "", // p1CheckerOff, p2CheckerOff
-			"", "", // p1BackChecker, p2BackChecker
-			"", "", // p1CheckerInZone, p2CheckerInZone
-			"",     // searchText
-			"",     // p1AbsolutePipCount
-			"",     // equity
-			true,   // decisionTypeFilter
-			false,  // diceRollFilter
-			"",     // movePattern
-			"",     // date
-			"", "", // p1OutfieldBlot, p2OutfieldBlot
-			"", "", // p1JanBlot, p2JanBlot
-			false, // noContact
-			false, // mirror
-			"",    // moveError
-			"",    // matchIDs
-			"",    // tournamentIDs
-			"",    // restrictToPositionIDs
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: filter, DecisionTypeFilter: true})
 	}
 }
 
@@ -235,25 +213,7 @@ func BenchmarkSearch_ErrorAboveTenth(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			emptyFilter(),
-			false, false,
-			"", "", "", "", "", "", "",
-			"", "",
-			"", "",
-			"", "",
-			"",
-			"",
-			"",
-			false, false,
-			"", "",
-			"", "",
-			"", "",
-			false, false,
-			"E>100", // moveErrorFilter: ≥ 100 millipoints (0.1 equity)
-			"", "",
-			"",
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), MoveErrorFilter: "E>100"})
 	}
 }
 
@@ -264,26 +224,7 @@ func BenchmarkSearch_PipWindow(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			emptyFilter(),
-			false, false,
-			"p-2,2", // pipCountFilter
-			"", "", "", "", "", "",
-			"", "",
-			"", "",
-			"", "",
-			"",
-			"",
-			"",
-			false, false,
-			"", "",
-			"", "",
-			"", "",
-			false, false,
-			"",
-			"", "",
-			"",
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), PipCountFilter: "p-2,2"})
 	}
 }
 
@@ -294,28 +235,7 @@ func BenchmarkSearch_WinGammonCombo(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			emptyFilter(),
-			false, false,
-			"",
-			"w>0.55", // winRateFilter
-			"g>0.2",  // gammonRateFilter
-			"", "", "", "",
-			"", "",
-			"", "",
-			"", "",
-			"",
-			"",
-			"",
-			false, false,
-			"", "",
-			"", "",
-			"", "",
-			false, false,
-			"",
-			"", "",
-			"",
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: emptyFilter(), WinRateFilter: "w>0.55", GammonRateFilter: "g>0.2"})
 	}
 }
 
@@ -329,25 +249,7 @@ func BenchmarkSearch_ScoreSpecific(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			filter,
-			false, true, // includeScore=true
-			"", "", "", "", "", "", "",
-			"", "",
-			"", "",
-			"", "",
-			"",
-			"",
-			"",
-			false, false,
-			"", "",
-			"", "",
-			"", "",
-			false, false,
-			"",
-			"", "",
-			"",
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: filter, IncludeScore: true})
 	}
 }
 
@@ -362,26 +264,7 @@ func BenchmarkSearch_DiceAndPlayer(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			filter,
-			false, false,
-			"", "", "", "", "", "", "",
-			"", "",
-			"", "",
-			"", "",
-			"",
-			"",
-			"",
-			false, // decisionTypeFilter
-			true,  // diceRollFilter
-			"", "",
-			"", "",
-			"", "",
-			false, false,
-			"",
-			"", "",
-			"",
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: filter, DiceRollFilter: true})
 	}
 }
 
@@ -396,25 +279,7 @@ func BenchmarkSearch_CheckerStructure(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			filter,
-			false, false,
-			"", "", "", "", "", "", "",
-			"", "",
-			"", "",
-			"", "",
-			"",
-			"",
-			"",
-			false, false,
-			"", "",
-			"", "",
-			"", "",
-			false, false,
-			"",
-			"", "",
-			"",
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: filter})
 	}
 }
 
@@ -430,24 +295,6 @@ func BenchmarkSearch_PrimePattern(b *testing.B) {
 	defer restore()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		db.LoadPositionsByFilters(
-			filter,
-			false, false,
-			"", "", "", "", "", "", "",
-			"", "",
-			"", "",
-			"", "",
-			"",
-			"",
-			"",
-			false, false,
-			"", "",
-			"", "",
-			"", "",
-			false, false,
-			"",
-			"", "",
-			"",
-		)
+		db.LoadPositionsByFilters(SearchFilters{Filter: filter})
 	}
 }
