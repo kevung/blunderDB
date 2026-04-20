@@ -72,25 +72,7 @@ func (d *Database) ImportGnuBGMatch(filePath string) (int64, error) {
 // isSGF indicates SGF format where moves use absolute coordinates.
 func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePath string, isSGF bool) (int64, error) {
 	// Parse match date
-	var matchDate time.Time
-	if gnuMatch.Metadata.Date != "" {
-		for _, layout := range []string{
-			"2006-01-02 15:04:05",
-			"2006-01-02",
-			"2006/01/02",
-			"01/02/2006",
-			"January 2, 2006",
-			time.RFC3339,
-		} {
-			if t, parseErr := time.Parse(layout, gnuMatch.Metadata.Date); parseErr == nil {
-				matchDate = t
-				break
-			}
-		}
-	}
-	if matchDate.IsZero() {
-		matchDate = time.Now()
-	}
+	matchDate := parseMatchDate(gnuMatch.Metadata.Date)
 
 	// Compute match hash for duplicate detection
 	matchHash := ComputeGnuBGMatchHash(gnuMatch)
@@ -98,21 +80,11 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 	// Compute canonical hash (format-independent)
 	canonicalHash := ComputeCanonicalMatchHashFromGnuBG(gnuMatch)
 
-	// Check if this match already exists (same format)
-	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
+	// Check for duplicate (same format) or canonical duplicate (cross-format)
+	canonicalMatchID, isCanonicalDuplicate, err := d.checkDuplicateMatchLocked(matchHash, canonicalHash)
 	if err != nil {
-		return 0, fmt.Errorf("failed to check for duplicate match: %w", err)
+		return 0, err
 	}
-	if existingMatchID > 0 {
-		return 0, ErrDuplicateMatch
-	}
-
-	// Check for canonical duplicate (same match from different format)
-	canonicalMatchID, err := d.checkCanonicalMatchExistsLocked(canonicalHash)
-	if err != nil {
-		return 0, fmt.Errorf("failed to check for canonical duplicate: %w", err)
-	}
-	isCanonicalDuplicate := canonicalMatchID > 0
 
 	// Begin transaction for atomic import
 	tx, err := d.db.Begin()
@@ -934,39 +906,34 @@ func formatGnuBGMoveItems(move [8]int, player int, formatPoint func(int, int) st
 
 // saveGnuBGMoveAnalysisInTx saves a gnubgparser MoveOption to the move_analysis table
 func (d *Database) saveGnuBGMoveAnalysisInTx(tx *sql.Tx, moveID int64, moveOpt *gnubgparser.MoveOption) error {
-	// gnubgparser rates are 0-1 fractions; convert to integer × 100 of percentage
-	player1WinRate := int64(math.Round(float64(moveOpt.Player1WinRate) * 100.0 * 100))
-	player2WinRate := int64(math.Round(float64(moveOpt.Player2WinRate) * 100.0 * 100))
-
-	_, err := tx.Exec(`
-		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
-		                           win_rate, gammon_rate, backgammon_rate,
-		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "checker", translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth),
-		int64(math.Round(moveOpt.Equity*1000)), int64(0),
-		player1WinRate, int64(math.Round(float64(moveOpt.Player1GammonRate)*100.0*100)), int64(math.Round(float64(moveOpt.Player1BackgammonRate)*100.0*100)),
-		player2WinRate, int64(math.Round(float64(moveOpt.Player2GammonRate)*100.0*100)), int64(math.Round(float64(moveOpt.Player2BackgammonRate)*100.0*100)))
-
-	return err
+	return insertMoveAnalysisRow(tx, moveAnalysisRow{
+		MoveID:                 moveID,
+		AnalysisType:           "checker",
+		Depth:                  translateGnuBGAnalysisDepth(moveOpt.AnalysisDepth),
+		Equity:                 int64(math.Round(moveOpt.Equity * 1000)),
+		WinRate:                int64(math.Round(float64(moveOpt.Player1WinRate) * 100.0 * 100)),
+		GammonRate:             int64(math.Round(float64(moveOpt.Player1GammonRate) * 100.0 * 100)),
+		BackgammonRate:         int64(math.Round(float64(moveOpt.Player1BackgammonRate) * 100.0 * 100)),
+		OpponentWinRate:        int64(math.Round(float64(moveOpt.Player2WinRate) * 100.0 * 100)),
+		OpponentGammonRate:     int64(math.Round(float64(moveOpt.Player2GammonRate) * 100.0 * 100)),
+		OpponentBackgammonRate: int64(math.Round(float64(moveOpt.Player2BackgammonRate) * 100.0 * 100)),
+	})
 }
 
 // saveGnuBGCubeMoveAnalysisInTx saves gnubgparser CubeAnalysis to the move_analysis table
 func (d *Database) saveGnuBGCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *gnubgparser.CubeAnalysis) error {
-	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
-	player2WinRate := int64(math.Round(float64(analysis.Player2WinRate) * 100.0 * 100))
-
-	_, err := tx.Exec(`
-		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
-		                           win_rate, gammon_rate, backgammon_rate,
-		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "cube", translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
-		int64(math.Round(analysis.CubefulNoDouble*1000)), int64(0),
-		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BackgammonRate)*100.0*100)),
-		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BackgammonRate)*100.0*100)))
-
-	return err
+	return insertMoveAnalysisRow(tx, moveAnalysisRow{
+		MoveID:                 moveID,
+		AnalysisType:           "cube",
+		Depth:                  translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
+		Equity:                 int64(math.Round(analysis.CubefulNoDouble * 1000)),
+		WinRate:                int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100)),
+		GammonRate:             int64(math.Round(float64(analysis.Player1GammonRate) * 100.0 * 100)),
+		BackgammonRate:         int64(math.Round(float64(analysis.Player1BackgammonRate) * 100.0 * 100)),
+		OpponentWinRate:        int64(math.Round(float64(analysis.Player2WinRate) * 100.0 * 100)),
+		OpponentGammonRate:     int64(math.Round(float64(analysis.Player2GammonRate) * 100.0 * 100)),
+		OpponentBackgammonRate: int64(math.Round(float64(analysis.Player2BackgammonRate) * 100.0 * 100)),
+	})
 }
 
 // saveGnuBGCheckerAnalysisToPositionInTx converts gnubgparser MoveAnalysis to PositionAnalysis and saves it
@@ -1053,22 +1020,7 @@ func (d *Database) saveGnuBGCubeAnalysisToPositionInTx(tx *sql.Tx, positionID in
 	cubefulDoubleTake := analysis.CubefulDoubleTake
 	cubefulDoublePass := analysis.CubefulDoublePass
 
-	// Calculate best equity considering opponent's optimal response
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	bestEquity := cubefulNoDouble
-	bestAction := "No Double"
-	if effectiveDoubleEquity > cubefulNoDouble {
-		bestEquity = effectiveDoubleEquity
-		if cubefulDoubleTake <= cubefulDoublePass {
-			bestAction = "Double, Take"
-		} else {
-			bestAction = "Double, Pass"
-		}
-	}
+	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
 
 	cubeAnalysis := DoublingCubeAnalysis{
 		AnalysisDepth:             translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
@@ -1122,21 +1074,7 @@ func (d *Database) saveGnuBGCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, posit
 	cubefulDoubleTake := analysis.CubefulDoubleTake
 	cubefulDoublePass := analysis.CubefulDoublePass
 
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	bestEquity := cubefulNoDouble
-	bestAction := "No Double"
-	if effectiveDoubleEquity > cubefulNoDouble {
-		bestEquity = effectiveDoubleEquity
-		if cubefulDoubleTake <= cubefulDoublePass {
-			bestAction = "Double, Take"
-		} else {
-			bestAction = "Double, Pass"
-		}
-	}
+	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
 
 	cubeAnalysis := DoublingCubeAnalysis{
 		AnalysisDepth:             translateGnuBGAnalysisDepth(analysis.AnalysisDepth),

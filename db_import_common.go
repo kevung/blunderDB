@@ -458,6 +458,99 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 // ErrDuplicateMatch is returned when attempting to import a match that already exists
 var ErrDuplicateMatch = fmt.Errorf("duplicate match: this match has already been imported")
 
+// parseMatchDate tries multiple date formats and returns the parsed time.
+// Returns time.Now() if dateStr is empty or no format matches.
+func parseMatchDate(dateStr string) time.Time {
+	if dateStr == "" {
+		return time.Now()
+	}
+	for _, layout := range []string{
+		"Jan 2, 2006",
+		"2006-01-02 15:04:05",
+		"2006-01-02",
+		"2006/01/02",
+		"01/02/2006",
+		"January 2, 2006",
+		time.RFC3339,
+	} {
+		if t, err := time.Parse(layout, dateStr); err == nil {
+			return t
+		}
+	}
+	return time.Now()
+}
+
+// checkDuplicateMatchLocked checks both format-specific and canonical hash
+// for duplicate matches. Must be called with d.mu held.
+// Returns (canonicalMatchID, isCanonicalDuplicate, error).
+// Returns ErrDuplicateMatch if the exact same-format hash already exists.
+func (d *Database) checkDuplicateMatchLocked(matchHash, canonicalHash string) (int64, bool, error) {
+	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
+	if err != nil {
+		return 0, false, fmt.Errorf("failed to check for duplicate match: %w", err)
+	}
+	if existingMatchID > 0 {
+		return 0, false, ErrDuplicateMatch
+	}
+
+	canonicalMatchID, err := d.checkCanonicalMatchExistsLocked(canonicalHash)
+	if err != nil {
+		return 0, false, fmt.Errorf("failed to check for canonical duplicate: %w", err)
+	}
+	return canonicalMatchID, canonicalMatchID > 0, nil
+}
+
+// moveAnalysisRow holds the pre-extracted values for a move_analysis INSERT.
+// Each importer converts its format-specific data into this struct, then
+// calls insertMoveAnalysisRow for the actual INSERT.
+type moveAnalysisRow struct {
+	MoveID                     int64
+	AnalysisType               string // "checker" or "cube"
+	Depth                      string
+	Equity                     int64
+	WinRate                    int64
+	GammonRate                 int64
+	BackgammonRate             int64
+	OpponentWinRate            int64
+	OpponentGammonRate         int64
+	OpponentBackgammonRate     int64
+}
+
+// insertMoveAnalysisRow inserts a single row into the move_analysis table.
+func insertMoveAnalysisRow(tx *sql.Tx, row moveAnalysisRow) error {
+	_, err := tx.Exec(`
+		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
+		                           win_rate, gammon_rate, backgammon_rate,
+		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, row.MoveID, row.AnalysisType, row.Depth,
+		row.Equity, int64(0),
+		row.WinRate, row.GammonRate, row.BackgammonRate,
+		row.OpponentWinRate, row.OpponentGammonRate, row.OpponentBackgammonRate)
+	return err
+}
+
+// computeBestCubeAction determines the best cube action and equity from the three
+// cubeful equities. Returns (bestEquity, bestAction).
+func computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass float64) (float64, string) {
+	effectiveDoubleEquity := cubefulDoubleTake
+	if cubefulDoublePass < cubefulDoubleTake {
+		effectiveDoubleEquity = cubefulDoublePass
+	}
+
+	bestEquity := cubefulNoDouble
+	bestAction := "No Double"
+	if effectiveDoubleEquity > cubefulNoDouble {
+		bestEquity = effectiveDoubleEquity
+		if cubefulDoubleTake <= cubefulDoublePass {
+			bestAction = "Double, Take"
+		} else {
+			bestAction = "Double, Pass"
+		}
+	}
+	return bestEquity, bestAction
+}
+
 // ComputeMatchHash generates a unique hash for a match based on full match transcription
 // This is used to detect duplicate imports - includes all moves and decisions
 func ComputeMatchHash(match *xgparser.Match) string {

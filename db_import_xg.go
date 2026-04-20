@@ -65,23 +65,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	}
 
 	// Parse match date
-	var matchDate time.Time
-	if match.Metadata.DateTime != "" {
-		// Try to parse various date formats
-		for _, layout := range []string{
-			"2006-01-02 15:04:05",
-			"2006-01-02",
-			time.RFC3339,
-		} {
-			if t, err := time.Parse(layout, match.Metadata.DateTime); err == nil {
-				matchDate = t
-				break
-			}
-		}
-	}
-	if matchDate.IsZero() {
-		matchDate = time.Now()
-	}
+	matchDate := parseMatchDate(match.Metadata.DateTime)
 
 	// Compute match hash for duplicate detection (includes full match transcription)
 	matchHash := ComputeMatchHash(match)
@@ -89,21 +73,11 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	// Compute canonical hash (format-independent) for cross-format duplicate detection
 	canonicalHash := ComputeCanonicalMatchHashFromXG(match)
 
-	// Check if this exact match already exists (same format)
-	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
+	// Check for duplicate (same format) or canonical duplicate (cross-format)
+	canonicalMatchID, isCanonicalDuplicate, err := d.checkDuplicateMatchLocked(matchHash, canonicalHash)
 	if err != nil {
-		return 0, fmt.Errorf("failed to check for duplicate match: %w", err)
+		return 0, err
 	}
-	if existingMatchID > 0 {
-		return 0, ErrDuplicateMatch
-	}
-
-	// Check if same match was imported from a different format (canonical duplicate)
-	canonicalMatchID, err := d.checkCanonicalMatchExistsLocked(canonicalHash)
-	if err != nil {
-		return 0, fmt.Errorf("failed to check for canonical duplicate: %w", err)
-	}
-	isCanonicalDuplicate := canonicalMatchID > 0
 
 	// Begin transaction for atomic import
 	tx, err := d.db.Begin()
@@ -801,40 +775,34 @@ func convertBlunderDBPlayerToXG(blunderDBPlayer int) int32 {
 
 // saveMoveAnalysisInTx saves checker move analysis within a transaction
 func (d *Database) saveMoveAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgparser.CheckerAnalysis) error {
-	// Calculate win rates (player1 is player on roll) — stored as integer × 100
-	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
-	player2WinRate := int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100))
-
-	_, err := tx.Exec(`
-		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
-		                           win_rate, gammon_rate, backgammon_rate,
-		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "checker", translateAnalysisDepth(int(analysis.AnalysisDepth)),
-		int64(math.Round(float64(analysis.Equity)*1000)), int64(0),
-		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BgRate)*100.0*100)),
-		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BgRate)*100.0*100)))
-
-	return err
+	return insertMoveAnalysisRow(tx, moveAnalysisRow{
+		MoveID:                 moveID,
+		AnalysisType:           "checker",
+		Depth:                  translateAnalysisDepth(int(analysis.AnalysisDepth)),
+		Equity:                 int64(math.Round(float64(analysis.Equity) * 1000)),
+		WinRate:                int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100)),
+		GammonRate:             int64(math.Round(float64(analysis.Player1GammonRate) * 100.0 * 100)),
+		BackgammonRate:         int64(math.Round(float64(analysis.Player1BgRate) * 100.0 * 100)),
+		OpponentWinRate:        int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100)),
+		OpponentGammonRate:     int64(math.Round(float64(analysis.Player2GammonRate) * 100.0 * 100)),
+		OpponentBackgammonRate: int64(math.Round(float64(analysis.Player2BgRate) * 100.0 * 100)),
+	})
 }
 
 // saveCubeAnalysisInTx saves cube analysis within a transaction
 func (d *Database) saveCubeAnalysisInTx(tx *sql.Tx, moveID int64, analysis *xgparser.CubeAnalysis) error {
-	// Calculate win rates — stored as integer × 100
-	player1WinRate := int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100))
-	player2WinRate := int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100))
-
-	_, err := tx.Exec(`
-		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
-		                           win_rate, gammon_rate, backgammon_rate,
-		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "cube", translateAnalysisDepth(int(analysis.AnalysisDepth)),
-		int64(math.Round(float64(analysis.CubefulNoDouble)*1000)), int64(0),
-		player1WinRate, int64(math.Round(float64(analysis.Player1GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player1BgRate)*100.0*100)),
-		player2WinRate, int64(math.Round(float64(analysis.Player2GammonRate)*100.0*100)), int64(math.Round(float64(analysis.Player2BgRate)*100.0*100)))
-
-	return err
+	return insertMoveAnalysisRow(tx, moveAnalysisRow{
+		MoveID:                 moveID,
+		AnalysisType:           "cube",
+		Depth:                  translateAnalysisDepth(int(analysis.AnalysisDepth)),
+		Equity:                 int64(math.Round(float64(analysis.CubefulNoDouble) * 1000)),
+		WinRate:                int64(math.Round(float64(analysis.Player1WinRate) * 100.0 * 100)),
+		GammonRate:             int64(math.Round(float64(analysis.Player1GammonRate) * 100.0 * 100)),
+		BackgammonRate:         int64(math.Round(float64(analysis.Player1BgRate) * 100.0 * 100)),
+		OpponentWinRate:        int64(math.Round(float64(1.0-analysis.Player1WinRate) * 100.0 * 100)),
+		OpponentGammonRate:     int64(math.Round(float64(analysis.Player2GammonRate) * 100.0 * 100)),
+		OpponentBackgammonRate: int64(math.Round(float64(analysis.Player2BgRate) * 100.0 * 100)),
+	})
 }
 
 // saveCheckerAnalysisToPositionInTx converts XG checker analysis to PositionAnalysis and saves it
@@ -968,26 +936,7 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 	cubefulDoubleTake := float64(analysis.CubefulDoubleTake)
 	cubefulDoublePass := float64(analysis.CubefulDoublePass)
 
-	// Calculate best equity considering opponent's optimal response
-	// If player doubles, opponent will choose the action that minimizes player's equity
-	// So effective double equity = min(DoubleTake, DoublePass)
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	// Player's best achievable equity = max(NoDouble, effectiveDoubleEquity)
-	bestEquity := cubefulNoDouble
-	bestAction := "No Double"
-	if effectiveDoubleEquity > cubefulNoDouble {
-		bestEquity = effectiveDoubleEquity
-		// Best action is "Double, Take" or "Double, Pass" depending on opponent's response
-		if cubefulDoubleTake <= cubefulDoublePass {
-			bestAction = "Double, Take"
-		} else {
-			bestAction = "Double, Pass"
-		}
-	}
+	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
 
 	// Build doubling cube analysis
 	// Error is negative when this decision loses equity vs best (current - best)
@@ -1073,26 +1022,7 @@ func (d *Database) saveCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID
 	opponentGammon := float64(doubled.Eval[1]) * 100.0
 	opponentBg := float64(doubled.Eval[0]) * 100.0
 
-	// Calculate best equity considering opponent's optimal response
-	// If player doubles, opponent will choose the action that minimizes player's equity
-	// So effective double equity = min(DoubleTake, DoublePass)
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	// Player's best achievable equity = max(NoDouble, effectiveDoubleEquity)
-	bestEquity := cubefulNoDouble
-	bestAction := "No Double"
-	if effectiveDoubleEquity > cubefulNoDouble {
-		bestEquity = effectiveDoubleEquity
-		// Best action is "Double, Take" or "Double, Pass" depending on opponent's response
-		if cubefulDoubleTake <= cubefulDoublePass {
-			bestAction = "Double, Take"
-		} else {
-			bestAction = "Double, Pass"
-		}
-	}
+	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
 
 	// Build doubling cube analysis
 	// Error is negative when this decision loses equity vs best (current - best)

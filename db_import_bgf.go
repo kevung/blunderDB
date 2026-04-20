@@ -49,24 +49,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 	dateStr := bgfGetString(data, "date")
 
 	// Parse match date
-	var matchDate time.Time
-	if dateStr != "" {
-		for _, layout := range []string{
-			"Jan 2, 2006",
-			"2006-01-02 15:04:05",
-			"2006-01-02",
-			"January 2, 2006",
-			time.RFC3339,
-		} {
-			if t, err := time.Parse(layout, dateStr); err == nil {
-				matchDate = t
-				break
-			}
-		}
-	}
-	if matchDate.IsZero() {
-		matchDate = time.Now()
-	}
+	matchDate := parseMatchDate(dateStr)
 
 	// Extract games
 	gamesData, ok := data["games"].([]interface{})
@@ -80,21 +63,11 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 	// Compute canonical hash (format-independent) for cross-format duplicate detection
 	canonicalHash := ComputeCanonicalMatchHashFromBGF(bgfMatch)
 
-	// Check if this exact match already exists (same format)
-	existingMatchID, err := d.checkMatchExistsLocked(matchHash)
+	// Check for duplicate (same format) or canonical duplicate (cross-format)
+	canonicalMatchID, isCanonicalDuplicate, err := d.checkDuplicateMatchLocked(matchHash, canonicalHash)
 	if err != nil {
-		return 0, fmt.Errorf("failed to check for duplicate match: %w", err)
+		return 0, err
 	}
-	if existingMatchID > 0 {
-		return 0, ErrDuplicateMatch
-	}
-
-	// Check if same match was imported from a different format (canonical duplicate)
-	canonicalMatchID, err := d.checkCanonicalMatchExistsLocked(canonicalHash)
-	if err != nil {
-		return 0, fmt.Errorf("failed to check for canonical duplicate: %w", err)
-	}
-	isCanonicalDuplicate := canonicalMatchID > 0
 
 	// Begin transaction for atomic import
 	tx, err := d.db.Begin()
@@ -974,29 +947,23 @@ func (d *Database) saveBGFMoveAnalysisInTx(tx *sql.Tx, moveID int64, maData map[
 
 	ply := bgfGetInt(maData, "ply")
 
-	playerWin := int64(math.Round(bgfGetFloat(eq, "myWins") * 100.0 * 100))
-	playerGammon := int64(math.Round(bgfGetFloat(eq, "myGammon") * 100.0 * 100))
-	playerBg := int64(math.Round(bgfGetFloat(eq, "myBackGammon") * 100.0 * 100))
-	opponentWin := int64(math.Round(bgfGetFloat(eq, "oppWins") * 100.0 * 100))
-	opponentGammon := int64(math.Round(bgfGetFloat(eq, "oppGammon") * 100.0 * 100))
-	opponentBg := int64(math.Round(bgfGetFloat(eq, "oppBackGammon") * 100.0 * 100))
-
 	equity := bgfGetFloat(eq, "emg")
 	if !bgfGetBool(eq, "hasEMG") {
 		equity = bgfGetFloat(eq, "equity")
 	}
 
-	_, err := tx.Exec(`
-		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
-		                           win_rate, gammon_rate, backgammon_rate,
-		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "checker", translateBGFAnalysisDepth(ply),
-		int64(math.Round(equity*1000)), int64(0),
-		playerWin, playerGammon, playerBg,
-		opponentWin, opponentGammon, opponentBg)
-
-	return err
+	return insertMoveAnalysisRow(tx, moveAnalysisRow{
+		MoveID:                 moveID,
+		AnalysisType:           "checker",
+		Depth:                  translateBGFAnalysisDepth(ply),
+		Equity:                 int64(math.Round(equity * 1000)),
+		WinRate:                int64(math.Round(bgfGetFloat(eq, "myWins") * 100.0 * 100)),
+		GammonRate:             int64(math.Round(bgfGetFloat(eq, "myGammon") * 100.0 * 100)),
+		BackgammonRate:         int64(math.Round(bgfGetFloat(eq, "myBackGammon") * 100.0 * 100)),
+		OpponentWinRate:        int64(math.Round(bgfGetFloat(eq, "oppWins") * 100.0 * 100)),
+		OpponentGammonRate:     int64(math.Round(bgfGetFloat(eq, "oppGammon") * 100.0 * 100)),
+		OpponentBackgammonRate: int64(math.Round(bgfGetFloat(eq, "oppBackGammon") * 100.0 * 100)),
+	})
 }
 
 // saveBGFCheckerAnalysisToPositionInTx saves BGF checker analysis to position analysis table
@@ -1084,31 +1051,23 @@ func (d *Database) saveBGFCheckerAnalysisToPositionInTx(tx *sql.Tx, positionID i
 
 // saveBGFCubeMoveAnalysisInTx saves BGF cube analysis to move_analysis table
 func (d *Database) saveBGFCubeMoveAnalysisInTx(tx *sql.Tx, moveID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
-	playerWin := int64(math.Round(bgfGetFloat(equity, "myWins") * 100.0 * 100))
-	playerGammon := int64(math.Round(bgfGetFloat(equity, "myGammon") * 100.0 * 100))
-	playerBg := int64(math.Round(bgfGetFloat(equity, "myBackGammon") * 100.0 * 100))
-	opponentWin := int64(math.Round(bgfGetFloat(equity, "oppWins") * 100.0 * 100))
-	opponentGammon := int64(math.Round(bgfGetFloat(equity, "oppGammon") * 100.0 * 100))
-	opponentBg := int64(math.Round(bgfGetFloat(equity, "oppBackGammon") * 100.0 * 100))
-
-	eqNoDouble := int64(math.Round(bgfGetFloat(cubeDecision, "eqNoDouble") * 1000))
-
 	ply := 0 // Cube analysis doesn't have a ply field in BGF, use the move level
 	if pVal, ok := equity["ply"]; ok {
 		ply = bgfToInt(pVal)
 	}
 
-	_, err := tx.Exec(`
-		INSERT INTO move_analysis (move_id, analysis_type, depth, equity, equity_error,
-		                           win_rate, gammon_rate, backgammon_rate,
-		                           opponent_win_rate, opponent_gammon_rate, opponent_backgammon_rate)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-	`, moveID, "cube", translateBGFAnalysisDepth(ply),
-		eqNoDouble, int64(0),
-		playerWin, playerGammon, playerBg,
-		opponentWin, opponentGammon, opponentBg)
-
-	return err
+	return insertMoveAnalysisRow(tx, moveAnalysisRow{
+		MoveID:                 moveID,
+		AnalysisType:           "cube",
+		Depth:                  translateBGFAnalysisDepth(ply),
+		Equity:                 int64(math.Round(bgfGetFloat(cubeDecision, "eqNoDouble") * 1000)),
+		WinRate:                int64(math.Round(bgfGetFloat(equity, "myWins") * 100.0 * 100)),
+		GammonRate:             int64(math.Round(bgfGetFloat(equity, "myGammon") * 100.0 * 100)),
+		BackgammonRate:         int64(math.Round(bgfGetFloat(equity, "myBackGammon") * 100.0 * 100)),
+		OpponentWinRate:        int64(math.Round(bgfGetFloat(equity, "oppWins") * 100.0 * 100)),
+		OpponentGammonRate:     int64(math.Round(bgfGetFloat(equity, "oppGammon") * 100.0 * 100)),
+		OpponentBackgammonRate: int64(math.Round(bgfGetFloat(equity, "oppBackGammon") * 100.0 * 100)),
+	})
 }
 
 // saveBGFCubeAnalysisToPositionInTx saves BGF cube analysis to position analysis table
@@ -1128,22 +1087,7 @@ func (d *Database) saveBGFCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 	cubelessEquity := bgfGetFloat(cubeDecision, "eqCubeLess")
 	_ = bgfGetFloat(cubeDecision, "eqCubeFul") // cubefulEquity available but not directly used
 
-	// Calculate best equity
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	bestEquity := cubefulNoDouble
-	bestAction := "No Double"
-	if effectiveDoubleEquity > cubefulNoDouble {
-		bestEquity = effectiveDoubleEquity
-		if cubefulDoubleTake <= cubefulDoublePass {
-			bestAction = "Double, Take"
-		} else {
-			bestAction = "Double, Pass"
-		}
-	}
+	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
 
 	// Also derive from BGF stateOnMove/stateOther
 	stateOnMove := bgfGetString(cubeDecision, "stateOnMove")
@@ -1220,21 +1164,7 @@ func (d *Database) saveBGFCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positio
 	cubefulDoublePass := bgfGetFloat(cubeDecision, "eqDoublePass")
 	cubelessEquity := bgfGetFloat(cubeDecision, "eqCubeLess")
 
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	bestEquity := cubefulNoDouble
-	bestAction := "No Double"
-	if effectiveDoubleEquity > cubefulNoDouble {
-		bestEquity = effectiveDoubleEquity
-		if cubefulDoubleTake <= cubefulDoublePass {
-			bestAction = "Double, Take"
-		} else {
-			bestAction = "Double, Pass"
-		}
-	}
+	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
 
 	cubeAnalysis := DoublingCubeAnalysis{
 		AnalysisDepth:             "2-ply",
@@ -1600,21 +1530,7 @@ func (d *Database) saveBGFPositionWithAnalysis(bgfPos *bgfparser.Position) (int6
 			cubefulDoublePass = doublePass.EMG
 		}
 
-		effectiveDoubleEquity := cubefulDoubleTake
-		if cubefulDoublePass < cubefulDoubleTake {
-			effectiveDoubleEquity = cubefulDoublePass
-		}
-
-		bestEquity := cubefulNoDouble
-		bestAction := "No Double"
-		if effectiveDoubleEquity > cubefulNoDouble {
-			bestEquity = effectiveDoubleEquity
-			if cubefulDoubleTake <= cubefulDoublePass {
-				bestAction = "Double, Take"
-			} else {
-				bestAction = "Double, Pass"
-			}
-		}
+		bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
 
 		cubeAnalysis := DoublingCubeAnalysis{
 			AnalysisDepth:           "2-ply",
