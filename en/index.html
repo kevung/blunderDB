@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.17.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -229,6 +229,10 @@
 <tr class="row-even"><td><p>0.17.0</p></td>
 <td><p>April 20, 2026</p></td>
 <td><p>Storage optimization: zlib compression of analysis data (~80% reduction), compact board encoding (~90% position state size reduction). Added 5 missing indexes for search performance. Fixed cube error search returning wrong results. Fixed EDIT mode after search returns no results. Restored search panel state when switching tabs. Removed 62 debug print statements from hot search/filter paths.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.18.0</p></td>
+<td><p>April 20, 2026</p></td>
+<td><p>Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers spécialisés, extraction de 7 modules de service depuis App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux. Migration complète vers Svelte 5 runes. Remplacement de 9 modales de tableau par un composant générique DataTableModal. Ajout d’ESLint + Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier). Passage du mutex Database en RWMutex pour un meilleur parallélisme en lecture. Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN). Réécriture du README. Correction de tous les avertissements ESLint (46→0) et Vite (6→0).</p></td>
 </tr>
 </tbody>
 </table>
