@@ -121,6 +121,11 @@ clavier permettent une utilisation efficace de blunderDB.
 
 \item {} 
 \sphinxAtStartPar
+la section \sphinxstylestrong{interface en ligne de commande (CLI)} décrit les commandes
+disponibles pour l’import en masse, l’automatisation et le scripting.
+
+\item {} 
+\sphinxAtStartPar
 la \sphinxstylestrong{FAQ} fournit quelques réponses aux interrogations les plus fréquentes.
 
 \end{itemize}
@@ -4204,6 +4209,836 @@ Arrêter la révision et revenir à la liste des paquets (reprise possible).
 \end{tabular}
 \sphinxtableafterendhook\par
 \sphinxattableend\end{savenotes}
+
+\sphinxstepscope
+
+
+\section{Interface en ligne de commande (CLI)}
+\label{\detokenize{cli:interface-en-ligne-de-commande-cli}}\label{\detokenize{cli:cli}}\label{\detokenize{cli::doc}}
+
+\subsection{Introduction}
+\label{\detokenize{cli:introduction}}
+\sphinxAtStartPar
+blunderDB embarque une interface en ligne de commande (CLI) complète dans le
+même exécutable que l’interface graphique. La CLI est particulièrement utile
+pour:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{l’import en masse} de matchs: importer un répertoire entier de fichiers
+de matchs (XG, SGF, MAT, BGF…) en une seule commande,
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{l’automatisation}: intégrer blunderDB dans des scripts shell pour des
+sauvegardes régulières, des exports planifiés ou des chaînes de traitement,
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{l’utilisation sur serveur}: manipuler des bases de données sur des machines
+sans environnement graphique,
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{l’inspection rapide}: vérifier le contenu ou l’intégrité d’une base de
+données sans lancer l’interface graphique.
+
+\end{itemize}
+
+\sphinxAtStartPar
+La CLI partage exactement le même format de base de données que l’interface
+graphique. Toute opération effectuée en CLI est immédiatement visible dans
+l’interface graphique et inversement.
+
+
+\subsection{Syntaxe générale}
+\label{\detokenize{cli:syntaxe-generale}}
+\sphinxAtStartPar
+Le mode est détecté automatiquement: si le premier argument est une commande
+CLI, blunderDB se lance en mode headless, sinon il lance l’interface graphique.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Mode graphique (aucun argument)}
+./blunderdb
+
+\PYG{c+c1}{\PYGZsh{} Mode CLI}
+./blunderdb\PYG{+w}{ }\PYGZlt{}commande\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}options\PYG{o}{]}
+\end{sphinxVerbatim}
+
+
+\subsection{Commandes disponibles}
+\label{\detokenize{cli:commandes-disponibles}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{10}{50}\X{40}{50}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Commande
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Description
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+create
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Crée une nouvelle base de données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+import
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Importe des données (match, position, lot).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+export
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Exporte des données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+search
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Recherche des positions avec filtres.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+list
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Affiche le contenu de la base.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+match
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Affiche les positions et analyses d’un match.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+info
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Affiche les métadonnées de la base.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+edit
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Modifie les métadonnées de la base.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+verify
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Vérifie l’intégrité de la base.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+delete
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Supprime des données.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+help
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Affiche l’aide.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+version
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Affiche la version.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\sphinxAtStartPar
+Chaque commande accepte l’option \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}help}} pour afficher son aide détaillée.
+
+
+\subsection{create — Créer une base de données}
+\label{\detokenize{cli:create-creer-une-base-de-donnees}}
+\sphinxAtStartPar
+Crée un nouveau fichier de base de données avec des métadonnées optionnelles.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }create\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}user\PYG{+w}{ }\PYGZlt{}nom\PYGZgt{}\PYG{o}{]}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}description\PYG{+w}{ }\PYGZlt{}texte\PYGZgt{}\PYG{o}{]}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}force\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Chemin du fichier de base de données à créer (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}user}} — Nom du propriétaire de la base.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}description}} — Description de la base.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}force}} — Écraser le fichier s’il existe déjà.
+
+\end{itemize}
+
+\sphinxAtStartPar
+L’extension \sphinxcode{\sphinxupquote{.db}} est ajoutée automatiquement si elle est absente. Les
+répertoires parents sont créés si nécessaire.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemple:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }create\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }mes\PYGZus{}matchs.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}user\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Jean\PYGZdq{}}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}description\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Matchs de tournoi 2025\PYGZdq{}}
+\end{sphinxVerbatim}
+
+
+\subsection{import — Importer des données}
+\label{\detokenize{cli:import-importer-des-donnees}}
+\sphinxAtStartPar
+Importe des fichiers de matchs ou de positions dans la base de données.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }import\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }\PYGZlt{}type\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}options\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Chemin de la base de données (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Type d’import: \sphinxcode{\sphinxupquote{match}}, \sphinxcode{\sphinxupquote{position}} ou \sphinxcode{\sphinxupquote{batch}} (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Fichier à importer (pour \sphinxcode{\sphinxupquote{match}} et \sphinxcode{\sphinxupquote{position}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dir}} — Répertoire à importer (pour \sphinxcode{\sphinxupquote{batch}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}recursive}} — Scanner récursivement les sous\sphinxhyphen{}répertoires (défaut: oui).
+
+\end{itemize}
+
+
+\subsubsection{Import d’un match}
+\label{\detokenize{cli:import-d-un-match}}
+\sphinxAtStartPar
+Formats supportés: eXtreme Gammon (\sphinxcode{\sphinxupquote{.xg}}, \sphinxcode{\sphinxupquote{.xgp}}), GNUbg (\sphinxcode{\sphinxupquote{.sgf}}),
+Jellyfish (\sphinxcode{\sphinxupquote{.mat}}, \sphinxcode{\sphinxupquote{.txt}}) et BGBlitz (\sphinxcode{\sphinxupquote{.bgf}}).
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }import\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }match.xg
+\end{sphinxVerbatim}
+
+
+\subsubsection{Import de positions}
+\label{\detokenize{cli:import-de-positions}}
+\sphinxAtStartPar
+Importe des positions depuis un fichier texte (une position JSON par ligne):
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }import\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }position\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }positions.txt
+\end{sphinxVerbatim}
+
+
+\subsubsection{Import par lot}
+\label{\detokenize{cli:import-par-lot}}
+\sphinxAtStartPar
+Importe tous les fichiers de matchs d’un répertoire en une seule opération.
+C’est la méthode la plus efficace pour importer un grand nombre de matchs.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Import récursif (par défaut)}
+./blunderdb\PYG{+w}{ }import\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }batch\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }./matchs/
+
+\PYG{c+c1}{\PYGZsh{} Import non récursif}
+./blunderdb\PYG{+w}{ }import\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }batch\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }./matchs/\PYG{+w}{ }\PYGZhy{}\PYGZhy{}recursive\PYG{o}{=}\PYG{n+nb}{false}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+Un tableau récapitulatif indique pour chaque fichier si l’import a réussi
+(\(\checkmark\)), échoué (✗) ou s’il s’agit d’un doublon (⊘).
+
+
+\subsection{export — Exporter des données}
+\label{\detokenize{cli:export-exporter-des-donnees}}
+\sphinxAtStartPar
+Exporte le contenu de la base vers des fichiers.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }\PYGZlt{}type\PYGZgt{}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }\PYGZlt{}sortie\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}options\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Base source (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Type d’export: \sphinxcode{\sphinxupquote{database}}, \sphinxcode{\sphinxupquote{positions}} ou \sphinxcode{\sphinxupquote{matches}} (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}file}} — Fichier de sortie (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}analysis}} — Inclure les analyses (défaut: oui).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}comments}} — Inclure les commentaires (défaut: oui).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}filters}} — Inclure la bibliothèque de filtres (défaut: oui).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}played\sphinxhyphen{}moves}} — Inclure les coups joués (défaut: oui).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}matches}} — Inclure les matchs (défaut: oui).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}collections}} — Inclure les collections (défaut: non).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}collection\sphinxhyphen{}ids}} — IDs de collections à exporter (séparés par des virgules).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}ids}} — IDs de matchs à exporter (séparés par des virgules, vide = tous).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament\sphinxhyphen{}ids}} — IDs de tournois à exporter (séparés par des virgules).
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Export complet de la base}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }database\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }sauvegarde.db
+
+\PYG{c+c1}{\PYGZsh{} Export des positions en JSON}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }positions\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }positions.txt
+
+\PYG{c+c1}{\PYGZsh{} Export de matchs spécifiques}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }matches\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }selection.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{1},3,5
+\end{sphinxVerbatim}
+
+
+\subsection{search — Rechercher des positions}
+\label{\detokenize{cli:search-rechercher-des-positions}}
+\sphinxAtStartPar
+Recherche des positions dans la base selon des critères combinables.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}options\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options principales:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Base de données (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}format}} — Format de sortie: \sphinxcode{\sphinxupquote{table}}, \sphinxcode{\sphinxupquote{json}} ou \sphinxcode{\sphinxupquote{xgid}} (défaut: \sphinxcode{\sphinxupquote{table}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}limit}} — Nombre maximum de résultats (0 = illimité).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}export}} — Exporter les résultats vers une nouvelle base.
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Filtres disponibles:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision}} — Type de décision: \sphinxcode{\sphinxupquote{checker}} ou \sphinxcode{\sphinxupquote{cube}}.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}pip\sphinxhyphen{}min}} / \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}pip\sphinxhyphen{}max}} — Intervalle de différence de pip count.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}winrate\sphinxhyphen{}min}} / \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}winrate\sphinxhyphen{}max}} — Intervalle de taux de victoire (\%).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}cube}} — Valeur du videau.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}score1}} / \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}score2}} — Scores des joueurs.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}length}} — Longueur du match.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}error\sphinxhyphen{}min}} — Erreur d’équité minimale.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}move\sphinxhyphen{}error\sphinxhyphen{}min}} / \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}move\sphinxhyphen{}error\sphinxhyphen{}max}} — Erreur du coup joué (millipoints).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}has\sphinxhyphen{}analysis}} — Uniquement les positions avec analyse.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}off1\sphinxhyphen{}min}} / \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}off2\sphinxhyphen{}min}} — Pions sortis minimum (joueur 1/2).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match\sphinxhyphen{}ids}} — Filtrer par IDs de matchs (séparés par des virgules).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}tournament\sphinxhyphen{}ids}} — Filtrer par IDs de tournois (séparés par des virgules).
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Rechercher les décisions de videau}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}decision\PYG{+w}{ }cube
+
+\PYG{c+c1}{\PYGZsh{} Rechercher les positions avec erreur \PYGZgt{}= 0.1}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}error\PYGZhy{}min\PYG{+w}{ }\PYG{l+m}{0}.1
+
+\PYG{c+c1}{\PYGZsh{} Rechercher dans un tournoi et exporter}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}tournament\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}export\PYG{+w}{ }cubes.db
+
+\PYG{c+c1}{\PYGZsh{} Sortie JSON limitée à 10 résultats}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }json\PYG{+w}{ }\PYGZhy{}\PYGZhy{}limit\PYG{+w}{ }\PYG{l+m}{10}
+\end{sphinxVerbatim}
+
+
+\subsection{list — Lister le contenu}
+\label{\detokenize{cli:list-lister-le-contenu}}
+\sphinxAtStartPar
+Affiche le contenu de la base de données.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }\PYGZlt{}type\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}limit\PYG{+w}{ }\PYGZlt{}n\PYGZgt{}\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Types:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{matches}} — Liste des matchs importés.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{positions}} — Liste des positions (limité à 10 par défaut).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{stats}} — Statistiques globales (positions, analyses, matchs, parties, coups).
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Statistiques de la base}
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }stats
+
+\PYG{c+c1}{\PYGZsh{} Liste des matchs}
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }matches
+
+\PYG{c+c1}{\PYGZsh{} Premières 20 positions}
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }positions\PYG{+w}{ }\PYGZhy{}\PYGZhy{}limit\PYG{+w}{ }\PYG{l+m}{20}
+\end{sphinxVerbatim}
+
+
+\subsection{match — Afficher un match}
+\label{\detokenize{cli:match-afficher-un-match}}
+\sphinxAtStartPar
+Affiche les positions et analyses d’un match importé.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYGZlt{}id\PYGZus{}match\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }\PYGZlt{}format\PYGZgt{}\PYG{o}{]}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}output\PYG{+w}{ }\PYGZlt{}fichier\PYGZgt{}\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Base de données (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}id}} — ID du match à afficher (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}format}} — Format de sortie: \sphinxcode{\sphinxupquote{json}}, \sphinxcode{\sphinxupquote{text}} ou \sphinxcode{\sphinxupquote{summary}} (défaut: \sphinxcode{\sphinxupquote{json}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}output}} — Fichier de sortie (défaut: sortie standard).
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Résumé d\PYGZsq{}un match}
+./blunderdb\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }summary
+
+\PYG{c+c1}{\PYGZsh{} Détails de chaque position}
+./blunderdb\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }text
+
+\PYG{c+c1}{\PYGZsh{} Export JSON vers un fichier}
+./blunderdb\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}output\PYG{+w}{ }match1.json
+\end{sphinxVerbatim}
+
+
+\subsection{info — Métadonnées de la base}
+\label{\detokenize{cli:info-metadonnees-de-la-base}}
+\sphinxAtStartPar
+Affiche les métadonnées et les statistiques d’une base de données.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }info\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }\PYGZlt{}format\PYGZgt{}\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Base de données (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}format}} — Format de sortie: \sphinxcode{\sphinxupquote{text}} ou \sphinxcode{\sphinxupquote{json}} (défaut: \sphinxcode{\sphinxupquote{text}}).
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Afficher les informations}
+./blunderdb\PYG{+w}{ }info\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db
+
+\PYG{c+c1}{\PYGZsh{} Sortie JSON (pour un script)}
+./blunderdb\PYG{+w}{ }info\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }json
+\end{sphinxVerbatim}
+
+
+\subsection{edit — Modifier les métadonnées}
+\label{\detokenize{cli:edit-modifier-les-metadonnees}}
+\sphinxAtStartPar
+Modifie le nom d’utilisateur ou la description d’une base de données.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }edit\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}options\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Base de données (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}user}} — Nouveau nom d’utilisateur.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}description}} — Nouvelle description.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}clear\sphinxhyphen{}user}} — Effacer le nom d’utilisateur.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}clear\sphinxhyphen{}description}} — Effacer la description.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Au moins une option de modification est requise.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Modifier l\PYGZsq{}utilisateur et la description}
+./blunderdb\PYG{+w}{ }edit\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}user\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Marie\PYGZdq{}}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}description\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Ma collection\PYGZdq{}}
+
+\PYG{c+c1}{\PYGZsh{} Effacer la description}
+./blunderdb\PYG{+w}{ }edit\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}clear\PYGZhy{}description
+\end{sphinxVerbatim}
+
+
+\subsection{verify — Vérifier l’intégrité}
+\label{\detokenize{cli:verify-verifier-l-integrite}}
+\sphinxAtStartPar
+Vérifie l’intégrité de la base de données et, optionnellement, compare un match
+avec son fichier source.
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }verify\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}match\PYG{+w}{ }\PYGZlt{}id\PYGZgt{}\PYG{o}{]}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}mat\PYG{+w}{ }\PYGZlt{}fichier.mat\PYGZgt{}\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Base de données (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match}} — ID du match à vérifier.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}mat}} — Fichier MAT à comparer (utilisé avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match}}).
+
+\end{itemize}
+
+\sphinxAtStartPar
+Sans l’option \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match}}, la commande affiche les statistiques générales de la
+base. Avec \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}match}}, elle vérifie les données du match et peut les comparer
+avec le fichier source original.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Vérification globale}
+./blunderdb\PYG{+w}{ }verify\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db
+
+\PYG{c+c1}{\PYGZsh{} Vérifier un match spécifique}
+./blunderdb\PYG{+w}{ }verify\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYG{+w}{ }\PYG{l+m}{1}
+
+\PYG{c+c1}{\PYGZsh{} Comparer avec le fichier source}
+./blunderdb\PYG{+w}{ }verify\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}match\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}mat\PYG{+w}{ }original.mat
+\end{sphinxVerbatim}
+
+
+\subsection{delete — Supprimer des données}
+\label{\detokenize{cli:delete-supprimer-des-donnees}}
+\sphinxAtStartPar
+Supprime un match et toutes les données associées (parties, coups, analyses).
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+./blunderdb\PYG{+w}{ }delete\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }\PYGZlt{}chemin\PYGZgt{}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYGZlt{}id\PYGZgt{}\PYG{+w}{ }\PYG{o}{[}\PYGZhy{}\PYGZhy{}confirm\PYG{o}{]}
+\end{sphinxVerbatim}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Options:}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}db}} — Base de données (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}type}} — Type de suppression: \sphinxcode{\sphinxupquote{match}} (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}id}} — ID de l’élément à supprimer (obligatoire).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}confirm}} — Supprimer sans demander de confirmation.
+
+\end{itemize}
+
+\sphinxAtStartPar
+\sphinxstylestrong{Exemples:}
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Supprimer avec confirmation interactive}
+./blunderdb\PYG{+w}{ }delete\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYG{l+m}{1}
+
+\PYG{c+c1}{\PYGZsh{} Supprimer sans confirmation (pour scripts)}
+./blunderdb\PYG{+w}{ }delete\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}id\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}confirm
+\end{sphinxVerbatim}
+
+
+\subsection{Exemples de flux de travail}
+\label{\detokenize{cli:exemples-de-flux-de-travail}}
+
+\subsubsection{Import d’un répertoire de tournoi}
+\label{\detokenize{cli:import-d-un-repertoire-de-tournoi}}
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Créer une base dédiée au tournoi}
+./blunderdb\PYG{+w}{ }create\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }tournoi\PYGZus{}paris.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}user\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Jean\PYGZdq{}}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}description\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Open de Paris 2025\PYGZdq{}}
+
+\PYG{c+c1}{\PYGZsh{} Importer tous les matchs du répertoire}
+./blunderdb\PYG{+w}{ }import\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }tournoi\PYGZus{}paris.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }batch\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dir\PYG{+w}{ }./matchs\PYGZus{}open\PYGZus{}paris/
+
+\PYG{c+c1}{\PYGZsh{} Vérifier le résultat}
+./blunderdb\PYG{+w}{ }list\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }tournoi\PYGZus{}paris.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }stats
+\end{sphinxVerbatim}
+
+
+\subsubsection{Sauvegarde régulière}
+\label{\detokenize{cli:sauvegarde-reguliere}}
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Export complet pour sauvegarde}
+./blunderdb\PYG{+w}{ }\PYG{n+nb}{export}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }production.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }database\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }sauvegarde\PYGZhy{}\PYG{k}{\PYGZdl{}(}date\PYG{+w}{ }+\PYGZpc{}Y\PYGZpc{}m\PYGZpc{}d\PYG{k}{)}.db
+\end{sphinxVerbatim}
+
+
+\subsubsection{Analyse des erreurs}
+\label{\detokenize{cli:analyse-des-erreurs}}
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{c+c1}{\PYGZsh{} Extraire les blunders dans une base séparée}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }production.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}error\PYGZhy{}min\PYG{+w}{ }\PYG{l+m}{0}.1\PYG{+w}{ }\PYGZhy{}\PYGZhy{}export\PYG{+w}{ }blunders.db
+
+\PYG{c+c1}{\PYGZsh{} Extraire les erreurs de videau}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }production.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}decision\PYG{+w}{ }cube\PYG{+w}{ }\PYGZhy{}\PYGZhy{}error\PYGZhy{}min\PYG{+w}{ }\PYG{l+m}{0}.05\PYG{+w}{ }\PYGZhy{}\PYGZhy{}export\PYG{+w}{ }cube\PYGZus{}errors.db
+\end{sphinxVerbatim}
+
+
+\subsection{Codes de retour}
+\label{\detokenize{cli:codes-de-retour}}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{0}} — Succès.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{1}} — Erreur.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Cela permet d’utiliser la CLI dans des scripts avec gestion d’erreurs:
+
+\begin{sphinxVerbatim}[commandchars=\\\{\}]
+\PYG{k}{if}\PYG{+w}{ }./blunderdb\PYG{+w}{ }import\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}type\PYG{+w}{ }match\PYG{+w}{ }\PYGZhy{}\PYGZhy{}file\PYG{+w}{ }match.xg\PYG{p}{;}\PYG{+w}{ }\PYG{k}{then}
+\PYG{+w}{    }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Import réussi\PYGZdq{}}
+\PYG{k}{else}
+\PYG{+w}{    }\PYG{n+nb}{echo}\PYG{+w}{ }\PYG{l+s+s2}{\PYGZdq{}Échec de l\PYGZsq{}import\PYGZdq{}}
+\PYG{+w}{    }\PYG{n+nb}{exit}\PYG{+w}{ }\PYG{l+m}{1}
+\PYG{k}{fi}
+\end{sphinxVerbatim}
 
 \sphinxstepscope
 

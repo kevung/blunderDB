@@ -1,0 +1,577 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>6. Interface en ligne de commande (CLI) &mdash; Documentation blunderDB 0.17.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=84b1388f"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="7. Foire aux questions" href="faq.html" />
+    <link rel="prev" title="5. Raccourcis clavier" href="raccourcis.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. Interface en ligne de commande (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">6.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#syntaxe-generale">6.2. Syntaxe générale</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-disponibles">6.3. Commandes disponibles</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-creer-une-base-de-donnees">6.4. create — Créer une base de données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-importer-des-donnees">6.5. import — Importer des données</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-match">6.5.1. Import d’un match</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-de-positions">6.5.2. Import de positions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#import-par-lot">6.5.3. Import par lot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#export-exporter-des-donnees">6.6. export — Exporter des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#search-rechercher-des-positions">6.7. search — Rechercher des positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#list-lister-le-contenu">6.8. list — Lister le contenu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#match-afficher-un-match">6.9. match — Afficher un match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#info-metadonnees-de-la-base">6.10. info — Métadonnées de la base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edit-modifier-les-metadonnees">6.11. edit — Modifier les métadonnées</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#verify-verifier-l-integrite">6.12. verify — Vérifier l’intégrité</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#delete-supprimer-des-donnees">6.13. delete — Supprimer des données</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples-de-flux-de-travail">6.14. Exemples de flux de travail</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#import-d-un-repertoire-de-tournoi">6.14.1. Import d’un répertoire de tournoi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#sauvegarde-reguliere">6.14.2. Sauvegarde régulière</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#analyse-des-erreurs">6.14.3. Analyse des erreurs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#codes-de-retour">6.15. Codes de retour</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Annexe: Schéma de la base de données</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">6. </span>Interface en ligne de commande (CLI)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="interface-en-ligne-de-commande-cli">
+<span id="cli"></span><h1><span class="section-number">6. </span>Interface en ligne de commande (CLI)<a class="headerlink" href="#interface-en-ligne-de-commande-cli" title="Lien vers cette rubrique"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">6.1. </span>Introduction<a class="headerlink" href="#introduction" title="Lien vers cette rubrique"></a></h2>
+<p>blunderDB embarque une interface en ligne de commande (CLI) complète dans le
+même exécutable que l’interface graphique. La CLI est particulièrement utile
+pour:</p>
+<ul class="simple">
+<li><p><strong>l’import en masse</strong> de matchs: importer un répertoire entier de fichiers
+de matchs (XG, SGF, MAT, BGF…) en une seule commande,</p></li>
+<li><p><strong>l’automatisation</strong>: intégrer blunderDB dans des scripts shell pour des
+sauvegardes régulières, des exports planifiés ou des chaînes de traitement,</p></li>
+<li><p><strong>l’utilisation sur serveur</strong>: manipuler des bases de données sur des machines
+sans environnement graphique,</p></li>
+<li><p><strong>l’inspection rapide</strong>: vérifier le contenu ou l’intégrité d’une base de
+données sans lancer l’interface graphique.</p></li>
+</ul>
+<p>La CLI partage exactement le même format de base de données que l’interface
+graphique. Toute opération effectuée en CLI est immédiatement visible dans
+l’interface graphique et inversement.</p>
+</section>
+<section id="syntaxe-generale">
+<h2><span class="section-number">6.2. </span>Syntaxe générale<a class="headerlink" href="#syntaxe-generale" title="Lien vers cette rubrique"></a></h2>
+<p>Le mode est détecté automatiquement: si le premier argument est une commande
+CLI, blunderDB se lance en mode headless, sinon il lance l’interface graphique.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Mode graphique (aucun argument)</span>
+./blunderdb
+
+<span class="c1"># Mode CLI</span>
+./blunderdb<span class="w"> </span>&lt;commande&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+</section>
+<section id="commandes-disponibles">
+<h2><span class="section-number">6.3. </span>Commandes disponibles<a class="headerlink" href="#commandes-disponibles" title="Lien vers cette rubrique"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Commande</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>create</p></td>
+<td><p>Crée une nouvelle base de données.</p></td>
+</tr>
+<tr class="row-odd"><td><p>import</p></td>
+<td><p>Importe des données (match, position, lot).</p></td>
+</tr>
+<tr class="row-even"><td><p>export</p></td>
+<td><p>Exporte des données.</p></td>
+</tr>
+<tr class="row-odd"><td><p>search</p></td>
+<td><p>Recherche des positions avec filtres.</p></td>
+</tr>
+<tr class="row-even"><td><p>list</p></td>
+<td><p>Affiche le contenu de la base.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match</p></td>
+<td><p>Affiche les positions et analyses d’un match.</p></td>
+</tr>
+<tr class="row-even"><td><p>info</p></td>
+<td><p>Affiche les métadonnées de la base.</p></td>
+</tr>
+<tr class="row-odd"><td><p>edit</p></td>
+<td><p>Modifie les métadonnées de la base.</p></td>
+</tr>
+<tr class="row-even"><td><p>verify</p></td>
+<td><p>Vérifie l’intégrité de la base.</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete</p></td>
+<td><p>Supprime des données.</p></td>
+</tr>
+<tr class="row-even"><td><p>help</p></td>
+<td><p>Affiche l’aide.</p></td>
+</tr>
+<tr class="row-odd"><td><p>version</p></td>
+<td><p>Affiche la version.</p></td>
+</tr>
+</tbody>
+</table>
+<p>Chaque commande accepte l’option <code class="docutils literal notranslate"><span class="pre">--help</span></code> pour afficher son aide détaillée.</p>
+</section>
+<section id="create-creer-une-base-de-donnees">
+<h2><span class="section-number">6.4. </span>create — Créer une base de données<a class="headerlink" href="#create-creer-une-base-de-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Crée un nouveau fichier de base de données avec des métadonnées optionnelles.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>--user<span class="w"> </span>&lt;nom&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--description<span class="w"> </span>&lt;texte&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--force<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Chemin du fichier de base de données à créer (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Nom du propriétaire de la base.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Description de la base.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--force</span></code> — Écraser le fichier s’il existe déjà.</p></li>
+</ul>
+<p>L’extension <code class="docutils literal notranslate"><span class="pre">.db</span></code> est ajoutée automatiquement si elle est absente. Les
+répertoires parents sont créés si nécessaire.</p>
+<p><strong>Exemple:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>mes_matchs.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">&quot;Jean&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Matchs de tournoi 2025&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="import-importer-des-donnees">
+<h2><span class="section-number">6.5. </span>import — Importer des données<a class="headerlink" href="#import-importer-des-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Importe des fichiers de matchs ou de positions dans la base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Chemin de la base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’import: <code class="docutils literal notranslate"><span class="pre">match</span></code>, <code class="docutils literal notranslate"><span class="pre">position</span></code> ou <code class="docutils literal notranslate"><span class="pre">batch</span></code> (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier à importer (pour <code class="docutils literal notranslate"><span class="pre">match</span></code> et <code class="docutils literal notranslate"><span class="pre">position</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dir</span></code> — Répertoire à importer (pour <code class="docutils literal notranslate"><span class="pre">batch</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--recursive</span></code> — Scanner récursivement les sous-répertoires (défaut: oui).</p></li>
+</ul>
+<section id="import-d-un-match">
+<h3><span class="section-number">6.5.1. </span>Import d’un match<a class="headerlink" href="#import-d-un-match" title="Lien vers cette rubrique"></a></h3>
+<p>Formats supportés: eXtreme Gammon (<code class="docutils literal notranslate"><span class="pre">.xg</span></code>, <code class="docutils literal notranslate"><span class="pre">.xgp</span></code>), GNUbg (<code class="docutils literal notranslate"><span class="pre">.sgf</span></code>),
+Jellyfish (<code class="docutils literal notranslate"><span class="pre">.mat</span></code>, <code class="docutils literal notranslate"><span class="pre">.txt</span></code>) et BGBlitz (<code class="docutils literal notranslate"><span class="pre">.bgf</span></code>).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg
+</pre></div>
+</div>
+</section>
+<section id="import-de-positions">
+<h3><span class="section-number">6.5.2. </span>Import de positions<a class="headerlink" href="#import-de-positions" title="Lien vers cette rubrique"></a></h3>
+<p>Importe des positions depuis un fichier texte (une position JSON par ligne):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>position<span class="w"> </span>--file<span class="w"> </span>positions.txt
+</pre></div>
+</div>
+</section>
+<section id="import-par-lot">
+<h3><span class="section-number">6.5.3. </span>Import par lot<a class="headerlink" href="#import-par-lot" title="Lien vers cette rubrique"></a></h3>
+<p>Importe tous les fichiers de matchs d’un répertoire en une seule opération.
+C’est la méthode la plus efficace pour importer un grand nombre de matchs.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Import récursif (par défaut)</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/
+
+<span class="c1"># Import non récursif</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs/<span class="w"> </span>--recursive<span class="o">=</span><span class="nb">false</span>
+</pre></div>
+</div>
+<p>Un tableau récapitulatif indique pour chaque fichier si l’import a réussi
+(✓), échoué (✗) ou s’il s’agit d’un doublon (⊘).</p>
+</section>
+</section>
+<section id="export-exporter-des-donnees">
+<h2><span class="section-number">6.6. </span>export — Exporter des données<a class="headerlink" href="#export-exporter-des-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Exporte le contenu de la base vers des fichiers.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span>--file<span class="w"> </span>&lt;sortie&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base source (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type d’export: <code class="docutils literal notranslate"><span class="pre">database</span></code>, <code class="docutils literal notranslate"><span class="pre">positions</span></code> ou <code class="docutils literal notranslate"><span class="pre">matches</span></code> (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--file</span></code> — Fichier de sortie (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--analysis</span></code> — Inclure les analyses (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--comments</span></code> — Inclure les commentaires (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--filters</span></code> — Inclure la bibliothèque de filtres (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--played-moves</span></code> — Inclure les coups joués (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--matches</span></code> — Inclure les matchs (défaut: oui).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collections</span></code> — Inclure les collections (défaut: non).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--collection-ids</span></code> — IDs de collections à exporter (séparés par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — IDs de matchs à exporter (séparés par des virgules, vide = tous).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — IDs de tournois à exporter (séparés par des virgules).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export complet de la base</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde.db
+
+<span class="c1"># Export des positions en JSON</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--file<span class="w"> </span>positions.txt
+
+<span class="c1"># Export de matchs spécifiques</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches<span class="w"> </span>--file<span class="w"> </span>selection.db<span class="w"> </span>--match-ids<span class="w"> </span><span class="m">1</span>,3,5
+</pre></div>
+</div>
+</section>
+<section id="search-rechercher-des-positions">
+<h2><span class="section-number">6.7. </span>search — Rechercher des positions<a class="headerlink" href="#search-rechercher-des-positions" title="Lien vers cette rubrique"></a></h2>
+<p>Recherche des positions dans la base selon des critères combinables.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options principales:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">table</span></code>, <code class="docutils literal notranslate"><span class="pre">json</span></code> ou <code class="docutils literal notranslate"><span class="pre">xgid</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">table</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--limit</span></code> — Nombre maximum de résultats (0 = illimité).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--export</span></code> — Exporter les résultats vers une nouvelle base.</p></li>
+</ul>
+<p><strong>Filtres disponibles:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code> — Type de décision: <code class="docutils literal notranslate"><span class="pre">checker</span></code> ou <code class="docutils literal notranslate"><span class="pre">cube</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code> — Intervalle de différence de pip count.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code> — Intervalle de taux de victoire (%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code> — Valeur du videau.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--score1</span></code> / <code class="docutils literal notranslate"><span class="pre">--score2</span></code> — Scores des joueurs.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-length</span></code> — Longueur du match.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--error-min</span></code> — Erreur d’équité minimale.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--move-error-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--move-error-max</span></code> — Erreur du coup joué (millipoints).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--has-analysis</span></code> — Uniquement les positions avec analyse.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--off1-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--off2-min</span></code> — Pions sortis minimum (joueur 1/2).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match-ids</span></code> — Filtrer par IDs de matchs (séparés par des virgules).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--tournament-ids</span></code> — Filtrer par IDs de tournois (séparés par des virgules).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Rechercher les décisions de videau</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--decision<span class="w"> </span>cube
+
+<span class="c1"># Rechercher les positions avec erreur &gt;= 0.1</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1
+
+<span class="c1"># Rechercher dans un tournoi et exporter</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--tournament-ids<span class="w"> </span><span class="m">1</span><span class="w"> </span>--export<span class="w"> </span>cubes.db
+
+<span class="c1"># Sortie JSON limitée à 10 résultats</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+</pre></div>
+</div>
+</section>
+<section id="list-lister-le-contenu">
+<h2><span class="section-number">6.8. </span>list — Lister le contenu<a class="headerlink" href="#list-lister-le-contenu" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche le contenu de la base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--type<span class="w"> </span>&lt;type&gt;<span class="w"> </span><span class="o">[</span>--limit<span class="w"> </span>&lt;n&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Types:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">matches</span></code> — Liste des matchs importés.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">positions</span></code> — Liste des positions (limité à 10 par défaut).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">stats</span></code> — Statistiques globales (positions, analyses, matchs, parties, coups).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Statistiques de la base</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>stats
+
+<span class="c1"># Liste des matchs</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>matches
+
+<span class="c1"># Premières 20 positions</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>positions<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+</pre></div>
+</div>
+</section>
+<section id="match-afficher-un-match">
+<h2><span class="section-number">6.9. </span>match — Afficher un match<a class="headerlink" href="#match-afficher-un-match" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche les positions et analyses d’un match importé.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--id<span class="w"> </span>&lt;id_match&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--output<span class="w"> </span>&lt;fichier&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — ID du match à afficher (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">json</span></code>, <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">summary</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">json</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--output</span></code> — Fichier de sortie (défaut: sortie standard).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Résumé d&#39;un match</span>
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>summary
+
+<span class="c1"># Détails de chaque position</span>
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--format<span class="w"> </span>text
+
+<span class="c1"># Export JSON vers un fichier</span>
+./blunderdb<span class="w"> </span>match<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--output<span class="w"> </span>match1.json
+</pre></div>
+</div>
+</section>
+<section id="info-metadonnees-de-la-base">
+<h2><span class="section-number">6.10. </span>info — Métadonnées de la base<a class="headerlink" href="#info-metadonnees-de-la-base" title="Lien vers cette rubrique"></a></h2>
+<p>Affiche les métadonnées et les statistiques d’une base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>--format<span class="w"> </span>&lt;format&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--format</span></code> — Format de sortie: <code class="docutils literal notranslate"><span class="pre">text</span></code> ou <code class="docutils literal notranslate"><span class="pre">json</span></code> (défaut: <code class="docutils literal notranslate"><span class="pre">text</span></code>).</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Afficher les informations</span>
+./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Sortie JSON (pour un script)</span>
+./blunderdb<span class="w"> </span>info<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json
+</pre></div>
+</div>
+</section>
+<section id="edit-modifier-les-metadonnees">
+<h2><span class="section-number">6.11. </span>edit — Modifier les métadonnées<a class="headerlink" href="#edit-modifier-les-metadonnees" title="Lien vers cette rubrique"></a></h2>
+<p>Modifie le nom d’utilisateur ou la description d’une base de données.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>options<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--user</span></code> — Nouveau nom d’utilisateur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--description</span></code> — Nouvelle description.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-user</span></code> — Effacer le nom d’utilisateur.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--clear-description</span></code> — Effacer la description.</p></li>
+</ul>
+<p>Au moins une option de modification est requise.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Modifier l&#39;utilisateur et la description</span>
+./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">&quot;Marie&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Ma collection&quot;</span>
+
+<span class="c1"># Effacer la description</span>
+./blunderdb<span class="w"> </span>edit<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--clear-description
+</pre></div>
+</div>
+</section>
+<section id="verify-verifier-l-integrite">
+<h2><span class="section-number">6.12. </span>verify — Vérifier l’intégrité<a class="headerlink" href="#verify-verifier-l-integrite" title="Lien vers cette rubrique"></a></h2>
+<p>Vérifie l’intégrité de la base de données et, optionnellement, compare un match
+avec son fichier source.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span><span class="o">[</span>--match<span class="w"> </span>&lt;id&gt;<span class="o">]</span><span class="w"> </span><span class="o">[</span>--mat<span class="w"> </span>&lt;fichier.mat&gt;<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--match</span></code> — ID du match à vérifier.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--mat</span></code> — Fichier MAT à comparer (utilisé avec <code class="docutils literal notranslate"><span class="pre">--match</span></code>).</p></li>
+</ul>
+<p>Sans l’option <code class="docutils literal notranslate"><span class="pre">--match</span></code>, la commande affiche les statistiques générales de la
+base. Avec <code class="docutils literal notranslate"><span class="pre">--match</span></code>, elle vérifie les données du match et peut les comparer
+avec le fichier source original.</p>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Vérification globale</span>
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db
+
+<span class="c1"># Vérifier un match spécifique</span>
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Comparer avec le fichier source</span>
+./blunderdb<span class="w"> </span>verify<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--match<span class="w"> </span><span class="m">1</span><span class="w"> </span>--mat<span class="w"> </span>original.mat
+</pre></div>
+</div>
+</section>
+<section id="delete-supprimer-des-donnees">
+<h2><span class="section-number">6.13. </span>delete — Supprimer des données<a class="headerlink" href="#delete-supprimer-des-donnees" title="Lien vers cette rubrique"></a></h2>
+<p>Supprime un match et toutes les données associées (parties, coups, analyses).</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>&lt;chemin&gt;<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span>&lt;id&gt;<span class="w"> </span><span class="o">[</span>--confirm<span class="o">]</span>
+</pre></div>
+</div>
+<p><strong>Options:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">--db</span></code> — Base de données (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--type</span></code> — Type de suppression: <code class="docutils literal notranslate"><span class="pre">match</span></code> (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--id</span></code> — ID de l’élément à supprimer (obligatoire).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--confirm</span></code> — Supprimer sans demander de confirmation.</p></li>
+</ul>
+<p><strong>Exemples:</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Supprimer avec confirmation interactive</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span>
+
+<span class="c1"># Supprimer sans confirmation (pour scripts)</span>
+./blunderdb<span class="w"> </span>delete<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--id<span class="w"> </span><span class="m">1</span><span class="w"> </span>--confirm
+</pre></div>
+</div>
+</section>
+<section id="exemples-de-flux-de-travail">
+<h2><span class="section-number">6.14. </span>Exemples de flux de travail<a class="headerlink" href="#exemples-de-flux-de-travail" title="Lien vers cette rubrique"></a></h2>
+<section id="import-d-un-repertoire-de-tournoi">
+<h3><span class="section-number">6.14.1. </span>Import d’un répertoire de tournoi<a class="headerlink" href="#import-d-un-repertoire-de-tournoi" title="Lien vers cette rubrique"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Créer une base dédiée au tournoi</span>
+./blunderdb<span class="w"> </span>create<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--user<span class="w"> </span><span class="s2">&quot;Jean&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Open de Paris 2025&quot;</span>
+
+<span class="c1"># Importer tous les matchs du répertoire</span>
+./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>batch<span class="w"> </span>--dir<span class="w"> </span>./matchs_open_paris/
+
+<span class="c1"># Vérifier le résultat</span>
+./blunderdb<span class="w"> </span>list<span class="w"> </span>--db<span class="w"> </span>tournoi_paris.db<span class="w"> </span>--type<span class="w"> </span>stats
+</pre></div>
+</div>
+</section>
+<section id="sauvegarde-reguliere">
+<h3><span class="section-number">6.14.2. </span>Sauvegarde régulière<a class="headerlink" href="#sauvegarde-reguliere" title="Lien vers cette rubrique"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Export complet pour sauvegarde</span>
+./blunderdb<span class="w"> </span><span class="nb">export</span><span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--type<span class="w"> </span>database<span class="w"> </span>--file<span class="w"> </span>sauvegarde-<span class="k">$(</span>date<span class="w"> </span>+%Y%m%d<span class="k">)</span>.db
+</pre></div>
+</div>
+</section>
+<section id="analyse-des-erreurs">
+<h3><span class="section-number">6.14.3. </span>Analyse des erreurs<a class="headerlink" href="#analyse-des-erreurs" title="Lien vers cette rubrique"></a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Extraire les blunders dans une base séparée</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.1<span class="w"> </span>--export<span class="w"> </span>blunders.db
+
+<span class="c1"># Extraire les erreurs de videau</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>production.db<span class="w"> </span>--decision<span class="w"> </span>cube<span class="w"> </span>--error-min<span class="w"> </span><span class="m">0</span>.05<span class="w"> </span>--export<span class="w"> </span>cube_errors.db
+</pre></div>
+</div>
+</section>
+</section>
+<section id="codes-de-retour">
+<h2><span class="section-number">6.15. </span>Codes de retour<a class="headerlink" href="#codes-de-retour" title="Lien vers cette rubrique"></a></h2>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0</span></code> — Succès.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">1</span></code> — Erreur.</p></li>
+</ul>
+<p>Cela permet d’utiliser la CLI dans des scripts avec gestion d’erreurs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span>./blunderdb<span class="w"> </span>import<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--type<span class="w"> </span>match<span class="w"> </span>--file<span class="w"> </span>match.xg<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Import réussi&quot;</span>
+<span class="k">else</span>
+<span class="w">    </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;Échec de l&#39;import&quot;</span>
+<span class="w">    </span><span class="nb">exit</span><span class="w"> </span><span class="m">1</span>
+<span class="k">fi</span>
+</pre></div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="raccourcis.html" class="btn btn-neutral float-left" title="5. Raccourcis clavier" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="7. Foire aux questions" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+            
+            <dd><a href="../en/index.html">en</a></dd>
+            
+            <dd><a href="../fr/index.html">fr</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
