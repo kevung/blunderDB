@@ -1,4 +1,5 @@
 <script>
+    import { logger } from './utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
 
@@ -250,7 +251,7 @@
             const size = await WindowGetSize();
             if (size) await SaveWindowDimensions(size.w, size.h);
         } catch (err) {
-            console.error('Error getting window dimensions:', err);
+            logger.error('Error getting window dimensions:', err);
         }
     }
 
@@ -309,7 +310,7 @@
             const lastDbPath = await GetLastDatabasePath();
             if (lastDbPath) await openDatabaseByPath(lastDbPath);
         } catch (error) {
-            console.error('Error auto-reopening last database:', error);
+            logger.error('Error auto-reopening last database:', error);
             try {
                 await SaveLastDatabasePath('');
             } catch (_e) {

@@ -1,5 +1,6 @@
 <!-- HelpModal.svelte -->
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
@@ -25,7 +26,7 @@
         try {
             databaseVersion = await GetDatabaseVersion();
         } catch (error) {
-            console.error('Error fetching database version:', error);
+            logger.error('Error fetching database version:', error);
         }
     });
 

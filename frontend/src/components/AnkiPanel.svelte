@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, ankiReviewActionStore, ankiPausedSessionStore } from '../stores/ankiStore';
     import { statusBarTextStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore';
@@ -123,7 +124,7 @@
             const colls = await GetAllCollections();
             collectionsStore.set(colls || []);
         } catch (e) {
-            console.error('Error loading anki decks:', e);
+            logger.error('Error loading anki decks:', e);
         }
     }
 
@@ -203,7 +204,7 @@
                 currentPositionIndexStore.set(0);
             }
         } catch (e) {
-            console.error(e);
+            logger.error(e);
         }
     }
 
@@ -442,7 +443,7 @@
             }
             return Array.from(idSet);
         } catch (e) {
-            console.error('Error executing search for deck sync:', e);
+            logger.error('Error executing search for deck sync:', e);
             return [];
         }
     }
@@ -556,13 +557,13 @@
                         await SyncAnkiDeck(deck.id);
                     }
                 } catch (e) {
-                    console.error(`Error syncing deck "${deck.name}":`, e);
+                    logger.error(`Error syncing deck "${deck.name}":`, e);
                 }
             }
             // Reload to reflect updated card counts
             await loadDecks();
         } catch (e) {
-            console.error('Error auto-syncing decks:', e);
+            logger.error('Error auto-syncing decks:', e);
         }
     }
 </script>

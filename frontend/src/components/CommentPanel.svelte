@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     export let visible = false;
     export let onClose;
 
@@ -42,7 +43,7 @@
             }
             if (!searchQuery.trim()) displayedComments = allComments;
         } catch (error) {
-            console.error('Error loading comments:', error);
+            logger.error('Error loading comments:', error);
             allComments = [];
             displayedComments = [];
         }
@@ -73,7 +74,7 @@
                 selectedMoveStore.set(null);
             }
         } catch (error) {
-            console.error('Error navigating to comment position:', error);
+            logger.error('Error navigating to comment position:', error);
         }
     }
 
@@ -89,7 +90,7 @@
             // Scroll feed to top (newest first)
             if (feedEl) feedEl.scrollTop = 0;
         } catch (error) {
-            console.error('Error adding comment:', error);
+            logger.error('Error adding comment:', error);
         }
     }
 
@@ -116,7 +117,7 @@
                 await UpdateCommentEntry(comment.id, editingText);
                 await loadComments();
             } catch (error) {
-                console.error('Error saving edited comment:', error);
+                logger.error('Error saving edited comment:', error);
             }
         }
     }
@@ -138,7 +139,7 @@
             await DeleteCommentEntry(comment.id);
             await loadComments();
         } catch (error) {
-            console.error('Error deleting comment:', error);
+            logger.error('Error deleting comment:', error);
         }
     }
 

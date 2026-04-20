@@ -9,11 +9,12 @@ import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
 import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore, resetExportState } from '../stores/exportModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
+import { logger } from '../utils/logger.js';
 
 let pendingExportPath = null;
 
 export async function exportDatabase() {
-    console.log('exportDatabase');
+    logger.log('exportDatabase');
 
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened. Please open a database first.');
@@ -30,18 +31,18 @@ export async function exportDatabase() {
     try {
         const exportFilePath = await OpenExportDatabaseDialog();
         if (!exportFilePath) {
-            console.log('No export path selected');
+            logger.log('No export path selected');
             return;
         }
 
-        console.log('Exporting to:', exportFilePath);
+        logger.log('Exporting to:', exportFilePath);
         pendingExportPath = exportFilePath;
 
         try {
             const matches = await GetAllMatches();
             exportMatchesStore.set(matches || []);
         } catch (e) {
-            console.log('Could not get matches:', e);
+            logger.log('Could not get matches:', e);
             exportMatchesStore.set([]);
         }
 
@@ -49,21 +50,21 @@ export async function exportDatabase() {
             const colls = await GetAllCollections();
             collectionsStore.set(colls || []);
         } catch (e) {
-            console.log('Could not get collections:', e);
+            logger.log('Could not get collections:', e);
         }
 
         try {
             const tourns = await GetAllTournaments();
             tournamentsStore.set(tourns || []);
         } catch (e) {
-            console.log('Could not get tournaments:', e);
+            logger.log('Could not get tournaments:', e);
         }
 
         exportPositionCountStore.set(positions.length);
         exportModalModeStore.set('metadata');
         openModal(MODAL.EXPORT_DATABASE);
     } catch (error) {
-        console.error('Error during export preparation:', error);
+        logger.error('Error during export preparation:', error);
         setStatusBarMessage(`Error preparing export: ${error}`);
         await ShowAlert(`Error preparing export: ${error}`);
         statusBarModeStore.set('NORMAL');
@@ -72,11 +73,11 @@ export async function exportDatabase() {
 
 export async function handleExportCommit() {
     if (!pendingExportPath) {
-        console.error('No pending export path');
+        logger.error('No pending export path');
         return;
     }
 
-    console.log('Committing export to:', pendingExportPath);
+    logger.log('Committing export to:', pendingExportPath);
     exportModalModeStore.set('exporting');
 
     try {
@@ -103,13 +104,13 @@ export async function handleExportCommit() {
             tournamentIDs: exportOptions.includeTournamentIDs || []
         });
 
-        console.log('Export completed successfully');
+        logger.log('Export completed successfully');
         exportModalModeStore.set('completed');
 
         const posCount = get(exportPositionCountStore);
         setStatusBarMessage(`Export completed: ${posCount} position(s) exported`);
     } catch (error) {
-        console.error('Error committing export:', error);
+        logger.error('Error committing export:', error);
         closeModal();
         setStatusBarMessage(`Error committing export: ${error}`);
         await ShowAlert(`Error committing export: ${error}`);
@@ -121,7 +122,7 @@ export async function handleExportCommit() {
 }
 
 export function handleExportCancel() {
-    console.log('Export cancelled by user');
+    logger.log('Export cancelled by user');
 
     closeModal();
     pendingExportPath = null;
@@ -132,7 +133,7 @@ export function handleExportCancel() {
 }
 
 export function handleExportClose() {
-    console.log('Export completed and closed');
+    logger.log('Export completed and closed');
     closeModal();
     pendingExportPath = null;
     resetExportState();

@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
     import {
@@ -106,7 +107,7 @@
             const loaded = await GetAllTournaments();
             tournamentsStore.set(sortTournaments(loaded || []));
         } catch (error) {
-            console.error('Error loading tournaments:', error);
+            logger.error('Error loading tournaments:', error);
         }
     }
 
@@ -114,7 +115,7 @@
         try {
             allMatches = (await GetAllMatches()) || [];
         } catch (error) {
-            console.error('Error loading matches:', error);
+            logger.error('Error loading matches:', error);
             allMatches = [];
         }
     }
@@ -180,7 +181,7 @@
             const matches = await GetTournamentMatches(tournament.id);
             tournamentMatchesStore.set(matches || []);
         } catch (error) {
-            console.error('Error loading tournament matches:', error);
+            logger.error('Error loading tournament matches:', error);
         }
     }
 
@@ -194,7 +195,7 @@
             newTournamentDate = '';
             newTournamentLocation = '';
         } catch (error) {
-            console.error('Error creating tournament:', error);
+            logger.error('Error creating tournament:', error);
             statusBarTextStore.set('Error creating tournament');
         }
     }
@@ -211,7 +212,7 @@
             }
             statusBarTextStore.set('Tournament deleted');
         } catch (error) {
-            console.error('Error deleting tournament:', error);
+            logger.error('Error deleting tournament:', error);
         }
     }
 
@@ -233,7 +234,7 @@
             }
             editingTournament = null;
         } catch (error) {
-            console.error('Error updating tournament:', error);
+            logger.error('Error updating tournament:', error);
         }
     }
 
@@ -268,7 +269,7 @@
             await loadAllMatches();
             updateFilteredMatches();
         } catch (error) {
-            console.error('Error adding match:', error);
+            logger.error('Error adding match:', error);
         }
     }
 
@@ -280,7 +281,7 @@
             tournamentMatchesStore.set(matches || []);
             await loadTournaments();
         } catch (error) {
-            console.error('Error removing match:', error);
+            logger.error('Error removing match:', error);
         }
     }
 
@@ -296,7 +297,7 @@
                 newList.map((m) => m.id)
             );
         } catch (error) {
-            console.error('Error reordering matches:', error);
+            logger.error('Error reordering matches:', error);
         }
     }
 
@@ -311,7 +312,7 @@
                 newList.map((m) => m.id)
             );
         } catch (error) {
-            console.error('Error reordering matches:', error);
+            logger.error('Error reordering matches:', error);
         }
     }
 
@@ -331,7 +332,7 @@
             tournamentMatchesStore.set(updated);
             editingMatchCommentId = null;
         } catch (error) {
-            console.error('Error saving match comment:', error);
+            logger.error('Error saving match comment:', error);
         }
     }
 
@@ -353,7 +354,7 @@
             selectedTournamentStore.set({ ...selectedTournament, comment: tournamentCommentText });
             editingTournamentComment = false;
         } catch (error) {
-            console.error('Error saving tournament comment:', error);
+            logger.error('Error saving tournament comment:', error);
         }
     }
 
@@ -374,7 +375,7 @@
                 newList.map((m) => m.id)
             );
         } catch (error) {
-            console.error('Error reordering matches:', error);
+            logger.error('Error reordering matches:', error);
         }
     }
 
@@ -409,7 +410,7 @@
 
             statusBarTextStore.set('Swapped players for match');
         } catch (error) {
-            console.error('Error swapping match players:', error);
+            logger.error('Error swapping match players:', error);
             statusBarTextStore.set('Error swapping match players');
         }
     }
@@ -504,11 +505,11 @@
             });
             // Persist last visited position to database
             SaveLastVisitedPosition(match.id, startIndex).catch((e) => {
-                console.error('Error persisting last visited position:', e);
+                logger.error('Error persisting last visited position:', e);
             });
             closeTournamentPanel();
         } catch (error) {
-            console.error('Error opening match:', error);
+            logger.error('Error opening match:', error);
             statusBarTextStore.set('Error opening match');
         }
     }

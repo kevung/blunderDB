@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import { positionStore, positionsStore, matchContextStore } from './positionStore';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
+import { logger } from '../utils/logger.js';
 
 function createDefaultPosition() {
     return {
@@ -195,7 +196,7 @@ function createViewStore() {
             restoreViewState(target);
             return true;
         } catch (e) {
-            console.error('Error deserializing views:', e);
+            logger.error('Error deserializing views:', e);
             return false;
         }
     }

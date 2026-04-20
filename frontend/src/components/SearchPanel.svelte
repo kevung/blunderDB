@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
@@ -223,7 +224,7 @@
             const history = await LoadSearchHistory();
             searchHistoryStore.set(history || []);
         } catch (error) {
-            console.error('Error loading search history:', error);
+            logger.error('Error loading search history:', error);
         }
     }
 
@@ -417,7 +418,7 @@
 
         const entry = { command: searchCommand, position: JSON.stringify($positionStore), timestamp: Date.now() };
         searchHistoryStore.update((h) => [entry, ...h].slice(0, 100));
-        SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch((err) => console.error('Error saving search history:', err));
+        SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch((err) => logger.error('Error saving search history:', err));
 
         let restrictToPositionIDs = '';
         if (searchInCurrentResults) {

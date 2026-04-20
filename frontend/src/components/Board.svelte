@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { positionStore, matchContextStore } from '../stores/positionStore';
     import { selectedMoveStore } from '../stores/analysisStore'; // Import selectedMoveStore
     import { onMount, onDestroy } from 'svelte';
@@ -578,7 +579,7 @@
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
 
-        console.log('Rectangle or Dice click detected at:', mouseX, mouseY); // Debug log
+        logger.log('Rectangle or Dice click detected at:', mouseX, mouseY); // Debug log
 
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
@@ -644,25 +645,25 @@
         }
 
         if (isInsideDie1 || isInsideDie2) {
-            console.log('Die clicked'); // Debug log
+            logger.log('Die clicked'); // Debug log
         }
 
         positionStore.update((pos) => {
             if (isInsideTopPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                console.log("Top player's rectangle clicked"); // Debug log
+                logger.log("Top player's rectangle clicked"); // Debug log
                 pos.player_on_roll = 0;
                 pos.decision_type = 1; // Set decision type to doubling cube
                 previousDice = pos.dice; // Save previous dice values
                 pos.dice = [0, 0];
-                console.log('Updated decision_type to 1 for top player'); // Debug log
+                logger.log('Updated decision_type to 1 for top player'); // Debug log
             } else if (isInsideBottomPlayerRectangle && !isInsideDie1 && !isInsideDie2) {
-                console.log("Bottom player's rectangle clicked"); // Debug log
+                logger.log("Bottom player's rectangle clicked"); // Debug log
                 pos.player_on_roll = 1;
                 pos.decision_type = 1; // Set decision type to doubling cube
                 pos.dice = [0, 0];
-                console.log('Updated decision_type to 1 for bottom player'); // Debug log
+                logger.log('Updated decision_type to 1 for bottom player'); // Debug log
             } else if (isInsideDie1) {
-                console.log('Die 1 clicked'); // Debug log
+                logger.log('Die 1 clicked'); // Debug log
                 pos.decision_type = 0;
                 pos.dice = previousDice; // Restore previous dice values
                 if (event.button === 0) {
@@ -671,7 +672,7 @@
                     pos.dice[0] = pos.dice[0] === 1 ? 6 : pos.dice[0] - 1; // Right click to decrease
                 }
             } else if (isInsideDie2) {
-                console.log('Die 2 clicked'); // Debug log
+                logger.log('Die 2 clicked'); // Debug log
                 pos.decision_type = 0;
                 pos.dice = previousDice; // Restore previous dice values
                 if (event.button === 0) {
@@ -681,8 +682,8 @@
                 }
             }
 
-            console.log('Updated dice values:', pos.dice); // Debug log
-            console.log('Updated position store:', pos); // Log the updated position store
+            logger.log('Updated dice values:', pos.dice); // Debug log
+            logger.log('Updated position store:', pos); // Log the updated position store
             return pos;
         });
     }
@@ -742,8 +743,8 @@
     function logCanvasSize() {
         const actualWidth = canvas.clientWidth;
         const actualHeight = canvas.clientHeight;
-        console.log('Actual canvas width: ', actualWidth, 'Actual canvas height: ', actualHeight);
-        console.log('Two.js width: ', two.width, 'Two.js height: ', two.height);
+        logger.log('Actual canvas width: ', actualWidth, 'Actual canvas height: ', actualHeight);
+        logger.log('Two.js width: ', two.width, 'Two.js height: ', two.height);
     }
 
     function setBoardOrientation(orientation) {
@@ -926,13 +927,13 @@
         const boardTriangleHeight = 5 * boardCheckerSize;
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
-        console.log('width: ', width, 'height: ', height);
-        console.log('boardOrigXpos: ', boardOrigXpos, 'boardOrigYpos: ', boardOrigYpos);
-        console.log('two.width: ', two.width, 'two.height: ', two.height);
+        logger.log('width: ', width, 'height: ', height);
+        logger.log('boardOrigXpos: ', boardOrigXpos, 'boardOrigYpos: ', boardOrigYpos);
+        logger.log('two.width: ', two.width, 'two.height: ', two.height);
 
         // Get the position to display (may be mirrored in match mode)
         const position = getDisplayPosition();
-        console.log('drawBoard - decision_type: ', position.decision_type); // Debug log
+        logger.log('drawBoard - decision_type: ', position.decision_type); // Debug log
 
         function createTriangle(x, y, flip) {
             if (flip == false) {
@@ -1463,7 +1464,7 @@
         drawDoublingCube();
         drawCheckers();
         drawBearoff();
-        console.log('showPipcount: ', showPipcount);
+        logger.log('showPipcount: ', showPipcount);
         if (showPipcount) {
             drawPipCounts(); // Conditionally draw pip counts
         }

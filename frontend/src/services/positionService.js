@@ -25,6 +25,7 @@ import { viewStore } from '../stores/viewStore.js';
 import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, PANEL, closePanel, openModal, MODAL, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
+import { logger } from '../utils/logger.js';
 
 // Module-level state for EPC mode save/restore
 let savedPositionBeforeEPC = null;
@@ -141,7 +142,7 @@ export function mirrorPositionForSearch(pos) {
 
 export async function showPosition(position) {
     if (!position) {
-        console.error('Invalid position:', position);
+        logger.error('Invalid position:', position);
         return;
     }
 
@@ -251,7 +252,7 @@ export async function loadAnalysisForPosition(position) {
             });
         }
     } catch (error) {
-        console.error('Error loading analysis:', error);
+        logger.error('Error loading analysis:', error);
     }
 }
 
@@ -265,7 +266,7 @@ export async function loadAllPositions() {
 
         if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex).catch((e) => {
-                console.error('Error persisting last visited position:', e);
+                logger.error('Error persisting last visited position:', e);
             });
         }
         statusBarModeStore.set('NORMAL');
@@ -297,10 +298,10 @@ export async function loadAllPositions() {
         } else {
             currentPositionIndexStore.set(-1);
             setStatusBarMessage('No positions found');
-            console.log('No positions found.');
+            logger.log('No positions found.');
         }
     } catch (error) {
-        console.error('Error loading all positions:', error);
+        logger.error('Error loading all positions:', error);
         setStatusBarMessage('Error loading all positions');
     }
 }
@@ -437,7 +438,7 @@ export async function loadPositionsByFilters(
             }
         }
     } catch (error) {
-        console.error('Error loading positions by filters:', error);
+        logger.error('Error loading positions by filters:', error);
         setStatusBarMessage('Error loading positions by filters');
         if (get(activeTabStore) === 'search') {
             statusBarModeStore.set('EDIT');
@@ -456,7 +457,7 @@ function saveCurrentMatchPosition() {
                 gameNumber: currentMovePos.game_number
             });
             SaveLastVisitedPosition(matchCtx.matchID, matchCtx.currentIndex).catch((e) => {
-                console.error('Error persisting last visited position:', e);
+                logger.error('Error persisting last visited position:', e);
             });
         }
     }
@@ -641,7 +642,7 @@ export function gotoPosition() {
 }
 
 export function findPosition() {
-    console.log('findPosition');
+    logger.log('findPosition');
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened');
         return;
@@ -654,7 +655,7 @@ export async function deletePosition() {
         setStatusBarMessage('No database opened');
         return;
     }
-    console.log('deletePosition');
+    logger.log('deletePosition');
 
     const positions = get(positionsStore);
     if (!positions || positions.length === 0) {
@@ -665,12 +666,12 @@ export async function deletePosition() {
     try {
         const positionID = positions[get(currentPositionIndexStore)].id;
         await DeletePosition(positionID);
-        console.log('Position and associated analysis deleted with ID:', positionID);
+        logger.log('Position and associated analysis deleted with ID:', positionID);
 
         await loadAllPositions();
         setStatusBarMessage('Position and associated analysis deleted successfully');
     } catch (error) {
-        console.error('Error deleting position and associated analysis:', error);
+        logger.error('Error deleting position and associated analysis:', error);
         setStatusBarMessage('Error deleting position and associated analysis');
     } finally {
         statusBarModeStore.set('NORMAL');
@@ -686,7 +687,7 @@ export async function updatePosition() {
         setStatusBarMessage('Update is only possible in edit mode');
         return;
     }
-    console.log('updatePosition');
+    logger.log('updatePosition');
 
     const positions = get(positionsStore);
     if (positions.length === 0) {
@@ -742,21 +743,21 @@ export async function updatePosition() {
 
         if (positionJSON !== originalPositionJSON) {
             await DeleteAnalysis(positionID);
-            console.log('Analysis deleted for position ID:', positionID);
+            logger.log('Analysis deleted for position ID:', positionID);
         }
 
         analysis.xgid = generateXGID(position);
         await UpdatePosition(position);
-        console.log('Position updated with ID:', positionID);
+        logger.log('Position updated with ID:', positionID);
         await SaveAnalysis(positionID, analysis);
-        console.log('Analysis updated for position ID:', positionID);
+        logger.log('Analysis updated for position ID:', positionID);
 
         await loadAllPositions();
         currentPositionIndexStore.set(currentIndex);
         setStatusBarMessage('Position and analysis updated successfully');
         statusBarModeStore.set('NORMAL');
     } catch (error) {
-        console.error('Error updating position and analysis:', error);
+        logger.error('Error updating position and analysis:', error);
         setStatusBarMessage('Error updating position and analysis');
     } finally {
         statusBarModeStore.set('NORMAL');
@@ -773,7 +774,7 @@ export async function saveCurrentPosition() {
         return;
     }
 
-    console.log('saveCurrentPosition');
+    logger.log('saveCurrentPosition');
 
     const position = get(positionStore);
     const analysis = get(analysisStore);
@@ -811,16 +812,16 @@ export async function saveCurrentPosition() {
 }
 
 export async function enterEditMode() {
-    console.log('enterEditMode');
+    logger.log('enterEditMode');
     if (!get(databasePathStore)) return;
 
     if (get(statusBarModeStore) === 'MATCH') {
-        console.log('Exiting MATCH mode to enter EDIT');
+        logger.log('Exiting MATCH mode to enter EDIT');
         if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             try {
                 await SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex);
             } catch (e) {
-                console.error('Error saving last visited position:', e);
+                logger.error('Error saving last visited position:', e);
             }
         }
         matchContextStore.set({
@@ -949,26 +950,26 @@ export async function updateEPC(position) {
             statusBarTextStore.set('EPC: N/A (checkers not all in home board)');
         }
     } catch (error) {
-        console.error('Error computing EPC:', error);
+        logger.error('Error computing EPC:', error);
         epcDataStore.set({ bottomEPC: null, topEPC: null, error: 'Error computing EPC' });
         statusBarTextStore.set('EPC: Error computing');
     }
 }
 
 export async function toggleMatchMode() {
-    console.log('toggleMatchMode');
+    logger.log('toggleMatchMode');
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened');
         return;
     }
 
     if (get(statusBarModeStore) === 'MATCH') {
-        console.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
+        logger.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
         if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             try {
                 await SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex);
             } catch (e) {
-                console.error('Error saving last visited position:', e);
+                logger.error('Error saving last visited position:', e);
             }
         }
         statusBarModeStore.set('NORMAL');
@@ -1077,7 +1078,7 @@ export async function toggleMatchMode() {
             gameNumber: startMovePos.game_number
         });
     } catch (error) {
-        console.error('Error entering match mode:', error);
+        logger.error('Error entering match mode:', error);
         const errMsg = error?.toString() || '';
         if (errMsg.includes('no matches')) {
             setStatusBarMessage('No matches in database');
@@ -1092,7 +1093,7 @@ export function toggleAnalysisPanel() {
         setStatusBarMessage('No database opened');
         return;
     }
-    console.log('toggleAnalysisPanel');
+    logger.log('toggleAnalysisPanel');
     activeTabStore.set('analysis');
 }
 
@@ -1106,7 +1107,7 @@ export function toggleCommentPanel() {
         setStatusBarMessage('No current position to comment on');
         return;
     }
-    console.log('toggleCommentPanel called');
+    logger.log('toggleCommentPanel called');
     activeTabStore.set('comments');
 }
 
@@ -1121,7 +1122,7 @@ export function toggleMetadataModal() {
 }
 
 export function toggleFilterLibraryPanel() {
-    console.log('toggleFilterLibraryPanel');
+    logger.log('toggleFilterLibraryPanel');
     if (!get(databasePathStore)) {
         statusBarTextStore.set('No database loaded');
         return;
@@ -1130,7 +1131,7 @@ export function toggleFilterLibraryPanel() {
 }
 
 export function toggleAnkiPanel() {
-    console.log('toggleAnkiPanel');
+    logger.log('toggleAnkiPanel');
     if (!get(databasePathStore)) {
         statusBarTextStore.set('No database loaded');
         return;
@@ -1139,7 +1140,7 @@ export function toggleAnkiPanel() {
 }
 
 export function toggleMatchPanel() {
-    console.log('toggleMatchPanel');
+    logger.log('toggleMatchPanel');
     if (!get(databasePathStore)) {
         statusBarTextStore.set('No database loaded');
         return;
@@ -1148,7 +1149,7 @@ export function toggleMatchPanel() {
 }
 
 export function toggleCollectionPanelAction() {
-    console.log('toggleCollectionPanelAction');
+    logger.log('toggleCollectionPanelAction');
     if (!get(databasePathStore)) {
         statusBarTextStore.set('No database loaded');
         return;
@@ -1157,7 +1158,7 @@ export function toggleCollectionPanelAction() {
 }
 
 export function toggleTournamentPanel() {
-    console.log('toggleTournamentPanel');
+    logger.log('toggleTournamentPanel');
     if (!get(databasePathStore)) {
         statusBarTextStore.set('No database loaded');
         return;
@@ -1166,7 +1167,7 @@ export function toggleTournamentPanel() {
 }
 
 export async function exitCollectionMode() {
-    console.log('Exiting COLLECTION mode to NORMAL mode');
+    logger.log('Exiting COLLECTION mode to NORMAL mode');
     const lastViewedPosition = get(positionStore);
     statusBarModeStore.set('NORMAL');
     activeCollectionStore.set(null);
@@ -1194,7 +1195,7 @@ export async function exitCollectionMode() {
             lastSearchStore.set(null);
         }
     } catch (error) {
-        console.error('Error reloading positions after collection exit:', error);
+        logger.error('Error reloading positions after collection exit:', error);
         loadAllPositions();
     }
 }
@@ -1228,7 +1229,7 @@ export function handleOpenCollection(collection, collectionPositions) {
 }
 
 export function togglePipcount() {
-    console.log('togglePipcount');
+    logger.log('togglePipcount');
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened');
         return;
@@ -1245,7 +1246,7 @@ export function togglePipcount() {
 }
 
 export function loadRandomPosition() {
-    console.log('loadRandomPosition');
+    logger.log('loadRandomPosition');
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened');
         return;
@@ -1256,7 +1257,7 @@ export function loadRandomPosition() {
         while (randomIndex === get(currentPositionIndexStore)) {
             randomIndex = Math.floor(Math.random() * positions.length);
         }
-        console.log('Random position index:', randomIndex);
+        logger.log('Random position index:', randomIndex);
         currentPositionIndexStore.set(randomIndex);
     }
 }
@@ -1269,7 +1270,7 @@ export async function addSearchToFilterLibrary(filterName, filterCommand, positi
         }
         statusBarTextStore.set('Filter saved successfully');
     } catch (error) {
-        console.error('Error saving filter:', error);
+        logger.error('Error saving filter:', error);
         statusBarTextStore.set('Error saving filter');
     }
 }

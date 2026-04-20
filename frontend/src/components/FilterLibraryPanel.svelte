@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore';
@@ -82,7 +83,7 @@
             filterLibraryStore.set(loadedFilters);
             filters = loadedFilters || []; // Ensure filters are set correctly
         } catch (error) {
-            console.error('Error loading filters:', error);
+            logger.error('Error loading filters:', error);
             statusBarTextStore.set('Error loading filters');
         }
     }

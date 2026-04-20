@@ -8,6 +8,7 @@ import { databasePathStore } from '../stores/databaseStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
+import { logger } from '../utils/logger.js';
 
 export const warningMessageStore = writable('');
 
@@ -73,7 +74,7 @@ function getMajorVersion(version) {
 }
 
 export async function newDatabase() {
-    console.log('newDatabase');
+    logger.log('newDatabase');
     try {
         const filePath = await SaveDatabaseDialog();
         if (filePath) {
@@ -82,25 +83,25 @@ export async function newDatabase() {
 
             try {
                 await DeleteFile(filePath);
-                console.log('Existing file deleted:', filePath);
+                logger.log('Existing file deleted:', filePath);
             } catch (error) {
-                console.log('No existing file to delete or error deleting file:', error);
+                logger.log('No existing file to delete or error deleting file:', error);
             }
 
             databasePathStore.set(filePath);
-            console.log('databasePathStore:', filePath);
+            logger.log('databasePathStore:', filePath);
             await SetupDatabase(filePath);
             setStatusBarMessage('New database created successfully');
             const filename = getFilenameFromPath(filePath);
             WindowSetTitle(`blunderDB - ${filename}`);
-            console.log(`New database created at ${filePath}`);
+            logger.log(`New database created at ${filePath}`);
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
         } else {
-            console.log('No file selected');
+            logger.log('No file selected');
         }
     } catch (error) {
-        console.error('Error opening file dialog:', error);
+        logger.error('Error opening file dialog:', error);
         setStatusBarMessage('Error creating new database');
     } finally {
         statusBarModeStore.set('NORMAL');
@@ -108,17 +109,17 @@ export async function newDatabase() {
 }
 
 export async function openDatabase() {
-    console.log('openDatabase');
+    logger.log('openDatabase');
     try {
         const filePath = await OpenDatabaseDialog();
         if (!filePath) {
-            console.log('No Database selected');
+            logger.log('No Database selected');
             return;
         }
 
         await openDatabaseByPath(filePath);
     } catch (error) {
-        console.error('Error opening file dialog:', error);
+        logger.error('Error opening file dialog:', error);
         setStatusBarMessage('Error opening database');
     }
 }
@@ -129,15 +130,15 @@ export async function openDatabaseByPath(filePath) {
         resetAnkiStores();
 
         databasePathStore.set(filePath);
-        console.log('databasePathStore:', filePath);
+        logger.log('databasePathStore:', filePath);
 
         await SaveLastDatabasePath(filePath);
         await OpenDatabase(filePath);
 
         const dbVersion = await CheckDatabaseVersion();
         const modelVersion = await GetDatabaseVersion();
-        console.log(`Database version: ${dbVersion}`);
-        console.log(`Model version: ${modelVersion}`);
+        logger.log(`Database version: ${dbVersion}`);
+        logger.log(`Model version: ${modelVersion}`);
         setStatusBarMessage(`Database version: ${dbVersion}`);
 
         if (getMajorVersion(dbVersion) !== getMajorVersion(modelVersion)) {
@@ -154,7 +155,7 @@ export async function openDatabaseByPath(filePath) {
         const { restoreSessionState } = await import('./sessionService.js');
         await restoreSessionState();
     } catch (error) {
-        console.error('Error opening database:', error);
+        logger.error('Error opening database:', error);
         setStatusBarMessage('Error opening database');
     } finally {
         statusBarModeStore.set('NORMAL');

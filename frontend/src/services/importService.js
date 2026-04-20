@@ -45,13 +45,14 @@ import {
     fileImportResultsStore
 } from '../stores/importModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
+import { logger } from '../utils/logger.js';
 
 // Pending import path (module-level)
 let pendingImportPath = null;
 let fileImportCancelled = false;
 
 export async function importDatabase() {
-    console.log('importDatabase');
+    logger.log('importDatabase');
 
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened. Please open a database first.');
@@ -61,11 +62,11 @@ export async function importDatabase() {
     try {
         const importFilePath = await OpenImportDatabaseDialog();
         if (!importFilePath) {
-            console.log('No import database selected');
+            logger.log('No import database selected');
             return;
         }
 
-        console.log('Analyzing import from:', importFilePath);
+        logger.log('Analyzing import from:', importFilePath);
 
         showImportProgressModalStore.set(true);
         importModalModeStore.set('analyzing');
@@ -73,7 +74,7 @@ export async function importDatabase() {
 
         try {
             const analysis = await AnalyzeImportDatabase(importFilePath);
-            console.log('Import analysis:', analysis);
+            logger.log('Import analysis:', analysis);
 
             importAnalysisStore.set({
                 toAdd: analysis.toAdd,
@@ -88,7 +89,7 @@ export async function importDatabase() {
             throw analyzeError;
         }
     } catch (error) {
-        console.error('Error analyzing import:', error);
+        logger.error('Error analyzing import:', error);
         setStatusBarMessage(`Error analyzing import: ${error}`);
         await ShowAlert(`Error analyzing import: ${error}`);
         statusBarModeStore.set('NORMAL');
@@ -97,16 +98,16 @@ export async function importDatabase() {
 
 export async function handleImportCommit() {
     if (!pendingImportPath) {
-        console.error('No pending import path');
+        logger.error('No pending import path');
         return;
     }
 
-    console.log('Committing import from:', pendingImportPath);
+    logger.log('Committing import from:', pendingImportPath);
     importModalModeStore.set('committing');
 
     try {
         const result = await CommitImportDatabase(pendingImportPath);
-        console.log('Import result:', result);
+        logger.log('Import result:', result);
 
         importResultStore.set({
             added: result.added,
@@ -121,7 +122,7 @@ export async function handleImportCommit() {
         const { loadAllPositions } = await import('./positionService.js');
         await loadAllPositions();
     } catch (error) {
-        console.error('Error committing import:', error);
+        logger.error('Error committing import:', error);
         showImportProgressModalStore.set(false);
         setStatusBarMessage(`Error committing import: ${error}`);
         await ShowAlert(`Error committing import: ${error}`);
@@ -132,12 +133,12 @@ export async function handleImportCommit() {
 }
 
 export function handleImportCancel() {
-    console.log('Import cancelled by user');
+    logger.log('Import cancelled by user');
 
     if (get(importModalModeStore) === 'committing') {
-        console.log('Aborting ongoing commit transaction');
+        logger.log('Aborting ongoing commit transaction');
         CancelImport().catch((err) => {
-            console.error('Error calling CancelImport:', err);
+            logger.error('Error calling CancelImport:', err);
         });
     }
 
@@ -149,7 +150,7 @@ export function handleImportCancel() {
 }
 
 export function handleImportClose() {
-    console.log('Import completed and closed');
+    logger.log('Import completed and closed');
     showImportProgressModalStore.set(false);
     pendingImportPath = null;
     importModalModeStore.set('analyzing');
@@ -163,7 +164,7 @@ export async function importDatabaseByPath(importFilePath) {
     }
 
     try {
-        console.log('Analyzing import from:', importFilePath);
+        logger.log('Analyzing import from:', importFilePath);
 
         showImportProgressModalStore.set(true);
         importModalModeStore.set('analyzing');
@@ -171,7 +172,7 @@ export async function importDatabaseByPath(importFilePath) {
 
         try {
             const analysis = await AnalyzeImportDatabase(importFilePath);
-            console.log('Import analysis:', analysis);
+            logger.log('Import analysis:', analysis);
 
             importAnalysisStore.set({
                 toAdd: analysis.toAdd,
@@ -186,7 +187,7 @@ export async function importDatabaseByPath(importFilePath) {
             throw analyzeError;
         }
     } catch (error) {
-        console.error('Error analyzing import:', error);
+        logger.error('Error analyzing import:', error);
         setStatusBarMessage(`Error analyzing import: ${error}`);
         await ShowAlert(`Error analyzing import: ${error}`);
         statusBarModeStore.set('NORMAL');
@@ -203,7 +204,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
 
     const positionExistsResult = await PositionExists(positionData);
     if (positionExistsResult.exists) {
-        console.log('Position already exists with ID:', positionExistsResult.id);
+        logger.log('Position already exists with ID:', positionExistsResult.id);
         try {
             parsedAnalysis.positionId = positionExistsResult.id;
             await SaveAnalysis(positionExistsResult.id, parsedAnalysis);
@@ -223,7 +224,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
             }
 
             await SaveComment(positionExistsResult.id, mergedComment);
-            console.log('Analysis and comment updated for position ID:', positionExistsResult.id);
+            logger.log('Analysis and comment updated for position ID:', positionExistsResult.id);
             setStatusBarMessage('Position already exists, analysis and comment merged');
 
             const positions = get(positionsStore);
@@ -231,7 +232,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
             currentPositionIndexStore.set(positions.findIndex((pos) => pos.id === positionExistsResult.id));
             commentTextStore.set(mergedComment);
         } catch (error) {
-            console.error('Error updating analysis and comment:', error);
+            logger.error('Error updating analysis and comment:', error);
             setStatusBarMessage('Error updating analysis and comment');
         }
         return;
@@ -239,19 +240,19 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
 
     try {
         const positionID = await SavePosition(positionData);
-        console.log('Position saved with ID:', positionID);
+        logger.log('Position saved with ID:', positionID);
 
         positionData.id = positionID;
         parsedAnalysis.positionId = positionID;
         await SaveAnalysis(positionID, parsedAnalysis);
         await SaveComment(positionID, parsedAnalysis.comment);
-        console.log('Analysis and comment saved for position ID:', positionID);
+        logger.log('Analysis and comment saved for position ID:', positionID);
 
         const { loadAllPositions } = await import('./positionService.js');
         await loadAllPositions();
         setStatusBarMessage(successMessage);
     } catch (error) {
-        console.error('Error saving position, analysis, and comment:', error);
+        logger.error('Error saving position, analysis, and comment:', error);
         setStatusBarMessage('Error saving position, analysis, and comment');
     }
 }
@@ -272,7 +273,7 @@ export async function importPosition() {
             await importMultipleFiles(files);
         }
     } catch (error) {
-        console.error('Error importing position:', error);
+        logger.error('Error importing position:', error);
     } finally {
         if (wasMatchMode) {
             matchContextStore.set({
@@ -308,7 +309,7 @@ export async function importFolder() {
 
         await importMultipleFiles(files);
     } catch (error) {
-        console.error('Error importing folder:', error);
+        logger.error('Error importing folder:', error);
     } finally {
         if (wasMatchMode) {
             matchContextStore.set({
@@ -336,26 +337,26 @@ export async function importSingleFile(filePath) {
     const isTXTFile = lowerPath.endsWith('.txt');
 
     if (isXGPFile) {
-        console.log('Importing XGP position file:', filePath);
+        logger.log('Importing XGP position file:', filePath);
         try {
             const posID = await ImportXGPPosition(filePath);
             setStatusBarMessage(`XGP position imported successfully (ID: ${posID})`);
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
         } catch (error) {
-            console.error('Error importing XGP position:', error);
+            logger.error('Error importing XGP position:', error);
             setStatusBarMessage('Error importing XGP position: ' + error);
             await ShowAlert('Error importing XGP position: ' + error);
         }
     } else if (isXGFile) {
-        console.log('Importing XG match file:', filePath);
+        logger.log('Importing XG match file:', filePath);
         try {
             const matchID = await ImportXGMatch(filePath);
             setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error('Error importing XG match:', error);
+            logger.error('Error importing XG match:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -365,14 +366,14 @@ export async function importSingleFile(filePath) {
             }
         }
     } else if (isBGFFile) {
-        console.log('Importing BGF match file:', filePath);
+        logger.log('Importing BGF match file:', filePath);
         try {
             const matchID = await ImportBGFMatch(filePath);
             setStatusBarMessage(`BGBlitz match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error('Error importing BGF match:', error);
+            logger.error('Error importing BGF match:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -383,14 +384,14 @@ export async function importSingleFile(filePath) {
         }
     } else if (isSGFFile || isMATFile) {
         const formatName = isSGFFile ? 'GnuBG SGF' : 'Jellyfish MAT';
-        console.log(`Importing ${formatName} match file:`, filePath);
+        logger.log(`Importing ${formatName} match file:`, filePath);
         try {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`${formatName} match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error(`Error importing ${formatName} match:`, error);
+            logger.error(`Error importing ${formatName} match:`, error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -407,7 +408,7 @@ export async function importSingleFile(filePath) {
 async function importTxtFile(filePath) {
     const response = await ReadFileContent(filePath);
     if (response.error) {
-        console.error('Error reading file:', response.error);
+        logger.error('Error reading file:', response.error);
         setStatusBarMessage('Error reading file: ' + response.error);
         return;
     }
@@ -417,14 +418,14 @@ async function importTxtFile(filePath) {
     const isBGBlitzTXT = content && content.includes('Position-ID:');
 
     if (isJellyfishTXT) {
-        console.log('Importing Jellyfish TXT match file:', filePath);
+        logger.log('Importing Jellyfish TXT match file:', filePath);
         try {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`Jellyfish TXT match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error('Error importing Jellyfish TXT match:', error);
+            logger.error('Error importing Jellyfish TXT match:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -434,14 +435,14 @@ async function importTxtFile(filePath) {
             }
         }
     } else if (isBGBlitzTXT) {
-        console.log('Importing BGBlitz TXT position:', filePath);
+        logger.log('Importing BGBlitz TXT position:', filePath);
         try {
             const posID = await ImportBGFPosition(filePath);
             setStatusBarMessage(`BGBlitz position imported successfully (ID: ${posID})`);
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
         } catch (error) {
-            console.error('Error importing BGBlitz position:', error);
+            logger.error('Error importing BGBlitz position:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate') || errorStr.includes('already exists')) {
                 setStatusBarMessage('This position already exists');
@@ -451,7 +452,7 @@ async function importTxtFile(filePath) {
             }
         }
     } else {
-        console.log('File content:', content);
+        logger.log('File content:', content);
         const { positionData, parsedAnalysis } = parsePosition(content);
         positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
         analysisStore.set({
@@ -608,7 +609,7 @@ export async function pastePosition() {
         setStatusBarMessage('No database opened');
         return;
     }
-    console.log('pastePosition');
+    logger.log('pastePosition');
 
     if (get(statusBarModeStore) === 'EDIT') {
         await pastePositionToBoard();
@@ -619,7 +620,7 @@ export async function pastePosition() {
     try {
         result = await ClipboardGetText();
     } catch (error) {
-        console.error('Error pasting from clipboard:', error);
+        logger.error('Error pasting from clipboard:', error);
         return;
     }
 
@@ -635,7 +636,7 @@ export async function pastePosition() {
             matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error('Error pasting GnuBG match:', error);
+            logger.error('Error pasting GnuBG match:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -650,7 +651,7 @@ export async function pastePosition() {
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
         } catch (error) {
-            console.error('Error pasting BGBlitz position:', error);
+            logger.error('Error pasting BGBlitz position:', error);
             setStatusBarMessage('Error pasting BGBlitz position: ' + error);
         }
     } else {
@@ -670,7 +671,7 @@ async function pastePositionToBoard() {
                 setStatusBarMessage('Position pasted to board from clipboard');
                 return;
             } catch (e) {
-                console.log('Clipboard text has XGID but parse failed, trying internal clipboard:', e);
+                logger.log('Clipboard text has XGID but parse failed, trying internal clipboard:', e);
             }
         }
 
@@ -689,7 +690,7 @@ async function pastePositionToBoard() {
             setStatusBarMessage('Position pasted to board');
             return;
         }
-        console.error('Error pasting position to board:', error);
+        logger.error('Error pasting position to board:', error);
         setStatusBarMessage('No position to paste');
     }
 }
@@ -748,14 +749,14 @@ export async function handleDbFileDrop(dbPath) {
                 await importDatabaseByPath(dbPath);
             }
         } catch (error) {
-            console.error('Error in DB drop dialog:', error);
+            logger.error('Error in DB drop dialog:', error);
             setStatusBarMessage('Error handling dropped database');
         }
     }
 }
 
 export async function handleFileDrop(x, y, paths) {
-    console.log('Files dropped:', paths);
+    logger.log('Files dropped:', paths);
 
     if (!paths || paths.length === 0) return;
 
@@ -763,7 +764,7 @@ export async function handleFileDrop(x, y, paths) {
 
     if (unsupported.length > 0) {
         const exts = [...new Set(unsupported.map((p) => '.' + p.split('.').pop()))].join(', ');
-        console.warn('Unsupported file extensions dropped:', exts);
+        logger.warn('Unsupported file extensions dropped:', exts);
     }
 
     if (dbFiles.length > 0) {
@@ -779,7 +780,7 @@ export async function handleFileDrop(x, y, paths) {
                 allImportFiles = allImportFiles.concat(folderFiles);
             }
         } catch (error) {
-            console.error('Error collecting files from folder:', folder, error);
+            logger.error('Error collecting files from folder:', folder, error);
         }
     }
 

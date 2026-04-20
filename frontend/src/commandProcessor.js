@@ -7,6 +7,7 @@ import { searchHistoryStore } from './stores/searchHistoryStore';
 import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wailsjs/go/main/Database.js';
 import { SaveSearchHistory } from '../wailsjs/go/main/Database.js';
 import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/main/Database.js';
+import { logger } from './utils/logger.js';
 
 let callbacks = {};
 
@@ -109,7 +110,7 @@ export function processCommand(command) {
                 statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
             })
             .catch((error) => {
-                console.error('Error migrating database:', error);
+                logger.error('Error migrating database:', error);
                 statusBarTextStore.set('Error migrating database.');
             });
     } else if (command === 'migrate_from_1_1_to_1_2') {
@@ -118,7 +119,7 @@ export function processCommand(command) {
                 statusBarTextStore.set('Database migrated to version 1.2.0 successfully.');
             })
             .catch((error) => {
-                console.error('Error migrating database:', error);
+                logger.error('Error migrating database:', error);
                 statusBarTextStore.set('Error migrating database.');
             });
     } else if (command === 'migrate_from_1_2_to_1_3') {
@@ -127,7 +128,7 @@ export function processCommand(command) {
                 statusBarTextStore.set('Database migrated to version 1.3.0 successfully.');
             })
             .catch((error) => {
-                console.error('Error migrating database:', error);
+                logger.error('Error migrating database:', error);
                 statusBarTextStore.set('Error migrating database.');
             });
     } else if (command === 'cl' || command === 'clear') {
@@ -138,7 +139,7 @@ export function processCommand(command) {
                 statusBarTextStore.set('Command history cleared.');
             })
             .catch((error) => {
-                console.error('Error clearing command history:', error);
+                logger.error('Error clearing command history:', error);
                 statusBarTextStore.set('Error clearing command history.');
             });
     }
@@ -165,7 +166,7 @@ function handleSubSearch(command, positions) {
             return newHistory;
         });
         SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch((err) => {
-            console.error('Error saving search history:', err);
+            logger.error('Error saving search history:', err);
         });
 
         if (command === 'ss') {
@@ -267,7 +268,7 @@ function handleSearch(command) {
             return newHistory;
         });
         SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch((err) => {
-            console.error('Error saving search history:', err);
+            logger.error('Error saving search history:', err);
         });
 
         if (command === 's') {

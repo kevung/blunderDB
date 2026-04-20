@@ -8,13 +8,14 @@ import { commentTextStore } from '../stores/uiStore.js';
 import { matchContextStore } from '../stores/positionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { generateXGID } from './positionService.js';
+import { logger } from '../utils/logger.js';
 
 export function copyPosition() {
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened');
         return;
     }
-    console.log('copyPosition');
+    logger.log('copyPosition');
     const position = get(positionStore);
     const analysis = get(analysisStore);
     const comment = get(commentTextStore);
@@ -100,11 +101,11 @@ export function copyPosition() {
     navigator.clipboard
         .writeText(clipboardContent)
         .then(() => {
-            console.log('Position, analysis, and comment copied to clipboard');
+            logger.log('Position, analysis, and comment copied to clipboard');
             setStatusBarMessage('Position, analysis, and comment copied to clipboard');
         })
         .catch((err) => {
-            console.error('Error copying to clipboard:', err);
+            logger.error('Error copying to clipboard:', err);
             setStatusBarMessage('Error copying to clipboard');
         });
 }
@@ -191,7 +192,7 @@ export async function copyBoardImage() {
                 await CopyImageToClipboard(base64Data);
                 setStatusBarMessage('Board image copied to clipboard');
             } catch (err) {
-                console.error('Failed to copy image to clipboard:', err);
+                logger.error('Failed to copy image to clipboard:', err);
                 setStatusBarMessage('Failed to copy image to clipboard: ' + err);
             }
         };
@@ -201,7 +202,7 @@ export async function copyBoardImage() {
         };
         img.src = url;
     } catch (error) {
-        console.error('Error copying board image:', error);
+        logger.error('Error copying board image:', error);
         setStatusBarMessage('Error copying board image');
     }
 }
@@ -325,7 +326,7 @@ export async function copyBoardWithAnalysisImage() {
                 await CopyImageToClipboard(base64Data);
                 setStatusBarMessage('Board + analysis image copied to clipboard');
             } catch (err) {
-                console.error('Failed to copy image to clipboard:', err);
+                logger.error('Failed to copy image to clipboard:', err);
                 setStatusBarMessage('Failed to copy image to clipboard: ' + err);
             }
         };
@@ -335,7 +336,7 @@ export async function copyBoardWithAnalysisImage() {
         };
         img.src = url;
     } catch (error) {
-        console.error('Error copying board+analysis image:', error);
+        logger.error('Error copying board+analysis image:', error);
         setStatusBarMessage('Error copying board+analysis image');
     }
 }

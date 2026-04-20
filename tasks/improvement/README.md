@@ -76,8 +76,8 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 13 — App.svelte services
 - [x] 14 — Modal stores
 - [x] 15 — Frontend tests
-- [ ] 16 — Frontend lint
-- [ ] 17 — Strip console
+- [x] 16 — Frontend lint
+- [x] 17 — Strip console
 - [ ] 18 — Table modals
 - [ ] 19 — Svelte 5 runes
 - [ ] 20 — Accessibility

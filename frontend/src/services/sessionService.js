@@ -8,6 +8,7 @@ import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 import { getSearchState, setSearchState } from './positionService.js';
+import { logger } from '../utils/logger.js';
 
 export async function saveSessionState() {
     if (!get(databasePathStore)) return;
@@ -28,16 +29,16 @@ export async function saveSessionState() {
         };
 
         await SaveSessionState(sessionState);
-        console.log('Session state saved');
+        logger.log('Session state saved');
     } catch (error) {
-        console.error('Error saving session state:', error);
+        logger.error('Error saving session state:', error);
     }
 }
 
 export async function restoreSessionState() {
     try {
         const sessionState = await LoadSessionState();
-        console.log('Loaded session state:', sessionState);
+        logger.log('Loaded session state:', sessionState);
 
         // Try restoring view tabs first
         if (sessionState && sessionState.viewsJSON) {
@@ -49,7 +50,7 @@ export async function restoreSessionState() {
                     hasActiveSearch: sessionState.hasActiveSearch || false
                 });
                 setStatusBarMessage('Session restored with views');
-                console.log('Session restored with views');
+                logger.log('Session restored with views');
                 return;
             }
         }
@@ -79,7 +80,7 @@ export async function restoreSessionState() {
                 currentPositionIndexStore.set(indexToRestore);
 
                 setStatusBarMessage(`Session restored: ${orderedPositions.length} positions, showing #${indexToRestore + 1}`);
-                console.log(`Session restored with ${orderedPositions.length} positions at index ${indexToRestore}`);
+                logger.log(`Session restored with ${orderedPositions.length} positions at index ${indexToRestore}`);
                 return;
             }
         }
@@ -94,7 +95,7 @@ export async function restoreSessionState() {
         const { loadAllPositions } = await import('./positionService.js');
         await loadAllPositions();
     } catch (error) {
-        console.error('Error restoring session state:', error);
+        logger.error('Error restoring session state:', error);
         const { loadAllPositions } = await import('./positionService.js');
         await loadAllPositions();
     }

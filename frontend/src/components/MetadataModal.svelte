@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js'; // Import functions
 
@@ -18,7 +19,7 @@
             dateOfCreation = metadata.dateOfCreation || '';
             databaseVersion = metadata.database_version || ''; // Load database version
         } catch (error) {
-            console.error('Error loading metadata:', error);
+            logger.error('Error loading metadata:', error);
         }
     }
 
@@ -26,7 +27,7 @@
         try {
             await SaveMetadata({ user, description, dateOfCreation });
         } catch (error) {
-            console.error('Error saving metadata:', error);
+            logger.error('Error saving metadata:', error);
         }
     }
 

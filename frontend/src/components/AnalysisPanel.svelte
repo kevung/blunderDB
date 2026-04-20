@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { openPanels, PANEL } from '../stores/uiStore';
@@ -355,7 +356,7 @@
                         return true; // Found cube analysis in current game
                     }
                 } catch (error) {
-                    console.error('Error loading cube analysis:', error);
+                    logger.error('Error loading cube analysis:', error);
                 }
                 return false;
             }

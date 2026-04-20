@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { positionStore, positionsStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
@@ -362,35 +363,35 @@
         const finalFilters = transformedFilters.length > 0 ? transformedFilters : [];
 
         // print all values of arguments to console
-        console.log('includeCube:', includeCube);
-        console.log('includeScore:', includeScore);
-        console.log('pipCountFilter:', pipCountFilter);
-        console.log('winRateFilter:', winRateFilter);
-        console.log('gammonRateFilter:', gammonRateFilter);
-        console.log('backgammonRateFilter:', backgammonRateFilter);
-        console.log('player2WinRateFilter:', player2WinRateFilter);
-        console.log('player2GammonRateFilter:', player2GammonRateFilter);
-        console.log('player2BackgammonRateFilter:', player2BackgammonRateFilter);
-        console.log('player1CheckerOffFilter:', player1CheckerOffFilter);
-        console.log('player2CheckerOffFilter:', player2CheckerOffFilter);
-        console.log('player1BackCheckerFilter:', player1BackCheckerFilter);
-        console.log('player2BackCheckerFilter:', player2BackCheckerFilter);
-        console.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter);
-        console.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter);
-        console.log('searchText:', searchText);
-        console.log('player1AbsolutePipCountFilter:', player1AbsolutePipCountFilter);
-        console.log('equityFilter:', equityFilter);
-        console.log('moveErrorFilter:', moveErrorFilter);
-        console.log('decisionTypeFilter:', decisionTypeFilter);
-        console.log('diceRollFilter:', diceRollFilter);
-        console.log('movePatternFilter:', movePatternFilter);
-        console.log('creationDateFilter:', creationDateFilter);
-        console.log('player1OutfieldBlotFilter:', player1OutfieldBlotFilter);
-        console.log('player2OutfieldBlotFilter:', player2OutfieldBlotFilter);
-        console.log('player1JanBlotFilter:', player1JanBlotFilter);
-        console.log('player2JanBlotFilter:', player2JanBlotFilter);
-        console.log('noContactFilter:', noContactFilter);
-        console.log('mirrorPositionFilter:', mirrorPositionFilter);
+        logger.log('includeCube:', includeCube);
+        logger.log('includeScore:', includeScore);
+        logger.log('pipCountFilter:', pipCountFilter);
+        logger.log('winRateFilter:', winRateFilter);
+        logger.log('gammonRateFilter:', gammonRateFilter);
+        logger.log('backgammonRateFilter:', backgammonRateFilter);
+        logger.log('player2WinRateFilter:', player2WinRateFilter);
+        logger.log('player2GammonRateFilter:', player2GammonRateFilter);
+        logger.log('player2BackgammonRateFilter:', player2BackgammonRateFilter);
+        logger.log('player1CheckerOffFilter:', player1CheckerOffFilter);
+        logger.log('player2CheckerOffFilter:', player2CheckerOffFilter);
+        logger.log('player1BackCheckerFilter:', player1BackCheckerFilter);
+        logger.log('player2BackCheckerFilter:', player2BackCheckerFilter);
+        logger.log('player1CheckerInZoneFilter:', player1CheckerInZoneFilter);
+        logger.log('player2CheckerInZoneFilter:', player2CheckerInZoneFilter);
+        logger.log('searchText:', searchText);
+        logger.log('player1AbsolutePipCountFilter:', player1AbsolutePipCountFilter);
+        logger.log('equityFilter:', equityFilter);
+        logger.log('moveErrorFilter:', moveErrorFilter);
+        logger.log('decisionTypeFilter:', decisionTypeFilter);
+        logger.log('diceRollFilter:', diceRollFilter);
+        logger.log('movePatternFilter:', movePatternFilter);
+        logger.log('creationDateFilter:', creationDateFilter);
+        logger.log('player1OutfieldBlotFilter:', player1OutfieldBlotFilter);
+        logger.log('player2OutfieldBlotFilter:', player2OutfieldBlotFilter);
+        logger.log('player1JanBlotFilter:', player1JanBlotFilter);
+        logger.log('player2JanBlotFilter:', player2JanBlotFilter);
+        logger.log('noContactFilter:', noContactFilter);
+        logger.log('mirrorPositionFilter:', mirrorPositionFilter);
 
         // Build the command string
         const commandParts = ['s'];
@@ -417,7 +418,7 @@
 
         // Save to database
         SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch((err) => {
-            console.error('Error saving search history:', err);
+            logger.error('Error saving search history:', err);
         });
 
         // Build restrictToPositionIDs if searching in current results

@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
     import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
@@ -133,7 +134,7 @@
             const loaded = await GetAllCollections();
             collectionsStore.set(loaded || []);
         } catch (error) {
-            console.error('Error loading collections:', error);
+            logger.error('Error loading collections:', error);
             statusBarTextStore.set('Error loading collections');
         }
     }
@@ -197,7 +198,7 @@
                 collectionPositionsStore.set(positions || []);
             }
         } catch (error) {
-            console.error('Error toggling position in collection:', error);
+            logger.error('Error toggling position in collection:', error);
             statusBarTextStore.set('Error updating collection');
         }
     }
@@ -215,7 +216,7 @@
             inlineNewName = '';
             inlineNewDescription = '';
         } catch (error) {
-            console.error('Error creating collection:', error);
+            logger.error('Error creating collection:', error);
             statusBarTextStore.set('Error creating collection');
         }
     }
@@ -232,7 +233,7 @@
             const positions = await GetCollectionPositions(collection.id);
             collectionPositionsStore.set(positions || []);
         } catch (error) {
-            console.error('Error loading collection positions:', error);
+            logger.error('Error loading collection positions:', error);
         }
     }
 
@@ -254,7 +255,7 @@
                 onOpenCollection(collection, positions);
             }
         } catch (error) {
-            console.error('Error opening collection:', error);
+            logger.error('Error opening collection:', error);
         }
     }
 
@@ -279,7 +280,7 @@
                 await loadPositionCollections(currentPosition.id);
             }
         } catch (error) {
-            console.error('Error deleting collection:', error);
+            logger.error('Error deleting collection:', error);
         }
     }
 
@@ -307,7 +308,7 @@
                     activeCollectionStore.set({ ...activeCollection, name: newName, description: newDesc });
                 }
             } catch (error) {
-                console.error('Error updating collection:', error);
+                logger.error('Error updating collection:', error);
             }
         }
         editingCollectionId = null;
@@ -343,7 +344,7 @@
         try {
             await ReorderCollections(newOrder.map((c) => c.id));
         } catch (error) {
-            console.error('Error reordering collections:', error);
+            logger.error('Error reordering collections:', error);
         }
     }
 
@@ -356,7 +357,7 @@
         try {
             await ReorderCollections(newOrder.map((c) => c.id));
         } catch (error) {
-            console.error('Error reordering collections:', error);
+            logger.error('Error reordering collections:', error);
         }
     }
 
@@ -409,7 +410,7 @@
                 onOpenCollection(activeCollection, positions);
             }
         } catch (error) {
-            console.error('Error removing positions:', error);
+            logger.error('Error removing positions:', error);
         }
     }
 
@@ -431,7 +432,7 @@
                 newOrder.map((p) => p.id)
             );
         } catch (error) {
-            console.error('Error reordering positions:', error);
+            logger.error('Error reordering positions:', error);
         }
     }
 
@@ -453,7 +454,7 @@
                 newOrder.map((p) => p.id)
             );
         } catch (error) {
-            console.error('Error reordering positions:', error);
+            logger.error('Error reordering positions:', error);
         }
     }
 
@@ -472,7 +473,7 @@
                 onOpenCollection(activeCollection, positions);
             }
         } catch (error) {
-            console.error('Error removing position:', error);
+            logger.error('Error removing position:', error);
         }
     }
 
@@ -485,7 +486,7 @@
                 analysisStore.set(analysis);
             }
         } catch (error) {
-            console.error('Error loading analysis:', error);
+            logger.error('Error loading analysis:', error);
         }
     }
 
@@ -498,7 +499,7 @@
         try {
             await ReorderCollections(newOrder.map((c) => c.id));
         } catch (error) {
-            console.error('Error reordering collections:', error);
+            logger.error('Error reordering collections:', error);
         }
     }
 
@@ -527,7 +528,7 @@
                     newOrder.map((p) => p.id)
                 );
             } catch (error) {
-                console.error('Error reordering positions:', error);
+                logger.error('Error reordering positions:', error);
             }
         } else {
             const newOrder = [...collectionPositions];
@@ -543,7 +544,7 @@
                     newOrder.map((p) => p.id)
                 );
             } catch (error) {
-                console.error('Error reordering positions:', error);
+                logger.error('Error reordering positions:', error);
             }
         }
     }
@@ -611,7 +612,7 @@
                 onOpenCollection(activeCollection, positions);
             }
         } catch (error) {
-            console.error('Error removing position:', error);
+            logger.error('Error removing position:', error);
         }
     }
 
@@ -626,7 +627,7 @@
                 const positions = await GetCollectionPositions(activeCollection.id);
                 collectionPositionsStore.set(positions || []);
             } catch (error) {
-                console.error('Error reloading active collection positions:', error);
+                logger.error('Error reloading active collection positions:', error);
             }
         }
         if (currentPosition && currentPosition.id) {

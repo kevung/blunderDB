@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import {
         GetAllMatches,
@@ -98,7 +99,7 @@
             matches = loadedMatches || [];
             await loadTournaments();
         } catch (error) {
-            console.error('Error loading matches:', error);
+            logger.error('Error loading matches:', error);
             matches = [];
         }
     }
@@ -108,7 +109,7 @@
             const loaded = await GetAllTournaments();
             tournamentsStore.set(loaded || []);
         } catch (error) {
-            console.error('Error loading tournaments:', error);
+            logger.error('Error loading tournaments:', error);
         }
     }
 
@@ -165,7 +166,7 @@
             await loadTournaments();
             statusBarTextStore.set(editTournamentValue.trim() ? `Tournament set to "${editTournamentValue.trim()}"` : 'Tournament cleared');
         } catch (error) {
-            console.error('Error setting tournament:', error);
+            logger.error('Error setting tournament:', error);
             statusBarTextStore.set('Error setting tournament');
         }
         editingTournamentMatchId = null;
@@ -217,7 +218,7 @@
             await loadMatches();
             statusBarTextStore.set('Match updated');
         } catch (error) {
-            console.error('Error updating match:', error);
+            logger.error('Error updating match:', error);
             statusBarTextStore.set('Error updating match');
         }
         editingMatchId = null;
@@ -245,7 +246,7 @@
             matches = matches;
             statusBarTextStore.set('Comment updated');
         } catch (error) {
-            console.error('Error updating comment:', error);
+            logger.error('Error updating comment:', error);
             statusBarTextStore.set('Error updating comment');
         }
         editingDetailComment = false;
@@ -353,7 +354,7 @@
             detailMovePositions = movePositions || [];
             detailGames = games || [];
         } catch (error) {
-            console.error('Error loading match detail:', error);
+            logger.error('Error loading match detail:', error);
             detailMovePositions = [];
             detailGames = [];
         }
@@ -455,7 +456,7 @@
         });
 
         SaveLastVisitedPosition(match.id, moveIndex).catch((e) => {
-            console.error('Error persisting last visited position:', e);
+            logger.error('Error persisting last visited position:', e);
         });
 
         // Switch to analysis tab so user sees the analysis
@@ -506,7 +507,7 @@
             positionReloadTriggerStore.update((n) => n + 1);
             statusBarTextStore.set('Match deleted');
         } catch (error) {
-            console.error('Error deleting match:', error);
+            logger.error('Error deleting match:', error);
             statusBarTextStore.set('Error deleting match');
         }
     }
@@ -548,7 +549,7 @@
 
             statusBarTextStore.set(`Swapped players for match`);
         } catch (error) {
-            console.error('Error swapping match players:', error);
+            logger.error('Error swapping match players:', error);
             statusBarTextStore.set('Error swapping match players');
         }
     }

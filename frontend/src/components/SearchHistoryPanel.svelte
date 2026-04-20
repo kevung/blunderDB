@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
@@ -60,7 +61,7 @@
             const history = await LoadSearchHistory();
             searchHistoryStore.set(history || []);
         } catch (error) {
-            console.error('Error loading search history:', error);
+            logger.error('Error loading search history:', error);
         }
     }
 
@@ -69,7 +70,7 @@
             const filters = await LoadFilters();
             filterLibrary = filters || [];
         } catch (error) {
-            console.error('Error loading filter library:', error);
+            logger.error('Error loading filter library:', error);
             filterLibrary = [];
         }
     }
@@ -262,7 +263,7 @@
             await loadHistory();
             statusBarTextStore.set('Search deleted from history');
         } catch (error) {
-            console.error('Error deleting search:', error);
+            logger.error('Error deleting search:', error);
             statusBarTextStore.set('Error deleting search');
         }
     }
