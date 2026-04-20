@@ -63,19 +63,19 @@ All 9 share the same structure:
 
 ### 1. Create `DataTableModal.svelte`
 
-- [ ] Implement generic modal with props:
+- [x] Implement generic modal with props:
   - `visible: boolean`
   - `onClose: () => void`
   - `title: string`
   - `tables: Array<{ title?: string, data: number[][], precision: number }>`
-- [ ] Support both single-table and side-by-side dual-table layout
-- [ ] Include the Escape-to-close handler
-- [ ] Include shared CSS (modal overlay, content, alternating rows)
-- [ ] Use `{cell.toFixed(precision)}` for cell formatting
+- [x] Support both single-table and side-by-side dual-table layout
+- [x] Include the Escape-to-close handler
+- [x] Include shared CSS (modal overlay, content, alternating rows)
+- [x] Use `{cell.toFixed(precision)}` for cell formatting
 
 ### 2. Replace simple modals (7 files)
 
-- [ ] Replace each single-table modal with `<DataTableModal>` in `App.svelte`:
+- [x] Replace each single-table modal with `<DataTableModal>` in `App.svelte`:
   ```svelte
   <!-- Before: 7 separate components -->
   <TakePoint2LastModal visible={showTakePoint2Last} onClose={...} />
@@ -87,11 +87,11 @@ All 9 share the same structure:
   <DataTableModal visible={...} onClose={...} title="Gammon Value (1-cube)"
       tables={[{ data: $gammonValue1Store, precision: 2 }]} />
   ```
-- [ ] Delete the 7 old component files
+- [x] Delete the 7 old component files
 
 ### 3. Replace dual-table modals (2 files)
 
-- [ ] Replace `TakePoint2Modal` and `TakePoint4Modal`:
+- [x] Replace `TakePoint2Modal` and `TakePoint4Modal`:
   ```svelte
   <DataTableModal visible={...} onClose={...} title="Take Point 2"
       tables={[
@@ -99,23 +99,23 @@ All 9 share the same structure:
           { title: 'Last', data: $takePoint2LastStore, precision: 1 },
       ]} />
   ```
-- [ ] Delete the 2 old component files
+- [x] Delete the 2 old component files
 
 ### 4. Verify
 
-- [ ] `npm run build` succeeds
-- [ ] Visual check: each table displays the same data as before
-- [ ] Escape key closes modals
-- [ ] Mouse scroll on table still works (if applicable)
-- [ ] All 9 modal triggers still open the correct table
+- [x] `npm run build` succeeds
+- [ ] Visual check: each table displays the same data as before (manual)
+- [ ] Escape key closes modals (manual)
+- [ ] Mouse scroll on table still works (manual)
+- [ ] All 9 modal triggers still open the correct table (manual)
 
 ## Acceptance criteria
 
-- [ ] 9 old modal files deleted
-- [ ] 1 new `DataTableModal.svelte` (< 120 lines)
-- [ ] Net deletion: ~800+ lines
-- [ ] All tables render identically to before
-- [ ] `npm run build` succeeds
+- [x] 9 old modal files deleted
+- [x] 1 new `DataTableModal.svelte` (116 lines)
+- [x] Net deletion: 981 lines (1012 deleted, 31 added)
+- [ ] All tables render identically to before (manual)
+- [x] `npm run build` succeeds
 
 ## Rollback
 

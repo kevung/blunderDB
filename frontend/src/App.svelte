@@ -97,16 +97,15 @@
     import HelpModal from './components/HelpModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import MetModal from './components/MetModal.svelte';
-    import TakePoint2LastModal from './components/TakePoint2LastModal.svelte';
-    import TakePoint2LiveModal from './components/TakePoint2LiveModal.svelte';
-    import TakePoint4LastModal from './components/TakePoint4LastModal.svelte';
-    import TakePoint4LiveModal from './components/TakePoint4LiveModal.svelte';
-    import GammonValue1Modal from './components/GammonValue1Modal.svelte';
-    import GammonValue2Modal from './components/GammonValue2Modal.svelte';
-    import GammonValue4Modal from './components/GammonValue4Modal.svelte';
+    import DataTableModal from './components/DataTableModal.svelte';
+    import { takePoint2LastTable } from './stores/takePoint2LastTable';
+    import { takePoint2LiveTable } from './stores/takePoint2LiveTable';
+    import { takePoint4LastTable } from './stores/takePoint4LastTable';
+    import { takePoint4LiveTable } from './stores/takePoint4LiveTable';
+    import { gammonValue1Table } from './stores/gammonValue1Table';
+    import { gammonValue2Table } from './stores/gammonValue2Table';
+    import { gammonValue4Table } from './stores/gammonValue4Table';
     import WarningModal from './components/WarningModal.svelte';
-    import TakePoint2Modal from './components/TakePoint2Modal.svelte';
-    import TakePoint4Modal from './components/TakePoint4Modal.svelte';
     import ImportProgressModal from './components/ImportProgressModal.svelte';
     import FileImportProgressModal from './components/FileImportProgressModal.svelte';
     import ExportDatabaseModal from './components/ExportDatabaseModal.svelte';
@@ -395,18 +394,32 @@
     <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
 
     <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
-    <TakePoint2LastModal visible={$activeModal === MODAL.TAKE_POINT_2_LAST} onClose={() => closeModal()} />
-    <TakePoint2LiveModal visible={$activeModal === MODAL.TAKE_POINT_2_LIVE} onClose={() => closeModal()} />
-    <TakePoint4LastModal visible={$activeModal === MODAL.TAKE_POINT_4_LAST} onClose={() => closeModal()} />
-    <TakePoint4LiveModal visible={$activeModal === MODAL.TAKE_POINT_4_LIVE} onClose={() => closeModal()} />
-    <GammonValue1Modal visible={$activeModal === MODAL.GAMMON_VALUE_1} onClose={() => closeModal()} />
-    <GammonValue2Modal visible={$activeModal === MODAL.GAMMON_VALUE_2} onClose={() => closeModal()} />
-    <GammonValue4Modal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} />
+    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_2_LAST} onClose={() => closeModal()} tables={[{ data: takePoint2LastTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
+    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_2_LIVE} onClose={() => closeModal()} tables={[{ data: takePoint2LiveTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
+    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_4_LAST} onClose={() => closeModal()} tables={[{ data: takePoint4LastTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }]} />
+    <DataTableModal visible={$activeModal === MODAL.TAKE_POINT_4_LIVE} onClose={() => closeModal()} tables={[{ data: takePoint4LiveTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }]} />
+    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_1} onClose={() => closeModal()} tables={[{ data: gammonValue1Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 2 }]} />
+    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_2} onClose={() => closeModal()} tables={[{ data: gammonValue2Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 3 }]} />
+    <DataTableModal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} tables={[{ data: gammonValue4Table, precision: 2, colCount: 8, colOffset: 2, rowOffset: 5 }]} />
 
     <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
 
-    <TakePoint2Modal />
-    <TakePoint4Modal />
+    <DataTableModal
+        visible={$activeModal === MODAL.TAKE_POINT_2}
+        onClose={() => closeModal()}
+        tables={[
+            { title: 'Long Races', data: takePoint2LiveTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 },
+            { title: 'Last Roll', data: takePoint2LastTable, precision: 1, colCount: 8, colOffset: 2, rowOffset: 2 }
+        ]}
+    />
+    <DataTableModal
+        visible={$activeModal === MODAL.TAKE_POINT_4}
+        onClose={() => closeModal()}
+        tables={[
+            { title: 'Long Races', data: takePoint4LiveTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 },
+            { title: 'Last Roll', data: takePoint4LastTable, precision: 0, colCount: 7, colOffset: 3, rowOffset: 3 }
+        ]}
+    />
 
     <ImportProgressModal
         visible={$showImportProgressModalStore}
