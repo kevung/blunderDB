@@ -114,9 +114,16 @@ function createViewStore() {
     }
 
     function addView() {
-        const id = nextViewId++;
-        const newView = createDefaultView(id);
         saveCurrentViewState();
+        const id = nextViewId++;
+        const currentId = get(activeViewId);
+        const vs = get(views);
+        const current = vs.find((v) => v.id === currentId);
+        const newView = {
+            ...JSON.parse(JSON.stringify(current)),
+            id,
+            name: `#${id}`
+        };
         views.update((vs) => [...vs, newView]);
         activeViewId.set(id);
         restoreViewState(newView);
