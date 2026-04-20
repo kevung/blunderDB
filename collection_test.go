@@ -6,59 +6,8 @@ import (
 	"testing"
 )
 
-func setupCollectionTestDB(t *testing.T) (*Database, func()) {
-	t.Helper()
-	tmpDir := t.TempDir()
-	dbPath := filepath.Join(tmpDir, "test.db")
-
-	db := NewDatabase()
-	if err := db.SetupDatabase(dbPath); err != nil {
-		t.Fatalf("SetupDatabase: %v", err)
-	}
-
-	return db, func() {
-		if db.db != nil {
-			db.db.Close()
-		}
-		os.Remove(dbPath)
-	}
-}
-
-// importTestMatch imports the test.sgf fixture and returns the match ID.
-func importTestMatch(t *testing.T, db *Database) int64 {
-	t.Helper()
-	matchID, err := db.ImportGnuBGMatch(filepath.Join("testdata", "test.sgf"))
-	if err != nil {
-		t.Fatalf("ImportGnuBGMatch: %v", err)
-	}
-	return matchID
-}
-
-// getPositionIDs returns position IDs from the database (up to limit).
-func getPositionIDs(t *testing.T, db *Database, limit int) []int64 {
-	t.Helper()
-	rows, err := db.db.Query(`SELECT id FROM position ORDER BY id LIMIT ?`, limit)
-	if err != nil {
-		t.Fatalf("query positions: %v", err)
-	}
-	defer rows.Close()
-	var ids []int64
-	for rows.Next() {
-		var id int64
-		if err := rows.Scan(&id); err != nil {
-			t.Fatalf("scan: %v", err)
-		}
-		ids = append(ids, id)
-	}
-	if len(ids) == 0 {
-		t.Fatal("no positions in database")
-	}
-	return ids
-}
-
 func TestCreateCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	id, err := db.CreateCollection("Test Collection", "A description")
 	if err != nil {
@@ -81,8 +30,7 @@ func TestCreateCollection(t *testing.T) {
 }
 
 func TestGetAllCollections(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	for i := 0; i < 3; i++ {
 		if _, err := db.CreateCollection("Col", ""); err != nil {
@@ -105,8 +53,7 @@ func TestGetAllCollections(t *testing.T) {
 }
 
 func TestUpdateCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	id, _ := db.CreateCollection("Old", "OldDesc")
 	if err := db.UpdateCollection(id, "New", "NewDesc"); err != nil {
@@ -119,8 +66,7 @@ func TestUpdateCollection(t *testing.T) {
 }
 
 func TestDeleteCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 2)
@@ -145,8 +91,7 @@ func TestDeleteCollection(t *testing.T) {
 }
 
 func TestAddPositionToCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 1)
@@ -166,8 +111,7 @@ func TestAddPositionToCollection(t *testing.T) {
 }
 
 func TestAddPositionsToCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 5)
@@ -187,8 +131,7 @@ func TestAddPositionsToCollection(t *testing.T) {
 }
 
 func TestAddDuplicatePosition(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 1)
@@ -208,8 +151,7 @@ func TestAddDuplicatePosition(t *testing.T) {
 }
 
 func TestRemovePositionFromCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 1)
@@ -227,8 +169,7 @@ func TestRemovePositionFromCollection(t *testing.T) {
 }
 
 func TestRemovePositionsFromCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 3)
@@ -246,8 +187,7 @@ func TestRemovePositionsFromCollection(t *testing.T) {
 }
 
 func TestReorderCollections(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	id1, _ := db.CreateCollection("A", "")
 	id2, _ := db.CreateCollection("B", "")
@@ -269,8 +209,7 @@ func TestReorderCollections(t *testing.T) {
 }
 
 func TestReorderCollectionPositions(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 3)
@@ -293,8 +232,7 @@ func TestReorderCollectionPositions(t *testing.T) {
 }
 
 func TestMovePositionBetweenCollections(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 1)
@@ -317,8 +255,7 @@ func TestMovePositionBetweenCollections(t *testing.T) {
 }
 
 func TestCopyPositionToCollection(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 1)
@@ -338,8 +275,7 @@ func TestCopyPositionToCollection(t *testing.T) {
 }
 
 func TestGetPositionCollections(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 1)
@@ -358,8 +294,7 @@ func TestGetPositionCollections(t *testing.T) {
 }
 
 func TestExportCollections(t *testing.T) {
-	db, cleanup := setupCollectionTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, 3)

@@ -215,13 +215,7 @@ func jsonUnmarshal(data string, v any) error {
 
 func setupSearchTestDB(t *testing.T) *Database {
 	t.Helper()
-	db, cleanup := setupTestDB(t)
-	t.Cleanup(cleanup)
-
-	if _, err := db.ImportXGMatch("testdata/test.xg"); err != nil {
-		t.Fatalf("import testdata/test.xg: %v", err)
-	}
-	return db
+	return newTestDBWithXG(t)
 }
 
 // sortedIDs returns a sorted slice of position IDs from the result.

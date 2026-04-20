@@ -21,16 +21,14 @@ func TestCompareTXTvsXGPositions(t *testing.T) {
 	}
 
 	// Import XG
-	dbXG, cleanupXG := setupTestDB(t)
-	defer cleanupXG()
+	dbXG := newTestDB(t)
 	xgMatchID, err := dbXG.ImportXGMatch(xgFile)
 	if err != nil {
 		t.Fatalf("XG import failed: %v", err)
 	}
 
 	// Import TXT
-	dbTXT, cleanupTXT := setupTestDB(t)
-	defer cleanupTXT()
+	dbTXT := newTestDB(t)
 	txtMatchID, err := dbTXT.ImportGnuBGMatch(txtFile)
 	if err != nil {
 		t.Fatalf("TXT import failed: %v", err)
@@ -168,16 +166,14 @@ func TestCompareMATvsXGPositions(t *testing.T) {
 	}
 
 	// Import XG
-	dbXG, cleanupXG := setupTestDB(t)
-	defer cleanupXG()
+	dbXG := newTestDB(t)
 	xgMatchID, err := dbXG.ImportXGMatch(xgFile)
 	if err != nil {
 		t.Fatalf("XG import failed: %v", err)
 	}
 
 	// Import MAT
-	dbMAT, cleanupMAT := setupTestDB(t)
-	defer cleanupMAT()
+	dbMAT := newTestDB(t)
 	matMatchID, err := dbMAT.ImportGnuBGMatch(matFile)
 	if err != nil {
 		t.Fatalf("MAT import failed: %v", err)
@@ -311,8 +307,7 @@ func TestImportMatchFromText(t *testing.T) {
 				t.Fatalf("Failed to read %s: %v", tc.file, err)
 			}
 
-			db, cleanup := setupTestDB(t)
-			defer cleanup()
+			db := newTestDB(t)
 
 			// Import via text (clipboard simulation)
 			matchID, err := db.ImportGnuBGMatchFromText(string(content))

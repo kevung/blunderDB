@@ -70,9 +70,9 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 07 — slog logging
 - [x] 08 — SearchFilters struct
 - [x] 09 — ExportOptions struct
-- [ ] 10 — RWMutex
-- [ ] 11 — Import helpers
-- [ ] 12 — Test utilities
+- [x] 10 — RWMutex
+- [x] 11 — Import helpers
+- [x] 12 — Test utilities
 - [ ] 13 — App.svelte services
 - [ ] 14 — Modal stores
 - [ ] 15 — Frontend tests

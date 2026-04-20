@@ -10,25 +10,6 @@ import (
 	_ "modernc.org/sqlite"
 )
 
-// setupTestDB creates a temporary database for testing and returns the Database and cleanup function.
-func setupTestDB(t *testing.T) (*Database, func()) {
-	t.Helper()
-	tmpDir := t.TempDir()
-	dbPath := filepath.Join(tmpDir, "test.db")
-
-	db := NewDatabase()
-	if err := db.SetupDatabase(dbPath); err != nil {
-		t.Fatalf("Failed to setup test database: %v", err)
-	}
-
-	return db, func() {
-		if db.db != nil {
-			db.db.Close()
-		}
-		os.Remove(dbPath)
-	}
-}
-
 // testUnmarshalPositionState unmarshals a position state string that may be
 // either compact board encoding ([28]int array) or legacy full-JSON.
 // For compact states, only the Board is reconstructed; the caller must load
@@ -49,8 +30,7 @@ func testLoadPositionFromRow(db *Database, id int64) (Position, error) {
 
 // TestImportGnuBGSGF tests importing a GnuBG SGF match file.
 func TestImportGnuBGSGF(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
@@ -138,8 +118,7 @@ func TestImportGnuBGSGF(t *testing.T) {
 
 // TestImportGnuBGMAT tests importing a Jellyfish MAT match file.
 func TestImportGnuBGMAT(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.mat")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
@@ -196,8 +175,7 @@ func TestImportGnuBGMAT(t *testing.T) {
 
 // TestImportGnuBGTXT tests importing a Jellyfish TXT match file.
 func TestImportGnuBGTXT(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.txt")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
@@ -240,8 +218,7 @@ func TestImportGnuBGTXT(t *testing.T) {
 
 // TestImportGnuBGDuplicate tests that importing the same match twice is rejected.
 func TestImportGnuBGDuplicate(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
@@ -268,8 +245,7 @@ func TestImportGnuBGDuplicate(t *testing.T) {
 
 // TestImportGnuBGSGFGameDetails verifies detailed game/move data from SGF import.
 func TestImportGnuBGSGFGameDetails(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "test.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
@@ -429,8 +405,7 @@ func TestImportGnuBGSGFGameDetails(t *testing.T) {
 
 // TestImportGnuBGMATvsTXT verifies that MAT and TXT produce same match structure.
 func TestImportGnuBGMATvsTXT(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	matFile := filepath.Join("testdata", "test.mat")
 	txtFile := filepath.Join("testdata", "test.txt")
@@ -575,8 +550,7 @@ func TestConvertGnuBGMoveToString(t *testing.T) {
 
 // TestImportGnuBGUnsupportedFormat tests that unsupported extensions are rejected.
 func TestImportGnuBGUnsupportedFormat(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	_, err := db.ImportGnuBGMatch("test.bgf")
 	if err == nil {
@@ -587,8 +561,7 @@ func TestImportGnuBGUnsupportedFormat(t *testing.T) {
 
 // TestImportCharlotSGF tests importing the charlot SGF match file (second test dataset).
 func TestImportCharlotSGF(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.sgf")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
@@ -614,8 +587,7 @@ func TestImportCharlotSGF(t *testing.T) {
 
 // TestImportCharlotMAT tests importing the charlot MAT match file (second test dataset).
 func TestImportCharlotMAT(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "charlot1-charlot2_7p_2025-11-08-2305.mat")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {
@@ -655,16 +627,14 @@ func TestCompareXGvsSGFImport(t *testing.T) {
 	}
 
 	// Import XG into a fresh DB
-	dbXG, cleanupXG := setupTestDB(t)
-	defer cleanupXG()
+	dbXG := newTestDB(t)
 	xgMatchID, err := dbXG.ImportXGMatch(xgFile)
 	if err != nil {
 		t.Fatalf("ImportXGMatch failed: %v", err)
 	}
 
 	// Import SGF into a fresh DB
-	dbSGF, cleanupSGF := setupTestDB(t)
-	defer cleanupSGF()
+	dbSGF := newTestDB(t)
 	sgfMatchID, err := dbSGF.ImportGnuBGMatch(sgfFile)
 	if err != nil {
 		t.Fatalf("ImportGnuBGMatch(.sgf) failed: %v", err)
@@ -1074,8 +1044,7 @@ func TestMATImportCheckerCounts(t *testing.T) {
 		t.Skip("charlot match file not found")
 	}
 
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	matchID, err := db.ImportGnuBGMatch(matFile)
 	if err != nil {
@@ -1150,8 +1119,7 @@ func TestMATImportCheckerCounts(t *testing.T) {
 
 // TestImportXGComments tests that XG file comments are imported into the comment table.
 func TestImportXGComments(t *testing.T) {
-	db, cleanup := setupTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	testFile := filepath.Join("testdata", "match_with_comment.xg")
 	if _, err := os.Stat(testFile); os.IsNotExist(err) {

@@ -1,53 +1,30 @@
 package main
 
 import (
-	"os"
-	"path/filepath"
 	"testing"
 )
 
-func setupAnkiTestDB(t *testing.T) (*Database, func()) {
+// setupAnkiCollectionWithPositions creates a collection with N positions and returns (db, collectionID, positionIDs).
+func setupAnkiCollectionWithPositions(t *testing.T, n int) (*Database, int64, []int64) {
 	t.Helper()
-	tmpDir := t.TempDir()
-	dbPath := filepath.Join(tmpDir, "test.db")
-
-	db := NewDatabase()
-	if err := db.SetupDatabase(dbPath); err != nil {
-		t.Fatalf("SetupDatabase: %v", err)
-	}
-
-	return db, func() {
-		if db.db != nil {
-			db.db.Close()
-		}
-		os.Remove(dbPath)
-	}
-}
-
-// setupAnkiCollectionWithPositions creates a collection with N positions and returns (db, collectionID, positionIDs, cleanup).
-func setupAnkiCollectionWithPositions(t *testing.T, n int) (*Database, int64, []int64, func()) {
-	t.Helper()
-	db, cleanup := setupAnkiTestDB(t)
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	ids := getPositionIDs(t, db, n)
 
 	colID, err := db.CreateCollection("AnkiSource", "")
 	if err != nil {
-		cleanup()
 		t.Fatalf("CreateCollection: %v", err)
 	}
 	if err := db.AddPositionsToCollection(colID, ids); err != nil {
-		cleanup()
 		t.Fatalf("AddPositionsToCollection: %v", err)
 	}
 
-	return db, colID, ids, cleanup
+	return db, colID, ids
 }
 
 func TestCreateAnkiDeck(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, err := db.CreateAnkiDeck("MyDeck", "A deck", "collection", colID, "")
 	if err != nil {
@@ -59,8 +36,7 @@ func TestCreateAnkiDeck(t *testing.T) {
 }
 
 func TestGetAllAnkiDecks(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	db.CreateAnkiDeck("D1", "", "collection", colID, "")
 	db.CreateAnkiDeck("D2", "", "collection", colID, "")
@@ -75,8 +51,7 @@ func TestGetAllAnkiDecks(t *testing.T) {
 }
 
 func TestUpdateAnkiDeck(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("Old", "OldDesc", "collection", colID, "")
 	if err := db.UpdateAnkiDeck(id, "New", "NewDesc"); err != nil {
@@ -96,8 +71,7 @@ func TestUpdateAnkiDeck(t *testing.T) {
 }
 
 func TestUpdateAnkiDeckParams(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	if err := db.UpdateAnkiDeckParams(id, 0.85, 180.0, true); err != nil {
@@ -123,8 +97,7 @@ func TestUpdateAnkiDeckParams(t *testing.T) {
 }
 
 func TestDeleteAnkiDeck(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(id)
@@ -149,8 +122,7 @@ func TestDeleteAnkiDeck(t *testing.T) {
 }
 
 func TestSyncAnkiDeck_Collection(t *testing.T) {
-	db, colID, ids, cleanup := setupAnkiCollectionWithPositions(t, 5)
-	defer cleanup()
+	db, colID, ids := setupAnkiCollectionWithPositions(t, 5)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	if err := db.SyncAnkiDeck(deckID); err != nil {
@@ -167,8 +139,7 @@ func TestSyncAnkiDeck_Collection(t *testing.T) {
 }
 
 func TestSyncAnkiDeck_Idempotent(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -181,8 +152,7 @@ func TestSyncAnkiDeck_Idempotent(t *testing.T) {
 }
 
 func TestSyncAnkiDeck_AddNew(t *testing.T) {
-	db, colID, ids, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, ids := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -216,8 +186,7 @@ func TestSyncAnkiDeck_AddNew(t *testing.T) {
 }
 
 func TestGetNextAnkiCard(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -238,8 +207,7 @@ func TestGetNextAnkiCard(t *testing.T) {
 }
 
 func TestGetNextAnkiCard_Empty(t *testing.T) {
-	db, cleanup := setupAnkiTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	colID, _ := db.CreateCollection("Empty", "")
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
@@ -254,8 +222,7 @@ func TestGetNextAnkiCard_Empty(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Again(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -285,8 +252,7 @@ func TestReviewAnkiCard_Again(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Good(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -315,8 +281,7 @@ func TestReviewAnkiCard_Good(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Easy(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -341,8 +306,7 @@ func TestReviewAnkiCard_Easy(t *testing.T) {
 }
 
 func TestReviewAnkiCard_Progression(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 1)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -369,8 +333,7 @@ func TestReviewAnkiCard_Progression(t *testing.T) {
 }
 
 func TestResetAnkiDeck(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -394,8 +357,7 @@ func TestResetAnkiDeck(t *testing.T) {
 }
 
 func TestGetAnkiDeckStats(t *testing.T) {
-	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 5)
-	defer cleanup()
+	db, colID, _ := setupAnkiCollectionWithPositions(t, 5)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)
@@ -414,8 +376,7 @@ func TestGetAnkiDeckStats(t *testing.T) {
 }
 
 func TestGetAnkiDeckPositions(t *testing.T) {
-	db, colID, ids, cleanup := setupAnkiCollectionWithPositions(t, 3)
-	defer cleanup()
+	db, colID, ids := setupAnkiCollectionWithPositions(t, 3)
 
 	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
 	_ = db.SyncAnkiDeck(deckID)

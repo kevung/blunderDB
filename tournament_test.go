@@ -6,27 +6,8 @@ import (
 	"testing"
 )
 
-func setupTournamentTestDB(t *testing.T) (*Database, func()) {
-	t.Helper()
-	tmpDir := t.TempDir()
-	dbPath := filepath.Join(tmpDir, "test.db")
-
-	db := NewDatabase()
-	if err := db.SetupDatabase(dbPath); err != nil {
-		t.Fatalf("SetupDatabase: %v", err)
-	}
-
-	return db, func() {
-		if db.db != nil {
-			db.db.Close()
-		}
-		os.Remove(dbPath)
-	}
-}
-
 func TestCreateTournament(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	id, err := db.CreateTournament("Grand Prix", "2025-01-15", "Paris")
 	if err != nil {
@@ -38,8 +19,7 @@ func TestCreateTournament(t *testing.T) {
 }
 
 func TestGetAllTournaments(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	for i := 0; i < 3; i++ {
 		if _, err := db.CreateTournament("T", "", ""); err != nil {
@@ -62,8 +42,7 @@ func TestGetAllTournaments(t *testing.T) {
 }
 
 func TestUpdateTournament(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	id, _ := db.CreateTournament("Old", "2025-01-01", "Old City")
 	if err := db.UpdateTournament(id, "New", "2025-06-15", "New City"); err != nil {
@@ -87,8 +66,7 @@ func TestUpdateTournament(t *testing.T) {
 }
 
 func TestDeleteTournament(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, err := db.GetAllMatches()
@@ -112,8 +90,7 @@ func TestDeleteTournament(t *testing.T) {
 }
 
 func TestAddMatchToTournament(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, _ := db.GetAllMatches()
@@ -134,8 +111,7 @@ func TestAddMatchToTournament(t *testing.T) {
 }
 
 func TestRemoveMatchFromTournament(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, _ := db.GetAllMatches()
@@ -161,8 +137,7 @@ func TestRemoveMatchFromTournament(t *testing.T) {
 }
 
 func TestSetMatchTournamentByName(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, _ := db.GetAllMatches()
@@ -183,8 +158,7 @@ func TestSetMatchTournamentByName(t *testing.T) {
 }
 
 func TestSetMatchTournamentByName_Existing(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, _ := db.GetAllMatches()
@@ -208,8 +182,7 @@ func TestSetMatchTournamentByName_Existing(t *testing.T) {
 }
 
 func TestReorderTournamentMatches(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	// Import two different matches
 	m1, err := db.ImportGnuBGMatch(filepath.Join("testdata", "test.sgf"))
@@ -237,8 +210,7 @@ func TestReorderTournamentMatches(t *testing.T) {
 }
 
 func TestGetMatchTournament(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, _ := db.GetAllMatches()
@@ -257,8 +229,7 @@ func TestGetMatchTournament(t *testing.T) {
 }
 
 func TestUpdateTournamentComment(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	tID, _ := db.CreateTournament("T", "", "")
 	if err := db.UpdateTournamentComment(tID, "Great event"); err != nil {
@@ -278,8 +249,7 @@ func TestUpdateTournamentComment(t *testing.T) {
 }
 
 func TestUpdateMatchComment(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, _ := db.GetAllMatches()
@@ -302,8 +272,7 @@ func TestUpdateMatchComment(t *testing.T) {
 }
 
 func TestExportTournaments(t *testing.T) {
-	db, cleanup := setupTournamentTestDB(t)
-	defer cleanup()
+	db := newTestDB(t)
 
 	importTestMatch(t, db)
 	matches, _ := db.GetAllMatches()
