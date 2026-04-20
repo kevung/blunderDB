@@ -1,5 +1,5 @@
 <script>
-    let { onNewDatabase, onOpenDatabase, onImportDatabase, onExportDatabase, onExit, onImportPosition, onImportFolder, onCopyPosition, onPastePosition, onSavePosition, onUpdatePosition, onDeletePosition, onFirstPosition, onPreviousPosition, onNextPosition, onLastPosition, onGoToPosition, onTogglePipcount, onRandomPosition, onCopyBoardImage, onToggleCommandMode, onToggleHelp, onLoadAllPositions, onToggleEPCMode } = $props();
+    let { onNewDatabase, onOpenDatabase, onImportDatabase, onExportDatabase, onExit, onImportPosition, onImportFolder, onCopyPosition, onPastePosition, onSavePosition, onUpdatePosition, onDeletePosition, onFirstPosition, onPreviousPosition, onNextPosition, onLastPosition, onGoToPosition, onTogglePipcount, onRandomPosition, onCopyBoardImage, onToggleCommandMode: _onToggleCommandMode, onToggleHelp, onLoadAllPositions, onToggleEPCMode: _onToggleEPCMode } = $props();
 
     import { activeTabStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';

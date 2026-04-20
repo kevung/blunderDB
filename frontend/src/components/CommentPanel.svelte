@@ -1,6 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
-    let { visible = false, onClose } = $props();
+    let { visible = false, onClose: _onClose } = $props();
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';

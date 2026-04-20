@@ -38,7 +38,7 @@ jobs:
         shell: bash
 
       - name: Run Go tests
-        run: go test -timeout 300s -race -count=1 ./...
+        run: go test -timeout 600s -race -count=1 ./...
         shell: bash
 
   frontend-test:

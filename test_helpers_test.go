@@ -32,16 +32,6 @@ func newTestDBWithXG(t *testing.T) *Database {
 	return db
 }
 
-// newTestDBWithSGF creates a file-backed database and imports testdata/test.sgf.
-func newTestDBWithSGF(t *testing.T) *Database {
-	t.Helper()
-	db := newTestDB(t)
-	if _, err := db.ImportGnuBGMatch(filepath.Join("testdata", "test.sgf")); err != nil {
-		t.Fatalf("ImportGnuBGMatch: %v", err)
-	}
-	return db
-}
-
 // importTestMatch imports testdata/test.sgf and returns the match ID.
 func importTestMatch(t *testing.T, db *Database) int64 {
 	t.Helper()
@@ -74,22 +64,4 @@ func getPositionIDs(t *testing.T, db *Database, limit int) []int64 {
 	return ids
 }
 
-// positionCount returns the number of positions in the database.
-func positionCount(t *testing.T, db *Database) int {
-	t.Helper()
-	var count int
-	if err := db.db.QueryRow("SELECT COUNT(*) FROM position").Scan(&count); err != nil {
-		t.Fatalf("positionCount: %v", err)
-	}
-	return count
-}
 
-// matchCount returns the number of matches in the database.
-func matchCount(t *testing.T, db *Database) int {
-	t.Helper()
-	var count int
-	if err := db.db.QueryRow("SELECT COUNT(*) FROM match").Scan(&count); err != nil {
-		t.Fatalf("matchCount: %v", err)
-	}
-	return count
-}
