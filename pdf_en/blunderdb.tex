@@ -964,27 +964,16 @@ The user can navigate through the positions of the collection using the \sphinxs
 The Anki panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Création de paquets :} Cliquez sur \sphinxstyleemphasis{New Deck} pour créer un paquet à partir
-d’une collection ou des résultats de recherche courants. Les paquets basés sur
-une recherche se synchronisent automatiquement à l’activation de l’onglet Anki.
+\sphinxstylestrong{Creating decks:} Click \sphinxstyleemphasis{New Deck} to create a deck from a collection or the current search results. Search\sphinxhyphen{}based decks sync automatically when the Anki tab is opened.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Révision :} Sélectionnez un paquet puis cliquez sur \sphinxstyleemphasis{Study} (ou double\sphinxhyphen{}cliquez
-sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
-la position correspondante sur le plateau. Évaluez votre rappel avec les touches
-\sphinxstyleemphasis{1} (À revoir), \sphinxstyleemphasis{2} (Difficile), \sphinxstyleemphasis{3} (Bien), ou \sphinxstyleemphasis{4} (Facile). Appuyez sur \sphinxstyleemphasis{Esc}
-pour arrêter et revenir à la liste des paquets.
+\sphinxstylestrong{Reviewing:} Select a deck then click \sphinxstyleemphasis{Study} (or double\sphinxhyphen{}click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys \sphinxstyleemphasis{1} (Again), \sphinxstyleemphasis{2} (Hard), \sphinxstyleemphasis{3} (Good), or \sphinxstyleemphasis{4} (Easy). Press \sphinxstyleemphasis{Esc} to stop and return to the deck list.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Arrêt/Reprise :} Vous pouvez interrompre une session de révision à tout moment
-avec \sphinxstyleemphasis{Esc}. Le bouton change en \sphinxstyleemphasis{Resume} et affiche votre progression.
-Cliquez dessus pour reprendre là où vous vous êtes arrêté.
+\sphinxstylestrong{Pause/Resume:} You can interrupt a review session at any time with \sphinxstyleemphasis{Esc}. The button changes to \sphinxstyleemphasis{Resume} and shows your progress. Click it to pick up where you left off.
 
 \sphinxAtStartPar
-\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
-synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
-(rétention cible, intervalle maximum, aléa) peuvent être configurés par
-paquet dans les Paramètres (icône engrenage).
+\sphinxstylestrong{Deck management:} Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (target retention, maximum interval, fuzz factor) can be configured per deck in the Settings (gear icon).
 
 \sphinxstepscope
 
@@ -3999,7 +3988,7 @@ Action
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Évaluer : À revoir (échec, revoir bientôt).
+Rate: Again (failed, review soon).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4010,7 +3999,7 @@ Action
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Évaluer : Difficile.
+Rate: Hard.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4021,7 +4010,7 @@ Action
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Évaluer : Bien.
+Rate: Good.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4032,7 +4021,7 @@ Action
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Évaluer : Facile.
+Rate: Easy.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4043,7 +4032,7 @@ Esc
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Arrêter la révision et revenir à la liste des paquets (reprise possible).
+Stop the review and return to the deck list (can resume later).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -5184,12 +5173,12 @@ Here are some examples of using filters in the command line:
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
-Type de position
+Position type
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
-Structure de pions
+Checker structure
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5201,7 +5190,7 @@ Command
 \sphinxmidrule
 \sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Courses
+Pure race
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5215,7 +5204,7 @@ s nc
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Courses petites
+Short race
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5229,7 +5218,7 @@ s nc P\textless{}70
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Frapper au point 1
+Hitting on the ace point
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5248,7 +5237,7 @@ Backgame 1\sphinxhyphen{}4
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-portes 24, 21
+points 24, 21 made
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5259,12 +5248,12 @@ s p\textgreater{}35
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Décision de Take/Pass à \sphinxhyphen{}2 \sphinxhyphen{}4
+Take/Pass decision at \sphinxhyphen{}2 \sphinxhyphen{}4
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-dés vides côté joueur du haut, score \sphinxhyphen{}2/\sphinxhyphen{}4
+empty dice on upper player’s side, score \sphinxhyphen{}2/\sphinxhyphen{}4
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5275,12 +5264,12 @@ s s d
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Envoi de too good
+Too good to double
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-dés vides côté joueur du bas
+empty dice on lower player’s side
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5291,12 +5280,12 @@ s d e\textgreater{}1000
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Blitz avec au moins 20\% de gammon
+Blitz with at least 20\% gammon
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-portes dans le jan, hommes à la barre
+made points in home board, men on the bar
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5307,7 +5296,7 @@ s g\textgreater{}20
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Erreurs du joueur 1 de plus de 40 millipoints
+Player 1 errors greater than 40 millipoints
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5321,7 +5310,7 @@ s E\textgreater{}40
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Position du tournoi Aachen2024
+Position from the Aachen2024 tournament
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5335,7 +5324,7 @@ s t"Aachen2024"
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Un pion arriéré à ramener
+One back checker to bring home
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5349,7 +5338,7 @@ s k1,1
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Quitter le point 20
+Escaping from the 20 point
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5365,12 +5354,12 @@ s m"20/"
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Prime contre prime
+Prime versus prime
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-indiquer les primes
+indicate the primes
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5386,7 +5375,7 @@ Ace\sphinxhyphen{}point bear\sphinxhyphen{}off
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-point 1 pour l’adversaire
+opponent’s ace point made
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5397,12 +5386,12 @@ s P\textless{}60
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Double avec au moins 20pip d’avance
+Double with at least 20 pip lead
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-dés vides côté joueur du bas
+empty dice on lower player’s side
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5413,7 +5402,7 @@ s d p\textless{}\sphinxhyphen{}20
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Positions du match 5
+Positions from match 5
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5427,7 +5416,7 @@ s ma5
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Positions des matchs 2 à 4
+Positions from matches 2 to 4
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5441,7 +5430,7 @@ s ma2,4
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Positions des matchs 23 et 43
+Positions from matches 23 and 43
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5455,7 +5444,7 @@ s ma23 ma43
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Positions du tournoi 1
+Positions from tournament 1
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
@@ -5469,7 +5458,7 @@ s tn1
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Erreurs dans le tournoi 2
+Errors in tournament 2
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
