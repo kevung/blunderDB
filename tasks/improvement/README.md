@@ -64,7 +64,7 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 01 — CI tests
 - [x] 02 — CI lint
 - [x] 03 — Fix exit-zero
-- [ ] 04 — CLI tests
+- [x] 04 — CLI tests
 - [ ] 05 — CRUD tests
 - [ ] 06 — Split db.go
 - [ ] 07 — slog logging
