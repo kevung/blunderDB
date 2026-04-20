@@ -1238,20 +1238,20 @@
             };
 
             // Call the backend to export
-            await ExportDatabase(
-                pendingExportPath, 
-                positions, 
-                metadata,
-                exportOptions.includeAnalysis,
-                exportOptions.includeComments,
-                exportOptions.includeFilterLibrary,
-                exportOptions.includePlayedMoves,
-                exportOptions.includeMatches,
-                exportOptions.includeCollections,
-                exportOptions.collectionIDs || [],
-                exportOptions.matchIDs || [],
-                exportOptions.includeTournamentIDs || []
-            );
+            await ExportDatabase({
+                exportPath: pendingExportPath,
+                positions: positions,
+                metadata: metadata,
+                includeAnalysis: exportOptions.includeAnalysis,
+                includeComments: exportOptions.includeComments,
+                includeFilterLibrary: exportOptions.includeFilterLibrary,
+                includePlayedMoves: exportOptions.includePlayedMoves,
+                includeMatches: exportOptions.includeMatches,
+                includeCollections: exportOptions.includeCollections,
+                collectionIDs: exportOptions.collectionIDs || [],
+                matchIDs: exportOptions.matchIDs || [],
+                tournamentIDs: exportOptions.includeTournamentIDs || []
+            });
             
             console.log('Export completed successfully');
             

@@ -771,7 +771,15 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	exportPath := filepath.Join(tmpDir, "export_test.db")
 	allPositions, _ := db230obj.LoadAllPositions()
 	start = time.Now()
-	db230obj.ExportDatabase(exportPath, allPositions, map[string]string{}, true, true, false, true, true, false, nil, nil, nil)
+	db230obj.ExportDatabase(ExportOptions{
+		ExportPath:      exportPath,
+		Positions:       allPositions,
+		Metadata:        map[string]string{},
+		IncludeAnalysis: true,
+		IncludeComments: true,
+		IncludePlayedMoves: true,
+		IncludeMatches:  true,
+	})
 	exportDuration := time.Since(start)
 	exportSize := fileSize(t, exportPath)
 	t.Logf("  Export: %v, disk size: %s", exportDuration, humanBytes(exportSize))

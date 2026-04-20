@@ -39,7 +39,7 @@ func (d *Database) ExportDatabase(
 
 ### 1. Define `ExportOptions` struct
 
-- [ ] Add to `model.go`:
+- [x] Add to `model.go`:
   ```go
   type ExportOptions struct {
       ExportPath           string            `json:"exportPath"`
@@ -59,26 +59,26 @@ func (d *Database) ExportDatabase(
 
 ### 2. Update Go function signature
 
-- [ ] Change `ExportDatabase(opts ExportOptions) error`
-- [ ] Replace all parameter references with `opts.FieldName`
+- [x] Change `ExportDatabase(opts ExportOptions) error`
+- [x] Replace all parameter references with `opts.FieldName`
 
 ### 3. Update call sites
 
-- [ ] `cli.go`: `exportDatabase()`, `exportDatabaseWithOptions()`, `exportMatchesOnly()`
-- [ ] Frontend: `ExportDatabaseModal.svelte`, `App.svelte`
-- [ ] Test files: `export_test.go` (20+ tests to update)
+- [x] `cli.go`: `exportDatabase()`, `exportDatabaseWithOptions()`, `exportMatchesOnly()`
+- [x] Frontend: `ExportDatabaseModal.svelte`, `App.svelte`
+- [x] Test files: `export_test.go` (20+ tests to update)
 
 ### 4. Regenerate Wails bindings
 
-- [ ] Run `wails dev` or `wails build` to regenerate `.js`/`.d.ts`
-- [ ] Verify frontend compiles
+- [x] Run `wails dev` or `wails build` to regenerate `.js`/`.d.ts`
+- [x] Verify frontend compiles
 
 ## Acceptance criteria
 
-- [ ] `ExportDatabase` accepts a single `ExportOptions` struct
-- [ ] All 20+ export tests pass
-- [ ] `wails build` succeeds
-- [ ] Frontend export functionality works
+- [x] `ExportDatabase` accepts a single `ExportOptions` struct
+- [x] All 20+ export tests pass
+- [x] `wails build` succeeds
+- [x] Frontend export functionality works
 
 ## Rollback
 

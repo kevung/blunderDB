@@ -177,6 +177,22 @@ type SearchFilters struct {
 	RestrictToPositionIDs         string   `json:"restrictToPositionIDs"`
 }
 
+// ExportOptions bundles all parameters for ExportDatabase.
+type ExportOptions struct {
+	ExportPath           string            `json:"exportPath"`
+	Positions            []Position        `json:"positions"`
+	Metadata             map[string]string `json:"metadata"`
+	IncludeAnalysis      bool              `json:"includeAnalysis"`
+	IncludeComments      bool              `json:"includeComments"`
+	IncludeFilterLibrary bool              `json:"includeFilterLibrary"`
+	IncludePlayedMoves   bool              `json:"includePlayedMoves"`
+	IncludeMatches       bool              `json:"includeMatches"`
+	IncludeCollections   bool              `json:"includeCollections"`
+	CollectionIDs        []int64           `json:"collectionIDs"`
+	MatchIDs             []int64           `json:"matchIDs"`
+	TournamentIDs        []int64           `json:"tournamentIDs"`
+}
+
 type DoublingCubeAnalysis struct {
 	AnalysisDepth             string  `json:"analysisDepth"`
 	AnalysisEngine            string  `json:"analysisEngine,omitempty"`

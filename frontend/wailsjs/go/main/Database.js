@@ -114,8 +114,8 @@ export function ExportCollections(arg1, arg2, arg3, arg4, arg5) {
   return window['go']['main']['Database']['ExportCollections'](arg1, arg2, arg3, arg4, arg5);
 }
 
-export function ExportDatabase(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12) {
-  return window['go']['main']['Database']['ExportDatabase'](arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
+export function ExportDatabase(arg1) {
+  return window['go']['main']['Database']['ExportDatabase'](arg1);
 }
 
 export function ExportTournaments(arg1, arg2, arg3, arg4, arg5) {

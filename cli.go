@@ -626,9 +626,20 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 	}
 
 	// Export with the specified options
-	err = cli.db.ExportDatabase(outputFile, positions, metadata,
-		includeAnalysis, includeComments, includeFilterLibrary, includePlayedMoves,
-		includeMatches, includeCollections, collectionIDs, matchIDs, tournamentIDs)
+	err = cli.db.ExportDatabase(ExportOptions{
+		ExportPath:           outputFile,
+		Positions:            positions,
+		Metadata:             metadata,
+		IncludeAnalysis:      includeAnalysis,
+		IncludeComments:      includeComments,
+		IncludeFilterLibrary: includeFilterLibrary,
+		IncludePlayedMoves:   includePlayedMoves,
+		IncludeMatches:       includeMatches,
+		IncludeCollections:   includeCollections,
+		CollectionIDs:        collectionIDs,
+		MatchIDs:             matchIDs,
+		TournamentIDs:        tournamentIDs,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to export database: %v", err)
 	}
@@ -675,7 +686,15 @@ func (cli *CLI) exportMatchesOnly(outputFile string) error {
 	}
 
 	// Export with positions, analysis, comments disabled, but matches enabled
-	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, false, true, true, false, nil, nil, nil)
+	err = cli.db.ExportDatabase(ExportOptions{
+		ExportPath:      outputFile,
+		Positions:       positions,
+		Metadata:        metadata,
+		IncludeAnalysis: true,
+		IncludeComments: true,
+		IncludePlayedMoves: true,
+		IncludeMatches:  true,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to export matches: %v", err)
 	}
@@ -2011,7 +2030,14 @@ func (cli *CLI) runSearch(args []string) error {
 		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
 		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
 
-		err = cli.db.ExportDatabase(*outputDB, filteredPositions, metadata, true, true, false, true, false, false, nil, nil, nil)
+		err = cli.db.ExportDatabase(ExportOptions{
+			ExportPath:         *outputDB,
+			Positions:          filteredPositions,
+			Metadata:           metadata,
+			IncludeAnalysis:    true,
+			IncludeComments:    true,
+			IncludePlayedMoves: true,
+		})
 		if err != nil {
 			return fmt.Errorf("failed to export database: %v", err)
 		}

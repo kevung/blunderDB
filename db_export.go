@@ -13,7 +13,7 @@ import (
 
 // ExportDatabase creates a new database file containing the current selection of positions
 // with their analysis and comments
-func (d *Database) ExportDatabase(exportPath string, positions []Position, metadata map[string]string, includeAnalysis bool, includeComments bool, includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool, includeCollections bool, collectionIDs []int64, matchIDs []int64, tournamentIDs []int64) error {
+func (d *Database) ExportDatabase(opts ExportOptions) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -23,16 +23,16 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	}
 
 	// Delete the export file if it already exists
-	if _, err := os.Stat(exportPath); err == nil {
+	if _, err := os.Stat(opts.ExportPath); err == nil {
 		// File exists, remove it
-		if err := os.Remove(exportPath); err != nil {
+		if err := os.Remove(opts.ExportPath); err != nil {
 			return fmt.Errorf("cannot remove existing export file: %v", err)
 		}
-		slog.Debug("removed existing export file", "path", exportPath)
+		slog.Debug("removed existing export file", "path", opts.ExportPath)
 	}
 
 	// Create a new database for export
-	exportDB, err := sql.Open("sqlite", exportPath)
+	exportDB, err := sql.Open("sqlite", opts.ExportPath)
 	if err != nil {
 		return err
 	}
@@ -254,7 +254,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	}
 
 	// Insert metadata (user, description, dateOfCreation)
-	for key, value := range metadata {
+	for key, value := range opts.Metadata {
 		if value != "" {
 			_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
 			if err != nil {
@@ -264,7 +264,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	}
 
 	// If dateOfCreation is not provided, set it to current date
-	if metadata["dateOfCreation"] == "" {
+	if opts.Metadata["dateOfCreation"] == "" {
 		currentDate := time.Now().Format("2006-01-02")
 		_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('dateOfCreation', ?)`, currentDate)
 		if err != nil {
@@ -287,7 +287,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	// Export all positions with their analysis and comments
 	idMapping := make(map[int64]int64) // map old position ID to new position ID
 
-	for _, position := range positions {
+	for _, position := range opts.Positions {
 		oldPositionID := position.ID
 
 		// Reset the ID for the new database
@@ -313,7 +313,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		idMapping[oldPositionID] = newPositionID
 
 		// Export analysis if it exists and if includeAnalysis is true
-		if includeAnalysis {
+		if opts.IncludeAnalysis {
 			var analysisData []byte
 			analysisErr := d.db.QueryRow(`SELECT data FROM analysis WHERE position_id = ?`, oldPositionID).Scan(&analysisData)
 			if analysisErr == nil {
@@ -323,7 +323,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					analysis.PositionID = int(newPositionID)
 
 					// Handle played moves
-					if includePlayedMoves {
+					if opts.IncludePlayedMoves {
 						// Load played moves from the move table and merge with existing
 						moveRows, moveErr := d.db.Query(`
 							SELECT checker_move, cube_action 
@@ -389,7 +389,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 							sort.Strings(analysis.PlayedCubeActions)
 						}
 					} else {
-						// Clear played move fields if includePlayedMoves is false
+						// Clear played move fields if IncludePlayedMoves is false
 						analysis.PlayedMove = ""
 						analysis.PlayedCubeAction = ""
 						analysis.PlayedMoves = nil
@@ -411,7 +411,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		}
 
 		// Export comment if it exists and if includeComments is true
-		if includeComments {
+		if opts.IncludeComments {
 			var comment string
 			commentErr := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, oldPositionID).Scan(&comment)
 			if commentErr == nil && comment != "" {
@@ -431,7 +431,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	}
 
 	// Export filter library if includeFilterLibrary is true
-	if includeFilterLibrary {
+	if opts.IncludeFilterLibrary {
 		rows, err := d.db.Query(`SELECT name, command, COALESCE(edit_position, '') FROM filter_library`)
 		if err == nil {
 			defer rows.Close()
@@ -454,7 +454,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 
 	// Export matches if includeMatches is true
 	matchIDMapping := make(map[int64]int64) // old match ID -> new match ID (accessible for tournament linking)
-	if includeMatches {
+	if opts.IncludeMatches {
 		matchCount := 0
 		gameCount := 0
 		moveCount := 0
@@ -462,11 +462,11 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 
 		// Get matches - filter by matchIDs if provided, otherwise get all
 		var matchRows *sql.Rows
-		if len(matchIDs) > 0 {
+		if len(opts.MatchIDs) > 0 {
 			// Build IN clause for specific match IDs
-			placeholders := make([]string, len(matchIDs))
-			args := make([]interface{}, len(matchIDs))
-			for i, id := range matchIDs {
+			placeholders := make([]string, len(opts.MatchIDs))
+			args := make([]interface{}, len(opts.MatchIDs))
+			for i, id := range opts.MatchIDs {
 				placeholders[i] = "?"
 				args[i] = id
 			}
@@ -698,11 +698,11 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	}
 
 	// Export collections if requested
-	if includeCollections && len(collectionIDs) > 0 {
+	if opts.IncludeCollections && len(opts.CollectionIDs) > 0 {
 		collectionCount := 0
 		collectionPosCount := 0
 
-		for _, collectionID := range collectionIDs {
+		for _, collectionID := range opts.CollectionIDs {
 			var name, description string
 			var sortOrder int
 			var createdAt, updatedAt string
@@ -754,11 +754,11 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	}
 
 	// Export tournaments if requested
-	if len(tournamentIDs) > 0 {
+	if len(opts.TournamentIDs) > 0 {
 		tournamentCount := 0
 		tournamentIDMapping := make(map[int64]int64)
 
-		for _, tournamentID := range tournamentIDs {
+		for _, tournamentID := range opts.TournamentIDs {
 			var name string
 			var date, location sql.NullString
 			var sortOrder int
@@ -785,7 +785,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		}
 
 		// Update tournament_id on exported matches that belong to exported tournaments
-		if includeMatches && len(matchIDMapping) > 0 {
+		if opts.IncludeMatches && len(matchIDMapping) > 0 {
 			matchTournamentRows, mterr := d.db.Query(`SELECT id, tournament_id FROM match WHERE tournament_id IS NOT NULL`)
 			if mterr == nil {
 				for matchTournamentRows.Next() {
@@ -809,7 +809,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		slog.Info("exported tournaments", "count", tournamentCount)
 	}
 
-	slog.Info("exported positions", "count", len(positions), "path", exportPath)
+	slog.Info("exported positions", "count", len(opts.Positions), "path", opts.ExportPath)
 	return nil
 }
 
