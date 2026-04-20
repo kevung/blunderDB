@@ -250,7 +250,7 @@
                     <p>To close the EPC panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
 
                     <h3>Match Navigation</h3>
-                    <p>blunderDB allows browsing through the moves of imported matches. Open the Match panel with <strong>Ctrl+T</strong> and double-click a match (or press <strong>Enter</strong>) to load its positions.</p>
+                    <p>blunderDB allows browsing through the moves of imported matches. Open the Match panel with <strong>Ctrl+Tab</strong> and double-click a match (or press <strong>Enter</strong>) to load its positions.</p>
                     <p>When navigating a match, the last visited position is automatically saved and restored. Use the <strong>Left</strong>/<strong>Right</strong> keys to move between positions, and <strong>PageUp</strong>/<strong>PageDown</strong> to jump between games.</p>
                     <p>The analysis panel (<strong>Ctrl+L</strong>) shows the analysis for each move, with the played move highlighted. Press <strong>d</strong> to toggle between checker and cube analysis.</p>
 
@@ -511,7 +511,7 @@
                             </tr>
 
                             <tr>
-                                <td>Ctrl + T</td>
+                                <td>Ctrl + Tab</td>
                                 <td>Match Panel</td>
                             </tr>
 

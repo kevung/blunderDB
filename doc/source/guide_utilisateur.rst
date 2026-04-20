@@ -193,7 +193,7 @@ Naviguer dans un match
 
 Pour naviguer dans un match importé:
 
-#. Ouvrir le panneau des matchs avec *CTRL-T*.
+#. Ouvrir le panneau des matchs avec *CTRL-Tab*.
 
 #. Double-cliquer sur un match ou appuyer sur *ENTREE*.
 
@@ -206,7 +206,7 @@ Pour naviguer dans un match importé:
 #. Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du cube.
 
 .. tip::
-   Raccourci: *CTRL-T* pour ouvrir le panneau des matchs.
+   Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs.
    Commande: ``m``
 
 .. note::
@@ -217,7 +217,7 @@ Pour naviguer dans un match importé:
 Gérer le panneau des matchs
 -----------------------------
 
-Le panneau des matchs (*CTRL-T*) permet de:
+Le panneau des matchs (*CTRL-Tab*) permet de:
 
 * lister l'ensemble des matchs importés (triés du plus récent au plus ancien),
 
@@ -273,7 +273,7 @@ Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*.
 
 **Assigner un match à un tournoi:**
 
-* Depuis le panneau des matchs (*CTRL-T*), utiliser le menu déroulant
+* Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant
   de la colonne tournoi pour assigner un match.
 
 Calculer l'EPC
