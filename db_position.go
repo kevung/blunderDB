@@ -6,8 +6,8 @@ import (
 )
 
 func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	// Create a copy of the position without the ID field inside the state
 	positionCopy := position
@@ -315,8 +315,8 @@ func (d *Database) UpdatePosition(position Position) error {
 }
 
 func (d *Database) LoadPosition(id int) (*Position, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	row := d.db.QueryRow(`SELECT `+positionSelectCols+` FROM position WHERE id = ?`, id)
 	pos, err := scanPositionRow(row)
@@ -328,8 +328,8 @@ func (d *Database) LoadPosition(id int) (*Position, error) {
 }
 
 func (d *Database) LoadAllPositions() ([]Position, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {

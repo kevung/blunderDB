@@ -399,9 +399,9 @@ func (d *Database) loadPositionsByFiltersCore(
 	LEFT JOIN analysis a ON a.position_id = p.id
 	WHERE ` + where.String() + ` ORDER BY p.id`
 
-	d.mu.Lock()
+	d.mu.RLock()
 	rows, err := d.db.Query(query, args...)
-	d.mu.Unlock()
+	d.mu.RUnlock()
 	if err != nil {
 		return nil, nil, fmt.Errorf("search query: %w", err)
 	}
@@ -712,14 +712,14 @@ func parseFilterIDList(s string) ([]int64, error) {
 
 // getPositionIDsForMatch returns all position IDs linked to a given match.
 func (d *Database) getPositionIDsForMatch(matchID int64) ([]int64, error) {
-	d.mu.Lock()
+	d.mu.RLock()
 	rows, err := d.db.Query(`
 		SELECT DISTINCT mv.position_id
 		FROM move mv
 		INNER JOIN game g ON mv.game_id = g.id
 		WHERE g.match_id = ?
 	`, matchID)
-	d.mu.Unlock()
+	d.mu.RUnlock()
 	if err != nil {
 		return nil, err
 	}
@@ -738,9 +738,9 @@ func (d *Database) getPositionIDsForMatch(matchID int64) ([]int64, error) {
 
 // getMatchIDsForTournament returns all match IDs belonging to a tournament.
 func (d *Database) getMatchIDsForTournament(tournamentID int64) ([]int64, error) {
-	d.mu.Lock()
+	d.mu.RLock()
 	rows, err := d.db.Query(`SELECT id FROM match WHERE tournament_id = ?`, tournamentID)
-	d.mu.Unlock()
+	d.mu.RUnlock()
 	if err != nil {
 		return nil, err
 	}

@@ -49,8 +49,8 @@ func (d *Database) CreateAnkiDeck(name, description, sourceType string, sourceID
 
 // GetAllAnkiDecks returns all Anki decks with card counts
 func (d *Database) GetAllAnkiDecks() ([]AnkiDeck, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
@@ -233,8 +233,8 @@ func (d *Database) SyncAnkiDeckWithPositions(deckID int64, positionIDs []int64) 
 
 // GetAnkiDeckPositions returns all positions associated with a deck's cards.
 func (d *Database) GetAnkiDeckPositions(deckID int64) ([]Position, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	rows, err := d.db.Query(`
 		SELECT `+positionSelectColsP+`
@@ -261,8 +261,8 @@ func (d *Database) GetAnkiDeckPositions(deckID int64) ([]Position, error) {
 
 // GetAnkiDeckStats returns review statistics for a deck
 func (d *Database) GetAnkiDeckStats(deckID int64) (AnkiDeckStats, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var stats AnkiDeckStats
 	if d.db == nil {
@@ -286,8 +286,8 @@ func (d *Database) GetAnkiDeckStats(deckID int64) (AnkiDeckStats, error) {
 
 // GetNextAnkiCard returns the next card due for review in a deck
 func (d *Database) GetNextAnkiCard(deckID int64) (*AnkiReviewCard, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")

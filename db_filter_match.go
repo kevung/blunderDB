@@ -831,8 +831,8 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 // getPlayer1MovesForPosition returns checker moves and cube actions played by player1 for a position.
 // Player1 is identified by player=1 in XG encoding in the move table.
 func (d *Database) getPlayer1MovesForPosition(positionID int64) ([]string, []string) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	rows, err := d.db.Query(`SELECT checker_move, cube_action FROM move WHERE position_id = ? AND player = 1`, positionID)
 	if err != nil {

@@ -10,8 +10,8 @@ import (
 
 // GetAllMatches returns all matches from the database
 func (d *Database) GetAllMatches() ([]Match, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	rows, err := d.db.Query(`
 		SELECT m.id, m.player1_name, m.player2_name, m.event, m.location, m.round, 
@@ -49,8 +49,8 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 
 // GetMatchByID returns a specific match by ID
 func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var m Match
 	err := d.db.QueryRow(`
@@ -87,8 +87,8 @@ func (d *Database) SaveLastVisitedPosition(matchID int64, positionIndex int) err
 // GetLastVisitedMatch returns the most recently visited match (match with highest last_visited_position != -1)
 // If no match has been visited, returns the most recent match (first in date order)
 func (d *Database) GetLastVisitedMatch() (*Match, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var m Match
 	// First try to find a match that has been visited (last_visited_position >= 0)
@@ -140,8 +140,8 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 
 // GetGamesByMatch returns all games in a match
 func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	rows, err := d.db.Query(`
 		SELECT id, match_id, game_number, initial_score_1, initial_score_2,
@@ -177,8 +177,8 @@ func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
 
 // GetMovesByGame returns all moves in a game
 func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	rows, err := d.db.Query(`
 		SELECT id, game_id, move_number, move_type, position_id, player,
@@ -290,8 +290,8 @@ func (d *Database) DeleteMatch(matchID int64) error {
 // Positions are returned as they were stored (from player on roll POV)
 // The frontend is responsible for mirroring display if needed
 func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	// Get match info for player names
 	var player1Name, player2Name string
@@ -381,8 +381,8 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 
 // GetDatabaseStats returns statistics about the database
 func (d *Database) GetDatabaseStats() (map[string]interface{}, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	stats := make(map[string]interface{})
 

@@ -43,8 +43,8 @@ func (d *Database) CreateTournament(name string, date string, location string) (
 
 // GetAllTournaments returns all tournaments with their match counts
 func (d *Database) GetAllTournaments() ([]Tournament, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
@@ -294,8 +294,8 @@ func (d *Database) SetMatchTournamentByName(matchID int64, tournamentName string
 
 // GetTournamentMatches returns all matches in a tournament
 func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
@@ -342,8 +342,8 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 
 // GetMatchTournament returns the tournament a match belongs to (if any)
 func (d *Database) GetMatchTournament(matchID int64) (*Tournament, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")

@@ -61,8 +61,8 @@ func (d *Database) CreateCollection(name string, description string) (int64, err
 
 // GetAllCollections returns all collections with their position counts
 func (d *Database) GetAllCollections() ([]Collection, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
@@ -315,8 +315,8 @@ func (d *Database) RemovePositionsFromCollection(collectionID int64, positionIDs
 
 // GetPositionIndexMap returns a map of position ID to its 1-based index in the database
 func (d *Database) GetPositionIndexMap() (map[int64]int, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
@@ -347,8 +347,8 @@ func (d *Database) GetPositionIndexMap() (map[int64]int, error) {
 
 // GetCollectionPositions returns all positions in a collection
 func (d *Database) GetCollectionPositions(collectionID int64) ([]Position, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
@@ -474,8 +474,8 @@ func (d *Database) CopyPositionToCollection(toCollectionID int64, positionID int
 
 // GetCollectionByID returns a collection by its ID
 func (d *Database) GetCollectionByID(id int64) (*Collection, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")
@@ -505,8 +505,8 @@ func (d *Database) GetCollectionByID(id int64) (*Collection, error) {
 
 // GetPositionCollections returns all collections that contain a specific position
 func (d *Database) GetPositionCollections(positionID int64) ([]Collection, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("no database is currently open")

@@ -89,8 +89,8 @@ func (d *Database) SaveComment(positionID int64, text string) error {
 
 // LoadComment loads a comment for a given position ID
 func (d *Database) LoadComment(positionID int64) (string, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	var text string
 	err := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, positionID).Scan(&text)
@@ -116,8 +116,8 @@ func (d *Database) commentTableHasTimestamps() bool {
 
 // GetCommentsByPosition returns all non-empty comments for a given position, ordered by comment ID descending
 func (d *Database) GetCommentsByPosition(positionID int64) ([]CommentEntry, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var rows *sql.Rows
 	var err error
@@ -151,8 +151,8 @@ func (d *Database) GetCommentsByPosition(positionID int64) ([]CommentEntry, erro
 
 // GetAllComments returns all non-empty comments, ordered by comment ID descending (most recent first)
 func (d *Database) GetAllComments() ([]CommentEntry, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var rows *sql.Rows
 	var err error
@@ -186,8 +186,8 @@ func (d *Database) GetAllComments() ([]CommentEntry, error) {
 
 // SearchComments searches for comments containing the given query string (case-insensitive)
 func (d *Database) SearchComments(query string) ([]CommentEntry, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var rows *sql.Rows
 	var err error

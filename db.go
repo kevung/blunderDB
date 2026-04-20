@@ -12,7 +12,7 @@ import (
 
 type Database struct {
 	db                *sql.DB
-	mu                sync.Mutex                          // Add a mutex to the Database struct
+	mu                sync.RWMutex                        // RWMutex allows concurrent reads
 	importCancelled   int32                               // Flag to cancel ongoing import (atomic)
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
 }

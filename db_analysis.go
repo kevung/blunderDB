@@ -348,8 +348,8 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 }
 
 func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var analysisData []byte
 	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisData)

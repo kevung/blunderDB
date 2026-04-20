@@ -45,8 +45,8 @@ func (d *Database) SaveCommand(command string) error {
 
 // LoadCommandHistory loads the command history from the command_history table
 func (d *Database) LoadCommandHistory() ([]string, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	// Check if the database version is 1.1.0 or higher
 	var dbVersion string
@@ -143,8 +143,8 @@ func (d *Database) SaveSearchHistory(command string, position string) error {
 
 // LoadSearchHistory loads the search history from the search_history table
 func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("database is not opened")
@@ -260,8 +260,8 @@ func (d *Database) SaveSessionState(state SessionState) error {
 
 // LoadSessionState loads the last session state from the metadata table
 func (d *Database) LoadSessionState() (*SessionState, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	if d.db == nil {
 		return nil, fmt.Errorf("database is not opened")
@@ -576,8 +576,8 @@ func (d *Database) DeleteFilter(id int64) error {
 }
 
 func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	// Check if the database version is 1.2.0 or higher
 	var dbVersion string
@@ -649,8 +649,8 @@ func (d *Database) SaveEditPosition(filterName, editPosition string) error {
 }
 
 func (d *Database) LoadEditPosition(filterName string) (string, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	// Check if the database version is 1.2.0 or higher
 	var dbVersion string

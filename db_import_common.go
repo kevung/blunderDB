@@ -568,8 +568,8 @@ func computeMatchHashFromStoredData(db *sql.DB, matchID int64, p1Name, p2Name st
 // CheckMatchExists checks if a match with the given hash already exists in the database
 // Returns the existing match ID if found, 0 otherwise
 func (d *Database) CheckMatchExists(matchHash string) (int64, error) {
-	d.mu.Lock()
-	defer d.mu.Unlock()
+	d.mu.RLock()
+	defer d.mu.RUnlock()
 
 	var existingID int64
 	err := d.db.QueryRow(`SELECT id FROM match WHERE match_hash = ?`, matchHash).Scan(&existingID)
