@@ -1,12 +1,10 @@
 import { get } from 'svelte/store';
 import {
-    isAnyModalOpenStore,
+    isAnyModalOpen,
     showCommandInputStore,
-    showCommentStore,
-    showHelpStore,
-    showCommandStore,
+    activeModal, MODAL,
+    openPanels, PANEL,
     activeTabStore,
-    showMatchPanelStore,
 } from '../stores/uiStore.js';
 import { ankiViewModeStore, ankiReviewActionStore } from '../stores/ankiStore.js';
 import { selectedMoveStore } from '../stores/analysisStore.js';
@@ -29,18 +27,20 @@ import { copyPosition, copyBoardImage, copyBoardWithAnalysisImage } from './clip
 let lastCtrlXTime = 0;
 
 export function toggleHelpModal() {
-    const wasOpen = get(showHelpStore);
-    showHelpStore.set(!wasOpen);
+    const wasOpen = get(activeModal) === MODAL.HELP;
     if (wasOpen) {
+        activeModal.set(null);
         setTimeout(() => {
-            if (get(showCommandStore)) {
+            if (get(activeModal) === MODAL.COMMAND) {
                 const el = document.querySelector('.command-input');
                 if (el) /** @type {HTMLElement} */ (el).focus();
-            } else if (get(showCommentStore)) {
+            } else if (get(openPanels).has(PANEL.COMMENT)) {
                 const el = document.getElementById('commentsTextArea');
                 if (el) el.focus();
             }
         }, 0);
+    } else {
+        activeModal.set(MODAL.HELP);
     }
 }
 
@@ -55,7 +55,7 @@ export function toggleSearchHistoryPanel() {
 export function handleKeyDown(event) {
     event.stopPropagation();
 
-    if (get(isAnyModalOpenStore)) return;
+    if (get(isAnyModalOpen)) return;
 
     // During Anki review on the Anki tab, route review keys
     if (get(ankiViewModeStore) === 'review' && !event.ctrlKey && get(activeTabStore) === 'anki') {
@@ -91,7 +91,7 @@ export function handleKeyDown(event) {
     }
 
     // Panel focus handling
-    const showComment = get(showCommentStore);
+    const showComment = get(openPanels).has(PANEL.COMMENT);
     if (document.activeElement.closest('.filter-library-panel') || document.activeElement.closest('.search-history-panel') || document.activeElement.closest('.match-panel') || document.activeElement.closest('.collection-panel') || document.activeElement.closest('.tournament-panel') || showComment) {
         if (event.ctrlKey) {
             event.preventDefault();

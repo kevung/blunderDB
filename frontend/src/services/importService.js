@@ -43,7 +43,7 @@ import {
     statusBarTextStore,
     statusBarModeStore,
     commentTextStore,
-    showMatchPanelStore,
+    openPanel, PANEL,
     matchPanelRefreshTriggerStore,
 } from '../stores/uiStore.js';
 import {
@@ -359,7 +359,7 @@ export async function importSingleFile(filePath) {
             const matchID = await ImportXGMatch(filePath);
             setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update(n => n + 1);
-            showMatchPanelStore.set(true);
+            openPanel(PANEL.MATCH);
         } catch (error) {
             console.error("Error importing XG match:", error);
             const errorStr = String(error);
@@ -376,7 +376,7 @@ export async function importSingleFile(filePath) {
             const matchID = await ImportBGFMatch(filePath);
             setStatusBarMessage(`BGBlitz match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update(n => n + 1);
-            showMatchPanelStore.set(true);
+            openPanel(PANEL.MATCH);
         } catch (error) {
             console.error("Error importing BGF match:", error);
             const errorStr = String(error);
@@ -394,7 +394,7 @@ export async function importSingleFile(filePath) {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`${formatName} match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update(n => n + 1);
-            showMatchPanelStore.set(true);
+            openPanel(PANEL.MATCH);
         } catch (error) {
             console.error(`Error importing ${formatName} match:`, error);
             const errorStr = String(error);
@@ -428,7 +428,7 @@ async function importTxtFile(filePath) {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`Jellyfish TXT match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update(n => n + 1);
-            showMatchPanelStore.set(true);
+            openPanel(PANEL.MATCH);
         } catch (error) {
             console.error("Error importing Jellyfish TXT match:", error);
             const errorStr = String(error);
@@ -640,7 +640,7 @@ export async function pastePosition() {
             const matchID = await ImportGnuBGMatchFromText(result);
             setStatusBarMessage(`Match imported from clipboard successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update(n => n + 1);
-            showMatchPanelStore.set(true);
+            openPanel(PANEL.MATCH);
         } catch (error) {
             console.error('Error pasting GnuBG match:', error);
             const errorStr = String(error);

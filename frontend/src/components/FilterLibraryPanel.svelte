@@ -1,7 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
-    import { showFilterLibraryPanelStore, statusBarTextStore, activeTabStore, currentPositionIndexStore, showCommentStore } from '../stores/uiStore';
+    import { openPanels, PANEL, closePanel, statusBarTextStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters, SaveEditPosition, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
@@ -30,9 +30,9 @@
         databaseLoaded = value;
     });
 
-    showFilterLibraryPanelStore.subscribe(async value => {
+    openPanels.subscribe(async value => {
         const wasVisible = visible;
-        visible = value;
+        visible = value.has(PANEL.FILTER_LIBRARY);
         if (visible && !wasVisible) {
             // Panel just opened
             await loadFilters();
@@ -285,8 +285,8 @@
         // Do not close the filter library panel after executing the filter search
     }
 
-    function closePanel() {
-        showFilterLibraryPanelStore.set(false);
+    function closeFilterLibraryPanel() {
+        closePanel(PANEL.FILTER_LIBRARY);
     }
 
     function handleKeyDown(event) {
@@ -323,7 +323,7 @@
                     currentPositionIndexStore.set(savedIndex);
                 }
             } else {
-                closePanel();
+                closeFilterLibraryPanel();
             }
             return;
         }

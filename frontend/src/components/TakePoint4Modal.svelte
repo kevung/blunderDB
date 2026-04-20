@@ -1,16 +1,16 @@
 <script>
     import { takePoint4LastTable } from '../stores/takePoint4LastTable';
     import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
-    import { showTakePoint4ModalStore } from '../stores/uiStore';
+    import { activeModal, MODAL, closeModal } from '../stores/uiStore';
     let visible = false;
 
-    showTakePoint4ModalStore.subscribe(value => {
-        visible = value;
+    activeModal.subscribe(value => {
+        visible = value === MODAL.TAKE_POINT_4;
     });
 
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
-            showTakePoint4ModalStore.set(false);
+            closeModal();
         }
     }
 
@@ -32,7 +32,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={e => showTakePoint4ModalStore.set(false)}>
+    <div class="modal-overlay" on:click={e => closeModal()}>
         <div class="modal-content" on:click|stopPropagation>
             <div class="table-container">
                 <div class="table-section">

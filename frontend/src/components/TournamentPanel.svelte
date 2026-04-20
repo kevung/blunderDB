@@ -18,7 +18,7 @@
         UpdateTournamentComment,
         ReorderTournamentMatches
     } from '../../wailsjs/go/main/Database.js';
-    import { showTournamentPanelStore, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
+    import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
@@ -77,9 +77,9 @@
         databaseLoaded = value;
     });
 
-    const unsubVisible = showTournamentPanelStore.subscribe(async value => {
+    const unsubVisible = openPanels.subscribe(async value => {
         const wasVisible = visible;
-        visible = value;
+        visible = value.has(PANEL.TOURNAMENT);
         if (visible && !wasVisible) {
             await loadTournaments();
             selectedTournamentStore.set(null);
@@ -487,15 +487,15 @@
             SaveLastVisitedPosition(match.id, startIndex).catch(e => {
                 console.error('Error persisting last visited position:', e);
             });
-            closePanel();
+            closeTournamentPanel();
         } catch (error) {
             console.error('Error opening match:', error);
             statusBarTextStore.set('Error opening match');
         }
     }
 
-    function closePanel() {
-        showTournamentPanelStore.set(false);
+    function closeTournamentPanel() {
+        closePanel(PANEL.TOURNAMENT);
     }
 
     function handleKeyDown(event) {
@@ -518,7 +518,7 @@
                 selectedTournamentStore.set(null);
                 tournamentMatchesStore.set([]);
             } else {
-                closePanel();
+                closeTournamentPanel();
             }
             return;
         }

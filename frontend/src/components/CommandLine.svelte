@@ -1,14 +1,13 @@
 <script>
    import { onMount, onDestroy } from 'svelte';
-   import { commentTextStore, currentPositionIndexStore, commandTextStore, statusBarModeStore, showCommandStore, statusBarTextStore } from '../stores/uiStore';
+   import { commentTextStore, currentPositionIndexStore, commandTextStore, statusBarModeStore, statusBarTextStore, activeModal, MODAL, openModal, closeModal } from '../stores/uiStore';
    import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../../wailsjs/go/main/Database.js';
    import { positionsStore, positionStore } from '../stores/positionStore';
-   import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from '../stores/uiStore';
-   import { databaseLoadedStore } from '../stores/databaseStore'; // Ensure the import path is correct
-   import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
-   import { searchHistoryStore } from '../stores/searchHistoryStore'; // Import search history store
-   import { LoadCommandHistory, SaveCommand, SaveSearchHistory } from '../../wailsjs/go/main/Database.js'; // Import database functions
-   import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../../wailsjs/go/main/Database.js'; // Import migration functions
+   import { databaseLoadedStore } from '../stores/databaseStore';
+   import { commandHistoryStore } from '../stores/commandHistoryStore';
+   import { searchHistoryStore } from '../stores/searchHistoryStore';
+   import { LoadCommandHistory, SaveCommand, SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
+   import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../../wailsjs/go/main/Database.js';
 
    export let onToggleHelp;
    export let onNewDatabase;
@@ -46,8 +45,8 @@
 
    commandHistoryStore.subscribe(value => commandHistory = value);
 
-   showCommandStore.subscribe(async value => {
-      if (value) {
+   activeModal.subscribe(async value => {
+      if (value === MODAL.COMMAND) {
          commandTextStore.set('');
          setTimeout(() => {
             inputEl?.focus();
@@ -66,7 +65,7 @@
    async function handleKeyDown(event) {
       event.stopPropagation();
 
-      if ($showCommandStore) {
+      if ($activeModal === MODAL.COMMAND) {
          if (event.code === 'ArrowUp') {
             if (historyIndex < commandHistory.length - 1) {
                historyIndex++;
@@ -89,9 +88,9 @@
                commandTextStore.set('');
             }
          } else if (event.code === 'Backspace' && inputEl.value === '') {
-            showCommandStore.set(false);
+            closeModal();
          } else if (event.code === 'Escape') {
-            showCommandStore.set(false);
+            closeModal();
          } else if (event.code === 'Enter') {
             const command = inputEl.value.trim();
             console.log('Command entered:', command); // Debugging log
@@ -485,37 +484,37 @@
             } else if (command === 'collection' || command === 'coll') {
                toggleCollectionPanel();
             } else if (command === 'epc') {
-               showCommandStore.set(false);
+               closeModal();
                toggleEPCMode();
             } else if (command === 'm') {
-               showCommandStore.set(false);
+               closeModal();
                toggleMatchMode();
             } else if (command === 'met') {
-               showMetModalStore.set(true); // Show MET modal
+               openModal(MODAL.MET);
             } else if (command === 'tp2_last') {
-               showTakePoint2LastModalStore.set(true); // Show TakePoint2Last modal
+               openModal(MODAL.TAKE_POINT_2_LAST);
             } else if (command === 'tp2_live') {
-               showTakePoint2LiveModalStore.set(true); // Show TakePoint2Live modal
+               openModal(MODAL.TAKE_POINT_2_LIVE);
             } else if (command === 'tp4_last') {
-               showTakePoint4LastModalStore.set(true); // Show TakePoint4Last modal
+               openModal(MODAL.TAKE_POINT_4_LAST);
             } else if (command === 'tp4_live') {
-               showTakePoint4LiveModalStore.set(true); // Show TakePoint4Live modal
+               openModal(MODAL.TAKE_POINT_4_LIVE);
             } else if (command === 'gv1') {
-               showGammonValue1ModalStore.set(true); // Show GammonValue1 modal
+               openModal(MODAL.GAMMON_VALUE_1);
             } else if (command === 'gv2') {
-               showGammonValue2ModalStore.set(true); // Show GammonValue2 modal
+               openModal(MODAL.GAMMON_VALUE_2);
             } else if (command === 'gv4') {
-               showGammonValue4ModalStore.set(true); // Show GammonValue4 modal
+               openModal(MODAL.GAMMON_VALUE_4);
             } else if (command === 'meta') {
                if (databaseLoaded) {
-                  showMetadataModalStore.set(true); // Show Metadata modal
+                  openModal(MODAL.METADATA);
                } else {
-                  statusBarTextStore.set('No database loaded.'); // Display message in status bar
+                  statusBarTextStore.set('No database loaded.');
                }
             } else if (command === 'tp2') {
-               showTakePoint2ModalStore.set(true); // Show TakePoint2 modal
+               openModal(MODAL.TAKE_POINT_2);
             } else if (command === 'tp4') {
-               showTakePoint4ModalStore.set(true); // Show TakePoint4 modal
+               openModal(MODAL.TAKE_POINT_4);
             } else if (command === 'migrate_from_1_0_to_1_1') {
                try {
                   await Migrate_1_0_0_to_1_1_0();
@@ -550,7 +549,7 @@
                   statusBarTextStore.set('Error clearing command history.');
                }
             }
-            showCommandStore.set(false); // Hide the command line after processing the command
+            closeModal(); // Hide the command line after processing the command
          } else if (event.ctrlKey && event.code === 'KeyH') {
             onToggleHelp();
          }
@@ -576,8 +575,8 @@
    }
 
    function handleClickOutside(event) {
-      if ($showCommandStore && !inputEl.contains(event.target)) {
-         showCommandStore.set(false);
+      if ($activeModal === MODAL.COMMAND && !inputEl.contains(event.target)) {
+         closeModal();
       }
    }
 
@@ -598,7 +597,7 @@
    });
 </script>
 
-{#if $showCommandStore}
+{#if $activeModal === MODAL.COMMAND}
    <input
          type="text"
          bind:this={inputEl}

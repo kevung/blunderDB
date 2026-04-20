@@ -73,8 +73,8 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 10 — RWMutex
 - [x] 11 — Import helpers
 - [x] 12 — Test utilities
-- [ ] 13 — App.svelte services
-- [ ] 14 — Modal stores
+- [x] 13 — App.svelte services
+- [x] 14 — Modal stores
 - [ ] 15 — Frontend tests
 - [ ] 16 — Frontend lint
 - [ ] 17 — Strip console

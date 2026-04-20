@@ -1,6 +1,5 @@
 import { get } from 'svelte/store';
-import { commentTextStore, currentPositionIndexStore, statusBarModeStore, statusBarTextStore, logEntriesStore, addLogEntry } from './stores/uiStore';
-import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from './stores/uiStore';
+import { commentTextStore, currentPositionIndexStore, statusBarModeStore, statusBarTextStore, logEntriesStore, addLogEntry, openModal, MODAL } from './stores/uiStore';
 import { positionsStore, positionStore } from './stores/positionStore';
 import { databaseLoadedStore } from './stores/databaseStore';
 import { commandHistoryStore } from './stores/commandHistoryStore';
@@ -79,31 +78,31 @@ export function processCommand(command) {
     } else if (command === 'm') {
         callbacks.toggleMatchMode?.();
     } else if (command === 'met') {
-        showMetModalStore.set(true);
+        openModal(MODAL.MET);
     } else if (command === 'tp2_last') {
-        showTakePoint2LastModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_2_LAST);
     } else if (command === 'tp2_live') {
-        showTakePoint2LiveModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_2_LIVE);
     } else if (command === 'tp4_last') {
-        showTakePoint4LastModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_4_LAST);
     } else if (command === 'tp4_live') {
-        showTakePoint4LiveModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_4_LIVE);
     } else if (command === 'gv1') {
-        showGammonValue1ModalStore.set(true);
+        openModal(MODAL.GAMMON_VALUE_1);
     } else if (command === 'gv2') {
-        showGammonValue2ModalStore.set(true);
+        openModal(MODAL.GAMMON_VALUE_2);
     } else if (command === 'gv4') {
-        showGammonValue4ModalStore.set(true);
+        openModal(MODAL.GAMMON_VALUE_4);
     } else if (command === 'meta') {
         if (databaseLoaded) {
-            showMetadataModalStore.set(true);
+            openModal(MODAL.METADATA);
         } else {
             statusBarTextStore.set('No database loaded.');
         }
     } else if (command === 'tp2') {
-        showTakePoint2ModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_2);
     } else if (command === 'tp4') {
-        showTakePoint4ModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_4);
     } else if (command === 'migrate_from_1_0_to_1_1') {
         Migrate_1_0_0_to_1_1_0().then(() => {
             statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');

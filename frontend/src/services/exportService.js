@@ -12,7 +12,7 @@ import {
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
-import { statusBarModeStore, showExportDatabaseModalStore } from '../stores/uiStore.js';
+import { statusBarModeStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
 import {
@@ -76,7 +76,7 @@ export async function exportDatabase() {
 
         exportPositionCountStore.set(positions.length);
         exportModalModeStore.set('metadata');
-        showExportDatabaseModalStore.set(true);
+        openModal(MODAL.EXPORT_DATABASE);
 
     } catch (error) {
         console.error('Error during export preparation:', error);
@@ -127,7 +127,7 @@ export async function handleExportCommit() {
 
     } catch (error) {
         console.error('Error committing export:', error);
-        showExportDatabaseModalStore.set(false);
+        closeModal();
         setStatusBarMessage(`Error committing export: ${error}`);
         await ShowAlert(`Error committing export: ${error}`);
         statusBarModeStore.set('NORMAL');
@@ -140,7 +140,7 @@ export async function handleExportCommit() {
 export function handleExportCancel() {
     console.log('Export cancelled by user');
 
-    showExportDatabaseModalStore.set(false);
+    closeModal();
     pendingExportPath = null;
     resetExportState();
     exportMatchesStore.set([]);
@@ -150,7 +150,7 @@ export function handleExportCancel() {
 
 export function handleExportClose() {
     console.log('Export completed and closed');
-    showExportDatabaseModalStore.set(false);
+    closeModal();
     pendingExportPath = null;
     resetExportState();
     exportMatchesStore.set([]);

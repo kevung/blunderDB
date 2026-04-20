@@ -12,14 +12,11 @@
     import { analysisStore } from './stores/analysisStore.js';
     import {
         currentPositionIndexStore, statusBarModeStore,
-        showGoToPositionModalStore, showMetModalStore,
-        showTakePoint2LastModalStore, showTakePoint2LiveModalStore,
-        showTakePoint4LastModalStore, showTakePoint4LiveModalStore,
-        showGammonValue1ModalStore, showGammonValue2ModalStore,
-        showGammonValue4ModalStore, showHelpStore, showWarningModalStore,
-        showExportDatabaseModalStore, showCommandInputStore,
-        positionReloadTriggerStore, activeTabStore, showMatchPanelStore,
-        isAnyModalOpenStore,
+        showCommandInputStore,
+        positionReloadTriggerStore, activeTabStore,
+        activeModal, MODAL, openPanels, PANEL,
+        openModal, closeModal, openPanel, closePanel,
+        isAnyModalOpen,
     } from './stores/uiStore.js';
     import {
         showImportProgressModalStore, importModalModeStore,
@@ -151,7 +148,7 @@
         else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
         if (tab === 'epc' && $statusBarModeStore !== 'EPC') enterEPCMode();
         else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
-        showMatchPanelStore.set(tab === 'matches');
+        if (tab === 'matches') openPanel(PANEL.MATCH); else closePanel(PANEL.MATCH);
     });
 
     // ── UI event handlers ──────────────────────────────────────────
@@ -179,7 +176,7 @@
     }
 
     function handleWheel(event) {
-        if ($isAnyModalOpenStore || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC') return;
+        if ($isAnyModalOpen || $statusBarModeStore === 'EDIT' || $statusBarModeStore === 'EPC') return;
         const boardArea = mainArea?.querySelector('.scrollable-content');
         if (!boardArea || !boardArea.contains(event.target)) return;
         if (positions && positions.length > 0) {
@@ -315,22 +312,22 @@
     </div>
 
     <GoToPositionModal
-        visible={$showGoToPositionModalStore}
-        onClose={() => showGoToPositionModalStore.set(false)}
+        visible={$activeModal === MODAL.GO_TO_POSITION}
+        onClose={() => closeModal()}
     />
 
-    <MetModal visible={$showMetModalStore} onClose={() => showMetModalStore.set(false)} />
-    <TakePoint2LastModal visible={$showTakePoint2LastModalStore} onClose={() => showTakePoint2LastModalStore.set(false)} />
-    <TakePoint2LiveModal visible={$showTakePoint2LiveModalStore} onClose={() => showTakePoint2LiveModalStore.set(false)} />
-    <TakePoint4LastModal visible={$showTakePoint4LastModalStore} onClose={() => showTakePoint4LastModalStore.set(false)} />
-    <TakePoint4LiveModal visible={$showTakePoint4LiveModalStore} onClose={() => showTakePoint4LiveModalStore.set(false)} />
-    <GammonValue1Modal visible={$showGammonValue1ModalStore} onClose={() => showGammonValue1ModalStore.set(false)} />
-    <GammonValue2Modal visible={$showGammonValue2ModalStore} onClose={() => showGammonValue2ModalStore.set(false)} />
-    <GammonValue4Modal visible={$showGammonValue4ModalStore} onClose={() => showGammonValue4ModalStore.set(false)} />
+    <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
+    <TakePoint2LastModal visible={$activeModal === MODAL.TAKE_POINT_2_LAST} onClose={() => closeModal()} />
+    <TakePoint2LiveModal visible={$activeModal === MODAL.TAKE_POINT_2_LIVE} onClose={() => closeModal()} />
+    <TakePoint4LastModal visible={$activeModal === MODAL.TAKE_POINT_4_LAST} onClose={() => closeModal()} />
+    <TakePoint4LiveModal visible={$activeModal === MODAL.TAKE_POINT_4_LIVE} onClose={() => closeModal()} />
+    <GammonValue1Modal visible={$activeModal === MODAL.GAMMON_VALUE_1} onClose={() => closeModal()} />
+    <GammonValue2Modal visible={$activeModal === MODAL.GAMMON_VALUE_2} onClose={() => closeModal()} />
+    <GammonValue4Modal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} />
 
     <WarningModal
         message={$warningMessageStore}
-        visible={$showWarningModalStore}
+        visible={$activeModal === MODAL.WARNING}
         onClose={closeWarningModal}
     />
 
@@ -359,7 +356,7 @@
     />
 
     <ExportDatabaseModal
-        visible={$showExportDatabaseModalStore}
+        visible={$activeModal === MODAL.EXPORT_DATABASE}
         mode={$exportModalModeStore}
         positionCount={$exportPositionCountStore}
         matches={$exportMatchesStore}
@@ -371,7 +368,7 @@
     />
 
     <HelpModal
-        visible={$showHelpStore}
+        visible={$activeModal === MODAL.HELP}
         onClose={toggleHelpModal}
         handleGlobalKeydown={handleKeyDown}
     />

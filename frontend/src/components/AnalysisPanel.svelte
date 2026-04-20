@@ -1,7 +1,7 @@
 <script>
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
-    import { showAnalysisStore, showFilterLibraryPanelStore, showCommentStore } from '../stores/uiStore'; // Import showAnalysisStore
+    import { openPanels, PANEL } from '../stores/uiStore';
     export let visible = false;
     export let onClose;
 
@@ -48,8 +48,8 @@
         cubeValue = value.cube.value;
     });
 
-    showAnalysisStore.subscribe(async value => {
-        visible = value;
+    openPanels.subscribe(async value => {
+        visible = value.has(PANEL.ANALYSIS);
         if(visible) {
             // Pre-load cube analysis in match mode if current position is checker
             if (matchCtx.isMatchMode) {

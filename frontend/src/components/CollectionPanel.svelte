@@ -8,7 +8,7 @@
         activeCollectionStore
     } from '../stores/collectionStore';
     import { 
-        showCollectionPanelStore, 
+        openPanels, PANEL, closePanel,
         statusBarTextStore, 
         statusBarModeStore, 
         currentPositionIndexStore
@@ -124,8 +124,8 @@
         }
     });
 
-    const unsubVisible = showCollectionPanelStore.subscribe(async value => {
-        visible = value;
+    const unsubVisible = openPanels.subscribe(async value => {
+        visible = value.has(PANEL.COLLECTION);
     });
 
     onDestroy(() => {
@@ -548,8 +548,8 @@
         }
     }
 
-    function closePanel() {
-        showCollectionPanelStore.set(false);
+    function closeCollectionPanel() {
+        closePanel(PANEL.COLLECTION);
     }
 
     function handleKeyDown(event) {
@@ -576,7 +576,7 @@
                 selectedCollectionStore.set(null);
                 collectionPositionsStore.set([]);
             } else {
-                closePanel();
+                closeCollectionPanel();
             }
             return;
         }

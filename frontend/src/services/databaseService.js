@@ -19,7 +19,7 @@ import {
     statusBarTextStore,
     statusBarModeStore,
     commentTextStore,
-    showWarningModalStore,
+    openModal, closeModal, MODAL,
 } from '../stores/uiStore.js';
 import {
     ankiDecksStore,
@@ -162,7 +162,7 @@ export async function openDatabaseByPath(filePath) {
 
         if (getMajorVersion(dbVersion) !== getMajorVersion(modelVersion)) {
             warningMessageStore.set(`Major database version mismatch. The database schema might be incompatible with the current version of blunderDB. Continuing to edit the database is done at your own risk. Backup your file before proceeding any further.\nDatabase version: ${dbVersion}\nExpected version: ${modelVersion}`);
-            showWarningModalStore.set(true);
+            openModal(MODAL.WARNING);
         }
 
         setStatusBarMessage('Database opened successfully');
@@ -186,7 +186,7 @@ export async function exitApp() {
 }
 
 export function closeWarningModal() {
-    showWarningModalStore.set(false);
+    closeModal();
 }
 
 export { getFilenameFromPath, setStatusBarMessage, resetAnkiStores, resetAnalysisAndCommentStores, getMajorVersion };

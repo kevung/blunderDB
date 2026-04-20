@@ -14,7 +14,7 @@
         SaveLastVisitedPosition
     } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
-    import { statusBarModeStore, showMatchPanelStore, matchPanelRefreshTriggerStore, positionReloadTriggerStore, statusBarTextStore, activeTabStore } from '../stores/uiStore';
+    import { statusBarModeStore, openPanels, PANEL, closePanel, matchPanelRefreshTriggerStore, positionReloadTriggerStore, statusBarTextStore, activeTabStore } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
@@ -73,9 +73,9 @@
         }
     });
 
-    showMatchPanelStore.subscribe(async value => {
+    openPanels.subscribe(async value => {
         const wasVisible = visible;
-        visible = value;
+        visible = value.has(PANEL.MATCH);
         if (visible && !wasVisible) {
             await loadMatches();
             if (lastVisitedMatch && lastVisitedMatch.matchID) {
@@ -562,8 +562,8 @@
         return `${y}/${m}/${d}`;
     }
 
-    function closePanel() {
-        showMatchPanelStore.set(false);
+    function closeMatchPanel() {
+        closePanel(PANEL.MATCH);
     }
 
     function handleKeyDown(event) {
@@ -596,7 +596,7 @@
                 detailGames = [];
                 event.preventDefault();
             } else {
-                closePanel();
+                closeMatchPanel();
             }
             return;
         }

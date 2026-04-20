@@ -34,13 +34,10 @@ import {
     statusBarTextStore,
     statusBarModeStore,
     commentTextStore,
-    showCommentStore,
-    showAnalysisStore,
-    showGoToPositionModalStore,
+    openPanels, PANEL, closePanel, openPanel,
+    openModal, MODAL,
     activeTabStore,
-    showMatchPanelStore,
     showPipcountStore,
-    showCollectionPanelStore,
 } from '../stores/uiStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
@@ -588,7 +585,7 @@ export async function lastPosition() {
 export function gotoPosition() {
     if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
     if (get(statusBarModeStore) === 'EDIT') { setStatusBarMessage('Cannot go to position in edit mode'); return; }
-    showGoToPositionModalStore.set(true);
+    openModal(MODAL.GO_TO_POSITION);
 }
 
 export function findPosition() {
@@ -744,8 +741,8 @@ export async function enterEditMode() {
 
     if (get(statusBarModeStore) !== "EDIT") {
         statusBarModeStore.set('EDIT');
-        showCommentStore.set(false);
-        showAnalysisStore.set(false);
+        closePanel(PANEL.COMMENT);
+        closePanel(PANEL.ANALYSIS);
         positionStore.update(pos => {
             pos.board.points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
             pos.board.bearoff = [15, 15];
@@ -805,8 +802,8 @@ export function enterEPCMode() {
     };
 
     statusBarModeStore.set('EPC');
-    showCommentStore.set(false);
-    showAnalysisStore.set(false);
+    closePanel(PANEL.COMMENT);
+    closePanel(PANEL.ANALYSIS);
 
     positionsStore.set([epcPosition]);
     positionStore.set(epcPosition);
@@ -1018,7 +1015,7 @@ export async function exitCollectionMode() {
     activeCollectionStore.set(null);
     selectedCollectionStore.set(null);
     collectionPositionsStore.set([]);
-    showCollectionPanelStore.set(false);
+    closePanel(PANEL.COLLECTION);
     savedPositionBeforeCollection = null;
     savedPositionIndexBeforeCollection = -1;
     savedPositionsBeforeCollection = null;

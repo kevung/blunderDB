@@ -2,7 +2,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
-    import { statusBarTextStore, showSearchHistoryPanelStore, currentPositionIndexStore } from '../stores/uiStore';
+    import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore } from '../stores/uiStore';
     import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/main/Database.js';
 
     export let onLoadPositionsByFilters;
@@ -19,9 +19,9 @@
         searchHistory = value;
     });
 
-    showSearchHistoryPanelStore.subscribe(async value => {
+    openPanels.subscribe(async value => {
         const wasVisible = visible;
-        visible = value;
+        visible = value.has(PANEL.SEARCH_HISTORY);
         if (visible && !wasVisible) {
             // Panel just opened
             await loadHistory();
@@ -213,7 +213,7 @@
 
     function handleDoubleClick(search) {
         executeSearch(search);
-        closePanel();
+        closeSearchHistoryPanel();
     }
 
     function showAddToLibraryDialog(search) {
@@ -261,8 +261,8 @@
         return date.toLocaleString();
     }
 
-    function closePanel() {
-        showSearchHistoryPanelStore.set(false);
+    function closeSearchHistoryPanel() {
+        closePanel(PANEL.SEARCH_HISTORY);
     }
 
     function handleKeyDown(event) {
@@ -290,7 +290,7 @@
                 event.preventDefault();
                 event.stopPropagation();
             } else {
-                closePanel();
+                closeSearchHistoryPanel();
             }
             return;
         }

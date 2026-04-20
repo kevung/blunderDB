@@ -4,35 +4,29 @@
     import { onMount, onDestroy } from "svelte";
     import Two from "two.js";
     import { get } from 'svelte/store';
-    import { statusBarModeStore, isAnyModalOpenStore, showSearchModalStore, showCommentStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore, showPipcountStore } from '../stores/uiStore';
+    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore } from '../stores/uiStore';
 
     let mode;
     let showSearchModal = false;
     let showComment = false;
-    let showMetadataModal = false; // Add showMetadataModal variable
-    let showTakePoint2Modal = false; // Add showTakePoint2Modal variable
-    let showTakePoint4Modal = false; // Add showTakePoint4Modal variable
-    let showPipcount = true; // Add a reactive variable to control pip count visibility
+    let showMetadataModal = false;
+    let showTakePoint2Modal = false;
+    let showTakePoint4Modal = false;
+    let showPipcount = true;
     let arrowGroup = null; // Track the arrow group for cleanup
     let matchContext = null; // Store match context
 
     statusBarModeStore.subscribe(value => {
         mode = value;
     });
-    showSearchModalStore.subscribe(value => {
-        showSearchModal = value;
+    activeModal.subscribe(value => {
+        showSearchModal = value === MODAL.SEARCH;
+        showMetadataModal = value === MODAL.METADATA;
+        showTakePoint2Modal = value === MODAL.TAKE_POINT_2;
+        showTakePoint4Modal = value === MODAL.TAKE_POINT_4;
     });
-    showCommentStore.subscribe(value => {
-        showComment = value;
-    });
-    showMetadataModalStore.subscribe(value => {
-        showMetadataModal = value;
-    });
-    showTakePoint2ModalStore.subscribe(value => {
-        showTakePoint2Modal = value;
-    });
-    showTakePoint4ModalStore.subscribe(value => {
-        showTakePoint4Modal = value;
+    openPanels.subscribe(value => {
+        showComment = value.has(PANEL.COMMENT);
     });
     showPipcountStore.subscribe(value => {
         showPipcount = value;
@@ -748,8 +742,8 @@
     }
 
     function handleOrientationChange(event) {
-        const isAnyModalOpen = get(isAnyModalOpenStore);
-        if (isAnyModalOpen || showComment) return; // Disable orientation change when any modal or comment panel is open
+        const isAnyModalOpenVal = get(isAnyModalOpen);
+        if (isAnyModalOpenVal || showComment) return; // Disable orientation change when any modal or comment panel is open
         if (event.ctrlKey && event.key === 'ArrowLeft') {
             setBoardOrientation("left");
         } else if (event.ctrlKey && event.key === 'ArrowRight') {
