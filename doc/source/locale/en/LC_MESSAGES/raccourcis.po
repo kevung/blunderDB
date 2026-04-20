@@ -527,39 +527,39 @@ msgstr "Show/hide the Anki panel (spaced repetition)."
 
 #: ../../source/raccourcis.rst:1
 msgid "1"
-msgstr ""
+msgstr "1"
 
 #: ../../source/raccourcis.rst:1
 msgid "Évaluer : À revoir (échec, revoir bientôt)."
-msgstr ""
+msgstr "Rate: Again (failed, review soon)."
 
 #: ../../source/raccourcis.rst:1
 msgid "2"
-msgstr ""
+msgstr "2"
 
 #: ../../source/raccourcis.rst:1
 msgid "Évaluer : Difficile."
-msgstr ""
+msgstr "Rate: Hard."
 
 #: ../../source/raccourcis.rst:1
 msgid "3"
-msgstr ""
+msgstr "3"
 
 #: ../../source/raccourcis.rst:1
 msgid "Évaluer : Bien."
-msgstr ""
+msgstr "Rate: Good."
 
 #: ../../source/raccourcis.rst:1
 msgid "4"
-msgstr ""
+msgstr "4"
 
 #: ../../source/raccourcis.rst:1
 msgid "Évaluer : Facile."
-msgstr ""
+msgstr "Rate: Easy."
 
 #: ../../source/raccourcis.rst:1
 msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
-msgstr ""
+msgstr "Stop the review and return to the deck list (can resume later)."
 
 #~ msgid "Mode activé"
 #~ msgstr "Mode activated"
@@ -696,9 +696,6 @@ msgstr ""
 #~ msgid "Effacer la position courante."
 #~ msgstr "Clear the current position."
 
-#~ msgid "ENTREE"
-#~ msgstr "ENTER"
-
 #~ msgid "Exécuter une requête."
 #~ msgstr "Execute a query."
 
@@ -711,17 +708,8 @@ msgstr ""
 #~ msgid "Effacer la commande. Si vide, fermer le mode COMMAND"
 #~ msgstr "Clear the command. If empty, close COMMAND mode."
 
-#~ msgid "Panneau d'analyse"
-#~ msgstr "Analysis Panel"
-
-#~ msgid "Clic"
-#~ msgstr "Click"
-
 #~ msgid "Sélectionner/désélectionner un coup (affiche/efface les flèches)."
 #~ msgstr "Select/deselect a move (show/hide arrows)."
-
-#~ msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
-#~ msgstr "Deselect move. If no move selected, close the panel."
 
 #~ msgid "Aller à une position spécifique."
 #~ msgstr "Go to a specific position."

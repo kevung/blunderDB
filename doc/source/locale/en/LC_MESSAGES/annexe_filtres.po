@@ -190,11 +190,11 @@ msgstr "Here are some examples of using filters in the command line:"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Type de position"
-msgstr ""
+msgstr "Position type"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Structure de pions"
-msgstr ""
+msgstr "Checker structure"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Commande"
@@ -202,15 +202,15 @@ msgstr "Command"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Courses"
-msgstr ""
+msgstr "Pure race"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s nc"
-msgstr ""
+msgstr "s nc"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Courses petites"
-msgstr ""
+msgstr "Short race"
 
 #: ../../source/annexe_filtres.rst:1
 #, fuzzy
@@ -219,31 +219,31 @@ msgstr "ss P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Frapper au point 1"
-msgstr ""
+msgstr "Hitting on the ace point"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s m\\\"6/1*\\\""
-msgstr ""
+msgstr "s m\\\"6/1*\\\""
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Backgame 1-4"
-msgstr ""
+msgstr "Backgame 1-4"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "portes 24, 21"
-msgstr ""
+msgstr "points 24, 21 made"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s p>35"
-msgstr ""
+msgstr "s p>35"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Décision de Take/Pass à -2 -4"
-msgstr ""
+msgstr "Take/Pass decision at -2 -4"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "dés vides côté joueur du haut, score -2/-4"
-msgstr ""
+msgstr "empty dice on upper player's side, score -2/-4"
 
 #: ../../source/annexe_filtres.rst:1
 #, fuzzy
@@ -252,24 +252,24 @@ msgstr "ss d"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Envoi de too good"
-msgstr ""
+msgstr "Too good to double"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "dés vides côté joueur du bas"
-msgstr ""
+msgstr "empty dice on lower player's side"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s d e>1000"
-msgstr ""
+msgstr "s d e>1000"
 
 #: ../../source/annexe_filtres.rst:1
 #, python-format
 msgid "Blitz avec au moins 20% de gammon"
-msgstr ""
+msgstr "Blitz with at least 20% gammon"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "portes dans le jan, hommes à la barre"
-msgstr ""
+msgstr "made points in home board, men on the bar"
 
 #: ../../source/annexe_filtres.rst:1
 #, fuzzy
@@ -278,7 +278,7 @@ msgstr "ss E>40"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Erreurs du joueur 1 de plus de 40 millipoints"
-msgstr ""
+msgstr "Player 1 errors greater than 40 millipoints"
 
 #: ../../source/annexe_filtres.rst:1
 #, fuzzy
@@ -287,51 +287,51 @@ msgstr "ss E>40"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Position du tournoi Aachen2024"
-msgstr ""
+msgstr "Position from the Aachen2024 tournament"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s t\\\"Aachen2024\\\""
-msgstr ""
+msgstr "s t\\\"Aachen2024\\\""
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Un pion arriéré à ramener"
-msgstr ""
+msgstr "One back checker to bring home"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s k1,1"
-msgstr ""
+msgstr "s k1,1"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Quitter le point 20"
-msgstr ""
+msgstr "Escaping from the 20 point"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "point 20"
-msgstr ""
+msgstr "point 20"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s m\\\"20/\\\""
-msgstr ""
+msgstr "s m\\\"20/\\\""
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Prime contre prime"
-msgstr ""
+msgstr "Prime versus prime"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "indiquer les primes"
-msgstr ""
+msgstr "indicate the primes"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s"
-msgstr ""
+msgstr "s"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Ace-point bear-off"
-msgstr ""
+msgstr "Ace-point bear-off"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "point 1 pour l'adversaire"
-msgstr ""
+msgstr "opponent's ace point made"
 
 #: ../../source/annexe_filtres.rst:1
 #, fuzzy
@@ -340,7 +340,7 @@ msgstr "ss P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Double avec au moins 20pip d'avance"
-msgstr ""
+msgstr "Double with at least 20 pip lead"
 
 #: ../../source/annexe_filtres.rst:1
 #, fuzzy
@@ -349,39 +349,39 @@ msgstr "ss P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions du match 5"
-msgstr ""
+msgstr "Positions from match 5"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s ma5"
-msgstr ""
+msgstr "s ma5"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions des matchs 2 à 4"
-msgstr ""
+msgstr "Positions from matches 2 to 4"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s ma2,4"
-msgstr ""
+msgstr "s ma2,4"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions des matchs 23 et 43"
-msgstr ""
+msgstr "Positions from matches 23 and 43"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s ma23 ma43"
-msgstr ""
+msgstr "s ma23 ma43"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions du tournoi 1"
-msgstr ""
+msgstr "Positions from tournament 1"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "s tn1"
-msgstr ""
+msgstr "s tn1"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Erreurs dans le tournoi 2"
-msgstr ""
+msgstr "Errors in tournament 2"
 
 #: ../../source/annexe_filtres.rst:1
 #, fuzzy
@@ -425,106 +425,4 @@ msgstr "ss d"
 
 #~ msgid "Basculer dans le mode EDIT."
 #~ msgstr "Switch to EDIT mode."
-
-#~ msgid "Type de position"
-#~ msgstr "Type of position"
-
-#~ msgid "Structure de pions"
-#~ msgstr "Checker structure"
-
-#~ msgid "Courses"
-#~ msgstr "Races"
-
-#~ msgid "s nc"
-#~ msgstr "s nc"
-
-#~ msgid "Courses petites"
-#~ msgstr "Short races"
-
-#~ msgid "s nc P<70"
-#~ msgstr "s nc P<70"
-
-#~ msgid "Frapper au point 1"
-#~ msgstr "Hit to point 1"
-
-#~ msgid "s m\\\"6/1*\\\""
-#~ msgstr "s m\\\"6/1*\\\""
-
-#~ msgid "Backgame 1-4"
-#~ msgstr "Backgame 1-4"
-
-#~ msgid "portes 24, 21"
-#~ msgstr "points 24, 21"
-
-#~ msgid "s p>35"
-#~ msgstr "s p>35"
-
-#~ msgid "Décision de Take/Pass à -2 -4"
-#~ msgstr "Take/Pass decision at 2-away 4-away"
-
-#~ msgid "dés vides côté joueur du haut, score -2/-4"
-#~ msgstr "empty dice for top player, score 2a-4a"
-
-#~ msgid "Envoi de too good"
-#~ msgstr "Too Good doubles"
-
-#~ msgid "dés vides côté joueur du bas"
-#~ msgstr "empty dice for bottom player"
-
-#~ msgid "s d e>1000"
-#~ msgstr "s d e>1000"
-
-#~ msgid "Blitz avec au moins 20% de gammon"
-#~ msgstr "Blitz with at least 20% gammon"
-
-#~ msgid "portes dans le jan, hommes à la barre"
-#~ msgstr "point in jan, checkers on the bar"
-
-#~ msgid "s g>20"
-#~ msgstr "s g>20"
-
-#~ msgid "Erreurs du joueur 1 de plus de 40 millipoints"
-#~ msgstr "Player 1 errors greater than 40 millipoints"
-
-#~ msgid "Position du tournoi Aachen2024"
-#~ msgstr "Positions from Aachen2024 tournment"
-
-#~ msgid "s t\\\"Aachen2024\\\""
-#~ msgstr "s t\\\"Aachen2024\\\""
-
-#~ msgid "Un pion arriéré à ramener"
-#~ msgstr "One backchecker to bring back"
-
-#~ msgid "s k1,1"
-#~ msgstr "s k1,1"
-
-#~ msgid "Quitter le point 20"
-#~ msgstr "Leave the 20-point anchor"
-
-#~ msgid "point 20"
-#~ msgstr "point 20"
-
-#~ msgid "s m\\\"20/\\\""
-#~ msgstr "s m\\\"20/\\\""
-
-#~ msgid "Prime contre prime"
-#~ msgstr "Prime vs prime"
-
-#~ msgid "indiquer les primes"
-#~ msgstr "Set the primes"
-
-#~ msgid "s"
-#~ msgstr "s"
-
-#~ msgid "Ace-point bear-off"
-#~ msgstr "Ace-point bear-off"
-
-#~ msgid "point 1 pour l'adversaire"
-#~ msgstr "point 1 for the opponent"
-
-#~ msgid "Double avec au moins 20pip d'avance"
-#~ msgstr "Double with at least 20pip ahead"
-
-#~ msgid "s d p<-20"
-#~ msgstr "s d p<-20"
 
