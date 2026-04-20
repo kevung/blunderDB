@@ -23,6 +23,9 @@ La présente documentation est structurée de la manière suivante:
 * la liste des **commandes** ainsi que la liste des **raccourcis**
   clavier permettent une utilisation efficace de blunderDB.
 
+* la section **interface en ligne de commande (CLI)** décrit les commandes
+  disponibles pour l'import en masse, l'automatisation et le scripting.
+
 * la **FAQ** fournit quelques réponses aux interrogations les plus fréquentes.
 
 Historique des versions
@@ -148,6 +151,7 @@ Sommaire
    guide_utilisateur
    cmd_mode
    raccourcis
+   cli
    faq
    annexe_filtres
    annexe_windows_securite

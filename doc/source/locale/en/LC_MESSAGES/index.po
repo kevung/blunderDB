@@ -74,6 +74,14 @@ msgstr ""
 
 #: ../../source/index.rst:26
 msgid ""
+"la section **interface en ligne de commande (CLI)** décrit les commandes "
+"disponibles pour l'import en masse, l'automatisation et le scripting."
+msgstr ""
+"the **command line interface (CLI)** section describes the available "
+"commands for bulk import, automation, and scripting."
+
+#: ../../source/index.rst:29
+msgid ""
 "la **FAQ** fournit quelques réponses aux interrogations les plus "
 "fréquentes."
 msgstr "The **FAQ** provides answers to the most frequently asked questions."
