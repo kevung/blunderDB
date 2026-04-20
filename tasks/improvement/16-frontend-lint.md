@@ -1,5 +1,7 @@
 # 16 — Add ESLint/Prettier to frontend
 
+**Status: done**
+
 **Goal:** Configure ESLint and Prettier for the frontend codebase to catch bugs and enforce consistent style.
 
 **Depends on:** Nothing.

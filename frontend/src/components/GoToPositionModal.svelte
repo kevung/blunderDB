@@ -28,26 +28,26 @@
         } else if (positionNumber > maxPositionNumber) {
             positionNumber = maxPositionNumber;
         }
-        
+
         // Handle MATCH mode differently
         if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
             const newIndex = positionNumber - 1;
-            matchContextStore.update(ctx => ({ ...ctx, currentIndex: newIndex }));
+            matchContextStore.update((ctx) => ({ ...ctx, currentIndex: newIndex }));
             const movePos = $matchContextStore.movePositions[newIndex];
             positionStore.set(movePos.position);
-            
+
             // Load analysis for the position
             let analysis = null;
             try {
                 analysis = await LoadAnalysis(movePos.position.id);
-            } catch (error) {
+            } catch (_error) {
                 // No analysis for this position
             }
-            
+
             // Use the specific move from this match context, not all played moves
             const currentPlayedMove = movePos.checker_move || '';
             const currentPlayedCubeAction = movePos.cube_action || '';
-            
+
             analysisStore.set({
                 positionId: analysis?.positionId || null,
                 xgid: analysis?.xgid || '',
@@ -83,10 +83,10 @@
                 creationDate: analysis?.creationDate || '',
                 lastModifiedDate: analysis?.lastModifiedDate || ''
             });
-            
+
             commentTextStore.set('');
             selectedMoveStore.set(null);
-            
+
             statusBarTextStore.set(`${$matchContextStore.player1Name} vs ${$matchContextStore.player2Name}`);
         } else {
             currentPositionIndexStore.set(positionNumber - 1); // Set the store value directly
@@ -121,17 +121,26 @@
 </script>
 
 {#if visible}
-<div class="modal-overlay" on:click={onClose}>
-    <div class="modal-content" on:click|stopPropagation>
-        <div class="close-button" on:click={onClose}>×</div>
-        <h2>Go To Position</h2>
-        <input type="number" bind:value={positionNumber} min="1" max={maxPositionNumber} placeholder="Enter position number" class="input-field" bind:this={inputField} on:keydown={handleKeyDown} />
-        <div class="modal-buttons">
-            <button class="primary-button" on:click={handleGoToPosition}>Go</button>
-            <button class="secondary-button" on:click={onClose}>Cancel</button>
+    <div class="modal-overlay" on:click={onClose}>
+        <div class="modal-content" on:click|stopPropagation>
+            <div class="close-button" on:click={onClose}>×</div>
+            <h2>Go To Position</h2>
+            <input
+                type="number"
+                bind:value={positionNumber}
+                min="1"
+                max={maxPositionNumber}
+                placeholder="Enter position number"
+                class="input-field"
+                bind:this={inputField}
+                on:keydown={handleKeyDown}
+            />
+            <div class="modal-buttons">
+                <button class="primary-button" on:click={handleGoToPosition}>Go</button>
+                <button class="secondary-button" on:click={onClose}>Cancel</button>
+            </div>
         </div>
     </div>
-</div>
 {/if}
 
 <style>
@@ -174,7 +183,9 @@
         color: #666;
         cursor: pointer;
         z-index: 10;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
+        transition:
+            background-color 0.3s ease,
+            opacity 0.3s ease;
     }
 
     .input-field {

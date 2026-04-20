@@ -63,7 +63,7 @@ export function dragReorder(node, params) {
 
     function clearClasses() {
         const rows = getRows();
-        rows.forEach(r => {
+        rows.forEach((r) => {
             r.classList.remove(dragOverClass);
             r.classList.remove(draggingClass);
         });

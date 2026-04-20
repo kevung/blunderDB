@@ -1,9 +1,5 @@
 import { get } from 'svelte/store';
-import {
-    SaveSessionState,
-    LoadSessionState,
-    LoadAllPositions,
-} from '../../wailsjs/go/main/Database.js';
+import { SaveSessionState, LoadSessionState, LoadAllPositions } from '../../wailsjs/go/main/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
@@ -21,7 +17,7 @@ export async function saveSessionState() {
         const currentPositionIndex = get(currentPositionIndexStore);
         const searchState = getSearchState();
 
-        const positionIds = positions.map(pos => pos.id);
+        const positionIds = positions.map((pos) => pos.id);
         const sessionState = {
             lastSearchCommand: searchState.lastSearchCommand,
             lastSearchPosition: searchState.lastSearchPosition ? JSON.stringify(searchState.lastSearchPosition) : '',
@@ -67,12 +63,10 @@ export async function restoreSessionState() {
 
             const allPositions = await LoadAllPositions();
             const positionIdSet = new Set(sessionState.lastPositionIds);
-            const restoredPositions = allPositions.filter(pos => positionIdSet.has(pos.id));
+            const restoredPositions = allPositions.filter((pos) => positionIdSet.has(pos.id));
 
-            const positionMap = new Map(restoredPositions.map(pos => [pos.id, pos]));
-            const orderedPositions = sessionState.lastPositionIds
-                .map(id => positionMap.get(id))
-                .filter(pos => pos !== undefined);
+            const positionMap = new Map(restoredPositions.map((pos) => [pos.id, pos]));
+            const orderedPositions = sessionState.lastPositionIds.map((id) => positionMap.get(id)).filter((pos) => pos !== undefined);
 
             if (orderedPositions.length > 0) {
                 positionsStore.set(orderedPositions);

@@ -28,13 +28,13 @@ export const analysisStore = writable({
         cubefulDoublePassError: 0,
         bestCubeAction: '',
         wrongPassPercentage: 0,
-        wrongTakePercentage: 0,
+        wrongTakePercentage: 0
     },
     allCubeAnalyses: [],
-    playedMove: '',  // Deprecated: for backward compatibility
-    playedCubeAction: '',  // Deprecated: for backward compatibility
-    playedMoves: [],  // All moves played in this position across different matches
-    playedCubeActions: [],  // All cube actions taken in this position across different matches
+    playedMove: '', // Deprecated: for backward compatibility
+    playedCubeAction: '', // Deprecated: for backward compatibility
+    playedMoves: [], // All moves played in this position across different matches
+    playedCubeActions: [], // All cube actions taken in this position across different matches
     creationDate: '',
     lastModifiedDate: ''
 });

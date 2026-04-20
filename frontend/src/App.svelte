@@ -11,48 +11,78 @@
     import { positionStore, positionsStore } from './stores/positionStore.js';
     import { analysisStore } from './stores/analysisStore.js';
     import {
-        currentPositionIndexStore, statusBarModeStore,
+        currentPositionIndexStore,
+        statusBarModeStore,
         showCommandInputStore,
-        positionReloadTriggerStore, activeTabStore,
-        activeModal, MODAL, openPanels, PANEL,
-        openModal, closeModal, openPanel, closePanel,
-        isAnyModalOpen,
+        positionReloadTriggerStore,
+        activeTabStore,
+        activeModal,
+        MODAL,
+        PANEL,
+        closeModal,
+        openPanel,
+        closePanel,
+        isAnyModalOpen
     } from './stores/uiStore.js';
     import {
-        showImportProgressModalStore, importModalModeStore,
-        importAnalysisStore, importResultStore,
-        showFileImportModalStore, fileImportModeStore,
-        fileImportTotalFilesStore, fileImportCurrentIndexStore,
-        fileImportCurrentFileStore, fileImportResultsStore,
+        showImportProgressModalStore,
+        importModalModeStore,
+        importAnalysisStore,
+        importResultStore,
+        showFileImportModalStore,
+        fileImportModeStore,
+        fileImportTotalFilesStore,
+        fileImportCurrentIndexStore,
+        fileImportCurrentFileStore,
+        fileImportResultsStore
     } from './stores/importModalStore.js';
-    import {
-        exportModalModeStore, exportPositionCountStore,
-        exportMetadataStore, exportOptionsStore, exportMatchesStore,
-    } from './stores/exportModalStore.js';
-    import { viewStore } from './stores/viewStore.js';
+    import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore } from './stores/exportModalStore.js';
 
     // Services
     import { newDatabase, openDatabase, openDatabaseByPath, exitApp, closeWarningModal, warningMessageStore } from './services/databaseService.js';
     import {
-        showPosition, loadAllPositions, loadPositionsByFilters,
-        firstPosition, previousPosition, nextPosition, lastPosition, gotoPosition,
-        saveCurrentPosition, updatePosition, deletePosition,
-        toggleAnalysisPanel, toggleCommentPanel, toggleMetadataModal,
-        toggleFilterLibraryPanel, toggleAnkiPanel, toggleMatchPanel,
-        toggleCollectionPanelAction, toggleTournamentPanel,
-        toggleEPCMode, toggleMatchMode, enterEditMode, exitEditMode,
-        enterEPCMode, exitEPCMode, updateEPC,
-        handleOpenCollection, addSearchToFilterLibrary, togglePipcount,
-        loadRandomPosition,
+        showPosition,
+        loadAllPositions,
+        loadPositionsByFilters,
+        firstPosition,
+        previousPosition,
+        nextPosition,
+        lastPosition,
+        gotoPosition,
+        saveCurrentPosition,
+        updatePosition,
+        deletePosition,
+        toggleAnalysisPanel,
+        toggleCommentPanel,
+        toggleFilterLibraryPanel,
+        toggleMatchPanel,
+        toggleCollectionPanelAction,
+        toggleEPCMode,
+        toggleMatchMode,
+        enterEditMode,
+        exitEditMode,
+        enterEPCMode,
+        exitEPCMode,
+        updateEPC,
+        handleOpenCollection,
+        addSearchToFilterLibrary,
+        togglePipcount,
+        loadRandomPosition
     } from './services/positionService.js';
     import {
-        importDatabase, importPosition, importFolder,
-        handleImportCommit, handleImportCancel, handleImportClose,
-        handleFileImportCancel, handleFileImportClose,
-        pastePosition, handleFileDrop,
+        importDatabase,
+        importPosition,
+        importFolder,
+        handleImportCommit,
+        handleImportCancel,
+        handleImportClose,
+        handleFileImportCancel,
+        handleFileImportClose,
+        pastePosition,
+        handleFileDrop
     } from './services/importService.js';
     import { exportDatabase, handleExportCommit, handleExportCancel, handleExportClose } from './services/exportService.js';
-    import { copyPosition, copyBoardImage, copyBoardWithAnalysisImage } from './services/clipboardService.js';
+    import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, toggleSearchHistoryPanel } from './services/keyboardService.js';
 
@@ -83,7 +113,7 @@
     // Component state
     let mainArea;
     let panelHeight = 250;
-    let isResizing = false;
+    let _isResizing = false;
     let showDropOverlay = false;
     let dragCounter = 0;
     let positions = [];
@@ -94,7 +124,7 @@
 
     // ── Store subscriptions with side effects ──────────────────────
 
-    positionStore.subscribe(value => {
+    positionStore.subscribe((value) => {
         if ($statusBarModeStore === 'EPC' && value) updateEPC(value);
     });
 
@@ -102,36 +132,60 @@
         if ($databasePathStore) await loadAllPositions();
     });
 
-    positionsStore.subscribe(value => {
+    positionsStore.subscribe((value) => {
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
             positionStore.set({
                 id: 0,
                 board: { points: Array(26).fill({ checkers: 0, color: -1 }), bearoff: [15, 15] },
                 cube: { owner: -1, value: 0 },
-                dice: [3, 1], score: [-1, -1],
-                player_on_roll: 0, decision_type: 0, has_jacoby: 0, has_beaver: 0,
+                dice: [3, 1],
+                score: [-1, -1],
+                player_on_roll: 0,
+                decision_type: 0,
+                has_jacoby: 0,
+                has_beaver: 0
             });
             analysisStore.set({
-                positionId: null, xgid: '', player1: '', player2: '',
-                analysisType: '', analysisEngineVersion: '',
+                positionId: null,
+                xgid: '',
+                player1: '',
+                player2: '',
+                analysisType: '',
+                analysisEngineVersion: '',
                 checkerAnalysis: { moves: [] },
                 doublingCubeAnalysis: {
-                    analysisDepth: '', playerWinChances: 0, playerGammonChances: 0, playerBackgammonChances: 0,
-                    opponentWinChances: 0, opponentGammonChances: 0, opponentBackgammonChances: 0,
-                    cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
-                    cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0,
-                    cubefulDoubleTakeEquity: 0, cubefulDoubleTakeError: 0,
-                    cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
-                    bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
+                    analysisDepth: '',
+                    playerWinChances: 0,
+                    playerGammonChances: 0,
+                    playerBackgammonChances: 0,
+                    opponentWinChances: 0,
+                    opponentGammonChances: 0,
+                    opponentBackgammonChances: 0,
+                    cubelessNoDoubleEquity: 0,
+                    cubelessDoubleEquity: 0,
+                    cubefulNoDoubleEquity: 0,
+                    cubefulNoDoubleError: 0,
+                    cubefulDoubleTakeEquity: 0,
+                    cubefulDoubleTakeError: 0,
+                    cubefulDoublePassEquity: 0,
+                    cubefulDoublePassError: 0,
+                    bestCubeAction: '',
+                    wrongPassPercentage: 0,
+                    wrongTakePercentage: 0
                 },
-                allCubeAnalyses: [], playedMove: '', playedCubeAction: '',
-                playedMoves: [], playedCubeActions: [], creationDate: '', lastModifiedDate: ''
+                allCubeAnalyses: [],
+                playedMove: '',
+                playedCubeAction: '',
+                playedMoves: [],
+                playedCubeActions: [],
+                creationDate: '',
+                lastModifiedDate: ''
             });
         }
     });
 
-    currentPositionIndexStore.subscribe(async value => {
+    currentPositionIndexStore.subscribe(async (value) => {
         currentPositionIndex = value;
         if (positions.length > 0 && currentPositionIndex >= 0 && currentPositionIndex < positions.length) {
             await showPosition(positions[currentPositionIndex]);
@@ -140,22 +194,27 @@
         }
     });
 
-    activeTabStore.subscribe(tab => {
-        if (!tabInitialized) { tabInitialized = true; previousTab = tab; return; }
+    activeTabStore.subscribe((tab) => {
+        if (!tabInitialized) {
+            tabInitialized = true;
+            previousTab = tab;
+            return;
+        }
         const prevTab = previousTab;
         previousTab = tab;
         if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
         else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
         if (tab === 'epc' && $statusBarModeStore !== 'EPC') enterEPCMode();
         else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
-        if (tab === 'matches') openPanel(PANEL.MATCH); else closePanel(PANEL.MATCH);
+        if (tab === 'matches') openPanel(PANEL.MATCH);
+        else closePanel(PANEL.MATCH);
     });
 
     // ── UI event handlers ──────────────────────────────────────────
 
     function onResizeHandleMouseDown(e) {
         e.preventDefault();
-        isResizing = true;
+        _isResizing = true;
         document.body.style.cursor = 'ns-resize';
         document.body.style.userSelect = 'none';
         const startY = e.clientY;
@@ -165,7 +224,7 @@
             window.dispatchEvent(new Event('resize'));
         }
         function onMouseUp() {
-            isResizing = false;
+            _isResizing = false;
             document.body.style.cursor = '';
             document.body.style.userSelect = '';
             window.removeEventListener('mousemove', onMouseMove);
@@ -197,29 +256,47 @@
 
     function handleDragOver(e) {
         e.preventDefault();
-        if (!showDropOverlay) { dragCounter++; showDropOverlay = true; }
+        if (!showDropOverlay) {
+            dragCounter++;
+            showDropOverlay = true;
+        }
     }
-    function handleDragLeave(e) {
+    function handleDragLeave(_e) {
         dragCounter--;
-        if (dragCounter <= 0) { dragCounter = 0; showDropOverlay = false; }
+        if (dragCounter <= 0) {
+            dragCounter = 0;
+            showDropOverlay = false;
+        }
     }
-    function handleDragEnd(e) { dragCounter = 0; showDropOverlay = false; }
+    function handleDragEnd(_e) {
+        dragCounter = 0;
+        showDropOverlay = false;
+    }
 
     // ── Lifecycle ──────────────────────────────────────────────────
 
     onMount(async () => {
         initCommandProcessor({
-            onToggleHelp: toggleHelpModal, onNewDatabase: newDatabase,
-            onOpenDatabase: openDatabase, onImportDatabase: importDatabase,
-            onExportDatabase: exportDatabase, importPosition,
-            onSavePosition: saveCurrentPosition, onUpdatePosition: updatePosition,
-            onDeletePosition: deletePosition, onToggleAnalysis: toggleAnalysisPanel,
-            onToggleComment: toggleCommentPanel, exitApp,
+            onToggleHelp: toggleHelpModal,
+            onNewDatabase: newDatabase,
+            onOpenDatabase: openDatabase,
+            onImportDatabase: importDatabase,
+            onExportDatabase: exportDatabase,
+            importPosition,
+            onSavePosition: saveCurrentPosition,
+            onUpdatePosition: updatePosition,
+            onDeletePosition: deletePosition,
+            onToggleAnalysis: toggleAnalysisPanel,
+            onToggleComment: toggleCommentPanel,
+            exitApp,
             onLoadPositionsByFilters: loadPositionsByFilters,
             onLoadAllPositions: loadAllPositions,
-            toggleFilterLibraryPanel, toggleSearchHistoryPanel,
-            toggleMatchPanel, toggleCollectionPanel: toggleCollectionPanelAction,
-            toggleEPCMode, toggleMatchMode,
+            toggleFilterLibraryPanel,
+            toggleSearchHistoryPanel,
+            toggleMatchPanel,
+            toggleCollectionPanel: toggleCollectionPanelAction,
+            toggleEPCMode,
+            toggleMatchMode
         });
         window.addEventListener('keydown', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
@@ -233,7 +310,11 @@
             if (lastDbPath) await openDatabaseByPath(lastDbPath);
         } catch (error) {
             console.error('Error auto-reopening last database:', error);
-            try { await SaveLastDatabasePath(''); } catch (e) {}
+            try {
+                await SaveLastDatabasePath('');
+            } catch (_e) {
+                /* ignored */
+            }
         }
     });
 
@@ -249,7 +330,6 @@
 </script>
 
 <main class="main-container" bind:this={mainArea}>
-
     {#if showDropOverlay}
         <div class="drop-overlay" transition:fade={{ duration: 150 }}>
             <div class="drop-overlay-content">
@@ -311,10 +391,7 @@
         />
     </div>
 
-    <GoToPositionModal
-        visible={$activeModal === MODAL.GO_TO_POSITION}
-        onClose={() => closeModal()}
-    />
+    <GoToPositionModal visible={$activeModal === MODAL.GO_TO_POSITION} onClose={() => closeModal()} />
 
     <MetModal visible={$activeModal === MODAL.MET} onClose={() => closeModal()} />
     <TakePoint2LastModal visible={$activeModal === MODAL.TAKE_POINT_2_LAST} onClose={() => closeModal()} />
@@ -325,14 +402,10 @@
     <GammonValue2Modal visible={$activeModal === MODAL.GAMMON_VALUE_2} onClose={() => closeModal()} />
     <GammonValue4Modal visible={$activeModal === MODAL.GAMMON_VALUE_4} onClose={() => closeModal()} />
 
-    <WarningModal
-        message={$warningMessageStore}
-        visible={$activeModal === MODAL.WARNING}
-        onClose={closeWarningModal}
-    />
+    <WarningModal message={$warningMessageStore} visible={$activeModal === MODAL.WARNING} onClose={closeWarningModal} />
 
-    <TakePoint2Modal/>
-    <TakePoint4Modal/>
+    <TakePoint2Modal />
+    <TakePoint4Modal />
 
     <ImportProgressModal
         visible={$showImportProgressModalStore}
@@ -367,14 +440,9 @@
         onClose={handleExportClose}
     />
 
-    <HelpModal
-        visible={$activeModal === MODAL.HELP}
-        onClose={toggleHelpModal}
-        handleGlobalKeydown={handleKeyDown}
-    />
+    <HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />
 
     <StatusBar onCommand={(cmd) => processCommand(cmd)} />
-
 </main>
 
 <style>

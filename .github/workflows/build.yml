@@ -59,6 +59,27 @@ jobs:
         run: npm ci && npm test
         shell: bash
 
+  frontend-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23.4.0'
+
+      - name: Frontend lint
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run lint
+          npm run format:check
+        shell: bash
+
   lint:
     runs-on: ubuntu-latest
     steps:

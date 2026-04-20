@@ -17,7 +17,7 @@ export const activeTabStore = writable('analysis');
 export const logEntriesStore = writable([]);
 
 export function addLogEntry(message, type = 'info') {
-    logEntriesStore.update(entries => {
+    logEntriesStore.update((entries) => {
         const entry = { timestamp: new Date(), type, message };
         return [...entries, entry];
     });
@@ -46,7 +46,7 @@ export const MODAL = {
     TAKE_POINT_2: 'takePoint2',
     TAKE_POINT_4: 'takePoint4',
     HELP: 'help',
-    COMMAND: 'command',
+    COMMAND: 'command'
 };
 
 // ── Panel identifiers (can be open simultaneously) ──
@@ -57,7 +57,7 @@ export const PANEL = {
     SEARCH_HISTORY: 'searchHistory',
     MATCH: 'match',
     COLLECTION: 'collection',
-    TOURNAMENT: 'tournament',
+    TOURNAMENT: 'tournament'
 };
 
 // ── Single modal store (only one modal at a time) ──
@@ -67,34 +67,44 @@ export const activeModal = writable(null);
 export const openPanels = writable(new Set());
 
 // ── Modal helpers ──
-export function openModal(name) { activeModal.set(name); }
-export function closeModal() { activeModal.set(null); }
+export function openModal(name) {
+    activeModal.set(name);
+}
+export function closeModal() {
+    activeModal.set(null);
+}
 export function toggleModal(name) {
-    activeModal.update(current => current === name ? null : name);
+    activeModal.update((current) => (current === name ? null : name));
 }
 
 // ── Panel helpers ──
 export function openPanel(name) {
-    openPanels.update(s => { const next = new Set(s); next.add(name); return next; });
+    openPanels.update((s) => {
+        const next = new Set(s);
+        next.add(name);
+        return next;
+    });
 }
 export function closePanel(name) {
-    openPanels.update(s => { const next = new Set(s); next.delete(name); return next; });
+    openPanels.update((s) => {
+        const next = new Set(s);
+        next.delete(name);
+        return next;
+    });
 }
 export function togglePanel(name) {
-    openPanels.update(s => {
+    openPanels.update((s) => {
         const next = new Set(s);
-        if (next.has(name)) next.delete(name); else next.add(name);
+        if (next.has(name)) next.delete(name);
+        else next.add(name);
         return next;
     });
 }
 
 // ── Derived stores (automatic — no manual enumeration) ──
-export const isAnyModalOpen = derived(activeModal, $m => $m !== null);
-export const isAnyPanelOpen = derived(openPanels, $p => $p.size > 0);
-export const isAnyModalOrPanelOpen = derived(
-    [activeModal, openPanels],
-    ([$m, $p]) => $m !== null || $p.size > 0
-);
+export const isAnyModalOpen = derived(activeModal, ($m) => $m !== null);
+export const isAnyPanelOpen = derived(openPanels, ($p) => $p.size > 0);
+export const isAnyModalOrPanelOpen = derived([activeModal, openPanels], ([$m, $p]) => $m !== null || $p.size > 0);
 
 export const matchPanelRefreshTriggerStore = writable(0);
 

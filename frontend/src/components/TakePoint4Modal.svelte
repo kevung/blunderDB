@@ -4,7 +4,7 @@
     import { activeModal, MODAL, closeModal } from '../stores/uiStore';
     let visible = false;
 
-    activeModal.subscribe(value => {
+    activeModal.subscribe((value) => {
         visible = value === MODAL.TAKE_POINT_4;
     });
 
@@ -32,7 +32,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={e => closeModal()}>
+    <div class="modal-overlay" on:click={(_e) => closeModal()}>
         <div class="modal-content" on:click|stopPropagation>
             <div class="table-container">
                 <div class="table-section">
@@ -131,7 +131,8 @@
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;

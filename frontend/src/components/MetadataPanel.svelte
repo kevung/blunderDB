@@ -33,7 +33,7 @@
 
     // Load when tab becomes active, save when leaving
     let wasActive = false;
-    const unsubscribe = activeTabStore.subscribe(async value => {
+    const unsubscribe = activeTabStore.subscribe(async (value) => {
         if (value === 'metadata') {
             await loadMetadata();
             wasActive = true;
@@ -105,8 +105,8 @@
         color: #888;
         text-transform: uppercase;
         letter-spacing: 0.3px;
-    user-select: none;
-    -webkit-user-select: none;
+        user-select: none;
+        -webkit-user-select: none;
         font-size: 12px;
         font-family: inherit;
     }
@@ -122,7 +122,8 @@
         color: #888;
     }
 
-    input:focus, textarea:focus {
+    input:focus,
+    textarea:focus {
         outline: none;
         border-color: #1a73e8;
     }

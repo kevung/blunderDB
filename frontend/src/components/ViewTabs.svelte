@@ -31,7 +31,8 @@
             finishRename();
         } else if (event.key === 'Escape') {
             event.stopPropagation();
-            editingId = null; editingName = '';
+            editingId = null;
+            editingName = '';
         }
     }
 
@@ -55,22 +56,11 @@
 <svelte:window on:keydown={handleKeydown} />
 
 <div class="view-tabs">
-    {#each $views as view, i (view.id)}
+    {#each $views as view, _i (view.id)}
         <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div
-            class="view-tab"
-            class:active={$activeViewId === view.id}
-            on:click={() => handleTabClick(view.id)}
-            on:dblclick={() => handleDoubleClick(view)}
-        >
+        <div class="view-tab" class:active={$activeViewId === view.id} on:click={() => handleTabClick(view.id)} on:dblclick={() => handleDoubleClick(view)}>
             {#if editingId === view.id}
-                <input
-                    bind:this={editInput}
-                    bind:value={editingName}
-                    class="rename-input"
-                    on:blur={finishRename}
-                    on:keydown={handleRenameKeydown}
-                />
+                <input bind:this={editInput} bind:value={editingName} class="rename-input" on:blur={finishRename} on:keydown={handleRenameKeydown} />
             {:else}
                 <span class="tab-name">{view.name}</span>
             {/if}

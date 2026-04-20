@@ -1,11 +1,11 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import { 
-        GetAllMatches, 
-        DeleteMatch, 
+    import {
+        GetAllMatches,
+        DeleteMatch,
         UpdateMatch,
         UpdateMatchComment,
-        GetMatchMovePositions, 
+        GetMatchMovePositions,
         GetGamesByMatch,
         LoadAnalysis,
         GetAllTournaments,
@@ -26,14 +26,14 @@
     let tournaments = [];
 
     // Detail pane state
-    let detailMatch = null;         // Match currently shown in detail pane
-    let detailMovePositions = [];   // MatchMovePosition[] for the detail match
-    let detailGames = [];           // Game[] for the detail match
-    let detailView = 'transcript';  // 'transcript' | 'metadata'
+    let detailMatch = null; // Match currently shown in detail pane
+    let detailMovePositions = []; // MatchMovePosition[] for the detail match
+    let detailGames = []; // Game[] for the detail match
+    let detailView = 'transcript'; // 'transcript' | 'metadata'
     let loadingDetail = false;
 
     // Sorting state
-    let sortColumn = null;     // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
+    let sortColumn = null; // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
     let sortDirection = 'asc'; // 'asc' | 'desc'
 
     // Inline tournament editing
@@ -53,11 +53,11 @@
     let editingDetailComment = false;
     let editDetailCommentText = '';
 
-    lastVisitedMatchStore.subscribe(value => {
+    lastVisitedMatchStore.subscribe((value) => {
         lastVisitedMatch = value;
     });
 
-    tournamentsStore.subscribe(value => {
+    tournamentsStore.subscribe((value) => {
         tournaments = value || [];
     });
 
@@ -67,19 +67,19 @@
             await loadMatches();
             // If we have a last visited match, try to re-select it
             if (lastVisitedMatch && lastVisitedMatch.matchID) {
-                selectedMatch = matches.find(m => m.id === lastVisitedMatch.matchID);
+                selectedMatch = matches.find((m) => m.id === lastVisitedMatch.matchID);
                 if (selectedMatch) await loadMatchDetail(selectedMatch);
             }
         }
     });
 
-    openPanels.subscribe(async value => {
+    openPanels.subscribe(async (value) => {
         const wasVisible = visible;
         visible = value.has(PANEL.MATCH);
         if (visible && !wasVisible) {
             await loadMatches();
             if (lastVisitedMatch && lastVisitedMatch.matchID) {
-                selectedMatch = matches.find(m => m.id === lastVisitedMatch.matchID);
+                selectedMatch = matches.find((m) => m.id === lastVisitedMatch.matchID);
                 if (selectedMatch) await loadMatchDetail(selectedMatch);
             } else {
                 selectedMatch = null;
@@ -144,7 +144,7 @@
         if (!val) {
             filteredTournaments = tournaments;
         } else {
-            filteredTournaments = tournaments.filter(t => t.name.toLowerCase().includes(val));
+            filteredTournaments = tournaments.filter((t) => t.name.toLowerCase().includes(val));
         }
         const input = document.querySelector('.tournament-edit-input');
         if (input) computeTournamentDropdownPosition(input);
@@ -240,7 +240,7 @@
         try {
             await UpdateMatchComment(detailMatch.id, editDetailCommentText);
             detailMatch.comment = editDetailCommentText;
-            const m = matches.find(x => x.id === detailMatch.id);
+            const m = matches.find((x) => x.id === detailMatch.id);
             if (m) m.comment = editDetailCommentText;
             matches = matches;
             statusBarTextStore.set('Comment updated');
@@ -306,12 +306,18 @@
 
     function getSortValue(match, column) {
         switch (column) {
-            case 'player1': return match.player1_name || '';
-            case 'player2': return match.player2_name || '';
-            case 'date': return match.match_date || '';
-            case 'length': return match.match_length || 0;
-            case 'tournament': return match.tournament_name || match.event || '';
-            default: return '';
+            case 'player1':
+                return match.player1_name || '';
+            case 'player2':
+                return match.player2_name || '';
+            case 'date':
+                return match.match_date || '';
+            case 'length':
+                return match.match_length || 0;
+            case 'tournament':
+                return match.tournament_name || match.event || '';
+            default:
+                return '';
         }
     }
 
@@ -343,10 +349,7 @@
         loadingDetail = true;
         detailMatch = match;
         try {
-            const [movePositions, games] = await Promise.all([
-                GetMatchMovePositions(match.id),
-                GetGamesByMatch(match.id)
-            ]);
+            const [movePositions, games] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id)]);
             detailMovePositions = movePositions || [];
             detailGames = games || [];
         } catch (error) {
@@ -370,7 +373,7 @@
         const result = [];
         for (const [gameNum, moves] of gameMap) {
             // Find corresponding game info
-            const gameInfo = detailGames.find(g => g.game_number === gameNum);
+            const gameInfo = detailGames.find((g) => g.game_number === gameNum);
             result.push({ gameNumber: gameNum, moves, gameInfo });
         }
         return result;
@@ -388,20 +391,22 @@
             movePositions: movePositions,
             currentIndex: moveIndex,
             player1Name: match.player1_name,
-            player2Name: match.player2_name,
+            player2Name: match.player2_name
         });
 
         const movePos = movePositions[moveIndex];
         positionStore.set(movePos.position);
-        
+
         let analysis = null;
         try {
             analysis = await LoadAnalysis(movePos.position.id);
-        } catch (error) {}
-        
+        } catch (_error) {
+            /* ignored */
+        }
+
         const currentPlayedMove = movePos.checker_move || '';
         const currentPlayedCubeAction = movePos.cube_action || '';
-        
+
         analysisStore.set({
             positionId: analysis?.positionId || null,
             xgid: analysis?.xgid || '',
@@ -411,12 +416,24 @@
             analysisEngineVersion: analysis?.analysisEngineVersion || '',
             checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
             doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
-                analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
-                playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
-                opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
-                cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
-                cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
-                bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
+                analysisDepth: '',
+                playerWinChances: 0,
+                playerGammonChances: 0,
+                playerBackgammonChances: 0,
+                opponentWinChances: 0,
+                opponentGammonChances: 0,
+                opponentBackgammonChances: 0,
+                cubelessNoDoubleEquity: 0,
+                cubelessDoubleEquity: 0,
+                cubefulNoDoubleEquity: 0,
+                cubefulNoDoubleError: 0,
+                cubefulDoubleTakeEquity: 0,
+                cubefulDoubleTakeError: 0,
+                cubefulDoublePassEquity: 0,
+                cubefulDoublePassError: 0,
+                bestCubeAction: '',
+                wrongPassPercentage: 0,
+                wrongTakePercentage: 0
             },
             playedMove: currentPlayedMove,
             playedCubeAction: currentPlayedCubeAction,
@@ -425,19 +442,19 @@
             creationDate: analysis?.creationDate || '',
             lastModifiedDate: analysis?.lastModifiedDate || ''
         });
-        
+
         commentTextStore.set('');
         selectedMoveStore.set(null);
         statusBarModeStore.set('MATCH');
         statusBarTextStore.set(`${match.player1_name} vs ${match.player2_name}`);
-        
+
         lastVisitedMatchStore.set({
             matchID: match.id,
             currentIndex: moveIndex,
             gameNumber: movePos.game_number
         });
 
-        SaveLastVisitedPosition(match.id, moveIndex).catch(e => {
+        SaveLastVisitedPosition(match.id, moveIndex).catch((e) => {
             console.error('Error persisting last visited position:', e);
         });
 
@@ -484,9 +501,9 @@
                 detailGames = [];
             }
             // Trigger match panel refresh to update all dependent components
-            matchPanelRefreshTriggerStore.update(n => n + 1);
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
             // Trigger position reload to reflect deleted positions
-            positionReloadTriggerStore.update(n => n + 1);
+            positionReloadTriggerStore.update((n) => n + 1);
             statusBarTextStore.set('Match deleted');
         } catch (error) {
             console.error('Error deleting match:', error);
@@ -502,7 +519,7 @@
 
             // If we are currently viewing this match in match mode, update context
             let currentContext = null;
-            const unsub = matchContextStore.subscribe(v => currentContext = v);
+            const unsub = matchContextStore.subscribe((v) => (currentContext = v));
             unsub();
             if (currentContext && currentContext.isMatchMode && currentContext.matchID === match.id) {
                 // Reload match positions to reflect swapped players
@@ -515,17 +532,17 @@
                         movePositions: movePositions,
                         currentIndex: currentIndex,
                         player1Name: movePositions[0].player1_name,
-                        player2Name: movePositions[0].player2_name,
+                        player2Name: movePositions[0].player2_name
                     });
                     // Update the displayed position
                     positionStore.set(movePositions[currentIndex].position);
-                    positionReloadTriggerStore.update(n => n + 1);
+                    positionReloadTriggerStore.update((n) => n + 1);
                 }
             }
 
             // Reload detail pane if viewing this match
             if (detailMatch && detailMatch.id === match.id) {
-                detailMatch = matches.find(m => m.id === match.id) || detailMatch;
+                detailMatch = matches.find((m) => m.id === match.id) || detailMatch;
                 await loadMatchDetail(detailMatch);
             }
 
@@ -541,7 +558,7 @@
         return `${dice[0]}${dice[1]}`;
     }
 
-    function formatMoveText(mp) {
+    function _formatMoveText(mp) {
         if (mp.move_type === 'cube') {
             return mp.cube_action || 'Cube action';
         }
@@ -549,7 +566,7 @@
     }
 
     function getPlayerName(mp) {
-        return mp.player_on_roll === 0 ? (mp.player1_name || 'Player 1') : (mp.player2_name || 'Player 2');
+        return mp.player_on_roll === 0 ? mp.player1_name || 'Player 1' : mp.player2_name || 'Player 2';
     }
 
     function formatDate(dateStr) {
@@ -614,7 +631,7 @@
         }
 
         if (selectedMatch && sortedMatches.length > 0) {
-            const currentIndex = sortedMatches.findIndex(m => m.id === selectedMatch.id);
+            const currentIndex = sortedMatches.findIndex((m) => m.id === selectedMatch.id);
 
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -685,270 +702,269 @@
     });
 </script>
 
-    <section class="match-panel" role="dialog" aria-modal="true" id="matchPanel" tabindex="-1">
-        <div class="match-panel-content">
-            <!-- Match list (left pane) -->
-            <div class="match-list-pane" class:has-detail={detailMatch !== null}>
-                <div class="match-table-container">
-                    <table class="match-table">
-                        <thead>
-                            <tr>
-                                <th class="no-select narrow-col">#</th>
-                                <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}>Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select sortable" on:click={() => handleSort('player1')}>Player 1 {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select sortable" on:click={() => handleSort('player2')}>Player 2 {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select sortable narrow-col" on:click={() => handleSort('length')}>Pts {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select sortable tournament-col" on:click={() => handleSort('tournament')}>Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                <th class="no-select actions-col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {#each sortedMatches as match, index}
-                                {#if editingMatchId === match.id}
-                                    <tr class="match-editing-row" class:selected={selectedMatch && selectedMatch.id === match.id}>
-                                        <td class="index-cell narrow-col no-select">{index + 1}</td>
-                                        <td class="narrow-col">
-                                            <input type="date" class="match-edit-input" bind:value={editDateValue} on:keydown={handleMatchEditKeyDown} />
-                                        </td>
-                                        <td>
-                                            <input type="text" class="match-edit-input" bind:value={editPlayer1Value} on:keydown={handleMatchEditKeyDown} placeholder="Player 1" />
-                                        </td>
-                                        <td>
-                                            <input type="text" class="match-edit-input" bind:value={editPlayer2Value} on:keydown={handleMatchEditKeyDown} placeholder="Player 2" />
-                                        </td>
-                                        <td class="narrow-col no-select">{match.match_length}</td>
-                                        <td class="tournament-col no-select">{match.tournament_name || ''}</td>
-                                        <td class="actions-col no-select">
-                                            <span class="item-actions editing-actions">
-                                                <button class="icon-btn" on:click|stopPropagation={saveMatchEdit} title="Save">✓</button>
-                                                <button class="icon-btn" on:click|stopPropagation={cancelMatchEdit} title="Cancel">✕</button>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {:else}
-                                    <tr 
-                                        class:selected={selectedMatch && selectedMatch.id === match.id}
-                                        on:click={() => selectMatch(match)}
-                                        on:dblclick={() => handleDoubleClick(match)}
-                                    >
-                                        <td class="index-cell narrow-col no-select">{index + 1}</td>
-                                        <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
-                                        <td class="no-select">{match.player1_name}</td>
-                                        <td class="no-select">{match.player2_name}</td>
-                                        <td class="narrow-col no-select">{match.match_length}</td>
-                                        <td class="tournament-col no-select tournament-meta-cell" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
-                                            {#if editingTournamentMatchId === match.id}
-                                                <div class="tournament-cell-edit">
-                                                    <input 
-                                                        type="text" 
-                                                        class="tournament-edit-input"
-                                                        bind:value={editTournamentValue}
-                                                        on:input={filterTournaments}
-                                                        on:keydown={handleTournamentKeyDown}
-                                                        on:blur={() => setTimeout(cancelTournamentEdit, 200)}
-                                                        placeholder="Tournament name"
-                                                    />
-                                                    {#if showTournamentDropdown && filteredTournaments.length > 0}
-                                                        <div class="tournament-dropdown" style={tournamentDropdownStyle}>
-                                                            {#each filteredTournaments as t}
-                                                                <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
-                                                                    {t.name}
-                                                                </div>
-                                                            {/each}
-                                                        </div>
-                                                    {/if}
-                                                </div>
-                                            {:else}
-                                                <span class="tournament-display" title="Click to assign tournament">{match.tournament_name || ''}</span>
-                                            {/if}
-                                        </td>
-                                        <td class="actions-col no-select">
-                                            <span class="item-actions">
-                                                <button class="icon-btn" on:click|stopPropagation={(e) => swapMatchPlayers(match, e)} title="Swap players">⇄</button>
-                                                <button class="icon-btn" on:click|stopPropagation={(e) => startEditMatch(match, e)} title="Edit">✎</button>
-                                                <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteMatchEntry(match, e)} title="Delete">×</button>
-                                            </span>
-                                        </td>
-                                    </tr>
-                                {/if}
-                            {/each}
-                        </tbody>
-                    </table>
-                    {#if matches.length === 0}
-                        <div class="empty-state">No matches imported yet</div>
-                    {/if}
-                </div>
-            </div>
-
-            <!-- Detail pane (right side, shown when a match is selected) -->
-            {#if detailMatch}
-                <div class="detail-pane">
-                    <!-- Match metadata header -->
-                    <div class="detail-header">
-                        <div class="detail-title">
-                            <span class="player-name">{detailMatch.player1_name}</span>
-                            <span class="vs-label">vs</span>
-                            <span class="player-name">{detailMatch.player2_name}</span>
-                            <span class="match-length-badge">{detailMatch.match_length} pt</span>
-                        </div>
-                        <div class="detail-meta">
-                            {#if detailMatch.match_date && formatDate(detailMatch.match_date) !== '-'}
-                                <span class="meta-item" title="Date">{formatDate(detailMatch.match_date)}</span>
-                            {/if}
-                            {#if detailMatch.tournament_name || detailMatch.event}
-                                <span class="meta-item meta-tournament" title="Tournament">{detailMatch.tournament_name || detailMatch.event}</span>
-                            {/if}
-                            {#if detailMatch.round}
-                                <span class="meta-item" title="Round">R{detailMatch.round}</span>
-                            {/if}
-                            {#if detailMatch.location}
-                                <span class="meta-item" title="Location">{detailMatch.location}</span>
-                            {/if}
-                        </div>
-                        <div class="detail-tabs">
-                            <button class="detail-tab" class:active={detailView === 'transcript'} on:click={() => detailView = 'transcript'}>Transcript</button>
-                            <button class="detail-tab" class:active={detailView === 'metadata'} on:click={() => detailView = 'metadata'}>Info</button>
-                            <button class="detail-tab enter-match-btn" on:click={() => enterMatchMode(detailMatch)} title="Enter match mode (↵)">▶ Review</button>
-                        </div>
-                    </div>
-
-                    <!-- Transcript view -->
-                    {#if detailView === 'transcript'}
-                        <div class="transcript-container">
-                            {#if loadingDetail}
-                                <div class="loading-state">Loading...</div>
-                            {:else if transcriptGames.length === 0}
-                                <div class="empty-state">No moves recorded</div>
+<section class="match-panel" role="dialog" aria-modal="true" id="matchPanel" tabindex="-1">
+    <div class="match-panel-content">
+        <!-- Match list (left pane) -->
+        <div class="match-list-pane" class:has-detail={detailMatch !== null}>
+            <div class="match-table-container">
+                <table class="match-table">
+                    <thead>
+                        <tr>
+                            <th class="no-select narrow-col">#</th>
+                            <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}
+                                >Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
+                            <th class="no-select sortable" on:click={() => handleSort('player1')}
+                                >Player 1 {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
+                            <th class="no-select sortable" on:click={() => handleSort('player2')}
+                                >Player 2 {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
+                            <th class="no-select sortable narrow-col" on:click={() => handleSort('length')}
+                                >Pts {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
+                            <th class="no-select sortable tournament-col" on:click={() => handleSort('tournament')}
+                                >Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
+                            <th class="no-select actions-col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each sortedMatches as match, index}
+                            {#if editingMatchId === match.id}
+                                <tr class="match-editing-row" class:selected={selectedMatch && selectedMatch.id === match.id}>
+                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
+                                    <td class="narrow-col">
+                                        <input type="date" class="match-edit-input" bind:value={editDateValue} on:keydown={handleMatchEditKeyDown} />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="match-edit-input" bind:value={editPlayer1Value} on:keydown={handleMatchEditKeyDown} placeholder="Player 1" />
+                                    </td>
+                                    <td>
+                                        <input type="text" class="match-edit-input" bind:value={editPlayer2Value} on:keydown={handleMatchEditKeyDown} placeholder="Player 2" />
+                                    </td>
+                                    <td class="narrow-col no-select">{match.match_length}</td>
+                                    <td class="tournament-col no-select">{match.tournament_name || ''}</td>
+                                    <td class="actions-col no-select">
+                                        <span class="item-actions editing-actions">
+                                            <button class="icon-btn" on:click|stopPropagation={saveMatchEdit} title="Save">✓</button>
+                                            <button class="icon-btn" on:click|stopPropagation={cancelMatchEdit} title="Cancel">✕</button>
+                                        </span>
+                                    </td>
+                                </tr>
                             {:else}
-                                {#each transcriptGames as game}
-                                    <div class="game-section">
-                                        <div class="game-header">
-                                            <span class="game-title">Game {game.gameNumber}</span>
-                                            {#if game.gameInfo}
-                                                <span class="game-score">Score: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
-                                                {#if game.gameInfo.winner >= 0}
-                                                    <span class="game-result">Won by {game.gameInfo.winner === 0 ? detailMatch.player1_name : detailMatch.player2_name} ({game.gameInfo.points_won} pt{game.gameInfo.points_won > 1 ? 's' : ''})</span>
-                                                {/if}
-                                            {/if}
-                                        </div>
-                                        <table class="transcript-table">
-                                            <thead>
-                                                <tr>
-                                                    <th class="transcript-num">#</th>
-                                                    <th class="transcript-player">Player</th>
-                                                    <th class="transcript-dice">Dice</th>
-                                                    <th class="transcript-move">Move</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                {#each game.moves as mp, mi}
-                                                    {@const globalIdx = detailMovePositions.indexOf(mp)}
-                                                    <tr 
-                                                        class="transcript-row"
-                                                        class:cube-row={mp.move_type === 'cube'}
-                                                        on:click={() => navigateToMove(globalIdx)}
-                                                        title="Click to review this position"
-                                                    >
-                                                        <td class="transcript-num">{mi + 1}</td>
-                                                        <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
-                                                            {getPlayerName(mp)}
-                                                        </td>
-                                                        <td class="transcript-dice">
-                                                            {#if mp.move_type === 'checker'}
-                                                                {formatDiceShort(mp.position.dice)}
-                                                            {/if}
-                                                        </td>
-                                                        <td class="transcript-move">
-                                                            {#if mp.move_type === 'cube'}
-                                                                <span class="cube-action">{mp.cube_action || 'Cube'}</span>
-                                                            {:else}
-                                                                {mp.checker_move || '—'}
-                                                            {/if}
-                                                        </td>
-                                                    </tr>
-                                                {/each}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                {/each}
-                            {/if}
-                        </div>
-                    {/if}
-
-                    <!-- Metadata view -->
-                    {#if detailView === 'metadata'}
-                        <div class="metadata-container">
-                            <table class="metadata-table">
-                                <tbody>
-                                    <tr><td class="meta-label">Player 1</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
-                                    <tr><td class="meta-label">Player 2</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
-                                    <tr><td class="meta-label">Match length</td><td class="meta-value">{detailMatch.match_length} point{detailMatch.match_length > 1 ? 's' : ''}</td></tr>
-                                    <tr><td class="meta-label">Games</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
-                                    <tr><td class="meta-label">Date</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
-                                    <tr>
-                                        <td class="meta-label">Comment</td>
-                                        <td class="meta-value">
-                                            {#if editingDetailComment}
+                                <tr class:selected={selectedMatch && selectedMatch.id === match.id} on:click={() => selectMatch(match)} on:dblclick={() => handleDoubleClick(match)}>
+                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
+                                    <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
+                                    <td class="no-select">{match.player1_name}</td>
+                                    <td class="no-select">{match.player2_name}</td>
+                                    <td class="narrow-col no-select">{match.match_length}</td>
+                                    <td class="tournament-col no-select tournament-meta-cell" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
+                                        {#if editingTournamentMatchId === match.id}
+                                            <div class="tournament-cell-edit">
                                                 <input
                                                     type="text"
-                                                    class="match-comment-input"
-                                                    bind:value={editDetailCommentText}
-                                                    on:keydown={handleDetailCommentKeyDown}
-                                                    on:blur={saveDetailComment}
+                                                    class="tournament-edit-input"
+                                                    bind:value={editTournamentValue}
+                                                    on:input={filterTournaments}
+                                                    on:keydown={handleTournamentKeyDown}
+                                                    on:blur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                    placeholder="Tournament name"
                                                 />
-                                            {:else}
-                                                <!-- svelte-ignore a11y_click_events_have_key_events -->
-                                                <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                                <span class="match-comment-display" on:click={startEditDetailComment} title="Click to add comment">
-                                                    {detailMatch.comment || 'Add comment…'}
-                                                </span>
-                                            {/if}
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td class="meta-label">Tournament</td>
-                                        <td class="meta-value tournament-meta-cell" on:click|stopPropagation={(e) => startEditTournament(detailMatch, e)}>
-                                            {#if editingTournamentMatchId === detailMatch.id}
-                                                <div class="tournament-cell-edit">
-                                                    <input 
-                                                        type="text" 
-                                                        class="tournament-edit-input"
-                                                        bind:value={editTournamentValue}
-                                                        on:input={filterTournaments}
-                                                        on:keydown={handleTournamentKeyDown}
-                                                        on:blur={() => setTimeout(cancelTournamentEdit, 200)}
-                                                        placeholder="Tournament name"
-                                                    />
-                                                    {#if showTournamentDropdown && filteredTournaments.length > 0}
-                                                        <div class="tournament-dropdown" style={tournamentDropdownStyle}>
-                                                            {#each filteredTournaments as t}
-                                                                <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
-                                                                    {t.name}
-                                                                </div>
-                                                            {/each}
-                                                        </div>
-                                                    {/if}
-                                                </div>
-                                            {:else}
-                                                <span class="tournament-display" title="Click to edit">{detailMatch.tournament_name || detailMatch.event || '—'}</span>
-                                            {/if}
-                                        </td>
-                                    </tr>
-                                    <tr><td class="meta-label">Event</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
-                                    <tr><td class="meta-label">Location</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
-                                    <tr><td class="meta-label">Round</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
-                                    <tr><td class="meta-label">Source file</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
-                                    <tr><td class="meta-label">Import date</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
-                                    <tr><td class="meta-label">Match ID</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    {/if}
-                </div>
-            {/if}
+                                                {#if showTournamentDropdown && filteredTournaments.length > 0}
+                                                    <div class="tournament-dropdown" style={tournamentDropdownStyle}>
+                                                        {#each filteredTournaments as t}
+                                                            <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
+                                                                {t.name}
+                                                            </div>
+                                                        {/each}
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {:else}
+                                            <span class="tournament-display" title="Click to assign tournament">{match.tournament_name || ''}</span>
+                                        {/if}
+                                    </td>
+                                    <td class="actions-col no-select">
+                                        <span class="item-actions">
+                                            <button class="icon-btn" on:click|stopPropagation={(e) => swapMatchPlayers(match, e)} title="Swap players">⇄</button>
+                                            <button class="icon-btn" on:click|stopPropagation={(e) => startEditMatch(match, e)} title="Edit">✎</button>
+                                            <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteMatchEntry(match, e)} title="Delete">×</button>
+                                        </span>
+                                    </td>
+                                </tr>
+                            {/if}
+                        {/each}
+                    </tbody>
+                </table>
+                {#if matches.length === 0}
+                    <div class="empty-state">No matches imported yet</div>
+                {/if}
+            </div>
         </div>
-    </section>
 
+        <!-- Detail pane (right side, shown when a match is selected) -->
+        {#if detailMatch}
+            <div class="detail-pane">
+                <!-- Match metadata header -->
+                <div class="detail-header">
+                    <div class="detail-title">
+                        <span class="player-name">{detailMatch.player1_name}</span>
+                        <span class="vs-label">vs</span>
+                        <span class="player-name">{detailMatch.player2_name}</span>
+                        <span class="match-length-badge">{detailMatch.match_length} pt</span>
+                    </div>
+                    <div class="detail-meta">
+                        {#if detailMatch.match_date && formatDate(detailMatch.match_date) !== '-'}
+                            <span class="meta-item" title="Date">{formatDate(detailMatch.match_date)}</span>
+                        {/if}
+                        {#if detailMatch.tournament_name || detailMatch.event}
+                            <span class="meta-item meta-tournament" title="Tournament">{detailMatch.tournament_name || detailMatch.event}</span>
+                        {/if}
+                        {#if detailMatch.round}
+                            <span class="meta-item" title="Round">R{detailMatch.round}</span>
+                        {/if}
+                        {#if detailMatch.location}
+                            <span class="meta-item" title="Location">{detailMatch.location}</span>
+                        {/if}
+                    </div>
+                    <div class="detail-tabs">
+                        <button class="detail-tab" class:active={detailView === 'transcript'} on:click={() => (detailView = 'transcript')}>Transcript</button>
+                        <button class="detail-tab" class:active={detailView === 'metadata'} on:click={() => (detailView = 'metadata')}>Info</button>
+                        <button class="detail-tab enter-match-btn" on:click={() => enterMatchMode(detailMatch)} title="Enter match mode (↵)">▶ Review</button>
+                    </div>
+                </div>
+
+                <!-- Transcript view -->
+                {#if detailView === 'transcript'}
+                    <div class="transcript-container">
+                        {#if loadingDetail}
+                            <div class="loading-state">Loading...</div>
+                        {:else if transcriptGames.length === 0}
+                            <div class="empty-state">No moves recorded</div>
+                        {:else}
+                            {#each transcriptGames as game}
+                                <div class="game-section">
+                                    <div class="game-header">
+                                        <span class="game-title">Game {game.gameNumber}</span>
+                                        {#if game.gameInfo}
+                                            <span class="game-score">Score: {game.gameInfo.initial_score[0]}–{game.gameInfo.initial_score[1]}</span>
+                                            {#if game.gameInfo.winner >= 0}
+                                                <span class="game-result"
+                                                    >Won by {game.gameInfo.winner === 0 ? detailMatch.player1_name : detailMatch.player2_name} ({game.gameInfo.points_won} pt{game.gameInfo.points_won >
+                                                    1
+                                                        ? 's'
+                                                        : ''})</span
+                                                >
+                                            {/if}
+                                        {/if}
+                                    </div>
+                                    <table class="transcript-table">
+                                        <thead>
+                                            <tr>
+                                                <th class="transcript-num">#</th>
+                                                <th class="transcript-player">Player</th>
+                                                <th class="transcript-dice">Dice</th>
+                                                <th class="transcript-move">Move</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {#each game.moves as mp, mi}
+                                                {@const globalIdx = detailMovePositions.indexOf(mp)}
+                                                <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} on:click={() => navigateToMove(globalIdx)} title="Click to review this position">
+                                                    <td class="transcript-num">{mi + 1}</td>
+                                                    <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
+                                                        {getPlayerName(mp)}
+                                                    </td>
+                                                    <td class="transcript-dice">
+                                                        {#if mp.move_type === 'checker'}
+                                                            {formatDiceShort(mp.position.dice)}
+                                                        {/if}
+                                                    </td>
+                                                    <td class="transcript-move">
+                                                        {#if mp.move_type === 'cube'}
+                                                            <span class="cube-action">{mp.cube_action || 'Cube'}</span>
+                                                        {:else}
+                                                            {mp.checker_move || '—'}
+                                                        {/if}
+                                                    </td>
+                                                </tr>
+                                            {/each}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            {/each}
+                        {/if}
+                    </div>
+                {/if}
+
+                <!-- Metadata view -->
+                {#if detailView === 'metadata'}
+                    <div class="metadata-container">
+                        <table class="metadata-table">
+                            <tbody>
+                                <tr><td class="meta-label">Player 1</td><td class="meta-value">{detailMatch.player1_name || '—'}</td></tr>
+                                <tr><td class="meta-label">Player 2</td><td class="meta-value">{detailMatch.player2_name || '—'}</td></tr>
+                                <tr><td class="meta-label">Match length</td><td class="meta-value">{detailMatch.match_length} point{detailMatch.match_length > 1 ? 's' : ''}</td></tr>
+                                <tr><td class="meta-label">Games</td><td class="meta-value">{detailMatch.game_count || detailGames.length || '—'}</td></tr>
+                                <tr><td class="meta-label">Date</td><td class="meta-value">{formatDate(detailMatch.match_date)}</td></tr>
+                                <tr>
+                                    <td class="meta-label">Comment</td>
+                                    <td class="meta-value">
+                                        {#if editingDetailComment}
+                                            <input type="text" class="match-comment-input" bind:value={editDetailCommentText} on:keydown={handleDetailCommentKeyDown} on:blur={saveDetailComment} />
+                                        {:else}
+                                            <!-- svelte-ignore a11y_click_events_have_key_events -->
+                                            <!-- svelte-ignore a11y_no_static_element_interactions -->
+                                            <span class="match-comment-display" on:click={startEditDetailComment} title="Click to add comment">
+                                                {detailMatch.comment || 'Add comment…'}
+                                            </span>
+                                        {/if}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="meta-label">Tournament</td>
+                                    <td class="meta-value tournament-meta-cell" on:click|stopPropagation={(e) => startEditTournament(detailMatch, e)}>
+                                        {#if editingTournamentMatchId === detailMatch.id}
+                                            <div class="tournament-cell-edit">
+                                                <input
+                                                    type="text"
+                                                    class="tournament-edit-input"
+                                                    bind:value={editTournamentValue}
+                                                    on:input={filterTournaments}
+                                                    on:keydown={handleTournamentKeyDown}
+                                                    on:blur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                    placeholder="Tournament name"
+                                                />
+                                                {#if showTournamentDropdown && filteredTournaments.length > 0}
+                                                    <div class="tournament-dropdown" style={tournamentDropdownStyle}>
+                                                        {#each filteredTournaments as t}
+                                                            <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
+                                                                {t.name}
+                                                            </div>
+                                                        {/each}
+                                                    </div>
+                                                {/if}
+                                            </div>
+                                        {:else}
+                                            <span class="tournament-display" title="Click to edit">{detailMatch.tournament_name || detailMatch.event || '—'}</span>
+                                        {/if}
+                                    </td>
+                                </tr>
+                                <tr><td class="meta-label">Event</td><td class="meta-value">{detailMatch.event || '—'}</td></tr>
+                                <tr><td class="meta-label">Location</td><td class="meta-value">{detailMatch.location || '—'}</td></tr>
+                                <tr><td class="meta-label">Round</td><td class="meta-value">{detailMatch.round || '—'}</td></tr>
+                                <tr><td class="meta-label">Source file</td><td class="meta-value source-file">{detailMatch.file_path || '—'}</td></tr>
+                                <tr><td class="meta-label">Import date</td><td class="meta-value">{formatDate(detailMatch.import_date)}</td></tr>
+                                <tr><td class="meta-label">Match ID</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                {/if}
+            </div>
+        {/if}
+    </div>
+</section>
 
 <style>
     .match-panel {
@@ -1207,7 +1223,9 @@
         cursor: pointer;
         font-size: 11px;
         color: #666;
-        transition: color 0.15s, border-color 0.15s;
+        transition:
+            color 0.15s,
+            border-color 0.15s;
     }
 
     .detail-tab:hover {
@@ -1422,7 +1440,7 @@
         background: white;
         border: 1px solid #ccc;
         border-radius: 3px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
         z-index: 9999;
     }
 

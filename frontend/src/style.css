@@ -1,9 +1,10 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: hidden; /* Prevents horizontal overflow */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* Prevents horizontal overflow */
 }
 
 html {
@@ -14,30 +15,41 @@ html {
 
 body {
     color: black;
-    font-family: "Nunito", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
+    font-family:
+        'Nunito',
+        -apple-system,
+        BlinkMacSystemFont,
+        'Segoe UI',
+        'Roboto',
+        'Oxygen',
+        'Ubuntu',
+        'Cantarell',
+        'Fira Sans',
+        'Droid Sans',
+        'Helvetica Neue',
+        sans-serif;
 }
 
 .japanese-text {
     font-family: 'Noto Sans JP', sans-serif; /* Font for Japanese text */
 }
 
-
 @font-face {
-    font-family: "Nunito";
+    font-family: 'Nunito';
     font-style: normal;
     font-weight: 400;
-    src: local(""),
-    url("assets/fonts/nunito-v16-latin-regular.woff2") format("woff2");
+    src:
+        local(''),
+        url('assets/fonts/nunito-v16-latin-regular.woff2') format('woff2');
 }
 
 @font-face {
-    font-family: "Noto Sans JP";
+    font-family: 'Noto Sans JP';
     font-style: normal;
     font-weight: normal;
-    src: local(""),
-    url("assets/fonts/NotoSansJP-Regular.ttf") format("truetype");
+    src:
+        local(''),
+        url('assets/fonts/NotoSansJP-Regular.ttf') format('truetype');
 }
 
 #app {

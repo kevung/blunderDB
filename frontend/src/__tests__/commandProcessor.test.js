@@ -8,7 +8,7 @@ vi.mock('../../wailsjs/go/main/Database.js', () => ({
     Migrate_1_1_0_to_1_2_0: vi.fn().mockResolvedValue(undefined),
     Migrate_1_2_0_to_1_3_0: vi.fn().mockResolvedValue(undefined),
     ClearCommandHistory: vi.fn().mockResolvedValue(undefined),
-    SaveSearchHistory: vi.fn().mockResolvedValue(undefined),
+    SaveSearchHistory: vi.fn().mockResolvedValue(undefined)
 }));
 
 import { parseFilters, processCommand, initCommandProcessor } from '../commandProcessor.js';
@@ -329,7 +329,7 @@ describe('processCommand', () => {
             toggleMatchPanel: vi.fn(),
             toggleCollectionPanel: vi.fn(),
             toggleEPCMode: vi.fn(),
-            toggleMatchMode: vi.fn(),
+            toggleMatchMode: vi.fn()
         };
         initCommandProcessor(callbacks);
 
@@ -413,7 +413,7 @@ describe('processCommand', () => {
         ['collection', 'toggleCollectionPanel'],
         ['coll', 'toggleCollectionPanel'],
         ['epc', 'toggleEPCMode'],
-        ['m', 'toggleMatchMode'],
+        ['m', 'toggleMatchMode']
     ];
 
     test.each(callbackCommands)('"%s" calls %s', (cmd, cb) => {

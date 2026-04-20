@@ -4,7 +4,7 @@
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';
-    import { GetCommentsByPosition, SearchComments, LoadComment, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/main/Database.js';
+    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/main/Database.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
 
     let allComments = [];
@@ -36,7 +36,7 @@
         try {
             const pos = $positionStore;
             if (pos && pos.id) {
-                allComments = await GetCommentsByPosition(pos.id) || [];
+                allComments = (await GetCommentsByPosition(pos.id)) || [];
             } else {
                 allComments = [];
             }
@@ -50,8 +50,8 @@
 
     async function filterComments(q) {
         try {
-            displayedComments = await SearchComments(q) || [];
-        } catch (error) {
+            displayedComments = (await SearchComments(q)) || [];
+        } catch (_error) {
             displayedComments = [];
         }
     }
@@ -67,7 +67,9 @@
                     if (analysis) {
                         analysisStore.set(analysis);
                     }
-                } catch (e) {}
+                } catch (_e) {
+                    /* ignored */
+                }
                 selectedMoveStore.set(null);
             }
         } catch (error) {
@@ -155,7 +157,9 @@
             const diffHr = Math.floor(diffMin / 60);
             if (diffHr < 24) return `${diffHr}h ago`;
             return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        } catch { return ''; }
+        } catch {
+            return '';
+        }
     }
 
     function handleSearchKeyDown(event) {
@@ -170,15 +174,14 @@
     <!-- Search bar -->
     <div class="search-strip">
         <span class="search-icon">⌕</span>
-        <input
-            type="text"
-            bind:value={searchQuery}
-            placeholder="Search comments…"
-            on:keydown={handleSearchKeyDown}
-            class="search-input"
-        />
+        <input type="text" bind:value={searchQuery} placeholder="Search comments…" on:keydown={handleSearchKeyDown} class="search-input" />
         {#if searchQuery}
-            <button class="clear-btn" on:click={() => { searchQuery = ''; }}>×</button>
+            <button
+                class="clear-btn"
+                on:click={() => {
+                    searchQuery = '';
+                }}>×</button
+            >
         {/if}
     </div>
 
@@ -190,18 +193,13 @@
             {#each displayedComments as comment}
                 {#if editingCommentId === comment.id}
                     <div class="msg editing">
-                        <textarea
-                            class="msg-edit-input"
-                            bind:value={editingText}
-                            on:keydown={(e) => handleEditKeyDown(e, comment)}
-                            on:blur={() => saveEditedComment(comment)}
-                            rows="2"
-                        ></textarea>
+                        <textarea class="msg-edit-input" bind:value={editingText} on:keydown={(e) => handleEditKeyDown(e, comment)} on:blur={() => saveEditedComment(comment)} rows="2"></textarea>
                     </div>
                 {:else}
                     <div class="msg" role="button" tabindex="-1" on:click={() => navigateToComment(comment)} on:keydown={() => {}}>
                         <div class="msg-header">
-                            <span class="msg-date">{comment.modifiedAt && comment.modifiedAt !== comment.createdAt ? formatDate(comment.modifiedAt) + ' (edited)' : formatDate(comment.createdAt)}</span>
+                            <span class="msg-date">{comment.modifiedAt && comment.modifiedAt !== comment.createdAt ? formatDate(comment.modifiedAt) + ' (edited)' : formatDate(comment.createdAt)}</span
+                            >
                         </div>
                         <div class="msg-text">{comment.text}</div>
                         <div class="msg-footer">
@@ -216,13 +214,7 @@
 
     <!-- Prompt -->
     <div class="prompt">
-        <textarea
-            id="commentTextArea"
-            bind:value={promptText}
-            placeholder="Comment on current position…"
-            on:keydown={handlePromptKeyDown}
-            rows="2"
-        ></textarea>
+        <textarea id="commentTextArea" bind:value={promptText} placeholder="Comment on current position…" on:keydown={handlePromptKeyDown} rows="2"></textarea>
     </div>
 </div>
 
@@ -246,7 +238,11 @@
         flex-shrink: 0;
         background: #fafafa;
     }
-    .search-icon { color: #aaa; font-size: 13px; flex-shrink: 0; }
+    .search-icon {
+        color: #aaa;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
     .search-input {
         flex: 1;
         border: none;
@@ -265,7 +261,9 @@
         padding: 0 2px;
         line-height: 1;
     }
-    .clear-btn:hover { color: #333; }
+    .clear-btn:hover {
+        color: #333;
+    }
 
     /* Feed */
     .feed {
@@ -283,8 +281,14 @@
         transition: background 0.1s;
         position: relative;
     }
-    .msg:hover { background: #e4e8f2; }
-    .msg.editing { background: #fefce8; cursor: default; border-radius: 6px; }
+    .msg:hover {
+        background: #e4e8f2;
+    }
+    .msg.editing {
+        background: #fefce8;
+        cursor: default;
+        border-radius: 6px;
+    }
 
     .msg-text {
         font-size: 12px;
@@ -320,9 +324,15 @@
         line-height: 1;
         transition: color 0.1s;
     }
-    .msg:hover .msg-action { color: #bbb; }
-    .msg-edit:hover { color: #4a90d9 !important; }
-    .msg-delete:hover { color: #c55 !important; }
+    .msg:hover .msg-action {
+        color: #bbb;
+    }
+    .msg-edit:hover {
+        color: #4a90d9 !important;
+    }
+    .msg-delete:hover {
+        color: #c55 !important;
+    }
 
     .msg-edit-input {
         width: 100%;
@@ -336,7 +346,9 @@
         resize: none;
         outline: none;
     }
-    .msg-edit-input:focus { border-color: #4a90d9; }
+    .msg-edit-input:focus {
+        border-color: #4a90d9;
+    }
 
     .empty-msg {
         text-align: center;

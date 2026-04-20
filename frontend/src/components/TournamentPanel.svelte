@@ -1,10 +1,10 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
-    import { 
-        GetAllTournaments, 
-        CreateTournament, 
-        DeleteTournament, 
+    import {
+        GetAllTournaments,
+        CreateTournament,
+        DeleteTournament,
         UpdateTournament,
         GetTournamentMatches,
         RemoveMatchFromTournament,
@@ -29,15 +29,15 @@
     let selectedTournament = null;
     let tournamentMatches = [];
     let visible = false;
-    let databaseLoaded = false;
+    let _databaseLoaded = false;
     let sortBy = null;
     let sortOrder = 'asc';
-    
+
     // New tournament form
     let newTournamentName = '';
     let newTournamentDate = '';
     let newTournamentLocation = '';
-    
+
     // Edit tournament
     let editingTournament = null;
     let editName = '';
@@ -61,23 +61,23 @@
 
     // Pointer-based drag reorder (no state variables needed)
 
-    const unsubTournaments = tournamentsStore.subscribe(value => {
+    const unsubTournaments = tournamentsStore.subscribe((value) => {
         tournaments = value || [];
     });
 
-    const unsubSelected = selectedTournamentStore.subscribe(value => {
+    const unsubSelected = selectedTournamentStore.subscribe((value) => {
         selectedTournament = value;
     });
 
-    const unsubMatches = tournamentMatchesStore.subscribe(value => {
+    const unsubMatches = tournamentMatchesStore.subscribe((value) => {
         tournamentMatches = value || [];
     });
 
-    const unsubDb = databaseLoadedStore.subscribe(value => {
-        databaseLoaded = value;
+    const unsubDb = databaseLoadedStore.subscribe((value) => {
+        _databaseLoaded = value;
     });
 
-    const unsubVisible = openPanels.subscribe(async value => {
+    const unsubVisible = openPanels.subscribe(async (value) => {
         const wasVisible = visible;
         visible = value.has(PANEL.TOURNAMENT);
         if (visible && !wasVisible) {
@@ -243,14 +243,10 @@
 
     function updateFilteredMatches() {
         // Only show matches not assigned to any tournament
-        let available = allMatches.filter(m => !m.tournament_id);
+        let available = allMatches.filter((m) => !m.tournament_id);
         if (addMatchSearch.trim()) {
             const q = addMatchSearch.toLowerCase();
-            available = available.filter(m =>
-                (m.player1_name || '').toLowerCase().includes(q) ||
-                (m.player2_name || '').toLowerCase().includes(q) ||
-                String(m.match_length || '').includes(q)
-            );
+            available = available.filter((m) => (m.player1_name || '').toLowerCase().includes(q) || (m.player2_name || '').toLowerCase().includes(q) || String(m.match_length || '').includes(q));
         }
         filteredMatches = available;
     }
@@ -295,7 +291,10 @@
         [newList[index - 1], newList[index]] = [newList[index], newList[index - 1]];
         tournamentMatchesStore.set(newList);
         try {
-            await ReorderTournamentMatches(selectedTournament.id, newList.map(m => m.id));
+            await ReorderTournamentMatches(
+                selectedTournament.id,
+                newList.map((m) => m.id)
+            );
         } catch (error) {
             console.error('Error reordering matches:', error);
         }
@@ -307,7 +306,10 @@
         [newList[index], newList[index + 1]] = [newList[index + 1], newList[index]];
         tournamentMatchesStore.set(newList);
         try {
-            await ReorderTournamentMatches(selectedTournament.id, newList.map(m => m.id));
+            await ReorderTournamentMatches(
+                selectedTournament.id,
+                newList.map((m) => m.id)
+            );
         } catch (error) {
             console.error('Error reordering matches:', error);
         }
@@ -325,9 +327,7 @@
         try {
             await UpdateMatchComment(editingMatchCommentId, editingMatchComment);
             // Update local state
-            const updated = tournamentMatches.map(m =>
-                m.id === editingMatchCommentId ? { ...m, comment: editingMatchComment } : m
-            );
+            const updated = tournamentMatches.map((m) => (m.id === editingMatchCommentId ? { ...m, comment: editingMatchComment } : m));
             tournamentMatchesStore.set(updated);
             editingMatchCommentId = null;
         } catch (error) {
@@ -369,7 +369,10 @@
         newList.splice(toIndex, 0, moved);
         tournamentMatchesStore.set(newList);
         try {
-            await ReorderTournamentMatches(selectedTournament.id, newList.map(m => m.id));
+            await ReorderTournamentMatches(
+                selectedTournament.id,
+                newList.map((m) => m.id)
+            );
         } catch (error) {
             console.error('Error reordering matches:', error);
         }
@@ -386,7 +389,7 @@
 
             // If we are currently viewing this match in match mode, update context
             let currentContext = null;
-            const unsub = matchContextStore.subscribe(v => currentContext = v);
+            const unsub = matchContextStore.subscribe((v) => (currentContext = v));
             unsub();
             if (currentContext && currentContext.isMatchMode && currentContext.matchID === match.id) {
                 const movePositions = await GetMatchMovePositions(match.id);
@@ -398,7 +401,7 @@
                         movePositions: movePositions,
                         currentIndex: currentIndex,
                         player1Name: movePositions[0].player1_name,
-                        player2Name: movePositions[0].player2_name,
+                        player2Name: movePositions[0].player2_name
                     });
                     positionStore.set(movePositions[currentIndex].position);
                 }
@@ -421,7 +424,7 @@
 
             let startIndex = 0;
             let lastVisitedMatch = null;
-            const unsub = lastVisitedMatchStore.subscribe(v => lastVisitedMatch = v);
+            const unsub = lastVisitedMatchStore.subscribe((v) => (lastVisitedMatch = v));
             unsub();
             // First check in-memory store for same session, then check DB-persisted value
             if (lastVisitedMatch && lastVisitedMatch.matchID === match.id) {
@@ -438,14 +441,18 @@
                 movePositions: movePositions,
                 currentIndex: startIndex,
                 player1Name: match.player1_name,
-                player2Name: match.player2_name,
+                player2Name: match.player2_name
             });
 
             const startMovePos = movePositions[startIndex];
             positionStore.set(startMovePos.position);
 
             let analysis = null;
-            try { analysis = await LoadAnalysis(startMovePos.position.id); } catch (e) {}
+            try {
+                analysis = await LoadAnalysis(startMovePos.position.id);
+            } catch (_e) {
+                /* ignored */
+            }
 
             const currentPlayedMove = startMovePos.checker_move || '';
             const currentPlayedCubeAction = startMovePos.cube_action || '';
@@ -459,12 +466,24 @@
                 analysisEngineVersion: analysis?.analysisEngineVersion || '',
                 checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
                 doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
-                    analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
-                    playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
-                    opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
-                    cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
-                    cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
-                    bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
+                    analysisDepth: '',
+                    playerWinChances: 0,
+                    playerGammonChances: 0,
+                    playerBackgammonChances: 0,
+                    opponentWinChances: 0,
+                    opponentGammonChances: 0,
+                    opponentBackgammonChances: 0,
+                    cubelessNoDoubleEquity: 0,
+                    cubelessDoubleEquity: 0,
+                    cubefulNoDoubleEquity: 0,
+                    cubefulNoDoubleError: 0,
+                    cubefulDoubleTakeEquity: 0,
+                    cubefulDoubleTakeError: 0,
+                    cubefulDoublePassEquity: 0,
+                    cubefulDoublePassError: 0,
+                    bestCubeAction: '',
+                    wrongPassPercentage: 0,
+                    wrongTakePercentage: 0
                 },
                 playedMove: currentPlayedMove,
                 playedCubeAction: currentPlayedCubeAction,
@@ -484,7 +503,7 @@
                 gameNumber: startMovePos.game_number
             });
             // Persist last visited position to database
-            SaveLastVisitedPosition(match.id, startIndex).catch(e => {
+            SaveLastVisitedPosition(match.id, startIndex).catch((e) => {
                 console.error('Error persisting last visited position:', e);
             });
             closeTournamentPanel();
@@ -525,9 +544,7 @@
 
         // j/k / ArrowUp/Down to browse tournament list
         if (tournaments.length > 0) {
-            const currentIndex = selectedTournament 
-                ? tournaments.findIndex(t => t.id === selectedTournament.id) 
-                : -1;
+            const currentIndex = selectedTournament ? tournaments.findIndex((t) => t.id === selectedTournament.id) : -1;
 
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -574,253 +591,645 @@
     });
 </script>
 
-    <section class="tournament-panel" id="tournamentPanel" tabindex="-1">
-        <div class="panel-content">
-            {#if !selectedTournament}
-                <!-- Tournaments list -->
-                <div class="tournament-list-pane">
-                    <div class="table-container">
-                        <table class="tournament-table">
-                            <thead>
-                                <tr>
-                                    <th class="no-select sortable" on:click={() => handleSort('name')}>Name {#if sortBy === 'name'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                    <th class="no-select sortable narrow-col" on:click={() => handleSort('matches')}>Matches {#if sortBy === 'matches'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                    <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}>Date {#if sortBy === 'date'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                    <th class="no-select sortable" on:click={() => handleSort('location')}>Location {#if sortBy === 'location'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th>
-                                    <th class="no-select actions-col"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {#each tournaments as tournament, index}
-                                    {#if editingTournament && editingTournament.id === tournament.id}
-                                        <tr class="editing-row">
-                                            <td><input class="edit-input" type="text" bind:value={editName} on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); saveEdit(); } if (e.key === 'Escape') { e.stopPropagation(); cancelEdit(); } }} autofocus /></td>
-                                            <td class="narrow-col"></td>
-                                            <td class="narrow-col"><input class="edit-input" type="date" bind:value={editDate} on:keydown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); cancelEdit(); } }} /></td>
-                                            <td><input class="edit-input" type="text" bind:value={editLocation} placeholder="Location" on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); saveEdit(); } if (e.key === 'Escape') { e.stopPropagation(); cancelEdit(); } }} /></td>
-                                            <td class="actions-col no-select">
-                                                <span class="item-actions editing-actions">
-                                                    <button class="icon-btn" on:click={saveEdit} title="Save">✓</button>
-                                                    <button class="icon-btn" on:click={cancelEdit} title="Cancel">✕</button>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    {:else}
-                                        <tr on:click={() => selectTournament(tournament)} on:dblclick={() => selectTournament(tournament)}>
-                                            <td class="no-select">{tournament.name}</td>
-                                            <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
-                                            <td class="narrow-col no-select">{tournament.date || ''}</td>
-                                            <td class="no-select">{tournament.location || ''}</td>
-                                            <td class="actions-col no-select">
-                                                <span class="item-actions">
-                                                    <button class="icon-btn" on:click|stopPropagation={(e) => startEdit(tournament, e)} title="Edit">✎</button>
-                                                    <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteTournamentEntry(tournament, e)} title="Delete">×</button>
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    {/if}
-                                {/each}
-                            </tbody>
-                        </table>
-                        {#if tournaments.length === 0}
-                            <div class="empty-state">No tournaments</div>
-                        {/if}
-                    </div>
-                    <div class="add-area">
-                        <input class="add-input name" type="text" bind:value={newTournamentName} placeholder="New tournament…" on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); createTournament(); } if (e.key === 'Escape') { e.stopPropagation(); e.currentTarget.blur(); } }} />
-                        <input class="add-input date" type="date" bind:value={newTournamentDate} on:keydown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); e.currentTarget.blur(); } }} />
-                        <input class="add-input loc" type="text" bind:value={newTournamentLocation} placeholder="Location" on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); createTournament(); } if (e.key === 'Escape') { e.stopPropagation(); e.currentTarget.blur(); } }} />
-                    </div>
-                </div>
-            {:else}
-                <!-- Matches for selected tournament -->
-                <div class="tournament-list-pane">
-                    <div class="detail-header">
-                        <button class="back-btn" on:click={() => { selectedTournamentStore.set(null); tournamentMatchesStore.set([]); addMatchSearch = ''; editingTournamentComment = false; }} title="Back to tournaments">←</button>
-                        <span class="header-name" title={selectedTournament.name}>{selectedTournament.name}</span>
-                        {#if selectedTournament.date || selectedTournament.location}
-                            <span class="header-meta">
-                                {#if selectedTournament.date}{selectedTournament.date}{/if}
-                                {#if selectedTournament.date && selectedTournament.location} · {/if}
-                                {#if selectedTournament.location}{selectedTournament.location}{/if}
-                            </span>
-                        {/if}
-                        <button class="icon-btn edit-header-btn" on:click|stopPropagation={(e) => startEdit(selectedTournament, e)} title="Edit">✎</button>
-                        <span class="header-spacer"></span>
-                        {#if editingTournamentComment}
-                            <input
-                                class="tournament-comment-inline"
-                                type="text"
-                                bind:value={tournamentCommentText}
-                                on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); saveTournamentComment(); } if (e.key === 'Escape') { e.stopPropagation(); cancelTournamentComment(); } }}
-                                on:blur={saveTournamentComment}
-                                placeholder="Notes…"
-                                autofocus
-                            />
-                        {:else}
-                            <span class="tournament-comment-text" class:has-comment={selectedTournament.comment} on:click|stopPropagation={startEditTournamentComment} title={selectedTournament.comment || 'Click to add notes'}>
-                                {selectedTournament.comment || 'Notes…'}
-                            </span>
-                        {/if}
-                    </div>
-                    <div class="table-container">
-                        <table class="tournament-table">
-                            <thead>
-                                <tr>
-                                    <th class="no-select narrow-col">#</th>
-                                    <th class="no-select">Player 1</th>
-                                    <th class="no-select">Player 2</th>
-                                    <th class="no-select narrow-col">Pts</th>
-                                    <th class="no-select comment-col">Comment</th>
-                                    <th class="no-select actions-col"></th>
-                                </tr>
-                            </thead>
-                            <tbody use:dragReorder={{ onReorder: handleMatchReorder }}>
-                                {#each tournamentMatches as match, index}
-                                    <tr
-                                        on:dblclick={() => openMatch(match)}
-                                    >
-                                        <td class="index-cell narrow-col no-select">{index + 1}</td>
-                                        <td class="no-select">{match.player1_name}</td>
-                                        <td class="no-select">{match.player2_name}</td>
-                                        <td class="narrow-col no-select">{match.match_length}</td>
-                                        <td class="comment-col no-select">
-                                            {#if editingMatchCommentId === match.id}
-                                                <input
-                                                    class="edit-input"
-                                                    type="text"
-                                                    bind:value={editingMatchComment}
-                                                    on:keydown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); saveMatchComment(); } if (e.key === 'Escape') { e.stopPropagation(); cancelMatchComment(); } }}
-                                                    on:blur={saveMatchComment}
-                                                    autofocus
-                                                />
-                                            {:else}
-                                                <span class="comment-text" class:has-comment={match.comment} on:click|stopPropagation={(e) => startEditMatchComment(match, e)} title={match.comment || 'Click to add comment'}>
-                                                    {match.comment || ''}
-                                                </span>
-                                            {/if}
-                                        </td>
+<section class="tournament-panel" id="tournamentPanel" tabindex="-1">
+    <div class="panel-content">
+        {#if !selectedTournament}
+            <!-- Tournaments list -->
+            <div class="tournament-list-pane">
+                <div class="table-container">
+                    <table class="tournament-table">
+                        <thead>
+                            <tr>
+                                <th class="no-select sortable" on:click={() => handleSort('name')}
+                                    >Name {#if sortBy === 'name'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >
+                                <th class="no-select sortable narrow-col" on:click={() => handleSort('matches')}
+                                    >Matches {#if sortBy === 'matches'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >
+                                <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}
+                                    >Date {#if sortBy === 'date'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >
+                                <th class="no-select sortable" on:click={() => handleSort('location')}
+                                    >Location {#if sortBy === 'location'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >
+                                <th class="no-select actions-col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {#each tournaments as tournament, _index}
+                                {#if editingTournament && editingTournament.id === tournament.id}
+                                    <tr class="editing-row">
+                                        <td
+                                            ><input
+                                                class="edit-input"
+                                                type="text"
+                                                bind:value={editName}
+                                                on:keydown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.stopPropagation();
+                                                        saveEdit();
+                                                    }
+                                                    if (e.key === 'Escape') {
+                                                        e.stopPropagation();
+                                                        cancelEdit();
+                                                    }
+                                                }}
+                                                autofocus
+                                            /></td
+                                        >
+                                        <td class="narrow-col"></td>
+                                        <td class="narrow-col"
+                                            ><input
+                                                class="edit-input"
+                                                type="date"
+                                                bind:value={editDate}
+                                                on:keydown={(e) => {
+                                                    if (e.key === 'Escape') {
+                                                        e.stopPropagation();
+                                                        cancelEdit();
+                                                    }
+                                                }}
+                                            /></td
+                                        >
+                                        <td
+                                            ><input
+                                                class="edit-input"
+                                                type="text"
+                                                bind:value={editLocation}
+                                                placeholder="Location"
+                                                on:keydown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.stopPropagation();
+                                                        saveEdit();
+                                                    }
+                                                    if (e.key === 'Escape') {
+                                                        e.stopPropagation();
+                                                        cancelEdit();
+                                                    }
+                                                }}
+                                            /></td
+                                        >
                                         <td class="actions-col no-select">
-                                            <span class="item-actions">
-                                                <button class="icon-btn" on:click|stopPropagation={() => moveMatchUp(index)} disabled={index === 0} title="Move up">▲</button>
-                                                <button class="icon-btn" on:click|stopPropagation={() => moveMatchDown(index)} disabled={index === tournamentMatches.length - 1} title="Move down">▼</button>
-                                                <button class="icon-btn" on:click|stopPropagation={() => swapMatchPlayersInTournament(match)} title="Swap">⇄</button>
-                                                <button class="icon-btn delete" on:click|stopPropagation={() => removeMatch(match.id)} title="Remove">×</button>
+                                            <span class="item-actions editing-actions">
+                                                <button class="icon-btn" on:click={saveEdit} title="Save">✓</button>
+                                                <button class="icon-btn" on:click={cancelEdit} title="Cancel">✕</button>
                                             </span>
                                         </td>
                                     </tr>
+                                {:else}
+                                    <tr on:click={() => selectTournament(tournament)} on:dblclick={() => selectTournament(tournament)}>
+                                        <td class="no-select">{tournament.name}</td>
+                                        <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
+                                        <td class="narrow-col no-select">{tournament.date || ''}</td>
+                                        <td class="no-select">{tournament.location || ''}</td>
+                                        <td class="actions-col no-select">
+                                            <span class="item-actions">
+                                                <button class="icon-btn" on:click|stopPropagation={(e) => startEdit(tournament, e)} title="Edit">✎</button>
+                                                <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteTournamentEntry(tournament, e)} title="Delete">×</button>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {/if}
+                            {/each}
+                        </tbody>
+                    </table>
+                    {#if tournaments.length === 0}
+                        <div class="empty-state">No tournaments</div>
+                    {/if}
+                </div>
+                <div class="add-area">
+                    <input
+                        class="add-input name"
+                        type="text"
+                        bind:value={newTournamentName}
+                        placeholder="New tournament…"
+                        on:keydown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.stopPropagation();
+                                createTournament();
+                            }
+                            if (e.key === 'Escape') {
+                                e.stopPropagation();
+                                e.currentTarget.blur();
+                            }
+                        }}
+                    />
+                    <input
+                        class="add-input date"
+                        type="date"
+                        bind:value={newTournamentDate}
+                        on:keydown={(e) => {
+                            if (e.key === 'Escape') {
+                                e.stopPropagation();
+                                e.currentTarget.blur();
+                            }
+                        }}
+                    />
+                    <input
+                        class="add-input loc"
+                        type="text"
+                        bind:value={newTournamentLocation}
+                        placeholder="Location"
+                        on:keydown={(e) => {
+                            if (e.key === 'Enter') {
+                                e.stopPropagation();
+                                createTournament();
+                            }
+                            if (e.key === 'Escape') {
+                                e.stopPropagation();
+                                e.currentTarget.blur();
+                            }
+                        }}
+                    />
+                </div>
+            </div>
+        {:else}
+            <!-- Matches for selected tournament -->
+            <div class="tournament-list-pane">
+                <div class="detail-header">
+                    <button
+                        class="back-btn"
+                        on:click={() => {
+                            selectedTournamentStore.set(null);
+                            tournamentMatchesStore.set([]);
+                            addMatchSearch = '';
+                            editingTournamentComment = false;
+                        }}
+                        title="Back to tournaments">←</button
+                    >
+                    <span class="header-name" title={selectedTournament.name}>{selectedTournament.name}</span>
+                    {#if selectedTournament.date || selectedTournament.location}
+                        <span class="header-meta">
+                            {#if selectedTournament.date}{selectedTournament.date}{/if}
+                            {#if selectedTournament.date && selectedTournament.location}
+                                ·
+                            {/if}
+                            {#if selectedTournament.location}{selectedTournament.location}{/if}
+                        </span>
+                    {/if}
+                    <button class="icon-btn edit-header-btn" on:click|stopPropagation={(e) => startEdit(selectedTournament, e)} title="Edit">✎</button>
+                    <span class="header-spacer"></span>
+                    {#if editingTournamentComment}
+                        <input
+                            class="tournament-comment-inline"
+                            type="text"
+                            bind:value={tournamentCommentText}
+                            on:keydown={(e) => {
+                                if (e.key === 'Enter') {
+                                    e.stopPropagation();
+                                    saveTournamentComment();
+                                }
+                                if (e.key === 'Escape') {
+                                    e.stopPropagation();
+                                    cancelTournamentComment();
+                                }
+                            }}
+                            on:blur={saveTournamentComment}
+                            placeholder="Notes…"
+                            autofocus
+                        />
+                    {:else}
+                        <span
+                            class="tournament-comment-text"
+                            class:has-comment={selectedTournament.comment}
+                            on:click|stopPropagation={startEditTournamentComment}
+                            title={selectedTournament.comment || 'Click to add notes'}
+                        >
+                            {selectedTournament.comment || 'Notes…'}
+                        </span>
+                    {/if}
+                </div>
+                <div class="table-container">
+                    <table class="tournament-table">
+                        <thead>
+                            <tr>
+                                <th class="no-select narrow-col">#</th>
+                                <th class="no-select">Player 1</th>
+                                <th class="no-select">Player 2</th>
+                                <th class="no-select narrow-col">Pts</th>
+                                <th class="no-select comment-col">Comment</th>
+                                <th class="no-select actions-col"></th>
+                            </tr>
+                        </thead>
+                        <tbody use:dragReorder={{ onReorder: handleMatchReorder }}>
+                            {#each tournamentMatches as match, index}
+                                <tr on:dblclick={() => openMatch(match)}>
+                                    <td class="index-cell narrow-col no-select">{index + 1}</td>
+                                    <td class="no-select">{match.player1_name}</td>
+                                    <td class="no-select">{match.player2_name}</td>
+                                    <td class="narrow-col no-select">{match.match_length}</td>
+                                    <td class="comment-col no-select">
+                                        {#if editingMatchCommentId === match.id}
+                                            <input
+                                                class="edit-input"
+                                                type="text"
+                                                bind:value={editingMatchComment}
+                                                on:keydown={(e) => {
+                                                    if (e.key === 'Enter') {
+                                                        e.stopPropagation();
+                                                        saveMatchComment();
+                                                    }
+                                                    if (e.key === 'Escape') {
+                                                        e.stopPropagation();
+                                                        cancelMatchComment();
+                                                    }
+                                                }}
+                                                on:blur={saveMatchComment}
+                                                autofocus
+                                            />
+                                        {:else}
+                                            <span
+                                                class="comment-text"
+                                                class:has-comment={match.comment}
+                                                on:click|stopPropagation={(e) => startEditMatchComment(match, e)}
+                                                title={match.comment || 'Click to add comment'}
+                                            >
+                                                {match.comment || ''}
+                                            </span>
+                                        {/if}
+                                    </td>
+                                    <td class="actions-col no-select">
+                                        <span class="item-actions">
+                                            <button class="icon-btn" on:click|stopPropagation={() => moveMatchUp(index)} disabled={index === 0} title="Move up">▲</button>
+                                            <button class="icon-btn" on:click|stopPropagation={() => moveMatchDown(index)} disabled={index === tournamentMatches.length - 1} title="Move down">▼</button
+                                            >
+                                            <button class="icon-btn" on:click|stopPropagation={() => swapMatchPlayersInTournament(match)} title="Swap">⇄</button>
+                                            <button class="icon-btn delete" on:click|stopPropagation={() => removeMatch(match.id)} title="Remove">×</button>
+                                        </span>
+                                    </td>
+                                </tr>
+                            {/each}
+                        </tbody>
+                    </table>
+                    {#if tournamentMatches.length === 0}
+                        <div class="empty-state">No matches</div>
+                    {/if}
+                </div>
+                <div class="add-area">
+                    <div class="add-match-wrap">
+                        <input
+                            type="text"
+                            bind:value={addMatchSearch}
+                            on:focus={(e) => {
+                                addMatchFocused = true;
+                                computeMatchDropdownPos(e.currentTarget);
+                                loadAllMatches().then(updateFilteredMatches);
+                            }}
+                            on:blur={() =>
+                                setTimeout(() => {
+                                    addMatchFocused = false;
+                                }, 150)}
+                            on:keydown={(e) => {
+                                if (e.key === 'Escape') {
+                                    e.stopPropagation();
+                                    addMatchSearch = '';
+                                    e.currentTarget.blur();
+                                }
+                            }}
+                            placeholder="Add match…"
+                            class="add-match-input"
+                        />
+                        {#if addMatchFocused && filteredMatches.length > 0}
+                            <div class="match-dropdown" style={matchDropdownStyle}>
+                                {#each filteredMatches as match}
+                                    <div class="dropdown-item" on:mousedown|preventDefault={() => addMatchToTournament(match.id)}>
+                                        {match.player1_name} vs {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
+                                    </div>
                                 {/each}
-                            </tbody>
-                        </table>
-                        {#if tournamentMatches.length === 0}
-                            <div class="empty-state">No matches</div>
+                            </div>
                         {/if}
                     </div>
-                    <div class="add-area">
-                        <div class="add-match-wrap">
-                            <input
-                                type="text"
-                                bind:value={addMatchSearch}
-                                on:focus={(e) => { addMatchFocused = true; computeMatchDropdownPos(e.currentTarget); loadAllMatches().then(updateFilteredMatches); }}
-                                on:blur={() => setTimeout(() => { addMatchFocused = false; }, 150)}
-                                on:keydown={(e) => { if (e.key === 'Escape') { e.stopPropagation(); addMatchSearch = ''; e.currentTarget.blur(); } }}
-                                placeholder="Add match…"
-                                class="add-match-input"
-                            />
-                            {#if addMatchFocused && filteredMatches.length > 0}
-                                <div class="match-dropdown" style={matchDropdownStyle}>
-                                    {#each filteredMatches as match}
-                                        <div class="dropdown-item" on:mousedown|preventDefault={() => addMatchToTournament(match.id)}>
-                                            {match.player1_name} vs {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
-                                        </div>
-                                    {/each}
-                                </div>
-                            {/if}
-                        </div>
-                    </div>
                 </div>
-            {/if}
-        </div>
-    </section>
+            </div>
+        {/if}
+    </div>
+</section>
 
 <style>
-    .tournament-panel { width: 100%; height: 100%; background: white; box-sizing: border-box; outline: none; overflow: hidden; user-select: none; -webkit-user-select: none; }
-    .panel-content { font-size: 12px; color: #333; height: 100%; display: flex; overflow: hidden; }
+    .tournament-panel {
+        width: 100%;
+        height: 100%;
+        background: white;
+        box-sizing: border-box;
+        outline: none;
+        overflow: hidden;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    .panel-content {
+        font-size: 12px;
+        color: #333;
+        height: 100%;
+        display: flex;
+        overflow: hidden;
+    }
 
-    .tournament-list-pane { flex: 1; min-width: 0; height: 100%; overflow: hidden; display: flex; flex-direction: column; }
+    .tournament-list-pane {
+        flex: 1;
+        min-width: 0;
+        height: 100%;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
 
-    .table-container { flex: 1; overflow-y: auto; }
+    .table-container {
+        flex: 1;
+        overflow-y: auto;
+    }
 
-    .tournament-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    .tournament-table thead { position: sticky; top: 0; background-color: #f5f5f5; z-index: 1; }
+    .tournament-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+    .tournament-table thead {
+        position: sticky;
+        top: 0;
+        background-color: #f5f5f5;
+        z-index: 1;
+    }
     .tournament-table th,
-    .tournament-table td { padding: 4px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; }
-    .tournament-table th { font-weight: 600; color: #333; font-size: 11px; }
-    .tournament-table th.sortable { cursor: pointer; }
-    .tournament-table th.sortable:hover { background-color: #e8e8e8; }
-    .sort-arrow { font-size: 9px; margin-left: 3px; color: #1976d2; }
+    .tournament-table td {
+        padding: 4px 8px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    .tournament-table th {
+        font-weight: 600;
+        color: #333;
+        font-size: 11px;
+    }
+    .tournament-table th.sortable {
+        cursor: pointer;
+    }
+    .tournament-table th.sortable:hover {
+        background-color: #e8e8e8;
+    }
+    .sort-arrow {
+        font-size: 9px;
+        margin-left: 3px;
+        color: #1976d2;
+    }
 
-    .tournament-table tbody tr { transition: background-color 0.1s; }
-    .tournament-table tbody tr:hover { background-color: #f9f9f9; }
-    .tournament-table tbody tr.editing-row { background-color: #fefce8; cursor: default; }
+    .tournament-table tbody tr {
+        transition: background-color 0.1s;
+    }
+    .tournament-table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+    .tournament-table tbody tr.editing-row {
+        background-color: #fefce8;
+        cursor: default;
+    }
 
-    .index-cell { text-align: center; color: #999; }
-    .count-cell { text-align: center; color: #888; }
-    .narrow-col { width: 1px; white-space: nowrap; padding-left: 6px; padding-right: 6px; }
-    .actions-col { width: 80px; min-width: 80px; max-width: 80px; white-space: nowrap; text-align: center; padding: 0 4px; }
+    .index-cell {
+        text-align: center;
+        color: #999;
+    }
+    .count-cell {
+        text-align: center;
+        color: #888;
+    }
+    .narrow-col {
+        width: 1px;
+        white-space: nowrap;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
+    .actions-col {
+        width: 80px;
+        min-width: 80px;
+        max-width: 80px;
+        white-space: nowrap;
+        text-align: center;
+        padding: 0 4px;
+    }
 
-    .item-actions { display: inline-flex; gap: 2px; vertical-align: middle; }
+    .item-actions {
+        display: inline-flex;
+        gap: 2px;
+        vertical-align: middle;
+    }
 
-    .icon-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: #666; padding: 0 3px; line-height: 1; }
-    .icon-btn:hover:not(:disabled) { color: #000; }
-    .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .icon-btn.delete:hover:not(:disabled) { color: #c55; }
+    .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        color: #666;
+        padding: 0 3px;
+        line-height: 1;
+    }
+    .icon-btn:hover:not(:disabled) {
+        color: #000;
+    }
+    .icon-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+    .icon-btn.delete:hover:not(:disabled) {
+        color: #c55;
+    }
 
-    .edit-input { width: 100%; padding: 1px 4px; border: 1px solid #1976d2; border-radius: 2px; font-size: 11px; box-sizing: border-box; outline: none; }
+    .edit-input {
+        width: 100%;
+        padding: 1px 4px;
+        border: 1px solid #1976d2;
+        border-radius: 2px;
+        font-size: 11px;
+        box-sizing: border-box;
+        outline: none;
+    }
 
-    .no-select { user-select: none; -webkit-user-select: none; }
-    .empty-state { text-align: center; color: #999; padding: 24px; font-size: 12px; }
+    .no-select {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    .empty-state {
+        text-align: center;
+        color: #999;
+        padding: 24px;
+        font-size: 12px;
+    }
 
     /* Detail header for match view */
-    .detail-header { padding: 3px 8px; font-size: 11px; color: #555; border-bottom: 1px solid #e0e0e0; flex-shrink: 0; background: #f5f5f5; display: flex; align-items: center; gap: 6px; min-height: 24px; }
-    .back-btn { border: none; background: none; cursor: pointer; font-size: 14px; color: #666; padding: 0 4px; line-height: 1; flex-shrink: 0; }
-    .back-btn:hover { color: #333; }
-    .header-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .header-meta { font-size: 10px; color: #999; flex-shrink: 0; }
-    .edit-header-btn { visibility: hidden; flex-shrink: 0; }
-    .detail-header:hover .edit-header-btn { visibility: visible; }
-    .header-spacer { flex: 1; }
+    .detail-header {
+        padding: 3px 8px;
+        font-size: 11px;
+        color: #555;
+        border-bottom: 1px solid #e0e0e0;
+        flex-shrink: 0;
+        background: #f5f5f5;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        min-height: 24px;
+    }
+    .back-btn {
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-size: 14px;
+        color: #666;
+        padding: 0 4px;
+        line-height: 1;
+        flex-shrink: 0;
+    }
+    .back-btn:hover {
+        color: #333;
+    }
+    .header-name {
+        font-weight: 600;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .header-meta {
+        font-size: 10px;
+        color: #999;
+        flex-shrink: 0;
+    }
+    .edit-header-btn {
+        visibility: hidden;
+        flex-shrink: 0;
+    }
+    .detail-header:hover .edit-header-btn {
+        visibility: visible;
+    }
+    .header-spacer {
+        flex: 1;
+    }
 
     /* Inline tournament comment in header */
-    .tournament-comment-inline { flex: 1; min-width: 80px; padding: 1px 4px; border: 1px solid #1976d2; border-radius: 2px; font-size: 11px; box-sizing: border-box; outline: none; }
-    .tournament-comment-text { flex-shrink: 1; font-size: 10px; color: #bbb; cursor: pointer; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; font-style: italic; }
-    .tournament-comment-text.has-comment { color: #888; }
-    .tournament-comment-text:hover { color: #1976d2; }
+    .tournament-comment-inline {
+        flex: 1;
+        min-width: 80px;
+        padding: 1px 4px;
+        border: 1px solid #1976d2;
+        border-radius: 2px;
+        font-size: 11px;
+        box-sizing: border-box;
+        outline: none;
+    }
+    .tournament-comment-text {
+        flex-shrink: 1;
+        font-size: 10px;
+        color: #bbb;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 200px;
+        font-style: italic;
+    }
+    .tournament-comment-text.has-comment {
+        color: #888;
+    }
+    .tournament-comment-text:hover {
+        color: #1976d2;
+    }
 
     /* Add area */
-    .add-area { border-top: 1px solid #eee; padding: 3px 8px 4px; flex-shrink: 0; background: #fafafa; display: flex; gap: 4px; align-items: center; }
-    .add-input { padding: 2px 4px; border: 1px solid #ccc; border-radius: 2px; font-size: 11px; outline: none; box-sizing: border-box; }
-    .add-input:focus { border-color: #99c; }
-    .add-input.name { flex: 1; min-width: 0; }
-    .add-input.date { width: 110px; flex-shrink: 0; }
-    .add-input.loc { width: 90px; flex-shrink: 0; }
+    .add-area {
+        border-top: 1px solid #eee;
+        padding: 3px 8px 4px;
+        flex-shrink: 0;
+        background: #fafafa;
+        display: flex;
+        gap: 4px;
+        align-items: center;
+    }
+    .add-input {
+        padding: 2px 4px;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        font-size: 11px;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .add-input:focus {
+        border-color: #99c;
+    }
+    .add-input.name {
+        flex: 1;
+        min-width: 0;
+    }
+    .add-input.date {
+        width: 110px;
+        flex-shrink: 0;
+    }
+    .add-input.loc {
+        width: 90px;
+        flex-shrink: 0;
+    }
 
     /* Add match dropdown */
-    .add-match-wrap { position: relative; flex: 1; }
-    .add-match-input { width: 100%; padding: 2px 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 11px; box-sizing: border-box; outline: none; }
-    .add-match-input:focus { border-color: #99c; }
-    .match-dropdown { overflow-y: auto; background: white; border: 1px solid #ccc; border-radius: 3px; box-shadow: 0 2px 8px rgba(0,0,0,0.18); z-index: 9999; }
-    .dropdown-item { padding: 3px 8px; cursor: pointer; font-size: 11px; border-bottom: 1px solid #f5f5f5; }
-    .dropdown-item:hover { background: #e3f2fd; }
-    .match-pts { font-size: 10px; color: #999; }
+    .add-match-wrap {
+        position: relative;
+        flex: 1;
+    }
+    .add-match-input {
+        width: 100%;
+        padding: 2px 6px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 11px;
+        box-sizing: border-box;
+        outline: none;
+    }
+    .add-match-input:focus {
+        border-color: #99c;
+    }
+    .match-dropdown {
+        overflow-y: auto;
+        background: white;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+        z-index: 9999;
+    }
+    .dropdown-item {
+        padding: 3px 8px;
+        cursor: pointer;
+        font-size: 11px;
+        border-bottom: 1px solid #f5f5f5;
+    }
+    .dropdown-item:hover {
+        background: #e3f2fd;
+    }
+    .match-pts {
+        font-size: 10px;
+        color: #999;
+    }
 
     /* Match comment column */
-    .comment-col { max-width: 140px; overflow: hidden; }
-    .comment-text { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 11px; color: #aaa; cursor: pointer; min-height: 16px; }
-    .comment-text.has-comment { color: #666; }
-    .comment-text:hover { color: #1976d2; }
+    .comment-col {
+        max-width: 140px;
+        overflow: hidden;
+    }
+    .comment-text {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-size: 11px;
+        color: #aaa;
+        cursor: pointer;
+        min-height: 16px;
+    }
+    .comment-text.has-comment {
+        color: #666;
+    }
+    .comment-text:hover {
+        color: #1976d2;
+    }
 
     /* Drag-and-drop */
-    .tournament-table tbody :global(tr.drag-over) { border-top: 2px solid #1976d2; }
-    .tournament-table tbody :global(tr.dragging) { opacity: 0.5; }
+    .tournament-table tbody :global(tr.drag-over) {
+        border-top: 2px solid #1976d2;
+    }
+    .tournament-table tbody :global(tr.dragging) {
+        opacity: 0.5;
+    }
 </style>

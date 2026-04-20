@@ -78,7 +78,8 @@
             </div>
             <div class="form-group">
                 <label for="databaseVersion">Database Version:</label>
-                <input id="databaseVersion" type="text" bind:value={databaseVersion} readonly /> <!-- Display database version -->
+                <input id="databaseVersion" type="text" bind:value={databaseVersion} readonly />
+                <!-- Display database version -->
             </div>
         </div>
     </div>
@@ -125,7 +126,8 @@
         font-size: 18px;
     }
 
-    input, textarea {
+    input,
+    textarea {
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;

@@ -16,6 +16,62 @@
     }
 </script>
 
+{#if visible}
+    <div class="modal-overlay">
+        <div class="modal-content">
+            {#if mode === 'importing'}
+                <h2>Importing Files <span class="spinner"></span></h2>
+                <p class="status-text">Importing file {currentIndex} of {totalFiles}...</p>
+                <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {progressPercent}%"></div>
+                </div>
+                <p class="progress-text">{progressPercent}%</p>
+
+                <div class="button-group">
+                    <button on:click={onCancel}>Cancel</button>
+                </div>
+            {:else if mode === 'completed'}
+                <h2>Import Completed</h2>
+
+                <div class="summary">
+                    <p><strong>Import finished.</strong> Processed {results.succeeded + results.failed + results.skipped} of {totalFiles} file(s).</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Imported</div>
+                        <div class="stat-value">{results.succeeded}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Skipped</div>
+                        <div class="stat-value">{results.skipped}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Failed</div>
+                        <div class="stat-value" class:errors={results.failed > 0}>{results.failed}</div>
+                    </div>
+                </div>
+
+                {#if results.errors.length > 0}
+                    <div class="error-list">
+                        {#each results.errors as err}
+                            <div class="error-item">
+                                <span class="error-file">{basename(err.file)}</span>: {err.message}
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
+
+                <div class="button-group">
+                    <button on:click={onClose}>Close</button>
+                </div>
+            {/if}
+        </div>
+    </div>
+{/if}
+
 <style>
     .modal-overlay {
         position: fixed;
@@ -130,8 +186,12 @@
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     .button-group {
@@ -200,60 +260,3 @@
         font-weight: 600;
     }
 </style>
-
-{#if visible}
-    <div class="modal-overlay">
-        <div class="modal-content">
-            {#if mode === 'importing'}
-                <h2>Importing Files <span class="spinner"></span></h2>
-                <p class="status-text">Importing file {currentIndex} of {totalFiles}...</p>
-                <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
-
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: {progressPercent}%"></div>
-                </div>
-                <p class="progress-text">{progressPercent}%</p>
-
-                <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
-                </div>
-
-            {:else if mode === 'completed'}
-                <h2>Import Completed</h2>
-
-                <div class="summary">
-                    <p><strong>Import finished.</strong> Processed {results.succeeded + results.failed + results.skipped} of {totalFiles} file(s).</p>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-label">Imported</div>
-                        <div class="stat-value">{results.succeeded}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Skipped</div>
-                        <div class="stat-value">{results.skipped}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Failed</div>
-                        <div class="stat-value" class:errors={results.failed > 0}>{results.failed}</div>
-                    </div>
-                </div>
-
-                {#if results.errors.length > 0}
-                    <div class="error-list">
-                        {#each results.errors as err}
-                            <div class="error-item">
-                                <span class="error-file">{basename(err.file)}</span>: {err.message}
-                            </div>
-                        {/each}
-                    </div>
-                {/if}
-
-                <div class="button-group">
-                    <button on:click={onClose}>Close</button>
-                </div>
-            {/if}
-        </div>
-    </div>
-{/if}

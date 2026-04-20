@@ -19,16 +19,20 @@ export function copyPosition() {
     const analysis = get(analysisStore);
     const comment = get(commentTextStore);
 
-    clipboardPositionStore.set(JSON.parse(JSON.stringify({
-        board: position.board,
-        cube: position.cube,
-        dice: position.dice,
-        score: position.score,
-        player_on_roll: position.player_on_roll,
-        decision_type: position.decision_type,
-        has_jacoby: position.has_jacoby,
-        has_beaver: position.has_beaver,
-    })));
+    clipboardPositionStore.set(
+        JSON.parse(
+            JSON.stringify({
+                board: position.board,
+                cube: position.cube,
+                dice: position.dice,
+                score: position.score,
+                player_on_roll: position.player_on_roll,
+                decision_type: position.decision_type,
+                has_jacoby: position.has_jacoby,
+                has_beaver: position.has_beaver
+            })
+        )
+    );
 
     const xgid = analysis.xgid || generateXGID(position);
 
@@ -43,7 +47,7 @@ export function copyPosition() {
     clipboardContent += `Decision type: ${position.decision_type}\n\n`;
 
     clipboardContent += `Analysis:\n`;
-    if (analysis.analysisType === "DoublingCube") {
+    if (analysis.analysisType === 'DoublingCube') {
         clipboardContent += `Doubling Cube Analysis:\n`;
         clipboardContent += `Analysis Depth: "${analysis.doublingCubeAnalysis.analysisDepth}"\n`;
         clipboardContent += `Player Win Chances: ${analysis.doublingCubeAnalysis.playerWinChances}%\n`;
@@ -67,9 +71,9 @@ export function copyPosition() {
         if (comment && comment.trim() !== '') {
             clipboardContent += `\n${comment}\n\n`;
         }
-    } else if (analysis.analysisType === "CheckerMove") {
+    } else if (analysis.analysisType === 'CheckerMove') {
         clipboardContent += `Checker Move Analysis:\n`;
-        analysis.checkerAnalysis.moves.forEach(move => {
+        analysis.checkerAnalysis.moves.forEach((move) => {
             clipboardContent += `Move ${move.index}: ${move.move}\n`;
             clipboardContent += `Analysis Depth: "${move.analysisDepth}"\n`;
             clipboardContent += `Equity: ${move.equity}\n`;
@@ -93,13 +97,16 @@ export function copyPosition() {
         clipboardContent += `eXtreme Gammon Version: ${analysis.analysisEngineVersion}\n`;
     }
 
-    navigator.clipboard.writeText(clipboardContent).then(() => {
-        console.log('Position, analysis, and comment copied to clipboard');
-        setStatusBarMessage('Position, analysis, and comment copied to clipboard');
-    }).catch(err => {
-        console.error('Error copying to clipboard:', err);
-        setStatusBarMessage('Error copying to clipboard');
-    });
+    navigator.clipboard
+        .writeText(clipboardContent)
+        .then(() => {
+            console.log('Position, analysis, and comment copied to clipboard');
+            setStatusBarMessage('Position, analysis, and comment copied to clipboard');
+        })
+        .catch((err) => {
+            console.error('Error copying to clipboard:', err);
+            setStatusBarMessage('Error copying to clipboard');
+        });
 }
 
 export async function copyBoardImage() {
@@ -128,9 +135,23 @@ export async function copyBoardImage() {
 
         const origElements = svgEl.querySelectorAll('*');
         const clonedElements = clonedSvg.querySelectorAll('*');
-        const styleProps = ['fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
-                            'stroke-miterlimit', 'opacity', 'font-family', 'font-size', 'font-weight',
-                            'font-style', 'text-anchor', 'dominant-baseline', 'visibility', 'display'];
+        const styleProps = [
+            'fill',
+            'stroke',
+            'stroke-width',
+            'stroke-linecap',
+            'stroke-linejoin',
+            'stroke-miterlimit',
+            'opacity',
+            'font-family',
+            'font-size',
+            'font-weight',
+            'font-style',
+            'text-anchor',
+            'dominant-baseline',
+            'visibility',
+            'display'
+        ];
         for (let i = 0; i < origElements.length; i++) {
             const orig = origElements[i];
             const cloned = clonedElements[i];
@@ -218,9 +239,23 @@ export async function copyBoardWithAnalysisImage() {
         clonedSvg.setAttribute('height', String(svgHeight));
         const origElements = svgEl.querySelectorAll('*');
         const clonedElements = clonedSvg.querySelectorAll('*');
-        const styleProps = ['fill', 'stroke', 'stroke-width', 'stroke-linecap', 'stroke-linejoin',
-                            'stroke-miterlimit', 'opacity', 'font-family', 'font-size', 'font-weight',
-                            'font-style', 'text-anchor', 'dominant-baseline', 'visibility', 'display'];
+        const styleProps = [
+            'fill',
+            'stroke',
+            'stroke-width',
+            'stroke-linecap',
+            'stroke-linejoin',
+            'stroke-miterlimit',
+            'opacity',
+            'font-family',
+            'font-size',
+            'font-weight',
+            'font-style',
+            'text-anchor',
+            'dominant-baseline',
+            'visibility',
+            'display'
+        ];
         for (let i = 0; i < origElements.length; i++) {
             const orig = origElements[i];
             const cloned = clonedElements[i];
@@ -249,8 +284,7 @@ export async function copyBoardWithAnalysisImage() {
             const tablePadding = 4;
 
             const cubeValue = position.cube?.value || 1;
-            const isCubeAnalysis = analysis.analysisType === 'DoublingCube' ||
-                (!analysis.checkerAnalysis?.moves?.length && analysis.doublingCubeAnalysis);
+            const isCubeAnalysis = analysis.analysisType === 'DoublingCube' || (!analysis.checkerAnalysis?.moves?.length && analysis.doublingCubeAnalysis);
 
             let analysisHeight = 0;
             let analysisWidth = svgWidth;
@@ -306,9 +340,9 @@ export async function copyBoardWithAnalysisImage() {
     }
 }
 
-function drawCubeAnalysis(ctx, cube, cubeValue, startY, totalWidth, rowHeight, pad, headerFont, font, charWidth) {
+function drawCubeAnalysis(ctx, cube, cubeValue, startY, totalWidth, rowHeight, pad, headerFont, font, _charWidth) {
     const formatEq = (v) => (v >= 0 ? '+' : '') + (v || 0).toFixed(3);
-    const getDecLabel = (d) => cubeValue >= 1 ? d.replace('Double', 'Redouble') : d;
+    const getDecLabel = (d) => (cubeValue >= 1 ? d.replace('Double', 'Redouble') : d);
 
     const colWidth = Math.floor(totalWidth / 3);
     const borderColor = '#ddd';
@@ -344,7 +378,7 @@ function drawCubeAnalysis(ctx, cube, cubeValue, startY, totalWidth, rowHeight, p
         if (matchCtx.isMatchMode) {
             if (analysis.playedCubeAction) {
                 const pp = normCubeAction(analysis.playedCubeAction);
-                return aParts.every(a => pp.includes(a));
+                return aParts.every((a) => pp.includes(a));
             }
             return false;
         }
@@ -357,7 +391,7 @@ function drawCubeAnalysis(ctx, cube, cubeValue, startY, totalWidth, rowHeight, p
         if (allParts.size === 0 && analysis.playedCubeAction) {
             for (const p of normCubeAction(analysis.playedCubeAction)) allParts.add(p);
         }
-        return allParts.size > 0 && aParts.every(a => allParts.has(a));
+        return allParts.size > 0 && aParts.every((a) => allParts.has(a));
     }
 
     let y = startY;
@@ -443,7 +477,7 @@ function drawCubeAnalysis(ctx, cube, cubeValue, startY, totalWidth, rowHeight, p
     drawCell(infoX + infoLabelW, y, infoValW, rowHeight, cube.analysisEngine || get(analysisStore).analysisEngineVersion || '');
 }
 
-function drawCheckerAnalysis(ctx, analysis, startY, totalWidth, rowHeight, pad, headerFont, font, charWidth) {
+function drawCheckerAnalysis(ctx, analysis, startY, totalWidth, rowHeight, pad, headerFont, font, _charWidth) {
     const formatEq = (v) => (v >= 0 ? '+' : '') + (v || 0).toFixed(3);
     const borderColor = '#ddd';
     const headerBg = '#f2f2f2';
@@ -461,8 +495,8 @@ function drawCheckerAnalysis(ctx, analysis, startY, totalWidth, rowHeight, pad, 
         { label: 'O W', frac: 0.07 },
         { label: 'O G', frac: 0.07 },
         { label: 'O B', frac: 0.07 },
-        { label: 'Depth', frac: 0.10 },
-        { label: 'Engine', frac: 0.14 },
+        { label: 'Depth', frac: 0.1 },
+        { label: 'Engine', frac: 0.14 }
     ];
 
     let colPositions = [];
@@ -537,7 +571,7 @@ function drawCheckerAnalysis(ctx, analysis, startY, totalWidth, rowHeight, pad, 
     for (let i = 0; i < displayMoves.length; i++) {
         const move = displayMoves[i];
         const played = isPlayed(move);
-        const rowBg = played ? playedBg : (i % 2 === 1 ? evenBg : '#ffffff');
+        const rowBg = played ? playedBg : i % 2 === 1 ? evenBg : '#ffffff';
 
         const values = [
             move.move || '',
@@ -550,7 +584,7 @@ function drawCheckerAnalysis(ctx, analysis, startY, totalWidth, rowHeight, pad, 
             (move.opponentGammonChance || 0).toFixed(2),
             (move.opponentBackgammonChance || 0).toFixed(2),
             move.analysisDepth || '',
-            move.analysisEngine || '',
+            move.analysisEngine || ''
         ];
 
         for (let j = 0; j < colPositions.length; j++) {

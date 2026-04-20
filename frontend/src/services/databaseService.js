@@ -1,33 +1,13 @@
-import { get, writable } from 'svelte/store';
-import {
-    SaveDatabaseDialog,
-    OpenDatabaseDialog,
-    DeleteFile,
-} from '../../wailsjs/go/main/App.js';
-import {
-    SetupDatabase,
-    CheckDatabaseVersion,
-    OpenDatabase,
-    GetDatabaseVersion,
-} from '../../wailsjs/go/main/Database.js';
+import { writable } from 'svelte/store';
+import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile } from '../../wailsjs/go/main/App.js';
+import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion } from '../../wailsjs/go/main/Database.js';
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
-import { SaveLastDatabasePath, GetLastDatabasePath } from '../../wailsjs/go/main/Config.js';
+import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
-import {
-    statusBarTextStore,
-    statusBarModeStore,
-    commentTextStore,
-    openModal, closeModal, MODAL,
-} from '../stores/uiStore.js';
-import {
-    ankiDecksStore,
-    selectedAnkiDeckStore,
-    ankiReviewCardStore,
-    ankiDeckStatsStore,
-    ankiViewModeStore,
-} from '../stores/ankiStore.js';
+import { statusBarTextStore, statusBarModeStore, commentTextStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
+import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore } from '../stores/ankiStore.js';
 
 export const warningMessageStore = writable('');
 
@@ -161,7 +141,9 @@ export async function openDatabaseByPath(filePath) {
         setStatusBarMessage(`Database version: ${dbVersion}`);
 
         if (getMajorVersion(dbVersion) !== getMajorVersion(modelVersion)) {
-            warningMessageStore.set(`Major database version mismatch. The database schema might be incompatible with the current version of blunderDB. Continuing to edit the database is done at your own risk. Backup your file before proceeding any further.\nDatabase version: ${dbVersion}\nExpected version: ${modelVersion}`);
+            warningMessageStore.set(
+                `Major database version mismatch. The database schema might be incompatible with the current version of blunderDB. Continuing to edit the database is done at your own risk. Backup your file before proceeding any further.\nDatabase version: ${dbVersion}\nExpected version: ${modelVersion}`
+            );
             openModal(MODAL.WARNING);
         }
 

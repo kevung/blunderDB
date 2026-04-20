@@ -13,32 +13,16 @@ import {
     GetMatchMovePositions,
     SaveEditPosition,
     SaveFilter,
-    GetAllCollections,
-    LoadComment,
+    LoadComment
 } from '../../wailsjs/go/main/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import {
-    positionStore,
-    positionsStore,
-    matchContextStore,
-    lastVisitedMatchStore,
-    clipboardPositionStore,
-} from '../stores/positionStore.js';
+import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
 import { viewStore } from '../stores/viewStore.js';
-import {
-    currentPositionIndexStore,
-    statusBarTextStore,
-    statusBarModeStore,
-    commentTextStore,
-    openPanels, PANEL, closePanel, openPanel,
-    openModal, MODAL,
-    activeTabStore,
-    showPipcountStore,
-} from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarTextStore, statusBarModeStore, commentTextStore, PANEL, closePanel, openModal, MODAL, activeTabStore, showPipcountStore } from '../stores/uiStore.js';
 import { activeCollectionStore, collectionPositionsStore, selectedCollectionStore } from '../stores/collectionStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 
@@ -48,9 +32,9 @@ let savedPositionIndexBeforeEPC = -1;
 let savedPositionsBeforeEPC = null;
 
 // Module-level state for COLLECTION mode save/restore
-let savedPositionBeforeCollection = null;
-let savedPositionIndexBeforeCollection = -1;
-let savedPositionsBeforeCollection = null;
+let _savedPositionBeforeCollection = null;
+let _savedPositionIndexBeforeCollection = -1;
+let _savedPositionsBeforeCollection = null;
 
 // Session/search tracking state
 let lastSearchCommand = '';
@@ -98,22 +82,37 @@ export function isValidPosition(position) {
     const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
     const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
 
-    if (player1Checkers > 15) { setStatusBarMessage('Invalid position: Player 1 has more than 15 checkers'); return false; }
-    if (player2Checkers > 15) { setStatusBarMessage('Invalid position: Player 2 has more than 15 checkers'); return false; }
-    if (player1Checkers === 0) { setStatusBarMessage('Invalid position: Player 1 has already borne off all checkers'); return false; }
-    if (player2Checkers === 0) { setStatusBarMessage('Invalid position: Player 2 has already borne off all checkers'); return false; }
+    if (player1Checkers > 15) {
+        setStatusBarMessage('Invalid position: Player 1 has more than 15 checkers');
+        return false;
+    }
+    if (player2Checkers > 15) {
+        setStatusBarMessage('Invalid position: Player 2 has more than 15 checkers');
+        return false;
+    }
+    if (player1Checkers === 0) {
+        setStatusBarMessage('Invalid position: Player 1 has already borne off all checkers');
+        return false;
+    }
+    if (player2Checkers === 0) {
+        setStatusBarMessage('Invalid position: Player 2 has already borne off all checkers');
+        return false;
+    }
 
     if (position.decision_type === 1) {
         if (position.cube.owner !== position.player_on_roll && position.cube.owner !== -1) {
-            setStatusBarMessage('Invalid position: Cube is not available for doubling'); return false;
+            setStatusBarMessage('Invalid position: Cube is not available for doubling');
+            return false;
         }
         if (position.score[position.player_on_roll] === 1) {
-            setStatusBarMessage('Invalid position: Crawford rule prevents doubling'); return false;
+            setStatusBarMessage('Invalid position: Crawford rule prevents doubling');
+            return false;
         }
     }
 
     if ((position.score[0] === -1 && position.score[1] !== -1) || (position.score[1] === -1 && position.score[0] !== -1)) {
-        setStatusBarMessage('Invalid position: Both players must have unlimited score or neither'); return false;
+        setStatusBarMessage('Invalid position: Both players must have unlimited score or neither');
+        return false;
     }
 
     return true;
@@ -130,8 +129,7 @@ export function mirrorPositionForSearch(pos) {
         };
     }
 
-    [mirrored.board.bearoff[0], mirrored.board.bearoff[1]] =
-        [mirrored.board.bearoff[1], mirrored.board.bearoff[0]];
+    [mirrored.board.bearoff[0], mirrored.board.bearoff[1]] = [mirrored.board.bearoff[1], mirrored.board.bearoff[0]];
     mirrored.player_on_roll = 1 - mirrored.player_on_roll;
     [mirrored.score[0], mirrored.score[1]] = [mirrored.score[1], mirrored.score[0]];
     if (mirrored.cube.owner !== -1) {
@@ -153,14 +151,14 @@ export async function showPosition(position) {
     let analysis = null;
     try {
         analysis = await LoadAnalysis(position.id);
-    } catch (error) { /* No analysis for this position */ }
+    } catch (_error) {
+        /* No analysis for this position */
+    }
 
     const matchCtx = get(matchContextStore);
     const inMatchMode = get(statusBarModeStore) === 'MATCH' && matchCtx.isMatchMode;
-    const isFirstPositionOfGame = inMatchMode &&
-        matchCtx.movePositions.length > 0 &&
-        (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 ||
-         matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
+    const isFirstPositionOfGame =
+        inMatchMode && matchCtx.movePositions.length > 0 && (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 || matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
 
     let currentPlayedMove = '';
     let currentPlayedCubeAction = '';
@@ -186,15 +184,29 @@ export async function showPosition(position) {
         analysisType: analysis?.analysisType || '',
         analysisEngineVersion: analysis?.analysisEngineVersion || '',
         checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
-        doublingCubeAnalysis: isFirstPositionOfGame ? null : (analysis?.doublingCubeAnalysis || {
-            analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
-            playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
-            opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
-            cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
-            cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
-            bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
-        }),
-        allCubeAnalyses: isFirstPositionOfGame ? [] : (analysis?.allCubeAnalyses || []),
+        doublingCubeAnalysis: isFirstPositionOfGame
+            ? null
+            : analysis?.doublingCubeAnalysis || {
+                  analysisDepth: '',
+                  playerWinChances: 0,
+                  playerGammonChances: 0,
+                  playerBackgammonChances: 0,
+                  opponentWinChances: 0,
+                  opponentGammonChances: 0,
+                  opponentBackgammonChances: 0,
+                  cubelessNoDoubleEquity: 0,
+                  cubelessDoubleEquity: 0,
+                  cubefulNoDoubleEquity: 0,
+                  cubefulNoDoubleError: 0,
+                  cubefulDoubleTakeEquity: 0,
+                  cubefulDoubleTakeError: 0,
+                  cubefulDoublePassEquity: 0,
+                  cubefulDoublePassError: 0,
+                  bestCubeAction: '',
+                  wrongPassPercentage: 0,
+                  wrongTakePercentage: 0
+              },
+        allCubeAnalyses: isFirstPositionOfGame ? [] : analysis?.allCubeAnalyses || [],
         playedMove: currentPlayedMove,
         playedCubeAction: isFirstPositionOfGame ? '' : currentPlayedCubeAction,
         playedMoves: allPlayedMoves,
@@ -206,7 +218,9 @@ export async function showPosition(position) {
     let comment = '';
     try {
         comment = await LoadComment(position.id);
-    } catch (error) { /* No comment for this position */ }
+    } catch (_error) {
+        /* No comment for this position */
+    }
     commentTextStore.set(comment || '');
 }
 
@@ -250,14 +264,18 @@ export async function loadAllPositions() {
         const positions = await LoadAllPositionsDB();
 
         if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
-            SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex).catch(e => {
+            SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex).catch((e) => {
                 console.error('Error persisting last visited position:', e);
             });
         }
         statusBarModeStore.set('NORMAL');
         matchContextStore.set({
-            isMatchMode: false, matchID: null, movePositions: [],
-            currentIndex: 0, player1Name: '', player2Name: ''
+            isMatchMode: false,
+            matchID: null,
+            movePositions: [],
+            currentIndex: 0,
+            player1Name: '',
+            player2Name: ''
         });
         savedPositionsBeforeEPC = null;
         savedPositionBeforeEPC = null;
@@ -322,7 +340,7 @@ export async function loadPositionsByFilters(
     matchIDsFilter = '',
     tournamentIDsFilter = '',
     restrictToPositionIDs = '',
-    openInNewTab = false,
+    openInNewTab = false
 ) {
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened');
@@ -339,7 +357,7 @@ export async function loadPositionsByFilters(
             ...currentPosition,
             has_jacoby: currentPosition.has_jacoby ? 1 : 0,
             has_beaver: currentPosition.has_beaver ? 1 : 0,
-            decision_type: typeof currentPosition.decision_type === 'string' ? (currentPosition.decision_type ? 1 : 0) : (currentPosition.decision_type || 0),
+            decision_type: typeof currentPosition.decision_type === 'string' ? (currentPosition.decision_type ? 1 : 0) : currentPosition.decision_type || 0
         };
 
         const searchFilterPositionJSON = JSON.stringify(currentPosition);
@@ -377,7 +395,7 @@ export async function loadPositionsByFilters(
             moveErrorFilter,
             matchIDsFilter,
             tournamentIDsFilter,
-            restrictToPositionIDs,
+            restrictToPositionIDs
         });
 
         if (loadedPositions && loadedPositions.length > 0) {
@@ -387,8 +405,12 @@ export async function loadPositionsByFilters(
 
             statusBarModeStore.set('NORMAL');
             matchContextStore.set({
-                isMatchMode: false, matchID: null, movePositions: [],
-                currentIndex: 0, player1Name: '', player2Name: ''
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0,
+                player1Name: '',
+                player2Name: ''
             });
             activeCollectionStore.set(null);
 
@@ -433,7 +455,7 @@ function saveCurrentMatchPosition() {
                 currentIndex: matchCtx.currentIndex,
                 gameNumber: currentMovePos.game_number
             });
-            SaveLastVisitedPosition(matchCtx.matchID, matchCtx.currentIndex).catch(e => {
+            SaveLastVisitedPosition(matchCtx.matchID, matchCtx.currentIndex).catch((e) => {
                 console.error('Error persisting last visited position:', e);
             });
         }
@@ -441,8 +463,14 @@ function saveCurrentMatchPosition() {
 }
 
 export async function firstPosition() {
-    if (get(statusBarModeStore) === 'EDIT') { setStatusBarMessage('Cannot browse positions in edit mode'); return; }
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (get(statusBarModeStore) === 'EDIT') {
+        setStatusBarMessage('Cannot browse positions in edit mode');
+        return;
+    }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
 
     if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
         const matchCtx = get(matchContextStore);
@@ -468,7 +496,7 @@ export async function firstPosition() {
             }
         }
 
-        matchContextStore.update(ctx => ({ ...ctx, currentIndex: targetIndex }));
+        matchContextStore.update((ctx) => ({ ...ctx, currentIndex: targetIndex }));
         const movePos = matchCtx.movePositions[targetIndex];
         await showPosition(movePos.position);
         statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
@@ -482,8 +510,14 @@ export async function firstPosition() {
 }
 
 export async function previousPosition() {
-    if (get(statusBarModeStore) === 'EDIT') { setStatusBarMessage('Cannot browse positions in edit mode'); return; }
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (get(statusBarModeStore) === 'EDIT') {
+        setStatusBarMessage('Cannot browse positions in edit mode');
+        return;
+    }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
 
     if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
         const matchCtx = get(matchContextStore);
@@ -496,7 +530,7 @@ export async function previousPosition() {
             }
 
             if (newIndex >= 0) {
-                matchContextStore.update(ctx => ({ ...ctx, currentIndex: newIndex }));
+                matchContextStore.update((ctx) => ({ ...ctx, currentIndex: newIndex }));
                 const movePos = matchCtx.movePositions[newIndex];
                 await showPosition(movePos.position);
                 statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
@@ -512,8 +546,14 @@ export async function previousPosition() {
 }
 
 export async function nextPosition() {
-    if (get(statusBarModeStore) === 'EDIT') { setStatusBarMessage('Cannot browse positions in edit mode'); return; }
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (get(statusBarModeStore) === 'EDIT') {
+        setStatusBarMessage('Cannot browse positions in edit mode');
+        return;
+    }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
 
     if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
         const matchCtx = get(matchContextStore);
@@ -526,7 +566,7 @@ export async function nextPosition() {
             }
 
             if (newIndex < matchCtx.movePositions.length) {
-                matchContextStore.update(ctx => ({ ...ctx, currentIndex: newIndex }));
+                matchContextStore.update((ctx) => ({ ...ctx, currentIndex: newIndex }));
                 const movePos = matchCtx.movePositions[newIndex];
                 await showPosition(movePos.position);
                 statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
@@ -542,8 +582,14 @@ export async function nextPosition() {
 }
 
 export async function lastPosition() {
-    if (get(statusBarModeStore) === 'EDIT') { setStatusBarMessage('Cannot browse positions in edit mode'); return; }
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (get(statusBarModeStore) === 'EDIT') {
+        setStatusBarMessage('Cannot browse positions in edit mode');
+        return;
+    }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
 
     if (get(statusBarModeStore) === 'MATCH' && get(matchContextStore).isMatchMode) {
         const matchCtx = get(matchContextStore);
@@ -558,7 +604,7 @@ export async function lastPosition() {
         }
 
         if (targetIndex === -1) {
-            const maxGameNumber = Math.max(...matchCtx.movePositions.map(p => p.game_number));
+            const maxGameNumber = Math.max(...matchCtx.movePositions.map((p) => p.game_number));
             for (let i = 0; i < matchCtx.movePositions.length; i++) {
                 if (matchCtx.movePositions[i].game_number === maxGameNumber) {
                     targetIndex = i;
@@ -568,7 +614,7 @@ export async function lastPosition() {
         }
 
         if (targetIndex !== -1) {
-            matchContextStore.update(ctx => ({ ...ctx, currentIndex: targetIndex }));
+            matchContextStore.update((ctx) => ({ ...ctx, currentIndex: targetIndex }));
             const movePos = matchCtx.movePositions[targetIndex];
             await showPosition(movePos.position);
             statusBarTextStore.set(`${matchCtx.player1Name} vs ${matchCtx.player2Name}`);
@@ -583,19 +629,31 @@ export async function lastPosition() {
 }
 
 export function gotoPosition() {
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
-    if (get(statusBarModeStore) === 'EDIT') { setStatusBarMessage('Cannot go to position in edit mode'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
+    if (get(statusBarModeStore) === 'EDIT') {
+        setStatusBarMessage('Cannot go to position in edit mode');
+        return;
+    }
     openModal(MODAL.GO_TO_POSITION);
 }
 
 export function findPosition() {
     console.log('findPosition');
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
     activeTabStore.set('search');
 }
 
 export async function deletePosition() {
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
     console.log('deletePosition');
 
     const positions = get(positionsStore);
@@ -620,12 +678,21 @@ export async function deletePosition() {
 }
 
 export async function updatePosition() {
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
-    if (get(statusBarModeStore) !== 'EDIT') { setStatusBarMessage('Update is only possible in edit mode'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
+    if (get(statusBarModeStore) !== 'EDIT') {
+        setStatusBarMessage('Update is only possible in edit mode');
+        return;
+    }
     console.log('updatePosition');
 
     const positions = get(positionsStore);
-    if (positions.length === 0) { setStatusBarMessage('No positions to update'); return; }
+    if (positions.length === 0) {
+        setStatusBarMessage('No positions to update');
+        return;
+    }
 
     const position = get(positionStore);
     const analysis = get(analysisStore);
@@ -636,18 +703,30 @@ export async function updatePosition() {
         const currentIndex = get(currentPositionIndexStore);
         const originalPosition = positions[currentIndex];
 
-        analysis.xgid = "";
-        analysis.analysisType = "";
+        analysis.xgid = '';
+        analysis.analysisType = '';
         analysis.checkerAnalysis = { moves: [] };
         analysis.doublingCubeAnalysis = {
-            analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
-            playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
-            opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
-            cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
-            cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
-            bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
+            analysisDepth: '',
+            playerWinChances: 0,
+            playerGammonChances: 0,
+            playerBackgammonChances: 0,
+            opponentWinChances: 0,
+            opponentGammonChances: 0,
+            opponentBackgammonChances: 0,
+            cubelessNoDoubleEquity: 0,
+            cubelessDoubleEquity: 0,
+            cubefulNoDoubleEquity: 0,
+            cubefulNoDoubleError: 0,
+            cubefulDoubleTakeEquity: 0,
+            cubefulDoubleTakeError: 0,
+            cubefulDoublePassEquity: 0,
+            cubefulDoublePassError: 0,
+            bestCubeAction: '',
+            wrongPassPercentage: 0,
+            wrongTakePercentage: 0
         };
-        analysis.analysisEngineVersion = "";
+        analysis.analysisEngineVersion = '';
 
         if (Array.isArray(analysis.checkerAnalysis)) {
             analysis.checkerAnalysis = { moves: analysis.checkerAnalysis };
@@ -685,8 +764,14 @@ export async function updatePosition() {
 }
 
 export async function saveCurrentPosition() {
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
-    if (get(statusBarModeStore) !== 'EDIT') { setStatusBarMessage('Save is only possible in edit mode'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
+    if (get(statusBarModeStore) !== 'EDIT') {
+        setStatusBarMessage('Save is only possible in edit mode');
+        return;
+    }
 
     console.log('saveCurrentPosition');
 
@@ -696,17 +781,29 @@ export async function saveCurrentPosition() {
     if (!isValidPosition(position)) return;
 
     analysis.xgid = generateXGID(position);
-    analysis.analysisType = "";
+    analysis.analysisType = '';
     analysis.checkerAnalysis = { moves: [] };
     analysis.doublingCubeAnalysis = {
-        analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
-        playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
-        opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
-        cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
-        cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
-        bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
+        analysisDepth: '',
+        playerWinChances: 0,
+        playerGammonChances: 0,
+        playerBackgammonChances: 0,
+        opponentWinChances: 0,
+        opponentGammonChances: 0,
+        opponentBackgammonChances: 0,
+        cubelessNoDoubleEquity: 0,
+        cubelessDoubleEquity: 0,
+        cubefulNoDoubleEquity: 0,
+        cubefulNoDoubleError: 0,
+        cubefulDoubleTakeEquity: 0,
+        cubefulDoubleTakeError: 0,
+        cubefulDoublePassEquity: 0,
+        cubefulDoublePassError: 0,
+        bestCubeAction: '',
+        wrongPassPercentage: 0,
+        wrongTakePercentage: 0
     };
-    analysis.analysisEngineVersion = "";
+    analysis.analysisEngineVersion = '';
 
     const { savePositionAndAnalysis } = await import('./importService.js');
     await savePositionAndAnalysis(position, analysis, 'Position and analysis saved successfully');
@@ -717,33 +814,39 @@ export async function enterEditMode() {
     console.log('enterEditMode');
     if (!get(databasePathStore)) return;
 
-    if (get(statusBarModeStore) === "MATCH") {
+    if (get(statusBarModeStore) === 'MATCH') {
         console.log('Exiting MATCH mode to enter EDIT');
         if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             try {
                 await SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex);
-            } catch (e) { console.error('Error saving last visited position:', e); }
+            } catch (e) {
+                console.error('Error saving last visited position:', e);
+            }
         }
         matchContextStore.set({
-            isMatchMode: false, matchID: null, movePositions: [],
-            currentIndex: 0, player1Name: '', player2Name: ''
+            isMatchMode: false,
+            matchID: null,
+            movePositions: [],
+            currentIndex: 0,
+            player1Name: '',
+            player2Name: ''
         });
         loadAllPositions();
     }
 
-    if (get(statusBarModeStore) === "COLLECTION") {
+    if (get(statusBarModeStore) === 'COLLECTION') {
         await exitCollectionMode();
     }
 
-    if (get(statusBarModeStore) === "EPC") {
+    if (get(statusBarModeStore) === 'EPC') {
         toggleEPCMode();
     }
 
-    if (get(statusBarModeStore) !== "EDIT") {
+    if (get(statusBarModeStore) !== 'EDIT') {
         statusBarModeStore.set('EDIT');
         closePanel(PANEL.COMMENT);
         closePanel(PANEL.ANALYSIS);
-        positionStore.update(pos => {
+        positionStore.update((pos) => {
             pos.board.points = Array.from({ length: 26 }, () => ({ checkers: 0, color: -1 }));
             pos.board.bearoff = [15, 15];
             pos.cube = { owner: -1, value: 0 };
@@ -798,7 +901,7 @@ export function enterEPCMode() {
         player_on_roll: 0,
         decision_type: 0,
         has_jacoby: 0,
-        has_beaver: 0,
+        has_beaver: 0
     };
 
     statusBarModeStore.set('EPC');
@@ -854,19 +957,28 @@ export async function updateEPC(position) {
 
 export async function toggleMatchMode() {
     console.log('toggleMatchMode');
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
 
     if (get(statusBarModeStore) === 'MATCH') {
         console.log('Exiting MATCH mode to NORMAL mode via toggleMatchMode');
         if (get(matchContextStore).isMatchMode && get(matchContextStore).matchID) {
             try {
                 await SaveLastVisitedPosition(get(matchContextStore).matchID, get(matchContextStore).currentIndex);
-            } catch (e) { console.error('Error saving last visited position:', e); }
+            } catch (e) {
+                console.error('Error saving last visited position:', e);
+            }
         }
         statusBarModeStore.set('NORMAL');
         matchContextStore.set({
-            isMatchMode: false, matchID: null, movePositions: [],
-            currentIndex: 0, player1Name: '', player2Name: ''
+            isMatchMode: false,
+            matchID: null,
+            movePositions: [],
+            currentIndex: 0,
+            player1Name: '',
+            player2Name: ''
         });
         loadAllPositions();
         return;
@@ -879,10 +991,16 @@ export async function toggleMatchMode() {
 
     try {
         const match = await GetLastVisitedMatch();
-        if (!match) { setStatusBarMessage('No matches in database'); return; }
+        if (!match) {
+            setStatusBarMessage('No matches in database');
+            return;
+        }
 
         const movePositions = await GetMatchMovePositions(match.id);
-        if (!movePositions || movePositions.length === 0) { setStatusBarMessage('No moves found in this match'); return; }
+        if (!movePositions || movePositions.length === 0) {
+            setStatusBarMessage('No moves found in this match');
+            return;
+        }
 
         let startIndex = 0;
         if (match.last_visited_position >= 0 && match.last_visited_position < movePositions.length) {
@@ -895,14 +1013,18 @@ export async function toggleMatchMode() {
             movePositions: movePositions,
             currentIndex: startIndex,
             player1Name: match.player1_name,
-            player2Name: match.player2_name,
+            player2Name: match.player2_name
         });
 
         const startMovePos = movePositions[startIndex];
         positionStore.set(startMovePos.position);
 
         let analysis = null;
-        try { analysis = await LoadAnalysis(startMovePos.position.id); } catch (error) {}
+        try {
+            analysis = await LoadAnalysis(startMovePos.position.id);
+        } catch (_error) {
+            /* ignored */
+        }
 
         const currentPlayedMove = startMovePos.checker_move || '';
         const currentPlayedCubeAction = startMovePos.cube_action || '';
@@ -916,12 +1038,24 @@ export async function toggleMatchMode() {
             analysisEngineVersion: analysis?.analysisEngineVersion || '',
             checkerAnalysis: analysis?.checkerAnalysis || { moves: [] },
             doublingCubeAnalysis: analysis?.doublingCubeAnalysis || {
-                analysisDepth: '', playerWinChances: 0, playerGammonChances: 0,
-                playerBackgammonChances: 0, opponentWinChances: 0, opponentGammonChances: 0,
-                opponentBackgammonChances: 0, cubelessNoDoubleEquity: 0, cubelessDoubleEquity: 0,
-                cubefulNoDoubleEquity: 0, cubefulNoDoubleError: 0, cubefulDoubleTakeEquity: 0,
-                cubefulDoubleTakeError: 0, cubefulDoublePassEquity: 0, cubefulDoublePassError: 0,
-                bestCubeAction: '', wrongPassPercentage: 0, wrongTakePercentage: 0
+                analysisDepth: '',
+                playerWinChances: 0,
+                playerGammonChances: 0,
+                playerBackgammonChances: 0,
+                opponentWinChances: 0,
+                opponentGammonChances: 0,
+                opponentBackgammonChances: 0,
+                cubelessNoDoubleEquity: 0,
+                cubelessDoubleEquity: 0,
+                cubefulNoDoubleEquity: 0,
+                cubefulNoDoubleError: 0,
+                cubefulDoubleTakeEquity: 0,
+                cubefulDoubleTakeError: 0,
+                cubefulDoublePassEquity: 0,
+                cubefulDoublePassError: 0,
+                bestCubeAction: '',
+                wrongPassPercentage: 0,
+                wrongTakePercentage: 0
             },
             allCubeAnalyses: analysis?.allCubeAnalyses || [],
             playedMove: currentPlayedMove,
@@ -942,7 +1076,6 @@ export async function toggleMatchMode() {
             currentIndex: startIndex,
             gameNumber: startMovePos.game_number
         });
-
     } catch (error) {
         console.error('Error entering match mode:', error);
         const errMsg = error?.toString() || '';
@@ -955,15 +1088,24 @@ export async function toggleMatchMode() {
 }
 
 export function toggleAnalysisPanel() {
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
     console.log('toggleAnalysisPanel');
     activeTabStore.set('analysis');
 }
 
 export function toggleCommentPanel() {
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
     const positions = get(positionsStore);
-    if (!positions[get(currentPositionIndexStore)]) { setStatusBarMessage('No current position to comment on'); return; }
+    if (!positions[get(currentPositionIndexStore)]) {
+        setStatusBarMessage('No current position to comment on');
+        return;
+    }
     console.log('toggleCommentPanel called');
     activeTabStore.set('comments');
 }
@@ -980,31 +1122,46 @@ export function toggleMetadataModal() {
 
 export function toggleFilterLibraryPanel() {
     console.log('toggleFilterLibraryPanel');
-    if (!get(databasePathStore)) { statusBarTextStore.set('No database loaded'); return; }
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set('No database loaded');
+        return;
+    }
     activeTabStore.set('search');
 }
 
 export function toggleAnkiPanel() {
     console.log('toggleAnkiPanel');
-    if (!get(databasePathStore)) { statusBarTextStore.set('No database loaded'); return; }
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set('No database loaded');
+        return;
+    }
     activeTabStore.set('anki');
 }
 
 export function toggleMatchPanel() {
     console.log('toggleMatchPanel');
-    if (!get(databasePathStore)) { statusBarTextStore.set('No database loaded'); return; }
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set('No database loaded');
+        return;
+    }
     activeTabStore.set('matches');
 }
 
 export function toggleCollectionPanelAction() {
     console.log('toggleCollectionPanelAction');
-    if (!get(databasePathStore)) { statusBarTextStore.set('No database loaded'); return; }
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set('No database loaded');
+        return;
+    }
     activeTabStore.set('collections');
 }
 
 export function toggleTournamentPanel() {
     console.log('toggleTournamentPanel');
-    if (!get(databasePathStore)) { statusBarTextStore.set('No database loaded'); return; }
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set('No database loaded');
+        return;
+    }
     activeTabStore.set('tournaments');
 }
 
@@ -1016,16 +1173,16 @@ export async function exitCollectionMode() {
     selectedCollectionStore.set(null);
     collectionPositionsStore.set([]);
     closePanel(PANEL.COLLECTION);
-    savedPositionBeforeCollection = null;
-    savedPositionIndexBeforeCollection = -1;
-    savedPositionsBeforeCollection = null;
+    _savedPositionBeforeCollection = null;
+    _savedPositionIndexBeforeCollection = -1;
+    _savedPositionsBeforeCollection = null;
     try {
         const allPositions = await LoadAllPositionsDB();
         positionsStore.set(Array.isArray(allPositions) ? allPositions : []);
         if (allPositions && allPositions.length > 0) {
             let targetIdx = allPositions.length - 1;
             if (lastViewedPosition && lastViewedPosition.id) {
-                const foundIdx = allPositions.findIndex(p => p.id === lastViewedPosition.id);
+                const foundIdx = allPositions.findIndex((p) => p.id === lastViewedPosition.id);
                 if (foundIdx >= 0) targetIdx = foundIdx;
             }
             currentPositionIndexStore.set(-1);
@@ -1048,13 +1205,17 @@ export function handleOpenCollection(collection, collectionPositions) {
         return;
     }
 
-    savedPositionBeforeCollection = get(positionStore);
-    savedPositionIndexBeforeCollection = get(currentPositionIndexStore);
-    savedPositionsBeforeCollection = get(positionsStore);
+    _savedPositionBeforeCollection = get(positionStore);
+    _savedPositionIndexBeforeCollection = get(currentPositionIndexStore);
+    _savedPositionsBeforeCollection = get(positionsStore);
 
     if (get(matchContextStore).isMatchMode) {
-        matchContextStore.update(ctx => ({
-            ...ctx, isMatchMode: false, matchID: null, movePositions: [], currentIndex: 0
+        matchContextStore.update((ctx) => ({
+            ...ctx,
+            isMatchMode: false,
+            matchID: null,
+            movePositions: [],
+            currentIndex: 0
         }));
     }
 
@@ -1068,7 +1229,10 @@ export function handleOpenCollection(collection, collectionPositions) {
 
 export function togglePipcount() {
     console.log('togglePipcount');
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
     showPipcountStore.set(!get(showPipcountStore));
     if (get(statusBarModeStore) === 'MATCH') {
         const currentPosition = get(positionStore);
@@ -1082,7 +1246,10 @@ export function togglePipcount() {
 
 export function loadRandomPosition() {
     console.log('loadRandomPosition');
-    if (!get(databasePathStore)) { setStatusBarMessage('No database opened'); return; }
+    if (!get(databasePathStore)) {
+        setStatusBarMessage('No database opened');
+        return;
+    }
     const positions = get(positionsStore);
     if (positions && positions.length > 0) {
         let randomIndex = Math.floor(Math.random() * positions.length);

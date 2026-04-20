@@ -7,7 +7,7 @@ import {
     ReadFileContent,
     ShowAlert,
     ShowQuestionDialog,
-    IsDirectory,
+    IsDirectory
 } from '../../wailsjs/go/main/App.js';
 import {
     SavePosition,
@@ -24,28 +24,14 @@ import {
     ImportBGFMatch,
     ImportBGFPosition,
     ImportBGFPositionFromText,
-    ImportXGPPosition,
-    LoadAllPositions,
+    ImportXGPPosition
 } from '../../wailsjs/go/main/Database.js';
 import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
-import {
-    positionStore,
-    positionsStore,
-    pastePositionTextStore,
-    matchContextStore,
-    clipboardPositionStore,
-} from '../stores/positionStore.js';
+import { positionStore, positionsStore, pastePositionTextStore, matchContextStore, clipboardPositionStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
-import {
-    currentPositionIndexStore,
-    statusBarTextStore,
-    statusBarModeStore,
-    commentTextStore,
-    openPanel, PANEL,
-    matchPanelRefreshTriggerStore,
-} from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarModeStore, commentTextStore, openPanel, PANEL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
 import {
     showImportProgressModalStore,
     importModalModeStore,
@@ -56,7 +42,7 @@ import {
     fileImportTotalFilesStore,
     fileImportCurrentIndexStore,
     fileImportCurrentFileStore,
-    fileImportResultsStore,
+    fileImportResultsStore
 } from '../stores/importModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 
@@ -150,7 +136,7 @@ export function handleImportCancel() {
 
     if (get(importModalModeStore) === 'committing') {
         console.log('Aborting ongoing commit transaction');
-        CancelImport().catch(err => {
+        CancelImport().catch((err) => {
             console.error('Error calling CancelImport:', err);
         });
     }
@@ -242,7 +228,7 @@ export async function savePositionAndAnalysis(positionData, parsedAnalysis, succ
 
             const positions = get(positionsStore);
             currentPositionIndexStore.set(-1);
-            currentPositionIndexStore.set(positions.findIndex(pos => pos.id === positionExistsResult.id));
+            currentPositionIndexStore.set(positions.findIndex((pos) => pos.id === positionExistsResult.id));
             commentTextStore.set(mergedComment);
         } catch (error) {
             console.error('Error updating analysis and comment:', error);
@@ -286,12 +272,16 @@ export async function importPosition() {
             await importMultipleFiles(files);
         }
     } catch (error) {
-        console.error("Error importing position:", error);
+        console.error('Error importing position:', error);
     } finally {
         if (wasMatchMode) {
             matchContextStore.set({
-                isMatchMode: false, matchID: null, movePositions: [],
-                currentIndex: 0, player1Name: '', player2Name: ''
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0,
+                player1Name: '',
+                player2Name: ''
             });
             const { loadAllPositions } = await import('./positionService.js');
             loadAllPositions();
@@ -318,12 +308,16 @@ export async function importFolder() {
 
         await importMultipleFiles(files);
     } catch (error) {
-        console.error("Error importing folder:", error);
+        console.error('Error importing folder:', error);
     } finally {
         if (wasMatchMode) {
             matchContextStore.set({
-                isMatchMode: false, matchID: null, movePositions: [],
-                currentIndex: 0, player1Name: '', player2Name: ''
+                isMatchMode: false,
+                matchID: null,
+                movePositions: [],
+                currentIndex: 0,
+                player1Name: '',
+                player2Name: ''
             });
             const { loadAllPositions } = await import('./positionService.js');
             loadAllPositions();
@@ -342,26 +336,26 @@ export async function importSingleFile(filePath) {
     const isTXTFile = lowerPath.endsWith('.txt');
 
     if (isXGPFile) {
-        console.log("Importing XGP position file:", filePath);
+        console.log('Importing XGP position file:', filePath);
         try {
             const posID = await ImportXGPPosition(filePath);
             setStatusBarMessage(`XGP position imported successfully (ID: ${posID})`);
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
         } catch (error) {
-            console.error("Error importing XGP position:", error);
+            console.error('Error importing XGP position:', error);
             setStatusBarMessage('Error importing XGP position: ' + error);
             await ShowAlert('Error importing XGP position: ' + error);
         }
     } else if (isXGFile) {
-        console.log("Importing XG match file:", filePath);
+        console.log('Importing XG match file:', filePath);
         try {
             const matchID = await ImportXGMatch(filePath);
             setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
-            matchPanelRefreshTriggerStore.update(n => n + 1);
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error("Error importing XG match:", error);
+            console.error('Error importing XG match:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -371,14 +365,14 @@ export async function importSingleFile(filePath) {
             }
         }
     } else if (isBGFFile) {
-        console.log("Importing BGF match file:", filePath);
+        console.log('Importing BGF match file:', filePath);
         try {
             const matchID = await ImportBGFMatch(filePath);
             setStatusBarMessage(`BGBlitz match imported successfully (ID: ${matchID})`);
-            matchPanelRefreshTriggerStore.update(n => n + 1);
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error("Error importing BGF match:", error);
+            console.error('Error importing BGF match:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -393,7 +387,7 @@ export async function importSingleFile(filePath) {
         try {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`${formatName} match imported successfully (ID: ${matchID})`);
-            matchPanelRefreshTriggerStore.update(n => n + 1);
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
             console.error(`Error importing ${formatName} match:`, error);
@@ -413,7 +407,7 @@ export async function importSingleFile(filePath) {
 async function importTxtFile(filePath) {
     const response = await ReadFileContent(filePath);
     if (response.error) {
-        console.error("Error reading file:", response.error);
+        console.error('Error reading file:', response.error);
         setStatusBarMessage('Error reading file: ' + response.error);
         return;
     }
@@ -423,14 +417,14 @@ async function importTxtFile(filePath) {
     const isBGBlitzTXT = content && content.includes('Position-ID:');
 
     if (isJellyfishTXT) {
-        console.log("Importing Jellyfish TXT match file:", filePath);
+        console.log('Importing Jellyfish TXT match file:', filePath);
         try {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`Jellyfish TXT match imported successfully (ID: ${matchID})`);
-            matchPanelRefreshTriggerStore.update(n => n + 1);
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
-            console.error("Error importing Jellyfish TXT match:", error);
+            console.error('Error importing Jellyfish TXT match:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate match') || errorStr.includes('already been imported')) {
                 setStatusBarMessage('This match has already been imported');
@@ -440,14 +434,14 @@ async function importTxtFile(filePath) {
             }
         }
     } else if (isBGBlitzTXT) {
-        console.log("Importing BGBlitz TXT position:", filePath);
+        console.log('Importing BGBlitz TXT position:', filePath);
         try {
             const posID = await ImportBGFPosition(filePath);
             setStatusBarMessage(`BGBlitz position imported successfully (ID: ${posID})`);
             const { loadAllPositions } = await import('./positionService.js');
             await loadAllPositions();
         } catch (error) {
-            console.error("Error importing BGBlitz position:", error);
+            console.error('Error importing BGBlitz position:', error);
             const errorStr = String(error);
             if (errorStr.includes('duplicate') || errorStr.includes('already exists')) {
                 setStatusBarMessage('This position already exists');
@@ -457,7 +451,7 @@ async function importTxtFile(filePath) {
             }
         }
     } else {
-        console.log("File content:", content);
+        console.log('File content:', content);
         const { positionData, parsedAnalysis } = parsePosition(content);
         positionStore.set({ ...positionData, id: 0, board: { ...positionData.board, bearoff: [15, 15] } });
         analysisStore.set({
@@ -568,15 +562,14 @@ export async function importMultipleFiles(files) {
 
         try {
             const result = await importSingleFileBatch(filePath);
-            fileImportResultsStore.update(r => ({ ...r, succeeded: r.succeeded + 1 }));
+            fileImportResultsStore.update((r) => ({ ...r, succeeded: r.succeeded + 1 }));
             if (result && result.type === 'match') hadMatches = true;
         } catch (error) {
             const errorStr = String(error);
-            if (errorStr.includes('duplicate match') || errorStr.includes('already been imported') ||
-                errorStr.includes('duplicate') || errorStr.includes('already exists')) {
-                fileImportResultsStore.update(r => ({ ...r, skipped: r.skipped + 1 }));
+            if (errorStr.includes('duplicate match') || errorStr.includes('already been imported') || errorStr.includes('duplicate') || errorStr.includes('already exists')) {
+                fileImportResultsStore.update((r) => ({ ...r, skipped: r.skipped + 1 }));
             } else {
-                fileImportResultsStore.update(r => ({
+                fileImportResultsStore.update((r) => ({
                     ...r,
                     failed: r.failed + 1,
                     errors: [...r.errors, { file: filePath, message: errorStr.replace(/^Error:\s*/, '') }]
@@ -588,7 +581,7 @@ export async function importMultipleFiles(files) {
     fileImportModeStore.set('completed');
 
     if (hadMatches) {
-        matchPanelRefreshTriggerStore.update(n => n + 1);
+        matchPanelRefreshTriggerStore.update((n) => n + 1);
     }
     const { loadAllPositions } = await import('./positionService.js');
     await loadAllPositions();
@@ -639,7 +632,7 @@ export async function pastePosition() {
         try {
             const matchID = await ImportGnuBGMatchFromText(result);
             setStatusBarMessage(`Match imported from clipboard successfully (ID: ${matchID})`);
-            matchPanelRefreshTriggerStore.update(n => n + 1);
+            matchPanelRefreshTriggerStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
             console.error('Error pasting GnuBG match:', error);
@@ -702,8 +695,8 @@ async function pastePositionToBoard() {
 }
 
 function applyPositionToBoard(posData) {
-    positionStore.update(pos => {
-        pos.board.points = posData.board.points.map(p => ({ checkers: p.checkers, color: p.color }));
+    positionStore.update((pos) => {
+        pos.board.points = posData.board.points.map((p) => ({ checkers: p.checkers, color: p.color }));
         pos.board.bearoff = [...posData.board.bearoff];
         pos.cube = { owner: posData.cube.owner, value: posData.cube.value };
         pos.dice = [...posData.dice];
@@ -748,12 +741,7 @@ export async function handleDbFileDrop(dbPath) {
     } else {
         const filename = dbPath.split('/').pop().split('\\').pop();
         try {
-            const answer = await ShowQuestionDialog(
-                'Database already open',
-                `A database is already open.\n\nWhat would you like to do with "${filename}"?`,
-                ['Open', 'Merge', 'Cancel'],
-                'Merge'
-            );
+            const answer = await ShowQuestionDialog('Database already open', `A database is already open.\n\nWhat would you like to do with "${filename}"?`, ['Open', 'Merge', 'Cancel'], 'Merge');
             if (answer === 'Open') {
                 await openDatabaseByPath(dbPath);
             } else if (answer === 'Merge') {
@@ -774,7 +762,7 @@ export async function handleFileDrop(x, y, paths) {
     const { dbFiles, importFiles, folders, unsupported } = await classifyDroppedFiles(paths);
 
     if (unsupported.length > 0) {
-        const exts = [...new Set(unsupported.map(p => '.' + p.split('.').pop()))].join(', ');
+        const exts = [...new Set(unsupported.map((p) => '.' + p.split('.').pop()))].join(', ');
         console.warn('Unsupported file extensions dropped:', exts);
     }
 
@@ -810,7 +798,7 @@ export async function handleFileDrop(x, y, paths) {
     }
 
     if (dbFiles.length === 0 && allImportFiles.length === 0 && unsupported.length > 0) {
-        const exts = [...new Set(unsupported.map(p => '.' + p.split('.').pop()))].join(', ');
+        const exts = [...new Set(unsupported.map((p) => '.' + p.split('.').pop()))].join(', ');
         setStatusBarMessage(`Unsupported file type(s): ${exts}`);
     } else if (folders.length > 0 && allImportFiles.length === 0 && dbFiles.length === 0) {
         setStatusBarMessage('No importable files found in dropped folder(s)');
@@ -821,38 +809,35 @@ export async function handleFileDrop(x, y, paths) {
 
 export function parsePosition(fileContent) {
     if (!fileContent || fileContent.trim().length === 0) {
-        throw new Error("File is empty or invalid.");
+        throw new Error('File is empty or invalid.');
     }
 
     let normalizedContent = fileContent.replace(/\r\n|\r/g, '\n').trim();
-    const lines = normalizedContent.split('\n').map(line => line.trim());
+    const lines = normalizedContent.split('\n').map((line) => line.trim());
 
-    const isFrench = normalizedContent.includes("Joueur") || normalizedContent.includes("Adversaire") || normalizedContent.includes("Videau");
-    const isJapanese = normalizedContent.includes("プレーヤー") || normalizedContent.includes("対戦相手") || normalizedContent.includes("キューブ");
-    const isInternalCheckerAnalysisFormat = normalizedContent.includes("Analysis:\nChecker Move Analysis:");
-    const isInternalDoublingAnalysisFormat = normalizedContent.includes("Analysis:\nDoubling Cube Analysis:");
-    const isGerman = normalizedContent.includes("Spieler") || normalizedContent.includes("Gegner") || normalizedContent.includes("Dopplerwürfel");
+    const isFrench = normalizedContent.includes('Joueur') || normalizedContent.includes('Adversaire') || normalizedContent.includes('Videau');
+    const isJapanese = normalizedContent.includes('プレーヤー') || normalizedContent.includes('対戦相手') || normalizedContent.includes('キューブ');
+    const isInternalCheckerAnalysisFormat = normalizedContent.includes('Analysis:\nChecker Move Analysis:');
+    const isInternalDoublingAnalysisFormat = normalizedContent.includes('Analysis:\nDoubling Cube Analysis:');
+    const isGerman = normalizedContent.includes('Spieler') || normalizedContent.includes('Gegner') || normalizedContent.includes('Dopplerwürfel');
 
     normalizedContent = normalizedContent.replace(/,/g, '.');
 
-    const xgidLine = lines.find(line => line.startsWith("XGID="));
+    const xgidLine = lines.find((line) => line.startsWith('XGID='));
     const xgid = xgidLine ? xgidLine.split('=')[1] : null;
 
     if (!xgid) {
-        throw new Error("XGID not found in the file content.");
+        throw new Error('XGID not found in the file content.');
     }
 
-    const [
-        positionPart, cubeValue, cubeOwner, playerDownOnDiagram, dicePart,
-        score1, score2, isCrawford, matchLength, dummy
-    ] = xgid.split(":");
+    const [positionPart, cubeValue, cubeOwner, playerDownOnDiagram, dicePart, score1, score2, isCrawford, matchLength, _dummy] = xgid.split(':');
 
     const board = { points: Array(26).fill({ checkers: 0, color: -1 }) };
 
     if (positionPart) {
         const pointChars = positionPart.split('');
         let pointIndex = 0;
-        pointChars.forEach(char => {
+        pointChars.forEach((char) => {
             if (char >= 'A' && char <= 'Z') {
                 const numCheckers = char.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
                 board.points[pointIndex] = { checkers: numCheckers, color: 0 };
@@ -864,7 +849,7 @@ export function parsePosition(fileContent) {
         });
     }
 
-    const diceValues = dicePart ? dicePart.split("").map(num => parseInt(num)) : [0, 0];
+    const diceValues = dicePart ? dicePart.split('').map((num) => parseInt(num)) : [0, 0];
     const dice = [diceValues[0], diceValues[1]];
 
     const player1Score = parseInt(score1);
@@ -872,16 +857,25 @@ export function parsePosition(fileContent) {
     const matchLengthValue = parseInt(matchLength);
     const playerOnRoll = parseInt(playerDownOnDiagram) === 1 ? 0 : 1;
 
-    let hasJacoby = 0, hasBeaver = 0, awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
+    let hasJacoby = 0,
+        hasBeaver = 0,
+        awayScores = [matchLengthValue - player1Score, matchLengthValue - player2Score];
     if (parseInt(isCrawford) === 0) {
-        awayScores = awayScores.map(score => score === 1 ? 0 : score);
+        awayScores = awayScores.map((score) => (score === 1 ? 0 : score));
     }
     if (matchLengthValue === 0) {
         awayScores = [-1, -1];
         switch (parseInt(isCrawford)) {
-            case 1: hasJacoby = 1; break;
-            case 2: hasBeaver = 1; break;
-            case 3: hasJacoby = 1; hasBeaver = 1; break;
+            case 1:
+                hasJacoby = 1;
+                break;
+            case 2:
+                hasBeaver = 1;
+                break;
+            case 3:
+                hasJacoby = 1;
+                hasBeaver = 1;
+                break;
         }
     }
 
@@ -889,7 +883,7 @@ export function parsePosition(fileContent) {
     const player2Bearoff = 15 - board.points.reduce((sum, point) => sum + (point.color === 1 ? point.checkers : 0), 0);
     board.bearoff = [player1Bearoff, player2Bearoff];
 
-    const decisionLine = lines.find(line => line.includes(isFrench ? "jouer" : isJapanese ? "to play" : isGerman ? "spielen" : "to play"));
+    const decisionLine = lines.find((line) => line.includes(isFrench ? 'jouer' : isJapanese ? 'to play' : isGerman ? 'spielen' : 'to play'));
     const decisionType = decisionLine || isInternalCheckerAnalysisFormat ? 0 : 1;
 
     const positionData = {
@@ -903,10 +897,10 @@ export function parsePosition(fileContent) {
         player_on_roll: playerOnRoll,
         decision_type: decisionType,
         has_jacoby: hasJacoby,
-        has_beaver: hasBeaver,
+        has_beaver: hasBeaver
     };
 
-    const parsedAnalysis = { xgid, analysisType: "", checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: "" };
+    const parsedAnalysis = { xgid, analysisType: '', checkerAnalysis: [], doublingCubeAnalysis: {}, analysisEngineVersion: '' };
 
     const engineVersionMatch = normalizedContent.match(/eXtreme Gammon Version: (.+?)(?:\. MET: (.+))?$/m);
     if (engineVersionMatch) {
@@ -916,11 +910,12 @@ export function parsePosition(fileContent) {
         }
     }
 
-    const engineName = engineVersionMatch ? "XG" : "";
+    const engineName = engineVersionMatch ? 'XG' : '';
 
     if (isInternalDoublingAnalysisFormat) {
-        parsedAnalysis.analysisType = "DoublingCube";
-        const doublingCubeAnalysisRegex = /Doubling Cube Analysis:\nAnalysis Depth: "(.+)"\nPlayer Win Chances: ([-.\d]+)%\nPlayer Gammon Chances: ([-.\d]+)%\nPlayer Backgammon Chances: ([-.\d]+)%\nOpponent Win Chances: ([-.\d]+)%\nOpponent Gammon Chances: ([-.\d]+)%\nOpponent Backgammon Chances: ([-.\d]+)%\nCubeless No Double Equity: ([-.\d]+)\nCubeless Double Equity: ([-.\d]+)\nCubeful No Double Equity: ([-.\d]+)\nCubeful No Double Error: ([-.\d]+)\nCubeful Double Take Equity: ([-.\d]+)\nCubeful Double Take Error: ([-.\d]+)\nCubeful Double Pass Equity: ([-.\d]+)\nCubeful Double Pass Error: ([-.\d]+)\nBest Cube Action: (.+)\nWrong Pass Percentage: ([-.\d]+)%\nWrong Take Percentage: ([-.\d]+)%/;
+        parsedAnalysis.analysisType = 'DoublingCube';
+        const doublingCubeAnalysisRegex =
+            /Doubling Cube Analysis:\nAnalysis Depth: "(.+)"\nPlayer Win Chances: ([-.\d]+)%\nPlayer Gammon Chances: ([-.\d]+)%\nPlayer Backgammon Chances: ([-.\d]+)%\nOpponent Win Chances: ([-.\d]+)%\nOpponent Gammon Chances: ([-.\d]+)%\nOpponent Backgammon Chances: ([-.\d]+)%\nCubeless No Double Equity: ([-.\d]+)\nCubeless Double Equity: ([-.\d]+)\nCubeful No Double Equity: ([-.\d]+)\nCubeful No Double Error: ([-.\d]+)\nCubeful Double Take Equity: ([-.\d]+)\nCubeful Double Take Error: ([-.\d]+)\nCubeful Double Pass Equity: ([-.\d]+)\nCubeful Double Pass Error: ([-.\d]+)\nBest Cube Action: (.+)\nWrong Pass Percentage: ([-.\d]+)%\nWrong Take Percentage: ([-.\d]+)%/;
         const doublingCubeMatch = doublingCubeAnalysisRegex.exec(normalizedContent);
         if (doublingCubeMatch) {
             parsedAnalysis.doublingCubeAnalysis = {
@@ -946,8 +941,9 @@ export function parsePosition(fileContent) {
             };
         }
     } else if (isInternalCheckerAnalysisFormat) {
-        parsedAnalysis.analysisType = "CheckerMove";
-        const moveRegex = /^Move (\d+): (.+)\nAnalysis Depth: "(.+)"\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%/gm;
+        parsedAnalysis.analysisType = 'CheckerMove';
+        const moveRegex =
+            /^Move (\d+): (.+)\nAnalysis Depth: "(.+)"\nEquity: ([-.\d]+)\nEquity Error: ([-.\d]+)\nPlayer Win Chance: ([-.\d]+)%\nPlayer Gammon Chance: ([-.\d]+)%\nPlayer Backgammon Chance: ([-.\d]+)%\nOpponent Win Chance: ([-.\d]+)%\nOpponent Gammon Chance: ([-.\d]+)%\nOpponent Backgammon Chance: ([-.\d]+)%/gm;
         let moveMatch;
         while ((moveMatch = moveRegex.exec(normalizedContent)) !== null) {
             parsedAnalysis.checkerAnalysis.push({
@@ -962,19 +958,19 @@ export function parsePosition(fileContent) {
                 playerBackgammonChance: parseFloat(moveMatch[8]),
                 opponentWinChance: parseFloat(moveMatch[9]),
                 opponentGammonChance: parseFloat(moveMatch[10]),
-                opponentBackgammonChance: parseFloat(moveMatch[11]),
+                opponentBackgammonChance: parseFloat(moveMatch[11])
             });
         }
     } else if (/^ {4}(\d+)\./gm.test(normalizedContent)) {
-        parsedAnalysis.analysisType = "CheckerMove";
+        parsedAnalysis.analysisType = 'CheckerMove';
         const moveRegex = new RegExp(
             isFrench
-            ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\séq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
-            : isJapanese
-            ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
-            : isGerman
-            ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
-            : /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/,
+                ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\séq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
+                : isJapanese
+                  ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
+                  : isGerman
+                    ? /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/
+                    : /^ {4}(\d+)\.\s(.{11})\s(.{28})\seq:(.{5,7})\s(?:\((-?[-.\d]{5,7})\))?/,
             'gm'
         );
         let moveMatch;
@@ -985,24 +981,24 @@ export function parsePosition(fileContent) {
                 analysisEngine: engineName,
                 move: moveMatch[3].trim(),
                 equity: parseFloat(moveMatch[4]),
-                equityError: moveMatch[5] ? parseFloat(moveMatch[5]) : 0,
+                equityError: moveMatch[5] ? parseFloat(moveMatch[5]) : 0
             };
             const lineStart = moveMatch.index + moveMatch[0].length;
             const remainingContent = normalizedContent.slice(lineStart);
             const playerRegex = isFrench
                 ? /Joueur:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
                 : isJapanese
-                ? /プレーヤー:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                : isGerman
-                ? /Spieler:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
+                  ? /プレーヤー:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                  : isGerman
+                    ? /Spieler:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                    : /Player:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
             const opponentRegex = isFrench
                 ? /Adversaire:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
                 : isJapanese
-                ? /対戦相手:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                : isGerman
-                ? /Gegner:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
-                : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
+                  ? /対戦相手:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                  : isGerman
+                    ? /Gegner:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                    : /Opponent:\s*(\d+\.\d+)%.*\(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/;
             const playerMatch = playerRegex.exec(remainingContent);
             const opponentMatch = opponentRegex.exec(remainingContent);
             if (playerMatch) {
@@ -1018,7 +1014,7 @@ export function parsePosition(fileContent) {
             parsedAnalysis.checkerAnalysis.push(moveDetails);
         }
         if (playerOnRoll === 1) {
-            parsedAnalysis.checkerAnalysis.forEach(move => {
+            parsedAnalysis.checkerAnalysis.forEach((move) => {
                 const tempWinChance = move.playerWinChance;
                 const tempGammonChance = move.playerGammonChance;
                 const tempBackgammonChance = move.playerBackgammonChance;
@@ -1031,27 +1027,151 @@ export function parsePosition(fileContent) {
             });
         }
     } else if (
-        (isFrench && (normalizedContent.includes("Equités sans videau") || normalizedContent.includes("Equités avec videau"))) ||
-        (isJapanese && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities"))) ||
-        (isGerman && (normalizedContent.includes("Equities ohne Dopplerwürfel") || normalizedContent.includes("Equities mit Dopplerwürfel"))) ||
-        (!isFrench && !isJapanese && !isGerman && (normalizedContent.includes("Cubeless Equities") || normalizedContent.includes("Cubeful Equities")))
+        (isFrench && (normalizedContent.includes('Equités sans videau') || normalizedContent.includes('Equités avec videau'))) ||
+        (isJapanese && (normalizedContent.includes('Cubeless Equities') || normalizedContent.includes('Cubeful Equities'))) ||
+        (isGerman && (normalizedContent.includes('Equities ohne Dopplerwürfel') || normalizedContent.includes('Equities mit Dopplerwürfel'))) ||
+        (!isFrench && !isJapanese && !isGerman && (normalizedContent.includes('Cubeless Equities') || normalizedContent.includes('Cubeful Equities')))
     ) {
-        parsedAnalysis.analysisType = "DoublingCube";
+        parsedAnalysis.analysisType = 'DoublingCube';
 
-        const analysisDepthMatch = normalizedContent.match(new RegExp(isFrench ? /Analysé avec\s+([^\n]*)/ : isJapanese ? /Analyzed in\s+([^\n]*)/ : isGerman ? /Analysiert in\s+([^\n]*)/ : /Analyzed in\s+([^\n]*)/));
-        const playerWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain du joueur:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : isJapanese ? /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : isGerman ? /Spieler Gewinnchancen:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
-        const opponentWinMatch = normalizedContent.match(new RegExp(isFrench ? /Chance de gain de l'adversaire:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : isJapanese ? /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : isGerman ? /Gewinnchancen des Gegners:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/ : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/));
-        const cubelessMatch = normalizedContent.match(new RegExp(isFrench ? /Equités sans videau\s*:\s*Pas de double=([\+\-\d.]+).\s*Double=([\+\-\d.]+)/ : isJapanese ? /Cubeless Equities:\s*No Double=([\+\-\d.]+).\s*Double=([\+\-\d.]+)./ : isGerman ? /Equities ohne Dopplerwürfel\s*:\s*Nicht Doppeln=([\+\-\d.]+).\s*Doppeln=([\+\-\d.]+)/ : /Cubeless Equities:\s*No Double=([\+\-\d.]+).\s*Double=([\+\-\d.]+)/));
-        const cubefulNoDoubleMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isJapanese ? /ノーダブル\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isGerman ? /Nicht Doppeln\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /No double\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-        const cubefulDoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Prend:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isJapanese ? /ダブル\/テイク:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isGerman ? /Doppeln\/Annehmen:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Take:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-        const cubefulDoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Passe:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isJapanese ? /ダブル\/パス:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isGerman ? /Doppeln\/Ablehnen:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Pass:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-        const redoubleNoMatch = normalizedContent.match(new RegExp(isFrench ? /Pas de redouble\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isJapanese ? /ノーリダブル\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isGerman ? /Nicht Redoppeln\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /No redouble\s*:\s*([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-        const redoubleTakeMatch = normalizedContent.match(new RegExp(isFrench ? /Redouble\/Prend:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isJapanese ? /リダブル\/テイク:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isGerman ? /Redoppeln\/Annehmen:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Redouble\/Take:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-        const redoublePassMatch = normalizedContent.match(new RegExp(isFrench ? /Redouble\/Passe:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isJapanese ? /リダブル\/パス:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isGerman ? /Redoppeln\/Ablehnen:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Redouble\/Pass:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-        const cubefulDoubleBeaverMatch = normalizedContent.match(new RegExp(isFrench ? /Double\/Beaver:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isJapanese ? /ダブル\/ビーバー:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : isGerman ? /Doppeln\/Beaver:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/ : /Double\/Beaver:\s+([\+\-\d.]+)(?: \(([\+\-\d.]+)\))?/));
-        const bestCubeActionMatch = normalizedContent.match(new RegExp(isFrench ? /Meilleur action du videau:\s*(.*)/ : isJapanese ? /ベストキューブアクション：\s*(.*)/ : isGerman ? /Beste Dopplerwürfel Aktion\s*(.*)/ : /Best Cube action:\s*(.*)/));
-        const wrongPassPercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : isJapanese ? /ダブルを正当化するのに必要な相手がパスする確率:\s*(\d+\.\d+)%/ : isGerman ? /Prozent von falschen Ablehnen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/ : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/));
-        const wrongTakePercentageMatch = normalizedContent.match(new RegExp(isFrench ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/ : isJapanese ? /ダブルを正当化するのに必要な相手がテイクする確率:\s*(\d+\.\d+)%/ : isGerman ? /Prozent von falschen Annehmen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/ : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/));
+        const analysisDepthMatch = normalizedContent.match(
+            new RegExp(isFrench ? /Analysé avec\s+([^\n]*)/ : isJapanese ? /Analyzed in\s+([^\n]*)/ : isGerman ? /Analysiert in\s+([^\n]*)/ : /Analyzed in\s+([^\n]*)/)
+        );
+        const playerWinMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Chance de gain du joueur:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                    : isJapanese
+                      ? /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                      : isGerman
+                        ? /Spieler Gewinnchancen:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                        : /Player Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+            )
+        );
+        const opponentWinMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Chance de gain de l'adversaire:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                    : isJapanese
+                      ? /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                      : isGerman
+                        ? /Gewinnchancen des Gegners:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+                        : /Opponent Winning Chances:\s+(\d+\.\d+)% \(G:(\d+\.\d+)% B:(\d+\.\d+)%\)/
+            )
+        );
+        const cubelessMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Equités sans videau\s*:\s*Pas de double=([+\-\d.]+).\s*Double=([+\-\d.]+)/
+                    : isJapanese
+                      ? /Cubeless Equities:\s*No Double=([+\-\d.]+).\s*Double=([+\-\d.]+)./
+                      : isGerman
+                        ? /Equities ohne Dopplerwürfel\s*:\s*Nicht Doppeln=([+\-\d.]+).\s*Doppeln=([+\-\d.]+)/
+                        : /Cubeless Equities:\s*No Double=([+\-\d.]+).\s*Double=([+\-\d.]+)/
+            )
+        );
+        const cubefulNoDoubleMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Pas de double\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                    : isJapanese
+                      ? /ノーダブル\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                      : isGerman
+                        ? /Nicht Doppeln\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                        : /No double\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+            )
+        );
+        const cubefulDoubleTakeMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Double\/Prend:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                    : isJapanese
+                      ? /ダブル\/テイク:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                      : isGerman
+                        ? /Doppeln\/Annehmen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                        : /Double\/Take:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+            )
+        );
+        const cubefulDoublePassMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Double\/Passe:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                    : isJapanese
+                      ? /ダブル\/パス:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                      : isGerman
+                        ? /Doppeln\/Ablehnen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                        : /Double\/Pass:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+            )
+        );
+        const redoubleNoMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Pas de redouble\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                    : isJapanese
+                      ? /ノーリダブル\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                      : isGerman
+                        ? /Nicht Redoppeln\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                        : /No redouble\s*:\s*([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+            )
+        );
+        const redoubleTakeMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Redouble\/Prend:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                    : isJapanese
+                      ? /リダブル\/テイク:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                      : isGerman
+                        ? /Redoppeln\/Annehmen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                        : /Redouble\/Take:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+            )
+        );
+        const redoublePassMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Redouble\/Passe:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                    : isJapanese
+                      ? /リダブル\/パス:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                      : isGerman
+                        ? /Redoppeln\/Ablehnen:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                        : /Redouble\/Pass:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+            )
+        );
+        const cubefulDoubleBeaverMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Double\/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                    : isJapanese
+                      ? /ダブル\/ビーバー:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                      : isGerman
+                        ? /Doppeln\/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+                        : /Double\/Beaver:\s+([+\-\d.]+)(?: \(([+\-\d.]+)\))?/
+            )
+        );
+        const bestCubeActionMatch = normalizedContent.match(
+            new RegExp(isFrench ? /Meilleur action du videau:\s*(.*)/ : isJapanese ? /ベストキューブアクション：\s*(.*)/ : isGerman ? /Beste Dopplerwürfel Aktion\s*(.*)/ : /Best Cube action:\s*(.*)/)
+        );
+        const wrongPassPercentageMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Pourcentage de passes incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/
+                    : isJapanese
+                      ? /ダブルを正当化するのに必要な相手がパスする確率:\s*(\d+\.\d+)%/
+                      : isGerman
+                        ? /Prozent von falschen Ablehnen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/
+                        : /Percentage of wrong pass needed to make the double decision right:\s*(\d+\.\d+)%/
+            )
+        );
+        const wrongTakePercentageMatch = normalizedContent.match(
+            new RegExp(
+                isFrench
+                    ? /Pourcentage de prises incorrectes pour rendre la décision de double correcte:\s*(\d+\.\d+)%/
+                    : isJapanese
+                      ? /ダブルを正当化するのに必要な相手がテイクする確率:\s*(\d+\.\d+)%/
+                      : isGerman
+                        ? /Prozent von falschen Annehmen gebraucht damit Doppelentscheidung richtig wäre.:\s*(\d+\.\d+)%/
+                        : /Percentage of wrong take needed to make the double decision right:\s*(\d+\.\d+)%/
+            )
+        );
 
         parsedAnalysis.doublingCubeAnalysis.analysisEngine = engineName;
         if (analysisDepthMatch) parsedAnalysis.doublingCubeAnalysis.analysisDepth = analysisDepthMatch[1].trim();
@@ -1114,7 +1234,7 @@ export function parsePosition(fileContent) {
         }
     }
 
-    const commentSection = extractCommentSection(normalizedContent, parsedAnalysis.analysisType === "DoublingCube");
+    const commentSection = extractCommentSection(normalizedContent, parsedAnalysis.analysisType === 'DoublingCube');
     parsedAnalysis.comment = commentSection;
 
     return { positionData, parsedAnalysis };
@@ -1143,7 +1263,10 @@ function extractCommentSection(content, isDoublingCube) {
         for (let i = lastOpponentIndex + 1; i < lines.length; i++) {
             if (lines[i].trim() === '') blankLineCount++;
             else blankLineCount = 0;
-            if (blankLineCount === 2) { commentStartIndex = i + 1; break; }
+            if (blankLineCount === 2) {
+                commentStartIndex = i + 1;
+                break;
+            }
         }
 
         if (commentStartIndex === -1) return '';

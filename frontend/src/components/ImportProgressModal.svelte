@@ -19,6 +19,96 @@
     export let onClose;
 </script>
 
+{#if visible}
+    <div class="modal-overlay">
+        <div class="modal-content">
+            {#if mode === 'analyzing'}
+                <h2>Analyzing Import <span class="spinner"></span></h2>
+                <p class="status-text">Please wait while we analyze the database to import...</p>
+
+                <div class="button-group">
+                    <button on:click={onCancel}>Cancel</button>
+                </div>
+            {:else if mode === 'preview'}
+                <h2>Import Preview</h2>
+
+                <div class="summary">
+                    <p><strong>Database to import:</strong> {analysis.total} position(s)</p>
+                    <p>The import operation will make the following changes:</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Will Add</div>
+                        <div class="stat-value">{analysis.toAdd}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Will Merge</div>
+                        <div class="stat-value">{analysis.toMerge}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Will Skip</div>
+                        <div class="stat-value">{analysis.toSkip}</div>
+                    </div>
+                </div>
+
+                {#if analysis.toMerge > 0}
+                    <div class="summary warning">
+                        <p><strong>Note:</strong> {analysis.toMerge} position(s) already exist and will be merged with their analysis and comments.</p>
+                    </div>
+                {/if}
+
+                {#if analysis.toAdd === 0 && analysis.toMerge === 0}
+                    <div class="summary warning">
+                        <p><strong>Nothing to import:</strong> All positions already exist in the database with identical data.</p>
+                    </div>
+                    <div class="button-group">
+                        <button on:click={onClose}>Close</button>
+                    </div>
+                {:else}
+                    <div class="button-group">
+                        <button on:click={onCancel}>Cancel</button>
+                        <button class="btn-commit" on:click={onCommit}>Commit Import</button>
+                    </div>
+                {/if}
+            {:else if mode === 'committing'}
+                <h2>Committing Import <span class="spinner"></span></h2>
+                <p class="status-text">Please wait while the database is being imported...</p>
+                <p class="status-text">This operation is atomic and will not modify your database until completion.</p>
+
+                <div class="button-group">
+                    <button on:click={onCancel}>Abort Import</button>
+                </div>
+            {:else if mode === 'completed'}
+                <h2>Import Completed</h2>
+
+                <div class="summary">
+                    <p><strong>Import successful!</strong> The database has been updated.</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Added</div>
+                        <div class="stat-value">{result.added}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Merged</div>
+                        <div class="stat-value">{result.merged}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Skipped</div>
+                        <div class="stat-value">{result.skipped}</div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button on:click={onClose}>Close</button>
+                </div>
+            {/if}
+        </div>
+    </div>
+{/if}
+
 <style>
     .modal-overlay {
         position: fixed;
@@ -97,8 +187,12 @@
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     .button-group {
@@ -163,96 +257,3 @@
         border-left-color: #999;
     }
 </style>
-
-{#if visible}
-    <div class="modal-overlay">
-        <div class="modal-content">
-            {#if mode === 'analyzing'}
-                <h2>Analyzing Import <span class="spinner"></span></h2>
-                <p class="status-text">Please wait while we analyze the database to import...</p>
-                
-                <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
-                </div>
-            
-            {:else if mode === 'preview'}
-                <h2>Import Preview</h2>
-                
-                <div class="summary">
-                    <p><strong>Database to import:</strong> {analysis.total} position(s)</p>
-                    <p>The import operation will make the following changes:</p>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-label">Will Add</div>
-                        <div class="stat-value">{analysis.toAdd}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Will Merge</div>
-                        <div class="stat-value">{analysis.toMerge}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Will Skip</div>
-                        <div class="stat-value">{analysis.toSkip}</div>
-                    </div>
-                </div>
-
-                {#if analysis.toMerge > 0}
-                    <div class="summary warning">
-                        <p><strong>Note:</strong> {analysis.toMerge} position(s) already exist and will be merged with their analysis and comments.</p>
-                    </div>
-                {/if}
-
-                {#if analysis.toAdd === 0 && analysis.toMerge === 0}
-                    <div class="summary warning">
-                        <p><strong>Nothing to import:</strong> All positions already exist in the database with identical data.</p>
-                    </div>
-                    <div class="button-group">
-                        <button on:click={onClose}>Close</button>
-                    </div>
-                {:else}
-                    <div class="button-group">
-                        <button on:click={onCancel}>Cancel</button>
-                        <button class="btn-commit" on:click={onCommit}>Commit Import</button>
-                    </div>
-                {/if}
-
-            {:else if mode === 'committing'}
-                <h2>Committing Import <span class="spinner"></span></h2>
-                <p class="status-text">Please wait while the database is being imported...</p>
-                <p class="status-text">This operation is atomic and will not modify your database until completion.</p>
-
-                <div class="button-group">
-                    <button on:click={onCancel}>Abort Import</button>
-                </div>
-
-            {:else if mode === 'completed'}
-                <h2>Import Completed</h2>
-                
-                <div class="summary">
-                    <p><strong>Import successful!</strong> The database has been updated.</p>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-label">Added</div>
-                        <div class="stat-value">{result.added}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Merged</div>
-                        <div class="stat-value">{result.merged}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Skipped</div>
-                        <div class="stat-value">{result.skipped}</div>
-                    </div>
-                </div>
-
-                <div class="button-group">
-                    <button on:click={onClose}>Close</button>
-                </div>
-            {/if}
-        </div>
-    </div>
-{/if}

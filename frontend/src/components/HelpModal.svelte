@@ -1,6 +1,5 @@
 <!-- HelpModal.svelte -->
 <script>
-
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
@@ -10,7 +9,7 @@
     export let onClose;
     export let handleGlobalKeydown;
 
-    let activeTab = "manual"; // Default active tab
+    let activeTab = 'manual'; // Default active tab
     const tabs = ['manual', 'shortcuts', 'commands', 'about'];
     let contentArea;
 
@@ -18,7 +17,7 @@
     let applicationVersion = '';
 
     // Subscribe to the metaStore
-    metaStore.subscribe(value => {
+    metaStore.subscribe((value) => {
         applicationVersion = value.applicationVersion;
     });
 
@@ -42,14 +41,12 @@
         window.removeEventListener('keydown', handleGlobalKeydown);
     }
 
-
     // Close on Esc key
     function handleKeyDown(event) {
-
         // Prevent default action and stop event propagation
         event.stopPropagation();
 
-        if(visible) {
+        if (visible) {
             event.preventDefault();
             if (event.key === 'Escape') {
                 onClose();
@@ -77,7 +74,8 @@
                 scrollContent('bottom'); // Go to the bottom of the page
             } else if (!event.ctrlKey && event.key === 'PageUp') {
                 scrollContent('top'); // Go to the top of the page
-            } else if (!event.ctrlKey && event.key === ' ') { // Space key
+            } else if (!event.ctrlKey && event.key === ' ') {
+                // Space key
                 scrollContent('page'); // Scroll down by the height of the content
             }
         }
@@ -89,20 +87,24 @@
         switchTab(tabs[newIndex]);
     }
 
-    
     function scrollContent(direction) {
         if (contentArea) {
             const scrollAmount = 60; // Pixels to scroll per key press
 
-            if (direction === 1) { // Arrow down
+            if (direction === 1) {
+                // Arrow down
                 contentArea.scrollTop += scrollAmount;
-            } else if (direction === -1) { // Arrow up
+            } else if (direction === -1) {
+                // Arrow up
                 contentArea.scrollTop -= scrollAmount;
-            } else if (direction === 'bottom') { // PageDown
+            } else if (direction === 'bottom') {
+                // PageDown
                 contentArea.scrollTop = contentArea.scrollHeight; // Go to bottom
-            } else if (direction === 'top') { // PageUp
+            } else if (direction === 'top') {
+                // PageUp
                 contentArea.scrollTop = 0; // Go to top
-            } else if (direction === 'page') { // Space key
+            } else if (direction === 'page') {
+                // Space key
                 contentArea.scrollTop += contentArea.clientHeight; // Scroll down by the visible area height
             }
         }
@@ -144,7 +146,6 @@
         window.removeEventListener('click', handleClickOutside); // Remove click event listener
         activateGlobalShortcuts();
     }
-
 </script>
 
 {#if visible}
@@ -154,19 +155,23 @@
 
             <!-- Tabs -->
             <div class="tab-header">
-                <button class="{activeTab === 'manual' ? 'active' : ''}" on:click={() => switchTab('manual')}>Manual</button>
-                <button class="{activeTab === 'shortcuts' ? 'active' : ''}" on:click={() => switchTab('shortcuts')}>Shortcut</button>
-                <button class="{activeTab === 'commands' ? 'active' : ''}" on:click={() => switchTab('commands')}>Command Line</button>
-                <button class="{activeTab === 'about' ? 'active' : ''}" on:click={() => switchTab('about')}>About</button>
+                <button class={activeTab === 'manual' ? 'active' : ''} on:click={() => switchTab('manual')}>Manual</button>
+                <button class={activeTab === 'shortcuts' ? 'active' : ''} on:click={() => switchTab('shortcuts')}>Shortcut</button>
+                <button class={activeTab === 'commands' ? 'active' : ''} on:click={() => switchTab('commands')}>Command Line</button>
+                <button class={activeTab === 'about' ? 'active' : ''} on:click={() => switchTab('about')}>About</button>
             </div>
 
             <!-- Tab Content -->
             <div class="tab-content" bind:this={contentArea}>
                 {#if activeTab === 'manual'}
                     <h3>Introduction</h3>
-                    <p>blunderDB is a software for creating backgammon position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online, in tournaments) and to be able to re-study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs of reference positions.</p>
+                    <p>
+                        blunderDB is a software for creating backgammon position databases. Its main strength is to provide a single place to aggregate positions that a player has encountered (online,
+                        in tournaments) and to be able to re-study these positions by filtering them according to various arbitrarily combinable filters. blunderDB can also be used to create catalogs
+                        of reference positions.
+                    </p>
                     <p>Positions are stored in a database represented by a .db file.</p>
-                    
+
                     <h3>Main Interactions</h3>
                     <p>The main interactions possible with blunderDB are:</p>
                     <ul>
@@ -181,7 +186,7 @@
                         <li>organizing matches into tournaments.</li>
                     </ul>
                     <p>The user can freely tag positions and annotate them with comments.</p>
-                    
+
                     <h3>Description of the GUI</h3>
                     <p>The blunderDB GUI is structured from top to bottom as follows:</p>
                     <ul>
@@ -217,7 +222,7 @@
                         <li>the index of the current position, followed by the total number of positions (or move/game info when navigating a match).</li>
                     </ul>
                     <p>In the case of positions resulting from a user search, the number of positions indicated in the status bar corresponds to the number of filtered positions.</p>
-                    
+
                     <h3>Browsing Positions</h3>
                     <p>By default, blunderDB allows you to:</p>
                     <ul>
@@ -225,20 +230,43 @@
                         <li>display analysis information associated with a position,</li>
                         <li>display, add, and modify comments on a position.</li>
                     </ul>
-                    
+
                     <h3>Editing Positions</h3>
-                    <p>Pressing the <strong>Tab</strong> key opens the search panel and allows editing a position on the board to add it to the database or to define a position structure to search for. The distribution of checkers, the cube, the score, and the turn can be modified using the mouse.</p>
-                    
+                    <p>
+                        Pressing the <strong>Tab</strong> key opens the search panel and allows editing a position on the board to add it to the database or to define a position structure to search for.
+                        The distribution of checkers, the cube, the score, and the turn can be modified using the mouse.
+                    </p>
+
                     <h3>Command Line</h3>
-                    <p>The command line, integrated in the status bar, allows performing all the functionalities of blunderDB: database operations, position navigation, displaying analysis and comments, searching for positions with filters... After getting familiar with the interface, it is recommended to gradually use the command line, which allows powerful and smooth use of blunderDB, especially for position search functionalities.</p>
-                    <p>To open the command line, press the <strong>Space</strong> key. A prompt appears in the status bar. Type your command and press <strong>Enter</strong> to execute. Press <strong>Escape</strong> to cancel. Command history and results are logged in the <strong>Log</strong> panel.</p>
-                    <p>blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required by the user.</p>
-                    <p>To refine a search within previously filtered positions, use the <strong>ss</strong> command followed by filters (e.g., <strong>ss nc</strong>). This restricts the search to only the positions currently displayed, allowing progressive narrowing of results. The search panel (<strong>Ctrl+F</strong>) also offers a "Search in current results" checkbox for the same functionality.</p>
+                    <p>
+                        The command line, integrated in the status bar, allows performing all the functionalities of blunderDB: database operations, position navigation, displaying analysis and
+                        comments, searching for positions with filters... After getting familiar with the interface, it is recommended to gradually use the command line, which allows powerful and
+                        smooth use of blunderDB, especially for position search functionalities.
+                    </p>
+                    <p>
+                        To open the command line, press the <strong>Space</strong> key. A prompt appears in the status bar. Type your command and press <strong>Enter</strong> to execute. Press
+                        <strong>Escape</strong>
+                        to cancel. Command history and results are logged in the <strong>Log</strong> panel.
+                    </p>
+                    <p>
+                        blunderDB executes the queries sent by the user provided they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions
+                        required by the user.
+                    </p>
+                    <p>
+                        To refine a search within previously filtered positions, use the <strong>ss</strong> command followed by filters (e.g., <strong>ss nc</strong>). This restricts the search to
+                        only the positions currently displayed, allowing progressive narrowing of results. The search panel (<strong>Ctrl+F</strong>) also offers a "Search in current results" checkbox
+                        for the same functionality.
+                    </p>
 
                     <h3>EPC Calculator</h3>
                     <p>The EPC (Effective Pip Count) calculator computes the effective pip count of bearoff positions. It uses the GNUbg one-sided 6-point bearoff database for exact EPC values.</p>
-                    <p>To open the EPC panel, press <strong>Ctrl+E</strong>, click the EPC tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard bearoff configuration (15 checkers).</p>
-                    <p>You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated EPC panel, showing for each player:</p>
+                    <p>
+                        To open the EPC panel, press <strong>Ctrl+E</strong>, click the EPC tab in the bottom panel, or type <strong>epc</strong> in the command line. The board is initialized with a standard
+                        bearoff configuration (15 checkers).
+                    </p>
+                    <p>
+                        You can freely add or remove checkers on the home-board points using the mouse. The EPC values are displayed in real-time in the dedicated EPC panel, showing for each player:
+                    </p>
                     <ul>
                         <li><strong>EPC</strong>: the average number of pips needed to bear off all checkers,</li>
                         <li><strong>Pip Count</strong>: the raw pip count,</li>
@@ -250,19 +278,43 @@
                     <p>To close the EPC panel, press <strong>Ctrl+E</strong> again or switch to another tab.</p>
 
                     <h3>Match Navigation</h3>
-                    <p>blunderDB allows browsing through the moves of imported matches. Open the Match panel with <strong>Ctrl+Tab</strong> and double-click a match (or press <strong>Enter</strong>) to load its positions.</p>
-                    <p>When navigating a match, the last visited position is automatically saved and restored. Use the <strong>Left</strong>/<strong>Right</strong> keys to move between positions, and <strong>PageUp</strong>/<strong>PageDown</strong> to jump between games.</p>
-                    <p>The analysis panel (<strong>Ctrl+L</strong>) shows the analysis for each move, with the played move highlighted. Press <strong>d</strong> to toggle between checker and cube analysis.</p>
+                    <p>
+                        blunderDB allows browsing through the moves of imported matches. Open the Match panel with <strong>Ctrl+Tab</strong> and double-click a match (or press <strong>Enter</strong>)
+                        to load its positions.
+                    </p>
+                    <p>
+                        When navigating a match, the last visited position is automatically saved and restored. Use the <strong>Left</strong>/<strong>Right</strong> keys to move between positions, and
+                        <strong>PageUp</strong>/<strong>PageDown</strong> to jump between games.
+                    </p>
+                    <p>
+                        The analysis panel (<strong>Ctrl+L</strong>) shows the analysis for each move, with the played move highlighted. Press <strong>d</strong> to toggle between checker and cube analysis.
+                    </p>
 
                     <h3>Collections</h3>
-                    <p>Collections allow organizing positions into custom groups. Open the Collection panel with <strong>Ctrl+B</strong>, then double-click a collection to browse its positions. Collections and positions within them can be reordered by drag-and-drop.</p>
+                    <p>
+                        Collections allow organizing positions into custom groups. Open the Collection panel with <strong>Ctrl+B</strong>, then double-click a collection to browse its positions.
+                        Collections and positions within them can be reordered by drag-and-drop.
+                    </p>
 
                     <h3>Anki (Spaced Repetition)</h3>
                     <p>The Anki panel (<strong>Ctrl+K</strong>) provides spaced repetition for studying backgammon positions using the FSRS algorithm.</p>
-                    <p><strong>Creating decks:</strong> Click <em>New Deck</em> to create a deck from a collection or from the current search results. Search-based decks automatically sync when the Anki tab is activated.</p>
-                    <p><strong>Reviewing:</strong> Select a deck and click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card displays the corresponding position on the board. Rate your recall with keys <strong>1</strong> (Again), <strong>2</strong> (Hard), <strong>3</strong> (Good), or <strong>4</strong> (Easy). Press <strong>Esc</strong> to stop and return to the deck list.</p>
-                    <p><strong>Stop/Resume:</strong> You can stop a review session at any time by pressing <strong>Esc</strong>. The button changes to <em>Resume</em> showing your progress. Click it to continue where you left off.</p>
-                    <p><strong>Deck management:</strong> Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (retention target, max interval, fuzz) can be configured per deck in Settings (gear icon).</p>
+                    <p>
+                        <strong>Creating decks:</strong> Click <em>New Deck</em> to create a deck from a collection or from the current search results. Search-based decks automatically sync when the Anki
+                        tab is activated.
+                    </p>
+                    <p>
+                        <strong>Reviewing:</strong> Select a deck and click <em>Study</em> (or double-click a deck) to start reviewing due cards. Each card displays the corresponding position on the
+                        board. Rate your recall with keys <strong>1</strong> (Again), <strong>2</strong> (Hard), <strong>3</strong> (Good), or <strong>4</strong> (Easy). Press <strong>Esc</strong> to stop
+                        and return to the deck list.
+                    </p>
+                    <p>
+                        <strong>Stop/Resume:</strong> You can stop a review session at any time by pressing <strong>Esc</strong>. The button changes to <em>Resume</em> showing your progress. Click it to
+                        continue where you left off.
+                    </p>
+                    <p>
+                        <strong>Deck management:</strong> Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (retention target, max interval, fuzz) can be configured per deck
+                        in Settings (gear icon).
+                    </p>
 
                     <h3>Tournaments</h3>
                     <p>Tournaments allow grouping matches by event. Open the Tournament panel with <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.</p>
@@ -279,7 +331,6 @@
                         </thead>
 
                         <tbody>
-
                             <tr>
                                 <td>Ctrl + N</td>
                                 <td>New Database</td>
@@ -309,7 +360,6 @@
                                 <td>Ctrl + M</td>
                                 <td>Edit Metadata</td>
                             </tr>
-                            
                         </tbody>
                     </table>
 
@@ -324,7 +374,6 @@
                         </thead>
 
                         <tbody>
-
                             <tr>
                                 <td>Ctrl + I</td>
                                 <td>Import Position or Match</td>
@@ -374,7 +423,6 @@
                                 <td>Ctrl + G</td>
                                 <td>Show Position Metadata</td>
                             </tr>
-
                         </tbody>
                     </table>
 
@@ -389,7 +437,6 @@
                         </thead>
 
                         <tbody>
-
                             <tr>
                                 <td>Ctrl + R</td>
                                 <td>Reload All Positions</td>
@@ -419,7 +466,6 @@
                                 <td>r</td>
                                 <td>Load Random Position</td>
                             </tr>
-
                         </tbody>
                     </table>
 
@@ -434,7 +480,6 @@
                         </thead>
 
                         <tbody>
-
                             <tr>
                                 <td>Ctrl + ArrowLeft</td>
                                 <td>Set Board Orientation to Left</td>
@@ -449,7 +494,6 @@
                                 <td>p</td>
                                 <td>Toggle Pipcount</td>
                             </tr>
-
                         </tbody>
                     </table>
 
@@ -464,7 +508,6 @@
                         </thead>
 
                         <tbody>
-
                             <tr>
                                 <td>Tab</td>
                                 <td>Open Search Panel (position editor)</td>
@@ -474,7 +517,6 @@
                                 <td>Space</td>
                                 <td>Open Command Line</td>
                             </tr>
-
                         </tbody>
                     </table>
 
@@ -489,7 +531,6 @@
                         </thead>
 
                         <tbody>
-
                             <tr>
                                 <td>Ctrl + L</td>
                                 <td>Show Analysis</td>
@@ -534,7 +575,6 @@
                                 <td>?</td>
                                 <td>Open Help</td>
                             </tr>
-
                         </tbody>
                     </table>
 
@@ -749,7 +789,6 @@
                             </tr>
                         </tbody>
                     </table>
-
                 {/if}
 
                 {#if activeTab === 'commands'}
@@ -1279,31 +1318,42 @@
                 {/if}
 
                 {#if activeTab === 'about'}
-                    
                     <h3>Version</h3>
                     <p>Application version: {applicationVersion}</p>
                     <p>Database version: {databaseVersion}</p>
-                    
+
                     <h3>Author</h3>
                     <p><strong>Kévin Unger &lt;blunderdb@proton.me&gt;</strong></p>
                     <p>You can also find me on Heroes under the nickname <strong>postmanpat</strong>.</p>
-                    <p>I developed blunderDB initially for my personal use to detect patterns in my mistakes. But it is very pleasant to have feedback, especially when a lot of hours have been spent on design, coding, debugging... So feel free to write to me to share your feedback.</p>
+                    <p>
+                        I developed blunderDB initially for my personal use to detect patterns in my mistakes. But it is very pleasant to have feedback, especially when a lot of hours have been spent
+                        on design, coding, debugging... So feel free to write to me to share your feedback.
+                    </p>
                     <p>Here are several ways to reach out:</p>
                     <ul>
                         <li>Discuss with me if we meet in a tournament,</li>
                         <li>Send me an email,</li>
                     </ul>
                     <h3>License</h3>
-                    <p>blunderDB is licensed under the MIT License. This means you are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, provided that the original copyright notice and this permission notice are included in all copies or substantial portions of the software.</p>
+                    <p>
+                        blunderDB is licensed under the MIT License. This means you are free to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the software, provided
+                        that the original copyright notice and this permission notice are included in all copies or substantial portions of the software.
+                    </p>
                     <h3>Acknowledgements</h3>
                     <p>I dedicate this small software to my partner <strong>Anne-Claire</strong> and our dear daughter <strong>Perrine</strong>. I would like to especially thank some friends:</p>
                     <ul>
-                        <li><strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to support me despite my poor attempts to play better.</li>
+                        <li>
+                            <strong>Tristan Remille</strong>, for introducing me to backgammon with joy and kindness; for showing the Way in understanding this wonderful game; for continuing to
+                            support me despite my poor attempts to play better.
+                        </li>
                         <li><strong>Nicolas Harmand</strong>, a joyful companion for over a decade in great adventures, and a fantastic game partner since he caught the backgammon bug.</li>
                     </ul>
                     <p>The Kazaross-XG2 Match Equity Table (MET) is credited to <strong>Neil Kazaross</strong>.</p>
                     <p>The take point and gammon values tables are taken from <strong>Dirk Schiemann</strong>'s book <em>The Theory of Backgammon</em>.</p>
-                    <p>The one-sided 6-point bearoff database used for EPC (Effective Pip Count) computation has been generated with <strong>GNU Backgammon</strong> (GNUbg). GNUbg is a free and open-source backgammon program licensed under the GNU General Public License.</p>
+                    <p>
+                        The one-sided 6-point bearoff database used for EPC (Effective Pip Count) computation has been generated with <strong>GNU Backgammon</strong> (GNUbg). GNUbg is a free and open-source
+                        backgammon program licensed under the GNU General Public License.
+                    </p>
                 {/if}
             </div>
         </div>
@@ -1345,7 +1395,9 @@
         color: #666;
         cursor: pointer;
         z-index: 10;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
+        transition:
+            background-color 0.3s ease,
+            opacity 0.3s ease;
     }
 
     .tab-header {
@@ -1386,7 +1438,10 @@
         height: calc(100% - 50px); /* Adjust height to ensure uniform tab size */
     }
 
-    .tab-content p, .tab-content ul, .tab-content h2, .tab-content h3 {
+    .tab-content p,
+    .tab-content ul,
+    .tab-content h2,
+    .tab-content h3 {
         margin: 0 20px 20px 20px; /* Add bottom margin for spacing */
         text-align: justify;
     }
@@ -1397,7 +1452,8 @@
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         padding: 12px;
         text-align: center;
         border-bottom: 1px solid #ddd;
@@ -1412,4 +1468,3 @@
         background-color: #f1f1f1;
     }
 </style>
-

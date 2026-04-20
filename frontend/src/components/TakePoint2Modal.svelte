@@ -5,7 +5,7 @@
 
     let visible = false;
 
-    activeModal.subscribe(value => {
+    activeModal.subscribe((value) => {
         visible = value === MODAL.TAKE_POINT_2;
     });
 
@@ -132,7 +132,8 @@
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;

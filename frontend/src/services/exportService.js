@@ -1,28 +1,13 @@
 import { get } from 'svelte/store';
-import {
-    OpenExportDatabaseDialog,
-    ShowAlert,
-} from '../../wailsjs/go/main/App.js';
-import {
-    ExportDatabase,
-    GetAllMatches,
-    GetAllCollections,
-    GetAllTournaments,
-} from '../../wailsjs/go/main/Database.js';
+import { OpenExportDatabaseDialog, ShowAlert } from '../../wailsjs/go/main/App.js';
+import { ExportDatabase, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/main/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { statusBarModeStore, openModal, closeModal, MODAL } from '../stores/uiStore.js';
 import { collectionsStore } from '../stores/collectionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
-import {
-    exportModalModeStore,
-    exportPositionCountStore,
-    exportMetadataStore,
-    exportOptionsStore,
-    exportMatchesStore,
-    resetExportState,
-} from '../stores/exportModalStore.js';
+import { exportModalModeStore, exportPositionCountStore, exportMetadataStore, exportOptionsStore, exportMatchesStore, resetExportState } from '../stores/exportModalStore.js';
 import { setStatusBarMessage } from './databaseService.js';
 
 let pendingExportPath = null;
@@ -77,7 +62,6 @@ export async function exportDatabase() {
         exportPositionCountStore.set(positions.length);
         exportModalModeStore.set('metadata');
         openModal(MODAL.EXPORT_DATABASE);
-
     } catch (error) {
         console.error('Error during export preparation:', error);
         setStatusBarMessage(`Error preparing export: ${error}`);
@@ -124,7 +108,6 @@ export async function handleExportCommit() {
 
         const posCount = get(exportPositionCountStore);
         setStatusBarMessage(`Export completed: ${posCount} position(s) exported`);
-
     } catch (error) {
         console.error('Error committing export:', error);
         closeModal();

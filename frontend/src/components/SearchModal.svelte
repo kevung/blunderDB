@@ -1,5 +1,5 @@
 <script>
-    import { createEventDispatcher, onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { positionStore, positionsStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
@@ -8,43 +8,21 @@
     export let onClose;
     export let onLoadPositionsByFilters;
 
-    const dispatch = createEventDispatcher();
-
     let filters = [];
-    let includeCube = false;
-    let includeScore = false;
     let pipCountMin = -375;
     let pipCountMax = 375;
-    let winRateFilter = '';
-    let gammonRateFilter = '';
-    let backgammonRateFilter = '';
-    let player2WinRateFilter = '';
-    let player2GammonRateFilter = '';
-    let player2BackgammonRateFilter = '';
-    let player1CheckerOffFilter = '';
-    let player2CheckerOffFilter = '';
-    let player1BackCheckerFilter = '';
-    let player2BackCheckerFilter = '';
-    let player1CheckerInZoneFilter = '';
-    let player2CheckerInZoneFilter = '';
     let searchText = '';
-    let player1AbsolutePipCountFilter = '';
-    let equityFilter = '';
-    let decisionTypeFilter = false;
-    let diceRollFilter = false;
-    let mirrorPositionFilter = false;
     let movePattern = '';
     let creationDateOption = 'min'; // Default option for creation date
     let creationDateMin = ''; // Min value for creation date
     let creationDateMax = ''; // Max value for creation date
     let creationDateRangeMin = ''; // Min value for creation date range
     let creationDateRangeMax = ''; // Max value for creation date range
-    let noContactFilter = false;
 
-    let matchIDsInput = '';  // Match IDs (comma-separated or range)
-    let tournamentIDsInput = '';  // Tournament IDs (comma-separated or range)
+    let matchIDsInput = ''; // Match IDs (comma-separated or range)
+    let tournamentIDsInput = ''; // Tournament IDs (comma-separated or range)
 
-    let searchInCurrentResults = false;  // Search within currently filtered positions
+    let searchInCurrentResults = false; // Search within currently filtered positions
 
     let selectedFilter = '';
     let pipCountOption = 'min'; // Default option for pip count
@@ -204,11 +182,11 @@
     }
 
     function removeFilter(filter) {
-        filters = filters.filter(f => f !== filter);
+        filters = filters.filter((f) => f !== filter);
     }
 
     function handleSearch() {
-        const transformedFilters = filters.map(filter => {
+        const transformedFilters = filters.map((filter) => {
             switch (filter) {
                 case 'Include Cube':
                     return 'cube';
@@ -225,7 +203,11 @@
                 case 'Pipcount Difference':
                     return pipCountOption === 'min' ? `p>${pipCountMin}` : pipCountOption === 'max' ? `p<${pipCountMax}` : `p${pipCountRangeMin},${pipCountRangeMax}`;
                 case 'Player Absolute Pipcount':
-                    return player1AbsolutePipCountOption === 'min' ? `P>${player1AbsolutePipCountMin}` : player1AbsolutePipCountOption === 'max' ? `P<${player1AbsolutePipCountMax}` : `P${player1AbsolutePipCountRangeMin},${player1AbsolutePipCountRangeMax}`;
+                    return player1AbsolutePipCountOption === 'min'
+                        ? `P>${player1AbsolutePipCountMin}`
+                        : player1AbsolutePipCountOption === 'max'
+                          ? `P<${player1AbsolutePipCountMax}`
+                          : `P${player1AbsolutePipCountRangeMin},${player1AbsolutePipCountRangeMax}`;
                 case 'Equity (millipoints)':
                     return equityOption === 'min' ? `e>${equityMin}` : equityOption === 'max' ? `e<${equityMax}` : `e${equityRangeMin},${equityRangeMax}`;
                 case 'Move Error (millipoints, Player 1)':
@@ -235,40 +217,101 @@
                 case 'Gammon Rate':
                     return gammonRateOption === 'min' ? `g>${gammonRateMin}` : gammonRateOption === 'max' ? `g<${gammonRateMax}` : `g${gammonRateRangeMin},${gammonRateRangeMax}`;
                 case 'Backgammon Rate':
-                    return backgammonRateOption === 'min' ? `b>${backgammonRateMin}` : backgammonRateOption === 'max' ? `b<${backgammonRateMax}` : `b${backgammonRateRangeMin},${backgammonRateRangeMax}`;
+                    return backgammonRateOption === 'min'
+                        ? `b>${backgammonRateMin}`
+                        : backgammonRateOption === 'max'
+                          ? `b<${backgammonRateMax}`
+                          : `b${backgammonRateRangeMin},${backgammonRateRangeMax}`;
                 case 'Opponent Win Rate':
-                    return player2WinRateOption === 'min' ? `W>${player2WinRateMin}` : player2WinRateOption === 'max' ? `W<${player2WinRateMax}` : `W${player2WinRateRangeMin},${player2WinRateRangeMax}`;
+                    return player2WinRateOption === 'min'
+                        ? `W>${player2WinRateMin}`
+                        : player2WinRateOption === 'max'
+                          ? `W<${player2WinRateMax}`
+                          : `W${player2WinRateRangeMin},${player2WinRateRangeMax}`;
                 case 'Opponent Gammon Rate':
-                    return player2GammonRateOption === 'min' ? `G>${player2GammonRateMin}` : player2GammonRateOption === 'max' ? `G<${player2GammonRateMax}` : `G${player2GammonRateRangeMin},${player2GammonRateRangeMax}`;
+                    return player2GammonRateOption === 'min'
+                        ? `G>${player2GammonRateMin}`
+                        : player2GammonRateOption === 'max'
+                          ? `G<${player2GammonRateMax}`
+                          : `G${player2GammonRateRangeMin},${player2GammonRateRangeMax}`;
                 case 'Opponent Backgammon Rate':
-                    return player2BackgammonRateOption === 'min' ? `B>${player2BackgammonRateMin}` : player2BackgammonRateOption === 'max' ? `B<${player2BackgammonRateMax}` : `B${player2BackgammonRateRangeMin},${player2BackgammonRateRangeMax}`;
+                    return player2BackgammonRateOption === 'min'
+                        ? `B>${player2BackgammonRateMin}`
+                        : player2BackgammonRateOption === 'max'
+                          ? `B<${player2BackgammonRateMax}`
+                          : `B${player2BackgammonRateRangeMin},${player2BackgammonRateRangeMax}`;
                 case 'Player Checker-Off':
-                    return player1CheckerOffOption === 'min' ? `o>${player1CheckerOffMin}` : player1CheckerOffOption === 'max' ? `o<${player1CheckerOffMax}` : `o${player1CheckerOffRangeMin},${player1CheckerOffRangeMax}`;
+                    return player1CheckerOffOption === 'min'
+                        ? `o>${player1CheckerOffMin}`
+                        : player1CheckerOffOption === 'max'
+                          ? `o<${player1CheckerOffMax}`
+                          : `o${player1CheckerOffRangeMin},${player1CheckerOffRangeMax}`;
                 case 'Opponent Checker-Off':
-                    return player2CheckerOffOption === 'min' ? `O>${player2CheckerOffMin}` : player2CheckerOffOption === 'max' ? `O<${player2CheckerOffMax}` : `O${player2CheckerOffRangeMin},${player2CheckerOffRangeMax}`;
+                    return player2CheckerOffOption === 'min'
+                        ? `O>${player2CheckerOffMin}`
+                        : player2CheckerOffOption === 'max'
+                          ? `O<${player2CheckerOffMax}`
+                          : `O${player2CheckerOffRangeMin},${player2CheckerOffRangeMax}`;
                 case 'Player Back Checker':
-                    return player1BackCheckerOption === 'min' ? `k>${player1BackCheckerMin}` : player1BackCheckerOption === 'max' ? `k<${player1BackCheckerMax}` : `k${player1BackCheckerRangeMin},${player1BackCheckerRangeMax}`;
+                    return player1BackCheckerOption === 'min'
+                        ? `k>${player1BackCheckerMin}`
+                        : player1BackCheckerOption === 'max'
+                          ? `k<${player1BackCheckerMax}`
+                          : `k${player1BackCheckerRangeMin},${player1BackCheckerRangeMax}`;
                 case 'Opponent Back Checker':
-                    return player2BackCheckerOption === 'min' ? `K>${player2BackCheckerMin}` : player2BackCheckerOption === 'max' ? `K<${player2BackCheckerMax}` : `K${player2BackCheckerRangeMin},${player2BackCheckerRangeMax}`;
+                    return player2BackCheckerOption === 'min'
+                        ? `K>${player2BackCheckerMin}`
+                        : player2BackCheckerOption === 'max'
+                          ? `K<${player2BackCheckerMax}`
+                          : `K${player2BackCheckerRangeMin},${player2BackCheckerRangeMax}`;
                 case 'Player Checker in the Zone':
-                    return player1CheckerInZoneOption === 'min' ? `z>${player1CheckerInZoneMin}` : player1CheckerInZoneOption === 'max' ? `z<${player1CheckerInZoneMax}` : `z${player1CheckerInZoneRangeMin},${player1CheckerInZoneRangeMax}`;
+                    return player1CheckerInZoneOption === 'min'
+                        ? `z>${player1CheckerInZoneMin}`
+                        : player1CheckerInZoneOption === 'max'
+                          ? `z<${player1CheckerInZoneMax}`
+                          : `z${player1CheckerInZoneRangeMin},${player1CheckerInZoneRangeMax}`;
                 case 'Opponent Checker in the Zone':
-                    return player2CheckerInZoneOption === 'min' ? `Z>${player2CheckerInZoneMin}` : player2CheckerInZoneOption === 'max' ? `Z<${player2CheckerInZoneMax}` : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
+                    return player2CheckerInZoneOption === 'min'
+                        ? `Z>${player2CheckerInZoneMin}`
+                        : player2CheckerInZoneOption === 'max'
+                          ? `Z<${player2CheckerInZoneMax}`
+                          : `Z${player2CheckerInZoneRangeMin},${player2CheckerInZoneRangeMax}`;
                 case 'Search Text':
                     return `t"${searchText}"`;
                 case 'Best Move or Cube Decision':
                     return `m"${movePattern}"`;
-                case 'Creation Date':
-                    const formatDate = date => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
-                    return creationDateOption === 'min' ? `T>${formatDate(creationDateMin)}` : creationDateOption === 'max' ? `T<${formatDate(creationDateMax)}` : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
+                case 'Creation Date': {
+                    const formatDate = (date) => date.replace(/-/g, '/'); // Convert date format to yyyy/mm/dd
+                    return creationDateOption === 'min'
+                        ? `T>${formatDate(creationDateMin)}`
+                        : creationDateOption === 'max'
+                          ? `T<${formatDate(creationDateMax)}`
+                          : `T${formatDate(creationDateRangeMin)},${formatDate(creationDateRangeMax)}`;
+                }
                 case 'Player Outfield Blot':
-                    return player1OutfieldBlotOption === 'min' ? `bo>${player1OutfieldBlotMin}` : player1OutfieldBlotOption === 'max' ? `bo<${player1OutfieldBlotMax}` : `bo${player1OutfieldBlotRangeMin},${player1OutfieldBlotRangeMax}`;
+                    return player1OutfieldBlotOption === 'min'
+                        ? `bo>${player1OutfieldBlotMin}`
+                        : player1OutfieldBlotOption === 'max'
+                          ? `bo<${player1OutfieldBlotMax}`
+                          : `bo${player1OutfieldBlotRangeMin},${player1OutfieldBlotRangeMax}`;
                 case 'Opponent Outfield Blot':
-                    return player2OutfieldBlotOption === 'min' ? `BO>${player2OutfieldBlotMin}` : player2OutfieldBlotOption === 'max' ? `BO<${player2OutfieldBlotMax}` : `BO${player2OutfieldBlotRangeMin},${player2OutfieldBlotRangeMax}`;
+                    return player2OutfieldBlotOption === 'min'
+                        ? `BO>${player2OutfieldBlotMin}`
+                        : player2OutfieldBlotOption === 'max'
+                          ? `BO<${player2OutfieldBlotMax}`
+                          : `BO${player2OutfieldBlotRangeMin},${player2OutfieldBlotRangeMax}`;
                 case 'Player Jan Blot':
-                    return player1JanBlotOption === 'min' ? `bj>${player1JanBlotMin}` : player1JanBlotOption === 'max' ? `bj<${player1JanBlotMax}` : `bj${player1JanBlotRangeMin},${player1JanBlotRangeMax}`;
+                    return player1JanBlotOption === 'min'
+                        ? `bj>${player1JanBlotMin}`
+                        : player1JanBlotOption === 'max'
+                          ? `bj<${player1JanBlotMax}`
+                          : `bj${player1JanBlotRangeMin},${player1JanBlotRangeMax}`;
                 case 'Opponent Jan Blot':
-                    return player2JanBlotOption === 'min' ? `BJ>${player2JanBlotMin}` : player2JanBlotOption === 'max' ? `BJ<${player2JanBlotMax}` : `BJ${player2JanBlotRangeMin},${player2JanBlotRangeMax}`;
+                    return player2JanBlotOption === 'min'
+                        ? `BJ>${player2JanBlotMin}`
+                        : player2JanBlotOption === 'max'
+                          ? `BJ<${player2JanBlotMax}`
+                          : `BJ${player2JanBlotRangeMin},${player2JanBlotRangeMax}`;
                 case 'Match IDs':
                     return matchIDsInput ? `ma${matchIDsInput}` : '';
                 case 'Tournament IDs':
@@ -282,36 +325,36 @@
         const includeScore = transformedFilters.includes('score');
         const noContactFilter = transformedFilters.includes('nc');
         const mirrorPositionFilter = transformedFilters.includes('M');
-        const pipCountFilter = transformedFilters.find(filter => filter.startsWith('p'));
-        const winRateFilter = transformedFilters.find(filter => filter.startsWith('w'));
-        const gammonRateFilter = transformedFilters.find(filter => filter.startsWith('g'));
-        const backgammonRateFilter = transformedFilters.find(filter => filter.startsWith('b') && !filter.startsWith('bo') && !filter.startsWith('bj'));
-        const player2WinRateFilter = transformedFilters.find(filter => filter.startsWith('W'));
-        const player2GammonRateFilter = transformedFilters.find(filter => filter.startsWith('G'));
-        const player2BackgammonRateFilter = transformedFilters.find(filter => filter.startsWith('B') && !filter.startsWith('BO') && !filter.startsWith('BJ'));
-        const player1CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('o'));
-        const player2CheckerOffFilter = transformedFilters.find(filter => filter.startsWith('O'));
-        const player1BackCheckerFilter = transformedFilters.find(filter => filter.startsWith('k'));
-        const player2BackCheckerFilter = transformedFilters.find(filter => filter.startsWith('K'));
-        const player1CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('z'));
-        const player2CheckerInZoneFilter = transformedFilters.find(filter => filter.startsWith('Z'));
-        const player1AbsolutePipCountFilter = transformedFilters.find(filter => filter.startsWith('P'));
-        const equityFilter = transformedFilters.find(filter => filter.startsWith('e'));
-        const moveErrorFilter = transformedFilters.find(filter => filter.startsWith('E'));
-        const player1OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('bo'));
-        const player2OutfieldBlotFilter = transformedFilters.find(filter => filter.startsWith('BO'));
-        const player1JanBlotFilter = transformedFilters.find(filter => filter.startsWith('bj'));
-        const player2JanBlotFilter = transformedFilters.find(filter => filter.startsWith('BJ'));
+        const pipCountFilter = transformedFilters.find((filter) => filter.startsWith('p'));
+        const winRateFilter = transformedFilters.find((filter) => filter.startsWith('w'));
+        const gammonRateFilter = transformedFilters.find((filter) => filter.startsWith('g'));
+        const backgammonRateFilter = transformedFilters.find((filter) => filter.startsWith('b') && !filter.startsWith('bo') && !filter.startsWith('bj'));
+        const player2WinRateFilter = transformedFilters.find((filter) => filter.startsWith('W'));
+        const player2GammonRateFilter = transformedFilters.find((filter) => filter.startsWith('G'));
+        const player2BackgammonRateFilter = transformedFilters.find((filter) => filter.startsWith('B') && !filter.startsWith('BO') && !filter.startsWith('BJ'));
+        const player1CheckerOffFilter = transformedFilters.find((filter) => filter.startsWith('o'));
+        const player2CheckerOffFilter = transformedFilters.find((filter) => filter.startsWith('O'));
+        const player1BackCheckerFilter = transformedFilters.find((filter) => filter.startsWith('k'));
+        const player2BackCheckerFilter = transformedFilters.find((filter) => filter.startsWith('K'));
+        const player1CheckerInZoneFilter = transformedFilters.find((filter) => filter.startsWith('z'));
+        const player2CheckerInZoneFilter = transformedFilters.find((filter) => filter.startsWith('Z'));
+        const player1AbsolutePipCountFilter = transformedFilters.find((filter) => filter.startsWith('P'));
+        const equityFilter = transformedFilters.find((filter) => filter.startsWith('e'));
+        const moveErrorFilter = transformedFilters.find((filter) => filter.startsWith('E'));
+        const player1OutfieldBlotFilter = transformedFilters.find((filter) => filter.startsWith('bo'));
+        const player2OutfieldBlotFilter = transformedFilters.find((filter) => filter.startsWith('BO'));
+        const player1JanBlotFilter = transformedFilters.find((filter) => filter.startsWith('bj'));
+        const player2JanBlotFilter = transformedFilters.find((filter) => filter.startsWith('BJ'));
 
         // Match/Tournament ID filters
-        const matchIDToken = transformedFilters.find(filter => filter.startsWith('ma'));
+        const matchIDToken = transformedFilters.find((filter) => filter.startsWith('ma'));
         const matchIDsFilter = matchIDToken ? matchIDToken.slice(2) : '';
-        const tournamentIDToken = transformedFilters.find(filter => filter.startsWith('tn'));
+        const tournamentIDToken = transformedFilters.find((filter) => filter.startsWith('tn'));
         const tournamentIDsFilter = tournamentIDToken ? tournamentIDToken.slice(2) : '';
 
         const decisionTypeFilter = transformedFilters.includes('d');
         const diceRollFilter = transformedFilters.includes('D');
-        const creationDateFilter = transformedFilters.find(filter => filter.startsWith('T'));
+        const creationDateFilter = transformedFilters.find((filter) => filter.startsWith('T'));
         const searchTextFilter = searchText ? `t"${searchText}"` : '';
         const movePatternFilter = movePattern ? `m"${movePattern}"` : '';
 
@@ -348,39 +391,43 @@
         console.log('player2JanBlotFilter:', player2JanBlotFilter);
         console.log('noContactFilter:', noContactFilter);
         console.log('mirrorPositionFilter:', mirrorPositionFilter);
-        
+
         // Build the command string
         const commandParts = ['s'];
-        transformedFilters.forEach(filter => {
-            if (filter !== 't""' && filter !== 'm""') { // Skip empty text filters
+        transformedFilters.forEach((filter) => {
+            if (filter !== 't""' && filter !== 'm""') {
+                // Skip empty text filters
                 commandParts.push(filter);
             }
         });
         const searchCommand = commandParts.join(' ');
-        
+
         // Save to search history
         const searchHistoryEntry = {
             command: searchCommand,
             position: JSON.stringify($positionStore),
             timestamp: Date.now()
         };
-        
+
         // Update search history store
-        searchHistoryStore.update(history => {
+        searchHistoryStore.update((history) => {
             const newHistory = [searchHistoryEntry, ...history].slice(0, 100); // Keep only last 100
             return newHistory;
         });
-        
+
         // Save to database
-        SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch(err => {
+        SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch((err) => {
             console.error('Error saving search history:', err);
         });
-        
+
         // Build restrictToPositionIDs if searching in current results
         let restrictToPositionIDs = '';
         if (searchInCurrentResults) {
             const currentPositions = $positionsStore || [];
-            restrictToPositionIDs = currentPositions.map(p => p.id).filter(id => id != null).join(',');
+            restrictToPositionIDs = currentPositions
+                .map((p) => p.id)
+                .filter((id) => id != null)
+                .join(',');
         }
 
         onLoadPositionsByFilters(
@@ -414,7 +461,7 @@
             noContactFilter,
             mirrorPositionFilter,
             moveErrorFilter,
-            '',  // searchCommand
+            '', // searchCommand
             matchIDsFilter,
             tournamentIDsFilter,
             restrictToPositionIDs
@@ -434,8 +481,6 @@
 
     function clearFilters() {
         filters = [];
-        includeCube = false;
-        includeScore = false;
         pipCountOption = 'min';
         pipCountMin = -375;
         pipCountMax = 375;
@@ -537,8 +582,6 @@
         player2JanBlotMax = 15;
         player2JanBlotRangeMin = 0;
         player2JanBlotRangeMax = 15;
-        noContactFilter = false;
-        mirrorPositionFilter = false;
         matchIDsInput = '';
         tournamentIDsInput = '';
         searchInCurrentResults = false;
@@ -599,16 +642,48 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1AbsolutePipCountOption} value="min" /> Min
-                                        <input type="number" bind:value={player1AbsolutePipCountMin} placeholder="Min" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1AbsolutePipCountMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="375"
+                                            disabled={player1AbsolutePipCountOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1AbsolutePipCountOption} value="max" /> Max
-                                        <input type="number" bind:value={player1AbsolutePipCountMax} placeholder="Max" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1AbsolutePipCountMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="375"
+                                            disabled={player1AbsolutePipCountOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1AbsolutePipCountOption} value="range" /> Range
-                                        <input type="number" bind:value={player1AbsolutePipCountRangeMin} placeholder="Min" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'range'} />
-                                        <input type="number" bind:value={player1AbsolutePipCountRangeMax} placeholder="Max" class="filter-input" min="0" max="375" disabled={player1AbsolutePipCountOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1AbsolutePipCountRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="375"
+                                            disabled={player1AbsolutePipCountOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player1AbsolutePipCountRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="375"
+                                            disabled={player1AbsolutePipCountOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -656,16 +731,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={winRateOption} value="min" /> Min
-                                        <input type="number" bind:value={winRateMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={winRateOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={winRateMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={winRateOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={winRateOption} value="max" /> Max
-                                        <input type="number" bind:value={winRateMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={winRateOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={winRateMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={winRateOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={winRateOption} value="range" /> Range
-                                        <input type="number" bind:value={winRateRangeMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={winRateOption !== 'range'} />
-                                        <input type="number" bind:value={winRateRangeMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={winRateOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={winRateRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={winRateOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={winRateRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={winRateOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -675,16 +786,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={gammonRateOption} value="min" /> Min
-                                        <input type="number" bind:value={gammonRateMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={gammonRateOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={gammonRateMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={gammonRateOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={gammonRateOption} value="max" /> Max
-                                        <input type="number" bind:value={gammonRateMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={gammonRateOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={gammonRateMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={gammonRateOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={gammonRateOption} value="range" /> Range
-                                        <input type="number" bind:value={gammonRateRangeMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={gammonRateOption !== 'range'} />
-                                        <input type="number" bind:value={gammonRateRangeMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={gammonRateOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={gammonRateRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={gammonRateOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={gammonRateRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={gammonRateOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -694,16 +841,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={backgammonRateOption} value="min" /> Min
-                                        <input type="number" bind:value={backgammonRateMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={backgammonRateOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={backgammonRateMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={backgammonRateOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={backgammonRateOption} value="max" /> Max
-                                        <input type="number" bind:value={backgammonRateMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={backgammonRateOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={backgammonRateMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={backgammonRateOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={backgammonRateOption} value="range" /> Range
-                                        <input type="number" bind:value={backgammonRateRangeMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={backgammonRateOption !== 'range'} />
-                                        <input type="number" bind:value={backgammonRateRangeMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={backgammonRateOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={backgammonRateRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={backgammonRateOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={backgammonRateRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={backgammonRateOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -713,16 +896,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2WinRateOption} value="min" /> Min
-                                        <input type="number" bind:value={player2WinRateMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2WinRateOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2WinRateMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2WinRateOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2WinRateOption} value="max" /> Max
-                                        <input type="number" bind:value={player2WinRateMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2WinRateOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2WinRateMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2WinRateOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2WinRateOption} value="range" /> Range
-                                        <input type="number" bind:value={player2WinRateRangeMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2WinRateOption !== 'range'} />
-                                        <input type="number" bind:value={player2WinRateRangeMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2WinRateOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2WinRateRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2WinRateOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2WinRateRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2WinRateOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -732,16 +951,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2GammonRateOption} value="min" /> Min
-                                        <input type="number" bind:value={player2GammonRateMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2GammonRateOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2GammonRateMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2GammonRateOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2GammonRateOption} value="max" /> Max
-                                        <input type="number" bind:value={player2GammonRateMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2GammonRateOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2GammonRateMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2GammonRateOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2GammonRateOption} value="range" /> Range
-                                        <input type="number" bind:value={player2GammonRateRangeMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2GammonRateOption !== 'range'} />
-                                        <input type="number" bind:value={player2GammonRateRangeMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2GammonRateOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2GammonRateRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2GammonRateOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2GammonRateRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2GammonRateOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -751,16 +1006,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2BackgammonRateOption} value="min" /> Min
-                                        <input type="number" bind:value={player2BackgammonRateMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2BackgammonRateOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackgammonRateMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackgammonRateOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2BackgammonRateOption} value="max" /> Max
-                                        <input type="number" bind:value={player2BackgammonRateMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2BackgammonRateOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackgammonRateMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackgammonRateOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2BackgammonRateOption} value="range" /> Range
-                                        <input type="number" bind:value={player2BackgammonRateRangeMin} placeholder="Min" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2BackgammonRateOption !== 'range'} />
-                                        <input type="number" bind:value={player2BackgammonRateRangeMax} placeholder="Max" class="filter-input" min="0" max="100" on:input={e => e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, '')))} disabled={player2BackgammonRateOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackgammonRateRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackgammonRateOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackgammonRateRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="100"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackgammonRateOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -770,16 +1061,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1CheckerOffOption} value="min" /> Min
-                                        <input type="number" bind:value={player1CheckerOffMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerOffOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerOffMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerOffOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1CheckerOffOption} value="max" /> Max
-                                        <input type="number" bind:value={player1CheckerOffMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerOffOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerOffMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerOffOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1CheckerOffOption} value="range" /> Range
-                                        <input type="number" bind:value={player1CheckerOffRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerOffOption !== 'range'} />
-                                        <input type="number" bind:value={player1CheckerOffRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerOffOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerOffRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerOffOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerOffRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerOffOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -789,16 +1116,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2CheckerOffOption} value="min" /> Min
-                                        <input type="number" bind:value={player2CheckerOffMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerOffOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerOffMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerOffOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2CheckerOffOption} value="max" /> Max
-                                        <input type="number" bind:value={player2CheckerOffMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerOffOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerOffMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerOffOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2CheckerOffOption} value="range" /> Range
-                                        <input type="number" bind:value={player2CheckerOffRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerOffOption !== 'range'} />
-                                        <input type="number" bind:value={player2CheckerOffRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerOffOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerOffRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerOffOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerOffRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerOffOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -808,16 +1171,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1BackCheckerOption} value="min" /> Min
-                                        <input type="number" bind:value={player1BackCheckerMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1BackCheckerOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1BackCheckerMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1BackCheckerOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1BackCheckerOption} value="max" /> Max
-                                        <input type="number" bind:value={player1BackCheckerMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1BackCheckerOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1BackCheckerMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1BackCheckerOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1BackCheckerOption} value="range" /> Range
-                                        <input type="number" bind:value={player1BackCheckerRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1BackCheckerOption !== 'range'} />
-                                        <input type="number" bind:value={player1BackCheckerRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1BackCheckerOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1BackCheckerRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1BackCheckerOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player1BackCheckerRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1BackCheckerOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -827,16 +1226,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2BackCheckerOption} value="min" /> Min
-                                        <input type="number" bind:value={player2BackCheckerMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2BackCheckerOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackCheckerMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackCheckerOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2BackCheckerOption} value="max" /> Max
-                                        <input type="number" bind:value={player2BackCheckerMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2BackCheckerOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackCheckerMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackCheckerOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2BackCheckerOption} value="range" /> Range
-                                        <input type="number" bind:value={player2BackCheckerRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2BackCheckerOption !== 'range'} />
-                                        <input type="number" bind:value={player2BackCheckerRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2BackCheckerOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackCheckerRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackCheckerOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2BackCheckerRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2BackCheckerOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -846,16 +1281,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1CheckerInZoneOption} value="min" /> Min
-                                        <input type="number" bind:value={player1CheckerInZoneMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerInZoneOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerInZoneMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerInZoneOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1CheckerInZoneOption} value="max" /> Max
-                                        <input type="number" bind:value={player1CheckerInZoneMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerInZoneOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerInZoneMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerInZoneOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1CheckerInZoneOption} value="range" /> Range
-                                        <input type="number" bind:value={player1CheckerInZoneRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerInZoneOption !== 'range'} />
-                                        <input type="number" bind:value={player1CheckerInZoneRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1CheckerInZoneOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerInZoneRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerInZoneOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player1CheckerInZoneRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1CheckerInZoneOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -865,16 +1336,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2CheckerInZoneOption} value="min" /> Min
-                                        <input type="number" bind:value={player2CheckerInZoneMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerInZoneOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerInZoneMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerInZoneOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2CheckerInZoneOption} value="max" /> Max
-                                        <input type="number" bind:value={player2CheckerInZoneMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerInZoneOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerInZoneMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerInZoneOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2CheckerInZoneOption} value="range" /> Range
-                                        <input type="number" bind:value={player2CheckerInZoneRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerInZoneOption !== 'range'} />
-                                        <input type="number" bind:value={player2CheckerInZoneRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2CheckerInZoneOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerInZoneRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerInZoneOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2CheckerInZoneRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2CheckerInZoneOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -884,16 +1391,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1OutfieldBlotOption} value="min" /> Min
-                                        <input type="number" bind:value={player1OutfieldBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1OutfieldBlotMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1OutfieldBlotOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1OutfieldBlotOption} value="max" /> Max
-                                        <input type="number" bind:value={player1OutfieldBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1OutfieldBlotMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1OutfieldBlotOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1OutfieldBlotOption} value="range" /> Range
-                                        <input type="number" bind:value={player1OutfieldBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'range'} />
-                                        <input type="number" bind:value={player1OutfieldBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1OutfieldBlotOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1OutfieldBlotRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1OutfieldBlotOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player1OutfieldBlotRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1OutfieldBlotOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -903,16 +1446,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2OutfieldBlotOption} value="min" /> Min
-                                        <input type="number" bind:value={player2OutfieldBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2OutfieldBlotMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2OutfieldBlotOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2OutfieldBlotOption} value="max" /> Max
-                                        <input type="number" bind:value={player2OutfieldBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2OutfieldBlotMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2OutfieldBlotOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2OutfieldBlotOption} value="range" /> Range
-                                        <input type="number" bind:value={player2OutfieldBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'range'} />
-                                        <input type="number" bind:value={player2OutfieldBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2OutfieldBlotOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2OutfieldBlotRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2OutfieldBlotOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2OutfieldBlotRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2OutfieldBlotOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -923,16 +1502,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1JanBlotOption} value="min" /> Min
-                                        <input type="number" bind:value={player1JanBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1JanBlotMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1JanBlotOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1JanBlotOption} value="max" /> Max
-                                        <input type="number" bind:value={player1JanBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1JanBlotMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1JanBlotOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player1JanBlotOption} value="range" /> Range
-                                        <input type="number" bind:value={player1JanBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'range'} />
-                                        <input type="number" bind:value={player1JanBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player1JanBlotOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player1JanBlotRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1JanBlotOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player1JanBlotRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player1JanBlotOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -942,16 +1557,52 @@
                                 <div class="filter-options expanded">
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2JanBlotOption} value="min" /> Min
-                                        <input type="number" bind:value={player2JanBlotMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'min'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2JanBlotMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2JanBlotOption !== 'min'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2JanBlotOption} value="max" /> Max
-                                        <input type="number" bind:value={player2JanBlotMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'max'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2JanBlotMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2JanBlotOption !== 'max'}
+                                        />
                                     </label>
                                     <label class="filter-option">
                                         <input type="radio" bind:group={player2JanBlotOption} value="range" /> Range
-                                        <input type="number" bind:value={player2JanBlotRangeMin} placeholder="Min" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'range'} />
-                                        <input type="number" bind:value={player2JanBlotRangeMax} placeholder="Max" class="filter-input" min="0" max="15" on:input={e => e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, '')))} disabled={player2JanBlotOption !== 'range'} />
+                                        <input
+                                            type="number"
+                                            bind:value={player2JanBlotRangeMin}
+                                            placeholder="Min"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2JanBlotOption !== 'range'}
+                                        />
+                                        <input
+                                            type="number"
+                                            bind:value={player2JanBlotRangeMax}
+                                            placeholder="Max"
+                                            class="filter-input"
+                                            min="0"
+                                            max="15"
+                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            disabled={player2JanBlotOption !== 'range'}
+                                        />
                                     </label>
                                 </div>
                             </div>
@@ -1091,7 +1742,9 @@
         margin-left: 20px; /* Increase gap between filter label and filter options */
     }
 
-    input[type="text"], input[type="number"], select {
+    input[type='text'],
+    input[type='number'],
+    select {
         flex: 2;
         margin-right: 10px;
         font-size: 18px; /* Set font size */
@@ -1118,7 +1771,8 @@
         width: 100%; /* Make the search text input fill its parent container */
     }
 
-    .add-button, .remove-button {
+    .add-button,
+    .remove-button {
         background: none;
         border: none;
         font-size: 1.5rem;
@@ -1145,7 +1799,7 @@
         margin-right: 6px;
     }
 
-    .search-in-results-label input[type="checkbox"] {
+    .search-in-results-label input[type='checkbox'] {
         cursor: pointer;
     }
 
@@ -1205,7 +1859,7 @@
         flex: 1; /* Ensure the input field takes the remaining space */
     }
 
-    input[type="number"] {
+    input[type='number'] {
         width: 100px; /* Set a fixed width for number input fields */
     }
 

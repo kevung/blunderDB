@@ -33,6 +33,19 @@
     });
 </script>
 
+{#if visible}
+    <div class="modal-overlay">
+        <div class="modal-content" id="modalContent">
+            <div class="close-button" on:click={handleClose}>×</div>
+            <div class="tab-content">
+                <p><span class="highlight">{message.split('\n')[0]}</span></p>
+                <p>{message.split('\n').slice(1).join('\n')}</p>
+                <!-- Ensure the message is displayed correctly -->
+            </div>
+        </div>
+    </div>
+{/if}
+
 <style>
     .modal-overlay {
         position: fixed;
@@ -68,7 +81,9 @@
         color: #666;
         cursor: pointer;
         z-index: 10;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
+        transition:
+            background-color 0.3s ease,
+            opacity 0.3s ease;
     }
 
     .tab-content {
@@ -91,15 +106,3 @@
         color: red;
     }
 </style>
-
-{#if visible}
-    <div class="modal-overlay">
-        <div class="modal-content" id="modalContent">
-            <div class="close-button" on:click={handleClose}>×</div>
-            <div class="tab-content">
-                <p><span class="highlight">{message.split('\n')[0]}</span></p>
-                <p>{message.split('\n').slice(1).join('\n')}</p> <!-- Ensure the message is displayed correctly -->
-            </div>
-        </div>
-    </div>
-{/if}
