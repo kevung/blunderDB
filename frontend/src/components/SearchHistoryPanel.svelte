@@ -366,7 +366,7 @@
     });
 </script>
 
-<section class="search-history-panel" role="dialog" aria-modal="true" id="searchHistoryPanel" tabindex="-1">
+<section class="search-history-panel" role="dialog" aria-modal="true" aria-label="Search history" id="searchHistoryPanel" tabindex="-1">
     <div class="search-history-content">
         {#if searchHistory.length === 0}
             <p class="empty-message">No search history yet. Position searches starting with 's ' will appear here.</p>
@@ -389,7 +389,10 @@
                                     <button
                                         class="action-btn add-btn"
                                         class:in-library={isInFilterLibrary(search)}
-                                        onclick={(e) => { e.stopPropagation(); (() => showAddToLibraryDialog(search))(); }}
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            (() => showAddToLibraryDialog(search))();
+                                        }}
                                         title="Add to filter library"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -400,7 +403,14 @@
                                             />
                                         </svg>
                                     </button>
-                                    <button class="action-btn delete-btn" onclick={(e) => { e.stopPropagation(); ((e) => deleteSearch(search, e))(e); }} title="Delete from history">
+                                    <button
+                                        class="action-btn delete-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => deleteSearch(search, e))(e);
+                                        }}
+                                        title="Delete from history"
+                                    >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                             <path
                                                 stroke-linecap="round"
@@ -437,8 +447,20 @@
                 <input type="text" id="filterName" bind:value={filterName} placeholder="Enter filter name" onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
             </div>
             <div class="dialog-actions">
-                <button class="btn-primary" onclick={(e) => { e.stopPropagation(); saveToFilterLibrary(e); }}>Save</button>
-                <button class="btn-secondary" onclick={(e) => { e.stopPropagation(); cancelSaveDialog(e); }}>Cancel</button>
+                <button
+                    class="btn-primary"
+                    onclick={(e) => {
+                        e.stopPropagation();
+                        saveToFilterLibrary(e);
+                    }}>Save</button
+                >
+                <button
+                    class="btn-secondary"
+                    onclick={(e) => {
+                        e.stopPropagation();
+                        cancelSaveDialog(e);
+                    }}>Cancel</button
+                >
             </div>
         </div>
     </div>

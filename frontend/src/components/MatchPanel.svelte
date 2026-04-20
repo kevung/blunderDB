@@ -703,7 +703,7 @@
     });
 </script>
 
-<section class="match-panel" role="dialog" aria-modal="true" id="matchPanel" tabindex="-1">
+<section class="match-panel" role="dialog" aria-modal="true" aria-label="Match navigator" id="matchPanel" tabindex="-1">
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={detailMatch !== null}>
@@ -748,8 +748,22 @@
                                     <td class="tournament-col no-select">{match.tournament_name || ''}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions editing-actions">
-                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); saveMatchEdit(e); }} title="Save">✓</button>
-                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); cancelMatchEdit(e); }} title="Cancel">✕</button>
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    saveMatchEdit(e);
+                                                }}
+                                                title="Save">✓</button
+                                            >
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    cancelMatchEdit(e);
+                                                }}
+                                                title="Cancel">✕</button
+                                            >
                                         </span>
                                     </td>
                                 </tr>
@@ -760,7 +774,13 @@
                                     <td class="no-select">{match.player1_name}</td>
                                     <td class="no-select">{match.player2_name}</td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
-                                    <td class="tournament-col no-select tournament-meta-cell" onclick={(e) => { e.stopPropagation(); ((e) => startEditTournament(match, e))(e); }}>
+                                    <td
+                                        class="tournament-col no-select tournament-meta-cell"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => startEditTournament(match, e))(e);
+                                        }}
+                                    >
                                         {#if editingTournamentMatchId === match.id}
                                             <div class="tournament-cell-edit">
                                                 <input
@@ -775,7 +795,13 @@
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
                                                         {#each filteredTournaments as t}
-                                                            <div class="tournament-dropdown-item" onmousedown={(e) => { e.preventDefault(); (() => selectTournamentOption(t.name))(); }}>
+                                                            <div
+                                                                class="tournament-dropdown-item"
+                                                                onmousedown={(e) => {
+                                                                    e.preventDefault();
+                                                                    (() => selectTournamentOption(t.name))();
+                                                                }}
+                                                            >
                                                                 {t.name}
                                                             </div>
                                                         {/each}
@@ -788,9 +814,30 @@
                                     </td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions">
-                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => swapMatchPlayers(match, e))(e); }} title="Swap players">⇄</button>
-                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEditMatch(match, e))(e); }} title="Edit">✎</button>
-                                            <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteMatchEntry(match, e))(e); }} title="Delete">×</button>
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    ((e) => swapMatchPlayers(match, e))(e);
+                                                }}
+                                                title="Swap players">⇄</button
+                                            >
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    ((e) => startEditMatch(match, e))(e);
+                                                }}
+                                                title="Edit">✎</button
+                                            >
+                                            <button
+                                                class="icon-btn delete"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    ((e) => deleteMatchEntry(match, e))(e);
+                                                }}
+                                                title="Delete">×</button
+                                            >
                                         </span>
                                     </td>
                                 </tr>
@@ -925,7 +972,13 @@
                                 </tr>
                                 <tr>
                                     <td class="meta-label">Tournament</td>
-                                    <td class="meta-value tournament-meta-cell" onclick={(e) => { e.stopPropagation(); ((e) => startEditTournament(detailMatch, e))(e); }}>
+                                    <td
+                                        class="meta-value tournament-meta-cell"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => startEditTournament(detailMatch, e))(e);
+                                        }}
+                                    >
                                         {#if editingTournamentMatchId === detailMatch.id}
                                             <div class="tournament-cell-edit">
                                                 <input
@@ -940,7 +993,13 @@
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
                                                         {#each filteredTournaments as t}
-                                                            <div class="tournament-dropdown-item" onmousedown={(e) => { e.preventDefault(); (() => selectTournamentOption(t.name))(); }}>
+                                                            <div
+                                                                class="tournament-dropdown-item"
+                                                                onmousedown={(e) => {
+                                                                    e.preventDefault();
+                                                                    (() => selectTournamentOption(t.name))();
+                                                                }}
+                                                            >
                                                                 {t.name}
                                                             </div>
                                                         {/each}

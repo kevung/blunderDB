@@ -1,6 +1,7 @@
 <!-- HelpModal.svelte -->
 <script>
     import { logger } from '../utils/logger.js';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
@@ -150,7 +151,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" id="helpModal" tabindex="0" transition:fade={{ duration: 30 }}>
+    <div class="modal-overlay" id="helpModal" tabindex="0" transition:fade={{ duration: 30 }} role="dialog" aria-modal="true" aria-label="Help" use:trapFocus>
         <div class="modal-content" id="modalContent">
             <div class="close-button" onclick={onClose} onkeydown={handleKeyDown}>×</div>
 

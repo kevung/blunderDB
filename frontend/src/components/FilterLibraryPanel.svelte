@@ -420,7 +420,7 @@
     });
 </script>
 
-<section class="filter-library-panel" role="dialog" aria-modal="true" id="filterLibraryPanel" tabindex="-1">
+<section class="filter-library-panel" role="dialog" aria-modal="true" aria-label="Filter library" id="filterLibraryPanel" tabindex="-1">
     <div class="filter-library-content">
         <div class="form-row">
             <div class="form-group name-group">

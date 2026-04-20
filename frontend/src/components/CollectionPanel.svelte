@@ -640,7 +640,7 @@
     });
 </script>
 
-<section class="collection-panel" id="collectionPanel" tabindex="-1">
+<section class="collection-panel" id="collectionPanel" tabindex="-1" role="dialog" aria-modal="true" aria-label="Collections">
     {#if view === 'list'}
         <!-- Collections list -->
         <div class="table-wrapper">
@@ -702,17 +702,50 @@
                                     <input
                                         type="checkbox"
                                         checked={positionCollectionIds.includes(collection.id)}
-                                        onclick={(e) => { e.stopPropagation(); ((e) => togglePositionInCollection(collection.id, e))(e); }}
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => togglePositionInCollection(collection.id, e))(e);
+                                        }}
                                         title={positionCollectionIds.includes(collection.id) ? 'Remove position from collection' : 'Add position to collection'}
                                     />
                                 {/if}
                             </td>
                             <td class="actions-col">
                                 <span class="item-actions">
-                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => moveCollectionUp(index, e))(e); }} disabled={index === 0} title="Move up">▲</button>
-                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => moveCollectionDown(index, e))(e); }} disabled={index === collections.length - 1} title="Move down">▼</button>
-                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEditing(collection, e))(e); }} title="Edit">✎</button>
-                                    <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteCollection(collection, e))(e); }} title="Delete">×</button>
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => moveCollectionUp(index, e))(e);
+                                        }}
+                                        disabled={index === 0}
+                                        title="Move up">▲</button
+                                    >
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => moveCollectionDown(index, e))(e);
+                                        }}
+                                        disabled={index === collections.length - 1}
+                                        title="Move down">▼</button
+                                    >
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => startEditing(collection, e))(e);
+                                        }}
+                                        title="Edit">✎</button
+                                    >
+                                    <button
+                                        class="icon-btn delete"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => deleteCollection(collection, e))(e);
+                                        }}
+                                        title="Delete">×</button
+                                    >
                                 </span>
                             </td>
                         </tr>
@@ -721,13 +754,25 @@
             </table>
             <!-- Inline add row below table -->
             <div class="add-row">
-                <input class="add-input" type="text" bind:value={inlineNewName} placeholder="New collection…" onkeydown={(e) => { e.stopPropagation(); ((e) => e.key === 'Enter' && createCollectionInline())(e); }} />
+                <input
+                    class="add-input"
+                    type="text"
+                    bind:value={inlineNewName}
+                    placeholder="New collection…"
+                    onkeydown={(e) => {
+                        e.stopPropagation();
+                        ((e) => e.key === 'Enter' && createCollectionInline())(e);
+                    }}
+                />
                 <input
                     class="add-input desc"
                     type="text"
                     bind:value={inlineNewDescription}
                     placeholder="Description…"
-                    onkeydown={(e) => { e.stopPropagation(); ((e) => e.key === 'Enter' && createCollectionInline())(e); }}
+                    onkeydown={(e) => {
+                        e.stopPropagation();
+                        ((e) => e.key === 'Enter' && createCollectionInline())(e);
+                    }}
                 />
             </div>
             {#if collections.length === 0}
@@ -782,11 +827,32 @@
                             <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
                             <td class="actions-col">
                                 <span class="item-actions">
-                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => movePositionUp(index, e))(e); }} disabled={index === 0} title="Move up">▲</button>
-                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => movePositionDown(index, e))(e); }} disabled={index === collectionPositions.length - 1} title="Move down"
-                                        >▼</button
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => movePositionUp(index, e))(e);
+                                        }}
+                                        disabled={index === 0}
+                                        title="Move up">▲</button
                                     >
-                                    <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => removePositionFromRow(index, e))(e); }} title="Remove from collection">×</button>
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => movePositionDown(index, e))(e);
+                                        }}
+                                        disabled={index === collectionPositions.length - 1}
+                                        title="Move down">▼</button
+                                    >
+                                    <button
+                                        class="icon-btn delete"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => removePositionFromRow(index, e))(e);
+                                        }}
+                                        title="Remove from collection">×</button
+                                    >
                                 </span>
                             </td>
                         </tr>

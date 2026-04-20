@@ -184,7 +184,7 @@
     });
 </script>
 
-<div class="status-bar">
+<div class="status-bar" role="status" aria-live="polite">
     {#if showInput}
         <div class="command-input-row">
             <span class="prompt-char">&gt;</span>

@@ -1,25 +1,35 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
 
-    let { visible = false, mode = 'preparing', positionCount = 0, onCancel, onExport, onClose, metadata = {
-        user: '',
-        description: '',
-        dateOfCreation: ''
-    }, exportOptions = {
-        includeAnalysis: true,
-        includeComments: true,
-        includeFilterLibrary: false,
-        includePlayedMoves: true,
-        includeMatches: true,
-        matchIDs: [],
-        includeTournaments: false,
-        includeTournamentIDs: [],
-        includeCollections: false,
-        collectionIDs: []
-    }, matches = [] } = $props();
-
+    let {
+        visible = false,
+        mode = 'preparing',
+        positionCount = 0,
+        onCancel,
+        onExport,
+        onClose,
+        metadata = {
+            user: '',
+            description: '',
+            dateOfCreation: ''
+        },
+        exportOptions = {
+            includeAnalysis: true,
+            includeComments: true,
+            includeFilterLibrary: false,
+            includePlayedMoves: true,
+            includeMatches: true,
+            matchIDs: [],
+            includeTournaments: false,
+            includeTournamentIDs: [],
+            includeCollections: false,
+            collectionIDs: []
+        },
+        matches = []
+    } = $props();
 
     let collections = $state([]);
 
@@ -45,49 +55,49 @@
     // Initialize date when modal becomes visible in metadata mode
     $effect(() => {
         if (visible && mode === 'metadata' && !metadata.dateOfCreation) {
-        metadata.dateOfCreation = getCurrentDate();
+            metadata.dateOfCreation = getCurrentDate();
         }
     });
     // Auto-select all matches when includeMatches is toggled on (only if not manually modified)
     let matchesManuallyModified = $state(false);
     $effect(() => {
         if (exportOptions.includeMatches && matches.length > 0 && exportOptions.matchIDs.length === 0 && !matchesManuallyModified) {
-        exportOptions.matchIDs = matches.map((m) => m.id);
+            exportOptions.matchIDs = matches.map((m) => m.id);
         }
     });
     // Clear matchIDs when includeMatches is toggled off
     $effect(() => {
         if (!exportOptions.includeMatches) {
-        exportOptions.matchIDs = [];
-        matchesManuallyModified = false;
+            exportOptions.matchIDs = [];
+            matchesManuallyModified = false;
         }
     });
     // Auto-select all collections when includeCollections is toggled on (only if not manually modified)
     let collectionsManuallyModified = $state(false);
     $effect(() => {
         if (exportOptions.includeCollections && collections.length > 0 && exportOptions.collectionIDs.length === 0 && !collectionsManuallyModified) {
-        exportOptions.collectionIDs = collections.map((c) => c.id);
+            exportOptions.collectionIDs = collections.map((c) => c.id);
         }
     });
     // Clear collectionIDs when includeCollections is toggled off
     $effect(() => {
         if (!exportOptions.includeCollections) {
-        exportOptions.collectionIDs = [];
-        collectionsManuallyModified = false;
+            exportOptions.collectionIDs = [];
+            collectionsManuallyModified = false;
         }
     });
     // Auto-select all tournaments when includeTournaments is toggled on (only if not manually modified)
     let tournamentsManuallyModified = $state(false);
     $effect(() => {
         if (exportOptions.includeTournaments && tournaments.length > 0 && exportOptions.includeTournamentIDs.length === 0 && !tournamentsManuallyModified) {
-        exportOptions.includeTournamentIDs = tournaments.map((t) => t.id);
+            exportOptions.includeTournamentIDs = tournaments.map((t) => t.id);
         }
     });
     // Clear tournamentIDs when includeTournaments is toggled off
     $effect(() => {
         if (!exportOptions.includeTournaments) {
-        exportOptions.includeTournamentIDs = [];
-        tournamentsManuallyModified = false;
+            exportOptions.includeTournamentIDs = [];
+            tournamentsManuallyModified = false;
         }
     });
     // Computed description of what will be exported
@@ -187,7 +197,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay">
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Export database" use:trapFocus>
         <div class="modal-content">
             {#if mode === 'preparing'}
                 <h2>Preparing Export <span class="spinner"></span></h2>

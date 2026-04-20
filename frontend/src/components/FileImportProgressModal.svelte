@@ -1,4 +1,6 @@
 <script>
+    import { trapFocus } from '../utils/focusTrap.js';
+
     let { visible = false, mode = 'idle', totalFiles = 0, currentIndex = 0, currentFile = '', results = { succeeded: 0, failed: 0, skipped: 0, errors: [] }, onClose, onCancel } = $props();
 
     let progressPercent = $derived(totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0);
@@ -9,7 +11,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay">
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="File import progress" use:trapFocus>
         <div class="modal-content">
             {#if mode === 'importing'}
                 <h2>Importing Files <span class="spinner"></span></h2>

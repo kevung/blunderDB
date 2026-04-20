@@ -1,5 +1,6 @@
 <script>
     import { onMount } from 'svelte';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { positionsStore, matchContextStore, positionStore } from '../stores/positionStore'; // Import stores
     import { currentPositionIndexStore, statusBarModeStore, statusBarTextStore, commentTextStore } from '../stores/uiStore'; // Import stores
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
@@ -15,11 +16,11 @@
     // Subscribe to positionsStore and matchContextStore to get the number of positions
     $effect(() => {
         if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
-        maxPositionNumber = $matchContextStore.movePositions.length;
-        currentIndex = $matchContextStore.currentIndex + 1; // Adjust for 1-based index
+            maxPositionNumber = $matchContextStore.movePositions.length;
+            currentIndex = $matchContextStore.currentIndex + 1; // Adjust for 1-based index
         } else {
-        maxPositionNumber = $positionsStore.length;
-        currentIndex = $currentPositionIndexStore + 1; // Adjust for 1-based index
+            maxPositionNumber = $positionsStore.length;
+            currentIndex = $currentPositionIndexStore + 1; // Adjust for 1-based index
         }
     });
     async function handleGoToPosition() {
@@ -111,38 +112,24 @@
     });
 
     $effect(() => {
-
         if (visible && inputField) {
-        inputField.focus();
-        inputField.select(); // Select the text to allow direct replacement
-
+            inputField.focus();
+            inputField.select(); // Select the text to allow direct replacement
         }
-
     });
     $effect(() => {
-
         if (visible && $statusBarModeStore === 'EDIT') {
-        onClose(); // Close the modal if in edit mode
-
+            onClose(); // Close the modal if in edit mode
         }
-
-    });</script>
+    });
+</script>
 
 {#if visible}
-    <div class="modal-overlay" onclick={onClose}>
+    <div class="modal-overlay" onclick={onClose} role="dialog" aria-modal="true" aria-label="Go to position" use:trapFocus>
         <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <div class="close-button" onclick={onClose}>×</div>
             <h2>Go To Position</h2>
-            <input
-                type="number"
-                bind:value={positionNumber}
-                min="1"
-                max={maxPositionNumber}
-                placeholder="Enter position number"
-                class="input-field"
-                bind:this={inputField}
-                onkeydown={handleKeyDown}
-            />
+            <input type="number" bind:value={positionNumber} min="1" max={maxPositionNumber} placeholder="Enter position number" class="input-field" bind:this={inputField} onkeydown={handleKeyDown} />
             <div class="modal-buttons">
                 <button class="primary-button" onclick={handleGoToPosition}>Go</button>
                 <button class="secondary-button" onclick={onClose}>Cancel</button>

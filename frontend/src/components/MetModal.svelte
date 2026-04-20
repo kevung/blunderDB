@@ -1,4 +1,6 @@
 <script>
+    import { trapFocus } from '../utils/focusTrap.js';
+
     let { visible = false, onClose } = $props();
 
     function closeModal() {
@@ -30,7 +32,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" onclick={closeModal}>
+    <div class="modal-overlay" onclick={closeModal} role="dialog" aria-modal="true" aria-label="Match equity table" use:trapFocus>
         <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <table>
                 <thead>

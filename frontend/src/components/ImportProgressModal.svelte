@@ -1,20 +1,30 @@
 <script>
-    let { visible = false, mode = 'analyzing', analysis = {
-        toAdd: 0,
-        toMerge: 0,
-        toSkip: 0,
-        total: 0,
-        importPath: ''
-    }, result = {
-        added: 0,
-        merged: 0,
-        skipped: 0,
-        total: 0
-    }, onCancel, onCommit, onClose } = $props();
+    import { trapFocus } from '../utils/focusTrap.js';
+
+    let {
+        visible = false,
+        mode = 'analyzing',
+        analysis = {
+            toAdd: 0,
+            toMerge: 0,
+            toSkip: 0,
+            total: 0,
+            importPath: ''
+        },
+        result = {
+            added: 0,
+            merged: 0,
+            skipped: 0,
+            total: 0
+        },
+        onCancel,
+        onCommit,
+        onClose
+    } = $props();
 </script>
 
 {#if visible}
-    <div class="modal-overlay">
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Import progress" use:trapFocus>
         <div class="modal-content">
             {#if mode === 'analyzing'}
                 <h2>Analyzing Import <span class="spinner"></span></h2>

@@ -75,10 +75,23 @@
 
     // Subscribe to selectedMoveStore and update selectedMove
     let selectedMove = $derived($selectedMoveStore);
+
+    let boardDescription = $derived.by(() => {
+        const pos = $positionStore;
+        if (!pos || !pos.board || !pos.board.points) return 'Backgammon board';
+        let pip1 = 0;
+        let pip2 = 0;
+        pos.board.points.forEach((point, index) => {
+            if (point.color === 0) pip1 += point.checkers * index;
+            else if (point.color === 1) pip2 += point.checkers * (25 - index);
+        });
+        const roller = pos.player_on_roll === 0 ? 'Player 1' : 'Player 2';
+        return `Backgammon board. Player 1 pip count ${pip1}, Player 2 pip count ${pip2}. ${roller} to move.`;
+    });
     // Reactive statement to redraw board when selectedMove changes
     $effect(() => {
         if (two && canvas && selectedMove !== undefined) {
-        drawBoard();
+            drawBoard();
         }
     });
     function handleMouseDown(event) {
@@ -1486,7 +1499,7 @@
 </script>
 
 <div class="canvas-container">
-    <div id="backgammon-board" class="full-size-board"></div>
+    <div id="backgammon-board" class="full-size-board" role="img" aria-label={boardDescription}></div>
 </div>
 
 <style>

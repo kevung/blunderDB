@@ -1,4 +1,6 @@
 <script>
+    import { trapFocus } from '../utils/focusTrap.js';
+
     let { visible = false, onClose, tables = [] } = $props();
 
     function handleKeyDown(event) {
@@ -12,21 +14,18 @@
     }
 
     $effect(() => {
-
         if (visible) {
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('wheel', handleWheel, { passive: false });
-
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('wheel', handleWheel, { passive: false });
         } else {
-        window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('wheel', handleWheel);
-
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('wheel', handleWheel);
         }
-
-    });</script>
+    });
+</script>
 
 {#if visible}
-    <div class="modal-overlay" onclick={() => onClose()}>
+    <div class="modal-overlay" onclick={() => onClose()} role="dialog" aria-modal="true" aria-label="Data table" use:trapFocus>
         <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <div class="table-container" class:multi={tables.length > 1}>
                 {#each tables as { title, data, precision, colCount, colOffset, rowOffset }}

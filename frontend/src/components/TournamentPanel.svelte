@@ -257,7 +257,6 @@
         const _m = tournamentMatches;
         const _s = addMatchSearch;
         updateFilteredMatches();
-
     });
     async function addMatchToTournament(matchId) {
         if (!selectedTournament) return;
@@ -577,15 +576,12 @@
     }
 
     $effect(() => {
-
         if (visible) {
-        setTimeout(() => {
-            const panel = document.getElementById('tournamentPanel');
-            if (panel) panel.focus();
-        }, 100);
-
+            setTimeout(() => {
+                const panel = document.getElementById('tournamentPanel');
+                if (panel) panel.focus();
+            }, 100);
         }
-
     });
     onMount(() => {
         document.addEventListener('keydown', handleKeyDown);
@@ -596,7 +592,7 @@
     });
 </script>
 
-<section class="tournament-panel" id="tournamentPanel" tabindex="-1">
+<section class="tournament-panel" id="tournamentPanel" tabindex="-1" role="dialog" aria-modal="true" aria-label="Tournaments">
     <div class="panel-content">
         {#if !selectedTournament}
             <!-- Tournaments list -->
@@ -689,8 +685,22 @@
                                         <td class="no-select">{tournament.location || ''}</td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions">
-                                                <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEdit(tournament, e))(e); }} title="Edit">✎</button>
-                                                <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteTournamentEntry(tournament, e))(e); }} title="Delete">×</button>
+                                                <button
+                                                    class="icon-btn"
+                                                    onclick={(e) => {
+                                                        e.stopPropagation();
+                                                        ((e) => startEdit(tournament, e))(e);
+                                                    }}
+                                                    title="Edit">✎</button
+                                                >
+                                                <button
+                                                    class="icon-btn delete"
+                                                    onclick={(e) => {
+                                                        e.stopPropagation();
+                                                        ((e) => deleteTournamentEntry(tournament, e))(e);
+                                                    }}
+                                                    title="Delete">×</button
+                                                >
                                             </span>
                                         </td>
                                     </tr>
@@ -772,7 +782,14 @@
                             {#if selectedTournament.location}{selectedTournament.location}{/if}
                         </span>
                     {/if}
-                    <button class="icon-btn edit-header-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEdit(selectedTournament, e))(e); }} title="Edit">✎</button>
+                    <button
+                        class="icon-btn edit-header-btn"
+                        onclick={(e) => {
+                            e.stopPropagation();
+                            ((e) => startEdit(selectedTournament, e))(e);
+                        }}
+                        title="Edit">✎</button
+                    >
                     <span class="header-spacer"></span>
                     {#if editingTournamentComment}
                         <input
@@ -797,7 +814,10 @@
                         <span
                             class="tournament-comment-text"
                             class:has-comment={selectedTournament.comment}
-                            onclick={(e) => { e.stopPropagation(); startEditTournamentComment(e); }}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                startEditTournamentComment(e);
+                            }}
                             title={selectedTournament.comment || 'Click to add notes'}
                         >
                             {selectedTournament.comment || 'Notes…'}
@@ -846,7 +866,10 @@
                                             <span
                                                 class="comment-text"
                                                 class:has-comment={match.comment}
-                                                onclick={(e) => { e.stopPropagation(); ((e) => startEditMatchComment(match, e))(e); }}
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    ((e) => startEditMatchComment(match, e))(e);
+                                                }}
                                                 title={match.comment || 'Click to add comment'}
                                             >
                                                 {match.comment || ''}
@@ -855,11 +878,40 @@
                                     </td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions">
-                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); (() => moveMatchUp(index))(); }} disabled={index === 0} title="Move up">▲</button>
-                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); (() => moveMatchDown(index))(); }} disabled={index === tournamentMatches.length - 1} title="Move down">▼</button
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    (() => moveMatchUp(index))();
+                                                }}
+                                                disabled={index === 0}
+                                                title="Move up">▲</button
                                             >
-                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); (() => swapMatchPlayersInTournament(match))(); }} title="Swap">⇄</button>
-                                            <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); (() => removeMatch(match.id))(); }} title="Remove">×</button>
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    (() => moveMatchDown(index))();
+                                                }}
+                                                disabled={index === tournamentMatches.length - 1}
+                                                title="Move down">▼</button
+                                            >
+                                            <button
+                                                class="icon-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    (() => swapMatchPlayersInTournament(match))();
+                                                }}
+                                                title="Swap">⇄</button
+                                            >
+                                            <button
+                                                class="icon-btn delete"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    (() => removeMatch(match.id))();
+                                                }}
+                                                title="Remove">×</button
+                                            >
                                         </span>
                                     </td>
                                 </tr>
@@ -897,7 +949,13 @@
                         {#if addMatchFocused && filteredMatches.length > 0}
                             <div class="match-dropdown" style={matchDropdownStyle}>
                                 {#each filteredMatches as match}
-                                    <div class="dropdown-item" onmousedown={(e) => { e.preventDefault(); (() => addMatchToTournament(match.id))(); }}>
+                                    <div
+                                        class="dropdown-item"
+                                        onmousedown={(e) => {
+                                            e.preventDefault();
+                                            (() => addMatchToTournament(match.id))();
+                                        }}
+                                    >
                                         {match.player1_name} vs {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
                                     </div>
                                 {/each}

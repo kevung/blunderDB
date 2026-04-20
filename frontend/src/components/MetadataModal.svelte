@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { onMount, onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js'; // Import functions
 
@@ -36,12 +37,9 @@
     }
 
     $effect(() => {
-
         if (visible) {
-        loadMetadata();
-
+            loadMetadata();
         }
-
     });
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
@@ -65,7 +63,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" onclick={handleClickOutside}>
+    <div class="modal-overlay" onclick={handleClickOutside} role="dialog" aria-modal="true" aria-label="Match metadata" use:trapFocus>
         <div class="modal-content">
             <!-- Metadata title removed -->
             <div class="form-group">

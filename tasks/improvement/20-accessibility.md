@@ -132,11 +132,11 @@
 
 ## Acceptance criteria
 
-- [ ] All modals have `role="dialog"`, `aria-modal="true"`, `aria-label`
-- [ ] Focus is trapped within open modals
-- [ ] Board has a descriptive `aria-label`
-- [ ] Status bar has `role="status"` and `aria-live="polite"`
-- [ ] `npm run build` succeeds
+- [x] All modals have `role="dialog"`, `aria-modal="true"`, `aria-label`
+- [x] Focus is trapped within open modals
+- [x] Board has a descriptive `aria-label`
+- [x] Status bar has `role="status"` and `aria-live="polite"`
+- [x] `npm run build` succeeds
 
 ## Rollback
 

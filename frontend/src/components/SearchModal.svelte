@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { onMount, onDestroy } from 'svelte';
     import { positionStore, positionsStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
@@ -597,7 +598,7 @@
 
 {#if visible}
     <div class="modal-backdrop" onclick={onClose}></div>
-    <div class="modal" onclick={(e) => e.stopPropagation()}>
+    <div class="modal" onclick={(e) => e.stopPropagation()} role="dialog" aria-modal="true" aria-label="Search positions" use:trapFocus>
         <div class="modal-body">
             <div class="form-group">
                 <select bind:value={selectedFilter} class="filter-dropdown">
