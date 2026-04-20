@@ -32,19 +32,19 @@
 
 ### 1. Write project header
 
-- [ ] Project name + one-line description:
+- [x] Project name + one-line description:
   > **blunderDB** — A backgammon blunder analysis tool. Desktop app (GUI + CLI) for importing, storing, searching, and studying positions from eXtreme Gammon, GnuBG, and BGBlitz.
-- [ ] Add badges: CI status, license, documentation link
+- [x] Add badges: CI status, license, documentation link
 
 ### 2. Add screenshot
 
-- [ ] Take a screenshot of the GUI with a position loaded and analysis visible
+- [ ] Take a screenshot of the GUI with a position loaded and analysis visible (TODO: manual step)
 - [ ] Save as `doc/source/_static/screenshot.png` (or similar)
-- [ ] Embed in README: `![blunderDB screenshot](doc/source/_static/screenshot.png)`
+- [x] Embed in README: placeholder comment added, ready to uncomment when screenshot exists
 
 ### 3. Write Features section
 
-- [ ] Key features:
+- [x] Key features:
   - Import matches from XG (`.xg`, `.xgp`), GnuBG (`.sgf`), BGBlitz (`.bgf`), Jellyfish (`.mat`)
   - Search positions by checker structure, pip count, equity, error threshold, dice, etc.
   - Spaced repetition (FSRS/Anki-style) flash cards for position review
@@ -56,8 +56,8 @@
 
 ### 4. Write Installation section
 
-- [ ] Download section: link to GitHub Releases
-- [ ] Build from source:
+- [x] Download section: link to GitHub Releases
+- [x] Build from source:
   ```bash
   # Prerequisites: Go 1.23+, Node.js 23+, Wails v2
   go install github.com/wailsapp/wails/v2/cmd/wails@latest
@@ -66,13 +66,13 @@
   wails build
   # Binary at build/bin/blunderdb
   ```
-- [ ] Linux note: requires webkit2gtk-4.1 (`wails build -tags webkit2_41`)
+- [x] Linux note: requires webkit2gtk-4.1 (`wails build -tags webkit2_41`)
 
 ### 5. Write Usage section
 
-- [ ] GUI quick start: launch binary, open/create DB, import a match file
-- [ ] CLI quick start: link to `CLI_USAGE.md`
-- [ ] Example commands:
+- [x] GUI quick start: launch binary, open/create DB, import a match file
+- [x] CLI quick start: link to `CLI_USAGE.md`
+- [x] Example commands:
   ```bash
   ./blunderdb                                              # GUI mode
   ./blunderdb import --db my.db --type match --file game.xg  # Import
@@ -82,7 +82,7 @@
 
 ### 6. Write Tech Stack section
 
-- [ ] Brief mention:
+- [x] Brief mention:
   - **Backend:** Go + pure-Go SQLite (`modernc.org/sqlite`)
   - **Frontend:** Svelte 5 + Vite + two.js (board rendering)
   - **Framework:** Wails v2 (Go ↔ WebView bridge)
@@ -90,21 +90,21 @@
 
 ### 7. Write Documentation / Contributing / License sections
 
-- [ ] Documentation: link to GitHub Pages
-- [ ] Contributing: brief note (open issues, PRs welcome, run `go test ./...` before submitting)
-- [ ] License: reference LICENSE file
+- [x] Documentation: link to GitHub Pages
+- [x] Contributing: brief note (open issues, PRs welcome, run `go test ./...` before submitting)
+- [x] License: reference LICENSE file
 
 ### 8. Keep it concise
 
-- [ ] Target 80-120 lines total
-- [ ] Don't duplicate CLI_USAGE.md — link to it
+- [x] Target 80-120 lines total (95 lines)
+- [x] Don't duplicate CLI_USAGE.md — link to it
 
 ## Acceptance criteria
 
-- [ ] README has: description, screenshot, features, install, usage, tech stack, license
-- [ ] ≤ 150 lines
-- [ ] All links work (badges, docs, CLI_USAGE.md)
-- [ ] Someone unfamiliar with the project can understand what it does and how to use it
+- [x] README has: description, screenshot (placeholder), features, install, usage, tech stack, license
+- [x] ≤ 150 lines (95 lines)
+- [x] All links work (badges, docs, CLI_USAGE.md)
+- [x] Someone unfamiliar with the project can understand what it does and how to use it
 
 ## Rollback
 
