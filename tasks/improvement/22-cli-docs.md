@@ -39,16 +39,16 @@
 
 ### 1. Read `cli.go` for undocumented commands
 
-- [ ] Read the `create` handler — document flags (`--db`, `--user`, `--description`, `--force`)
-- [ ] Read the `match` handler — document flags (`--db`, `--match`, `--format` json/text/summary)
-- [ ] Read the `info` handler — document flags (`--db`, `--format` text/json)
-- [ ] Read the `edit` handler — document flags (`--db`, `--user`, `--description`)
-- [ ] Read the `verify` handler — document flags (`--db`, `--match`, `--file`)
-- [ ] Read the `batch` import handler — document batch import from directory
+- [x] Read the `create` handler — document flags (`--db`, `--user`, `--description`, `--force`)
+- [x] Read the `match` handler — document flags (`--db`, `--match`, `--format` json/text/summary)
+- [x] Read the `info` handler — document flags (`--db`, `--format` text/json)
+- [x] Read the `edit` handler — document flags (`--db`, `--user`, `--description`)
+- [x] Read the `verify` handler — document flags (`--db`, `--match`, `--file`)
+- [x] Read the `batch` import handler — document batch import from directory
 
 ### 2. Document `create` command
 
-- [ ] Add section to `CLI_USAGE.md`:
+- [x] Add section to `CLI_USAGE.md`:
   ```markdown
   ## create — Create a new database
 
@@ -68,33 +68,33 @@
 
 ### 3. Document `match` command
 
-- [ ] Add section showing how to display match data with different formats
+- [x] Add section showing how to display match data with different formats
 
 ### 4. Document `info` command
 
-- [ ] Add section showing how to view database metadata and statistics
+- [x] Add section showing how to view database metadata and statistics
 
 ### 5. Document `edit` command
 
-- [ ] Add section showing how to edit database metadata
+- [x] Add section showing how to edit database metadata
 
 ### 6. Document `verify` command
 
-- [ ] Add section showing how to verify database integrity and compare with source files
+- [x] Add section showing how to verify database integrity and compare with source files
 
 ### 7. Document `batch` import subtype
 
-- [ ] Add to the existing `import` section a subsection for `--type batch`
+- [x] Add to the existing `import` section a subsection for `--type batch`
 
 ### 8. Update CLI_README.md
 
-- [ ] Add all missing commands to the quick-reference list
-- [ ] Ensure the command list matches the full set in `printUsage()`
+- [x] Add all missing commands to the quick-reference list
+- [x] Ensure the command list matches the full set in `printUsage()`
 
 ### 9. Verify accuracy
 
-- [ ] Run each documented command with `--help` or test flags to confirm behavior matches documentation
-- [ ] Ensure example commands work:
+- [x] Run each documented command with `--help` or test flags to confirm behavior matches documentation
+- [x] Ensure example commands work:
   ```bash
   ./blunderdb create --db test.db --user "Test"
   ./blunderdb info --db test.db
@@ -104,10 +104,10 @@
 
 ## Acceptance criteria
 
-- [ ] All 12 CLI subcommands are documented in `CLI_USAGE.md`
-- [ ] `CLI_README.md` lists all subcommands
-- [ ] Each documented command includes: description, usage syntax, flags, example
-- [ ] Examples are verified to work
+- [x] All 12 CLI subcommands are documented in `CLI_USAGE.md`
+- [x] `CLI_README.md` lists all subcommands
+- [x] Each documented command includes: description, usage syntax, flags, example
+- [x] Examples are verified to work
 
 ## Rollback
 
