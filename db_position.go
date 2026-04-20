@@ -156,7 +156,7 @@ func encodeBoardCompact(b Board) string {
 // decodeBoardCompact decodes a compact JSON array back into a Board.
 func decodeBoardCompact(s string) Board {
 	var vals [28]int
-	json.Unmarshal([]byte(s), &vals)
+	_ = json.Unmarshal([]byte(s), &vals)
 	var b Board
 	for i := 0; i < NumPoints+2; i++ {
 		v := vals[i]
@@ -185,7 +185,7 @@ func reconstructPosition(id int64, state string, decisionType, playerOnRoll, dic
 	if isCompactState(state) {
 		pos.Board = decodeBoardCompact(state)
 	} else {
-		json.Unmarshal([]byte(state), &pos)
+		_ = json.Unmarshal([]byte(state), &pos)
 	}
 	pos.ID = id
 	pos.DecisionType = decisionType
