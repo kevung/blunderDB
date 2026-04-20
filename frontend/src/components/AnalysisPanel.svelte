@@ -3,8 +3,7 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { openPanels, PANEL } from '../stores/uiStore';
-    export let visible = false;
-    export let onClose;
+    let { visible = false, onClose } = $props();
 
     let analysisData;
     let cubeValue;
@@ -151,11 +150,11 @@
     };
 
     // Detect if multiple engines are present in checker analysis
-    $: _hasMultipleEngines = (() => {
+    let _hasMultipleEngines = $derived.by(() => {
         if (!analysisData?.checkerAnalysis?.moves) return false;
         const engines = new Set(analysisData.checkerAnalysis.moves.map((m) => m.analysisEngine || '').filter((e) => e));
         return engines.size > 1;
-    })();
+    });
 
     function handleSort(column) {
         if (sortColumn === column) {
@@ -168,7 +167,7 @@
     }
 
     // Reactive sorted moves array
-    $: sortedMoves = (() => {
+    let sortedMoves = $derived.by(() => {
         if (!analysisData?.checkerAnalysis?.moves) return [];
         const moves = [...analysisData.checkerAnalysis.moves];
         const col = sortableColumns[sortColumn];
@@ -187,7 +186,7 @@
                 return sortDirection === 'asc' ? cmp : -cmp;
             }
         });
-    })();
+    });
 
     function getSortIndicator(column) {
         if (sortColumn !== column) return '';
@@ -410,19 +409,18 @@
     }
 
     // Determine if both analyses are available
-    $: hasCheckerAnalysis = analysisData && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0;
+    let hasCheckerAnalysis = $derived(analysisData && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0);
     // For cube analysis in MATCH mode, it must not be null and have actual data
     // Check both that the object exists and that it has actual analysis content
-    $: hasCubeAnalysis =
-        analysisData &&
+    let hasCubeAnalysis = $derived(analysisData &&
         analysisData.doublingCubeAnalysis !== null &&
         analysisData.doublingCubeAnalysis !== undefined &&
         typeof analysisData.doublingCubeAnalysis === 'object' &&
-        (analysisData.doublingCubeAnalysis.bestCubeAction || analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined);
+        (analysisData.doublingCubeAnalysis.bestCubeAction || analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined));
 
     // Build the list of cube analyses to display (may have multiple from different engines)
     // Sort so XG analysis appears first, then GNUbg, then others
-    $: cubeAnalysesList = (() => {
+    let cubeAnalysesList = $derived.by(() => {
         if (!analysisData) return [];
         let list = [];
         if (analysisData.allCubeAnalyses && analysisData.allCubeAnalyses.length > 0) {
@@ -439,20 +437,18 @@
         };
         list.sort((a, b) => enginePriority(a.analysisEngine) - enginePriority(b.analysisEngine));
         return list;
-    })();
+    });
     // Check if current position is the first position of a game (no cube decision possible)
     // First position can be move_number 0 or 1
-    $: isFirstPositionOfGame =
-        matchCtx.isMatchMode &&
+    let isFirstPositionOfGame = $derived(matchCtx.isMatchMode &&
         matchCtx.movePositions.length > 0 &&
-        (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 || matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
+        (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 || matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1));
     // Only show tabs in MATCH mode where checker and cube are separate positions
     // BUT not on the first position of a game (cube decision not possible)
-    $: showTabs = hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame;
-</script>
+    let showTabs = $derived(hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame);</script>
 
-<section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" on:keydown={handleKeyDown}>
-    <div class="analysis-content" on:click={handleContentClick} on:keydown={() => {}} role="button" tabindex="-1">
+<section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
+    <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
         {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
             {#each cubeAnalysesList as cubeAnalysis, _cubeIdx}
                 <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
@@ -536,22 +532,22 @@
             <table class="checker-table">
                 <thead>
                     <tr>
-                        <th class="sortable" class:active-sort={sortColumn === 'move'} on:click|stopPropagation={() => handleSort('move')}>Move{getSortIndicator('move')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'equity'} on:click|stopPropagation={() => handleSort('equity')}>Equity</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'error'} on:click|stopPropagation={() => handleSort('error')}>Error{getSortIndicator('error')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'pw'} on:click|stopPropagation={() => handleSort('pw')}>P W{getSortIndicator('pw')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'pg'} on:click|stopPropagation={() => handleSort('pg')}>P G{getSortIndicator('pg')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'pb'} on:click|stopPropagation={() => handleSort('pb')}>P B{getSortIndicator('pb')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'ow'} on:click|stopPropagation={() => handleSort('ow')}>O W{getSortIndicator('ow')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'og'} on:click|stopPropagation={() => handleSort('og')}>O G{getSortIndicator('og')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'ob'} on:click|stopPropagation={() => handleSort('ob')}>O B{getSortIndicator('ob')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'depth'} on:click|stopPropagation={() => handleSort('depth')}>Depth{getSortIndicator('depth')}</th>
-                        <th class="sortable" class:active-sort={sortColumn === 'engine'} on:click|stopPropagation={() => handleSort('engine')}>Engine{getSortIndicator('engine')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'move'} onclick={(e) => { e.stopPropagation(); (() => handleSort('move'))(); }}>Move{getSortIndicator('move')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'equity'} onclick={(e) => { e.stopPropagation(); (() => handleSort('equity'))(); }}>Equity</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'error'} onclick={(e) => { e.stopPropagation(); (() => handleSort('error'))(); }}>Error{getSortIndicator('error')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'pw'} onclick={(e) => { e.stopPropagation(); (() => handleSort('pw'))(); }}>P W{getSortIndicator('pw')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'pg'} onclick={(e) => { e.stopPropagation(); (() => handleSort('pg'))(); }}>P G{getSortIndicator('pg')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'pb'} onclick={(e) => { e.stopPropagation(); (() => handleSort('pb'))(); }}>P B{getSortIndicator('pb')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'ow'} onclick={(e) => { e.stopPropagation(); (() => handleSort('ow'))(); }}>O W{getSortIndicator('ow')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'og'} onclick={(e) => { e.stopPropagation(); (() => handleSort('og'))(); }}>O G{getSortIndicator('og')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'ob'} onclick={(e) => { e.stopPropagation(); (() => handleSort('ob'))(); }}>O B{getSortIndicator('ob')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'depth'} onclick={(e) => { e.stopPropagation(); (() => handleSort('depth'))(); }}>Depth{getSortIndicator('depth')}</th>
+                        <th class="sortable" class:active-sort={sortColumn === 'engine'} onclick={(e) => { e.stopPropagation(); (() => handleSort('engine'))(); }}>Engine{getSortIndicator('engine')}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {#each sortedMoves as move}
-                        <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} on:click={() => handleMoveRowClick(move)}>
+                        <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
                             <td>{move.move}</td>
                             <td>{formatEquity(move.equity || 0)}</td>
                             <td>{formatEquity(move.equityError || 0)}</td>

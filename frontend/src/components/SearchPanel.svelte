@@ -8,8 +8,7 @@
     import { searchParamsStore } from '../stores/searchParamsStore';
     import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
 
-    export let onLoadPositionsByFilters;
-    export let onAddToFilterLibrary;
+    let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
     // Sub-tab state
     let activeSubTab = 'search'; // 'search', 'history', 'saved'
@@ -200,18 +199,18 @@
     availableFilters.forEach((f) => (filterEnabled[f] = false));
     restoreSearchState();
 
-    $: activeFilterCount = availableFilters.filter((f) => filterEnabled[f]).length;
-
+    let activeFilterCount = $derived(availableFilters.filter((f) => filterEnabled[f]).length);
     // Track board position only while the search tab is active.
     // When the user switches away, App.svelte's exitEditMode() fires synchronously
     // and updates positionStore to a DB position before onDestroy runs.
     // This reactive block stops updating once $activeTabStore !== 'search',
     // so savedSearchPosition always holds the last board the user saw on this panel.
     let savedSearchPosition = null;
-    $: if ($activeTabStore === 'search') {
+    $effect(() => {
+        if ($activeTabStore === 'search') {
         savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
-    }
-
+        }
+    });
     activeTabStore.subscribe(async (value) => {
         if (value === 'search') {
             await loadHistory();
@@ -1056,9 +1055,9 @@
 <div class="search-panel">
     <!-- Left sub-tab sidebar -->
     <div class="sub-tab-sidebar">
-        <button class="sub-tab-btn" class:active={activeSubTab === 'search'} on:click={() => (activeSubTab = 'search')}>Search</button>
-        <button class="sub-tab-btn" class:active={activeSubTab === 'history'} on:click={() => (activeSubTab = 'history')}>History</button>
-        <button class="sub-tab-btn" class:active={activeSubTab === 'saved'} on:click={() => (activeSubTab = 'saved')}>Saved</button>
+        <button class="sub-tab-btn" class:active={activeSubTab === 'search'} onclick={() => (activeSubTab = 'search')}>Search</button>
+        <button class="sub-tab-btn" class:active={activeSubTab === 'history'} onclick={() => (activeSubTab = 'history')}>History</button>
+        <button class="sub-tab-btn" class:active={activeSubTab === 'saved'} onclick={() => (activeSubTab = 'saved')}>Saved</button>
     </div>
 
     <!-- Content area -->
@@ -1070,8 +1069,8 @@
                     <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> In results</label>
                     <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> New tab</label>
                     <span class="active-count">{activeFilterCount} active</span>
-                    <button class="btn-search" on:click={handleSearch}>Search</button>
-                    <button class="btn-clear" on:click={clearFilters}>Clear</button>
+                    <button class="btn-search" onclick={handleSearch}>Search</button>
+                    <button class="btn-clear" onclick={clearFilters}>Clear</button>
                 </div>
                 <div class="filter-groups">
                     {#each filterGroups as group}
@@ -1711,14 +1710,14 @@
                             <thead><tr><th>Date</th><th>Command</th><th>Actions</th></tr></thead>
                             <tbody>
                                 {#each searchHistory as search}
-                                    <tr class:selected={selectedSearch === search} on:click={() => selectSearch(search)} on:dblclick={() => handleDoubleClick(search)}>
+                                    <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
                                         <td class="date-cell">{formatTimestamp(search.timestamp)}</td>
                                         <td class="command-cell">{search.command}</td>
                                         <td class="actions-cell">
                                             <button
                                                 class="action-btn"
                                                 class:in-library={isInFilterLibrary(search)}
-                                                on:click|stopPropagation={() => showAddToLibraryDialog(search)}
+                                                onclick={(e) => { e.stopPropagation(); (() => showAddToLibraryDialog(search))(); }}
                                                 title="Save to bookmarks"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
@@ -1729,7 +1728,7 @@
                                                     /></svg
                                                 >
                                             </button>
-                                            <button class="action-btn delete-btn" on:click|stopPropagation={(e) => deleteSearch(search, e)} title="Delete">
+                                            <button class="action-btn delete-btn" onclick={(e) => { e.stopPropagation(); ((e) => deleteSearch(search, e))(e); }} title="Delete">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
                                                     ><path
                                                         stroke-linecap="round"
@@ -1756,17 +1755,14 @@
                             <div
                                 class="saved-item"
                                 class:selected={selectedSavedFilter && selectedSavedFilter.id === sf.id}
-                                on:click={() => selectSavedFilter(sf)}
-                                on:dblclick={() => executeSavedFilter(sf)}
+                                onclick={() => selectSavedFilter(sf)}
+                                ondblclick={() => executeSavedFilter(sf)}
                             >
                                 <span class="saved-name">{sf.name}</span>
                                 <span class="saved-cmd">{sf.command}</span>
                                 <button
                                     class="action-btn delete-btn"
-                                    on:click|stopPropagation={() => {
-                                        selectedSavedFilter = sf;
-                                        deleteSavedFilter();
-                                    }}
+                                    onclick={(e) => { e.stopPropagation(); selectedSavedFilter = sf; deleteSavedFilter(); }}
                                     title="Remove"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
@@ -1787,17 +1783,17 @@
 </div>
 
 {#if showSaveDialog}
-    <div class="save-dialog-overlay" on:click|self={cancelSaveDialog}>
+    <div class="save-dialog-overlay" onclick={(e) => { if (e.target === e.currentTarget) cancelSaveDialog(e); }}>
         <div class="save-dialog">
             <h3>Save Search</h3>
             <p class="command-preview">{selectedSearch?.command || ''}</p>
             <div class="dialog-form">
                 <label for="filterNameInput">Name:</label>
-                <input type="text" id="filterNameInput" bind:value={filterName} placeholder="Enter name" on:keydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
+                <input type="text" id="filterNameInput" bind:value={filterName} placeholder="Enter name" onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
             </div>
             <div class="dialog-actions">
-                <button class="btn-search" on:click|stopPropagation={saveToFilterLibrary}>Save</button>
-                <button class="btn-clear" on:click|stopPropagation={cancelSaveDialog}>Cancel</button>
+                <button class="btn-search" onclick={(e) => { e.stopPropagation(); saveToFilterLibrary(e); }}>Save</button>
+                <button class="btn-clear" onclick={(e) => { e.stopPropagation(); cancelSaveDialog(e); }}>Cancel</button>
             </div>
         </div>
     </div>

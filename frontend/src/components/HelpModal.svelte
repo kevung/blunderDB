@@ -6,9 +6,7 @@
     import { metaStore } from '../stores/metaStore'; // Import metaStore
     import { GetDatabaseVersion } from '../../wailsjs/go/main/Database'; // Correct import path
 
-    export let visible = false;
-    export let onClose;
-    export let handleGlobalKeydown;
+    let { visible = false, onClose, handleGlobalKeydown } = $props();
 
     let activeTab = 'manual'; // Default active tab
     const tabs = ['manual', 'shortcuts', 'commands', 'about'];
@@ -132,34 +130,36 @@
     });
 
     // Focus modal content when visible and listen for Esc key
-    $: if (visible) {
-        setTimeout(() => {
-            const helpModal = document.getElementById('helpModal');
-            if (helpModal) {
-                helpModal.focus();
-            }
-        }, 0);
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('click', handleClickOutside); // Add click event listener
-        deactivateGlobalShortcuts();
-    } else {
-        window.removeEventListener('keydown', handleKeyDown);
-        window.removeEventListener('click', handleClickOutside); // Remove click event listener
-        activateGlobalShortcuts();
-    }
+    $effect(() => {
+        if (visible) {
+            setTimeout(() => {
+                const helpModal = document.getElementById('helpModal');
+                if (helpModal) {
+                    helpModal.focus();
+                }
+            }, 0);
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('click', handleClickOutside);
+            deactivateGlobalShortcuts();
+        } else {
+            window.removeEventListener('keydown', handleKeyDown);
+            window.removeEventListener('click', handleClickOutside);
+            activateGlobalShortcuts();
+        }
+    });
 </script>
 
 {#if visible}
     <div class="modal-overlay" id="helpModal" tabindex="0" transition:fade={{ duration: 30 }}>
         <div class="modal-content" id="modalContent">
-            <div class="close-button" on:click={onClose} on:keydown={handleKeyDown}>×</div>
+            <div class="close-button" onclick={onClose} onkeydown={handleKeyDown}>×</div>
 
             <!-- Tabs -->
             <div class="tab-header">
-                <button class={activeTab === 'manual' ? 'active' : ''} on:click={() => switchTab('manual')}>Manual</button>
-                <button class={activeTab === 'shortcuts' ? 'active' : ''} on:click={() => switchTab('shortcuts')}>Shortcut</button>
-                <button class={activeTab === 'commands' ? 'active' : ''} on:click={() => switchTab('commands')}>Command Line</button>
-                <button class={activeTab === 'about' ? 'active' : ''} on:click={() => switchTab('about')}>About</button>
+                <button class={activeTab === 'manual' ? 'active' : ''} onclick={() => switchTab('manual')}>Manual</button>
+                <button class={activeTab === 'shortcuts' ? 'active' : ''} onclick={() => switchTab('shortcuts')}>Shortcut</button>
+                <button class={activeTab === 'commands' ? 'active' : ''} onclick={() => switchTab('commands')}>Command Line</button>
+                <button class={activeTab === 'about' ? 'active' : ''} onclick={() => switchTab('about')}>About</button>
             </div>
 
             <!-- Tab Content -->

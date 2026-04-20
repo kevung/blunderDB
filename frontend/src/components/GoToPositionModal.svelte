@@ -5,8 +5,7 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { LoadAnalysis } from '../../wailsjs/go/main/Database.js';
 
-    export let visible = false;
-    export let onClose;
+    let { visible = false, onClose } = $props();
 
     let positionNumber = 0;
     let inputField;
@@ -14,14 +13,15 @@
     let currentIndex = 0;
 
     // Subscribe to positionsStore and matchContextStore to get the number of positions
-    $: if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+    $effect(() => {
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
         maxPositionNumber = $matchContextStore.movePositions.length;
         currentIndex = $matchContextStore.currentIndex + 1; // Adjust for 1-based index
-    } else {
+        } else {
         maxPositionNumber = $positionsStore.length;
         currentIndex = $currentPositionIndexStore + 1; // Adjust for 1-based index
-    }
-
+        }
+    });
     async function handleGoToPosition() {
         if (positionNumber < 1) {
             positionNumber = 1;
@@ -110,20 +110,28 @@
         }
     });
 
-    $: if (visible && inputField) {
+    $effect(() => {
+
+        if (visible && inputField) {
         inputField.focus();
         inputField.select(); // Select the text to allow direct replacement
-    }
 
-    $: if (visible && $statusBarModeStore === 'EDIT') {
+        }
+
+    });
+    $effect(() => {
+
+        if (visible && $statusBarModeStore === 'EDIT') {
         onClose(); // Close the modal if in edit mode
-    }
-</script>
+
+        }
+
+    });</script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={onClose}>
-        <div class="modal-content" on:click|stopPropagation>
-            <div class="close-button" on:click={onClose}>×</div>
+    <div class="modal-overlay" onclick={onClose}>
+        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
+            <div class="close-button" onclick={onClose}>×</div>
             <h2>Go To Position</h2>
             <input
                 type="number"
@@ -133,11 +141,11 @@
                 placeholder="Enter position number"
                 class="input-field"
                 bind:this={inputField}
-                on:keydown={handleKeyDown}
+                onkeydown={handleKeyDown}
             />
             <div class="modal-buttons">
-                <button class="primary-button" on:click={handleGoToPosition}>Go</button>
-                <button class="secondary-button" on:click={onClose}>Cancel</button>
+                <button class="primary-button" onclick={handleGoToPosition}>Go</button>
+                <button class="secondary-button" onclick={onClose}>Cancel</button>
             </div>
         </div>
     </div>

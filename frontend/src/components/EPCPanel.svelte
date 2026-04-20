@@ -2,9 +2,8 @@
     import { statusBarModeStore } from '../stores/uiStore';
     import { epcDataStore } from '../stores/epcStore';
 
-    $: isActive = $statusBarModeStore === 'EPC';
-    $: data = $epcDataStore;
-</script>
+    let isActive = $derived($statusBarModeStore === 'EPC');
+    let data = $derived($epcDataStore);</script>
 
 <div class="epc-panel">
     {#if !isActive}

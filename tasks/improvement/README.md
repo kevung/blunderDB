@@ -78,8 +78,8 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 15 — Frontend tests
 - [x] 16 — Frontend lint
 - [x] 17 — Strip console
-- [ ] 18 — Table modals
-- [ ] 19 — Svelte 5 runes
+- [x] 18 — Table modals
+- [x] 19 — Svelte 5 runes
 - [ ] 20 — Accessibility
 - [ ] 21 — README
 - [ ] 22 — CLI docs

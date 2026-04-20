@@ -1,7 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
-    export let visible = false;
-    export let onClose;
+    let { visible = false, onClose } = $props();
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';
@@ -16,22 +15,27 @@
     let editingText = '';
     let promptText = '';
 
-    $: if (visible) {
-        loadComments();
-    }
+    $effect(() => {
 
+        if (visible) {
+        loadComments();
+
+        }
+
+    });
     // Reload comments when displayed position changes
-    $: if (visible && $positionStore && $positionStore.id) {
+    $effect(() => {
+        if (visible && $positionStore && $positionStore.id) {
         loadComments();
-    }
-
-    $: {
+        }
+    });
+    $effect(() => {
         if (searchQuery.trim()) {
             filterComments(searchQuery.trim());
         } else {
             displayedComments = allComments;
         }
-    }
+    });
 
     async function loadComments() {
         try {
@@ -175,11 +179,11 @@
     <!-- Search bar -->
     <div class="search-strip">
         <span class="search-icon">⌕</span>
-        <input type="text" bind:value={searchQuery} placeholder="Search comments…" on:keydown={handleSearchKeyDown} class="search-input" />
+        <input type="text" bind:value={searchQuery} placeholder="Search comments…" onkeydown={handleSearchKeyDown} class="search-input" />
         {#if searchQuery}
             <button
                 class="clear-btn"
-                on:click={() => {
+                onclick={() => {
                     searchQuery = '';
                 }}>×</button
             >
@@ -194,18 +198,18 @@
             {#each displayedComments as comment}
                 {#if editingCommentId === comment.id}
                     <div class="msg editing">
-                        <textarea class="msg-edit-input" bind:value={editingText} on:keydown={(e) => handleEditKeyDown(e, comment)} on:blur={() => saveEditedComment(comment)} rows="2"></textarea>
+                        <textarea class="msg-edit-input" bind:value={editingText} onkeydown={(e) => handleEditKeyDown(e, comment)} onblur={() => saveEditedComment(comment)} rows="2"></textarea>
                     </div>
                 {:else}
-                    <div class="msg" role="button" tabindex="-1" on:click={() => navigateToComment(comment)} on:keydown={() => {}}>
+                    <div class="msg" role="button" tabindex="-1" onclick={() => navigateToComment(comment)} onkeydown={() => {}}>
                         <div class="msg-header">
                             <span class="msg-date">{comment.modifiedAt && comment.modifiedAt !== comment.createdAt ? formatDate(comment.modifiedAt) + ' (edited)' : formatDate(comment.createdAt)}</span
                             >
                         </div>
                         <div class="msg-text">{comment.text}</div>
                         <div class="msg-footer">
-                            <button class="msg-action msg-edit" on:click|stopPropagation={() => startEditComment(comment)} title="Edit">✎</button>
-                            <button class="msg-action msg-delete" on:click|stopPropagation={(e) => deleteComment(comment, e)} title="Delete">×</button>
+                            <button class="msg-action msg-edit" onclick={(e) => { e.stopPropagation(); (() => startEditComment(comment))(); }} title="Edit">✎</button>
+                            <button class="msg-action msg-delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteComment(comment, e))(e); }} title="Delete">×</button>
                         </div>
                     </div>
                 {/if}
@@ -215,7 +219,7 @@
 
     <!-- Prompt -->
     <div class="prompt">
-        <textarea id="commentTextArea" bind:value={promptText} placeholder="Comment on current position…" on:keydown={handlePromptKeyDown} rows="2"></textarea>
+        <textarea id="commentTextArea" bind:value={promptText} placeholder="Comment on current position…" onkeydown={handlePromptKeyDown} rows="2"></textarea>
     </div>
 </div>
 

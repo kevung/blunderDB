@@ -5,9 +5,7 @@
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
 
-    export let visible = false;
-    export let onClose;
-    export let onLoadPositionsByFilters;
+    let { visible = false, onClose, onLoadPositionsByFilters } = $props();
 
     let filters = [];
     let pipCountMin = -375;
@@ -598,8 +596,8 @@
 </script>
 
 {#if visible}
-    <div class="modal-backdrop" on:click={onClose}></div>
-    <div class="modal" on:click|stopPropagation>
+    <div class="modal-backdrop" onclick={onClose}></div>
+    <div class="modal" onclick={(e) => e.stopPropagation()}>
         <div class="modal-body">
             <div class="form-group">
                 <select bind:value={selectedFilter} class="filter-dropdown">
@@ -608,7 +606,7 @@
                         <option value={filter}>{filter}</option>
                     {/each}
                 </select>
-                <button class="add-button" on:click={addFilter}>+</button>
+                <button class="add-button" onclick={addFilter}>+</button>
             </div>
             {#each filters as filter}
                 <div class="form-group">
@@ -739,7 +737,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={winRateOption !== 'min'}
                                         />
                                     </label>
@@ -752,7 +750,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={winRateOption !== 'max'}
                                         />
                                     </label>
@@ -765,7 +763,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={winRateOption !== 'range'}
                                         />
                                         <input
@@ -775,7 +773,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={winRateOption !== 'range'}
                                         />
                                     </label>
@@ -794,7 +792,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={gammonRateOption !== 'min'}
                                         />
                                     </label>
@@ -807,7 +805,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={gammonRateOption !== 'max'}
                                         />
                                     </label>
@@ -820,7 +818,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={gammonRateOption !== 'range'}
                                         />
                                         <input
@@ -830,7 +828,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={gammonRateOption !== 'range'}
                                         />
                                     </label>
@@ -849,7 +847,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={backgammonRateOption !== 'min'}
                                         />
                                     </label>
@@ -862,7 +860,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={backgammonRateOption !== 'max'}
                                         />
                                     </label>
@@ -875,7 +873,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={backgammonRateOption !== 'range'}
                                         />
                                         <input
@@ -885,7 +883,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={backgammonRateOption !== 'range'}
                                         />
                                     </label>
@@ -904,7 +902,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2WinRateOption !== 'min'}
                                         />
                                     </label>
@@ -917,7 +915,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2WinRateOption !== 'max'}
                                         />
                                     </label>
@@ -930,7 +928,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2WinRateOption !== 'range'}
                                         />
                                         <input
@@ -940,7 +938,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2WinRateOption !== 'range'}
                                         />
                                     </label>
@@ -959,7 +957,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2GammonRateOption !== 'min'}
                                         />
                                     </label>
@@ -972,7 +970,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2GammonRateOption !== 'max'}
                                         />
                                     </label>
@@ -985,7 +983,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2GammonRateOption !== 'range'}
                                         />
                                         <input
@@ -995,7 +993,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2GammonRateOption !== 'range'}
                                         />
                                     </label>
@@ -1014,7 +1012,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackgammonRateOption !== 'min'}
                                         />
                                     </label>
@@ -1027,7 +1025,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackgammonRateOption !== 'max'}
                                         />
                                     </label>
@@ -1040,7 +1038,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackgammonRateOption !== 'range'}
                                         />
                                         <input
@@ -1050,7 +1048,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="100"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(100, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackgammonRateOption !== 'range'}
                                         />
                                     </label>
@@ -1069,7 +1067,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerOffOption !== 'min'}
                                         />
                                     </label>
@@ -1082,7 +1080,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerOffOption !== 'max'}
                                         />
                                     </label>
@@ -1095,7 +1093,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerOffOption !== 'range'}
                                         />
                                         <input
@@ -1105,7 +1103,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerOffOption !== 'range'}
                                         />
                                     </label>
@@ -1124,7 +1122,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerOffOption !== 'min'}
                                         />
                                     </label>
@@ -1137,7 +1135,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerOffOption !== 'max'}
                                         />
                                     </label>
@@ -1150,7 +1148,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerOffOption !== 'range'}
                                         />
                                         <input
@@ -1160,7 +1158,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerOffOption !== 'range'}
                                         />
                                     </label>
@@ -1179,7 +1177,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1BackCheckerOption !== 'min'}
                                         />
                                     </label>
@@ -1192,7 +1190,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1BackCheckerOption !== 'max'}
                                         />
                                     </label>
@@ -1205,7 +1203,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1BackCheckerOption !== 'range'}
                                         />
                                         <input
@@ -1215,7 +1213,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1BackCheckerOption !== 'range'}
                                         />
                                     </label>
@@ -1234,7 +1232,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackCheckerOption !== 'min'}
                                         />
                                     </label>
@@ -1247,7 +1245,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackCheckerOption !== 'max'}
                                         />
                                     </label>
@@ -1260,7 +1258,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackCheckerOption !== 'range'}
                                         />
                                         <input
@@ -1270,7 +1268,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2BackCheckerOption !== 'range'}
                                         />
                                     </label>
@@ -1289,7 +1287,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerInZoneOption !== 'min'}
                                         />
                                     </label>
@@ -1302,7 +1300,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerInZoneOption !== 'max'}
                                         />
                                     </label>
@@ -1315,7 +1313,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerInZoneOption !== 'range'}
                                         />
                                         <input
@@ -1325,7 +1323,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1CheckerInZoneOption !== 'range'}
                                         />
                                     </label>
@@ -1344,7 +1342,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerInZoneOption !== 'min'}
                                         />
                                     </label>
@@ -1357,7 +1355,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerInZoneOption !== 'max'}
                                         />
                                     </label>
@@ -1370,7 +1368,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerInZoneOption !== 'range'}
                                         />
                                         <input
@@ -1380,7 +1378,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2CheckerInZoneOption !== 'range'}
                                         />
                                     </label>
@@ -1399,7 +1397,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1OutfieldBlotOption !== 'min'}
                                         />
                                     </label>
@@ -1412,7 +1410,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1OutfieldBlotOption !== 'max'}
                                         />
                                     </label>
@@ -1425,7 +1423,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1OutfieldBlotOption !== 'range'}
                                         />
                                         <input
@@ -1435,7 +1433,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1OutfieldBlotOption !== 'range'}
                                         />
                                     </label>
@@ -1454,7 +1452,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2OutfieldBlotOption !== 'min'}
                                         />
                                     </label>
@@ -1467,7 +1465,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2OutfieldBlotOption !== 'max'}
                                         />
                                     </label>
@@ -1480,7 +1478,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2OutfieldBlotOption !== 'range'}
                                         />
                                         <input
@@ -1490,7 +1488,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2OutfieldBlotOption !== 'range'}
                                         />
                                     </label>
@@ -1510,7 +1508,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1JanBlotOption !== 'min'}
                                         />
                                     </label>
@@ -1523,7 +1521,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1JanBlotOption !== 'max'}
                                         />
                                     </label>
@@ -1536,7 +1534,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1JanBlotOption !== 'range'}
                                         />
                                         <input
@@ -1546,7 +1544,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player1JanBlotOption !== 'range'}
                                         />
                                     </label>
@@ -1565,7 +1563,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2JanBlotOption !== 'min'}
                                         />
                                     </label>
@@ -1578,7 +1576,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2JanBlotOption !== 'max'}
                                         />
                                     </label>
@@ -1591,7 +1589,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2JanBlotOption !== 'range'}
                                         />
                                         <input
@@ -1601,7 +1599,7 @@
                                             class="filter-input"
                                             min="0"
                                             max="15"
-                                            on:input={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
+                                            oninput={(e) => (e.target.value = Math.max(0, Math.min(15, e.target.value.replace(/\D/g, ''))))}
                                             disabled={player2JanBlotOption !== 'range'}
                                         />
                                     </label>
@@ -1653,7 +1651,7 @@
                             </div>
                         {/if}
                     </div>
-                    <button class="remove-button" on:click={() => removeFilter(filter)}>−</button>
+                    <button class="remove-button" onclick={() => removeFilter(filter)}>−</button>
                 </div>
             {/each}
             <div class="modal-buttons">
@@ -1661,9 +1659,9 @@
                     <input type="checkbox" bind:checked={searchInCurrentResults} />
                     Search in current results
                 </label>
-                <button class="primary-button" on:click={handleSearch}>Search</button>
-                <button class="secondary-button" on:click={onClose}>Cancel</button>
-                <button class="secondary-button" on:click={clearFilters}>Clear Filters</button>
+                <button class="primary-button" onclick={handleSearch}>Search</button>
+                <button class="secondary-button" onclick={onClose}>Cancel</button>
+                <button class="secondary-button" onclick={clearFilters}>Clear Filters</button>
             </div>
         </div>
     </div>

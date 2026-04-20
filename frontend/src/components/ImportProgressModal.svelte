@@ -1,22 +1,16 @@
 <script>
-    export let visible = false;
-    export let mode = 'analyzing'; // 'analyzing', 'preview', 'committing', 'completed'
-    export let analysis = {
+    let { visible = false, mode = 'analyzing', analysis = {
         toAdd: 0,
         toMerge: 0,
         toSkip: 0,
         total: 0,
         importPath: ''
-    };
-    export let result = {
+    }, result = {
         added: 0,
         merged: 0,
         skipped: 0,
         total: 0
-    };
-    export let onCancel;
-    export let onCommit;
-    export let onClose;
+    }, onCancel, onCommit, onClose } = $props();
 </script>
 
 {#if visible}
@@ -27,7 +21,7 @@
                 <p class="status-text">Please wait while we analyze the database to import...</p>
 
                 <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
+                    <button onclick={onCancel}>Cancel</button>
                 </div>
             {:else if mode === 'preview'}
                 <h2>Import Preview</h2>
@@ -63,12 +57,12 @@
                         <p><strong>Nothing to import:</strong> All positions already exist in the database with identical data.</p>
                     </div>
                     <div class="button-group">
-                        <button on:click={onClose}>Close</button>
+                        <button onclick={onClose}>Close</button>
                     </div>
                 {:else}
                     <div class="button-group">
-                        <button on:click={onCancel}>Cancel</button>
-                        <button class="btn-commit" on:click={onCommit}>Commit Import</button>
+                        <button onclick={onCancel}>Cancel</button>
+                        <button class="btn-commit" onclick={onCommit}>Commit Import</button>
                     </div>
                 {/if}
             {:else if mode === 'committing'}
@@ -77,7 +71,7 @@
                 <p class="status-text">This operation is atomic and will not modify your database until completion.</p>
 
                 <div class="button-group">
-                    <button on:click={onCancel}>Abort Import</button>
+                    <button onclick={onCancel}>Abort Import</button>
                 </div>
             {:else if mode === 'completed'}
                 <h2>Import Completed</h2>
@@ -102,7 +96,7 @@
                 </div>
 
                 <div class="button-group">
-                    <button on:click={onClose}>Close</button>
+                    <button onclick={onClose}>Close</button>
                 </div>
             {/if}
         </div>

@@ -322,7 +322,7 @@
         }
     }
 
-    $: sortedMatches = (() => {
+    let sortedMatches = $derived.by(() => {
         if (!sortColumn) return matches;
         const sorted = [...matches].sort((a, b) => {
             const valA = getSortValue(a, sortColumn);
@@ -331,7 +331,7 @@
             return sortDirection === 'asc' ? cmp : -cmp;
         });
         return sorted;
-    })();
+    });
 
     function selectMatch(match) {
         if (selectedMatch && selectedMatch.id === match.id) {
@@ -362,7 +362,7 @@
     }
 
     // Group move positions by game number for transcript display
-    $: transcriptGames = (() => {
+    let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
         const gameMap = new Map();
         for (const mp of detailMovePositions) {
@@ -378,7 +378,7 @@
             result.push({ gameNumber: gameNum, moves, gameInfo });
         }
         return result;
-    })();
+    });
 
     async function navigateToMove(moveIndex) {
         if (!detailMatch || !detailMovePositions.length) return;
@@ -678,7 +678,7 @@
         }
     }
 
-    $: {
+    $effect(() => {
         if (visible) {
             setTimeout(() => {
                 const panel = document.getElementById('matchPanel');
@@ -689,7 +689,7 @@
                 }
             }, 100);
         }
-    }
+    });
 
     onMount(async () => {
         if (visible) await loadMatches();
@@ -712,19 +712,19 @@
                     <thead>
                         <tr>
                             <th class="no-select narrow-col">#</th>
-                            <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}
+                            <th class="no-select sortable narrow-col" onclick={() => handleSort('date')}
                                 >Date {#if sortColumn === 'date'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
-                            <th class="no-select sortable" on:click={() => handleSort('player1')}
+                            <th class="no-select sortable" onclick={() => handleSort('player1')}
                                 >Player 1 {#if sortColumn === 'player1'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
-                            <th class="no-select sortable" on:click={() => handleSort('player2')}
+                            <th class="no-select sortable" onclick={() => handleSort('player2')}
                                 >Player 2 {#if sortColumn === 'player2'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
-                            <th class="no-select sortable narrow-col" on:click={() => handleSort('length')}
+                            <th class="no-select sortable narrow-col" onclick={() => handleSort('length')}
                                 >Pts {#if sortColumn === 'length'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
-                            <th class="no-select sortable tournament-col" on:click={() => handleSort('tournament')}
+                            <th class="no-select sortable tournament-col" onclick={() => handleSort('tournament')}
                                 >Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
                             <th class="no-select actions-col"></th>
@@ -736,46 +736,46 @@
                                 <tr class="match-editing-row" class:selected={selectedMatch && selectedMatch.id === match.id}>
                                     <td class="index-cell narrow-col no-select">{index + 1}</td>
                                     <td class="narrow-col">
-                                        <input type="date" class="match-edit-input" bind:value={editDateValue} on:keydown={handleMatchEditKeyDown} />
+                                        <input type="date" class="match-edit-input" bind:value={editDateValue} onkeydown={handleMatchEditKeyDown} />
                                     </td>
                                     <td>
-                                        <input type="text" class="match-edit-input" bind:value={editPlayer1Value} on:keydown={handleMatchEditKeyDown} placeholder="Player 1" />
+                                        <input type="text" class="match-edit-input" bind:value={editPlayer1Value} onkeydown={handleMatchEditKeyDown} placeholder="Player 1" />
                                     </td>
                                     <td>
-                                        <input type="text" class="match-edit-input" bind:value={editPlayer2Value} on:keydown={handleMatchEditKeyDown} placeholder="Player 2" />
+                                        <input type="text" class="match-edit-input" bind:value={editPlayer2Value} onkeydown={handleMatchEditKeyDown} placeholder="Player 2" />
                                     </td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="tournament-col no-select">{match.tournament_name || ''}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions editing-actions">
-                                            <button class="icon-btn" on:click|stopPropagation={saveMatchEdit} title="Save">✓</button>
-                                            <button class="icon-btn" on:click|stopPropagation={cancelMatchEdit} title="Cancel">✕</button>
+                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); saveMatchEdit(e); }} title="Save">✓</button>
+                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); cancelMatchEdit(e); }} title="Cancel">✕</button>
                                         </span>
                                     </td>
                                 </tr>
                             {:else}
-                                <tr class:selected={selectedMatch && selectedMatch.id === match.id} on:click={() => selectMatch(match)} on:dblclick={() => handleDoubleClick(match)}>
+                                <tr class:selected={selectedMatch && selectedMatch.id === match.id} onclick={() => selectMatch(match)} ondblclick={() => handleDoubleClick(match)}>
                                     <td class="index-cell narrow-col no-select">{index + 1}</td>
                                     <td class="narrow-col no-select">{formatDate(match.match_date)}</td>
                                     <td class="no-select">{match.player1_name}</td>
                                     <td class="no-select">{match.player2_name}</td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
-                                    <td class="tournament-col no-select tournament-meta-cell" on:click|stopPropagation={(e) => startEditTournament(match, e)}>
+                                    <td class="tournament-col no-select tournament-meta-cell" onclick={(e) => { e.stopPropagation(); ((e) => startEditTournament(match, e))(e); }}>
                                         {#if editingTournamentMatchId === match.id}
                                             <div class="tournament-cell-edit">
                                                 <input
                                                     type="text"
                                                     class="tournament-edit-input"
                                                     bind:value={editTournamentValue}
-                                                    on:input={filterTournaments}
-                                                    on:keydown={handleTournamentKeyDown}
-                                                    on:blur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                    oninput={filterTournaments}
+                                                    onkeydown={handleTournamentKeyDown}
+                                                    onblur={() => setTimeout(cancelTournamentEdit, 200)}
                                                     placeholder="Tournament name"
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
                                                         {#each filteredTournaments as t}
-                                                            <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
+                                                            <div class="tournament-dropdown-item" onmousedown={(e) => { e.preventDefault(); (() => selectTournamentOption(t.name))(); }}>
                                                                 {t.name}
                                                             </div>
                                                         {/each}
@@ -788,9 +788,9 @@
                                     </td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions">
-                                            <button class="icon-btn" on:click|stopPropagation={(e) => swapMatchPlayers(match, e)} title="Swap players">⇄</button>
-                                            <button class="icon-btn" on:click|stopPropagation={(e) => startEditMatch(match, e)} title="Edit">✎</button>
-                                            <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteMatchEntry(match, e)} title="Delete">×</button>
+                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => swapMatchPlayers(match, e))(e); }} title="Swap players">⇄</button>
+                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEditMatch(match, e))(e); }} title="Edit">✎</button>
+                                            <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteMatchEntry(match, e))(e); }} title="Delete">×</button>
                                         </span>
                                     </td>
                                 </tr>
@@ -830,9 +830,9 @@
                         {/if}
                     </div>
                     <div class="detail-tabs">
-                        <button class="detail-tab" class:active={detailView === 'transcript'} on:click={() => (detailView = 'transcript')}>Transcript</button>
-                        <button class="detail-tab" class:active={detailView === 'metadata'} on:click={() => (detailView = 'metadata')}>Info</button>
-                        <button class="detail-tab enter-match-btn" on:click={() => enterMatchMode(detailMatch)} title="Enter match mode (↵)">▶ Review</button>
+                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => (detailView = 'transcript')}>Transcript</button>
+                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => (detailView = 'metadata')}>Info</button>
+                        <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="Enter match mode (↵)">▶ Review</button>
                     </div>
                 </div>
 
@@ -872,7 +872,7 @@
                                         <tbody>
                                             {#each game.moves as mp, mi}
                                                 {@const globalIdx = detailMovePositions.indexOf(mp)}
-                                                <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} on:click={() => navigateToMove(globalIdx)} title="Click to review this position">
+                                                <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title="Click to review this position">
                                                     <td class="transcript-num">{mi + 1}</td>
                                                     <td class="transcript-player" class:player1={mp.player_on_roll === 0} class:player2={mp.player_on_roll === 1}>
                                                         {getPlayerName(mp)}
@@ -913,11 +913,11 @@
                                     <td class="meta-label">Comment</td>
                                     <td class="meta-value">
                                         {#if editingDetailComment}
-                                            <input type="text" class="match-comment-input" bind:value={editDetailCommentText} on:keydown={handleDetailCommentKeyDown} on:blur={saveDetailComment} />
+                                            <input type="text" class="match-comment-input" bind:value={editDetailCommentText} onkeydown={handleDetailCommentKeyDown} onblur={saveDetailComment} />
                                         {:else}
                                             <!-- svelte-ignore a11y_click_events_have_key_events -->
                                             <!-- svelte-ignore a11y_no_static_element_interactions -->
-                                            <span class="match-comment-display" on:click={startEditDetailComment} title="Click to add comment">
+                                            <span class="match-comment-display" onclick={startEditDetailComment} title="Click to add comment">
                                                 {detailMatch.comment || 'Add comment…'}
                                             </span>
                                         {/if}
@@ -925,22 +925,22 @@
                                 </tr>
                                 <tr>
                                     <td class="meta-label">Tournament</td>
-                                    <td class="meta-value tournament-meta-cell" on:click|stopPropagation={(e) => startEditTournament(detailMatch, e)}>
+                                    <td class="meta-value tournament-meta-cell" onclick={(e) => { e.stopPropagation(); ((e) => startEditTournament(detailMatch, e))(e); }}>
                                         {#if editingTournamentMatchId === detailMatch.id}
                                             <div class="tournament-cell-edit">
                                                 <input
                                                     type="text"
                                                     class="tournament-edit-input"
                                                     bind:value={editTournamentValue}
-                                                    on:input={filterTournaments}
-                                                    on:keydown={handleTournamentKeyDown}
-                                                    on:blur={() => setTimeout(cancelTournamentEdit, 200)}
+                                                    oninput={filterTournaments}
+                                                    onkeydown={handleTournamentKeyDown}
+                                                    onblur={() => setTimeout(cancelTournamentEdit, 200)}
                                                     placeholder="Tournament name"
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
                                                         {#each filteredTournaments as t}
-                                                            <div class="tournament-dropdown-item" on:mousedown|preventDefault={() => selectTournamentOption(t.name)}>
+                                                            <div class="tournament-dropdown-item" onmousedown={(e) => { e.preventDefault(); (() => selectTournamentOption(t.name))(); }}>
                                                                 {t.name}
                                                             </div>
                                                         {/each}

@@ -3,8 +3,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js'; // Import functions
 
-    export let visible = false;
-    export let onClose;
+    let { visible = false, onClose } = $props();
 
     let user = '';
     let description = '';
@@ -36,10 +35,14 @@
         onClose();
     }
 
-    $: if (visible) {
-        loadMetadata();
-    }
+    $effect(() => {
 
+        if (visible) {
+        loadMetadata();
+
+        }
+
+    });
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             handleClose();
@@ -62,7 +65,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={handleClickOutside}>
+    <div class="modal-overlay" onclick={handleClickOutside}>
         <div class="modal-content">
             <!-- Metadata title removed -->
             <div class="form-group">

@@ -9,14 +9,14 @@
     import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
     import { searchHistoryStore } from '../stores/searchHistoryStore'; // Import search history store
 
-    export let onLoadPositionsByFilters; // Accept the prop
+    let { onLoadPositionsByFilters } = $props();
 
     let filters = [];
     let filterName = '';
     let filterCommand = '';
     let selectedFilter = null;
     let visible = false;
-    let filterExists = false;
+
     let _databaseLoaded = false;
     let editPosition = ''; // Add editPosition variable
     let commandHistory = [];
@@ -383,9 +383,8 @@
         }
     }
 
-    $: filterExists = filters.some((filter) => filter.name === filterName);
-
-    $: {
+    let filterExists = $derived(filters.some((filter) => filter.name === filterName));
+    $effect(() => {
         if (filterExists) {
             const existingFilter = filters.find((filter) => filter.name === filterName);
             if (existingFilter) {
@@ -393,7 +392,7 @@
                 highlightFilter(existingFilter);
             }
         }
-    }
+    });
 
     function scrollToFilter(filter) {
         const filterTable = document.querySelector('.filter-table-container');
@@ -428,13 +427,13 @@
                 <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$activeTabStore !== 'search'} />
             </div>
             <div class="form-group command-group">
-                <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$activeTabStore !== 'search'} on:keydown={handleCommandKeyDown} />
+                <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$activeTabStore !== 'search'} onkeydown={handleCommandKeyDown} />
             </div>
             <div class="form-actions">
-                <button on:click={saveFilter} disabled={filterExists || $activeTabStore !== 'search'}>Add</button>
-                <button on:click={updateFilter} disabled={!filterExists || $activeTabStore !== 'search'}>Update</button>
-                <button on:click={deleteFilter} disabled={!selectedFilter}>Delete</button>
-                <button on:click={saveLastSearch} disabled={$activeTabStore !== 'search'} title="Load last search">Last Search</button>
+                <button onclick={saveFilter} disabled={filterExists || $activeTabStore !== 'search'}>Add</button>
+                <button onclick={updateFilter} disabled={!filterExists || $activeTabStore !== 'search'}>Update</button>
+                <button onclick={deleteFilter} disabled={!selectedFilter}>Delete</button>
+                <button onclick={saveLastSearch} disabled={$activeTabStore !== 'search'} title="Load last search">Last Search</button>
             </div>
         </div>
         <div class="filter-table-container">
@@ -447,7 +446,7 @@
                 </thead>
                 <tbody>
                     {#each filters as filter}
-                        <tr id={`filter-${filter.id}`} class:highlight={filter.name === filterName} on:click={() => selectFilter(filter)} on:dblclick={() => executeFilterCommand(filter)}>
+                        <tr id={`filter-${filter.id}`} class:highlight={filter.name === filterName} onclick={() => selectFilter(filter)} ondblclick={() => executeFilterCommand(filter)}>
                             <td class="no-select">{filter.name}</td>
                             <td class="no-select">{filter.command}</td>
                         </tr>

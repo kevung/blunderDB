@@ -22,7 +22,7 @@
         LoadAnalysis
     } from '../../wailsjs/go/main/Database.js';
 
-    export let onOpenCollection;
+    let { onOpenCollection } = $props();
 
     let collections = [];
     let selectedCollection = null;
@@ -660,8 +660,8 @@
                         <tr
                             class:selected={selectedCollection?.id === collection.id}
                             class:in-collection={positionCollectionIds.includes(collection.id)}
-                            on:click={(e) => togglePositionInCollection(collection.id, e)}
-                            on:dblclick={() => openCollection(collection)}
+                            onclick={(e) => togglePositionInCollection(collection.id, e)}
+                            ondblclick={() => openCollection(collection)}
                         >
                             <td class="name-cell">
                                 {#if editingCollectionId === collection.id}
@@ -669,10 +669,10 @@
                                         class="inline-edit"
                                         type="text"
                                         bind:value={editingName}
-                                        on:blur={(e) => handleEditingBlur(collection, e)}
-                                        on:keydown={(e) => handleEditingKeyDown(e, collection)}
-                                        on:click|stopPropagation
-                                        on:dblclick|stopPropagation
+                                        onblur={(e) => handleEditingBlur(collection, e)}
+                                        onkeydown={(e) => handleEditingKeyDown(e, collection)}
+                                        onclick={(e) => e.stopPropagation()}
+                                        ondblclick={(e) => e.stopPropagation()}
                                         autofocus
                                     />
                                 {:else}
@@ -686,10 +686,10 @@
                                         class="inline-edit"
                                         type="text"
                                         bind:value={editingDescription}
-                                        on:blur={(e) => handleEditingBlur(collection, e)}
-                                        on:keydown={(e) => handleEditingKeyDown(e, collection)}
-                                        on:click|stopPropagation
-                                        on:dblclick|stopPropagation
+                                        onblur={(e) => handleEditingBlur(collection, e)}
+                                        onkeydown={(e) => handleEditingKeyDown(e, collection)}
+                                        onclick={(e) => e.stopPropagation()}
+                                        ondblclick={(e) => e.stopPropagation()}
                                         placeholder="description…"
                                     />
                                 {:else}
@@ -702,17 +702,17 @@
                                     <input
                                         type="checkbox"
                                         checked={positionCollectionIds.includes(collection.id)}
-                                        on:click|stopPropagation={(e) => togglePositionInCollection(collection.id, e)}
+                                        onclick={(e) => { e.stopPropagation(); ((e) => togglePositionInCollection(collection.id, e))(e); }}
                                         title={positionCollectionIds.includes(collection.id) ? 'Remove position from collection' : 'Add position to collection'}
                                     />
                                 {/if}
                             </td>
                             <td class="actions-col">
                                 <span class="item-actions">
-                                    <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
-                                    <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionDown(index, e)} disabled={index === collections.length - 1} title="Move down">▼</button>
-                                    <button class="icon-btn" on:click|stopPropagation={(e) => startEditing(collection, e)} title="Edit">✎</button>
-                                    <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteCollection(collection, e)} title="Delete">×</button>
+                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => moveCollectionUp(index, e))(e); }} disabled={index === 0} title="Move up">▲</button>
+                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => moveCollectionDown(index, e))(e); }} disabled={index === collections.length - 1} title="Move down">▼</button>
+                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEditing(collection, e))(e); }} title="Edit">✎</button>
+                                    <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteCollection(collection, e))(e); }} title="Delete">×</button>
                                 </span>
                             </td>
                         </tr>
@@ -721,13 +721,13 @@
             </table>
             <!-- Inline add row below table -->
             <div class="add-row">
-                <input class="add-input" type="text" bind:value={inlineNewName} placeholder="New collection…" on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()} />
+                <input class="add-input" type="text" bind:value={inlineNewName} placeholder="New collection…" onkeydown={(e) => { e.stopPropagation(); ((e) => e.key === 'Enter' && createCollectionInline())(e); }} />
                 <input
                     class="add-input desc"
                     type="text"
                     bind:value={inlineNewDescription}
                     placeholder="Description…"
-                    on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()}
+                    onkeydown={(e) => { e.stopPropagation(); ((e) => e.key === 'Enter' && createCollectionInline())(e); }}
                 />
             </div>
             {#if collections.length === 0}
@@ -738,14 +738,14 @@
         <!-- Positions in active collection -->
         <div class="table-wrapper">
             <div class="detail-header">
-                <button class="back-btn" on:click={goBackToList} title="Back to collections">←</button>
+                <button class="back-btn" onclick={goBackToList} title="Back to collections">←</button>
                 <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
                 <span class="detail-count">{collectionPositions.length} pos</span>
                 {#if currentPosition && currentPosition.id}
                     <input
                         type="checkbox"
                         checked={positionCollectionIds.includes(activeCollection.id)}
-                        on:click={(e) => togglePositionInCollection(activeCollection.id, e)}
+                        onclick={(e) => togglePositionInCollection(activeCollection.id, e)}
                         title={positionCollectionIds.includes(activeCollection.id) ? 'Remove position from collection' : 'Add position to collection'}
                     />
                 {/if}
@@ -756,14 +756,14 @@
                         class="inline-edit full-width"
                         type="text"
                         bind:value={editingDescription}
-                        on:blur={(e) => handleEditingBlur(activeCollection, e)}
-                        on:keydown={(e) => handleEditingKeyDown(e, activeCollection)}
+                        onblur={(e) => handleEditingBlur(activeCollection, e)}
+                        onkeydown={(e) => handleEditingKeyDown(e, activeCollection)}
                         placeholder="description…"
                         autofocus
                     />
                 </div>
             {:else}
-                <div class="desc-bar clickable" on:click={(e) => startEditing(activeCollection, e)}>
+                <div class="desc-bar clickable" onclick={(e) => startEditing(activeCollection, e)}>
                     <span class="desc-text" title="Click to edit">{activeCollection.description || 'Add a description…'}</span>
                 </div>
             {/if}
@@ -777,16 +777,16 @@
                 </thead>
                 <tbody use:dragReorder={{ onReorder: handlePositionReorder }}>
                     {#each collectionPositions as position, index}
-                        <tr class:current={$currentPositionIndexStore === index} class:multi-selected={selectedPositionIndices.has(index)} on:click={(e) => selectAndDisplayPosition(index, e)}>
+                        <tr class:current={$currentPositionIndexStore === index} class:multi-selected={selectedPositionIndices.has(index)} onclick={(e) => selectAndDisplayPosition(index, e)}>
                             <td class="narrow-col idx-cell">{index + 1}</td>
                             <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
                             <td class="actions-col">
                                 <span class="item-actions">
-                                    <button class="icon-btn" on:click|stopPropagation={(e) => movePositionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
-                                    <button class="icon-btn" on:click|stopPropagation={(e) => movePositionDown(index, e)} disabled={index === collectionPositions.length - 1} title="Move down"
+                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => movePositionUp(index, e))(e); }} disabled={index === 0} title="Move up">▲</button>
+                                    <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => movePositionDown(index, e))(e); }} disabled={index === collectionPositions.length - 1} title="Move down"
                                         >▼</button
                                     >
-                                    <button class="icon-btn delete" on:click|stopPropagation={(e) => removePositionFromRow(index, e)} title="Remove from collection">×</button>
+                                    <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => removePositionFromRow(index, e))(e); }} title="Remove from collection">×</button>
                                 </span>
                             </td>
                         </tr>

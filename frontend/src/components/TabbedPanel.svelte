@@ -13,11 +13,7 @@
     import AnkiPanel from './AnkiPanel.svelte';
 
     // Props passed through to panels
-    export let onLoadPositionsByFilters;
-    export let onCloseAnalysis;
-    export let onCloseComment;
-    export let onOpenCollection;
-    export let onAddToFilterLibrary;
+    let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
 
     let tabs = [
         { id: 'analysis', label: 'Analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
@@ -102,7 +98,7 @@
                 class:drag-over={dragOverIndex === i && draggedIndex !== i}
                 class:dragging={draggedIndex === i && isDragging}
                 title={tab.shortcut ? `${tab.label} (${tab.shortcut})` : tab.label}
-                on:mousedown={(e) => handleMouseDown(e, i)}
+                onmousedown={(e) => handleMouseDown(e, i)}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
                     {#if tab.icon === 'log'}

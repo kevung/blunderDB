@@ -532,14 +532,16 @@
 
     // Reactive: reload and auto-sync all decks when tab becomes active,
     // and re-display the current review card position when returning to Anki tab during review
-    $: if ($activeTabStore === 'anki' && databaseLoaded) {
-        syncAllDecksAndReload();
-        // If a review is in progress, re-display the current card's position
-        if (viewMode === 'review' && reviewCard) {
-            positionStore.set(JSON.parse(JSON.stringify(reviewCard.position)));
-            updatePositionIndex(reviewCard.position.id);
+    $effect(() => {
+        if ($activeTabStore === 'anki' && databaseLoaded) {
+            syncAllDecksAndReload();
+            // If a review is in progress, re-display the current card's position
+            if (viewMode === 'review' && reviewCard) {
+                positionStore.set(JSON.parse(JSON.stringify(reviewCard.position)));
+                updatePositionIndex(reviewCard.position.id);
+            }
         }
-    }
+    });
 
     async function syncAllDecksAndReload() {
         try {
@@ -572,7 +574,7 @@
     {#if viewMode === 'review' && reviewCard}
         <!-- Review Mode -->
         <div class="review-header">
-            <button class="btn-back" on:click={backToList} title="Back to deck list (Esc)">
+            <button class="btn-back" onclick={backToList} title="Back to deck list (Esc)">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
@@ -585,19 +587,19 @@
         <div class="review-body">
             <div class="review-position-id">Position #{reviewCard.position.id}</div>
             <div class="review-buttons">
-                <button class="btn-rating btn-again" on:click={() => submitReview(1)} title="Again (1)">
+                <button class="btn-rating btn-again" onclick={() => submitReview(1)} title="Again (1)">
                     <span class="rating-label">Again</span>
                     <span class="rating-key">1</span>
                 </button>
-                <button class="btn-rating btn-hard" on:click={() => submitReview(2)} title="Hard (2)">
+                <button class="btn-rating btn-hard" onclick={() => submitReview(2)} title="Hard (2)">
                     <span class="rating-label">Hard</span>
                     <span class="rating-key">2</span>
                 </button>
-                <button class="btn-rating btn-good" on:click={() => submitReview(3)} title="Good (3)">
+                <button class="btn-rating btn-good" onclick={() => submitReview(3)} title="Good (3)">
                     <span class="rating-label">Good</span>
                     <span class="rating-key">3</span>
                 </button>
-                <button class="btn-rating btn-easy" on:click={() => submitReview(4)} title="Easy (4)">
+                <button class="btn-rating btn-easy" onclick={() => submitReview(4)} title="Easy (4)">
                     <span class="rating-label">Easy</span>
                     <span class="rating-key">4</span>
                 </button>
@@ -606,7 +608,7 @@
     {:else if viewMode === 'settings' && selectedDeck}
         <!-- Settings Mode -->
         <div class="settings-header">
-            <button class="btn-back" on:click={backToList} title="Back">
+            <button class="btn-back" onclick={backToList} title="Back">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                 </svg>
@@ -630,8 +632,8 @@
                 </label>
             </div>
             <div class="settings-actions">
-                <button class="btn-save" on:click={saveSettings}>Save</button>
-                <button class="btn-cancel" on:click={backToList}>Cancel</button>
+                <button class="btn-save" onclick={saveSettings}>Save</button>
+                <button class="btn-cancel" onclick={backToList}>Cancel</button>
             </div>
         </div>
     {:else}
@@ -640,7 +642,7 @@
             {#if !showCreateForm}
                 <button
                     class="btn-add"
-                    on:click={() => {
+                    onclick={() => {
                         showCreateForm = true;
                     }}
                     title="Create a new deck"
@@ -657,7 +659,7 @@
                         bind:value={newDeckName}
                         placeholder="Deck name"
                         class="input-name"
-                        on:keydown={(e) => {
+                        onkeydown={(e) => {
                             if (e.key === 'Enter') createDeck();
                             if (e.key === 'Escape') showCreateForm = false;
                         }}
@@ -676,14 +678,14 @@
                     {:else}
                         <span class="search-hint">{positions.length} positions</span>
                     {/if}
-                    <button class="btn-confirm" on:click={createDeck} title="Create">
+                    <button class="btn-confirm" onclick={createDeck} title="Create">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                             <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                         </svg>
                     </button>
                     <button
                         class="btn-cancel-inline"
-                        on:click={() => {
+                        onclick={() => {
                             showCreateForm = false;
                         }}
                     >
@@ -715,8 +717,8 @@
                         {#each decks as deck}
                             <tr
                                 class:selected={selectedDeck && selectedDeck.id === deck.id}
-                                on:click={() => selectDeck(deck)}
-                                on:dblclick={() => {
+                                onclick={() => selectDeck(deck)}
+                                ondblclick={() => {
                                     selectDeck(deck);
                                     startReview();
                                 }}
@@ -728,7 +730,7 @@
                                                 type="text"
                                                 bind:value={editingName}
                                                 class="edit-name"
-                                                on:keydown={(e) => {
+                                                onkeydown={(e) => {
                                                     if (e.key === 'Enter') finishEditing(deck);
                                                     if (e.key === 'Escape') cancelEditing();
                                                 }}
@@ -738,12 +740,12 @@
                                                 bind:value={editingDescription}
                                                 class="edit-desc"
                                                 placeholder="Description"
-                                                on:keydown={(e) => {
+                                                onkeydown={(e) => {
                                                     if (e.key === 'Enter') finishEditing(deck);
                                                     if (e.key === 'Escape') cancelEditing();
                                                 }}
                                             />
-                                            <button class="icon-btn" on:click={() => finishEditing(deck)} title="Save">
+                                            <button class="icon-btn" onclick={() => finishEditing(deck)} title="Save">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
                                                 </svg>
@@ -761,7 +763,7 @@
                                     <td class="narrow-col count-cell">{deck.dueCount || ''}</td>
                                     <td class="actions-col">
                                         <span class="item-actions">
-                                            <button class="icon-btn" on:click={(e) => startEditing(deck, e)} title="Rename">
+                                            <button class="icon-btn" onclick={(e) => startEditing(deck, e)} title="Rename">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path
                                                         stroke-linecap="round"
@@ -770,7 +772,7 @@
                                                     />
                                                 </svg>
                                             </button>
-                                            <button class="icon-btn" on:click={(e) => syncDeck(deck, e)} title="Sync cards from source">
+                                            <button class="icon-btn" onclick={(e) => syncDeck(deck, e)} title="Sync cards from source">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path
                                                         stroke-linecap="round"
@@ -779,7 +781,7 @@
                                                     />
                                                 </svg>
                                             </button>
-                                            <button class="icon-btn delete" on:click={(e) => deleteDeck(deck, e)} title="Delete deck">
+                                            <button class="icon-btn delete" onclick={(e) => deleteDeck(deck, e)} title="Delete deck">
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="12" height="12">
                                                     <path
                                                         stroke-linecap="round"
@@ -820,7 +822,7 @@
                     </div>
                 </div>
                 <div class="detail-actions">
-                    <button class="btn-study" on:click={startReview} disabled={stats.dueCount === 0}>
+                    <button class="btn-study" onclick={startReview} disabled={stats.dueCount === 0}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                             <path
                                 stroke-linecap="round"
@@ -834,7 +836,7 @@
                             Study ({stats.dueCount} due)
                         {/if}
                     </button>
-                    <button class="btn-settings" on:click={openSettings} title="Deck settings">
+                    <button class="btn-settings" onclick={openSettings} title="Deck settings">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                             <path
                                 stroke-linecap="round"
@@ -844,7 +846,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                         </svg>
                     </button>
-                    <button class="btn-icon btn-reset" on:click={(e) => resetDeck(selectedDeck, e)} title="Reset all cards to new">
+                    <button class="btn-icon btn-reset" onclick={(e) => resetDeck(selectedDeck, e)} title="Reset all cards to new">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14">
                             <path
                                 stroke-linecap="round"

@@ -72,16 +72,15 @@
     let startMousePos = null;
     let cubePosition = { x: 0, y: 0 };
     let previousDice = get(positionStore).dice; // Save previous dice values
-    let selectedMove; // Will be set by reactive statement
 
     // Subscribe to selectedMoveStore and update selectedMove
-    $: selectedMove = $selectedMoveStore;
-
+    let selectedMove = $derived($selectedMoveStore);
     // Reactive statement to redraw board when selectedMove changes
-    $: if (two && canvas && selectedMove !== undefined) {
+    $effect(() => {
+        if (two && canvas && selectedMove !== undefined) {
         drawBoard();
-    }
-
+        }
+    });
     function handleMouseDown(event) {
         event.preventDefault(); // Prevent text or element selection
         // Blur any focused text field when clicking the board

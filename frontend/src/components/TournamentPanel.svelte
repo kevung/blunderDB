@@ -252,13 +252,13 @@
         filteredMatches = available;
     }
 
-    $: {
+    $effect(() => {
         // Re-filter when tournamentMatches or search changes
         const _m = tournamentMatches;
         const _s = addMatchSearch;
         updateFilteredMatches();
-    }
 
+    });
     async function addMatchToTournament(matchId) {
         if (!selectedTournament) return;
         try {
@@ -576,13 +576,17 @@
         }, 0);
     }
 
-    $: if (visible) {
+    $effect(() => {
+
+        if (visible) {
         setTimeout(() => {
             const panel = document.getElementById('tournamentPanel');
             if (panel) panel.focus();
         }, 100);
-    }
 
+        }
+
+    });
     onMount(() => {
         document.addEventListener('keydown', handleKeyDown);
     });
@@ -601,16 +605,16 @@
                     <table class="tournament-table">
                         <thead>
                             <tr>
-                                <th class="no-select sortable" on:click={() => handleSort('name')}
+                                <th class="no-select sortable" onclick={() => handleSort('name')}
                                     >Name {#if sortBy === 'name'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
-                                <th class="no-select sortable narrow-col" on:click={() => handleSort('matches')}
+                                <th class="no-select sortable narrow-col" onclick={() => handleSort('matches')}
                                     >Matches {#if sortBy === 'matches'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
-                                <th class="no-select sortable narrow-col" on:click={() => handleSort('date')}
+                                <th class="no-select sortable narrow-col" onclick={() => handleSort('date')}
                                     >Date {#if sortBy === 'date'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
-                                <th class="no-select sortable" on:click={() => handleSort('location')}
+                                <th class="no-select sortable" onclick={() => handleSort('location')}
                                     >Location {#if sortBy === 'location'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
                                 <th class="no-select actions-col"></th>
@@ -625,7 +629,7 @@
                                                 class="edit-input"
                                                 type="text"
                                                 bind:value={editName}
-                                                on:keydown={(e) => {
+                                                onkeydown={(e) => {
                                                     if (e.key === 'Enter') {
                                                         e.stopPropagation();
                                                         saveEdit();
@@ -644,7 +648,7 @@
                                                 class="edit-input"
                                                 type="date"
                                                 bind:value={editDate}
-                                                on:keydown={(e) => {
+                                                onkeydown={(e) => {
                                                     if (e.key === 'Escape') {
                                                         e.stopPropagation();
                                                         cancelEdit();
@@ -658,7 +662,7 @@
                                                 type="text"
                                                 bind:value={editLocation}
                                                 placeholder="Location"
-                                                on:keydown={(e) => {
+                                                onkeydown={(e) => {
                                                     if (e.key === 'Enter') {
                                                         e.stopPropagation();
                                                         saveEdit();
@@ -672,21 +676,21 @@
                                         >
                                         <td class="actions-col no-select">
                                             <span class="item-actions editing-actions">
-                                                <button class="icon-btn" on:click={saveEdit} title="Save">✓</button>
-                                                <button class="icon-btn" on:click={cancelEdit} title="Cancel">✕</button>
+                                                <button class="icon-btn" onclick={saveEdit} title="Save">✓</button>
+                                                <button class="icon-btn" onclick={cancelEdit} title="Cancel">✕</button>
                                             </span>
                                         </td>
                                     </tr>
                                 {:else}
-                                    <tr on:click={() => selectTournament(tournament)} on:dblclick={() => selectTournament(tournament)}>
+                                    <tr onclick={() => selectTournament(tournament)} ondblclick={() => selectTournament(tournament)}>
                                         <td class="no-select">{tournament.name}</td>
                                         <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
                                         <td class="narrow-col no-select">{tournament.date || ''}</td>
                                         <td class="no-select">{tournament.location || ''}</td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions">
-                                                <button class="icon-btn" on:click|stopPropagation={(e) => startEdit(tournament, e)} title="Edit">✎</button>
-                                                <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteTournamentEntry(tournament, e)} title="Delete">×</button>
+                                                <button class="icon-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEdit(tournament, e))(e); }} title="Edit">✎</button>
+                                                <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteTournamentEntry(tournament, e))(e); }} title="Delete">×</button>
                                             </span>
                                         </td>
                                     </tr>
@@ -704,7 +708,7 @@
                         type="text"
                         bind:value={newTournamentName}
                         placeholder="New tournament…"
-                        on:keydown={(e) => {
+                        onkeydown={(e) => {
                             if (e.key === 'Enter') {
                                 e.stopPropagation();
                                 createTournament();
@@ -719,7 +723,7 @@
                         class="add-input date"
                         type="date"
                         bind:value={newTournamentDate}
-                        on:keydown={(e) => {
+                        onkeydown={(e) => {
                             if (e.key === 'Escape') {
                                 e.stopPropagation();
                                 e.currentTarget.blur();
@@ -731,7 +735,7 @@
                         type="text"
                         bind:value={newTournamentLocation}
                         placeholder="Location"
-                        on:keydown={(e) => {
+                        onkeydown={(e) => {
                             if (e.key === 'Enter') {
                                 e.stopPropagation();
                                 createTournament();
@@ -750,7 +754,7 @@
                 <div class="detail-header">
                     <button
                         class="back-btn"
-                        on:click={() => {
+                        onclick={() => {
                             selectedTournamentStore.set(null);
                             tournamentMatchesStore.set([]);
                             addMatchSearch = '';
@@ -768,14 +772,14 @@
                             {#if selectedTournament.location}{selectedTournament.location}{/if}
                         </span>
                     {/if}
-                    <button class="icon-btn edit-header-btn" on:click|stopPropagation={(e) => startEdit(selectedTournament, e)} title="Edit">✎</button>
+                    <button class="icon-btn edit-header-btn" onclick={(e) => { e.stopPropagation(); ((e) => startEdit(selectedTournament, e))(e); }} title="Edit">✎</button>
                     <span class="header-spacer"></span>
                     {#if editingTournamentComment}
                         <input
                             class="tournament-comment-inline"
                             type="text"
                             bind:value={tournamentCommentText}
-                            on:keydown={(e) => {
+                            onkeydown={(e) => {
                                 if (e.key === 'Enter') {
                                     e.stopPropagation();
                                     saveTournamentComment();
@@ -785,7 +789,7 @@
                                     cancelTournamentComment();
                                 }
                             }}
-                            on:blur={saveTournamentComment}
+                            onblur={saveTournamentComment}
                             placeholder="Notes…"
                             autofocus
                         />
@@ -793,7 +797,7 @@
                         <span
                             class="tournament-comment-text"
                             class:has-comment={selectedTournament.comment}
-                            on:click|stopPropagation={startEditTournamentComment}
+                            onclick={(e) => { e.stopPropagation(); startEditTournamentComment(e); }}
                             title={selectedTournament.comment || 'Click to add notes'}
                         >
                             {selectedTournament.comment || 'Notes…'}
@@ -814,7 +818,7 @@
                         </thead>
                         <tbody use:dragReorder={{ onReorder: handleMatchReorder }}>
                             {#each tournamentMatches as match, index}
-                                <tr on:dblclick={() => openMatch(match)}>
+                                <tr ondblclick={() => openMatch(match)}>
                                     <td class="index-cell narrow-col no-select">{index + 1}</td>
                                     <td class="no-select">{match.player1_name}</td>
                                     <td class="no-select">{match.player2_name}</td>
@@ -825,7 +829,7 @@
                                                 class="edit-input"
                                                 type="text"
                                                 bind:value={editingMatchComment}
-                                                on:keydown={(e) => {
+                                                onkeydown={(e) => {
                                                     if (e.key === 'Enter') {
                                                         e.stopPropagation();
                                                         saveMatchComment();
@@ -835,14 +839,14 @@
                                                         cancelMatchComment();
                                                     }
                                                 }}
-                                                on:blur={saveMatchComment}
+                                                onblur={saveMatchComment}
                                                 autofocus
                                             />
                                         {:else}
                                             <span
                                                 class="comment-text"
                                                 class:has-comment={match.comment}
-                                                on:click|stopPropagation={(e) => startEditMatchComment(match, e)}
+                                                onclick={(e) => { e.stopPropagation(); ((e) => startEditMatchComment(match, e))(e); }}
                                                 title={match.comment || 'Click to add comment'}
                                             >
                                                 {match.comment || ''}
@@ -851,11 +855,11 @@
                                     </td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions">
-                                            <button class="icon-btn" on:click|stopPropagation={() => moveMatchUp(index)} disabled={index === 0} title="Move up">▲</button>
-                                            <button class="icon-btn" on:click|stopPropagation={() => moveMatchDown(index)} disabled={index === tournamentMatches.length - 1} title="Move down">▼</button
+                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); (() => moveMatchUp(index))(); }} disabled={index === 0} title="Move up">▲</button>
+                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); (() => moveMatchDown(index))(); }} disabled={index === tournamentMatches.length - 1} title="Move down">▼</button
                                             >
-                                            <button class="icon-btn" on:click|stopPropagation={() => swapMatchPlayersInTournament(match)} title="Swap">⇄</button>
-                                            <button class="icon-btn delete" on:click|stopPropagation={() => removeMatch(match.id)} title="Remove">×</button>
+                                            <button class="icon-btn" onclick={(e) => { e.stopPropagation(); (() => swapMatchPlayersInTournament(match))(); }} title="Swap">⇄</button>
+                                            <button class="icon-btn delete" onclick={(e) => { e.stopPropagation(); (() => removeMatch(match.id))(); }} title="Remove">×</button>
                                         </span>
                                     </td>
                                 </tr>
@@ -871,16 +875,16 @@
                         <input
                             type="text"
                             bind:value={addMatchSearch}
-                            on:focus={(e) => {
+                            onfocus={(e) => {
                                 addMatchFocused = true;
                                 computeMatchDropdownPos(e.currentTarget);
                                 loadAllMatches().then(updateFilteredMatches);
                             }}
-                            on:blur={() =>
+                            onblur={() =>
                                 setTimeout(() => {
                                     addMatchFocused = false;
                                 }, 150)}
-                            on:keydown={(e) => {
+                            onkeydown={(e) => {
                                 if (e.key === 'Escape') {
                                     e.stopPropagation();
                                     addMatchSearch = '';
@@ -893,7 +897,7 @@
                         {#if addMatchFocused && filteredMatches.length > 0}
                             <div class="match-dropdown" style={matchDropdownStyle}>
                                 {#each filteredMatches as match}
-                                    <div class="dropdown-item" on:mousedown|preventDefault={() => addMatchToTournament(match.id)}>
+                                    <div class="dropdown-item" onmousedown={(e) => { e.preventDefault(); (() => addMatchToTournament(match.id))(); }}>
                                         {match.player1_name} vs {match.player2_name} <span class="match-pts">{match.match_length}pt</span>
                                     </div>
                                 {/each}

@@ -1,6 +1,5 @@
 <script>
-    export let visible = false;
-    export let onClose;
+    let { visible = false, onClose } = $props();
 
     function closeModal() {
         onClose();
@@ -31,8 +30,8 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={closeModal}>
-        <div class="modal-content" on:click|stopPropagation>
+    <div class="modal-overlay" onclick={closeModal}>
+        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <table>
                 <thead>
                     <tr>

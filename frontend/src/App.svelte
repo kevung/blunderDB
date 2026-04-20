@@ -345,7 +345,7 @@
     {/if}
 
     <Toolbar
-        on:click={() => {}}
+        onclick={() => {}}
         onNewDatabase={newDatabase}
         onOpenDatabase={openDatabase}
         onImportDatabase={importDatabase}
@@ -378,8 +378,8 @@
         <Board />
     </div>
 
-    <!-- svelte-ignore a11y-no-static-element-interactions -->
-    <div class="resize-handle" on:mousedown={onResizeHandleMouseDown}></div>
+    <!-- svelte-ignore a11y_no_static_element_interactions -->
+    <div class="resize-handle" onmousedown={onResizeHandleMouseDown}></div>
 
     <div class="panel-wrapper" style="height: {panelHeight}px;">
         <TabbedPanel

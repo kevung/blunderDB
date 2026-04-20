@@ -6,8 +6,7 @@
     import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore } from '../stores/uiStore';
     import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/main/Database.js';
 
-    export let onLoadPositionsByFilters;
-    export let onAddToFilterLibrary; // Function to add search to filter library
+    let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
     let searchHistory = [];
     let selectedSearch = null;
@@ -345,7 +344,7 @@
     }
 
     // Focus the panel when it becomes visible
-    $: {
+    $effect(() => {
         if (visible) {
             setTimeout(() => {
                 const panel = document.getElementById('searchHistoryPanel');
@@ -354,7 +353,7 @@
                 }
             }, 0);
         }
-    }
+    });
 
     onMount(async () => {
         document.addEventListener('click', handleClickOutside);
@@ -383,14 +382,14 @@
                     </thead>
                     <tbody>
                         {#each searchHistory as search}
-                            <tr class:selected={selectedSearch === search} on:click={() => selectSearch(search)} on:dblclick={() => handleDoubleClick(search)}>
+                            <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
                                 <td class="date-cell no-select">{formatTimestamp(search.timestamp)}</td>
                                 <td class="command-cell no-select">{search.command}</td>
                                 <td class="actions-cell">
                                     <button
                                         class="action-btn add-btn"
                                         class:in-library={isInFilterLibrary(search)}
-                                        on:click|stopPropagation={() => showAddToLibraryDialog(search)}
+                                        onclick={(e) => { e.stopPropagation(); (() => showAddToLibraryDialog(search))(); }}
                                         title="Add to filter library"
                                     >
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
@@ -401,7 +400,7 @@
                                             />
                                         </svg>
                                     </button>
-                                    <button class="action-btn delete-btn" on:click|stopPropagation={(e) => deleteSearch(search, e)} title="Delete from history">
+                                    <button class="action-btn delete-btn" onclick={(e) => { e.stopPropagation(); ((e) => deleteSearch(search, e))(e); }} title="Delete from history">
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
                                             <path
                                                 stroke-linecap="round"
@@ -423,7 +422,7 @@
 {#if showSaveDialog}
     <div
         class="save-dialog-overlay"
-        on:click={(e) => {
+        onclick={(e) => {
             // Close save dialog if clicking on overlay background
             if (e.target.classList.contains('save-dialog-overlay')) {
                 cancelSaveDialog();
@@ -435,11 +434,11 @@
             <p class="command-preview">Command: {selectedSearch?.command || ''}</p>
             <div class="form-group">
                 <label for="filterName">Filter Name:</label>
-                <input type="text" id="filterName" bind:value={filterName} placeholder="Enter filter name" on:keydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
+                <input type="text" id="filterName" bind:value={filterName} placeholder="Enter filter name" onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
             </div>
             <div class="dialog-actions">
-                <button class="btn-primary" on:click|stopPropagation={saveToFilterLibrary}>Save</button>
-                <button class="btn-secondary" on:click|stopPropagation={cancelSaveDialog}>Cancel</button>
+                <button class="btn-primary" onclick={(e) => { e.stopPropagation(); saveToFilterLibrary(e); }}>Save</button>
+                <button class="btn-secondary" onclick={(e) => { e.stopPropagation(); cancelSaveDialog(e); }}>Cancel</button>
             </div>
         </div>
     </div>

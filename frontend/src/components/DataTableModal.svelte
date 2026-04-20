@@ -1,7 +1,5 @@
 <script>
-    export let visible = false;
-    export let onClose;
-    export let tables = [];
+    let { visible = false, onClose, tables = [] } = $props();
 
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
@@ -13,18 +11,23 @@
         event.preventDefault();
     }
 
-    $: if (visible) {
+    $effect(() => {
+
+        if (visible) {
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('wheel', handleWheel, { passive: false });
-    } else {
+
+        } else {
         window.removeEventListener('keydown', handleKeyDown);
         window.removeEventListener('wheel', handleWheel);
-    }
-</script>
+
+        }
+
+    });</script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={() => onClose()}>
-        <div class="modal-content" on:click|stopPropagation>
+    <div class="modal-overlay" onclick={() => onClose()}>
+        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <div class="table-container" class:multi={tables.length > 1}>
                 {#each tables as { title, data, precision, colCount, colOffset, rowOffset }}
                     <div class="table-section">

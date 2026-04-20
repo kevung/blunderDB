@@ -1,7 +1,5 @@
 <script>
-    export let message = ''; // Ensure the message prop is declared
-    export let visible = false;
-    export let onClose = () => {};
+    let { message = '', visible = false, onClose = () => {} } = $props();
 
     function handleClose() {
         onClose();
@@ -36,7 +34,7 @@
 {#if visible}
     <div class="modal-overlay">
         <div class="modal-content" id="modalContent">
-            <div class="close-button" on:click={handleClose}>×</div>
+            <div class="close-button" onclick={handleClose}>×</div>
             <div class="tab-content">
                 <p><span class="highlight">{message.split('\n')[0]}</span></p>
                 <p>{message.split('\n').slice(1).join('\n')}</p>

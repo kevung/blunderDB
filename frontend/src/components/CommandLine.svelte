@@ -10,26 +10,7 @@
     import { LoadCommandHistory, SaveCommand, SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
     import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../../wailsjs/go/main/Database.js';
 
-    export let onToggleHelp;
-    export let onNewDatabase;
-    export let onOpenDatabase;
-    export let onImportDatabase;
-    export let onExportDatabase;
-    export let importPosition;
-    export let onSavePosition;
-    export let onUpdatePosition;
-    export let onDeletePosition;
-    export let onToggleAnalysis;
-    export let onToggleComment;
-    export let exitApp;
-    export let onLoadPositionsByFilters;
-    export let onLoadAllPositions;
-    export let toggleFilterLibraryPanel; // Add the prop
-    export let toggleSearchHistoryPanel; // Add the prop
-    export let toggleMatchPanel; // Add the prop for match panel
-    export let toggleCollectionPanel; // Add the prop for collection panel
-    export let toggleEPCMode; // Add the prop for EPC mode
-    export let toggleMatchMode; // Add the prop for match mode
+    let { onToggleHelp, onNewDatabase, onOpenDatabase, onImportDatabase, onExportDatabase, importPosition, onSavePosition, onUpdatePosition, onDeletePosition, onToggleAnalysis, onToggleComment, exitApp, onLoadPositionsByFilters, onLoadAllPositions, toggleFilterLibraryPanel, toggleSearchHistoryPanel, toggleMatchPanel, toggleCollectionPanel, toggleEPCMode, toggleMatchMode } = $props();
     let inputEl;
 
     let initialized = false;
@@ -711,7 +692,7 @@
 </script>
 
 {#if $activeModal === MODAL.COMMAND}
-    <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder=" Type your command here. " on:keydown={handleKeyDown} />
+    <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder=" Type your command here. " onkeydown={handleKeyDown} />
 {/if}
 
 <style>

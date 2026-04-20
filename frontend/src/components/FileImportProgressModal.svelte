@@ -1,15 +1,7 @@
 <script>
-    export let visible = false;
-    export let mode = 'idle'; // 'idle', 'picking', 'importing', 'completed'
-    export let totalFiles = 0;
-    export let currentIndex = 0;
-    export let currentFile = '';
-    export let results = { succeeded: 0, failed: 0, skipped: 0, errors: [] };
-    export let onClose;
-    export let onCancel;
+    let { visible = false, mode = 'idle', totalFiles = 0, currentIndex = 0, currentFile = '', results = { succeeded: 0, failed: 0, skipped: 0, errors: [] }, onClose, onCancel } = $props();
 
-    $: progressPercent = totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0;
-
+    let progressPercent = $derived(totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0);
     function basename(path) {
         if (!path) return '';
         return path.split('/').pop().split('\\').pop();
@@ -30,7 +22,7 @@
                 <p class="progress-text">{progressPercent}%</p>
 
                 <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
+                    <button onclick={onCancel}>Cancel</button>
                 </div>
             {:else if mode === 'completed'}
                 <h2>Import Completed</h2>
@@ -65,7 +57,7 @@
                 {/if}
 
                 <div class="button-group">
-                    <button on:click={onClose}>Close</button>
+                    <button onclick={onClose}>Close</button>
                 </div>
             {/if}
         </div>

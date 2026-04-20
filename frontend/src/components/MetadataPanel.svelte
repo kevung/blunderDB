@@ -54,11 +54,11 @@
     <div class="meta-row">
         <div class="form-group">
             <label for="meta-user">User</label>
-            <input id="meta-user" type="text" bind:value={user} on:blur={saveMetadata} />
+            <input id="meta-user" type="text" bind:value={user} onblur={saveMetadata} />
         </div>
         <div class="form-group">
             <label for="meta-date">Created</label>
-            <input id="meta-date" type="date" bind:value={dateOfCreation} on:change={saveMetadata} />
+            <input id="meta-date" type="date" bind:value={dateOfCreation} onchange={saveMetadata} />
         </div>
         <div class="form-group">
             <label for="meta-version">Version</label>
@@ -67,7 +67,7 @@
     </div>
     <div class="form-group desc-group">
         <label for="meta-description">Description</label>
-        <textarea id="meta-description" bind:value={description} on:blur={saveMetadata} rows="2"></textarea>
+        <textarea id="meta-description" bind:value={description} onblur={saveMetadata} rows="2"></textarea>
     </div>
 </div>
 

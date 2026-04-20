@@ -16,7 +16,7 @@
     import { get } from 'svelte/store';
 
     /** @type {function(string): void} */
-    export let onCommand = (_cmd) => {};
+    let { onCommand = (_cmd) => {} } = $props();
 
     let inputEl;
     let showInput = false;
@@ -188,7 +188,7 @@
     {#if showInput}
         <div class="command-input-row">
             <span class="prompt-char">&gt;</span>
-            <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder="Type command..." on:keydown={handleKeyDown} on:blur={hideInput} />
+            <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder="Type command..." onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
     {:else}
         <span class="info-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
