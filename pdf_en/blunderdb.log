@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.20)  20 APR 2026 18:01
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.20)  20 APR 2026 18:08
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -870,20 +870,8 @@ File: ts1qtm.fd 2009/09/25 v1.2 font definition file for TS1/qtm
 
 ]
 Chapter 1.
-
-Underfull \hbox (badness 5288) in paragraph at lines 557--559
-\T1/qtm/m/n/10 depuis App.svelte (4888$\OMS/cmsy/m/n/10 !$\T1/qtm/m/n/10 469 li
-gnes), con-sol-i-da-tion des stores
- []
-
-
-Underfull \hbox (badness 5288) detected at line 560
-\T1/qtm/m/n/10 depuis App.svelte (4888$\OMS/cmsy/m/n/10 !$\T1/qtm/m/n/10 469 li
-gnes), con-sol-i-da-tion des stores
- []
-
 [3]
-Overfull \vbox (576.70886pt too high) has occurred while \output is active []
+Overfull \vbox (564.70886pt too high) has occurred while \output is active []
 
 
 [4]

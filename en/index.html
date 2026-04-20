@@ -232,7 +232,7 @@
 </tr>
 <tr class="row-odd"><td><p>0.18.0</p></td>
 <td><p>April 20, 2026</p></td>
-<td><p>Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers spécialisés, extraction de 7 modules de service depuis App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux. Migration complète vers Svelte 5 runes. Remplacement de 9 modales de tableau par un composant générique DataTableModal. Ajout d’ESLint + Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier). Passage du mutex Database en RWMutex pour un meilleur parallélisme en lecture. Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN). Réécriture du README. Correction de tous les avertissements ESLint (46→0) et Vite (6→0).</p></td>
+<td><p>Major codebase refactoring: split db.go (10k lines) into 19 domain-focused files, extracted 7 service modules from App.svelte (4,888→469 lines), consolidated modal/panel stores. Full migration to Svelte 5 runes. Replaced 9 table modals with a generic DataTableModal component. Added ESLint + Prettier + vitest (125 frontend tests) with CI enforcement. WCAG 2.1 AA accessibility baseline (visible focus, ARIA roles, keyboard navigation). Upgraded Database mutex to RWMutex for better read concurrency. Complete CLI documentation (CLI_USAGE.md + Sphinx FR/EN). Rewrote README. Resolved all ESLint warnings (46→0) and Vite build warnings (6→0).</p></td>
 </tr>
 </tbody>
 </table>
