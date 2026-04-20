@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"strings"
 )
 
@@ -37,6 +38,7 @@ type TournamentStats struct {
 	Name         string
 	Date         string
 	PR           float64
+	MWC          float64
 	NumDecisions int
 }
 
@@ -46,6 +48,7 @@ type MatchStats struct {
 	Date         string
 	PlayerName   string
 	PR           float64
+	MWC          float64
 	NumDecisions int
 }
 
@@ -53,6 +56,7 @@ type MatchStats struct {
 type CubeActionStats struct {
 	Action       string
 	PR           float64
+	MWC          float64
 	NumDecisions int
 	BlunderCount int
 }
@@ -70,17 +74,22 @@ type BlunderEntry struct {
 	MatchID      int64
 	TournamentID int64
 	ErrorMP      int64
+	MWCLoss      float64
 	Description  string
 }
 
 // StatsResult contains all computed statistics for the given filter.
-// MWC fields are added in sheet 02.
 type StatsResult struct {
 	Totals              StatsTotals
 	PRGlobal            float64
 	PRChecker           float64
 	PRCube              float64
 	PRRolling           map[int]float64 // keyed by N: 5,10,50,100,250,500,1000
+	MWCGlobal           float64         // sum of MWC losses across all match-play decisions
+	MWCChecker          float64         // MWC loss from checker play errors
+	MWCCube             float64         // MWC loss from cube action errors
+	MWCRolling          map[int]float64 // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
+	MWCAvailable        bool            // true if at least one match-play decision contributed
 	PerTournament       []TournamentStats
 	PerMatch            []MatchStats
 	CubeActionBreakdown []CubeActionStats
@@ -386,6 +395,102 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 		for _, threshold := range rollingNs {
 			if n == threshold {
 				result.PRRolling[threshold] = pr(cumSum, n)
+			}
+		}
+	}
+
+	// ── MWC pass ──────────────────────────────────────────────────────────────
+	// Stream per-row data (err, position context) in most-recent-first order and
+	// aggregate MWC losses in Go. One supplementary SQL pass; O(n_decisions).
+	{
+		mwcPassSQL := `SELECT ` + statsErrExpr + ` as err,` +
+			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
+			` COALESCE(p.cube_value, 1), COALESCE(p.match_length, m.match_length, 0),` +
+			` COALESCE(m.tournament_id, 0), m.id,` +
+			` COALESCE(a.best_cube_action, ''), p.decision_type, p.id ` +
+			statsBaseJoin + whereSQL +
+			` ORDER BY m.match_date DESC, mv.move_number DESC`
+
+		mwcRows, mwcErr := d.db.Query(mwcPassSQL, baseArgs...)
+		if mwcErr != nil {
+			return nil, fmt.Errorf("MWC pass query: %w", mwcErr)
+		}
+
+		mwcByTournament := make(map[int64]float64)
+		mwcByMatch := make(map[int64]float64)
+		mwcByCubeAction := make(map[string]float64)
+		blunderMWC := make(map[int64]float64)
+
+		var mwcGlobal, mwcChecker, mwcCube float64
+		var mwcAvailable bool
+		var rowIdx int
+		var mwcRollingCum float64
+		mwcRollingThresholds := []int{5, 10, 50, 100, 250, 500, 1000}
+		mwcRollingMap := make(map[int]float64)
+
+		func() {
+			defer mwcRows.Close()
+			for mwcRows.Next() {
+				var errMP int64
+				var score0, score1, fMove, cubeValue, matchLength int
+				var tournamentID, matchID int64
+				var cubeAction string
+				var dt int
+				var posID int64
+				if err2 := mwcRows.Scan(&errMP, &score0, &score1, &fMove, &cubeValue, &matchLength,
+					&tournamentID, &matchID, &cubeAction, &dt, &posID); err2 != nil {
+					return
+				}
+
+				rowIdx++
+				mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), score0, score1, fMove, cubeValue, matchLength)
+
+				if !math.IsNaN(mwcLoss) {
+					mwcAvailable = true
+					mwcGlobal += mwcLoss
+					if dt == 0 {
+						mwcChecker += mwcLoss
+					} else {
+						mwcCube += mwcLoss
+					}
+					if tournamentID != 0 {
+						mwcByTournament[tournamentID] += mwcLoss
+					}
+					mwcByMatch[matchID] += mwcLoss
+					if dt == 1 {
+						mwcByCubeAction[cubeAction] += mwcLoss
+					}
+					blunderMWC[posID] = mwcLoss
+					mwcRollingCum += mwcLoss
+				}
+
+				// Rolling thresholds count all decisions (including money-game), mirroring PRRolling.
+				for _, threshold := range mwcRollingThresholds {
+					if rowIdx == threshold {
+						mwcRollingMap[threshold] = mwcRollingCum
+					}
+				}
+			}
+		}()
+
+		result.MWCGlobal = mwcGlobal
+		result.MWCChecker = mwcChecker
+		result.MWCCube = mwcCube
+		result.MWCAvailable = mwcAvailable
+		result.MWCRolling = mwcRollingMap
+
+		for i, ts := range result.PerTournament {
+			result.PerTournament[i].MWC = mwcByTournament[ts.ID]
+		}
+		for i, ms := range result.PerMatch {
+			result.PerMatch[i].MWC = mwcByMatch[ms.ID]
+		}
+		for i, cs := range result.CubeActionBreakdown {
+			result.CubeActionBreakdown[i].MWC = mwcByCubeAction[cs.Action]
+		}
+		for i, be := range result.TopBlunders {
+			if loss, ok := blunderMWC[be.PositionID]; ok {
+				result.TopBlunders[i].MWCLoss = loss
 			}
 		}
 	}

@@ -473,6 +473,146 @@ func BenchmarkComputeStats(b *testing.B) {
 	}
 }
 
+// ── MWC integration tests ────────────────────────────────────────────────────
+
+// insertStatsFixtureRowMWC is like insertStatsFixtureRow but also sets the
+// match-play context columns (score_1, score_2, cube_value, match_length) on
+// the position row so that ConvertEMGLossToMWCLoss returns a meaningful value.
+func insertStatsFixtureRowMWC(t *testing.T, db *Database, matchID, gameID int64,
+	errMP, dt, player, moveNum int,
+	score0, score1, cubeValue, matchLength int) int64 {
+	t.Helper()
+	res, err := db.db.Exec(
+		`INSERT INTO position (decision_type, state, score_1, score_2, cube_value, match_length) VALUES (?, '', ?, ?, ?, ?)`,
+		dt, score0, score1, cubeValue, matchLength,
+	)
+	if err != nil {
+		t.Fatalf("insert position with MWC context: %v", err)
+	}
+	posID, _ := res.LastInsertId()
+
+	cubeErr := 0
+	moveErr := 0
+	if dt == 1 {
+		cubeErr = errMP
+	} else {
+		moveErr = errMP
+	}
+	if _, err = db.db.Exec(
+		`INSERT INTO analysis (position_id, data, cube_error, best_move_equity_error) VALUES (?, '{}', ?, ?)`,
+		posID, cubeErr, moveErr,
+	); err != nil {
+		t.Fatalf("insert analysis: %v", err)
+	}
+	if _, err = db.db.Exec(
+		`INSERT INTO move (game_id, move_number, position_id, player) VALUES (?, ?, ?, ?)`,
+		gameID, moveNum, posID, player,
+	); err != nil {
+		t.Fatalf("insert move: %v", err)
+	}
+	return posID
+}
+
+// TestComputeStats_MWCMatchPlay checks that MWCAvailable is true when at least
+// one match-play decision is present, that MWCGlobal > 0, and that the
+// per-tournament and per-match MWC values are populated.
+func TestComputeStats_MWCMatchPlay(t *testing.T) {
+	db := newTestDB(t)
+
+	tid := createTournament(t, db, "MWCTournament", "2025-08-01")
+	// 7-point match: player on roll is player0, scores 3-3 (both 4-away), cube=1
+	m := createMatch(t, db, "Alice", "Bob", "2025-08-05", 7, tid)
+	g := createGame(t, db, m)
+	// Insert 5 checker decisions with match-play context
+	for i := range 5 {
+		insertStatsFixtureRowMWC(t, db, m, g, 100, 0, 0, i+1, 3, 3, 1, 7)
+	}
+
+	res, err := db.ComputeStats(StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("ComputeStats: %v", err)
+	}
+	if !res.MWCAvailable {
+		t.Error("MWCAvailable should be true for match-play positions")
+	}
+	if res.MWCGlobal <= 0 {
+		t.Errorf("MWCGlobal = %.6f, want > 0", res.MWCGlobal)
+	}
+	if len(res.PerTournament) != 1 || res.PerTournament[0].MWC <= 0 {
+		t.Errorf("PerTournament[0].MWC = %.6f, want > 0", res.PerTournament[0].MWC)
+	}
+	if len(res.PerMatch) != 1 || res.PerMatch[0].MWC <= 0 {
+		t.Errorf("PerMatch[0].MWC = %.6f, want > 0", res.PerMatch[0].MWC)
+	}
+	// MWCGlobal must equal sum of PerMatch MWC (single match here).
+	if math.Abs(res.MWCGlobal-res.PerMatch[0].MWC) > 1e-9 {
+		t.Errorf("MWCGlobal (%.8f) != PerMatch MWC (%.8f)", res.MWCGlobal, res.PerMatch[0].MWC)
+	}
+}
+
+// TestComputeStats_MWCMoneyGame verifies that a 100% money-game dataset yields
+// MWCAvailable = false.
+func TestComputeStats_MWCMoneyGame(t *testing.T) {
+	db := newTestDB(t)
+
+	// match_length=0 → money game
+	m := createMatch(t, db, "X", "Y", "2025-09-01", 0, 0)
+	g := createGame(t, db, m)
+	for i := range 5 {
+		// score_1/score_2/cube_value irrelevant: match_length=0 → NaN
+		insertStatsFixtureRowMWC(t, db, m, g, 100, 0, 0, i+1, 0, 0, 1, 0)
+	}
+
+	res, err := db.ComputeStats(StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("ComputeStats: %v", err)
+	}
+	if res.MWCAvailable {
+		t.Error("MWCAvailable should be false for money-game only dataset")
+	}
+}
+
+// TestComputeStats_MWCMixedMatchMoney checks that money-game positions are
+// excluded from MWCGlobal but not from PRGlobal.
+func TestComputeStats_MWCMixedMatchMoney(t *testing.T) {
+	db := newTestDB(t)
+
+	// Match-play: 3 decisions
+	mMP := createMatch(t, db, "A", "B", "2025-10-01", 7, 0)
+	gMP := createGame(t, db, mMP)
+	for i := range 3 {
+		insertStatsFixtureRowMWC(t, db, mMP, gMP, 100, 0, 0, i+1, 3, 3, 1, 7)
+	}
+
+	// Money-game: 2 decisions
+	mMG := createMatch(t, db, "A", "B", "2025-10-02", 0, 0)
+	gMG := createGame(t, db, mMG)
+	for i := range 2 {
+		insertStatsFixtureRowMWC(t, db, mMG, gMG, 100, 0, 0, i+1, 0, 0, 1, 0)
+	}
+
+	res, err := db.ComputeStats(StatsFilter{DecisionType: -1})
+	if err != nil {
+		t.Fatalf("ComputeStats: %v", err)
+	}
+	// PR uses all 5 decisions
+	if res.Totals.NumDecisions != 5 {
+		t.Errorf("NumDecisions = %d, want 5", res.Totals.NumDecisions)
+	}
+	if !res.MWCAvailable {
+		t.Error("MWCAvailable should be true (match-play decisions present)")
+	}
+	// MWC from match-play only (3 decisions @ 100 millipoints each)
+	// For a 7pt match at 3-3 with cube=1, the exact value depends on MET,
+	// but it must be strictly less than the value if all 5 decisions counted.
+	// We verify it is positive and equals exactly 3 times the per-decision MWC loss.
+	mwcPerDecision := ConvertEMGLossToMWCLoss(100, 3, 3, 0, 1, 7)
+	wantMWC := 3 * mwcPerDecision
+	if math.Abs(res.MWCGlobal-wantMWC) > 1e-9 {
+		t.Errorf("MWCGlobal = %.8f, want %.8f (3 match-play decisions)", res.MWCGlobal, wantMWC)
+	}
+}
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 func containsStr(s, sub string) bool {
