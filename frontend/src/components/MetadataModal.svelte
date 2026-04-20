@@ -5,10 +5,10 @@
 
     let { visible = false, onClose } = $props();
 
-    let user = '';
-    let description = '';
-    let dateOfCreation = '';
-    let databaseVersion = ''; // Add variable for database version
+    let user = $state('');
+    let description = $state('');
+    let dateOfCreation = $state('');
+    let databaseVersion = $state(''); // Add variable for database version
 
     async function loadMetadata() {
         try {

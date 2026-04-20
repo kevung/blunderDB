@@ -18,8 +18,8 @@
     /** @type {function(string): void} */
     let { onCommand = (_cmd) => {} } = $props();
 
-    let inputEl;
-    let showInput = false;
+    let inputEl = $state();
+    let showInput = $state(false);
     let commandHistory = [];
     let historyIndex = -1;
 

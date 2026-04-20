@@ -7,13 +7,13 @@
     import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/main/Database.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
 
-    let allComments = [];
-    let searchQuery = '';
-    let displayedComments = [];
+    let allComments = $state([]);
+    let searchQuery = $state('');
+    let displayedComments = $state([]);
     let feedEl;
-    let editingCommentId = null;
-    let editingText = '';
-    let promptText = '';
+    let editingCommentId = $state(null);
+    let editingText = $state('');
+    let promptText = $state('');
 
     $effect(() => {
 

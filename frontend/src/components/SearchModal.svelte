@@ -7,10 +7,10 @@
 
     let { visible = false, onClose, onLoadPositionsByFilters } = $props();
 
-    let filters = [];
-    let pipCountMin = -375;
-    let pipCountMax = 375;
-    let searchText = '';
+    let filters = $state([]);
+    let pipCountMin = $state(-375);
+    let pipCountMax = $state(375);
+    let searchText = $state('');
     let movePattern = '';
     let creationDateOption = 'min'; // Default option for creation date
     let creationDateMin = ''; // Min value for creation date
@@ -18,126 +18,126 @@
     let creationDateRangeMin = ''; // Min value for creation date range
     let creationDateRangeMax = ''; // Max value for creation date range
 
-    let matchIDsInput = ''; // Match IDs (comma-separated or range)
-    let tournamentIDsInput = ''; // Tournament IDs (comma-separated or range)
+    let matchIDsInput = $state(''); // Match IDs (comma-separated or range)
+    let tournamentIDsInput = $state(''); // Tournament IDs (comma-separated or range)
 
-    let searchInCurrentResults = false; // Search within currently filtered positions
+    let searchInCurrentResults = $state(false); // Search within currently filtered positions
 
-    let selectedFilter = '';
-    let pipCountOption = 'min'; // Default option for pip count
-    let pipCountRangeMin = -375; // Min value for pip count range
-    let pipCountRangeMax = 375; // Max value for pip count range
-    let winRateOption = 'min'; // Default option for win rate
-    let winRateMin = 0; // Min value for win rate
-    let winRateMax = 100; // Max value for win rate
-    let winRateRangeMin = 0; // Min value for win rate range
-    let winRateRangeMax = 100; // Max value for win rate range
-    let gammonRateOption = 'min'; // Default option for gammon rate
-    let gammonRateMin = 0; // Min value for gammon rate
-    let gammonRateMax = 100; // Max value for gammon rate
-    let gammonRateRangeMin = 0; // Min value for gammon rate range
-    let gammonRateRangeMax = 100; // Max value for gammon rate range
-    let backgammonRateOption = 'min'; // Default option for backgammon rate
-    let backgammonRateMin = 0; // Min value for backgammon rate
-    let backgammonRateMax = 100; // Max value for backgammon rate
-    let backgammonRateRangeMin = 0; // Min value for backgammon rate range
-    let backgammonRateRangeMax = 100; // Max value for backgammon rate range
+    let selectedFilter = $state('');
+    let pipCountOption = $state('min'); // Default option for pip count
+    let pipCountRangeMin = $state(-375); // Min value for pip count range
+    let pipCountRangeMax = $state(375); // Max value for pip count range
+    let winRateOption = $state('min'); // Default option for win rate
+    let winRateMin = $state(0); // Min value for win rate
+    let winRateMax = $state(100); // Max value for win rate
+    let winRateRangeMin = $state(0); // Min value for win rate range
+    let winRateRangeMax = $state(100); // Max value for win rate range
+    let gammonRateOption = $state('min'); // Default option for gammon rate
+    let gammonRateMin = $state(0); // Min value for gammon rate
+    let gammonRateMax = $state(100); // Max value for gammon rate
+    let gammonRateRangeMin = $state(0); // Min value for gammon rate range
+    let gammonRateRangeMax = $state(100); // Max value for gammon rate range
+    let backgammonRateOption = $state('min'); // Default option for backgammon rate
+    let backgammonRateMin = $state(0); // Min value for backgammon rate
+    let backgammonRateMax = $state(100); // Max value for backgammon rate
+    let backgammonRateRangeMin = $state(0); // Min value for backgammon rate range
+    let backgammonRateRangeMax = $state(100); // Max value for backgammon rate range
 
-    let player2WinRateOption = 'min'; // Default option for opponent win rate
-    let player2WinRateMin = 0; // Min value for opponent win rate
-    let player2WinRateMax = 100; // Max value for opponent win rate
-    let player2WinRateRangeMin = 0; // Min value for opponent win rate range
-    let player2WinRateRangeMax = 100; // Max value for opponent win rate range
+    let player2WinRateOption = $state('min'); // Default option for opponent win rate
+    let player2WinRateMin = $state(0); // Min value for opponent win rate
+    let player2WinRateMax = $state(100); // Max value for opponent win rate
+    let player2WinRateRangeMin = $state(0); // Min value for opponent win rate range
+    let player2WinRateRangeMax = $state(100); // Max value for opponent win rate range
 
-    let player2GammonRateOption = 'min'; // Default option for opponent gammon rate
-    let player2GammonRateMin = 0; // Min value for opponent gammon rate
-    let player2GammonRateMax = 100; // Max value for opponent gammon rate
-    let player2GammonRateRangeMin = 0; // Min value for opponent gammon rate range
-    let player2GammonRateRangeMax = 100; // Max value for opponent gammon rate range
+    let player2GammonRateOption = $state('min'); // Default option for opponent gammon rate
+    let player2GammonRateMin = $state(0); // Min value for opponent gammon rate
+    let player2GammonRateMax = $state(100); // Max value for opponent gammon rate
+    let player2GammonRateRangeMin = $state(0); // Min value for opponent gammon rate range
+    let player2GammonRateRangeMax = $state(100); // Max value for opponent gammon rate range
 
-    let player2BackgammonRateOption = 'min'; // Default option for opponent backgammon rate
-    let player2BackgammonRateMin = 0; // Min value for opponent backgammon rate
-    let player2BackgammonRateMax = 100; // Max value for opponent backgammon rate
-    let player2BackgammonRateRangeMin = 0; // Min value for opponent backgammon rate range
-    let player2BackgammonRateRangeMax = 100; // Max value for opponent backgammon rate range
+    let player2BackgammonRateOption = $state('min'); // Default option for opponent backgammon rate
+    let player2BackgammonRateMin = $state(0); // Min value for opponent backgammon rate
+    let player2BackgammonRateMax = $state(100); // Max value for opponent backgammon rate
+    let player2BackgammonRateRangeMin = $state(0); // Min value for opponent backgammon rate range
+    let player2BackgammonRateRangeMax = $state(100); // Max value for opponent backgammon rate range
 
-    let player1CheckerOffOption = 'min'; // Default option for player checker off
-    let player1CheckerOffMin = 0; // Min value for player checker off
-    let player1CheckerOffMax = 15; // Max value for player checker off
-    let player1CheckerOffRangeMin = 0; // Min value for player checker off range
-    let player1CheckerOffRangeMax = 15; // Max value for player checker off range
+    let player1CheckerOffOption = $state('min'); // Default option for player checker off
+    let player1CheckerOffMin = $state(0); // Min value for player checker off
+    let player1CheckerOffMax = $state(15); // Max value for player checker off
+    let player1CheckerOffRangeMin = $state(0); // Min value for player checker off range
+    let player1CheckerOffRangeMax = $state(15); // Max value for player checker off range
 
-    let player2CheckerOffOption = 'min'; // Default option for opponent checker off
-    let player2CheckerOffMin = 0; // Min value for opponent checker off
-    let player2CheckerOffMax = 15; // Max value for opponent checker off
-    let player2CheckerOffRangeMin = 0; // Min value for opponent checker off range
-    let player2CheckerOffRangeMax = 15; // Max value for opponent checker off range
+    let player2CheckerOffOption = $state('min'); // Default option for opponent checker off
+    let player2CheckerOffMin = $state(0); // Min value for opponent checker off
+    let player2CheckerOffMax = $state(15); // Max value for opponent checker off
+    let player2CheckerOffRangeMin = $state(0); // Min value for opponent checker off range
+    let player2CheckerOffRangeMax = $state(15); // Max value for opponent checker off range
 
-    let player1BackCheckerOption = 'min'; // Default option for player back checker
-    let player1BackCheckerMin = 0; // Min value for player back checker
-    let player1BackCheckerMax = 15; // Max value for player back checker
-    let player1BackCheckerRangeMin = 0; // Min value for player back checker range
-    let player1BackCheckerRangeMax = 15; // Max value for player back checker range
+    let player1BackCheckerOption = $state('min'); // Default option for player back checker
+    let player1BackCheckerMin = $state(0); // Min value for player back checker
+    let player1BackCheckerMax = $state(15); // Max value for player back checker
+    let player1BackCheckerRangeMin = $state(0); // Min value for player back checker range
+    let player1BackCheckerRangeMax = $state(15); // Max value for player back checker range
 
-    let player2BackCheckerOption = 'min'; // Default option for opponent back checker
-    let player2BackCheckerMin = 0; // Min value for opponent back checker
-    let player2BackCheckerMax = 15; // Max value for opponent back checker
-    let player2BackCheckerRangeMin = 0; // Min value for opponent back checker range
-    let player2BackCheckerRangeMax = 15; // Max value for opponent back checker range
+    let player2BackCheckerOption = $state('min'); // Default option for opponent back checker
+    let player2BackCheckerMin = $state(0); // Min value for opponent back checker
+    let player2BackCheckerMax = $state(15); // Max value for opponent back checker
+    let player2BackCheckerRangeMin = $state(0); // Min value for opponent back checker range
+    let player2BackCheckerRangeMax = $state(15); // Max value for opponent back checker range
 
-    let player1CheckerInZoneOption = 'min'; // Default option for player checker in zone
-    let player1CheckerInZoneMin = 0; // Min value for player checker in zone
-    let player1CheckerInZoneMax = 15; // Max value for player checker in zone
-    let player1CheckerInZoneRangeMin = 0; // Min value for player checker in zone range
-    let player1CheckerInZoneRangeMax = 15; // Max value for player checker in zone range
+    let player1CheckerInZoneOption = $state('min'); // Default option for player checker in zone
+    let player1CheckerInZoneMin = $state(0); // Min value for player checker in zone
+    let player1CheckerInZoneMax = $state(15); // Max value for player checker in zone
+    let player1CheckerInZoneRangeMin = $state(0); // Min value for player checker in zone range
+    let player1CheckerInZoneRangeMax = $state(15); // Max value for player checker in zone range
 
-    let player2CheckerInZoneOption = 'min'; // Default option for opponent checker in zone
-    let player2CheckerInZoneMin = 0; // Min value for opponent checker in zone
-    let player2CheckerInZoneMax = 15; // Max value for opponent checker in zone
-    let player2CheckerInZoneRangeMin = 0; // Min value for opponent checker in zone range
-    let player2CheckerInZoneRangeMax = 15; // Max value for opponent checker in zone range
+    let player2CheckerInZoneOption = $state('min'); // Default option for opponent checker in zone
+    let player2CheckerInZoneMin = $state(0); // Min value for opponent checker in zone
+    let player2CheckerInZoneMax = $state(15); // Max value for opponent checker in zone
+    let player2CheckerInZoneRangeMin = $state(0); // Min value for opponent checker in zone range
+    let player2CheckerInZoneRangeMax = $state(15); // Max value for opponent checker in zone range
 
-    let player1AbsolutePipCountOption = 'min'; // Default option for player absolute pip count
-    let player1AbsolutePipCountMin = 0; // Min value for player absolute pip count
-    let player1AbsolutePipCountMax = 375; // Max value for player absolute pip count
-    let player1AbsolutePipCountRangeMin = 0; // Min value for player absolute pip count range
-    let player1AbsolutePipCountRangeMax = 375; // Max value for player absolute pip count range
+    let player1AbsolutePipCountOption = $state('min'); // Default option for player absolute pip count
+    let player1AbsolutePipCountMin = $state(0); // Min value for player absolute pip count
+    let player1AbsolutePipCountMax = $state(375); // Max value for player absolute pip count
+    let player1AbsolutePipCountRangeMin = $state(0); // Min value for player absolute pip count range
+    let player1AbsolutePipCountRangeMax = $state(375); // Max value for player absolute pip count range
 
-    let equityOption = 'min'; // Default option for equity
-    let equityMin = -1000; // Min value for equity
-    let equityMax = 1000; // Max value for equity
-    let equityRangeMin = -1000; // Min value for equity range
-    let equityRangeMax = 1000; // Max value for equity range
+    let equityOption = $state('min'); // Default option for equity
+    let equityMin = $state(-1000); // Min value for equity
+    let equityMax = $state(1000); // Max value for equity
+    let equityRangeMin = $state(-1000); // Min value for equity range
+    let equityRangeMax = $state(1000); // Max value for equity range
 
-    let moveErrorOption = 'min'; // Default option for move error
-    let moveErrorMin = 0; // Min value for move error (millipoints)
-    let moveErrorMax = 1000; // Max value for move error (millipoints)
-    let moveErrorRangeMin = 0; // Min value for move error range
-    let moveErrorRangeMax = 1000; // Max value for move error range
+    let moveErrorOption = $state('min'); // Default option for move error
+    let moveErrorMin = $state(0); // Min value for move error (millipoints)
+    let moveErrorMax = $state(1000); // Max value for move error (millipoints)
+    let moveErrorRangeMin = $state(0); // Min value for move error range
+    let moveErrorRangeMax = $state(1000); // Max value for move error range
 
-    let player1OutfieldBlotOption = 'min'; // Default option for player 1 outfield blot
-    let player1OutfieldBlotMin = 0; // Min value for player 1 outfield blot
-    let player1OutfieldBlotMax = 15; // Max value for player 1 outfield blot
-    let player1OutfieldBlotRangeMin = 0; // Min value for player 1 outfield blot range
-    let player1OutfieldBlotRangeMax = 15; // Max value for player 1 outfield blot range
+    let player1OutfieldBlotOption = $state('min'); // Default option for player 1 outfield blot
+    let player1OutfieldBlotMin = $state(0); // Min value for player 1 outfield blot
+    let player1OutfieldBlotMax = $state(15); // Max value for player 1 outfield blot
+    let player1OutfieldBlotRangeMin = $state(0); // Min value for player 1 outfield blot range
+    let player1OutfieldBlotRangeMax = $state(15); // Max value for player 1 outfield blot range
 
-    let player2OutfieldBlotOption = 'min'; // Default option for player 2 outfield blot
-    let player2OutfieldBlotMin = 0; // Min value for player 2 outfield blot
-    let player2OutfieldBlotMax = 15; // Max value for player 2 outfield blot
-    let player2OutfieldBlotRangeMin = 0; // Min value for player 2 outfield blot range
-    let player2OutfieldBlotRangeMax = 15; // Max value for player 2 outfield blot range
+    let player2OutfieldBlotOption = $state('min'); // Default option for player 2 outfield blot
+    let player2OutfieldBlotMin = $state(0); // Min value for player 2 outfield blot
+    let player2OutfieldBlotMax = $state(15); // Max value for player 2 outfield blot
+    let player2OutfieldBlotRangeMin = $state(0); // Min value for player 2 outfield blot range
+    let player2OutfieldBlotRangeMax = $state(15); // Max value for player 2 outfield blot range
 
-    let player1JanBlotOption = 'min'; // Default option for player 1 jan blot
-    let player1JanBlotMin = 0; // Min value for player 1 jan blot
-    let player1JanBlotMax = 15; // Max value for player 1 jan blot
-    let player1JanBlotRangeMin = 0; // Min value for player 1 jan blot range
-    let player1JanBlotRangeMax = 15; // Max value for player 1 jan blot range
+    let player1JanBlotOption = $state('min'); // Default option for player 1 jan blot
+    let player1JanBlotMin = $state(0); // Min value for player 1 jan blot
+    let player1JanBlotMax = $state(15); // Max value for player 1 jan blot
+    let player1JanBlotRangeMin = $state(0); // Min value for player 1 jan blot range
+    let player1JanBlotRangeMax = $state(15); // Max value for player 1 jan blot range
 
-    let player2JanBlotOption = 'min'; // Default option for player 2 jan blot
-    let player2JanBlotMin = 0; // Min value for player 2 jan blot
-    let player2JanBlotMax = 15; // Max value for player 2 jan blot
-    let player2JanBlotRangeMin = 0; // Min value for player 2 jan blot range
-    let player2JanBlotRangeMax = 15; // Max value for player 2 jan blot range
+    let player2JanBlotOption = $state('min'); // Default option for player 2 jan blot
+    let player2JanBlotMin = $state(0); // Min value for player 2 jan blot
+    let player2JanBlotMax = $state(15); // Max value for player 2 jan blot
+    let player2JanBlotRangeMin = $state(0); // Min value for player 2 jan blot range
+    let player2JanBlotRangeMax = $state(15); // Max value for player 2 jan blot range
 
     let availableFilters = [
         'Include Cube',

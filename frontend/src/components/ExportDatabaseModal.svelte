@@ -21,13 +21,13 @@
     }, matches = [] } = $props();
 
 
-    let collections = [];
+    let collections = $state([]);
 
     collectionsStore.subscribe((value) => {
         collections = value || [];
     });
 
-    let tournaments = [];
+    let tournaments = $state([]);
 
     tournamentsStore.subscribe((value) => {
         tournaments = value || [];
@@ -49,7 +49,7 @@
         }
     });
     // Auto-select all matches when includeMatches is toggled on (only if not manually modified)
-    let matchesManuallyModified = false;
+    let matchesManuallyModified = $state(false);
     $effect(() => {
         if (exportOptions.includeMatches && matches.length > 0 && exportOptions.matchIDs.length === 0 && !matchesManuallyModified) {
         exportOptions.matchIDs = matches.map((m) => m.id);
@@ -63,7 +63,7 @@
         }
     });
     // Auto-select all collections when includeCollections is toggled on (only if not manually modified)
-    let collectionsManuallyModified = false;
+    let collectionsManuallyModified = $state(false);
     $effect(() => {
         if (exportOptions.includeCollections && collections.length > 0 && exportOptions.collectionIDs.length === 0 && !collectionsManuallyModified) {
         exportOptions.collectionIDs = collections.map((c) => c.id);
@@ -77,7 +77,7 @@
         }
     });
     // Auto-select all tournaments when includeTournaments is toggled on (only if not manually modified)
-    let tournamentsManuallyModified = false;
+    let tournamentsManuallyModified = $state(false);
     $effect(() => {
         if (exportOptions.includeTournaments && tournaments.length > 0 && exportOptions.includeTournamentIDs.length === 0 && !tournamentsManuallyModified) {
         exportOptions.includeTournamentIDs = tournaments.map((t) => t.id);

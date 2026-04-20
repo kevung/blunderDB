@@ -24,34 +24,34 @@
 
     let { onOpenCollection } = $props();
 
-    let collections = [];
-    let selectedCollection = null;
-    let collectionPositions = [];
-    let activeCollection = null;
-    let visible = false;
-    let databaseLoaded = false;
-    let currentPosition = null;
+    let collections = $state([]);
+    let selectedCollection = $state(null);
+    let collectionPositions = $state([]);
+    let activeCollection = $state(null);
+    let visible = $state(false);
+    let databaseLoaded = $state(false);
+    let currentPosition = $state(null);
     let mode = 'NORMAL';
 
-    let positionCollectionIds = [];
+    let positionCollectionIds = $state([]);
 
     // View: 'list' (all collections) or 'detail' (positions in active collection)
-    let view = 'list';
+    let view = $state('list');
 
     // Collection editing (unified: name + description at the same time)
-    let editingCollectionId = null;
-    let editingName = '';
-    let editingDescription = '';
-    let inlineNewName = '';
+    let editingCollectionId = $state(null);
+    let editingName = $state('');
+    let editingDescription = $state('');
+    let inlineNewName = $state('');
 
     // Multi-select for positions
-    let selectedPositionIndices = new Set();
+    let selectedPositionIndices = $state(new Set());
 
     // Position index map (position_id -> 1-based index in DB)
-    let positionIndexMap = {};
+    let positionIndexMap = $state({});
 
     // Inline new description
-    let inlineNewDescription = '';
+    let inlineNewDescription = $state('');
 
     const unsubCollections = collectionsStore.subscribe((value) => {
         collections = value || [];

@@ -5,14 +5,14 @@
     import { openPanels, PANEL } from '../stores/uiStore';
     let { visible = false, onClose } = $props();
 
-    let analysisData;
-    let cubeValue;
-    let activeTab = 'checker'; // 'checker' or 'cube'
-    let matchCtx;
+    let analysisData = $state();
+    let cubeValue = $state();
+    let activeTab = $state('checker'); // 'checker' or 'cube'
+    let matchCtx = $state();
 
     // Sorting state for checker analysis table
-    let sortColumn = 'equity'; // default sort by equity
-    let sortDirection = 'desc'; // default highest to lowest
+    let sortColumn = $state('equity'); // default sort by equity
+    let sortDirection = $state('desc'); // default highest to lowest
 
     // Subscribe to matchContextStore
     matchContextStore.subscribe((value) => {

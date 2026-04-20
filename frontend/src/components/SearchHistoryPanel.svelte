@@ -8,12 +8,12 @@
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
-    let searchHistory = [];
-    let selectedSearch = null;
-    let showSaveDialog = false;
-    let filterName = '';
+    let searchHistory = $state([]);
+    let selectedSearch = $state(null);
+    let showSaveDialog = $state(false);
+    let filterName = $state('');
     let filterLibrary = []; // Store loaded filters
-    let visible = false;
+    let visible = $state(false);
 
     searchHistoryStore.subscribe((value) => {
         searchHistory = value;

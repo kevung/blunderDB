@@ -3,7 +3,7 @@
     import { activeTabStore, logEntriesStore } from '../stores/uiStore';
 
     let logContainer;
-    let logEntries = [];
+    let logEntries = $state([]);
 
     logEntriesStore.subscribe(async (value) => {
         logEntries = value;

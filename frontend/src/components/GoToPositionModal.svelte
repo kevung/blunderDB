@@ -7,10 +7,10 @@
 
     let { visible = false, onClose } = $props();
 
-    let positionNumber = 0;
-    let inputField;
-    let maxPositionNumber = 0;
-    let currentIndex = 0;
+    let positionNumber = $state(0);
+    let inputField = $state();
+    let maxPositionNumber = $state(0);
+    let currentIndex = $state(0);
 
     // Subscribe to positionsStore and matchContextStore to get the number of positions
     $effect(() => {

@@ -8,12 +8,12 @@
 
     let { visible = false, onClose, handleGlobalKeydown } = $props();
 
-    let activeTab = 'manual'; // Default active tab
+    let activeTab = $state('manual'); // Default active tab
     const tabs = ['manual', 'shortcuts', 'commands', 'about'];
-    let contentArea;
+    let contentArea = $state();
 
-    let databaseVersion = '';
-    let applicationVersion = '';
+    let databaseVersion = $state('');
+    let applicationVersion = $state('');
 
     // Subscribe to the metaStore
     metaStore.subscribe((value) => {

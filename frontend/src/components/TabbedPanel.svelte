@@ -15,7 +15,7 @@
     // Props passed through to panels
     let { onLoadPositionsByFilters, onCloseAnalysis, onCloseComment, onOpenCollection, onAddToFilterLibrary } = $props();
 
-    let tabs = [
+    let tabs = $state([
         { id: 'analysis', label: 'Analysis', icon: 'analysis', shortcut: 'Ctrl+L' },
         { id: 'comments', label: 'Comments', icon: 'comments', shortcut: 'Ctrl+P' },
         { id: 'search', label: 'Search', icon: 'search', shortcut: 'Ctrl+F' },
@@ -26,11 +26,11 @@
         { id: 'anki', label: 'Anki', icon: 'anki', shortcut: 'Ctrl+K' },
         { id: 'metadata', label: 'Metadata', icon: 'metadata', shortcut: 'Ctrl+M' },
         { id: 'log', label: 'Log', icon: 'log', shortcut: '' }
-    ];
+    ]);
 
-    let draggedIndex = null;
-    let dragOverIndex = null;
-    let isDragging = false;
+    let draggedIndex = $state(null);
+    let dragOverIndex = $state(null);
+    let isDragging = $state(false);
     let dragStartX = 0;
     let tabBarEl;
 

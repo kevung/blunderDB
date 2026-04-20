@@ -4,11 +4,11 @@
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js';
     import { activeTabStore } from '../stores/uiStore';
 
-    let user = '';
-    let description = '';
-    let dateOfCreation = '';
-    let databaseVersion = '';
-    let loaded = false;
+    let user = $state('');
+    let description = $state('');
+    let dateOfCreation = $state('');
+    let databaseVersion = $state('');
+    let loaded = $state(false);
 
     async function loadMetadata() {
         try {
@@ -33,7 +33,7 @@
     }
 
     // Load when tab becomes active, save when leaving
-    let wasActive = false;
+    let wasActive = $state(false);
     const unsubscribe = activeTabStore.subscribe(async (value) => {
         if (value === 'metadata') {
             await loadMetadata();

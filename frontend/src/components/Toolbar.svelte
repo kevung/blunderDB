@@ -3,11 +3,11 @@
 
     import { activeTabStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
-    let databasePath;
+    let databasePath = $state();
     databasePathStore.subscribe((value) => {
         databasePath = value;
     });
-    let isSearchTab = false;
+    let isSearchTab = $state(false);
     activeTabStore.subscribe((value) => {
         isSearchTab = value === 'search';
     });

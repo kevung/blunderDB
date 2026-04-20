@@ -112,9 +112,9 @@
 
     // Component state
     let mainArea;
-    let panelHeight = 250;
+    let panelHeight = $state(250);
     let _isResizing = false;
-    let showDropOverlay = false;
+    let showDropOverlay = $state(false);
     let dragCounter = 0;
     let positions = [];
     let currentPositionIndex = 0;

@@ -26,39 +26,39 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
 
-    let tournaments = [];
-    let selectedTournament = null;
-    let tournamentMatches = [];
-    let visible = false;
+    let tournaments = $state([]);
+    let selectedTournament = $state(null);
+    let tournamentMatches = $state([]);
+    let visible = $state(false);
     let _databaseLoaded = false;
-    let sortBy = null;
-    let sortOrder = 'asc';
+    let sortBy = $state(null);
+    let sortOrder = $state('asc');
 
     // New tournament form
-    let newTournamentName = '';
-    let newTournamentDate = '';
-    let newTournamentLocation = '';
+    let newTournamentName = $state('');
+    let newTournamentDate = $state('');
+    let newTournamentLocation = $state('');
 
     // Edit tournament
-    let editingTournament = null;
-    let editName = '';
-    let editDate = '';
-    let editLocation = '';
+    let editingTournament = $state(null);
+    let editName = $state('');
+    let editDate = $state('');
+    let editLocation = $state('');
 
     // Add match to tournament
-    let addMatchSearch = '';
-    let allMatches = [];
-    let filteredMatches = [];
-    let addMatchFocused = false;
-    let matchDropdownStyle = '';
+    let addMatchSearch = $state('');
+    let allMatches = $state([]);
+    let filteredMatches = $state([]);
+    let addMatchFocused = $state(false);
+    let matchDropdownStyle = $state('');
 
     // Match comment editing
-    let editingMatchCommentId = null;
-    let editingMatchComment = '';
+    let editingMatchCommentId = $state(null);
+    let editingMatchComment = $state('');
 
     // Tournament comment editing
-    let editingTournamentComment = false;
-    let tournamentCommentText = '';
+    let editingTournamentComment = $state(false);
+    let tournamentCommentText = $state('');
 
     // Pointer-based drag reorder (no state variables needed)
 

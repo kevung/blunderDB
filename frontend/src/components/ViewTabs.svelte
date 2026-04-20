@@ -3,9 +3,9 @@
 
     const { views, activeViewId, switchTo, addView, closeView, renameView } = viewStore;
 
-    let editingId = null;
-    let editingName = '';
-    let editInput;
+    let editingId = $state(null);
+    let editingName = $state('');
+    let editInput = $state();
 
     function handleTabClick(viewId) {
         switchTo(viewId);

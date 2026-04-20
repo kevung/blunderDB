@@ -20,39 +20,39 @@
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
 
-    let matches = [];
-    let selectedMatch = null;
-    let visible = false;
+    let matches = $state([]);
+    let selectedMatch = $state(null);
+    let visible = $state(false);
     let lastVisitedMatch = null;
-    let tournaments = [];
+    let tournaments = $state([]);
 
     // Detail pane state
-    let detailMatch = null; // Match currently shown in detail pane
-    let detailMovePositions = []; // MatchMovePosition[] for the detail match
-    let detailGames = []; // Game[] for the detail match
-    let detailView = 'transcript'; // 'transcript' | 'metadata'
-    let loadingDetail = false;
+    let detailMatch = $state(null); // Match currently shown in detail pane
+    let detailMovePositions = $state([]); // MatchMovePosition[] for the detail match
+    let detailGames = $state([]); // Game[] for the detail match
+    let detailView = $state('transcript'); // 'transcript' | 'metadata'
+    let loadingDetail = $state(false);
 
     // Sorting state
-    let sortColumn = null; // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
-    let sortDirection = 'asc'; // 'asc' | 'desc'
+    let sortColumn = $state(null); // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
+    let sortDirection = $state('asc'); // 'asc' | 'desc'
 
     // Inline tournament editing
-    let editingTournamentMatchId = null;
-    let editTournamentValue = '';
-    let showTournamentDropdown = false;
-    let filteredTournaments = [];
-    let tournamentDropdownStyle = '';
+    let editingTournamentMatchId = $state(null);
+    let editTournamentValue = $state('');
+    let showTournamentDropdown = $state(false);
+    let filteredTournaments = $state([]);
+    let tournamentDropdownStyle = $state('');
 
     // Inline match editing (player names, date)
-    let editingMatchId = null;
-    let editPlayer1Value = '';
-    let editPlayer2Value = '';
-    let editDateValue = '';
+    let editingMatchId = $state(null);
+    let editPlayer1Value = $state('');
+    let editPlayer2Value = $state('');
+    let editDateValue = $state('');
 
     // Inline match comment editing
-    let editingDetailComment = false;
-    let editDetailCommentText = '';
+    let editingDetailComment = $state(false);
+    let editDetailCommentText = $state('');
 
     lastVisitedMatchStore.subscribe((value) => {
         lastVisitedMatch = value;

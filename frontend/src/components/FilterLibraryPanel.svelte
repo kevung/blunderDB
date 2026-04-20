@@ -11,11 +11,11 @@
 
     let { onLoadPositionsByFilters } = $props();
 
-    let filters = [];
-    let filterName = '';
-    let filterCommand = '';
-    let selectedFilter = null;
-    let visible = false;
+    let filters = $state([]);
+    let filterName = $state('');
+    let filterCommand = $state('');
+    let selectedFilter = $state(null);
+    let visible = $state(false);
 
     let _databaseLoaded = false;
     let editPosition = ''; // Add editPosition variable

@@ -25,35 +25,35 @@
         LoadPositionsByFilters
     } from '../../wailsjs/go/main/Database.js';
 
-    let decks = [];
-    let selectedDeck = null;
-    let reviewCard = null;
-    let stats = null;
-    let viewMode = 'list';
-    let databaseLoaded = false;
-    let collections = [];
-    let positions = [];
+    let decks = $state([]);
+    let selectedDeck = $state(null);
+    let reviewCard = $state(null);
+    let stats = $state(null);
+    let viewMode = $state('list');
+    let databaseLoaded = $state(false);
+    let collections = $state([]);
+    let positions = $state([]);
 
     // Create deck form
-    let newDeckName = '';
-    let newDeckSourceType = 'collection';
-    let newDeckSourceId = 0;
-    let showCreateForm = false;
+    let newDeckName = $state('');
+    let newDeckSourceType = $state('collection');
+    let newDeckSourceId = $state(0);
+    let showCreateForm = $state(false);
 
     // Edit deck
-    let editingDeckId = null;
-    let editingName = '';
-    let editingDescription = '';
+    let editingDeckId = $state(null);
+    let editingName = $state('');
+    let editingDescription = $state('');
 
     // Settings
-    let settingsRetention = 0.9;
-    let settingsMaxInterval = 36500;
-    let settingsFuzz = true;
+    let settingsRetention = $state(0.9);
+    let settingsMaxInterval = $state(36500);
+    let settingsFuzz = $state(true);
 
     // Review state
-    let reviewSessionCount = 0;
+    let reviewSessionCount = $state(0);
     let lastSearch = null;
-    let pausedSession = null;
+    let pausedSession = $state(null);
 
     const unsubDecks = ankiDecksStore.subscribe((v) => {
         decks = v || [];
