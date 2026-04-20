@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 )
 
 func (d *Database) DeleteComment(positionID int64) error {
@@ -11,7 +10,6 @@ func (d *Database) DeleteComment(positionID int64) error {
 
 	_, err := d.db.Exec(`DELETE FROM comment WHERE position_id = ?`, positionID)
 	if err != nil {
-		fmt.Println("Error deleting comment:", err)
 		return err
 	}
 	return nil
@@ -24,7 +22,6 @@ func (d *Database) AddComment(positionID int64, text string) error {
 
 	_, err := d.db.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, text)
 	if err != nil {
-		fmt.Println("Error inserting comment:", err)
 		return err
 	}
 	return nil
@@ -38,13 +35,11 @@ func (d *Database) UpdateCommentEntry(commentID int64, text string) error {
 	if d.commentTableHasTimestamps() {
 		_, err := d.db.Exec(`UPDATE comment SET text = ?, modified_at = CURRENT_TIMESTAMP WHERE id = ?`, text, commentID)
 		if err != nil {
-			fmt.Println("Error updating comment:", err)
 			return err
 		}
 	} else {
 		_, err := d.db.Exec(`UPDATE comment SET text = ? WHERE id = ?`, text, commentID)
 		if err != nil {
-			fmt.Println("Error updating comment:", err)
 			return err
 		}
 	}
@@ -58,7 +53,6 @@ func (d *Database) DeleteCommentEntry(commentID int64) error {
 
 	_, err := d.db.Exec(`DELETE FROM comment WHERE id = ?`, commentID)
 	if err != nil {
-		fmt.Println("Error deleting comment:", err)
 		return err
 	}
 	return nil
@@ -73,7 +67,6 @@ func (d *Database) SaveComment(positionID int64, text string) error {
 	var existingID int64
 	err := d.db.QueryRow(`SELECT id FROM comment WHERE position_id = ?`, positionID).Scan(&existingID)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error querying comment:", err)
 		return err
 	}
 
@@ -81,14 +74,12 @@ func (d *Database) SaveComment(positionID int64, text string) error {
 		// Update the existing comment
 		_, err = d.db.Exec(`UPDATE comment SET text = ? WHERE id = ?`, text, existingID)
 		if err != nil {
-			fmt.Println("Error updating comment:", err)
 			return err
 		}
 	} else {
 		// Insert a new comment
 		_, err = d.db.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, text)
 		if err != nil {
-			fmt.Println("Error inserting comment:", err)
 			return err
 		}
 	}
@@ -107,7 +98,6 @@ func (d *Database) LoadComment(positionID int64) (string, error) {
 		if err == sql.ErrNoRows {
 			return "", nil // No comment found
 		}
-		fmt.Println("Error loading comment:", err)
 		return "", err
 	}
 	return text, nil

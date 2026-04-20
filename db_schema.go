@@ -341,7 +341,6 @@ func (d *Database) CheckVersion(databaseVersion string) error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -362,7 +361,6 @@ func (d *Database) CheckDatabaseVersion() (string, error) {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return "", err
 	}
 	return dbVersion, nil
@@ -381,7 +379,6 @@ func (d *Database) LoadMetadata() (map[string]string, error) {
 
 	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation', 'database_version')`)
 	if err != nil {
-		fmt.Println("Error loading metadata:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -390,7 +387,6 @@ func (d *Database) LoadMetadata() (map[string]string, error) {
 	for rows.Next() {
 		var key, value string
 		if err = rows.Scan(&key, &value); err != nil {
-			fmt.Println("Error scanning metadata:", err)
 			return nil, err
 		}
 		metadata[key] = value
@@ -415,7 +411,6 @@ func (d *Database) SaveMetadata(metadata map[string]string) error {
 	for key, value := range metadata {
 		_, err := tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
 		if err != nil {
-			fmt.Println("Error saving metadata:", err)
 			return err
 		}
 	}

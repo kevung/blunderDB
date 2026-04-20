@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 	"sort"
 	"strings"
@@ -27,13 +28,12 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		if err := os.Remove(exportPath); err != nil {
 			return fmt.Errorf("cannot remove existing export file: %v", err)
 		}
-		fmt.Printf("Removed existing export file: %s\n", exportPath)
+		slog.Debug("removed existing export file", "path", exportPath)
 	}
 
 	// Create a new database for export
 	exportDB, err := sql.Open("sqlite", exportPath)
 	if err != nil {
-		fmt.Println("Error creating export database:", err)
 		return err
 	}
 	defer exportDB.Close()
@@ -46,7 +46,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating position table in export database:", err)
 		return err
 	}
 
@@ -59,7 +58,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating analysis table in export database:", err)
 		return err
 	}
 
@@ -72,7 +70,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating comment table in export database:", err)
 		return err
 	}
 
@@ -83,7 +80,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating metadata table in export database:", err)
 		return err
 	}
 
@@ -95,7 +91,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating command_history table in export database:", err)
 		return err
 	}
 
@@ -108,7 +103,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating filter_library table in export database:", err)
 		return err
 	}
 
@@ -122,7 +116,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating search_history table in export database:", err)
 		return err
 	}
 
@@ -146,7 +139,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating match table in export database:", err)
 		return err
 	}
 
@@ -163,7 +155,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating tournament table in export database:", err)
 		return err
 	}
 
@@ -179,7 +170,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating collection table in export database:", err)
 		return err
 	}
 
@@ -196,7 +186,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating collection_position table in export database:", err)
 		return err
 	}
 
@@ -214,7 +203,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating game table in export database:", err)
 		return err
 	}
 
@@ -235,7 +223,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating move table in export database:", err)
 		return err
 	}
 
@@ -257,14 +244,12 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating move_analysis table in export database:", err)
 		return err
 	}
 
 	// Insert database version
 	_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
-		fmt.Println("Error inserting database version in export database:", err)
 		return err
 	}
 
@@ -273,7 +258,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		if value != "" {
 			_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES (?, ?)`, key, value)
 			if err != nil {
-				fmt.Printf("Error inserting metadata %s in export database: %v\n", key, err)
+				slog.Warn("inserting metadata in export database", "key", key, "err", err)
 			}
 		}
 	}
@@ -283,20 +268,19 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		currentDate := time.Now().Format("2006-01-02")
 		_, err = exportDB.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('dateOfCreation', ?)`, currentDate)
 		if err != nil {
-			fmt.Println("Error inserting default creation date in export database:", err)
+			slog.Warn("inserting default creation date in export database", "err", err)
 		}
 	}
 
 	// Begin transaction for export
 	tx, err := exportDB.Begin()
 	if err != nil {
-		fmt.Println("Error starting transaction for export:", err)
 		return err
 	}
 	defer func() {
 		if err != nil {
 			tx.Rollback()
-			fmt.Println("Transaction rolled back due to error during export")
+			slog.Warn("transaction rolled back due to error during export")
 		}
 	}()
 
@@ -315,13 +299,13 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 		// Insert the position into the export database
 		result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, positionJSON)
 		if err != nil {
-			fmt.Printf("Error inserting position %d into export database: %v\n", oldPositionID, err)
+			slog.Warn("inserting position into export database", "positionID", oldPositionID, "err", err)
 			continue
 		}
 
 		newPositionID, err := result.LastInsertId()
 		if err != nil {
-			fmt.Printf("Error getting last insert ID for position %d: %v\n", oldPositionID, err)
+			slog.Warn("getting last insert ID for position", "positionID", oldPositionID, "err", err)
 			continue
 		}
 
@@ -418,11 +402,11 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					}
 
 					if _, insertErr := tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, string(updatedAnalysisJSON)); insertErr != nil {
-						fmt.Printf("Error inserting analysis for position %d (old ID: %d): %v\n", newPositionID, oldPositionID, insertErr)
+						slog.Warn("inserting analysis for position", "newID", newPositionID, "oldID", oldPositionID, "err", insertErr)
 					}
 				}
 			} else if analysisErr != sql.ErrNoRows {
-				fmt.Printf("Error querying analysis for position %d: %v\n", oldPositionID, analysisErr)
+				slog.Warn("querying analysis for position", "positionID", oldPositionID, "err", analysisErr)
 			}
 		}
 
@@ -432,10 +416,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			commentErr := d.db.QueryRow(`SELECT text FROM comment WHERE position_id = ?`, oldPositionID).Scan(&comment)
 			if commentErr == nil && comment != "" {
 				if _, insertErr := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newPositionID, comment); insertErr != nil {
-					fmt.Printf("Error inserting comment for position %d (old ID: %d): %v\n", newPositionID, oldPositionID, insertErr)
+					slog.Warn("inserting comment for position", "newID", newPositionID, "oldID", oldPositionID, "err", insertErr)
 				}
 			} else if commentErr != nil && commentErr != sql.ErrNoRows {
-				fmt.Printf("Error querying comment for position %d: %v\n", oldPositionID, commentErr)
+				slog.Warn("querying comment for position", "positionID", oldPositionID, "err", commentErr)
 			}
 		}
 	}
@@ -443,7 +427,6 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 	// Commit the transaction
 	err = tx.Commit()
 	if err != nil {
-		fmt.Println("Error committing transaction for export:", err)
 		return err
 	}
 
@@ -459,7 +442,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				if err == nil {
 					_, err = exportDB.Exec(`INSERT INTO filter_library (name, command, edit_position) VALUES (?, ?, ?)`, name, command, editPosition)
 					if err != nil {
-						fmt.Printf("Error inserting filter library entry '%s': %v\n", name, err)
+						slog.Warn("inserting filter library entry", "name", name, "err", err)
 					}
 				}
 			}
@@ -516,7 +499,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 				err := matchRows.Scan(&oldMatchID, &player1Name, &player2Name, &event, &location, &round,
 					&matchLength, &matchDate, &importDate, &filePath, &gameCountVal, &matchHash, &tournamentID)
 				if err != nil {
-					fmt.Printf("Error scanning match: %v\n", err)
+					slog.Warn("scanning match", "err", err)
 					continue
 				}
 
@@ -538,13 +521,13 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 						matchLength, matchDate, importDate, filePath, gameCountVal)
 				}
 				if err != nil {
-					fmt.Printf("Error inserting match: %v\n", err)
+					slog.Warn("inserting match", "err", err)
 					continue
 				}
 
 				newMatchID, err := result.LastInsertId()
 				if err != nil {
-					fmt.Printf("Error getting new match ID: %v\n", err)
+					slog.Warn("getting new match ID", "err", err)
 					continue
 				}
 				matchIDMapping[oldMatchID] = newMatchID
@@ -564,7 +547,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					WHERE match_id = ?
 				`, oldMatchID)
 				if err != nil {
-					fmt.Printf("Error querying games for match %d: %v\n", oldMatchID, err)
+					slog.Warn("querying games for match", "matchID", oldMatchID, "err", err)
 					continue
 				}
 
@@ -575,7 +558,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 
 					err := gameRows.Scan(&oldGameID, &gameNumber, &score1, &score2, &winner, &pointsWon, &moveCountVal)
 					if err != nil {
-						fmt.Printf("Error scanning game: %v\n", err)
+						slog.Warn("scanning game", "err", err)
 						continue
 					}
 
@@ -584,13 +567,13 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 						VALUES (?, ?, ?, ?, ?, ?, ?)
 					`, newMatchID, gameNumber, score1, score2, winner, pointsWon, moveCountVal)
 					if err != nil {
-						fmt.Printf("Error inserting game: %v\n", err)
+						slog.Warn("inserting game", "err", err)
 						continue
 					}
 
 					newGameID, err := result.LastInsertId()
 					if err != nil {
-						fmt.Printf("Error getting new game ID: %v\n", err)
+						slog.Warn("getting new game ID", "err", err)
 						continue
 					}
 					gameIDMapping[oldGameID] = newGameID
@@ -612,7 +595,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					WHERE game_id = ?
 				`, oldGameID)
 				if err != nil {
-					fmt.Printf("Error querying moves for game %d: %v\n", oldGameID, err)
+					slog.Warn("querying moves for game", "gameID", oldGameID, "err", err)
 					continue
 				}
 
@@ -624,7 +607,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 
 					err := moveRows.Scan(&oldMoveID, &moveNumber, &moveType, &positionID, &player, &dice1, &dice2, &checkerMove, &cubeAction)
 					if err != nil {
-						fmt.Printf("Error scanning move: %v\n", err)
+						slog.Warn("scanning move", "err", err)
 						continue
 					}
 
@@ -651,13 +634,13 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 							checkerMove.String, cubeAction.String)
 					}
 					if err != nil {
-						fmt.Printf("Error inserting move: %v\n", err)
+						slog.Warn("inserting move", "err", err)
 						continue
 					}
 
 					newMoveID, err := result.LastInsertId()
 					if err != nil {
-						fmt.Printf("Error getting new move ID: %v\n", err)
+						slog.Warn("getting new move ID", "err", err)
 						continue
 					}
 					moveIDMapping[oldMoveID] = newMoveID
@@ -699,7 +682,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 					`, newMoveID, analysisType, depth, equity, equityError, winRate, gammonRate, backgammonRate,
 						oppWinRate, oppGammonRate, oppBackgammonRate)
 					if err != nil {
-						fmt.Printf("Error inserting move analysis: %v\n", err)
+						slog.Warn("inserting move analysis", "err", err)
 						continue
 					}
 					moveAnalysisCount++
@@ -711,7 +694,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			}
 		}
 
-		fmt.Printf("Exported %d matches, %d games, %d moves, %d move analyses\n", matchCount, gameCount, moveCount, moveAnalysisCount)
+		slog.Info("exported matches", "matches", matchCount, "games", gameCount, "moves", moveCount, "moveAnalyses", moveAnalysisCount)
 	}
 
 	// Export collections if requested
@@ -726,14 +709,14 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			err := d.db.QueryRow(`SELECT name, COALESCE(description, ''), sort_order, COALESCE(strftime('%Y-%m-%d %H:%M:%S', created_at), ''), COALESCE(strftime('%Y-%m-%d %H:%M:%S', updated_at), '') FROM collection WHERE id = ?`, collectionID).
 				Scan(&name, &description, &sortOrder, &createdAt, &updatedAt)
 			if err != nil {
-				fmt.Printf("Error reading collection %d: %v\n", collectionID, err)
+				slog.Warn("reading collection", "collectionID", collectionID, "err", err)
 				continue
 			}
 
 			result, err := exportDB.Exec(`INSERT INTO collection (name, description, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?)`,
 				name, description, sortOrder, createdAt, updatedAt)
 			if err != nil {
-				fmt.Printf("Error inserting collection %d: %v\n", collectionID, err)
+				slog.Warn("inserting collection", "collectionID", collectionID, "err", err)
 				continue
 			}
 			newCollectionID, err := result.LastInsertId()
@@ -745,7 +728,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			// Export collection_position mappings
 			cpRows, err := d.db.Query(`SELECT position_id, sort_order, added_at FROM collection_position WHERE collection_id = ?`, collectionID)
 			if err != nil {
-				fmt.Printf("Error querying collection_position for collection %d: %v\n", collectionID, err)
+				slog.Warn("querying collection_position", "collectionID", collectionID, "err", err)
 				continue
 			}
 			for cpRows.Next() {
@@ -767,7 +750,7 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			cpRows.Close()
 		}
 
-		fmt.Printf("Exported %d collections with %d position mappings\n", collectionCount, collectionPosCount)
+		slog.Info("exported collections", "collections", collectionCount, "positionMappings", collectionPosCount)
 	}
 
 	// Export tournaments if requested
@@ -783,14 +766,14 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			err := d.db.QueryRow(`SELECT name, date, location, sort_order, created_at, updated_at FROM tournament WHERE id = ?`, tournamentID).
 				Scan(&name, &date, &location, &sortOrder, &createdAt, &updatedAt)
 			if err != nil {
-				fmt.Printf("Error reading tournament %d: %v\n", tournamentID, err)
+				slog.Warn("reading tournament", "tournamentID", tournamentID, "err", err)
 				continue
 			}
 
 			result, err := exportDB.Exec(`INSERT INTO tournament (name, date, location, sort_order, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?)`,
 				name, date, location, sortOrder, createdAt, updatedAt)
 			if err != nil {
-				fmt.Printf("Error inserting tournament %d: %v\n", tournamentID, err)
+				slog.Warn("inserting tournament", "tournamentID", tournamentID, "err", err)
 				continue
 			}
 			newTournamentID, err := result.LastInsertId()
@@ -823,10 +806,10 @@ func (d *Database) ExportDatabase(exportPath string, positions []Position, metad
 			}
 		}
 
-		fmt.Printf("Exported %d tournaments\n", tournamentCount)
+		slog.Info("exported tournaments", "count", tournamentCount)
 	}
 
-	fmt.Printf("Successfully exported %d positions to %s\n", len(positions), exportPath)
+	slog.Info("exported positions", "count", len(positions), "path", exportPath)
 	return nil
 }
 

@@ -30,7 +30,6 @@ func (d *Database) CreateTournament(name string, date string, location string) (
 		VALUES (?, ?, ?, ?, datetime('now'), datetime('now'))
 	`, name, date, location, maxOrder+1)
 	if err != nil {
-		fmt.Println("Error creating tournament:", err)
 		return 0, err
 	}
 

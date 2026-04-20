@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"strings"
 	"time"
 )
@@ -23,7 +24,6 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 		ORDER BY CASE WHEN m.match_date IS NULL OR m.match_date = '' OR m.match_date = '0001-01-01T00:00:00Z' THEN m.import_date ELSE m.match_date END DESC
 	`)
 	if err != nil {
-		fmt.Println("Error loading matches:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -35,7 +35,7 @@ func (d *Database) GetAllMatches() ([]Match, error) {
 			&m.MatchLength, &m.MatchDate, &m.ImportDate, &m.FilePath, &m.GameCount,
 			&m.TournamentID, &m.TournamentName, &m.LastVisitedPosition, &m.Comment)
 		if err != nil {
-			fmt.Println("Error scanning match:", err)
+			slog.Warn("scanning match", "err", err)
 			continue
 		}
 		matches = append(matches, m)
@@ -66,7 +66,6 @@ func (d *Database) GetMatchByID(matchID int64) (*Match, error) {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("match not found")
 		}
-		fmt.Println("Error loading match:", err)
 		return nil, err
 	}
 
@@ -80,7 +79,6 @@ func (d *Database) SaveLastVisitedPosition(matchID int64, positionIndex int) err
 
 	_, err := d.db.Exec(`UPDATE match SET last_visited_position = ? WHERE id = ?`, positionIndex, matchID)
 	if err != nil {
-		fmt.Println("Error saving last visited position:", err)
 		return err
 	}
 	return nil
@@ -113,7 +111,6 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 	}
 
 	if err != sql.ErrNoRows {
-		fmt.Println("Error finding last visited match:", err)
 		return nil, err
 	}
 
@@ -135,7 +132,6 @@ func (d *Database) GetLastVisitedMatch() (*Match, error) {
 		if err == sql.ErrNoRows {
 			return nil, fmt.Errorf("no matches in database")
 		}
-		fmt.Println("Error finding most recent match:", err)
 		return nil, err
 	}
 
@@ -155,7 +151,6 @@ func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
 		ORDER BY game_number ASC
 	`, matchID)
 	if err != nil {
-		fmt.Println("Error loading games:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -167,7 +162,7 @@ func (d *Database) GetGamesByMatch(matchID int64) ([]Game, error) {
 		err := rows.Scan(&g.ID, &g.MatchID, &g.GameNumber, &score1, &score2,
 			&g.Winner, &g.PointsWon, &g.MoveCount)
 		if err != nil {
-			fmt.Println("Error scanning game:", err)
+			slog.Warn("scanning game", "err", err)
 			continue
 		}
 		g.InitialScore = [2]int32{score1, score2}
@@ -193,7 +188,6 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 		ORDER BY move_number ASC
 	`, gameID)
 	if err != nil {
-		fmt.Println("Error loading moves:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -206,7 +200,7 @@ func (d *Database) GetMovesByGame(gameID int64) ([]Move, error) {
 		err := rows.Scan(&m.ID, &m.GameID, &m.MoveNumber, &m.MoveType, &m.PositionID,
 			&m.Player, &dice1, &dice2, &checkerMove, &cubeAction)
 		if err != nil {
-			fmt.Println("Error scanning move:", err)
+			slog.Warn("scanning move", "err", err)
 			continue
 		}
 		m.Dice = [2]int32{dice1, dice2}
@@ -349,7 +343,7 @@ func (d *Database) GetMatchMovePositions(matchID int64) ([]MatchMovePosition, er
 			&pDT, &pPOR, &pD1, &pD2, &pCV, &pCO, &pS1, &pS2, &pHJ, &pHB,
 			&checkerMove, &cubeAction)
 		if err != nil {
-			fmt.Printf("Error scanning move: %v\n", err)
+			slog.Warn("scanning move", "err", err)
 			continue
 		}
 

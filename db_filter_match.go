@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"math"
 	"strconv"
 	"strings"
@@ -16,7 +17,7 @@ func (p *Position) MatchesDecisionType(filter Position) bool {
 func (p *Position) MatchesSearchText(searchText string, d *Database) bool {
 	comment, err := d.LoadComment(p.ID)
 	if err != nil {
-		fmt.Printf("Error loading comment for position ID: %d, error: %v\n", p.ID, err)
+		slog.Warn("loading comment for position", "positionID", p.ID, "err", err)
 		return false
 	}
 
@@ -39,14 +40,14 @@ func (p *Position) MatchesPlayer1CheckerOff(filter string) bool {
 	if strings.HasPrefix(filter, "o>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersOff >= value
 	} else if strings.HasPrefix(filter, "o<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersOff <= value
@@ -56,13 +57,13 @@ func (p *Position) MatchesPlayer1CheckerOff(filter string) bool {
 			values = append(values, values[0]) // Handle case where 'ox' means 'ox,x'
 		}
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -83,14 +84,14 @@ func (p *Position) MatchesPlayer2CheckerOff(filter string) bool {
 	if strings.HasPrefix(filter, "O>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersOff >= value
 	} else if strings.HasPrefix(filter, "O<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersOff <= value
@@ -100,13 +101,13 @@ func (p *Position) MatchesPlayer2CheckerOff(filter string) bool {
 			values = append(values, values[0]) // Handle case where 'Ox' means 'Ox,x'
 		}
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -141,27 +142,27 @@ func (p *Position) MatchesPlayer2BackgammonRate(filter string, d *Database) bool
 	if strings.HasPrefix(filter, "B>") && !strings.HasPrefix(filter, "BO>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backgammonRate >= value
 	} else if strings.HasPrefix(filter, "B<") && !strings.HasPrefix(filter, "BO<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backgammonRate <= value
 	} else if strings.HasPrefix(filter, "B") && !strings.HasPrefix(filter, "BO") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.ParseFloat(values[0], 64)
 		value2, err2 := strconv.ParseFloat(values[1], 64)
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -196,27 +197,27 @@ func (p *Position) MatchesPlayer2GammonRate(filter string, d *Database) bool {
 	if strings.HasPrefix(filter, "G>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return gammonRate >= value
 	} else if strings.HasPrefix(filter, "G<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return gammonRate <= value
 	} else if strings.HasPrefix(filter, "G") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.ParseFloat(values[0], 64)
 		value2, err2 := strconv.ParseFloat(values[1], 64)
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -246,27 +247,27 @@ func (p *Position) MatchesPipCountFilter(filter string) bool {
 	if strings.HasPrefix(filter, "p>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return pipCountDiff >= value
 	} else if strings.HasPrefix(filter, "p<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return pipCountDiff <= value
 	} else if strings.HasPrefix(filter, "p") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -301,27 +302,27 @@ func (p *Position) MatchesWinRate(filter string, d *Database) bool {
 	if strings.HasPrefix(filter, "w>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return winRate >= value
 	} else if strings.HasPrefix(filter, "w<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return winRate <= value
 	} else if strings.HasPrefix(filter, "w") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.ParseFloat(values[0], 64)
 		value2, err2 := strconv.ParseFloat(values[1], 64)
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -356,27 +357,27 @@ func (p *Position) MatchesPlayer2WinRate(filter string, d *Database) bool {
 	if strings.HasPrefix(filter, "W>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return winRate >= value
 	} else if strings.HasPrefix(filter, "W<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return winRate <= value
 	} else if strings.HasPrefix(filter, "W") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.ParseFloat(values[0], 64)
 		value2, err2 := strconv.ParseFloat(values[1], 64)
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -411,27 +412,27 @@ func (p *Position) MatchesGammonRate(filter string, d *Database) bool {
 	if strings.HasPrefix(filter, "g>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return gammonRate >= value
 	} else if strings.HasPrefix(filter, "g<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return gammonRate <= value
 	} else if strings.HasPrefix(filter, "g") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.ParseFloat(values[0], 64)
 		value2, err2 := strconv.ParseFloat(values[1], 64)
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -466,27 +467,27 @@ func (p *Position) MatchesBackgammonRate(filter string, d *Database) bool {
 	if strings.HasPrefix(filter, "b>") && !strings.HasPrefix(filter, "bo>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backgammonRate >= value
 	} else if strings.HasPrefix(filter, "b<") && !strings.HasPrefix(filter, "bo<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backgammonRate <= value
 	} else if strings.HasPrefix(filter, "b") && !strings.HasPrefix(filter, "bo") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.ParseFloat(values[0], 64)
 		value2, err2 := strconv.ParseFloat(values[1], 64)
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -535,14 +536,14 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 	if strings.HasPrefix(filter, "k>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backCheckers >= value
 	} else if strings.HasPrefix(filter, "k<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backCheckers <= value
@@ -552,13 +553,13 @@ func (p *Position) MatchesPlayer1BackChecker(filter string) bool {
 			values = append(values, values[0]) // Handle case where 'kx' means 'kx,x'
 		}
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -585,14 +586,14 @@ func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
 	if strings.HasPrefix(filter, "K>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backCheckers >= value
 	} else if strings.HasPrefix(filter, "K<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return backCheckers <= value
@@ -602,13 +603,13 @@ func (p *Position) MatchesPlayer2BackChecker(filter string) bool {
 			values = append(values, values[0]) // Handle case where 'Kx' means 'Kx,x'
 		}
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -635,14 +636,14 @@ func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
 	if strings.HasPrefix(filter, "z>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersInZone >= value
 	} else if strings.HasPrefix(filter, "z<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersInZone <= value
@@ -652,13 +653,13 @@ func (p *Position) MatchesPlayer1CheckerInZone(filter string) bool {
 			values = append(values, values[0]) // Handle case where 'zx' means 'zx,x'
 		}
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -685,14 +686,14 @@ func (p *Position) MatchesPlayer2CheckerInZone(filter string) bool {
 	if strings.HasPrefix(filter, "Z>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersInZone >= value
 	} else if strings.HasPrefix(filter, "Z<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return checkersInZone <= value
@@ -702,13 +703,13 @@ func (p *Position) MatchesPlayer2CheckerInZone(filter string) bool {
 			values = append(values, values[0]) // Handle case where 'Zx' means 'Zx,x'
 		}
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -729,14 +730,14 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 	if strings.HasPrefix(filter, "P>") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return player1PipCount >= value
 	} else if strings.HasPrefix(filter, "P<") {
 		value, err := strconv.Atoi(filter[2:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		return player1PipCount <= value
@@ -745,7 +746,7 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 		if len(values) == 1 {
 			value, err := strconv.Atoi(values[0])
 			if err != nil {
-				fmt.Printf("Error parsing filter value: %s\n", values[0])
+				slog.Warn("parsing filter value", "value", values[0])
 				return false
 			}
 			return player1PipCount == value
@@ -753,7 +754,7 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 			value1, err1 := strconv.Atoi(values[0])
 			value2, err2 := strconv.Atoi(values[1])
 			if err1 != nil || err2 != nil {
-				fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+				slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 				return false
 			}
 			minValue := value1
@@ -789,7 +790,7 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 	if strings.HasPrefix(filter, "e>") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		value /= 1000 // Convert millipoints to points
@@ -797,7 +798,7 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 	} else if strings.HasPrefix(filter, "e<") {
 		value, err := strconv.ParseFloat(filter[2:], 64)
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[2:])
+			slog.Warn("parsing filter value", "value", filter[2:])
 			return false
 		}
 		value /= 1000 // Convert millipoints to points
@@ -805,13 +806,13 @@ func (p *Position) MatchesEquityFilter(filter string, d *Database) bool {
 	} else if strings.HasPrefix(filter, "e") {
 		values := strings.Split(filter[1:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[1:])
+			slog.Warn("parsing filter values", "value", filter[1:])
 			return false
 		}
 		value1, err1 := strconv.ParseFloat(values[0], 64)
 		value2, err2 := strconv.ParseFloat(values[1], 64)
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		value1 /= 1000 // Convert millipoints to points
@@ -1053,7 +1054,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 		dateStr := filter[2:]
 		date, err := time.ParseInLocation("2006/01/02", dateStr, creationDate.Location())
 		if err != nil {
-			fmt.Printf("Error parsing date filter value: %s\n", dateStr)
+			slog.Warn("parsing date filter value", "value", dateStr)
 			return false
 		}
 		match := creationDate.After(date) || creationDate.Equal(date)
@@ -1062,7 +1063,7 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 		dateStr := filter[2:]
 		date, err := time.ParseInLocation("2006/01/02", dateStr, creationDate.Location())
 		if err != nil {
-			fmt.Printf("Error parsing date filter value: %s\n", dateStr)
+			slog.Warn("parsing date filter value", "value", dateStr)
 			return false
 		}
 		date = date.Add(24 * time.Hour).Add(-1 * time.Second) // Include the entire day
@@ -1071,13 +1072,13 @@ func (p *Position) MatchesDateFilter(filter string, d *Database) bool {
 	} else if strings.HasPrefix(filter, "T") {
 		dateRange := strings.Split(filter[1:], ",")
 		if len(dateRange) != 2 {
-			fmt.Printf("Error parsing date range filter values: %s\n", filter[1:])
+			slog.Warn("parsing date range filter values", "value", filter[1:])
 			return false
 		}
 		startDate, err1 := time.ParseInLocation("2006/01/02", dateRange[0], creationDate.Location())
 		endDate, err2 := time.ParseInLocation("2006/01/02", dateRange[1], creationDate.Location())
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing date range filter values: %s, %s\n", dateRange[0], dateRange[1])
+			slog.Warn("parsing date range filter values", "v1", dateRange[0], "v2", dateRange[1])
 			return false
 		}
 		if startDate.After(endDate) {
@@ -1102,27 +1103,27 @@ func (p *Position) MatchesPlayer1OutfieldBlot(filter string) bool {
 	if strings.HasPrefix(filter, "bo>") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return outfieldBlots >= value
 	} else if strings.HasPrefix(filter, "bo<") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return outfieldBlots <= value
 	} else if strings.HasPrefix(filter, "bo") {
 		values := strings.Split(filter[2:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			slog.Warn("parsing filter values", "value", filter[2:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -1148,27 +1149,27 @@ func (p *Position) MatchesPlayer2OutfieldBlot(filter string) bool {
 	if strings.HasPrefix(filter, "BO>") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return opponentOutfieldBlots >= value
 	} else if strings.HasPrefix(filter, "BO<") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return opponentOutfieldBlots <= value
 	} else if strings.HasPrefix(filter, "BO") {
 		values := strings.Split(filter[2:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			slog.Warn("parsing filter values", "value", filter[2:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -1194,27 +1195,27 @@ func (p *Position) MatchesPlayer1JanBlot(filter string) bool {
 	if strings.HasPrefix(filter, "bj>") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return janBlots >= value
 	} else if strings.HasPrefix(filter, "bj<") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return janBlots <= value
 	} else if strings.HasPrefix(filter, "bj") {
 		values := strings.Split(filter[2:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			slog.Warn("parsing filter values", "value", filter[2:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1
@@ -1240,27 +1241,27 @@ func (p *Position) MatchesPlayer2JanBlot(filter string) bool {
 	if strings.HasPrefix(filter, "BJ>") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return opponentJanBlots >= value
 	} else if strings.HasPrefix(filter, "BJ<") {
 		value, err := strconv.Atoi(filter[3:])
 		if err != nil {
-			fmt.Printf("Error parsing filter value: %s\n", filter[3:])
+			slog.Warn("parsing filter value", "value", filter[3:])
 			return false
 		}
 		return opponentJanBlots <= value
 	} else if strings.HasPrefix(filter, "BJ") {
 		values := strings.Split(filter[2:], ",")
 		if len(values) != 2 {
-			fmt.Printf("Error parsing filter values: %s\n", filter[2:])
+			slog.Warn("parsing filter values", "value", filter[2:])
 			return false
 		}
 		value1, err1 := strconv.Atoi(values[0])
 		value2, err2 := strconv.Atoi(values[1])
 		if err1 != nil || err2 != nil {
-			fmt.Printf("Error parsing filter values: %s, %s\n", values[0], values[1])
+			slog.Warn("parsing filter values", "v1", values[0], "v2", values[1])
 			return false
 		}
 		minValue := value1

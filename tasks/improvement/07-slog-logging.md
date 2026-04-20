@@ -31,7 +31,7 @@
 
 ### 1. Set up `slog` infrastructure
 
-- [ ] Create `logging.go` with handler initialization:
+- [x] Create `logging.go` with handler initialization:
   ```go
   package main
 
@@ -57,12 +57,12 @@
       slog.SetDefault(slog.New(handler))
   }
   ```
-- [ ] Call `initLogging("cli")` from `runCLI()` and `initLogging("gui")` from `runGUI()` in `main.go`
-- [ ] Support `BLUNDERDB_DEBUG=1` env var to set level to `slog.LevelDebug`
+- [x] Call `initLogging("cli")` from `runCLI()` and `initLogging("gui")` from `runGUI()` in `main.go`
+- [x] Support `BLUNDERDB_DEBUG=1` env var to set level to `slog.LevelDebug`
 
 ### 2. Categorize all 746 print calls
 
-- [ ] Audit each `fmt.Println`/`fmt.Printf` and classify:
+- [x] Audit each `fmt.Println`/`fmt.Printf` and classify:
   - **Error** (`"Error creating table:", err`) → `slog.Error("creating table", "err", err)`
   - **Warning** (`"Warning: ..."`) → `slog.Warn("...")`
   - **Diagnostic/debug** (`"Processing batch:", n`) → `slog.Debug("processing batch", "n", n)`
@@ -71,7 +71,7 @@
 
 ### 3. Migrate `db_*.go` files (383 calls)
 
-- [ ] Replace error prints with `slog.Error`:
+- [x] Replace error prints with `slog.Error`:
   ```go
   // Before:
   fmt.Println("Error creating position table:", err)
@@ -80,40 +80,40 @@
   // After:
   return fmt.Errorf("creating position table: %w", err)
   ```
-- [ ] For cases where the function continues after the print (non-fatal), use `slog.Warn`
-- [ ] Remove all `fmt.Println("Error ...")` + `return err` double-reports — the caller logs if needed
-- [ ] Process one `db_*.go` file at a time, running tests after each
+- [x] For cases where the function continues after the print (non-fatal), use `slog.Warn`
+- [x] Remove all `fmt.Println("Error ...")` + `return err` double-reports — the caller logs if needed
+- [x] Process one `db_*.go` file at a time, running tests after each
 
 ### 4. Migrate `cli.go` (358 calls)
 
-- [ ] Separate user-facing output from error reporting:
+- [x] Separate user-facing output from error reporting:
   - `fmt.Printf("Match: %s vs %s\n", ...)` → keep (intentional CLI output)
   - `fmt.Println("Error importing:", err)` → `slog.Error("importing", "err", err)` or `fmt.Fprintf(os.Stderr, ...)`
-- [ ] Use `slog.Error` for errors, `fmt.Fprintf(os.Stdout, ...)` for results
-- [ ] Ensure all CLI error output goes to stderr, results to stdout
+- [x] Use `slog.Error` for errors, `fmt.Fprintf(os.Stdout, ...)` for results
+- [x] Ensure all CLI error output goes to stderr, results to stdout
 
 ### 5. Migrate `main.go` (4 calls)
 
-- [ ] Already partially fixed by task 03 — verify remaining prints use `slog` or `log.Fatal`
+- [x] Already partially fixed by task 03 — verify remaining prints use `slog` or `log.Fatal`
 
 ### 6. Migrate `epc.go` (1 call)
 
-- [ ] Replace `fmt.Printf("Warning: ...")` with `slog.Warn("...", "err", err)`
+- [x] Replace `fmt.Printf("Warning: ...")` with `slog.Warn("...", "err", err)`
 
 ### 7. Remove `fmt` import where no longer needed
 
-- [ ] After migration, some files may no longer import `fmt` — remove unused imports
-- [ ] Keep `fmt` where `fmt.Errorf` is still used for error wrapping
+- [x] After migration, some files may no longer import `fmt` — remove unused imports
+- [x] Keep `fmt` where `fmt.Errorf` is still used for error wrapping
 
 ## Acceptance criteria
 
-- [ ] Zero `fmt.Println("Error` patterns in any Go source file
-- [ ] All error/diagnostic output uses `slog.Error`, `slog.Warn`, or `slog.Debug`
-- [ ] CLI user-facing output still goes to stdout
-- [ ] CLI error output goes to stderr
-- [ ] `BLUNDERDB_DEBUG=1` enables debug-level logging
-- [ ] All tests pass
-- [ ] No new dependencies (slog is stdlib since Go 1.21)
+- [x] Zero `fmt.Println("Error` patterns in any Go source file
+- [x] All error/diagnostic output uses `slog.Error`, `slog.Warn`, or `slog.Debug`
+- [x] CLI user-facing output still goes to stdout
+- [x] CLI error output goes to stderr
+- [x] `BLUNDERDB_DEBUG=1` enables debug-level logging
+- [x] All tests pass
+- [x] No new dependencies (slog is stdlib since Go 1.21)
 
 ## Rollback
 

@@ -36,6 +36,7 @@ func main() {
 }
 
 func runCLI() {
+	initLogging("cli")
 	cli := NewCLI()
 	args := os.Args[1:]
 
@@ -46,6 +47,7 @@ func runCLI() {
 }
 
 func runGUI() {
+	initLogging("gui")
 	app := NewApp()
 	db := NewDatabase()
 	cfg := NewConfig()

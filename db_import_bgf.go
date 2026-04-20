@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"math"
 	"sort"
 	"strconv"
@@ -110,7 +111,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 	var matchID int64
 	if isCanonicalDuplicate {
 		matchID = canonicalMatchID
-		fmt.Printf("Canonical duplicate detected - reusing match ID %d, importing new analysis only\n", matchID)
+		slog.Info("canonical duplicate detected, reusing match", "matchID", matchID)
 	} else {
 		result, err := tx.Exec(`
 			INSERT INTO match (player1_name, player2_name, event, location, round,
@@ -144,7 +145,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			if tournamentID > 0 {
 				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
 				if err != nil {
-					fmt.Printf("Warning: failed to link match to tournament: %v\n", err)
+					slog.Warn("failed to link match to tournament", "err", err)
 				}
 			}
 		}
@@ -266,7 +267,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 
 						err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 						if err != nil {
-							fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
+							slog.Warn("failed to import BGF cube move", "game", gameIdx+1, "err", err)
 						}
 						moveNumber++
 						continue
@@ -275,7 +276,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 					// Normal checker move
 					err := d.importBGFCheckerMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache)
 					if err != nil {
-						fmt.Printf("Warning: failed to import BGF move %d in game %d: %v\n", moveIdx, gameIdx+1, err)
+						slog.Warn("failed to import BGF move", "move", moveIdx, "game", gameIdx+1, "err", err)
 					}
 					// Update board state - skip when green=7 (unplayable die marker)
 					// BGBlitz uses green=7 to indicate that one die couldn't be played.
@@ -309,7 +310,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 
 					err := d.importBGFCubeMove(tx, gameID, moveNumber, moveData, gameData, matchLen, boardState, cubeValue, cubeOwner, isCrawford, cache, cubeAction)
 					if err != nil {
-						fmt.Printf("Warning: failed to import BGF cube move in game %d: %v\n", gameIdx+1, err)
+						slog.Warn("failed to import BGF cube move", "game", gameIdx+1, "err", err)
 					}
 					moveNumber++
 
@@ -444,7 +445,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 		return 0, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
-	fmt.Printf("Successfully imported BGF match %d with %d games from %s\n", matchID, len(gamesData), filePath)
+	slog.Info("imported BGF match", "matchID", matchID, "games", len(gamesData), "file", filePath)
 	return matchID, nil
 }
 
@@ -556,7 +557,7 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 			if bgfGetBool(maData, "played") {
 				err = d.saveBGFMoveAnalysisInTx(tx, moveID, maData)
 				if err != nil {
-					fmt.Printf("Warning: failed to save BGF move analysis: %v\n", err)
+					slog.Warn("failed to save BGF move analysis", "err", err)
 				}
 				break // Only save the played move to move_analysis
 			}
@@ -565,7 +566,7 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 		// Save to position analysis table (all moves for UI compatibility)
 		err = d.saveBGFCheckerAnalysisToPositionInTx(tx, posID, moveAnalysis, blunderDBPlayer, checkerMoveStr)
 		if err != nil {
-			fmt.Printf("Warning: failed to save BGF position analysis: %v\n", err)
+			slog.Warn("failed to save BGF position analysis", "err", err)
 		}
 	}
 
@@ -578,7 +579,7 @@ func (d *Database) importBGFCheckerMove(tx *sql.Tx, gameID int64, moveNumber int
 			if stateOnMove != "" {
 				err = d.saveBGFCubeAnalysisForCheckerPositionInTx(tx, posID, equity, cubeDecision)
 				if err != nil {
-					fmt.Printf("Warning: failed to save cube analysis for checker position: %v\n", err)
+					slog.Warn("failed to save cube analysis for checker position", "err", err)
 				}
 			}
 		}
@@ -629,12 +630,12 @@ func (d *Database) importBGFCubeMove(tx *sql.Tx, gameID int64, moveNumber int32,
 		if cubeDecision != nil {
 			err = d.saveBGFCubeMoveAnalysisInTx(tx, moveID, equity, cubeDecision)
 			if err != nil {
-				fmt.Printf("Warning: failed to save BGF cube analysis: %v\n", err)
+				slog.Warn("failed to save BGF cube analysis", "err", err)
 			}
 
 			err = d.saveBGFCubeAnalysisToPositionInTx(tx, posID, equity, cubeDecision, cubeAction)
 			if err != nil {
-				fmt.Printf("Warning: failed to save BGF position cube analysis: %v\n", err)
+				slog.Warn("failed to save BGF position cube analysis", "err", err)
 			}
 		}
 	}
@@ -1707,12 +1708,12 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 		err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis,
 			&move.CheckerMove.Position, move.CheckerMove.ActivePlayer, &move.CheckerMove.PlayedMove)
 		if err != nil {
-			fmt.Printf("Warning: failed to save checker analysis for XGP position: %v\n", err)
+			slog.Warn("failed to save checker analysis for XGP position", "err", err)
 		}
 	} else if move.MoveType == "cube" && move.CubeMove != nil && move.CubeMove.Analysis != nil {
 		err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, d.convertCubeAction(move.CubeMove.CubeAction))
 		if err != nil {
-			fmt.Printf("Warning: failed to save cube analysis for XGP position: %v\n", err)
+			slog.Warn("failed to save cube analysis for XGP position", "err", err)
 		}
 	}
 
@@ -1741,7 +1742,7 @@ func (d *Database) ImportXGPPosition(filePath string) (int64, error) {
 		return 0, fmt.Errorf("failed to commit XGP position: %w", err)
 	}
 
-	fmt.Printf("Successfully imported XGP position (ID: %d) from %s\n", positionID, filePath)
+	slog.Info("imported XGP position", "positionID", positionID, "file", filePath)
 	return positionID, nil
 }
 

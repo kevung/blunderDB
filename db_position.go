@@ -3,7 +3,6 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
-	"fmt"
 )
 
 func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
@@ -16,13 +15,11 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 
 	positionJSON, err := json.Marshal(positionCopy)
 	if err != nil {
-		fmt.Println("Error marshalling position:", err)
 		return nil, err
 	}
 
 	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
-		fmt.Println("Error querying positions:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -30,7 +27,6 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 	for rows.Next() {
 		existingPosition, err := scanPositionRow(rows)
 		if err != nil {
-			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
 		positionID := existingPosition.ID
@@ -39,7 +35,6 @@ func (d *Database) PositionExists(position Position) (map[string]interface{}, er
 		existingPosition.ID = 0
 		existingPositionJSON, err := json.Marshal(existingPosition)
 		if err != nil {
-			fmt.Println("Error marshalling existing position:", err)
 			return nil, err
 		}
 
@@ -268,13 +263,11 @@ func (d *Database) SavePosition(position *Position) (int64, error) {
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
 		compactState)
 	if err != nil {
-		fmt.Println("Error inserting position:", err)
 		return 0, err
 	}
 
 	positionID, err := result.LastInsertId()
 	if err != nil {
-		fmt.Println("Error getting last insert ID:", err)
 		return 0, err
 	}
 
@@ -315,7 +308,6 @@ func (d *Database) UpdatePosition(position Position) error {
 		int64(cols.Occupancy1), int64(cols.Occupancy2), int64(cols.PointMask1), int64(cols.PointMask2),
 		position.ID)
 	if err != nil {
-		fmt.Println("Error updating position:", err)
 		return err
 	}
 
@@ -329,7 +321,6 @@ func (d *Database) LoadPosition(id int) (*Position, error) {
 	row := d.db.QueryRow(`SELECT `+positionSelectCols+` FROM position WHERE id = ?`, id)
 	pos, err := scanPositionRow(row)
 	if err != nil {
-		fmt.Println("Error loading position:", err)
 		return nil, err
 	}
 
@@ -342,7 +333,6 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 
 	rows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
-		fmt.Println("Error loading positions:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -351,7 +341,6 @@ func (d *Database) LoadAllPositions() ([]Position, error) {
 	for rows.Next() {
 		position, err := scanPositionRow(rows)
 		if err != nil {
-			fmt.Println("Error scanning position:", err)
 			return nil, err
 		}
 		positions = append(positions, position)
@@ -370,7 +359,6 @@ func (d *Database) DeletePosition(positionID int64) error {
 	// Delete the position — ON DELETE CASCADE handles analysis, comment, and collection_position
 	_, err := d.db.Exec(`DELETE FROM position WHERE id = ?`, positionID)
 	if err != nil {
-		fmt.Println("Error deleting position:", err)
 		return err
 	}
 

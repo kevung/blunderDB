@@ -5,6 +5,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log/slog"
 	"math"
 	"os"
 	"path/filepath"
@@ -168,13 +169,11 @@ func (cli *CLI) runImport(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		importCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *importType == "" {
-		fmt.Println("Error: --type flag is required")
 		importCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
@@ -188,7 +187,6 @@ func (cli *CLI) runImport(args []string) error {
 	switch strings.ToLower(*importType) {
 	case "match":
 		if *inputFile == "" {
-			fmt.Println("Error: --file flag is required for match import")
 			importCmd.Usage()
 			return fmt.Errorf("missing required flag: --file")
 		}
@@ -199,7 +197,6 @@ func (cli *CLI) runImport(args []string) error {
 		return cli.importMatch(*inputFile)
 	case "position":
 		if *inputFile == "" {
-			fmt.Println("Error: --file flag is required for position import")
 			importCmd.Usage()
 			return fmt.Errorf("missing required flag: --file")
 		}
@@ -210,7 +207,6 @@ func (cli *CLI) runImport(args []string) error {
 		return cli.importPosition(*inputFile)
 	case "batch":
 		if *inputDir == "" {
-			fmt.Println("Error: --dir flag is required for batch import")
 			importCmd.Usage()
 			return fmt.Errorf("missing required flag: --dir")
 		}
@@ -287,19 +283,16 @@ func (cli *CLI) runExport(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *exportType == "" {
-		fmt.Println("Error: --type flag is required")
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
 
 	if *outputFile == "" {
-		fmt.Println("Error: --file flag is required")
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --file")
 	}
@@ -382,13 +375,11 @@ func (cli *CLI) runList(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		listCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *listType == "" {
-		fmt.Println("Error: --type flag is required")
 		listCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
@@ -440,19 +431,16 @@ func (cli *CLI) runDelete(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		deleteCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *deleteType == "" {
-		fmt.Println("Error: --type flag is required")
 		deleteCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
 
 	if *id == 0 {
-		fmt.Println("Error: --id flag is required")
 		deleteCmd.Usage()
 		return fmt.Errorf("missing required flag: --id")
 	}
@@ -595,7 +583,7 @@ func (cli *CLI) importPosition(filePath string) error {
 		// Try to parse as position JSON
 		var pos Position
 		if err := json.Unmarshal([]byte(line), &pos); err != nil {
-			fmt.Printf("Error parsing line %d: %v\n", i+1, err)
+			slog.Warn("parsing line", "line", i+1, "err", err)
 			errors++
 			continue
 		}
@@ -603,7 +591,7 @@ func (cli *CLI) importPosition(filePath string) error {
 		// Save position
 		_, err := cli.db.SavePosition(&pos)
 		if err != nil {
-			fmt.Printf("Error importing line %d: %v\n", i+1, err)
+			slog.Warn("importing line", "line", i+1, "err", err)
 			errors++
 			continue
 		}
@@ -924,7 +912,6 @@ func (cli *CLI) runCreate(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		createCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
@@ -1020,13 +1007,11 @@ func (cli *CLI) runMatch(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		matchCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *matchID == 0 {
-		fmt.Println("Error: --id flag is required")
 		matchCmd.Usage()
 		return fmt.Errorf("missing required flag: --id")
 	}
@@ -1110,7 +1095,6 @@ func (cli *CLI) runVerify(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		verifyCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
@@ -1532,7 +1516,6 @@ func (cli *CLI) runInfo(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		infoCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
@@ -1645,14 +1628,12 @@ func (cli *CLI) runEdit(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		editCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	// Check that at least one edit option is provided
 	if *user == "" && *description == "" && !*clearUser && !*clearDescription {
-		fmt.Println("Error: at least one edit option is required")
 		editCmd.Usage()
 		return fmt.Errorf("no edit options provided")
 	}
@@ -1765,7 +1746,6 @@ func (cli *CLI) runSearch(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		searchCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}

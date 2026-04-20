@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"strings"
 	"sync/atomic"
 )
@@ -333,7 +334,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 		}
 	}
 	if mergedTotal > 0 {
-		fmt.Printf("migrate_1_9_0_to_2_0_0: merged %d duplicate positions\n", mergedTotal)
+		slog.Info("migration merged duplicate positions", "count", mergedTotal)
 	}
 
 	// -----------------------------------------------------------------
@@ -360,7 +361,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 	for _, idx := range v2indexes {
 		if _, err := d.db.Exec(idx); err != nil {
 			// UNIQUE index may fail if dedup left residual NULLs; treat as non-fatal warning
-			fmt.Printf("migrate_1_9_0_to_2_0_0: index warning: %v\n", err)
+			slog.Warn("migration index warning", "err", err)
 		}
 	}
 
@@ -376,7 +377,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 		return fmt.Errorf("migrate version bump: %w", err)
 	}
 
-	fmt.Println("Database automatically upgraded from 1.9.0 to 2.0.0")
+	slog.Info("database upgraded", "from", "1.9.0", "to", "2.0.0")
 	return nil
 }
 
@@ -511,7 +512,7 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 		return fmt.Errorf("migrate version bump: %w", err)
 	}
 
-	fmt.Println("Database automatically upgraded from 2.0.0 to 2.1.0")
+	slog.Info("database upgraded", "from", "2.0.0", "to", "2.1.0")
 	return nil
 }
 
@@ -607,7 +608,7 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 		return fmt.Errorf("migrate version bump: %w", err)
 	}
 
-	fmt.Println("Database automatically upgraded from 2.1.0 to 2.2.0")
+	slog.Info("database upgraded", "from", "2.1.0", "to", "2.2.0")
 	return nil
 }
 
@@ -688,6 +689,6 @@ func (d *Database) migrate_2_2_0_to_2_3_0() error {
 		return fmt.Errorf("migrate version bump: %w", err)
 	}
 
-	fmt.Println("Database automatically upgraded from 2.2.0 to 2.3.0")
+	slog.Info("database upgraded", "from", "2.2.0", "to", "2.3.0")
 	return nil
 }

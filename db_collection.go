@@ -48,7 +48,6 @@ func (d *Database) CreateCollection(name string, description string) (int64, err
 		VALUES (?, ?, ?, datetime('now'), datetime('now'))
 	`, name, description, maxOrder+1)
 	if err != nil {
-		fmt.Println("Error creating collection:", err)
 		return 0, err
 	}
 

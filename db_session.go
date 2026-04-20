@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"strconv"
 	"time"
 )
@@ -17,7 +18,6 @@ func (d *Database) SaveCommand(command string) error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -27,7 +27,6 @@ func (d *Database) SaveCommand(command string) error {
 
 	_, err = d.db.Exec(`INSERT INTO command_history (command) VALUES (?)`, command)
 	if err != nil {
-		fmt.Println("Error saving command:", err)
 		return err
 	}
 
@@ -53,7 +52,6 @@ func (d *Database) LoadCommandHistory() ([]string, error) {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return nil, err
 	}
 
@@ -63,7 +61,6 @@ func (d *Database) LoadCommandHistory() ([]string, error) {
 
 	rows, err := d.db.Query(`SELECT command FROM command_history ORDER BY timestamp ASC`)
 	if err != nil {
-		fmt.Println("Error loading command history:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -72,7 +69,6 @@ func (d *Database) LoadCommandHistory() ([]string, error) {
 	for rows.Next() {
 		var command string
 		if err = rows.Scan(&command); err != nil {
-			fmt.Println("Error scanning command:", err)
 			return nil, err
 		}
 		history = append(history, command)
@@ -91,7 +87,6 @@ func (d *Database) ClearCommandHistory() error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -101,7 +96,6 @@ func (d *Database) ClearCommandHistory() error {
 
 	_, err = d.db.Exec(`DELETE FROM command_history`)
 	if err != nil {
-		fmt.Println("Error clearing command history:", err)
 		return err
 	}
 	return nil
@@ -128,7 +122,6 @@ func (d *Database) SaveSearchHistory(command string, position string) error {
 	_, err := d.db.Exec(`INSERT INTO search_history (command, position, timestamp) VALUES (?, ?, ?)`,
 		command, position, time.Now().UnixMilli())
 	if err != nil {
-		fmt.Println("Error saving search history:", err)
 		return err
 	}
 
@@ -142,7 +135,6 @@ func (d *Database) SaveSearchHistory(command string, position string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error pruning search history:", err)
 		return err
 	}
 
@@ -160,7 +152,6 @@ func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
 
 	rows, err := d.db.Query(`SELECT id, command, position, timestamp FROM search_history ORDER BY timestamp DESC LIMIT 100`)
 	if err != nil {
-		fmt.Println("Error loading search history:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -170,7 +161,6 @@ func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
 		var entry SearchHistory
 		err := rows.Scan(&entry.ID, &entry.Command, &entry.Position, &entry.Timestamp)
 		if err != nil {
-			fmt.Println("Error scanning search history row:", err)
 			return nil, err
 		}
 		history = append(history, entry)
@@ -193,7 +183,6 @@ func (d *Database) DeleteSearchHistoryEntry(timestamp int64) error {
 
 	_, err := d.db.Exec(`DELETE FROM search_history WHERE timestamp = ?`, timestamp)
 	if err != nil {
-		fmt.Println("Error deleting search history entry:", err)
 		return err
 	}
 
@@ -222,7 +211,6 @@ func (d *Database) SaveSessionState(state SessionState) error {
 	// Serialize position IDs to JSON
 	positionIDsJSON, err := json.Marshal(state.LastPositionIDs)
 	if err != nil {
-		fmt.Println("Error marshaling position IDs:", err)
 		return err
 	}
 
@@ -235,25 +223,21 @@ func (d *Database) SaveSessionState(state SessionState) error {
 	// Save each session state field as a metadata entry
 	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_command', ?)`, state.LastSearchCommand)
 	if err != nil {
-		fmt.Println("Error saving session_last_search_command:", err)
 		return err
 	}
 
 	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_search_position', ?)`, state.LastSearchPosition)
 	if err != nil {
-		fmt.Println("Error saving session_last_search_position:", err)
 		return err
 	}
 
 	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_index', ?)`, strconv.Itoa(state.LastPositionIndex))
 	if err != nil {
-		fmt.Println("Error saving session_last_position_index:", err)
 		return err
 	}
 
 	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_last_position_ids', ?)`, string(positionIDsJSON))
 	if err != nil {
-		fmt.Println("Error saving session_last_position_ids:", err)
 		return err
 	}
 
@@ -263,13 +247,11 @@ func (d *Database) SaveSessionState(state SessionState) error {
 	}
 	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_has_active_search', ?)`, hasActiveSearchStr)
 	if err != nil {
-		fmt.Println("Error saving session_has_active_search:", err)
 		return err
 	}
 
 	_, err = tx.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('session_views', ?)`, state.ViewsJSON)
 	if err != nil {
-		fmt.Println("Error saving session_views:", err)
 		return err
 	}
 
@@ -291,7 +273,6 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	var lastSearchCommand sql.NullString
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_command'`).Scan(&lastSearchCommand)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error loading session_last_search_command:", err)
 		return nil, err
 	}
 	if lastSearchCommand.Valid {
@@ -302,7 +283,6 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	var lastSearchPosition sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_search_position'`).Scan(&lastSearchPosition)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error loading session_last_search_position:", err)
 		return nil, err
 	}
 	if lastSearchPosition.Valid {
@@ -313,7 +293,6 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	var lastPositionIndex sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_index'`).Scan(&lastPositionIndex)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error loading session_last_position_index:", err)
 		return nil, err
 	}
 	if lastPositionIndex.Valid {
@@ -327,7 +306,6 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	var lastPositionIDs sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_last_position_ids'`).Scan(&lastPositionIDs)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error loading session_last_position_ids:", err)
 		return nil, err
 	}
 	if lastPositionIDs.Valid && lastPositionIDs.String != "" {
@@ -341,7 +319,6 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	var hasActiveSearch sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_has_active_search'`).Scan(&hasActiveSearch)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error loading session_has_active_search:", err)
 		return nil, err
 	}
 	if hasActiveSearch.Valid {
@@ -352,7 +329,6 @@ func (d *Database) LoadSessionState() (*SessionState, error) {
 	var viewsJSON sql.NullString
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'session_views'`).Scan(&viewsJSON)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error loading session_views:", err)
 		return nil, err
 	}
 	if viewsJSON.Valid {
@@ -389,7 +365,6 @@ func (d *Database) ClearSessionState() error {
 	for _, key := range sessionKeys {
 		_, err := tx.Exec(`DELETE FROM metadata WHERE key = ?`, key)
 		if err != nil {
-			fmt.Println("Error deleting session key:", key, err)
 			return err
 		}
 	}
@@ -405,7 +380,6 @@ func (d *Database) Migrate_1_0_0_to_1_1_0() error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -422,18 +396,16 @@ func (d *Database) Migrate_1_0_0_to_1_1_0() error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating command_history table:", err)
 		return err
 	}
 
 	// Update the database version to 1.1.0
 	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.1.0")
 	if err != nil {
-		fmt.Println("Error updating database version:", err)
 		return err
 	}
 
-	fmt.Println("Database successfully migrated from version 1.0.0 to 1.1.0")
+	slog.Info("database migrated", "from", "1.0.0", "to", "1.1.0")
 	return nil
 }
 
@@ -445,7 +417,6 @@ func (d *Database) Migrate_1_1_0_to_1_2_0() error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -463,18 +434,16 @@ func (d *Database) Migrate_1_1_0_to_1_2_0() error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating filter_library table:", err)
 		return err
 	}
 
 	// Update the database version to 1.2.0
 	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.2.0")
 	if err != nil {
-		fmt.Println("Error updating database version:", err)
 		return err
 	}
 
-	fmt.Println("Database successfully migrated from version 1.1.0 to 1.2.0")
+	slog.Info("database migrated", "from", "1.1.0", "to", "1.2.0")
 	return nil
 }
 
@@ -486,7 +455,6 @@ func (d *Database) Migrate_1_2_0_to_1_3_0() error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -504,18 +472,16 @@ func (d *Database) Migrate_1_2_0_to_1_3_0() error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating search_history table:", err)
 		return err
 	}
 
 	// Update the database version to 1.3.0
 	_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.3.0")
 	if err != nil {
-		fmt.Println("Error updating database version:", err)
 		return err
 	}
 
-	fmt.Println("Database successfully migrated from version 1.2.0 to 1.3.0")
+	slog.Info("database migrated", "from", "1.2.0", "to", "1.3.0")
 	return nil
 }
 
@@ -527,7 +493,6 @@ func (d *Database) SaveFilter(name, command string) error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -539,7 +504,6 @@ func (d *Database) SaveFilter(name, command string) error {
 	var existingID int64
 	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, name).Scan(&existingID)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error checking existing filter:", err)
 		return err
 	}
 	if existingID > 0 {
@@ -548,7 +512,6 @@ func (d *Database) SaveFilter(name, command string) error {
 
 	_, err = d.db.Exec(`INSERT INTO filter_library (name, command) VALUES (?, ?)`, name, command)
 	if err != nil {
-		fmt.Println("Error saving filter:", err)
 		return err
 	}
 	return nil
@@ -562,7 +525,6 @@ func (d *Database) UpdateFilter(id int64, name, command string) error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -572,7 +534,6 @@ func (d *Database) UpdateFilter(id int64, name, command string) error {
 
 	result, err := d.db.Exec(`UPDATE filter_library SET name = ?, command = ? WHERE id = ?`, name, command, id)
 	if err != nil {
-		fmt.Println("Error updating filter:", err)
 		return err
 	}
 	rowsAffected, err := result.RowsAffected()
@@ -593,7 +554,6 @@ func (d *Database) DeleteFilter(id int64) error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -603,7 +563,6 @@ func (d *Database) DeleteFilter(id int64) error {
 
 	result, err := d.db.Exec(`DELETE FROM filter_library WHERE id = ?`, id)
 	if err != nil {
-		fmt.Println("Error deleting filter:", err)
 		return err
 	}
 	rowsAffected, err := result.RowsAffected()
@@ -624,7 +583,6 @@ func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return nil, err
 	}
 
@@ -634,7 +592,6 @@ func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 
 	rows, err := d.db.Query(`SELECT id, name, command FROM filter_library`)
 	if err != nil {
-		fmt.Println("Error loading filters:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -644,7 +601,6 @@ func (d *Database) LoadFilters() ([]map[string]interface{}, error) {
 		var id int64
 		var name, command string
 		if err = rows.Scan(&id, &name, &command); err != nil {
-			fmt.Println("Error scanning filter:", err)
 			return nil, err
 		}
 		filters = append(filters, map[string]interface{}{
@@ -667,7 +623,6 @@ func (d *Database) SaveEditPosition(filterName, editPosition string) error {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -679,13 +634,11 @@ func (d *Database) SaveEditPosition(filterName, editPosition string) error {
 	var existingID int64
 	err = d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, filterName).Scan(&existingID)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error checking existing filter:", err)
 		return err
 	}
 	if existingID > 0 {
 		_, err = d.db.Exec(`UPDATE filter_library SET edit_position = ? WHERE id = ?`, editPosition, existingID)
 		if err != nil {
-			fmt.Println("Error updating edit position:", err)
 			return err
 		}
 	} else {
@@ -703,7 +656,6 @@ func (d *Database) LoadEditPosition(filterName string) (string, error) {
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return "", err
 	}
 
@@ -717,7 +669,6 @@ func (d *Database) LoadEditPosition(filterName string) (string, error) {
 		if err == sql.ErrNoRows {
 			return "", nil // No edit position found
 		}
-		fmt.Println("Error loading edit position:", err)
 		return "", err
 	}
 	return editPosition, nil

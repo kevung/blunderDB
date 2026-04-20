@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"math"
 	"sort"
 	"strings"
@@ -30,7 +31,6 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	// Also parse lightweight structure for metadata
 	match, err := xgparser.ParseXG(segments)
 	if err != nil {
-		fmt.Printf("Error parsing XG file: %v\n", err)
 		return 0, fmt.Errorf("failed to parse XG file: %w", err)
 	}
 
@@ -121,7 +121,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 	var matchID int64
 	if isCanonicalDuplicate {
 		matchID = canonicalMatchID
-		fmt.Printf("Canonical duplicate detected - reusing match ID %d, importing new analysis only\n", matchID)
+		slog.Info("canonical duplicate detected, reusing match", "matchID", matchID)
 	} else {
 		result, err := tx.Exec(`
 			INSERT INTO match (player1_name, player2_name, event, location, round, 
@@ -158,7 +158,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 			if tournamentID > 0 {
 				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
 				if err != nil {
-					fmt.Printf("Warning: failed to link match to tournament: %v\n", err)
+					slog.Warn("failed to link match to tournament", "err", err)
 				}
 			}
 		}
@@ -214,7 +214,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 						err = d.saveCheckerAnalysisToPositionInTx(tx, posID, move.CheckerMove.Analysis,
 							&move.CheckerMove.Position, move.CheckerMove.ActivePlayer, &move.CheckerMove.PlayedMove)
 						if err != nil {
-							fmt.Printf("Warning: failed to save analysis for canonical duplicate: %v\n", err)
+							slog.Warn("failed to save analysis for canonical duplicate", "err", err)
 						}
 					}
 
@@ -222,7 +222,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 					if move.Comment != "" {
 						_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, posID, move.Comment)
 						if err != nil {
-							fmt.Printf("Warning: failed to save XG comment for canonical duplicate: %v\n", err)
+							slog.Warn("failed to save XG comment for canonical duplicate", "err", err)
 						}
 					}
 				} else if move.MoveType == "cube" && move.CubeMove != nil && move.CubeMove.Analysis != nil {
@@ -241,14 +241,14 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 
 					err = d.saveCubeAnalysisToPositionInTx(tx, posID, move.CubeMove.Analysis, d.convertCubeAction(move.CubeMove.CubeAction))
 					if err != nil {
-						fmt.Printf("Warning: failed to save cube analysis for canonical duplicate: %v\n", err)
+						slog.Warn("failed to save cube analysis for canonical duplicate", "err", err)
 					}
 
 					// Save comment from XG file if present
 					if move.Comment != "" {
 						_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, posID, move.Comment)
 						if err != nil {
-							fmt.Printf("Warning: failed to save XG comment for canonical duplicate: %v\n", err)
+							slog.Warn("failed to save XG comment for canonical duplicate", "err", err)
 						}
 					}
 				}
@@ -266,7 +266,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 		return 0, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
-	fmt.Printf("Successfully imported match %d with %d games from %s\n", matchID, len(match.Games), filePath)
+	slog.Info("imported match", "matchID", matchID, "games", len(match.Games), "file", filePath)
 	return matchID, nil
 }
 
@@ -413,13 +413,13 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			for _, analysis := range move.CheckerMove.Analysis {
 				err = d.saveMoveAnalysisInTx(tx, moveID, &analysis)
 				if err != nil {
-					fmt.Printf("Warning: failed to save checker analysis: %v\n", err)
+					slog.Warn("failed to save checker analysis", "err", err)
 				}
 			}
 
 			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer, &move.CheckerMove.PlayedMove)
 			if err != nil {
-				fmt.Printf("Warning: failed to save position analysis: %v\n", err)
+				slog.Warn("failed to save position analysis", "err", err)
 			}
 		}
 
@@ -428,7 +428,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 		if rawCube != nil && rawCube.Doubled != nil {
 			err = d.saveCubeAnalysisForCheckerPositionInTx(tx, positionID, rawCube)
 			if err != nil {
-				fmt.Printf("Warning: failed to save cube analysis for checker position: %v\n", err)
+				slog.Warn("failed to save cube analysis for checker position", "err", err)
 			}
 		}
 
@@ -491,11 +491,11 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			if move.CubeMove.Analysis != nil {
 				err = d.saveCubeAnalysisInTx(tx, moveID1, move.CubeMove.Analysis)
 				if err != nil {
-					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+					slog.Warn("failed to save cube analysis", "err", err)
 				}
 				err = d.saveCubeAnalysisToPositionInTx(tx, posID1, move.CubeMove.Analysis, "Double/Take")
 				if err != nil {
-					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+					slog.Warn("failed to save position cube analysis", "err", err)
 				}
 			}
 
@@ -580,12 +580,12 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			if move.CubeMove.Analysis != nil {
 				err = d.saveCubeAnalysisInTx(tx, moveID, move.CubeMove.Analysis)
 				if err != nil {
-					fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+					slog.Warn("failed to save cube analysis", "err", err)
 				}
 
 				err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, cubeActionStr)
 				if err != nil {
-					fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+					slog.Warn("failed to save position cube analysis", "err", err)
 				}
 			}
 		}
@@ -595,7 +595,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 	if move.Comment != "" && positionID > 0 {
 		_, err := tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, positionID, move.Comment)
 		if err != nil {
-			fmt.Printf("Warning: failed to save XG comment: %v\n", err)
+			slog.Warn("failed to save XG comment", "err", err)
 		}
 	}
 

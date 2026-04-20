@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"strings"
 	"sync/atomic"
 )
@@ -21,7 +22,6 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	// Open the import database
 	importDB, err := sql.Open("sqlite", importPath)
 	if err != nil {
-		fmt.Println("Error opening import database:", err)
 		return nil, err
 	}
 	defer importDB.Close()
@@ -30,7 +30,6 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	var importDBVersion string
 	err = importDB.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&importDBVersion)
 	if err != nil {
-		fmt.Println("Error querying import database version:", err)
 		return nil, fmt.Errorf("import database is invalid or missing version information")
 	}
 
@@ -38,7 +37,6 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	var currentDBVersion string
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&currentDBVersion)
 	if err != nil {
-		fmt.Println("Error querying current database version:", err)
 		return nil, err
 	}
 
@@ -54,7 +52,6 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	var totalPositions int
 	err = importDB.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&totalPositions)
 	if err != nil {
-		fmt.Println("Error counting positions:", err)
 		return nil, err
 	}
 
@@ -63,7 +60,6 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
 	currentRows, err := d.db.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
-		fmt.Println("Error querying current database positions:", err)
 		return nil, err
 	}
 
@@ -87,12 +83,11 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 	}
 	currentRows.Close()
 
-	fmt.Printf("Built index of %d positions in current database\n", len(currentPositionsMap))
+	slog.Debug("built position index", "count", len(currentPositionsMap))
 
 	// Analyze what would happen
 	rows, err := importDB.Query(`SELECT id, state FROM position`)
 	if err != nil {
-		fmt.Println("Error loading positions from import database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -105,7 +100,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		var id int64
 		var stateJSON string
 		if err = rows.Scan(&id, &stateJSON); err != nil {
-			fmt.Println("Error scanning position:", err)
+			slog.Warn("scanning position", "err", err)
 			positionsToSkip++
 			continue
 		}
@@ -114,7 +109,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		if isCompactState(stateJSON) {
 			importPosition.Board = decodeBoardCompact(stateJSON)
 		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
-			fmt.Println("Error unmarshalling position:", err)
+			slog.Warn("unmarshalling position", "err", err)
 			positionsToSkip++
 			continue
 		}
@@ -194,7 +189,7 @@ func (d *Database) AnalyzeImportDatabase(importPath string) (map[string]interfac
 		"importPath": importPath,
 	}
 
-	fmt.Printf("Import analysis: %d to add, %d to merge, %d to skip out of %d total\n", positionsToAdd, positionsToMerge, positionsToSkip, totalPositions)
+	slog.Info("import analysis", "toAdd", positionsToAdd, "toMerge", positionsToMerge, "toSkip", positionsToSkip, "total", totalPositions)
 	return result, nil
 }
 
@@ -214,7 +209,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// Begin transaction for ACID compliance
 	tx, err := d.db.Begin()
 	if err != nil {
-		fmt.Println("Error starting transaction:", err)
 		return nil, err
 	}
 
@@ -223,9 +217,9 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		if err != nil || d.isImportCancelled() {
 			tx.Rollback()
 			if d.isImportCancelled() {
-				fmt.Println("Transaction rolled back due to user cancellation")
+				slog.Info("transaction rolled back due to user cancellation")
 			} else {
-				fmt.Println("Transaction rolled back due to error")
+				slog.Warn("transaction rolled back due to error")
 			}
 		}
 	}()
@@ -233,7 +227,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	// Open the import database
 	importDB, err := sql.Open("sqlite", importPath)
 	if err != nil {
-		fmt.Println("Error opening import database:", err)
 		return nil, err
 	}
 	defer importDB.Close()
@@ -242,7 +235,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	var importDBVersion string
 	err = importDB.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&importDBVersion)
 	if err != nil {
-		fmt.Println("Error querying import database version:", err)
 		return nil, fmt.Errorf("import database is invalid or missing version information")
 	}
 
@@ -250,7 +242,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	var currentDBVersion string
 	err = tx.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&currentDBVersion)
 	if err != nil {
-		fmt.Println("Error querying current database version:", err)
 		return nil, err
 	}
 
@@ -266,7 +257,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	var totalPositions int
 	err = importDB.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&totalPositions)
 	if err != nil {
-		fmt.Println("Error counting positions:", err)
 		return nil, err
 	}
 
@@ -275,7 +265,6 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	currentPositionsMap := make(map[string]int64) // map[positionJSON]positionID
 	currentRows, err := tx.Query(`SELECT ` + positionSelectCols + ` FROM position`)
 	if err != nil {
-		fmt.Println("Error querying current database positions:", err)
 		return nil, err
 	}
 
@@ -299,12 +288,11 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	}
 	currentRows.Close()
 
-	fmt.Printf("Built index of %d positions in current database for commit\n", len(currentPositionsMap))
+	slog.Debug("built position index for commit", "count", len(currentPositionsMap))
 
 	// Load all positions from the import database
 	rows, err := importDB.Query(`SELECT id, state FROM position`)
 	if err != nil {
-		fmt.Println("Error loading positions from import database:", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -316,14 +304,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 	for rows.Next() {
 		// Check for cancellation
 		if d.isImportCancelled() {
-			fmt.Println("Import cancelled by user during processing")
+			slog.Info("import cancelled by user during processing")
 			return nil, fmt.Errorf("import cancelled by user")
 		}
 
 		var id int64
 		var stateJSON string
 		if err = rows.Scan(&id, &stateJSON); err != nil {
-			fmt.Println("Error scanning position:", err)
+			slog.Warn("scanning position", "err", err)
 			continue
 		}
 
@@ -331,7 +319,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		if isCompactState(stateJSON) {
 			importPosition.Board = decodeBoardCompact(stateJSON)
 		} else if err = json.Unmarshal([]byte(stateJSON), &importPosition); err != nil {
-			fmt.Println("Error unmarshalling position:", err)
+			slog.Warn("unmarshalling position", "err", err)
 			continue
 		}
 
@@ -366,7 +354,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 					}
 					_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, existingPositionID, recompressed)
 					if err != nil {
-						fmt.Printf("Error inserting analysis for position %d: %v\n", existingPositionID, err)
+						slog.Warn("inserting analysis for position", "positionID", existingPositionID, "err", err)
 					} else {
 						hasMerged = true
 					}
@@ -383,7 +371,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 						}
 						_, err = tx.Exec(`UPDATE analysis SET data = ? WHERE position_id = ?`, recompressed, existingPositionID)
 						if err != nil {
-							fmt.Printf("Error updating analysis for position %d: %v\n", existingPositionID, err)
+							slog.Warn("updating analysis for position", "positionID", existingPositionID, "err", err)
 						} else {
 							hasMerged = true
 						}
@@ -406,7 +394,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 					// No existing comment, insert the imported one
 					_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, existingPositionID, importComment)
 					if err != nil {
-						fmt.Printf("Error inserting comment for position %d: %v\n", existingPositionID, err)
+						slog.Warn("inserting comment for position", "positionID", existingPositionID, "err", err)
 					} else {
 						hasMerged = true
 					}
@@ -421,7 +409,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 						}
 						_, err = tx.Exec(`UPDATE comment SET text = ? WHERE position_id = ?`, mergedComment, existingPositionID)
 						if err != nil {
-							fmt.Printf("Error updating comment for position %d: %v\n", existingPositionID, err)
+							slog.Warn("updating comment for position", "positionID", existingPositionID, "err", err)
 						} else {
 							hasMerged = true
 						}
@@ -440,14 +428,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			fullJSON := fullPositionJSON(importPosition)
 			result, err := tx.Exec(`INSERT INTO position (state) VALUES (?)`, fullJSON)
 			if err != nil {
-				fmt.Println("Error inserting position:", err)
+				slog.Warn("inserting position", "err", err)
 				positionsSkipped++
 				continue
 			}
 
 			newPositionID, err := result.LastInsertId()
 			if err != nil {
-				fmt.Println("Error getting last insert ID:", err)
+				slog.Warn("getting last insert ID", "err", err)
 				positionsSkipped++
 				continue
 			}
@@ -466,7 +454,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 				_, err = tx.Exec(`INSERT INTO analysis (position_id, data) VALUES (?, ?)`, newPositionID, updatedAnalysisData)
 				if err != nil {
-					fmt.Printf("Error inserting analysis for new position %d: %v\n", newPositionID, err)
+					slog.Warn("inserting analysis for new position", "positionID", newPositionID, "err", err)
 				}
 			}
 
@@ -476,7 +464,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 			if err == nil && importComment != "" {
 				_, err = tx.Exec(`INSERT INTO comment (position_id, text) VALUES (?, ?)`, newPositionID, importComment)
 				if err != nil {
-					fmt.Printf("Error inserting comment for new position %d: %v\n", newPositionID, err)
+					slog.Warn("inserting comment for new position", "positionID", newPositionID, "err", err)
 				}
 			}
 
@@ -489,14 +477,13 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 
 	// Final check for cancellation before committing
 	if d.isImportCancelled() {
-		fmt.Println("Import cancelled by user before commit")
+		slog.Info("import cancelled by user before commit")
 		return nil, fmt.Errorf("import cancelled by user")
 	}
 
 	// Commit the transaction - this makes all changes atomic
 	err = tx.Commit()
 	if err != nil {
-		fmt.Println("Error committing transaction:", err)
 		return nil, err
 	}
 
@@ -507,14 +494,14 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 		"total":   totalPositions,
 	}
 
-	fmt.Printf("Import committed: %d added, %d merged, %d skipped out of %d total\n", positionsAdded, positionsMerged, positionsSkipped, totalPositions)
+	slog.Info("import committed", "added", positionsAdded, "merged", positionsMerged, "skipped", positionsSkipped, "total", totalPositions)
 	return result, nil
 }
 
 // CancelImport sets the flag to cancel any ongoing import operation
 func (d *Database) CancelImport() {
 	atomic.StoreInt32(&d.importCancelled, 1)
-	fmt.Println("Import cancellation requested")
+	slog.Info("import cancellation requested")
 }
 
 // isImportCancelled checks if import has been cancelled (internal method, no lock needed as it's called within locked context)

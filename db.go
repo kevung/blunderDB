@@ -3,6 +3,7 @@ package main
 import (
 	"database/sql"
 	"fmt"
+	"log/slog"
 	"strings"
 	"sync"
 
@@ -56,13 +57,11 @@ func (d *Database) SetupDatabase(path string) error {
 	var err error
 	d.db, err = sql.Open("sqlite", path)
 	if err != nil {
-		fmt.Println("Error opening database:", err)
 		return err
 	}
 
 	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
 	if err = d.applyPragmas(path); err != nil {
-		fmt.Println("Error applying PRAGMAs:", err)
 		return err
 	}
 
@@ -75,7 +74,6 @@ func (d *Database) SetupDatabase(path string) error {
 		PRAGMA INTEGRITY_CHECK;
 	`)
 	if err != nil {
-		fmt.Println("Error erasing database content:", err)
 		return err
 	}
 
@@ -110,7 +108,6 @@ func (d *Database) SetupDatabase(path string) error {
         )
     `)
 	if err != nil {
-		fmt.Println("Error creating position table:", err)
 		return err
 	}
 
@@ -132,7 +129,6 @@ func (d *Database) SetupDatabase(path string) error {
         )
     `)
 	if err != nil {
-		fmt.Println("Error creating analysis table:", err)
 		return err
 	}
 
@@ -147,7 +143,6 @@ func (d *Database) SetupDatabase(path string) error {
         )
     `)
 	if err != nil {
-		fmt.Println("Error creating comment table:", err)
 		return err
 	}
 
@@ -158,7 +153,6 @@ func (d *Database) SetupDatabase(path string) error {
         )
     `)
 	if err != nil {
-		fmt.Println("Error creating metadata table:", err)
 		return err
 	}
 
@@ -170,7 +164,6 @@ func (d *Database) SetupDatabase(path string) error {
         )
     `)
 	if err != nil {
-		fmt.Println("Error creating command_history table:", err)
 		return err
 	}
 
@@ -183,7 +176,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating filter_library table:", err)
 		return err
 	}
 
@@ -196,7 +188,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating search_history table:", err)
 		return err
 	}
 
@@ -218,14 +209,12 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating match table:", err)
 		return err
 	}
 
 	// Create index on match_hash for fast duplicate detection
 	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
 	if err != nil {
-		fmt.Println("Error creating match_hash index:", err)
 		return err
 	}
 
@@ -243,7 +232,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating game table:", err)
 		return err
 	}
 
@@ -264,7 +252,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating move table:", err)
 		return err
 	}
 
@@ -286,7 +273,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating move_analysis table:", err)
 		return err
 	}
 
@@ -302,7 +288,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating collection table:", err)
 		return err
 	}
 
@@ -319,14 +304,12 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating collection_position table:", err)
 		return err
 	}
 
 	// Create index for faster collection lookups
 	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`)
 	if err != nil {
-		fmt.Println("Error creating collection_position index:", err)
 		return err
 	}
 
@@ -343,7 +326,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating tournament table:", err)
 		return err
 	}
 
@@ -383,7 +365,6 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating anki_deck table:", err)
 		return err
 	}
 
@@ -407,19 +388,16 @@ func (d *Database) SetupDatabase(path string) error {
 		)
 	`)
 	if err != nil {
-		fmt.Println("Error creating anki_card table:", err)
 		return err
 	}
 
 	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_anki_card_deck ON anki_card(deck_id)`)
 	if err != nil {
-		fmt.Println("Error creating anki_card deck index:", err)
 		return err
 	}
 
 	_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_anki_card_due ON anki_card(deck_id, due)`)
 	if err != nil {
-		fmt.Println("Error creating anki_card due index:", err)
 		return err
 	}
 
@@ -445,7 +423,6 @@ func (d *Database) SetupDatabase(path string) error {
 	}
 	for _, idx := range v2indexes {
 		if _, err = d.db.Exec(idx); err != nil {
-			fmt.Println("Error creating v2.0.0 index:", idx, err)
 			return err
 		}
 	}
@@ -453,7 +430,6 @@ func (d *Database) SetupDatabase(path string) error {
 	// Insert or update the database version
 	_, err = d.db.Exec(`INSERT OR REPLACE INTO metadata (key, value) VALUES ('database_version', ?)`, DatabaseVersion)
 	if err != nil {
-		fmt.Println("Error inserting database version:", err)
 		return err
 	}
 
@@ -472,13 +448,11 @@ func (d *Database) OpenDatabase(path string) error {
 	var err error
 	d.db, err = sql.Open("sqlite", path)
 	if err != nil {
-		fmt.Println("Error opening database:", err)
 		return err
 	}
 
 	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
 	if err = d.applyPragmas(path); err != nil {
-		fmt.Println("Error applying PRAGMAs:", err)
 		return err
 	}
 
@@ -486,7 +460,6 @@ func (d *Database) OpenDatabase(path string) error {
 	var dbVersion string
 	err = d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
 	if err != nil {
-		fmt.Println("Error querying database version:", err)
 		return err
 	}
 
@@ -503,16 +476,14 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating command_history table:", err)
 				return err
 			}
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.1.0")
 			if err != nil {
-				fmt.Println("Error updating database version:", err)
 				return err
 			}
 			dbVersion = "1.1.0"
-			fmt.Println("Database automatically upgraded from 1.0.0 to 1.1.0")
+			slog.Info("database upgraded", "from", "1.0.0", "to", "1.1.0")
 		}
 	}
 
@@ -530,16 +501,14 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating filter_library table:", err)
 				return err
 			}
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.2.0")
 			if err != nil {
-				fmt.Println("Error updating database version:", err)
 				return err
 			}
 			dbVersion = "1.2.0"
-			fmt.Println("Database automatically upgraded from 1.1.0 to 1.2.0")
+			slog.Info("database upgraded", "from", "1.1.0", "to", "1.2.0")
 		}
 	}
 
@@ -557,16 +526,14 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating search_history table:", err)
 				return err
 			}
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.3.0")
 			if err != nil {
-				fmt.Println("Error updating database version:", err)
 				return err
 			}
 			dbVersion = "1.3.0"
-			fmt.Println("Database automatically upgraded from 1.2.0 to 1.3.0")
+			slog.Info("database upgraded", "from", "1.2.0", "to", "1.3.0")
 		}
 	}
 
@@ -593,7 +560,6 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating match table:", err)
 				return err
 			}
 
@@ -611,7 +577,6 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating game table:", err)
 				return err
 			}
 
@@ -632,7 +597,6 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating move table:", err)
 				return err
 			}
 
@@ -654,24 +618,21 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating move_analysis table:", err)
 				return err
 			}
 
 			// Create index on match_hash for fast duplicate detection
 			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
 			if err != nil {
-				fmt.Println("Error creating match_hash index:", err)
 				return err
 			}
 
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.4.0")
 			if err != nil {
-				fmt.Println("Error updating database version:", err)
 				return err
 			}
 			dbVersion = "1.4.0"
-			fmt.Println("Database automatically upgraded from 1.3.0 to 1.4.0")
+			slog.Info("database upgraded", "from", "1.3.0", "to", "1.4.0")
 		}
 	}
 
@@ -684,14 +645,12 @@ func (d *Database) OpenDatabase(path string) error {
 			// Add match_hash column
 			_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN match_hash TEXT`)
 			if err != nil {
-				fmt.Println("Error adding match_hash column:", err)
 				return err
 			}
 
 			// Create index on match_hash
 			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_match_hash ON match(match_hash)`)
 			if err != nil {
-				fmt.Println("Error creating match_hash index:", err)
 				return err
 			}
 
@@ -715,7 +674,7 @@ func (d *Database) OpenDatabase(path string) error {
 				}
 			}
 
-			fmt.Println("Added match_hash column and populated existing matches")
+			slog.Info("added match_hash column and populated existing matches")
 		}
 	}
 
@@ -736,7 +695,6 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating collection table:", err)
 				return err
 			}
 
@@ -753,24 +711,21 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating collection_position table:", err)
 				return err
 			}
 
 			// Create index for faster collection lookups
 			_, err = d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_collection_position_collection ON collection_position(collection_id)`)
 			if err != nil {
-				fmt.Println("Error creating collection_position index:", err)
 				return err
 			}
 
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.5.0")
 			if err != nil {
-				fmt.Println("Error updating database version:", err)
 				return err
 			}
 			dbVersion = "1.5.0"
-			fmt.Println("Database automatically upgraded from 1.4.0 to 1.5.0")
+			slog.Info("database upgraded", "from", "1.4.0", "to", "1.5.0")
 		}
 	}
 
@@ -792,7 +747,6 @@ func (d *Database) OpenDatabase(path string) error {
 				)
 			`)
 			if err != nil {
-				fmt.Println("Error creating tournament table:", err)
 				return err
 			}
 
@@ -801,11 +755,10 @@ func (d *Database) OpenDatabase(path string) error {
 
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.6.0")
 			if err != nil {
-				fmt.Println("Error updating database version:", err)
 				return err
 			}
 			dbVersion = "1.6.0"
-			fmt.Println("Database automatically upgraded from 1.5.0 to 1.6.0")
+			slog.Info("database upgraded", "from", "1.5.0", "to", "1.6.0")
 		}
 	}
 
@@ -816,11 +769,10 @@ func (d *Database) OpenDatabase(path string) error {
 
 		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.7.0")
 		if err != nil {
-			fmt.Println("Error updating database version:", err)
 			return err
 		}
 		dbVersion = "1.7.0"
-		fmt.Println("Database automatically upgraded from 1.6.0 to 1.7.0")
+		slog.Info("database upgraded", "from", "1.6.0", "to", "1.7.0")
 	}
 
 	// Auto-migrate from 1.7.0 to 1.8.0
@@ -832,11 +784,10 @@ func (d *Database) OpenDatabase(path string) error {
 
 		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.8.0")
 		if err != nil {
-			fmt.Println("Error updating database version:", err)
 			return err
 		}
 		dbVersion = "1.8.0"
-		fmt.Println("Database automatically upgraded from 1.7.0 to 1.8.0")
+		slog.Info("database upgraded", "from", "1.7.0", "to", "1.8.0")
 	}
 
 	// Auto-migrate from 1.8.0 to 1.9.0
@@ -846,11 +797,10 @@ func (d *Database) OpenDatabase(path string) error {
 
 		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.9.0")
 		if err != nil {
-			fmt.Println("Error updating database version:", err)
 			return err
 		}
 		dbVersion = "1.9.0"
-		fmt.Println("Database automatically upgraded from 1.8.0 to 1.9.0")
+		slog.Info("database upgraded", "from", "1.8.0", "to", "1.9.0")
 	}
 
 	// Auto-migrate from 1.9.0 to 2.0.0
@@ -896,7 +846,6 @@ func (d *Database) OpenDatabase(path string) error {
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).
 	if err := d.ensureAllTablesExist(); err != nil {
-		fmt.Println("Error ensuring all tables exist:", err)
 		return err
 	}
 
@@ -925,7 +874,6 @@ func (d *Database) OpenDatabase(path string) error {
 		var tableName string
 		err = d.db.QueryRow(`SELECT name FROM sqlite_master WHERE type='table' AND name=?`, table).Scan(&tableName)
 		if err != nil {
-			fmt.Printf("Error checking table %s: %v\n", table, err)
 			return err
 		}
 		if tableName != table {
@@ -939,7 +887,6 @@ func (d *Database) OpenDatabase(path string) error {
 		var value string
 		err = d.db.QueryRow(`SELECT value FROM metadata WHERE key=?`, key).Scan(&value)
 		if err != nil {
-			fmt.Printf("Error checking metadata key %s: %v\n", key, err)
 			return err
 		}
 		if value == "" {

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"log/slog"
 	"math"
 	"path/filepath"
 	"sort"
@@ -128,7 +129,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 	var matchID int64
 	if isCanonicalDuplicate {
 		matchID = canonicalMatchID
-		fmt.Printf("Canonical duplicate detected - reusing match ID %d, importing new analysis only\n", matchID)
+		slog.Info("canonical duplicate detected, reusing match", "matchID", matchID)
 	} else {
 		result, err := tx.Exec(`
 			INSERT INTO match (player1_name, player2_name, event, location, round,
@@ -164,7 +165,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 			if tournamentID > 0 {
 				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
 				if err != nil {
-					fmt.Printf("Warning: failed to link match to tournament: %v\n", err)
+					slog.Warn("failed to link match to tournament", "err", err)
 				}
 			}
 		}
@@ -230,7 +231,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 						}
 						err = d.saveGnuBGCheckerAnalysisToPositionInTx(tx, posID, moveRec.Analysis, moveRec.Player, checkerMoveStr, isSGF)
 						if err != nil {
-							fmt.Printf("Warning: failed to save analysis for canonical duplicate: %v\n", err)
+							slog.Warn("failed to save analysis for canonical duplicate", "err", err)
 						}
 					}
 					if moveRec.CubeAnalysis != nil {
@@ -288,7 +289,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 						}
 						err = d.saveGnuBGCubeAnalysisToPositionInTx(tx, posID, &cubeAnalysis, cubeAction)
 						if err != nil {
-							fmt.Printf("Warning: failed to save cube analysis for canonical duplicate: %v\n", err)
+							slog.Warn("failed to save cube analysis for canonical duplicate", "err", err)
 						}
 					}
 				case "take", "drop":
@@ -371,7 +372,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 
 				err := d.importGnuBGMove(tx, gameID, moveNumber, moveRec, &game, gnuMatch.Metadata.MatchLength, cache, isSGF, cubeAction)
 				if err != nil {
-					fmt.Printf("Warning: failed to import move %d in game %d: %v\n", moveNumber, game.GameNumber, err)
+					slog.Warn("failed to import move", "move", moveNumber, "game", game.GameNumber, "err", err)
 					moveNumber++
 					continue
 				}
@@ -401,7 +402,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 		return 0, fmt.Errorf("failed to commit transaction: %w", err)
 	}
 
-	fmt.Printf("Successfully imported GnuBG match %d with %d games from %s\n", matchID, len(gnuMatch.Games), filePath)
+	slog.Info("imported GnuBG match", "matchID", matchID, "games", len(gnuMatch.Games), "file", filePath)
 	return matchID, nil
 }
 
@@ -521,14 +522,14 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 		for _, moveOpt := range moveRec.Analysis.Moves {
 			err = d.saveGnuBGMoveAnalysisInTx(tx, moveID, &moveOpt)
 			if err != nil {
-				fmt.Printf("Warning: failed to save checker analysis: %v\n", err)
+				slog.Warn("failed to save checker analysis", "err", err)
 			}
 		}
 
 		// Save to position analysis table (for UI compatibility)
 		err = d.saveGnuBGCheckerAnalysisToPositionInTx(tx, positionID, moveRec.Analysis, moveRec.Player, checkerMoveStr, isSGF)
 		if err != nil {
-			fmt.Printf("Warning: failed to save position analysis: %v\n", err)
+			slog.Warn("failed to save position analysis", "err", err)
 		}
 	}
 
@@ -541,7 +542,7 @@ func (d *Database) importGnuBGCheckerMove(tx *sql.Tx, gameID int64, moveNumber i
 		}
 		err = d.saveGnuBGCubeAnalysisForCheckerPositionInTx(tx, positionID, &cubeAnalysis)
 		if err != nil {
-			fmt.Printf("Warning: failed to save cube analysis for checker position: %v\n", err)
+			slog.Warn("failed to save cube analysis for checker position", "err", err)
 		}
 	}
 
@@ -609,13 +610,13 @@ func (d *Database) importGnuBGCubeMove(tx *sql.Tx, gameID int64, moveNumber int3
 		// Save to move_analysis table
 		err = d.saveGnuBGCubeMoveAnalysisInTx(tx, moveID, &cubeAnalysis)
 		if err != nil {
-			fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
+			slog.Warn("failed to save cube analysis", "err", err)
 		}
 
 		// Save to position analysis table (for UI compatibility)
 		err = d.saveGnuBGCubeAnalysisToPositionInTx(tx, positionID, &cubeAnalysis, cubeAction)
 		if err != nil {
-			fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
+			slog.Warn("failed to save position cube analysis", "err", err)
 		}
 	}
 

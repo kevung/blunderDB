@@ -5,7 +5,6 @@ import (
 	"compress/zlib"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"io"
 	"math"
 	"sort"
@@ -178,7 +177,6 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 	var existingAnalysisData []byte
 	err := d.db.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
 	if err != nil && err != sql.ErrNoRows {
-		fmt.Println("Error querying analysis:", err)
 		return err
 	}
 
@@ -186,7 +184,6 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		// Parse existing analysis
 		existingAnalysis, err := decodeAnalysisFromStorage(existingAnalysisData)
 		if err != nil {
-			fmt.Println("Error unmarshalling existing analysis:", err)
 			return err
 		}
 
@@ -257,7 +254,6 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		roundAnalysisForStorage(&analysis)
 		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
-			fmt.Println("Error marshalling analysis:", err)
 			return err
 		}
 		playedMove := ""
@@ -282,7 +278,6 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
 			existingID)
 		if err != nil {
-			fmt.Println("Error updating analysis:", err)
 			return err
 		}
 	} else {
@@ -323,7 +318,6 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 		roundAnalysisForStorage(&analysis)
 		analysisData, err := encodeAnalysisForStorage(&analysis)
 		if err != nil {
-			fmt.Println("Error marshalling analysis:", err)
 			return err
 		}
 		playedMove := ""
@@ -346,7 +340,6 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
 		if err != nil {
-			fmt.Println("Error inserting analysis:", err)
 			return err
 		}
 	}
@@ -364,13 +357,11 @@ func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 		if err == sql.ErrNoRows {
 			return nil, err
 		}
-		fmt.Println("Error loading analysis:", err)
 		return nil, err
 	}
 
 	analysis, err := decodeAnalysisFromStorage(analysisData)
 	if err != nil {
-		fmt.Println("Error unmarshalling analysis:", err)
 		return nil, err
 	}
 
@@ -475,7 +466,6 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 
 	_, err := d.db.Exec(`DELETE FROM analysis WHERE position_id = ?`, positionID)
 	if err != nil {
-		fmt.Println("Error deleting analysis:", err)
 		return err
 	}
 	return nil
