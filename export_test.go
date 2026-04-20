@@ -208,29 +208,6 @@ func countRows(t *testing.T, db *sql.DB, table string) int {
 	return count
 }
 
-// loadAllPositions returns the positions from the export db.
-func loadExportPositions(t *testing.T, db *sql.DB) []Position {
-	t.Helper()
-	rows, err := db.Query("SELECT state FROM position")
-	if err != nil {
-		t.Fatalf("query positions: %v", err)
-	}
-	defer rows.Close()
-	var positions []Position
-	for rows.Next() {
-		var stateJSON string
-		if err := rows.Scan(&stateJSON); err != nil {
-			t.Fatalf("scan position: %v", err)
-		}
-		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-			t.Fatalf("unmarshal position: %v", err)
-		}
-		positions = append(positions, pos)
-	}
-	return positions
-}
-
 // loadExportAnalysis returns all PositionAnalysis from the export db.
 func loadExportAnalysis(t *testing.T, db *sql.DB) []PositionAnalysis {
 	t.Helper()

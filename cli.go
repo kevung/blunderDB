@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -619,11 +618,6 @@ func (cli *CLI) importPosition(filePath string) error {
 	return nil
 }
 
-// exportDatabase exports the entire database (legacy function, exports with matches)
-func (cli *CLI) exportDatabase(outputFile string) error {
-	return cli.exportDatabaseWithOptions(outputFile, true, true, true, true, true, false, nil, nil, nil)
-}
-
 // exportDatabaseWithOptions exports the database with configurable options
 func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis bool, includeComments bool,
 	includeFilterLibrary bool, includePlayedMoves bool, includeMatches bool,
@@ -878,7 +872,7 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 	if !confirm {
 		fmt.Print("Are you sure you want to delete this match? (yes/no): ")
 		var response string
-		fmt.Scanln(&response)
+		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "yes" {
 			fmt.Println("Deletion cancelled")
 			return nil
@@ -1459,12 +1453,12 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 
 		// After each successful match import, checkpoint the WAL to keep file size bounded.
 		if result.Success && result.MatchID > 0 {
-			cli.db.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+			_, _ = cli.db.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
 		}
 	}
 
 	// After all imports, update query planner statistics.
-	cli.db.db.Exec("ANALYZE")
+	_, _ = cli.db.db.Exec("ANALYZE")
 
 	// Print summary table
 	fmt.Println("\n" + strings.Repeat("=", 100))
@@ -2068,45 +2062,4 @@ func (cli *CLI) runSearch(args []string) error {
 	}
 
 	return nil
-}
-
-// SearchResult represents a position search result for display
-type SearchResult struct {
-	Position    Position
-	Analysis    *PositionAnalysis
-	XGID        string
-	BestMove    string
-	Equity      float64
-	EquityError *float64
-}
-
-// getSearchResults loads positions with their analysis for display
-func (cli *CLI) getSearchResults(positions []Position) []SearchResult {
-	var results []SearchResult
-
-	for _, pos := range positions {
-		result := SearchResult{
-			Position: pos,
-		}
-
-		analysis, err := cli.db.LoadAnalysis(pos.ID)
-		if err == nil && analysis != nil {
-			result.Analysis = analysis
-			result.XGID = analysis.XGID
-
-			if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-				result.BestMove = analysis.CheckerAnalysis.Moves[0].Move
-				result.Equity = analysis.CheckerAnalysis.Moves[0].Equity
-			}
-		}
-
-		results = append(results, result)
-	}
-
-	// Sort by ID
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].Position.ID < results[j].Position.ID
-	})
-
-	return results
 }

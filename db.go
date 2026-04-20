@@ -1123,29 +1123,23 @@ func (d *Database) SetupDatabase(path string) error {
 	}
 
 	// Add tournament_id column to match table if it doesn't exist
-	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
-	// Ignore error if column already exists
+	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
 
 	// Add last_visited_position column to match table if it doesn't exist (v1.7.0)
-	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
-	// Ignore error if column already exists
+	d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
 
 	// Add canonical_hash column to match table if it doesn't exist
 	// canonical_hash is format-independent (same match imported from XG and SGF will have the same canonical_hash)
-	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
-	// Ignore error if column already exists
+	d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
 
 	// Add comment column to match table
-	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
-	// Ignore error if column already exists
+	d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
 
 	// Add tournament_sort_order column to match table (ordering within a tournament)
-	_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
-	// Ignore error if column already exists
+	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
 
 	// Add comment column to tournament table
-	_, err = d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
-	// Ignore error if column already exists
+	d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
 
 	// Create Anki spaced repetition tables (v1.8.0)
 	_, err = d.db.Exec(`
@@ -1578,8 +1572,7 @@ func (d *Database) OpenDatabase(path string) error {
 			}
 
 			// Add tournament_id column to match table
-			_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
-			// Ignore error if column already exists
+			d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
 
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.6.0")
 			if err != nil {
@@ -1594,8 +1587,7 @@ func (d *Database) OpenDatabase(path string) error {
 	// Auto-migrate from 1.6.0 to 1.7.0
 	if dbVersion == "1.6.0" {
 		// Add last_visited_position column to match table
-		_, err = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
-		// Ignore error if column already exists
+		d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
 
 		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.7.0")
 		if err != nil {
@@ -3178,23 +3170,6 @@ func appendIntRangeSQL(column string, min, max int, hasMin, hasMax bool, where *
 			where.WriteString(" AND " + column + " BETWEEN ? AND ?")
 			*args = append(*args, min, max)
 		}
-	} else if hasMin {
-		where.WriteString(" AND " + column + " >= ?")
-		*args = append(*args, min)
-	} else {
-		where.WriteString(" AND " + column + " <= ?")
-		*args = append(*args, max)
-	}
-}
-
-// appendFloatRangeSQL is the float64 variant of appendIntRangeSQL.
-func appendFloatRangeSQL(column string, min, max float64, hasMin, hasMax bool, where *strings.Builder, args *[]any) {
-	if !hasMin && !hasMax {
-		return
-	}
-	if hasMin && hasMax {
-		where.WriteString(" AND " + column + " BETWEEN ? AND ?")
-		*args = append(*args, min, max)
 	} else if hasMin {
 		where.WriteString(" AND " + column + " >= ?")
 		*args = append(*args, min)
@@ -6490,7 +6465,7 @@ func (d *Database) CommitImportDatabase(importPath string) (map[string]interface
 				} else if existingErr == nil {
 					// Merge comments - only add if not already present
 					if trimmedImport != "" && !strings.Contains(trimmedExisting, trimmedImport) {
-						mergedComment := trimmedExisting
+						var mergedComment string
 						if trimmedExisting != "" {
 							mergedComment = trimmedExisting + "\n\n" + trimmedImport
 						} else {
@@ -7786,129 +7761,6 @@ func (d *Database) importGame(tx *sql.Tx, matchID int64, game *xgparser.Game) (i
 	return result.LastInsertId()
 }
 
-// importMoveWithCache imports a move using a position cache for deduplication
-func (d *Database) importMoveWithCache(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, cache *importCache) error {
-	var positionID int64
-	var player int32
-	var dice [2]int32
-	var checkerMoveStr string
-	var cubeActionStr string
-
-	if move.MoveType == "checker" && move.CheckerMove != nil {
-		// Create position from checker move
-		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber, move.CheckerMove.ActivePlayer)
-		if err != nil {
-			return fmt.Errorf("failed to create position: %w", err)
-		}
-
-		// Set position-specific attributes from move
-		// Convert XG player encoding (-1, 1) to blunderDB encoding (0, 1)
-		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CheckerMove.ActivePlayer)
-		pos.DecisionType = CheckerAction
-		pos.Dice = [2]int{int(move.CheckerMove.Dice[0]), int(move.CheckerMove.Dice[1])}
-
-		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
-		if err != nil {
-			return fmt.Errorf("failed to save position: %w", err)
-		}
-		positionID = posID
-
-		player = move.CheckerMove.ActivePlayer
-		dice = move.CheckerMove.Dice
-
-		// Convert move notation with hit detection for consistency with analysis display
-		checkerMoveStr = d.convertXGMoveToStringWithHits(move.CheckerMove.PlayedMove, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
-
-		// Save move
-		moveResult, err := tx.Exec(`
-			INSERT INTO move (game_id, move_number, move_type, position_id, player,
-			                  dice_1, dice_2, checker_move)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`, gameID, moveNumber, "checker", positionID, player, dice[0], dice[1], checkerMoveStr)
-		if err != nil {
-			return err
-		}
-
-		moveID, err := moveResult.LastInsertId()
-		if err != nil {
-			return fmt.Errorf("failed to get last insert ID: %w", err)
-		}
-
-		// Save analysis if available
-		if len(move.CheckerMove.Analysis) > 0 {
-			// Save to move_analysis table
-			for _, analysis := range move.CheckerMove.Analysis {
-				err = d.saveMoveAnalysisInTx(tx, moveID, &analysis)
-				if err != nil {
-					fmt.Printf("Warning: failed to save checker analysis: %v\n", err)
-				}
-			}
-
-			// Also save to position analysis table (for UI compatibility)
-			err = d.saveCheckerAnalysisToPositionInTx(tx, positionID, move.CheckerMove.Analysis, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer, &move.CheckerMove.PlayedMove)
-			if err != nil {
-				fmt.Printf("Warning: failed to save position analysis: %v\n", err)
-			}
-		}
-
-	} else if move.MoveType == "cube" && move.CubeMove != nil {
-		// Create position from cube move
-		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
-		if err != nil {
-			return fmt.Errorf("failed to create position: %w", err)
-		}
-
-		// Set position-specific attributes from move
-		// Convert XG player encoding (-1, 1) to blunderDB encoding (0, 1)
-		pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
-		pos.DecisionType = CubeAction
-		pos.Dice = [2]int{0, 0} // No dice for cube decisions
-
-		// Save position with cache
-		posID, err := d.savePositionInTxWithCache(tx, pos, cache)
-		if err != nil {
-			return fmt.Errorf("failed to save position: %w", err)
-		}
-		positionID = posID
-
-		player = move.CubeMove.ActivePlayer
-		cubeActionStr = d.convertCubeAction(move.CubeMove.CubeAction)
-
-		// Save move
-		moveResult, err := tx.Exec(`
-			INSERT INTO move (game_id, move_number, move_type, position_id, player,
-			                  dice_1, dice_2, cube_action)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`, gameID, moveNumber, "cube", positionID, player, 0, 0, cubeActionStr)
-		if err != nil {
-			return err
-		}
-
-		moveID, err := moveResult.LastInsertId()
-		if err != nil {
-			return fmt.Errorf("failed to get last insert ID: %w", err)
-		}
-
-		// Save cube analysis if available
-		if move.CubeMove.Analysis != nil {
-			// Save to move_analysis table
-			err = d.saveCubeAnalysisInTx(tx, moveID, move.CubeMove.Analysis)
-			if err != nil {
-				fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
-			}
-
-			// Also save to position analysis table (for UI compatibility)
-			err = d.saveCubeAnalysisToPositionInTx(tx, positionID, move.CubeMove.Analysis, cubeActionStr)
-			if err != nil {
-				fmt.Printf("Warning: failed to save position cube analysis: %v\n", err)
-			}
-		}
-	}
-
-	return nil
-}
-
 // importMoveWithCacheAndRawCube imports a move with raw cube data for complete action info
 func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32, cache *importCache, rawCube *RawCubeAction) error {
 	var positionID int64
@@ -8068,7 +7920,7 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 			positionID = posID2 // Use second position as the reference
 
 			// Convert opponent from blunderDB (0,1) back to XG encoding (1,-1) for move table
-			opponentPlayerXG := int32(1)
+			var opponentPlayerXG int32
 			if opponentPlayer == 0 {
 				opponentPlayerXG = 1
 			} else {
@@ -8170,103 +8022,6 @@ func (d *Database) convertRawCubeAction(double, take int32) string {
 		}
 	}
 	return fmt.Sprintf("Unknown(D=%d,T=%d)", double, take)
-}
-
-// importMove imports a move, creates associated position, and stores analysis (deprecated - use importMoveWithCache)
-func (d *Database) importMove(tx *sql.Tx, gameID int64, moveNumber int32, move *xgparser.Move, game *xgparser.Game, matchLength int32) error {
-	var positionID int64
-	var player int32
-	var dice [2]int32
-	var checkerMoveStr string
-	var cubeActionStr string
-
-	if move.MoveType == "checker" && move.CheckerMove != nil {
-		// Create position from checker move
-		pos, err := d.createPositionFromXG(move.CheckerMove.Position, game, matchLength, moveNumber, move.CheckerMove.ActivePlayer)
-		if err != nil {
-			return fmt.Errorf("failed to create position: %w", err)
-		}
-
-		// Save position
-		posID, err := d.savePositionInTx(tx, pos)
-		if err != nil {
-			return fmt.Errorf("failed to save position: %w", err)
-		}
-		positionID = posID
-
-		player = move.CheckerMove.ActivePlayer
-		dice = move.CheckerMove.Dice
-
-		// Convert move notation with hit detection for consistency with analysis display
-		checkerMoveStr = d.convertXGMoveToStringWithHits(move.CheckerMove.PlayedMove, &move.CheckerMove.Position, move.CheckerMove.ActivePlayer)
-
-		// Save move
-		moveResult, err := tx.Exec(`
-			INSERT INTO move (game_id, move_number, move_type, position_id, player,
-			                  dice_1, dice_2, checker_move)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`, gameID, moveNumber, "checker", positionID, player, dice[0], dice[1], checkerMoveStr)
-		if err != nil {
-			return err
-		}
-
-		moveID, err := moveResult.LastInsertId()
-		if err != nil {
-			return fmt.Errorf("failed to get last insert ID: %w", err)
-		}
-
-		// Save analysis if available
-		if len(move.CheckerMove.Analysis) > 0 {
-			for _, analysis := range move.CheckerMove.Analysis {
-				err = d.saveMoveAnalysisInTx(tx, moveID, &analysis)
-				if err != nil {
-					fmt.Printf("Warning: failed to save checker analysis: %v\n", err)
-				}
-			}
-		}
-
-	} else if move.MoveType == "cube" && move.CubeMove != nil {
-		// Create position from cube move
-		pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
-		if err != nil {
-			return fmt.Errorf("failed to create position: %w", err)
-		}
-
-		// Save position
-		posID, err := d.savePositionInTx(tx, pos)
-		if err != nil {
-			return fmt.Errorf("failed to save position: %w", err)
-		}
-		positionID = posID
-
-		player = move.CubeMove.ActivePlayer
-		cubeActionStr = d.convertCubeAction(move.CubeMove.CubeAction)
-
-		// Save move
-		moveResult, err := tx.Exec(`
-			INSERT INTO move (game_id, move_number, move_type, position_id, player,
-			                  dice_1, dice_2, cube_action)
-			VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-		`, gameID, moveNumber, "cube", positionID, player, 0, 0, cubeActionStr)
-		if err != nil {
-			return err
-		}
-
-		moveID, err := moveResult.LastInsertId()
-		if err != nil {
-			return fmt.Errorf("failed to get last insert ID: %w", err)
-		}
-
-		// Save cube analysis if available
-		if move.CubeMove.Analysis != nil {
-			err = d.saveCubeAnalysisInTx(tx, moveID, move.CubeMove.Analysis)
-			if err != nil {
-				fmt.Printf("Warning: failed to save cube analysis: %v\n", err)
-			}
-		}
-	}
-
-	return nil
 }
 
 // createPositionFromXG converts xgparser.Position to blunderDB Position
@@ -8373,13 +8128,11 @@ func (d *Database) createPositionFromXG(xgPos xgparser.Position, game *xgparser.
 				// Active player's bar (Player 2) → Player 2's bar
 				targetIndex = 0
 			}
-		} else {
-			// Player 1's perspective - direct mapping (XG index = blunderDB index)
-			// XG index 1-24 = Player 1's points 1-24 → blunderDB index 1-24 (same)
-			// XG index 0 = opponent bar (Player 2) → blunderDB index 0 (Player 2's bar)
-			// XG index 25 = active bar (Player 1) → blunderDB index 25 (Player 1's bar)
-			// No transformation needed: targetIndex = i
 		}
+		// Player 1's perspective: direct mapping (XG index = blunderDB index)
+		// XG index 1-24 = Player 1's points 1-24 → blunderDB index 1-24 (same)
+		// XG index 0 = opponent bar (Player 2) → blunderDB index 0 (Player 2's bar)
+		// XG index 25 = active bar (Player 1) → blunderDB index 25 (Player 1's bar)
 
 		if checkerCount == 0 {
 			pos.Board.Points[targetIndex] = Point{Checkers: 0, Color: -1}
@@ -8882,29 +8635,6 @@ func (d *Database) saveCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID
 
 	// Save to analysis table (will update if exists, insert if not)
 	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
-}
-
-// determineBestCubeAction determines the best cube action from analysis
-// Takes into account that opponent will play optimally (choose min equity for the player)
-func (d *Database) determineBestCubeAction(analysis *xgparser.CubeAnalysis) string {
-	cubefulNoDouble := analysis.CubefulNoDouble
-	cubefulDoubleTake := analysis.CubefulDoubleTake
-	cubefulDoublePass := analysis.CubefulDoublePass
-
-	// If player doubles, opponent will choose the action that minimizes player's equity
-	effectiveDoubleEquity := cubefulDoubleTake
-	if cubefulDoublePass < cubefulDoubleTake {
-		effectiveDoubleEquity = cubefulDoublePass
-	}
-
-	// Player's best choice is max(NoDouble, effectiveDoubleEquity)
-	if effectiveDoubleEquity > cubefulNoDouble {
-		if cubefulDoubleTake <= cubefulDoublePass {
-			return "Double, Take"
-		}
-		return "Double, Pass"
-	}
-	return "No Double"
 }
 
 // enginePriority returns a sort priority for analysis engines.
@@ -9714,12 +9444,6 @@ type xgMoveWithHit struct {
 	from  int32
 	to    int32
 	isHit bool
-}
-
-// xgMoveItem is unused but kept for documentation
-type xgMoveItem struct {
-	from int32
-	to   int32
 }
 
 // mergeSlides merges consecutive moves of the same checker
@@ -12359,11 +12083,7 @@ func (d *Database) createPositionFromBGF(boardState [28]int, gameData map[string
 		Dice: [2]int{0, 0},
 	}
 
-	// Determine Jacoby/Beaver from match settings
-	if matchLen == 0 {
-		// Money game - check match-level settings
-		// (Jacoby/Beaver are only relevant in money games)
-	}
+	// TODO: Determine Jacoby/Beaver from match settings for money games (matchLen == 0).
 
 	// Initialize all points as empty
 	for i := 0; i < 26; i++ {

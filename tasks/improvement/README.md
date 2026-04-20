@@ -62,7 +62,7 @@ Dependencies flow top-down within each phase. Phases are sequential.
 ## Current status
 
 - [x] 01 — CI tests
-- [ ] 02 — CI lint
+- [x] 02 — CI lint
 - [ ] 03 — Fix exit-zero
 - [ ] 04 — CLI tests
 - [ ] 05 — CRUD tests

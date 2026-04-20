@@ -209,7 +209,7 @@ func (a *App) ReadFileContent(filePath string) (*FileDialogResponse, error) {
 }
 
 func (a *App) ShowAlert(message string) {
-	runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
+	_, _ = runtime.MessageDialog(a.ctx, runtime.MessageDialogOptions{
 		Type:    runtime.InfoDialog,
 		Title:   "Alert",
 		Message: message,
