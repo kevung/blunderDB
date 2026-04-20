@@ -168,8 +168,8 @@ func (d *Database) ensureAllTablesExist() error {
 	}
 
 	// Ensure collection timestamps are not NULL (repair old databases)
-	d.db.Exec(`UPDATE collection SET created_at = datetime('now') WHERE created_at IS NULL OR created_at = ''`)
-	d.db.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE updated_at IS NULL OR updated_at = ''`)
+	_, _ = d.db.Exec(`UPDATE collection SET created_at = datetime('now') WHERE created_at IS NULL OR created_at = ''`)
+	_, _ = d.db.Exec(`UPDATE collection SET updated_at = datetime('now') WHERE updated_at IS NULL OR updated_at = ''`)
 
 	// v1.6.0: tournament
 	_, err = d.db.Exec(`
@@ -189,24 +189,24 @@ func (d *Database) ensureAllTablesExist() error {
 
 	// Ensure columns added in later versions exist on match table
 	// tournament_id (v1.6.0)
-	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
 	// last_visited_position (v1.7.0)
-	d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
 	// canonical_hash (v1.7.0)
-	d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
 
 	// match comment
-	d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
 	// tournament_sort_order (ordering within a tournament)
-	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
 	// tournament comment
-	d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
+	_, _ = d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
 
 	// Ensure columns added in later versions exist on comment table
 	// created_at (v1.8.0)
-	d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
+	_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
 	// modified_at (v1.9.0)
-	d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
+	_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
 
 	// v1.8.0: anki_deck, anki_card
 	_, err = d.db.Exec(`
@@ -289,7 +289,7 @@ func (d *Database) ensureAllTablesExist() error {
 		`ALTER TABLE position ADD COLUMN point_mask_2   INTEGER`,
 	}
 	for _, stmt := range newPositionCols {
-		d.db.Exec(stmt) // ignore error: column may already exist
+		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
 	}
 
 	newAnalysisCols := []string{
@@ -304,7 +304,7 @@ func (d *Database) ensureAllTablesExist() error {
 		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
 	}
 	for _, stmt := range newAnalysisCols {
-		d.db.Exec(stmt) // ignore error: column may already exist
+		_, _ = d.db.Exec(stmt) // ignore error: column may already exist
 	}
 
 	// v2.0.0 indexes — non-unique ones are safe to add to existing DBs
@@ -326,7 +326,7 @@ func (d *Database) ensureAllTablesExist() error {
 		`CREATE INDEX IF NOT EXISTS idx_game_match              ON game(match_id)`,
 	}
 	for _, idx := range v2indexesSafe {
-		d.db.Exec(idx) // ignore error: index may already exist or column may be NULL
+		_, _ = d.db.Exec(idx) // ignore error: index may already exist or column may be NULL
 	}
 	// idx_position_zobrist (UNIQUE) and idx_match_canonical (UNIQUE) are only safe on fresh DBs
 	// or after a dedup migration; they're handled in phase 03 for existing DBs.
@@ -335,8 +335,8 @@ func (d *Database) ensureAllTablesExist() error {
 }
 
 func (d *Database) CheckVersion(databaseVersion string) error {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
@@ -355,8 +355,8 @@ func (d *Database) CheckVersion(databaseVersion string) error {
 }
 
 func (d *Database) CheckDatabaseVersion() (string, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	var dbVersion string
 	err := d.db.QueryRow(`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&dbVersion)
@@ -367,15 +367,15 @@ func (d *Database) CheckDatabaseVersion() (string, error) {
 }
 
 func (d *Database) GetDatabaseVersion() (string, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	return DatabaseVersion, nil
 }
 
 func (d *Database) LoadMetadata() (map[string]string, error) {
-	d.mu.Lock()         // Lock the mutex
-	defer d.mu.Unlock() // Unlock the mutex when the function returns
+	d.mu.RLock()         // Lock the mutex
+	defer d.mu.RUnlock() // Unlock the mutex when the function returns
 
 	rows, err := d.db.Query(`SELECT key, value FROM metadata WHERE key IN ('user', 'description', 'dateOfCreation', 'database_version')`)
 	if err != nil {

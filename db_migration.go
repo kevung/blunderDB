@@ -87,14 +87,14 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 		`ALTER TABLE analysis ADD COLUMN player2_backgammon_rate REAL`,
 	}
 	for _, stmt := range newAnalysisCols {
-		d.db.Exec(stmt)
+		_, _ = d.db.Exec(stmt)
 	}
 
 	// -----------------------------------------------------------------
 	// 2. Backfill position
 	// -----------------------------------------------------------------
 	var posTotal int
-	d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
 
 	if posTotal > 0 {
 		updatePos, err := d.db.Prepare(`UPDATE position SET
@@ -157,7 +157,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 				if c.NoContact {
 					noContactInt = 1
 				}
-				updatePos.Exec(
+				_, _ = updatePos.Exec(
 					int64(c.ZobristHash), c.DecisionType, 0 /*player_on_roll: always 0 after normalize*/, c.Dice1, c.Dice2,
 					c.CubeValue, c.CubeOwner, c.Score1, c.Score2,
 					c.HasJacoby, c.HasBeaver,
@@ -178,7 +178,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 	// 3. Backfill analysis
 	// -----------------------------------------------------------------
 	var anaTotal int
-	d.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&anaTotal)
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis`).Scan(&anaTotal)
 
 	if anaTotal > 0 {
 		updateAna, err := d.db.Prepare(`UPDATE analysis SET
@@ -266,7 +266,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 					}
 				}
 				ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
-				updateAna.Exec(
+				_, _ = updateAna.Exec(
 					ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
 					ac.Player1WinRate, ac.Player1GammonRate, ac.Player1BackgammonRate,
 					ac.Player2WinRate, ac.Player2GammonRate, ac.Player2BackgammonRate,
@@ -324,12 +324,12 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 				continue
 			}
 			// Remap FK references
-			d.db.Exec(`UPDATE move               SET position_id=? WHERE position_id=?`, g.keepID, discardID)
-			d.db.Exec(`UPDATE collection_position SET position_id=? WHERE position_id=?`, g.keepID, discardID)
-			d.db.Exec(`UPDATE anki_card           SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			_, _ = d.db.Exec(`UPDATE move               SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			_, _ = d.db.Exec(`UPDATE collection_position SET position_id=? WHERE position_id=?`, g.keepID, discardID)
+			_, _ = d.db.Exec(`UPDATE anki_card           SET position_id=? WHERE position_id=?`, g.keepID, discardID)
 			// Delete orphan analysis + position
-			d.db.Exec(`DELETE FROM analysis WHERE position_id=?`, discardID)
-			d.db.Exec(`DELETE FROM position WHERE id=?`, discardID)
+			_, _ = d.db.Exec(`DELETE FROM analysis WHERE position_id=?`, discardID)
+			_, _ = d.db.Exec(`DELETE FROM position WHERE id=?`, discardID)
 			mergedTotal++
 		}
 	}
@@ -368,7 +368,7 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 	// -----------------------------------------------------------------
 	// 6. ANALYZE
 	// -----------------------------------------------------------------
-	d.db.Exec(`ANALYZE`)
+	_, _ = d.db.Exec(`ANALYZE`)
 
 	// -----------------------------------------------------------------
 	// 7. Bump version
@@ -488,7 +488,7 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 			}
 		}
 		ac := populateAnalysisColumns(&ana, playedMove, playedCubeAction)
-		updateStmt.Exec(
+		_, _ = updateStmt.Exec(
 			string(newJSON),
 			ac.BestCubeAction, ac.CubeError, ac.BestMoveEquityError,
 			ac.Player1WinRate, ac.Player1GammonRate, ac.Player1BackgammonRate,
@@ -503,7 +503,7 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 	// -----------------------------------------------------------------
 	// 3. ANALYZE
 	// -----------------------------------------------------------------
-	d.db.Exec(`ANALYZE`)
+	_, _ = d.db.Exec(`ANALYZE`)
 
 	// -----------------------------------------------------------------
 	// 4. Bump version
@@ -526,7 +526,7 @@ func (d *Database) migrate_2_0_0_to_2_1_0() error {
 // The caller must hold d.mu.
 func (d *Database) migrate_2_1_0_to_2_2_0() error {
 	var posTotal int
-	d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posTotal)
 
 	if posTotal > 0 {
 		updateStmt, err := d.db.Prepare(`UPDATE position SET state = ? WHERE id = ?`)
@@ -582,7 +582,7 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 					continue // malformed JSON — leave as-is
 				}
 				compact := encodeBoardCompact(pos.Board)
-				updateStmt.Exec(compact, r.id)
+				_, _ = updateStmt.Exec(compact, r.id)
 				done++
 				if done%200 == 0 {
 					d.emitMigrationProgress("compact_state", done, posTotal)
@@ -593,7 +593,7 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 	}
 
 	// Prune command_history to last 1000 entries
-	d.db.Exec(`
+	_, _ = d.db.Exec(`
 		DELETE FROM command_history
 		WHERE id NOT IN (
 			SELECT id FROM command_history
@@ -602,7 +602,7 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 		)
 	`)
 
-	d.db.Exec(`ANALYZE`)
+	_, _ = d.db.Exec(`ANALYZE`)
 
 	if _, err := d.db.Exec(`UPDATE metadata SET value='2.2.0' WHERE key='database_version'`); err != nil {
 		return fmt.Errorf("migrate version bump: %w", err)
@@ -619,7 +619,7 @@ func (d *Database) migrate_2_1_0_to_2_2_0() error {
 // The caller must hold d.mu.
 func (d *Database) migrate_2_2_0_to_2_3_0() error {
 	var anaTotal int
-	d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE data IS NOT NULL AND data != ''`).Scan(&anaTotal)
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE data IS NOT NULL AND data != ''`).Scan(&anaTotal)
 
 	if anaTotal > 0 {
 		updateStmt, err := d.db.Prepare(`UPDATE analysis SET data = ? WHERE id = ?`)
@@ -673,7 +673,7 @@ func (d *Database) migrate_2_2_0_to_2_3_0() error {
 					done++
 					continue
 				}
-				updateStmt.Exec(compressed, r.id)
+				_, _ = updateStmt.Exec(compressed, r.id)
 				done++
 				if done%200 == 0 {
 					d.emitMigrationProgress("compress_analysis", done, anaTotal)
@@ -683,7 +683,7 @@ func (d *Database) migrate_2_2_0_to_2_3_0() error {
 		d.emitMigrationProgress("compress_analysis", anaTotal, anaTotal)
 	}
 
-	d.db.Exec(`ANALYZE`)
+	_, _ = d.db.Exec(`ANALYZE`)
 
 	if _, err := d.db.Exec(`UPDATE metadata SET value='2.3.0' WHERE key='database_version'`); err != nil {
 		return fmt.Errorf("migrate version bump: %w", err)
