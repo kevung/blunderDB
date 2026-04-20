@@ -1,5 +1,7 @@
 # 10 — Switch `sync.Mutex` to `sync.RWMutex`
 
+**Status: DONE** ✅
+
 **Goal:** Allow concurrent read operations on the database by using `RWMutex` instead of exclusive `Mutex`. Improves GUI responsiveness during imports.
 
 **Depends on:** 06 (db.go split — mutex is used across all db_*.go files).
