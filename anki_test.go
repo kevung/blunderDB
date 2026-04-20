@@ -1,0 +1,430 @@
+package main
+
+import (
+	"os"
+	"path/filepath"
+	"testing"
+)
+
+func setupAnkiTestDB(t *testing.T) (*Database, func()) {
+	t.Helper()
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "test.db")
+
+	db := NewDatabase()
+	if err := db.SetupDatabase(dbPath); err != nil {
+		t.Fatalf("SetupDatabase: %v", err)
+	}
+
+	return db, func() {
+		if db.db != nil {
+			db.db.Close()
+		}
+		os.Remove(dbPath)
+	}
+}
+
+// setupAnkiCollectionWithPositions creates a collection with N positions and returns (db, collectionID, positionIDs, cleanup).
+func setupAnkiCollectionWithPositions(t *testing.T, n int) (*Database, int64, []int64, func()) {
+	t.Helper()
+	db, cleanup := setupAnkiTestDB(t)
+
+	importTestMatch(t, db)
+	ids := getPositionIDs(t, db, n)
+
+	colID, err := db.CreateCollection("AnkiSource", "")
+	if err != nil {
+		cleanup()
+		t.Fatalf("CreateCollection: %v", err)
+	}
+	if err := db.AddPositionsToCollection(colID, ids); err != nil {
+		cleanup()
+		t.Fatalf("AddPositionsToCollection: %v", err)
+	}
+
+	return db, colID, ids, cleanup
+}
+
+func TestCreateAnkiDeck(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	id, err := db.CreateAnkiDeck("MyDeck", "A deck", "collection", colID, "")
+	if err != nil {
+		t.Fatalf("CreateAnkiDeck: %v", err)
+	}
+	if id <= 0 {
+		t.Fatalf("expected positive ID, got %d", id)
+	}
+}
+
+func TestGetAllAnkiDecks(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	db.CreateAnkiDeck("D1", "", "collection", colID, "")
+	db.CreateAnkiDeck("D2", "", "collection", colID, "")
+
+	decks, err := db.GetAllAnkiDecks()
+	if err != nil {
+		t.Fatalf("GetAllAnkiDecks: %v", err)
+	}
+	if len(decks) != 2 {
+		t.Fatalf("got %d decks, want 2", len(decks))
+	}
+}
+
+func TestUpdateAnkiDeck(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	id, _ := db.CreateAnkiDeck("Old", "OldDesc", "collection", colID, "")
+	if err := db.UpdateAnkiDeck(id, "New", "NewDesc"); err != nil {
+		t.Fatalf("UpdateAnkiDeck: %v", err)
+	}
+
+	decks, _ := db.GetAllAnkiDecks()
+	for _, d := range decks {
+		if d.ID == id {
+			if d.Name != "New" || d.Description != "NewDesc" {
+				t.Errorf("got name=%q desc=%q", d.Name, d.Description)
+			}
+			return
+		}
+	}
+	t.Error("deck not found")
+}
+
+func TestUpdateAnkiDeckParams(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	if err := db.UpdateAnkiDeckParams(id, 0.85, 180.0, true); err != nil {
+		t.Fatalf("UpdateAnkiDeckParams: %v", err)
+	}
+
+	decks, _ := db.GetAllAnkiDecks()
+	for _, d := range decks {
+		if d.ID == id {
+			if d.RequestRetention != 0.85 {
+				t.Errorf("retention = %f, want 0.85", d.RequestRetention)
+			}
+			if d.MaximumInterval != 180.0 {
+				t.Errorf("maxInterval = %f, want 180", d.MaximumInterval)
+			}
+			if !d.EnableFuzz {
+				t.Error("enableFuzz should be true")
+			}
+			return
+		}
+	}
+	t.Error("deck not found")
+}
+
+func TestDeleteAnkiDeck(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	id, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(id)
+
+	if err := db.DeleteAnkiDeck(id); err != nil {
+		t.Fatalf("DeleteAnkiDeck: %v", err)
+	}
+
+	decks, _ := db.GetAllAnkiDecks()
+	for _, d := range decks {
+		if d.ID == id {
+			t.Error("deck still exists after delete")
+		}
+	}
+
+	// Cards should be cascade-deleted
+	var count int
+	db.db.QueryRow(`SELECT COUNT(*) FROM anki_card WHERE deck_id = ?`, id).Scan(&count)
+	if count != 0 {
+		t.Errorf("found %d orphan cards after deck delete", count)
+	}
+}
+
+func TestSyncAnkiDeck_Collection(t *testing.T) {
+	db, colID, ids, cleanup := setupAnkiCollectionWithPositions(t, 5)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	if err := db.SyncAnkiDeck(deckID); err != nil {
+		t.Fatalf("SyncAnkiDeck: %v", err)
+	}
+
+	stats, err := db.GetAnkiDeckStats(deckID)
+	if err != nil {
+		t.Fatalf("GetAnkiDeckStats: %v", err)
+	}
+	if stats.TotalCount != len(ids) {
+		t.Errorf("totalCount = %d, want %d", stats.TotalCount, len(ids))
+	}
+}
+
+func TestSyncAnkiDeck_Idempotent(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+	_ = db.SyncAnkiDeck(deckID) // second sync
+
+	stats, _ := db.GetAnkiDeckStats(deckID)
+	if stats.TotalCount != 3 {
+		t.Errorf("totalCount = %d after double sync, want 3", stats.TotalCount)
+	}
+}
+
+func TestSyncAnkiDeck_AddNew(t *testing.T) {
+	db, colID, ids, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	// Add another position to the collection
+	moreIDs := getPositionIDs(t, db, 5)
+	var newID int64
+	for _, mid := range moreIDs {
+		found := false
+		for _, eid := range ids {
+			if mid == eid {
+				found = true
+				break
+			}
+		}
+		if !found {
+			newID = mid
+			break
+		}
+	}
+	if newID == 0 {
+		t.Skip("no additional position available")
+	}
+	_ = db.AddPositionToCollection(colID, newID)
+	_ = db.SyncAnkiDeck(deckID)
+
+	stats, _ := db.GetAnkiDeckStats(deckID)
+	if stats.TotalCount != 4 {
+		t.Errorf("totalCount = %d after adding position, want 4", stats.TotalCount)
+	}
+}
+
+func TestGetNextAnkiCard(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	card, err := db.GetNextAnkiCard(deckID)
+	if err != nil {
+		t.Fatalf("GetNextAnkiCard: %v", err)
+	}
+	if card == nil {
+		t.Fatal("expected a card, got nil")
+	}
+	if card.Card.ID <= 0 {
+		t.Error("card ID should be positive")
+	}
+	if card.Position.ID <= 0 {
+		t.Error("position ID should be positive")
+	}
+}
+
+func TestGetNextAnkiCard_Empty(t *testing.T) {
+	db, cleanup := setupAnkiTestDB(t)
+	defer cleanup()
+
+	colID, _ := db.CreateCollection("Empty", "")
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+
+	card, err := db.GetNextAnkiCard(deckID)
+	if err != nil {
+		t.Fatalf("GetNextAnkiCard: %v", err)
+	}
+	if card != nil {
+		t.Error("expected nil for empty deck")
+	}
+}
+
+func TestReviewAnkiCard_Again(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	card, _ := db.GetNextAnkiCard(deckID)
+	if card == nil {
+		t.Fatal("no card")
+	}
+
+	// Rating 1 = Again
+	_, err := db.ReviewAnkiCard(card.Card.ID, 1)
+	if err != nil {
+		t.Fatalf("ReviewAnkiCard: %v", err)
+	}
+
+	// Verify card was updated
+	var reps, state int
+	db.db.QueryRow(`SELECT reps, state FROM anki_card WHERE id = ?`, card.Card.ID).
+		Scan(&reps, &state)
+	if reps != 1 {
+		t.Errorf("reps = %d, want 1", reps)
+	}
+	// State should be Learning (1) or Relearning (3) after "Again"
+	if state != 1 && state != 3 {
+		t.Errorf("state = %d, want 1 (Learning) or 3 (Relearning)", state)
+	}
+}
+
+func TestReviewAnkiCard_Good(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	card, _ := db.GetNextAnkiCard(deckID)
+	if card == nil {
+		t.Fatal("no card")
+	}
+
+	// Rating 3 = Good
+	_, err := db.ReviewAnkiCard(card.Card.ID, 3)
+	if err != nil {
+		t.Fatalf("ReviewAnkiCard: %v", err)
+	}
+
+	var reps int
+	var stability float64
+	db.db.QueryRow(`SELECT reps, stability FROM anki_card WHERE id = ?`, card.Card.ID).
+		Scan(&reps, &stability)
+	if reps != 1 {
+		t.Errorf("reps = %d, want 1", reps)
+	}
+	if stability <= 0 {
+		t.Errorf("stability = %f, want > 0", stability)
+	}
+}
+
+func TestReviewAnkiCard_Easy(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	card, _ := db.GetNextAnkiCard(deckID)
+	if card == nil {
+		t.Fatal("no card")
+	}
+
+	// Rating 4 = Easy
+	_, err := db.ReviewAnkiCard(card.Card.ID, 4)
+	if err != nil {
+		t.Fatalf("ReviewAnkiCard: %v", err)
+	}
+
+	var stability float64
+	db.db.QueryRow(`SELECT stability FROM anki_card WHERE id = ?`, card.Card.ID).
+		Scan(&stability)
+	if stability <= 0 {
+		t.Errorf("stability = %f, want > 0", stability)
+	}
+}
+
+func TestReviewAnkiCard_Progression(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 1)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	card, _ := db.GetNextAnkiCard(deckID)
+	if card == nil {
+		t.Fatal("no card")
+	}
+	cardID := card.Card.ID
+
+	// Again → Good → Good → Easy
+	ratings := []int{1, 3, 3, 4}
+	for _, r := range ratings {
+		if _, err := db.ReviewAnkiCard(cardID, r); err != nil {
+			t.Fatalf("ReviewAnkiCard(rating=%d): %v", r, err)
+		}
+	}
+
+	var reps int
+	db.db.QueryRow(`SELECT reps FROM anki_card WHERE id = ?`, cardID).Scan(&reps)
+	if reps != 4 {
+		t.Errorf("reps = %d after 4 reviews, want 4", reps)
+	}
+}
+
+func TestResetAnkiDeck(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	// Review a card
+	card, _ := db.GetNextAnkiCard(deckID)
+	if card != nil {
+		db.ReviewAnkiCard(card.Card.ID, 3)
+	}
+
+	if err := db.ResetAnkiDeck(deckID); err != nil {
+		t.Fatalf("ResetAnkiDeck: %v", err)
+	}
+
+	// All cards should be back to new
+	var maxReps int
+	db.db.QueryRow(`SELECT COALESCE(MAX(reps), 0) FROM anki_card WHERE deck_id = ?`, deckID).Scan(&maxReps)
+	if maxReps != 0 {
+		t.Errorf("max reps = %d after reset, want 0", maxReps)
+	}
+}
+
+func TestGetAnkiDeckStats(t *testing.T) {
+	db, colID, _, cleanup := setupAnkiCollectionWithPositions(t, 5)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	stats, err := db.GetAnkiDeckStats(deckID)
+	if err != nil {
+		t.Fatalf("GetAnkiDeckStats: %v", err)
+	}
+	if stats.TotalCount != 5 {
+		t.Errorf("totalCount = %d, want 5", stats.TotalCount)
+	}
+	// All should be new initially
+	if stats.NewCount != 5 {
+		t.Errorf("newCount = %d, want 5", stats.NewCount)
+	}
+}
+
+func TestGetAnkiDeckPositions(t *testing.T) {
+	db, colID, ids, cleanup := setupAnkiCollectionWithPositions(t, 3)
+	defer cleanup()
+
+	deckID, _ := db.CreateAnkiDeck("D", "", "collection", colID, "")
+	_ = db.SyncAnkiDeck(deckID)
+
+	positions, err := db.GetAnkiDeckPositions(deckID)
+	if err != nil {
+		t.Fatalf("GetAnkiDeckPositions: %v", err)
+	}
+	if len(positions) != len(ids) {
+		t.Errorf("got %d positions, want %d", len(positions), len(ids))
+	}
+}
