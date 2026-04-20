@@ -58,7 +58,7 @@ export function DeleteTournament(arg1:number):Promise<void>;
 
 export function ExportCollections(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean):Promise<void>;
 
-export function ExportDatabase(arg1:string,arg2:Array<main.Position>,arg3:Record<string, string>,arg4:boolean,arg5:boolean,arg6:boolean,arg7:boolean,arg8:boolean,arg9:boolean,arg10:Array<number>,arg11:Array<number>,arg12:Array<number>):Promise<void>;
+export function ExportDatabase(arg1:main.ExportOptions):Promise<void>;
 
 export function ExportTournaments(arg1:string,arg2:Array<number>,arg3:Record<string, string>,arg4:boolean,arg5:boolean):Promise<void>;
 
@@ -138,7 +138,7 @@ export function LoadMetadata():Promise<Record<string, string>>;
 
 export function LoadPosition(arg1:number):Promise<main.Position>;
 
-export function LoadPositionsByFilters(arg1:main.Position,arg2:boolean,arg3:boolean,arg4:string,arg5:string,arg6:string,arg7:string,arg8:string,arg9:string,arg10:string,arg11:string,arg12:string,arg13:string,arg14:string,arg15:string,arg16:string,arg17:string,arg18:string,arg19:string,arg20:boolean,arg21:boolean,arg22:string,arg23:string,arg24:string,arg25:string,arg26:string,arg27:string,arg28:boolean,arg29:boolean,arg30:string,arg31:string,arg32:string,arg33:string):Promise<Array<main.Position>>;
+export function LoadPositionsByFilters(arg1:main.SearchFilters):Promise<Array<main.Position>>;
 
 export function LoadSearchHistory():Promise<Array<main.SearchHistory>>;
 

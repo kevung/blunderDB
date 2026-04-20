@@ -4,6 +4,7 @@ import (
 	"embed"
 	"encoding/binary"
 	"fmt"
+	"log/slog"
 	"math"
 )
 
@@ -47,7 +48,7 @@ func init() {
 	var err error
 	globalBearoffDB, err = loadBearoffDatabase()
 	if err != nil {
-		fmt.Printf("Warning: failed to load bearoff database: %v\n", err)
+		slog.Warn("failed to load bearoff database", "err", err)
 	}
 }
 

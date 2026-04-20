@@ -1,20 +1,70 @@
 <script>
-    export let visible = false;
-    export let mode = 'idle'; // 'idle', 'picking', 'importing', 'completed'
-    export let totalFiles = 0;
-    export let currentIndex = 0;
-    export let currentFile = '';
-    export let results = { succeeded: 0, failed: 0, skipped: 0, errors: [] };
-    export let onClose;
-    export let onCancel;
+    import { trapFocus } from '../utils/focusTrap.js';
 
-    $: progressPercent = totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0;
+    let { visible = false, mode = 'idle', totalFiles = 0, currentIndex = 0, currentFile = '', results = { succeeded: 0, failed: 0, skipped: 0, errors: [] }, onClose, onCancel } = $props();
 
+    let progressPercent = $derived(totalFiles > 0 ? Math.round((currentIndex / totalFiles) * 100) : 0);
     function basename(path) {
         if (!path) return '';
         return path.split('/').pop().split('\\').pop();
     }
 </script>
+
+{#if visible}
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="File import progress" use:trapFocus>
+        <div class="modal-content">
+            {#if mode === 'importing'}
+                <h2>Importing Files <span class="spinner"></span></h2>
+                <p class="status-text">Importing file {currentIndex} of {totalFiles}...</p>
+                <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
+
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: {progressPercent}%"></div>
+                </div>
+                <p class="progress-text">{progressPercent}%</p>
+
+                <div class="button-group">
+                    <button onclick={onCancel}>Cancel</button>
+                </div>
+            {:else if mode === 'completed'}
+                <h2>Import Completed</h2>
+
+                <div class="summary">
+                    <p><strong>Import finished.</strong> Processed {results.succeeded + results.failed + results.skipped} of {totalFiles} file(s).</p>
+                </div>
+
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-label">Imported</div>
+                        <div class="stat-value">{results.succeeded}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Skipped</div>
+                        <div class="stat-value">{results.skipped}</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Failed</div>
+                        <div class="stat-value" class:errors={results.failed > 0}>{results.failed}</div>
+                    </div>
+                </div>
+
+                {#if results.errors.length > 0}
+                    <div class="error-list">
+                        {#each results.errors as err, i (i)}
+                            <div class="error-item">
+                                <span class="error-file">{basename(err.file)}</span>: {err.message}
+                            </div>
+                        {/each}
+                    </div>
+                {/if}
+
+                <div class="button-group">
+                    <button onclick={onClose}>Close</button>
+                </div>
+            {/if}
+        </div>
+    </div>
+{/if}
 
 <style>
     .modal-overlay {
@@ -130,8 +180,12 @@
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     .button-group {
@@ -200,60 +254,3 @@
         font-weight: 600;
     }
 </style>
-
-{#if visible}
-    <div class="modal-overlay">
-        <div class="modal-content">
-            {#if mode === 'importing'}
-                <h2>Importing Files <span class="spinner"></span></h2>
-                <p class="status-text">Importing file {currentIndex} of {totalFiles}...</p>
-                <p class="current-file" title={currentFile}>{basename(currentFile)}</p>
-
-                <div class="progress-bar-container">
-                    <div class="progress-bar" style="width: {progressPercent}%"></div>
-                </div>
-                <p class="progress-text">{progressPercent}%</p>
-
-                <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
-                </div>
-
-            {:else if mode === 'completed'}
-                <h2>Import Completed</h2>
-
-                <div class="summary">
-                    <p><strong>Import finished.</strong> Processed {results.succeeded + results.failed + results.skipped} of {totalFiles} file(s).</p>
-                </div>
-
-                <div class="stats">
-                    <div class="stat-item">
-                        <div class="stat-label">Imported</div>
-                        <div class="stat-value">{results.succeeded}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Skipped</div>
-                        <div class="stat-value">{results.skipped}</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-label">Failed</div>
-                        <div class="stat-value" class:errors={results.failed > 0}>{results.failed}</div>
-                    </div>
-                </div>
-
-                {#if results.errors.length > 0}
-                    <div class="error-list">
-                        {#each results.errors as err}
-                            <div class="error-item">
-                                <span class="error-file">{basename(err.file)}</span>: {err.message}
-                            </div>
-                        {/each}
-                    </div>
-                {/if}
-
-                <div class="button-group">
-                    <button on:click={onClose}>Close</button>
-                </div>
-            {/if}
-        </div>
-    </div>
-{/if}

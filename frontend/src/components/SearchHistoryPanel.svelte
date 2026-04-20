@@ -1,27 +1,27 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
-    import { statusBarTextStore, showSearchHistoryPanelStore, currentPositionIndexStore } from '../stores/uiStore';
+    import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore } from '../stores/uiStore';
     import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/main/Database.js';
 
-    export let onLoadPositionsByFilters;
-    export let onAddToFilterLibrary; // Function to add search to filter library
+    let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
-    let searchHistory = [];
-    let selectedSearch = null;
-    let showSaveDialog = false;
-    let filterName = '';
+    let searchHistory = $state([]);
+    let selectedSearch = $state(null);
+    let showSaveDialog = $state(false);
+    let filterName = $state('');
     let filterLibrary = []; // Store loaded filters
-    let visible = false;
+    let visible = $state(false);
 
-    searchHistoryStore.subscribe(value => {
+    searchHistoryStore.subscribe((value) => {
         searchHistory = value;
     });
 
-    showSearchHistoryPanelStore.subscribe(async value => {
+    openPanels.subscribe(async (value) => {
         const wasVisible = visible;
-        visible = value;
+        visible = value.has(PANEL.SEARCH_HISTORY);
         if (visible && !wasVisible) {
             // Panel just opened
             await loadHistory();
@@ -47,7 +47,7 @@
     });
 
     // Update saved position when browsing positions (only if no search is selected)
-    currentPositionIndexStore.subscribe(value => {
+    currentPositionIndexStore.subscribe((value) => {
         if (visible && !selectedSearch && value >= 0) {
             // Update the saved position as user browses
             positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
@@ -60,7 +60,7 @@
             const history = await LoadSearchHistory();
             searchHistoryStore.set(history || []);
         } catch (error) {
-            console.error('Error loading search history:', error);
+            logger.error('Error loading search history:', error);
         }
     }
 
@@ -69,13 +69,13 @@
             const filters = await LoadFilters();
             filterLibrary = filters || [];
         } catch (error) {
-            console.error('Error loading filter library:', error);
+            logger.error('Error loading filter library:', error);
             filterLibrary = [];
         }
     }
 
     function isInFilterLibrary(search) {
-        return filterLibrary.some(filter => filter.command === search.command);
+        return filterLibrary.some((filter) => filter.command === search.command);
     }
 
     function selectSearch(search) {
@@ -96,7 +96,7 @@
                 positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
                 positionIndexBeforeFilterLibraryStore.set($currentPositionIndexStore);
             }
-            
+
             // Select new search - show its position
             selectedSearch = search;
             if (search.position) {
@@ -116,64 +116,75 @@
         const command = search.command;
         if (command.startsWith('s ') || command === 's') {
             // Parse the command to extract filters
-            const filters = command === 's' ? [] : command.slice(2).trim().split(' ').map(filter => filter.trim());
-            
+            const filters =
+                command === 's'
+                    ? []
+                    : command
+                          .slice(2)
+                          .trim()
+                          .split(' ')
+                          .map((filter) => filter.trim());
+
             const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
             const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
             const noContactFilter = filters.includes('nc');
             const decisionTypeFilter = filters.includes('d');
             const diceRollFilter = filters.includes('D');
             const mirrorPositionFilter = filters.includes('M');
-            const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
-            const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
-            const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
-            const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || (filter.startsWith('b') && !filter.startsWith('bo'))) && !filter.startsWith('bj'));
-            const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
-            const player2GammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
-            const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B') && !filter.startsWith('BO')) && !filter.startsWith('BJ'));
-            
-            let player1CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
+            const pipCountFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
+            const winRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
+            const gammonRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
+            const backgammonRateFilter = filters.find(
+                (filter) => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || (filter.startsWith('b') && !filter.startsWith('bo'))) && !filter.startsWith('bj')
+            );
+            const player2WinRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
+            const player2GammonRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
+            const player2BackgammonRateFilter = filters.find(
+                (filter) => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || (filter.startsWith('B') && !filter.startsWith('BO'))) && !filter.startsWith('BJ')
+            );
+
+            let player1CheckerOffFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
             if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
                 player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`;
             }
-            
-            let player2CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('O>') || filter.startsWith('O<') || filter.startsWith('O')));
+
+            let player2CheckerOffFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('O>') || filter.startsWith('O<') || filter.startsWith('O')));
             if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
                 player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`;
             }
-            
-            let player1BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('k>') || filter.startsWith('k<') || filter.startsWith('k')));
+
+            let player1BackCheckerFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('k>') || filter.startsWith('k<') || filter.startsWith('k')));
             if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
                 player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`;
             }
-            
-            let player2BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
+
+            let player2BackCheckerFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
             if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
                 player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`;
             }
-            
-            let player1CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('z>') || filter.startsWith('z<') || filter.startsWith('z')));
+
+            let player1CheckerInZoneFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('z>') || filter.startsWith('z<') || filter.startsWith('z')));
             if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
                 player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`;
             }
-            
-            let player2CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('Z>') || filter.startsWith('Z<') || filter.startsWith('Z')));
+
+            let player2CheckerInZoneFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('Z>') || filter.startsWith('Z<') || filter.startsWith('Z')));
             if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
                 player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`;
             }
-            
-            const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
-            const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
-            const dateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('T>') || filter.startsWith('T<') || filter.startsWith('T')));
+
+            const player1AbsolutePipCountFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
+            const equityFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
+            const dateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('T>') || filter.startsWith('T<') || filter.startsWith('T')));
             const movePatternMatch = command.match(/m["'][^"']*["']/);
             const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
             const searchTextMatch = command.match(/t["'][^"']*["']/);
             const searchText = searchTextMatch ? searchTextMatch[0] : '';
-            const player1OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bo>') || filter.startsWith('bo<') || filter.startsWith('bo')));
-            const player2OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
-            const player1JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
-            const player2JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
-            const moveErrorFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
+            const player1OutfieldBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('bo>') || filter.startsWith('bo<') || filter.startsWith('bo')));
+            const player2OutfieldBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
+            const player1JanBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
+            const player2JanBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
+            const moveErrorFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
 
             onLoadPositionsByFilters(
                 filters,
@@ -206,14 +217,14 @@
                 noContactFilter,
                 mirrorPositionFilter,
                 moveErrorFilter,
-                command  // Pass the original search command for session tracking
+                command // Pass the original search command for session tracking
             );
         }
     }
 
     function handleDoubleClick(search) {
         executeSearch(search);
-        closePanel();
+        closeSearchHistoryPanel();
     }
 
     function showAddToLibraryDialog(search) {
@@ -233,14 +244,14 @@
             statusBarTextStore.set('Please enter a filter name');
             return;
         }
-        
+
         // Call the parent function to add to filter library
         if (onAddToFilterLibrary) {
             await onAddToFilterLibrary(filterName, selectedSearch.command, selectedSearch.position);
             await loadFilterLibrary(); // Reload filter library to update icon colors
             statusBarTextStore.set('Filter saved to library');
         }
-        
+
         cancelSaveDialog();
     }
 
@@ -251,7 +262,7 @@
             await loadHistory();
             statusBarTextStore.set('Search deleted from history');
         } catch (error) {
-            console.error('Error deleting search:', error);
+            logger.error('Error deleting search:', error);
             statusBarTextStore.set('Error deleting search');
         }
     }
@@ -261,13 +272,13 @@
         return date.toLocaleString();
     }
 
-    function closePanel() {
-        showSearchHistoryPanelStore.set(false);
+    function closeSearchHistoryPanel() {
+        closePanel(PANEL.SEARCH_HISTORY);
     }
 
     function handleKeyDown(event) {
         if (!visible) return;
-        
+
         // Skip events from input fields to allow normal input field behavior
         if (event.target.matches('input, textarea')) {
             event.stopPropagation(); // Prevent global shortcuts from intercepting input
@@ -276,11 +287,11 @@
 
         // Let Ctrl+key combos pass through to global handler
         if (event.ctrlKey) return;
-        
+
         // Stop all keyboard events from propagating to global handlers
         // This prevents global shortcuts (j, k, space, etc.) from interfering with search history panel
         event.stopPropagation();
-        
+
         if (event.key === 'Escape') {
             if (showSaveDialog) {
                 cancelSaveDialog();
@@ -290,14 +301,14 @@
                 event.preventDefault();
                 event.stopPropagation();
             } else {
-                closePanel();
+                closeSearchHistoryPanel();
             }
             return;
         }
 
         // Handle j/k and arrow keys for search navigation ONLY when a search is selected
         if (selectedSearch && !showSaveDialog && searchHistory.length > 0) {
-            const currentIndex = searchHistory.findIndex(s => s.timestamp === selectedSearch.timestamp);
+            const currentIndex = searchHistory.findIndex((s) => s.timestamp === selectedSearch.timestamp);
 
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -325,7 +336,7 @@
                 return;
             }
         }
-        
+
         const panel = document.getElementById('searchHistoryPanel');
         if (panel && !panel.contains(event.target)) {
             document.activeElement.blur(); // Remove focus from the active element
@@ -333,7 +344,7 @@
     }
 
     // Focus the panel when it becomes visible
-    $: {
+    $effect(() => {
         if (visible) {
             setTimeout(() => {
                 const panel = document.getElementById('searchHistoryPanel');
@@ -342,7 +353,7 @@
                 }
             }, 0);
         }
-    }
+    });
 
     onMount(async () => {
         document.addEventListener('click', handleClickOutside);
@@ -355,87 +366,105 @@
     });
 </script>
 
-    <section class="search-history-panel" role="dialog" aria-modal="true" id="searchHistoryPanel" tabindex="-1">
-        <div class="search-history-content">
-            {#if searchHistory.length === 0}
-                <p class="empty-message">No search history yet. Position searches starting with 's ' will appear here.</p>
-            {:else}
-                <div class="history-table-container">
-                    <table class="history-table">
-                        <thead>
-                            <tr>
-                                <th class="no-select">Date</th>
-                                <th class="no-select">Command</th>
-                                <th class="no-select">Actions</th>
+<section class="search-history-panel" role="dialog" aria-modal="true" aria-label="Search history" id="searchHistoryPanel" tabindex="-1">
+    <div class="search-history-content">
+        {#if searchHistory.length === 0}
+            <p class="empty-message">No search history yet. Position searches starting with 's ' will appear here.</p>
+        {:else}
+            <div class="history-table-container">
+                <table class="history-table">
+                    <thead>
+                        <tr>
+                            <th class="no-select">Date</th>
+                            <th class="no-select">Command</th>
+                            <th class="no-select">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {#each searchHistory as search (search.timestamp)}
+                            <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
+                                <td class="date-cell no-select">{formatTimestamp(search.timestamp)}</td>
+                                <td class="command-cell no-select">{search.command}</td>
+                                <td class="actions-cell">
+                                    <button
+                                        class="action-btn add-btn"
+                                        class:in-library={isInFilterLibrary(search)}
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            (() => showAddToLibraryDialog(search))();
+                                        }}
+                                        title="Add to filter library"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z"
+                                            />
+                                        </svg>
+                                    </button>
+                                    <button
+                                        class="action-btn delete-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => deleteSearch(search, e))(e);
+                                        }}
+                                        title="Delete from history"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                            <path
+                                                stroke-linecap="round"
+                                                stroke-linejoin="round"
+                                                d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                                            />
+                                        </svg>
+                                    </button>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            {#each searchHistory as search}
-                                <tr 
-                                    class:selected={selectedSearch === search}
-                                    on:click={() => selectSearch(search)}
-                                    on:dblclick={() => handleDoubleClick(search)}
-                                >
-                                    <td class="date-cell no-select">{formatTimestamp(search.timestamp)}</td>
-                                    <td class="command-cell no-select">{search.command}</td>
-                                    <td class="actions-cell">
-                                        <button 
-                                            class="action-btn add-btn"
-                                            class:in-library={isInFilterLibrary(search)}
-                                            on:click|stopPropagation={() => showAddToLibraryDialog(search)}
-                                            title="Add to filter library"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" />
-                                            </svg>
-                                        </button>
-                                        <button 
-                                            class="action-btn delete-btn" 
-                                            on:click|stopPropagation={(e) => deleteSearch(search, e)}
-                                            title="Delete from history"
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                </tr>
-                            {/each}
-                        </tbody>
-                    </table>
-                </div>
-            {/if}
-        </div>
-    </section>
+                        {/each}
+                    </tbody>
+                </table>
+            </div>
+        {/if}
+    </div>
+</section>
 
-    {#if showSaveDialog}
-        <div class="save-dialog-overlay" on:click={(e) => {
+{#if showSaveDialog}
+    <div
+        class="save-dialog-overlay"
+        onclick={(e) => {
             // Close save dialog if clicking on overlay background
             if (e.target.classList.contains('save-dialog-overlay')) {
                 cancelSaveDialog();
             }
-        }}>
-            <div class="save-dialog">
-                <h3>Save to Filter Library</h3>
-                <p class="command-preview">Command: {selectedSearch?.command || ''}</p>
-                <div class="form-group">
-                    <label for="filterName">Filter Name:</label>
-                    <input 
-                        type="text" 
-                        id="filterName" 
-                        bind:value={filterName} 
-                        placeholder="Enter filter name"
-                        on:keydown={(e) => e.key === 'Enter' && saveToFilterLibrary()}
-                    />
-                </div>
-                <div class="dialog-actions">
-                    <button class="btn-primary" on:click|stopPropagation={saveToFilterLibrary}>Save</button>
-                    <button class="btn-secondary" on:click|stopPropagation={cancelSaveDialog}>Cancel</button>
-                </div>
+        }}
+    >
+        <div class="save-dialog">
+            <h3>Save to Filter Library</h3>
+            <p class="command-preview">Command: {selectedSearch?.command || ''}</p>
+            <div class="form-group">
+                <label for="filterName">Filter Name:</label>
+                <input type="text" id="filterName" bind:value={filterName} placeholder="Enter filter name" onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
+            </div>
+            <div class="dialog-actions">
+                <button
+                    class="btn-primary"
+                    onclick={(e) => {
+                        e.stopPropagation();
+                        saveToFilterLibrary(e);
+                    }}>Save</button
+                >
+                <button
+                    class="btn-secondary"
+                    onclick={(e) => {
+                        e.stopPropagation();
+                        cancelSaveDialog(e);
+                    }}>Cancel</button
+                >
             </div>
         </div>
-    {/if}
-
+    </div>
+{/if}
 
 <style>
     .search-history-panel {
@@ -641,7 +670,8 @@
         gap: 10px;
     }
 
-    .btn-primary, .btn-secondary {
+    .btn-primary,
+    .btn-secondary {
         padding: 10px 20px;
         border: none;
         border-radius: 4px;

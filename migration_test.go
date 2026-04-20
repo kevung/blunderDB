@@ -235,16 +235,6 @@ func tableExists(db *sql.DB, tableName string) bool {
 	return err == nil && name == tableName
 }
 
-// getDBVersion reads the database_version from metadata
-func getDBVersion(db *sql.DB) string {
-	var version string
-	err := db.QueryRow(`SELECT value FROM metadata WHERE key='database_version'`).Scan(&version)
-	if err != nil {
-		return ""
-	}
-	return version
-}
-
 // allExpectedTables returns all tables expected at the latest version
 func allExpectedTables() []string {
 	return []string{

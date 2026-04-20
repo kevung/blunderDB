@@ -1,20 +1,11 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { dragReorder } from '../utils/dragReorder.js';
-    import { 
-        collectionsStore, 
-        selectedCollectionStore, 
-        collectionPositionsStore,
-        activeCollectionStore
-    } from '../stores/collectionStore';
-    import { 
-        showCollectionPanelStore, 
-        statusBarTextStore, 
-        statusBarModeStore, 
-        currentPositionIndexStore
-    } from '../stores/uiStore';
+    import { collectionsStore, selectedCollectionStore, collectionPositionsStore, activeCollectionStore } from '../stores/collectionStore';
+    import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
-    import { positionStore, positionsStore } from '../stores/positionStore';
+    import { positionStore } from '../stores/positionStore';
     import { analysisStore } from '../stores/analysisStore';
     import {
         CreateCollection,
@@ -31,52 +22,50 @@
         LoadAnalysis
     } from '../../wailsjs/go/main/Database.js';
 
-    export let onOpenCollection;
+    let { onOpenCollection } = $props();
 
-    let collections = [];
-    let selectedCollection = null;
-    let collectionPositions = [];
-    let activeCollection = null;
-    let visible = false;
-    let databaseLoaded = false;
-    let currentPosition = null;
+    let collections = $state([]);
+    let selectedCollection = $state(null);
+    let collectionPositions = $state([]);
+    let activeCollection = $state(null);
+    let visible = $state(false);
+    let databaseLoaded = $state(false);
+    let currentPosition = $state(null);
     let mode = 'NORMAL';
-    
-    let positionCollectionIds = [];
+
+    let positionCollectionIds = $state([]);
 
     // View: 'list' (all collections) or 'detail' (positions in active collection)
-    let view = 'list';
+    let view = $state('list');
 
     // Collection editing (unified: name + description at the same time)
-    let editingCollectionId = null;
-    let editingName = '';
-    let editingDescription = '';
-    let inlineNewName = '';
+    let editingCollectionId = $state(null);
+    let editingName = $state('');
+    let editingDescription = $state('');
+    let inlineNewName = $state('');
 
     // Multi-select for positions
-    let selectedPositionIndices = new Set();
+    let selectedPositionIndices = $state(new Set());
 
     // Position index map (position_id -> 1-based index in DB)
-    let positionIndexMap = {};
+    let positionIndexMap = $state({});
 
     // Inline new description
-    let inlineNewDescription = '';
+    let inlineNewDescription = $state('');
 
-
-
-    const unsubCollections = collectionsStore.subscribe(value => {
+    const unsubCollections = collectionsStore.subscribe((value) => {
         collections = value || [];
     });
 
-    const unsubSelected = selectedCollectionStore.subscribe(value => {
+    const unsubSelected = selectedCollectionStore.subscribe((value) => {
         selectedCollection = value;
     });
 
-    const unsubPositions = collectionPositionsStore.subscribe(value => {
+    const unsubPositions = collectionPositionsStore.subscribe((value) => {
         collectionPositions = value || [];
     });
 
-    const unsubActive = activeCollectionStore.subscribe(value => {
+    const unsubActive = activeCollectionStore.subscribe((value) => {
         activeCollection = value;
         if (value) {
             view = 'detail';
@@ -85,7 +74,7 @@
         }
     });
 
-    const unsubDb = databaseLoadedStore.subscribe(async value => {
+    const unsubDb = databaseLoadedStore.subscribe(async (value) => {
         const wasLoaded = databaseLoaded;
         databaseLoaded = value;
         if (value && !wasLoaded) {
@@ -97,7 +86,7 @@
         }
     });
 
-    const unsubPosition = positionStore.subscribe(value => {
+    const unsubPosition = positionStore.subscribe((value) => {
         const prevId = currentPosition ? currentPosition.id : null;
         currentPosition = value;
         const newId = value ? value.id : null;
@@ -110,7 +99,7 @@
         }
     });
 
-    const unsubMode = statusBarModeStore.subscribe(value => {
+    const unsubMode = statusBarModeStore.subscribe((value) => {
         mode = value;
         if (value === 'COLLECTION' && activeCollection) {
             view = 'detail';
@@ -118,14 +107,15 @@
     });
 
     // Sync position selection when navigating with j/k in COLLECTION mode
-    const unsubCurrentIdx = currentPositionIndexStore.subscribe(value => {
+    const unsubCurrentIdx = currentPositionIndexStore.subscribe((value) => {
         if (mode === 'COLLECTION' && activeCollection && value >= 0) {
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- clone-reassign pattern
             selectedPositionIndices = new Set([value]);
         }
     });
 
-    const unsubVisible = showCollectionPanelStore.subscribe(async value => {
-        visible = value;
+    const unsubVisible = openPanels.subscribe(async (value) => {
+        visible = value.has(PANEL.COLLECTION);
     });
 
     onDestroy(() => {
@@ -145,15 +135,15 @@
             const loaded = await GetAllCollections();
             collectionsStore.set(loaded || []);
         } catch (error) {
-            console.error('Error loading collections:', error);
+            logger.error('Error loading collections:', error);
             statusBarTextStore.set('Error loading collections');
         }
     }
 
     async function loadPositionIndexMap() {
         try {
-            positionIndexMap = await GetPositionIndexMap() || {};
-        } catch (error) {
+            positionIndexMap = (await GetPositionIndexMap()) || {};
+        } catch (_error) {
             positionIndexMap = {};
         }
     }
@@ -161,15 +151,15 @@
     async function loadPositionCollections(positionId) {
         try {
             const colls = await GetPositionCollections(positionId);
-            positionCollectionIds = (colls || []).map(c => c.id);
-        } catch (error) {
+            positionCollectionIds = (colls || []).map((c) => c.id);
+        } catch (_error) {
             positionCollectionIds = [];
         }
     }
 
     function isDuplicateName(name, excludeId = null) {
         const lower = name.trim().toLowerCase();
-        return collections.some(c => c.name.toLowerCase() === lower && c.id !== excludeId);
+        return collections.some((c) => c.name.toLowerCase() === lower && c.id !== excludeId);
     }
 
     function formatDate(dateStr) {
@@ -182,8 +172,8 @@
         }
         const d = new Date(normalized);
         if (isNaN(d.getTime())) return '';
-        const pad = n => String(n).padStart(2, '0');
-        return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        const pad = (n) => String(n).padStart(2, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
     async function togglePositionInCollection(collectionId, event) {
@@ -195,7 +185,7 @@
         try {
             if (positionCollectionIds.includes(collectionId)) {
                 await RemovePositionFromCollection(collectionId, currentPosition.id);
-                positionCollectionIds = positionCollectionIds.filter(id => id !== collectionId);
+                positionCollectionIds = positionCollectionIds.filter((id) => id !== collectionId);
                 statusBarTextStore.set('Position removed from collection');
             } else {
                 await AddPositionToCollection(collectionId, currentPosition.id);
@@ -209,7 +199,7 @@
                 collectionPositionsStore.set(positions || []);
             }
         } catch (error) {
-            console.error('Error toggling position in collection:', error);
+            logger.error('Error toggling position in collection:', error);
             statusBarTextStore.set('Error updating collection');
         }
     }
@@ -227,12 +217,12 @@
             inlineNewName = '';
             inlineNewDescription = '';
         } catch (error) {
-            console.error('Error creating collection:', error);
+            logger.error('Error creating collection:', error);
             statusBarTextStore.set('Error creating collection');
         }
     }
 
-    async function selectCollection(collection) {
+    async function _selectCollection(collection) {
         if (mode === 'COLLECTION' && activeCollection) return;
         if (selectedCollection && selectedCollection.id === collection.id) {
             selectedCollectionStore.set(null);
@@ -244,7 +234,7 @@
             const positions = await GetCollectionPositions(collection.id);
             collectionPositionsStore.set(positions || []);
         } catch (error) {
-            console.error('Error loading collection positions:', error);
+            logger.error('Error loading collection positions:', error);
         }
     }
 
@@ -266,7 +256,7 @@
                 onOpenCollection(collection, positions);
             }
         } catch (error) {
-            console.error('Error opening collection:', error);
+            logger.error('Error opening collection:', error);
         }
     }
 
@@ -291,7 +281,7 @@
                 await loadPositionCollections(currentPosition.id);
             }
         } catch (error) {
-            console.error('Error deleting collection:', error);
+            logger.error('Error deleting collection:', error);
         }
     }
 
@@ -319,7 +309,7 @@
                     activeCollectionStore.set({ ...activeCollection, name: newName, description: newDesc });
                 }
             } catch (error) {
-                console.error('Error updating collection:', error);
+                logger.error('Error updating collection:', error);
             }
         }
         editingCollectionId = null;
@@ -353,9 +343,9 @@
         [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
         collectionsStore.set(newOrder);
         try {
-            await ReorderCollections(newOrder.map(c => c.id));
+            await ReorderCollections(newOrder.map((c) => c.id));
         } catch (error) {
-            console.error('Error reordering collections:', error);
+            logger.error('Error reordering collections:', error);
         }
     }
 
@@ -366,15 +356,16 @@
         [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
         collectionsStore.set(newOrder);
         try {
-            await ReorderCollections(newOrder.map(c => c.id));
+            await ReorderCollections(newOrder.map((c) => c.id));
         } catch (error) {
-            console.error('Error reordering collections:', error);
+            logger.error('Error reordering collections:', error);
         }
     }
 
     // Select a position and display it
     async function selectAndDisplayPosition(index, event) {
         event.stopPropagation();
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
         const newSet = new Set(selectedPositionIndices);
         if (event.shiftKey && selectedPositionIndices.size > 0) {
             const sorted = [...selectedPositionIndices].sort((a, b) => a - b);
@@ -421,7 +412,7 @@
                 onOpenCollection(activeCollection, positions);
             }
         } catch (error) {
-            console.error('Error removing positions:', error);
+            logger.error('Error removing positions:', error);
         }
     }
 
@@ -432,15 +423,19 @@
         [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
         collectionPositionsStore.set(newOrder);
         if (selectedPositionIndices.has(index)) {
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
             const newSet = new Set(selectedPositionIndices);
             newSet.delete(index);
             newSet.add(index - 1);
             selectedPositionIndices = newSet;
         }
         try {
-            await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
+            await ReorderCollectionPositions(
+                activeCollection.id,
+                newOrder.map((p) => p.id)
+            );
         } catch (error) {
-            console.error('Error reordering positions:', error);
+            logger.error('Error reordering positions:', error);
         }
     }
 
@@ -451,15 +446,19 @@
         [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
         collectionPositionsStore.set(newOrder);
         if (selectedPositionIndices.has(index)) {
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
             const newSet = new Set(selectedPositionIndices);
             newSet.delete(index);
             newSet.add(index + 1);
             selectedPositionIndices = newSet;
         }
         try {
-            await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
+            await ReorderCollectionPositions(
+                activeCollection.id,
+                newOrder.map((p) => p.id)
+            );
         } catch (error) {
-            console.error('Error reordering positions:', error);
+            logger.error('Error reordering positions:', error);
         }
     }
 
@@ -470,7 +469,7 @@
         try {
             await RemovePositionFromCollection(activeCollection.id, positionId);
             selectedPositionIndices.delete(index);
-            selectedPositionIndices = new Set([...selectedPositionIndices].map(i => i > index ? i - 1 : i));
+            selectedPositionIndices = new Set([...selectedPositionIndices].map((i) => (i > index ? i - 1 : i)));
             const positions = await GetCollectionPositions(activeCollection.id);
             collectionPositionsStore.set(positions || []);
             await loadCollections();
@@ -478,7 +477,7 @@
                 onOpenCollection(activeCollection, positions);
             }
         } catch (error) {
-            console.error('Error removing position:', error);
+            logger.error('Error removing position:', error);
         }
     }
 
@@ -491,7 +490,7 @@
                 analysisStore.set(analysis);
             }
         } catch (error) {
-            console.error('Error loading analysis:', error);
+            logger.error('Error loading analysis:', error);
         }
     }
 
@@ -502,9 +501,9 @@
         newOrder.splice(toIndex, 0, moved);
         collectionsStore.set(newOrder);
         try {
-            await ReorderCollections(newOrder.map(c => c.id));
+            await ReorderCollections(newOrder.map((c) => c.id));
         } catch (error) {
-            console.error('Error reordering collections:', error);
+            logger.error('Error reordering collections:', error);
         }
     }
 
@@ -514,23 +513,27 @@
 
         if (selectedPositionIndices.size > 1 && selectedPositionIndices.has(fromIndex)) {
             const sorted = [...selectedPositionIndices].sort((a, b) => a - b);
-            const items = sorted.map(i => collectionPositions[i]);
+            const items = sorted.map((i) => collectionPositions[i]);
             const newOrder = collectionPositions.filter((_, i) => !selectedPositionIndices.has(i));
             let insertAt = toIndex;
-            const removedBefore = sorted.filter(i => i < toIndex).length;
+            const removedBefore = sorted.filter((i) => i < toIndex).length;
             insertAt -= removedBefore;
             if (insertAt < 0) insertAt = 0;
             newOrder.splice(insertAt, 0, ...items);
             collectionPositionsStore.set(newOrder);
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
             const newSelected = new Set();
             for (let i = 0; i < items.length; i++) {
                 newSelected.add(insertAt + i);
             }
             selectedPositionIndices = newSelected;
             try {
-                await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
+                await ReorderCollectionPositions(
+                    activeCollection.id,
+                    newOrder.map((p) => p.id)
+                );
             } catch (error) {
-                console.error('Error reordering positions:', error);
+                logger.error('Error reordering positions:', error);
             }
         } else {
             const newOrder = [...collectionPositions];
@@ -541,15 +544,18 @@
                 selectedPositionIndices = new Set([toIndex]);
             }
             try {
-                await ReorderCollectionPositions(activeCollection.id, newOrder.map(p => p.id));
+                await ReorderCollectionPositions(
+                    activeCollection.id,
+                    newOrder.map((p) => p.id)
+                );
             } catch (error) {
-                console.error('Error reordering positions:', error);
+                logger.error('Error reordering positions:', error);
             }
         }
     }
 
-    function closePanel() {
-        showCollectionPanelStore.set(false);
+    function closeCollectionPanel() {
+        closePanel(PANEL.COLLECTION);
     }
 
     function handleKeyDown(event) {
@@ -560,10 +566,15 @@
         if (event.ctrlKey) return;
 
         // Let navigation keys pass through to global handler for position browsing
-        const isNavigationKey = (event.key === 'j' || event.key === 'k' || 
-                                event.key === 'ArrowLeft' || event.key === 'ArrowRight' ||
-                                event.key === 'h' || event.key === 'l' ||
-                                event.key === 'PageUp' || event.key === 'PageDown');
+        const isNavigationKey =
+            event.key === 'j' ||
+            event.key === 'k' ||
+            event.key === 'ArrowLeft' ||
+            event.key === 'ArrowRight' ||
+            event.key === 'h' ||
+            event.key === 'l' ||
+            event.key === 'PageUp' ||
+            event.key === 'PageDown';
         if (isNavigationKey) return;
 
         // Stop other keyboard events from propagating to global handlers
@@ -576,7 +587,7 @@
                 selectedCollectionStore.set(null);
                 collectionPositionsStore.set([]);
             } else {
-                closePanel();
+                closeCollectionPanel();
             }
             return;
         }
@@ -606,7 +617,7 @@
                 onOpenCollection(activeCollection, positions);
             }
         } catch (error) {
-            console.error('Error removing position:', error);
+            logger.error('Error removing position:', error);
         }
     }
 
@@ -621,7 +632,7 @@
                 const positions = await GetCollectionPositions(activeCollection.id);
                 collectionPositionsStore.set(positions || []);
             } catch (error) {
-                console.error('Error reloading active collection positions:', error);
+                logger.error('Error reloading active collection positions:', error);
             }
         }
         if (currentPosition && currentPosition.id) {
@@ -634,230 +645,515 @@
     });
 </script>
 
-    <section class="collection-panel" id="collectionPanel" tabindex="-1">
-        {#if view === 'list'}
-            <!-- Collections list -->
-            <div class="table-wrapper">
-                <table class="coll-table">
-                    <thead>
-                        <tr>
-                            <th class="no-select">Name</th>
-                            <th class="no-select narrow-col">Pos</th>
-                            <th class="no-select">Description</th>
-                            <th class="no-select narrow-col">Modified</th>
-                            <th class="no-select narrow-col toggle-header" title="Add/remove current position">Pos ✓</th>
-                            <th class="no-select actions-col"></th>
+<section class="collection-panel" id="collectionPanel" tabindex="-1" role="dialog" aria-modal="true" aria-label="Collections">
+    {#if view === 'list'}
+        <!-- Collections list -->
+        <div class="table-wrapper">
+            <table class="coll-table">
+                <thead>
+                    <tr>
+                        <th class="no-select">Name</th>
+                        <th class="no-select narrow-col">Pos</th>
+                        <th class="no-select">Description</th>
+                        <th class="no-select narrow-col">Modified</th>
+                        <th class="no-select narrow-col toggle-header" title="Add/remove current position">Pos ✓</th>
+                        <th class="no-select actions-col"></th>
+                    </tr>
+                </thead>
+                <tbody use:dragReorder={{ onReorder: handleCollectionReorder }}>
+                    {#each collections as collection, index (collection.id)}
+                        <tr
+                            class:selected={selectedCollection?.id === collection.id}
+                            class:in-collection={positionCollectionIds.includes(collection.id)}
+                            onclick={(e) => togglePositionInCollection(collection.id, e)}
+                            ondblclick={() => openCollection(collection)}
+                        >
+                            <td class="name-cell">
+                                {#if editingCollectionId === collection.id}
+                                    <input
+                                        class="inline-edit"
+                                        type="text"
+                                        bind:value={editingName}
+                                        onblur={(e) => handleEditingBlur(collection, e)}
+                                        onkeydown={(e) => handleEditingKeyDown(e, collection)}
+                                        onclick={(e) => e.stopPropagation()}
+                                        ondblclick={(e) => e.stopPropagation()}
+                                        autofocus
+                                    />
+                                {:else}
+                                    <span title={collection.name}>{collection.name}</span>
+                                {/if}
+                            </td>
+                            <td class="narrow-col count-cell">{collection.positionCount || 0}</td>
+                            <td class="desc-cell">
+                                {#if editingCollectionId === collection.id}
+                                    <input
+                                        class="inline-edit"
+                                        type="text"
+                                        bind:value={editingDescription}
+                                        onblur={(e) => handleEditingBlur(collection, e)}
+                                        onkeydown={(e) => handleEditingKeyDown(e, collection)}
+                                        onclick={(e) => e.stopPropagation()}
+                                        ondblclick={(e) => e.stopPropagation()}
+                                        placeholder="description…"
+                                    />
+                                {:else}
+                                    <span class="desc-text" title={collection.description || ''}>{collection.description || ''}</span>
+                                {/if}
+                            </td>
+                            <td class="narrow-col date-cell">{formatDate(collection.updatedAt)}</td>
+                            <td class="narrow-col toggle-cell">
+                                {#if currentPosition && currentPosition.id}
+                                    <input
+                                        type="checkbox"
+                                        checked={positionCollectionIds.includes(collection.id)}
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => togglePositionInCollection(collection.id, e))(e);
+                                        }}
+                                        title={positionCollectionIds.includes(collection.id) ? 'Remove position from collection' : 'Add position to collection'}
+                                    />
+                                {/if}
+                            </td>
+                            <td class="actions-col">
+                                <span class="item-actions">
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => moveCollectionUp(index, e))(e);
+                                        }}
+                                        disabled={index === 0}
+                                        title="Move up">▲</button
+                                    >
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => moveCollectionDown(index, e))(e);
+                                        }}
+                                        disabled={index === collections.length - 1}
+                                        title="Move down">▼</button
+                                    >
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => startEditing(collection, e))(e);
+                                        }}
+                                        title="Edit">✎</button
+                                    >
+                                    <button
+                                        class="icon-btn delete"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => deleteCollection(collection, e))(e);
+                                        }}
+                                        title="Delete">×</button
+                                    >
+                                </span>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody use:dragReorder={{ onReorder: handleCollectionReorder }}>
-                        {#each collections as collection, index}
-                            <tr
-                                class:selected={selectedCollection?.id === collection.id}
-                                class:in-collection={positionCollectionIds.includes(collection.id)}
-                                on:click={(e) => togglePositionInCollection(collection.id, e)}
-                                on:dblclick={() => openCollection(collection)}
-                            >
-                                <td class="name-cell">
-                                    {#if editingCollectionId === collection.id}
-                                        <input
-                                            class="inline-edit"
-                                            type="text"
-                                            bind:value={editingName}
-                                            on:blur={(e) => handleEditingBlur(collection, e)}
-                                            on:keydown={(e) => handleEditingKeyDown(e, collection)}
-                                            on:click|stopPropagation
-                                            on:dblclick|stopPropagation
-                                            autofocus
-                                        />
-                                    {:else}
-                                        <span title={collection.name}>{collection.name}</span>
-                                    {/if}
-                                </td>
-                                <td class="narrow-col count-cell">{collection.positionCount || 0}</td>
-                                <td class="desc-cell">
-                                    {#if editingCollectionId === collection.id}
-                                        <input
-                                            class="inline-edit"
-                                            type="text"
-                                            bind:value={editingDescription}
-                                            on:blur={(e) => handleEditingBlur(collection, e)}
-                                            on:keydown={(e) => handleEditingKeyDown(e, collection)}
-                                            on:click|stopPropagation
-                                            on:dblclick|stopPropagation
-                                            placeholder="description…"
-                                        />
-                                    {:else}
-                                        <span class="desc-text" title={collection.description || ''}>{collection.description || ''}</span>
-                                    {/if}
-                                </td>
-                                <td class="narrow-col date-cell">{formatDate(collection.updatedAt)}</td>
-                                <td class="narrow-col toggle-cell">
-                                    {#if currentPosition && currentPosition.id}
-                                        <input type="checkbox" checked={positionCollectionIds.includes(collection.id)} on:click|stopPropagation={(e) => togglePositionInCollection(collection.id, e)} title={positionCollectionIds.includes(collection.id) ? 'Remove position from collection' : 'Add position to collection'} />
-                                    {/if}
-                                </td>
-                                <td class="actions-col">
-                                    <span class="item-actions">
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => moveCollectionDown(index, e)} disabled={index === collections.length - 1} title="Move down">▼</button>
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => startEditing(collection, e)} title="Edit">✎</button>
-                                        <button class="icon-btn delete" on:click|stopPropagation={(e) => deleteCollection(collection, e)} title="Delete">×</button>
-                                    </span>
-                                </td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-                <!-- Inline add row below table -->
-                <div class="add-row">
-                    <input class="add-input" type="text" bind:value={inlineNewName} placeholder="New collection…" on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()} />
-                    <input class="add-input desc" type="text" bind:value={inlineNewDescription} placeholder="Description…" on:keydown|stopPropagation={(e) => e.key === 'Enter' && createCollectionInline()} />
-                </div>
-                {#if collections.length === 0}
-                    <div class="empty-msg">No collections</div>
+                    {/each}
+                </tbody>
+            </table>
+            <!-- Inline add row below table -->
+            <div class="add-row">
+                <input
+                    class="add-input"
+                    type="text"
+                    bind:value={inlineNewName}
+                    placeholder="New collection…"
+                    onkeydown={(e) => {
+                        e.stopPropagation();
+                        ((e) => e.key === 'Enter' && createCollectionInline())(e);
+                    }}
+                />
+                <input
+                    class="add-input desc"
+                    type="text"
+                    bind:value={inlineNewDescription}
+                    placeholder="Description…"
+                    onkeydown={(e) => {
+                        e.stopPropagation();
+                        ((e) => e.key === 'Enter' && createCollectionInline())(e);
+                    }}
+                />
+            </div>
+            {#if collections.length === 0}
+                <div class="empty-msg">No collections</div>
+            {/if}
+        </div>
+    {:else if view === 'detail' && activeCollection}
+        <!-- Positions in active collection -->
+        <div class="table-wrapper">
+            <div class="detail-header">
+                <button class="back-btn" onclick={goBackToList} title="Back to collections">←</button>
+                <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
+                <span class="detail-count">{collectionPositions.length} pos</span>
+                {#if currentPosition && currentPosition.id}
+                    <input
+                        type="checkbox"
+                        checked={positionCollectionIds.includes(activeCollection.id)}
+                        onclick={(e) => togglePositionInCollection(activeCollection.id, e)}
+                        title={positionCollectionIds.includes(activeCollection.id) ? 'Remove position from collection' : 'Add position to collection'}
+                    />
                 {/if}
             </div>
-        {:else if view === 'detail' && activeCollection}
-            <!-- Positions in active collection -->
-            <div class="table-wrapper">
-                <div class="detail-header">
-                    <button class="back-btn" on:click={goBackToList} title="Back to collections">←</button>
-                    <span class="detail-title" title={activeCollection.name}>{activeCollection.name}</span>
-                    <span class="detail-count">{collectionPositions.length} pos</span>
-                    {#if currentPosition && currentPosition.id}
-                        <input type="checkbox" checked={positionCollectionIds.includes(activeCollection.id)} on:click={(e) => togglePositionInCollection(activeCollection.id, e)} title={positionCollectionIds.includes(activeCollection.id) ? 'Remove position from collection' : 'Add position to collection'} />
-                    {/if}
+            {#if editingCollectionId === activeCollection.id}
+                <div class="desc-bar">
+                    <input
+                        class="inline-edit full-width"
+                        type="text"
+                        bind:value={editingDescription}
+                        onblur={(e) => handleEditingBlur(activeCollection, e)}
+                        onkeydown={(e) => handleEditingKeyDown(e, activeCollection)}
+                        placeholder="description…"
+                        autofocus
+                    />
                 </div>
-                {#if editingCollectionId === activeCollection.id}
-                    <div class="desc-bar">
-                        <input
-                            class="inline-edit full-width"
-                            type="text"
-                            bind:value={editingDescription}
-                            on:blur={(e) => handleEditingBlur(activeCollection, e)}
-                            on:keydown={(e) => handleEditingKeyDown(e, activeCollection)}
-                            placeholder="description…"
-                            autofocus
-                        />
-                    </div>
-                {:else}
-                    <div class="desc-bar clickable" on:click={(e) => startEditing(activeCollection, e)}>
-                        <span class="desc-text" title="Click to edit">{activeCollection.description || 'Add a description…'}</span>
-                    </div>
-                {/if}
-                <table class="coll-table">
-                    <thead>
-                        <tr>
-                            <th class="no-select narrow-col">#</th>
-                            <th class="no-select narrow-col">ID</th>
-                            <th class="no-select actions-col"></th>
+            {:else}
+                <div class="desc-bar clickable" onclick={(e) => startEditing(activeCollection, e)}>
+                    <span class="desc-text" title="Click to edit">{activeCollection.description || 'Add a description…'}</span>
+                </div>
+            {/if}
+            <table class="coll-table">
+                <thead>
+                    <tr>
+                        <th class="no-select narrow-col">#</th>
+                        <th class="no-select narrow-col">ID</th>
+                        <th class="no-select actions-col"></th>
+                    </tr>
+                </thead>
+                <tbody use:dragReorder={{ onReorder: handlePositionReorder }}>
+                    {#each collectionPositions as position, index (position.id)}
+                        <tr class:current={$currentPositionIndexStore === index} class:multi-selected={selectedPositionIndices.has(index)} onclick={(e) => selectAndDisplayPosition(index, e)}>
+                            <td class="narrow-col idx-cell">{index + 1}</td>
+                            <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
+                            <td class="actions-col">
+                                <span class="item-actions">
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => movePositionUp(index, e))(e);
+                                        }}
+                                        disabled={index === 0}
+                                        title="Move up">▲</button
+                                    >
+                                    <button
+                                        class="icon-btn"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => movePositionDown(index, e))(e);
+                                        }}
+                                        disabled={index === collectionPositions.length - 1}
+                                        title="Move down">▼</button
+                                    >
+                                    <button
+                                        class="icon-btn delete"
+                                        onclick={(e) => {
+                                            e.stopPropagation();
+                                            ((e) => removePositionFromRow(index, e))(e);
+                                        }}
+                                        title="Remove from collection">×</button
+                                    >
+                                </span>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody use:dragReorder={{ onReorder: handlePositionReorder }}>
-                        {#each collectionPositions as position, index}
-                            <tr
-                                class:current={$currentPositionIndexStore === index}
-                                class:multi-selected={selectedPositionIndices.has(index)}
-                                on:click={(e) => selectAndDisplayPosition(index, e)}
-                            >
-                                <td class="narrow-col idx-cell">{index + 1}</td>
-                                <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>
-                                <td class="actions-col">
-                                    <span class="item-actions">
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionUp(index, e)} disabled={index === 0} title="Move up">▲</button>
-                                        <button class="icon-btn" on:click|stopPropagation={(e) => movePositionDown(index, e)} disabled={index === collectionPositions.length - 1} title="Move down">▼</button>
-                                        <button class="icon-btn delete" on:click|stopPropagation={(e) => removePositionFromRow(index, e)} title="Remove from collection">×</button>
-                                    </span>
-                                </td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
-                {#if collectionPositions.length === 0}
-                    <div class="empty-msg">Empty collection</div>
-                {/if}
-            </div>
-        {/if}
-    </section>
+                    {/each}
+                </tbody>
+            </table>
+            {#if collectionPositions.length === 0}
+                <div class="empty-msg">Empty collection</div>
+            {/if}
+        </div>
+    {/if}
+</section>
 
 <style>
-    .collection-panel { width: 100%; height: 100%; background: white; box-sizing: border-box; outline: none; overflow: hidden; user-select: none; -webkit-user-select: none; }
-    .collection-panel * { user-select: none; -webkit-user-select: none; }
-    .collection-panel input, .collection-panel textarea { user-select: text; -webkit-user-select: text; }
+    .collection-panel {
+        width: 100%;
+        height: 100%;
+        background: white;
+        box-sizing: border-box;
+        outline: none;
+        overflow: hidden;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    .collection-panel * {
+        user-select: none;
+        -webkit-user-select: none;
+    }
+    .collection-panel input,
+    .collection-panel textarea {
+        user-select: text;
+        -webkit-user-select: text;
+    }
 
-    .table-wrapper { height: 100%; display: flex; flex-direction: column; min-height: 0; overflow-y: auto; overflow-x: hidden; }
+    .table-wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
 
     /* Table layout (same pattern as Match/Tournament panels) */
-    .coll-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .coll-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
 
-    .coll-table thead { position: sticky; top: 0; background-color: #f5f5f5; z-index: 1; }
+    .coll-table thead {
+        position: sticky;
+        top: 0;
+        background-color: #f5f5f5;
+        z-index: 1;
+    }
 
-    .coll-table th, .coll-table td { padding: 4px 8px; text-align: left; border-bottom: 1px solid #e0e0e0; }
+    .coll-table th,
+    .coll-table td {
+        padding: 4px 8px;
+        text-align: left;
+        border-bottom: 1px solid #e0e0e0;
+    }
 
-    .coll-table th { font-weight: 600; color: #333; font-size: 11px; }
+    .coll-table th {
+        font-weight: 600;
+        color: #333;
+        font-size: 11px;
+    }
 
-    .narrow-col { width: 1px; white-space: nowrap; padding-left: 6px; padding-right: 6px; }
+    .narrow-col {
+        width: 1px;
+        white-space: nowrap;
+        padding-left: 6px;
+        padding-right: 6px;
+    }
 
-    .actions-col { width: 90px; min-width: 90px; max-width: 90px; white-space: nowrap; text-align: center; padding: 0 4px; }
+    .actions-col {
+        width: 90px;
+        min-width: 90px;
+        max-width: 90px;
+        white-space: nowrap;
+        text-align: center;
+        padding: 0 4px;
+    }
 
-    .date-cell { font-size: 10px; color: #999; }
+    .date-cell {
+        font-size: 10px;
+        color: #999;
+    }
 
     /* Row styles */
-    .coll-table tbody tr { transition: background-color 0.1s; }
-    .coll-table tbody tr:hover { background-color: #f9f9f9; }
-    .coll-table tbody tr.selected { background-color: #e3f2fd; }
-    .coll-table tbody tr.selected:hover { background-color: #bbdefb; }
-    .coll-table tbody tr.in-collection { border-left: 3px solid #4a8; }
-    .coll-table tbody :global(tr.drag-over) { border-top: 2px solid #999; }
-    .coll-table tbody :global(tr.dragging) { opacity: 0.5; }
-    .coll-table tbody tr.current { background-color: #dce9f7; }
-    .coll-table tbody tr.multi-selected { background-color: #dce9f7; }
+    .coll-table tbody tr {
+        transition: background-color 0.1s;
+    }
+    .coll-table tbody tr:hover {
+        background-color: #f9f9f9;
+    }
+    .coll-table tbody tr.selected {
+        background-color: #e3f2fd;
+    }
+    .coll-table tbody tr.selected:hover {
+        background-color: #bbdefb;
+    }
+    .coll-table tbody tr.in-collection {
+        border-left: 3px solid #4a8;
+    }
+    .coll-table tbody :global(tr.drag-over) {
+        border-top: 2px solid #999;
+    }
+    .coll-table tbody :global(tr.dragging) {
+        opacity: 0.5;
+    }
+    .coll-table tbody tr.current {
+        background-color: #dce9f7;
+    }
+    .coll-table tbody tr.multi-selected {
+        background-color: #dce9f7;
+    }
 
     /* Cell styles */
-    .name-cell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
-    .count-cell { text-align: center; color: #666; }
-    .desc-cell { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 0; }
-    .desc-text { color: #888; font-style: italic; cursor: pointer; font-size: 11px; }
-    .desc-text:hover { color: #555; }
-    .idx-cell { text-align: right; color: #999; }
-    .id-cell { color: #666; }
+    .name-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 0;
+    }
+    .count-cell {
+        text-align: center;
+        color: #666;
+    }
+    .desc-cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        max-width: 0;
+    }
+    .desc-text {
+        color: #888;
+        font-style: italic;
+        cursor: pointer;
+        font-size: 11px;
+    }
+    .desc-text:hover {
+        color: #555;
+    }
+    .idx-cell {
+        text-align: right;
+        color: #999;
+    }
+    .id-cell {
+        color: #666;
+    }
 
-    .inline-edit { width: 100%; font-size: 12px; padding: 1px 4px; border: 1px solid #999; outline: none; box-sizing: border-box; }
+    .inline-edit {
+        width: 100%;
+        font-size: 12px;
+        padding: 1px 4px;
+        border: 1px solid #999;
+        outline: none;
+        box-sizing: border-box;
+    }
 
-    .toggle-header { text-align: center; color: #4a8; }
-    .toggle-cell { text-align: center; }
-    .toggle-cell input[type="checkbox"] { cursor: pointer; margin: 0; width: 15px; height: 15px; accent-color: #4a8; }
+    .toggle-header {
+        text-align: center;
+        color: #4a8;
+    }
+    .toggle-cell {
+        text-align: center;
+    }
+    .toggle-cell input[type='checkbox'] {
+        cursor: pointer;
+        margin: 0;
+        width: 15px;
+        height: 15px;
+        accent-color: #4a8;
+    }
 
     /* Action buttons - always visible */
-    .item-actions { display: inline-flex; gap: 2px; vertical-align: middle; }
+    .item-actions {
+        display: inline-flex;
+        gap: 2px;
+        vertical-align: middle;
+    }
 
-    .icon-btn { background: none; border: none; cursor: pointer; font-size: 12px; color: #666; padding: 2px 4px; line-height: 1; }
-    .icon-btn:hover:not(:disabled) { color: #000; }
-    .icon-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .icon-btn.delete:hover:not(:disabled) { color: #c55; }
-
+    .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+        color: #666;
+        padding: 2px 4px;
+        line-height: 1;
+    }
+    .icon-btn:hover:not(:disabled) {
+        color: #000;
+    }
+    .icon-btn:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+    }
+    .icon-btn.delete:hover:not(:disabled) {
+        color: #c55;
+    }
 
     /* Add row */
-    .add-row { padding: 4px 8px; background: #fafafa; border-top: 1px solid #e0e0e0; flex-shrink: 0; }
-    .add-row { display: flex; gap: 4px; }
-    .add-input { flex: 1; padding: 3px 6px; border: 1px solid #ccc; border-radius: 3px; font-size: 12px; outline: none; box-sizing: border-box; }
-    .add-input.desc { flex: 1; font-size: 11px; color: #666; }
-    .add-input:focus { border-color: #999; }
+    .add-row {
+        padding: 4px 8px;
+        background: #fafafa;
+        border-top: 1px solid #e0e0e0;
+        flex-shrink: 0;
+    }
+    .add-row {
+        display: flex;
+        gap: 4px;
+    }
+    .add-input {
+        flex: 1;
+        padding: 3px 6px;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 12px;
+        outline: none;
+        box-sizing: border-box;
+    }
+    .add-input.desc {
+        flex: 1;
+        font-size: 11px;
+        color: #666;
+    }
+    .add-input:focus {
+        border-color: #999;
+    }
 
-    .empty-msg { text-align: center; color: #bbb; padding: 16px; font-size: 11px; font-style: italic; }
+    .empty-msg {
+        text-align: center;
+        color: #bbb;
+        padding: 16px;
+        font-size: 11px;
+        font-style: italic;
+    }
 
     /* Detail header */
-    .detail-header { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: #f5f5f5; border-bottom: 1px solid #e0e0e0; flex-shrink: 0; }
-    .back-btn { background: none; border: none; cursor: pointer; font-size: 16px; color: #666; padding: 2px 6px; line-height: 1; }
-    .back-btn:hover { color: #333; }
-    .detail-title { font-size: 13px; font-weight: 600; color: #333; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
-    .detail-count { font-size: 11px; color: #888; flex-shrink: 0; }
+    .detail-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 8px;
+        background: #f5f5f5;
+        border-bottom: 1px solid #e0e0e0;
+        flex-shrink: 0;
+    }
+    .back-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        color: #666;
+        padding: 2px 6px;
+        line-height: 1;
+    }
+    .back-btn:hover {
+        color: #333;
+    }
+    .detail-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #333;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        flex: 1;
+    }
+    .detail-count {
+        font-size: 11px;
+        color: #888;
+        flex-shrink: 0;
+    }
 
     /* Description bar */
-    .desc-bar { padding: 3px 8px 3px 32px; border-bottom: 1px solid #eee; flex-shrink: 0; }
-    .desc-bar.clickable { cursor: pointer; }
-    .desc-bar .desc-text { font-size: 11px; }
-    .full-width { width: 100%; }
+    .desc-bar {
+        padding: 3px 8px 3px 32px;
+        border-bottom: 1px solid #eee;
+        flex-shrink: 0;
+    }
+    .desc-bar.clickable {
+        cursor: pointer;
+    }
+    .desc-bar .desc-text {
+        font-size: 11px;
+    }
+    .full-width {
+        width: 100%;
+    }
 
-    .no-select { user-select: none; }
+    .no-select {
+        user-select: none;
+    }
 </style>

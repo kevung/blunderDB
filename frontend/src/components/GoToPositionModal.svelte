@@ -1,53 +1,54 @@
 <script>
     import { onMount } from 'svelte';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { positionsStore, matchContextStore, positionStore } from '../stores/positionStore'; // Import stores
     import { currentPositionIndexStore, statusBarModeStore, statusBarTextStore, commentTextStore } from '../stores/uiStore'; // Import stores
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { LoadAnalysis } from '../../wailsjs/go/main/Database.js';
 
-    export let visible = false;
-    export let onClose;
+    let { visible = false, onClose } = $props();
 
-    let positionNumber = 0;
-    let inputField;
-    let maxPositionNumber = 0;
-    let currentIndex = 0;
+    let positionNumber = $state(0);
+    let inputField = $state();
+    let maxPositionNumber = $state(0);
+    let currentIndex = $state(0);
 
     // Subscribe to positionsStore and matchContextStore to get the number of positions
-    $: if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
-        maxPositionNumber = $matchContextStore.movePositions.length;
-        currentIndex = $matchContextStore.currentIndex + 1; // Adjust for 1-based index
-    } else {
-        maxPositionNumber = $positionsStore.length;
-        currentIndex = $currentPositionIndexStore + 1; // Adjust for 1-based index
-    }
-
+    $effect(() => {
+        if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
+            maxPositionNumber = $matchContextStore.movePositions.length;
+            currentIndex = $matchContextStore.currentIndex + 1; // Adjust for 1-based index
+        } else {
+            maxPositionNumber = $positionsStore.length;
+            currentIndex = $currentPositionIndexStore + 1; // Adjust for 1-based index
+        }
+    });
     async function handleGoToPosition() {
         if (positionNumber < 1) {
             positionNumber = 1;
         } else if (positionNumber > maxPositionNumber) {
             positionNumber = maxPositionNumber;
         }
-        
+
         // Handle MATCH mode differently
         if ($statusBarModeStore === 'MATCH' && $matchContextStore.isMatchMode) {
             const newIndex = positionNumber - 1;
-            matchContextStore.update(ctx => ({ ...ctx, currentIndex: newIndex }));
+            matchContextStore.update((ctx) => ({ ...ctx, currentIndex: newIndex }));
             const movePos = $matchContextStore.movePositions[newIndex];
             positionStore.set(movePos.position);
-            
+
             // Load analysis for the position
             let analysis = null;
             try {
                 analysis = await LoadAnalysis(movePos.position.id);
-            } catch (error) {
+            } catch (_error) {
                 // No analysis for this position
             }
-            
+
             // Use the specific move from this match context, not all played moves
             const currentPlayedMove = movePos.checker_move || '';
             const currentPlayedCubeAction = movePos.cube_action || '';
-            
+
             analysisStore.set({
                 positionId: analysis?.positionId || null,
                 xgid: analysis?.xgid || '',
@@ -83,10 +84,10 @@
                 creationDate: analysis?.creationDate || '',
                 lastModifiedDate: analysis?.lastModifiedDate || ''
             });
-            
+
             commentTextStore.set('');
             selectedMoveStore.set(null);
-            
+
             statusBarTextStore.set(`${$matchContextStore.player1Name} vs ${$matchContextStore.player2Name}`);
         } else {
             currentPositionIndexStore.set(positionNumber - 1); // Set the store value directly
@@ -110,28 +111,31 @@
         }
     });
 
-    $: if (visible && inputField) {
-        inputField.focus();
-        inputField.select(); // Select the text to allow direct replacement
-    }
-
-    $: if (visible && $statusBarModeStore === 'EDIT') {
-        onClose(); // Close the modal if in edit mode
-    }
+    $effect(() => {
+        if (visible && inputField) {
+            inputField.focus();
+            inputField.select(); // Select the text to allow direct replacement
+        }
+    });
+    $effect(() => {
+        if (visible && $statusBarModeStore === 'EDIT') {
+            onClose(); // Close the modal if in edit mode
+        }
+    });
 </script>
 
 {#if visible}
-<div class="modal-overlay" on:click={onClose}>
-    <div class="modal-content" on:click|stopPropagation>
-        <div class="close-button" on:click={onClose}>×</div>
-        <h2>Go To Position</h2>
-        <input type="number" bind:value={positionNumber} min="1" max={maxPositionNumber} placeholder="Enter position number" class="input-field" bind:this={inputField} on:keydown={handleKeyDown} />
-        <div class="modal-buttons">
-            <button class="primary-button" on:click={handleGoToPosition}>Go</button>
-            <button class="secondary-button" on:click={onClose}>Cancel</button>
+    <div class="modal-overlay" onclick={onClose} role="dialog" aria-modal="true" aria-label="Go to position" use:trapFocus>
+        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
+            <div class="close-button" onclick={onClose}>×</div>
+            <h2>Go To Position</h2>
+            <input type="number" bind:value={positionNumber} min="1" max={maxPositionNumber} placeholder="Enter position number" class="input-field" bind:this={inputField} onkeydown={handleKeyDown} />
+            <div class="modal-buttons">
+                <button class="primary-button" onclick={handleGoToPosition}>Go</button>
+                <button class="secondary-button" onclick={onClose}>Cancel</button>
+            </div>
         </div>
     </div>
-</div>
 {/if}
 
 <style>
@@ -174,7 +178,9 @@
         color: #666;
         cursor: pointer;
         z-index: 10;
-        transition: background-color 0.3s ease, opacity 0.3s ease;
+        transition:
+            background-color 0.3s ease,
+            opacity 0.3s ease;
     }
 
     .input-field {

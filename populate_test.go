@@ -1,7 +1,6 @@
 package main
 
 import (
-	"math"
 	"testing"
 )
 
@@ -105,10 +104,6 @@ func TestPopulatePositionColumns_Normalization(t *testing.T) {
 // ---------------------------------------------------------------------------
 // populateAnalysisColumns tests
 // ---------------------------------------------------------------------------
-
-func nearlyEqual(a, b, eps float64) bool {
-	return math.Abs(a-b) < eps
-}
 
 func TestPopulateAnalysisColumns_Nil(t *testing.T) {
 	c := populateAnalysisColumns(nil, "", "")

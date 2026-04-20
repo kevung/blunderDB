@@ -2,6 +2,7 @@ import { writable, get } from 'svelte/store';
 import { positionStore, positionsStore, matchContextStore } from './positionStore';
 import { analysisStore, selectedMoveStore } from './analysisStore';
 import { currentPositionIndexStore, activeTabStore, commentTextStore, statusBarModeStore } from './uiStore';
+import { logger } from '../utils/logger.js';
 
 function createDefaultPosition() {
     return {
@@ -15,8 +16,8 @@ function createDefaultPosition() {
         score: [-1, -1],
         player_on_roll: 1,
         decision_type: '',
-        has_jacoby: false,
-        has_beaver: false
+        has_jacoby: 0,
+        has_beaver: 0
     };
 }
 
@@ -66,23 +67,25 @@ function createViewStore() {
 
     function saveCurrentViewState() {
         const currentId = get(activeViewId);
-        views.update(vs => vs.map(v => {
-            if (v.id === currentId) {
-                return {
-                    ...v,
-                    positions: get(positionsStore),
-                    positionIndex: get(currentPositionIndexStore),
-                    position: JSON.parse(JSON.stringify(get(positionStore))),
-                    analysis: JSON.parse(JSON.stringify(get(analysisStore))),
-                    selectedMove: get(selectedMoveStore),
-                    activeTab: get(activeTabStore),
-                    commentText: get(commentTextStore),
-                    mode: get(statusBarModeStore),
-                    matchContext: JSON.parse(JSON.stringify(get(matchContextStore)))
-                };
-            }
-            return v;
-        }));
+        views.update((vs) =>
+            vs.map((v) => {
+                if (v.id === currentId) {
+                    return {
+                        ...v,
+                        positions: get(positionsStore),
+                        positionIndex: get(currentPositionIndexStore),
+                        position: JSON.parse(JSON.stringify(get(positionStore))),
+                        analysis: JSON.parse(JSON.stringify(get(analysisStore))),
+                        selectedMove: get(selectedMoveStore),
+                        activeTab: get(activeTabStore),
+                        commentText: get(commentTextStore),
+                        mode: get(statusBarModeStore),
+                        matchContext: JSON.parse(JSON.stringify(get(matchContextStore)))
+                    };
+                }
+                return v;
+            })
+        );
     }
 
     function restoreViewState(view) {
@@ -103,7 +106,7 @@ function createViewStore() {
         if (viewId === currentId) return;
         saveCurrentViewState();
         const vs = get(views);
-        const target = vs.find(v => v.id === viewId);
+        const target = vs.find((v) => v.id === viewId);
         if (target) {
             activeViewId.set(viewId);
             restoreViewState(target);
@@ -111,10 +114,17 @@ function createViewStore() {
     }
 
     function addView() {
-        const id = nextViewId++;
-        const newView = createDefaultView(id);
         saveCurrentViewState();
-        views.update(vs => [...vs, newView]);
+        const id = nextViewId++;
+        const currentId = get(activeViewId);
+        const vs = get(views);
+        const current = vs.find((v) => v.id === currentId);
+        const newView = {
+            ...JSON.parse(JSON.stringify(current)),
+            id,
+            name: `#${id}`
+        };
+        views.update((vs) => [...vs, newView]);
         activeViewId.set(id);
         restoreViewState(newView);
     }
@@ -122,7 +132,7 @@ function createViewStore() {
     function closeView(viewId) {
         const vs = get(views);
         if (vs.length <= 1) return;
-        const remaining = vs.filter(v => v.id !== viewId);
+        const remaining = vs.filter((v) => v.id !== viewId);
         views.set(remaining);
         if (get(activeViewId) === viewId) {
             const next = remaining[remaining.length - 1];
@@ -132,7 +142,7 @@ function createViewStore() {
     }
 
     function renameView(viewId, newName) {
-        views.update(vs => vs.map(v => v.id === viewId ? { ...v, name: newName } : v));
+        views.update((vs) => vs.map((v) => (v.id === viewId ? { ...v, name: newName } : v)));
     }
 
     // Serialize all views for persistence (only stores position IDs, not full objects)
@@ -142,10 +152,10 @@ function createViewStore() {
         return JSON.stringify({
             nextViewId,
             activeViewId: get(activeViewId),
-            views: vs.map(v => ({
+            views: vs.map((v) => ({
                 id: v.id,
                 name: v.name,
-                positionIds: (v.positions || []).map(p => p.id).filter(id => id != null),
+                positionIds: (v.positions || []).map((p) => p.id).filter((id) => id != null),
                 positionIndex: v.positionIndex || 0,
                 selectedMove: v.selectedMove,
                 activeTab: v.activeTab || 'analysis',
@@ -164,12 +174,12 @@ function createViewStore() {
 
             // Load all positions once for ID lookup
             const allPositions = await loadAllPositionsFn();
-            const posMap = new Map(allPositions.map(p => [p.id, p]));
+            const posMap = new Map(allPositions.map((p) => [p.id, p]));
 
             nextViewId = data.nextViewId || data.views.length + 1;
 
-            const restoredViews = data.views.map(sv => {
-                const positions = (sv.positionIds || []).map(id => posMap.get(id)).filter(Boolean);
+            const restoredViews = data.views.map((sv) => {
+                const positions = (sv.positionIds || []).map((id) => posMap.get(id)).filter(Boolean);
                 return {
                     id: sv.id,
                     name: sv.name,
@@ -189,11 +199,11 @@ function createViewStore() {
             views.set(restoredViews);
             const targetId = data.activeViewId || restoredViews[0].id;
             activeViewId.set(targetId);
-            const target = restoredViews.find(v => v.id === targetId) || restoredViews[0];
+            const target = restoredViews.find((v) => v.id === targetId) || restoredViews[0];
             restoreViewState(target);
             return true;
         } catch (e) {
-            console.error('Error deserializing views:', e);
+            logger.error('Error deserializing views:', e);
             return false;
         }
     }
@@ -202,7 +212,7 @@ function createViewStore() {
         const vs = get(views);
         if (vs.length <= 1) return;
         const currentId = get(activeViewId);
-        const idx = vs.findIndex(v => v.id === currentId);
+        const idx = vs.findIndex((v) => v.id === currentId);
         const prevIdx = idx > 0 ? idx - 1 : vs.length - 1;
         switchTo(vs[prevIdx].id);
     }
@@ -211,7 +221,7 @@ function createViewStore() {
         const vs = get(views);
         if (vs.length <= 1) return;
         const currentId = get(activeViewId);
-        const idx = vs.findIndex(v => v.id === currentId);
+        const idx = vs.findIndex((v) => v.id === currentId);
         const nextIdx = idx < vs.length - 1 ? idx + 1 : 0;
         switchTo(vs[nextIdx].id);
     }

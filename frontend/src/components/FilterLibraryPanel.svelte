@@ -1,38 +1,39 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
-    import { showFilterLibraryPanelStore, statusBarTextStore, activeTabStore, currentPositionIndexStore, showCommentStore } from '../stores/uiStore';
+    import { openPanels, PANEL, closePanel, statusBarTextStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters, SaveEditPosition, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
     import { searchHistoryStore } from '../stores/searchHistoryStore'; // Import search history store
-    
-    export let onLoadPositionsByFilters; // Accept the prop
 
-    let filters = [];
-    let filterName = '';
-    let filterCommand = '';
-    let selectedFilter = null;
-    let visible = false;
-    let filterExists = false;
-    let databaseLoaded = false;
+    let { onLoadPositionsByFilters } = $props();
+
+    let filters = $state([]);
+    let filterName = $state('');
+    let filterCommand = $state('');
+    let selectedFilter = $state(null);
+    let visible = $state(false);
+
+    let _databaseLoaded = false;
     let editPosition = ''; // Add editPosition variable
     let commandHistory = [];
     let searchHistory = [];
     let historyIndex = -1;
 
-    filterLibraryStore.subscribe(value => {
+    filterLibraryStore.subscribe((value) => {
         filters = value || [];
     });
 
-    databaseLoadedStore.subscribe(value => {
-        databaseLoaded = value;
+    databaseLoadedStore.subscribe((value) => {
+        _databaseLoaded = value;
     });
 
-    showFilterLibraryPanelStore.subscribe(async value => {
+    openPanels.subscribe(async (value) => {
         const wasVisible = visible;
-        visible = value;
+        visible = value.has(PANEL.FILTER_LIBRARY);
         if (visible && !wasVisible) {
             // Panel just opened
             await loadFilters();
@@ -60,7 +61,7 @@
     });
 
     // Update saved position when browsing positions (only if no filter is selected)
-    currentPositionIndexStore.subscribe(value => {
+    currentPositionIndexStore.subscribe((value) => {
         if (visible && !selectedFilter && value >= 0) {
             // Update the saved position as user browses
             positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
@@ -68,11 +69,11 @@
         }
     });
 
-    commandHistoryStore.subscribe(value => {
-        commandHistory = value.filter(command => command.startsWith('s ') || command === 's'); // Filter commands
+    commandHistoryStore.subscribe((value) => {
+        commandHistory = value.filter((command) => command.startsWith('s ') || command === 's'); // Filter commands
     });
 
-    searchHistoryStore.subscribe(value => {
+    searchHistoryStore.subscribe((value) => {
         searchHistory = value;
     });
 
@@ -82,14 +83,14 @@
             filterLibraryStore.set(loadedFilters);
             filters = loadedFilters || []; // Ensure filters are set correctly
         } catch (error) {
-            console.error('Error loading filters:', error);
+            logger.error('Error loading filters:', error);
             statusBarTextStore.set('Error loading filters');
         }
     }
 
     async function saveFilter() {
         if (filterName && (filterCommand.startsWith('s ') || filterCommand === 's')) {
-            const existingFilter = filters.find(filter => filter.name === filterName);
+            const existingFilter = filters.find((filter) => filter.name === filterName);
             if (existingFilter) {
                 statusBarTextStore.set('Filter name already exists');
                 return;
@@ -98,7 +99,7 @@
             await SaveFilter(filterName, filterCommand);
             await SaveEditPosition(filterName, editPosition); // Save edit position
             await loadFilters();
-            const newFilter = filters.find(filter => filter.name === filterName);
+            const newFilter = filters.find((filter) => filter.name === filterName);
             if (newFilter) {
                 scrollToFilter(newFilter);
                 highlightFilter(newFilter);
@@ -143,15 +144,15 @@
             statusBarTextStore.set('No search history available');
             return;
         }
-        
+
         const lastSearch = searchHistory[0]; // Get the most recent search
         filterCommand = lastSearch.command;
         editPosition = lastSearch.position;
-        
+
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition)); // Restore positionStore from JSON string
         }
-        
+
         statusBarTextStore.set('Last search loaded. Enter a name and click Add to save.');
     }
 
@@ -173,13 +174,13 @@
             }
             return;
         }
-        
+
         // Save the current position BEFORE selecting a new filter (only if not already saved)
         if (!selectedFilter && !$positionBeforeFilterLibraryStore) {
             positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
             positionIndexBeforeFilterLibraryStore.set($currentPositionIndexStore);
         }
-        
+
         selectedFilter = filter;
         filterName = filter.name;
         filterCommand = filter.command;
@@ -197,56 +198,64 @@
         }
 
         const command = filter.command;
-        const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
+        const filters = command
+            .slice(1)
+            .trim()
+            .split(' ')
+            .map((filter) => filter.trim());
         const includeCube = filters.includes('cube') || filters.includes('cu') || filters.includes('c') || filters.includes('cub');
         const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
         const noContactFilter = filters.includes('nc');
         const decisionTypeFilter = filters.includes('d');
         const diceRollFilter = filters.includes('D');
         const mirrorPositionFilter = filters.includes('M');
-        const pipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
-        const winRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
-        const gammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
-        const backgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || (filter.startsWith('b') && !filter.startsWith('bo'))) && !filter.startsWith('bj'));
-        const player2WinRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
-        const player2GammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
-        const player2BackgammonRateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || filter.startsWith('B') && !filter.startsWith('BO')) && !filter.startsWith('BJ'));
-        let player1CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
+        const pipCountFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
+        const winRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
+        const gammonRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('g>') || filter.startsWith('g<') || filter.startsWith('g')));
+        const backgammonRateFilter = filters.find(
+            (filter) => typeof filter === 'string' && (filter.startsWith('b>') || filter.startsWith('b<') || (filter.startsWith('b') && !filter.startsWith('bo'))) && !filter.startsWith('bj')
+        );
+        const player2WinRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('W>') || filter.startsWith('W<') || filter.startsWith('W')));
+        const player2GammonRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('G>') || filter.startsWith('G<') || filter.startsWith('G')));
+        const player2BackgammonRateFilter = filters.find(
+            (filter) => typeof filter === 'string' && (filter.startsWith('B>') || filter.startsWith('B<') || (filter.startsWith('B') && !filter.startsWith('BO'))) && !filter.startsWith('BJ')
+        );
+        let player1CheckerOffFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('o>') || filter.startsWith('o<') || filter.startsWith('o')));
         if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
             player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`; // Handle case where 'ox' means 'ox,x'
         }
-        let player2CheckerOffFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('O>') || filter.startsWith('O<') || filter.startsWith('O')));
+        let player2CheckerOffFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('O>') || filter.startsWith('O<') || filter.startsWith('O')));
         if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
             player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`; // Handle case where 'Ox' means 'Ox,x'
         }
-        let player1BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('k>') || filter.startsWith('k<') || filter.startsWith('k')));
+        let player1BackCheckerFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('k>') || filter.startsWith('k<') || filter.startsWith('k')));
         if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
             player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`; // Handle case where 'kx' means 'kx,x'
         }
-        let player2BackCheckerFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
+        let player2BackCheckerFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('K>') || filter.startsWith('K<') || filter.startsWith('K')));
         if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
             player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`; // Handle case where 'Kx' means 'Kx,x'
         }
-        let player1CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('z>') || filter.startsWith('z<') || filter.startsWith('z')));
+        let player1CheckerInZoneFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('z>') || filter.startsWith('z<') || filter.startsWith('z')));
         if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
             player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`; // Handle case where 'zx' means 'zx,x'
         }
-        let player2CheckerInZoneFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('Z>') || filter.startsWith('Z<') || filter.startsWith('Z')));
+        let player2CheckerInZoneFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('Z>') || filter.startsWith('Z<') || filter.startsWith('Z')));
         if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
             player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`; // Handle case where 'Zx' means 'Zx,x'
         }
-        const player1AbsolutePipCountFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
-        const equityFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
-        const dateFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('T>') || filter.startsWith('T<') || filter.startsWith('T')));
+        const player1AbsolutePipCountFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('P>') || filter.startsWith('P<') || filter.startsWith('P')));
+        const equityFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('e>') || filter.startsWith('e<') || filter.startsWith('e')));
+        const dateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('T>') || filter.startsWith('T<') || filter.startsWith('T')));
         const movePatternMatch = command.match(/m["'][^"']*["']/);
         const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
         const searchTextMatch = command.match(/t["'][^"']*["']/);
         const searchText = searchTextMatch ? searchTextMatch[0] : '';
-        const player1OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bo>') || filter.startsWith('bo<') || filter.startsWith('bo')));
-        const player2OutfieldBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
-        const player1JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
-        const player2JanBlotFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
-        const moveErrorFilter = filters.find(filter => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
+        const player1OutfieldBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('bo>') || filter.startsWith('bo<') || filter.startsWith('bo')));
+        const player2OutfieldBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('BO>') || filter.startsWith('BO<') || filter.startsWith('BO')));
+        const player1JanBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('bj>') || filter.startsWith('bj<') || filter.startsWith('bj')));
+        const player2JanBlotFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('BJ>') || filter.startsWith('BJ<') || filter.startsWith('BJ')));
+        const moveErrorFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('E>') || filter.startsWith('E<') || (filter.startsWith('E') && /^E\d/.test(filter))));
 
         onLoadPositionsByFilters(
             filters,
@@ -279,14 +288,14 @@
             noContactFilter,
             mirrorPositionFilter,
             moveErrorFilter,
-            command  // Pass the original search command for session tracking
+            command // Pass the original search command for session tracking
         );
 
         // Do not close the filter library panel after executing the filter search
     }
 
-    function closePanel() {
-        showFilterLibraryPanelStore.set(false);
+    function closeFilterLibraryPanel() {
+        closePanel(PANEL.FILTER_LIBRARY);
     }
 
     function handleKeyDown(event) {
@@ -299,11 +308,11 @@
 
         // Let Ctrl+key combos pass through to global handler
         if (event.ctrlKey) return;
-        
+
         // Stop all keyboard events from propagating to global handlers
         // This prevents global shortcuts (j, k, space, etc.) from interfering with filter library panel
         event.stopPropagation();
-        
+
         if (event.key === 'Escape') {
             if (selectedFilter) {
                 // Deselect if a filter is selected
@@ -323,14 +332,14 @@
                     currentPositionIndexStore.set(savedIndex);
                 }
             } else {
-                closePanel();
+                closeFilterLibraryPanel();
             }
             return;
         }
 
         // Handle j/k and arrow keys for filter navigation ONLY when a filter is selected
         if (selectedFilter && filters.length > 0) {
-            const currentIndex = filters.findIndex(f => f.id === selectedFilter.id);
+            const currentIndex = filters.findIndex((f) => f.id === selectedFilter.id);
 
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
@@ -374,17 +383,16 @@
         }
     }
 
-    $: filterExists = filters.some(filter => filter.name === filterName);
-
-    $: {
+    let filterExists = $derived(filters.some((filter) => filter.name === filterName));
+    $effect(() => {
         if (filterExists) {
-            const existingFilter = filters.find(filter => filter.name === filterName);
+            const existingFilter = filters.find((filter) => filter.name === filterName);
             if (existingFilter) {
                 scrollToFilter(existingFilter);
                 highlightFilter(existingFilter);
             }
         }
-    }
+    });
 
     function scrollToFilter(filter) {
         const filterTable = document.querySelector('.filter-table-container');
@@ -412,42 +420,42 @@
     });
 </script>
 
-    <section class="filter-library-panel" role="dialog" aria-modal="true" id="filterLibraryPanel" tabindex="-1">
-        <div class="filter-library-content">
-            <div class="form-row">
-                <div class="form-group name-group">
-                    <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$activeTabStore !== 'search'} />
-                </div>
-                <div class="form-group command-group">
-                    <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$activeTabStore !== 'search'} on:keydown={handleCommandKeyDown} />
-                </div>
-                <div class="form-actions">
-                    <button on:click={saveFilter} disabled={filterExists || $activeTabStore !== 'search'}>Add</button>
-                    <button on:click={updateFilter} disabled={!filterExists || $activeTabStore !== 'search'}>Update</button>
-                    <button on:click={deleteFilter} disabled={!selectedFilter}>Delete</button>
-                    <button on:click={saveLastSearch} disabled={$activeTabStore !== 'search'} title="Load last search">Last Search</button>
-                </div>
+<section class="filter-library-panel" role="dialog" aria-modal="true" aria-label="Filter library" id="filterLibraryPanel" tabindex="-1">
+    <div class="filter-library-content">
+        <div class="form-row">
+            <div class="form-group name-group">
+                <input type="text" id="filterName" bind:value={filterName} placeholder=" Name " disabled={$activeTabStore !== 'search'} />
             </div>
-            <div class="filter-table-container">
-                <table class="filter-table">
-                    <thead>
-                        <tr>
-                            <th class="no-select">Name</th>
-                            <th class="no-select">Filter</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each filters as filter}
-                            <tr id={`filter-${filter.id}`} class:highlight={filter.name === filterName} on:click={() => selectFilter(filter)} on:dblclick={() => executeFilterCommand(filter)}>
-                                <td class="no-select">{filter.name}</td>
-                                <td class="no-select">{filter.command}</td>
-                            </tr>
-                        {/each}
-                    </tbody>
-                </table>
+            <div class="form-group command-group">
+                <input type="text" id="filterCommand" bind:value={filterCommand} placeholder=" Filter Command " disabled={$activeTabStore !== 'search'} onkeydown={handleCommandKeyDown} />
+            </div>
+            <div class="form-actions">
+                <button onclick={saveFilter} disabled={filterExists || $activeTabStore !== 'search'}>Add</button>
+                <button onclick={updateFilter} disabled={!filterExists || $activeTabStore !== 'search'}>Update</button>
+                <button onclick={deleteFilter} disabled={!selectedFilter}>Delete</button>
+                <button onclick={saveLastSearch} disabled={$activeTabStore !== 'search'} title="Load last search">Last Search</button>
             </div>
         </div>
-    </section>
+        <div class="filter-table-container">
+            <table class="filter-table">
+                <thead>
+                    <tr>
+                        <th class="no-select">Name</th>
+                        <th class="no-select">Filter</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each filters as filter (filter.id)}
+                        <tr id={`filter-${filter.id}`} class:highlight={filter.name === filterName} onclick={() => selectFilter(filter)} ondblclick={() => executeFilterCommand(filter)}>
+                            <td class="no-select">{filter.name}</td>
+                            <td class="no-select">{filter.command}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
 
 <style>
     .filter-library-panel {
@@ -525,7 +533,8 @@
         border-collapse: collapse;
     }
 
-    .filter-table th, .filter-table td {
+    .filter-table th,
+    .filter-table td {
         border: 1px solid #ddd;
         padding: 2px; /* Reduce padding */
         text-align: center;

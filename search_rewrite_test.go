@@ -215,13 +215,7 @@ func jsonUnmarshal(data string, v any) error {
 
 func setupSearchTestDB(t *testing.T) *Database {
 	t.Helper()
-	db, cleanup := setupTestDB(t)
-	t.Cleanup(cleanup)
-
-	if _, err := db.ImportXGMatch("testdata/test.xg"); err != nil {
-		t.Fatalf("import testdata/test.xg: %v", err)
-	}
-	return db
+	return newTestDBWithXG(t)
 }
 
 // sortedIDs returns a sorted slice of position IDs from the result.
@@ -255,21 +249,24 @@ func assertEquivalent(t *testing.T, db *Database, label string,
 ) {
 	t.Helper()
 
-	got, err := db.LoadPositionsByFilters(
-		filter, includeCube, includeScore,
-		pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter,
-		player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter,
-		player1CheckerOffFilter, player2CheckerOffFilter,
-		player1BackCheckerFilter, player2BackCheckerFilter,
-		player1CheckerInZoneFilter, player2CheckerInZoneFilter,
-		searchText, player1AbsolutePipCountFilter, equityFilter,
-		decisionTypeFilter, diceRollFilter,
-		movePatternFilter, dateFilter,
-		player1OutfieldBlotFilter, player2OutfieldBlotFilter,
-		player1JanBlotFilter, player2JanBlotFilter,
-		noContactFilter, mirrorFilter, moveErrorFilter,
-		matchIDsFilter, tournamentIDsFilter, restrictToPositionIDs,
-	)
+	got, err := db.LoadPositionsByFilters(SearchFilters{
+		Filter: filter, IncludeCube: includeCube, IncludeScore: includeScore,
+		PipCountFilter: pipCountFilter, WinRateFilter: winRateFilter,
+		GammonRateFilter: gammonRateFilter, BackgammonRateFilter: backgammonRateFilter,
+		Player2WinRateFilter: player2WinRateFilter, Player2GammonRateFilter: player2GammonRateFilter,
+		Player2BackgammonRateFilter: player2BackgammonRateFilter,
+		Player1CheckerOffFilter:     player1CheckerOffFilter, Player2CheckerOffFilter: player2CheckerOffFilter,
+		Player1BackCheckerFilter: player1BackCheckerFilter, Player2BackCheckerFilter: player2BackCheckerFilter,
+		Player1CheckerInZoneFilter: player1CheckerInZoneFilter, Player2CheckerInZoneFilter: player2CheckerInZoneFilter,
+		SearchText: searchText, Player1AbsolutePipCountFilter: player1AbsolutePipCountFilter,
+		EquityFilter: equityFilter, DecisionTypeFilter: decisionTypeFilter, DiceRollFilter: diceRollFilter,
+		MovePatternFilter: movePatternFilter, DateFilter: dateFilter,
+		Player1OutfieldBlotFilter: player1OutfieldBlotFilter, Player2OutfieldBlotFilter: player2OutfieldBlotFilter,
+		Player1JanBlotFilter: player1JanBlotFilter, Player2JanBlotFilter: player2JanBlotFilter,
+		NoContactFilter: noContactFilter, MirrorFilter: mirrorFilter, MoveErrorFilter: moveErrorFilter,
+		MatchIDsFilter: matchIDsFilter, TournamentIDsFilter: tournamentIDsFilter,
+		RestrictToPositionIDs: restrictToPositionIDs,
+	})
 	if err != nil {
 		t.Fatalf("[%s] new impl error: %v", label, err)
 	}
@@ -389,11 +386,7 @@ func TestSearch_Equivalence_MirrorFilter(t *testing.T) {
 	// Mirror filter: should match same total set as no-filter (all positions appear either
 	// as-is or mirrored), just check the count is at least as large as no-filter.
 	filter := Position{DecisionType: CubeAction, PlayerOnRoll: 0}
-	got, err := db.LoadPositionsByFilters(
-		filter, false, false,
-		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", true, false,
-		"", "", "", "", "", "", false, true, "", "", "", "",
-	)
+	got, err := db.LoadPositionsByFilters(SearchFilters{Filter: filter, DecisionTypeFilter: true, MirrorFilter: true})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -436,11 +429,7 @@ func TestSearch_PaginationStable(t *testing.T) {
 	}
 
 	// Full result (no pagination in the public API — use the core with empty filters).
-	full, _, err := db.loadPositionsByFiltersCore(
-		Position{}, false, false,
-		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false, false,
-		"", "", "", "", "", "", false, false, "", "", "", "",
-	)
+	full, _, err := db.loadPositionsByFiltersCore(SearchFilters{Filter: Position{}})
 	if err != nil {
 		t.Fatalf("full query: %v", err)
 	}
@@ -460,19 +449,11 @@ func TestSearch_PaginationStable(t *testing.T) {
 	page1IDs := idsToCSV(first10IDs[:n/2])
 	page2IDs := idsToCSV(first10IDs[n/2:])
 
-	page1, err := db.LoadPositionsByFilters(
-		Position{}, false, false,
-		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false, false,
-		"", "", "", "", "", "", false, false, "", "", "", page1IDs,
-	)
+	page1, err := db.LoadPositionsByFilters(SearchFilters{Filter: Position{}, RestrictToPositionIDs: page1IDs})
 	if err != nil {
 		t.Fatalf("page1: %v", err)
 	}
-	page2, err := db.LoadPositionsByFilters(
-		Position{}, false, false,
-		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false, false,
-		"", "", "", "", "", "", false, false, "", "", "", page2IDs,
-	)
+	page2, err := db.LoadPositionsByFilters(SearchFilters{Filter: Position{}, RestrictToPositionIDs: page2IDs})
 	if err != nil {
 		t.Fatalf("page2: %v", err)
 	}
@@ -515,11 +496,7 @@ func TestSearch_PrimePattern_BitboardOnly(t *testing.T) {
 	}
 
 	// new SQL-path result
-	got, err := db.LoadPositionsByFilters(
-		filterPos, false, false,
-		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false, false,
-		"", "", "", "", "", "", false, false, "", "", "", "",
-	)
+	got, err := db.LoadPositionsByFilters(SearchFilters{Filter: filterPos})
 	if err != nil {
 		t.Fatalf("new impl: %v", err)
 	}

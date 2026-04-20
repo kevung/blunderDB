@@ -1,6 +1,5 @@
 import { get } from 'svelte/store';
-import { commentTextStore, currentPositionIndexStore, statusBarModeStore, statusBarTextStore, logEntriesStore, addLogEntry } from './stores/uiStore';
-import { showMetModalStore, showTakePoint2LastModalStore, showTakePoint2LiveModalStore, showTakePoint4LastModalStore, showTakePoint4LiveModalStore, showGammonValue1ModalStore, showGammonValue2ModalStore, showGammonValue4ModalStore, showMetadataModalStore, showTakePoint2ModalStore, showTakePoint4ModalStore } from './stores/uiStore';
+import { commentTextStore, currentPositionIndexStore, statusBarModeStore, statusBarTextStore, logEntriesStore, addLogEntry, openModal, MODAL } from './stores/uiStore';
 import { positionsStore, positionStore } from './stores/positionStore';
 import { databaseLoadedStore } from './stores/databaseStore';
 import { commandHistoryStore } from './stores/commandHistoryStore';
@@ -8,6 +7,7 @@ import { searchHistoryStore } from './stores/searchHistoryStore';
 import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wailsjs/go/main/Database.js';
 import { SaveSearchHistory } from '../wailsjs/go/main/Database.js';
 import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/main/Database.js';
+import { logger } from './utils/logger.js';
 
 let callbacks = {};
 
@@ -79,61 +79,69 @@ export function processCommand(command) {
     } else if (command === 'm') {
         callbacks.toggleMatchMode?.();
     } else if (command === 'met') {
-        showMetModalStore.set(true);
+        openModal(MODAL.MET);
     } else if (command === 'tp2_last') {
-        showTakePoint2LastModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_2_LAST);
     } else if (command === 'tp2_live') {
-        showTakePoint2LiveModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_2_LIVE);
     } else if (command === 'tp4_last') {
-        showTakePoint4LastModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_4_LAST);
     } else if (command === 'tp4_live') {
-        showTakePoint4LiveModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_4_LIVE);
     } else if (command === 'gv1') {
-        showGammonValue1ModalStore.set(true);
+        openModal(MODAL.GAMMON_VALUE_1);
     } else if (command === 'gv2') {
-        showGammonValue2ModalStore.set(true);
+        openModal(MODAL.GAMMON_VALUE_2);
     } else if (command === 'gv4') {
-        showGammonValue4ModalStore.set(true);
+        openModal(MODAL.GAMMON_VALUE_4);
     } else if (command === 'meta') {
         if (databaseLoaded) {
-            showMetadataModalStore.set(true);
+            openModal(MODAL.METADATA);
         } else {
             statusBarTextStore.set('No database loaded.');
         }
     } else if (command === 'tp2') {
-        showTakePoint2ModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_2);
     } else if (command === 'tp4') {
-        showTakePoint4ModalStore.set(true);
+        openModal(MODAL.TAKE_POINT_4);
     } else if (command === 'migrate_from_1_0_to_1_1') {
-        Migrate_1_0_0_to_1_1_0().then(() => {
-            statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
-        }).catch(error => {
-            console.error('Error migrating database:', error);
-            statusBarTextStore.set('Error migrating database.');
-        });
+        Migrate_1_0_0_to_1_1_0()
+            .then(() => {
+                statusBarTextStore.set('Database migrated to version 1.1.0 successfully.');
+            })
+            .catch((error) => {
+                logger.error('Error migrating database:', error);
+                statusBarTextStore.set('Error migrating database.');
+            });
     } else if (command === 'migrate_from_1_1_to_1_2') {
-        Migrate_1_1_0_to_1_2_0().then(() => {
-            statusBarTextStore.set('Database migrated to version 1.2.0 successfully.');
-        }).catch(error => {
-            console.error('Error migrating database:', error);
-            statusBarTextStore.set('Error migrating database.');
-        });
+        Migrate_1_1_0_to_1_2_0()
+            .then(() => {
+                statusBarTextStore.set('Database migrated to version 1.2.0 successfully.');
+            })
+            .catch((error) => {
+                logger.error('Error migrating database:', error);
+                statusBarTextStore.set('Error migrating database.');
+            });
     } else if (command === 'migrate_from_1_2_to_1_3') {
-        Migrate_1_2_0_to_1_3_0().then(() => {
-            statusBarTextStore.set('Database migrated to version 1.3.0 successfully.');
-        }).catch(error => {
-            console.error('Error migrating database:', error);
-            statusBarTextStore.set('Error migrating database.');
-        });
+        Migrate_1_2_0_to_1_3_0()
+            .then(() => {
+                statusBarTextStore.set('Database migrated to version 1.3.0 successfully.');
+            })
+            .catch((error) => {
+                logger.error('Error migrating database:', error);
+                statusBarTextStore.set('Error migrating database.');
+            });
     } else if (command === 'cl' || command === 'clear') {
-        ClearCommandHistory().then(() => {
-            commandHistoryStore.set([]);
-            logEntriesStore.set([]);
-            statusBarTextStore.set('Command history cleared.');
-        }).catch(error => {
-            console.error('Error clearing command history:', error);
-            statusBarTextStore.set('Error clearing command history.');
-        });
+        ClearCommandHistory()
+            .then(() => {
+                commandHistoryStore.set([]);
+                logEntriesStore.set([]);
+                statusBarTextStore.set('Command history cleared.');
+            })
+            .catch((error) => {
+                logger.error('Error clearing command history:', error);
+                statusBarTextStore.set('Error clearing command history.');
+            });
     }
 }
 
@@ -144,38 +152,102 @@ function handleSubSearch(command, positions) {
             statusBarTextStore.set('No current results to search in.');
             return;
         }
-        const currentIDs = positions.map(p => p.id).filter(id => id != null).join(',');
+        const currentIDs = positions
+            .map((p) => p.id)
+            .filter((id) => id != null)
+            .join(',');
         const searchHistoryEntry = {
             command: command,
             position: JSON.stringify(get(positionStore)),
             timestamp: Date.now()
         };
-        searchHistoryStore.update(history => {
+        searchHistoryStore.update((history) => {
             const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
             return newHistory;
         });
-        SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch(err => {
-            console.error('Error saving search history:', err);
+        SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch((err) => {
+            logger.error('Error saving search history:', err);
         });
 
         if (command === 'ss') {
-            callbacks.onLoadPositionsByFilters?.([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, '', command, '', '', currentIDs);
+            callbacks.onLoadPositionsByFilters?.(
+                [],
+                false,
+                false,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                false,
+                false,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                false,
+                false,
+                '',
+                command,
+                '',
+                '',
+                currentIDs
+            );
         } else {
-            const filters = command.slice(2).trim().split(' ').map(filter => filter.trim());
+            const filters = command
+                .slice(2)
+                .trim()
+                .split(' ')
+                .map((filter) => filter.trim());
             const parsedFilters = parseFilters(filters, command);
             callbacks.onLoadPositionsByFilters?.(
-                filters, parsedFilters.includeCube, parsedFilters.includeScore,
-                parsedFilters.pipCountFilter, parsedFilters.winRateFilter, parsedFilters.gammonRateFilter,
-                parsedFilters.backgammonRateFilter, parsedFilters.player2WinRateFilter, parsedFilters.player2GammonRateFilter,
-                parsedFilters.player2BackgammonRateFilter, parsedFilters.player1CheckerOffFilter, parsedFilters.player2CheckerOffFilter,
-                parsedFilters.player1BackCheckerFilter, parsedFilters.player2BackCheckerFilter,
-                parsedFilters.player1CheckerInZoneFilter, parsedFilters.player2CheckerInZoneFilter,
-                parsedFilters.searchText, parsedFilters.player1AbsolutePipCountFilter, parsedFilters.equityFilter,
-                parsedFilters.decisionTypeFilter, parsedFilters.diceRollFilter, parsedFilters.movePatternFilter,
-                parsedFilters.dateFilter, parsedFilters.player1OutfieldBlotFilter, parsedFilters.player2OutfieldBlotFilter,
-                parsedFilters.player1JanBlotFilter, parsedFilters.player2JanBlotFilter,
-                parsedFilters.noContactFilter, parsedFilters.mirrorPositionFilter, parsedFilters.moveErrorFilter,
-                command, parsedFilters.matchIDsFilter, parsedFilters.tournamentIDsFilter, currentIDs
+                filters,
+                parsedFilters.includeCube,
+                parsedFilters.includeScore,
+                parsedFilters.pipCountFilter,
+                parsedFilters.winRateFilter,
+                parsedFilters.gammonRateFilter,
+                parsedFilters.backgammonRateFilter,
+                parsedFilters.player2WinRateFilter,
+                parsedFilters.player2GammonRateFilter,
+                parsedFilters.player2BackgammonRateFilter,
+                parsedFilters.player1CheckerOffFilter,
+                parsedFilters.player2CheckerOffFilter,
+                parsedFilters.player1BackCheckerFilter,
+                parsedFilters.player2BackCheckerFilter,
+                parsedFilters.player1CheckerInZoneFilter,
+                parsedFilters.player2CheckerInZoneFilter,
+                parsedFilters.searchText,
+                parsedFilters.player1AbsolutePipCountFilter,
+                parsedFilters.equityFilter,
+                parsedFilters.decisionTypeFilter,
+                parsedFilters.diceRollFilter,
+                parsedFilters.movePatternFilter,
+                parsedFilters.dateFilter,
+                parsedFilters.player1OutfieldBlotFilter,
+                parsedFilters.player2OutfieldBlotFilter,
+                parsedFilters.player1JanBlotFilter,
+                parsedFilters.player2JanBlotFilter,
+                parsedFilters.noContactFilter,
+                parsedFilters.mirrorPositionFilter,
+                parsedFilters.moveErrorFilter,
+                command,
+                parsedFilters.matchIDsFilter,
+                parsedFilters.tournamentIDsFilter,
+                currentIDs
             );
         }
     } else {
@@ -191,32 +263,91 @@ function handleSearch(command) {
             position: JSON.stringify(get(positionStore)),
             timestamp: Date.now()
         };
-        searchHistoryStore.update(history => {
+        searchHistoryStore.update((history) => {
             const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
             return newHistory;
         });
-        SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch(err => {
-            console.error('Error saving search history:', err);
+        SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch((err) => {
+            logger.error('Error saving search history:', err);
         });
 
         if (command === 's') {
-            callbacks.onLoadPositionsByFilters?.([], false, false, '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', false, false, '', '', '', '', '', '', false, false, '', command, '', '');
+            callbacks.onLoadPositionsByFilters?.(
+                [],
+                false,
+                false,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                false,
+                false,
+                '',
+                '',
+                '',
+                '',
+                '',
+                '',
+                false,
+                false,
+                '',
+                command,
+                '',
+                ''
+            );
         } else {
-            const filters = command.slice(1).trim().split(' ').map(filter => filter.trim());
+            const filters = command
+                .slice(1)
+                .trim()
+                .split(' ')
+                .map((filter) => filter.trim());
             const parsedFilters = parseFilters(filters, command);
             callbacks.onLoadPositionsByFilters?.(
-                filters, parsedFilters.includeCube, parsedFilters.includeScore,
-                parsedFilters.pipCountFilter, parsedFilters.winRateFilter, parsedFilters.gammonRateFilter,
-                parsedFilters.backgammonRateFilter, parsedFilters.player2WinRateFilter, parsedFilters.player2GammonRateFilter,
-                parsedFilters.player2BackgammonRateFilter, parsedFilters.player1CheckerOffFilter, parsedFilters.player2CheckerOffFilter,
-                parsedFilters.player1BackCheckerFilter, parsedFilters.player2BackCheckerFilter,
-                parsedFilters.player1CheckerInZoneFilter, parsedFilters.player2CheckerInZoneFilter,
-                parsedFilters.searchText, parsedFilters.player1AbsolutePipCountFilter, parsedFilters.equityFilter,
-                parsedFilters.decisionTypeFilter, parsedFilters.diceRollFilter, parsedFilters.movePatternFilter,
-                parsedFilters.dateFilter, parsedFilters.player1OutfieldBlotFilter, parsedFilters.player2OutfieldBlotFilter,
-                parsedFilters.player1JanBlotFilter, parsedFilters.player2JanBlotFilter,
-                parsedFilters.noContactFilter, parsedFilters.mirrorPositionFilter, parsedFilters.moveErrorFilter,
-                command, parsedFilters.matchIDsFilter, parsedFilters.tournamentIDsFilter
+                filters,
+                parsedFilters.includeCube,
+                parsedFilters.includeScore,
+                parsedFilters.pipCountFilter,
+                parsedFilters.winRateFilter,
+                parsedFilters.gammonRateFilter,
+                parsedFilters.backgammonRateFilter,
+                parsedFilters.player2WinRateFilter,
+                parsedFilters.player2GammonRateFilter,
+                parsedFilters.player2BackgammonRateFilter,
+                parsedFilters.player1CheckerOffFilter,
+                parsedFilters.player2CheckerOffFilter,
+                parsedFilters.player1BackCheckerFilter,
+                parsedFilters.player2BackCheckerFilter,
+                parsedFilters.player1CheckerInZoneFilter,
+                parsedFilters.player2CheckerInZoneFilter,
+                parsedFilters.searchText,
+                parsedFilters.player1AbsolutePipCountFilter,
+                parsedFilters.equityFilter,
+                parsedFilters.decisionTypeFilter,
+                parsedFilters.diceRollFilter,
+                parsedFilters.movePatternFilter,
+                parsedFilters.dateFilter,
+                parsedFilters.player1OutfieldBlotFilter,
+                parsedFilters.player2OutfieldBlotFilter,
+                parsedFilters.player1JanBlotFilter,
+                parsedFilters.player2JanBlotFilter,
+                parsedFilters.noContactFilter,
+                parsedFilters.mirrorPositionFilter,
+                parsedFilters.moveErrorFilter,
+                command,
+                parsedFilters.matchIDsFilter,
+                parsedFilters.tournamentIDsFilter
             );
         }
     } else {
@@ -231,83 +362,103 @@ export function parseFilters(filters, command) {
     const decisionTypeFilter = filters.includes('d');
     const diceRollFilter = filters.includes('D');
     const mirrorPositionFilter = filters.includes('M');
-    const pipCountFilter = filters.find(f => typeof f === 'string' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
-    const winRateFilter = filters.find(f => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
-    const gammonRateFilter = filters.find(f => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
-    const backgammonRateFilter = filters.find(f => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
-    const player2WinRateFilter = filters.find(f => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W')));
-    const player2GammonRateFilter = filters.find(f => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G')));
-    const player2BackgammonRateFilter = filters.find(f => typeof f === 'string' && (f.startsWith('B>') || f.startsWith('B<') || f.startsWith('B') && !f.startsWith('BO')) && !f.startsWith('BJ'));
-    let player1CheckerOffFilter = filters.find(f => typeof f === 'string' && (f.startsWith('o>') || f.startsWith('o<') || f.startsWith('o')));
+    const pipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
+    const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
+    const gammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
+    const backgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('b>') || f.startsWith('b<') || (f.startsWith('b') && !f.startsWith('bo'))) && !f.startsWith('bj'));
+    const player2WinRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('W>') || f.startsWith('W<') || f.startsWith('W')));
+    const player2GammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('G>') || f.startsWith('G<') || f.startsWith('G')));
+    const player2BackgammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('B>') || f.startsWith('B<') || (f.startsWith('B') && !f.startsWith('BO'))) && !f.startsWith('BJ'));
+    let player1CheckerOffFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('o>') || f.startsWith('o<') || f.startsWith('o')));
     if (player1CheckerOffFilter && !player1CheckerOffFilter.includes(',') && !player1CheckerOffFilter.includes('>') && !player1CheckerOffFilter.includes('<')) {
         player1CheckerOffFilter = `${player1CheckerOffFilter},${player1CheckerOffFilter.slice(1)}`;
     }
-    let player2CheckerOffFilter = filters.find(f => typeof f === 'string' && (f.startsWith('O>') || f.startsWith('O<') || f.startsWith('O')));
+    let player2CheckerOffFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('O>') || f.startsWith('O<') || f.startsWith('O')));
     if (player2CheckerOffFilter && !player2CheckerOffFilter.includes(',') && !player2CheckerOffFilter.includes('>') && !player2CheckerOffFilter.includes('<')) {
         player2CheckerOffFilter = `${player2CheckerOffFilter},${player2CheckerOffFilter.slice(1)}`;
     }
-    let player1BackCheckerFilter = filters.find(f => typeof f === 'string' && (f.startsWith('k>') || f.startsWith('k<') || f.startsWith('k')));
+    let player1BackCheckerFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('k>') || f.startsWith('k<') || f.startsWith('k')));
     if (player1BackCheckerFilter && !player1BackCheckerFilter.includes(',') && !player1BackCheckerFilter.includes('>') && !player1BackCheckerFilter.includes('<')) {
         player1BackCheckerFilter = `${player1BackCheckerFilter},${player1BackCheckerFilter.slice(1)}`;
     }
-    let player2BackCheckerFilter = filters.find(f => typeof f === 'string' && (f.startsWith('K>') || f.startsWith('K<') || f.startsWith('K')));
+    let player2BackCheckerFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('K>') || f.startsWith('K<') || f.startsWith('K')));
     if (player2BackCheckerFilter && !player2BackCheckerFilter.includes(',') && !player2BackCheckerFilter.includes('>') && !player2BackCheckerFilter.includes('<')) {
         player2BackCheckerFilter = `${player2BackCheckerFilter},${player2BackCheckerFilter.slice(1)}`;
     }
-    let player1CheckerInZoneFilter = filters.find(f => typeof f === 'string' && (f.startsWith('z>') || f.startsWith('z<') || f.startsWith('z')));
+    let player1CheckerInZoneFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('z>') || f.startsWith('z<') || f.startsWith('z')));
     if (player1CheckerInZoneFilter && !player1CheckerInZoneFilter.includes(',') && !player1CheckerInZoneFilter.includes('>') && !player1CheckerInZoneFilter.includes('<')) {
         player1CheckerInZoneFilter = `${player1CheckerInZoneFilter},${player1CheckerInZoneFilter.slice(1)}`;
     }
-    let player2CheckerInZoneFilter = filters.find(f => typeof f === 'string' && (f.startsWith('Z>') || f.startsWith('Z<') || f.startsWith('Z')));
+    let player2CheckerInZoneFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('Z>') || f.startsWith('Z<') || f.startsWith('Z')));
     if (player2CheckerInZoneFilter && !player2CheckerInZoneFilter.includes(',') && !player2CheckerInZoneFilter.includes('>') && !player2CheckerInZoneFilter.includes('<')) {
         player2CheckerInZoneFilter = `${player2CheckerInZoneFilter},${player2CheckerInZoneFilter.slice(1)}`;
     }
-    const player1AbsolutePipCountFilter = filters.find(f => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P')));
-    const equityFilter = filters.find(f => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e')));
-    const dateFilter = filters.find(f => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T')));
+    const player1AbsolutePipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('P>') || f.startsWith('P<') || f.startsWith('P')));
+    const equityFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('e>') || f.startsWith('e<') || f.startsWith('e')));
+    const dateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('T>') || f.startsWith('T<') || f.startsWith('T')));
     const movePatternMatch = command.match(/m["'][^"']*["']/);
     const movePatternFilter = movePatternMatch ? movePatternMatch[0] : '';
     const searchTextMatch = command.match(/t["'][^"']*["']/);
     const searchText = searchTextMatch ? searchTextMatch[0] : '';
-    const player1OutfieldBlotFilter = filters.find(f => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
-    const player2OutfieldBlotFilter = filters.find(f => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
-    const player1JanBlotFilter = filters.find(f => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
-    const player2JanBlotFilter = filters.find(f => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ')));
-    const moveErrorFilter = filters.find(f => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f))));
+    const player1OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bo>') || f.startsWith('bo<') || f.startsWith('bo')));
+    const player2OutfieldBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BO>') || f.startsWith('BO<') || f.startsWith('BO')));
+    const player1JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('bj>') || f.startsWith('bj<') || f.startsWith('bj')));
+    const player2JanBlotFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('BJ>') || f.startsWith('BJ<') || f.startsWith('BJ')));
+    const moveErrorFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('E>') || f.startsWith('E<') || (f.startsWith('E') && /^E\d/.test(f))));
 
-    const matchIDTokens = filters.filter(f => typeof f === 'string' && /^ma\d/.test(f));
+    const matchIDTokens = filters.filter((f) => typeof f === 'string' && /^ma\d/.test(f));
     let matchIDsFilter = '';
     if (matchIDTokens.length > 0) {
-        const parts = matchIDTokens.map(token => token.slice(2));
+        const parts = matchIDTokens.map((token) => token.slice(2));
         matchIDsFilter = parts.join(';');
     }
 
-    const tournamentIDTokens = filters.filter(f => typeof f === 'string' && /^tn\d/.test(f));
+    const tournamentIDTokens = filters.filter((f) => typeof f === 'string' && /^tn\d/.test(f));
     let tournamentIDsFilter = '';
     if (tournamentIDTokens.length > 0) {
-        const parts = tournamentIDTokens.map(token => token.slice(2));
+        const parts = tournamentIDTokens.map((token) => token.slice(2));
         tournamentIDsFilter = parts.join(';');
     }
 
     return {
-        includeCube, includeScore, noContactFilter, decisionTypeFilter, diceRollFilter, mirrorPositionFilter,
-        pipCountFilter, winRateFilter, gammonRateFilter, backgammonRateFilter,
-        player2WinRateFilter, player2GammonRateFilter, player2BackgammonRateFilter,
-        player1CheckerOffFilter, player2CheckerOffFilter,
-        player1BackCheckerFilter, player2BackCheckerFilter,
-        player1CheckerInZoneFilter, player2CheckerInZoneFilter,
-        player1AbsolutePipCountFilter, equityFilter, dateFilter,
-        movePatternFilter, searchText,
-        player1OutfieldBlotFilter, player2OutfieldBlotFilter,
-        player1JanBlotFilter, player2JanBlotFilter, moveErrorFilter,
-        matchIDsFilter, tournamentIDsFilter
+        includeCube,
+        includeScore,
+        noContactFilter,
+        decisionTypeFilter,
+        diceRollFilter,
+        mirrorPositionFilter,
+        pipCountFilter,
+        winRateFilter,
+        gammonRateFilter,
+        backgammonRateFilter,
+        player2WinRateFilter,
+        player2GammonRateFilter,
+        player2BackgammonRateFilter,
+        player1CheckerOffFilter,
+        player2CheckerOffFilter,
+        player1BackCheckerFilter,
+        player2BackCheckerFilter,
+        player1CheckerInZoneFilter,
+        player2CheckerInZoneFilter,
+        player1AbsolutePipCountFilter,
+        equityFilter,
+        dateFilter,
+        movePatternFilter,
+        searchText,
+        player1OutfieldBlotFilter,
+        player2OutfieldBlotFilter,
+        player1JanBlotFilter,
+        player2JanBlotFilter,
+        moveErrorFilter,
+        matchIDsFilter,
+        tournamentIDsFilter
     };
 }
 
 function insertTags(tags) {
-    commentTextStore.update(text => {
+    commentTextStore.update((text) => {
         const existingTags = new Set(text.match(/#[^\s#]+/g) || []);
-        const newTags = tags.split(' ').filter(tag => !existingTags.has(tag));
+        const newTags = tags.split(' ').filter((tag) => !existingTags.has(tag));
         const updatedText = `${newTags.join(' ')}\n${text}`;
         setTimeout(() => {
             const textAreaEl = document.getElementById('commentTextArea');

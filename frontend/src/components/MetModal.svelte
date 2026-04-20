@@ -1,6 +1,7 @@
 <script>
-    export let visible = false;
-    export let onClose;
+    import { trapFocus } from '../utils/focusTrap.js';
+
+    let { visible = false, onClose } = $props();
 
     function closeModal() {
         onClose();
@@ -31,22 +32,22 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={closeModal}>
-        <div class="modal-content" on:click|stopPropagation>
+    <div class="modal-overlay" onclick={closeModal} role="dialog" aria-modal="true" aria-label="Match equity table" use:trapFocus>
+        <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <table>
                 <thead>
                     <tr>
                         <th></th>
-                        {#each Array(15) as _, colIndex}
+                        {#each Array(15) as _, colIndex (colIndex)}
                             <th><strong>{colIndex + 1}</strong></th>
                         {/each}
                     </tr>
                 </thead>
                 <tbody>
-                    {#each tableData as row, rowIndex}
+                    {#each tableData as row, rowIndex (rowIndex)}
                         <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                             <td><strong>{rowIndex + 1}</strong></td>
-                            {#each row as cell}
+                            {#each row as cell, cellIndex (cellIndex)}
                                 <td>{formatCell(cell)}</td>
                             {/each}
                         </tr>
@@ -86,7 +87,8 @@
         border-collapse: collapse;
     }
 
-    th, td {
+    th,
+    td {
         border: 1px solid #ddd;
         padding: 8px;
         text-align: center;

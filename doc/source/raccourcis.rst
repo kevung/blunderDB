@@ -102,7 +102,7 @@ Outils
    "CTRL-P", "Afficher/cacher les commentaires."
    "CTRL-K", "Afficher/cacher le panneau Anki (répétition espacée)."
    "CTRL-F", "Afficher/cacher le panneau de recherche."
-   "CTRL-T", "Afficher/cacher le panneau des matchs."
+   "CTRL-Tab", "Afficher/cacher le panneau des matchs."
    "CTRL-B", "Afficher/cacher le panneau des collections."
    "CTRL-Y", "Afficher/cacher le panneau des tournois."
    "CTRL-E", "Afficher/cacher le panneau EPC."

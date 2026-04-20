@@ -3,9 +3,9 @@
 
     const { views, activeViewId, switchTo, addView, closeView, renameView } = viewStore;
 
-    let editingId = null;
-    let editingName = '';
-    let editInput;
+    let editingId = $state(null);
+    let editingName = $state('');
+    let editInput = $state();
 
     function handleTabClick(viewId) {
         switchTo(viewId);
@@ -31,7 +31,8 @@
             finishRename();
         } else if (event.key === 'Escape') {
             event.stopPropagation();
-            editingId = null; editingName = '';
+            editingId = null;
+            editingName = '';
         }
     }
 
@@ -52,34 +53,23 @@
     }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window onkeydown={handleKeydown} />
 
 <div class="view-tabs">
-    {#each $views as view, i (view.id)}
-        <!-- svelte-ignore a11y-no-static-element-interactions -->
-        <div
-            class="view-tab"
-            class:active={$activeViewId === view.id}
-            on:click={() => handleTabClick(view.id)}
-            on:dblclick={() => handleDoubleClick(view)}
-        >
+    {#each $views as view, _i (view.id)}
+        <!-- svelte-ignore a11y_no_static_element_interactions -->
+        <div class="view-tab" class:active={$activeViewId === view.id} onclick={() => handleTabClick(view.id)} ondblclick={() => handleDoubleClick(view)}>
             {#if editingId === view.id}
-                <input
-                    bind:this={editInput}
-                    bind:value={editingName}
-                    class="rename-input"
-                    on:blur={finishRename}
-                    on:keydown={handleRenameKeydown}
-                />
+                <input bind:this={editInput} bind:value={editingName} class="rename-input" onblur={finishRename} onkeydown={handleRenameKeydown} />
             {:else}
                 <span class="tab-name">{view.name}</span>
             {/if}
             {#if $views.length > 1}
-                <button class="close-btn" on:click={(e) => handleClose(e, view.id)} title="Close view">&times;</button>
+                <button class="close-btn" onclick={(e) => handleClose(e, view.id)} title="Close view">&times;</button>
             {/if}
         </div>
     {/each}
-    <button class="add-btn" on:click={addView} title="New view">+</button>
+    <button class="add-btn" onclick={addView} title="New view">+</button>
 </div>
 
 <style>

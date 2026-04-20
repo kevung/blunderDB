@@ -1,14 +1,15 @@
 <script>
+    import { logger } from '../utils/logger.js';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { onMount, onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js'; // Import functions
 
-    export let visible = false;
-    export let onClose;
+    let { visible = false, onClose } = $props();
 
-    let user = '';
-    let description = '';
-    let dateOfCreation = '';
-    let databaseVersion = ''; // Add variable for database version
+    let user = $state('');
+    let description = $state('');
+    let dateOfCreation = $state('');
+    let databaseVersion = $state(''); // Add variable for database version
 
     async function loadMetadata() {
         try {
@@ -18,7 +19,7 @@
             dateOfCreation = metadata.dateOfCreation || '';
             databaseVersion = metadata.database_version || ''; // Load database version
         } catch (error) {
-            console.error('Error loading metadata:', error);
+            logger.error('Error loading metadata:', error);
         }
     }
 
@@ -26,7 +27,7 @@
         try {
             await SaveMetadata({ user, description, dateOfCreation });
         } catch (error) {
-            console.error('Error saving metadata:', error);
+            logger.error('Error saving metadata:', error);
         }
     }
 
@@ -35,10 +36,11 @@
         onClose();
     }
 
-    $: if (visible) {
-        loadMetadata();
-    }
-
+    $effect(() => {
+        if (visible) {
+            loadMetadata();
+        }
+    });
     function handleKeyDown(event) {
         if (event.key === 'Escape') {
             handleClose();
@@ -61,7 +63,7 @@
 </script>
 
 {#if visible}
-    <div class="modal-overlay" on:click={handleClickOutside}>
+    <div class="modal-overlay" onclick={handleClickOutside} role="dialog" aria-modal="true" aria-label="Match metadata" use:trapFocus>
         <div class="modal-content">
             <!-- Metadata title removed -->
             <div class="form-group">
@@ -78,7 +80,8 @@
             </div>
             <div class="form-group">
                 <label for="databaseVersion">Database Version:</label>
-                <input id="databaseVersion" type="text" bind:value={databaseVersion} readonly /> <!-- Display database version -->
+                <input id="databaseVersion" type="text" bind:value={databaseVersion} readonly />
+                <!-- Display database version -->
             </div>
         </div>
     </div>
@@ -125,7 +128,8 @@
         font-size: 18px;
     }
 
-    input, textarea {
+    input,
+    textarea {
         padding: 8px;
         border: 1px solid #ccc;
         border-radius: 4px;

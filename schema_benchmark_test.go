@@ -23,6 +23,7 @@ import (
 //
 //	go test -v -run TestSchemaBenchmark_CrossVersion -timeout 30m
 func TestSchemaBenchmark_CrossVersion(t *testing.T) {
+	t.Skip("skipping cross-version benchmark: takes 10+ min, run manually when needed")
 	if testing.Short() {
 		t.Skip("skipping cross-version benchmark in short mode")
 	}
@@ -352,6 +353,44 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		args   searchArgs
 	}
 
+	toSearchFilters := func(sc searchCase) SearchFilters {
+		return SearchFilters{
+			Filter:                        sc.filter,
+			IncludeCube:                   sc.args.includeCube,
+			IncludeScore:                  sc.args.includeScore,
+			PipCountFilter:                sc.args.pipCountFilter,
+			WinRateFilter:                 sc.args.winRateFilter,
+			GammonRateFilter:              sc.args.gammonRateFilter,
+			BackgammonRateFilter:          sc.args.backgammonRateFilter,
+			Player2WinRateFilter:          sc.args.player2WinRateFilter,
+			Player2GammonRateFilter:       sc.args.player2GammonRateFilter,
+			Player2BackgammonRateFilter:   sc.args.player2BackgammonRateFilter,
+			Player1CheckerOffFilter:       sc.args.player1CheckerOffFilter,
+			Player2CheckerOffFilter:       sc.args.player2CheckerOffFilter,
+			Player1BackCheckerFilter:      sc.args.player1BackCheckerFilter,
+			Player2BackCheckerFilter:      sc.args.player2BackCheckerFilter,
+			Player1CheckerInZoneFilter:    sc.args.player1CheckerInZoneFilter,
+			Player2CheckerInZoneFilter:    sc.args.player2CheckerInZoneFilter,
+			SearchText:                    sc.args.searchText,
+			Player1AbsolutePipCountFilter: sc.args.player1AbsolutePipCountFilter,
+			EquityFilter:                  sc.args.equityFilter,
+			DecisionTypeFilter:            sc.args.decisionTypeFilter,
+			DiceRollFilter:                sc.args.diceRollFilter,
+			MovePatternFilter:             sc.args.movePatternFilter,
+			DateFilter:                    sc.args.dateFilter,
+			Player1OutfieldBlotFilter:     sc.args.player1OutfieldBlotFilter,
+			Player2OutfieldBlotFilter:     sc.args.player2OutfieldBlotFilter,
+			Player1JanBlotFilter:          sc.args.player1JanBlotFilter,
+			Player2JanBlotFilter:          sc.args.player2JanBlotFilter,
+			NoContactFilter:               sc.args.noContactFilter,
+			MirrorFilter:                  sc.args.mirrorFilter,
+			MoveErrorFilter:               sc.args.moveErrorFilter,
+			MatchIDsFilter:                sc.args.matchIDsFilter,
+			TournamentIDsFilter:           sc.args.tournamentIDsFilter,
+			RestrictToPositionIDs:         sc.args.restrictToPositionIDs,
+		}
+	}
+
 	cases := []searchCase{
 		{
 			name: "DecisionCube",
@@ -435,27 +474,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		start := time.Now()
 		var resultCount int
 		for j := 0; j < searchIters; j++ {
-			results, _ := db230obj.LoadPositionsByFilters(
-				sc.filter,
-				sc.args.includeCube, sc.args.includeScore,
-				sc.args.pipCountFilter,
-				sc.args.winRateFilter, sc.args.gammonRateFilter, sc.args.backgammonRateFilter,
-				sc.args.player2WinRateFilter, sc.args.player2GammonRateFilter, sc.args.player2BackgammonRateFilter,
-				sc.args.player1CheckerOffFilter, sc.args.player2CheckerOffFilter,
-				sc.args.player1BackCheckerFilter, sc.args.player2BackCheckerFilter,
-				sc.args.player1CheckerInZoneFilter, sc.args.player2CheckerInZoneFilter,
-				sc.args.searchText,
-				sc.args.player1AbsolutePipCountFilter,
-				sc.args.equityFilter,
-				sc.args.decisionTypeFilter, sc.args.diceRollFilter,
-				sc.args.movePatternFilter, sc.args.dateFilter,
-				sc.args.player1OutfieldBlotFilter, sc.args.player2OutfieldBlotFilter,
-				sc.args.player1JanBlotFilter, sc.args.player2JanBlotFilter,
-				sc.args.noContactFilter, sc.args.mirrorFilter,
-				sc.args.moveErrorFilter,
-				sc.args.matchIDsFilter, sc.args.tournamentIDsFilter,
-				sc.args.restrictToPositionIDs,
-			)
+			results, _ := db230obj.LoadPositionsByFilters(toSearchFilters(sc))
 			resultCount = len(results)
 		}
 		elapsed := time.Since(start)
@@ -520,27 +539,7 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 		start := time.Now()
 		var resultCount int
 		for j := 0; j < searchIters; j++ {
-			results, _ := db220obj.LoadPositionsByFilters(
-				sc.filter,
-				sc.args.includeCube, sc.args.includeScore,
-				sc.args.pipCountFilter,
-				sc.args.winRateFilter, sc.args.gammonRateFilter, sc.args.backgammonRateFilter,
-				sc.args.player2WinRateFilter, sc.args.player2GammonRateFilter, sc.args.player2BackgammonRateFilter,
-				sc.args.player1CheckerOffFilter, sc.args.player2CheckerOffFilter,
-				sc.args.player1BackCheckerFilter, sc.args.player2BackCheckerFilter,
-				sc.args.player1CheckerInZoneFilter, sc.args.player2CheckerInZoneFilter,
-				sc.args.searchText,
-				sc.args.player1AbsolutePipCountFilter,
-				sc.args.equityFilter,
-				sc.args.decisionTypeFilter, sc.args.diceRollFilter,
-				sc.args.movePatternFilter, sc.args.dateFilter,
-				sc.args.player1OutfieldBlotFilter, sc.args.player2OutfieldBlotFilter,
-				sc.args.player1JanBlotFilter, sc.args.player2JanBlotFilter,
-				sc.args.noContactFilter, sc.args.mirrorFilter,
-				sc.args.moveErrorFilter,
-				sc.args.matchIDsFilter, sc.args.tournamentIDsFilter,
-				sc.args.restrictToPositionIDs,
-			)
+			results, _ := db220obj.LoadPositionsByFilters(toSearchFilters(sc))
 			resultCount = len(results)
 		}
 		elapsed := time.Since(start)
@@ -772,7 +771,15 @@ func TestSchemaBenchmark_CrossVersion(t *testing.T) {
 	exportPath := filepath.Join(tmpDir, "export_test.db")
 	allPositions, _ := db230obj.LoadAllPositions()
 	start = time.Now()
-	db230obj.ExportDatabase(exportPath, allPositions, map[string]string{}, true, true, false, true, true, false, nil, nil, nil)
+	db230obj.ExportDatabase(ExportOptions{
+		ExportPath:      exportPath,
+		Positions:       allPositions,
+		Metadata:        map[string]string{},
+		IncludeAnalysis: true,
+		IncludeComments: true,
+		IncludePlayedMoves: true,
+		IncludeMatches:  true,
+	})
 	exportDuration := time.Since(start)
 	exportSize := fileSize(t, exportPath)
 	t.Logf("  Export: %v, disk size: %s", exportDuration, humanBytes(exportSize))

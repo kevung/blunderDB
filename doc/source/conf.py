@@ -9,7 +9,7 @@
 import requests
 
 project = 'blunderDB'
-copyright = '2024, Kevin UNGER <blunderdb@proton.me>'
+copyright = '2024-2026, Kevin UNGER <blunderdb@proton.me>'
 author = 'Kevin UNGER <blunderdb@proton.me>'
 release = '0.17.0'
 

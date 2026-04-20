@@ -1,103 +1,47 @@
 # 11 — Extract shared import helpers
 
+**Status: Done**
+
 **Goal:** Reduce duplication across the XG, GnuBG, and BGF import pipelines by extracting common patterns into shared helpers.
 
 **Depends on:** 06 (db.go split — import files are separate).
 
-**Impact:** Medium — eliminates ~21 parallel functions worth of structural duplication.
+**Impact:** Medium — eliminates structural duplication across import pipelines.
 
-## Context
+## What was done
 
-The three import pipelines share these patterns (each duplicated 3–4 times):
+### Previously completed (before this task)
 
-| Pattern | Current duplication |
-|---|---|
-| Date parsing with format fallback | Copy-pasted 4 times |
-| Match hash check + canonical hash check | 3 identical sequences |
-| Transaction setup + commit/rollback | 3 identical blocks |
-| `saveMoveAnalysisInTx` (move_analysis INSERT) | 3 near-identical functions |
-| `saveCubeAnalysisForCheckerPositionInTx` | 3 parallel functions |
-| Import progress reporting | 3 identical patterns |
+Tasks 1–3 from the original plan were already implemented:
+
+- **`parseMatchDate`** — shared date parser in `db_import_common.go`, used by all 3 importers
+- **`checkDuplicateMatchLocked`** — shared duplicate check, used by all 3 importers
+- **`moveAnalysisRow` + `insertMoveAnalysisRow`** — shared INSERT helper, used by all 3 importers
+
+### Completed in this pass
+
+1. **`autoLinkTournament(tx, matchID, eventName)`** — extracted 3 identical 15-line tournament find-or-create + match-link blocks into a single shared helper in `db_import_common.go`. Updated all 3 importers.
+
+2. **`cubeAnalysisParams` + `buildDoublingCubeAnalysis(params)`** — extracted the repeated `DoublingCubeAnalysis` struct construction (including `computeBestCubeAction` call and error delta calculation) into a shared builder. Replaced 5 near-identical 20+ line struct literals across:
+   - `saveCubeAnalysisToPositionInTx` (XG)
+   - `saveCubeAnalysisForCheckerPositionInTx` (XG)
+   - `saveGnuBGCubeAnalysisToPositionInTx` (GnuBG)
+   - `saveGnuBGCubeAnalysisForCheckerPositionInTx` (GnuBG)
+   - `saveBGFCubeAnalysisToPositionInTx` (BGF) — with post-build `BestCubeAction` override for BGF-specific `stateOnMove`/`stateOther` logic
+   - `saveBGFCubeAnalysisForCheckerPositionInTx` (BGF)
+
+3. **Simplified XG & BGF `*CubeAnalysisForCheckerPositionInTx`** — removed redundant `SELECT id, data FROM analysis` + `decodeAnalysisFromStorage` that duplicated logic already in `saveAnalysisInTx`. Now matches GnuBG's cleaner approach of building a `PositionAnalysis` and delegating merge to `saveAnalysisInTx`.
+
+### Not extracted (by design)
+
+- **`save*CheckerAnalysisToPositionInTx`** — format-specific move conversion dominates each function (XG: `inferMoveMultipliers` + `convertXGMoveToStringWithHits`; GnuBG: SGF vs MAT coordinate conversion; BGF: `map[string]interface{}` extraction). The shared part is just the `saveAnalysisInTx` call, which is already shared.
 
 ## Files touched
 
-- **Edit:** `db_import_common.go` (post-split) — add new shared helpers
-- **Edit:** `db_import_xg.go` — use shared helpers
-- **Edit:** `db_import_gnubg.go` — use shared helpers
-- **Edit:** `db_import_bgf.go` — use shared helpers
-
-## Tasks
-
-### 1. Extract `parseMatchDate` helper
-
-- [ ] Create shared date parser in `db_import_common.go`:
-  ```go
-  // parseMatchDate tries multiple date formats and returns the parsed time.
-  // Returns zero time if no format matches.
-  func parseMatchDate(dateStr string) time.Time {
-      formats := []string{
-          "2006-01-02",
-          "2006-01-02 15:04:05",
-          "01/02/2006",
-          "1/2/2006",
-          "2006/01/02",
-          "January 2, 2006",
-          "Jan 2, 2006",
-          "02-Jan-2006",
-          "2006-01-02T15:04:05Z07:00",
-          time.RFC3339,
-      }
-      for _, f := range formats {
-          if t, err := time.Parse(f, dateStr); err == nil {
-              return t
-          }
-      }
-      return time.Time{}
-  }
-  ```
-- [ ] Replace the 4 copy-pasted date-parsing loops in XG, GnuBG, and BGF imports
-
-### 2. Extract `checkDuplicateMatchLocked` helper
-
-- [ ] Create shared duplicate check in `db_import_common.go`:
-  ```go
-  // checkDuplicateMatchLocked checks both format-specific and canonical hash
-  // for duplicate matches. Must be called with d.mu held.
-  // Returns (existingMatchID, isCanonicalDuplicate, error).
-  func (d *Database) checkDuplicateMatchLocked(
-      matchHash, canonicalHash string,
-  ) (int64, bool, error)
-  ```
-- [ ] Replace the 3 identical check sequences in `ImportXGMatch`, `ImportGnuBGMatch`, `ImportBGFMatch`
-
-### 3. Unify `saveMoveAnalysisInTx` functions
-
-- [ ] The three functions (`saveMoveAnalysisInTx`, `saveGnuBGMoveAnalysisInTx`, `saveBGFMoveAnalysisInTx`) all INSERT into `move_analysis` with the same columns
-- [ ] Create a shared `saveMoveAnalysisInTx`:
-  ```go
-  type moveAnalysisRow struct {
-      MoveID               int64
-      AnalysisType         string
-      Depth                string
-      Equity               int64
-      EquityError          int64
-      WinRate              int64
-      GammonRate           int64
-      BackgammonRate       int64
-      OpponentWinRate      int64
-      OpponentGammonRate   int64
-      OpponentBackgammonRate int64
-  }
-
-  func saveMoveAnalysisInTx(tx *sql.Tx, row moveAnalysisRow) error
-  ```
-- [ ] Keep format-specific conversion logic in each import file, but the actual INSERT is shared
-- [ ] Each import file converts its format-specific data into `moveAnalysisRow` then calls the shared function
-
-### 4. Unify `saveCubeAnalysisForCheckerPositionInTx` pattern
-
-- [ ] The three versions share the same logic: look up existing analysis, merge cube info, save back
-- [ ] If the merge logic is identical, extract; if format-specific, document why they differ
+- **`db_import_common.go`** — added `autoLinkTournament`, `cubeAnalysisParams`, `buildDoublingCubeAnalysis`; added `log/slog` import
+- **`db_import_xg.go`** — used `autoLinkTournament`, `buildDoublingCubeAnalysis`; simplified `saveCubeAnalysisForCheckerPositionInTx`
+- **`db_import_gnubg.go`** — used `autoLinkTournament`, `buildDoublingCubeAnalysis`
+- **`db_import_bgf.go`** — used `autoLinkTournament`, `buildDoublingCubeAnalysis`; simplified `saveBGFCubeAnalysisForCheckerPositionInTx`
 
 ### 5. Extract import progress helper
 

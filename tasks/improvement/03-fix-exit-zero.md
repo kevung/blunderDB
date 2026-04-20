@@ -30,30 +30,30 @@ fmt.Println("Aspect ratio:", float64(initialHeight)/float64(initialWidth))
 
 ### 1. Fix fatal error exits in `runGUI()`
 
-- [ ] Replace `fmt.Println(...) + return` with `log.Fatal(err)` (or `fmt.Fprintln(os.Stderr, ...) + os.Exit(1)`) for:
+- [x] Replace `fmt.Println(...) + return` with `fmt.Fprintln(os.Stderr, ...) + os.Exit(1)` for:
   - Config load failure
   - Database setup failure
-- [ ] For `wails.Run()` error at end of function: add `os.Exit(1)` after the error print
-- [ ] Use `os.Stderr` for error output, not `os.Stdout`
+- [x] For `wails.Run()` error at end of function: add `os.Exit(1)` after the error print
+- [x] Use `os.Stderr` for error output, not `os.Stdout`
 
 ### 2. Remove diagnostic prints
 
-- [ ] Remove or gate the `fmt.Println("Initial dimensions:", ...)` and `fmt.Println("Aspect ratio:", ...)` lines
-- [ ] Option A: delete them entirely (preferred — they serve no runtime purpose)
-- [ ] Option B: gate behind an environment variable: `if os.Getenv("BLUNDERDB_DEBUG") != "" { ... }`
+- [x] Remove or gate the `fmt.Println("Initial dimensions:", ...)` and `fmt.Println("Aspect ratio:", ...)` lines
+- [x] Option A: delete them entirely (preferred — they serve no runtime purpose)
+- ~~Option B: gate behind an environment variable~~ (not needed, chose Option A)
 
 ### 3. Verify `runCLI()` is already correct
 
-- [ ] Confirm `runCLI()` already uses `fmt.Fprintln(os.Stderr, ...)` and `os.Exit(1)` — no changes needed there
+- [x] Confirm `runCLI()` already uses `fmt.Fprintf(os.Stderr, ...)` and `os.Exit(1)` — no changes needed
 
 ## Acceptance criteria
 
-- [ ] Config load failure → exit code 1, error on stderr
-- [ ] Database setup failure → exit code 1, error on stderr
-- [ ] `wails.Run()` failure → exit code 1, error on stderr
-- [ ] Normal startup produces no stdout output (no dimension/ratio prints)
-- [ ] `go build && ./blunderdb` still starts normally in GUI mode
-- [ ] `go test ./...` still passes
+- [x] Config load failure → exit code 1, error on stderr
+- [x] Database setup failure → exit code 1, error on stderr
+- [x] `wails.Run()` failure → exit code 1, error on stderr
+- [x] Normal startup produces no stdout output (no dimension/ratio prints)
+- [x] `go build && ./blunderdb` still starts normally in GUI mode
+- [x] `go test ./...` still passes
 
 ## Rollback
 

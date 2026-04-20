@@ -1,43 +1,45 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { trapFocus } from '../utils/focusTrap.js';
     import { collectionsStore } from '../stores/collectionStore';
     import { tournamentsStore } from '../stores/tournamentStore';
 
-    export let visible = false;
-    export let mode = 'preparing'; // 'preparing', 'metadata', 'exporting', 'completed'
-    export let positionCount = 0;
-    export let onCancel;
-    export let onExport;
-    export let onClose;
-    export let metadata = {
-        user: '',
-        description: '',
-        dateOfCreation: ''
-    };
-    export let exportOptions = {
-        includeAnalysis: true,
-        includeComments: true,
-        includeFilterLibrary: false,
-        includePlayedMoves: true,
-        includeMatches: true,
-        matchIDs: [],
-        includeTournaments: false,
-        includeTournamentIDs: [],
-        includeCollections: false,
-        collectionIDs: []
-    };
+    let {
+        visible = false,
+        mode = 'preparing',
+        positionCount = 0,
+        onCancel,
+        onExport,
+        onClose,
+        metadata = {
+            user: '',
+            description: '',
+            dateOfCreation: ''
+        },
+        exportOptions = {
+            includeAnalysis: true,
+            includeComments: true,
+            includeFilterLibrary: false,
+            includePlayedMoves: true,
+            includeMatches: true,
+            matchIDs: [],
+            includeTournaments: false,
+            includeTournamentIDs: [],
+            includeCollections: false,
+            collectionIDs: []
+        },
+        matches = []
+    } = $props();
 
-    export let matches = [];
+    let collections = $state([]);
 
-    let collections = [];
-
-    collectionsStore.subscribe(value => {
+    collectionsStore.subscribe((value) => {
         collections = value || [];
     });
 
-    let tournaments = [];
+    let tournaments = $state([]);
 
-    tournamentsStore.subscribe(value => {
+    tournamentsStore.subscribe((value) => {
         tournaments = value || [];
     });
 
@@ -51,57 +53,66 @@
     }
 
     // Initialize date when modal becomes visible in metadata mode
-    $: if (visible && mode === 'metadata' && !metadata.dateOfCreation) {
-        metadata.dateOfCreation = getCurrentDate();
-    }
-
+    $effect(() => {
+        if (visible && mode === 'metadata' && !metadata.dateOfCreation) {
+            metadata.dateOfCreation = getCurrentDate();
+        }
+    });
     // Auto-select all matches when includeMatches is toggled on (only if not manually modified)
-    let matchesManuallyModified = false;
-    $: if (exportOptions.includeMatches && matches.length > 0 && exportOptions.matchIDs.length === 0 && !matchesManuallyModified) {
-        exportOptions.matchIDs = matches.map(m => m.id);
-    }
-
+    let matchesManuallyModified = $state(false);
+    $effect(() => {
+        if (exportOptions.includeMatches && matches.length > 0 && exportOptions.matchIDs.length === 0 && !matchesManuallyModified) {
+            exportOptions.matchIDs = matches.map((m) => m.id);
+        }
+    });
     // Clear matchIDs when includeMatches is toggled off
-    $: if (!exportOptions.includeMatches) {
-        exportOptions.matchIDs = [];
-        matchesManuallyModified = false;
-    }
-
+    $effect(() => {
+        if (!exportOptions.includeMatches) {
+            exportOptions.matchIDs = [];
+            matchesManuallyModified = false;
+        }
+    });
     // Auto-select all collections when includeCollections is toggled on (only if not manually modified)
-    let collectionsManuallyModified = false;
-    $: if (exportOptions.includeCollections && collections.length > 0 && exportOptions.collectionIDs.length === 0 && !collectionsManuallyModified) {
-        exportOptions.collectionIDs = collections.map(c => c.id);
-    }
-
+    let collectionsManuallyModified = $state(false);
+    $effect(() => {
+        if (exportOptions.includeCollections && collections.length > 0 && exportOptions.collectionIDs.length === 0 && !collectionsManuallyModified) {
+            exportOptions.collectionIDs = collections.map((c) => c.id);
+        }
+    });
     // Clear collectionIDs when includeCollections is toggled off
-    $: if (!exportOptions.includeCollections) {
-        exportOptions.collectionIDs = [];
-        collectionsManuallyModified = false;
-    }
-
+    $effect(() => {
+        if (!exportOptions.includeCollections) {
+            exportOptions.collectionIDs = [];
+            collectionsManuallyModified = false;
+        }
+    });
     // Auto-select all tournaments when includeTournaments is toggled on (only if not manually modified)
-    let tournamentsManuallyModified = false;
-    $: if (exportOptions.includeTournaments && tournaments.length > 0 && exportOptions.includeTournamentIDs.length === 0 && !tournamentsManuallyModified) {
-        exportOptions.includeTournamentIDs = tournaments.map(t => t.id);
-    }
-
+    let tournamentsManuallyModified = $state(false);
+    $effect(() => {
+        if (exportOptions.includeTournaments && tournaments.length > 0 && exportOptions.includeTournamentIDs.length === 0 && !tournamentsManuallyModified) {
+            exportOptions.includeTournamentIDs = tournaments.map((t) => t.id);
+        }
+    });
     // Clear tournamentIDs when includeTournaments is toggled off
-    $: if (!exportOptions.includeTournaments) {
-        exportOptions.includeTournamentIDs = [];
-        tournamentsManuallyModified = false;
-    }
-
+    $effect(() => {
+        if (!exportOptions.includeTournaments) {
+            exportOptions.includeTournamentIDs = [];
+            tournamentsManuallyModified = false;
+        }
+    });
     // Computed description of what will be exported
-    $: exportDescription = (() => {
+    let exportDescription = $derived.by(() => {
         let parts = [];
         if (exportOptions.includeAnalysis) parts.push('analysis');
         if (exportOptions.includeComments) parts.push('comments');
         if (exportOptions.includeFilterLibrary) parts.push('filter library');
         if (exportOptions.includePlayedMoves) parts.push('played moves');
         if (exportOptions.includeMatches && exportOptions.matchIDs.length > 0) parts.push(`${exportOptions.matchIDs.length} match${exportOptions.matchIDs.length > 1 ? 'es' : ''}`);
-        if (exportOptions.includeTournaments && exportOptions.includeTournamentIDs.length > 0) parts.push(`${exportOptions.includeTournamentIDs.length} tournament${exportOptions.includeTournamentIDs.length > 1 ? 's' : ''}`);
-        if (exportOptions.includeCollections && exportOptions.collectionIDs.length > 0) parts.push(`${exportOptions.collectionIDs.length} collection${exportOptions.collectionIDs.length > 1 ? 's' : ''}`);
-        
+        if (exportOptions.includeTournaments && exportOptions.includeTournamentIDs.length > 0)
+            parts.push(`${exportOptions.includeTournamentIDs.length} tournament${exportOptions.includeTournamentIDs.length > 1 ? 's' : ''}`);
+        if (exportOptions.includeCollections && exportOptions.collectionIDs.length > 0)
+            parts.push(`${exportOptions.collectionIDs.length} collection${exportOptions.collectionIDs.length > 1 ? 's' : ''}`);
+
         if (parts.length === 0) {
             return 'positions only';
         } else if (parts.length === 1) {
@@ -111,12 +122,12 @@
         } else {
             return `${parts.slice(0, -1).join(', ')}, and ${parts[parts.length - 1]}`;
         }
-    })();
+    });
 
     function toggleMatchSelection(matchId) {
         matchesManuallyModified = true;
         if (exportOptions.matchIDs.includes(matchId)) {
-            exportOptions.matchIDs = exportOptions.matchIDs.filter(id => id !== matchId);
+            exportOptions.matchIDs = exportOptions.matchIDs.filter((id) => id !== matchId);
         } else {
             exportOptions.matchIDs = [...exportOptions.matchIDs, matchId];
         }
@@ -124,7 +135,7 @@
 
     function selectAllMatches() {
         matchesManuallyModified = true;
-        exportOptions.matchIDs = matches.map(m => m.id);
+        exportOptions.matchIDs = matches.map((m) => m.id);
     }
 
     function selectNoMatches() {
@@ -135,7 +146,7 @@
     function toggleCollectionSelection(collectionId) {
         collectionsManuallyModified = true;
         if (exportOptions.collectionIDs.includes(collectionId)) {
-            exportOptions.collectionIDs = exportOptions.collectionIDs.filter(id => id !== collectionId);
+            exportOptions.collectionIDs = exportOptions.collectionIDs.filter((id) => id !== collectionId);
         } else {
             exportOptions.collectionIDs = [...exportOptions.collectionIDs, collectionId];
         }
@@ -144,7 +155,7 @@
     function toggleTournamentSelection(tournamentId) {
         tournamentsManuallyModified = true;
         if (exportOptions.includeTournamentIDs.includes(tournamentId)) {
-            exportOptions.includeTournamentIDs = exportOptions.includeTournamentIDs.filter(id => id !== tournamentId);
+            exportOptions.includeTournamentIDs = exportOptions.includeTournamentIDs.filter((id) => id !== tournamentId);
         } else {
             exportOptions.includeTournamentIDs = [...exportOptions.includeTournamentIDs, tournamentId];
         }
@@ -152,7 +163,7 @@
 
     function selectAllCollections() {
         collectionsManuallyModified = true;
-        exportOptions.collectionIDs = collections.map(c => c.id);
+        exportOptions.collectionIDs = collections.map((c) => c.id);
     }
 
     function selectNoCollections() {
@@ -162,7 +173,7 @@
 
     function selectAllTournaments() {
         tournamentsManuallyModified = true;
-        exportOptions.includeTournamentIDs = tournaments.map(t => t.id);
+        exportOptions.includeTournamentIDs = tournaments.map((t) => t.id);
     }
 
     function selectNoTournaments() {
@@ -184,6 +195,159 @@
         window.removeEventListener('keydown', handleKeyDown);
     });
 </script>
+
+{#if visible}
+    <div class="modal-overlay" role="dialog" aria-modal="true" aria-label="Export database" use:trapFocus>
+        <div class="modal-content">
+            {#if mode === 'preparing'}
+                <h2>Preparing Export <span class="spinner"></span></h2>
+                <p class="status-text">Counting positions to export...</p>
+
+                <div class="button-group">
+                    <button onclick={onCancel}>Cancel</button>
+                </div>
+            {:else if mode === 'metadata'}
+                <h2>Export Database</h2>
+
+                <div class="summary">
+                    <p><strong>{positionCount} position(s)</strong> will be exported with {exportDescription}.</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="export-user">User</label>
+                    <input id="export-user" type="text" bind:value={metadata.user} placeholder="Enter your name (optional)" />
+                </div>
+
+                <div class="form-group">
+                    <label for="export-description">Description</label>
+                    <textarea id="export-description" bind:value={metadata.description} placeholder="Enter a description for this database (optional)"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="export-date">Creation Date</label>
+                    <input id="export-date" type="date" bind:value={metadata.dateOfCreation} />
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-analysis" bind:checked={exportOptions.includeAnalysis} />
+                        <label for="export-analysis">Include analysis</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-comments" bind:checked={exportOptions.includeComments} />
+                        <label for="export-comments">Include comments</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-filter-library" bind:checked={exportOptions.includeFilterLibrary} />
+                        <label for="export-filter-library">Include filter library</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-played-moves" bind:checked={exportOptions.includePlayedMoves} disabled={!exportOptions.includeAnalysis} />
+                        <label for="export-played-moves">Include played moves</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-matches" bind:checked={exportOptions.includeMatches} disabled={matches.length === 0} />
+                        <label for="export-matches">Include matches ({matches.length})</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-tournaments" bind:checked={exportOptions.includeTournaments} disabled={tournaments.length === 0} />
+                        <label for="export-tournaments">Include tournaments ({tournaments.length})</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="export-collections" bind:checked={exportOptions.includeCollections} disabled={collections.length === 0} />
+                        <label for="export-collections">Include collections ({collections.length})</label>
+                    </div>
+                </div>
+
+                {#if exportOptions.includeMatches && matches.length > 0}
+                    <div class="collections-section">
+                        <div class="collections-header">
+                            <span>Select matches to export</span>
+                            <div class="collections-buttons">
+                                <button type="button" class="small-btn" onclick={selectAllMatches}>All</button>
+                                <button type="button" class="small-btn" onclick={selectNoMatches}>None</button>
+                            </div>
+                        </div>
+                        <div class="collections-list">
+                            {#each matches as match (match.id)}
+                                <label class="collection-checkbox">
+                                    <input type="checkbox" checked={exportOptions.matchIDs.includes(match.id)} onchange={() => toggleMatchSelection(match.id)} />
+                                    <span class="coll-name">{match.player1_name} vs {match.player2_name}</span>
+                                    <span class="coll-count">({match.game_count}g)</span>
+                                </label>
+                            {/each}
+                        </div>
+                    </div>
+                {/if}
+
+                {#if exportOptions.includeTournaments && tournaments.length > 0}
+                    <div class="collections-section">
+                        <div class="collections-header">
+                            <span>Select tournaments to export</span>
+                            <div class="collections-buttons">
+                                <button type="button" class="small-btn" onclick={selectAllTournaments}>All</button>
+                                <button type="button" class="small-btn" onclick={selectNoTournaments}>None</button>
+                            </div>
+                        </div>
+                        <div class="collections-list">
+                            {#each tournaments as tournament (tournament.id)}
+                                <label class="collection-checkbox">
+                                    <input type="checkbox" checked={exportOptions.includeTournamentIDs.includes(tournament.id)} onchange={() => toggleTournamentSelection(tournament.id)} />
+                                    <span class="coll-name">{tournament.name}</span>
+                                    <span class="coll-count">({tournament.matchCount})</span>
+                                </label>
+                            {/each}
+                        </div>
+                    </div>
+                {/if}
+
+                {#if exportOptions.includeCollections && collections.length > 0}
+                    <div class="collections-section">
+                        <div class="collections-header">
+                            <span>Select collections to export</span>
+                            <div class="collections-buttons">
+                                <button type="button" class="small-btn" onclick={selectAllCollections}>All</button>
+                                <button type="button" class="small-btn" onclick={selectNoCollections}>None</button>
+                            </div>
+                        </div>
+                        <div class="collections-list">
+                            {#each collections as collection (collection.id)}
+                                <label class="collection-checkbox">
+                                    <input type="checkbox" checked={exportOptions.collectionIDs.includes(collection.id)} onchange={() => toggleCollectionSelection(collection.id)} />
+                                    <span class="coll-name">{collection.name}</span>
+                                    <span class="coll-count">({collection.positionCount})</span>
+                                </label>
+                            {/each}
+                        </div>
+                    </div>
+                {/if}
+
+                <div class="button-group">
+                    <button onclick={onCancel}>Cancel</button>
+                    <button class="btn-export" onclick={onExport}>Export</button>
+                </div>
+            {:else if mode === 'exporting'}
+                <h2>Exporting Database <span class="spinner"></span></h2>
+                <p class="status-text">Exporting {positionCount} position(s) to the new database...</p>
+                <p class="status-text">This may take a few moments.</p>
+
+                <div class="button-group">
+                    <button onclick={onCancel}>Cancel</button>
+                </div>
+            {:else if mode === 'completed'}
+                <h2>Export Completed</h2>
+
+                <div class="summary">
+                    <p><strong>Export successful!</strong> The database has been created with {positionCount} position(s).</p>
+                </div>
+
+                <div class="button-group">
+                    <button onclick={onClose}>Close</button>
+                </div>
+            {/if}
+        </div>
+    </div>
+{/if}
 
 <style>
     .modal-overlay {
@@ -234,7 +398,8 @@
         color: #333;
     }
 
-    input, textarea {
+    input,
+    textarea {
         padding: 8px 12px;
         border: 1px solid #ccc;
         border-radius: 4px;
@@ -242,7 +407,8 @@
         font-family: inherit;
     }
 
-    input:focus, textarea:focus {
+    input:focus,
+    textarea:focus {
         outline: none;
         border-color: #666;
     }
@@ -268,14 +434,14 @@
         gap: 10px;
     }
 
-    .checkbox-item input[type="checkbox"] {
+    .checkbox-item input[type='checkbox'] {
         width: 18px;
         height: 18px;
         cursor: pointer;
         accent-color: #333;
     }
 
-    .checkbox-item input[type="checkbox"]:disabled {
+    .checkbox-item input[type='checkbox']:disabled {
         cursor: not-allowed;
         opacity: 0.5;
     }
@@ -286,7 +452,7 @@
         font-weight: normal;
     }
 
-    .checkbox-item input[type="checkbox"]:disabled + label {
+    .checkbox-item input[type='checkbox']:disabled + label {
         cursor: not-allowed;
         opacity: 0.5;
     }
@@ -304,8 +470,12 @@
     }
 
     @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
     }
 
     .button-group {
@@ -411,7 +581,7 @@
         background-color: #f5f5f5;
     }
 
-    .collection-checkbox input[type="checkbox"] {
+    .collection-checkbox input[type='checkbox'] {
         width: 16px;
         height: 16px;
         cursor: pointer;
@@ -427,216 +597,3 @@
         font-size: 12px;
     }
 </style>
-
-{#if visible}
-    <div class="modal-overlay">
-        <div class="modal-content">
-            {#if mode === 'preparing'}
-                <h2>Preparing Export <span class="spinner"></span></h2>
-                <p class="status-text">Counting positions to export...</p>
-                
-                <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
-                </div>
-            
-            {:else if mode === 'metadata'}
-                <h2>Export Database</h2>
-                
-                <div class="summary">
-                    <p><strong>{positionCount} position(s)</strong> will be exported with {exportDescription}.</p>
-                </div>
-
-                <div class="form-group">
-                    <label for="export-user">User</label>
-                    <input 
-                        id="export-user" 
-                        type="text" 
-                        bind:value={metadata.user}
-                        placeholder="Enter your name (optional)"
-                    />
-                </div>
-
-                <div class="form-group">
-                    <label for="export-description">Description</label>
-                    <textarea 
-                        id="export-description" 
-                        bind:value={metadata.description}
-                        placeholder="Enter a description for this database (optional)"
-                    ></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="export-date">Creation Date</label>
-                    <input 
-                        id="export-date" 
-                        type="date" 
-                        bind:value={metadata.dateOfCreation}
-                    />
-                </div>
-
-                <div class="checkbox-group">
-                    <div class="checkbox-item">
-                        <input 
-                            type="checkbox" 
-                            id="export-analysis" 
-                            bind:checked={exportOptions.includeAnalysis}
-                        />
-                        <label for="export-analysis">Include analysis</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input 
-                            type="checkbox" 
-                            id="export-comments" 
-                            bind:checked={exportOptions.includeComments}
-                        />
-                        <label for="export-comments">Include comments</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input 
-                            type="checkbox" 
-                            id="export-filter-library" 
-                            bind:checked={exportOptions.includeFilterLibrary}
-                        />
-                        <label for="export-filter-library">Include filter library</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input 
-                            type="checkbox" 
-                            id="export-played-moves" 
-                            bind:checked={exportOptions.includePlayedMoves}
-                            disabled={!exportOptions.includeAnalysis}
-                        />
-                        <label for="export-played-moves">Include played moves</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input 
-                            type="checkbox" 
-                            id="export-matches" 
-                            bind:checked={exportOptions.includeMatches}
-                            disabled={matches.length === 0}
-                        />
-                        <label for="export-matches">Include matches ({matches.length})</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input 
-                            type="checkbox" 
-                            id="export-tournaments" 
-                            bind:checked={exportOptions.includeTournaments}
-                            disabled={tournaments.length === 0}
-                        />
-                        <label for="export-tournaments">Include tournaments ({tournaments.length})</label>
-                    </div>
-                    <div class="checkbox-item">
-                        <input 
-                            type="checkbox" 
-                            id="export-collections" 
-                            bind:checked={exportOptions.includeCollections}
-                            disabled={collections.length === 0}
-                        />
-                        <label for="export-collections">Include collections ({collections.length})</label>
-                    </div>
-                </div>
-
-                {#if exportOptions.includeMatches && matches.length > 0}
-                    <div class="collections-section">
-                        <div class="collections-header">
-                            <span>Select matches to export</span>
-                            <div class="collections-buttons">
-                                <button type="button" class="small-btn" on:click={selectAllMatches}>All</button>
-                                <button type="button" class="small-btn" on:click={selectNoMatches}>None</button>
-                            </div>
-                        </div>
-                        <div class="collections-list">
-                            {#each matches as match}
-                                <label class="collection-checkbox">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={exportOptions.matchIDs.includes(match.id)}
-                                        on:change={() => toggleMatchSelection(match.id)}
-                                    />
-                                    <span class="coll-name">{match.player1_name} vs {match.player2_name}</span>
-                                    <span class="coll-count">({match.game_count}g)</span>
-                                </label>
-                            {/each}
-                        </div>
-                    </div>
-                {/if}
-
-                {#if exportOptions.includeTournaments && tournaments.length > 0}
-                    <div class="collections-section">
-                        <div class="collections-header">
-                            <span>Select tournaments to export</span>
-                            <div class="collections-buttons">
-                                <button type="button" class="small-btn" on:click={selectAllTournaments}>All</button>
-                                <button type="button" class="small-btn" on:click={selectNoTournaments}>None</button>
-                            </div>
-                        </div>
-                        <div class="collections-list">
-                            {#each tournaments as tournament}
-                                <label class="collection-checkbox">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={exportOptions.includeTournamentIDs.includes(tournament.id)}
-                                        on:change={() => toggleTournamentSelection(tournament.id)}
-                                    />
-                                    <span class="coll-name">{tournament.name}</span>
-                                    <span class="coll-count">({tournament.matchCount})</span>
-                                </label>
-                            {/each}
-                        </div>
-                    </div>
-                {/if}
-
-                {#if exportOptions.includeCollections && collections.length > 0}
-                    <div class="collections-section">
-                        <div class="collections-header">
-                            <span>Select collections to export</span>
-                            <div class="collections-buttons">
-                                <button type="button" class="small-btn" on:click={selectAllCollections}>All</button>
-                                <button type="button" class="small-btn" on:click={selectNoCollections}>None</button>
-                            </div>
-                        </div>
-                        <div class="collections-list">
-                            {#each collections as collection}
-                                <label class="collection-checkbox">
-                                    <input 
-                                        type="checkbox" 
-                                        checked={exportOptions.collectionIDs.includes(collection.id)}
-                                        on:change={() => toggleCollectionSelection(collection.id)}
-                                    />
-                                    <span class="coll-name">{collection.name}</span>
-                                    <span class="coll-count">({collection.positionCount})</span>
-                                </label>
-                            {/each}
-                        </div>
-                    </div>
-                {/if}
-
-                <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
-                    <button class="btn-export" on:click={onExport}>Export</button>
-                </div>
-
-            {:else if mode === 'exporting'}
-                <h2>Exporting Database <span class="spinner"></span></h2>
-                <p class="status-text">Exporting {positionCount} position(s) to the new database...</p>
-                <p class="status-text">This may take a few moments.</p>
-
-                <div class="button-group">
-                    <button on:click={onCancel}>Cancel</button>
-                </div>
-
-            {:else if mode === 'completed'}
-                <h2>Export Completed</h2>
-                
-                <div class="summary">
-                    <p><strong>Export successful!</strong> The database has been created with {positionCount} position(s).</p>
-                </div>
-
-                <div class="button-group">
-                    <button on:click={onClose}>Close</button>
-                </div>
-            {/if}
-        </div>
-    </div>
-{/if}

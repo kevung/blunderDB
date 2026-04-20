@@ -1,13 +1,14 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { onDestroy } from 'svelte';
     import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js';
     import { activeTabStore } from '../stores/uiStore';
 
-    let user = '';
-    let description = '';
-    let dateOfCreation = '';
-    let databaseVersion = '';
-    let loaded = false;
+    let user = $state('');
+    let description = $state('');
+    let dateOfCreation = $state('');
+    let databaseVersion = $state('');
+    let loaded = $state(false);
 
     async function loadMetadata() {
         try {
@@ -18,7 +19,7 @@
             databaseVersion = metadata.database_version || '';
             loaded = true;
         } catch (error) {
-            console.error('Error loading metadata:', error);
+            logger.error('Error loading metadata:', error);
         }
     }
 
@@ -27,13 +28,13 @@
         try {
             await SaveMetadata({ user, description, dateOfCreation });
         } catch (error) {
-            console.error('Error saving metadata:', error);
+            logger.error('Error saving metadata:', error);
         }
     }
 
     // Load when tab becomes active, save when leaving
-    let wasActive = false;
-    const unsubscribe = activeTabStore.subscribe(async value => {
+    let wasActive = $state(false);
+    const unsubscribe = activeTabStore.subscribe(async (value) => {
         if (value === 'metadata') {
             await loadMetadata();
             wasActive = true;
@@ -53,11 +54,11 @@
     <div class="meta-row">
         <div class="form-group">
             <label for="meta-user">User</label>
-            <input id="meta-user" type="text" bind:value={user} on:blur={saveMetadata} />
+            <input id="meta-user" type="text" bind:value={user} onblur={saveMetadata} />
         </div>
         <div class="form-group">
             <label for="meta-date">Created</label>
-            <input id="meta-date" type="date" bind:value={dateOfCreation} on:change={saveMetadata} />
+            <input id="meta-date" type="date" bind:value={dateOfCreation} onchange={saveMetadata} />
         </div>
         <div class="form-group">
             <label for="meta-version">Version</label>
@@ -66,7 +67,7 @@
     </div>
     <div class="form-group desc-group">
         <label for="meta-description">Description</label>
-        <textarea id="meta-description" bind:value={description} on:blur={saveMetadata} rows="2"></textarea>
+        <textarea id="meta-description" bind:value={description} onblur={saveMetadata} rows="2"></textarea>
     </div>
 </div>
 
@@ -105,8 +106,8 @@
         color: #888;
         text-transform: uppercase;
         letter-spacing: 0.3px;
-    user-select: none;
-    -webkit-user-select: none;
+        user-select: none;
+        -webkit-user-select: none;
         font-size: 12px;
         font-family: inherit;
     }
@@ -122,7 +123,8 @@
         color: #888;
     }
 
-    input:focus, textarea:focus {
+    input:focus,
+    textarea:focus {
         outline: none;
         border-color: #1a73e8;
     }

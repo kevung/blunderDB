@@ -140,6 +140,59 @@ type Position struct {
 	HasBeaver    int    `json:"has_beaver"` // Add HasBeaver field
 }
 
+// SearchFilters bundles all filter parameters for LoadPositionsByFilters.
+type SearchFilters struct {
+	Filter                        Position `json:"filter"`
+	IncludeCube                   bool     `json:"includeCube"`
+	IncludeScore                  bool     `json:"includeScore"`
+	PipCountFilter                string   `json:"pipCountFilter"`
+	WinRateFilter                 string   `json:"winRateFilter"`
+	GammonRateFilter              string   `json:"gammonRateFilter"`
+	BackgammonRateFilter          string   `json:"backgammonRateFilter"`
+	Player2WinRateFilter          string   `json:"player2WinRateFilter"`
+	Player2GammonRateFilter       string   `json:"player2GammonRateFilter"`
+	Player2BackgammonRateFilter   string   `json:"player2BackgammonRateFilter"`
+	Player1CheckerOffFilter       string   `json:"player1CheckerOffFilter"`
+	Player2CheckerOffFilter       string   `json:"player2CheckerOffFilter"`
+	Player1BackCheckerFilter      string   `json:"player1BackCheckerFilter"`
+	Player2BackCheckerFilter      string   `json:"player2BackCheckerFilter"`
+	Player1CheckerInZoneFilter    string   `json:"player1CheckerInZoneFilter"`
+	Player2CheckerInZoneFilter    string   `json:"player2CheckerInZoneFilter"`
+	SearchText                    string   `json:"searchText"`
+	Player1AbsolutePipCountFilter string   `json:"player1AbsolutePipCountFilter"`
+	EquityFilter                  string   `json:"equityFilter"`
+	DecisionTypeFilter            bool     `json:"decisionTypeFilter"`
+	DiceRollFilter                bool     `json:"diceRollFilter"`
+	MovePatternFilter             string   `json:"movePatternFilter"`
+	DateFilter                    string   `json:"dateFilter"`
+	Player1OutfieldBlotFilter     string   `json:"player1OutfieldBlotFilter"`
+	Player2OutfieldBlotFilter     string   `json:"player2OutfieldBlotFilter"`
+	Player1JanBlotFilter          string   `json:"player1JanBlotFilter"`
+	Player2JanBlotFilter          string   `json:"player2JanBlotFilter"`
+	NoContactFilter               bool     `json:"noContactFilter"`
+	MirrorFilter                  bool     `json:"mirrorFilter"`
+	MoveErrorFilter               string   `json:"moveErrorFilter"`
+	MatchIDsFilter                string   `json:"matchIDsFilter"`
+	TournamentIDsFilter           string   `json:"tournamentIDsFilter"`
+	RestrictToPositionIDs         string   `json:"restrictToPositionIDs"`
+}
+
+// ExportOptions bundles all parameters for ExportDatabase.
+type ExportOptions struct {
+	ExportPath           string            `json:"exportPath"`
+	Positions            []Position        `json:"positions"`
+	Metadata             map[string]string `json:"metadata"`
+	IncludeAnalysis      bool              `json:"includeAnalysis"`
+	IncludeComments      bool              `json:"includeComments"`
+	IncludeFilterLibrary bool              `json:"includeFilterLibrary"`
+	IncludePlayedMoves   bool              `json:"includePlayedMoves"`
+	IncludeMatches       bool              `json:"includeMatches"`
+	IncludeCollections   bool              `json:"includeCollections"`
+	CollectionIDs        []int64           `json:"collectionIDs"`
+	MatchIDs             []int64           `json:"matchIDs"`
+	TournamentIDs        []int64           `json:"tournamentIDs"`
+}
+
 type DoublingCubeAnalysis struct {
 	AnalysisDepth             string  `json:"analysisDepth"`
 	AnalysisEngine            string  `json:"analysisEngine,omitempty"`

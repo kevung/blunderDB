@@ -69,7 +69,7 @@ Adding a new modal = use a new string constant. No store changes, no derived sto
 
 ### 1. Define modal/panel constants
 
-- [ ] Add constants to `uiStore.js`:
+- [x] Add constants to `uiStore.js`:
   ```js
   // Modal identifiers
   export const MODAL = {
@@ -106,15 +106,15 @@ Adding a new modal = use a new string constant. No store changes, no derived sto
 
 ### 2. Create new store primitives
 
-- [ ] Replace 12+ modal writable stores with:
+- [x] Replace 12+ modal writable stores with:
   ```js
   export const activeModal = writable(null);
   ```
-- [ ] Replace 7 panel writable stores with:
+- [x] Replace 7 panel writable stores with:
   ```js
   export const openPanels = writable(new Set());
   ```
-- [ ] Add helper functions:
+- [x] Add helper functions:
   ```js
   export function openModal(name) { activeModal.set(name); }
   export function closeModal() { activeModal.set(null); }
@@ -135,7 +135,7 @@ Adding a new modal = use a new string constant. No store changes, no derived sto
 
 ### 3. Replace derived stores
 
-- [ ] Replace manual enumeration with automatic:
+- [x] Replace manual enumeration with automatic:
   ```js
   export const isAnyModalOpen = derived(activeModal, $m => $m !== null);
   export const isAnyPanelOpen = derived(openPanels, $p => $p.size > 0);
@@ -147,33 +147,33 @@ Adding a new modal = use a new string constant. No store changes, no derived sto
 
 ### 4. Update components
 
-- [ ] **Each modal component**: Replace `$showXxxModalStore` with check against `$activeModal === MODAL.XXX`
-- [ ] **Each panel component**: Replace `$showXxxStore` with `$openPanels.has(PANEL.XXX)` or use `isPanelOpen(PANEL.XXX)`
-- [ ] **Toolbar.svelte**: Replace `showXxxModalStore.set(true)` with `openModal(MODAL.XXX)`, and `showXxxStore.update(v => !v)` with `togglePanel(PANEL.XXX)`
-- [ ] **App.svelte**: Remove 33 manual subscriptions — use reactive `$activeModal` and `$openPanels` directly
+- [x] **Each modal component**: Replace `$showXxxModalStore` with check against `$activeModal === MODAL.XXX`
+- [x] **Each panel component**: Replace `$showXxxStore` with `$openPanels.has(PANEL.XXX)` or use `isPanelOpen(PANEL.XXX)`
+- [x] **Toolbar.svelte**: Replace `showXxxModalStore.set(true)` with `openModal(MODAL.XXX)`, and `showXxxStore.update(v => !v)` with `togglePanel(PANEL.XXX)`
+- [x] **App.svelte**: Remove 33 manual subscriptions — use reactive `$activeModal` and `$openPanels` directly
 
 ### 5. Remove old stores
 
-- [ ] Delete all individual `showXxxStore` / `showXxxModalStore` from `uiStore.js`
-- [ ] Remove the 3 old derived stores with manual enumeration
-- [ ] Verify `uiStore.js` is significantly shorter (~100 lines vs. 252)
+- [x] Delete all individual `showXxxStore` / `showXxxModalStore` from `uiStore.js`
+- [x] Remove the 3 old derived stores with manual enumeration
+- [x] Verify `uiStore.js` is significantly shorter (~100 lines vs. 252)
 
 ### 6. Test
 
-- [ ] `npm run build` succeeds
-- [ ] Manual test: open/close every modal, toggle every panel
-- [ ] Verify only one modal can be open at a time (opening a modal closes the previous)
-- [ ] Verify panels can be open simultaneously
-- [ ] Verify keyboard shortcuts (Escape closes modal, etc.)
+- [x] `npm run build` succeeds
+- [x] Manual test: open/close every modal, toggle every panel
+- [x] Verify only one modal can be open at a time (opening a modal closes the previous)
+- [x] Verify panels can be open simultaneously
+- [x] Verify keyboard shortcuts (Escape closes modal, etc.)
 
 ## Acceptance criteria
 
-- [ ] Single `activeModal` store replaces 12+ individual modal stores
-- [ ] Single `openPanels` store replaces 7 individual panel stores
-- [ ] Derived stores are automatic (no manual enumeration)
-- [ ] `uiStore.js` ≤ 120 lines
-- [ ] Adding a new modal = one string constant, zero store changes
-- [ ] All modals and panels function correctly
+- [x] Single `activeModal` store replaces 12+ individual modal stores
+- [x] Single `openPanels` store replaces 7 individual panel stores
+- [x] Derived stores are automatic (no manual enumeration)
+- [x] `uiStore.js` ≤ 120 lines
+- [x] Adding a new modal = one string constant, zero store changes
+- [x] All modals and panels function correctly
 
 ## Rollback
 

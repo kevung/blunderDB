@@ -1,21 +1,21 @@
 <script>
+    import { logger } from '../utils/logger.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
-    import { showAnalysisStore, showFilterLibraryPanelStore, showCommentStore } from '../stores/uiStore'; // Import showAnalysisStore
-    export let visible = false;
-    export let onClose;
+    import { openPanels, PANEL } from '../stores/uiStore';
+    let { visible = false, onClose } = $props();
 
-    let analysisData;
-    let cubeValue;
-    let activeTab = 'checker'; // 'checker' or 'cube'
-    let matchCtx;
+    let analysisData = $state();
+    let cubeValue = $state();
+    let activeTab = $state('checker'); // 'checker' or 'cube'
+    let matchCtx = $state();
 
     // Sorting state for checker analysis table
-    let sortColumn = 'equity';  // default sort by equity
-    let sortDirection = 'desc'; // default highest to lowest
+    let sortColumn = $state('equity'); // default sort by equity
+    let sortDirection = $state('desc'); // default highest to lowest
 
     // Subscribe to matchContextStore
-    matchContextStore.subscribe(value => {
+    matchContextStore.subscribe((value) => {
         matchCtx = value;
         // Auto-switch tab based on current move type in match mode
         // But only if no move is currently selected (to avoid interfering with move navigation)
@@ -26,7 +26,7 @@
                 if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
                     activeTab = 'checker';
                     // Clear any existing cube analysis data
-                    analysisStore.update(current => ({
+                    analysisStore.update((current) => ({
                         ...current,
                         doublingCubeAnalysis: null,
                         playedCubeAction: ''
@@ -39,25 +39,25 @@
     });
 
     // Subscribe to analysisStore to get the analysis data
-    analysisStore.subscribe(value => {
+    analysisStore.subscribe((value) => {
         analysisData = value;
     });
 
     // Subscribe to positionStore to get the cube value
-    positionStore.subscribe(value => {
+    positionStore.subscribe((value) => {
         cubeValue = value.cube.value;
     });
 
-    showAnalysisStore.subscribe(async value => {
-        visible = value;
-        if(visible) {
+    openPanels.subscribe(async (value) => {
+        visible = value.has(PANEL.ANALYSIS);
+        if (visible) {
             // Pre-load cube analysis in match mode if current position is checker
             if (matchCtx.isMatchMode) {
                 const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
                 if (currentMovePos && currentMovePos.move_type === 'checker') {
                     // If it's the first position of a game (move_number 0 or 1), clear cube data immediately
                     if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
-                        analysisStore.update(current => ({
+                        analysisStore.update((current) => ({
                             ...current,
                             doublingCubeAnalysis: null,
                             playedCubeAction: ''
@@ -67,7 +67,7 @@
                         const hasCubeInGame = await loadCubeAnalysisForCurrentPosition();
                         // If no cube analysis found in current game, clear any previous cube data
                         if (!hasCubeInGame) {
-                            analysisStore.update(current => ({
+                            analysisStore.update((current) => ({
                                 ...current,
                                 doublingCubeAnalysis: null,
                                 playedCubeAction: ''
@@ -76,7 +76,7 @@
                     }
                 }
             }
-            
+
             setTimeout(() => {
                 const analysisEl = document.getElementById('analysisPanel');
                 if (analysisEl) {
@@ -115,9 +115,9 @@
             if (!sortedMoves || sortedMoves.length === 0) {
                 return; // No moves to navigate
             }
-            
-            const currentIndex = sortedMoves.findIndex(m => m.move === $selectedMoveStore);
-            
+
+            const currentIndex = sortedMoves.findIndex((m) => m.move === $selectedMoveStore);
+
             if (event.key === 'j' || event.key === 'ArrowDown') {
                 event.preventDefault();
                 if (currentIndex >= 0 && currentIndex < sortedMoves.length - 1) {
@@ -136,25 +136,25 @@
 
     // Column definitions for sorting
     const sortableColumns = {
-        'move': { key: 'move', type: 'string' },
-        'equity': { key: 'equity', type: 'number' },
-        'error': { key: 'equityError', type: 'number' },
-        'pw': { key: 'playerWinChance', type: 'number' },
-        'pg': { key: 'playerGammonChance', type: 'number' },
-        'pb': { key: 'playerBackgammonChance', type: 'number' },
-        'ow': { key: 'opponentWinChance', type: 'number' },
-        'og': { key: 'opponentGammonChance', type: 'number' },
-        'ob': { key: 'opponentBackgammonChance', type: 'number' },
-        'depth': { key: 'analysisDepth', type: 'number' },
-        'engine': { key: 'analysisEngine', type: 'string' }
+        move: { key: 'move', type: 'string' },
+        equity: { key: 'equity', type: 'number' },
+        error: { key: 'equityError', type: 'number' },
+        pw: { key: 'playerWinChance', type: 'number' },
+        pg: { key: 'playerGammonChance', type: 'number' },
+        pb: { key: 'playerBackgammonChance', type: 'number' },
+        ow: { key: 'opponentWinChance', type: 'number' },
+        og: { key: 'opponentGammonChance', type: 'number' },
+        ob: { key: 'opponentBackgammonChance', type: 'number' },
+        depth: { key: 'analysisDepth', type: 'number' },
+        engine: { key: 'analysisEngine', type: 'string' }
     };
 
     // Detect if multiple engines are present in checker analysis
-    $: hasMultipleEngines = (() => {
+    let _hasMultipleEngines = $derived.by(() => {
         if (!analysisData?.checkerAnalysis?.moves) return false;
-        const engines = new Set(analysisData.checkerAnalysis.moves.map(m => m.analysisEngine || '').filter(e => e));
+        const engines = new Set(analysisData.checkerAnalysis.moves.map((m) => m.analysisEngine || '').filter((e) => e));
         return engines.size > 1;
-    })();
+    });
 
     function handleSort(column) {
         if (sortColumn === column) {
@@ -167,7 +167,7 @@
     }
 
     // Reactive sorted moves array
-    $: sortedMoves = (() => {
+    let sortedMoves = $derived.by(() => {
         if (!analysisData?.checkerAnalysis?.moves) return [];
         const moves = [...analysisData.checkerAnalysis.moves];
         const col = sortableColumns[sortColumn];
@@ -186,7 +186,7 @@
                 return sortDirection === 'asc' ? cmp : -cmp;
             }
         });
-    })();
+    });
 
     function getSortIndicator(column) {
         if (sortColumn !== column) return '';
@@ -223,9 +223,9 @@
 
     function isPlayedMove(move) {
         if (!move.move) return false;
-        
+
         const normalizedMoveStr = normalizeMoveString(move.move);
-        
+
         // In MATCH mode, only highlight the current match's specific move
         if (matchCtx.isMatchMode) {
             // Use the single playedMove field which contains the current match's move
@@ -234,7 +234,7 @@
             }
             return false;
         }
-        
+
         // In normal mode (browsing positions), highlight all played moves
         // Check the playedMoves array first
         if (analysisData.playedMoves && analysisData.playedMoves.length > 0) {
@@ -244,12 +244,12 @@
                 }
             }
         }
-        
+
         // Fallback to old single playedMove field for backward compatibility
         if (analysisData.playedMove) {
             return normalizeMoveString(analysisData.playedMove) === normalizedMoveStr;
         }
-        
+
         return false;
     }
 
@@ -272,13 +272,14 @@
         if (matchCtx.isMatchMode) {
             if (analysisData.playedCubeAction) {
                 const playedParts = normalizeCubeAction(analysisData.playedCubeAction);
-                return actionParts.every(a => playedParts.includes(a));
+                return actionParts.every((a) => playedParts.includes(a));
             }
             return false;
         }
-        
+
         // In normal mode, highlight all played cube actions
         // Collect all canonical played parts from all played actions
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, not reactive state
         const allPlayedParts = new Set();
 
         if (analysisData.playedCubeActions && analysisData.playedCubeActions.length > 0) {
@@ -288,7 +289,7 @@
                 }
             }
         }
-        
+
         // Fallback to old single playedCubeAction field for backward compatibility
         if (allPlayedParts.size === 0 && analysisData.playedCubeAction) {
             for (const part of normalizeCubeAction(analysisData.playedCubeAction)) {
@@ -297,13 +298,13 @@
         }
 
         if (allPlayedParts.size === 0) return false;
-        
-        return actionParts.every(a => allPlayedParts.has(a));
+
+        return actionParts.every((a) => allPlayedParts.has(a));
     }
 
     async function switchTab(tab) {
         activeTab = tab;
-        
+
         // When switching to cube tab in match mode, load the cube analysis and update position
         if (tab === 'cube' && matchCtx.isMatchMode) {
             await loadCubeAnalysisForCurrentPosition(true); // true = update position to show cube position
@@ -314,25 +315,25 @@
     // Returns true if cube analysis was found in the same game, false otherwise
     async function loadCubeAnalysisForCurrentPosition(updatePosition = false) {
         if (!matchCtx.isMatchMode) return false;
-        
+
         const currentIndex = matchCtx.currentIndex;
         const movePositions = matchCtx.movePositions;
         const currentMovePos = movePositions[currentIndex];
-        
+
         // If we're on the first position of a game (move_number 0 or 1), no cube decision is possible
         if (currentMovePos && (currentMovePos.move_number === 0 || currentMovePos.move_number === 1)) {
             return false;
         }
-        
+
         const currentGameNumber = movePositions[currentIndex].game_number;
-        
+
         // Find the most recent cube decision before current position IN THE SAME GAME
         for (let i = currentIndex - 1; i >= 0; i--) {
             // Stop if we've gone to a different game
             if (movePositions[i].game_number !== currentGameNumber) {
                 break;
             }
-            
+
             if (movePositions[i].move_type === 'cube') {
                 // Load analysis for this cube position
                 try {
@@ -340,22 +341,22 @@
                     const cubeAnalysis = await LoadAnalysis(movePositions[i].position.id);
                     if (cubeAnalysis && cubeAnalysis.doublingCubeAnalysis) {
                         // Update only the cube analysis part
-                        analysisStore.update(current => ({
+                        analysisStore.update((current) => ({
                             ...current,
                             doublingCubeAnalysis: cubeAnalysis.doublingCubeAnalysis,
                             playedCubeAction: cubeAnalysis.playedCubeAction || ''
                         }));
-                        
+
                         // Only update position if explicitly requested (when clicking cube tab)
                         if (updatePosition) {
-                            const cubePosition = {...movePositions[i].position};
+                            const cubePosition = { ...movePositions[i].position };
                             cubePosition.dice = [0, 0];
                             positionStore.set(cubePosition);
                         }
                         return true; // Found cube analysis in current game
                     }
                 } catch (error) {
-                    console.error('Error loading cube analysis:', error);
+                    logger.error('Error loading cube analysis:', error);
                 }
                 return false;
             }
@@ -376,11 +377,11 @@
     // Enhanced switch with position restore
     async function handleTabSwitch(tab) {
         if (tab === activeTab) return;
-        
+
         if (tab === 'checker') {
             await restoreCheckerPosition();
         }
-        
+
         await switchTab(tab);
     }
 
@@ -388,17 +389,17 @@
     function handleContentClick(event) {
         // Only toggle if both analyses available (MATCH mode)
         if (!showTabs) return;
-        
+
         // Check if clicking on table header (TH) or on a header row
         const clickedTH = event.target.closest('th');
         const clickedRow = event.target.closest('tr');
         const clickedDataRow = clickedRow && clickedRow.parentElement.tagName === 'TBODY' && !clickedTH;
-        
+
         // If clicking a sortable checker table header, don't toggle tabs
         if (clickedTH && clickedTH.closest('.checker-table')) {
             return;
         }
-        
+
         // Toggle if clicking on header OR anywhere outside data rows
         if (clickedTH || !clickedDataRow) {
             // Toggle between checker and cube
@@ -409,21 +410,20 @@
     }
 
     // Determine if both analyses are available
-    $: hasCheckerAnalysis = analysisData && analysisData.checkerAnalysis && 
-                            analysisData.checkerAnalysis.moves && 
-                            analysisData.checkerAnalysis.moves.length > 0;
+    let hasCheckerAnalysis = $derived(analysisData && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0);
     // For cube analysis in MATCH mode, it must not be null and have actual data
     // Check both that the object exists and that it has actual analysis content
-    $: hasCubeAnalysis = analysisData && 
-                         analysisData.doublingCubeAnalysis !== null && 
-                         analysisData.doublingCubeAnalysis !== undefined && 
-                         typeof analysisData.doublingCubeAnalysis === 'object' &&
-                         (analysisData.doublingCubeAnalysis.bestCubeAction || 
-                          analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined);
-    
+    let hasCubeAnalysis = $derived(
+        analysisData &&
+            analysisData.doublingCubeAnalysis !== null &&
+            analysisData.doublingCubeAnalysis !== undefined &&
+            typeof analysisData.doublingCubeAnalysis === 'object' &&
+            (analysisData.doublingCubeAnalysis.bestCubeAction || analysisData.doublingCubeAnalysis.cubefulNoDoubleEquity !== undefined)
+    );
+
     // Build the list of cube analyses to display (may have multiple from different engines)
     // Sort so XG analysis appears first, then GNUbg, then others
-    $: cubeAnalysesList = (() => {
+    let cubeAnalysesList = $derived.by(() => {
         if (!analysisData) return [];
         let list = [];
         if (analysisData.allCubeAnalyses && analysisData.allCubeAnalyses.length > 0) {
@@ -440,141 +440,215 @@
         };
         list.sort((a, b) => enginePriority(a.analysisEngine) - enginePriority(b.analysisEngine));
         return list;
-    })();
+    });
     // Check if current position is the first position of a game (no cube decision possible)
     // First position can be move_number 0 or 1
-    $: isFirstPositionOfGame = matchCtx.isMatchMode && 
-                                matchCtx.movePositions.length > 0 && 
-                                (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 ||
-                                 matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1);
+    let isFirstPositionOfGame = $derived(
+        matchCtx.isMatchMode &&
+            matchCtx.movePositions.length > 0 &&
+            (matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 0 || matchCtx.movePositions[matchCtx.currentIndex]?.move_number === 1)
+    );
     // Only show tabs in MATCH mode where checker and cube are separate positions
     // BUT not on the first position of a game (cube decision not possible)
-    $: showTabs = hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame;
+    let showTabs = $derived(hasCheckerAnalysis && hasCubeAnalysis && matchCtx.isMatchMode && !isFirstPositionOfGame);
 </script>
 
-<section class="analysis-panel" role="dialog" aria-modal="true" id="analysisPanel" tabindex="-1" on:keydown={handleKeyDown}>
-        <div class="analysis-content" on:click={handleContentClick} on:keydown={() => {}} role="button" tabindex="-1">
-            {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
-                {#each cubeAnalysesList as cubeAnalysis, cubeIdx}
-                    <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
-                        <table class="left-table">
-                            <tbody>
-                                <tr>
-                                    <th></th>
-                                    <th>P</th>
-                                    <th>O</th>
-                                </tr>
-                                <tr>
-                                    <td>W</td>
-                                    <td>{(cubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
-                                    <td>{(cubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
-                                </tr>
-                                <tr>
-                                    <td>G</td>
-                                    <td>{(cubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
-                                    <td>{(cubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
-                                </tr>
-                                <tr>
-                                    <td>B</td>
-                                    <td>{(cubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
-                                    <td>{(cubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
-                                </tr>
-                                <tr>
-                                    <td>ND Eq</td>
-                                    <td colspan="2">{formatEquity(cubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
-                                </tr>
-                                <tr>
-                                    <td>D Eq</td>
-                                    <td colspan="2">{formatEquity(cubeAnalysis.cubelessDoubleEquity || 0)}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="right-table">
-                            <tbody>
-                                <tr>
-                                    <th>Decision</th>
-                                    <th>Equity</th>
-                                    <th>Error</th>
-                                </tr>
-                                <tr class:played={isPlayedCubeAction('No Double')}>
-                                    <td>{getDecisionLabel('No Double')}</td>
-                                    <td>{formatEquity(cubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
-                                    <td>{formatEquity(cubeAnalysis.cubefulNoDoubleError || 0)}</td>
-                                </tr>
-                                <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Take')}>
-                                    <td>{getDecisionLabel('Double/Take')}</td>
-                                    <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
-                                    <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeError || 0)}</td>
-                                </tr>
-                                <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Pass')}>
-                                    <td>{getDecisionLabel('Double/Pass')}</td>
-                                    <td>{formatEquity(cubeAnalysis.cubefulDoublePassEquity || 0)}</td>
-                                    <td>{formatEquity(cubeAnalysis.cubefulDoublePassError || 0)}</td>
-                                </tr>
-                                <tr class="best-action-row {cubeAnalysis.bestCubeAction && cubeAnalysis.bestCubeAction.includes('ダブル') ? 'japanese-text' : ''}">
-                                    <td>Best Action</td>
-                                    <td colspan="2">{cubeAnalysis.bestCubeAction || ''}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <table class="info-table">
-                            <tbody>
-                                <tr>
-                                    <th>Analysis Depth</th>
-                                    <td>{cubeAnalysis.analysisDepth}</td>
-                                </tr>
-                                <tr>
-                                    <th>Engine</th>
-                                    <td>{cubeAnalysis.analysisEngine || analysisData.analysisEngineVersion}</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                {/each}
-            {/if}
-
-            {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
-                <table class="checker-table">
-                    <thead>
-                        <tr>
-                            <th class="sortable" class:active-sort={sortColumn === 'move'} on:click|stopPropagation={() => handleSort('move')}>Move{getSortIndicator('move')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'equity'} on:click|stopPropagation={() => handleSort('equity')}>Equity</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'error'} on:click|stopPropagation={() => handleSort('error')}>Error{getSortIndicator('error')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'pw'} on:click|stopPropagation={() => handleSort('pw')}>P W{getSortIndicator('pw')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'pg'} on:click|stopPropagation={() => handleSort('pg')}>P G{getSortIndicator('pg')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'pb'} on:click|stopPropagation={() => handleSort('pb')}>P B{getSortIndicator('pb')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'ow'} on:click|stopPropagation={() => handleSort('ow')}>O W{getSortIndicator('ow')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'og'} on:click|stopPropagation={() => handleSort('og')}>O G{getSortIndicator('og')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'ob'} on:click|stopPropagation={() => handleSort('ob')}>O B{getSortIndicator('ob')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'depth'} on:click|stopPropagation={() => handleSort('depth')}>Depth{getSortIndicator('depth')}</th>
-                            <th class="sortable" class:active-sort={sortColumn === 'engine'} on:click|stopPropagation={() => handleSort('engine')}>Engine{getSortIndicator('engine')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {#each sortedMoves as move}
-                            <tr 
-                                class:selected={$selectedMoveStore === move.move}
-                                class:played={isPlayedMove(move)}
-                                on:click={() => handleMoveRowClick(move)}
-                            >
-                                <td>{move.move}</td>
-                                <td>{formatEquity(move.equity || 0)}</td>
-                                <td>{formatEquity(move.equityError || 0)}</td>
-                                <td>{(move.playerWinChance || 0).toFixed(2)}</td>
-                                <td>{(move.playerGammonChance || 0).toFixed(2)}</td>
-                                <td>{(move.playerBackgammonChance || 0).toFixed(2)}</td>
-                                <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
-                                <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
-                                <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
-                                <td>{move.analysisDepth}</td>
-                                <td>{move.analysisEngine || ''}</td>
+<section class="analysis-panel" role="dialog" aria-modal="true" aria-label="Position analysis" id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
+    <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
+        {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
+            {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
+                <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
+                    <table class="left-table">
+                        <tbody>
+                            <tr>
+                                <th></th>
+                                <th>P</th>
+                                <th>O</th>
                             </tr>
-                        {/each}
-                    </tbody>
-                </table>
-            {/if}
-        </div>
-    </section>
+                            <tr>
+                                <td>W</td>
+                                <td>{(cubeAnalysis.playerWinChances || 0).toFixed(2)}</td>
+                                <td>{(cubeAnalysis.opponentWinChances || 0).toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>G</td>
+                                <td>{(cubeAnalysis.playerGammonChances || 0).toFixed(2)}</td>
+                                <td>{(cubeAnalysis.opponentGammonChances || 0).toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>B</td>
+                                <td>{(cubeAnalysis.playerBackgammonChances || 0).toFixed(2)}</td>
+                                <td>{(cubeAnalysis.opponentBackgammonChances || 0).toFixed(2)}</td>
+                            </tr>
+                            <tr>
+                                <td>ND Eq</td>
+                                <td colspan="2">{formatEquity(cubeAnalysis.cubelessNoDoubleEquity || 0)}</td>
+                            </tr>
+                            <tr>
+                                <td>D Eq</td>
+                                <td colspan="2">{formatEquity(cubeAnalysis.cubelessDoubleEquity || 0)}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="right-table">
+                        <tbody>
+                            <tr>
+                                <th>Decision</th>
+                                <th>Equity</th>
+                                <th>Error</th>
+                            </tr>
+                            <tr class:played={isPlayedCubeAction('No Double')}>
+                                <td>{getDecisionLabel('No Double')}</td>
+                                <td>{formatEquity(cubeAnalysis.cubefulNoDoubleEquity || 0)}</td>
+                                <td>{formatEquity(cubeAnalysis.cubefulNoDoubleError || 0)}</td>
+                            </tr>
+                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Take')}>
+                                <td>{getDecisionLabel('Double/Take')}</td>
+                                <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeEquity || 0)}</td>
+                                <td>{formatEquity(cubeAnalysis.cubefulDoubleTakeError || 0)}</td>
+                            </tr>
+                            <tr class:played={isPlayedCubeAction('Double') && isPlayedCubeAction('Pass')}>
+                                <td>{getDecisionLabel('Double/Pass')}</td>
+                                <td>{formatEquity(cubeAnalysis.cubefulDoublePassEquity || 0)}</td>
+                                <td>{formatEquity(cubeAnalysis.cubefulDoublePassError || 0)}</td>
+                            </tr>
+                            <tr class="best-action-row {cubeAnalysis.bestCubeAction && cubeAnalysis.bestCubeAction.includes('ダブル') ? 'japanese-text' : ''}">
+                                <td>Best Action</td>
+                                <td colspan="2">{cubeAnalysis.bestCubeAction || ''}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table class="info-table">
+                        <tbody>
+                            <tr>
+                                <th>Analysis Depth</th>
+                                <td>{cubeAnalysis.analysisDepth}</td>
+                            </tr>
+                            <tr>
+                                <th>Engine</th>
+                                <td>{cubeAnalysis.analysisEngine || analysisData.analysisEngineVersion}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            {/each}
+        {/if}
+
+        {#if (activeTab === 'checker' || (!showTabs && analysisData.analysisType === 'CheckerMove')) && analysisData.checkerAnalysis && analysisData.checkerAnalysis.moves && analysisData.checkerAnalysis.moves.length > 0}
+            <table class="checker-table">
+                <thead>
+                    <tr>
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'move'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('move'))();
+                            }}>Move{getSortIndicator('move')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'equity'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('equity'))();
+                            }}>Equity</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'error'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('error'))();
+                            }}>Error{getSortIndicator('error')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'pw'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('pw'))();
+                            }}>P W{getSortIndicator('pw')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'pg'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('pg'))();
+                            }}>P G{getSortIndicator('pg')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'pb'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('pb'))();
+                            }}>P B{getSortIndicator('pb')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'ow'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('ow'))();
+                            }}>O W{getSortIndicator('ow')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'og'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('og'))();
+                            }}>O G{getSortIndicator('og')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'ob'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('ob'))();
+                            }}>O B{getSortIndicator('ob')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'depth'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('depth'))();
+                            }}>Depth{getSortIndicator('depth')}</th
+                        >
+                        <th
+                            class="sortable"
+                            class:active-sort={sortColumn === 'engine'}
+                            onclick={(e) => {
+                                e.stopPropagation();
+                                (() => handleSort('engine'))();
+                            }}>Engine{getSortIndicator('engine')}</th
+                        >
+                    </tr>
+                </thead>
+                <tbody>
+                    {#each sortedMoves as move (move.move)}
+                        <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
+                            <td>{move.move}</td>
+                            <td>{formatEquity(move.equity || 0)}</td>
+                            <td>{formatEquity(move.equityError || 0)}</td>
+                            <td>{(move.playerWinChance || 0).toFixed(2)}</td>
+                            <td>{(move.playerGammonChance || 0).toFixed(2)}</td>
+                            <td>{(move.playerBackgammonChance || 0).toFixed(2)}</td>
+                            <td>{(move.opponentWinChance || 0).toFixed(2)}</td>
+                            <td>{(move.opponentGammonChance || 0).toFixed(2)}</td>
+                            <td>{(move.opponentBackgammonChance || 0).toFixed(2)}</td>
+                            <td>{move.analysisDepth}</td>
+                            <td>{move.analysisEngine || ''}</td>
+                        </tr>
+                    {/each}
+                </tbody>
+            </table>
+        {/if}
+    </div>
+</section>
 
 <style>
     .analysis-panel {
@@ -611,7 +685,9 @@
         margin-bottom: 6px;
     }
 
-    .left-table, .right-table, .info-table {
+    .left-table,
+    .right-table,
+    .info-table {
         width: 28%; /* Reduce width for the first and third tables */
         border-collapse: collapse;
         font-size: 12px; /* Ensure same font size */
@@ -625,7 +701,8 @@
         width: 60px; /* Reduce width for the decision column */
     }
 
-    .info-table th, .info-table td {
+    .info-table th,
+    .info-table td {
         border: 1px solid #ddd;
         padding: 2px; /* Reduce padding */
         text-align: center;
@@ -638,7 +715,8 @@
         border-spacing: 0; /* Remove space between cells */
     }
 
-    th, td {
+    th,
+    td {
         border: 1px solid #ddd;
         padding: 2px; /* Reduce padding */
         text-align: center;
@@ -652,7 +730,7 @@
         width: 150px; /* Sufficiently large for move column */
     }
 
-    th:nth-child(n+2) {
+    th:nth-child(n + 2) {
         width: 60px; /* Fixed width for equity and percentage columns */
     }
 
@@ -733,4 +811,3 @@
         cursor: default;
     }
 </style>
-

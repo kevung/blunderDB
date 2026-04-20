@@ -17,7 +17,7 @@ export const activeTabStore = writable('analysis');
 export const logEntriesStore = writable([]);
 
 export function addLogEntry(message, type = 'info') {
-    logEntriesStore.update(entries => {
+    logEntriesStore.update((entries) => {
         const entry = { timestamp: new Date(), type, message };
         return [...entries, entry];
     });
@@ -26,227 +26,88 @@ export function addLogEntry(message, type = 'info') {
 // Whether the command input is active in the status bar
 export const showCommandInputStore = writable(false);
 
-export const currentPositionIndexStore = writable(0); // Add current position index store
+export const currentPositionIndexStore = writable(0);
 
-export const showSearchModalStore = writable(false); // Add store for search modal visibility
+// ── Modal identifiers (exclusive — only one modal at a time) ──
+export const MODAL = {
+    SEARCH: 'search',
+    MET: 'met',
+    TAKE_POINT_2_LAST: 'takePoint2Last',
+    TAKE_POINT_2_LIVE: 'takePoint2Live',
+    TAKE_POINT_4_LAST: 'takePoint4Last',
+    TAKE_POINT_4_LIVE: 'takePoint4Live',
+    GAMMON_VALUE_1: 'gammonValue1',
+    GAMMON_VALUE_2: 'gammonValue2',
+    GAMMON_VALUE_4: 'gammonValue4',
+    WARNING: 'warning',
+    METADATA: 'metadata',
+    GO_TO_POSITION: 'goToPosition',
+    EXPORT_DATABASE: 'exportDatabase',
+    TAKE_POINT_2: 'takePoint2',
+    TAKE_POINT_4: 'takePoint4',
+    HELP: 'help',
+    COMMAND: 'command'
+};
 
-export const showMetModalStore = writable(false); // Add store for MET modal visibility
+// ── Panel identifiers (can be open simultaneously) ──
+export const PANEL = {
+    ANALYSIS: 'analysis',
+    COMMENT: 'comment',
+    FILTER_LIBRARY: 'filterLibrary',
+    SEARCH_HISTORY: 'searchHistory',
+    MATCH: 'match',
+    COLLECTION: 'collection',
+    TOURNAMENT: 'tournament'
+};
 
-export const showTakePoint2LastModalStore = writable(false); // Add store for TakePoint2Last modal visibility
+// ── Single modal store (only one modal at a time) ──
+export const activeModal = writable(null);
 
-export const showTakePoint2LiveModalStore = writable(false); // Add store for TakePoint2Live modal visibility
+// ── Panel set (multiple panels can be open) ──
+export const openPanels = writable(new Set());
 
-export const showTakePoint4LastModalStore = writable(false); // Add store for TakePoint4Last modal visibility
+// ── Modal helpers ──
+export function openModal(name) {
+    activeModal.set(name);
+}
+export function closeModal() {
+    activeModal.set(null);
+}
+export function toggleModal(name) {
+    activeModal.update((current) => (current === name ? null : name));
+}
 
-export const showTakePoint4LiveModalStore = writable(false); // Add store for TakePoint4Live modal visibility
+// ── Panel helpers ──
+export function openPanel(name) {
+    openPanels.update((s) => {
+        const next = new Set(s);
+        next.add(name);
+        return next;
+    });
+}
+export function closePanel(name) {
+    openPanels.update((s) => {
+        const next = new Set(s);
+        next.delete(name);
+        return next;
+    });
+}
+export function togglePanel(name) {
+    openPanels.update((s) => {
+        const next = new Set(s);
+        if (next.has(name)) next.delete(name);
+        else next.add(name);
+        return next;
+    });
+}
 
-export const showGammonValue1ModalStore = writable(false); // Add store for GammonValue1 modal visibility
+// ── Derived stores (automatic — no manual enumeration) ──
+export const isAnyModalOpen = derived(activeModal, ($m) => $m !== null);
+export const isAnyPanelOpen = derived(openPanels, ($p) => $p.size > 0);
+export const isAnyModalOrPanelOpen = derived([activeModal, openPanels], ([$m, $p]) => $m !== null || $p.size > 0);
 
-export const showGammonValue2ModalStore = writable(false); // Add store for GammonValue2 modal visibility
+export const matchPanelRefreshTriggerStore = writable(0);
 
-export const showGammonValue4ModalStore = writable(false); // Add store for GammonValue4 modal visibility
+export const positionReloadTriggerStore = writable(0);
 
-export const showWarningModalStore = writable(false); // Add store for warning modal visibility
-
-export const showMetadataModalStore = writable(false); // Add store for metadata modal visibility
-
-export const showCommandStore = writable(false);
-
-export const showAnalysisStore = writable(false);
-export const showHelpStore = writable(false);
-export const showCommentStore = writable(false);
-export const showGoToPositionModalStore = writable(false);
-
-export const showSearchHistoryPanelStore = writable(false); // Add store for search history panel visibility
-
-export const showTakePoint2ModalStore = writable(false);
-export const showTakePoint4ModalStore = writable(false);
-
-// previousModeStore removed — mode is now auto-driven by active tab context
-
-export const showFilterLibraryPanelStore = writable(false);
-
-export const showMatchPanelStore = writable(false); // Add store for match panel visibility
-
-export const matchPanelRefreshTriggerStore = writable(0); // Trigger to refresh match panel data
-
-export const positionReloadTriggerStore = writable(0); // Trigger to reload all positions
-
-export const showCollectionPanelStore = writable(false); // Add store for collection panel visibility
-
-export const showTournamentPanelStore = writable(false); // Add store for tournament panel visibility
-
-export const showPipcountStore = writable(true); // Add store for pip count visibility
-
-export const showExportDatabaseModalStore = writable(false); // Add store for export database modal visibility
-
-export const isAnyModalOrPanelOpenStore = derived(
-  [
-    showSearchModalStore,
-    showMetModalStore,
-    showTakePoint2LastModalStore,
-    showTakePoint2LiveModalStore,
-    showTakePoint4LastModalStore,
-    showTakePoint4LiveModalStore,
-    showGammonValue1ModalStore,
-    showGammonValue2ModalStore,
-    showGammonValue4ModalStore,
-    showWarningModalStore,
-    showMetadataModalStore,
-    showCommandStore,
-    showAnalysisStore,
-    showHelpStore,
-    showCommentStore,
-    showGoToPositionModalStore,
-    showSearchHistoryPanelStore,
-    showTakePoint2ModalStore,
-    showTakePoint4ModalStore,
-    showFilterLibraryPanelStore,
-    showMatchPanelStore,
-    showCollectionPanelStore,
-    showTournamentPanelStore
-  ],
-  ([
-    showSearchModal,
-    showMetModal,
-    showTakePoint2LastModal,
-    showTakePoint2LiveModal,
-    showTakePoint4LastModal,
-    showTakePoint4LiveModal,
-    showGammonValue1Modal,
-    showGammonValue2Modal,
-    showGammonValue4Modal,
-    showWarningModal,
-    showMetadataModal,
-    showCommand,
-    showAnalysis,
-    showHelp,
-    showComment,
-    showGoToPositionModal,
-    showSearchHistoryPanel,
-    showTakePoint2Modal,
-    showTakePoint4Modal,
-    showFilterLibraryPanel,
-    showMatchPanel,
-    showCollectionPanel,
-    showTournamentPanel
-  ]) => {
-    return (
-      showSearchModal ||
-      showMetModal ||
-      showTakePoint2LastModal ||
-      showTakePoint2LiveModal ||
-      showTakePoint4LastModal ||
-      showTakePoint4LiveModal ||
-      showGammonValue1Modal ||
-      showGammonValue2Modal ||
-      showGammonValue4Modal ||
-      showWarningModal ||
-      showMetadataModal ||
-      showCommand ||
-      showAnalysis ||
-      showHelp ||
-      showComment ||
-      showGoToPositionModal ||
-      showSearchHistoryPanel ||
-      showTakePoint2Modal ||
-      showTakePoint4Modal ||
-      showFilterLibraryPanel ||
-      showMatchPanel ||
-      showCollectionPanel ||
-      showTournamentPanel
-    );
-  }
-);
-
-export const isAnyModalOpenStore = derived(
-  [
-    showSearchModalStore,
-    showMetModalStore,
-    showTakePoint2LastModalStore,
-    showTakePoint2LiveModalStore,
-    showTakePoint4LastModalStore,
-    showTakePoint4LiveModalStore,
-    showGammonValue1ModalStore,
-    showGammonValue2ModalStore,
-    showGammonValue4ModalStore,
-    showWarningModalStore,
-    showMetadataModalStore,
-    showGoToPositionModalStore,
-    showTakePoint2ModalStore,
-    showTakePoint4ModalStore,
-    showHelpStore,
-    showCommandStore,
-    showExportDatabaseModalStore,
-  ],
-  ([
-    showSearchModal,
-    showMetModal,
-    showTakePoint2LastModal,
-    showTakePoint2LiveModal,
-    showTakePoint4LastModal,
-    showTakePoint4LiveModal,
-    showGammonValue1Modal,
-    showGammonValue2Modal,
-    showGammonValue4Modal,
-    showWarningModal,
-    showMetadataModal,
-    showGoToPositionModal,
-    showTakePoint2Modal,
-    showTakePoint4Modal,
-    showHelp, 
-    showCommand,
-    showExportDatabaseModal,
-  ]) => {
-    return (
-      showSearchModal ||
-      showMetModal ||
-      showTakePoint2LastModal ||
-      showTakePoint2LiveModal ||
-      showTakePoint4LastModal ||
-      showTakePoint4LiveModal ||
-      showGammonValue1Modal ||
-      showGammonValue2Modal ||
-      showGammonValue4Modal ||
-      showWarningModal ||
-      showMetadataModal ||
-      showGoToPositionModal ||
-      showTakePoint2Modal ||
-      showTakePoint4Modal ||
-      showHelp || 
-      showCommand ||
-      showExportDatabaseModal
-    );
-  }
-);
-
-export const isAnyPanelOpenStore = derived(
-  [
-    showAnalysisStore,
-    showCommentStore,
-    showFilterLibraryPanelStore,
-    showSearchHistoryPanelStore,
-    showMatchPanelStore,
-    showCollectionPanelStore,
-    showTournamentPanelStore
-  ],
-  ([
-    showAnalysis,
-    showComment,
-    showFilterLibraryPanel,
-    showSearchHistoryPanel,
-    showMatchPanel,
-    showCollectionPanel,
-    showTournamentPanel
-  ]) => {
-    return (
-      showAnalysis ||
-      showComment ||
-      showFilterLibraryPanel ||
-      showSearchHistoryPanel ||
-      showMatchPanel ||
-      showCollectionPanel ||
-      showTournamentPanel
-    );
-  }
-);
+export const showPipcountStore = writable(true);

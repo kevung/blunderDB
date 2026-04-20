@@ -44,8 +44,8 @@
 
 ### 1. Create archive directory
 
-- [ ] Create `doc/archive/` directory
-- [ ] Create `doc/archive/README.md`:
+- [x] Create `doc/archive/` directory
+- [x] Create `doc/archive/README.md`:
   ```markdown
   # Archived Design Documents
 
@@ -64,37 +64,37 @@
 
 ### 2. Move stale documents
 
-- [ ] `git mv ANALYSIS_IMPLEMENTATION.md doc/archive/`
-- [ ] `git mv ANALYSIS_STORAGE_OPTIMIZATION.md doc/archive/`
-- [ ] `git mv DISPLAY_FIX_SUMMARY.md doc/archive/`
-- [ ] `git mv MATCH_IMPORT_ARCHITECTURE.md doc/archive/`
-- [ ] `git mv MATCH_MODE_DISPLAY_IMPLEMENTATION.md doc/archive/`
-- [ ] `git mv PLAYED_MOVE_INDICATOR.md doc/archive/`
-- [ ] `git mv POSITION_TRACKING_IMPLEMENTATION.md doc/archive/`
-- [ ] `git mv XG_PLAYER_ENCODING_FIX.md doc/archive/`
+- [x] `git mv ANALYSIS_IMPLEMENTATION.md doc/archive/`
+- [x] `git mv ANALYSIS_STORAGE_OPTIMIZATION.md doc/archive/`
+- [x] `git mv DISPLAY_FIX_SUMMARY.md doc/archive/`
+- [x] `git mv MATCH_IMPORT_ARCHITECTURE.md doc/archive/`
+- [x] `git mv MATCH_MODE_DISPLAY_IMPLEMENTATION.md doc/archive/`
+- [x] `git mv PLAYED_MOVE_INDICATOR.md doc/archive/`
+- [x] `git mv POSITION_TRACKING_IMPLEMENTATION.md doc/archive/`
+- [x] `git mv XG_PLAYER_ENCODING_FIX.md doc/archive/`
 
 ### 3. Delete empty TODO.md
 
-- [ ] `git rm TODO.md`
+- [x] Deleted locally (file was gitignored, not tracked)
 
 ### 4. Update references
 
-- [ ] Check `CLAUDE.md` for references to moved files — update paths or note they're archived
-- [ ] Check any other files that might link to the moved documents
+- [x] Check `CLAUDE.md` for references to moved files — update paths or note they're archived
+- [x] Check any other files that might link to the moved documents (`CLI_USAGE.md`, `IMPROVEMENT_PLAN.md`)
 
 ### 5. Verify
 
-- [ ] `git status` shows clean moves/deletions
-- [ ] No broken links in remaining documentation
-- [ ] Repo root is cleaner: only active docs remain
+- [x] `git status` shows clean moves/deletions
+- [x] No broken links in remaining documentation
+- [x] Repo root is cleaner: only active docs remain (6 .md files)
 
 ## Acceptance criteria
 
-- [ ] 8 stale documents moved to `doc/archive/`
-- [ ] Empty `TODO.md` deleted
-- [ ] `doc/archive/README.md` indexes the archived files
-- [ ] No broken references in active documents
-- [ ] Repo root has ≤ 7 `.md` files
+- [x] 8 stale documents moved to `doc/archive/`
+- [x] Empty `TODO.md` deleted
+- [x] `doc/archive/README.md` indexes the archived files
+- [x] No broken references in active documents
+- [x] Repo root has ≤ 7 `.md` files (6)
 
 ## Rollback
 

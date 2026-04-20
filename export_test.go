@@ -208,29 +208,6 @@ func countRows(t *testing.T, db *sql.DB, table string) int {
 	return count
 }
 
-// loadAllPositions returns the positions from the export db.
-func loadExportPositions(t *testing.T, db *sql.DB) []Position {
-	t.Helper()
-	rows, err := db.Query("SELECT state FROM position")
-	if err != nil {
-		t.Fatalf("query positions: %v", err)
-	}
-	defer rows.Close()
-	var positions []Position
-	for rows.Next() {
-		var stateJSON string
-		if err := rows.Scan(&stateJSON); err != nil {
-			t.Fatalf("scan position: %v", err)
-		}
-		var pos Position
-		if err := json.Unmarshal([]byte(stateJSON), &pos); err != nil {
-			t.Fatalf("unmarshal position: %v", err)
-		}
-		positions = append(positions, pos)
-	}
-	return positions
-}
-
 // loadExportAnalysis returns all PositionAnalysis from the export db.
 func loadExportAnalysis(t *testing.T, db *sql.DB) []PositionAnalysis {
 	t.Helper()
@@ -299,10 +276,20 @@ func doExport(t *testing.T, db *Database, exportPath string, p exportParams) {
 		"user":        "testuser",
 		"description": "test export",
 	}
-	err := db.ExportDatabase(exportPath, positions, metadata,
-		p.includeAnalysis, p.includeComments, p.includeFilterLibrary,
-		p.includePlayedMoves, p.includeMatches, p.includeCollections,
-		p.collectionIDs, p.matchIDs, p.tournamentIDs)
+	err := db.ExportDatabase(ExportOptions{
+		ExportPath:           exportPath,
+		Positions:            positions,
+		Metadata:             metadata,
+		IncludeAnalysis:      p.includeAnalysis,
+		IncludeComments:      p.includeComments,
+		IncludeFilterLibrary: p.includeFilterLibrary,
+		IncludePlayedMoves:   p.includePlayedMoves,
+		IncludeMatches:       p.includeMatches,
+		IncludeCollections:   p.includeCollections,
+		CollectionIDs:        p.collectionIDs,
+		MatchIDs:             p.matchIDs,
+		TournamentIDs:        p.tournamentIDs,
+	})
 	if err != nil {
 		t.Fatalf("ExportDatabase failed: %v", err)
 	}
@@ -882,8 +869,16 @@ func TestExport_Metadata(t *testing.T) {
 		"description":    "My blunder collection",
 		"dateOfCreation": "2025-06-15",
 	}
-	err := db.ExportDatabase(exportPath, positions, metadata,
-		true, true, true, true, true, false, nil, nil, nil)
+	err := db.ExportDatabase(ExportOptions{
+		ExportPath:           exportPath,
+		Positions:            positions,
+		Metadata:             metadata,
+		IncludeAnalysis:      true,
+		IncludeComments:      true,
+		IncludeFilterLibrary: true,
+		IncludePlayedMoves:   true,
+		IncludeMatches:       true,
+	})
 	if err != nil {
 		t.Fatalf("ExportDatabase failed: %v", err)
 	}
@@ -922,8 +917,16 @@ func TestExport_DefaultDateOfCreation(t *testing.T) {
 	exportPath := filepath.Join(dir, "export.db")
 	positions := allPositions(t, db)
 	metadata := map[string]string{} // empty - no dateOfCreation
-	err := db.ExportDatabase(exportPath, positions, metadata,
-		true, true, true, true, true, false, nil, nil, nil)
+	err := db.ExportDatabase(ExportOptions{
+		ExportPath:           exportPath,
+		Positions:            positions,
+		Metadata:             metadata,
+		IncludeAnalysis:      true,
+		IncludeComments:      true,
+		IncludeFilterLibrary: true,
+		IncludePlayedMoves:   true,
+		IncludeMatches:       true,
+	})
 	if err != nil {
 		t.Fatalf("ExportDatabase failed: %v", err)
 	}
@@ -972,7 +975,14 @@ func TestExport_NoDatabaseOpen(t *testing.T) {
 	dir := t.TempDir()
 	exportPath := filepath.Join(dir, "export.db")
 
-	err := db.ExportDatabase(exportPath, nil, nil, true, true, true, true, true, false, nil, nil, nil)
+	err := db.ExportDatabase(ExportOptions{
+		ExportPath:           exportPath,
+		IncludeAnalysis:      true,
+		IncludeComments:      true,
+		IncludeFilterLibrary: true,
+		IncludePlayedMoves:   true,
+		IncludeMatches:       true,
+	})
 	if err == nil {
 		t.Error("expected error when no database is open")
 	}

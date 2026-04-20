@@ -61,27 +61,27 @@ Dependencies flow top-down within each phase. Phases are sequential.
 
 ## Current status
 
-- [ ] 01 — CI tests
-- [ ] 02 — CI lint
-- [ ] 03 — Fix exit-zero
-- [ ] 04 — CLI tests
-- [ ] 05 — CRUD tests
-- [ ] 06 — Split db.go
-- [ ] 07 — slog logging
-- [ ] 08 — SearchFilters struct
-- [ ] 09 — ExportOptions struct
-- [ ] 10 — RWMutex
-- [ ] 11 — Import helpers
-- [ ] 12 — Test utilities
-- [ ] 13 — App.svelte services
-- [ ] 14 — Modal stores
-- [ ] 15 — Frontend tests
-- [ ] 16 — Frontend lint
-- [ ] 17 — Strip console
-- [ ] 18 — Table modals
-- [ ] 19 — Svelte 5 runes
-- [ ] 20 — Accessibility
-- [ ] 21 — README
-- [ ] 22 — CLI docs
-- [ ] 23 — Stale docs
-- [ ] 24 — CI benchmarks
+- [x] 01 — CI tests
+- [x] 02 — CI lint
+- [x] 03 — Fix exit-zero
+- [x] 04 — CLI tests
+- [x] 05 — CRUD tests
+- [x] 06 — Split db.go
+- [x] 07 — slog logging
+- [x] 08 — SearchFilters struct
+- [x] 09 — ExportOptions struct
+- [x] 10 — RWMutex
+- [x] 11 — Import helpers
+- [x] 12 — Test utilities
+- [x] 13 — App.svelte services
+- [x] 14 — Modal stores
+- [x] 15 — Frontend tests
+- [x] 16 — Frontend lint
+- [x] 17 — Strip console
+- [x] 18 — Table modals
+- [x] 19 — Svelte 5 runes
+- [x] 20 — Accessibility
+- [x] 21 — README
+- [x] 22 — CLI docs
+- [x] 23 — Stale docs
+- [x] 24 — CI benchmarks

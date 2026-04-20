@@ -5,11 +5,11 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"log/slog"
 	"math"
 	"os"
 	"path/filepath"
 	"regexp"
-	"sort"
 	"strconv"
 	"strings"
 	"text/tabwriter"
@@ -169,13 +169,11 @@ func (cli *CLI) runImport(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		importCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *importType == "" {
-		fmt.Println("Error: --type flag is required")
 		importCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
@@ -189,7 +187,6 @@ func (cli *CLI) runImport(args []string) error {
 	switch strings.ToLower(*importType) {
 	case "match":
 		if *inputFile == "" {
-			fmt.Println("Error: --file flag is required for match import")
 			importCmd.Usage()
 			return fmt.Errorf("missing required flag: --file")
 		}
@@ -200,7 +197,6 @@ func (cli *CLI) runImport(args []string) error {
 		return cli.importMatch(*inputFile)
 	case "position":
 		if *inputFile == "" {
-			fmt.Println("Error: --file flag is required for position import")
 			importCmd.Usage()
 			return fmt.Errorf("missing required flag: --file")
 		}
@@ -211,7 +207,6 @@ func (cli *CLI) runImport(args []string) error {
 		return cli.importPosition(*inputFile)
 	case "batch":
 		if *inputDir == "" {
-			fmt.Println("Error: --dir flag is required for batch import")
 			importCmd.Usage()
 			return fmt.Errorf("missing required flag: --dir")
 		}
@@ -288,19 +283,16 @@ func (cli *CLI) runExport(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *exportType == "" {
-		fmt.Println("Error: --type flag is required")
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
 
 	if *outputFile == "" {
-		fmt.Println("Error: --file flag is required")
 		exportCmd.Usage()
 		return fmt.Errorf("missing required flag: --file")
 	}
@@ -383,13 +375,11 @@ func (cli *CLI) runList(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		listCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *listType == "" {
-		fmt.Println("Error: --type flag is required")
 		listCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
@@ -441,19 +431,16 @@ func (cli *CLI) runDelete(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		deleteCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *deleteType == "" {
-		fmt.Println("Error: --type flag is required")
 		deleteCmd.Usage()
 		return fmt.Errorf("missing required flag: --type")
 	}
 
 	if *id == 0 {
-		fmt.Println("Error: --id flag is required")
 		deleteCmd.Usage()
 		return fmt.Errorf("missing required flag: --id")
 	}
@@ -596,7 +583,7 @@ func (cli *CLI) importPosition(filePath string) error {
 		// Try to parse as position JSON
 		var pos Position
 		if err := json.Unmarshal([]byte(line), &pos); err != nil {
-			fmt.Printf("Error parsing line %d: %v\n", i+1, err)
+			slog.Warn("parsing line", "line", i+1, "err", err)
 			errors++
 			continue
 		}
@@ -604,7 +591,7 @@ func (cli *CLI) importPosition(filePath string) error {
 		// Save position
 		_, err := cli.db.SavePosition(&pos)
 		if err != nil {
-			fmt.Printf("Error importing line %d: %v\n", i+1, err)
+			slog.Warn("importing line", "line", i+1, "err", err)
 			errors++
 			continue
 		}
@@ -617,11 +604,6 @@ func (cli *CLI) importPosition(filePath string) error {
 	}
 
 	return nil
-}
-
-// exportDatabase exports the entire database (legacy function, exports with matches)
-func (cli *CLI) exportDatabase(outputFile string) error {
-	return cli.exportDatabaseWithOptions(outputFile, true, true, true, true, true, false, nil, nil, nil)
 }
 
 // exportDatabaseWithOptions exports the database with configurable options
@@ -644,9 +626,20 @@ func (cli *CLI) exportDatabaseWithOptions(outputFile string, includeAnalysis boo
 	}
 
 	// Export with the specified options
-	err = cli.db.ExportDatabase(outputFile, positions, metadata,
-		includeAnalysis, includeComments, includeFilterLibrary, includePlayedMoves,
-		includeMatches, includeCollections, collectionIDs, matchIDs, tournamentIDs)
+	err = cli.db.ExportDatabase(ExportOptions{
+		ExportPath:           outputFile,
+		Positions:            positions,
+		Metadata:             metadata,
+		IncludeAnalysis:      includeAnalysis,
+		IncludeComments:      includeComments,
+		IncludeFilterLibrary: includeFilterLibrary,
+		IncludePlayedMoves:   includePlayedMoves,
+		IncludeMatches:       includeMatches,
+		IncludeCollections:   includeCollections,
+		CollectionIDs:        collectionIDs,
+		MatchIDs:             matchIDs,
+		TournamentIDs:        tournamentIDs,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to export database: %v", err)
 	}
@@ -693,7 +686,15 @@ func (cli *CLI) exportMatchesOnly(outputFile string) error {
 	}
 
 	// Export with positions, analysis, comments disabled, but matches enabled
-	err = cli.db.ExportDatabase(outputFile, positions, metadata, true, true, false, true, true, false, nil, nil, nil)
+	err = cli.db.ExportDatabase(ExportOptions{
+		ExportPath:      outputFile,
+		Positions:       positions,
+		Metadata:        metadata,
+		IncludeAnalysis: true,
+		IncludeComments: true,
+		IncludePlayedMoves: true,
+		IncludeMatches:  true,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to export matches: %v", err)
 	}
@@ -878,7 +879,7 @@ func (cli *CLI) deleteMatch(matchID int64, confirm bool) error {
 	if !confirm {
 		fmt.Print("Are you sure you want to delete this match? (yes/no): ")
 		var response string
-		fmt.Scanln(&response)
+		_, _ = fmt.Scanln(&response)
 		if strings.ToLower(response) != "yes" {
 			fmt.Println("Deletion cancelled")
 			return nil
@@ -930,7 +931,6 @@ func (cli *CLI) runCreate(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		createCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
@@ -1026,13 +1026,11 @@ func (cli *CLI) runMatch(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		matchCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	if *matchID == 0 {
-		fmt.Println("Error: --id flag is required")
 		matchCmd.Usage()
 		return fmt.Errorf("missing required flag: --id")
 	}
@@ -1116,7 +1114,6 @@ func (cli *CLI) runVerify(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		verifyCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
@@ -1459,12 +1456,12 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 
 		// After each successful match import, checkpoint the WAL to keep file size bounded.
 		if result.Success && result.MatchID > 0 {
-			cli.db.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+			_, _ = cli.db.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
 		}
 	}
 
 	// After all imports, update query planner statistics.
-	cli.db.db.Exec("ANALYZE")
+	_, _ = cli.db.db.Exec("ANALYZE")
 
 	// Print summary table
 	fmt.Println("\n" + strings.Repeat("=", 100))
@@ -1538,7 +1535,6 @@ func (cli *CLI) runInfo(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		infoCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
@@ -1651,14 +1647,12 @@ func (cli *CLI) runEdit(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		editCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
 
 	// Check that at least one edit option is provided
 	if *user == "" && *description == "" && !*clearUser && !*clearDescription {
-		fmt.Println("Error: at least one edit option is required")
 		editCmd.Usage()
 		return fmt.Errorf("no edit options provided")
 	}
@@ -1771,7 +1765,6 @@ func (cli *CLI) runSearch(args []string) error {
 
 	// Validate required flags
 	if *dbPath == "" {
-		fmt.Println("Error: --db flag is required")
 		searchCmd.Usage()
 		return fmt.Errorf("missing required flag: --db")
 	}
@@ -1872,41 +1865,19 @@ func (cli *CLI) runSearch(args []string) error {
 
 	// Use the core implementation to get analysis data in the same query, avoiding
 	// per-row LoadAnalysis calls for errorMin and hasAnalysis filtering.
-	positions, analysisMap, err := cli.db.loadPositionsByFiltersCore(
-		filter,
-		includeCube,
-		includeScore,
-		pipCountFilter,
-		winRateFilter,
-		"", // gammonRateFilter
-		"", // backgammonRateFilter
-		"", // player2WinRateFilter
-		"", // player2GammonRateFilter
-		"", // player2BackgammonRateFilter
-		player1CheckerOffFilter,
-		player2CheckerOffFilter,
-		"",                 // player1BackCheckerFilter
-		"",                 // player2BackCheckerFilter
-		"",                 // player1CheckerInZoneFilter
-		"",                 // player2CheckerInZoneFilter
-		"",                 // searchText
-		"",                 // player1AbsolutePipCountFilter
-		"",                 // equityFilter
-		decisionTypeFilter, // pushed to SQL (player_on_roll=0 for all stored positions)
-		false,              // diceRollFilter
-		"",                 // movePatternFilter
-		"",                 // dateFilter
-		"",                 // player1OutfieldBlotFilter
-		"",                 // player2OutfieldBlotFilter
-		"",                 // player1JanBlotFilter
-		"",                 // player2JanBlotFilter
-		false,              // noContactFilter
-		false,              // mirrorFilter
-		moveErrorFilter,    // moveErrorFilter
-		*matchIDsFlag,      // matchIDsFilter
-		*tournamentIDsFlag, // tournamentIDsFilter
-		"",                 // restrictToPositionIDs
-	)
+	positions, analysisMap, err := cli.db.loadPositionsByFiltersCore(SearchFilters{
+		Filter:                  filter,
+		IncludeCube:             includeCube,
+		IncludeScore:            includeScore,
+		PipCountFilter:          pipCountFilter,
+		WinRateFilter:           winRateFilter,
+		MoveErrorFilter:         moveErrorFilter,
+		Player1CheckerOffFilter: player1CheckerOffFilter,
+		Player2CheckerOffFilter: player2CheckerOffFilter,
+		DecisionTypeFilter:      decisionTypeFilter,
+		MatchIDsFilter:          *matchIDsFlag,
+		TournamentIDsFilter:     *tournamentIDsFlag,
+	})
 	if err != nil {
 		return fmt.Errorf("failed to search positions: %v", err)
 	}
@@ -2059,7 +2030,14 @@ func (cli *CLI) runSearch(args []string) error {
 		metadata["description"] = fmt.Sprintf("Exported from search: %d positions", len(filteredPositions))
 		metadata["dateOfCreation"] = time.Now().Format("2006-01-02 15:04:05")
 
-		err = cli.db.ExportDatabase(*outputDB, filteredPositions, metadata, true, true, false, true, false, false, nil, nil, nil)
+		err = cli.db.ExportDatabase(ExportOptions{
+			ExportPath:         *outputDB,
+			Positions:          filteredPositions,
+			Metadata:           metadata,
+			IncludeAnalysis:    true,
+			IncludeComments:    true,
+			IncludePlayedMoves: true,
+		})
 		if err != nil {
 			return fmt.Errorf("failed to export database: %v", err)
 		}
@@ -2068,45 +2046,4 @@ func (cli *CLI) runSearch(args []string) error {
 	}
 
 	return nil
-}
-
-// SearchResult represents a position search result for display
-type SearchResult struct {
-	Position    Position
-	Analysis    *PositionAnalysis
-	XGID        string
-	BestMove    string
-	Equity      float64
-	EquityError *float64
-}
-
-// getSearchResults loads positions with their analysis for display
-func (cli *CLI) getSearchResults(positions []Position) []SearchResult {
-	var results []SearchResult
-
-	for _, pos := range positions {
-		result := SearchResult{
-			Position: pos,
-		}
-
-		analysis, err := cli.db.LoadAnalysis(pos.ID)
-		if err == nil && analysis != nil {
-			result.Analysis = analysis
-			result.XGID = analysis.XGID
-
-			if analysis.CheckerAnalysis != nil && len(analysis.CheckerAnalysis.Moves) > 0 {
-				result.BestMove = analysis.CheckerAnalysis.Moves[0].Move
-				result.Equity = analysis.CheckerAnalysis.Moves[0].Equity
-			}
-		}
-
-		results = append(results, result)
-	}
-
-	// Sort by ID
-	sort.Slice(results, func(i, j int) bool {
-		return results[i].Position.ID < results[j].Position.ID
-	})
-
-	return results
 }

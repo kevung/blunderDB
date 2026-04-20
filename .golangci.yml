@@ -1,0 +1,68 @@
+# golangci-lint v2 configuration for blunderDB
+# https://golangci-lint.run/usage/configuration/
+version: "2"
+
+linters:
+  # Default linters in v2 already include: errcheck, govet, staticcheck,
+  # unused, ineffassign, gosimple.  We add nolintlint to enforce hygiene.
+  enable:
+    - nolintlint
+
+  settings:
+    errcheck:
+      # Suppress unchecked-error warnings on print functions until task 07
+      # (slog migration) replaces them.
+      exclude-functions:
+        - fmt.Println
+        - fmt.Printf
+        - fmt.Fprintf
+        - fmt.Fprintln
+        # defer tx.Rollback() is idiomatic Go — the error is irrelevant
+        # after a successful Commit, and on failure the deferred call is
+        # best-effort cleanup.
+        - (*database/sql.Tx).Rollback
+
+    nolintlint:
+      require-explanation: true
+      require-specific: true
+
+    staticcheck:
+      checks:
+        - "all"
+        - "-QF*"    # quick-fix suggestions are style, not bugs — revisit later
+        - "-ST1003" # migration functions use underscores (migrate_X_to_Y) by convention
+
+  exclusions:
+    generated: lax
+    presets:
+      - comments
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - frontend/wailsjs
+      - third_party$
+      - builtin$
+      - examples$
+    rules:
+      # Test files commonly skip error checks; suppress until task 12
+      # (test utilities) introduces proper helpers.
+      - linters: [errcheck]
+        path: "_test\\.go$"
+      # db.go has ~48 unchecked Exec/Scan calls, mostly in migration code
+      # that intentionally ignores "column already exists" errors.  Will be
+      # enforced per-file after task 06 (split db.go).
+      - linters: [errcheck]
+        path: "^db\\.go$"
+
+issues:
+  max-issues-per-linter: 0   # no cap — show everything
+  max-same-issues: 0         # no cap
+
+formatters:
+  exclusions:
+    generated: lax
+    paths:
+      - third_party$
+      - builtin$
+      - examples$

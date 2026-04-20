@@ -17,28 +17,28 @@
 
 ### 1. Add `go vet` to CI
 
-- [ ] Add step to `.github/workflows/build.yml` (in the test job or before build):
+- [x] Add step to `.github/workflows/build.yml` (in the test job or before build):
   ```yaml
   - name: Go vet
     run: go vet ./...
     shell: bash
   ```
-- [ ] Fix any issues `go vet` reports (expected: few or none — `go vet` is conservative)
+- [x] Fix any issues `go vet` reports (none found) (expected: few or none — `go vet` is conservative)
 
 ### 2. Add `golangci-lint` to CI
 
-- [ ] Add step using the official GitHub Action:
+- [x] Add step using the official GitHub Action (golangci-lint-action@v7):
   ```yaml
   - name: golangci-lint
     uses: golangci/golangci-lint-action@v6
     with:
       version: latest
   ```
-- [ ] Create `.golangci.yml` configuration file in repo root
+- [x] Create `.golangci.yml` configuration file in repo root (v2 format)
 
 ### 3. Configure initial linter set
 
-- [ ] Start with a conservative set to avoid overwhelming noise:
+- [x] Start with a conservative set to avoid overwhelming noise:
   ```yaml
   # .golangci.yml
   linters:
@@ -63,20 +63,20 @@
     max-issues-per-linter: 50
     max-same-issues: 10
   ```
-- [ ] Exclude `fmt.Print*` from errcheck initially (task 07 will remove them)
-- [ ] Exclude auto-generated `frontend/wailsjs/` from linting
+- [x] Exclude `fmt.Print*` from errcheck initially (task 07 will remove them)
+- [x] Exclude auto-generated `frontend/wailsjs/` from linting
 
 ### 4. Fix initial lint findings
 
-- [ ] Run locally: `golangci-lint run ./...`
-- [ ] Fix genuine issues (shadow variables, unused vars, dead code)
-- [ ] Suppress false positives via `//nolint:` comments with justification
-- [ ] Target: zero lint errors on the initial commit
+- [x] Run locally: `golangci-lint run ./...`
+- [x] Fix genuine issues (removed 7 unused functions/types, fixed 10 ineffassign, fixed 2 SA9003)
+- [x] Suppress false positives via config exclusions (errcheck for db.go and test files)
+- [x] Target: zero lint errors on the initial commit
 
 ### 5. Optional: add nolint directive policy
 
-- [ ] Require `//nolint:lintername // reason` format (not bare `//nolint`)
-- [ ] Enable `nolintlint` linter to enforce this:
+- [x] Require `//nolint:lintername // reason` format (not bare `//nolint`)
+- [x] Enable `nolintlint` linter to enforce this:
   ```yaml
   linters:
     enable:
@@ -89,11 +89,11 @@
 
 ## Acceptance criteria
 
-- [ ] `go vet ./...` runs in CI, blocks on failure
-- [ ] `golangci-lint` runs in CI, blocks on failure
-- [ ] `.golangci.yml` exists with documented linter choices
-- [ ] All current code passes lint (zero warnings)
-- [ ] `frontend/wailsjs/` excluded from analysis
+- [x] `go vet ./...` runs in CI, blocks on failure
+- [x] `golangci-lint` runs in CI, blocks on failure
+- [x] `.golangci.yml` exists with documented linter choices
+- [x] All current code passes lint (zero warnings)
+- [x] `frontend/wailsjs/` excluded from analysis
 
 ## Rollback
 

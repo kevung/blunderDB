@@ -1,48 +1,50 @@
 <script>
-    export let visible = false;
-    export let onClose;
+    import { logger } from '../utils/logger.js';
+    let { visible = false, onClose: _onClose } = $props();
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';
-    import { GetCommentsByPosition, SearchComments, LoadComment, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/main/Database.js';
+    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/main/Database.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
 
-    let allComments = [];
-    let searchQuery = '';
-    let displayedComments = [];
+    let allComments = $state([]);
+    let searchQuery = $state('');
+    let displayedComments = $state([]);
     let feedEl;
-    let editingCommentId = null;
-    let editingText = '';
-    let promptText = '';
+    let editingCommentId = $state(null);
+    let editingText = $state('');
+    let promptText = $state('');
 
-    $: if (visible) {
-        loadComments();
-    }
-
+    $effect(() => {
+        if (visible) {
+            loadComments();
+        }
+    });
     // Reload comments when displayed position changes
-    $: if (visible && $positionStore && $positionStore.id) {
-        loadComments();
-    }
-
-    $: {
+    $effect(() => {
+        if (visible && $positionStore && $positionStore.id) {
+            loadComments();
+        }
+    });
+    $effect(() => {
         if (searchQuery.trim()) {
             filterComments(searchQuery.trim());
         } else {
             displayedComments = allComments;
         }
-    }
+    });
 
     async function loadComments() {
         try {
             const pos = $positionStore;
             if (pos && pos.id) {
-                allComments = await GetCommentsByPosition(pos.id) || [];
+                allComments = (await GetCommentsByPosition(pos.id)) || [];
             } else {
                 allComments = [];
             }
             if (!searchQuery.trim()) displayedComments = allComments;
         } catch (error) {
-            console.error('Error loading comments:', error);
+            logger.error('Error loading comments:', error);
             allComments = [];
             displayedComments = [];
         }
@@ -50,8 +52,8 @@
 
     async function filterComments(q) {
         try {
-            displayedComments = await SearchComments(q) || [];
-        } catch (error) {
+            displayedComments = (await SearchComments(q)) || [];
+        } catch (_error) {
             displayedComments = [];
         }
     }
@@ -67,11 +69,13 @@
                     if (analysis) {
                         analysisStore.set(analysis);
                     }
-                } catch (e) {}
+                } catch (_e) {
+                    /* ignored */
+                }
                 selectedMoveStore.set(null);
             }
         } catch (error) {
-            console.error('Error navigating to comment position:', error);
+            logger.error('Error navigating to comment position:', error);
         }
     }
 
@@ -87,7 +91,7 @@
             // Scroll feed to top (newest first)
             if (feedEl) feedEl.scrollTop = 0;
         } catch (error) {
-            console.error('Error adding comment:', error);
+            logger.error('Error adding comment:', error);
         }
     }
 
@@ -114,7 +118,7 @@
                 await UpdateCommentEntry(comment.id, editingText);
                 await loadComments();
             } catch (error) {
-                console.error('Error saving edited comment:', error);
+                logger.error('Error saving edited comment:', error);
             }
         }
     }
@@ -136,7 +140,7 @@
             await DeleteCommentEntry(comment.id);
             await loadComments();
         } catch (error) {
-            console.error('Error deleting comment:', error);
+            logger.error('Error deleting comment:', error);
         }
     }
 
@@ -155,7 +159,9 @@
             const diffHr = Math.floor(diffMin / 60);
             if (diffHr < 24) return `${diffHr}h ago`;
             return d.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + d.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-        } catch { return ''; }
+        } catch {
+            return '';
+        }
     }
 
     function handleSearchKeyDown(event) {
@@ -170,15 +176,14 @@
     <!-- Search bar -->
     <div class="search-strip">
         <span class="search-icon">⌕</span>
-        <input
-            type="text"
-            bind:value={searchQuery}
-            placeholder="Search comments…"
-            on:keydown={handleSearchKeyDown}
-            class="search-input"
-        />
+        <input type="text" bind:value={searchQuery} placeholder="Search comments…" onkeydown={handleSearchKeyDown} class="search-input" />
         {#if searchQuery}
-            <button class="clear-btn" on:click={() => { searchQuery = ''; }}>×</button>
+            <button
+                class="clear-btn"
+                onclick={() => {
+                    searchQuery = '';
+                }}>×</button
+            >
         {/if}
     </div>
 
@@ -187,26 +192,35 @@
         {#if displayedComments.length === 0}
             <div class="empty-msg">{searchQuery.trim() ? 'No matches' : 'No comments yet'}</div>
         {:else}
-            {#each displayedComments as comment}
+            {#each displayedComments as comment (comment.id)}
                 {#if editingCommentId === comment.id}
                     <div class="msg editing">
-                        <textarea
-                            class="msg-edit-input"
-                            bind:value={editingText}
-                            on:keydown={(e) => handleEditKeyDown(e, comment)}
-                            on:blur={() => saveEditedComment(comment)}
-                            rows="2"
-                        ></textarea>
+                        <textarea class="msg-edit-input" bind:value={editingText} onkeydown={(e) => handleEditKeyDown(e, comment)} onblur={() => saveEditedComment(comment)} rows="2"></textarea>
                     </div>
                 {:else}
-                    <div class="msg" role="button" tabindex="-1" on:click={() => navigateToComment(comment)} on:keydown={() => {}}>
+                    <div class="msg" role="button" tabindex="-1" onclick={() => navigateToComment(comment)} onkeydown={() => {}}>
                         <div class="msg-header">
-                            <span class="msg-date">{comment.modifiedAt && comment.modifiedAt !== comment.createdAt ? formatDate(comment.modifiedAt) + ' (edited)' : formatDate(comment.createdAt)}</span>
+                            <span class="msg-date">{comment.modifiedAt && comment.modifiedAt !== comment.createdAt ? formatDate(comment.modifiedAt) + ' (edited)' : formatDate(comment.createdAt)}</span
+                            >
                         </div>
                         <div class="msg-text">{comment.text}</div>
                         <div class="msg-footer">
-                            <button class="msg-action msg-edit" on:click|stopPropagation={() => startEditComment(comment)} title="Edit">✎</button>
-                            <button class="msg-action msg-delete" on:click|stopPropagation={(e) => deleteComment(comment, e)} title="Delete">×</button>
+                            <button
+                                class="msg-action msg-edit"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => startEditComment(comment))();
+                                }}
+                                title="Edit">✎</button
+                            >
+                            <button
+                                class="msg-action msg-delete"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    ((e) => deleteComment(comment, e))(e);
+                                }}
+                                title="Delete">×</button
+                            >
                         </div>
                     </div>
                 {/if}
@@ -216,13 +230,7 @@
 
     <!-- Prompt -->
     <div class="prompt">
-        <textarea
-            id="commentTextArea"
-            bind:value={promptText}
-            placeholder="Comment on current position…"
-            on:keydown={handlePromptKeyDown}
-            rows="2"
-        ></textarea>
+        <textarea id="commentTextArea" bind:value={promptText} placeholder="Comment on current position…" onkeydown={handlePromptKeyDown} rows="2"></textarea>
     </div>
 </div>
 
@@ -246,7 +254,11 @@
         flex-shrink: 0;
         background: #fafafa;
     }
-    .search-icon { color: #aaa; font-size: 13px; flex-shrink: 0; }
+    .search-icon {
+        color: #aaa;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
     .search-input {
         flex: 1;
         border: none;
@@ -265,7 +277,9 @@
         padding: 0 2px;
         line-height: 1;
     }
-    .clear-btn:hover { color: #333; }
+    .clear-btn:hover {
+        color: #333;
+    }
 
     /* Feed */
     .feed {
@@ -283,8 +297,14 @@
         transition: background 0.1s;
         position: relative;
     }
-    .msg:hover { background: #e4e8f2; }
-    .msg.editing { background: #fefce8; cursor: default; border-radius: 6px; }
+    .msg:hover {
+        background: #e4e8f2;
+    }
+    .msg.editing {
+        background: #fefce8;
+        cursor: default;
+        border-radius: 6px;
+    }
 
     .msg-text {
         font-size: 12px;
@@ -320,9 +340,15 @@
         line-height: 1;
         transition: color 0.1s;
     }
-    .msg:hover .msg-action { color: #bbb; }
-    .msg-edit:hover { color: #4a90d9 !important; }
-    .msg-delete:hover { color: #c55 !important; }
+    .msg:hover .msg-action {
+        color: #bbb;
+    }
+    .msg-edit:hover {
+        color: #4a90d9 !important;
+    }
+    .msg-delete:hover {
+        color: #c55 !important;
+    }
 
     .msg-edit-input {
         width: 100%;
@@ -336,7 +362,9 @@
         resize: none;
         outline: none;
     }
-    .msg-edit-input:focus { border-color: #4a90d9; }
+    .msg-edit-input:focus {
+        border-color: #4a90d9;
+    }
 
     .empty-msg {
         text-align: center;

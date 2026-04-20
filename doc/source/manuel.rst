@@ -184,7 +184,7 @@ Navigation dans les matchs
 --------------------------
 
 La navigation dans les matchs permet de parcourir les coups d'un match importé.
-Elle est activée depuis le panneau des matchs (*CTRL-T*) en double-cliquant
+Elle est activée depuis le panneau des matchs (*CTRL-Tab*) en double-cliquant
 sur un match ou en appuyant sur *ENTREE*. La commande ``m`` permet également
 de reprendre la navigation dans le dernier match visité.
 

@@ -333,8 +333,8 @@ msgid "Afficher/cacher le panneau de recherche."
 msgstr "Show/hide the search panel."
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-T"
-msgstr "CTRL-T"
+msgid "CTRL-Tab"
+msgstr "CTRL-Tab"
 
 #: ../../source/raccourcis.rst:1
 msgid "Afficher/cacher le panneau des matchs."
