@@ -446,13 +446,13 @@ func TestExportWritesUncompressedJSON(t *testing.T) {
 	exportPath := filepath.Join(tmpDir, "exported.db")
 	positions, _ := d.LoadAllPositions()
 	err = d.ExportDatabase(ExportOptions{
-		ExportPath:      exportPath,
-		Positions:       positions,
-		Metadata:        map[string]string{},
-		IncludeAnalysis: true,
-		IncludeComments: true,
+		ExportPath:         exportPath,
+		Positions:          positions,
+		Metadata:           map[string]string{},
+		IncludeAnalysis:    true,
+		IncludeComments:    true,
 		IncludePlayedMoves: true,
-		IncludeMatches:  true,
+		IncludeMatches:     true,
 	})
 	if err != nil {
 		t.Fatalf("ExportDatabase: %v", err)

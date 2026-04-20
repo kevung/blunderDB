@@ -505,16 +505,16 @@ func (d *Database) checkDuplicateMatchLocked(matchHash, canonicalHash string) (i
 // Each importer converts its format-specific data into this struct, then
 // calls insertMoveAnalysisRow for the actual INSERT.
 type moveAnalysisRow struct {
-	MoveID                     int64
-	AnalysisType               string // "checker" or "cube"
-	Depth                      string
-	Equity                     int64
-	WinRate                    int64
-	GammonRate                 int64
-	BackgammonRate             int64
-	OpponentWinRate            int64
-	OpponentGammonRate         int64
-	OpponentBackgammonRate     int64
+	MoveID                 int64
+	AnalysisType           string // "checker" or "cube"
+	Depth                  string
+	Equity                 int64
+	WinRate                int64
+	GammonRate             int64
+	BackgammonRate         int64
+	OpponentWinRate        int64
+	OpponentGammonRate     int64
+	OpponentBackgammonRate int64
 }
 
 // insertMoveAnalysisRow inserts a single row into the move_analysis table.
