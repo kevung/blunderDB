@@ -53,22 +53,20 @@ func runGUI() {
 	// Load the configuration file
 	config, err := cfg.LoadConfig()
 	if err != nil {
-		fmt.Println("Error loading configuration file:", err)
-		return
+		fmt.Fprintln(os.Stderr, "Error loading configuration file:", err)
+		os.Exit(1)
 	}
 
 	// Set up the in-memory database
 	err = db.SetupDatabase(":memory:")
 	if err != nil {
-		fmt.Println("Error setting up in-memory database:", err)
-		return
+		fmt.Fprintln(os.Stderr, "Error setting up in-memory database:", err)
+		os.Exit(1)
 	}
 
 	// Initialize width and height from config
 	initialWidth := config.WindowWidth
 	initialHeight := config.WindowHeight
-	fmt.Println("Initial dimensions:", initialWidth, "x", initialHeight)
-	fmt.Println("Aspect ratio:", float64(initialHeight)/float64(initialWidth))
 
 	// Create application with options
 	err = wails.Run(&options.App{
@@ -101,6 +99,7 @@ func runGUI() {
 	})
 
 	if err != nil {
-		println("Error:", err.Error())
+		fmt.Fprintln(os.Stderr, "Error:", err)
+		os.Exit(1)
 	}
 }
