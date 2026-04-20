@@ -269,7 +269,7 @@
                             </div>
                         </div>
                         <div class="collections-list">
-                            {#each matches as match}
+                            {#each matches as match (match.id)}
                                 <label class="collection-checkbox">
                                     <input type="checkbox" checked={exportOptions.matchIDs.includes(match.id)} onchange={() => toggleMatchSelection(match.id)} />
                                     <span class="coll-name">{match.player1_name} vs {match.player2_name}</span>
@@ -290,7 +290,7 @@
                             </div>
                         </div>
                         <div class="collections-list">
-                            {#each tournaments as tournament}
+                            {#each tournaments as tournament (tournament.id)}
                                 <label class="collection-checkbox">
                                     <input type="checkbox" checked={exportOptions.includeTournamentIDs.includes(tournament.id)} onchange={() => toggleTournamentSelection(tournament.id)} />
                                     <span class="coll-name">{tournament.name}</span>
@@ -311,7 +311,7 @@
                             </div>
                         </div>
                         <div class="collections-list">
-                            {#each collections as collection}
+                            {#each collections as collection (collection.id)}
                                 <label class="collection-checkbox">
                                     <input type="checkbox" checked={exportOptions.collectionIDs.includes(collection.id)} onchange={() => toggleCollectionSelection(collection.id)} />
                                     <span class="coll-name">{collection.name}</span>

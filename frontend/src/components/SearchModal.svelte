@@ -603,13 +603,13 @@
             <div class="form-group">
                 <select bind:value={selectedFilter} class="filter-dropdown">
                     <option value="" disabled>Select a filter</option>
-                    {#each availableFilters as filter}
+                    {#each availableFilters as filter (filter)}
                         <option value={filter}>{filter}</option>
                     {/each}
                 </select>
                 <button class="add-button" onclick={addFilter}>+</button>
             </div>
-            {#each filters as filter}
+            {#each filters as filter (filter)}
                 <div class="form-group">
                     <div class="filter-label-container">
                         <label class="filter-label">{filter}</label>

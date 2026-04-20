@@ -50,7 +50,7 @@
 
                 {#if results.errors.length > 0}
                     <div class="error-list">
-                        {#each results.errors as err}
+                        {#each results.errors as err, i (i)}
                             <div class="error-item">
                                 <span class="error-file">{basename(err.file)}</span>: {err.message}
                             </div>

@@ -1,5 +1,30 @@
 <script>
-    let { onNewDatabase, onOpenDatabase, onImportDatabase, onExportDatabase, onExit, onImportPosition, onImportFolder, onCopyPosition, onPastePosition, onSavePosition, onUpdatePosition, onDeletePosition, onFirstPosition, onPreviousPosition, onNextPosition, onLastPosition, onGoToPosition, onTogglePipcount, onRandomPosition, onCopyBoardImage, onToggleCommandMode: _onToggleCommandMode, onToggleHelp, onLoadAllPositions, onToggleEPCMode: _onToggleEPCMode } = $props();
+    let {
+        onNewDatabase,
+        onOpenDatabase,
+        onImportDatabase,
+        onExportDatabase,
+        onExit,
+        onImportPosition,
+        onImportFolder,
+        onCopyPosition,
+        onPastePosition,
+        onSavePosition,
+        onUpdatePosition,
+        onDeletePosition,
+        onFirstPosition,
+        onPreviousPosition,
+        onNextPosition,
+        onLastPosition,
+        onGoToPosition,
+        onTogglePipcount,
+        onRandomPosition,
+        onCopyBoardImage,
+        onToggleCommandMode: _onToggleCommandMode,
+        onToggleHelp,
+        onLoadAllPositions,
+        onToggleEPCMode: _onToggleEPCMode
+    } = $props();
 
     import { activeTabStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
@@ -15,7 +40,14 @@
 
 <!--// https://heroicons.com/-->
 <div class="toolbar">
-    <button onclick={(e) => { e.stopPropagation(); onNewDatabase(e); }} aria-label="New Database" title="New Database (Ctrl-N)">
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onNewDatabase(e);
+        }}
+        aria-label="New Database"
+        title="New Database (Ctrl-N)"
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -25,7 +57,14 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onOpenDatabase(e); }} aria-label="Open Database" title="Open Database (Ctrl-O)">
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onOpenDatabase(e);
+        }}
+        aria-label="Open Database"
+        title="Open Database (Ctrl-O)"
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -35,7 +74,15 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onImportDatabase(e); }} aria-label="Import Database" title="Import Database (Ctrl-Shift-I)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onImportDatabase(e);
+        }}
+        aria-label="Import Database"
+        title="Import Database (Ctrl-Shift-I)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -45,7 +92,15 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onExportDatabase(e); }} aria-label="Export Database" title="Export Database (Ctrl-Shift-S)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onExportDatabase(e);
+        }}
+        aria-label="Export Database"
+        title="Export Database (Ctrl-Shift-S)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -55,7 +110,14 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onExit(e); }} aria-label="Exit" title="Exit blunderDB (Ctrl-Q)">
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onExit(e);
+        }}
+        aria-label="Exit"
+        title="Exit blunderDB (Ctrl-Q)"
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -67,7 +129,15 @@
 
     <div class="separator"></div>
 
-    <button onclick={(e) => { e.stopPropagation(); onImportPosition(e); }} aria-label="Import Position or Match" title="Import Position or Match Files (Ctrl-I)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onImportPosition(e);
+        }}
+        aria-label="Import Position or Match"
+        title="Import Position or Match Files (Ctrl-I)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -77,7 +147,15 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onImportFolder(e); }} aria-label="Import Folder" title="Import Folder (Ctrl-Shift-F)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onImportFolder(e);
+        }}
+        aria-label="Import Folder"
+        title="Import Folder (Ctrl-Shift-F)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -88,7 +166,10 @@
     </button>
 
     <button
-        onclick={(e) => { e.stopPropagation(); onCopyPosition(e); }}
+        onclick={(e) => {
+            e.stopPropagation();
+            onCopyPosition(e);
+        }}
         aria-label="Copy Position"
         title={isSearchTab ? 'Copy Position to clipboard and board clipboard (Ctrl-C)' : 'Copy Position (Ctrl-C)'}
         disabled={!databasePath}
@@ -102,7 +183,15 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onPastePosition(e); }} aria-label="Paste Position" title={isSearchTab ? 'Paste Position to board (Ctrl-V)' : 'Paste Position (Ctrl-V)'} disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onPastePosition(e);
+        }}
+        aria-label="Paste Position"
+        title={isSearchTab ? 'Paste Position to board (Ctrl-V)' : 'Paste Position (Ctrl-V)'}
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -112,13 +201,29 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onSavePosition(e); }} aria-label="Save Position" title="Save Position (Ctrl-S)" disabled={!isSearchTab || !databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onSavePosition(e);
+        }}
+        aria-label="Save Position"
+        title="Save Position (Ctrl-S)"
+        disabled={!isSearchTab || !databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onUpdatePosition(e); }} aria-label="Update Position" title="Update Position (Ctrl-U)" disabled={!isSearchTab || !databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onUpdatePosition(e);
+        }}
+        aria-label="Update Position"
+        title="Update Position (Ctrl-U)"
+        disabled={!isSearchTab || !databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -128,7 +233,15 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onDeletePosition(e); }} aria-label="Delete Position" title="Delete Position (Del)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onDeletePosition(e);
+        }}
+        aria-label="Delete Position"
+        title="Delete Position (Del)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -140,37 +253,85 @@
 
     <div class="separator"></div>
 
-    <button onclick={(e) => { e.stopPropagation(); onLoadAllPositions(e); }} aria-label="Reload All Positions" title="Reload All Positions (Ctrl-R)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onLoadAllPositions(e);
+        }}
+        aria-label="Reload All Positions"
+        title="Reload All Positions (Ctrl-R)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onFirstPosition(e); }} aria-label="First Position" title="First Position (PageUp, h)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onFirstPosition(e);
+        }}
+        aria-label="First Position"
+        title="First Position (PageUp, h)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="m18.75 4.5-7.5 7.5 7.5 7.5m-6-15L5.25 12l7.5 7.5" />
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onPreviousPosition(e); }} aria-label="Previous Position" title="Previous Position (Left, k)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onPreviousPosition(e);
+        }}
+        aria-label="Previous Position"
+        title="Previous Position (Left, k)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onNextPosition(e); }} aria-label="Next Position" title="Next Position (Right, j)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onNextPosition(e);
+        }}
+        aria-label="Next Position"
+        title="Next Position (Right, j)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onLastPosition(e); }} aria-label="Last Position" title="Last Position (PageDown, l)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onLastPosition(e);
+        }}
+        aria-label="Last Position"
+        title="Last Position (PageDown, l)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="m5.25 4.5 7.5 7.5-7.5 7.5m6-15 7.5 7.5-7.5 7.5" />
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onGoToPosition(e); }} aria-label="Go To Position" title="Go To Position" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onGoToPosition(e);
+        }}
+        aria-label="Go To Position"
+        title="Go To Position"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -182,13 +343,29 @@
 
     <div class="separator"></div>
 
-    <button onclick={(e) => { e.stopPropagation(); onTogglePipcount(e); }} aria-label="Toggle Pipcount" title="Toggle Pipcount (p)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onTogglePipcount(e);
+        }}
+        aria-label="Toggle Pipcount"
+        title="Toggle Pipcount (p)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path stroke-linecap="round" stroke-linejoin="round" d="M5.25 8.25h15m-16.5 7.5h15m-1.8-13.5-3.9 19.5m-2.1-19.5-3.9 19.5" />
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onRandomPosition(e); }} aria-label="Random Position" title="Random Position (r)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onRandomPosition(e);
+        }}
+        aria-label="Random Position"
+        title="Random Position (r)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon" fill="none" class="size-6">
             <path
                 stroke-linecap="round"
@@ -198,7 +375,15 @@
         </svg>
     </button>
 
-    <button onclick={(e) => { e.stopPropagation(); onCopyBoardImage(e); }} aria-label="Copy Board Image" title="Copy Board Image to Clipboard (Ctrl-X), with Analysis (Ctrl-X Ctrl-X)" disabled={!databasePath}>
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onCopyBoardImage(e);
+        }}
+        aria-label="Copy Board Image"
+        title="Copy Board Image to Clipboard (Ctrl-X), with Analysis (Ctrl-X Ctrl-X)"
+        disabled={!databasePath}
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"
@@ -210,7 +395,14 @@
 
     <div class="separator"></div>
 
-    <button onclick={(e) => { e.stopPropagation(); onToggleHelp(e); }} aria-label="Help" title="Help (?)">
+    <button
+        onclick={(e) => {
+            e.stopPropagation();
+            onToggleHelp(e);
+        }}
+        aria-label="Help"
+        title="Help (?)"
+    >
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
             <path
                 stroke-linecap="round"

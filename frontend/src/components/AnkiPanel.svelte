@@ -437,6 +437,7 @@
 
             // Merge: use search results PLUS any stored IDs not already included
             // This ensures we never lose previously tracked cards
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, not reactive state
             const idSet = new Set(searchIds);
             for (const id of storedIds) {
                 idSet.add(id);
@@ -671,7 +672,7 @@
                     {#if newDeckSourceType === 'collection'}
                         <select bind:value={newDeckSourceId} class="input-source-id">
                             <option value={0}>-- Select collection --</option>
-                            {#each collections as coll}
+                            {#each collections as coll (coll.id)}
                                 <option value={coll.id}>{coll.name} ({coll.positionCount})</option>
                             {/each}
                         </select>
@@ -714,7 +715,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each decks as deck}
+                        {#each decks as deck (deck.id)}
                             <tr
                                 class:selected={selectedDeck && selectedDeck.id === deck.id}
                                 onclick={() => selectDeck(deck)}

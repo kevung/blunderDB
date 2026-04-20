@@ -28,23 +28,23 @@
     <div class="modal-overlay" onclick={() => onClose()} role="dialog" aria-modal="true" aria-label="Data table" use:trapFocus>
         <div class="modal-content" onclick={(e) => e.stopPropagation()}>
             <div class="table-container" class:multi={tables.length > 1}>
-                {#each tables as { title, data, precision, colCount, colOffset, rowOffset }}
+                {#each tables as { title, data, precision, colCount, colOffset, rowOffset } (title)}
                     <div class="table-section">
                         {#if title}<h3>{title}</h3>{/if}
                         <table>
                             <thead>
                                 <tr>
                                     <th></th>
-                                    {#each Array(colCount) as _, colIndex}
+                                    {#each Array(colCount) as _, colIndex (colIndex)}
                                         <th><strong>{colIndex + colOffset}</strong></th>
                                     {/each}
                                 </tr>
                             </thead>
                             <tbody>
-                                {#each data as row, rowIndex}
+                                {#each data as row, rowIndex (rowIndex)}
                                     <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                                         <td><strong>{rowIndex + rowOffset}</strong></td>
-                                        {#each row as cell}
+                                        {#each row as cell, cellIndex (cellIndex)}
                                             <td>{cell.toFixed(precision)}</td>
                                         {/each}
                                     </tr>

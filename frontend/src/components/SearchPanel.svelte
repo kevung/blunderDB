@@ -208,7 +208,7 @@
     let savedSearchPosition = $state(null);
     $effect(() => {
         if ($activeTabStore === 'search') {
-        savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
+            savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
         }
     });
     activeTabStore.subscribe(async (value) => {
@@ -1073,10 +1073,10 @@
                     <button class="btn-clear" onclick={clearFilters}>Clear</button>
                 </div>
                 <div class="filter-groups">
-                    {#each filterGroups as group}
+                    {#each filterGroups as group (group.name)}
                         <div class="filter-group">
                             <div class="group-header">{group.name}</div>
-                            {#each group.filters as filter}
+                            {#each group.filters as filter (filter)}
                                 <div class="filter-item" class:active={filterEnabled[filter]}>
                                     <label class="filter-checkbox">
                                         <input type="checkbox" bind:checked={filterEnabled[filter]} />
@@ -1709,7 +1709,7 @@
                         <table class="history-table">
                             <thead><tr><th>Date</th><th>Command</th><th>Actions</th></tr></thead>
                             <tbody>
-                                {#each searchHistory as search}
+                                {#each searchHistory as search (search.timestamp)}
                                     <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
                                         <td class="date-cell">{formatTimestamp(search.timestamp)}</td>
                                         <td class="command-cell">{search.command}</td>
@@ -1717,7 +1717,10 @@
                                             <button
                                                 class="action-btn"
                                                 class:in-library={isInFilterLibrary(search)}
-                                                onclick={(e) => { e.stopPropagation(); (() => showAddToLibraryDialog(search))(); }}
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    (() => showAddToLibraryDialog(search))();
+                                                }}
                                                 title="Save to bookmarks"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
@@ -1728,7 +1731,14 @@
                                                     /></svg
                                                 >
                                             </button>
-                                            <button class="action-btn delete-btn" onclick={(e) => { e.stopPropagation(); ((e) => deleteSearch(search, e))(e); }} title="Delete">
+                                            <button
+                                                class="action-btn delete-btn"
+                                                onclick={(e) => {
+                                                    e.stopPropagation();
+                                                    ((e) => deleteSearch(search, e))(e);
+                                                }}
+                                                title="Delete"
+                                            >
                                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
                                                     ><path
                                                         stroke-linecap="round"
@@ -1751,7 +1761,7 @@
                     <p class="empty-message">No saved searches. Bookmark searches from History.</p>
                 {:else}
                     <div class="saved-list">
-                        {#each savedFilters as sf}
+                        {#each savedFilters as sf (sf.id)}
                             <div
                                 class="saved-item"
                                 class:selected={selectedSavedFilter && selectedSavedFilter.id === sf.id}
@@ -1762,7 +1772,11 @@
                                 <span class="saved-cmd">{sf.command}</span>
                                 <button
                                     class="action-btn delete-btn"
-                                    onclick={(e) => { e.stopPropagation(); selectedSavedFilter = sf; deleteSavedFilter(); }}
+                                    onclick={(e) => {
+                                        e.stopPropagation();
+                                        selectedSavedFilter = sf;
+                                        deleteSavedFilter();
+                                    }}
                                     title="Remove"
                                 >
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="14" height="14"
@@ -1783,7 +1797,12 @@
 </div>
 
 {#if showSaveDialog}
-    <div class="save-dialog-overlay" onclick={(e) => { if (e.target === e.currentTarget) cancelSaveDialog(e); }}>
+    <div
+        class="save-dialog-overlay"
+        onclick={(e) => {
+            if (e.target === e.currentTarget) cancelSaveDialog(e);
+        }}
+    >
         <div class="save-dialog">
             <h3>Save Search</h3>
             <p class="command-preview">{selectedSearch?.command || ''}</p>
@@ -1792,8 +1811,20 @@
                 <input type="text" id="filterNameInput" bind:value={filterName} placeholder="Enter name" onkeydown={(e) => e.key === 'Enter' && saveToFilterLibrary()} />
             </div>
             <div class="dialog-actions">
-                <button class="btn-search" onclick={(e) => { e.stopPropagation(); saveToFilterLibrary(e); }}>Save</button>
-                <button class="btn-clear" onclick={(e) => { e.stopPropagation(); cancelSaveDialog(e); }}>Cancel</button>
+                <button
+                    class="btn-search"
+                    onclick={(e) => {
+                        e.stopPropagation();
+                        saveToFilterLibrary(e);
+                    }}>Save</button
+                >
+                <button
+                    class="btn-clear"
+                    onclick={(e) => {
+                        e.stopPropagation();
+                        cancelSaveDialog(e);
+                    }}>Cancel</button
+                >
             </div>
         </div>
     </div>

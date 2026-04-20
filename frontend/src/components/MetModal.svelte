@@ -38,16 +38,16 @@
                 <thead>
                     <tr>
                         <th></th>
-                        {#each Array(15) as _, colIndex}
+                        {#each Array(15) as _, colIndex (colIndex)}
                             <th><strong>{colIndex + 1}</strong></th>
                         {/each}
                     </tr>
                 </thead>
                 <tbody>
-                    {#each tableData as row, rowIndex}
+                    {#each tableData as row, rowIndex (rowIndex)}
                         <tr class={rowIndex % 2 === 0 ? 'even-row' : 'odd-row'}>
                             <td><strong>{rowIndex + 1}</strong></td>
-                            {#each row as cell}
+                            {#each row as cell, cellIndex (cellIndex)}
                                 <td>{formatCell(cell)}</td>
                             {/each}
                         </tr>

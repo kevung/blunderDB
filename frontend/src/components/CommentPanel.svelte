@@ -16,17 +16,14 @@
     let promptText = $state('');
 
     $effect(() => {
-
         if (visible) {
-        loadComments();
-
+            loadComments();
         }
-
     });
     // Reload comments when displayed position changes
     $effect(() => {
         if (visible && $positionStore && $positionStore.id) {
-        loadComments();
+            loadComments();
         }
     });
     $effect(() => {
@@ -195,7 +192,7 @@
         {#if displayedComments.length === 0}
             <div class="empty-msg">{searchQuery.trim() ? 'No matches' : 'No comments yet'}</div>
         {:else}
-            {#each displayedComments as comment}
+            {#each displayedComments as comment (comment.id)}
                 {#if editingCommentId === comment.id}
                     <div class="msg editing">
                         <textarea class="msg-edit-input" bind:value={editingText} onkeydown={(e) => handleEditKeyDown(e, comment)} onblur={() => saveEditedComment(comment)} rows="2"></textarea>
@@ -208,8 +205,22 @@
                         </div>
                         <div class="msg-text">{comment.text}</div>
                         <div class="msg-footer">
-                            <button class="msg-action msg-edit" onclick={(e) => { e.stopPropagation(); (() => startEditComment(comment))(); }} title="Edit">✎</button>
-                            <button class="msg-action msg-delete" onclick={(e) => { e.stopPropagation(); ((e) => deleteComment(comment, e))(e); }} title="Delete">×</button>
+                            <button
+                                class="msg-action msg-edit"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    (() => startEditComment(comment))();
+                                }}
+                                title="Edit">✎</button
+                            >
+                            <button
+                                class="msg-action msg-delete"
+                                onclick={(e) => {
+                                    e.stopPropagation();
+                                    ((e) => deleteComment(comment, e))(e);
+                                }}
+                                title="Delete">×</button
+                            >
                         </div>
                     </div>
                 {/if}

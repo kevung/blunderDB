@@ -279,6 +279,7 @@
 
         // In normal mode, highlight all played cube actions
         // Collect all canonical played parts from all played actions
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, not reactive state
         const allPlayedParts = new Set();
 
         if (analysisData.playedCubeActions && analysisData.playedCubeActions.length > 0) {
@@ -455,7 +456,7 @@
 <section class="analysis-panel" role="dialog" aria-modal="true" aria-label="Position analysis" id="analysisPanel" tabindex="-1" onkeydown={handleKeyDown}>
     <div class="analysis-content" onclick={handleContentClick} onkeydown={() => {}} role="button" tabindex="-1">
         {#if (activeTab === 'cube' || (!showTabs && analysisData.analysisType === 'DoublingCube')) && cubeAnalysesList.length > 0}
-            {#each cubeAnalysesList as cubeAnalysis, _cubeIdx}
+            {#each cubeAnalysesList as cubeAnalysis, _cubeIdx (_cubeIdx)}
                 <div class="tables-container" class:multi-engine-cube={cubeAnalysesList.length > 1}>
                     <table class="left-table">
                         <tbody>
@@ -628,7 +629,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each sortedMoves as move}
+                    {#each sortedMoves as move (move.move)}
                         <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
                             <td>{move.move}</td>
                             <td>{formatEquity(move.equity || 0)}</td>

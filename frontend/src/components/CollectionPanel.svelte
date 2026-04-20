@@ -109,6 +109,7 @@
     // Sync position selection when navigating with j/k in COLLECTION mode
     const unsubCurrentIdx = currentPositionIndexStore.subscribe((value) => {
         if (mode === 'COLLECTION' && activeCollection && value >= 0) {
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- clone-reassign pattern
             selectedPositionIndices = new Set([value]);
         }
     });
@@ -364,6 +365,7 @@
     // Select a position and display it
     async function selectAndDisplayPosition(index, event) {
         event.stopPropagation();
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
         const newSet = new Set(selectedPositionIndices);
         if (event.shiftKey && selectedPositionIndices.size > 0) {
             const sorted = [...selectedPositionIndices].sort((a, b) => a - b);
@@ -421,6 +423,7 @@
         [newOrder[index - 1], newOrder[index]] = [newOrder[index], newOrder[index - 1]];
         collectionPositionsStore.set(newOrder);
         if (selectedPositionIndices.has(index)) {
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
             const newSet = new Set(selectedPositionIndices);
             newSet.delete(index);
             newSet.add(index - 1);
@@ -443,6 +446,7 @@
         [newOrder[index], newOrder[index + 1]] = [newOrder[index + 1], newOrder[index]];
         collectionPositionsStore.set(newOrder);
         if (selectedPositionIndices.has(index)) {
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
             const newSet = new Set(selectedPositionIndices);
             newSet.delete(index);
             newSet.add(index + 1);
@@ -517,6 +521,7 @@
             if (insertAt < 0) insertAt = 0;
             newOrder.splice(insertAt, 0, ...items);
             collectionPositionsStore.set(newOrder);
+            // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp, clone-reassign pattern
             const newSelected = new Set();
             for (let i = 0; i < items.length; i++) {
                 newSelected.add(insertAt + i);
@@ -656,7 +661,7 @@
                     </tr>
                 </thead>
                 <tbody use:dragReorder={{ onReorder: handleCollectionReorder }}>
-                    {#each collections as collection, index}
+                    {#each collections as collection, index (collection.id)}
                         <tr
                             class:selected={selectedCollection?.id === collection.id}
                             class:in-collection={positionCollectionIds.includes(collection.id)}
@@ -821,7 +826,7 @@
                     </tr>
                 </thead>
                 <tbody use:dragReorder={{ onReorder: handlePositionReorder }}>
-                    {#each collectionPositions as position, index}
+                    {#each collectionPositions as position, index (position.id)}
                         <tr class:current={$currentPositionIndexStore === index} class:multi-selected={selectedPositionIndices.has(index)} onclick={(e) => selectAndDisplayPosition(index, e)}>
                             <td class="narrow-col idx-cell">{index + 1}</td>
                             <td class="narrow-col id-cell">{positionIndexMap[position.id] || '?'}</td>

@@ -3,7 +3,8 @@
     import { epcDataStore } from '../stores/epcStore';
 
     let isActive = $derived($statusBarModeStore === 'EPC');
-    let data = $derived($epcDataStore);</script>
+    let data = $derived($epcDataStore);
+</script>
 
 <div class="epc-panel">
     {#if !isActive}

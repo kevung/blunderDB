@@ -996,7 +996,7 @@
             // when Player 2 is on roll, we need to check match context for flip
 
             const matchCtx = get(matchContextStore);
-            let flip = false;
+            let flip;
 
             if (matchCtx && matchCtx.isMatchMode && matchCtx.movePositions.length > 0) {
                 // In match mode: flip labels when Player 2 is on roll

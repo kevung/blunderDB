@@ -381,7 +381,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each searchHistory as search}
+                        {#each searchHistory as search (search.timestamp)}
                             <tr class:selected={selectedSearch === search} onclick={() => selectSearch(search)} ondblclick={() => handleDoubleClick(search)}>
                                 <td class="date-cell no-select">{formatTimestamp(search.timestamp)}</td>
                                 <td class="command-cell no-select">{search.command}</td>

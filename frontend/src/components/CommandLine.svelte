@@ -10,7 +10,28 @@
     import { LoadCommandHistory, SaveCommand, SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
     import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../../wailsjs/go/main/Database.js';
 
-    let { onToggleHelp, onNewDatabase, onOpenDatabase, onImportDatabase, onExportDatabase, importPosition, onSavePosition, onUpdatePosition, onDeletePosition, onToggleAnalysis, onToggleComment, exitApp, onLoadPositionsByFilters, onLoadAllPositions, toggleFilterLibraryPanel, toggleSearchHistoryPanel, toggleMatchPanel, toggleCollectionPanel, toggleEPCMode, toggleMatchMode } = $props();
+    let {
+        onToggleHelp,
+        onNewDatabase,
+        onOpenDatabase,
+        onImportDatabase,
+        onExportDatabase,
+        importPosition,
+        onSavePosition,
+        onUpdatePosition,
+        onDeletePosition,
+        onToggleAnalysis,
+        onToggleComment,
+        exitApp,
+        onLoadPositionsByFilters,
+        onLoadAllPositions,
+        toggleFilterLibraryPanel,
+        toggleSearchHistoryPanel,
+        toggleMatchPanel,
+        toggleCollectionPanel,
+        toggleEPCMode,
+        toggleMatchMode
+    } = $props();
     let inputEl;
 
     let initialized = false;

@@ -91,7 +91,7 @@
 
 <div class="tabbed-panel">
     <div class="tab-bar" bind:this={tabBarEl}>
-        {#each tabs as tab, i}
+        {#each tabs as tab, i (tab.id)}
             <button
                 class="tab-button"
                 class:active={$activeTabStore === tab.id}

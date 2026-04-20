@@ -445,7 +445,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each filters as filter}
+                    {#each filters as filter (filter.id)}
                         <tr id={`filter-${filter.id}`} class:highlight={filter.name === filterName} onclick={() => selectFilter(filter)} ondblclick={() => executeFilterCommand(filter)}>
                             <td class="no-select">{filter.name}</td>
                             <td class="no-select">{filter.command}</td>

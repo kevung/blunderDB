@@ -19,7 +19,7 @@
         {#if entries.length === 0}
             <div class="empty-msg">No operations logged yet.</div>
         {:else}
-            {#each entries as entry}
+            {#each entries as entry, i (i)}
                 <div class="log-line">
                     <span class="log-time">{entry.timestamp.toLocaleTimeString('sv-SE', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span>
                     <span class="log-msg">{entry.message}</span>

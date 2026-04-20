@@ -617,7 +617,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {#each tournaments as tournament, _index}
+                            {#each tournaments as tournament, _index (tournament.id)}
                                 {#if editingTournament && editingTournament.id === tournament.id}
                                     <tr class="editing-row">
                                         <td
@@ -837,7 +837,7 @@
                             </tr>
                         </thead>
                         <tbody use:dragReorder={{ onReorder: handleMatchReorder }}>
-                            {#each tournamentMatches as match, index}
+                            {#each tournamentMatches as match, index (match.id)}
                                 <tr ondblclick={() => openMatch(match)}>
                                     <td class="index-cell narrow-col no-select">{index + 1}</td>
                                     <td class="no-select">{match.player1_name}</td>
@@ -948,7 +948,7 @@
                         />
                         {#if addMatchFocused && filteredMatches.length > 0}
                             <div class="match-dropdown" style={matchDropdownStyle}>
-                                {#each filteredMatches as match}
+                                {#each filteredMatches as match (match.id)}
                                     <div
                                         class="dropdown-item"
                                         onmousedown={(e) => {

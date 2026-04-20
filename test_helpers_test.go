@@ -63,5 +63,3 @@ func getPositionIDs(t *testing.T, db *Database, limit int) []int64 {
 	}
 	return ids
 }
-
-

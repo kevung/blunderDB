@@ -364,6 +364,7 @@
     // Group move positions by game number for transcript display
     let transcriptGames = $derived.by(() => {
         if (!detailMovePositions.length) return [];
+        // eslint-disable-next-line svelte/prefer-svelte-reactivity -- local temp inside $derived
         const gameMap = new Map();
         for (const mp of detailMovePositions) {
             if (!gameMap.has(mp.game_number)) {
@@ -731,7 +732,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {#each sortedMatches as match, index}
+                        {#each sortedMatches as match, index (match.id)}
                             {#if editingMatchId === match.id}
                                 <tr class="match-editing-row" class:selected={selectedMatch && selectedMatch.id === match.id}>
                                     <td class="index-cell narrow-col no-select">{index + 1}</td>
@@ -794,7 +795,7 @@
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
-                                                        {#each filteredTournaments as t}
+                                                        {#each filteredTournaments as t (t.name)}
                                                             <div
                                                                 class="tournament-dropdown-item"
                                                                 onmousedown={(e) => {
@@ -891,7 +892,7 @@
                         {:else if transcriptGames.length === 0}
                             <div class="empty-state">No moves recorded</div>
                         {:else}
-                            {#each transcriptGames as game}
+                            {#each transcriptGames as game (game.gameNumber)}
                                 <div class="game-section">
                                     <div class="game-header">
                                         <span class="game-title">Game {game.gameNumber}</span>
@@ -917,7 +918,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            {#each game.moves as mp, mi}
+                                            {#each game.moves as mp, mi (mi)}
                                                 {@const globalIdx = detailMovePositions.indexOf(mp)}
                                                 <tr class="transcript-row" class:cube-row={mp.move_type === 'cube'} onclick={() => navigateToMove(globalIdx)} title="Click to review this position">
                                                     <td class="transcript-num">{mi + 1}</td>
@@ -992,7 +993,7 @@
                                                 />
                                                 {#if showTournamentDropdown && filteredTournaments.length > 0}
                                                     <div class="tournament-dropdown" style={tournamentDropdownStyle}>
-                                                        {#each filteredTournaments as t}
+                                                        {#each filteredTournaments as t (t.name)}
                                                             <div
                                                                 class="tournament-dropdown-item"
                                                                 onmousedown={(e) => {
