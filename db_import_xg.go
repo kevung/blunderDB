@@ -114,28 +114,7 @@ func (d *Database) ImportXGMatch(filePath string) (int64, error) {
 			return 0, fmt.Errorf("failed to get match ID: %w", err)
 		}
 
-		// Auto-link tournament from event metadata
-		eventName := strings.TrimSpace(match.Metadata.Event)
-		if eventName != "" {
-			var tournamentID int64
-			err2 := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
-			if err2 != nil {
-				// Tournament doesn't exist yet — create it
-				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
-				if err3 == nil {
-					tournamentID, err = res2.LastInsertId()
-					if err != nil {
-						return 0, fmt.Errorf("failed to get last insert ID: %w", err)
-					}
-				}
-			}
-			if tournamentID > 0 {
-				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
-				if err != nil {
-					slog.Warn("failed to link match to tournament", "err", err)
-				}
-			}
-		}
+		autoLinkTournament(tx, matchID, match.Metadata.Event)
 	}
 
 	// Build a per-import deduplication cache keyed by Zobrist hash.
@@ -932,17 +911,9 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 		posAnalysis.PlayedCubeActions = []string{playedCubeAction}
 	}
 
-	cubefulNoDouble := float64(analysis.CubefulNoDouble)
-	cubefulDoubleTake := float64(analysis.CubefulDoubleTake)
-	cubefulDoublePass := float64(analysis.CubefulDoublePass)
-
-	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
-
-	// Build doubling cube analysis
-	// Error is negative when this decision loses equity vs best (current - best)
-	cubeAnalysis := DoublingCubeAnalysis{
-		AnalysisDepth:             translateAnalysisDepth(int(analysis.AnalysisDepth)),
-		AnalysisEngine:            "XG",
+	cubeAnalysis := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                     translateAnalysisDepth(int(analysis.AnalysisDepth)),
+		Engine:                    "XG",
 		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
 		PlayerGammonChances:       float64(analysis.Player1GammonRate) * 100.0,
 		PlayerBackgammonChances:   float64(analysis.Player1BgRate) * 100.0,
@@ -951,16 +922,11 @@ func (d *Database) saveCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int64, 
 		OpponentBackgammonChances: float64(analysis.Player2BgRate) * 100.0,
 		CubelessNoDoubleEquity:    float64(analysis.CubelessNoDouble),
 		CubelessDoubleEquity:      float64(analysis.CubelessDouble),
-		CubefulNoDoubleEquity:     cubefulNoDouble,
-		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
-		CubefulDoubleTakeEquity:   cubefulDoubleTake,
-		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
-		CubefulDoublePassEquity:   cubefulDoublePass,
-		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
-		BestCubeAction:            bestAction,
+		CubefulNoDoubleEquity:     float64(analysis.CubefulNoDouble),
+		CubefulDoubleTakeEquity:   float64(analysis.CubefulDoubleTake),
+		CubefulDoublePassEquity:   float64(analysis.CubefulDoublePass),
 		WrongPassPercentage:       float64(analysis.WrongPassTakePercent) * 100.0,
-		WrongTakePercentage:       0.0, // XG provides WrongPassTakePercent which covers both
-	}
+	})
 
 	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 
@@ -978,29 +944,14 @@ func (d *Database) saveCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID
 
 	doubled := rawCube.Doubled
 
-	// Try to load existing analysis for this position
-	var existingAnalysisData []byte
-	var existingID int64
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
-
-	var posAnalysis PositionAnalysis
-	if err == nil && existingID > 0 {
-		// Existing analysis found - merge cube info with it
-		posAnalysis, err = decodeAnalysisFromStorage(existingAnalysisData)
-		if err != nil {
-			return err
-		}
-	} else {
-		// No existing analysis - create new one
-		posAnalysis = PositionAnalysis{
-			PositionID:            int(positionID),
-			AnalysisType:          "CheckerMove",
-			AnalysisEngineVersion: "XG",
-			CreationDate:          time.Now(),
-		}
+	// Build a PositionAnalysis with just the cube analysis and let saveAnalysisInTx handle merging
+	posAnalysis := PositionAnalysis{
+		PositionID:            int(positionID),
+		AnalysisType:          "CheckerMove",
+		AnalysisEngineVersion: "XG",
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
 	}
-
-	posAnalysis.LastModifiedDate = time.Now()
 
 	// Extract data from EngineStructDoubleAction
 	// XG Eval array mapping (from xgparser convertCubeEntry):
@@ -1010,47 +961,25 @@ func (d *Database) saveCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID
 	// Eval[4] = player on roll's gammon rate
 	// Eval[5] = player on roll's backgammon rate
 	// Eval[6] = cubeless equity
-	cubefulNoDouble := float64(doubled.EquB)
-	cubefulDoubleTake := float64(doubled.EquDouble)
-	cubefulDoublePass := float64(doubled.EquDrop)
-
-	// Win/gammon/bg rates from player on roll's perspective
-	playerWin := (1.0 - float64(doubled.Eval[2])) * 100.0
-	playerGammon := float64(doubled.Eval[4]) * 100.0
-	playerBg := float64(doubled.Eval[5]) * 100.0
-	opponentWin := float64(doubled.Eval[2]) * 100.0
-	opponentGammon := float64(doubled.Eval[1]) * 100.0
-	opponentBg := float64(doubled.Eval[0]) * 100.0
-
-	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
-
-	// Build doubling cube analysis
-	// Error is negative when this decision loses equity vs best (current - best)
-	cubeAnalysis := DoublingCubeAnalysis{
-		AnalysisDepth:             translateAnalysisDepth(int(doubled.Level)),
-		AnalysisEngine:            "XG",
-		PlayerWinChances:          playerWin,
-		PlayerGammonChances:       playerGammon,
-		PlayerBackgammonChances:   playerBg,
-		OpponentWinChances:        opponentWin,
-		OpponentGammonChances:     opponentGammon,
-		OpponentBackgammonChances: opponentBg,
+	cubeAnalysis := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                     translateAnalysisDepth(int(doubled.Level)),
+		Engine:                    "XG",
+		PlayerWinChances:          (1.0 - float64(doubled.Eval[2])) * 100.0,
+		PlayerGammonChances:       float64(doubled.Eval[4]) * 100.0,
+		PlayerBackgammonChances:   float64(doubled.Eval[5]) * 100.0,
+		OpponentWinChances:        float64(doubled.Eval[2]) * 100.0,
+		OpponentGammonChances:     float64(doubled.Eval[1]) * 100.0,
+		OpponentBackgammonChances: float64(doubled.Eval[0]) * 100.0,
 		CubelessNoDoubleEquity:    float64(doubled.Eval[6]),
-		CubelessDoubleEquity:      float64(doubled.Eval[6]), // Same as no double for cubeless
-		CubefulNoDoubleEquity:     cubefulNoDouble,
-		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
-		CubefulDoubleTakeEquity:   cubefulDoubleTake,
-		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
-		CubefulDoublePassEquity:   cubefulDoublePass,
-		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
-		BestCubeAction:            bestAction,
-		WrongPassPercentage:       0.0, // Not available from EngineStructDoubleAction
-		WrongTakePercentage:       0.0,
-	}
+		CubelessDoubleEquity:      float64(doubled.Eval[6]),
+		CubefulNoDoubleEquity:     float64(doubled.EquB),
+		CubefulDoubleTakeEquity:   float64(doubled.EquDouble),
+		CubefulDoublePassEquity:   float64(doubled.EquDrop),
+	})
 
 	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 
-	// Save to analysis table (will update if exists, insert if not)
+	// Save to analysis table (saveAnalysisInTx handles merge with existing)
 	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
 }
 

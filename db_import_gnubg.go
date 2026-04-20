@@ -120,27 +120,7 @@ func (d *Database) importGnuBGMatchInternal(gnuMatch *gnubgparser.Match, filePat
 			return 0, fmt.Errorf("failed to get match ID: %w", err)
 		}
 
-		// Auto-link tournament from event metadata
-		eventName := strings.TrimSpace(gnuMatch.Metadata.Event)
-		if eventName != "" {
-			var tournamentID int64
-			err2 := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
-			if err2 != nil {
-				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
-				if err3 == nil {
-					tournamentID, err = res2.LastInsertId()
-					if err != nil {
-						return 0, fmt.Errorf("failed to get last insert ID: %w", err)
-					}
-				}
-			}
-			if tournamentID > 0 {
-				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
-				if err != nil {
-					slog.Warn("failed to link match to tournament", "err", err)
-				}
-			}
-		}
+		autoLinkTournament(tx, matchID, gnuMatch.Metadata.Event)
 	}
 
 	// Per-import deduplication cache keyed by Zobrist hash.
@@ -1016,15 +996,9 @@ func (d *Database) saveGnuBGCubeAnalysisToPositionInTx(tx *sql.Tx, positionID in
 		LastModifiedDate:      time.Now(),
 	}
 
-	cubefulNoDouble := analysis.CubefulNoDouble
-	cubefulDoubleTake := analysis.CubefulDoubleTake
-	cubefulDoublePass := analysis.CubefulDoublePass
-
-	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
-
-	cubeAnalysis := DoublingCubeAnalysis{
-		AnalysisDepth:             translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
-		AnalysisEngine:            "GNUbg",
+	cubeAnalysis := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                     translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
+		Engine:                    "GNUbg",
 		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
 		PlayerGammonChances:       float64(analysis.Player1GammonRate) * 100.0,
 		PlayerBackgammonChances:   float64(analysis.Player1BackgammonRate) * 100.0,
@@ -1033,16 +1007,11 @@ func (d *Database) saveGnuBGCubeAnalysisToPositionInTx(tx *sql.Tx, positionID in
 		OpponentBackgammonChances: float64(analysis.Player2BackgammonRate) * 100.0,
 		CubelessNoDoubleEquity:    analysis.CubelessEquity,
 		CubelessDoubleEquity:      analysis.CubelessEquity,
-		CubefulNoDoubleEquity:     cubefulNoDouble,
-		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
-		CubefulDoubleTakeEquity:   cubefulDoubleTake,
-		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
-		CubefulDoublePassEquity:   cubefulDoublePass,
-		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
-		BestCubeAction:            bestAction,
+		CubefulNoDoubleEquity:     analysis.CubefulNoDouble,
+		CubefulDoubleTakeEquity:   analysis.CubefulDoubleTake,
+		CubefulDoublePassEquity:   analysis.CubefulDoublePass,
 		WrongPassPercentage:       float64(analysis.WrongPassTakePercent) * 100.0,
-		WrongTakePercentage:       0.0,
-	}
+	})
 
 	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 
@@ -1070,15 +1039,9 @@ func (d *Database) saveGnuBGCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, posit
 		LastModifiedDate:      time.Now(),
 	}
 
-	cubefulNoDouble := analysis.CubefulNoDouble
-	cubefulDoubleTake := analysis.CubefulDoubleTake
-	cubefulDoublePass := analysis.CubefulDoublePass
-
-	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
-
-	cubeAnalysis := DoublingCubeAnalysis{
-		AnalysisDepth:             translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
-		AnalysisEngine:            "GNUbg",
+	cubeAnalysis := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                     translateGnuBGAnalysisDepth(analysis.AnalysisDepth),
+		Engine:                    "GNUbg",
 		PlayerWinChances:          float64(analysis.Player1WinRate) * 100.0,
 		PlayerGammonChances:       float64(analysis.Player1GammonRate) * 100.0,
 		PlayerBackgammonChances:   float64(analysis.Player1BackgammonRate) * 100.0,
@@ -1087,16 +1050,11 @@ func (d *Database) saveGnuBGCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, posit
 		OpponentBackgammonChances: float64(analysis.Player2BackgammonRate) * 100.0,
 		CubelessNoDoubleEquity:    analysis.CubelessEquity,
 		CubelessDoubleEquity:      analysis.CubelessEquity,
-		CubefulNoDoubleEquity:     cubefulNoDouble,
-		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
-		CubefulDoubleTakeEquity:   cubefulDoubleTake,
-		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
-		CubefulDoublePassEquity:   cubefulDoublePass,
-		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
-		BestCubeAction:            bestAction,
+		CubefulNoDoubleEquity:     analysis.CubefulNoDouble,
+		CubefulDoubleTakeEquity:   analysis.CubefulDoubleTake,
+		CubefulDoublePassEquity:   analysis.CubefulDoublePass,
 		WrongPassPercentage:       float64(analysis.WrongPassTakePercent) * 100.0,
-		WrongTakePercentage:       0.0,
-	}
+	})
 
 	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 

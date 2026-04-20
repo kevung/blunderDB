@@ -101,27 +101,7 @@ func (d *Database) ImportBGFMatch(filePath string) (int64, error) {
 			return 0, fmt.Errorf("failed to get match ID: %w", err)
 		}
 
-		// Auto-link tournament from event metadata
-		eventName := strings.TrimSpace(event)
-		if eventName != "" {
-			var tournamentID int64
-			err2 := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
-			if err2 != nil {
-				res2, err3 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
-				if err3 == nil {
-					tournamentID, err = res2.LastInsertId()
-					if err != nil {
-						return 0, fmt.Errorf("failed to get last insert ID: %w", err)
-					}
-				}
-			}
-			if tournamentID > 0 {
-				_, err = tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID)
-				if err != nil {
-					slog.Warn("failed to link match to tournament", "err", err)
-				}
-			}
-		}
+		autoLinkTournament(tx, matchID, event)
 	}
 
 	// Per-import deduplication cache keyed by Zobrist hash.
@@ -1083,30 +1063,12 @@ func (d *Database) saveBGFCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 	cubefulNoDouble := bgfGetFloat(cubeDecision, "eqNoDouble")
 	cubefulDoubleTake := bgfGetFloat(cubeDecision, "eqDoubleTake")
 	cubefulDoublePass := bgfGetFloat(cubeDecision, "eqDoublePass")
-
 	cubelessEquity := bgfGetFloat(cubeDecision, "eqCubeLess")
 	_ = bgfGetFloat(cubeDecision, "eqCubeFul") // cubefulEquity available but not directly used
 
-	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
-
-	// Also derive from BGF stateOnMove/stateOther
-	stateOnMove := bgfGetString(cubeDecision, "stateOnMove")
-	stateOther := bgfGetString(cubeDecision, "stateOther")
-	if stateOnMove == "DOUBLE" || stateOnMove == "REDOUBLE" {
-		if stateOther == "ACCEPT" {
-			bestAction = "Double, Take"
-		} else if stateOther == "REJECT" {
-			bestAction = "Double, Pass"
-		}
-	} else if stateOnMove == "TO_GOOD" {
-		bestAction = "No Double"
-	} else if stateOnMove == "NO_DOUBLE" {
-		bestAction = "No Double"
-	}
-
-	cubeAnalysis := DoublingCubeAnalysis{
-		AnalysisDepth:             "2-ply", // BGBlitz default
-		AnalysisEngine:            "BGBlitz",
+	cubeAnalysis := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                     "2-ply",
+		Engine:                    "BGBlitz",
 		PlayerWinChances:          bgfGetFloat(equity, "myWins") * 100.0,
 		PlayerGammonChances:       bgfGetFloat(equity, "myGammon") * 100.0,
 		PlayerBackgammonChances:   bgfGetFloat(equity, "myBackGammon") * 100.0,
@@ -1116,14 +1078,21 @@ func (d *Database) saveBGFCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 		CubelessNoDoubleEquity:    cubelessEquity,
 		CubelessDoubleEquity:      cubelessEquity,
 		CubefulNoDoubleEquity:     cubefulNoDouble,
-		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
 		CubefulDoubleTakeEquity:   cubefulDoubleTake,
-		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
 		CubefulDoublePassEquity:   cubefulDoublePass,
-		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
-		BestCubeAction:            bestAction,
-		WrongPassPercentage:       0.0,
-		WrongTakePercentage:       0.0,
+	})
+
+	// Override best action from BGF stateOnMove/stateOther when available
+	stateOnMove := bgfGetString(cubeDecision, "stateOnMove")
+	stateOther := bgfGetString(cubeDecision, "stateOther")
+	if stateOnMove == "DOUBLE" || stateOnMove == "REDOUBLE" {
+		if stateOther == "ACCEPT" {
+			cubeAnalysis.BestCubeAction = "Double, Take"
+		} else if stateOther == "REJECT" {
+			cubeAnalysis.BestCubeAction = "Double, Pass"
+		}
+	} else if stateOnMove == "TO_GOOD" || stateOnMove == "NO_DOUBLE" {
+		cubeAnalysis.BestCubeAction = "No Double"
 	}
 
 	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
@@ -1137,56 +1106,30 @@ func (d *Database) saveBGFCubeAnalysisToPositionInTx(tx *sql.Tx, positionID int6
 
 // saveBGFCubeAnalysisForCheckerPositionInTx saves cube analysis from equity field to a checker position
 func (d *Database) saveBGFCubeAnalysisForCheckerPositionInTx(tx *sql.Tx, positionID int64, equity map[string]interface{}, cubeDecision map[string]interface{}) error {
-	// Try to load existing analysis for this position
-	var existingAnalysisData []byte
-	var existingID int64
-	err := tx.QueryRow(`SELECT id, data FROM analysis WHERE position_id = ?`, positionID).Scan(&existingID, &existingAnalysisData)
-
-	var posAnalysis PositionAnalysis
-	if err == nil && existingID > 0 {
-		posAnalysis, err = decodeAnalysisFromStorage(existingAnalysisData)
-		if err != nil {
-			return err
-		}
-	} else {
-		posAnalysis = PositionAnalysis{
-			PositionID:            int(positionID),
-			AnalysisType:          "CheckerMove",
-			AnalysisEngineVersion: "BGBlitz",
-			CreationDate:          time.Now(),
-		}
+	// Build a PositionAnalysis with just the cube analysis and let saveAnalysisInTx handle merging
+	posAnalysis := PositionAnalysis{
+		PositionID:            int(positionID),
+		AnalysisType:          "CheckerMove",
+		AnalysisEngineVersion: "BGBlitz",
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
 	}
 
-	posAnalysis.LastModifiedDate = time.Now()
-
-	cubefulNoDouble := bgfGetFloat(cubeDecision, "eqNoDouble")
-	cubefulDoubleTake := bgfGetFloat(cubeDecision, "eqDoubleTake")
-	cubefulDoublePass := bgfGetFloat(cubeDecision, "eqDoublePass")
-	cubelessEquity := bgfGetFloat(cubeDecision, "eqCubeLess")
-
-	bestEquity, bestAction := computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass)
-
-	cubeAnalysis := DoublingCubeAnalysis{
-		AnalysisDepth:             "2-ply",
-		AnalysisEngine:            "BGBlitz",
+	cubeAnalysis := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                     "2-ply",
+		Engine:                    "BGBlitz",
 		PlayerWinChances:          bgfGetFloat(equity, "myWins") * 100.0,
 		PlayerGammonChances:       bgfGetFloat(equity, "myGammon") * 100.0,
 		PlayerBackgammonChances:   bgfGetFloat(equity, "myBackGammon") * 100.0,
 		OpponentWinChances:        bgfGetFloat(equity, "oppWins") * 100.0,
 		OpponentGammonChances:     bgfGetFloat(equity, "oppGammon") * 100.0,
 		OpponentBackgammonChances: bgfGetFloat(equity, "oppBackGammon") * 100.0,
-		CubelessNoDoubleEquity:    cubelessEquity,
-		CubelessDoubleEquity:      cubelessEquity,
-		CubefulNoDoubleEquity:     cubefulNoDouble,
-		CubefulNoDoubleError:      cubefulNoDouble - bestEquity,
-		CubefulDoubleTakeEquity:   cubefulDoubleTake,
-		CubefulDoubleTakeError:    cubefulDoubleTake - bestEquity,
-		CubefulDoublePassEquity:   cubefulDoublePass,
-		CubefulDoublePassError:    cubefulDoublePass - bestEquity,
-		BestCubeAction:            bestAction,
-		WrongPassPercentage:       0.0,
-		WrongTakePercentage:       0.0,
-	}
+		CubelessNoDoubleEquity:    bgfGetFloat(cubeDecision, "eqCubeLess"),
+		CubelessDoubleEquity:      bgfGetFloat(cubeDecision, "eqCubeLess"),
+		CubefulNoDoubleEquity:     bgfGetFloat(cubeDecision, "eqNoDouble"),
+		CubefulDoubleTakeEquity:   bgfGetFloat(cubeDecision, "eqDoubleTake"),
+		CubefulDoublePassEquity:   bgfGetFloat(cubeDecision, "eqDoublePass"),
+	})
 
 	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
 

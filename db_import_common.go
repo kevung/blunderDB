@@ -6,6 +6,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"log/slog"
 	"os"
 	"sort"
 	"strings"
@@ -549,6 +550,76 @@ func computeBestCubeAction(cubefulNoDouble, cubefulDoubleTake, cubefulDoublePass
 		}
 	}
 	return bestEquity, bestAction
+}
+
+// autoLinkTournament finds or creates a tournament by name and links it to the given match.
+// Does nothing if eventName is empty.
+func autoLinkTournament(tx *sql.Tx, matchID int64, eventName string) {
+	eventName = strings.TrimSpace(eventName)
+	if eventName == "" {
+		return
+	}
+	var tournamentID int64
+	err := tx.QueryRow(`SELECT id FROM tournament WHERE name = ?`, eventName).Scan(&tournamentID)
+	if err != nil {
+		// Tournament doesn't exist yet — create it
+		res, err2 := tx.Exec(`INSERT INTO tournament (name, date, location) VALUES (?, '', '')`, eventName)
+		if err2 == nil {
+			tournamentID, _ = res.LastInsertId()
+		}
+	}
+	if tournamentID > 0 {
+		if _, err := tx.Exec(`UPDATE match SET tournament_id = ? WHERE id = ?`, tournamentID, matchID); err != nil {
+			slog.Warn("failed to link match to tournament", "err", err)
+		}
+	}
+}
+
+// cubeAnalysisParams holds the format-independent cube analysis values needed to build
+// a DoublingCubeAnalysis struct. Each importer extracts these from its format-specific types.
+type cubeAnalysisParams struct {
+	Depth                     string
+	Engine                    string
+	PlayerWinChances          float64
+	PlayerGammonChances       float64
+	PlayerBackgammonChances   float64
+	OpponentWinChances        float64
+	OpponentGammonChances     float64
+	OpponentBackgammonChances float64
+	CubelessNoDoubleEquity    float64
+	CubelessDoubleEquity      float64
+	CubefulNoDoubleEquity     float64
+	CubefulDoubleTakeEquity   float64
+	CubefulDoublePassEquity   float64
+	WrongPassPercentage       float64
+	WrongTakePercentage       float64
+}
+
+// buildDoublingCubeAnalysis creates a DoublingCubeAnalysis from the given params,
+// computing best action and error deltas automatically.
+func buildDoublingCubeAnalysis(p cubeAnalysisParams) DoublingCubeAnalysis {
+	bestEquity, bestAction := computeBestCubeAction(p.CubefulNoDoubleEquity, p.CubefulDoubleTakeEquity, p.CubefulDoublePassEquity)
+	return DoublingCubeAnalysis{
+		AnalysisDepth:             p.Depth,
+		AnalysisEngine:            p.Engine,
+		PlayerWinChances:          p.PlayerWinChances,
+		PlayerGammonChances:       p.PlayerGammonChances,
+		PlayerBackgammonChances:   p.PlayerBackgammonChances,
+		OpponentWinChances:        p.OpponentWinChances,
+		OpponentGammonChances:     p.OpponentGammonChances,
+		OpponentBackgammonChances: p.OpponentBackgammonChances,
+		CubelessNoDoubleEquity:    p.CubelessNoDoubleEquity,
+		CubelessDoubleEquity:      p.CubelessDoubleEquity,
+		CubefulNoDoubleEquity:     p.CubefulNoDoubleEquity,
+		CubefulNoDoubleError:      p.CubefulNoDoubleEquity - bestEquity,
+		CubefulDoubleTakeEquity:   p.CubefulDoubleTakeEquity,
+		CubefulDoubleTakeError:    p.CubefulDoubleTakeEquity - bestEquity,
+		CubefulDoublePassEquity:   p.CubefulDoublePassEquity,
+		CubefulDoublePassError:    p.CubefulDoublePassEquity - bestEquity,
+		BestCubeAction:            bestAction,
+		WrongPassPercentage:       p.WrongPassPercentage,
+		WrongTakePercentage:       p.WrongTakePercentage,
+	}
 }
 
 // ComputeMatchHash generates a unique hash for a match based on full match transcription
