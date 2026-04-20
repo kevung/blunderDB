@@ -80,8 +80,8 @@ Dependencies flow top-down within each phase. Phases are sequential.
 - [x] 17 — Strip console
 - [x] 18 — Table modals
 - [x] 19 — Svelte 5 runes
-- [ ] 20 — Accessibility
-- [ ] 21 — README
+- [x] 20 — Accessibility
+- [x] 21 — README
 - [x] 22 — CLI docs
-- [ ] 23 — Stale docs
+- [x] 23 — Stale docs
 - [ ] 24 — CI benchmarks

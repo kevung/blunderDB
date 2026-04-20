@@ -679,5 +679,5 @@ fi
 ## See Also
 
 - Main blunderDB documentation
-- `MATCH_IMPORT_ARCHITECTURE.md` - Technical details about match import
-- `POSITION_TRACKING_IMPLEMENTATION.md` - Position data structures
+- `doc/archive/MATCH_IMPORT_ARCHITECTURE.md` - Technical details about match import
+- `doc/archive/POSITION_TRACKING_IMPLEMENTATION.md` - Position data structures

@@ -457,10 +457,7 @@ both paths.
 
 ### 7.4 Clean up stale plan documents
 
-9 historical markdown files in the repo root (`ANALYSIS_IMPLEMENTATION.md`,
-`MATCH_IMPORT_ARCHITECTURE.md`, `POSITION_TRACKING_IMPLEMENTATION.md`, etc.).
-Move to a `docs/design/` directory to reduce root clutter, or delete those that
-are fully superseded by the current code.
+9 historical markdown files have been moved to `doc/archive/` (see `doc/archive/README.md`).
 
 ### 7.5 Close open FOLLOWUPS
 
