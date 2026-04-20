@@ -16,7 +16,7 @@
 
 ### 1. Types publics
 
-- [ ] Étendre `db_stats.go` :
+- [x] Étendre `db_stats.go` :
   ```go
   type SelectionSpec struct {
       Kind         string  // "all", "checker", "cube", "cube_action",
@@ -35,18 +35,18 @@
 
 ### 2. Signatures publiques
 
-- [ ] Dans `db_stats.go` :
+- [x] Dans `db_stats.go` :
   ```go
   func (db *Database) GetPositionIDsByStatsSelection(filter StatsFilter, sel SelectionSpec) ([]int64, error)
   func (db *Database) GetPositionIDsByTournament(tournamentID int64) ([]int64, error)
   func (db *Database) GetPositionIDsByMatch(matchID int64) ([]int64, error)
   ```
-- [ ] Les deux derniers sont des raccourcis qui délèguent à `GetPositionIDsByStatsSelection` avec un `SelectionSpec` approprié, **mais** ils ignorent `StatsFilter` — ils retournent toutes les positions du tournoi/match quel que soit le filtre (car l'utilisateur a explicitement cliqué sur *Open tournament*/*Open match*, il veut rouvrir l'élément entier). Les raccourcis n'appliquent que les jointures nécessaires.
+- [x] Les deux derniers sont des raccourcis qui délèguent à `GetPositionIDsByStatsSelection` avec un `SelectionSpec` approprié, **mais** ils ignorent `StatsFilter` — ils retournent toutes les positions du tournoi/match quel que soit le filtre (car l'utilisateur a explicitement cliqué sur *Open tournament*/*Open match*, il veut rouvrir l'élément entier). Les raccourcis n'appliquent que les jointures nécessaires.
 
 ### 3. Implémentation
 
-- [ ] Réutiliser `buildStatsWhereClause(filter)` de la fiche 01 pour la base.
-- [ ] Ajouter un helper `buildSelectionWhereClause(sel SelectionSpec) (sql string, args []any)` qui produit la clause spécifique à la sélection :
+- [x] Réutiliser `buildStatsWhereClause(filter)` de la fiche 01 pour la base.
+- [x] Ajouter un helper `buildSelectionWhereClause(sel SelectionSpec) (sql string, args []any)` qui produit la clause spécifique à la sélection :
   - `"all"` → `""` (pas de clause sup).
   - `"checker"` → `" AND p.decision_type = 0"` (+ `" AND a.best_move_equity_error > 0"` si `OnlyWithError`).
   - `"cube"` → `" AND p.decision_type = 1"` (+ `OnlyWithError`).
@@ -57,31 +57,31 @@
   - `"last_n"` → pas de clause WHERE ; ajouter `ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?`.
   - `"position"` → `" AND p.id = ?"` (retourne 1 ID).
   - `"top_blunders"` → `ORDER BY " + statsErrExpr + " DESC LIMIT 10`.
-- [ ] Fusion finale : `SELECT p.id FROM position p JOIN … WHERE <filter> <selection> <order/limit>` — deux concaténations de clauses, une seule requête.
-- [ ] Retour `[]int64` dédupliqué en SQL via `SELECT DISTINCT p.id`.
+- [x] Fusion finale : `SELECT p.id FROM position p JOIN … WHERE <filter> <selection> <order/limit>` — deux concaténations de clauses, une seule requête.
+- [x] Retour `[]int64` dédupliqué en SQL via `SELECT DISTINCT p.id`.
 
 ### 4. Intégration UI vs panneaux natifs
 
-- [ ] `GetPositionIDsByTournament` et `GetPositionIDsByMatch` sont nécessaires pour les actions *Open positions* depuis les graphes de Progression, **indépendamment** du filtre courant. Mais les clics sur les vues Erreurs doivent **conserver** le filtre courant (le dashboard Stats filtré par joueur → le clic sur DoubleTake ne doit charger que les DoubleTake **du joueur filtré**).
-- [ ] Convention explicite : les deux raccourcis (`GetPositionIDsByTournament`/`Match`) n'appliquent pas `StatsFilter`. La méthode générique `GetPositionIDsByStatsSelection` l'applique **toujours**. Le frontend choisit.
+- [x] `GetPositionIDsByTournament` et `GetPositionIDsByMatch` sont nécessaires pour les actions *Open positions* depuis les graphes de Progression, **indépendamment** du filtre courant. Mais les clics sur les vues Erreurs doivent **conserver** le filtre courant (le dashboard Stats filtré par joueur → le clic sur DoubleTake ne doit charger que les DoubleTake **du joueur filtré**).
+- [x] Convention explicite : les deux raccourcis (`GetPositionIDsByTournament`/`Match`) n'appliquent pas `StatsFilter`. La méthode générique `GetPositionIDsByStatsSelection` l'applique **toujours**. Le frontend choisit.
 
 ### 5. Tests unitaires
 
-- [ ] `db_stats_drilldown_test.go`.
-- [ ] **Test invariant "ce qu'on clique = ce qu'on voit"** : pour un filtre + sélection donnée, `COUNT(GetPositionIDsByStatsSelection(filter, sel)) == TotalFromComputeStats(filter, sel)`. Décliné sur :
+- [x] `db_stats_drilldown_test.go`.
+- [x] **Test invariant "ce qu'on clique = ce qu'on voit"** : pour un filtre + sélection donnée, `COUNT(GetPositionIDsByStatsSelection(filter, sel)) == TotalFromComputeStats(filter, sel)`. Décliné sur :
   - sélection "cube_action" → doit correspondre au `CubeActionStats.NumDecisions` du bon item.
   - sélection "error_bucket" → correspond au `ErrorBucket.Count`.
   - sélection "checker" → correspond à `result.TotalChecker`.
-- [ ] **Test `OnlyWithError`** : sélection "cube_action=DoubleTake, OnlyWithError=true" ne retourne que les positions avec `cube_error > 0`. Vérifier avec une fixture contenant quelques DoubleTake corrects (erreur 0) et quelques DoubleTake avec erreur.
-- [ ] **Test raccourci tournoi** : `GetPositionIDsByTournament(id)` ignore bien le filtre courant (vérifier avec un filtre bidon qui exclurait tout si appliqué).
-- [ ] **Test top blunders** : `GetPositionIDsByStatsSelection(filter, {Kind: "top_blunders"})` retourne ≤ 10 IDs, ordre cohérent avec `result.TopBlunders`.
+- [x] **Test `OnlyWithError`** : sélection "cube_action=DoubleTake, OnlyWithError=true" ne retourne que les positions avec `cube_error > 0`. Vérifier avec une fixture contenant quelques DoubleTake corrects (erreur 0) et quelques DoubleTake avec erreur.
+- [x] **Test raccourci tournoi** : `GetPositionIDsByTournament(id)` ignore bien le filtre courant (vérifier avec un filtre bidon qui exclurait tout si appliqué).
+- [x] **Test top blunders** : `GetPositionIDsByStatsSelection(filter, {Kind: "top_blunders"})` retourne ≤ 10 IDs, ordre cohérent avec `result.TopBlunders`.
 
 ## Acceptance criteria
 
-- [ ] `go test -run TestDrilldown ./...` vert (tous les tests listés).
-- [ ] `go test ./...` reste vert (pas de régression).
-- [ ] `go vet ./...` clean.
-- [ ] Les helpers `buildStatsWhereClause` / `buildSelectionWhereClause` sont privés et bien testés séparément.
+- [x] `go test -run TestDrilldown ./...` vert (tous les tests listés).
+- [x] `go test ./...` reste vert (pas de régression).
+- [x] `go vet ./...` clean.
+- [x] Les helpers `buildStatsWhereClause` / `buildSelectionWhereClause` sont privés et bien testés séparément.
 
 ## Rollback
 

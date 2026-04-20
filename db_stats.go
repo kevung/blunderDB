@@ -497,3 +497,159 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 
 	return result, nil
 }
+
+// ── Drill-down ────────────────────────────────────────────────────────────────
+
+// SelectionSpec describes what the user selected in the stats panel (a click on
+// a bar, point, or row). The frontend passes this to GetPositionIDsByStatsSelection
+// to obtain the matching position IDs for navigation.
+type SelectionSpec struct {
+	Kind         string // "all", "checker", "cube", "cube_action",
+	// "error_bucket", "tournament", "match",
+	// "last_n", "position", "top_blunders"
+	CubeAction   string // "NoDouble" | "DoubleTake" | "DoublePass" | "TooGood"
+	BucketMinMP  int    // inclusive
+	BucketMaxMP  int    // exclusive; -1 = +∞
+	TournamentID int64
+	MatchID      int64
+	LastN        int
+	PositionID   int64
+	OnlyWithError bool // for "cube_action", "checker", "cube" → error > 0
+}
+
+// buildSelectionWhereClause produces the extra WHERE fragment and optional
+// ORDER BY / LIMIT fragment for a given SelectionSpec.
+//
+// whereAdd starts with " AND " or is empty (never contains "WHERE").
+// orderLimit is the ORDER BY … LIMIT … suffix or empty.
+// args contains the combined parameters for whereAdd followed by orderLimit.
+func buildSelectionWhereClause(sel SelectionSpec) (whereAdd string, orderLimit string, args []any) {
+	switch sel.Kind {
+	case "checker":
+		whereAdd = " AND p.decision_type = 0"
+		if sel.OnlyWithError {
+			whereAdd += " AND (" + statsErrExpr + ") > 0"
+		}
+	case "cube":
+		whereAdd = " AND p.decision_type = 1"
+		if sel.OnlyWithError {
+			whereAdd += " AND (" + statsErrExpr + ") > 0"
+		}
+	case "cube_action":
+		whereAdd = " AND p.decision_type = 1 AND a.best_cube_action = ?"
+		args = append(args, sel.CubeAction)
+		if sel.OnlyWithError {
+			whereAdd += " AND (" + statsErrExpr + ") > 0"
+		}
+	case "error_bucket":
+		whereAdd = " AND (" + statsErrExpr + ") >= ?"
+		args = append(args, sel.BucketMinMP)
+		if sel.BucketMaxMP != -1 {
+			whereAdd += " AND (" + statsErrExpr + ") < ?"
+			args = append(args, sel.BucketMaxMP)
+		}
+	case "tournament":
+		whereAdd = " AND m.tournament_id = ?"
+		args = append(args, sel.TournamentID)
+	case "match":
+		whereAdd = " AND m.id = ?"
+		args = append(args, sel.MatchID)
+	case "last_n":
+		orderLimit = "ORDER BY m.match_date DESC, mv.move_number DESC LIMIT ?"
+		args = append(args, sel.LastN)
+	case "position":
+		whereAdd = " AND p.id = ?"
+		args = append(args, sel.PositionID)
+	case "top_blunders":
+		orderLimit = "ORDER BY (" + statsErrExpr + ") DESC LIMIT 10"
+	// "all" → no extra clauses
+	}
+	return whereAdd, orderLimit, args
+}
+
+// scanPositionIDs scans a rows result set returning a single int64 column into
+// a slice. It closes rows and propagates any iteration error.
+func scanPositionIDs(rows interface {
+	Next() bool
+	Scan(...any) error
+	Close() error
+	Err() error
+}) ([]int64, error) {
+	defer rows.Close()
+	var ids []int64
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, fmt.Errorf("scan position id: %w", err)
+		}
+		ids = append(ids, id)
+	}
+	return ids, rows.Err()
+}
+
+// GetPositionIDsByStatsSelection resolves a user selection made in the Stats
+// panel into a deduplicated list of position IDs. The StatsFilter is always
+// applied so that the IDs correspond exactly to what is displayed in the panel
+// (invariant: "ce qu'on clique = ce qu'on voit").
+func (d *Database) GetPositionIDsByStatsSelection(filter StatsFilter, sel SelectionSpec) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	whereSQL, baseArgs := buildStatsWhereClause(filter)
+	whereAdd, orderLimit, selArgs := buildSelectionWhereClause(sel)
+
+	query := "SELECT DISTINCT p.id " + statsBaseJoin + whereSQL + whereAdd
+	if orderLimit != "" {
+		query += " " + orderLimit
+	}
+
+	allArgs := append(append([]any{}, baseArgs...), selArgs...)
+	rows, err := d.db.Query(query, allArgs...)
+	if err != nil {
+		return nil, fmt.Errorf("GetPositionIDsByStatsSelection (%s): %w", sel.Kind, err)
+	}
+	return scanPositionIDs(rows)
+}
+
+// GetPositionIDsByTournament returns all position IDs belonging to the given
+// tournament, regardless of any stats filter. Used when the user explicitly
+// reopens a tournament (Open tournament action).
+func (d *Database) GetPositionIDsByTournament(tournamentID int64) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	query := "SELECT DISTINCT p.id " + statsBaseJoin +
+		" WHERE m.tournament_id = ? AND a.position_id IS NOT NULL AND (" + statsErrExpr + ") IS NOT NULL"
+	rows, err := d.db.Query(query, tournamentID)
+	if err != nil {
+		return nil, fmt.Errorf("GetPositionIDsByTournament: %w", err)
+	}
+	return scanPositionIDs(rows)
+}
+
+// GetPositionIDsByMatch returns all position IDs belonging to the given match,
+// regardless of any stats filter. Used when the user explicitly reopens a match.
+func (d *Database) GetPositionIDsByMatch(matchID int64) ([]int64, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	query := "SELECT DISTINCT p.id " + statsBaseJoin +
+		" WHERE m.id = ? AND a.position_id IS NOT NULL AND (" + statsErrExpr + ") IS NOT NULL"
+	rows, err := d.db.Query(query, matchID)
+	if err != nil {
+		return nil, fmt.Errorf("GetPositionIDsByMatch: %w", err)
+	}
+	return scanPositionIDs(rows)
+}
