@@ -68,12 +68,14 @@
     let width;
     let height;
     let unsubscribe;
+    let unsubscribeSelectedMove;
     let _isMouseDown = false;
     let startMousePos = null;
     let cubePosition = { x: 0, y: 0 };
     let previousDice = get(positionStore).dice; // Save previous dice values
 
-    // Subscribe to selectedMoveStore and update selectedMove
+    // selectedMove is read inside drawBoard() via this derived;
+    // the actual redraw is triggered by the subscribe in onMount (synchronous).
     let selectedMove = $derived($selectedMoveStore);
 
     let boardDescription = $derived.by(() => {
@@ -87,12 +89,6 @@
         });
         const roller = pos.player_on_roll === 0 ? 'Player 1' : 'Player 2';
         return `Backgammon board. Player 1 pip count ${pip1}, Player 2 pip count ${pip2}. ${roller} to move.`;
-    });
-    // Reactive statement to redraw board when selectedMove changes
-    $effect(() => {
-        if (two && canvas && selectedMove !== undefined) {
-            drawBoard();
-        }
     });
     function handleMouseDown(event) {
         event.preventDefault(); // Prevent text or element selection
@@ -829,6 +825,13 @@
             drawBoard();
         });
 
+        // Synchronous subscriber so arrows are drawn immediately when a move is selected.
+        // A Svelte 5 $effect would be deferred (async), causing a race where drawBoard()
+        // from positionStore.subscribe could overwrite the arrows before the effect ran.
+        unsubscribeSelectedMove = selectedMoveStore.subscribe(() => {
+            if (two && canvas) drawBoard();
+        });
+
         logCanvasSize();
         window.addEventListener('resize', logCanvasSize);
     });
@@ -847,6 +850,7 @@
         window.removeEventListener('keydown', handleOrientationChange);
         window.removeEventListener('keydown', handleKeyDown);
         if (unsubscribe) unsubscribe();
+        if (unsubscribeSelectedMove) unsubscribeSelectedMove();
     });
 
     // Helper function to get the position to display
