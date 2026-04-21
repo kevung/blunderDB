@@ -10,7 +10,7 @@
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
-      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
 
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -52,12 +52,11 @@
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats.html">7. Stats Panel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Annex: Advanced Filter Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows Annex: False Detection of blunderDB as Malware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac Annex: Possible Blocking of blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Annex: Database Schema</a></li>
 </ul>
 
         </div>
@@ -235,10 +234,6 @@
 <td><p>April 20, 2026</p></td>
 <td><p>Major codebase refactoring: split db.go (10k lines) into 19 domain-focused files, extracted 7 service modules from App.svelte (4,888→469 lines), consolidated modal/panel stores. Full migration to Svelte 5 runes. Replaced 9 table modals with a generic DataTableModal component. Added ESLint + Prettier + vitest (125 frontend tests) with CI enforcement. WCAG 2.1 AA accessibility baseline (visible focus, ARIA roles, keyboard navigation). Upgraded Database mutex to RWMutex for better read concurrency. Complete CLI documentation (CLI_USAGE.md + Sphinx FR/EN). Rewrote README. Resolved all ESLint warnings (46→0) and Vite build warnings (6→0).</p></td>
 </tr>
-<tr class="row-even"><td><p>0.19.0</p></td>
-<td><p>21/04/2026</p></td>
-<td><p>Ajout du panneau Stats : indicateurs PR (Performance Rate) et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Voir :ref:`stats`.</p></td>
-</tr>
 </tbody>
 </table>
 </section>
@@ -276,12 +271,11 @@
 <li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">3.13. Manage the match panel</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">3.14. Manage collections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">3.15. Manage tournaments</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-les-statistiques-de-performance">3.16. Display performance statistics</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#calculer-l-epc">3.17. Calculate the EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. Display the analysis of a position imported from XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.19. Export a position to XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.20. View the different positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.21. Search for positions based on criteria</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#calculer-l-epc">3.16. Calculate the EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.17. Display the analysis of a position imported from XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.18. Export a position to XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.19. View the different positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.20. Search for positions based on criteria</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a><ul>
@@ -325,62 +319,50 @@
 <li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">6.15. Exit codes</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="stats.html">7. Stats Panel</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#introduction">7.1. Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#ouverture-du-panneau">7.2. Opening the panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#barre-de-filtre">7.3. Filter bar</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#toggle-pr-mwc">7.4. PR / MWC toggle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#onglet-dashboard">7.5. Dashboard tab</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#onglet-progression">7.6. Progression tab</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#onglet-erreurs">7.7. Errors tab</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#regle-d-agregation">7.8. Aggregation rule</a></li>
-<li class="toctree-l2"><a class="reference internal" href="stats.html#mwc-limitations">7.9. MWC: limitations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Frequently Asked Questions (FAQ)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">7.1. What is the purpose of blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">7.2. What motivated the creation of blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">7.3. How to save the state of the current database?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">7.4. Should I create different databases for different categories of positions?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">7.5. How to merge multiple databases?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">7.6. Which match file formats are supported?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">7.7. What is a collection?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">7.8. What is EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">7.9. Does blunderDB have a command-line interface?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">7.10. Can I modify, copy, share blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">7.11. What data format does blunderDB use?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">7.12. What were the design principles of blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">7.13. What is the software architecture of blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">7.14. On which platforms does blunderDB run?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. Where does the blunderDB icon come from?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">8.1. What is the purpose of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">8.2. What motivated the creation of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">8.3. How to save the state of the current database?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">8.4. Should I create different databases for different categories of positions?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">8.5. How to merge multiple databases?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">8.6. Which match file formats are supported?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">8.7. What is a collection?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">8.8. What is EPC?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">8.9. Does blunderDB have a command-line interface?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">8.10. Can I modify, copy, share blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">8.11. What data format does blunderDB use?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">8.12. What were the design principles of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">8.13. What is the software architecture of blunderDB?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">8.14. On which platforms does blunderDB run?</a></li>
-<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">8.15. Where does the blunderDB icon come from?</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annex: Advanced Filter Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. Command-line search for positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. Search in Current Results</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. Filter Library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. Examples</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Annex: Advanced Filter Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">9.1. Command-line search for positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">9.2. Search in Current Results</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">9.3. Filter Library</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">9.4. Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows Annex: False Detection of blunderDB as Malware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Windows SmartScreen Warning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Windows Defender Blocking</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows Annex: False Detection of blunderDB as Malware</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">10.1. Windows SmartScreen Warning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">10.2. Windows Defender Blocking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac Annex: Possible Blocking of blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. Installation of blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. Authorization to Run blunderDB</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac Annex: Possible Blocking of blunderDB</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">11.1. Installation of blunderDB</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">11.2. Authorization to Run blunderDB</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Annex: Database Schema</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">12.1. Version 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">12.2. Version 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">12.3. Version 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">12.4. Version 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">12.5. Version 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">12.6. Version 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">12.7. Version 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">12.8. Version 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Annex: Database Schema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. Version 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. Version 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. Version 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. Version 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. Version 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. Version 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. Version 1.7.0</a></li>
 </ul>
 </li>
 </ul>
