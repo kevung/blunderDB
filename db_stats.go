@@ -76,6 +76,9 @@ type BlunderEntry struct {
 	ErrorMP      int64
 	MWCLoss      float64
 	Description  string
+	DecisionType int    // 0=checker, 1=cube
+	MatchDate    string // ISO date string, may be empty
+	PlayerNames  string // "Player1 vs Player2"
 }
 
 // StatsResult contains all computed statistics for the given filter.
@@ -344,7 +347,10 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 
 	// ── 7. Top blunders ───────────────────────────────────────────────────────
 	rows, err = d.db.Query(
-		`SELECT p.id, m.id, COALESCE(m.tournament_id, 0), (`+statsErrExpr+`) as emg `+
+		`SELECT p.id, m.id, COALESCE(m.tournament_id, 0), (`+statsErrExpr+`) as emg,`+
+			` p.decision_type,`+
+			` COALESCE(m.match_date, '') as match_date,`+
+			` COALESCE(m.player1_name, '') || ' vs ' || COALESCE(m.player2_name, '') as player_names `+
 			statsBaseJoin+whereSQL+
 			` ORDER BY emg DESC LIMIT 10`,
 		baseArgs...,
@@ -356,7 +362,8 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 		defer rows.Close()
 		for rows.Next() {
 			var be BlunderEntry
-			if err2 := rows.Scan(&be.PositionID, &be.MatchID, &be.TournamentID, &be.ErrorMP); err2 != nil {
+			if err2 := rows.Scan(&be.PositionID, &be.MatchID, &be.TournamentID, &be.ErrorMP,
+				&be.DecisionType, &be.MatchDate, &be.PlayerNames); err2 != nil {
 				return
 			}
 			result.TopBlunders = append(result.TopBlunders, be)

@@ -51,7 +51,7 @@ Dépendances top-down ; une phase ne peut démarrer qu'après celles dont elle d
 - [x] 03 — drill-down backend
 - [x] 04 — Wails + store
 - [x] 05 — panel shell + charts
-- [ ] 06 — dashboard tab
+- [x] 06 — dashboard tab
 - [ ] 07 — progression tab
 - [ ] 08 — errors tab
 - [ ] 09 — filter bar
