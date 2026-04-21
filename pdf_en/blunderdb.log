@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  21 APR 2026 01:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  21 APR 2026 01:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -908,41 +908,41 @@ efined on input line 633.
 [6]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 7 undefined on i
-nput line 852.
+nput line 856.
 
 [7]
 
 LaTeX Warning: Hyper reference `guide_utilisateur:guide-edit-position' on page 
-8 undefined on input line 859.
+8 undefined on input line 863.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 863.
+nput line 867.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 883.
+ line 887.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-883.
+887.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 922.
+nput line 926.
 
 [8] [9] [10] [11] [12] [13] [14]
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-filter' on page 15 undefined on in
-put line 1528.
+put line 1553.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-filter' on page 15 undefined on input li
-ne 1528.
+ne 1553.
 
 [15] [16] [17] [18] [19] [20] [21] [22]
 LaTeX Font Info:    Font shape `T1/txtt/m/it' in size <10> not available
-(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4099.
+(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4135.
 
  [23]
 
@@ -953,21 +953,21 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.4378 ... succeeded (\(\checkmark\)), failed (✗
+l.4414 ... succeeded (\(\checkmark\)), failed (✗
                                                   ) or was a duplicate (⊘).
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.4378 ... succeeded (\(\checkmark\)), failed (✗
+l.4414 ... succeeded (\(\checkmark\)), failed (✗
                                                   ) or was a duplicate (⊘).
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
  
 Here is how much of TeX's memory you used:
- 16912 strings out of 476182
- 287150 string characters out of 5795595
+ 16916 strings out of 476182
+ 287188 string characters out of 5795595
  2008975 words of memory out of 5000000
  38432 multiletter control sequences out of 15000+600000
  614712 words of font info for 78 fonts, out of 8000000 for 9000

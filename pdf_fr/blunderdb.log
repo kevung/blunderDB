@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  21 APR 2026 01:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  21 APR 2026 01:19
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -905,43 +905,43 @@ efined on input line 656.
 [6] [7]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 894.
+nput line 898.
 
 
 LaTeX Warning: Hyper reference `guide_utilisateur:guide-edit-position' on page 
-8 undefined on input line 905.
+8 undefined on input line 909.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 909.
+nput line 913.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 945.
+ line 949.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-945.
+949.
 
 [8]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 9 undefined on i
-nput line 989.
+nput line 993.
 
-[9] [10] [11] [12] [13] [14]
+[9] [10] [11] [12] [13] [14] [15]
 
-LaTeX Warning: Hyper reference `cmd_mode:cmd-filter' on page 15 undefined on in
-put line 1688.
+LaTeX Warning: Hyper reference `cmd_mode:cmd-filter' on page 16 undefined on in
+put line 1715.
 
 
-LaTeX Warning: Reference `cmd_mode:cmd-filter' on page 15 undefined on input li
-ne 1688.
+LaTeX Warning: Reference `cmd_mode:cmd-filter' on page 16 undefined on input li
+ne 1715.
 
-[15] [16] [17] [18] [19] [20] [21] [22]
+[16] [17] [18] [19] [20] [21] [22] [23]
 LaTeX Font Info:    Font shape `T1/txtt/m/it' in size <10> not available
-(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4293.
+(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4331.
 
- [23]
+ [24]
 
 ! LaTeX Error: Unicode character ✗ (U+2717)
                not set up for use with LaTeX.
@@ -950,14 +950,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.4576 (\(\checkmark\)), échoué (✗
+l.4614 (\(\checkmark\)), échoué (✗
                                       ) ou s’il s’agit d’un doublon (�...
 
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.4576 (\(\checkmark\)), échoué (✗
+l.4614 (\(\checkmark\)), échoué (✗
                                       ) ou s’il s’agit d’un doublon (�...
 
 You may provide a definition with
@@ -965,9 +965,9 @@ You may provide a definition with
 
  
 Here is how much of TeX's memory you used:
- 16870 strings out of 476182
- 285780 string characters out of 5795595
- 2008975 words of memory out of 5000000
+ 16875 strings out of 476182
+ 285825 string characters out of 5795595
+ 2005975 words of memory out of 5000000
  38395 multiletter control sequences out of 15000+600000
  617709 words of font info for 79 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191

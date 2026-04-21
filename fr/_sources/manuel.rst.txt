@@ -71,6 +71,8 @@ Des panneaux peuvent être affichés pour:
 
 * afficher et gérer les tournois (panneau tournois),
 
+* afficher les statistiques de performance (panneau Stats),
+
 * calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau EPC),
 
 * afficher les métadonnées de la base de données (panneau métadonnées),
