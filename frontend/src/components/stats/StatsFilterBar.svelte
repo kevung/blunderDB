@@ -81,7 +81,7 @@
         if (idx === -1) {
             localFilter = { ...localFilter, matchLength: [...localFilter.matchLength, ml] };
         } else {
-            localFilter = { ...localFilter, matchLength: localFilter.matchLength.filter(v => v !== ml) };
+            localFilter = { ...localFilter, matchLength: localFilter.matchLength.filter((v) => v !== ml) };
         }
         applyFilter();
     }
@@ -91,30 +91,24 @@
         if (idx === -1) {
             localFilter = { ...localFilter, tournamentIDs: [...localFilter.tournamentIDs, id] };
         } else {
-            localFilter = { ...localFilter, tournamentIDs: localFilter.tournamentIDs.filter(v => v !== id) };
+            localFilter = { ...localFilter, tournamentIDs: localFilter.tournamentIDs.filter((v) => v !== id) };
         }
         applyFilter();
     }
 
     onMount(async () => {
         try {
-            const [players, tournaments, persisted] = await Promise.all([
-                GetAllPlayerNames(),
-                GetAllTournaments(),
-                GetStatsFilter()
-            ]);
+            const [players, tournaments, persisted] = await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsFilter()]);
 
             playerList = players ?? [];
-            tournamentList = (tournaments ?? []).map(t => ({ id: t.id, name: t.name }));
+            tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));
             dbEmpty = playerList.length === 0;
 
             // Restore persisted filter
             if (persisted) {
                 const savedPlayer = persisted.player_name ?? '';
                 // Auto-detect player only if no saved player name
-                const detectedPlayer = (!savedPlayer && playerList.length > 0)
-                    ? playerList[0].Name
-                    : savedPlayer;
+                const detectedPlayer = !savedPlayer && playerList.length > 0 ? playerList[0].Name : savedPlayer;
 
                 localFilter = {
                     playerName: detectedPlayer,
@@ -164,7 +158,10 @@
             class="fb-select"
             disabled={dbEmpty}
             value={localFilter.playerName}
-            onchange={(e) => { localFilter = { ...localFilter, playerName: e.target.value }; applyFilter(); }}
+            onchange={(e) => {
+                localFilter = { ...localFilter, playerName: e.target.value };
+                applyFilter();
+            }}
         >
             <option value="">Toutes perspectives</option>
             {#each playerList as p}
@@ -178,11 +175,7 @@
             <div class="fb-multi">
                 {#each tournamentList as t}
                     <label class="fb-check-label">
-                        <input
-                            type="checkbox"
-                            checked={localFilter.tournamentIDs.includes(t.id)}
-                            onchange={() => toggleTournament(t.id)}
-                        />
+                        <input type="checkbox" checked={localFilter.tournamentIDs.includes(t.id)} onchange={() => toggleTournament(t.id)} />
                         {t.name}
                     </label>
                 {/each}
@@ -197,7 +190,10 @@
             class="fb-date"
             class:date-error={dateError && localFilter.dateFrom > localFilter.dateTo}
             value={localFilter.dateFrom}
-            onchange={(e) => { localFilter = { ...localFilter, dateFrom: e.target.value }; applyFilter(); }}
+            onchange={(e) => {
+                localFilter = { ...localFilter, dateFrom: e.target.value };
+                applyFilter();
+            }}
         />
         <label class="fb-label" for="fb-date-to">À</label>
         <input
@@ -206,7 +202,10 @@
             class="fb-date"
             class:date-error={dateError}
             value={localFilter.dateTo}
-            onchange={(e) => { localFilter = { ...localFilter, dateTo: e.target.value }; applyFilter(); }}
+            onchange={(e) => {
+                localFilter = { ...localFilter, dateTo: e.target.value };
+                applyFilter();
+            }}
         />
 
         <!-- Decision type -->
@@ -219,7 +218,10 @@
                         name="decision-type"
                         value={val}
                         checked={localFilter.decisionType === val}
-                        onchange={() => { localFilter = { ...localFilter, decisionType: val }; applyFilter(); }}
+                        onchange={() => {
+                            localFilter = { ...localFilter, decisionType: val };
+                            applyFilter();
+                        }}
                     />
                     {lbl}
                 </label>
@@ -230,12 +232,7 @@
         <label class="fb-label">Longueur</label>
         <div class="fb-ml-group">
             {#each MATCH_LENGTHS as ml}
-                <button
-                    class="fb-ml-btn"
-                    class:active={localFilter.matchLength.includes(ml)}
-                    onclick={() => toggleMatchLength(ml)}
-                    aria-pressed={localFilter.matchLength.includes(ml)}
-                >{ml}</button>
+                <button class="fb-ml-btn" class:active={localFilter.matchLength.includes(ml)} onclick={() => toggleMatchLength(ml)} aria-pressed={localFilter.matchLength.includes(ml)}>{ml}</button>
             {/each}
         </div>
 

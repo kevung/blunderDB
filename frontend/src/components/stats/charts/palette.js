@@ -21,7 +21,7 @@ export const GRADE_COLORS = [
     '#558b2f', // Expert        (≤ 3.0)
     '#f57f17', // Intermediate  (≤ 5.0)
     '#e65100', // Amateur       (≤ 8.0)
-    '#b71c1c'  // Beginner      (> 8.0)
+    '#b71c1c' // Beginner      (> 8.0)
 ];
 
 // Cube-action breakdown colours

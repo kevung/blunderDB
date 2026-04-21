@@ -323,7 +323,10 @@
                     <p>Tournaments allow grouping matches by event. Open the Tournament panel with <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.</p>
 
                     <h3>Stats</h3>
-                    <p>The Stats panel (<strong>Ctrl+D</strong>) displays performance statistics (PR and MWC cost) computed from all imported positions. Use the filter bar to restrict the analysis by player, tournament, date range, decision type, or match length. Click any indicator to drill down into the corresponding positions.</p>
+                    <p>
+                        The Stats panel (<strong>Ctrl+D</strong>) displays performance statistics (PR and MWC cost) computed from all imported positions. Use the filter bar to restrict the analysis by
+                        player, tournament, date range, decision type, or match length. Click any indicator to drill down into the corresponding positions.
+                    </p>
                 {/if}
 
                 {#if activeTab === 'shortcuts'}

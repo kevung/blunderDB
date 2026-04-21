@@ -28,4 +28,4 @@
     };
 </script>
 
-<BarChart {labels} {datasets} options={histogramOptions} onBarClick={onBarClick} />
+<BarChart {labels} {datasets} options={histogramOptions} {onBarClick} />

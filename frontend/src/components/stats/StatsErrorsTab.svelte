@@ -14,17 +14,19 @@
 
     // ── 1. Cube action breakdown ──────────────────────────────────────────────
     let cubeBreakdown = $derived(result?.CubeActionBreakdown ?? []);
-    let hasCubeData   = $derived(cubeBreakdown.length > 0);
+    let hasCubeData = $derived(cubeBreakdown.length > 0);
 
-    let cubeLabels = $derived(cubeBreakdown.map(c => c.Action));
+    let cubeLabels = $derived(cubeBreakdown.map((c) => c.Action));
 
-    let cubeDatasets = $derived([{
-        label: metric === 'pr' ? 'PR' : 'MWC loss',
-        data: cubeBreakdown.map(c => metric === 'pr' ? c.PR : c.MWC),
-        backgroundColor: PRIMARY,
-        borderColor: PRIMARY,
-        borderWidth: 1,
-    }]);
+    let cubeDatasets = $derived([
+        {
+            label: metric === 'pr' ? 'PR' : 'MWC loss',
+            data: cubeBreakdown.map((c) => (metric === 'pr' ? c.PR : c.MWC)),
+            backgroundColor: PRIMARY,
+            borderColor: PRIMARY,
+            borderWidth: 1
+        }
+    ]);
 
     const cubeChartOptions = {
         plugins: {
@@ -37,10 +39,7 @@
                         const c = cubeBreakdown[idx];
                         if (!c) return [];
                         const rate = blunderRate(c);
-                        return [
-                            `Décisions : ${c.NumDecisions}`,
-                            `Blunders  : ${c.BlunderCount} (${rate}%)`,
-                        ];
+                        return [`Décisions : ${c.NumDecisions}`, `Blunders  : ${c.BlunderCount} (${rate}%)`];
                     }
                 }
             }
@@ -55,21 +54,20 @@
         loadPositionsFromStatsSelection(filter, {
             Kind: 'cube_action',
             CubeAction: c.Action,
-            OnlyWithError: true,
+            OnlyWithError: true
         });
     }
 
     // ── 2. Checker vs Cube comparison ─────────────────────────────────────────
-    let compDatasets = $derived([{
-        label: metric === 'pr' ? 'PR' : 'MWC loss',
-        data: [
-            metric === 'pr' ? (result?.PRChecker ?? 0) : (result?.MWCChecker ?? 0),
-            metric === 'pr' ? (result?.PRCube    ?? 0) : (result?.MWCCube    ?? 0),
-        ],
-        backgroundColor: PRIMARY,
-        borderColor: PRIMARY,
-        borderWidth: 1,
-    }]);
+    let compDatasets = $derived([
+        {
+            label: metric === 'pr' ? 'PR' : 'MWC loss',
+            data: [metric === 'pr' ? (result?.PRChecker ?? 0) : (result?.MWCChecker ?? 0), metric === 'pr' ? (result?.PRCube ?? 0) : (result?.MWCCube ?? 0)],
+            backgroundColor: PRIMARY,
+            borderColor: PRIMARY,
+            borderWidth: 1
+        }
+    ]);
 
     const compChartOptions = {
         plugins: { legend: { display: false } },
@@ -83,17 +81,19 @@
     }
 
     // ── 3. Error magnitude histogram ──────────────────────────────────────────
-    let histogram   = $derived(result?.ErrorHistogram ?? []);
-    let hasHistData = $derived(histogram.some(b => b.Count > 0));
+    let histogram = $derived(result?.ErrorHistogram ?? []);
+    let hasHistData = $derived(histogram.some((b) => b.Count > 0));
 
-    let histLabels   = $derived(histogram.map(bucketLabel));
-    let histDatasets = $derived([{
-        label: 'Positions',
-        data: histogram.map(b => b.Count),
-        backgroundColor: PRIMARY,
-        borderColor: PRIMARY,
-        borderWidth: 1,
-    }]);
+    let histLabels = $derived(histogram.map(bucketLabel));
+    let histDatasets = $derived([
+        {
+            label: 'Positions',
+            data: histogram.map((b) => b.Count),
+            backgroundColor: PRIMARY,
+            borderColor: PRIMARY,
+            borderWidth: 1
+        }
+    ]);
 
     const histChartOptions = {
         plugins: { legend: { display: false } },
@@ -107,7 +107,7 @@
         loadPositionsFromStatsSelection(filter, {
             Kind: 'error_bucket',
             BucketMinMP: b.MinMP,
-            BucketMaxMP: b.MaxMP,
+            BucketMaxMP: b.MaxMP
         });
     }
 
@@ -143,12 +143,7 @@
             <p class="empty-subsection">Aucune décision cube sur la période.</p>
         {:else}
             <div class="chart-wrapper">
-                <BarChart
-                    labels={cubeLabels}
-                    datasets={cubeDatasets}
-                    options={cubeChartOptions}
-                    onBarClick={handleCubeBarClick}
-                />
+                <BarChart labels={cubeLabels} datasets={cubeDatasets} options={cubeChartOptions} onBarClick={handleCubeBarClick} />
             </div>
         {/if}
     </section>
@@ -157,12 +152,7 @@
     <section class="chart-section">
         <h3 class="section-title">Checker vs Cube ({yAxisLabel()})</h3>
         <div class="chart-wrapper chart-wrapper--small">
-            <BarChart
-                labels={['Checker', 'Cube']}
-                datasets={compDatasets}
-                options={compChartOptions}
-                onBarClick={handleCompBarClick}
-            />
+            <BarChart labels={['Checker', 'Cube']} datasets={compDatasets} options={compChartOptions} onBarClick={handleCompBarClick} />
         </div>
     </section>
 
@@ -173,12 +163,7 @@
             <p class="empty-subsection">Aucune erreur dans cette période.</p>
         {:else}
             <div class="chart-wrapper">
-                <Histogram
-                    labels={histLabels}
-                    datasets={histDatasets}
-                    options={histChartOptions}
-                    onBarClick={handleHistBarClick}
-                />
+                <Histogram labels={histLabels} datasets={histDatasets} options={histChartOptions} onBarClick={handleHistBarClick} />
             </div>
         {/if}
     </section>

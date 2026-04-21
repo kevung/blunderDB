@@ -1,12 +1,6 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
-    import {
-        statsFilterStore,
-        statsResultStore,
-        statsLoadingStore,
-        statsMetricStore,
-        refreshStats
-    } from '../../stores/statsStore.js';
+    import { statsFilterStore, statsResultStore, statsLoadingStore, statsMetricStore, refreshStats } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
     import StatsFilterBar from './StatsFilterBar.svelte';
     import StatsDashboardTab from './StatsDashboardTab.svelte';
@@ -35,63 +29,35 @@
 </script>
 
 <section class="stats-panel" role="region" aria-label="Stats">
-        <header class="stats-header">
-            <h2 class="stats-title">Stats</h2>
-            <div class="metric-toggle" role="group" aria-label="Metric">
-                <button
-                    class="metric-btn"
-                    class:active={$statsMetricStore === 'pr'}
-                    onclick={() => statsMetricStore.set('pr')}
-                    aria-pressed={$statsMetricStore === 'pr'}
-                >PR</button>
-                <button
-                    class="metric-btn"
-                    class:active={$statsMetricStore === 'mwc'}
-                    onclick={() => statsMetricStore.set('mwc')}
-                    aria-pressed={$statsMetricStore === 'mwc'}
-                >MWC</button>
-            </div>
-            <button class="close-btn" onclick={handleClose} aria-label="Close stats panel">✕</button>
-        </header>
-
-        <StatsFilterBar />
-
-        <nav class="tabs" role="tablist">
-            <button
-                class="tab-btn"
-                class:active={activeTab === 'dashboard'}
-                role="tab"
-                aria-selected={activeTab === 'dashboard'}
-                onclick={() => (activeTab = 'dashboard')}
-            >Dashboard</button>
-            <button
-                class="tab-btn"
-                class:active={activeTab === 'progression'}
-                role="tab"
-                aria-selected={activeTab === 'progression'}
-                onclick={() => (activeTab = 'progression')}
-            >Progression</button>
-            <button
-                class="tab-btn"
-                class:active={activeTab === 'errors'}
-                role="tab"
-                aria-selected={activeTab === 'errors'}
-                onclick={() => (activeTab = 'errors')}
-            >Errors</button>
-        </nav>
-
-        <div class="tab-content" role="tabpanel">
-            {#if $statsLoadingStore}
-                <p class="loading-msg">Loading…</p>
-            {:else if activeTab === 'dashboard'}
-                <StatsDashboardTab result={$statsResultStore} metric={$statsMetricStore} />
-            {:else if activeTab === 'progression'}
-                <StatsProgressionTab result={$statsResultStore} metric={$statsMetricStore} />
-            {:else if activeTab === 'errors'}
-                <StatsErrorsTab result={$statsResultStore} metric={$statsMetricStore} />
-            {/if}
+    <header class="stats-header">
+        <h2 class="stats-title">Stats</h2>
+        <div class="metric-toggle" role="group" aria-label="Metric">
+            <button class="metric-btn" class:active={$statsMetricStore === 'pr'} onclick={() => statsMetricStore.set('pr')} aria-pressed={$statsMetricStore === 'pr'}>PR</button>
+            <button class="metric-btn" class:active={$statsMetricStore === 'mwc'} onclick={() => statsMetricStore.set('mwc')} aria-pressed={$statsMetricStore === 'mwc'}>MWC</button>
         </div>
-    </section>
+        <button class="close-btn" onclick={handleClose} aria-label="Close stats panel">✕</button>
+    </header>
+
+    <StatsFilterBar />
+
+    <nav class="tabs" role="tablist">
+        <button class="tab-btn" class:active={activeTab === 'dashboard'} role="tab" aria-selected={activeTab === 'dashboard'} onclick={() => (activeTab = 'dashboard')}>Dashboard</button>
+        <button class="tab-btn" class:active={activeTab === 'progression'} role="tab" aria-selected={activeTab === 'progression'} onclick={() => (activeTab = 'progression')}>Progression</button>
+        <button class="tab-btn" class:active={activeTab === 'errors'} role="tab" aria-selected={activeTab === 'errors'} onclick={() => (activeTab = 'errors')}>Errors</button>
+    </nav>
+
+    <div class="tab-content" role="tabpanel">
+        {#if $statsLoadingStore}
+            <p class="loading-msg">Loading…</p>
+        {:else if activeTab === 'dashboard'}
+            <StatsDashboardTab result={$statsResultStore} metric={$statsMetricStore} />
+        {:else if activeTab === 'progression'}
+            <StatsProgressionTab result={$statsResultStore} metric={$statsMetricStore} />
+        {:else if activeTab === 'errors'}
+            <StatsErrorsTab result={$statsResultStore} metric={$statsMetricStore} />
+        {/if}
+    </div>
+</section>
 
 <style>
     .stats-panel {
@@ -182,7 +148,9 @@
         font-size: 11px;
         cursor: pointer;
         color: #555;
-        transition: border-color 0.1s, color 0.1s;
+        transition:
+            border-color 0.1s,
+            color 0.1s;
     }
 
     .tab-btn:hover {

@@ -1,10 +1,5 @@
 <script>
-    import {
-        loadPositionsFromTournament,
-        loadPositionsFromMatch,
-        openTournamentInPanel,
-        openMatchInPanel
-    } from '../../services/positionLoader.js';
+    import { loadPositionsFromTournament, loadPositionsFromMatch, openTournamentInPanel, openMatchInPanel } from '../../services/positionLoader.js';
     import LineChart from './charts/LineChart.svelte';
     import ScatterChart from './charts/ScatterChart.svelte';
     import ContextMenu from './ContextMenu.svelte';
@@ -29,21 +24,23 @@
 
     // ── Derived data ──────────────────────────────────────────────────────────
     let tournaments = $derived(result?.PerTournament ?? []);
-    let matches     = $derived(result?.PerMatch ?? []);
+    let matches = $derived(result?.PerMatch ?? []);
 
     // ── Tournament line chart ─────────────────────────────────────────────────
-    let tourLabels = $derived(tournaments.map(t => truncateLabel(t.Name)));
+    let tourLabels = $derived(tournaments.map((t) => truncateLabel(t.Name)));
 
-    let tourDatasets = $derived([{
-        label: metric === 'pr' ? 'PR' : 'MWC loss',
-        data: tournaments.map(t => metric === 'pr' ? t.PR : t.MWC),
-        borderColor: PRIMARY,
-        backgroundColor: PRIMARY_ALPHA,
-        tension: 0.3,
-        pointRadius: 5,
-        pointHoverRadius: 7,
-        fill: false,
-    }]);
+    let tourDatasets = $derived([
+        {
+            label: metric === 'pr' ? 'PR' : 'MWC loss',
+            data: tournaments.map((t) => (metric === 'pr' ? t.PR : t.MWC)),
+            borderColor: PRIMARY,
+            backgroundColor: PRIMARY_ALPHA,
+            tension: 0.3,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            fill: false
+        }
+    ]);
 
     const tourChartOptions = {
         plugins: { legend: { display: false } },
@@ -57,22 +54,24 @@
         if (!t) return;
         showMenu(nativeEvent, [
             { label: 'Open tournament', onClick: () => openTournamentInPanel(t.ID) },
-            { label: 'Open positions',  onClick: () => loadPositionsFromTournament(t.ID) },
+            { label: 'Open positions', onClick: () => loadPositionsFromTournament(t.ID) }
         ]);
     }
 
     // ── Match scatter chart ───────────────────────────────────────────────────
-    let matchDatasets = $derived([{
-        label: metric === 'pr' ? 'PR per match' : 'MWC loss per match',
-        data: matches.map(m => ({
-            x: parseDateMs(m.Date),
-            y: metric === 'pr' ? m.PR : m.MWC,
-        })),
-        backgroundColor: PRIMARY_ALPHA,
-        borderColor: PRIMARY,
-        pointRadius: matches.map(m => clampRadius(m.NumDecisions)),
-        pointHoverRadius: matches.map(m => clampRadius(m.NumDecisions) + 2),
-    }]);
+    let matchDatasets = $derived([
+        {
+            label: metric === 'pr' ? 'PR per match' : 'MWC loss per match',
+            data: matches.map((m) => ({
+                x: parseDateMs(m.Date),
+                y: metric === 'pr' ? m.PR : m.MWC
+            })),
+            backgroundColor: PRIMARY_ALPHA,
+            borderColor: PRIMARY,
+            pointRadius: matches.map((m) => clampRadius(m.NumDecisions)),
+            pointHoverRadius: matches.map((m) => clampRadius(m.NumDecisions) + 2)
+        }
+    ]);
 
     const scatterChartOptions = {
         plugins: { legend: { display: false } },
@@ -91,8 +90,8 @@
         const m = matches[dataIndex];
         if (!m) return;
         showMenu(nativeEvent, [
-            { label: 'Open match',     onClick: () => openMatchInPanel(m.ID) },
-            { label: 'Open positions', onClick: () => loadPositionsFromMatch(m.ID) },
+            { label: 'Open match', onClick: () => openMatchInPanel(m.ID) },
+            { label: 'Open positions', onClick: () => loadPositionsFromMatch(m.ID) }
         ]);
     }
 
@@ -133,10 +132,7 @@
 
 {#if !result || (tournaments.length === 0 && matches.length === 0)}
     <!-- ── Empty state ──────────────────────────────────────────────────────── -->
-    <p class="empty-state">
-        Aucun tournoi dans la période. Importez des matchs taggués avec un tournoi pour voir votre
-        progression.
-    </p>
+    <p class="empty-state">Aucun tournoi dans la période. Importez des matchs taggués avec un tournoi pour voir votre progression.</p>
 {:else}
     <!-- ── Tournament line chart ────────────────────────────────────────────── -->
     <section class="chart-section">
@@ -159,13 +155,7 @@
             </div>
         {:else}
             <div class="chart-wrap">
-                <LineChart
-                    labels={tourLabels}
-                    datasets={tourDatasets}
-                    options={tourChartOptions}
-                    plugins={[gradeBandPlugin]}
-                    onPointClick={handleTourClick}
-                />
+                <LineChart labels={tourLabels} datasets={tourDatasets} options={tourChartOptions} plugins={[gradeBandPlugin]} onPointClick={handleTourClick} />
             </div>
         {/if}
     </section>
@@ -175,12 +165,7 @@
         <section class="chart-section">
             <h3 class="section-title">PR par match ({yAxisLabel()})</h3>
             <div class="chart-wrap">
-                <ScatterChart
-                    datasets={matchDatasets}
-                    options={scatterChartOptions}
-                    plugins={[gradeBandPlugin]}
-                    onPointClick={handleMatchClick}
-                />
+                <ScatterChart datasets={matchDatasets} options={scatterChartOptions} plugins={[gradeBandPlugin]} onPointClick={handleMatchClick} />
             </div>
             <p class="chart-hint">La taille du point est proportionnelle au nombre de décisions.</p>
         </section>
@@ -199,12 +184,7 @@
 
 <!-- ── Context menu ──────────────────────────────────────────────────────────── -->
 {#if contextMenu}
-    <ContextMenu
-        x={contextMenu.x}
-        y={contextMenu.y}
-        items={contextMenu.items}
-        onClose={() => (contextMenu = null)}
-    />
+    <ContextMenu x={contextMenu.x} y={contextMenu.y} items={contextMenu.items} onClose={() => (contextMenu = null)} />
 {/if}
 
 <style>
@@ -312,4 +292,3 @@
         white-space: nowrap;
     }
 </style>
-

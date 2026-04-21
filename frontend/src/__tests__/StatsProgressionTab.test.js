@@ -5,19 +5,19 @@ import { get } from 'svelte/store';
 
 vi.mock('../../wailsjs/go/main/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn().mockResolvedValue([]),
-    GetPositionIDsByTournament:     vi.fn().mockResolvedValue([10, 11, 12]),
-    GetPositionIDsByMatch:          vi.fn().mockResolvedValue([20, 21]),
-    LoadPositionsByFilters:         vi.fn().mockResolvedValue([])
+    GetPositionIDsByTournament: vi.fn().mockResolvedValue([10, 11, 12]),
+    GetPositionIDsByMatch: vi.fn().mockResolvedValue([20, 21]),
+    LoadPositionsByFilters: vi.fn().mockResolvedValue([])
 }));
 
 vi.mock('../stores/uiStore.js', () => {
     const { writable } = require('svelte/store');
     return {
-        activeTabStore:             writable('analysis'),
-        openPanel:                  vi.fn(),
+        activeTabStore: writable('analysis'),
+        openPanel: vi.fn(),
         PANEL: { ANALYSIS: 'analysis', MATCH: 'match', TOURNAMENT: 'tournament', STATS: 'stats' },
-        statusBarTextStore:         writable(''),
-        currentPositionIndexStore:  writable(0)
+        statusBarTextStore: writable(''),
+        currentPositionIndexStore: writable(0)
     };
 });
 
@@ -40,44 +40,57 @@ vi.mock('../stores/positionStore.js', () => {
 import { GetPositionIDsByTournament, GetPositionIDsByMatch } from '../../wailsjs/go/main/Database.js';
 import { activeTabStore } from '../stores/uiStore.js';
 import { selectedTournamentStore } from '../stores/tournamentStore.js';
-import {
-    loadPositionsFromTournament,
-    loadPositionsFromMatch,
-    openTournamentInPanel,
-} from '../services/positionLoader.js';
+import { loadPositionsFromTournament, loadPositionsFromMatch, openTournamentInPanel } from '../services/positionLoader.js';
 import { GRADE_BANDS, gradeForPR, makeGradeBandPlugin } from '../components/stats/gradeBands.js';
 
 // ── Sample data ───────────────────────────────────────────────────────────────
 
 const SAMPLE_TOURNAMENTS = [
-    { ID: 1, Name: 'Open de Paris',  Date: '2025-01-10', PR: 3.5,  MWC: 0.021, NumDecisions: 120 },
-    { ID: 2, Name: 'Monte Carlo BG', Date: '2025-04-05', PR: 2.8,  MWC: 0.017, NumDecisions: 95  },
-    { ID: 3, Name: 'World Cup 2025', Date: '2025-09-20', PR: 4.1,  MWC: 0.025, NumDecisions: 200 },
+    { ID: 1, Name: 'Open de Paris', Date: '2025-01-10', PR: 3.5, MWC: 0.021, NumDecisions: 120 },
+    { ID: 2, Name: 'Monte Carlo BG', Date: '2025-04-05', PR: 2.8, MWC: 0.017, NumDecisions: 95 },
+    { ID: 3, Name: 'World Cup 2025', Date: '2025-09-20', PR: 4.1, MWC: 0.025, NumDecisions: 200 }
 ];
 
 const SAMPLE_MATCHES = [
-    { ID: 10, Date: '2025-01-15T12:00:00Z', PlayerName: 'Alice', PR: 3.2,  MWC: 0.019, NumDecisions: 40 },
-    { ID: 11, Date: '2025-02-20T15:30:00Z', PlayerName: 'Bob',   PR: 5.0,  MWC: 0.031, NumDecisions: 28 },
-    { ID: 12, Date: '2025-03-10T09:00:00Z', PlayerName: 'Carol', PR: 2.1,  MWC: 0.013, NumDecisions: 55 },
+    { ID: 10, Date: '2025-01-15T12:00:00Z', PlayerName: 'Alice', PR: 3.2, MWC: 0.019, NumDecisions: 40 },
+    { ID: 11, Date: '2025-02-20T15:30:00Z', PlayerName: 'Bob', PR: 5.0, MWC: 0.031, NumDecisions: 28 },
+    { ID: 12, Date: '2025-03-10T09:00:00Z', PlayerName: 'Carol', PR: 2.1, MWC: 0.013, NumDecisions: 55 }
 ];
 
 const SAMPLE_RESULT = {
     Totals: { NumPositions: 415, NumMatches: 3, NumTournaments: 3, NumDecisions: 415 },
-    PRGlobal: 3.5, PRChecker: 3.1, PRCube: 4.2,
+    PRGlobal: 3.5,
+    PRChecker: 3.1,
+    PRCube: 4.2,
     PRRolling: { 5: 2.8, 10: 3.0, 50: 3.4 },
-    MWCGlobal: 0.021, MWCChecker: 0.018, MWCCube: 0.026,
-    MWCRolling: null, MWCAvailable: true,
+    MWCGlobal: 0.021,
+    MWCChecker: 0.018,
+    MWCCube: 0.026,
+    MWCRolling: null,
+    MWCAvailable: true,
     PerTournament: SAMPLE_TOURNAMENTS,
     PerMatch: SAMPLE_MATCHES,
-    CubeActionBreakdown: [], ErrorHistogram: [], TopBlunders: []
+    CubeActionBreakdown: [],
+    ErrorHistogram: [],
+    TopBlunders: []
 };
 
 const EMPTY_RESULT = {
     Totals: { NumPositions: 0, NumMatches: 0, NumTournaments: 0, NumDecisions: 0 },
-    PRGlobal: 0, PRChecker: 0, PRCube: 0, PRRolling: {},
-    MWCGlobal: 0, MWCChecker: 0, MWCCube: 0, MWCRolling: null, MWCAvailable: false,
-    PerTournament: [], PerMatch: [],
-    CubeActionBreakdown: [], ErrorHistogram: [], TopBlunders: []
+    PRGlobal: 0,
+    PRChecker: 0,
+    PRCube: 0,
+    PRRolling: {},
+    MWCGlobal: 0,
+    MWCChecker: 0,
+    MWCCube: 0,
+    MWCRolling: null,
+    MWCAvailable: false,
+    PerTournament: [],
+    PerMatch: [],
+    CubeActionBreakdown: [],
+    ErrorHistogram: [],
+    TopBlunders: []
 };
 
 // ── Helpers (mirrors component logic) ────────────────────────────────────────
@@ -97,21 +110,25 @@ function parseDateMs(dateStr) {
 }
 
 function buildTourDatasets(tournaments, metric) {
-    return [{
-        label: metric === 'pr' ? 'PR' : 'MWC loss',
-        data: tournaments.map(t => metric === 'pr' ? t.PR : t.MWC),
-    }];
+    return [
+        {
+            label: metric === 'pr' ? 'PR' : 'MWC loss',
+            data: tournaments.map((t) => (metric === 'pr' ? t.PR : t.MWC))
+        }
+    ];
 }
 
 function buildMatchDatasets(matches, metric) {
-    return [{
-        label: metric === 'pr' ? 'PR per match' : 'MWC loss per match',
-        data: matches.map(m => ({
-            x: parseDateMs(m.Date),
-            y: metric === 'pr' ? m.PR : m.MWC,
-        })),
-        pointRadius: matches.map(m => clampRadius(m.NumDecisions)),
-    }];
+    return [
+        {
+            label: metric === 'pr' ? 'PR per match' : 'MWC loss per match',
+            data: matches.map((m) => ({
+                x: parseDateMs(m.Date),
+                y: metric === 'pr' ? m.PR : m.MWC
+            })),
+            pointRadius: matches.map((m) => clampRadius(m.NumDecisions))
+        }
+    ];
 }
 
 // ── Tests: gradeBands.js ──────────────────────────────────────────────────────
@@ -192,13 +209,13 @@ describe('makeGradeBandPlugin', () => {
         const plugin = makeGradeBandPlugin(GRADE_BANDS);
         const mockChart = {
             ctx: {
-                save:        vi.fn(),
-                restore:     vi.fn(),
-                beginPath:   vi.fn(),
-                rect:        vi.fn(),
-                clip:        vi.fn(),
-                fillRect:    vi.fn(),
-                fillStyle:   '',
+                save: vi.fn(),
+                restore: vi.fn(),
+                beginPath: vi.fn(),
+                rect: vi.fn(),
+                clip: vi.fn(),
+                fillRect: vi.fn(),
+                fillStyle: ''
             },
             chartArea: { top: 0, bottom: 300, left: 0, right: 400 },
             scales: {
@@ -226,7 +243,7 @@ describe('StatsProgressionTab — tournament dataset (PR mode)', () => {
 
     test('dataset values match tournament PRs', () => {
         const ds = buildTourDatasets(SAMPLE_TOURNAMENTS, 'pr');
-        expect(ds[0].data).toEqual(SAMPLE_TOURNAMENTS.map(t => t.PR));
+        expect(ds[0].data).toEqual(SAMPLE_TOURNAMENTS.map((t) => t.PR));
     });
 
     test('dataset label says PR in pr mode', () => {
@@ -238,7 +255,7 @@ describe('StatsProgressionTab — tournament dataset (PR mode)', () => {
 describe('StatsProgressionTab — tournament dataset (MWC mode)', () => {
     test('dataset values switch to MWC', () => {
         const ds = buildTourDatasets(SAMPLE_TOURNAMENTS, 'mwc');
-        expect(ds[0].data).toEqual(SAMPLE_TOURNAMENTS.map(t => t.MWC));
+        expect(ds[0].data).toEqual(SAMPLE_TOURNAMENTS.map((t) => t.MWC));
     });
 
     test('dataset label says MWC loss in mwc mode', () => {
@@ -263,12 +280,12 @@ describe('StatsProgressionTab — match scatter dataset', () => {
 
     test('y values match PR', () => {
         const ds = buildMatchDatasets(SAMPLE_MATCHES, 'pr');
-        expect(ds[0].data.map(p => p.y)).toEqual(SAMPLE_MATCHES.map(m => m.PR));
+        expect(ds[0].data.map((p) => p.y)).toEqual(SAMPLE_MATCHES.map((m) => m.PR));
     });
 
     test('y values switch to MWC in mwc mode', () => {
         const ds = buildMatchDatasets(SAMPLE_MATCHES, 'mwc');
-        expect(ds[0].data.map(p => p.y)).toEqual(SAMPLE_MATCHES.map(m => m.MWC));
+        expect(ds[0].data.map((p) => p.y)).toEqual(SAMPLE_MATCHES.map((m) => m.MWC));
     });
 
     test('point radius is clamped between 4 and 12', () => {

@@ -50,12 +50,7 @@ vi.mock('../stores/positionStore.js', () => {
     };
 });
 
-import {
-    GetPositionIDsByStatsSelection,
-    GetPositionIDsByTournament,
-    GetPositionIDsByMatch,
-    LoadPositionsByFilters
-} from '../../wailsjs/go/main/Database.js';
+import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionsByFilters } from '../../wailsjs/go/main/Database.js';
 
 import {
     loadPositionsFromSelection,
@@ -134,9 +129,7 @@ describe('loadPositionsFromSelection', () => {
     test('passes comma-separated IDs as restrictToPositionIDs', async () => {
         LoadPositionsByFilters.mockResolvedValue([{ id: 1 }, { id: 2 }, { id: 3 }]);
         await loadPositionsFromSelection([1, 2, 3]);
-        expect(LoadPositionsByFilters).toHaveBeenCalledWith(
-            expect.objectContaining({ restrictToPositionIDs: '1,2,3' })
-        );
+        expect(LoadPositionsByFilters).toHaveBeenCalledWith(expect.objectContaining({ restrictToPositionIDs: '1,2,3' }));
     });
 });
 

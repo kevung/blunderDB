@@ -47,11 +47,11 @@ import { activeTabStore } from '../stores/uiStore.js';
 const SAMPLE_RESULT = {
     Totals: { NumPositions: 100, NumMatches: 10, NumTournaments: 3, NumDecisions: 250 },
     PRGlobal: 4.25,
-    PRChecker: 3.80,
-    PRCube: 5.10,
+    PRChecker: 3.8,
+    PRCube: 5.1,
     PRRolling: { 5: 3.1, 10: 3.5, 50: 4.0, 100: 4.1, 250: 4.25 },
     MWCGlobal: 0.0512,
-    MWCChecker: 0.0310,
+    MWCChecker: 0.031,
     MWCCube: 0.0202,
     MWCRolling: null,
     MWCAvailable: true,
@@ -87,12 +87,19 @@ const SAMPLE_RESULT = {
 
 const EMPTY_RESULT = {
     Totals: { NumPositions: 0, NumMatches: 0, NumTournaments: 0, NumDecisions: 0 },
-    PRGlobal: 0, PRChecker: 0, PRCube: 0,
+    PRGlobal: 0,
+    PRChecker: 0,
+    PRCube: 0,
     PRRolling: {},
-    MWCGlobal: 0, MWCChecker: 0, MWCCube: 0,
-    MWCRolling: null, MWCAvailable: false,
-    PerTournament: [], PerMatch: [],
-    CubeActionBreakdown: [], ErrorHistogram: [],
+    MWCGlobal: 0,
+    MWCChecker: 0,
+    MWCCube: 0,
+    MWCRolling: null,
+    MWCAvailable: false,
+    PerTournament: [],
+    PerMatch: [],
+    CubeActionBreakdown: [],
+    ErrorHistogram: [],
     TopBlunders: []
 };
 
@@ -100,8 +107,12 @@ const EMPTY_RESULT = {
 
 function cardValue(result, metric, kind) {
     if (!result) return '—';
-    function fmtPR(v) { return (v == null || isNaN(v)) ? '—' : v.toFixed(2); }
-    function fmtMWC(v) { return (v == null || isNaN(v)) ? '—' : v.toFixed(4); }
+    function fmtPR(v) {
+        return v == null || isNaN(v) ? '—' : v.toFixed(2);
+    }
+    function fmtMWC(v) {
+        return v == null || isNaN(v) ? '—' : v.toFixed(4);
+    }
     if (metric === 'pr') {
         if (kind === 'all') return fmtPR(result.PRGlobal);
         if (kind === 'checker') return fmtPR(result.PRChecker);

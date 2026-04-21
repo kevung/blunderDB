@@ -20,7 +20,7 @@ vi.mock('../../wailsjs/go/main/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn(),
     GetPositionIDsByTournament: vi.fn(),
     GetPositionIDsByMatch: vi.fn(),
-    LoadPositionsByFilters: vi.fn(),
+    LoadPositionsByFilters: vi.fn()
 }));
 
 vi.mock('../stores/uiStore.js', () => {
@@ -33,11 +33,11 @@ vi.mock('../stores/uiStore.js', () => {
             ANALYSIS: 'analysis',
             MATCH: 'match',
             TOURNAMENT: 'tournament',
-            STATS: 'stats',
+            STATS: 'stats'
         },
         statusBarTextStore: writable(''),
         currentPositionIndexStore: writable(0),
-        openPanels: writable(new Set()),
+        openPanels: writable(new Set())
     };
 });
 
@@ -58,27 +58,11 @@ vi.mock('../stores/positionStore.js', () => {
 
 // ── Imports (after mocks) ─────────────────────────────────────────────────────
 
-import {
-    ComputeStats,
-    GetPositionIDsByStatsSelection,
-    GetPositionIDsByTournament,
-    LoadPositionsByFilters,
-} from '../../wailsjs/go/main/Database.js';
+import { ComputeStats, GetPositionIDsByStatsSelection, GetPositionIDsByTournament, LoadPositionsByFilters } from '../../wailsjs/go/main/Database.js';
 
-import {
-    statsFilterStore,
-    statsResultStore,
-    statsLoadingStore,
-    statsErrorStore,
-    statsMetricStore,
-    refreshStats,
-} from '../stores/statsStore.js';
+import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
-import {
-    loadPositionsFromStatsSelection,
-    loadPositionsFromTournament,
-    openTournamentInPanel,
-} from '../services/positionLoader.js';
+import { loadPositionsFromStatsSelection, loadPositionsFromTournament, openTournamentInPanel } from '../services/positionLoader.js';
 
 import { activeTabStore } from '../stores/uiStore.js';
 import { selectedTournamentStore } from '../stores/tournamentStore.js';
@@ -88,44 +72,50 @@ import { positionsStore } from '../stores/positionStore.js';
 
 const SAMPLE_RESULT = {
     Totals: { NumPositions: 300, NumMatches: 8, NumTournaments: 3, NumDecisions: 300 },
-    PRGlobal: 4.50,
-    PRChecker: 4.00,
-    PRCube: 5.50,
+    PRGlobal: 4.5,
+    PRChecker: 4.0,
+    PRCube: 5.5,
     PRRolling: { 5: 3.5, 10: 4.0, 50: 4.3, 100: 4.4, 250: 4.5 },
-    MWCGlobal: 0.0540,
-    MWCChecker: 0.0380,
-    MWCCube: 0.0440,
+    MWCGlobal: 0.054,
+    MWCChecker: 0.038,
+    MWCCube: 0.044,
     MWCRolling: { 5: 0.031, 10: 0.038, 50: 0.048, 100: 0.051, 250: 0.054 },
     MWCAvailable: true,
     PerTournament: [
-        { ID: 10, Name: 'Open de Paris',    PR: 3.8, MWC: 0.020, NumDecisions: 120 },
-        { ID: 11, Name: 'Monte Carlo BG',   PR: 5.2, MWC: 0.031, NumDecisions: 80  },
-        { ID: 12, Name: 'World Cup Finals', PR: 4.6, MWC: 0.028, NumDecisions: 100 },
+        { ID: 10, Name: 'Open de Paris', PR: 3.8, MWC: 0.02, NumDecisions: 120 },
+        { ID: 11, Name: 'Monte Carlo BG', PR: 5.2, MWC: 0.031, NumDecisions: 80 },
+        { ID: 12, Name: 'World Cup Finals', PR: 4.6, MWC: 0.028, NumDecisions: 100 }
     ],
     PerMatch: [
         { ID: 1, Date: '2025-01-10T00:00:00Z', PlayerName: 'Alice', PR: 3.2, MWC: 0.018, NumDecisions: 40 },
-        { ID: 2, Date: '2025-02-20T00:00:00Z', PlayerName: 'Alice', PR: 5.9, MWC: 0.036, NumDecisions: 25 },
+        { ID: 2, Date: '2025-02-20T00:00:00Z', PlayerName: 'Alice', PR: 5.9, MWC: 0.036, NumDecisions: 25 }
     ],
     CubeActionBreakdown: [
-        { Action: 'NoDouble',   PR: 3.5, MWC: 0.021, NumDecisions: 80,  BlunderCount: 5 },
-        { Action: 'DoubleTake', PR: 6.2, MWC: 0.040, NumDecisions: 60,  BlunderCount: 12 },
-        { Action: 'DoublePass', PR: 2.1, MWC: 0.012, NumDecisions: 30,  BlunderCount: 2 },
+        { Action: 'NoDouble', PR: 3.5, MWC: 0.021, NumDecisions: 80, BlunderCount: 5 },
+        { Action: 'DoubleTake', PR: 6.2, MWC: 0.04, NumDecisions: 60, BlunderCount: 12 },
+        { Action: 'DoublePass', PR: 2.1, MWC: 0.012, NumDecisions: 30, BlunderCount: 2 }
     ],
     ErrorHistogram: [
-        { MinMP: 0,   MaxMP: 5,   Count: 150 },
-        { MinMP: 5,   MaxMP: 10,  Count: 80  },
-        { MinMP: 10,  MaxMP: 25,  Count: 40  },
-        { MinMP: 25,  MaxMP: 50,  Count: 20  },
-        { MinMP: 50,  MaxMP: 100, Count: 8   },
-        { MinMP: 100, MaxMP: -1,  Count: 2   },
+        { MinMP: 0, MaxMP: 5, Count: 150 },
+        { MinMP: 5, MaxMP: 10, Count: 80 },
+        { MinMP: 10, MaxMP: 25, Count: 40 },
+        { MinMP: 25, MaxMP: 50, Count: 20 },
+        { MinMP: 50, MaxMP: 100, Count: 8 },
+        { MinMP: 100, MaxMP: -1, Count: 2 }
     ],
     TopBlunders: [
         {
-            PositionID: 42, MatchID: 1, TournamentID: 10,
-            ErrorMP: 450, MWCLoss: 0.0, Description: '', DecisionType: 0,
-            MatchDate: '2025-01-10T00:00:00Z', PlayerNames: 'Alice vs Bob',
-        },
-    ],
+            PositionID: 42,
+            MatchID: 1,
+            TournamentID: 10,
+            ErrorMP: 450,
+            MWCLoss: 0.0,
+            Description: '',
+            DecisionType: 0,
+            MatchDate: '2025-01-10T00:00:00Z',
+            PlayerNames: 'Alice vs Bob'
+        }
+    ]
 };
 
 // ── Reset helpers ─────────────────────────────────────────────────────────────
@@ -141,7 +131,7 @@ function resetAll() {
         dateFrom: '',
         dateTo: '',
         decisionType: -1,
-        matchLength: [],
+        matchLength: []
     });
     positionsStore.set([]);
     activeTabStore.set('analysis');
@@ -222,28 +212,19 @@ describe('Integration: Dashboard card click triggers drill-down', () => {
     test('clicking "all" card calls GetPositionIDsByStatsSelection with Kind=all', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'all', OnlyWithError: false });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'all', OnlyWithError: false }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'all', OnlyWithError: false });
     });
 
     test('clicking "checker" card calls GetPositionIDsByStatsSelection with Kind=checker', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'checker', OnlyWithError: false });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'checker', OnlyWithError: false }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'checker', OnlyWithError: false });
     });
 
     test('clicking "cube" card calls GetPositionIDsByStatsSelection with Kind=cube', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'cube', OnlyWithError: false });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'cube', OnlyWithError: false }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'cube', OnlyWithError: false });
     });
 
     test('drill-down loads positions into positionsStore', async () => {
@@ -272,19 +253,13 @@ describe('Integration: rolling-N click triggers last_n drill-down', () => {
     test('clicking N=10 calls GetPositionIDsByStatsSelection with Kind=last_n LastN=10', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'last_n', LastN: 10 });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'last_n', LastN: 10 }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'last_n', LastN: 10 });
     });
 
     test('clicking N=50 calls GetPositionIDsByStatsSelection with Kind=last_n LastN=50', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, { Kind: 'last_n', LastN: 50 });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'last_n', LastN: 50 }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'last_n', LastN: 50 });
     });
 });
 
@@ -379,30 +354,30 @@ describe('Integration: Errors tab — cube action bar click', () => {
     test('clicking NoDouble bar produces Kind=cube_action CubeAction=NoDouble', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, {
-            Kind: 'cube_action', CubeAction: 'NoDouble', OnlyWithError: true,
+            Kind: 'cube_action',
+            CubeAction: 'NoDouble',
+            OnlyWithError: true
         });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'cube_action', CubeAction: 'NoDouble', OnlyWithError: true }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'cube_action', CubeAction: 'NoDouble', OnlyWithError: true });
     });
 
     test('clicking a histogram bucket calls loadPositionsFromStatsSelection with Kind=error_bucket', async () => {
         const filter = get(statsFilterStore);
         // Bucket: 5–10 mp
         await loadPositionsFromStatsSelection(filter, {
-            Kind: 'error_bucket', BucketMinMP: 5, BucketMaxMP: 10,
+            Kind: 'error_bucket',
+            BucketMinMP: 5,
+            BucketMaxMP: 10
         });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'error_bucket', BucketMinMP: 5, BucketMaxMP: 10 }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'error_bucket', BucketMinMP: 5, BucketMaxMP: 10 });
     });
 
     test('DoubleTake drill-down loads positions into positionsStore', async () => {
         const filter = get(statsFilterStore);
         await loadPositionsFromStatsSelection(filter, {
-            Kind: 'cube_action', CubeAction: 'DoubleTake', OnlyWithError: true,
+            Kind: 'cube_action',
+            CubeAction: 'DoubleTake',
+            OnlyWithError: true
         });
         expect(get(positionsStore)).toEqual([{ id: 30 }, { id: 31 }]);
     });
@@ -435,10 +410,7 @@ describe('Integration: full journey — filter, result, toggle, drill-down', () 
 
         // 4. Click checker card — drill-down
         await loadPositionsFromStatsSelection(filter, { Kind: 'checker', OnlyWithError: false });
-        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(
-            filter,
-            { Kind: 'checker', OnlyWithError: false }
-        );
+        expect(GetPositionIDsByStatsSelection).toHaveBeenCalledWith(filter, { Kind: 'checker', OnlyWithError: false });
         expect(get(positionsStore)).toEqual([{ id: 5 }, { id: 6 }, { id: 7 }]);
         expect(get(activeTabStore)).toBe('analysis');
     });

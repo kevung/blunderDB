@@ -58,28 +58,34 @@ function blunderRate(c) {
 // ── Sample data ───────────────────────────────────────────────────────────────
 
 const SAMPLE_CUBE_BREAKDOWN = [
-    { Action: 'NoDouble',    PR: 3.5,  MWC: 0.021, NumDecisions: 80,  BlunderCount: 5  },
-    { Action: 'DoubleTake',  PR: 4.2,  MWC: 0.028, NumDecisions: 60,  BlunderCount: 8  },
-    { Action: 'DoublePass',  PR: 2.1,  MWC: 0.012, NumDecisions: 30,  BlunderCount: 1  },
-    { Action: 'TooGood',     PR: 6.0,  MWC: 0.040, NumDecisions: 10,  BlunderCount: 3  },
+    { Action: 'NoDouble', PR: 3.5, MWC: 0.021, NumDecisions: 80, BlunderCount: 5 },
+    { Action: 'DoubleTake', PR: 4.2, MWC: 0.028, NumDecisions: 60, BlunderCount: 8 },
+    { Action: 'DoublePass', PR: 2.1, MWC: 0.012, NumDecisions: 30, BlunderCount: 1 },
+    { Action: 'TooGood', PR: 6.0, MWC: 0.04, NumDecisions: 10, BlunderCount: 3 }
 ];
 
 const SAMPLE_HISTOGRAM = [
-    { MinMP: 0,   MaxMP: 5,   Count: 120 },
-    { MinMP: 5,   MaxMP: 10,  Count: 45  },
-    { MinMP: 10,  MaxMP: 25,  Count: 30  },
-    { MinMP: 25,  MaxMP: 50,  Count: 18  },
-    { MinMP: 50,  MaxMP: 100, Count: 9   },
-    { MinMP: 100, MaxMP: -1,  Count: 4   },
+    { MinMP: 0, MaxMP: 5, Count: 120 },
+    { MinMP: 5, MaxMP: 10, Count: 45 },
+    { MinMP: 10, MaxMP: 25, Count: 30 },
+    { MinMP: 25, MaxMP: 50, Count: 18 },
+    { MinMP: 50, MaxMP: 100, Count: 9 },
+    { MinMP: 100, MaxMP: -1, Count: 4 }
 ];
 
 const SAMPLE_RESULT = {
     Totals: { NumPositions: 226, NumMatches: 12, NumTournaments: 3, NumDecisions: 350 },
-    PRGlobal: 4.0,   PRChecker: 3.2,  PRCube: 5.5,
+    PRGlobal: 4.0,
+    PRChecker: 3.2,
+    PRCube: 5.5,
     PRRolling: {},
-    MWCGlobal: 0.024, MWCChecker: 0.018, MWCCube: 0.032,
-    MWCRolling: null, MWCAvailable: true,
-    PerTournament: [], PerMatch: [],
+    MWCGlobal: 0.024,
+    MWCChecker: 0.018,
+    MWCCube: 0.032,
+    MWCRolling: null,
+    MWCAvailable: true,
+    PerTournament: [],
+    PerMatch: [],
     CubeActionBreakdown: SAMPLE_CUBE_BREAKDOWN,
     ErrorHistogram: SAMPLE_HISTOGRAM,
     TopBlunders: []
@@ -87,10 +93,20 @@ const SAMPLE_RESULT = {
 
 const EMPTY_RESULT = {
     Totals: { NumPositions: 0, NumMatches: 0, NumTournaments: 0, NumDecisions: 0 },
-    PRGlobal: 0, PRChecker: 0, PRCube: 0, PRRolling: {},
-    MWCGlobal: 0, MWCChecker: 0, MWCCube: 0, MWCRolling: null, MWCAvailable: false,
-    PerTournament: [], PerMatch: [],
-    CubeActionBreakdown: [], ErrorHistogram: [], TopBlunders: []
+    PRGlobal: 0,
+    PRChecker: 0,
+    PRCube: 0,
+    PRRolling: {},
+    MWCGlobal: 0,
+    MWCChecker: 0,
+    MWCCube: 0,
+    MWCRolling: null,
+    MWCAvailable: false,
+    PerTournament: [],
+    PerMatch: [],
+    CubeActionBreakdown: [],
+    ErrorHistogram: [],
+    TopBlunders: []
 };
 
 // ── Helper functions mirroring component logic ────────────────────────────────
@@ -102,10 +118,7 @@ function cubeDataValue(breakdown, metric, index) {
 }
 
 function compDataValues(result, metric) {
-    return [
-        metric === 'pr' ? (result?.PRChecker ?? 0) : (result?.MWCChecker ?? 0),
-        metric === 'pr' ? (result?.PRCube    ?? 0) : (result?.MWCCube    ?? 0),
-    ];
+    return [metric === 'pr' ? (result?.PRChecker ?? 0) : (result?.MWCChecker ?? 0), metric === 'pr' ? (result?.PRCube ?? 0) : (result?.MWCCube ?? 0)];
 }
 
 function hasCubeData(result) {
@@ -113,7 +126,7 @@ function hasCubeData(result) {
 }
 
 function hasHistData(result) {
-    return (result?.ErrorHistogram ?? []).some(b => b.Count > 0);
+    return (result?.ErrorHistogram ?? []).some((b) => b.Count > 0);
 }
 
 // ── Tests: bucketLabel ────────────────────────────────────────────────────────
@@ -224,7 +237,7 @@ describe('StatsErrorsTab — error histogram', () => {
     });
 
     test('hasHistData false when all buckets are 0', () => {
-        const allZero = { ErrorHistogram: SAMPLE_HISTOGRAM.map(b => ({ ...b, Count: 0 })) };
+        const allZero = { ErrorHistogram: SAMPLE_HISTOGRAM.map((b) => ({ ...b, Count: 0 })) };
         expect(hasHistData(allZero)).toBe(false);
     });
 
@@ -240,9 +253,9 @@ describe('StatsErrorsTab — error histogram', () => {
 
     test('histogram data does not change with metric toggle (always counts)', () => {
         // PR mode
-        const dataPR  = SAMPLE_HISTOGRAM.map(b => b.Count);
+        const dataPR = SAMPLE_HISTOGRAM.map((b) => b.Count);
         // MWC mode (should be identical)
-        const dataMWC = SAMPLE_HISTOGRAM.map(b => b.Count);
+        const dataMWC = SAMPLE_HISTOGRAM.map((b) => b.Count);
         expect(dataPR).toEqual(dataMWC);
     });
 });

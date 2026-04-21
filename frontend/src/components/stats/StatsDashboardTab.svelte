@@ -105,17 +105,8 @@
 {:else}
     <!-- ── Main cards ────────────────────────────────────────────── -->
     <div class="cards-grid">
-        {#each [
-            { kind: 'all',     label: 'PR Global',  unit: metric === 'pr' ? 'PR' : 'MWC loss' },
-            { kind: 'checker', label: 'PR Checker', unit: metric === 'pr' ? 'PR' : 'MWC loss' },
-            { kind: 'cube',    label: 'PR Cube',    unit: metric === 'pr' ? 'PR' : 'MWC loss' },
-        ] as card (card.kind)}
-            <button
-                class="stat-card"
-                onclick={() => openCard(card.kind)}
-                aria-label="Open {numDecisions()} positions — {card.label}"
-                title="{numDecisions()} decisions · click to open positions"
-            >
+        {#each [{ kind: 'all', label: 'PR Global', unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'checker', label: 'PR Checker', unit: metric === 'pr' ? 'PR' : 'MWC loss' }, { kind: 'cube', label: 'PR Cube', unit: metric === 'pr' ? 'PR' : 'MWC loss' }] as card (card.kind)}
+            <button class="stat-card" onclick={() => openCard(card.kind)} aria-label="Open {numDecisions()} positions — {card.label}" title="{numDecisions()} decisions · click to open positions">
                 <span class="card-value">{cardValue(card.kind)}</span>
                 <span class="card-label">{card.label}</span>
                 <span class="card-unit">{card.unit}</span>
@@ -136,13 +127,7 @@
         <div class="rolling-row">
             {#each ROLLING_NS as n (n)}
                 {@const avail = rollingDecisions(n) >= n}
-                <button
-                    class="rolling-cell"
-                    class:unavailable={!avail}
-                    onclick={() => avail && openRollingN(n)}
-                    disabled={!avail}
-                    title="{rollingDecisions(n)} decisions used"
-                >
+                <button class="rolling-cell" class:unavailable={!avail} onclick={() => avail && openRollingN(n)} disabled={!avail} title="{rollingDecisions(n)} decisions used">
                     <span class="rolling-n">N={n}</span>
                     <span class="rolling-val">{avail ? fmtRolling(n) : '—'}</span>
                 </button>
@@ -157,11 +142,7 @@
             <ol class="blunders-list">
                 {#each result.TopBlunders as entry, i (entry.PositionID)}
                     <li class="blunder-item">
-                        <button
-                            class="blunder-main"
-                            onclick={() => openBlunder(entry.PositionID)}
-                            title="{decisionLabel(entry)} — cliquer pour ouvrir la position"
-                        >
+                        <button class="blunder-main" onclick={() => openBlunder(entry.PositionID)} title="{decisionLabel(entry)} — cliquer pour ouvrir la position">
                             <span class="blunder-rank">#{i + 1}</span>
                             <span class="blunder-type">{decisionLabel(entry)}</span>
                             <span class="blunder-error">{fmtBlunderError(entry)}</span>
@@ -172,12 +153,7 @@
                                 {/if}
                             </span>
                         </button>
-                        <button
-                            class="blunder-open-match"
-                            onclick={() => openMatch(entry.MatchID)}
-                            title="Ouvrir le match"
-                            aria-label="Open match #{entry.MatchID}"
-                        >↗</button>
+                        <button class="blunder-open-match" onclick={() => openMatch(entry.MatchID)} title="Ouvrir le match" aria-label="Open match #{entry.MatchID}">↗</button>
                     </li>
                 {/each}
             </ol>
@@ -404,4 +380,3 @@
         }
     }
 </style>
-

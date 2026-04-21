@@ -6,12 +6,12 @@
  */
 
 export const GRADE_BANDS = [
-    { label: 'World Class',  min: 0,  max: 2,        color: 'rgba(46, 125, 50,  0.10)' },
-    { label: 'Expert',       min: 2,  max: 4,        color: 'rgba(100, 160, 50, 0.09)' },
-    { label: 'Advanced',     min: 4,  max: 6,        color: 'rgba(200, 160, 30, 0.09)' },
-    { label: 'Intermediate', min: 6,  max: 9,        color: 'rgba(230, 120, 20, 0.09)' },
-    { label: 'Casual',       min: 9,  max: 12,       color: 'rgba(200,  60, 30, 0.09)' },
-    { label: 'Beginner',     min: 12, max: Infinity,  color: 'rgba(183,  28, 28, 0.10)' },
+    { label: 'World Class', min: 0, max: 2, color: 'rgba(46, 125, 50,  0.10)' },
+    { label: 'Expert', min: 2, max: 4, color: 'rgba(100, 160, 50, 0.09)' },
+    { label: 'Advanced', min: 4, max: 6, color: 'rgba(200, 160, 30, 0.09)' },
+    { label: 'Intermediate', min: 6, max: 9, color: 'rgba(230, 120, 20, 0.09)' },
+    { label: 'Casual', min: 9, max: 12, color: 'rgba(200,  60, 30, 0.09)' },
+    { label: 'Beginner', min: 12, max: Infinity, color: 'rgba(183,  28, 28, 0.10)' }
 ];
 
 /**
@@ -65,7 +65,7 @@ export function makeGradeBandPlugin(bands) {
                 const pxBot = y.getPixelForValue(band.min);
 
                 // Clamp to visible chart area
-                const drawTop = Math.max(top,    Math.min(pxTop, pxBot));
+                const drawTop = Math.max(top, Math.min(pxTop, pxBot));
                 const drawBot = Math.min(bottom, Math.max(pxTop, pxBot));
                 if (drawBot <= drawTop) continue; // band off-screen
 

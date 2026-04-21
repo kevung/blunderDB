@@ -9,14 +9,7 @@ vi.mock('../../wailsjs/go/main/Database.js', () => ({
 
 import { ComputeStats } from '../../wailsjs/go/main/Database.js';
 
-import {
-    statsFilterStore,
-    statsResultStore,
-    statsLoadingStore,
-    statsErrorStore,
-    statsMetricStore,
-    refreshStats
-} from '../stores/statsStore.js';
+import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
 import { openPanels, PANEL, openPanel, closePanel } from '../stores/uiStore.js';
 

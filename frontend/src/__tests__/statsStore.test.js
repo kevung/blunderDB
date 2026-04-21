@@ -7,14 +7,7 @@ vi.mock('../../wailsjs/go/main/Database.js', () => ({
 }));
 
 import { ComputeStats } from '../../wailsjs/go/main/Database.js';
-import {
-    statsFilterStore,
-    statsResultStore,
-    statsLoadingStore,
-    statsErrorStore,
-    statsMetricStore,
-    refreshStats
-} from '../stores/statsStore.js';
+import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
 describe('statsStore — initial state', () => {
     test('statsResultStore starts null', () => {
@@ -54,7 +47,11 @@ describe('refreshStats()', () => {
 
     test('sets loading=true then false, populates result on success', async () => {
         let resolveCall;
-        ComputeStats.mockReturnValue(new Promise((res) => { resolveCall = res; }));
+        ComputeStats.mockReturnValue(
+            new Promise((res) => {
+                resolveCall = res;
+            })
+        );
 
         const promise = refreshStats({ playerName: '', decisionType: -1 });
         expect(get(statsLoadingStore)).toBe(true);
