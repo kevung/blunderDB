@@ -19,12 +19,7 @@ import {
     GetPositionIDsByMatch,
     LoadPositionsByFilters
 } from '../../wailsjs/go/main/Database.js';
-import {
-    activeTabStore,
-    openPanel,
-    PANEL,
-    statusBarTextStore
-} from '../stores/uiStore.js';
+import { activeTabStore, statusBarTextStore } from '../stores/uiStore.js';
 import { positionsStore } from '../stores/positionStore.js';
 import { currentPositionIndexStore } from '../stores/uiStore.js';
 import { selectedTournamentStore } from '../stores/tournamentStore.js';

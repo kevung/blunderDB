@@ -17,26 +17,26 @@
 
 ### 1. Installer Chart.js
 
-- [ ] `cd frontend && npm install chart.js@^4`
-- [ ] Vérifier que `package.json` contient la dépendance en `dependencies` (pas `devDependencies`).
+- [x] `cd frontend && npm install chart.js@^4`
+- [x] Vérifier que `package.json` contient la dépendance en `dependencies` (pas `devDependencies`).
 
 ### 2. Écrire les wrappers charts
 
-- [ ] Dossier `frontend/src/components/stats/charts/`.
-- [ ] `LineChart.svelte` — reçoit `{ labels, datasets, options, onPointClick }`. Utilise un `<canvas bind:this={canvas}>` et un `$effect` qui :
+- [x] Dossier `frontend/src/components/stats/charts/`.
+- [x] `LineChart.svelte` — reçoit `{ labels, datasets, options, onPointClick }`. Utilise un `<canvas bind:this={canvas}>` et un `$effect` qui :
   1. détruit l'instance précédente si existe,
   2. crée `new Chart(canvas, { type: 'line', data: { labels, datasets }, options })`,
   3. attache un handler `onClick` qui appelle `onPointClick(dataIndex, datasetIndex)` si fourni,
   4. retourne un cleanup `chart.destroy()`.
-- [ ] `BarChart.svelte` — idem, `type: 'bar'`.
-- [ ] `ScatterChart.svelte` — idem, `type: 'scatter'`. Support du point size via `options.datasets.scatter.pointRadius`.
-- [ ] `Histogram.svelte` — `BarChart` avec `options.scales.x.type = 'category'` et labels = limites de bucket.
-- [ ] Commun : `options.responsive = true`, `options.maintainAspectRatio = false`, `options.plugins.tooltip` configuré (hover = info secondaire, cf. §Principes UX).
-- [ ] Palette partagée : exporter des constantes depuis `frontend/src/components/stats/charts/palette.js` (couleur primaire, couleurs des bandes de grade backgammon, couleur neutre des gridlines).
+- [x] `BarChart.svelte` — idem, `type: 'bar'`.
+- [x] `ScatterChart.svelte` — idem, `type: 'scatter'`. Support du point size via `options.datasets.scatter.pointRadius`.
+- [x] `Histogram.svelte` — `BarChart` avec `options.scales.x.type = 'category'` et labels = limites de bucket.
+- [x] Commun : `options.responsive = true`, `options.maintainAspectRatio = false`, `options.plugins.tooltip` configuré (hover = info secondaire, cf. §Principes UX).
+- [x] Palette partagée : exporter des constantes depuis `frontend/src/components/stats/charts/palette.js` (couleur primaire, couleurs des bandes de grade backgammon, couleur neutre des gridlines).
 
 ### 3. `StatsPanel.svelte` squelette
 
-- [ ] `frontend/src/components/stats/StatsPanel.svelte`.
+- [x] `frontend/src/components/stats/StatsPanel.svelte`.
 - [ ] Structure :
   ```svelte
   <script>
@@ -83,38 +83,38 @@
     </div>
   </div>
   ```
-- [ ] Styles : reprendre les tokens de couleur/typographie utilisés dans `MatchPanel.svelte`. Largeur min 480 px (`min-width: 480px`). Chaque onglet a `overflow-y: auto`.
-- [ ] **Règle UX** : layout sobre, un h2, une barre de filtre, trois onglets, zone de contenu. Pas de card colorée, pas de gradient.
+- [x] Styles : reprendre les tokens de couleur/typographie utilisés dans `MatchPanel.svelte`. Largeur min 480 px (`min-width: 480px`). Chaque onglet a `overflow-y: auto`.
+- [x] **Règle UX** : layout sobre, un h2, une barre de filtre, trois onglets, zone de contenu. Pas de card colorée, pas de gradient.
 
 ### 4. Stubs des onglets
 
-- [ ] Créer `StatsDashboardTab.svelte`, `StatsProgressionTab.svelte`, `StatsErrorsTab.svelte` avec juste `<p>TODO</p>`. Fiches 06–08 les remplissent.
-- [ ] Créer `StatsFilterBar.svelte` stub avec juste un placeholder. Fiche 09 l'implémente.
+- [x] Créer `StatsDashboardTab.svelte`, `StatsProgressionTab.svelte`, `StatsErrorsTab.svelte` avec juste `<p>TODO</p>`. Fiches 06–08 les remplissent.
+- [x] Créer `StatsFilterBar.svelte` stub avec juste un placeholder. Fiche 09 l'implémente.
 
 ### 5. Mount dans `App.svelte`
 
-- [ ] Ajouter l'import de `StatsPanel`.
-- [ ] Dans la zone de rendu des panneaux, ajouter :
+- [x] Ajouter l'import de `StatsPanel`.
+- [x] Dans la zone de rendu des panneaux, ajouter :
   ```svelte
   {#if $openPanels.has(PANEL.STATS)}
     <StatsPanel />
   {/if}
   ```
-- [ ] Vérifier que la commande `:stats` ouvre/ferme bien le panneau avec un squelette visible.
+- [x] Vérifier que la commande `:stats` ouvre/ferme bien le panneau avec un squelette visible.
 
 ### 6. Tests Vitest
 
-- [ ] `StatsPanel.test.js` : monter le composant avec un store mocké, vérifier que les 3 tabs sont rendus, que cliquer change `activeTab`, que toggle PR/MWC met à jour `statsMetricStore`.
-- [ ] Test d'accessibilité minimal : les boutons tabs ont `role="tab"` ou équivalent, focus management au clavier.
+- [x] `StatsPanel.test.js` : monter le composant avec un store mocké, vérifier que les 3 tabs sont rendus, que cliquer change `activeTab`, que toggle PR/MWC met à jour `statsMetricStore`.
+- [x] Test d'accessibilité minimal : les boutons tabs ont `role="tab"` ou équivalent, focus management au clavier.
 
 ## Acceptance criteria
 
-- [ ] `:stats` dans la commande ouvre un panneau vide avec onglets et toggle PR/MWC.
-- [ ] Pas de warning Svelte 5 au démarrage.
-- [ ] `npm test` vert.
-- [ ] `npm run lint` clean.
-- [ ] `npm run build` produit une bundle sans erreur ; taille de `chart.js` visible dans le report (~70 KB gzip).
-- [ ] UX : respect des §Principes UX 1, 4, 5, 6, 10 du plan.
+- [x] `:stats` dans la commande ouvre un panneau vide avec onglets et toggle PR/MWC.
+- [x] Pas de warning Svelte 5 au démarrage.
+- [x] `npm test` vert.
+- [x] `npm run lint` clean.
+- [x] `npm run build` produit une bundle sans erreur ; taille de `chart.js` visible dans le report (~70 KB gzip).
+- [x] UX : respect des §Principes UX 1, 4, 5, 6, 10 du plan.
 
 ## Rollback
 

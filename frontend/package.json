@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@wails/runtime": "^1.3.20",
+    "chart.js": "^4.5.1",
     "two.js": "^0.8.14"
   }
 }
