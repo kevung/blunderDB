@@ -230,6 +230,34 @@ export namespace main {
 		    return a;
 		}
 	}
+	export class BlunderEntry {
+	    position_id: number;
+	    match_id: number;
+	    tournament_id: number;
+	    error_mp: number;
+	    mwc_loss: number;
+	    description: string;
+	    decision_type: number;
+	    match_date: string;
+	    player_names: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new BlunderEntry(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.position_id = source["position_id"];
+	        this.match_id = source["match_id"];
+	        this.tournament_id = source["tournament_id"];
+	        this.error_mp = source["error_mp"];
+	        this.mwc_loss = source["mwc_loss"];
+	        this.description = source["description"];
+	        this.decision_type = source["decision_type"];
+	        this.match_date = source["match_date"];
+	        this.player_names = source["player_names"];
+	    }
+	}
 	
 	export class CheckerMove {
 	    index: number;
@@ -340,47 +368,87 @@ export namespace main {
 	        this.modifiedAt = source["modifiedAt"];
 	    }
 	}
-export class StatsFilterPersisted {
+	export class StatsFilterPersisted {
 	    player_name: string;
-	    tournament_ids: Array<number>;
+	    tournament_ids: number[];
 	    date_from: string;
 	    date_to: string;
 	    decision_type: number;
-	    match_length: Array<number>;
+	    match_length: number[];
 	    metric: string;
-
-	    static createFrom(source: any = {}) { return new StatsFilterPersisted(source); }
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsFilterPersisted(source);
+	    }
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.player_name = source["player_name"] ?? '';
-	        this.tournament_ids = source["tournament_ids"] ?? [];
-	        this.date_from = source["date_from"] ?? '';
-	        this.date_to = source["date_to"] ?? '';
-	        this.decision_type = source["decision_type"] ?? -1;
-	        this.match_length = source["match_length"] ?? [];
-	        this.metric = source["metric"] ?? 'pr';
+	        this.player_name = source["player_name"];
+	        this.tournament_ids = source["tournament_ids"];
+	        this.date_from = source["date_from"];
+	        this.date_to = source["date_to"];
+	        this.decision_type = source["decision_type"];
+	        this.match_length = source["match_length"];
+	        this.metric = source["metric"];
 	    }
 	}
-
 	export class Config {
 	    window_width: number;
 	    window_height: number;
 	    last_database_path: string;
-	    stats_filter: StatsFilterPersisted;
-
+	    stats_filter?: StatsFilterPersisted;
+	
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
 	    }
-
+	
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.window_width = source["window_width"];
 	        this.window_height = source["window_height"];
 	        this.last_database_path = source["last_database_path"];
-	        this.stats_filter = StatsFilterPersisted.createFrom(source["stats_filter"]);
+	        this.stats_filter = this.convertValues(source["stats_filter"], StatsFilterPersisted);
 	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
 	}
 	
+	export class CubeActionStats {
+	    action: string;
+	    pr: number;
+	    mwc: number;
+	    num_decisions: number;
+	    blunder_count: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new CubeActionStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.action = source["action"];
+	        this.pr = source["pr"];
+	        this.mwc = source["mwc"];
+	        this.num_decisions = source["num_decisions"];
+	        this.blunder_count = source["blunder_count"];
+	    }
+	}
 	export class DoublingCubeAnalysis {
 	    analysisDepth: string;
 	    analysisEngine?: string;
@@ -427,6 +495,22 @@ export class StatsFilterPersisted {
 	        this.bestCubeAction = source["bestCubeAction"];
 	        this.wrongPassPercentage = source["wrongPassPercentage"];
 	        this.wrongTakePercentage = source["wrongTakePercentage"];
+	    }
+	}
+	export class ErrorBucket {
+	    min_mp: number;
+	    max_mp: number;
+	    count: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new ErrorBucket(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.min_mp = source["min_mp"];
+	        this.max_mp = source["max_mp"];
+	        this.count = source["count"];
 	    }
 	}
 	export class ExportOptions {
@@ -633,6 +717,28 @@ export class StatsFilterPersisted {
 		    return a;
 		}
 	}
+	export class MatchStats {
+	    id: number;
+	    date: string;
+	    player_name: string;
+	    pr: number;
+	    mwc: number;
+	    num_decisions: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.date = source["date"];
+	        this.player_name = source["player_name"];
+	        this.pr = source["pr"];
+	        this.mwc = source["mwc"];
+	        this.num_decisions = source["num_decisions"];
+	    }
+	}
 	export class Move {
 	    id: number;
 	    game_id: number;
@@ -659,6 +765,20 @@ export class StatsFilterPersisted {
 	        this.dice = source["dice"];
 	        this.checker_move = source["checker_move"];
 	        this.cube_action = source["cube_action"];
+	    }
+	}
+	export class PlayerFrequency {
+	    Name: string;
+	    Count: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new PlayerFrequency(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Name = source["Name"];
+	        this.Count = source["Count"];
 	    }
 	}
 	
@@ -835,6 +955,34 @@ export class StatsFilterPersisted {
 	        this.timestamp = source["timestamp"];
 	    }
 	}
+	export class SelectionSpec {
+	    Kind: string;
+	    CubeAction: string;
+	    BucketMinMP: number;
+	    BucketMaxMP: number;
+	    TournamentID: number;
+	    MatchID: number;
+	    LastN: number;
+	    PositionID: number;
+	    OnlyWithError: boolean;
+	
+	    static createFrom(source: any = {}) {
+	        return new SelectionSpec(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.Kind = source["Kind"];
+	        this.CubeAction = source["CubeAction"];
+	        this.BucketMinMP = source["BucketMinMP"];
+	        this.BucketMaxMP = source["BucketMaxMP"];
+	        this.TournamentID = source["TournamentID"];
+	        this.MatchID = source["MatchID"];
+	        this.LastN = source["LastN"];
+	        this.PositionID = source["PositionID"];
+	        this.OnlyWithError = source["OnlyWithError"];
+	    }
+	}
 	export class SessionState {
 	    lastSearchCommand: string;
 	    lastSearchPosition: string;
@@ -857,6 +1005,128 @@ export class StatsFilterPersisted {
 	        this.viewsJSON = source["viewsJSON"];
 	    }
 	}
+	export class StatsFilter {
+	    PlayerName: string;
+	    TournamentIDs: number[];
+	    DateFrom: string;
+	    DateTo: string;
+	    DecisionType: number;
+	    MatchLength: number[];
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsFilter(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.PlayerName = source["PlayerName"];
+	        this.TournamentIDs = source["TournamentIDs"];
+	        this.DateFrom = source["DateFrom"];
+	        this.DateTo = source["DateTo"];
+	        this.DecisionType = source["DecisionType"];
+	        this.MatchLength = source["MatchLength"];
+	    }
+	}
+	
+	export class TournamentStats {
+	    id: number;
+	    name: string;
+	    date: string;
+	    pr: number;
+	    mwc: number;
+	    num_decisions: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new TournamentStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.id = source["id"];
+	        this.name = source["name"];
+	        this.date = source["date"];
+	        this.pr = source["pr"];
+	        this.mwc = source["mwc"];
+	        this.num_decisions = source["num_decisions"];
+	    }
+	}
+	export class StatsTotals {
+	    num_positions: number;
+	    num_matches: number;
+	    num_tournaments: number;
+	    num_decisions: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsTotals(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.num_positions = source["num_positions"];
+	        this.num_matches = source["num_matches"];
+	        this.num_tournaments = source["num_tournaments"];
+	        this.num_decisions = source["num_decisions"];
+	    }
+	}
+	export class StatsResult {
+	    totals: StatsTotals;
+	    pr_global: number;
+	    pr_checker: number;
+	    pr_cube: number;
+	    pr_rolling: Record<number, number>;
+	    mwc_global: number;
+	    mwc_checker: number;
+	    mwc_cube: number;
+	    mwc_rolling: Record<number, number>;
+	    mwc_available: boolean;
+	    per_tournament: TournamentStats[];
+	    per_match: MatchStats[];
+	    cube_action_breakdown: CubeActionStats[];
+	    error_histogram: ErrorBucket[];
+	    top_blunders: BlunderEntry[];
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsResult(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.totals = this.convertValues(source["totals"], StatsTotals);
+	        this.pr_global = source["pr_global"];
+	        this.pr_checker = source["pr_checker"];
+	        this.pr_cube = source["pr_cube"];
+	        this.pr_rolling = source["pr_rolling"];
+	        this.mwc_global = source["mwc_global"];
+	        this.mwc_checker = source["mwc_checker"];
+	        this.mwc_cube = source["mwc_cube"];
+	        this.mwc_rolling = source["mwc_rolling"];
+	        this.mwc_available = source["mwc_available"];
+	        this.per_tournament = this.convertValues(source["per_tournament"], TournamentStats);
+	        this.per_match = this.convertValues(source["per_match"], MatchStats);
+	        this.cube_action_breakdown = this.convertValues(source["cube_action_breakdown"], CubeActionStats);
+	        this.error_histogram = this.convertValues(source["error_histogram"], ErrorBucket);
+	        this.top_blunders = this.convertValues(source["top_blunders"], BlunderEntry);
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	
 	export class Tournament {
 	    id: number;
 	    name: string;
@@ -886,215 +1156,5 @@ export class StatsFilterPersisted {
 	    }
 	}
 
-	// ── Stats types (added by fiche 04) ──────────────────────────────────────
-
-	export class PlayerFrequency {
-	    name: string;
-	    count: number;
-
-	    static createFrom(source: any = {}) { return new PlayerFrequency(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.name = source["Name"] ?? '';
-	        this.count = source["Count"] ?? 0;
-	    }
-	}
-
-	export class StatsFilter {
-	    playerName: string;
-	    tournamentIDs: Array<number>;
-	    dateFrom: string;
-	    dateTo: string;
-	    decisionType: number;
-	    matchLength: Array<number>;
-
-	    static createFrom(source: any = {}) {
-	        return new StatsFilter(source);
-	    }
-
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.playerName = source["PlayerName"] ?? '';
-	        this.tournamentIDs = source["TournamentIDs"] ?? [];
-	        this.dateFrom = source["DateFrom"] ?? '';
-	        this.dateTo = source["DateTo"] ?? '';
-	        this.decisionType = source["DecisionType"] ?? -1;
-	        this.matchLength = source["MatchLength"] ?? [];
-	    }
-	}
-
-	export class SelectionSpec {
-	    kind: string;
-	    cubeAction: string;
-	    bucketMinMP: number;
-	    bucketMaxMP: number;
-	    tournamentID: number;
-	    matchID: number;
-	    lastN: number;
-	    positionID: number;
-	    onlyWithError: boolean;
-
-	    static createFrom(source: any = {}) {
-	        return new SelectionSpec(source);
-	    }
-
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.kind = source["Kind"] ?? 'all';
-	        this.cubeAction = source["CubeAction"] ?? '';
-	        this.bucketMinMP = source["BucketMinMP"] ?? 0;
-	        this.bucketMaxMP = source["BucketMaxMP"] ?? -1;
-	        this.tournamentID = source["TournamentID"] ?? 0;
-	        this.matchID = source["MatchID"] ?? 0;
-	        this.lastN = source["LastN"] ?? 0;
-	        this.positionID = source["PositionID"] ?? 0;
-	        this.onlyWithError = source["OnlyWithError"] ?? false;
-	    }
-	}
-
-	export class StatsTotals {
-	    numPositions: number;
-	    numMatches: number;
-	    numTournaments: number;
-	    numDecisions: number;
-
-	    static createFrom(source: any = {}) { return new StatsTotals(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.numPositions = source["NumPositions"] ?? 0;
-	        this.numMatches = source["NumMatches"] ?? 0;
-	        this.numTournaments = source["NumTournaments"] ?? 0;
-	        this.numDecisions = source["NumDecisions"] ?? 0;
-	    }
-	}
-
-	export class TournamentStats {
-	    id: number;
-	    name: string;
-	    date: string;
-	    pr: number;
-	    mwc: number;
-	    numDecisions: number;
-
-	    static createFrom(source: any = {}) { return new TournamentStats(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["ID"] ?? 0;
-	        this.name = source["Name"] ?? '';
-	        this.date = source["Date"] ?? '';
-	        this.pr = source["PR"] ?? 0;
-	        this.mwc = source["MWC"] ?? 0;
-	        this.numDecisions = source["NumDecisions"] ?? 0;
-	    }
-	}
-
-	export class MatchStats {
-	    id: number;
-	    date: string;
-	    playerName: string;
-	    pr: number;
-	    mwc: number;
-	    numDecisions: number;
-
-	    static createFrom(source: any = {}) { return new MatchStats(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.id = source["ID"] ?? 0;
-	        this.date = source["Date"] ?? '';
-	        this.playerName = source["PlayerName"] ?? '';
-	        this.pr = source["PR"] ?? 0;
-	        this.mwc = source["MWC"] ?? 0;
-	        this.numDecisions = source["NumDecisions"] ?? 0;
-	    }
-	}
-
-	export class CubeActionStats {
-	    action: string;
-	    pr: number;
-	    mwc: number;
-	    numDecisions: number;
-	    blunderCount: number;
-
-	    static createFrom(source: any = {}) { return new CubeActionStats(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.action = source["Action"] ?? '';
-	        this.pr = source["PR"] ?? 0;
-	        this.mwc = source["MWC"] ?? 0;
-	        this.numDecisions = source["NumDecisions"] ?? 0;
-	        this.blunderCount = source["BlunderCount"] ?? 0;
-	    }
-	}
-
-	export class ErrorBucket {
-	    minMP: number;
-	    maxMP: number;
-	    count: number;
-
-	    static createFrom(source: any = {}) { return new ErrorBucket(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.minMP = source["MinMP"] ?? 0;
-	        this.maxMP = source["MaxMP"] ?? 0;
-	        this.count = source["Count"] ?? 0;
-	    }
-	}
-
-	export class BlunderEntry {
-	    positionID: number;
-	    matchID: number;
-	    tournamentID: number;
-	    errorMP: number;
-	    mwcLoss: number;
-	    description: string;
-
-	    static createFrom(source: any = {}) { return new BlunderEntry(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.positionID = source["PositionID"] ?? 0;
-	        this.matchID = source["MatchID"] ?? 0;
-	        this.tournamentID = source["TournamentID"] ?? 0;
-	        this.errorMP = source["ErrorMP"] ?? 0;
-	        this.mwcLoss = source["MWCLoss"] ?? 0;
-	        this.description = source["Description"] ?? '';
-	    }
-	}
-
-	export class StatsResult {
-	    totals: StatsTotals;
-	    prGlobal: number;
-	    prChecker: number;
-	    prCube: number;
-	    prRolling: Record<number, number>;
-	    mwcGlobal: number;
-	    mwcChecker: number;
-	    mwcCube: number;
-	    mwcRolling: Record<number, number>;
-	    mwcAvailable: boolean;
-	    perTournament: Array<TournamentStats>;
-	    perMatch: Array<MatchStats>;
-	    cubeActionBreakdown: Array<CubeActionStats>;
-	    errorHistogram: Array<ErrorBucket>;
-	    topBlunders: Array<BlunderEntry>;
-
-	    static createFrom(source: any = {}) { return new StatsResult(source); }
-	    constructor(source: any = {}) {
-	        if ('string' === typeof source) source = JSON.parse(source);
-	        this.totals = StatsTotals.createFrom(source["Totals"]);
-	        this.prGlobal = source["PRGlobal"] ?? 0;
-	        this.prChecker = source["PRChecker"] ?? 0;
-	        this.prCube = source["PRCube"] ?? 0;
-	        this.prRolling = source["PRRolling"] ?? {};
-	        this.mwcGlobal = source["MWCGlobal"] ?? 0;
-	        this.mwcChecker = source["MWCChecker"] ?? 0;
-	        this.mwcCube = source["MWCCube"] ?? 0;
-	        this.mwcRolling = source["MWCRolling"] ?? {};
-	        this.mwcAvailable = source["MWCAvailable"] ?? false;
-	        this.perTournament = (source["PerTournament"] ?? []).map((x: any) => TournamentStats.createFrom(x));
-	        this.perMatch = (source["PerMatch"] ?? []).map((x: any) => MatchStats.createFrom(x));
-	        this.cubeActionBreakdown = (source["CubeActionBreakdown"] ?? []).map((x: any) => CubeActionStats.createFrom(x));
-	        this.errorHistogram = (source["ErrorHistogram"] ?? []).map((x: any) => ErrorBucket.createFrom(x));
-	        this.topBlunders = (source["TopBlunders"] ?? []).map((x: any) => BlunderEntry.createFrom(x));
-	    }
-	}
+}
 
