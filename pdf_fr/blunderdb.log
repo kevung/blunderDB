@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  21 APR 2026 00:16
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.4.21)  21 APR 2026 01:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -874,13 +874,13 @@ Underfull \hbox (badness 5652) in paragraph at lines 568--570
  []
 
 [3]
-Overfull \vbox (778.70886pt too high) has occurred while \output is active []
+Overfull \vbox (886.70886pt too high) has occurred while \output is active []
 
 
 [4]
 Chapter 2.
 LaTeX Font Info:    Trying to load font information for T1+txtt on input line 6
-19.
+35.
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/t1txtt.fd
 File: t1txtt.fd 2000/12/15 v3.1
 ) [5
@@ -888,58 +888,58 @@ File: t1txtt.fd 2000/12/15 v3.1
 ]
 
 LaTeX Warning: Hyper reference `annexe_windows_securite:annexe-windows-malware'
- on page 6 undefined on input line 633.
+ on page 6 undefined on input line 649.
 
 
 LaTeX Warning: Reference `annexe_windows_securite:annexe-windows-malware' on pa
-ge 6 undefined on input line 633.
+ge 6 undefined on input line 649.
 
 
 LaTeX Warning: Hyper reference `annexe_mac_securite:annexe-mac-malware' on page
- 6 undefined on input line 640.
+ 6 undefined on input line 656.
 
 
 LaTeX Warning: Reference `annexe_mac_securite:annexe-mac-malware' on page 6 und
-efined on input line 640.
+efined on input line 656.
 
 [6] [7]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 878.
+nput line 894.
 
 
 LaTeX Warning: Hyper reference `guide_utilisateur:guide-edit-position' on page 
-8 undefined on input line 889.
+8 undefined on input line 905.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 893.
+nput line 909.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 929.
+ line 945.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-929.
+945.
 
 [8]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 9 undefined on i
-nput line 973.
+nput line 989.
 
 [9] [10] [11] [12] [13] [14]
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-filter' on page 15 undefined on in
-put line 1672.
+put line 1688.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-filter' on page 15 undefined on input li
-ne 1672.
+ne 1688.
 
 [15] [16] [17] [18] [19] [20] [21] [22]
 LaTeX Font Info:    Font shape `T1/txtt/m/it' in size <10> not available
-(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4277.
+(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4293.
 
  [23]
 
@@ -950,14 +950,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.4560 (\(\checkmark\)), échoué (✗
+l.4576 (\(\checkmark\)), échoué (✗
                                       ) ou s’il s’agit d’un doublon (�...
 
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.4560 (\(\checkmark\)), échoué (✗
+l.4576 (\(\checkmark\)), échoué (✗
                                       ) ou s’il s’agit d’un doublon (�...
 
 You may provide a definition with
@@ -965,10 +965,10 @@ You may provide a definition with
 
  
 Here is how much of TeX's memory you used:
- 16869 strings out of 476182
- 285763 string characters out of 5795595
+ 16870 strings out of 476182
+ 285780 string characters out of 5795595
  2008975 words of memory out of 5000000
- 38394 multiletter control sequences out of 15000+600000
+ 38395 multiletter control sequences out of 15000+600000
  617709 words of font info for 79 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
  72i,13n,83p,1198b,679s stack positions out of 10000i,1000n,20000p,200000b,200000s

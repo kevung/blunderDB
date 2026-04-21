@@ -570,6 +570,22 @@ Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers sp�
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+0.19.0
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+21/04/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Ajout du panneau Stats : indicateurs PR (Performance Rate) et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill\sphinxhyphen{}down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list \textendash{}type stats. Voir :ref:\textasciigrave{}stats\textasciigrave{}.
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
 \sphinxbottomrule
 \end{tabular}
 \sphinxtableafterendhook\par
@@ -5055,6 +5071,439 @@ Cela permet d’utiliser la CLI dans des scripts avec gestion d’erreurs:
 \PYG{+w}{    }\PYG{n+nb}{exit}\PYG{+w}{ }\PYG{l+m}{1}
 \PYG{k}{fi}
 \end{sphinxVerbatim}
+
+\sphinxstepscope
+
+
+\section{Panneau Stats}
+\label{\detokenize{stats:panneau-stats}}\label{\detokenize{stats:stats}}\label{\detokenize{stats::doc}}
+
+\subsection{Introduction}
+\label{\detokenize{stats:introduction}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Stats} permet d’analyser son niveau de jeu et de suivre sa
+progression dans le temps à partir des positions importées dans la base de
+données. Il calcule et affiche les indicateurs \sphinxstylestrong{PR} (Performance Rate) et
+\sphinxstylestrong{MWC cost} (Match Winning Chance cost) pour l’ensemble des positions ou un
+sous\sphinxhyphen{}ensemble filtré.
+
+\sphinxAtStartPar
+Le panneau Stats est particulièrement utile pour :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{situer son niveau} par rapport aux seuils de référence (world\sphinxhyphen{}class,
+expert, avancé…) grâce au PR global ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{suivre sa progression} tournoi après tournoi ou match après match grâce
+aux graphiques de l’onglet Progression ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{identifier ses points faibles} : onglet Erreurs pour voir la répartition
+entre coups joués et décisions de videau, et la distribution des magnitudes
+d’erreur ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{accéder directement aux positions concernées} en cliquant sur n’importe
+quel indicateur (drill\sphinxhyphen{}down).
+
+\end{itemize}
+
+
+\subsection{Ouverture du panneau}
+\label{\detokenize{stats:ouverture-du-panneau}}
+\sphinxAtStartPar
+Pour ouvrir le panneau Stats :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Saisir la commande \sphinxcode{\sphinxupquote{:stats}} ou \sphinxcode{\sphinxupquote{:st}} dans la ligne de commande.
+
+\end{itemize}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Le panneau se rafraîchit automatiquement à chaque modification du filtre.
+Il ne recalcule pas les statistiques lors d’un simple basculement PR ↔ MWC :
+les deux métriques sont calculées simultanément par le backend.
+\end{sphinxadmonition}
+
+
+\subsection{Barre de filtre}
+\label{\detokenize{stats:barre-de-filtre}}
+\sphinxAtStartPar
+La barre de filtre, en haut du panneau, permet de restreindre le calcul à un
+sous\sphinxhyphen{}ensemble de positions.
+
+
+\subsubsection{Perspective joueur}
+\label{\detokenize{stats:perspective-joueur}}
+\sphinxAtStartPar
+La liste déroulante \sphinxstylestrong{Joueur} permet de filtrer les statistiques selon le
+joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom
+apparaît le plus souvent dans la base de données — modifiable à tout moment.
+
+\begin{sphinxadmonition}{tip}{Astuce:}
+\sphinxAtStartPar
+Changer de joueur ne provoque pas de perte de données ; il suffit de
+re\sphinxhyphen{}sélectionner le joueur précédent dans la liste.
+\end{sphinxadmonition}
+
+
+\subsubsection{Filtres disponibles}
+\label{\detokenize{stats:filtres-disponibles}}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Tournoi(s)} — restriction à un ou plusieurs tournois. Plusieurs tournois
+peuvent être sélectionnés simultanément.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Dates} — plage temporelle (\sphinxstyleemphasis{De} … \sphinxstyleemphasis{À}). Si seule la date de début est
+renseignée, les positions plus récentes sont incluses.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Type de décision} — Tous / Coups joués / Décisions de videau.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Longueur de match} — restriction à des longueurs de match précises (1, 3,
+5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Un bouton \sphinxstylestrong{Reset} remet tous les filtres à zéro (sauf le joueur
+auto\sphinxhyphen{}détecté).
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Les filtres sont persistés dans la configuration de blunderDB
+(\sphinxcode{\sphinxupquote{config.yaml}}) et sont restaurés à la prochaine ouverture.
+\end{sphinxadmonition}
+
+
+\subsection{Toggle PR / MWC}
+\label{\detokenize{stats:toggle-pr-mwc}}
+\sphinxAtStartPar
+Le bouton \sphinxstylestrong{PR / MWC} en haut du panneau bascule la métrique affichée dans
+tous les onglets.
+
+\sphinxAtStartPar
+\sphinxstylestrong{PR (Performance Rate)}
+\begin{quote}
+
+\sphinxAtStartPar
+Mesure la qualité de jeu \sphinxstyleemphasis{money\sphinxhyphen{}game} : somme des erreurs en millièmes de
+point de backgammon, divisée par le nombre de décisions. Indépendant du
+score de match.
+
+\sphinxAtStartPar
+Seuils de référence approximatifs :
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{20}{30}\X{10}{30}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Niveau
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+PR
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+World\sphinxhyphen{}class
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+\textless{} 3
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Expert
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+3 \textendash{} 5
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Avancé
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+5 \textendash{} 8
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Intermédiaire
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+8 \textendash{} 12
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Débutant
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+\textgreater{} 12
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+\end{quote}
+
+\sphinxAtStartPar
+\sphinxstylestrong{MWC cost (Match Winning Chance cost)}
+\begin{quote}
+
+\sphinxAtStartPar
+Probabilité cumulée de victoire de match perdue à cause des erreurs, sur
+l’ensemble du jeu de données filtré. Calculé à partir de la MET
+Kazaross\sphinxhyphen{}XG2 embarquée dans blunderDB.
+
+\begin{sphinxadmonition}{caution}{Prudence:}
+\sphinxAtStartPar
+Le MWC cost \sphinxstylestrong{n’est pas applicable} aux positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans
+enjeu de match). Ces positions sont exclues du calcul MWC.
+Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas
+directement comparables entre logiciels utilisant des METs différentes.
+\end{sphinxadmonition}
+\end{quote}
+
+\sphinxAtStartPar
+Le basculement PR ↔ MWC est instantané : aucun recalcul backend n’est
+effectué.
+
+
+\subsection{Onglet Dashboard}
+\label{\detokenize{stats:onglet-dashboard}}
+\sphinxAtStartPar
+L’onglet \sphinxstylestrong{Dashboard} donne une vue synthétique des indicateurs clés.
+
+
+\subsubsection{Cartes de niveau}
+\label{\detokenize{stats:cartes-de-niveau}}
+\sphinxAtStartPar
+Trois cartes affichent le PR (ou MWC) pour :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{All} — toutes les décisions (coups + videau) ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Checker} — coups joués seulement ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Cube} — décisions de videau seulement.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Cliquer sur une carte charge dans le panneau d’analyse les positions du
+sous\sphinxhyphen{}ensemble correspondant (drill\sphinxhyphen{}down).
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Le nombre total de décisions est affiché en bas de chaque carte au survol.
+\end{sphinxadmonition}
+
+
+\subsubsection{PR glissant sur N dernières décisions}
+\label{\detokenize{stats:pr-glissant-sur-n-dernieres-decisions}}
+\sphinxAtStartPar
+Une ligne de valeurs PR (ou MWC) calculées sur les \sphinxstyleemphasis{N} dernières décisions
+(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente.
+Les valeurs grisées correspondent à un N supérieur au nombre de décisions
+disponibles.
+
+\sphinxAtStartPar
+Cliquer sur une valeur charge les \sphinxstyleemphasis{N} dernières positions correspondantes.
+
+
+\subsubsection{Top blunders}
+\label{\detokenize{stats:top-blunders}}
+\sphinxAtStartPar
+La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante.
+Cliquer sur une ligne charge la position concernée dans le panneau d’analyse.
+
+
+\subsection{Onglet Progression}
+\label{\detokenize{stats:onglet-progression}}
+\sphinxAtStartPar
+L’onglet \sphinxstylestrong{Progression} présente l’évolution du niveau dans le temps.
+
+
+\subsubsection{Courbe par tournoi}
+\label{\detokenize{stats:courbe-par-tournoi}}
+\sphinxAtStartPar
+Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :
+ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur
+matérialisent les seuils de niveau.
+
+\sphinxAtStartPar
+Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open tournament} — ouvre le tournoi dans le panneau Tournois.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open positions} — charge toutes les positions du tournoi dans le panneau
+d’analyse.
+
+\end{itemize}
+
+
+\subsubsection{Scatter plot par match}
+\label{\detokenize{stats:scatter-plot-par-match}}
+\sphinxAtStartPar
+Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
+La taille du point est proportionnelle au nombre de décisions dans le match.
+
+\sphinxAtStartPar
+Cliquer sur un point ouvre un menu contextuel :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open match} — ouvre le match dans le panneau des matchs.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open positions} — charge toutes les positions du match dans le panneau
+d’analyse.
+
+\end{itemize}
+
+
+\subsection{Onglet Erreurs}
+\label{\detokenize{stats:onglet-erreurs}}
+\sphinxAtStartPar
+L’onglet \sphinxstylestrong{Erreurs} décompose les sources d’erreurs.
+
+
+\subsubsection{Répartition par action de videau}
+\label{\detokenize{stats:repartition-par-action-de-videau}}
+\sphinxAtStartPar
+Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision
+de videau : \sphinxstyleemphasis{NoDouble}, \sphinxstyleemphasis{DoubleTake}, \sphinxstyleemphasis{DoublePass}, \sphinxstyleemphasis{TooGood}. Chaque barre
+indique également le nombre de décisions et le taux de blunders en infobulle.
+
+\sphinxAtStartPar
+Cliquer sur une barre charge les positions correspondant à cette action de
+videau, \sphinxstylestrong{uniquement celles avec une erreur} (drill\sphinxhyphen{}down).
+
+
+\subsubsection{Répartition Checker / Cube}
+\label{\detokenize{stats:repartition-checker-cube}}
+\sphinxAtStartPar
+Un diagramme comparatif place côte à côte le PR des coups joués et des
+décisions de videau. Cliquer sur une barre charge les positions du
+sous\sphinxhyphen{}ensemble avec erreur.
+
+
+\subsubsection{Histogramme des magnitudes d’erreur}
+\label{\detokenize{stats:histogramme-des-magnitudes-d-erreur}}
+\sphinxAtStartPar
+Un histogramme distribue les erreurs selon leur magnitude en millièmes de
+point (tranches : 0\textendash{}5, 5\textendash{}10, 10\textendash{}25, 25\textendash{}50, 50\textendash{}100, ≥ 100). Cliquer sur
+une barre charge les positions de la tranche.
+
+
+\subsection{Règle d’agrégation}
+\label{\detokenize{stats:regle-d-agregation}}
+\begin{sphinxadmonition}{important}{Important:}
+\sphinxAtStartPar
+Le PR d’un tournoi (ou d’un sous\sphinxhyphen{}ensemble quelconque) est calculé par
+la règle \sphinxstylestrong{somme/somme} — jamais comme moyenne des PR individuels des
+matchs.
+
+\sphinxAtStartPar
+Formule :
+\begin{equation*}
+\begin{split}PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\end{split}
+\end{equation*}
+\sphinxAtStartPar
+\sphinxstylestrong{Exemple :} un joueur dispute deux matchs dans un tournoi —
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Match A : 10 décisions, erreur totale 50 mp \(\rightarrow\) PR = 5,0
+
+\item {} 
+\sphinxAtStartPar
+Match B : 90 décisions, erreur totale 270 mp \(\rightarrow\) PR = 3,0
+
+\end{itemize}
+
+\sphinxAtStartPar
+Moyenne naïve des PR : (5,0 + 3,0) / 2 = \sphinxstylestrong{4,0} \sphinxstyleemphasis{(incorrect)}
+
+\sphinxAtStartPar
+Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = \sphinxstylestrong{3,2} \sphinxstyleemphasis{(correct)}
+
+\sphinxAtStartPar
+La règle somme/somme est la seule qui résiste à la variation de longueur
+des matchs (un match en 21 points pèse plus qu’un match en 1 point).
+\end{sphinxadmonition}
+
+
+\subsection{MWC : limitations}
+\label{\detokenize{stats:mwc-limitations}}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Le MWC cost est calculé à partir de la \sphinxstylestrong{MET Kazaross\sphinxhyphen{}XG2}, table de
+référence de facto dans le backgammon compétitif. Les résultats ne sont
+pas directement comparables avec des logiciels utilisant d’autres METs.
+
+\item {} 
+\sphinxAtStartPar
+Les positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans score de match) sont \sphinxstylestrong{exclues} du
+calcul MWC. Si votre base de données contient beaucoup de positions
+money\sphinxhyphen{}game, le MWC cost peut être sous\sphinxhyphen{}estimé ou indisponible.
+
+\item {} 
+\sphinxAtStartPar
+Le MWC cost est cumulatif sur l’ensemble du jeu de données filtré — pas
+un indicateur par décision. Il mesure l’impact total de vos erreurs sur
+vos chances de victoire.
+
+\end{itemize}
 
 \sphinxstepscope
 
