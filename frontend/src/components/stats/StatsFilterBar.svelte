@@ -25,7 +25,7 @@
 
     // When the metric toggles after mount, persist it
     $effect(() => {
-        const metric = $statsMetricStore;
+        const _metric = $statsMetricStore;
         if (!mounted) return;
         scheduleSave();
     });
@@ -47,6 +47,7 @@
                 match_length: localFilter.matchLength,
                 metric: $statsMetricStore
             };
+            // eslint-disable-next-line no-console
             SaveStatsFilter(persisted).catch(console.error);
         }, 500);
     }
@@ -131,6 +132,7 @@
 
                 // If auto-detected, save immediately
                 if (!savedPlayer && detectedPlayer) {
+                    // eslint-disable-next-line no-console
                     SaveStatsFilter({
                         player_name: detectedPlayer,
                         tournament_ids: [],
@@ -147,6 +149,7 @@
             statsFilterStore.set({ ...localFilter });
             mounted = true;
         } catch (err) {
+            // eslint-disable-next-line no-console
             console.error('StatsFilterBar init error:', err);
         }
     });

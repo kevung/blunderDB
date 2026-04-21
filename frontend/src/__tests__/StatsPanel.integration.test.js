@@ -78,7 +78,6 @@ import {
     loadPositionsFromStatsSelection,
     loadPositionsFromTournament,
     openTournamentInPanel,
-    openMatchInPanel,
 } from '../services/positionLoader.js';
 
 import { activeTabStore } from '../stores/uiStore.js';

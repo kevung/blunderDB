@@ -23,7 +23,6 @@
         closeModal,
         openPanel,
         closePanel,
-        togglePanel,
         isAnyModalOpen
     } from './stores/uiStore.js';
     import {

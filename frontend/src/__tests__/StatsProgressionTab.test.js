@@ -44,7 +44,6 @@ import {
     loadPositionsFromTournament,
     loadPositionsFromMatch,
     openTournamentInPanel,
-    openMatchInPanel
 } from '../services/positionLoader.js';
 import { GRADE_BANDS, gradeForPR, makeGradeBandPlugin } from '../components/stats/gradeBands.js';
 

@@ -1,6 +1,4 @@
 <script>
-    import { get } from 'svelte/store';
-    import { statsFilterStore } from '../../stores/statsStore.js';
     import {
         loadPositionsFromTournament,
         loadPositionsFromMatch,
