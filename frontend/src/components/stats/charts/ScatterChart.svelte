@@ -8,10 +8,11 @@
      * @typedef {Object} ScatterChartProps
      * @property {import('chart.js').ChartDataset<'scatter'>[]} datasets
      * @property {import('chart.js').ChartOptions<'scatter'>} [options]
-     * @property {(dataIndex: number, datasetIndex: number) => void} [onPointClick]
+     * @property {import('chart.js').Plugin[]} [plugins]    Per-chart plugins.
+     * @property {(dataIndex: number, datasetIndex: number, nativeEvent: MouseEvent) => void} [onPointClick]
      */
 
-    let { datasets, options = {}, onPointClick } = $props();
+    let { datasets, options = {}, plugins = [], onPointClick } = $props();
 
     /** @type {HTMLCanvasElement} */
     let canvas;
@@ -44,13 +45,14 @@
         chart = new Chart(canvas, {
             type: 'scatter',
             data: { datasets: datasets ?? [] },
+            plugins: plugins ?? [],
             options: {
                 ...mergedOptions,
                 onClick: onPointClick
-                    ? (_evt, elements) => {
+                    ? (evt, elements) => {
                           if (elements.length > 0) {
                               const { datasetIndex, index } = elements[0];
-                              onPointClick(index, datasetIndex);
+                              onPointClick(index, datasetIndex, evt?.native);
                           }
                       }
                     : undefined
