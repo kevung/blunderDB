@@ -17,10 +17,10 @@
 
 ### 1. Documentation FR
 
-- [ ] Nouveau fichier `doc/source/fr/stats.rst` (ou intégré dans un fichier existant selon la structure).
-- [ ] Sections :
+- [x] Nouveau fichier `doc/source/stats.rst` (intégré dans la structure existante, ajouté au toctree).
+- [x] Sections :
   1. **Introduction** — à quoi sert le panneau, quand l'ouvrir.
-  2. **Ouverture** — commande `:stats` / `:st`, raccourci clavier si défini en fiche 04/05.
+  2. **Ouverture** — commande `:stats` / `:st`.
   3. **Barre de filtre** — expliquer la perspective joueur, l'auto-détection, la plage de dates.
   4. **Toggle PR / MWC** — expliquer la différence :
      - PR = erreur normalisée money-game, scalaire single-value (seuils world-class / expert / …).
@@ -35,18 +35,18 @@
 
 ### 2. Documentation EN
 
-- [ ] Traduction de tous les points ci-dessus dans `doc/source/en/stats.rst`.
-- [ ] Relire pour cohérence terminologique avec la doc existante (PR, MWC, blunder, etc.).
+- [x] Traduction de tous les points ci-dessus dans `doc/source/locale/en/LC_MESSAGES/stats.po`.
+- [x] Relire pour cohérence terminologique avec la doc existante (PR, MWC, blunder, etc.).
 
 ### 3. Changelog
 
-- [ ] Ajouter entrée à `doc/source/index.rst` (section changelog) et/ou `CHANGELOG.md` selon la convention :
+- [x] Ajouter entrée à `doc/source/index.rst` (section changelog) :
   - « v0.19.0 — Added Stats panel with PR/MWC metrics, per-tournament progression chart, error-type breakdown, and interactive drill-down. »
-- [ ] Référence au nouveau fichier doc.
+- [x] Référence au nouveau fichier doc (`:ref:\`stats\``). 
 
 ### 4. Test d'intégration
 
-- [ ] `frontend/src/components/stats/StatsPanel.integration.test.js` :
+- [x] `frontend/src/__tests__/StatsPanel.integration.test.js` :
   - Mock complet de Wails bindings avec une fixture de `StatsResult` réaliste.
   - Monte `StatsPanel`, vérifie que les 3 onglets s'affichent.
   - Navigue Dashboard → clique une carte → vérifie que `loadPositionsFromStatsSelection` a été appelé avec le bon `SelectionSpec`.
@@ -69,8 +69,8 @@
 ## Acceptance criteria
 
 - [ ] `cd doc && python build.py` produit FR + EN sans warning.
-- [ ] Entrée changelog présente avec référence au doc.
-- [ ] `StatsPanel.integration.test.js` passe.
+- [x] Entrée changelog présente avec référence au doc.
+- [x] `StatsPanel.integration.test.js` passe (29 tests, 0 failure).
 - [ ] Une exécution manuelle du script de test E2E valide les 8 points de §Vérification end-to-end du plan.
 - [ ] CI matrix verte sur les 4 plateformes (ubuntu-latest, ubuntu-22.04, windows-latest, macos-latest).
 

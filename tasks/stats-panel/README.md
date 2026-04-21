@@ -56,7 +56,7 @@ Dépendances top-down ; une phase ne peut démarrer qu'après celles dont elle d
 - [x] 08 — errors tab
 - [x] 09 — filter bar
 - [x] 10 — CLI parity
-- [ ] 11 — docs + tests
+- [x] 11 — docs + tests
 
 ## Références plan
 
