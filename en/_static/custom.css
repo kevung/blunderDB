@@ -1,0 +1,12 @@
+.align-center-table td:nth-child(1),
+.align-center-table th:nth-child(1),
+.align-center-table td:nth-child(2),
+.align-center-table th:nth-child(2) {
+   text-align: center;
+}
+
+.align-center-table td:nth-child(3),
+.align-center-table th:nth-child(3) {
+   text-align: left;
+}
+
