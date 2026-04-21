@@ -105,6 +105,7 @@ Outils
    "CTRL-Tab", "Afficher/cacher le panneau des matchs."
    "CTRL-B", "Afficher/cacher le panneau des collections."
    "CTRL-Y", "Afficher/cacher le panneau des tournois."
+   "CTRL-D", "Afficher le panneau Stats."
    "CTRL-E", "Afficher/cacher le panneau EPC."
    "?", "Afficher/cacher l'aide."
 

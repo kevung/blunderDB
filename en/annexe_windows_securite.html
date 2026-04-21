@@ -6,11 +6,11 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>9. Windows Annex: False Detection of blunderDB as Malware &mdash; blunderDB 0.18.0 documentation</title>
+  <title>10. Windows Annex: False Detection of blunderDB as Malware &mdash; blunderDB 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
-      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
 
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="10. Mac Annex: Possible Blocking of blunderDB" href="annexe_mac_securite.html" />
-    <link rel="prev" title="8. Annex: Advanced Filter Usage" href="annexe_filtres.html" /> 
+    <link rel="next" title="11. Mac Annex: Possible Blocking of blunderDB" href="annexe_mac_securite.html" />
+    <link rel="prev" title="9. Annex: Advanced Filter Usage" href="annexe_filtres.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,15 +53,16 @@
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Frequently Asked Questions (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annex: Advanced Filter Usage</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Windows Annex: False Detection of blunderDB as Malware</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">9.1. Windows SmartScreen Warning</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">9.2. Windows Defender Blocking</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">7. Stats Panel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Windows Annex: False Detection of blunderDB as Malware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">10.1. Windows SmartScreen Warning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">10.2. Windows Defender Blocking</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac Annex: Possible Blocking of blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Annex: Database Schema</a></li>
 </ul>
 
         </div>
@@ -78,7 +79,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">9. </span>Windows Annex: False Detection of blunderDB as Malware</li>
+      <li class="breadcrumb-item active"><span class="section-number">10. </span>Windows Annex: False Detection of blunderDB as Malware</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -88,7 +89,7 @@
            <div itemprop="articleBody">
              
   <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
-<span id="annexe-windows-malware"></span><h1><span class="section-number">9. </span>Windows Annex: False Detection of blunderDB as Malware<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
+<span id="annexe-windows-malware"></span><h1><span class="section-number">10. </span>Windows Annex: False Detection of blunderDB as Malware<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The following applies to Windows 10 and 11 operating systems.</p>
@@ -96,7 +97,7 @@
 <p>Windows now requires software publishing companies or independent software developers to digitally certify their applications, or even distribute them via the Windows Store. It is therefore recommended to turn to external companies to obtain a digital certificate, which costs several hundred euros (see, for example, <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a>).</p>
 <p>Since I am offering blunderDB for free, I do not wish to pursue these costly options. Consequently, it is very likely that Windows will warn you of a potential threat or even block the execution of blunderDB entirely. The following sections explain the steps to bypass Windows’ warnings.</p>
 <section id="avertissement-windows-smartscreen">
-<h2><span class="section-number">9.1. </span>Windows SmartScreen Warning<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<h2><span class="section-number">10.1. </span>Windows SmartScreen Warning<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
 <p>After downloading blunderDB, when you run it, Windows may display a warning such as:</p>
 <figure class="align-default">
 <img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
@@ -121,7 +122,7 @@
 </ol>
 </section>
 <section id="blocage-windows-defender">
-<h2><span class="section-number">9.2. </span>Windows Defender Blocking<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<h2><span class="section-number">10.2. </span>Windows Defender Blocking<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
 <p>For certain security settings in Windows, even after bypassing SmartScreen (see the previous section), Windows Defender may prevent the execution of blunderDB with messages such as:</p>
 <figure class="align-center">
 <img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
@@ -196,8 +197,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="8. Annex: Advanced Filter Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="10. Mac Annex: Possible Blocking of blunderDB" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="9. Annex: Advanced Filter Usage" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="11. Mac Annex: Possible Blocking of blunderDB" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

@@ -1,0 +1,407 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fr" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. Panneau Stats &mdash; Documentation blunderDB 0.18.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=32a2970b"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e6b791cb"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Recherche" href="search.html" />
+    <link rel="next" title="8. Foire aux questions" href="faq.html" />
+    <link rel="prev" title="6. Interface en ligne de commande (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Rechercher docs" aria-label="Rechercher docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Téléchargement et installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guide utilisateur</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interface en ligne de commande (CLI)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Panneau Stats</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">7.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouverture-du-panneau">7.2. Ouverture du panneau</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#barre-de-filtre">7.3. Barre de filtre</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#perspective-joueur">7.3.1. Perspective joueur</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#filtres-disponibles">7.3.2. Filtres disponibles</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#toggle-pr-mwc">7.4. Toggle PR / MWC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#onglet-dashboard">7.5. Onglet Dashboard</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#cartes-de-niveau">7.5.1. Cartes de niveau</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">7.5.2. PR glissant sur N dernières décisions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#top-blunders">7.5.3. Top blunders</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#onglet-progression">7.6. Onglet Progression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#courbe-par-tournoi">7.6.1. Courbe par tournoi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#scatter-plot-par-match">7.6.2. Scatter plot par match</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#onglet-erreurs">7.7. Onglet Erreurs</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#repartition-par-action-de-videau">7.7.1. Répartition par action de videau</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#repartition-checker-cube">7.7.2. Répartition Checker / Cube</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">7.7.3. Histogramme des magnitudes d’erreur</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#regle-d-agregation">7.8. Règle d’agrégation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mwc-limitations">7.9. MWC : limitations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Annexe: Schéma de la base de données</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">7. </span>Panneau Stats</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="panneau-stats">
+<span id="stats"></span><h1><span class="section-number">7. </span>Panneau Stats<a class="headerlink" href="#panneau-stats" title="Lien vers cette rubrique"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">7.1. </span>Introduction<a class="headerlink" href="#introduction" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau <strong>Stats</strong> permet d’analyser son niveau de jeu et de suivre sa
+progression dans le temps à partir des positions importées dans la base de
+données. Il calcule et affiche les indicateurs <strong>PR</strong> (Performance Rate) et
+<strong>MWC cost</strong> (Match Winning Chance cost) pour l’ensemble des positions ou un
+sous-ensemble filtré.</p>
+<p>Le panneau Stats est particulièrement utile pour :</p>
+<ul class="simple">
+<li><p><strong>situer son niveau</strong> par rapport aux seuils de référence (world-class,
+expert, avancé…) grâce au PR global ;</p></li>
+<li><p><strong>suivre sa progression</strong> tournoi après tournoi ou match après match grâce
+aux graphiques de l’onglet Progression ;</p></li>
+<li><p><strong>identifier ses points faibles</strong> : onglet Erreurs pour voir la répartition
+entre coups joués et décisions de videau, et la distribution des magnitudes
+d’erreur ;</p></li>
+<li><p><strong>accéder directement aux positions concernées</strong> en cliquant sur n’importe
+quel indicateur (drill-down).</p></li>
+</ul>
+</section>
+<section id="ouverture-du-panneau">
+<h2><span class="section-number">7.2. </span>Ouverture du panneau<a class="headerlink" href="#ouverture-du-panneau" title="Lien vers cette rubrique"></a></h2>
+<p>Pour ouvrir le panneau Stats :</p>
+<ul class="simple">
+<li><p>Appuyer sur <em>CTRL-D</em>.</p></li>
+<li><p>Saisir la commande <code class="docutils literal notranslate"><span class="pre">:stats</span></code> ou <code class="docutils literal notranslate"><span class="pre">:st</span></code> dans la ligne de commande.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le panneau se rafraîchit automatiquement à chaque modification du filtre.
+Il ne recalcule pas les statistiques lors d’un simple basculement PR ↔ MWC :
+les deux métriques sont calculées simultanément par le backend.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h2><span class="section-number">7.3. </span>Barre de filtre<a class="headerlink" href="#barre-de-filtre" title="Lien vers cette rubrique"></a></h2>
+<p>La barre de filtre, en haut du panneau, permet de restreindre le calcul à un
+sous-ensemble de positions.</p>
+<section id="perspective-joueur">
+<h3><span class="section-number">7.3.1. </span>Perspective joueur<a class="headerlink" href="#perspective-joueur" title="Lien vers cette rubrique"></a></h3>
+<p>La liste déroulante <strong>Joueur</strong> permet de filtrer les statistiques selon le
+joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom
+apparaît le plus souvent dans la base de données — modifiable à tout moment.</p>
+<div class="admonition tip">
+<p class="admonition-title">Astuce</p>
+<p>Changer de joueur ne provoque pas de perte de données ; il suffit de
+re-sélectionner le joueur précédent dans la liste.</p>
+</div>
+</section>
+<section id="filtres-disponibles">
+<h3><span class="section-number">7.3.2. </span>Filtres disponibles<a class="headerlink" href="#filtres-disponibles" title="Lien vers cette rubrique"></a></h3>
+<ul class="simple">
+<li><p><strong>Tournoi(s)</strong> — restriction à un ou plusieurs tournois. Plusieurs tournois
+peuvent être sélectionnés simultanément.</p></li>
+<li><p><strong>Dates</strong> — plage temporelle (<em>De</em> … <em>À</em>). Si seule la date de début est
+renseignée, les positions plus récentes sont incluses.</p></li>
+<li><p><strong>Type de décision</strong> — Tous / Coups joués / Décisions de videau.</p></li>
+<li><p><strong>Longueur de match</strong> — restriction à des longueurs de match précises (1, 3,
+5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.</p></li>
+</ul>
+<p>Un bouton <strong>Reset</strong> remet tous les filtres à zéro (sauf le joueur
+auto-détecté).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Les filtres sont persistés dans la configuration de blunderDB
+(<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) et sont restaurés à la prochaine ouverture.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h2><span class="section-number">7.4. </span>Toggle PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Lien vers cette rubrique"></a></h2>
+<p>Le bouton <strong>PR / MWC</strong> en haut du panneau bascule la métrique affichée dans
+tous les onglets.</p>
+<p><strong>PR (Performance Rate)</strong></p>
+<blockquote>
+<div><p>Mesure la qualité de jeu <em>money-game</em> : somme des erreurs en millièmes de
+point de backgammon, divisée par le nombre de décisions. Indépendant du
+score de match.</p>
+<p>Seuils de référence approximatifs :</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Niveau</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>World-class</p></td>
+<td><p>&lt; 3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>3 – 5</p></td>
+</tr>
+<tr class="row-even"><td><p>Avancé</p></td>
+<td><p>5 – 8</p></td>
+</tr>
+<tr class="row-odd"><td><p>Intermédiaire</p></td>
+<td><p>8 – 12</p></td>
+</tr>
+<tr class="row-even"><td><p>Débutant</p></td>
+<td><p>&gt; 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Probabilité cumulée de victoire de match perdue à cause des erreurs, sur
+l’ensemble du jeu de données filtré. Calculé à partir de la MET
+Kazaross-XG2 embarquée dans blunderDB.</p>
+<div class="admonition caution">
+<p class="admonition-title">Prudence</p>
+<p>Le MWC cost <strong>n’est pas applicable</strong> aux positions <em>money-game</em> (sans
+enjeu de match). Ces positions sont exclues du calcul MWC.
+Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas
+directement comparables entre logiciels utilisant des METs différentes.</p>
+</div>
+</div></blockquote>
+<p>Le basculement PR ↔ MWC est instantané : aucun recalcul backend n’est
+effectué.</p>
+</section>
+<section id="onglet-dashboard">
+<h2><span class="section-number">7.5. </span>Onglet Dashboard<a class="headerlink" href="#onglet-dashboard" title="Lien vers cette rubrique"></a></h2>
+<p>L’onglet <strong>Dashboard</strong> donne une vue synthétique des indicateurs clés.</p>
+<section id="cartes-de-niveau">
+<h3><span class="section-number">7.5.1. </span>Cartes de niveau<a class="headerlink" href="#cartes-de-niveau" title="Lien vers cette rubrique"></a></h3>
+<p>Trois cartes affichent le PR (ou MWC) pour :</p>
+<ul class="simple">
+<li><p><strong>All</strong> — toutes les décisions (coups + videau) ;</p></li>
+<li><p><strong>Checker</strong> — coups joués seulement ;</p></li>
+<li><p><strong>Cube</strong> — décisions de videau seulement.</p></li>
+</ul>
+<p>Cliquer sur une carte charge dans le panneau d’analyse les positions du
+sous-ensemble correspondant (drill-down).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Le nombre total de décisions est affiché en bas de chaque carte au survol.</p>
+</div>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h3><span class="section-number">7.5.2. </span>PR glissant sur N dernières décisions<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Lien vers cette rubrique"></a></h3>
+<p>Une ligne de valeurs PR (ou MWC) calculées sur les <em>N</em> dernières décisions
+(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente.
+Les valeurs grisées correspondent à un N supérieur au nombre de décisions
+disponibles.</p>
+<p>Cliquer sur une valeur charge les <em>N</em> dernières positions correspondantes.</p>
+</section>
+<section id="top-blunders">
+<h3><span class="section-number">7.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Lien vers cette rubrique"></a></h3>
+<p>La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante.
+Cliquer sur une ligne charge la position concernée dans le panneau d’analyse.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h2><span class="section-number">7.6. </span>Onglet Progression<a class="headerlink" href="#onglet-progression" title="Lien vers cette rubrique"></a></h2>
+<p>L’onglet <strong>Progression</strong> présente l’évolution du niveau dans le temps.</p>
+<section id="courbe-par-tournoi">
+<h3><span class="section-number">7.6.1. </span>Courbe par tournoi<a class="headerlink" href="#courbe-par-tournoi" title="Lien vers cette rubrique"></a></h3>
+<p>Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :
+ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur
+matérialisent les seuils de niveau.</p>
+<p>Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :</p>
+<ul class="simple">
+<li><p><strong>Open tournament</strong> — ouvre le tournoi dans le panneau Tournois.</p></li>
+<li><p><strong>Open positions</strong> — charge toutes les positions du tournoi dans le panneau
+d’analyse.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h3><span class="section-number">7.6.2. </span>Scatter plot par match<a class="headerlink" href="#scatter-plot-par-match" title="Lien vers cette rubrique"></a></h3>
+<p>Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
+La taille du point est proportionnelle au nombre de décisions dans le match.</p>
+<p>Cliquer sur un point ouvre un menu contextuel :</p>
+<ul class="simple">
+<li><p><strong>Open match</strong> — ouvre le match dans le panneau des matchs.</p></li>
+<li><p><strong>Open positions</strong> — charge toutes les positions du match dans le panneau
+d’analyse.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h2><span class="section-number">7.7. </span>Onglet Erreurs<a class="headerlink" href="#onglet-erreurs" title="Lien vers cette rubrique"></a></h2>
+<p>L’onglet <strong>Erreurs</strong> décompose les sources d’erreurs.</p>
+<section id="repartition-par-action-de-videau">
+<h3><span class="section-number">7.7.1. </span>Répartition par action de videau<a class="headerlink" href="#repartition-par-action-de-videau" title="Lien vers cette rubrique"></a></h3>
+<p>Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision
+de videau : <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Chaque barre
+indique également le nombre de décisions et le taux de blunders en infobulle.</p>
+<p>Cliquer sur une barre charge les positions correspondant à cette action de
+videau, <strong>uniquement celles avec une erreur</strong> (drill-down).</p>
+</section>
+<section id="repartition-checker-cube">
+<h3><span class="section-number">7.7.2. </span>Répartition Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Lien vers cette rubrique"></a></h3>
+<p>Un diagramme comparatif place côte à côte le PR des coups joués et des
+décisions de videau. Cliquer sur une barre charge les positions du
+sous-ensemble avec erreur.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h3><span class="section-number">7.7.3. </span>Histogramme des magnitudes d’erreur<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Lien vers cette rubrique"></a></h3>
+<p>Un histogramme distribue les erreurs selon leur magnitude en millièmes de
+point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
+une barre charge les positions de la tranche.</p>
+</section>
+</section>
+<section id="regle-d-agregation">
+<h2><span class="section-number">7.8. </span>Règle d’agrégation<a class="headerlink" href="#regle-d-agregation" title="Lien vers cette rubrique"></a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Le PR d’un tournoi (ou d’un sous-ensemble quelconque) est calculé par
+la règle <strong>somme/somme</strong> — jamais comme moyenne des PR individuels des
+matchs.</p>
+<p>Formule :</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\]</div>
+<p><strong>Exemple :</strong> un joueur dispute deux matchs dans un tournoi —</p>
+<ul class="simple">
+<li><p>Match A : 10 décisions, erreur totale 50 mp → PR = 5,0</p></li>
+<li><p>Match B : 90 décisions, erreur totale 270 mp → PR = 3,0</p></li>
+</ul>
+<p>Moyenne naïve des PR : (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(incorrect)</em></p>
+<p>Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = <strong>3,2</strong> <em>(correct)</em></p>
+<p>La règle somme/somme est la seule qui résiste à la variation de longueur
+des matchs (un match en 21 points pèse plus qu’un match en 1 point).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h2><span class="section-number">7.9. </span>MWC : limitations<a class="headerlink" href="#mwc-limitations" title="Lien vers cette rubrique"></a></h2>
+<ul class="simple">
+<li><p>Le MWC cost est calculé à partir de la <strong>MET Kazaross-XG2</strong>, table de
+référence de facto dans le backgammon compétitif. Les résultats ne sont
+pas directement comparables avec des logiciels utilisant d’autres METs.</p></li>
+<li><p>Les positions <em>money-game</em> (sans score de match) sont <strong>exclues</strong> du
+calcul MWC. Si votre base de données contient beaucoup de positions
+money-game, le MWC cost peut être sous-estimé ou indisponible.</p></li>
+<li><p>Le MWC cost est cumulatif sur l’ensemble du jeu de données filtré — pas
+un indicateur par décision. Il mesure l’impact total de vos erreurs sur
+vos chances de victoire.</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pied de page">
+        <a href="cli.html" class="btn btn-neutral float-left" title="6. Interface en ligne de commande (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Précédent</a>
+        <a href="faq.html" class="btn btn-neutral float-right" title="8. Foire aux questions" accesskey="n" rel="next">Suivant <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Droits d'auteur 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Languages</dt>
+            
+            <dd><a href="../en/index.html">en</a></dd>
+            
+            <dd><a href="../fr/index.html">fr</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

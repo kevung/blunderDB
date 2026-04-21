@@ -6,11 +6,11 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>11. Annex: Database Schema &mdash; blunderDB 0.18.0 documentation</title>
+  <title>12. Annex: Database Schema &mdash; blunderDB 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
-      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
 
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="10. Mac Annex: Possible Blocking of blunderDB" href="annexe_mac_securite.html" /> 
+    <link rel="prev" title="11. Mac Annex: Possible Blocking of blunderDB" href="annexe_mac_securite.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -52,19 +52,20 @@
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Frequently Asked Questions (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annex: Advanced Filter Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows Annex: False Detection of blunderDB as Malware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac Annex: Possible Blocking of blunderDB</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">11. Annex: Database Schema</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">11.1. Version 1.0.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">11.2. Version 1.1.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">11.3. Version 1.2.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">11.4. Version 1.3.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">11.5. Version 1.4.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">11.6. Version 1.5.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">11.7. Version 1.6.0</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">11.8. Version 1.7.0</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">7. Stats Panel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Annex: Database Schema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">12.1. Version 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">12.2. Version 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">12.3. Version 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">12.4. Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">12.5. Version 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">12.6. Version 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">12.7. Version 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">12.8. Version 1.7.0</a></li>
 </ul>
 </li>
 </ul>
@@ -83,7 +84,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">11. </span>Annex: Database Schema</li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Annex: Database Schema</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -93,13 +94,13 @@
            <div itemprop="articleBody">
              
   <section id="annexe-schema-de-la-base-de-donnees">
-<span id="annexe-db-migration"></span><h1><span class="section-number">11. </span>Annex: Database Schema<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<span id="annexe-db-migration"></span><h1><span class="section-number">12. </span>Annex: Database Schema<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>Always back up your .db file before performing database migrations.</p>
 </div>
 <section id="version-1-0-0">
-<h2><span class="section-number">11.1. </span>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.1. </span>Version 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
 <p>Version 1.0.0 of the database contains the following tables:</p>
 <ul class="simple">
 <li><p><strong>position</strong>: Stores the positions with the columns <cite>id</cite> (primary key) and <cite>state</cite> (state of the position in JSON format).</p></li>
@@ -109,7 +110,7 @@
 </ul>
 </section>
 <section id="version-1-1-0">
-<h2><span class="section-number">11.2. </span>Version 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.2. </span>Version 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
 <p>Version 1.1.0 of the database adds the following table:</p>
 <ul class="simple">
 <li><p><strong>command_history</strong>: Stores the command history with the columns <cite>id</cite> (primary key), <cite>command</cite> (text of the command), and <cite>timestamp</cite> (date and time of command execution).</p></li>
@@ -118,7 +119,7 @@
 <p>To migrate the database from version 1.0.0 to version 1.1.0, execute the command <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> in blunderDB.</p>
 </section>
 <section id="version-1-2-0">
-<h2><span class="section-number">11.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.3. </span>Version 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
 <p>Version 1.2.0 of the database adds the following table:</p>
 <ul class="simple">
 <li><p><strong>filter_library</strong>: Stores search filters with the columns <cite>id</cite> (primary key), <cite>name</cite> (filter name), <cite>command</cite> (command associated with the filter), and <cite>edit_position</cite> (position edited when saving the filter).</p></li>
@@ -127,7 +128,7 @@
 <p>To migrate the database from version 1.1.0 to version 1.2.0, execute the command <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> in blunderDB.</p>
 </section>
 <section id="version-1-3-0">
-<h2><span class="section-number">11.4. </span>Version 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.4. </span>Version 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
 <p>Version 1.3.0 of the database adds the following table:</p>
 <ul class="simple">
 <li><p><strong>search_history</strong>: Stores position search history with the columns <cite>id</cite> (primary key), <cite>command</cite> (search command text), <cite>position</cite> (position state at the time of search), and <cite>timestamp</cite> (date and time of the search).</p></li>
@@ -136,7 +137,7 @@
 <p>To migrate the database from version 1.2.0 to version 1.3.0, execute the command <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> in blunderDB.</p>
 </section>
 <section id="version-1-4-0">
-<h2><span class="section-number">11.5. </span>Version 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.5. </span>Version 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
 <p>Version 1.4.0 of the database adds the following tables for match management:</p>
 <ul class="simple">
 <li><p><strong>match</strong>: Stores imported matches with the columns <cite>id</cite> (primary key), <cite>player1_name</cite>, <cite>player2_name</cite>, <cite>event</cite>, <cite>location</cite>, <cite>round</cite>, <cite>match_length</cite>, <cite>match_date</cite>, <cite>import_date</cite>, <cite>file_path</cite>, <cite>game_count</cite>, and <cite>match_hash</cite> (hash for duplicate detection).</p></li>
@@ -147,7 +148,7 @@
 <p>Migration from 1.3.0 to 1.4.0 is automatic when opening the database.</p>
 </section>
 <section id="version-1-5-0">
-<h2><span class="section-number">11.6. </span>Version 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.6. </span>Version 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
 <p>Version 1.5.0 of the database adds the following tables for collection management:</p>
 <ul class="simple">
 <li><p><strong>collection</strong>: Stores position collections with the columns <cite>id</cite> (primary key), <cite>name</cite>, <cite>description</cite>, <cite>sort_order</cite>, <cite>created_at</cite>, and <cite>updated_at</cite>.</p></li>
@@ -156,7 +157,7 @@
 <p>Migration from 1.4.0 to 1.5.0 is automatic when opening the database.</p>
 </section>
 <section id="version-1-6-0">
-<h2><span class="section-number">11.7. </span>Version 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.7. </span>Version 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
 <p>Version 1.6.0 of the database adds the following table for tournament management:</p>
 <ul class="simple">
 <li><p><strong>tournament</strong>: Stores tournaments with the columns <cite>id</cite> (primary key), <cite>name</cite>, <cite>date</cite>, <cite>location</cite>, <cite>sort_order</cite>, <cite>created_at</cite>, and <cite>updated_at</cite>.</p></li>
@@ -165,7 +166,7 @@
 <p>Migration from 1.5.0 to 1.6.0 is automatic when opening the database.</p>
 </section>
 <section id="version-1-7-0">
-<h2><span class="section-number">11.8. </span>Version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
+<h2><span class="section-number">12.8. </span>Version 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
 <p>Version 1.7.0 of the database adds the following column:</p>
 <ul class="simple">
 <li><p>Addition of the <cite>last_visited_position</cite> column in the <cite>match</cite> table to remember the last visited position in each match.</p></li>
@@ -182,7 +183,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="10. Mac Annex: Possible Blocking of blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="11. Mac Annex: Possible Blocking of blunderDB" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

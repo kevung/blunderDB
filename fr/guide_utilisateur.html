@@ -10,7 +10,7 @@
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
-      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
 
   
     <link rel="shortcut icon" href="_static/favicon.ico"/>
@@ -66,21 +66,23 @@
 <li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">3.13. Gérer le panneau des matchs</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">3.14. Gérer les collections</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">3.15. Gérer les tournois</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#calculer-l-epc">3.16. Calculer l’EPC</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">3.17. Afficher l’analyse d’une position importée depuis XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">3.18. Exporter une position vers XG</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">3.19. Visualiser les différentes positions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">3.20. Rechercher des positions selon des critères</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">3.16. Afficher les statistiques de performance</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculer-l-epc">3.17. Calculer l’EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. Afficher l’analyse d’une position importée depuis XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">3.19. Exporter une position vers XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">3.20. Visualiser les différentes positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">3.21. Rechercher des positions selon des critères</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Liste des commandes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Raccourcis clavier</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interface en ligne de commande (CLI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Foire aux questions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annexe: Utilisation avancée des filtres</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Annexe Mac : Blocage éventuel de blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Annexe: Schéma de la base de données</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">7. Panneau Stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">8. Foire aux questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">9. Annexe: Utilisation avancée des filtres</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">10. Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">11. Annexe Mac : Blocage éventuel de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">12. Annexe: Schéma de la base de données</a></li>
 </ul>
 
         </div>
@@ -358,8 +360,19 @@ Pour accéder au panneau des tournois, appuyer sur <em>CTRL-Y</em>.</p>
 de la colonne tournoi pour assigner un match.</p></li>
 </ul>
 </section>
+<section id="afficher-les-statistiques-de-performance">
+<h2><span class="section-number">3.16. </span>Afficher les statistiques de performance<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="Lien vers cette rubrique"></a></h2>
+<p>Le panneau Stats permet de visualiser ses indicateurs de performance (PR et coût MWC)
+à partir des positions importées.</p>
+<ol class="arabic simple">
+<li><p>Appuyer <em>CTRL-D</em> ou cliquer sur l’onglet Stats dans le panneau inférieur.</p></li>
+<li><p>Utiliser la barre de filtre pour restreindre l’analyse par joueur,
+tournoi, plage de dates, type de décision ou longueur de match.</p></li>
+<li><p>Cliquer sur un indicateur pour accéder directement aux positions correspondantes.</p></li>
+</ol>
+</section>
 <section id="calculer-l-epc">
-<h2><span class="section-number">3.16. </span>Calculer l’EPC<a class="headerlink" href="#calculer-l-epc" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.17. </span>Calculer l’EPC<a class="headerlink" href="#calculer-l-epc" title="Lien vers cette rubrique"></a></h2>
 <p>Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques de
 bearoff d’une position.</p>
 <ol class="arabic simple">
@@ -375,7 +388,7 @@ EPC, nombre moyen de lancers, écart type, pip count et wastage.</p></li>
 </div>
 </section>
 <section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
-<h2><span class="section-number">3.17. </span>Afficher l’analyse d’une position importée depuis XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.18. </span>Afficher l’analyse d’une position importée depuis XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Lien vers cette rubrique"></a></h2>
 <p>Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans
 blunderDB, l’analyse peut être affichée en appuyant <em>CTRL-L</em>.</p>
 <p>Si la position correspond à une décision de pions, les cinq meilleurs coups
@@ -399,7 +412,7 @@ correspondantes sont affichées sur le board.</p>
 </div>
 </section>
 <section id="exporter-une-position-vers-xg">
-<h2><span class="section-number">3.18. </span>Exporter une position vers XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.19. </span>Exporter une position vers XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Lien vers cette rubrique"></a></h2>
 <p>Pour exporter une position de blunderDB vers XG,</p>
 <ol class="arabic simple">
 <li><p>afficher dans blunderDB la position à exporter et appuyter <em>CTRL-C</em>,</p></li>
@@ -407,7 +420,7 @@ correspondantes sont affichées sur le board.</p>
 </ol>
 </section>
 <section id="visualiser-les-differentes-positions">
-<h2><span class="section-number">3.19. </span>Visualiser les différentes positions<a class="headerlink" href="#visualiser-les-differentes-positions" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.20. </span>Visualiser les différentes positions<a class="headerlink" href="#visualiser-les-differentes-positions" title="Lien vers cette rubrique"></a></h2>
 <p>Pour visualiser les différentes positions de la bibliothèque courante, utiliser
 les touches <em>GAUCHE</em> et <em>DROITE</em>. La touche <em>HOME</em> permet d’aller à la première
 position. La touche <em>FIN</em> permet d’aller à la dernière position.</p>
@@ -415,7 +428,7 @@ position. La touche <em>FIN</em> permet d’aller à la dernière position.</p>
 bearoff à droite, appuyer <em>CTRL-DROITE</em>.</p>
 </section>
 <section id="rechercher-des-positions-selon-des-criteres">
-<h2><span class="section-number">3.20. </span>Rechercher des positions selon des critères<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Lien vers cette rubrique"></a></h2>
+<h2><span class="section-number">3.21. </span>Rechercher des positions selon des critères<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Lien vers cette rubrique"></a></h2>
 <p>Pour rechercher des types de positions,</p>
 <ul class="simple">
 <li><p>appuyer sur <em>TAB</em> pour ouvrir le panneau de recherche,</p></li>
