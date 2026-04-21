@@ -62,6 +62,8 @@ export function processCommand(command) {
         callbacks.onToggleHelp?.();
     } else if (command === 'e') {
         callbacks.onLoadAllPositions?.();
+    } else if (command === 'stats' || command === 'st') {
+        callbacks.onToggleStats?.();
     } else if (command.startsWith('ss')) {
         handleSubSearch(command, positions);
     } else if (command.startsWith('s')) {

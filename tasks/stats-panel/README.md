@@ -49,7 +49,7 @@ Dépendances top-down ; une phase ne peut démarrer qu'après celles dont elle d
 - [x] 01 — backend stats
 - [x] 02 — MWC conversion
 - [x] 03 — drill-down backend
-- [ ] 04 — Wails + store
+- [x] 04 — Wails + store
 - [ ] 05 — panel shell + charts
 - [ ] 06 — dashboard tab
 - [ ] 07 — progression tab

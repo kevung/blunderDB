@@ -329,7 +329,8 @@ describe('processCommand', () => {
             toggleMatchPanel: vi.fn(),
             toggleCollectionPanel: vi.fn(),
             toggleEPCMode: vi.fn(),
-            toggleMatchMode: vi.fn()
+            toggleMatchMode: vi.fn(),
+            onToggleStats: vi.fn()
         };
         initCommandProcessor(callbacks);
 
@@ -412,6 +413,8 @@ describe('processCommand', () => {
         ['ma', 'toggleMatchPanel'],
         ['collection', 'toggleCollectionPanel'],
         ['coll', 'toggleCollectionPanel'],
+        ['stats', 'onToggleStats'],
+        ['st', 'onToggleStats'],
         ['epc', 'toggleEPCMode'],
         ['m', 'toggleMatchMode']
     ];

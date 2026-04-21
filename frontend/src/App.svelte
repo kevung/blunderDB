@@ -23,6 +23,7 @@
         closeModal,
         openPanel,
         closePanel,
+        togglePanel,
         isAnyModalOpen
     } from './stores/uiStore.js';
     import {
@@ -296,7 +297,8 @@
             toggleMatchPanel,
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,
-            toggleMatchMode
+            toggleMatchMode,
+            onToggleStats: () => togglePanel(PANEL.STATS)
         });
         window.addEventListener('keydown', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);

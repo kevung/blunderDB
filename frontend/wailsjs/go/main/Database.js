@@ -54,6 +54,10 @@ export function ComputeEPCFromPosition(arg1) {
   return window['go']['main']['Database']['ComputeEPCFromPosition'](arg1);
 }
 
+export function ComputeStats(arg1) {
+  return window['go']['main']['Database']['ComputeStats'](arg1);
+}
+
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['main']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
@@ -200,6 +204,18 @@ export function GetNextAnkiCard(arg1) {
 
 export function GetPositionCollections(arg1) {
   return window['go']['main']['Database']['GetPositionCollections'](arg1);
+}
+
+export function GetPositionIDsByMatch(arg1) {
+  return window['go']['main']['Database']['GetPositionIDsByMatch'](arg1);
+}
+
+export function GetPositionIDsByStatsSelection(arg1, arg2) {
+  return window['go']['main']['Database']['GetPositionIDsByStatsSelection'](arg1, arg2);
+}
+
+export function GetPositionIDsByTournament(arg1) {
+  return window['go']['main']['Database']['GetPositionIDsByTournament'](arg1);
 }
 
 export function GetPositionIndexMap() {

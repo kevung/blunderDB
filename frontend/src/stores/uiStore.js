@@ -57,7 +57,8 @@ export const PANEL = {
     SEARCH_HISTORY: 'searchHistory',
     MATCH: 'match',
     COLLECTION: 'collection',
-    TOURNAMENT: 'tournament'
+    TOURNAMENT: 'tournament',
+    STATS: 'stats'
 };
 
 // ── Single modal store (only one modal at a time) ──
