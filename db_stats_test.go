@@ -626,3 +626,105 @@ func containsStr(s, sub string) bool {
 			return false
 		}())
 }
+
+// ── GetAllPlayerNames tests ──────────────────────────────────────────────────
+
+// TestGetAllPlayerNames_EmptyDB verifies an empty database returns an empty slice.
+func TestGetAllPlayerNames_EmptyDB(t *testing.T) {
+	db := newTestDB(t)
+	players, err := db.GetAllPlayerNames()
+	if err != nil {
+		t.Fatalf("GetAllPlayerNames: %v", err)
+	}
+	if len(players) != 0 {
+		t.Errorf("expected empty slice, got %v", players)
+	}
+}
+
+// TestGetAllPlayerNames_CountsAndOrder verifies frequency counts and ordering.
+// Fixture: Alice as p1 in 3 matches and as p2 in 2 matches → Count=5
+//          Bob as p2 in 5 matches → Count=5
+//          Carol as p1 in 1 match → Count=1
+// Expected order: Alice and Bob (both 5) alphabetically, then Carol.
+func TestGetAllPlayerNames_CountsAndOrder(t *testing.T) {
+	db := newTestDB(t)
+
+	insertMatchName := func(p1, p2 string) {
+		t.Helper()
+		_, err := db.db.Exec(
+			`INSERT INTO match (player1_name, player2_name, match_date, match_length) VALUES (?,?,?,?)`,
+			p1, p2, "2024-01-01", 5,
+		)
+		if err != nil {
+			t.Fatalf("insert match: %v", err)
+		}
+	}
+
+	// Alice p1×3
+	insertMatchName("Alice", "Bob")
+	insertMatchName("Alice", "Bob")
+	insertMatchName("Alice", "Bob")
+	// Alice p2×2
+	insertMatchName("Bob", "Alice")
+	insertMatchName("Bob", "Alice")
+	// Carol p1×1
+	insertMatchName("Carol", "Bob")
+
+	players, err := db.GetAllPlayerNames()
+	if err != nil {
+		t.Fatalf("GetAllPlayerNames: %v", err)
+	}
+
+	// Alice: 3+2=5, Bob: 3+2+1=6, Carol: 1
+	// Expected order: Bob(6), Alice(5), Carol(1)
+	if len(players) != 3 {
+		t.Fatalf("expected 3 players, got %d: %v", len(players), players)
+	}
+
+	if players[0].Name != "Bob" || players[0].Count != 6 {
+		t.Errorf("players[0]: want {Bob,6}, got %+v", players[0])
+	}
+	if players[1].Name != "Alice" || players[1].Count != 5 {
+		t.Errorf("players[1]: want {Alice,5}, got %+v", players[1])
+	}
+	if players[2].Name != "Carol" || players[2].Count != 1 {
+		t.Errorf("players[2]: want {Carol,1}, got %+v", players[2])
+	}
+}
+
+// TestGetAllPlayerNames_AlphabeticTiebreak verifies alphabetical order for equal counts.
+func TestGetAllPlayerNames_AlphabeticTiebreak(t *testing.T) {
+	db := newTestDB(t)
+
+	for _, name := range []string{"Zara", "Alice", "Mike"} {
+		if _, err := db.db.Exec(
+			`INSERT INTO match (player1_name, player2_name, match_date, match_length) VALUES (?, 'Opp', '2024-01-01', 5)`,
+			name,
+		); err != nil {
+			t.Fatalf("insert match: %v", err)
+		}
+	}
+
+	players, err := db.GetAllPlayerNames()
+	if err != nil {
+		t.Fatalf("GetAllPlayerNames: %v", err)
+	}
+
+	// All have count=1; "Opp" also appears as p2 × 3 → count=3
+	// Alice, Mike, Zara each have count=1, sorted alphabetically after Opp
+	names := make([]string, len(players))
+	for i, p := range players {
+		names[i] = p.Name
+	}
+
+	// Opp first (count=3), then Alice, Mike, Zara (count=1, alphabetical)
+	want := []string{"Opp", "Alice", "Mike", "Zara"}
+	for i, w := range want {
+		if i >= len(names) {
+			t.Fatalf("not enough players: %v", names)
+		}
+		if names[i] != w {
+			t.Errorf("names[%d]: want %q, got %q", i, w, names[i])
+		}
+	}
+}

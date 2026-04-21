@@ -142,6 +142,10 @@ export function GetAllMatches() {
   return window['go']['main']['Database']['GetAllMatches']();
 }
 
+export function GetAllPlayerNames() {
+  return window['go']['main']['Database']['GetAllPlayerNames']();
+}
+
 export function GetAllTournaments() {
   return window['go']['main']['Database']['GetAllTournaments']();
 }

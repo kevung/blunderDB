@@ -12,10 +12,21 @@ import (
 
 const configFilePath = "blunderDB/config.yaml"
 
+type StatsFilterPersisted struct {
+	PlayerName    string  `json:"player_name"`
+	TournamentIDs []int64 `json:"tournament_ids"`
+	DateFrom      string  `json:"date_from"`
+	DateTo        string  `json:"date_to"`
+	DecisionType  int     `json:"decision_type"`
+	MatchLength   []int   `json:"match_length"`
+	Metric        string  `json:"metric"` // "pr" | "mwc"
+}
+
 type Config struct {
-	WindowWidth      int    `json:"window_width"`
-	WindowHeight     int    `json:"window_height"`
-	LastDatabasePath string `json:"last_database_path"`
+	WindowWidth      int                  `json:"window_width"`
+	WindowHeight     int                  `json:"window_height"`
+	LastDatabasePath string               `json:"last_database_path"`
+	StatsFilter      StatsFilterPersisted `json:"stats_filter,omitempty"`
 }
 
 func NewConfig() *Config {
@@ -70,6 +81,7 @@ func (c *Config) LoadConfig() (*Config, error) {
 	c.WindowWidth = config.WindowWidth
 	c.WindowHeight = config.WindowHeight
 	c.LastDatabasePath = config.LastDatabasePath
+	c.StatsFilter = config.StatsFilter
 
 	return &config, nil
 }
@@ -101,4 +113,15 @@ func (c *Config) SaveLastDatabasePath(path string) error {
 
 func (c *Config) GetLastDatabasePath() string {
 	return c.LastDatabasePath
+}
+
+// GetStatsFilter returns the persisted stats filter (called from the frontend).
+func (c *Config) GetStatsFilter() StatsFilterPersisted {
+	return c.StatsFilter
+}
+
+// SaveStatsFilter persists the given stats filter to disk.
+func (c *Config) SaveStatsFilter(filter StatsFilterPersisted) error {
+	c.StatsFilter = filter
+	return c.SaveConfig(c)
 }

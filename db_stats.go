@@ -660,3 +660,46 @@ func (d *Database) GetPositionIDsByMatch(matchID int64) ([]int64, error) {
 	}
 	return scanPositionIDs(rows)
 }
+
+// PlayerFrequency pairs a player name with the number of matches in which they appear.
+type PlayerFrequency struct {
+	Name  string
+	Count int
+}
+
+// GetAllPlayerNames returns all player names found in the match table, ranked by
+// the total number of matches (player1 + player2 appearances) descending.
+// Names that are equal in frequency are sorted alphabetically.
+func (d *Database) GetAllPlayerNames() ([]PlayerFrequency, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	rows, err := d.db.Query(`
+		SELECT name, COUNT(*) AS cnt
+		FROM (
+			SELECT player1_name AS name FROM match WHERE player1_name != ''
+			UNION ALL
+			SELECT player2_name AS name FROM match WHERE player2_name != ''
+		)
+		GROUP BY name
+		ORDER BY cnt DESC, name ASC
+	`)
+	if err != nil {
+		return nil, fmt.Errorf("GetAllPlayerNames: %w", err)
+	}
+	defer rows.Close()
+
+	var result []PlayerFrequency
+	for rows.Next() {
+		var pf PlayerFrequency
+		if err := rows.Scan(&pf.Name, &pf.Count); err != nil {
+			return nil, fmt.Errorf("GetAllPlayerNames scan: %w", err)
+		}
+		result = append(result, pf)
+	}
+	return result, rows.Err()
+}

@@ -72,6 +72,8 @@ export function GetAllComments():Promise<Array<main.CommentEntry>>;
 
 export function GetAllMatches():Promise<Array<main.Match>>;
 
+export function GetAllPlayerNames():Promise<Array<main.PlayerFrequency>>;
+
 export function GetAllTournaments():Promise<Array<main.Tournament>>;
 
 export function GetAnkiDeckPositions(arg1:number):Promise<Array<main.Position>>;

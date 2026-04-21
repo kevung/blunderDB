@@ -340,20 +340,44 @@ export namespace main {
 	        this.modifiedAt = source["modifiedAt"];
 	    }
 	}
+export class StatsFilterPersisted {
+	    player_name: string;
+	    tournament_ids: Array<number>;
+	    date_from: string;
+	    date_to: string;
+	    decision_type: number;
+	    match_length: Array<number>;
+	    metric: string;
+
+	    static createFrom(source: any = {}) { return new StatsFilterPersisted(source); }
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.player_name = source["player_name"] ?? '';
+	        this.tournament_ids = source["tournament_ids"] ?? [];
+	        this.date_from = source["date_from"] ?? '';
+	        this.date_to = source["date_to"] ?? '';
+	        this.decision_type = source["decision_type"] ?? -1;
+	        this.match_length = source["match_length"] ?? [];
+	        this.metric = source["metric"] ?? 'pr';
+	    }
+	}
+
 	export class Config {
 	    window_width: number;
 	    window_height: number;
 	    last_database_path: string;
-	
+	    stats_filter: StatsFilterPersisted;
+
 	    static createFrom(source: any = {}) {
 	        return new Config(source);
 	    }
-	
+
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.window_width = source["window_width"];
 	        this.window_height = source["window_height"];
 	        this.last_database_path = source["last_database_path"];
+	        this.stats_filter = StatsFilterPersisted.createFrom(source["stats_filter"]);
 	    }
 	}
 	
@@ -863,6 +887,18 @@ export namespace main {
 	}
 
 	// ── Stats types (added by fiche 04) ──────────────────────────────────────
+
+	export class PlayerFrequency {
+	    name: string;
+	    count: number;
+
+	    static createFrom(source: any = {}) { return new PlayerFrequency(source); }
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.name = source["Name"] ?? '';
+	        this.count = source["Count"] ?? 0;
+	    }
+	}
 
 	export class StatsFilter {
 	    playerName: string;

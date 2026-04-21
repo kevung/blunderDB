@@ -4,10 +4,14 @@ import {main} from '../models';
 
 export function GetLastDatabasePath():Promise<string>;
 
+export function GetStatsFilter():Promise<main.StatsFilterPersisted>;
+
 export function LoadConfig():Promise<main.Config>;
 
 export function SaveConfig(arg1:main.Config):Promise<void>;
 
 export function SaveLastDatabasePath(arg1:string):Promise<void>;
+
+export function SaveStatsFilter(arg1:main.StatsFilterPersisted):Promise<void>;
 
 export function SaveWindowDimensions(arg1:number,arg2:number):Promise<void>;
