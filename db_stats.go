@@ -26,78 +26,78 @@ type StatsFilter struct {
 
 // StatsTotals holds high-level counts for a stats result.
 type StatsTotals struct {
-	NumPositions   int
-	NumMatches     int
-	NumTournaments int
-	NumDecisions   int
+	NumPositions   int `json:"num_positions"`
+	NumMatches     int `json:"num_matches"`
+	NumTournaments int `json:"num_tournaments"`
+	NumDecisions   int `json:"num_decisions"`
 }
 
 // TournamentStats holds aggregated stats for a single tournament.
 type TournamentStats struct {
-	ID           int64
-	Name         string
-	Date         string
-	PR           float64
-	MWC          float64
-	NumDecisions int
+	ID           int64   `json:"id"`
+	Name         string  `json:"name"`
+	Date         string  `json:"date"`
+	PR           float64 `json:"pr"`
+	MWC          float64 `json:"mwc"`
+	NumDecisions int     `json:"num_decisions"`
 }
 
 // MatchStats holds aggregated stats for a single match.
 type MatchStats struct {
-	ID           int64
-	Date         string
-	PlayerName   string
-	PR           float64
-	MWC          float64
-	NumDecisions int
+	ID           int64   `json:"id"`
+	Date         string  `json:"date"`
+	PlayerName   string  `json:"player_name"`
+	PR           float64 `json:"pr"`
+	MWC          float64 `json:"mwc"`
+	NumDecisions int     `json:"num_decisions"`
 }
 
 // CubeActionStats holds aggregated stats grouped by cube action.
 type CubeActionStats struct {
-	Action       string
-	PR           float64
-	MWC          float64
-	NumDecisions int
-	BlunderCount int
+	Action       string  `json:"action"`
+	PR           float64 `json:"pr"`
+	MWC          float64 `json:"mwc"`
+	NumDecisions int     `json:"num_decisions"`
+	BlunderCount int     `json:"blunder_count"`
 }
 
 // ErrorBucket groups decisions by magnitude of error.
 type ErrorBucket struct {
-	MinMP int
-	MaxMP int
-	Count int
+	MinMP int `json:"min_mp"`
+	MaxMP int `json:"max_mp"`
+	Count int `json:"count"`
 }
 
 // BlunderEntry identifies a single bad decision.
 type BlunderEntry struct {
-	PositionID   int64
-	MatchID      int64
-	TournamentID int64
-	ErrorMP      int64
-	MWCLoss      float64
-	Description  string
-	DecisionType int    // 0=checker, 1=cube
-	MatchDate    string // ISO date string, may be empty
-	PlayerNames  string // "Player1 vs Player2"
+	PositionID   int64   `json:"position_id"`
+	MatchID      int64   `json:"match_id"`
+	TournamentID int64   `json:"tournament_id"`
+	ErrorMP      int64   `json:"error_mp"`
+	MWCLoss      float64 `json:"mwc_loss"`
+	Description  string  `json:"description"`
+	DecisionType int     `json:"decision_type"` // 0=checker, 1=cube
+	MatchDate    string  `json:"match_date"`    // ISO date string, may be empty
+	PlayerNames  string  `json:"player_names"`  // "Player1 vs Player2"
 }
 
 // StatsResult contains all computed statistics for the given filter.
 type StatsResult struct {
-	Totals              StatsTotals
-	PRGlobal            float64
-	PRChecker           float64
-	PRCube              float64
-	PRRolling           map[int]float64 // keyed by N: 5,10,50,100,250,500,1000
-	MWCGlobal           float64         // sum of MWC losses across all match-play decisions
-	MWCChecker          float64         // MWC loss from checker play errors
-	MWCCube             float64         // MWC loss from cube action errors
-	MWCRolling          map[int]float64 // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
-	MWCAvailable        bool            // true if at least one match-play decision contributed
-	PerTournament       []TournamentStats
-	PerMatch            []MatchStats
-	CubeActionBreakdown []CubeActionStats
-	ErrorHistogram      []ErrorBucket
-	TopBlunders         []BlunderEntry
+	Totals              StatsTotals        `json:"totals"`
+	PRGlobal            float64            `json:"pr_global"`
+	PRChecker           float64            `json:"pr_checker"`
+	PRCube              float64            `json:"pr_cube"`
+	PRRolling           map[int]float64    `json:"pr_rolling"`   // keyed by N: 5,10,50,100,250,500,1000
+	MWCGlobal           float64            `json:"mwc_global"`   // sum of MWC losses across all match-play decisions
+	MWCChecker          float64            `json:"mwc_checker"`  // MWC loss from checker play errors
+	MWCCube             float64            `json:"mwc_cube"`     // MWC loss from cube action errors
+	MWCRolling          map[int]float64    `json:"mwc_rolling"`  // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
+	MWCAvailable        bool               `json:"mwc_available"` // true if at least one match-play decision contributed
+	PerTournament       []TournamentStats  `json:"per_tournament"`
+	PerMatch            []MatchStats       `json:"per_match"`
+	CubeActionBreakdown []CubeActionStats  `json:"cube_action_breakdown"`
+	ErrorHistogram      []ErrorBucket      `json:"error_histogram"`
+	TopBlunders         []BlunderEntry     `json:"top_blunders"`
 }
 
 // pr computes the Performance Rating from a sum of errors (millipoints stored
