@@ -53,7 +53,7 @@ Dépendances top-down ; une phase ne peut démarrer qu'après celles dont elle d
 - [x] 05 — panel shell + charts
 - [x] 06 — dashboard tab
 - [x] 07 — progression tab
-- [ ] 08 — errors tab
+- [x] 08 — errors tab
 - [ ] 09 — filter bar
 - [ ] 10 — CLI parity
 - [ ] 11 — docs + tests
