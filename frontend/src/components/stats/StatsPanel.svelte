@@ -7,7 +7,7 @@
         statsMetricStore,
         refreshStats
     } from '../../stores/statsStore.js';
-    import { openPanels, PANEL, closePanel } from '../../stores/uiStore.js';
+    import { activeTabStore } from '../../stores/uiStore.js';
     import StatsFilterBar from './StatsFilterBar.svelte';
     import StatsDashboardTab from './StatsDashboardTab.svelte';
     import StatsProgressionTab from './StatsProgressionTab.svelte';
@@ -16,36 +16,25 @@
     /** Currently active inner tab. */
     let activeTab = $state('dashboard');
 
-    let visible = $state(false);
     let unsubscribeFilter;
-    let unsubVisible;
-
-    unsubVisible = openPanels.subscribe((value) => {
-        const wasVisible = visible;
-        visible = value.has(PANEL.STATS);
-        if (visible && !wasVisible) {
-            refreshStats($statsFilterStore);
-        }
-    });
 
     onMount(() => {
+        refreshStats($statsFilterStore);
         unsubscribeFilter = statsFilterStore.subscribe((filter) => {
-            if (visible) refreshStats(filter);
+            refreshStats(filter);
         });
     });
 
     onDestroy(() => {
         unsubscribeFilter?.();
-        unsubVisible?.();
     });
 
     function handleClose() {
-        closePanel(PANEL.STATS);
+        activeTabStore.set('analysis');
     }
 </script>
 
-{#if visible}
-    <section class="stats-panel" role="dialog" aria-modal="false" aria-label="Stats">
+<section class="stats-panel" role="region" aria-label="Stats">
         <header class="stats-header">
             <h2 class="stats-title">Stats</h2>
             <div class="metric-toggle" role="group" aria-label="Metric">
@@ -103,23 +92,15 @@
             {/if}
         </div>
     </section>
-{/if}
 
 <style>
     .stats-panel {
-        position: fixed;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        width: 520px;
-        min-width: 480px;
-        background: #fff;
-        border-left: 1px solid #e0e0e0;
         display: flex;
         flex-direction: column;
-        z-index: 200;
+        height: 100%;
+        min-height: 0;
+        background: #fff;
         font-size: 12px;
-        box-shadow: -2px 0 8px rgba(0, 0, 0, 0.08);
     }
 
     /* ── Header ── */

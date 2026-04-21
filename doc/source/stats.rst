@@ -32,6 +32,7 @@ Ouverture du panneau
 
 Pour ouvrir le panneau Stats :
 
+* Appuyer sur *CTRL-D*.
 * Saisir la commande ``:stats`` ou ``:st`` dans la ligne de commande.
 
 .. note::

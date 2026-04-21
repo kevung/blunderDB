@@ -1166,6 +1166,15 @@ export function toggleTournamentPanel() {
     activeTabStore.set('tournaments');
 }
 
+export function toggleStatsPanel() {
+    logger.log('toggleStatsPanel');
+    if (!get(databasePathStore)) {
+        statusBarTextStore.set('No database loaded');
+        return;
+    }
+    activeTabStore.set('stats');
+}
+
 export async function exitCollectionMode() {
     logger.log('Exiting COLLECTION mode to NORMAL mode');
     const lastViewedPosition = get(positionStore);

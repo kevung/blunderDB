@@ -20,6 +20,7 @@ import {
     toggleAnkiPanel,
     toggleCollectionPanelAction,
     toggleTournamentPanel,
+    toggleStatsPanel,
     toggleEPCMode,
     togglePipcount,
     loadAllPositions,
@@ -258,6 +259,9 @@ export function handleKeyDown(event) {
     } else if (event.ctrlKey && event.code === 'KeyY') {
         event.preventDefault();
         toggleTournamentPanel();
+    } else if (event.ctrlKey && event.code === 'KeyD') {
+        event.preventDefault();
+        toggleStatsPanel();
     } else if (event.ctrlKey && event.code === 'KeyE') {
         event.preventDefault();
         toggleEPCMode();

@@ -61,6 +61,7 @@
         toggleCollectionPanelAction,
         toggleEPCMode,
         toggleMatchMode,
+        toggleStatsPanel,
         enterEditMode,
         exitEditMode,
         enterEPCMode,
@@ -110,7 +111,6 @@
     import ImportProgressModal from './components/ImportProgressModal.svelte';
     import FileImportProgressModal from './components/FileImportProgressModal.svelte';
     import ExportDatabaseModal from './components/ExportDatabaseModal.svelte';
-    import StatsPanel from './components/stats/StatsPanel.svelte';
 
     // Component state
     let mainArea;
@@ -299,7 +299,7 @@
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,
             toggleMatchMode,
-            onToggleStats: () => togglePanel(PANEL.STATS)
+            onToggleStats: () => toggleStatsPanel()
         });
         window.addEventListener('keydown', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);
@@ -458,8 +458,6 @@
     />
 
     <HelpModal visible={$activeModal === MODAL.HELP} onClose={toggleHelpModal} handleGlobalKeydown={handleKeyDown} />
-
-    <StatsPanel />
 
     <StatusBar onCommand={(cmd) => processCommand(cmd)} />
 </main>

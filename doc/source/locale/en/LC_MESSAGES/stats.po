@@ -84,6 +84,10 @@ msgid "Pour ouvrir le panneau Stats :"
 msgstr "To open the Stats panel:"
 
 #: ../../source/stats.rst:35
+msgid "Appuyer sur *CTRL-D*."
+msgstr "Press *CTRL-D*."
+
+#: ../../source/stats.rst:36
 msgid "Saisir la commande ``:stats`` ou ``:st`` dans la ligne de commande."
 msgstr "Type the command ``:stats`` or ``:st`` in the command line."
 

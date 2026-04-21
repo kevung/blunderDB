@@ -175,6 +175,10 @@ msgid "afficher et gérer les tournois (panneau tournois),"
 msgstr "display and manage tournaments (tournaments panel),"
 
 #: ../../source/manuel.rst:74
+msgid "afficher les statistiques de performance (panneau Stats),"
+msgstr "display performance statistics (Stats panel),"
+
+#: ../../source/manuel.rst:76
 msgid ""
 "calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau "
 "EPC),"

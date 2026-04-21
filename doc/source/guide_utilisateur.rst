@@ -276,6 +276,19 @@ Pour accéder au panneau des tournois, appuyer sur *CTRL-Y*.
 * Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant
   de la colonne tournoi pour assigner un match.
 
+Afficher les statistiques de performance
+-----------------------------------------
+
+Le panneau Stats permet de visualiser ses indicateurs de performance (PR et coût MWC)
+à partir des positions importées.
+
+#. Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur.
+
+#. Utiliser la barre de filtre pour restreindre l'analyse par joueur,
+   tournoi, plage de dates, type de décision ou longueur de match.
+
+#. Cliquer sur un indicateur pour accéder directement aux positions correspondantes.
+
 Calculer l'EPC
 --------------
 
