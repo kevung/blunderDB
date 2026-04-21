@@ -47,8 +47,7 @@
                 match_length: localFilter.matchLength,
                 metric: $statsMetricStore
             };
-            // eslint-disable-next-line no-console
-            SaveStatsFilter(persisted).catch(console.error);
+            SaveStatsFilter(persisted).catch(console.error); // eslint-disable-line no-console
         }, 500);
     }
 
@@ -132,7 +131,6 @@
 
                 // If auto-detected, save immediately
                 if (!savedPlayer && detectedPlayer) {
-                    // eslint-disable-next-line no-console
                     SaveStatsFilter({
                         player_name: detectedPlayer,
                         tournament_ids: [],
@@ -141,7 +139,7 @@
                         decision_type: -1,
                         match_length: [],
                         metric: $statsMetricStore
-                    }).catch(console.error);
+                    }).catch(console.error); // eslint-disable-line no-console
                 }
             }
 
