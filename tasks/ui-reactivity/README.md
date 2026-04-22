@@ -73,7 +73,7 @@ Cf. Fiche 06 pour l'intégration de la règle dans `CLAUDE.md`.
 - [x] 01 — testing-library
 - [x] 02 — Playwright
 - [x] 03 — perf instrumentation
-- [ ] 04 — audit patterns
+- [x] 04 — audit patterns
 - [ ] 05.a — fix App.svelte
 - [ ] 05.b — fix MatchPanel
 - [ ] 05.c — fix StatsPanel

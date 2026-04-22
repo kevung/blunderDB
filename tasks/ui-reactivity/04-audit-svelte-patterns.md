@@ -31,28 +31,28 @@ L'audit de cette fiche doit **confirmer ou affiner** cette liste sur le scope co
 
 ### 1. Grep systématique
 
-- [ ] Grep `\.subscribe\(` dans `frontend/src/` restreint au scope. Lister toutes les occurrences avec fichier:ligne et un extrait.
-- [ ] Pour chaque occurrence, classifier :
+- [x] Grep `\.subscribe\(` dans `frontend/src/` restreint au scope. Lister toutes les occurrences avec fichier:ligne et un extrait.
+- [x] Pour chaque occurrence, classifier :
   - **(a)** à convertir en `$effect` lisant le store via `$storeName`.
   - **(b)** à garder (cas rare : setup d'un side-effect global, subscription avec `onDestroy` explicite).
   - **(c)** à supprimer (doublon, subscription qui n'apporte rien).
-- [ ] Grep `onMount\s*\(` dans le même scope, vérifier les corps qui contiennent `.subscribe`. Lister ces cas (StatsPanel au minimum).
+- [x] Grep `onMount\s*\(` dans le même scope, vérifier les corps qui contiennent `.subscribe`. Lister ces cas (StatsPanel au minimum).
 
 ### 2. Grep des closures stales
 
-- [ ] Grep `let\s+\w+\s*=` dans les composants, repérer les `let` lus **à l'intérieur** d'un callback `.subscribe()` et modifiés ailleurs : candidats à la promotion `$state`.
-- [ ] Grep `subscribe.*async` : les handlers async dans `.subscribe()` sont candidats à un `$effect` avec `debounce` ou à un `AbortController`.
+- [x] Grep `let\s+\w+\s*=` dans les composants, repérer les `let` lus **à l'intérieur** d'un callback `.subscribe()` et modifiés ailleurs : candidats à la promotion `$state`.
+- [x] Grep `subscribe.*async` : les handlers async dans `.subscribe()` sont candidats à un `$effect` avec `debounce` ou à un `AbortController`.
 
 ### 3. Grep des $effect à dépendances non trackées
 
-- [ ] Grep `\$effect\(` dans le scope. Pour chaque, vérifier :
+- [x] Grep `\$effect\(` dans le scope. Pour chaque, vérifier :
   - Le corps lit-il des stores via `$storeName` (tracké) ou via `get(store)` (NON tracké) ?
   - Appelle-t-il des fonctions qui lisent des stores en interne (non tracké → doit être relu dans l'effet) ?
-- [ ] Repérer les effets qui appellent des fonctions externes lisant des stores ; documenter le faux-positif potentiel.
+- [x] Repérer les effets qui appellent des fonctions externes lisant des stores ; documenter le faux-positif potentiel.
 
 ### 4. Rédaction du document
 
-- [ ] `doc/archive/ui-reactivity-audit.md` structuré :
+- [x] `doc/archive/ui-reactivity-audit.md` structuré :
   ```markdown
   # UI reactivity audit
 
@@ -74,25 +74,25 @@ L'audit de cette fiche doit **confirmer ou affiner** cette liste sur le scope co
 
   etc.
   ```
-- [ ] Chaque ligne du tableau de synthèse doit avoir une colonne « Fiche » pointant vers une Fiche 05.x.
+- [x] Chaque ligne du tableau de synthèse doit avoir une colonne « Fiche » pointant vers une Fiche 05.x.
 
 ### 5. Ré-ouverture des Fiches 05.* si besoin
 
-- [ ] Si l'audit révèle un problème hors de la liste pré-identifiée, créer une nouvelle Fiche `05.g-...` plutôt que d'étendre une fiche existante au-delà de son périmètre.
-- [ ] Si une Fiche 05.x s'avère inutile (faux-positif), la marquer « abandonnée » dans le README du chantier et archiver la fiche avec une note.
+- [x] Si l'audit révèle un problème hors de la liste pré-identifiée, créer une nouvelle Fiche `05.g-...` plutôt que d'étendre une fiche existante au-delà de son périmètre.
+- [x] Si une Fiche 05.x s'avère inutile (faux-positif), la marquer « abandonnée » dans le README du chantier et archiver la fiche avec une note.
 
 ## Acceptance
 
-- [ ] `ui-reactivity-audit.md` ≤ 300 lignes.
-- [ ] Toutes les occurrences du scope sont listées avec diagnostic.
-- [ ] Chaque occurrence « à corriger » est mappée à une Fiche 05.x.
-- [ ] Le README du chantier est mis à jour si de nouvelles fiches apparaissent.
+- [x] `ui-reactivity-audit.md` ≤ 300 lignes.
+- [x] Toutes les occurrences du scope sont listées avec diagnostic.
+- [x] Chaque occurrence « à corriger » est mappée à une Fiche 05.x.
+- [x] Le README du chantier est mis à jour si de nouvelles fiches apparaissent.
 
 ## Status
 
-- [ ] Grep `.subscribe()`
-- [ ] Grep `onMount` + subscribe
-- [ ] Grep closures stales
-- [ ] Grep `$effect` non trackés
-- [ ] Doc `ui-reactivity-audit.md` rédigée
-- [ ] Mapping audit ↔ fiches 05.x validé
+- [x] Grep `.subscribe()`
+- [x] Grep `onMount` + subscribe
+- [x] Grep closures stales
+- [x] Grep `$effect` non trackés
+- [x] Doc `ui-reactivity-audit.md` rédigée
+- [x] Mapping audit ↔ fiches 05.x validé
