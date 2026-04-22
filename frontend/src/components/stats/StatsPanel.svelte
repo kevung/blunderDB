@@ -1,4 +1,5 @@
 <script>
+    import { logger } from '../../utils/logger.js';
     import { onMount, onDestroy } from 'svelte';
     import { statsFilterStore, statsResultStore, statsLoadingStore, statsMetricStore, refreshStats } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
@@ -13,9 +14,9 @@
     let unsubscribeFilter;
 
     onMount(() => {
-        refreshStats($statsFilterStore);
+        logger.perf('StatsPanel:refreshStats', () => refreshStats($statsFilterStore));
         unsubscribeFilter = statsFilterStore.subscribe((filter) => {
-            refreshStats(filter);
+            logger.perf('StatsPanel:refreshStats', () => refreshStats(filter));
         });
     });
 

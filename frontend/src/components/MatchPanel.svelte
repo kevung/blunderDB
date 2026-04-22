@@ -94,14 +94,16 @@
     });
 
     async function loadMatches() {
-        try {
-            const loadedMatches = await GetAllMatches();
-            matches = loadedMatches || [];
-            await loadTournaments();
-        } catch (error) {
-            logger.error('Error loading matches:', error);
-            matches = [];
-        }
+        return logger.perf('MatchPanel:loadMatches', async () => {
+            try {
+                const loadedMatches = await GetAllMatches();
+                matches = loadedMatches || [];
+                await loadTournaments();
+            } catch (error) {
+                logger.error('Error loading matches:', error);
+                matches = [];
+            }
+        });
     }
 
     async function loadTournaments() {

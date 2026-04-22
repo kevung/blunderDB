@@ -201,14 +201,16 @@
             previousTab = tab;
             return;
         }
-        const prevTab = previousTab;
-        previousTab = tab;
-        if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
-        else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
-        if (tab === 'epc' && $statusBarModeStore !== 'EPC') enterEPCMode();
-        else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
-        if (tab === 'matches') openPanel(PANEL.MATCH);
-        else closePanel(PANEL.MATCH);
+        logger.perf('App:activeTabHandler', () => {
+            const prevTab = previousTab;
+            previousTab = tab;
+            if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
+            else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
+            if (tab === 'epc' && $statusBarModeStore !== 'EPC') logger.perf('App:epcSync', () => enterEPCMode());
+            else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
+            if (tab === 'matches') openPanel(PANEL.MATCH);
+            else closePanel(PANEL.MATCH);
+        });
     });
 
     // ── UI event handlers ──────────────────────────────────────────

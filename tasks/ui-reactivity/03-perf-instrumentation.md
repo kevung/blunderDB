@@ -23,7 +23,7 @@
 
 ### 1. Étendre `logger.js`
 
-- [ ] Ajouter à `frontend/src/utils/logger.js` :
+- [x] Ajouter à `frontend/src/utils/logger.js` :
   ```js
   const PERF_THRESHOLD_MS = Number(import.meta.env.VITE_PERF_THRESHOLD_MS ?? 16);
   const PERF_ENABLED = import.meta.env.DEV && PERF_THRESHOLD_MS >= 0;
@@ -50,51 +50,51 @@
       return result;
   }
   ```
-- [ ] Exporter `perf` dans l'objet `logger` (ou comme named export).
-- [ ] **Ne pas logger** en prod ni si `VITE_PERF_THRESHOLD_MS` est négatif.
+- [x] Exporter `perf` dans l'objet `logger` (ou comme named export).
+- [x] **Ne pas logger** en prod ni si `VITE_PERF_THRESHOLD_MS` est négatif.
 
 ### 2. Utilitaire `trackRuneDeps.js` (optionnel)
 
-- [ ] `frontend/src/utils/trackRuneDeps.js` — wrappers légers :
+- [x] `frontend/src/utils/trackRuneDeps.js` — wrappers légers :
   - `trackedState(label, initial)` — retourne un getter/setter qui logge chaque mutation si `VITE_TRACK_RUNES=1`.
   - `trackedEffect(label, fn)` — wrap de `$effect` qui incrémente un compteur et logge si le compteur > seuil (détecte les boucles).
-- [ ] **Implémentation minimale** ; l'objectif est diagnostique, à retirer quand les fixes sont validés. Note dans le fichier qu'il est **temporaire**.
+- [x] **Implémentation minimale** ; l'objectif est diagnostique, à retirer quand les fixes sont validés. Note dans le fichier qu'il est **temporaire**.
 
 ### 3. Points d'instrumentation stratégiques (≤ 8)
 
-- [ ] `App.svelte` : wrapper l'effet de `activeTabStore` (converti en `$effect` en Fiche 05.a) dans `perf('App:activeTabHandler', ...)`.
-- [ ] `App.svelte` : wrapper le futur effet EPC dans `perf('App:epcSync', ...)`.
-- [ ] `TabbedPanel.svelte` : wrapper l'effet `$effect.pre` de montage dans `perf('TabbedPanel:mountTab', ...)`.
-- [ ] `MatchPanel.svelte` : wrapper `loadMatches()` (déjà async) — juste un `perf('MatchPanel:loadMatches', () => loadMatches())` au point d'appel.
-- [ ] `StatsPanel.svelte` : wrapper `refreshStats(filter)` dans le futur `$effect` (Fiche 05.c).
+- [x] `App.svelte` : wrapper l'effet de `activeTabStore` (converti en `$effect` en Fiche 05.a) dans `perf('App:activeTabHandler', ...)`.
+- [x] `App.svelte` : wrapper le futur effet EPC dans `perf('App:epcSync', ...)`.
+- [ ] `TabbedPanel.svelte` : wrapper l'effet `$effect.pre` de montage dans `perf('TabbedPanel:mountTab', ...)` — différé à Fiche 05.e (pas d'effet `$effect.pre` dans TabbedPanel actuellement).
+- [x] `MatchPanel.svelte` : wrapper `loadMatches()` (déjà async) dans le corps de la fonction.
+- [x] `StatsPanel.svelte` : wrapper `refreshStats(filter)` dans les deux call sites de `onMount`.
 
 ### 4. Onglet de debug caché (optionnel)
 
-- [ ] Ajouter dans `commandProcessor.js` une commande `:perf` qui active/désactive `window.__PERF__` et logge un résumé en console. Pas de UI dédiée — le DevTools console suffit. Marquer cette section comme « debug only » dans le code.
+- [ ] Ajouter dans `commandProcessor.js` une commande `:perf` qui active/désactive `window.__PERF__` et logge un résumé en console. Pas de UI dédiée — le DevTools console suffit. Marquer cette section comme « debug only » dans le code. *(optionnel, reporté)*
 
 ### 5. Test
 
-- [ ] `frontend/src/__tests__/logger.perf.test.js` :
-  - Test 1 : `perf(label, () => 42)` retourne 42.
-  - Test 2 : `perf(label, async () => 42)` retourne une promesse résolue à 42.
-  - Test 3 : en mode prod (mocker `import.meta.env.DEV = false`), `console.log` n'est **pas** appelé.
-  - Test 4 : en mode dev avec seuil 0, une fonction synchrone de durée > 0 déclenche un log.
+- [x] `frontend/src/__tests__/logger.perf.test.js` :
+  - Test 1 : `perf(label, () => 42)` retourne 42. ✅
+  - Test 2 : `perf(label, async () => 42)` retourne une promesse résolue à 42. ✅
+  - Test 3 : en mode prod (mocker `import.meta.env.DEV = false`), `console.log` n'est **pas** appelé. ✅
+  - Test 4 : en mode dev avec seuil 0, une fonction synchrone de durée > 0 déclenche un log. ✅
 
 ### 6. Documentation courte
 
-- [ ] Dans l'entête de `logger.js`, documenter en 5-10 lignes comment activer le seuil à 0 pour voir tous les effets.
-- [ ] Commentaire d'entête dans `trackRuneDeps.js` précisant que c'est **temporaire** et à retirer après validation des fixes.
+- [x] Dans l'entête de `logger.js`, documenter en 5-10 lignes comment activer le seuil à 0 pour voir tous les effets.
+- [x] Commentaire d'entête dans `trackRuneDeps.js` précisant que c'est **temporaire** et à retirer après validation des fixes.
 
 ## Acceptance
 
-- [ ] `logger.perf` fonctionne, tests verts.
-- [ ] 4-5 points stratégiques instrumentés ; lancer l'app en dev avec `VITE_PERF_THRESHOLD_MS=0` produit un journal lisible.
-- [ ] Aucun impact perf en prod (vérifié par test + inspection).
+- [x] `logger.perf` fonctionne, tests verts (4/4 ✅, suite complète 294 tests ✅).
+- [x] 4 points stratégiques instrumentés (App×2, MatchPanel, StatsPanel×2) ; lancer l'app en dev avec `VITE_PERF_THRESHOLD_MS=0` produit un journal lisible.
+- [x] Aucun impact perf en prod (vérifié par test + inspection).
 
 ## Status
 
-- [ ] `logger.perf` + tests
-- [ ] `trackRuneDeps` (optionnel)
-- [ ] Points stratégiques wrappés
-- [ ] Commande `:perf` (optionnelle)
-- [ ] Doc
+- [x] `logger.perf` + tests
+- [x] `trackRuneDeps` (optionnel)
+- [x] Points stratégiques wrappés
+- [ ] Commande `:perf` (optionnelle — reportée)
+- [x] Doc
