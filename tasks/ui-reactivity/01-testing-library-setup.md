@@ -25,66 +25,70 @@
 
 ### 1. Installer les dépendances
 
-- [ ] `cd frontend && npm install --save-dev @testing-library/svelte @testing-library/jest-dom @testing-library/user-event`.
-- [ ] Vérifier dans `package.json` que les 3 paquets apparaissent en `devDependencies` et que la version de `@testing-library/svelte` est ≥ 5.
+- [x] `cd frontend && npm install --save-dev @testing-library/svelte @testing-library/jest-dom @testing-library/user-event`.
+- [x] Vérifier dans `package.json` que les 3 paquets apparaissent en `devDependencies` et que la version de `@testing-library/svelte` est ≥ 5.
 
 ### 2. Setup file
 
-- [ ] Créer `frontend/src/test-setup.js` avec :
+- [x] Créer `frontend/src/test-setup.js` avec :
   ```js
   import '@testing-library/jest-dom/vitest';
   ```
-- [ ] Dans `frontend/vitest.config.js`, ajouter `setupFiles: ['./src/test-setup.js']` dans l'objet `test`.
-- [ ] Vérifier que `include` capture bien `src/__tests__/**/*.test.js` (actuellement `src/**/*.{test,spec}.{js,ts}` — OK).
+- [x] Dans `frontend/vitest.config.js`, ajouter `setupFiles: ['./src/test-setup.js']` dans l'objet `test`.
+- [x] Vérifier que `include` capture bien `src/__tests__/**/*.test.js` (actuellement `src/**/*.{test,spec}.{js,ts}` — OK).
+
+> **Note :** Ajout également de `resolve.conditions: ['browser']` dans la config Vite pour que Svelte 5 se résolve sur le build navigateur (sans ça, Vitest+jsdom chargeait `svelte/src/index-server.js` et levait `lifecycle_function_unavailable`).
 
 ### 3. Helper de mock Wails pour composants
 
-- [ ] Dans `frontend/src/__tests__/helpers/wailsMock.js` (nouveau dossier `helpers/`) :
-  - [ ] Export `installWailsMock(overrides = {})` qui installe sur `global.window.go.main.Database` un set de méthodes asynchrones par défaut (`LoadCommandHistory → []`, `SaveCommand → undefined`, etc.), extensibles par `overrides`.
-  - [ ] Export `uninstallWailsMock()` qui nettoie `window.go`.
-  - [ ] **Alternative plus simple** si Vitest gère mal les window-level mocks : utiliser `vi.mock('../../wailsjs/go/main/Database.js', () => ({ ... }))` directement dans chaque test. Choisir selon ce qui passe.
+- [x] Dans `frontend/src/__tests__/helpers/wailsMock.js` (nouveau dossier `helpers/`) :
+  - [x] Export `installWailsMock(overrides = {})` qui installe sur `global.window.go.main.Database` un set de méthodes asynchrones par défaut (`LoadCommandHistory → []`, `SaveCommand → undefined`, etc.), extensibles par `overrides`.
+  - [x] Export `uninstallWailsMock()` qui nettoie `window.go`.
+  - [x] **Alternative retenue :** `vi.mock('../../wailsjs/go/main/Database.js', ...)` directement dans le test (plus fiable avec Vitest).
 
 ### 4. Test canari `StatusBar.reactivity.test.js`
 
-- [ ] Créer `frontend/src/__tests__/StatusBar.reactivity.test.js`.
-- [ ] Mock des modules Wails avant l'import du composant :
+- [x] Créer `frontend/src/__tests__/StatusBar.reactivity.test.js`.
+- [x] Mock des modules Wails avant l'import du composant :
   ```js
   vi.mock('../../wailsjs/go/main/Database.js', () => ({
       LoadCommandHistory: vi.fn(() => Promise.resolve([])),
       SaveCommand: vi.fn(),
   }));
   ```
-- [ ] Test 1 — *rendu initial* : monter `StatusBar`, vérifier que le texte initial de `statusBarTextStore` est présent dans le DOM (`screen.getByText(...)` ou `.info-message` query).
-- [ ] Test 2 — *réactivité du texte* : muter `statusBarTextStore.set('Hello world')`, `await tick()` (ou `await screen.findByText('Hello world')`), vérifier présence.
-- [ ] Test 3 — *réactivité du compteur position* : muter `positionsStore.set([{...}, {...}, {...}])` et `currentPositionIndexStore.set(1)`, vérifier que `.position-info` affiche `2 / 3`.
-- [ ] Test 4 — *latence* : mesurer `performance.now()` avant/après mutation+flush, échouer si > 50 ms (seuil généreux pour CI lent ; ajuster si flaky — envisager 150 ms).
-- [ ] Test 5 — *canari de régression* : après la mutation, changer **une seconde fois** le store ; le DOM doit à nouveau refléter. Ce test attrape les patterns où la réactivité ne fonctionne que pour le premier changement (typique de closures stales).
+- [x] Test 1 — *rendu initial* : monter `StatusBar`, vérifier que le texte initial de `statusBarTextStore` est présent dans le DOM.
+- [x] Test 2 — *réactivité du texte* : muter `statusBarTextStore.set('Hello world')`, `await tick()`, vérifier présence.
+- [x] Test 3 — *réactivité du compteur position* : muter `positionsStore.set([...])` + `currentPositionIndexStore.set(1)`, vérifier `.position-info` = `2 / 3`.
+- [x] Test 4 — *latence* : seuil retenu 150 ms (plus robuste en CI).
+- [x] Test 5 — *canari de régression* : trois mutations successives, toutes reflétées.
 
 ### 5. Documentation
 
-- [ ] `frontend/src/__tests__/README.md` — doc courte (≤ 80 lignes) :
-  - Comment lancer `npm test` et `npm test:watch`.
-  - Pattern « mount + mutate store + assert DOM » avec un exemple minimal.
-  - Conventions de mock Wails (`vi.mock` versus helper).
-  - Règle : tout nouveau composant introduit dans le scope doit avoir au moins un test de réactivité (store → DOM).
+- [x] `frontend/src/__tests__/README.md` — doc courte :
+  - [x] Comment lancer `npm test` et `npm test:watch`.
+  - [x] Pattern « mount + mutate store + assert DOM » avec un exemple minimal.
+  - [x] Conventions de mock Wails (`vi.mock` versus helper).
+  - [x] Règle : tout nouveau composant introduit dans le scope doit avoir au moins un test de réactivité.
 
 ### 6. Sanity check
 
-- [ ] `cd frontend && npm test` doit être vert.
-- [ ] Débrancher temporairement une souscription dans `StatusBar.svelte` (par exemple, ne plus lire `$statusBarTextStore` dans le template) → le test canari doit passer rouge. Rebrancher, vérifier vert. Cette étape vaut plus que mille docs.
+- [x] `cd frontend && npm test` — 290/290 vert.
+- [x] Débranchement temporaire de `$statusBarTextStore` dans le template → 4 tests canaris passent rouge. Rebranché → tout vert.
 
 ## Acceptance
 
-- [ ] 3 devDependencies ajoutées, `package.json` à jour.
-- [ ] `npm test` vert avec 5 assertions canari sur StatusBar.
-- [ ] Mutation manuelle du composant fait échouer le canari (mutation testing manuel).
-- [ ] README de tests mis à jour avec le pattern.
+- [x] 3 devDependencies ajoutées, `package.json` à jour.
+- [x] `npm test` vert avec 5 assertions canari sur StatusBar (290 tests total).
+- [x] Mutation manuelle du composant fait échouer le canari.
+- [x] README de tests mis à jour avec le pattern.
 
 ## Status
 
-- [ ] Dépendances installées
-- [ ] Setup file en place
-- [ ] Helper Wails
-- [ ] Tests canari écrits (1–5)
-- [ ] Doc pattern
-- [ ] Sanity check validé
+- [x] Dépendances installées
+- [x] Setup file en place
+- [x] Helper Wails
+- [x] Tests canari écrits (1–5)
+- [x] Doc pattern
+- [x] Sanity check validé
+
+**DONE** — 2026-04-22

@@ -70,7 +70,7 @@ Cf. Fiche 06 pour l'intégration de la règle dans `CLAUDE.md`.
 ## Current status
 
 - [x] 00 — scénarios + branche
-- [ ] 01 — testing-library
+- [x] 01 — testing-library
 - [ ] 02 — Playwright
 - [ ] 03 — perf instrumentation
 - [ ] 04 — audit patterns
