@@ -1,6 +1,6 @@
 <script>
     import { logger } from './utils/logger.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import { fade } from 'svelte/transition';
 
     // Wails runtime
@@ -19,10 +19,7 @@
         activeTabStore,
         activeModal,
         MODAL,
-        PANEL,
         closeModal,
-        openPanel,
-        closePanel,
         isAnyModalOpen
     } from './stores/uiStore.js';
     import {
@@ -87,6 +84,7 @@
     import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, toggleSearchHistoryPanel } from './services/keyboardService.js';
+    import { applyTabPanels } from './services/tabHandler.js';
 
     // Components
     import Toolbar from './components/Toolbar.svelte';
@@ -123,16 +121,25 @@
     let tabInitialized = false;
     let previousTab = '';
 
-    // ── Store subscriptions with side effects ──────────────────────
+    // ── Reactive effects (Svelte 5) ────────────────────────────────
 
-    positionStore.subscribe((value) => {
-        if ($statusBarModeStore === 'EPC' && value) updateEPC(value);
+    // EPC sync: re-runs when position OR mode changes (both are tracked deps)
+    $effect(() => {
+        if ($statusBarModeStore === 'EPC' && $positionStore) updateEPC($positionStore);
     });
 
-    positionReloadTriggerStore.subscribe(async () => {
-        if ($databasePathStore) await loadAllPositions();
+    // Reload positions when trigger increments (positionReloadTriggerStore is
+    // the only tracked dep; $databasePathStore is read at call time via $)
+    $effect(() => {
+        $positionReloadTriggerStore; // tracked — fires each time MatchPanel triggers a reload
+        untrack(() => {
+            if ($databasePathStore) loadAllPositions();
+        });
     });
 
+    // Keep `positions` array in sync with positionsStore.
+    // Plain .subscribe() is intentional: `positions` is never read in the
+    // template directly, so $state reactivity is not needed here.
     positionsStore.subscribe((value) => {
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
@@ -186,30 +193,42 @@
         }
     });
 
-    currentPositionIndexStore.subscribe(async (value) => {
+    // Navigate to the current position when index changes. The cancelled flag
+    // guards against stale async callbacks when the index changes rapidly.
+    $effect(() => {
+        const value = $currentPositionIndexStore;
         currentPositionIndex = value;
-        if (positions.length > 0 && currentPositionIndex >= 0 && currentPositionIndex < positions.length) {
-            await showPosition(positions[currentPositionIndex]);
-            if (saveSessionTimeout) clearTimeout(saveSessionTimeout);
-            saveSessionTimeout = setTimeout(() => saveSessionState(), 500);
+        let cancelled = false;
+        if (positions.length > 0 && value >= 0 && value < positions.length) {
+            showPosition(positions[value]).then(() => {
+                if (cancelled) return;
+                if (saveSessionTimeout) clearTimeout(saveSessionTimeout);
+                saveSessionTimeout = setTimeout(() => saveSessionState(), 500);
+            });
         }
+        return () => { cancelled = true; };
     });
 
-    activeTabStore.subscribe((tab) => {
+    // Tab handler: open/close panels and manage mode transitions.
+    // Only $activeTabStore is a tracked dependency; everything else is read
+    // inside untrack() so that mode/db-path changes alone don't re-run this.
+    $effect(() => {
+        const tab = $activeTabStore;
         if (!tabInitialized) {
             tabInitialized = true;
             previousTab = tab;
             return;
         }
-        logger.perf('App:activeTabHandler', () => {
-            const prevTab = previousTab;
-            previousTab = tab;
-            if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
-            else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
-            if (tab === 'epc' && $statusBarModeStore !== 'EPC') logger.perf('App:epcSync', () => enterEPCMode());
-            else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
-            if (tab === 'matches') openPanel(PANEL.MATCH);
-            else closePanel(PANEL.MATCH);
+        untrack(() => {
+            logger.perf('App:activeTabHandler', () => {
+                const prevTab = previousTab;
+                previousTab = tab;
+                if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
+                else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
+                if (tab === 'epc' && $statusBarModeStore !== 'EPC') logger.perf('App:epcSync', () => enterEPCMode());
+                else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
+                applyTabPanels(tab);
+            });
         });
     });
 
