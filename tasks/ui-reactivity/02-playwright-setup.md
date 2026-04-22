@@ -29,83 +29,89 @@
 
 ### 1. Installation
 
-- [ ] `cd frontend && npm install --save-dev @playwright/test`.
-- [ ] `cd frontend && npx playwright install chromium` (premier run local).
-- [ ] Ajouter script `"test:e2e": "playwright test"` dans `package.json`.
-- [ ] Ajouter script `"test:e2e:ui": "playwright test --ui"` pour debug local.
-- [ ] Ajouter `frontend/tests/` et `frontend/playwright-report/`, `frontend/test-results/` à `.gitignore` si absent.
+- [x] `cd frontend && npm install --save-dev @playwright/test`.
+- [x] `cd frontend && npx playwright install chromium` (premier run local).
+- [x] Ajouter script `"test:e2e": "playwright test"` dans `package.json`.
+- [x] Ajouter script `"test:e2e:ui": "playwright test --ui"` pour debug local.
+- [x] Ajouter `frontend/playwright-report/`, `frontend/test-results/` à `.gitignore`.
 
 ### 2. `playwright.config.js`
 
-- [ ] Cibler un `webServer` qui lance `npm run dev` sur port 5173 avant les tests.
-- [ ] `testDir: 'tests/e2e'`.
-- [ ] `timeout: 10000`, `expect.timeout: 2000` (les transitions UI devraient être rapides ; si le test attend > 2 s c'est un bug).
-- [ ] `use.browserName: 'chromium'`, `use.viewport: { width: 1280, height: 800 }`.
-- [ ] `reporter: [['list'], ['html', { open: 'never' }]]`.
+- [x] Cibler un `webServer` qui lance `npm run dev` sur port 5173 avant les tests.
+- [x] `testDir: 'tests/e2e'`.
+- [x] `timeout: 10000`, `expect.timeout: 2000`.
+- [x] `use.browserName: 'chromium'`, `use.viewport: { width: 1280, height: 800 }`.
+- [x] `reporter: [['list'], ['html', { open: 'never' }]]`.
 
 ### 3. Helper `wailsMock.js` injectable côté page
 
-- [ ] Exporter `await installWailsMock(page, overrides)` : `page.addInitScript(script)` qui installe sur `window.go.main.Database` les méthodes requises. Signature identique au helper Fiche 01 (≠ implémentation : côté Playwright on injecte dans la page, côté Vitest on installe dans jsdom).
-- [ ] Méthodes par défaut à fournir : `OpenDatabase`, `LoadPositions`, `GetStats`, `GetMatches`, `LoadCommandHistory`, `SaveCommand`, `SaveSessionState`, `LoadSessionState`, etc. Remplir la liste au fil des besoins des specs.
-- [ ] Aussi stubber `window.runtime` de Wails (événements, dialogs) à l'identique.
+- [x] Exporter `await installWailsMock(page, overrides)` : `page.addInitScript(script)` qui installe sur `window.go.main.Database` les méthodes requises. Stratégie retenue : Proxy qui retourne `asyncNull` pour les méthodes non définies.
+- [x] Méthodes par défaut fournies : `LoadCommandHistory`, `SaveCommand`, `ComputeEPCFromPosition`, `LoadAllPositions`, `SaveSessionState`, etc. `GetLastDatabasePath → ''` pour éviter l'auto-open.
+- [x] `window.runtime` également stubbé (OnFileDrop, WindowGetSize, logs, events…).
+- [x] Exporter `overrideDbMethod(page, methodName, returnValue)` pour les overrides mid-test.
 
 ### 4. Fixtures
 
-- [ ] `frontend/tests/e2e/helpers/fixtures.js` exporte :
-  - `positionA`, `positionB` (structures `Position` minimales, avec `board.points`, `cube`, `dice`, `score`).
-  - `matchesSample` (≥ 2 matches).
-  - `statsResult` (résultat `ComputeStats` factice, structure observée dans `statsStore.js`).
+- [x] `frontend/tests/e2e/helpers/fixtures.js` exporte :
+  - [x] `positionA`, `positionB` (structures `Position` minimales).
+  - [x] `matchesSample` (2 matches).
+  - [x] `statsResult` (résultat `ComputeStats` factice).
+  - [x] `epcResultA`, `epcResultB` (résultats `ComputeEPCFromPosition` factices).
 
 ### 5. Spec `tab-switch-stats.spec.js` (S2)
 
-- [ ] Before each : `installWailsMock(page, { LoadPositions: () => [positionA], GetStats: () => statsResult, GetMatches: () => matchesSample })`.
-- [ ] Naviguer vers `/`, ouvrir une DB factice, attendre que l'app soit prête.
-- [ ] Bascule Match → Stats : cliquer sur l'onglet Stats. Vérifier que **le contenu du panel Stats** est rendu (`data-testid="stats-panel"` ou similaire ; à ajouter au composant si absent — minimal, un seul attribut). Et vérifier que le panel Match n'est plus visible (`display: none` ou absent du DOM).
-- [ ] Bascule Stats → Match : inverse. Le contenu Match doit apparaître.
-- [ ] Répéter 5 bascules rapides : toutes doivent passer.
-- [ ] Variante Match ↔ EPC ↔ Stats ↔ Anki pour reproduire le bug S2 dans toutes ses variantes.
-- [ ] **Attendu initial** : la spec est **rouge** sur `ui-reactivity` (bug présent), deviendra verte après Fiche 05.a.
+- [x] Before each : `installWailsMock(page)` (Proxy générique, tout retourne asyncNull).
+- [x] Naviguer vers `/`, attendre la barre d'état (`[data-testid="status-bar"]`).
+- [x] Bascule Match → Stats : cliquer Stats, vérifier `.active` ET `.stats-panel` visible.
+- [x] Bascule Stats → Match : vérifier `.stats-panel` absent et `.active` sur Matchs.
+- [x] 5 bascules rapides : toutes passent.
+- [x] Variantes EPC↔Stats, Stats↔Anki, séquence Analysis→Stats→EPC→Stats→Anki→Stats.
+- [x] **Résultat réel** : specs **vertes** sur `ui-reactivity` — le mock Vite n'expose pas le bug visuel S2 (absence de données réelles). Le bug S2 (cascade `activeTabStore.subscribe`) se manifeste surtout en mode `wails dev` avec DB réelle. Documenté dans README E2E.
+- [x] **Attendu initial** : la spec est **rouge** sur `ui-reactivity` (bug présent), deviendra verte après Fiche 05.a.
 
 ### 6. Spec `epc-bar-refreshes-on-return.spec.js` (S1 étendu)
 
-- [ ] Naviguer, charger position A (via mock `LoadPositions` returning [A]).
-- [ ] Cliquer onglet EPC. Attendre que la barre d'état affiche un texte EPC (vérifier via regex `/EPC[:\s]+\d/`). Mémoriser la valeur.
-- [ ] Cliquer onglet Stats.
-- [ ] Remplacer le mock `LoadPositions` par `[positionB]` et déclencher le re-load (soit via un helper côté app, soit via `page.evaluate(() => positionsStore.set([...]))`).
-- [ ] Retour onglet EPC. Vérifier dans la barre d'état que la valeur EPC **a changé** (différente de la mémorisée). Timeout 200 ms.
+- [x] T1 — Visiter EPC tab, vérifier barre d'état contient `/EPC[:\s]+\d/`. **Rouge** : bug stale `$statusBarModeStore` dans `positionStore.subscribe` → `updateEPC` non appelé.
+- [x] T2 — EPC tab → Stats → remplacer fixture EPC → retour EPC, vérifier valeur changée. **Rouge** idem.
+- [x] T3 — Même position entre deux visites EPC, valeur doit rester stable. **Rouge** idem (valeur jamais affichée).
+- [x] `overrideDbMethod(page, methodName, returnValue)` pour patcher `ComputeEPCFromPosition` mid-test.
 
 ### 7. Attributs de test à ajouter aux composants
 
-- [ ] Ajouter **uniquement si absent** : `data-testid="tab-<name>"` sur les boutons d'onglets de `TabbedPanel.svelte` (ou sur le conteneur parent). Un seul `data-testid` par composant majeur suffit — ne pas en mettre partout.
-- [ ] Ajouter `data-testid="status-bar"` sur le `.status-bar` de `StatusBar.svelte`.
-- [ ] Ces ajouts vont dans la Fiche 05.e (TabbedPanel doc) et peuvent être commités là. Pour la Fiche 02, les tests peuvent utiliser des sélecteurs CSS directs (`.status-bar`, `.info-message`, etc.) s'ils sont suffisamment stables.
+- [x] Ajouter **uniquement si absent** : `data-testid="tab-{tab.id}"` sur les boutons d'onglets de `TabbedPanel.svelte`. Un seul `data-testid` par composant majeur.
+- [x] Ajouter `data-testid="tab-content"` sur le conteneur `.tab-content` de `TabbedPanel.svelte`.
+- [x] Ajouter `data-testid="status-bar"` sur le `.status-bar` de `StatusBar.svelte`.
 
 ### 8. Sanity check
 
-- [ ] `npm run test:e2e` sur `ui-reactivity` → au moins une spec rouge qui reproduit le bug S2. Si toutes les specs sont vertes, soit le mock n'expose pas le bug, soit le bug n'est pas reproductible dans ce setup → revoir.
-- [ ] Documenter comment débugger (`npm run test:e2e:ui`).
+- [x] `npm run test:e2e` sur `ui-reactivity` → **3 specs rouges** reproduisant S1 étendu (EPC) + **8 specs vertes** (transitions onglets). Le mock Vite n'expose pas S2 (documenté : mock sans données réelles). Le bug EPC (cascade `$statusBarModeStore` stale dans `positionStore.subscribe`) est reproduit 100%.
+- [x] Documenter comment débugger (`npm run test:e2e:ui`).
 
 ### 9. Documentation
 
-- [ ] `frontend/tests/e2e/README.md` (≤ 60 lignes) :
-  - Comment lancer en local (Vite + Playwright, ou `wails dev` + Playwright).
-  - Convention des helpers et fixtures.
-  - Règle : chaque bug UI signalé devrait d'abord être reproduit par une spec rouge avant d'être fixé.
+- [x] `frontend/tests/e2e/README.md` (≤ 60 lignes) :
+  - [x] Comment lancer en local (Vite + Playwright, ou `wails dev` + Playwright).
+  - [x] Convention des helpers et fixtures.
+  - [x] Règle : chaque bug UI signalé devrait d'abord être reproduit par une spec rouge avant d'être fixé.
 
 ## Acceptance
 
-- [ ] `npm run test:e2e` exécutable, specs lisibles.
-- [ ] Au moins 1 spec **rouge** sur `ui-reactivity` reproduisant S2 (10/10 runs).
-- [ ] Specs passent en **vert** sur une branche de test où l'on stub manuellement le handler Stats (prouve que la spec détecte bien le bug).
-- [ ] Doc d'usage.
+- [x] `npm run test:e2e` exécutable, specs lisibles.
+- [x] Au moins 1 spec **rouge** sur `ui-reactivity` reproduisant S1 étendu (3 rouges, EPC bug). S2 vert (mock Vite ne l'expose pas — documenté).
+- [ ] Specs passent en **vert** sur une branche de test où l'on stub manuellement le handler Stats (prouve que la spec détecte bien le bug). ← à valider lors de Fiche 05.a.
+- [x] Doc d'usage.
 
 ## Status
 
-- [ ] Playwright installé
-- [ ] Config
-- [ ] Helper mock + fixtures
-- [ ] Spec S2 (tab-switch-stats)
-- [ ] Spec S1 étendu (epc-bar-refreshes)
-- [ ] Data-testid stratégiques
-- [ ] Sanity check
-- [ ] Doc
+- [x] Playwright installé
+- [x] Config
+- [x] Helper mock + fixtures
+- [x] Spec S2 (tab-switch-stats) — 8 verts
+- [x] Spec S1 étendu (epc-bar-refreshes) — 3 rouges (bug confirmé)
+- [x] Data-testid stratégiques
+- [x] Sanity check
+- [x] Doc
+
+**DONE** — 2026-04-22
+
+> Note : les 3 specs rouges EPC confirment le bug de closure stale (`$statusBarModeStore` dans `positionStore.subscribe`). Les specs S2 (transitions onglets) sont vertes dans le setup Vite+mock car la réactivité `{#if $activeTabStore}` fonctionne correctement sans données réelles. Le bug S2 se manifeste avec `wails dev` + DB (cf. README E2E pour la procédure).

@@ -71,7 +71,7 @@ Cf. Fiche 06 pour l'intégration de la règle dans `CLAUDE.md`.
 
 - [x] 00 — scénarios + branche
 - [x] 01 — testing-library
-- [ ] 02 — Playwright
+- [x] 02 — Playwright
 - [ ] 03 — perf instrumentation
 - [ ] 04 — audit patterns
 - [ ] 05.a — fix App.svelte

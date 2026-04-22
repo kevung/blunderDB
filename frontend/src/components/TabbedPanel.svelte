@@ -100,6 +100,7 @@
                 class:drag-over={dragOverIndex === i && draggedIndex !== i}
                 class:dragging={draggedIndex === i && isDragging}
                 title={tab.shortcut ? `${tab.label} (${tab.shortcut})` : tab.label}
+                data-testid="tab-{tab.id}"
                 onmousedown={(e) => handleMouseDown(e, i)}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="tab-icon">
@@ -172,7 +173,7 @@
         {/each}
     </div>
 
-    <div class="tab-content">
+    <div class="tab-content" data-testid="tab-content">
         {#if $activeTabStore === 'analysis'}
             <AnalysisPanel visible={true} onClose={onCloseAnalysis} />
         {:else if $activeTabStore === 'comments'}
