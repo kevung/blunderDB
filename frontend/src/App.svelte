@@ -212,21 +212,27 @@
     // Tab handler: open/close panels and manage mode transitions.
     // Only $activeTabStore is a tracked dependency; everything else is read
     // inside untrack() so that mode/db-path changes alone don't re-run this.
+    //
+    // On the first run we must NOT return early: session restore may have
+    // already set activeTabStore to 'epc' or 'search', and we need to call
+    // enterEPCMode / enterEditMode immediately. We use `isFirstRun` to skip
+    // the exit paths (which depend on prevTab, unknown on the first call).
     $effect(() => {
         const tab = $activeTabStore;
+        const isFirstRun = !tabInitialized;
         if (!tabInitialized) {
             tabInitialized = true;
-            previousTab = tab;
-            return;
         }
         untrack(() => {
             logger.perf('App:activeTabHandler', () => {
                 const prevTab = previousTab;
                 previousTab = tab;
-                if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
-                else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
+                if (!isFirstRun) {
+                    if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
+                    else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
+                }
                 if (tab === 'epc' && $statusBarModeStore !== 'EPC') logger.perf('App:epcSync', () => enterEPCMode());
-                else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
+                else if (!isFirstRun && prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
                 applyTabPanels(tab);
             });
         });

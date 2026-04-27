@@ -125,6 +125,11 @@ export async function openDatabase() {
 }
 
 export async function openDatabaseByPath(filePath) {
+    // Reset mode synchronously before any await so it can't race with the
+    // Svelte effect microtask that restoreSessionState schedules later.
+    // A finally block would run AFTER those microtasks and overwrite the
+    // EPC/EDIT mode that the tab handler correctly re-enters on session restore.
+    statusBarModeStore.set('NORMAL');
     try {
         resetAnalysisAndCommentStores();
         resetAnkiStores();
@@ -157,7 +162,6 @@ export async function openDatabaseByPath(filePath) {
     } catch (error) {
         logger.error('Error opening database:', error);
         setStatusBarMessage('Error opening database');
-    } finally {
         statusBarModeStore.set('NORMAL');
     }
 }
