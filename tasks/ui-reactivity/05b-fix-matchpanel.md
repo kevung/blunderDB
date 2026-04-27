@@ -33,8 +33,8 @@ Problème : `visible` est un `$state`, mais lu dans un callback `.subscribe()` q
 
 ### 1. Remplacer les subscribe
 
-- [ ] `lastVisitedMatchStore.subscribe(...)` → si `lastVisitedMatch` est ensuite lu dans le template, le remplacer par `$lastVisitedMatchStore` directement (auto-subscribe Svelte 5, tracké). Sinon, `$effect(() => { lastVisitedMatch = $lastVisitedMatchStore; })` — mais préférer l'auto-subscribe.
-- [ ] `openPanels.subscribe(async ...)` → convertir en `$effect` :
+- [x] `lastVisitedMatchStore.subscribe(...)` → si `lastVisitedMatch` est ensuite lu dans le template, le remplacer par `$lastVisitedMatchStore` directement (auto-subscribe Svelte 5, tracké). Sinon, `$effect(() => { lastVisitedMatch = $lastVisitedMatchStore; })` — mais préférer l'auto-subscribe.
+- [x] `openPanels.subscribe(async ...)` → convertir en `$effect` :
   ```js
   let visible = $state(false);
   let prevVisible = $state(false);
@@ -57,12 +57,12 @@ Problème : `visible` est un `$state`, mais lu dans un callback `.subscribe()` q
 
 ### 2. Promotions `$state` nécessaires
 
-- [ ] Vérifier dans l'audit Fiche 04 si d'autres variables locales (`selectedMatch`, `detailMatch`) sont des `$state` ; sinon les promouvoir.
-- [ ] `lastVisitedMatch` : si utilisé uniquement pour affichage, remplacer par `$lastVisitedMatchStore` dans le template.
+- [x] Vérifier dans l'audit Fiche 04 si d'autres variables locales (`selectedMatch`, `detailMatch`) sont des `$state` ; sinon les promouvoir.
+- [x] `lastVisitedMatch` : si utilisé uniquement pour affichage, remplacer par `$lastVisitedMatchStore` dans le template.
 
 ### 3. Tests
 
-- [ ] `MatchPanel.reactivity.test.js` avec `@testing-library/svelte` :
+- [x] `MatchPanel.reactivity.test.js` avec `@testing-library/svelte` :
   - Mock Wails (`GetMatches` → fixture).
   - Test 1 : monter, `openPanels.set(new Set())` → panel non visible, `loadMatches` **pas** appelé.
   - Test 2 : `openPanels.set(new Set([PANEL.MATCH]))` → `loadMatches` appelé une fois.
@@ -71,23 +71,25 @@ Problème : `visible` est un `$state`, mais lu dans un callback `.subscribe()` q
 
 ### 4. Vérification manuelle
 
-- [ ] `wails dev` : bascule rapide Match → autre → Match plusieurs fois, vérifier que la liste des matches se charge à chaque ouverture et que `selectedMatch`/`detailMatch` sont réinitialisés à la fermeture.
+- [x] `wails dev` : bascule rapide Match → autre → Match plusieurs fois, vérifier que la liste des matches se charge à chaque ouverture et que `selectedMatch`/`detailMatch` sont réinitialisés à la fermeture.
 
 ### 5. Commit
 
-- [ ] `fix(ui): convert MatchPanel subscribe to $effect, remove stale closures`.
+- [x] `fix(ui): convert MatchPanel subscribe to $effect, remove stale closures`.
 
 ## Acceptance
 
-- [ ] `MatchPanel.reactivity.test.js` vert (4 tests).
-- [ ] Aucun `.subscribe()` résiduel dans `MatchPanel.svelte`.
-- [ ] Vérif manuelle OK.
+- [x] `MatchPanel.reactivity.test.js` vert (4 tests).
+- [x] Aucun `.subscribe()` résiduel dans `MatchPanel.svelte`.
+- [x] Vérif manuelle OK.
 
 ## Status
 
-- [ ] lastVisitedMatch simplifié
-- [ ] openPanels subscribe → $effect
-- [ ] Promotions `$state`
-- [ ] Tests écrits et verts
-- [ ] Vérif manuelle
-- [ ] Commit
+- [x] lastVisitedMatch simplifié
+- [x] openPanels subscribe → $effect
+- [x] Promotions `$state`
+- [x] Tests écrits et verts
+- [x] Vérif manuelle
+- [x] Commit
+
+**DONE** — 2026-04-27

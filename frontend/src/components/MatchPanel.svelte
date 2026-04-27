@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
+    import { get } from 'svelte/store';
     import {
         GetAllMatches,
         DeleteMatch,
@@ -22,8 +23,8 @@
 
     let matches = $state([]);
     let selectedMatch = $state(null);
-    let visible = $state(false);
-    let lastVisitedMatch = null;
+    const visible = $derived($openPanels.has(PANEL.MATCH));
+    let lastVisitedMatch = $state(null);
     let tournaments = $state([]);
 
     // Detail pane state
@@ -54,39 +55,55 @@
     let editingDetailComment = $state(false);
     let editDetailCommentText = $state('');
 
-    lastVisitedMatchStore.subscribe((value) => {
-        lastVisitedMatch = value;
+    $effect(() => {
+        lastVisitedMatch = $lastVisitedMatchStore;
     });
 
-    tournamentsStore.subscribe((value) => {
-        tournaments = value || [];
+    $effect(() => {
+        tournaments = $tournamentsStore || [];
     });
 
-    // Subscribe to refresh trigger to reload matches when a new match is imported
-    matchPanelRefreshTriggerStore.subscribe(async () => {
-        if (visible) {
-            await loadMatches();
-            // If we have a last visited match, try to re-select it
-            if (lastVisitedMatch && lastVisitedMatch.matchID) {
-                selectedMatch = matches.find((m) => m.id === lastVisitedMatch.matchID);
-                if (selectedMatch) await loadMatchDetail(selectedMatch);
+    // Reload matches when a new match is imported (trigger increments from 0)
+    $effect(() => {
+        const trigger = $matchPanelRefreshTriggerStore;
+        if (trigger === 0) return; // skip initial run
+        if (untrack(() => !visible)) return;
+        loadMatches().then(() => {
+            const lvm = lastVisitedMatch;
+            if (lvm && lvm.matchID) {
+                const m = matches.find((mm) => mm.id === lvm.matchID);
+                if (m) {
+                    selectedMatch = m;
+                    loadMatchDetail(m);
+                }
             }
-        }
+        });
     });
 
-    openPanels.subscribe(async (value) => {
-        const wasVisible = visible;
-        visible = value.has(PANEL.MATCH);
-        if (visible && !wasVisible) {
-            await loadMatches();
-            if (lastVisitedMatch && lastVisitedMatch.matchID) {
-                selectedMatch = matches.find((m) => m.id === lastVisitedMatch.matchID);
-                if (selectedMatch) await loadMatchDetail(selectedMatch);
-            } else {
-                selectedMatch = null;
-                detailMatch = null;
-            }
-        } else if (!visible && wasVisible) {
+    // Track panel open/close transitions and load data on open
+    let _prevVisible = false;
+    $effect(() => {
+        const opened = visible; // $derived — tracked
+        const wasVisible = _prevVisible;
+        _prevVisible = opened;
+        if (opened && !wasVisible) {
+            loadMatches().then(() => {
+                const lvm = lastVisitedMatch;
+                if (lvm && lvm.matchID) {
+                    const m = matches.find((mm) => mm.id === lvm.matchID);
+                    if (m) {
+                        selectedMatch = m;
+                        loadMatchDetail(m);
+                    } else {
+                        selectedMatch = null;
+                        detailMatch = null;
+                    }
+                } else {
+                    selectedMatch = null;
+                    detailMatch = null;
+                }
+            });
+        } else if (!opened && wasVisible) {
             selectedMatch = null;
             detailMatch = null;
             editingTournamentMatchId = null;
@@ -522,9 +539,7 @@
             await loadMatches();
 
             // If we are currently viewing this match in match mode, update context
-            let currentContext = null;
-            const unsub = matchContextStore.subscribe((v) => (currentContext = v));
-            unsub();
+            const currentContext = get(matchContextStore);
             if (currentContext && currentContext.isMatchMode && currentContext.matchID === match.id) {
                 // Reload match positions to reflect swapped players
                 const movePositions = await GetMatchMovePositions(match.id);
