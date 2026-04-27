@@ -690,7 +690,7 @@
 
     $effect(() => {
         if (visible) {
-            setTimeout(() => {
+            const id = setTimeout(() => {
                 const panel = document.getElementById('matchPanel');
                 if (panel) panel.focus();
                 if (selectedMatch) {
@@ -698,6 +698,7 @@
                     if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 100);
+            return () => clearTimeout(id);
         }
     });
 
