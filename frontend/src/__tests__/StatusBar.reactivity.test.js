@@ -8,18 +8,23 @@
  */
 
 import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, screen, cleanup } from '@testing-library/svelte';
+import { render, screen, cleanup, fireEvent } from '@testing-library/svelte';
 import { tick } from 'svelte';
+import { get } from 'svelte/store';
 
 // ── Wails mock (doit être déclaré avant l'import du composant) ──────────────
-vi.mock('../../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/main/Database.js', () => ({
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
     SaveCommand: vi.fn(() => Promise.resolve(undefined)),
 }));
 
 // ── Stores ──────────────────────────────────────────────────────────────────
-import { statusBarTextStore, currentPositionIndexStore } from '../stores/uiStore.js';
+import { statusBarTextStore, currentPositionIndexStore, showCommandInputStore, commandTextStore } from '../stores/uiStore.js';
 import { positionsStore, matchContextStore } from '../stores/positionStore.js';
+import { commandHistoryStore } from '../stores/commandHistoryStore.js';
+
+// ── Wails mock functions (accessibles après le mock hoisted) ─────────────────
+import { LoadCommandHistory } from '../../wailsjs/go/main/Database.js';
 
 // ── Composant ────────────────────────────────────────────────────────────────
 import StatusBar from '../components/StatusBar.svelte';
@@ -41,6 +46,9 @@ function resetStores() {
     statusBarTextStore.set('');
     currentPositionIndexStore.set(0);
     positionsStore.set([]);
+    showCommandInputStore.set(false);
+    commandHistoryStore.set([]);
+    commandTextStore.set('');
     matchContextStore.set({
         isMatchMode: false,
         matchID: null,
@@ -124,5 +132,47 @@ describe('StatusBar — réactivité', () => {
 
         expect(screen.queryByText('State B')).not.toBeInTheDocument();
         expect(screen.getByText('State C')).toBeInTheDocument();
+    });
+
+    // ── Test 6 : showCommandInputStore true → LoadCommandHistory + input visible ──
+    test('T6 — showCommandInputStore.set(true) → LoadCommandHistory appelée et input affiché', async () => {
+        LoadCommandHistory.mockClear();
+        render(StatusBar);
+
+        showCommandInputStore.set(true);
+        await tick();
+
+        expect(LoadCommandHistory).toHaveBeenCalledOnce();
+        expect(document.querySelector('.command-input')).toBeInTheDocument();
+    });
+
+    // ── Test 7 : showCommandInputStore false → input masqué ─────────────────
+    test('T7 — showCommandInputStore.set(false) → input absent du DOM', async () => {
+        showCommandInputStore.set(true);
+        render(StatusBar);
+        await tick();
+
+        expect(document.querySelector('.command-input')).toBeInTheDocument();
+
+        showCommandInputStore.set(false);
+        await tick();
+
+        expect(document.querySelector('.command-input')).not.toBeInTheDocument();
+    });
+
+    // ── Test 8 : mutation commandHistoryStore → ArrowUp navigue dans le nouvel historique ──
+    test('T8 — mutation de commandHistoryStore reflétée dans la navigation ArrowUp (pas de closure stale)', async () => {
+        showCommandInputStore.set(true);
+        const { container } = render(StatusBar);
+        await tick();
+
+        commandHistoryStore.set(['cmd_new', 'cmd_old']);
+        await tick();
+
+        const input = container.querySelector('.command-input');
+        fireEvent.keyDown(input, { code: 'ArrowUp' });
+        await tick();
+
+        expect(get(commandTextStore)).toBe('cmd_new');
     });
 });

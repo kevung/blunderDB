@@ -19,18 +19,13 @@
     let { onCommand = (_cmd) => {} } = $props();
 
     let inputEl = $state();
-    let showInput = $state(false);
-    let commandHistory = [];
+    let showInput = $derived($showCommandInputStore);
+    let commandHistory = $derived($commandHistoryStore);
     let historyIndex = -1;
 
-    commandHistoryStore.subscribe((value) => (commandHistory = value));
-
-    showCommandInputStore.subscribe(async (value) => {
-        showInput = value;
-        if (value) {
-            await loadHistory();
-            await tick();
-            inputEl?.focus();
+    $effect(() => {
+        if ($showCommandInputStore) {
+            loadHistory().then(() => tick()).then(() => inputEl?.focus());
         }
     });
 

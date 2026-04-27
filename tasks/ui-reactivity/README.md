@@ -77,7 +77,7 @@ Cf. Fiche 06 pour l'intégration de la règle dans `CLAUDE.md`.
 - [x] 05.a — fix App.svelte (subscribe → $effect, cas manquants stats/tournaments/collections, tabHandler.js, 15 tests)
 - [x] 05.b — fix MatchPanel (subscribe → $effect, closures stales, 6 tests)
 - [x] 05.c — fix StatsPanel (onMount+subscribe → $effect, 3 tests)
-- [ ] 05.d — fix StatusBar
+- [x] 05.d — fix StatusBar (subscribe → $derived + $effect, 3 tests T6/T7/T8, 321 tests verts)
 - [ ] 05.e — doc TabbedPanel
 - [ ] 05.f — fix enterEPCMode
 - [ ] 06 — benchmark + CI

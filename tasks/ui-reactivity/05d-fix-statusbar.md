@@ -37,14 +37,15 @@ Problèmes :
 
 ### 1. `commandHistory`
 
-- [ ] Soit promouvoir en `$state` et synchroniser via `$effect(() => { commandHistory = $commandHistoryStore; })`.
-- [ ] Soit, plus simple, lire directement `$commandHistoryStore` là où c'est utilisé dans `handleKeyDown` — cela évite le double state. Remplacer dans `handleKeyDown` les lectures de `commandHistory` par `$commandHistoryStore` (attention : dans Svelte 5, `$storeName` hors markup doit être lu via la rune, ou via `get(store)` dans une fonction).
+- [x] Soit promouvoir en `$state` et synchroniser via `$effect(() => { commandHistory = $commandHistoryStore; })`.
+- [x] Soit, plus simple, lire directement `$commandHistoryStore` là où c'est utilisé dans `handleKeyDown` — cela évite le double state. Remplacer dans `handleKeyDown` les lectures de `commandHistory` par `$commandHistoryStore` (attention : dans Svelte 5, `$storeName` hors markup doit être lu via la rune, ou via `get(store)` dans une fonction).
   - Dans un handler imperatif (event handler), utiliser `get(commandHistoryStore)` **ou** garder le `$state` local synchronisé via un `$effect`. La seconde option est plus idiomatique.
-- [ ] Choisir l'une des deux approches et documenter le choix dans le commit message.
+- [x] Choisir l'une des deux approches et documenter le choix dans le commit message.
+  - **Choix retenu :** `let commandHistory = $derived($commandHistoryStore)` — plus idiomatique que `$state` + `$effect`, évite toute écriture dans un effet.
 
 ### 2. `showCommandInputStore`
 
-- [ ] Remplacer par `$effect` :
+- [x] Remplacer par `$effect` :
   ```js
   $effect(() => {
       showInput = $showCommandInputStore;
@@ -54,12 +55,13 @@ Problèmes :
   });
   ```
   → `showInput` peut être `$state`. Attention à ne pas déclencher de boucle : l'effet lit `showInput` indirectement, mais l'écrit ; en Svelte 5, l'écriture pendant l'exécution de l'effet est autorisée si les lectures ne dépendent que de `$showCommandInputStore` (pas de re-trigger).
+  - **Choix retenu :** `let showInput = $derived($showCommandInputStore)` (plus simple, pas d'écriture dans l'effet) + `$effect` séparé pour le side-effect focus/loadHistory.
 
 ### 3. Tests (extension du canari Fiche 01)
 
-- [ ] Ajouter test : `showCommandInputStore.set(true)` → `loadHistory` est appelée (mock), l'input reçoit le focus.
-- [ ] Ajouter test : `showCommandInputStore.set(false)` → l'input disparaît du DOM.
-- [ ] Ajouter test : muter `commandHistoryStore` → navigation flèche haut récupère le nouvel historique (simuler keydown).
+- [x] Ajouter test : `showCommandInputStore.set(true)` → `loadHistory` est appelée (mock), l'input reçoit le focus.
+- [x] Ajouter test : `showCommandInputStore.set(false)` → l'input disparaît du DOM.
+- [x] Ajouter test : muter `commandHistoryStore` → navigation flèche haut récupère le nouvel historique (simuler keydown).
 
 ### 4. Vérification manuelle
 
@@ -67,18 +69,18 @@ Problèmes :
 
 ### 5. Commit
 
-- [ ] `fix(ui): StatusBar subscribe → $effect, avoid stale history closure`.
+- [x] `fix(ui): StatusBar subscribe → $effect, avoid stale history closure`.
 
 ## Acceptance
 
-- [ ] Tests étendus verts.
-- [ ] Aucun `.subscribe()` résiduel dans StatusBar.
+- [x] Tests étendus verts.
+- [x] Aucun `.subscribe()` résiduel dans StatusBar.
 - [ ] Vérif manuelle OK.
 
 ## Status
 
-- [ ] Refactor `commandHistory`
-- [ ] Refactor `showCommandInputStore`
-- [ ] Tests étendus
-- [ ] Vérif manuelle
-- [ ] Commit
+- [x] Refactor `commandHistory` → `$derived($commandHistoryStore)`
+- [x] Refactor `showCommandInputStore` → `$derived` + `$effect` side-effect
+- [x] Tests étendus (T6/T7/T8) — 321 tests verts
+- [ ] Vérif manuelle (`wails dev`)
+- [x] Commit
