@@ -1,3 +1,12 @@
+<!--
+  TabbedPanel utilise un pattern {#if} : les panneaux enfants sont démontés quand
+  on quitte leur onglet et remontés au retour. Contrainte pour les composants
+  enfants : tout état local ($state) est réinitialisé à chaque visite — stocker
+  dans un store Svelte tout état devant survivre aux changements d'onglet.
+  Éviter de faire dépendre un $effect d'une valeur de store « active en
+  arrière-plan » : l'effet sera de toute façon inactif hors onglet.
+  Voir tasks/ui-reactivity/ pour la règle générale.
+-->
 <script>
     import { activeTabStore } from '../stores/uiStore';
 

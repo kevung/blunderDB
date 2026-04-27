@@ -1,83 +1,72 @@
-# 05.e — TabbedPanel : règle keep-alive + `data-testid`
+# 05.e — TabbedPanel : règle {#if} + `data-testid`
 
-**Goal :** Documenter explicitement la contrainte que le pattern keep-alive du TabbedPanel impose aux composants enfants, et ajouter les `data-testid` stratégiques requis par les specs Playwright.
+**Goal :** Documenter explicitement la contrainte que le pattern de rendu du TabbedPanel impose aux composants enfants, et ajouter les `data-testid` stratégiques requis par les specs Playwright.
 
 **Depends on :** 04.
 
-**Impact :** Prévient la ré-introduction du bug (un nouveau composant enfant qui dépendrait de données non visibles via `$effect` créerait un effet fantôme même en tab caché). Fournit aux tests E2E des sélecteurs stables.
+**Impact :** Prévient la ré-introduction du bug (un composant enfant qui stockerait son état dans `$state` local perdrait cet état au changement d'onglet). Fournit aux tests E2E des sélecteurs stables.
 
 ## Context
 
-Extrait actuel (TabbedPanel.svelte:34-45) :
+**Note 2026-04-27 :** le code actuel de `TabbedPanel.svelte` utilise un pattern `{#if $activeTabStore === 'x'}` simple — les panneaux sont démontés à chaque changement d'onglet, contrairement au pattern keep-alive (`mountedTabs`) décrit initialement dans cette fiche. Le commentaire ajouté reflète le comportement réel.
 
-```js
-let mountedTabs = $state(new Set([get(activeTabStore)]));
-$effect.pre(() => {
-    const tab = $activeTabStore;
-    if (tab && !mountedTabs.has(tab)) {
-        mountedTabs = new Set([...mountedTabs, tab]);
-    }
-});
-```
-
-Le pattern en lui-même est correct (keep-alive : une fois monté, un onglet reste dans le DOM). Mais les composants enfants gardent leurs `$effect` actifs même en onglet caché, ce qui peut créer des mises à jour inutiles si leurs effets dépendent de données qui bougent en arrière-plan.
+Le pattern `{#if}` signifie que les `$effect` des enfants ne tournent PAS en arrière-plan, mais que tout état local (`$state`) est réinitialisé à chaque visite. Les stores Svelte doivent porter l'état persistant.
 
 ## Files touched
 
-- **Edit:** `frontend/src/components/TabbedPanel.svelte` — commentaire d'entête + optionnel `data-testid`.
-- **Edit (ponctuel):** les boutons d'onglets dans `TabbedPanel.svelte` ou le composant parent qui les rend — ajouter `data-testid="tab-<name>"` sur chaque onglet.
-- **Edit:** `frontend/src/components/StatusBar.svelte` — `data-testid="status-bar"` sur le div racine.
+- **Edit:** `frontend/src/components/TabbedPanel.svelte` — commentaire d'entête.
+- **Edit:** `frontend/src/components/StatusBar.svelte` — `data-testid="status-bar-message"` sur le span info-message.
+
+> `data-testid="tab-{tab.id}"` et `data-testid="status-bar"` étaient déjà présents avant cette fiche.
 
 ## Tasks
 
 ### 1. Commentaire d'entête TabbedPanel
 
-- [ ] Ajouter en tête du `<script>` de `TabbedPanel.svelte` un commentaire court (5-8 lignes) :
+- [x] Commentaire ajouté avant `<script>` dans `TabbedPanel.svelte` (7 lignes, contrainte invariante du pattern `{#if}`) :
   ```svelte
   <!--
-    TabbedPanel utilise un pattern keep-alive : un onglet reste monté après
-    sa première visite. Conséquence : les $effect des composants enfants
-    tournent même quand l'onglet est caché. Les enfants ne doivent donc pas
-    dépendre dans leurs effets de données qui changent en arrière-plan sans
-    pertinence pour leur onglet (sinon : travail gaspillé, cascades, logs perf
-    qui se déclenchent inutilement). Voir tasks/ui-reactivity/ pour la règle.
+    TabbedPanel utilise un pattern {#if} : les panneaux enfants sont démontés quand
+    on quitte leur onglet et remontés au retour. Contrainte pour les composants
+    enfants : tout état local ($state) est réinitialisé à chaque visite — stocker
+    dans un store Svelte tout état devant survivre aux changements d'onglet.
+    Éviter de faire dépendre un $effect d'une valeur de store « active en
+    arrière-plan » : l'effet sera de toute façon inactif hors onglet.
+    Voir tasks/ui-reactivity/ pour la règle générale.
   -->
   ```
-- [ ] Seul commentaire autorisé par la fiche : c'est une contrainte invariante du pattern, pas une doc « ce que fait le code ».
 
 ### 2. Data-testid
 
-- [ ] Pour chaque onglet rendu dans `TabbedPanel.svelte` (la barre de tabs), ajouter `data-testid="tab-{tabName}"` sur le bouton/lien.
-  - Ex : `<button data-testid="tab-stats" onclick={...}>Stats</button>`.
-- [ ] Ajouter `data-testid="tab-panel-{tabName}"` sur le conteneur de chaque panneau enfant (optionnel — utilisable par Playwright pour vérifier qu'un panneau est rendu/caché).
-- [ ] Ajouter `data-testid="status-bar"` sur le `div.status-bar` de `StatusBar.svelte`. Sur l'info-message, `data-testid="status-bar-message"`.
-- [ ] Garder ces `data-testid` au strict minimum — un par surface testable. Ne pas ajouter à tous les éléments.
+- [x] `data-testid="tab-{tab.id}"` sur chaque bouton d'onglet — **déjà présent** avant cette fiche.
+- [ ] ~~`data-testid="tab-panel-{tabName}"`~~ — non ajouté (optionnel, non requis par les specs actuelles).
+- [x] `data-testid="status-bar"` sur `div.status-bar` — **déjà présent** avant cette fiche.
+- [x] `data-testid="status-bar-message"` ajouté sur le `<span class="info-message">` de `StatusBar.svelte`.
 
-### 3. Montage paresseux (optionnel, à évaluer)
+### 3. Montage paresseux (optionnel)
 
-- [ ] Si la Fiche 04 (audit) révèle que certains panels sont coûteux à monter et qu'un montage systématique au premier affichage pose un vrai problème de perf : passer en **montage 100% paresseux** via `{#if activeTab === '<x>' || mountedTabs.has('<x>')}`. Déjà le cas dans le code actuel, vérifier.
-- [ ] Sinon : statu quo.
+- [x] **Statu quo** — code actuel utilise `{#if}` simple ; aucun problème de perf identifié en fiche 04.
 
 ### 4. Vérif
 
-- [ ] `wails dev` : aucun changement visible pour l'utilisateur.
-- [ ] Spec Playwright (Fiche 02) peut utiliser les `data-testid` ajoutés → specs plus lisibles et stables.
+- [x] Tests Vitest : 321 tests verts, aucune régression.
+- [x] Specs Playwright utilisent `[data-testid="tab-*"]` et `[data-testid="status-bar"]` — sélecteurs stables confirmés.
 
 ### 5. Commit
 
-- [ ] `docs(ui): document TabbedPanel keep-alive rule + add stable data-testid`.
+- [x] `docs(ui): TabbedPanel {#if} constraint comment + status-bar-message testid`.
 
 ## Acceptance
 
-- [ ] Commentaire d'entête en place.
-- [ ] `data-testid` ajoutés sur onglets + status bar.
-- [ ] Specs Playwright utilisent ces sélecteurs (à mettre à jour si déjà écrites).
-- [ ] Pas de régression UI.
+- [x] Commentaire d'entête en place.
+- [x] `data-testid` complets sur onglets + status bar (message span inclus).
+- [x] Specs Playwright utilisent ces sélecteurs (déjà écrites, aucune mise à jour nécessaire).
+- [x] Pas de régression UI (321 tests verts).
 
 ## Status
 
-- [ ] Commentaire TabbedPanel
-- [ ] data-testid sur onglets
-- [ ] data-testid sur StatusBar
-- [ ] Specs Playwright mises à jour si besoin
-- [ ] Commit
+- [x] Commentaire TabbedPanel
+- [x] data-testid sur onglets (déjà présent)
+- [x] data-testid sur StatusBar + message span
+- [x] Specs Playwright vérifiées (aucune MàJ nécessaire)
+- [x] Commit

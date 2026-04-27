@@ -186,7 +186,7 @@
             <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder="Type command..." onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
     {:else}
-        <span class="info-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
+        <span class="info-message" data-testid="status-bar-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
     {/if}
     {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
         {@const checkerMoves = $matchContextStore.movePositions.filter((p) => p.move_type === 'checker')}
