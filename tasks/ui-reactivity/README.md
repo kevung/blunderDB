@@ -80,7 +80,7 @@ Cf. Fiche 06 pour l'intégration de la règle dans `CLAUDE.md`.
 - [x] 05.d — fix StatusBar (subscribe → $derived + $effect, 3 tests T6/T7/T8, 321 tests verts)
 - [x] 05.e — TabbedPanel commentaire contrainte {#if} + data-testid="status-bar-message" (data-testid onglets déjà présents, 321 tests verts)
 - [ ] 05.e — doc TabbedPanel
-- [ ] 05.f — fix enterEPCMode
+- [x] 05.f — fix enterEPCMode (ordonnancement déjà correct depuis 05.a, 5 tests T1-T5 ajoutés, 326 tests verts)
 - [ ] 06 — benchmark + CI
 
 ## Références
