@@ -17,7 +17,8 @@ vi.mock('../stores/uiStore.js', () => {
         openPanel: vi.fn(),
         PANEL: { ANALYSIS: 'analysis', MATCH: 'match', TOURNAMENT: 'tournament', STATS: 'stats' },
         statusBarTextStore: writable(''),
-        currentPositionIndexStore: writable(0)
+        currentPositionIndexStore: writable(0),
+        dbMutationCounterStore: writable(0)
     };
 });
 

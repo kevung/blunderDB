@@ -16,7 +16,7 @@
         SaveLastVisitedPosition
     } from '../../wailsjs/go/main/Database.js';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
-    import { statusBarModeStore, openPanels, PANEL, closePanel, matchPanelRefreshTriggerStore, positionReloadTriggerStore, statusBarTextStore, activeTabStore } from '../stores/uiStore';
+    import { statusBarModeStore, openPanels, PANEL, closePanel, matchPanelRefreshTriggerStore, dbMutationCounterStore, positionReloadTriggerStore, statusBarTextStore, activeTabStore } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
@@ -515,6 +515,7 @@
             }
             // Trigger match panel refresh to update all dependent components
             matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
             // Trigger position reload to reflect deleted positions
             positionReloadTriggerStore.update((n) => n + 1);
             statusBarTextStore.set('Match deleted');

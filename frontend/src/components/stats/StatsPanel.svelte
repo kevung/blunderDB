@@ -1,6 +1,6 @@
 <script>
     import { logger } from '../../utils/logger.js';
-    import { statsFilterStore, statsResultStore, statsLoadingStore, statsMetricStore, refreshStats } from '../../stores/statsStore.js';
+    import { statsFilterStore, statsResultStore, statsLoadingStore, statsMetricStore, statsInvalidationKeyStore, refreshStats } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
     import StatsFilterBar from './StatsFilterBar.svelte';
     import StatsDashboardTab from './StatsDashboardTab.svelte';
@@ -11,7 +11,9 @@
     let activeTab = $state('dashboard');
 
     $effect(() => {
-        logger.perf('StatsPanel:refreshStats', () => refreshStats($statsFilterStore));
+        const filter = $statsFilterStore;
+        const key = $statsInvalidationKeyStore;
+        logger.perf('StatsPanel:refreshStats', () => refreshStats(filter, key));
     });
 
     function handleClose() {

@@ -37,7 +37,8 @@ vi.mock('../stores/uiStore.js', () => {
         },
         statusBarTextStore: writable(''),
         currentPositionIndexStore: writable(0),
-        openPanels: writable(new Set())
+        openPanels: writable(new Set()),
+        dbMutationCounterStore: writable(0)
     };
 });
 

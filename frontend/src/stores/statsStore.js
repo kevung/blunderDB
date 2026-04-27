@@ -1,5 +1,7 @@
-import { writable } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
 import { ComputeStats } from '../../wailsjs/go/main/Database.js';
+import { databasePathStore } from './databaseStore.js';
+import { dbMutationCounterStore } from './uiStore.js';
 
 const defaultFilter = {
     playerName: '',
@@ -20,17 +22,40 @@ export const statsErrorStore = writable(null);
 export const statsMetricStore = writable('pr');
 
 /**
- * Fetch stats from the backend for the current filter and update the stores.
- * Called manually from StatsPanel on mount and on filter changes.
- * @param {object} filter - StatsFilter object
+ * Opaque key combining the open database path and the mutation counter.
+ * Changes whenever a new database is opened or the data is mutated (import,
+ * delete match, etc.). Used by refreshStats to detect stale cache.
  */
-export async function refreshStats(filter) {
+export const statsInvalidationKeyStore = derived(
+    [databasePathStore, dbMutationCounterStore],
+    ([$path, $mutation]) => `${$path}::${$mutation}`
+);
+
+/** Cache key of the last successful fetch. */
+let _cachedKey = null;
+
+/**
+ * Fetch stats from the backend for the current filter and invalidation key.
+ * Skips the backend call when the result is already cached for the same
+ * filter + database state — prevents redundant recalculation on every
+ * tab activation.
+ *
+ * @param {object} filter          - StatsFilter object
+ * @param {string} invalidationKey - value of statsInvalidationKeyStore
+ */
+export async function refreshStats(filter, invalidationKey) {
+    const key = JSON.stringify(filter) + '||' + invalidationKey;
+    if (key === _cachedKey && get(statsResultStore) !== null) {
+        return; // cache hit — nothing changed
+    }
+    _cachedKey = key;
     statsLoadingStore.set(true);
     statsErrorStore.set(null);
     try {
         const result = await ComputeStats(filter);
         statsResultStore.set(result);
     } catch (err) {
+        _cachedKey = null; // allow retry on error
         statsErrorStore.set(err?.message ?? String(err));
         statsResultStore.set(null);
     } finally {

@@ -109,6 +109,11 @@ export const isAnyModalOrPanelOpen = derived([activeModal, openPanels], ([$m, $p
 
 export const matchPanelRefreshTriggerStore = writable(0);
 
+// Incremented after any DB mutation that can affect stats (import, delete match,
+// delete position, save analysis). Reset automatically when a new database is opened
+// via databasePathStore (see statsStore.js statsInvalidationKeyStore).
+export const dbMutationCounterStore = writable(0);
+
 export const positionReloadTriggerStore = writable(0);
 
 export const showPipcountStore = writable(true);
