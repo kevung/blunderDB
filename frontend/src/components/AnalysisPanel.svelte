@@ -629,7 +629,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each sortedMoves as move (move.move)}
+                    {#each sortedMoves as move (move.index ?? move.move)}
                         <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
                             <td>{move.move}</td>
                             <td>{formatEquity(move.equity || 0)}</td>

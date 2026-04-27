@@ -26,78 +26,78 @@ type StatsFilter struct {
 
 // StatsTotals holds high-level counts for a stats result.
 type StatsTotals struct {
-	NumPositions   int `json:"num_positions"`
-	NumMatches     int `json:"num_matches"`
-	NumTournaments int `json:"num_tournaments"`
-	NumDecisions   int `json:"num_decisions"`
+	NumPositions   int `json:"NumPositions"`
+	NumMatches     int `json:"NumMatches"`
+	NumTournaments int `json:"NumTournaments"`
+	NumDecisions   int `json:"NumDecisions"`
 }
 
 // TournamentStats holds aggregated stats for a single tournament.
 type TournamentStats struct {
-	ID           int64   `json:"id"`
-	Name         string  `json:"name"`
-	Date         string  `json:"date"`
-	PR           float64 `json:"pr"`
-	MWC          float64 `json:"mwc"`
-	NumDecisions int     `json:"num_decisions"`
+	ID           int64   `json:"ID"`
+	Name         string  `json:"Name"`
+	Date         string  `json:"Date"`
+	PR           float64 `json:"PR"`
+	MWC          float64 `json:"MWC"`
+	NumDecisions int     `json:"NumDecisions"`
 }
 
 // MatchStats holds aggregated stats for a single match.
 type MatchStats struct {
-	ID           int64   `json:"id"`
-	Date         string  `json:"date"`
-	PlayerName   string  `json:"player_name"`
-	PR           float64 `json:"pr"`
-	MWC          float64 `json:"mwc"`
-	NumDecisions int     `json:"num_decisions"`
+	ID           int64   `json:"ID"`
+	Date         string  `json:"Date"`
+	PlayerName   string  `json:"PlayerName"`
+	PR           float64 `json:"PR"`
+	MWC          float64 `json:"MWC"`
+	NumDecisions int     `json:"NumDecisions"`
 }
 
 // CubeActionStats holds aggregated stats grouped by cube action.
 type CubeActionStats struct {
-	Action       string  `json:"action"`
-	PR           float64 `json:"pr"`
-	MWC          float64 `json:"mwc"`
-	NumDecisions int     `json:"num_decisions"`
-	BlunderCount int     `json:"blunder_count"`
+	Action       string  `json:"Action"`
+	PR           float64 `json:"PR"`
+	MWC          float64 `json:"MWC"`
+	NumDecisions int     `json:"NumDecisions"`
+	BlunderCount int     `json:"BlunderCount"`
 }
 
 // ErrorBucket groups decisions by magnitude of error.
 type ErrorBucket struct {
-	MinMP int `json:"min_mp"`
-	MaxMP int `json:"max_mp"`
-	Count int `json:"count"`
+	MinMP int `json:"MinMP"`
+	MaxMP int `json:"MaxMP"`
+	Count int `json:"Count"`
 }
 
 // BlunderEntry identifies a single bad decision.
 type BlunderEntry struct {
-	PositionID   int64   `json:"position_id"`
-	MatchID      int64   `json:"match_id"`
-	TournamentID int64   `json:"tournament_id"`
-	ErrorMP      int64   `json:"error_mp"`
-	MWCLoss      float64 `json:"mwc_loss"`
-	Description  string  `json:"description"`
-	DecisionType int     `json:"decision_type"` // 0=checker, 1=cube
-	MatchDate    string  `json:"match_date"`    // ISO date string, may be empty
-	PlayerNames  string  `json:"player_names"`  // "Player1 vs Player2"
+	PositionID   int64   `json:"PositionID"`
+	MatchID      int64   `json:"MatchID"`
+	TournamentID int64   `json:"TournamentID"`
+	ErrorMP      int64   `json:"ErrorMP"`
+	MWCLoss      float64 `json:"MWCLoss"`
+	Description  string  `json:"Description"`
+	DecisionType int     `json:"DecisionType"` // 0=checker, 1=cube
+	MatchDate    string  `json:"MatchDate"`    // ISO date string, may be empty
+	PlayerNames  string  `json:"PlayerNames"`  // "Player1 vs Player2"
 }
 
 // StatsResult contains all computed statistics for the given filter.
 type StatsResult struct {
-	Totals              StatsTotals        `json:"totals"`
-	PRGlobal            float64            `json:"pr_global"`
-	PRChecker           float64            `json:"pr_checker"`
-	PRCube              float64            `json:"pr_cube"`
-	PRRolling           map[int]float64    `json:"pr_rolling"`   // keyed by N: 5,10,50,100,250,500,1000
-	MWCGlobal           float64            `json:"mwc_global"`   // sum of MWC losses across all match-play decisions
-	MWCChecker          float64            `json:"mwc_checker"`  // MWC loss from checker play errors
-	MWCCube             float64            `json:"mwc_cube"`     // MWC loss from cube action errors
-	MWCRolling          map[int]float64    `json:"mwc_rolling"`  // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
-	MWCAvailable        bool               `json:"mwc_available"` // true if at least one match-play decision contributed
-	PerTournament       []TournamentStats  `json:"per_tournament"`
-	PerMatch            []MatchStats       `json:"per_match"`
-	CubeActionBreakdown []CubeActionStats  `json:"cube_action_breakdown"`
-	ErrorHistogram      []ErrorBucket      `json:"error_histogram"`
-	TopBlunders         []BlunderEntry     `json:"top_blunders"`
+	Totals              StatsTotals       `json:"Totals"`
+	PRGlobal            float64           `json:"PRGlobal"`
+	PRChecker           float64           `json:"PRChecker"`
+	PRCube              float64           `json:"PRCube"`
+	PRRolling           map[int]float64   `json:"PRRolling"`    // keyed by N: 5,10,50,100,250,500,1000
+	MWCGlobal           float64           `json:"MWCGlobal"`    // sum of MWC losses across all match-play decisions
+	MWCChecker          float64           `json:"MWCChecker"`   // MWC loss from checker play errors
+	MWCCube             float64           `json:"MWCCube"`      // MWC loss from cube action errors
+	MWCRolling          map[int]float64   `json:"MWCRolling"`   // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
+	MWCAvailable        bool              `json:"MWCAvailable"` // true if at least one match-play decision contributed
+	PerTournament       []TournamentStats `json:"PerTournament"`
+	PerMatch            []MatchStats      `json:"PerMatch"`
+	CubeActionBreakdown []CubeActionStats `json:"CubeActionBreakdown"`
+	ErrorHistogram      []ErrorBucket     `json:"ErrorHistogram"`
+	TopBlunders         []BlunderEntry    `json:"TopBlunders"`
 }
 
 // pr computes the Performance Rating from a sum of errors (millipoints stored
@@ -511,16 +511,16 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 // a bar, point, or row). The frontend passes this to GetPositionIDsByStatsSelection
 // to obtain the matching position IDs for navigation.
 type SelectionSpec struct {
-	Kind         string // "all", "checker", "cube", "cube_action",
+	Kind string // "all", "checker", "cube", "cube_action",
 	// "error_bucket", "tournament", "match",
 	// "last_n", "position", "top_blunders"
-	CubeAction   string // "NoDouble" | "DoubleTake" | "DoublePass" | "TooGood"
-	BucketMinMP  int    // inclusive
-	BucketMaxMP  int    // exclusive; -1 = +∞
-	TournamentID int64
-	MatchID      int64
-	LastN        int
-	PositionID   int64
+	CubeAction    string // "NoDouble" | "DoubleTake" | "DoublePass" | "TooGood"
+	BucketMinMP   int    // inclusive
+	BucketMaxMP   int    // exclusive; -1 = +∞
+	TournamentID  int64
+	MatchID       int64
+	LastN         int
+	PositionID    int64
 	OnlyWithError bool // for "cube_action", "checker", "cube" → error > 0
 }
 
@@ -569,7 +569,7 @@ func buildSelectionWhereClause(sel SelectionSpec) (whereAdd string, orderLimit s
 		args = append(args, sel.PositionID)
 	case "top_blunders":
 		orderLimit = "ORDER BY (" + statsErrExpr + ") DESC LIMIT 10"
-	// "all" → no extra clauses
+		// "all" → no extra clauses
 	}
 	return whereAdd, orderLimit, args
 }

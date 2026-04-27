@@ -101,7 +101,7 @@ func TestCLIStats_JSONFormat(t *testing.T) {
 	}
 	// JSON must carry key fields
 	raw := string([]byte(out))
-	for _, key := range []string{`"totals"`, `"pr_global"`, `"pr_rolling"`, `"top_blunders"`} {
+	for _, key := range []string{`"Totals"`, `"PRGlobal"`, `"PRRolling"`, `"TopBlunders"`} {
 		if !strings.Contains(raw, key) {
 			t.Errorf("JSON missing key %q:\n%s", key, raw)
 		}

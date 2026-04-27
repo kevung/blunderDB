@@ -46,10 +46,16 @@ export function getSearchState() {
     return { lastSearchCommand, lastSearchPosition, hasActiveSearch };
 }
 
-export function setSearchState(cmd, pos, active) {
-    lastSearchCommand = cmd;
-    lastSearchPosition = pos;
-    hasActiveSearch = active;
+export function setSearchState(cmdOrObj, pos, active) {
+    if (cmdOrObj !== null && typeof cmdOrObj === 'object' && 'lastSearchCommand' in cmdOrObj) {
+        lastSearchCommand = cmdOrObj.lastSearchCommand;
+        lastSearchPosition = cmdOrObj.lastSearchPosition;
+        hasActiveSearch = cmdOrObj.hasActiveSearch;
+    } else {
+        lastSearchCommand = cmdOrObj;
+        lastSearchPosition = pos;
+        hasActiveSearch = active;
+    }
 }
 
 export function generateXGID(position) {
