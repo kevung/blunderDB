@@ -25,7 +25,9 @@
 
     $effect(() => {
         if ($showCommandInputStore) {
-            loadHistory().then(() => tick()).then(() => inputEl?.focus());
+            loadHistory()
+                .then(() => tick())
+                .then(() => inputEl?.focus());
         }
     });
 

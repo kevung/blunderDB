@@ -9,7 +9,7 @@
 const DEFAULT_METHODS = {
     LoadCommandHistory: () => Promise.resolve([]),
     SaveCommand: () => Promise.resolve(undefined),
-    ComputeStats: () => Promise.resolve(null),
+    ComputeStats: () => Promise.resolve(null)
 };
 
 /**
@@ -20,8 +20,8 @@ export function installWailsMock(overrides = {}) {
     globalThis.window = globalThis.window ?? {};
     globalThis.window.go = {
         main: {
-            Database: { ...DEFAULT_METHODS, ...overrides },
-        },
+            Database: { ...DEFAULT_METHODS, ...overrides }
+        }
     };
 }
 

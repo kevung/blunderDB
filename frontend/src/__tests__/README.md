@@ -25,7 +25,7 @@ src/__tests__/
 ```js
 // 1. Mocker les bindings Wails AVANT l'import du composant
 vi.mock('../../../wailsjs/go/main/Database.js', () => ({
-    LoadCommandHistory: vi.fn(() => Promise.resolve([])),
+    LoadCommandHistory: vi.fn(() => Promise.resolve([]))
 }));
 
 // 2. Importer stores et composant
@@ -36,13 +36,13 @@ import { tick } from 'svelte';
 
 // 3. Réinitialiser les stores dans beforeEach
 beforeEach(() => statusBarTextStore.set(''));
-afterEach(cleanup);  // libérer le DOM après chaque test
+afterEach(cleanup); // libérer le DOM après chaque test
 
 // 4. Tester
 test('réactivité', async () => {
     render(MyComponent);
     statusBarTextStore.set('Hello');
-    await tick();                          // laisser Svelte propager
+    await tick(); // laisser Svelte propager
     expect(screen.getByText('Hello')).toBeInTheDocument();
 });
 ```
@@ -56,7 +56,7 @@ Deux approches selon le besoin :
 ```js
 vi.mock('../../../wailsjs/go/main/Database.js', () => ({
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
-    SaveCommand: vi.fn(),
+    SaveCommand: vi.fn()
 }));
 ```
 

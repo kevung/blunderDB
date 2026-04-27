@@ -26,26 +26,20 @@ vi.mock('../../wailsjs/go/main/Database.js', () => ({
             MWCCube: 0,
             PRRolling: {},
             MWCRolling: {},
-            ErrorsByType: [],
+            ErrorsByType: []
         })
     ),
     GetAllPlayerNames: vi.fn(() => Promise.resolve([])),
-    GetAllTournaments: vi.fn(() => Promise.resolve([])),
+    GetAllTournaments: vi.fn(() => Promise.resolve([]))
 }));
 
 vi.mock('../../wailsjs/go/main/Config.js', () => ({
     GetStatsFilter: vi.fn(() => Promise.resolve(null)),
-    SaveStatsFilter: vi.fn(() => Promise.resolve()),
+    SaveStatsFilter: vi.fn(() => Promise.resolve())
 }));
 
 // ── Stores ───────────────────────────────────────────────────────────────────
-import {
-    statsFilterStore,
-    statsResultStore,
-    statsLoadingStore,
-    statsErrorStore,
-    statsMetricStore,
-} from '../stores/statsStore.js';
+import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore } from '../stores/statsStore.js';
 
 // ── DB mock ref (pour compter les appels) ────────────────────────────────────
 import { ComputeStats } from '../../wailsjs/go/main/Database.js';
@@ -61,7 +55,7 @@ const DEFAULT_FILTER = {
     dateFrom: '',
     dateTo: '',
     decisionType: -1,
-    matchLength: [],
+    matchLength: []
 };
 
 function resetStores() {
@@ -94,7 +88,7 @@ describe('StatsPanel — réactivité statsFilterStore', () => {
         expect(ComputeStats).toHaveBeenCalledWith(
             expect.objectContaining({
                 playerName: '',
-                decisionType: -1,
+                decisionType: -1
             })
         );
     });
@@ -110,7 +104,7 @@ describe('StatsPanel — réactivité statsFilterStore', () => {
         const newFilter = {
             ...DEFAULT_FILTER,
             playerName: 'Alice',
-            decisionType: 0,
+            decisionType: 0
         };
         statsFilterStore.set(newFilter);
         await tick();
@@ -120,7 +114,7 @@ describe('StatsPanel — réactivité statsFilterStore', () => {
         expect(ComputeStats).toHaveBeenLastCalledWith(
             expect.objectContaining({
                 playerName: 'Alice',
-                decisionType: 0,
+                decisionType: 0
             })
         );
     });

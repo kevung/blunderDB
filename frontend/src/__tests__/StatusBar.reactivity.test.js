@@ -15,7 +15,7 @@ import { get } from 'svelte/store';
 // ── Wails mock (doit être déclaré avant l'import du composant) ──────────────
 vi.mock('../../wailsjs/go/main/Database.js', () => ({
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
-    SaveCommand: vi.fn(() => Promise.resolve(undefined)),
+    SaveCommand: vi.fn(() => Promise.resolve(undefined))
 }));
 
 // ── Stores ──────────────────────────────────────────────────────────────────
@@ -38,7 +38,7 @@ function makePosition(overrides = {}) {
         score: [-1, -1],
         move_type: 'checker',
         game_number: 1,
-        ...overrides,
+        ...overrides
     };
 }
 
@@ -55,7 +55,7 @@ function resetStores() {
         movePositions: [],
         currentIndex: 0,
         player1Name: '',
-        player2Name: '',
+        player2Name: ''
     });
 }
 

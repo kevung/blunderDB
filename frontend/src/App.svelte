@@ -116,7 +116,6 @@
     let showDropOverlay = $state(false);
     let dragCounter = 0;
     let positions = [];
-    let currentPositionIndex = 0;
     let saveSessionTimeout = null;
     let tabInitialized = false;
     let previousTab = '';
@@ -197,7 +196,6 @@
     // guards against stale async callbacks when the index changes rapidly.
     $effect(() => {
         const value = $currentPositionIndexStore;
-        currentPositionIndex = value;
         let cancelled = false;
         if (positions.length > 0 && value >= 0 && value < positions.length) {
             showPosition(positions[value]).then(() => {
@@ -206,7 +204,9 @@
                 saveSessionTimeout = setTimeout(() => saveSessionState(), 500);
             });
         }
-        return () => { cancelled = true; };
+        return () => {
+            cancelled = true;
+        };
     });
 
     // Tab handler: open/close panels and manage mode transitions.

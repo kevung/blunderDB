@@ -24,8 +24,8 @@
     let matches = $state([]);
     let selectedMatch = $state(null);
     const visible = $derived($openPanels.has(PANEL.MATCH));
-    let lastVisitedMatch = $state(null);
-    let tournaments = $state([]);
+    let lastVisitedMatch = $derived($lastVisitedMatchStore);
+    let tournaments = $derived($tournamentsStore || []);
 
     // Detail pane state
     let detailMatch = $state(null); // Match currently shown in detail pane
@@ -54,14 +54,6 @@
     // Inline match comment editing
     let editingDetailComment = $state(false);
     let editDetailCommentText = $state('');
-
-    $effect(() => {
-        lastVisitedMatch = $lastVisitedMatchStore;
-    });
-
-    $effect(() => {
-        tournaments = $tournamentsStore || [];
-    });
 
     // Reload matches when a new match is imported (trigger increments from 0)
     $effect(() => {

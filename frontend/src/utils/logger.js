@@ -15,7 +15,7 @@ export const logger = {
     warn: (...args) => isDev && console.warn(...args),
     error: (...args) => console.error(...args),
     debug: (...args) => isDev && console.debug(...args),
-    perf,
+    perf
 };
 
 /**

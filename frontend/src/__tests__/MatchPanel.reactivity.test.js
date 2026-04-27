@@ -27,7 +27,7 @@ vi.mock('../../wailsjs/go/main/Database.js', () => ({
     SwapMatchPlayers: vi.fn(() => Promise.resolve()),
     SaveLastVisitedPosition: vi.fn(() => Promise.resolve()),
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
-    SaveCommand: vi.fn(() => Promise.resolve()),
+    SaveCommand: vi.fn(() => Promise.resolve())
 }));
 
 // ── Stores ───────────────────────────────────────────────────────────────────

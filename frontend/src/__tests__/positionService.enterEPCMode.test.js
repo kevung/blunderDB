@@ -33,13 +33,13 @@ vi.mock('../../wailsjs/go/main/Database.js', () => ({
     GetMatchMovePositions: vi.fn(() => Promise.resolve([])),
     SaveEditPosition: vi.fn(),
     SaveFilter: vi.fn(),
-    LoadComment: vi.fn(() => Promise.resolve('')),
+    LoadComment: vi.fn(() => Promise.resolve(''))
 }));
 
 // Mock databaseService (tire App.js, Config.js, runtime.js via ses propres imports)
 vi.mock('../services/databaseService.js', () => ({
     setStatusBarMessage: vi.fn(),
-    warningMessageStore: { subscribe: vi.fn(), set: vi.fn(), update: vi.fn() },
+    warningMessageStore: { subscribe: vi.fn(), set: vi.fn(), update: vi.fn() }
 }));
 
 // ── Stores réels (partagés avec positionService via le cache de modules) ──────
@@ -57,8 +57,10 @@ function makeRealPosition(id = 99) {
     return {
         id,
         board: {
-            points: Array(26).fill(null).map(() => ({ checkers: 0, color: -1 })),
-            bearoff: [3, 3],
+            points: Array(26)
+                .fill(null)
+                .map(() => ({ checkers: 0, color: -1 })),
+            bearoff: [3, 3]
         },
         cube: { owner: -1, value: 1 },
         dice: [3, 1],
@@ -66,7 +68,7 @@ function makeRealPosition(id = 99) {
         player_on_roll: 0,
         decision_type: 0,
         has_jacoby: 0,
-        has_beaver: 0,
+        has_beaver: 0
     };
 }
 
@@ -107,10 +109,7 @@ describe('enterEPCMode — ordre des set', () => {
     beforeEach(() => {
         resetStores();
         callOrder = [];
-        spies = installSetSpies(
-            { statusBarModeStore, positionStore, positionsStore },
-            callOrder
-        );
+        spies = installSetSpies({ statusBarModeStore, positionStore, positionsStore }, callOrder);
     });
 
     afterEach(() => {
@@ -120,9 +119,7 @@ describe('enterEPCMode — ordre des set', () => {
     test('T1 — statusBarModeStore(EPC) est appelé avant positionStore', () => {
         enterEPCMode();
 
-        const modeIdx = callOrder.findIndex(
-            (c) => c.store === 'statusBarModeStore' && c.value === 'EPC'
-        );
+        const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'EPC');
         const posIdx = callOrder.findIndex((c) => c.store === 'positionStore');
 
         expect(modeIdx, 'statusBarModeStore.set("EPC") doit avoir eu lieu').toBeGreaterThanOrEqual(0);
@@ -133,9 +130,7 @@ describe('enterEPCMode — ordre des set', () => {
     test('T2 — statusBarModeStore(EPC) est appelé avant positionsStore', () => {
         enterEPCMode();
 
-        const modeIdx = callOrder.findIndex(
-            (c) => c.store === 'statusBarModeStore' && c.value === 'EPC'
-        );
+        const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'EPC');
         const posListIdx = callOrder.findIndex((c) => c.store === 'positionsStore');
 
         expect(modeIdx).toBeGreaterThanOrEqual(0);
@@ -183,10 +178,7 @@ describe('exitEPCMode — ordre des set', () => {
         // Installer les espions call-through APRÈS enterEPCMode pour ne mesurer
         // que les appels issus de exitEPCMode.
         callOrder = [];
-        spies = installSetSpies(
-            { statusBarModeStore, positionStore },
-            callOrder
-        );
+        spies = installSetSpies({ statusBarModeStore, positionStore }, callOrder);
     });
 
     afterEach(() => {
@@ -197,9 +189,7 @@ describe('exitEPCMode — ordre des set', () => {
     test('T4 — statusBarModeStore(NORMAL) est appelé avant positionStore lors du exit', () => {
         exitEPCMode();
 
-        const modeIdx = callOrder.findIndex(
-            (c) => c.store === 'statusBarModeStore' && c.value === 'NORMAL'
-        );
+        const modeIdx = callOrder.findIndex((c) => c.store === 'statusBarModeStore' && c.value === 'NORMAL');
         const posIdx = callOrder.findIndex((c) => c.store === 'positionStore');
 
         expect(modeIdx, 'statusBarModeStore.set("NORMAL") doit avoir eu lieu').toBeGreaterThanOrEqual(0);
