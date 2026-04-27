@@ -37,45 +37,47 @@ Problème : mélange `$state` (rune Svelte 5) + subscription manuelle dans `onMo
 
 ### 1. Conversion
 
-- [ ] Supprimer `onMount` / `onDestroy` / `unsubscribeFilter`.
-- [ ] Remplacer par :
+- [x] Supprimer `onMount` / `onDestroy` / `unsubscribeFilter`.
+- [x] Remplacer par :
   ```js
   $effect(() => {
-      refreshStats($statsFilterStore);
+      logger.perf('StatsPanel:refreshStats', () => refreshStats($statsFilterStore));
   });
   ```
-- [ ] Si `refreshStats` est async et doit être abortable, wrapper dans un `AbortController` ou un simple drapeau local `let token = ++counter; refreshStats($statsFilterStore).then(res => { if (token === counter) ... })`.
+- [x] `refreshStats` est fire-and-forget (sets stores uniquement) — pas besoin d'AbortController.
 
 ### 2. Dépendances implicites
 
-- [ ] Vérifier dans `refreshStats(filter)` qu'il ne lit pas d'autres stores via `get(...)`. Si oui, promouvoir les lectures à `$effect` pour tracking correct, ou ajouter les stores explicitement dans la closure de l'effet (`const x = $otherStore;`).
+- [x] `refreshStats(filter)` ne lit aucun autre store via `get(...)` — il appelle uniquement `ComputeStats(filter)` et écrit dans les stores de résultat. Aucune dépendance implicite à promouvoir.
 
 ### 3. Tests
 
-- [ ] `StatsPanel.reactivity.test.js` avec `@testing-library/svelte` :
-  - Mock `refreshStats` (spy).
-  - Test 1 : monter → `refreshStats` appelé une fois avec la valeur initiale du filtre.
-  - Test 2 : `statsFilterStore.set({ ...new filter })` → `refreshStats` appelé avec le nouveau filtre.
-  - Test 3 : démontage → pas de fuite (pas d'appel à `refreshStats` après démontage même si filter change).
+- [x] `StatsPanel.reactivity.test.js` créé avec `@testing-library/svelte` :
+  - Mock `ComputeStats` (proxy de `refreshStats` — plus fiable que mock du module statsStore).
+  - T1 : montage → `ComputeStats` appelé au moins une fois avec le filtre initial.
+    Note : `StatsFilterBar.onMount` appelle `statsFilterStore.set()` une fois résolue (2e appel normal).
+  - T2 : `statsFilterStore.set(newFilter)` → `ComputeStats` re-appelé avec le nouveau filtre (+1 appel relatif).
+  - T3 : démontage → pas de fuite (count stable après `statsFilterStore.set()`).
 
 ### 4. Vérification manuelle
 
 - [ ] `wails dev` : modifier le filtre dans le Stats Panel, vérifier que les graphiques se mettent à jour sans délai. Bascule onglet et retour : le panel se comporte comme attendu (combinaison avec fix 05.a).
+  *(Test automatisé OK — vérification manuelle à réaliser lors de la phase 06)*
 
 ### 5. Commit
 
-- [ ] `fix(ui): StatsPanel onMount+subscribe → $effect`.
+- [x] `fix(ui): StatsPanel onMount+subscribe → $effect`.
 
 ## Acceptance
 
-- [ ] Test de réactivité StatsPanel vert (3 tests).
-- [ ] Aucun `onMount` avec `.subscribe` dans StatsPanel.
-- [ ] Vérif manuelle OK.
+- [x] Test de réactivité StatsPanel vert (3 tests — T1, T2, T3).
+- [x] Aucun `onMount` avec `.subscribe` dans StatsPanel.
+- [ ] Vérif manuelle OK (à confirmer lors de la phase 06).
 
 ## Status
 
-- [ ] Conversion effectuée
-- [ ] Dépendances implicites vérifiées
-- [ ] Tests
+- [x] Conversion effectuée
+- [x] Dépendances implicites vérifiées
+- [x] Tests (318/318 passent)
 - [ ] Vérif manuelle
-- [ ] Commit
+- [x] Commit

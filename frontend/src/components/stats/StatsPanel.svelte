@@ -1,6 +1,5 @@
 <script>
     import { logger } from '../../utils/logger.js';
-    import { onMount, onDestroy } from 'svelte';
     import { statsFilterStore, statsResultStore, statsLoadingStore, statsMetricStore, refreshStats } from '../../stores/statsStore.js';
     import { activeTabStore } from '../../stores/uiStore.js';
     import StatsFilterBar from './StatsFilterBar.svelte';
@@ -11,17 +10,8 @@
     /** Currently active inner tab. */
     let activeTab = $state('dashboard');
 
-    let unsubscribeFilter;
-
-    onMount(() => {
+    $effect(() => {
         logger.perf('StatsPanel:refreshStats', () => refreshStats($statsFilterStore));
-        unsubscribeFilter = statsFilterStore.subscribe((filter) => {
-            logger.perf('StatsPanel:refreshStats', () => refreshStats(filter));
-        });
-    });
-
-    onDestroy(() => {
-        unsubscribeFilter?.();
     });
 
     function handleClose() {

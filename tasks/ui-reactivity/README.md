@@ -76,7 +76,7 @@ Cf. Fiche 06 pour l'intégration de la règle dans `CLAUDE.md`.
 - [x] 04 — audit patterns
 - [x] 05.a — fix App.svelte (subscribe → $effect, cas manquants stats/tournaments/collections, tabHandler.js, 15 tests)
 - [x] 05.b — fix MatchPanel (subscribe → $effect, closures stales, 6 tests)
-- [ ] 05.c — fix StatsPanel
+- [x] 05.c — fix StatsPanel (onMount+subscribe → $effect, 3 tests)
 - [ ] 05.d — fix StatusBar
 - [ ] 05.e — doc TabbedPanel
 - [ ] 05.f — fix enterEPCMode
