@@ -85,6 +85,10 @@ Key backend invariants worth knowing before editing:
 - `frontend/src/components/Board.svelte` — board rendering uses `two.js`.
 - `frontend/wailsjs/` — **auto-generated** Go↔JS bindings. Do not hand-edit. They regenerate when `wails dev`/`wails build` sees changes to exported methods on bound structs (`App`, `Database`, `Config`). After adding a backend method, restart `wails dev` so the `.js`/`.d.ts` in `wailsjs/go/main/` are refreshed.
 
+### Svelte 5 — store/effect rule
+
+In this project, any store access inside a Svelte 5 component **must** use the auto-subscribe syntax `$storeName` or a `$effect(() => { const v = $storeName; ... })`. **Do not** use `.subscribe()` inside a component (rare exceptions must be justified in the commit message). Reason: `.subscribe()` callbacks capture stale closures and their internal dependencies (`$otherStore`, `get(x)`) are invisible to the Svelte compiler's dependency tracker — this caused the reactivity bugs documented in `tasks/ui-reactivity/` after the Svelte 5 migration.
+
 ### CLI/GUI parity
 
 The CLI reuses the same `Database` methods the GUI calls over Wails. When adding DB functionality, prefer putting the logic on `Database` in `db.go` and exposing it from both `cli.go` (as a subcommand) and the frontend (it will auto-bind). Don't fork logic between a CLI-only helper and a GUI-only method.

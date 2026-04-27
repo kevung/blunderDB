@@ -59,6 +59,43 @@ jobs:
         run: npm ci && npm test
         shell: bash
 
+  frontend-e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          submodules: recursive
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '23.4.0'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+        shell: bash
+
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+        shell: bash
+
+      - name: Frontend E2E tests
+        working-directory: frontend
+        run: npm run test:e2e
+        env:
+          CI: true
+        shell: bash
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+
   benchmark:
     runs-on: ubuntu-latest
     steps:
