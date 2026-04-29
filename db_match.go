@@ -531,3 +531,60 @@ func (d *Database) SwapMatchPlayers(matchID int64) error {
 
 	return tx.Commit()
 }
+
+// MergePlayers renames all occurrences of the given player names (in both
+// player1_name and player2_name columns of the match table) to canonicalName.
+// names must be non-empty and canonicalName must not be blank.
+func (d *Database) MergePlayers(names []string, canonicalName string) error {
+	canonicalName = strings.TrimSpace(canonicalName)
+	if canonicalName == "" {
+		return fmt.Errorf("canonical name must not be empty")
+	}
+	if len(names) == 0 {
+		return fmt.Errorf("no names to merge")
+	}
+
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	if d.db == nil {
+		return fmt.Errorf("no database is currently open")
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("failed to begin transaction: %w", err)
+	}
+	defer tx.Rollback()
+
+	// Build a parameterized IN clause.
+	placeholders := make([]string, len(names))
+	args := make([]interface{}, len(names))
+	for i, n := range names {
+		placeholders[i] = "?"
+		args[i] = n
+	}
+	inClause := strings.Join(placeholders, ", ")
+
+	// Rename in player1_name
+	args1 := append([]interface{}{canonicalName}, args...)
+	_, err = tx.Exec(
+		"UPDATE match SET player1_name = ? WHERE player1_name IN ("+inClause+")",
+		args1...,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update player1_name: %w", err)
+	}
+
+	// Rename in player2_name
+	args2 := append([]interface{}{canonicalName}, args...)
+	_, err = tx.Exec(
+		"UPDATE match SET player2_name = ? WHERE player2_name IN ("+inClause+")",
+		args2...,
+	)
+	if err != nil {
+		return fmt.Errorf("failed to update player2_name: %w", err)
+	}
+
+	return tx.Commit()
+}

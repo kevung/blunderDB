@@ -156,6 +156,8 @@ export function LoadSearchHistory():Promise<Array<main.SearchHistory>>;
 
 export function LoadSessionState():Promise<main.SessionState>;
 
+export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
+
 export function Migrate_1_0_0_to_1_1_0():Promise<void>;
 
 export function Migrate_1_1_0_to_1_2_0():Promise<void>;

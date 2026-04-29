@@ -15,6 +15,7 @@
         SwapMatchPlayers,
         SaveLastVisitedPosition
     } from '../../wailsjs/go/main/Database.js';
+    import MergePlayersModal from './MergePlayersModal.svelte';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { statusBarModeStore, openPanels, PANEL, closePanel, matchPanelRefreshTriggerStore, dbMutationCounterStore, positionReloadTriggerStore, statusBarTextStore, activeTabStore } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
@@ -50,6 +51,9 @@
     let editPlayer1Value = $state('');
     let editPlayer2Value = $state('');
     let editDateValue = $state('');
+
+    // Merge players modal
+    let showMergePlayersModal = $state(false);
 
     // Inline match comment editing
     let editingDetailComment = $state(false);
@@ -597,6 +601,8 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
+        // Don't intercept keys while the merge players modal is open
+        if (showMergePlayersModal) return;
 
         // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+Tab to toggle panel)
         if (event.ctrlKey) return;
@@ -675,6 +681,8 @@
     }
 
     function handleClickOutside(event) {
+        // Don't interfere while the merge players modal is open
+        if (showMergePlayersModal) return;
         // Close tournament dropdown if clicking outside
         if (editingTournamentMatchId !== null && !event.target.closest('.tournament-cell-edit')) {
             cancelTournamentEdit();
@@ -719,6 +727,14 @@
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={detailMatch !== null}>
+            <div class="match-list-toolbar">
+                <button
+                    class="toolbar-btn"
+                    onclick={() => (showMergePlayersModal = true)}
+                    title="Find and merge duplicate player names"
+                    disabled={matches.length === 0}
+                >⇢ Merge players</button>
+            </div>
             <div class="match-table-container">
                 <table class="match-table">
                     <thead>
@@ -1038,6 +1054,16 @@
     </div>
 </section>
 
+{#if showMergePlayersModal}
+    <MergePlayersModal
+        onClose={() => (showMergePlayersModal = false)}
+        onMerged={async () => {
+            await loadMatches();
+            dbMutationCounterStore.update((n) => n + 1);
+        }}
+    />
+{/if}
+
 <style>
     .match-panel {
         width: 100%;
@@ -1064,6 +1090,38 @@
         display: flex;
         flex-direction: column;
         transition: flex 0.15s;
+    }
+
+    .match-list-toolbar {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-bottom: 1px solid #e0e0e0;
+        background: #fafafa;
+    }
+
+    .toolbar-btn {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 11px;
+        color: #555;
+        cursor: pointer;
+        padding: 2px 8px;
+        line-height: 1.6;
+    }
+
+    .toolbar-btn:hover:not(:disabled) {
+        background: #e3f2fd;
+        border-color: #1976d2;
+        color: #1565c0;
+    }
+
+    .toolbar-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
     }
 
     .match-list-pane.has-detail {

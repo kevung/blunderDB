@@ -310,6 +310,10 @@ export function LoadSessionState() {
   return window['go']['main']['Database']['LoadSessionState']();
 }
 
+export function MergePlayers(arg1, arg2) {
+  return window['go']['main']['Database']['MergePlayers'](arg1, arg2);
+}
+
 export function Migrate_1_0_0_to_1_1_0() {
   return window['go']['main']['Database']['Migrate_1_0_0_to_1_1_0']();
 }
