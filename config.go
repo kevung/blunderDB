@@ -17,7 +17,7 @@ type StatsFilterPersisted struct {
 	TournamentIDs []int64 `json:"tournament_ids"`
 	DateFrom      string  `json:"date_from"`
 	DateTo        string  `json:"date_to"`
-	DecisionType  int     `json:"decision_type"`
+	DecisionType  *int    `json:"decision_type"` // nil = all (-1), 0 = checker only, 1 = cube only
 	MatchLength   []int   `json:"match_length"`
 	Metric        string  `json:"metric"` // "pr" | "mwc"
 }

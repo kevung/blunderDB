@@ -221,15 +221,15 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 
 			var batch []struct {
 				id   int64
-				data string
+				data []byte
 			}
 			for rows.Next() {
 				var id int64
-				var data string
+				var data []byte
 				if err := rows.Scan(&id, &data); err == nil {
 					batch = append(batch, struct {
 						id   int64
-						data string
+						data []byte
 					}{id, data})
 				}
 			}
@@ -241,8 +241,8 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 
 			for _, row := range batch {
 				lastID = row.id
-				var ana PositionAnalysis
-				if err := json.Unmarshal([]byte(row.data), &ana); err != nil {
+				ana, err := decodeAnalysisFromStorage(row.data)
+				if err != nil {
 					continue
 				}
 				playedMove := ""
@@ -690,5 +690,135 @@ func (d *Database) migrate_2_2_0_to_2_3_0() error {
 	}
 
 	slog.Info("database upgraded", "from", "2.2.0", "to", "2.3.0")
+	return nil
+}
+
+// migrate_2_3_0_to_2_4_0 repairs the best_move_equity_error scalar column for
+// checker positions where it was stored as 0 because PlayedMoves was missing from
+// the analysis JSON blob at the time of earlier migrations.
+//
+// Root cause: older import code did not always set PositionAnalysis.PlayedMoves in
+// the JSON blob. All migration passes that recomputed best_move_equity_error relied
+// solely on the JSON's PlayedMoves/PlayedMove fields; they never fell back to
+// move.checker_move. As a result, best_move_equity_error stayed 0 even for
+// positions where the player made a sub-optimal checker move.
+//
+// This migration:
+//  1. Queries all analysis rows where best_move_equity_error = 0.
+//  2. For each, looks up the played checker move from move.checker_move.
+//  3. Decodes the analysis blob, matches the played move against CheckerAnalysis.Moves.
+//  4. If the played move is found at index > 0, updates best_move_equity_error.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_3_0_to_2_4_0() error {
+	var anaTotal int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE best_move_equity_error = 0`).Scan(&anaTotal)
+
+	if anaTotal > 0 {
+		// Prepare lookup: given an analysis id, find the played checker move
+		// for the corresponding position.
+		lookupCheckerMove, err := d.db.Prepare(`
+                        SELECT mv.checker_move
+                        FROM move mv
+                        JOIN analysis a ON a.position_id = mv.position_id
+                        WHERE a.id = ?
+                          AND mv.checker_move IS NOT NULL AND mv.checker_move != ''
+                          AND mv.move_type = 'checker'
+                        LIMIT 1`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.4.0 prepare checker move lookup: %w", err)
+		}
+		defer lookupCheckerMove.Close()
+
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET best_move_equity_error=? WHERE id=?`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.4.0 prepare update: %w", err)
+		}
+		defer updateStmt.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, data FROM analysis WHERE best_move_equity_error = 0 AND id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate 2.4.0 query: %w", err)
+			}
+
+			type anaRow struct {
+				id   int64
+				data []byte
+			}
+			var batch []anaRow
+			for rows.Next() {
+				var r anaRow
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+
+				ana, err := decodeAnalysisFromStorage(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+
+				// Skip if analysis already has a played move (shouldn't happen here,
+				// but be safe — re-derive the error from the existing PlayedMoves).
+				playedMove := ""
+				if len(ana.PlayedMoves) > 0 {
+					playedMove = ana.PlayedMoves[0]
+				} else if ana.PlayedMove != "" {
+					playedMove = ana.PlayedMove
+				}
+
+				// If no played move in JSON, fall back to move.checker_move.
+				if playedMove == "" && ana.CheckerAnalysis != nil {
+					var cm sql.NullString
+					if err := lookupCheckerMove.QueryRow(r.id).Scan(&cm); err == nil && cm.Valid {
+						playedMove = cm.String
+					}
+				}
+
+				if playedMove == "" {
+					done++
+					continue
+				}
+
+				ac := populateAnalysisColumns(&ana, playedMove, "")
+				if ac.BestMoveEquityError != 0 {
+					_, _ = updateStmt.Exec(ac.BestMoveEquityError, r.id)
+				}
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("repair_move_error", done, anaTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("repair_move_error", anaTotal, anaTotal)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.4.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.3.0", "to", "2.4.0")
 	return nil
 }

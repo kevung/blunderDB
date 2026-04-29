@@ -150,9 +150,12 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 	}
 
 	// Best-move equity error: the equity error of the played checker move vs Moves[0], scaled × 1000.
+	// Normalize both sides before comparing: mergePlayedMoves stores normalized move strings
+	// (e.g. "13/8 24/23") while analysis moves may retain the original order ("24/23 13/8").
 	if playedMove != "" && a.CheckerAnalysis != nil {
+		normPlayed := normalizeMove(playedMove)
 		for _, m := range a.CheckerAnalysis.Moves {
-			if m.Move == playedMove && m.EquityError != nil {
+			if normalizeMove(m.Move) == normPlayed && m.EquityError != nil {
 				c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
 				break
 			}

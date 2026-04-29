@@ -842,6 +842,16 @@ func (d *Database) OpenDatabase(path string) error {
 		dbVersion = "2.3.0"
 	}
 
+	// Auto-migrate from 2.3.0 to 2.4.0
+	// Repairs best_move_equity_error for positions where PlayedMoves was missing
+	// from the analysis JSON blob in earlier migrations, by looking up move.checker_move.
+	if dbVersion == "2.3.0" {
+		if err := d.migrate_2_3_0_to_2_4_0(); err != nil {
+			return fmt.Errorf("migration 2.3.0→2.4.0 failed: %w", err)
+		}
+		dbVersion = "2.4.0"
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).

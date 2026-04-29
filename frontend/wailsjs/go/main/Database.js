@@ -226,6 +226,10 @@ export function GetPositionIndexMap() {
   return window['go']['main']['Database']['GetPositionIndexMap']();
 }
 
+export function GetStatsDateRange() {
+  return window['go']['main']['Database']['GetStatsDateRange']();
+}
+
 export function GetTournamentMatches(arg1) {
   return window['go']['main']['Database']['GetTournamentMatches'](arg1);
 }

@@ -114,6 +114,8 @@ export function GetPositionIDsByTournament(arg1:number):Promise<Array<number>>;
 
 export function GetPositionIndexMap():Promise<Record<number, number>>;
 
+export function GetStatsDateRange():Promise<main.StatsDateRange>;
+
 export function GetTournamentMatches(arg1:number):Promise<Array<main.Match>>;
 
 export function ImportBGFMatch(arg1:string):Promise<number>;

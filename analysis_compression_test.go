@@ -278,7 +278,7 @@ func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
 	}
 	db.Close()
 
-	// Open database — triggers migration to 2.3.0
+	// Open database — triggers migration to 2.4.0
 	d := NewDatabase()
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
@@ -286,8 +286,8 @@ func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
 
 	// Verify version bumped
 	ver, _ := d.CheckDatabaseVersion()
-	if ver != "2.3.0" {
-		t.Fatalf("expected version 2.3.0, got %s", ver)
+	if ver != DatabaseVersion {
+		t.Fatalf("expected version %s, got %s", DatabaseVersion, ver)
 	}
 
 	// Verify analysis data is now compressed (raw bytes should not start with '{')

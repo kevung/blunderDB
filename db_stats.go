@@ -6,6 +6,29 @@ import (
 	"strings"
 )
 
+// StatsDateRange holds the earliest and latest match dates in the database.
+type StatsDateRange struct {
+	DateFrom string `json:"DateFrom"` // ISO "YYYY-MM-DD", empty if no matches
+	DateTo   string `json:"DateTo"`   // ISO "YYYY-MM-DD", empty if no matches
+}
+
+// GetStatsDateRange returns the minimum and maximum match dates present in the
+// database. Both fields are empty when no matches with a date exist.
+func (d *Database) GetStatsDateRange() StatsDateRange {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+	if d.db == nil {
+		return StatsDateRange{}
+	}
+	var min, max string
+	_ = d.db.QueryRow(
+		`SELECT COALESCE(MIN(SUBSTR(match_date,1,10)),''), COALESCE(MAX(SUBSTR(match_date,1,10)),'')
+		 FROM match
+		 WHERE match_date IS NOT NULL AND match_date != '' AND match_date != '0001-01-01T00:00:00Z'`,
+	).Scan(&min, &max)
+	return StatsDateRange{DateFrom: min, DateTo: max}
+}
+
 // statsErrExpr is the SQL CASE expression that selects the correct error column
 // based on position decision type. Shared with db_search.go.
 const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.best_move_equity_error END"
@@ -124,7 +147,7 @@ func buildStatsWhereClause(filter StatsFilter) (whereSQL string, args []any) {
 	var clauses []string
 
 	if filter.PlayerName != "" {
-		clauses = append(clauses, "((m.player1_name = ? AND mv.player = 0) OR (m.player2_name = ? AND mv.player = 1))")
+		clauses = append(clauses, "((m.player1_name = ? AND mv.player = 1) OR (m.player2_name = ? AND mv.player = -1))")
 		args = append(args, filter.PlayerName, filter.PlayerName)
 	}
 

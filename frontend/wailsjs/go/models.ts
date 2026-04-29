@@ -373,7 +373,7 @@ export namespace main {
 	    tournament_ids: number[];
 	    date_from: string;
 	    date_to: string;
-	    decision_type: number;
+	    decision_type?: number;
 	    match_length: number[];
 	    metric: string;
 	
@@ -1003,6 +1003,20 @@ export namespace main {
 	        this.lastPositionIds = source["lastPositionIds"];
 	        this.hasActiveSearch = source["hasActiveSearch"];
 	        this.viewsJSON = source["viewsJSON"];
+	    }
+	}
+	export class StatsDateRange {
+	    DateFrom: string;
+	    DateTo: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new StatsDateRange(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.DateFrom = source["DateFrom"];
+	        this.DateTo = source["DateTo"];
 	    }
 	}
 	export class StatsFilter {

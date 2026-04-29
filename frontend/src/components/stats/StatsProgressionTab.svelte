@@ -132,33 +132,35 @@
 
 {#if !result || (tournaments.length === 0 && matches.length === 0)}
     <!-- ── Empty state ──────────────────────────────────────────────────────── -->
-    <p class="empty-state">Aucun tournoi dans la période. Importez des matchs taggués avec un tournoi pour voir votre progression.</p>
+    <p class="empty-state">Aucune donnée sur la période filtrée. Importez des matchs analysés pour voir votre progression.</p>
 {:else}
     <!-- ── Tournament line chart ────────────────────────────────────────────── -->
-    <section class="chart-section">
-        <h3 class="section-title">PR par tournoi ({yAxisLabel()})</h3>
+    {#if tournaments.length > 0}
+        <section class="chart-section">
+            <h3 class="section-title">PR par tournoi ({yAxisLabel()})</h3>
 
-        {#if tournaments.length === 1}
-            <!-- Single-tournament: show a card instead of a 1-point curve -->
-            {@const t = tournaments[0]}
-            <div class="single-card">
-                <span class="single-value">{fmtVal(metric === 'pr' ? t.PR : t.MWC)}</span>
-                <span class="single-label">{t.Name || 'Tournoi'}</span>
-                <span class="single-meta">{fmtDate(t.Date)} · {t.NumDecisions} décisions</span>
-                {#if metric === 'pr'}
-                    <span class="single-grade">{gradeForPR(t.PR)}</span>
-                {/if}
-                <div class="single-actions">
-                    <button onclick={() => openTournamentInPanel(t.ID)}>Open tournament</button>
-                    <button onclick={() => loadPositionsFromTournament(t.ID)}>Open positions</button>
+            {#if tournaments.length === 1}
+                <!-- Single-tournament: show a card instead of a 1-point curve -->
+                {@const t = tournaments[0]}
+                <div class="single-card">
+                    <span class="single-value">{fmtVal(metric === 'pr' ? t.PR : t.MWC)}</span>
+                    <span class="single-label">{t.Name || 'Tournoi'}</span>
+                    <span class="single-meta">{fmtDate(t.Date)} · {t.NumDecisions} décisions</span>
+                    {#if metric === 'pr'}
+                        <span class="single-grade">{gradeForPR(t.PR)}</span>
+                    {/if}
+                    <div class="single-actions">
+                        <button onclick={() => openTournamentInPanel(t.ID)}>Open tournament</button>
+                        <button onclick={() => loadPositionsFromTournament(t.ID)}>Open positions</button>
+                    </div>
                 </div>
-            </div>
-        {:else}
-            <div class="chart-wrap">
-                <LineChart labels={tourLabels} datasets={tourDatasets} options={tourChartOptions} plugins={[gradeBandPlugin]} onPointClick={handleTourClick} />
-            </div>
-        {/if}
-    </section>
+            {:else}
+                <div class="chart-wrap">
+                    <LineChart labels={tourLabels} datasets={tourDatasets} options={tourChartOptions} plugins={[gradeBandPlugin]} onPointClick={handleTourClick} />
+                </div>
+            {/if}
+        </section>
+    {/if}
 
     <!-- ── Match scatter chart ───────────────────────────────────────────────── -->
     {#if matches.length > 0}

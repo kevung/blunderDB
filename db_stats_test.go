@@ -14,10 +14,12 @@ import (
 // matchID  – pre-existing match row id
 // errMP    – error in stored millipoints units (>0)
 // dt       – decision_type: 0=checker, 1=cube
-// player   – move.player (0 or 1)
+// player   – move.player in blunderDB encoding (0=player1, 1=player2); stored as XG encoding (1/-1)
 // moveNum  – move.move_number (unique within a game for ordering)
 func insertStatsFixtureRow(t *testing.T, db *Database, matchID int64, gameID int64, errMP int, dt int, player int, moveNum int) int64 {
 	t.Helper()
+	// Convert blunderDB encoding (0/1) to XG encoding (1/-1) to match what importers store.
+	xgPlayer := convertBlunderDBPlayerToXG(player)
 	// Insert position
 	res, err := db.db.Exec(
 		`INSERT INTO position (decision_type, state) VALUES (?, '')`, dt,
@@ -45,7 +47,7 @@ func insertStatsFixtureRow(t *testing.T, db *Database, matchID int64, gameID int
 	// Insert move linking game → position
 	if _, err = db.db.Exec(
 		`INSERT INTO move (game_id, move_number, position_id, player) VALUES (?, ?, ?, ?)`,
-		gameID, moveNum, posID, player,
+		gameID, moveNum, posID, xgPlayer,
 	); err != nil {
 		t.Fatalf("insert move: %v", err)
 	}
@@ -289,7 +291,7 @@ func TestComputeStats_PlayerFilter(t *testing.T) {
 	mA := createMatch(t, db, "Alice", "Carol", "2025-02-01", 7, 0)
 	gA := createGame(t, db, mA)
 	for i := range 3 {
-		insertStatsFixtureRow(t, db, mA, gA, 10, 0, 0, i+1) // Alice's moves
+		insertStatsFixtureRow(t, db, mA, gA, 10, 0, 0, i+1)  // Alice's moves
 		insertStatsFixtureRow(t, db, mA, gA, 50, 0, 1, i+10) // Carol's moves
 	}
 
@@ -297,7 +299,7 @@ func TestComputeStats_PlayerFilter(t *testing.T) {
 	mB := createMatch(t, db, "Dave", "Alice", "2025-02-02", 7, 0)
 	gB := createGame(t, db, mB)
 	for i := range 2 {
-		insertStatsFixtureRow(t, db, mB, gB, 10, 0, 1, i+1) // Alice's moves
+		insertStatsFixtureRow(t, db, mB, gB, 10, 0, 1, i+1)  // Alice's moves
 		insertStatsFixtureRow(t, db, mB, gB, 99, 0, 0, i+10) // Dave's moves
 	}
 
@@ -643,8 +645,10 @@ func TestGetAllPlayerNames_EmptyDB(t *testing.T) {
 
 // TestGetAllPlayerNames_CountsAndOrder verifies frequency counts and ordering.
 // Fixture: Alice as p1 in 3 matches and as p2 in 2 matches → Count=5
-//          Bob as p2 in 5 matches → Count=5
-//          Carol as p1 in 1 match → Count=1
+//
+//	Bob as p2 in 5 matches → Count=5
+//	Carol as p1 in 1 match → Count=1
+//
 // Expected order: Alice and Bob (both 5) alphabetically, then Carol.
 func TestGetAllPlayerNames_CountsAndOrder(t *testing.T) {
 	db := newTestDB(t)
