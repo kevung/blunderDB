@@ -144,6 +144,12 @@
             } else if (sortBy === 'matches') {
                 valA = a.matchCount || 0;
                 valB = b.matchCount || 0;
+            } else if (sortBy === 'pr') {
+                valA = a.pr || 0;
+                valB = b.pr || 0;
+            } else if (sortBy === 'mwc') {
+                valA = a.mwc_loss || 0;
+                valB = b.mwc_loss || 0;
             } else {
                 return 0;
             }
@@ -613,6 +619,12 @@
                                 <th class="no-select sortable" onclick={() => handleSort('location')}
                                     >Location {#if sortBy === 'location'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
                                 >
+                                <th class="no-select sortable narrow-col" onclick={() => handleSort('pr')}
+                                    >PR {#if sortBy === 'pr'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >
+                                <th class="no-select sortable narrow-col" onclick={() => handleSort('mwc')}
+                                    >MWC {#if sortBy === 'mwc'}<span class="sort-arrow">{sortOrder === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                                >
                                 <th class="no-select actions-col"></th>
                             </tr>
                         </thead>
@@ -670,6 +682,8 @@
                                                 }}
                                             /></td
                                         >
+                                        <td class="narrow-col no-select"></td>
+                                        <td class="narrow-col no-select"></td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions editing-actions">
                                                 <button class="icon-btn" onclick={saveEdit} title="Save">✓</button>
@@ -683,6 +697,8 @@
                                         <td class="narrow-col no-select count-cell">{tournament.matchCount || 0}</td>
                                         <td class="narrow-col no-select">{tournament.date || ''}</td>
                                         <td class="no-select">{tournament.location || ''}</td>
+                                        <td class="narrow-col no-select stat-col">{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td>
+                                        <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? tournament.mwc_loss.toFixed(4) : '—'}</td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions">
                                                 <button
@@ -832,6 +848,8 @@
                                 <th class="no-select">Player 1</th>
                                 <th class="no-select">Player 2</th>
                                 <th class="no-select narrow-col">Pts</th>
+                                <th class="no-select narrow-col">PR</th>
+                                <th class="no-select narrow-col">MWC</th>
                                 <th class="no-select comment-col">Comment</th>
                                 <th class="no-select actions-col"></th>
                             </tr>
@@ -843,6 +861,8 @@
                                     <td class="no-select">{match.player1_name}</td>
                                     <td class="no-select">{match.player2_name}</td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
+                                    <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
+                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? match.mwc_loss.toFixed(4) : '—'}</td>
                                     <td class="comment-col no-select">
                                         {#if editingMatchCommentId === match.id}
                                             <input
@@ -1053,6 +1073,10 @@
     .count-cell {
         text-align: center;
         color: #888;
+    }
+    .stat-col {
+        color: #666;
+        font-variant-numeric: tabular-nums;
     }
     .narrow-col {
         width: 1px;

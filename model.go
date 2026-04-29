@@ -93,15 +93,17 @@ type AnkiDeckStats struct {
 
 // Tournament represents a tournament that organizes matches
 type Tournament struct {
-	ID         int64  `json:"id"`
-	Name       string `json:"name"`
-	Date       string `json:"date"`
-	Location   string `json:"location"`
-	SortOrder  int    `json:"sortOrder"`
-	CreatedAt  string `json:"createdAt"`
-	UpdatedAt  string `json:"updatedAt"`
-	MatchCount int    `json:"matchCount"`
-	Comment    string `json:"comment"`
+	ID         int64   `json:"id"`
+	Name       string  `json:"name"`
+	Date       string  `json:"date"`
+	Location   string  `json:"location"`
+	SortOrder  int     `json:"sortOrder"`
+	CreatedAt  string  `json:"createdAt"`
+	UpdatedAt  string  `json:"updatedAt"`
+	MatchCount int     `json:"matchCount"`
+	Comment    string  `json:"comment"`
+	PR         float64 `json:"pr"`
+	MWCLoss    float64 `json:"mwc_loss"`
 }
 
 // CommentEntry represents a comment for display in the comment wall
@@ -310,6 +312,8 @@ type Match struct {
 	LastVisitedPosition int       `json:"last_visited_position"`
 	Comment             string    `json:"comment"`
 	TournamentSortOrder int       `json:"tournament_sort_order"`
+	PR                  float64   `json:"pr"`
+	MWCLoss             float64   `json:"mwc_loss"`
 }
 
 type Game struct {

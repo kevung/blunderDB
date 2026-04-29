@@ -84,6 +84,11 @@ func (d *Database) GetAllTournaments() ([]Tournament, error) {
 		return nil, err
 	}
 
+	if err := populateTournamentStats(d.db, tournaments); err != nil {
+		// Non-fatal
+		_ = err
+	}
+
 	return tournaments, nil
 }
 
@@ -335,6 +340,11 @@ func (d *Database) GetTournamentMatches(tournamentID int64) ([]Match, error) {
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
+	}
+
+	if err := populateMatchStats(d.db, matches); err != nil {
+		// Non-fatal: log but continue without stats
+		_ = err
 	}
 
 	return matches, nil

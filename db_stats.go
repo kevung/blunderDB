@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"math"
 	"strings"
@@ -725,4 +726,137 @@ func (d *Database) GetAllPlayerNames() ([]PlayerFrequency, error) {
 		result = append(result, pf)
 	}
 	return result, rows.Err()
+}
+
+// matchPRMWCAcc accumulates error millipoints and MWC losses for one match.
+type matchPRMWCAcc struct {
+	sumErr int64
+	cnt    int
+	mwc    float64
+}
+
+// populateMatchStats computes PR and total MWC loss for each match in the slice
+// and sets the PR and MWCLoss fields in-place.
+// Must be called while the caller holds at least the read lock on the database.
+func populateMatchStats(db *sql.DB, matches []Match) error {
+	if len(matches) == 0 {
+		return nil
+	}
+
+	matchByID := make(map[int64]*Match, len(matches))
+	for i := range matches {
+		matchByID[matches[i].ID] = &matches[i]
+	}
+
+	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
+		COALESCE(p.cube_value, 1), COALESCE(p.match_length, m.match_length, 0) ` +
+		statsBaseJoin +
+		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	acc := make(map[int64]*matchPRMWCAcc)
+	for rows.Next() {
+		var matchID int64
+		var errMP int64
+		var score0, score1, fMove, cubeValue, matchLength int
+		if err := rows.Scan(&matchID, &errMP, &score0, &score1, &fMove, &cubeValue, &matchLength); err != nil {
+			continue
+		}
+		if _, ok := matchByID[matchID]; !ok {
+			continue
+		}
+		a, ok := acc[matchID]
+		if !ok {
+			a = &matchPRMWCAcc{}
+			acc[matchID] = a
+		}
+		a.sumErr += errMP
+		a.cnt++
+		if mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), score0, score1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+			a.mwc += mwcLoss
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	for matchID, a := range acc {
+		if m, ok := matchByID[matchID]; ok {
+			m.PR = pr(a.sumErr, a.cnt)
+			m.MWCLoss = a.mwc
+		}
+	}
+	return nil
+}
+
+// populateTournamentStats computes PR and total MWC loss for each tournament
+// (aggregated across all matches in the tournament) and sets the fields in-place.
+// Must be called while the caller holds at least the read lock on the database.
+func populateTournamentStats(db *sql.DB, tournaments []Tournament) error {
+	if len(tournaments) == 0 {
+		return nil
+	}
+
+	tournByID := make(map[int64]*Tournament, len(tournaments))
+	for i := range tournaments {
+		tournByID[tournaments[i].ID] = &tournaments[i]
+	}
+
+	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
+		COALESCE(p.cube_value, 1), COALESCE(p.match_length, m.match_length, 0) ` +
+		statsBaseJoin +
+		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
+		AND m.tournament_id IS NOT NULL`
+
+	rows, err := db.Query(query)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	type tournAcc struct {
+		sumErr int64
+		cnt    int
+		mwc    float64
+	}
+	acc := make(map[int64]*tournAcc)
+	for rows.Next() {
+		var tournamentID int64
+		var errMP int64
+		var score0, score1, fMove, cubeValue, matchLength int
+		if err := rows.Scan(&tournamentID, &errMP, &score0, &score1, &fMove, &cubeValue, &matchLength); err != nil {
+			continue
+		}
+		if _, ok := tournByID[tournamentID]; !ok {
+			continue
+		}
+		a, ok := acc[tournamentID]
+		if !ok {
+			a = &tournAcc{}
+			acc[tournamentID] = a
+		}
+		a.sumErr += errMP
+		a.cnt++
+		if mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), score0, score1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+			a.mwc += mwcLoss
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	for tournamentID, a := range acc {
+		if t, ok := tournByID[tournamentID]; ok {
+			t.PR = pr(a.sumErr, a.cnt)
+			t.MWCLoss = a.mwc
+		}
+	}
+	return nil
 }

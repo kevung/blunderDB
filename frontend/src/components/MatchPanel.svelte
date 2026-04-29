@@ -332,6 +332,10 @@
                 return match.match_length || 0;
             case 'tournament':
                 return match.tournament_name || match.event || '';
+            case 'pr':
+                return match.pr || 0;
+            case 'mwc':
+                return match.mwc_loss || 0;
             default:
                 return '';
         }
@@ -755,6 +759,12 @@
                             <th class="no-select sortable tournament-col" onclick={() => handleSort('tournament')}
                                 >Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
+                            <th class="no-select sortable narrow-col" onclick={() => handleSort('pr')}
+                                >PR {#if sortColumn === 'pr'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
+                            <th class="no-select sortable narrow-col" onclick={() => handleSort('mwc')}
+                                >MWC {#if sortColumn === 'mwc'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
                             <th class="no-select actions-col"></th>
                         </tr>
                     </thead>
@@ -774,6 +784,8 @@
                                     </td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="tournament-col no-select">{match.tournament_name || ''}</td>
+                                    <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}</td>
+                                    <td class="narrow-col no-select">{match.mwc_loss > 0 ? match.mwc_loss.toFixed(4) : ''}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions editing-actions">
                                             <button
@@ -840,6 +852,8 @@
                                             <span class="tournament-display" title="Click to assign tournament">{match.tournament_name || ''}</span>
                                         {/if}
                                     </td>
+                                    <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
+                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? match.mwc_loss.toFixed(4) : '—'}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions">
                                             <button
@@ -1219,6 +1233,11 @@
         white-space: nowrap;
         font-size: 11px;
         color: #666;
+    }
+
+    .stat-col {
+        color: #666;
+        font-variant-numeric: tabular-nums;
     }
 
     .item-actions {
