@@ -197,7 +197,6 @@
         <!-- Tournaments -->
         {#if tournamentList.length > 0}
             <span class="fb-label">Tournois</span>
-            <!-- svelte-ignore a11y_no_static_element_interactions -->
             <div class="fb-tour-wrap" class:open={tourOpen}>
                 <button
                     class="fb-tour-btn"
@@ -207,7 +206,6 @@
                     aria-haspopup="listbox"
                 >{tourLabel} ▾</button>
                 {#if tourOpen}
-                    <!-- svelte-ignore a11y_click_events_have_key_events -->
                     <div class="fb-tour-dropdown" role="listbox" aria-multiselectable="true">
                         <label class="fb-check-label fb-tour-all">
                             <input

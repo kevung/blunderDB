@@ -96,7 +96,6 @@
     }
 </script>
 
-<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 <div class="modal-backdrop" role="dialog" aria-modal="true" aria-label="Merge players" onkeydown={handleKeyDown}>
     <div class="modal-box">
         <div class="modal-header">
