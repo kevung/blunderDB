@@ -26,10 +26,7 @@ export const statsMetricStore = writable('pr');
  * Changes whenever a new database is opened or the data is mutated (import,
  * delete match, etc.). Used by refreshStats to detect stale cache.
  */
-export const statsInvalidationKeyStore = derived(
-    [databasePathStore, dbMutationCounterStore],
-    ([$path, $mutation]) => `${$path}::${$mutation}`
-);
+export const statsInvalidationKeyStore = derived([databasePathStore, dbMutationCounterStore], ([$path, $mutation]) => `${$path}::${$mutation}`);
 
 /** Cache key of the last successful fetch. */
 let _cachedKey = null;

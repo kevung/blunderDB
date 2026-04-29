@@ -132,12 +132,7 @@
 
     onMount(async () => {
         try {
-            const [players, tournaments, persisted, dateRange] = await Promise.all([
-                GetAllPlayerNames(),
-                GetAllTournaments(),
-                GetStatsFilter(),
-                GetStatsDateRange()
-            ]);
+            const [players, tournaments, persisted, dateRange] = await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsFilter(), GetStatsDateRange()]);
 
             playerList = players ?? [];
             tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));
@@ -198,13 +193,9 @@
         {#if tournamentList.length > 0}
             <span class="fb-label">Tournois</span>
             <div class="fb-tour-wrap" class:open={tourOpen}>
-                <button
-                    class="fb-tour-btn"
-                    class:filtered={localFilter.tournamentIDs.length > 0}
-                    onclick={() => (tourOpen = !tourOpen)}
-                    aria-expanded={tourOpen}
-                    aria-haspopup="listbox"
-                >{tourLabel} ▾</button>
+                <button class="fb-tour-btn" class:filtered={localFilter.tournamentIDs.length > 0} onclick={() => (tourOpen = !tourOpen)} aria-expanded={tourOpen} aria-haspopup="listbox"
+                    >{tourLabel} ▾</button
+                >
                 {#if tourOpen}
                     <div class="fb-tour-dropdown" role="listbox" aria-multiselectable="true">
                         <label class="fb-check-label fb-tour-all">
@@ -293,15 +284,18 @@
                     class:active={mlActive(ml)}
                     onclick={() => toggleMatchLength(ml)}
                     aria-pressed={mlActive(ml)}
-                    title={localFilter.matchLength.length === 0 ? 'Cliquer pour filtrer sur cette longueur uniquement' : ''}
-                >{ml}</button>
+                    title={localFilter.matchLength.length === 0 ? 'Cliquer pour filtrer sur cette longueur uniquement' : ''}>{ml}</button
+                >
             {/each}
             {#if localFilter.matchLength.length > 0}
                 <button
                     class="fb-ml-all"
-                    onclick={() => { localFilter = { ...localFilter, matchLength: [] }; applyFilter(); }}
-                    title="Sélectionner toutes les longueurs"
-                >Tout</button>
+                    onclick={() => {
+                        localFilter = { ...localFilter, matchLength: [] };
+                        applyFilter();
+                    }}
+                    title="Sélectionner toutes les longueurs">Tout</button
+                >
             {/if}
         </div>
 
@@ -389,7 +383,7 @@
         background: #fff;
         border: 1px solid #ccc;
         border-radius: 4px;
-        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
         padding: 4px 0;
         min-width: 160px;
         max-height: 220px;

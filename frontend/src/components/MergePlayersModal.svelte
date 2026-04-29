@@ -104,10 +104,7 @@
         </div>
 
         <div class="modal-body">
-            <p class="hint">
-                Select the names that represent the same person, then choose or type the
-                canonical name to keep. All matches will be updated.
-            </p>
+            <p class="hint">Select the names that represent the same person, then choose or type the canonical name to keep. All matches will be updated.</p>
 
             <!-- Filter input -->
             <input
@@ -137,18 +134,8 @@
                     {#each filteredPlayers as p (p.Name)}
                         <!-- svelte-ignore a11y_click_events_have_key_events -->
                         <!-- svelte-ignore a11y_no_static_element_interactions -->
-                        <div
-                            class="player-row"
-                            class:selected={selectedNames.has(p.Name)}
-                            onclick={() => toggleSelect(p.Name)}
-                        >
-                            <input
-                                type="checkbox"
-                                checked={selectedNames.has(p.Name)}
-                                tabindex="-1"
-                                onclick={(e) => e.stopPropagation()}
-                                onchange={() => toggleSelect(p.Name)}
-                            />
+                        <div class="player-row" class:selected={selectedNames.has(p.Name)} onclick={() => toggleSelect(p.Name)}>
+                            <input type="checkbox" checked={selectedNames.has(p.Name)} tabindex="-1" onclick={(e) => e.stopPropagation()} onchange={() => toggleSelect(p.Name)} />
                             <span class="player-name">{p.Name}</span>
                             <span class="player-count" title="Number of matches">{p.Count}</span>
                             <button
@@ -157,8 +144,8 @@
                                 onclick={(e) => {
                                     e.stopPropagation();
                                     useAsCanonical(p.Name);
-                                }}
-                            >✓ use</button>
+                                }}>✓ use</button
+                            >
                         </div>
                     {/each}
                 </div>
@@ -198,11 +185,7 @@
 
         <div class="modal-footer">
             <button class="btn-cancel" onclick={onClose} disabled={saving}>Cancel</button>
-            <button
-                class="btn-merge"
-                onclick={doMerge}
-                disabled={saving || selectedNames.size < 2 || !canonicalName.trim()}
-            >
+            <button class="btn-merge" onclick={doMerge} disabled={saving || selectedNames.size < 2 || !canonicalName.trim()}>
                 {saving ? 'Merging…' : `Merge ${selectedNames.size > 0 ? selectedNames.size : ''} names`}
             </button>
         </div>
@@ -223,7 +206,7 @@
     .modal-box {
         background: #fff;
         border-radius: 6px;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.22);
         width: 480px;
         max-width: 95vw;
         max-height: 80vh;
@@ -258,7 +241,9 @@
         padding: 0 2px;
     }
 
-    .close-btn:hover { color: #333; }
+    .close-btn:hover {
+        color: #333;
+    }
 
     .modal-body {
         padding: 12px 14px;
@@ -286,7 +271,9 @@
         outline: none;
     }
 
-    .filter-input:focus { border-color: #1976d2; }
+    .filter-input:focus {
+        border-color: #1976d2;
+    }
 
     .player-list {
         border: 1px solid #e0e0e0;
@@ -307,13 +294,21 @@
         transition: background-color 0.1s;
     }
 
-    .player-row:last-child { border-bottom: none; }
+    .player-row:last-child {
+        border-bottom: none;
+    }
 
-    .player-row:hover { background: #f5f5f5; }
+    .player-row:hover {
+        background: #f5f5f5;
+    }
 
-    .player-row.selected { background: #e3f2fd; }
+    .player-row.selected {
+        background: #e3f2fd;
+    }
 
-    .player-row.selected:hover { background: #bbdefb; }
+    .player-row.selected:hover {
+        background: #bbdefb;
+    }
 
     .player-name {
         flex: 1;

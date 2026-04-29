@@ -17,7 +17,17 @@
     } from '../../wailsjs/go/main/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
-    import { statusBarModeStore, openPanels, PANEL, closePanel, matchPanelRefreshTriggerStore, dbMutationCounterStore, positionReloadTriggerStore, statusBarTextStore, activeTabStore } from '../stores/uiStore';
+    import {
+        statusBarModeStore,
+        openPanels,
+        PANEL,
+        closePanel,
+        matchPanelRefreshTriggerStore,
+        dbMutationCounterStore,
+        positionReloadTriggerStore,
+        statusBarTextStore,
+        activeTabStore
+    } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
@@ -732,12 +742,7 @@
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={detailMatch !== null}>
             <div class="match-list-toolbar">
-                <button
-                    class="toolbar-btn"
-                    onclick={() => (showMergePlayersModal = true)}
-                    title="Find and merge duplicate player names"
-                    disabled={matches.length === 0}
-                >⇢ Merge players</button>
+                <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title="Find and merge duplicate player names" disabled={matches.length === 0}>⇢ Merge players</button>
             </div>
             <div class="match-table-container">
                 <table class="match-table">
