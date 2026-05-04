@@ -463,18 +463,30 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 			defer mwcRows.Close()
 			for mwcRows.Next() {
 				var errMP int64
-				var score0, score1, fMove, cubeValue, matchLength int
+				var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
 				var tournamentID, matchID int64
 				var cubeAction string
 				var dt int
 				var posID int64
-				if err2 := mwcRows.Scan(&errMP, &score0, &score1, &fMove, &cubeValue, &matchLength,
+				if err2 := mwcRows.Scan(&errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength,
 					&tournamentID, &matchID, &cubeAction, &dt, &posID); err2 != nil {
 					return
 				}
 
 				rowIdx++
-				mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), score0, score1, fMove, cubeValue, matchLength)
+
+				// Convert XG player encoding (1 or -1) to gnuBG fMove (0 or 1).
+				// XG encodes player 0 (bottom) as 1 and player 1 (top) as -1.
+				fMove := 0
+				if rawPlayer == -1 {
+					fMove = 1
+				}
+				// p.score_1/score_2 are away scores (points still needed); gnuBGGetME
+				// expects current scores (games already won).
+				currentScore0 := matchLength - awayScore0
+				currentScore1 := matchLength - awayScore1
+
+				mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
 
 				if !math.IsNaN(mwcLoss) {
 					mwcAvailable = true

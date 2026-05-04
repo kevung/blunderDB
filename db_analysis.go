@@ -135,6 +135,14 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 				raw = dca.CubefulDoubleTakeError
 			case "Double/Pass":
 				raw = dca.CubefulDoublePassError
+			case "Take":
+				// Taker's error: DT equity vs DP equity (from doubler's perspective).
+				// Error is negative when it was wrong to take (DT < DP).
+				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoubleTakeEquity
+			case "Pass":
+				// Passer's error: DP equity vs DT equity (from doubler's perspective).
+				// Error is negative when it was wrong to pass (DP < DT).
+				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoublePassEquity
 			}
 			c.CubeError = int64(math.Round(math.Abs(raw) * 1000))
 		}

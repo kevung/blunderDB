@@ -488,6 +488,15 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 				return err
 			}
 
+			// Save analysis to posID2 (take/pass decision) using the same cube analysis.
+			// The opponent decided to Take, so playedCubeAction = "Take".
+			if move.CubeMove.Analysis != nil {
+				err = d.saveCubeAnalysisToPositionInTx(tx, posID2, move.CubeMove.Analysis, "Take")
+				if err != nil {
+					slog.Warn("failed to save cube analysis for take position", "err", err)
+				}
+			}
+
 		} else {
 			// Single cube action (Double without Take, or other actions)
 			pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
