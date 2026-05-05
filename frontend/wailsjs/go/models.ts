@@ -626,6 +626,8 @@ export namespace main {
 	    tournament_sort_order: number;
 	    pr: number;
 	    mwc_loss: number;
+	    pr2: number;
+	    mwc_loss2: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -651,6 +653,100 @@ export namespace main {
 	        this.tournament_sort_order = source["tournament_sort_order"];
 	        this.pr = source["pr"];
 	        this.mwc_loss = source["mwc_loss"];
+	        this.pr2 = source["pr2"];
+	        this.mwc_loss2 = source["mwc_loss2"];
+	    }
+	
+		convertValues(a: any, classs: any, asMap: boolean = false): any {
+		    if (!a) {
+		        return a;
+		    }
+		    if (a.slice && a.map) {
+		        return (a as any[]).map(elem => this.convertValues(elem, classs));
+		    } else if ("object" === typeof a) {
+		        if (asMap) {
+		            for (const key of Object.keys(a)) {
+		                a[key] = new classs(a[key]);
+		            }
+		            return a;
+		        }
+		        return new classs(a);
+		    }
+		    return a;
+		}
+	}
+	export class MatchPlayerDetailStats {
+	    total_decisions: number;
+	    total_errors: number;
+	    total_blunders: number;
+	    total_equity_error: number;
+	    pr: number;
+	    mwc_loss: number;
+	    checker_decisions: number;
+	    checker_errors: number;
+	    checker_blunders: number;
+	    checker_equity_error: number;
+	    pr_checker: number;
+	    checker_mwc_loss: number;
+	    double_decisions: number;
+	    double_errors: number;
+	    double_blunders: number;
+	    double_equity_error: number;
+	    double_mwc_loss: number;
+	    take_decisions: number;
+	    take_errors: number;
+	    take_blunders: number;
+	    take_equity_error: number;
+	    take_mwc_loss: number;
+	    pr_cube: number;
+	    cube_mwc_loss: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchPlayerDetailStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.total_decisions = source["total_decisions"];
+	        this.total_errors = source["total_errors"];
+	        this.total_blunders = source["total_blunders"];
+	        this.total_equity_error = source["total_equity_error"];
+	        this.pr = source["pr"];
+	        this.mwc_loss = source["mwc_loss"];
+	        this.checker_decisions = source["checker_decisions"];
+	        this.checker_errors = source["checker_errors"];
+	        this.checker_blunders = source["checker_blunders"];
+	        this.checker_equity_error = source["checker_equity_error"];
+	        this.pr_checker = source["pr_checker"];
+	        this.checker_mwc_loss = source["checker_mwc_loss"];
+	        this.double_decisions = source["double_decisions"];
+	        this.double_errors = source["double_errors"];
+	        this.double_blunders = source["double_blunders"];
+	        this.double_equity_error = source["double_equity_error"];
+	        this.double_mwc_loss = source["double_mwc_loss"];
+	        this.take_decisions = source["take_decisions"];
+	        this.take_errors = source["take_errors"];
+	        this.take_blunders = source["take_blunders"];
+	        this.take_equity_error = source["take_equity_error"];
+	        this.take_mwc_loss = source["take_mwc_loss"];
+	        this.pr_cube = source["pr_cube"];
+	        this.cube_mwc_loss = source["cube_mwc_loss"];
+	    }
+	}
+	export class MatchDetailStats {
+	    match_id: number;
+	    player1: MatchPlayerDetailStats;
+	    player2: MatchPlayerDetailStats;
+	
+	    static createFrom(source: any = {}) {
+	        return new MatchDetailStats(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.match_id = source["match_id"];
+	        this.player1 = this.convertValues(source["player1"], MatchPlayerDetailStats);
+	        this.player2 = this.convertValues(source["player2"], MatchPlayerDetailStats);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
@@ -721,6 +817,7 @@ export namespace main {
 		    return a;
 		}
 	}
+	
 	export class MatchStats {
 	    ID: number;
 	    Date: string;

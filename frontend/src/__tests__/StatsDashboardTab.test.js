@@ -112,7 +112,7 @@ function cardValue(result, metric, kind) {
         return v == null || isNaN(v) ? '—' : v.toFixed(2);
     }
     function fmtMWC(v) {
-        return v == null || isNaN(v) ? '—' : v.toFixed(4);
+        return v == null || isNaN(v) ? '—' : (v * 100).toFixed(2) + '%';
     }
     if (metric === 'pr') {
         if (kind === 'all') return fmtPR(result.PRGlobal);
@@ -132,7 +132,7 @@ function rollingAvail(result, n) {
 }
 
 function fmtBlunderError(entry, metric) {
-    if (metric === 'mwc' && entry.MWCLoss > 0) return entry.MWCLoss.toFixed(4);
+    if (metric === 'mwc' && entry.MWCLoss > 0) return (entry.MWCLoss * 100).toFixed(2) + '%';
     if (entry.ErrorMP == null) return '—';
     return (entry.ErrorMP / 1000).toFixed(3);
 }

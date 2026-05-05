@@ -122,7 +122,7 @@
 
     function fmtVal(v) {
         if (v == null || isNaN(v)) return '—';
-        return metric === 'pr' ? v.toFixed(2) : v.toFixed(4);
+        return metric === 'pr' ? v.toFixed(2) : (v * 100).toFixed(2) + '%';
     }
 
     function yAxisLabel() {

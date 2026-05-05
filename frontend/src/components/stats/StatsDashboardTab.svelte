@@ -17,7 +17,7 @@
     /** Format a MWC cumulative loss. Returns '—' for unavailable. */
     function fmtMWC(val) {
         if (val == null || isNaN(val)) return '—';
-        return val.toFixed(4);
+        return (val * 100).toFixed(2) + '%';
     }
 
     /** Return the display value for a main card based on current metric. */
@@ -54,12 +54,12 @@
     function fmtRolling(n) {
         const v = rollingValue(n);
         if (v == null) return '—';
-        return metric === 'pr' ? v.toFixed(2) : v.toFixed(4);
+        return metric === 'pr' ? v.toFixed(2) : (v * 100).toFixed(2) + '%';
     }
 
     /** Format an error from a blunder entry. */
     function fmtBlunderError(entry) {
-        if (metric === 'mwc' && entry.MWCLoss > 0) return entry.MWCLoss.toFixed(4);
+        if (metric === 'mwc' && entry.MWCLoss > 0) return (entry.MWCLoss * 100).toFixed(2) + '%';
         if (entry.ErrorMP == null) return '—';
         return (entry.ErrorMP / 1000).toFixed(3);
     }

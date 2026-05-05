@@ -190,6 +190,10 @@ export function GetMatchByID(arg1) {
   return window['go']['main']['Database']['GetMatchByID'](arg1);
 }
 
+export function GetMatchDetailStats(arg1) {
+  return window['go']['main']['Database']['GetMatchDetailStats'](arg1);
+}
+
 export function GetMatchMovePositions(arg1) {
   return window['go']['main']['Database']['GetMatchMovePositions'](arg1);
 }

@@ -524,11 +524,12 @@ func TestComputeStats_MWCMatchPlay(t *testing.T) {
 	tid := createTournament(t, db, "MWCTournament", "2025-08-01")
 	// 7-point match: player on roll is player0, scores 3-3 current (both 4-away), cube=1.
 	// Store away scores (4) as that is the DB convention (points still needed to win).
+	// cube_value=0 = exponent for 1-cube (2^0 = 1).
 	m := createMatch(t, db, "Alice", "Bob", "2025-08-05", 7, tid)
 	g := createGame(t, db, m)
 	// Insert 5 checker decisions with match-play context
 	for i := range 5 {
-		insertStatsFixtureRowMWC(t, db, m, g, 100, 0, 0, i+1, 4, 4, 1, 7)
+		insertStatsFixtureRowMWC(t, db, m, g, 100, 0, 0, i+1, 4, 4, 0, 7)
 	}
 
 	res, err := db.ComputeStats(StatsFilter{DecisionType: -1})
@@ -580,11 +581,11 @@ func TestComputeStats_MWCMoneyGame(t *testing.T) {
 func TestComputeStats_MWCMixedMatchMoney(t *testing.T) {
 	db := newTestDB(t)
 
-	// Match-play: 3 decisions
+	// Match-play: 3 decisions; cube_value=0 = exponent for 1-cube (2^0=1).
 	mMP := createMatch(t, db, "A", "B", "2025-10-01", 7, 0)
 	gMP := createGame(t, db, mMP)
 	for i := range 3 {
-		insertStatsFixtureRowMWC(t, db, mMP, gMP, 100, 0, 0, i+1, 4, 4, 1, 7)
+		insertStatsFixtureRowMWC(t, db, mMP, gMP, 100, 0, 0, i+1, 4, 4, 0, 7)
 	}
 
 	// Money-game: 2 decisions

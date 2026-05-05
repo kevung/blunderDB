@@ -314,6 +314,8 @@ type Match struct {
 	TournamentSortOrder int       `json:"tournament_sort_order"`
 	PR                  float64   `json:"pr"`
 	MWCLoss             float64   `json:"mwc_loss"`
+	PR2                 float64   `json:"pr2"`
+	MWCLoss2            float64   `json:"mwc_loss2"`
 }
 
 type Game struct {

@@ -13,7 +13,8 @@
         GetAllTournaments,
         SetMatchTournamentByName,
         SwapMatchPlayers,
-        SaveLastVisitedPosition
+        SaveLastVisitedPosition,
+        GetMatchDetailStats
     } from '../../wailsjs/go/main/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
@@ -42,8 +43,10 @@
     let detailMatch = $state(null); // Match currently shown in detail pane
     let detailMovePositions = $state([]); // MatchMovePosition[] for the detail match
     let detailGames = $state([]); // Game[] for the detail match
-    let detailView = $state('transcript'); // 'transcript' | 'metadata'
+    let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
+    let detailStats = $state(null); // MatchDetailStats for the detail match
+    let loadingStats = $state(false);
 
     // Sorting state
     let sortColumn = $state(null); // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
@@ -112,6 +115,7 @@
         } else if (!opened && wasVisible) {
             selectedMatch = null;
             detailMatch = null;
+            detailStats = null;
             editingTournamentMatchId = null;
         }
     });
@@ -368,6 +372,7 @@
             detailMatch = null;
             detailMovePositions = [];
             detailGames = [];
+            detailStats = null;
         } else {
             selectedMatch = match;
             loadMatchDetail(match);
@@ -378,6 +383,7 @@
         if (!match) return;
         loadingDetail = true;
         detailMatch = match;
+        detailStats = null; // reset stats when switching match
         try {
             const [movePositions, games] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id)]);
             detailMovePositions = movePositions || [];
@@ -388,6 +394,25 @@
             detailGames = [];
         }
         loadingDetail = false;
+    }
+
+    async function loadMatchStats(match) {
+        if (!match || loadingStats) return;
+        loadingStats = true;
+        try {
+            detailStats = await GetMatchDetailStats(match.id);
+        } catch (error) {
+            logger.error('Error loading match stats:', error);
+            detailStats = null;
+        }
+        loadingStats = false;
+    }
+
+    function switchDetailView(view) {
+        detailView = view;
+        if (view === 'stats' && detailMatch && !detailStats && !loadingStats) {
+            loadMatchStats(detailMatch);
+        }
     }
 
     // Group move positions by game number for transcript display
@@ -530,6 +555,7 @@
                 detailMatch = null;
                 detailMovePositions = [];
                 detailGames = [];
+                detailStats = null;
             }
             // Trigger match panel refresh to update all dependent components
             matchPanelRefreshTriggerStore.update((n) => n + 1);
@@ -643,6 +669,7 @@
                 detailMatch = null;
                 detailMovePositions = [];
                 detailGames = [];
+                detailStats = null;
                 event.preventDefault();
             } else {
                 closeMatchPanel();
@@ -789,8 +816,8 @@
                                     </td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="tournament-col no-select">{match.tournament_name || ''}</td>
-                                    <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}</td>
-                                    <td class="narrow-col no-select">{match.mwc_loss > 0 ? match.mwc_loss.toFixed(4) : ''}</td>
+                                    <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                                    <td class="narrow-col no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions editing-actions">
                                             <button
@@ -857,8 +884,8 @@
                                             <span class="tournament-display" title="Click to assign tournament">{match.tournament_name || ''}</span>
                                         {/if}
                                     </td>
-                                    <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
-                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? match.mwc_loss.toFixed(4) : '—'}</td>
+                                    <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions">
                                             <button
@@ -924,8 +951,9 @@
                         {/if}
                     </div>
                     <div class="detail-tabs">
-                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => (detailView = 'transcript')}>Transcript</button>
-                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => (detailView = 'metadata')}>Info</button>
+                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => switchDetailView('transcript')}>Transcript</button>
+                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>Info</button>
+                        <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>Stats</button>
                         <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="Enter match mode (↵)">▶ Review</button>
                     </div>
                 </div>
@@ -1066,6 +1094,143 @@
                                 <tr><td class="meta-label">Match ID</td><td class="meta-value id-value">{detailMatch.id}</td></tr>
                             </tbody>
                         </table>
+                    </div>
+                {/if}
+
+                <!-- Stats view -->
+                {#if detailView === 'stats'}
+                    <div class="stats-container">
+                        {#if loadingStats}
+                            <div class="loading-state">Loading stats…</div>
+                        {:else if !detailStats}
+                            <div class="empty-state">No analysed positions found for this match.</div>
+                        {:else}
+                            {@const p1 = detailStats.player1}
+                            {@const p2 = detailStats.player2}
+                            {@const p1Name = detailMatch.player1_name || 'Player 1'}
+                            {@const p2Name = detailMatch.player2_name || 'Player 2'}
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th class="stats-label"></th>
+                                        <th class="stats-player">{p1Name}</th>
+                                        <th class="stats-player">{p2Name}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Performance Rating</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Overall PR</td>
+                                        <td class="stats-val pr-val">{p1.total_decisions > 0 ? p1.pr.toFixed(2) : '—'}</td>
+                                        <td class="stats-val pr-val">{p2.total_decisions > 0 ? p2.pr.toFixed(2) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Checker Play PR</td>
+                                        <td class="stats-val">{p1.checker_decisions > 0 ? p1.pr_checker.toFixed(2) : '—'}</td>
+                                        <td class="stats-val">{p2.checker_decisions > 0 ? p2.pr_checker.toFixed(2) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Cube Play PR</td>
+                                        <td class="stats-val">{p1.double_decisions + p1.take_decisions > 0 ? p1.pr_cube.toFixed(2) : '—'}</td>
+                                        <td class="stats-val">{p2.double_decisions + p2.take_decisions > 0 ? p2.pr_cube.toFixed(2) : '—'}</td>
+                                    </tr>
+
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Total Errors</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Errors (Blunders)</td>
+                                        <td class="stats-val">{p1.total_errors} ({p1.total_blunders})</td>
+                                        <td class="stats-val">{p2.total_errors} ({p2.total_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.total_equity_error > 0 ? '-' + p1.total_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.total_equity_error > 0 ? '-' + p2.total_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.mwc_loss > 0 ? '-' + (p1.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.mwc_loss > 0 ? '-' + (p2.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Decisions</td>
+                                        <td class="stats-val sub-val">{p1.total_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.total_decisions}</td>
+                                    </tr>
+
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Checker Play</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Checker Errors (Blunders)</td>
+                                        <td class="stats-val">{p1.checker_errors} ({p1.checker_blunders})</td>
+                                        <td class="stats-val">{p2.checker_errors} ({p2.checker_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.checker_equity_error > 0 ? '-' + p1.checker_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.checker_equity_error > 0 ? '-' + p2.checker_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.checker_mwc_loss > 0 ? '-' + (p1.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.checker_mwc_loss > 0 ? '-' + (p2.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Unforced Moves</td>
+                                        <td class="stats-val sub-val">{p1.checker_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.checker_decisions}</td>
+                                    </tr>
+
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Cube Play</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Doubles (Blunders)</td>
+                                        <td class="stats-val">{p1.double_errors} ({p1.double_blunders})</td>
+                                        <td class="stats-val">{p2.double_errors} ({p2.double_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.double_equity_error > 0 ? '-' + p1.double_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.double_equity_error > 0 ? '-' + p2.double_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.double_mwc_loss > 0 ? '-' + (p1.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.double_mwc_loss > 0 ? '-' + (p2.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Cube Decisions</td>
+                                        <td class="stats-val sub-val">{p1.double_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.double_decisions}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Takes (Blunders)</td>
+                                        <td class="stats-val">{p1.take_errors} ({p1.take_blunders})</td>
+                                        <td class="stats-val">{p2.take_errors} ({p2.take_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.take_equity_error > 0 ? '-' + p1.take_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.take_equity_error > 0 ? '-' + p2.take_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.take_mwc_loss > 0 ? '-' + (p1.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.take_mwc_loss > 0 ? '-' + (p2.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Take Decisions</td>
+                                        <td class="stats-val sub-val">{p1.take_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.take_decisions}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        {/if}
                     </div>
                 {/if}
             </div>
@@ -1630,5 +1795,72 @@
         border-radius: 3px;
         outline: none;
         box-sizing: border-box;
+    }
+
+    .stats-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px 12px;
+    }
+
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .stats-table th {
+        text-align: left;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: #555;
+        border-bottom: 2px solid #ddd;
+        font-weight: 600;
+    }
+
+    .stats-table th.stats-player {
+        text-align: right;
+        min-width: 80px;
+    }
+
+    .stats-section-header td {
+        background: #f0f4f8;
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #444;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border-top: 1px solid #ddd;
+    }
+
+    .stats-label {
+        padding: 3px 8px;
+        color: #555;
+        font-size: 12px;
+    }
+
+    .sub-label {
+        padding-left: 20px;
+        color: #888;
+        font-size: 11px;
+    }
+
+    .stats-val {
+        text-align: right;
+        padding: 3px 8px;
+        font-variant-numeric: tabular-nums;
+        color: #222;
+        min-width: 80px;
+    }
+
+    .sub-val {
+        color: #666;
+        font-size: 11px;
+    }
+
+    .pr-val {
+        font-weight: 600;
+        color: #1565c0;
     }
 </style>

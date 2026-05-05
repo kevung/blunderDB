@@ -698,7 +698,7 @@
                                         <td class="narrow-col no-select">{tournament.date || ''}</td>
                                         <td class="no-select">{tournament.location || ''}</td>
                                         <td class="narrow-col no-select stat-col">{tournament.pr > 0 ? tournament.pr.toFixed(2) : '—'}</td>
-                                        <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? tournament.mwc_loss.toFixed(4) : '—'}</td>
+                                        <td class="narrow-col no-select stat-col">{tournament.mwc_loss > 0 ? (tournament.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                         <td class="actions-col no-select">
                                             <span class="item-actions">
                                                 <button
@@ -862,7 +862,7 @@
                                     <td class="no-select">{match.player2_name}</td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}</td>
-                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? match.mwc_loss.toFixed(4) : '—'}</td>
+                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     <td class="comment-col no-select">
                                         {#if editingMatchCommentId === match.id}
                                             <input

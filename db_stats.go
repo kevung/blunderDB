@@ -436,7 +436,7 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 	{
 		mwcPassSQL := `SELECT ` + statsErrExpr + ` as err,` +
 			` COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,` +
-			` COALESCE(p.cube_value, 1), COALESCE(p.match_length, m.match_length, 0),` +
+			` (1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0),` +
 			` COALESCE(m.tournament_id, 0), m.id,` +
 			` COALESCE(a.best_cube_action, ''), p.decision_type, p.id ` +
 			statsBaseJoin + whereSQL +
@@ -747,8 +747,14 @@ type matchPRMWCAcc struct {
 	mwc    float64
 }
 
+// matchPlayerPRMWCAcc tracks per-player accumulators for a match.
+type matchPlayerPRMWCAcc struct {
+	p1 matchPRMWCAcc
+	p2 matchPRMWCAcc
+}
+
 // populateMatchStats computes PR and total MWC loss for each match in the slice
-// and sets the PR and MWCLoss fields in-place.
+// and sets the PR/PR2 and MWCLoss/MWCLoss2 fields in-place, split by player.
 // Must be called while the caller holds at least the read lock on the database.
 func populateMatchStats(db *sql.DB, matches []Match) error {
 	if len(matches) == 0 {
@@ -762,7 +768,7 @@ func populateMatchStats(db *sql.DB, matches []Match) error {
 
 	query := `SELECT g.match_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
-		COALESCE(p.cube_value, 1), COALESCE(p.match_length, m.match_length, 0) ` +
+		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL`
 
@@ -772,12 +778,12 @@ func populateMatchStats(db *sql.DB, matches []Match) error {
 	}
 	defer rows.Close()
 
-	acc := make(map[int64]*matchPRMWCAcc)
+	acc := make(map[int64]*matchPlayerPRMWCAcc)
 	for rows.Next() {
 		var matchID int64
 		var errMP int64
-		var score0, score1, fMove, cubeValue, matchLength int
-		if err := rows.Scan(&matchID, &errMP, &score0, &score1, &fMove, &cubeValue, &matchLength); err != nil {
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
+		if err := rows.Scan(&matchID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
 			continue
 		}
 		if _, ok := matchByID[matchID]; !ok {
@@ -785,13 +791,29 @@ func populateMatchStats(db *sql.DB, matches []Match) error {
 		}
 		a, ok := acc[matchID]
 		if !ok {
-			a = &matchPRMWCAcc{}
+			a = &matchPlayerPRMWCAcc{}
 			acc[matchID] = a
 		}
-		a.sumErr += errMP
-		a.cnt++
-		if mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), score0, score1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
-			a.mwc += mwcLoss
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss expects current scores.
+		currentScore0 := matchLength - awayScore0
+		currentScore1 := matchLength - awayScore1
+		mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+		if rawPlayer == 1 { // player1 on roll
+			a.p1.sumErr += errMP
+			a.p1.cnt++
+			if !math.IsNaN(mwcLoss) {
+				a.p1.mwc += mwcLoss
+			}
+		} else { // player2 on roll (rawPlayer == -1)
+			a.p2.sumErr += errMP
+			a.p2.cnt++
+			if !math.IsNaN(mwcLoss) {
+				a.p2.mwc += mwcLoss
+			}
 		}
 	}
 	if err := rows.Err(); err != nil {
@@ -800,8 +822,10 @@ func populateMatchStats(db *sql.DB, matches []Match) error {
 
 	for matchID, a := range acc {
 		if m, ok := matchByID[matchID]; ok {
-			m.PR = pr(a.sumErr, a.cnt)
-			m.MWCLoss = a.mwc
+			m.PR = pr(a.p1.sumErr, a.p1.cnt)
+			m.MWCLoss = a.p1.mwc
+			m.PR2 = pr(a.p2.sumErr, a.p2.cnt)
+			m.MWCLoss2 = a.p2.mwc
 		}
 	}
 	return nil
@@ -822,7 +846,7 @@ func populateTournamentStats(db *sql.DB, tournaments []Tournament) error {
 
 	query := `SELECT m.tournament_id, ` + statsErrExpr + ` as err_mp,
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
-		COALESCE(p.cube_value, 1), COALESCE(p.match_length, m.match_length, 0) ` +
+		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
 		AND m.tournament_id IS NOT NULL`
@@ -842,8 +866,8 @@ func populateTournamentStats(db *sql.DB, tournaments []Tournament) error {
 	for rows.Next() {
 		var tournamentID int64
 		var errMP int64
-		var score0, score1, fMove, cubeValue, matchLength int
-		if err := rows.Scan(&tournamentID, &errMP, &score0, &score1, &fMove, &cubeValue, &matchLength); err != nil {
+		var awayScore0, awayScore1, rawPlayer, cubeValue, matchLength int
+		if err := rows.Scan(&tournamentID, &errMP, &awayScore0, &awayScore1, &rawPlayer, &cubeValue, &matchLength); err != nil {
 			continue
 		}
 		if _, ok := tournByID[tournamentID]; !ok {
@@ -856,7 +880,15 @@ func populateTournamentStats(db *sql.DB, tournaments []Tournament) error {
 		}
 		a.sumErr += errMP
 		a.cnt++
-		if mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), score0, score1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
+		// Convert XG player encoding (1/-1) to gnuBG fMove (0/1).
+		// Convert away scores to current scores for ConvertEMGLossToMWCLoss.
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		currentScore0 := matchLength - awayScore0
+		currentScore1 := matchLength - awayScore1
+		if mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength); !math.IsNaN(mwcLoss) {
 			a.mwc += mwcLoss
 		}
 	}
@@ -871,4 +903,220 @@ func populateTournamentStats(db *sql.DB, tournaments []Tournament) error {
 		}
 	}
 	return nil
+}
+
+// MatchPlayerDetailStats holds per-player statistics for a single match.
+type MatchPlayerDetailStats struct {
+	// Overall
+	TotalDecisions   int     `json:"total_decisions"`
+	TotalErrors      int     `json:"total_errors"`
+	TotalBlunders    int     `json:"total_blunders"`
+	TotalEquityError float64 `json:"total_equity_error"` // sum of errors in EMG
+	PR               float64 `json:"pr"`
+	MWCLoss          float64 `json:"mwc_loss"`
+
+	// Checker play
+	CheckerDecisions   int     `json:"checker_decisions"`
+	CheckerErrors      int     `json:"checker_errors"`
+	CheckerBlunders    int     `json:"checker_blunders"`
+	CheckerEquityError float64 `json:"checker_equity_error"` // in EMG
+	PRChecker          float64 `json:"pr_checker"`
+	CheckerMWCLoss     float64 `json:"checker_mwc_loss"`
+
+	// Cube play: doubling decisions
+	DoubleDecisions   int     `json:"double_decisions"`
+	DoubleErrors      int     `json:"double_errors"`
+	DoubleBlunders    int     `json:"double_blunders"`
+	DoubleEquityError float64 `json:"double_equity_error"` // in EMG
+	DoubleMWCLoss     float64 `json:"double_mwc_loss"`
+
+	// Cube play: take/pass decisions
+	TakeDecisions   int     `json:"take_decisions"`
+	TakeErrors      int     `json:"take_errors"`
+	TakeBlunders    int     `json:"take_blunders"`
+	TakeEquityError float64 `json:"take_equity_error"` // in EMG
+	TakeMWCLoss     float64 `json:"take_mwc_loss"`
+
+	// Combined cube PR
+	PRCube      float64 `json:"pr_cube"`
+	CubeMWCLoss float64 `json:"cube_mwc_loss"`
+}
+
+// MatchDetailStats holds per-player statistics for a single match.
+type MatchDetailStats struct {
+	MatchID int64                  `json:"match_id"`
+	Player1 MatchPlayerDetailStats `json:"player1"`
+	Player2 MatchPlayerDetailStats `json:"player2"`
+}
+
+// GetMatchDetailStats computes per-player statistics for the given match.
+func (d *Database) GetMatchDetailStats(matchID int64) (*MatchDetailStats, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	if d.db == nil {
+		return nil, fmt.Errorf("no database is currently open")
+	}
+
+	query := `SELECT mv.player, p.decision_type, COALESCE(mv.cube_action,''),
+		(` + statsErrExpr + `) as err_mp,
+		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0),
+		(1 << COALESCE(p.cube_value, 0)),
+		COALESCE(p.match_length, m.match_length, 0) ` +
+		statsBaseJoin +
+		` WHERE m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL`
+
+	rows, err := d.db.Query(query, matchID)
+	if err != nil {
+		return nil, fmt.Errorf("GetMatchDetailStats query: %w", err)
+	}
+	defer rows.Close()
+
+	type playerAcc struct {
+		totalSumErr   int64
+		totalCnt      int
+		totalErrors   int
+		totalBlunders int
+		totalMWC      float64
+
+		checkerSumErr   int64
+		checkerCnt      int
+		checkerErrors   int
+		checkerBlunders int
+		checkerMWC      float64
+
+		doubleSumErr   int64
+		doubleCnt      int
+		doubleErrors   int
+		doubleBlunders int
+		doubleMWC      float64
+
+		takeSumErr   int64
+		takeCnt      int
+		takeErrors   int
+		takeBlunders int
+		takeMWC      float64
+	}
+
+	var p1, p2 playerAcc
+
+	for rows.Next() {
+		var rawPlayer, decisionType int
+		var cubeAction string
+		var errMP int64
+		var awayScore0, awayScore1, cubeValue, matchLength int
+		if err := rows.Scan(&rawPlayer, &decisionType, &cubeAction, &errMP,
+			&awayScore0, &awayScore1, &cubeValue, &matchLength); err != nil {
+			continue
+		}
+
+		fMove := 0
+		if rawPlayer == -1 {
+			fMove = 1
+		}
+		// p.score_1/score_2 are away scores; ConvertEMGLossToMWCLoss expects current scores.
+		currentScore0 := matchLength - awayScore0
+		currentScore1 := matchLength - awayScore1
+		mwcLoss := ConvertEMGLossToMWCLoss(int(errMP), currentScore0, currentScore1, fMove, cubeValue, matchLength)
+		if math.IsNaN(mwcLoss) {
+			mwcLoss = 0
+		}
+
+		isError := errMP > 0
+		isBlunder := errMP >= blunderThresholdMP
+		isTake := cubeAction == "Take" || cubeAction == "Pass"
+
+		acc := &p1
+		if rawPlayer == -1 {
+			acc = &p2
+		}
+
+		acc.totalSumErr += errMP
+		acc.totalCnt++
+		acc.totalMWC += mwcLoss
+		if isError {
+			acc.totalErrors++
+		}
+		if isBlunder {
+			acc.totalBlunders++
+		}
+
+		if decisionType == 0 {
+			acc.checkerSumErr += errMP
+			acc.checkerCnt++
+			acc.checkerMWC += mwcLoss
+			if isError {
+				acc.checkerErrors++
+			}
+			if isBlunder {
+				acc.checkerBlunders++
+			}
+		} else {
+			if isTake {
+				acc.takeSumErr += errMP
+				acc.takeCnt++
+				acc.takeMWC += mwcLoss
+				if isError {
+					acc.takeErrors++
+				}
+				if isBlunder {
+					acc.takeBlunders++
+				}
+			} else {
+				acc.doubleSumErr += errMP
+				acc.doubleCnt++
+				acc.doubleMWC += mwcLoss
+				if isError {
+					acc.doubleErrors++
+				}
+				if isBlunder {
+					acc.doubleBlunders++
+				}
+			}
+		}
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("GetMatchDetailStats scan: %w", err)
+	}
+
+	buildStats := func(a *playerAcc) MatchPlayerDetailStats {
+		cubeCnt := a.doubleCnt + a.takeCnt
+		cubeSumErr := a.doubleSumErr + a.takeSumErr
+		return MatchPlayerDetailStats{
+			TotalDecisions:   a.totalCnt,
+			TotalErrors:      a.totalErrors,
+			TotalBlunders:    a.totalBlunders,
+			TotalEquityError: float64(a.totalSumErr) / 1000,
+			PR:               pr(a.totalSumErr, a.totalCnt),
+			MWCLoss:          a.totalMWC,
+
+			CheckerDecisions:   a.checkerCnt,
+			CheckerErrors:      a.checkerErrors,
+			CheckerBlunders:    a.checkerBlunders,
+			CheckerEquityError: float64(a.checkerSumErr) / 1000,
+			PRChecker:          pr(a.checkerSumErr, a.checkerCnt),
+			CheckerMWCLoss:     a.checkerMWC,
+
+			DoubleDecisions:   a.doubleCnt,
+			DoubleErrors:      a.doubleErrors,
+			DoubleBlunders:    a.doubleBlunders,
+			DoubleEquityError: float64(a.doubleSumErr) / 1000,
+			DoubleMWCLoss:     a.doubleMWC,
+
+			TakeDecisions:   a.takeCnt,
+			TakeErrors:      a.takeErrors,
+			TakeBlunders:    a.takeBlunders,
+			TakeEquityError: float64(a.takeSumErr) / 1000,
+			TakeMWCLoss:     a.takeMWC,
+
+			PRCube:      pr(cubeSumErr, cubeCnt),
+			CubeMWCLoss: a.doubleMWC + a.takeMWC,
+		}
+	}
+
+	return &MatchDetailStats{
+		MatchID: matchID,
+		Player1: buildStats(&p1),
+		Player2: buildStats(&p2),
+	}, nil
 }

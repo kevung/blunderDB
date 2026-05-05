@@ -96,6 +96,8 @@ export function GetLastVisitedMatch():Promise<main.Match>;
 
 export function GetMatchByID(arg1:number):Promise<main.Match>;
 
+export function GetMatchDetailStats(arg1:number):Promise<main.MatchDetailStats>;
+
 export function GetMatchMovePositions(arg1:number):Promise<Array<main.MatchMovePosition>>;
 
 export function GetMatchTournament(arg1:number):Promise<main.Tournament>;
