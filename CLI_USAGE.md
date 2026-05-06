@@ -336,7 +336,7 @@ Shows position details:
 ./blunderdb list --db database.db --type stats
 ```
 
-Displays comprehensive performance statistics: PR/MWC metrics, rolling performance, top blunders, cube-action breakdown, and an error histogram.
+Displays comprehensive performance statistics: PR/MWC metrics, Snowie Error Rate, rolling performance, top blunders, cube-action breakdown, and an error histogram.
 
 **Options (stats-specific):**
 - `--metric pr|mwc` — Metric displayed in the text report (default: `pr`). `mwc` shows WC-loss values; money-game positions show `—`.
@@ -369,7 +369,7 @@ Displays comprehensive performance statistics: PR/MWC metrics, rolling performan
 
 1. **Header** — DB path, active filters, chosen metric.
 2. **Totals** — positions, matches, tournaments, decisions.
-3. **PR / MWC** — global, checker, and cube values.
+3. **PR / Snowie ER / MWC** — global, checker, and cube values. PR counts only unforced checker plays and close cube decisions (seuil 0.16 d'équité), aligned with eXtreme Gammon. Snowie ER uses the same error numerator but divides by the total moves of both players (forced included).
 4. **Rolling PR / MWC** — values for N = 5, 10, 50, 100, 250, 500, 1000 most-recent decisions.
 5. **Top N Blunders** — position ID, type, error in EMG, MWC loss, date, players.
 6. **Cube Action Breakdown** — per action: decisions, blunders, blunder %, PR, MWC.
@@ -380,9 +380,10 @@ Displays comprehensive performance statistics: PR/MWC metrics, rolling performan
 | Field | Type | Description |
 |---|---|---|
 | `totals` | object | `num_positions`, `num_matches`, `num_tournaments`, `num_decisions` |
-| `pr_global` | float | Global PR |
-| `pr_checker` | float | Checker-play PR |
-| `pr_cube` | float | Cube-action PR |
+| `pr_global` | float | Global PR (unforced checker + close cube decisions) |
+| `pr_checker` | float | Checker-play PR (unforced moves only) |
+| `pr_cube` | float | Cube-action PR (close cube decisions only) |
+| `snowie_global` | float | Snowie Error Rate (same error sum, denominator = total moves of both players) |
 | `pr_rolling` | object | Rolling PR keyed by N (5 … 1000) |
 | `mwc_global` | float | Total MWC loss (match-play decisions) |
 | `mwc_available` | bool | `false` for money-game-only data sets |

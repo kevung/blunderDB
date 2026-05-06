@@ -138,6 +138,7 @@ Historique des versions
    0.15.0, 31/03/2026, "Export de la position en image PNG dans le presse-papier (board seul via Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
    0.16.0, 18/04/2026, "Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL. Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d'abord)."
    0.17.0, 20/04/2026, "Optimisation du stockage : compression zlib des données d'analyse (~80% de réduction), encodage compact des positions (~90% de réduction de la taille). Ajout de 5 index manquants pour améliorer les performances de recherche. Correction de la recherche par erreur de cube. Correction du mode EDIT après une recherche sans résultats. Restauration de l'état du panneau de recherche lors du changement d'onglets. Suppression de 62 instructions de débogage des chemins critiques."
+   0.17.1, 07/05/2026, "Alignement des statistiques PR / Snowie ER / MWC sur eXtremeGammon et gnuBG : exclusion des coups forcés et des cubes triviaux du dénominateur PR (colonnes is_forced et is_close_cube, seuil 0.16 d'équité). Correction du calcul de cube_error pour les décisions Double/Pass. Ajout du Snowie Error Rate en sortie CLI et JSON. Documentation du modèle de statistiques (:ref:\`stats_parity\`). NOTE : les valeurs PR affichées peuvent légèrement différer des versions précédentes (alignement sur XG)."
    0.18.0, 20/04/2026, "Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers spécialisés, extraction de 7 modules de service depuis App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux. Migration complète vers Svelte 5 runes. Remplacement de 9 modales de tableau par un composant générique DataTableModal. Ajout d'ESLint + Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier). Passage du mutex Database en RWMutex pour un meilleur parallélisme en lecture. Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN). Réécriture du README. Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
    0.19.0, 21/04/2026, "Ajout du panneau Stats : indicateurs PR (Performance Rate) et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list --type stats. Voir :ref:\`stats\`."
 
@@ -155,6 +156,7 @@ Sommaire
    raccourcis
    cli
    stats
+   stats_parity
    faq
    annexe_filtres
    annexe_windows_securite

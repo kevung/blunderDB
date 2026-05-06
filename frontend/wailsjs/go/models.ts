@@ -700,6 +700,7 @@ export namespace main {
 	    take_mwc_loss: number;
 	    pr_cube: number;
 	    cube_mwc_loss: number;
+	    snowie_er: number;
 	
 	    static createFrom(source: any = {}) {
 	        return new MatchPlayerDetailStats(source);
@@ -731,6 +732,7 @@ export namespace main {
 	        this.take_mwc_loss = source["take_mwc_loss"];
 	        this.pr_cube = source["pr_cube"];
 	        this.cube_mwc_loss = source["cube_mwc_loss"];
+	        this.snowie_er = source["snowie_er"];
 	    }
 	}
 	export class MatchDetailStats {
@@ -1194,6 +1196,7 @@ export namespace main {
 	    MWCCube: number;
 	    MWCRolling: Record<number, number>;
 	    MWCAvailable: boolean;
+	    SnowieGlobal: number;
 	    PerTournament: TournamentStats[];
 	    PerMatch: MatchStats[];
 	    CubeActionBreakdown: CubeActionStats[];
@@ -1216,6 +1219,7 @@ export namespace main {
 	        this.MWCCube = source["MWCCube"];
 	        this.MWCRolling = source["MWCRolling"];
 	        this.MWCAvailable = source["MWCAvailable"];
+	        this.SnowieGlobal = source["SnowieGlobal"];
 	        this.PerTournament = this.convertValues(source["PerTournament"], TournamentStats);
 	        this.PerMatch = this.convertValues(source["PerMatch"], MatchStats);
 	        this.CubeActionBreakdown = this.convertValues(source["CubeActionBreakdown"], CubeActionStats);

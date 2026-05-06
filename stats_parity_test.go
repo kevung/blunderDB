@@ -26,13 +26,13 @@ type refPlayer struct {
 	CheckerMWCLossPct   *float64 `json:"checker_mwc_loss_pct"`
 	CheckerEquityEMG    *float64 `json:"checker_equity_error_emg"`
 	// gnuBG-only fields
-	CheckerTotal    *int     `json:"checker_total"`
-	CheckerForced   *int     `json:"checker_forced"`
-	CheckerPRXG500  *float64 `json:"checker_pr_xg_500"`
-	CubeEquityEMG   *float64 `json:"cube_equity_error_emg"`
-	CubeMWCLossPct  *float64 `json:"cube_mwc_loss_pct"`
-	TotalCube       *int     `json:"total_cube"`
-	SnowieER        *float64 `json:"snowie_er"`
+	CheckerTotal   *int     `json:"checker_total"`
+	CheckerForced  *int     `json:"checker_forced"`
+	CheckerPRXG500 *float64 `json:"checker_pr_xg_500"`
+	CubeEquityEMG  *float64 `json:"cube_equity_error_emg"`
+	CubeMWCLossPct *float64 `json:"cube_mwc_loss_pct"`
+	TotalCube      *int     `json:"total_cube"`
+	SnowieER       *float64 `json:"snowie_er"`
 }
 
 type refMatch struct {
@@ -63,72 +63,95 @@ func loadRefMatch(t *testing.T, path string) refMatch {
 // Phase 01 values are intentionally wide (blunderDB counts forced moves and
 // all No Double positions); they tighten after fiches 02–04.
 type parityTolerances struct {
-	TotalDecisions      int     // all decisions combined
-	CheckerDecisions    int     // checker move count
-	DoubleDecisions     int     // cube doubling decisions (very wide pre-fiche 03)
-	TakeDecisions       int     // take/pass count
-	CloseCubeDecisions  int     // is_close_cube=1 count vs XG/gnuBG close cube decisions
-	PR                  float64
-	MWCPct              float64 // percentage points
-	Equity              float64 // EMG
+	TotalDecisions     int // all decisions combined
+	CheckerDecisions   int // checker move count
+	DoubleDecisions    int // cube doubling decisions (very wide pre-fiche 03)
+	TakeDecisions      int // take/pass count
+	CloseCubeDecisions int // is_close_cube=1 count vs XG/gnuBG close cube decisions
+	PR                 float64
+	MWCPct             float64 // percentage points
+	Equity             float64 // EMG
+	SnowieER           float64 // Snowie Error Rate; 0 means use hardcoded default
 }
 
-// tolPhase01 matches the current blunderDB state (pre forced-moves + pre close-cube).
-// These tolerances will tighten progressively in fiches 02–04.
+// tolPhase01 documents the blunderDB state before fiches 02–04 (pre forced-moves + pre close-cube).
+// Kept for historical reference; not used in production tests.
 //
 // Explanations for wide values:
-//   CheckerDecisions=45: bDB counts all checker positions (incl. forced). gnuBG
-//     ref stores unforced only; observed deltas up to 40 (38 forced + import gaps).
-//   DoubleDecisions=100: bDB counts all No Doubles; XG/gnuBG only close ones
-//     (factor 2–6× overcounting pre-fiche 03).
-//   PR=3.0: inflated denominator (all decisions vs unforced+close) depresses bDB PR
-//     by up to 2+ points vs XG/gnuBG reference.
+//
+//	CheckerDecisions=45: bDB counts all checker positions (incl. forced). gnuBG
+//	  ref stores unforced only; observed deltas up to 40 (38 forced + import gaps).
+//	DoubleDecisions=100: bDB counts all No Doubles; XG/gnuBG only close ones
+//	  (factor 2–6× overcounting pre-fiche 03).
+//	PR=3.0: inflated denominator (all decisions vs unforced+close) depresses bDB PR
+//	  by up to 2+ points vs XG/gnuBG reference.
 var tolPhase01 = parityTolerances{
 	TotalDecisions:     100,  // bDB includes forced + all No Doubles
 	CheckerDecisions:   45,   // bDB includes forced moves + SGF import gaps
 	DoubleDecisions:    100,  // bDB counts all No Doubles
 	TakeDecisions:      3,    // takes/passes should align closely
-	CloseCubeDecisions: 5,    // is_close_cube=1 vs XG/gnuBG close cube decisions; tightens in fiche 07
+	CloseCubeDecisions: 5,    // is_close_cube=1 vs XG/gnuBG close cube decisions
 	PR:                 3.0,  // wide until denominator fixed (fiche 04)
 	MWCPct:             3.5,  // percentage points
 	Equity:             0.35, // EMG
+	SnowieER:           2.0,  // very wide pre-fix
 }
 
 // tolPhase04 applies after fiche 04 (PR denominator fix). Both bDB and
 // XG/gnuBG now count the same decisions: unforced checker + close cube.
 //
-//   PR=0.2  — tight for XG→XG and SGF→gnuBG (same engine). For XG-import
-//             vs gnuBG reference (different engines), call-site uses 1.0.
-//   CheckerDecisions=10 — bDB and XG may differ by ≤6 on forced-move boundary
-//             classification; 10 leaves margin.
-//   MWCPct=3.5 — SGF incomplete close-cube classification (only 2–3/7 cubes
-//             classified) and cross-engine equity differences cause ≥3.2 gaps.
-//             XG-vs-XG comparisons use tolPhase04XG (tighter, 1.0 pp).
-//   Equity=0.5 — SGF close-cube equity is incomplete (only 2/7 classified);
-//             removing non-close cube equity increases the gap with gnuBG ref.
+//	PR=0.2  — tight for XG→XG and SGF→gnuBG (same engine). For XG-import
+//	          vs gnuBG reference (different engines), call-site uses 1.0.
+//	CheckerDecisions=10 — bDB and XG may differ by ≤6 on forced-move boundary
+//	          classification; 10 leaves margin.
+//	MWCPct=3.5 — SGF incomplete close-cube classification (only 2–3/7 cubes
+//	          classified) and cross-engine equity differences cause ≥3.2 gaps.
+//	          XG-vs-XG comparisons use tolPhase04XG (tighter, 1.0 pp).
+//	Equity=0.5 — SGF close-cube equity is incomplete (only 2/7 classified);
+//	          removing non-close cube equity increases the gap with gnuBG ref.
+// tolPhase04 applies to SGF→gnuBG comparisons where structural gaps prevent tighter bounds.
+//
+//	MWCPct=3.5 — SGF incomplete close-cube classification (only 2–3/7 cubes
+//	          classified) and cross-engine equity differences produce gaps up to 3.33 pp.
+//	          Max observed: 3.33 pp (test.json SGF P1).
+//	Equity=0.5 — SGF close-cube equity is incomplete (only 2/7 classified);
+//	          max observed: 0.44 EMG (test.json SGF P1).
+//	SnowieER=0.5 — two structural sources: (a) SGF forced moves without analysis excluded
+//	          from bDB denominator but counted in gnuBG anTotalMoves (gap ≈20 moves);
+//	          (b) cross-engine equity differences. Max observed: 0.34 (test.json P2).
 var tolPhase04 = parityTolerances{
-	TotalDecisions:     5,    // aligned denominator
-	CheckerDecisions:   10,   // unforced checker; ≤6 boundary diff vs XG
-	DoubleDecisions:    5,    // close doubles only
-	TakeDecisions:      3,    // takes/passes: always counted
-	CloseCubeDecisions: 5,    // some SGF cube positions lack equity data
-	PR:                 0.2,  // aligned denominator: very close to XG/gnuBG
-	MWCPct:             3.5,  // cross-engine + SGF close-cube gaps prevent tightening
-	Equity:             0.5,  // EMG: wider for SGF incomplete close-cube equity
+	TotalDecisions:     5,   // aligned denominator
+	CheckerDecisions:   10,  // unforced checker; ≤6 boundary diff vs XG
+	DoubleDecisions:    5,   // close doubles only
+	TakeDecisions:      3,   // takes/passes: always counted
+	CloseCubeDecisions: 5,   // some SGF cube positions lack equity data
+	PR:                 0.2, // aligned denominator: very close to XG/gnuBG
+	MWCPct:             3.5, // structural SGF close-cube gap; irreducible at this stage
+	Equity:             0.5, // EMG: wider for SGF incomplete close-cube equity
+	SnowieER:           0.5, // structural SGF forced-without-analysis gap
 }
 
-// tolPhase04XG is like tolPhase04 but with a tighter MWC tolerance for
-// XG-vs-XG comparisons (same analysis engine, cube error formula fixed in fiche 06).
-// Max observed gap after fiche 06 fix: 0.99 pp (Aachen P1).
-var tolPhase04XG = parityTolerances{
+// tolPhaseFinal applies to XG-vs-XG comparisons (same analysis engine).
+// All values tightened to reflect the aligned denominator (fiches 02–04) and
+// the cube error formula fix (fiche 06). Used in production since fiche 07.
+//
+//	CheckerDecisions=7 — max observed: 6 (Aachen P2). Residual from forced-move
+//	          boundary classification at the 1-legal-move threshold.
+//	PR=0.1    — max observed: 0.086 (Aachen P1). Very tight after denominator alignment.
+//	MWCPct=1.0 — max observed: 0.984 pp (Aachen P1). Limit kept at 1.0 — one more
+//	          pp would require per-decision eq2mwc conversion (out of scope).
+//	Equity=0.05 — max observed: 0.015 EMG (Aachen P2). Analysis engine rounding only.
+//	SnowieER=0.3 — no XG Snowie ER reference available yet; tolerance kept from fiche 05.
+var tolPhaseFinal = parityTolerances{
 	TotalDecisions:     5,
-	CheckerDecisions:   10,
+	CheckerDecisions:   7,    // tightened from 10; max observed diff: 6
 	DoubleDecisions:    5,
 	TakeDecisions:      3,
 	CloseCubeDecisions: 5,
-	PR:                 0.2,
-	MWCPct:             1.0, // fiche 06: XG-vs-XG MWC gap ≤ 1 pp after cube error fix
-	Equity:             0.5,
+	PR:                 0.1,  // tightened from 0.2; max observed diff: 0.086
+	MWCPct:             1.0,  // cube error fix (fiche 06); max observed: 0.984 pp
+	Equity:             0.05, // tightened from 0.5; max observed diff: 0.015
+	SnowieER:           0.3,  // no XG ref yet; maintained from fiche 05
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
@@ -229,7 +252,7 @@ func countCloseCube(db *Database, matchID int64, player int) int {
 // ── Comparison logic ─────────────────────────────────────────────────────────
 
 // compareXGRef compares blunderDB stats against an XG reference player.
-// Uses wide tolerances because bDB counts forced moves and all No Doubles.
+// After fiches 02–04: bDB counts the same decisions as XG (unforced checker + close cube).
 func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDetailStats, tol parityTolerances) {
 	t.Helper()
 	t.Logf("--- %s vs XG reference ---", prefix)
@@ -238,8 +261,12 @@ func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDe
 	diffInt(t, prefix+" double_decisions", ref.DoubleDecisions, bdb.DoubleDecisions, tol.DoubleDecisions)
 	diffInt(t, prefix+" take_decisions", ref.TakeDecisions, bdb.TakeDecisions, tol.TakeDecisions)
 	diffFloat(t, prefix+" PR", ref.PR, bdb.PR, tol.PR)
-	// Snowie ER XG reference: tolerance 0.3 (no XG Snowie ER available yet for fixtures).
-	diffFloat(t, prefix+" snowie_er", ref.SnowieErrorRate, bdb.SnowieER, 0.3)
+	// Snowie ER: use tol.SnowieER (no XG reference data available yet for these fixtures).
+	snowieTol := tol.SnowieER
+	if snowieTol == 0 {
+		snowieTol = 0.3 // fallback if not set
+	}
+	diffFloat(t, prefix+" snowie_er", ref.SnowieErrorRate, bdb.SnowieER, snowieTol)
 	diffFloat(t, prefix+" total_equity_emg", ref.TotalEquityErrorEMG, bdb.TotalEquityError, tol.Equity)
 	diffFloat(t, prefix+" checker_equity_emg", ref.CheckerEquityEMG, bdb.CheckerEquityError, tol.Equity)
 	if ref.TotalMWCLossPct != nil {
@@ -276,11 +303,16 @@ func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlaye
 	}
 	// checker_pr_xg_500: compare against bDB PRChecker (same 500-factor formula).
 	diffFloat(t, prefix+" checker_pr_xg_500", ref.CheckerPRXG500, bdb.PRChecker, tol.PR)
-	// Snowie ER: tolerance 0.5. Two structural sources of divergence:
+	// Snowie ER: structural tolerance. Two irreducible sources of divergence:
 	//   (a) SGF forced moves without analysis are excluded from blunderDB's denominator
 	//       but counted in gnuBG's anTotalMoves → denominator gap up to ~20 moves.
 	//   (b) Cross-engine equity differences (XG vs gnuBG) add up to ~0.3 per player.
-	diffFloat(t, prefix+" snowie_er", ref.SnowieER, bdb.SnowieER, 0.5)
+	//   Max observed: 0.34 (test.json P2). Structural; documented in fiche 05 findings.
+	snowieGnuTol := tol.SnowieER
+	if snowieGnuTol == 0 {
+		snowieGnuTol = 0.5 // fallback if not set
+	}
+	diffFloat(t, prefix+" snowie_er", ref.SnowieER, bdb.SnowieER, snowieGnuTol)
 }
 
 // ── Main test ─────────────────────────────────────────────────────────────────
@@ -291,6 +323,8 @@ func TestStatsParity(t *testing.T) {
 		"testdata/stats_reference/test.json",
 		"testdata/stats_reference/charlot1-charlot2.json",
 	}
+	// tolPhase04 covers SGF→gnuBG comparisons (structural gaps prevent tightening).
+	// tolPhaseFinal covers XG→XG comparisons (same engine, tightest achievable).
 	tol := tolPhase04
 
 	for _, jsonPath := range fixtures {
@@ -304,8 +338,8 @@ func TestStatsParity(t *testing.T) {
 					t.Logf("XG import: %s  P1=%q", filepath.Base(ref.MatchFile), p1n)
 
 					if ref.XG != nil {
-						// XG-vs-XG: same engine, cube error fix in fiche 06 → tight 1.0 pp tolerance.
-						xgTol := tolPhase04XG
+						// XG-vs-XG: same engine, tightest tolerances (fiche 07 final).
+						xgTol := tolPhaseFinal
 						if rp := ref.XG["player1"]; rp != nil {
 							compareXGRef(t, "XG/P1", rp, bdbStats.Player1, xgTol)
 							if rp.CheckerForced != nil {
@@ -314,9 +348,15 @@ func TestStatsParity(t *testing.T) {
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
-								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
-								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
-								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								if rp.DoubleDecisions != nil {
+									wantClose += *rp.DoubleDecisions
+								}
+								if rp.TakeDecisions != nil {
+									wantClose += *rp.TakeDecisions
+								}
+								if rp.PassDecisions != nil {
+									wantClose += *rp.PassDecisions
+								}
 								gotClose := countCloseCube(db, matchID, 1)
 								diffInt(t, "XG/P1 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
 							}
@@ -329,9 +369,15 @@ func TestStatsParity(t *testing.T) {
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
-								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
-								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
-								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								if rp.DoubleDecisions != nil {
+									wantClose += *rp.DoubleDecisions
+								}
+								if rp.TakeDecisions != nil {
+									wantClose += *rp.TakeDecisions
+								}
+								if rp.PassDecisions != nil {
+									wantClose += *rp.PassDecisions
+								}
 								gotClose := countCloseCube(db, matchID, -1)
 								diffInt(t, "XG/P2 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
 							}
@@ -383,9 +429,15 @@ func TestStatsParity(t *testing.T) {
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
-								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
-								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
-								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								if rp.DoubleDecisions != nil {
+									wantClose += *rp.DoubleDecisions
+								}
+								if rp.TakeDecisions != nil {
+									wantClose += *rp.TakeDecisions
+								}
+								if rp.PassDecisions != nil {
+									wantClose += *rp.PassDecisions
+								}
 								gotClose := countCloseCube(db, matchID, 1)
 								diffInt(t, "SGF/P1 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
 							}
@@ -398,9 +450,15 @@ func TestStatsParity(t *testing.T) {
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
-								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
-								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
-								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								if rp.DoubleDecisions != nil {
+									wantClose += *rp.DoubleDecisions
+								}
+								if rp.TakeDecisions != nil {
+									wantClose += *rp.TakeDecisions
+								}
+								if rp.PassDecisions != nil {
+									wantClose += *rp.PassDecisions
+								}
 								gotClose := countCloseCube(db, matchID, -1)
 								diffInt(t, "SGF/P2 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
 							}
