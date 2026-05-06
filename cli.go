@@ -940,6 +940,7 @@ func (cli *CLI) showStats(filter StatsFilter, metric, format string, topN int) e
 		fmt.Fprintf(w, "  Global:\t%.3f\n", result.PRGlobal)
 		fmt.Fprintf(w, "  Checker:\t%.3f\n", result.PRChecker)
 		fmt.Fprintf(w, "  Cube:\t%.3f\n", result.PRCube)
+		fmt.Fprintf(w, "  Snowie ER:\t%.3f\n", result.SnowieGlobal)
 	}
 	w.Flush()
 	fmt.Println()

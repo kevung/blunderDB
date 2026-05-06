@@ -30,7 +30,8 @@
       "total_equity_error_emg": 2.595001,
       "total_mwc_loss_pct": 30.8044,
       "close_cube_decisions": null,
-      "pr_gnubg": null
+      "pr_gnubg": null,
+      "snowie_er": 3.920
     },
     "player2": {
       "checker_unforced": 127,
@@ -57,7 +58,8 @@
       "total_equity_error_emg": 3.669327,
       "total_mwc_loss_pct": 47.998,
       "close_cube_decisions": null,
-      "pr_gnubg": null
+      "pr_gnubg": null,
+      "snowie_er": 5.543
     }
   },
   "notes": "XG values not yet available (binary .xg format; match report not exported). gnuBG stats extracted from test.sgf GS tags using cmd/extract_gnubg_stats. gnuBG app: GNU Backgammon 1.08.003, full statistics computed (non-zero equity errors). Sanity check: P1 checker_pr_xg_500 = 500 × 2.152127 / 147 = 7.320 ✓; P2 = 500 × 3.376956 / 127 = 13.295 ✓. close_cube_decisions (anCloseCube) not stored in SGF — combined PR unavailable."

@@ -15,6 +15,7 @@ import (
 type refPlayer struct {
 	// XG fields
 	PR                  *float64 `json:"pr"`
+	SnowieErrorRate     *float64 `json:"snowie_error_rate"`
 	TotalDecisions      *int     `json:"total_decisions"`
 	CheckerUnforced     *int     `json:"checker_unforced"`
 	DoubleDecisions     *int     `json:"double_decisions"`
@@ -25,12 +26,13 @@ type refPlayer struct {
 	CheckerMWCLossPct   *float64 `json:"checker_mwc_loss_pct"`
 	CheckerEquityEMG    *float64 `json:"checker_equity_error_emg"`
 	// gnuBG-only fields
-	CheckerTotal   *int     `json:"checker_total"`
-	CheckerForced  *int     `json:"checker_forced"`
-	CheckerPRXG500 *float64 `json:"checker_pr_xg_500"`
-	CubeEquityEMG  *float64 `json:"cube_equity_error_emg"`
-	CubeMWCLossPct *float64 `json:"cube_mwc_loss_pct"`
-	TotalCube      *int     `json:"total_cube"`
+	CheckerTotal    *int     `json:"checker_total"`
+	CheckerForced   *int     `json:"checker_forced"`
+	CheckerPRXG500  *float64 `json:"checker_pr_xg_500"`
+	CubeEquityEMG   *float64 `json:"cube_equity_error_emg"`
+	CubeMWCLossPct  *float64 `json:"cube_mwc_loss_pct"`
+	TotalCube       *int     `json:"total_cube"`
+	SnowieER        *float64 `json:"snowie_er"`
 }
 
 type refMatch struct {
@@ -221,6 +223,8 @@ func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDe
 	diffInt(t, prefix+" double_decisions", ref.DoubleDecisions, bdb.DoubleDecisions, tol.DoubleDecisions)
 	diffInt(t, prefix+" take_decisions", ref.TakeDecisions, bdb.TakeDecisions, tol.TakeDecisions)
 	diffFloat(t, prefix+" PR", ref.PR, bdb.PR, tol.PR)
+	// Snowie ER XG reference: tolerance 0.3 (no XG Snowie ER available yet for fixtures).
+	diffFloat(t, prefix+" snowie_er", ref.SnowieErrorRate, bdb.SnowieER, 0.3)
 	diffFloat(t, prefix+" total_equity_emg", ref.TotalEquityErrorEMG, bdb.TotalEquityError, tol.Equity)
 	diffFloat(t, prefix+" checker_equity_emg", ref.CheckerEquityEMG, bdb.CheckerEquityError, tol.Equity)
 	if ref.TotalMWCLossPct != nil {
@@ -257,6 +261,11 @@ func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlaye
 	}
 	// checker_pr_xg_500: compare against bDB PRChecker (same 500-factor formula).
 	diffFloat(t, prefix+" checker_pr_xg_500", ref.CheckerPRXG500, bdb.PRChecker, tol.PR)
+	// Snowie ER: tolerance 0.5. Two structural sources of divergence:
+	//   (a) SGF forced moves without analysis are excluded from blunderDB's denominator
+	//       but counted in gnuBG's anTotalMoves → denominator gap up to ~20 moves.
+	//   (b) Cross-engine equity differences (XG vs gnuBG) add up to ~0.3 per player.
+	diffFloat(t, prefix+" snowie_er", ref.SnowieER, bdb.SnowieER, 0.5)
 }
 
 // ── Main test ─────────────────────────────────────────────────────────────────

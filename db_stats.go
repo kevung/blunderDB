@@ -122,6 +122,7 @@ type StatsResult struct {
 	MWCCube             float64           `json:"MWCCube"`      // MWC loss from cube action errors
 	MWCRolling          map[int]float64   `json:"MWCRolling"`   // rolling MWC loss over N most-recent decisions (same keys as PRRolling)
 	MWCAvailable        bool              `json:"MWCAvailable"` // true if at least one match-play decision contributed
+	SnowieGlobal        float64           `json:"SnowieGlobal"` // Snowie ER: 500×Σerr / (total checker moves, both players, forced included)
 	PerTournament       []TournamentStats `json:"PerTournament"`
 	PerMatch            []MatchStats      `json:"PerMatch"`
 	CubeActionBreakdown []CubeActionStats `json:"CubeActionBreakdown"`
@@ -138,6 +139,18 @@ func pr(sumErrMP int64, nDecisions int) float64 {
 	return 500 * float64(sumErrMP) / 1000 / float64(nDecisions)
 }
 
+// snowieER computes the Snowie Error Rate from a sum of errors (millipoints
+// stored units) and the total checker move count for both players combined.
+// Formula identical to pr() but denominator = anTotalMoves[P1] + anTotalMoves[P2]
+// (gnubg/formatgs.c:415-424). The per-player metric is asymmetric: each player's
+// error is divided by the combined move count of both players, matching gnuBG.
+func snowieER(sumErrMP int64, nMovesBoth int) float64 {
+	if nMovesBoth == 0 {
+		return 0
+	}
+	return 500 * float64(sumErrMP) / 1000 / float64(nMovesBoth)
+}
+
 // statsBaseJoin is the FROM + JOIN fragment shared by all stats queries.
 const statsBaseJoin = `FROM position p
 JOIN analysis a ON a.position_id = p.id
@@ -146,10 +159,11 @@ JOIN game g ON g.id = mv.game_id
 JOIN match m ON m.id = g.match_id
 LEFT JOIN tournament t ON t.id = m.tournament_id`
 
-// buildStatsWhereClause constructs a WHERE clause and argument slice for the
-// given filter. The returned whereSQL starts with " WHERE " (or is empty when no
-// filter is active). It is private and shared with fiche 03.
-func buildStatsWhereClause(filter StatsFilter) (whereSQL string, args []any) {
+// buildBaseWhereClause constructs the base WHERE clause for the given filter
+// without the statsCountedExpr predicate. Used by buildStatsWhereClause (PR
+// queries) and by Snowie ER queries that need all moves (forced checker and
+// non-close cube included).
+func buildBaseWhereClause(filter StatsFilter) (whereSQL string, args []any) {
 	var clauses []string
 
 	if filter.PlayerName != "" {
@@ -191,15 +205,18 @@ func buildStatsWhereClause(filter StatsFilter) (whereSQL string, args []any) {
 		}
 	}
 
-	// Exclude positions with NULL analysis (no error data).
 	clauses = append(clauses, "a.position_id IS NOT NULL")
 	clauses = append(clauses, "("+statsErrExpr+") IS NOT NULL")
 
-	// Apply XG/gnuBG counting semantics: exclude forced checker plays and
-	// non-close cube decisions from all PR and decision-count queries.
-	clauses = append(clauses, statsCountedExpr)
-
 	whereSQL = " WHERE " + strings.Join(clauses, " AND ")
+	return whereSQL, args
+}
+
+// buildStatsWhereClause wraps buildBaseWhereClause and appends the
+// statsCountedExpr predicate (XG/gnuBG semantics: unforced checker + close cube).
+func buildStatsWhereClause(filter StatsFilter) (whereSQL string, args []any) {
+	whereSQL, args = buildBaseWhereClause(filter)
+	whereSQL += " AND " + statsCountedExpr
 	return whereSQL, args
 }
 
@@ -265,6 +282,27 @@ func (d *Database) ComputeStats(filter StatsFilter) (*StatsResult, error) {
 		}
 	}()
 	result.PRGlobal = pr(totalErrSum, totalErrCount)
+
+	// ── Snowie ER (global) ────────────────────────────────────────────────────
+	// Uses buildBaseWhereClause (no statsCountedExpr): all moves including forced
+	// checker and non-close cube. Denominator = total checker positions only
+	// (decision_type=0, same as gnuBG anTotalMoves). The DecisionType filter from
+	// the StatsFilter is deliberately ignored here so the denominator always covers
+	// both checkers and cubes (matching the gnuBG formula).
+	{
+		snowieFilter := filter
+		snowieFilter.DecisionType = -1 // count all decision types
+		snowieWhere, snowieArgs := buildBaseWhereClause(snowieFilter)
+		var snowieSumErr int64
+		var snowieCheckerCnt int
+		_ = d.db.QueryRow(
+			`SELECT COALESCE(SUM(`+statsErrExpr+`),0), `+
+				`COALESCE(SUM(CASE WHEN p.decision_type=0 THEN 1 ELSE 0 END),0) `+
+				statsBaseJoin+snowieWhere,
+			snowieArgs...,
+		).Scan(&snowieSumErr, &snowieCheckerCnt)
+		result.SnowieGlobal = snowieER(snowieSumErr, snowieCheckerCnt)
+	}
 
 	// ── 3. PR per tournament ──────────────────────────────────────────────────
 	rows, err = d.db.Query(
@@ -949,6 +987,11 @@ type MatchPlayerDetailStats struct {
 	// Combined cube PR
 	PRCube      float64 `json:"pr_cube"`
 	CubeMWCLoss float64 `json:"cube_mwc_loss"`
+
+	// Snowie Error Rate: 500 × Σerr(player) / (anTotalMoves[P1]+anTotalMoves[P2]).
+	// Denominator = total checker moves for both players (forced included, cube excluded).
+	// This is asymmetric per player (gnuBG formatgs.c:415-424 convention).
+	SnowieER float64 `json:"snowie_er"`
 }
 
 // MatchDetailStats holds per-player statistics for a single match.
@@ -1088,6 +1131,45 @@ func (d *Database) GetMatchDetailStats(matchID int64) (*MatchDetailStats, error)
 		return nil, fmt.Errorf("GetMatchDetailStats scan: %w", err)
 	}
 
+	// ── Snowie ER pass ────────────────────────────────────────────────────────
+	// Second query without statsCountedExpr: sum all equity errors per player,
+	// count checker positions (decision_type=0, forced included) for both players.
+	// Denominator = anTotalMoves[P1] + anTotalMoves[P2] (gnuBG convention).
+	var snowieP1SumErr, snowieP2SumErr int64
+	var snowieP1Checker, snowieP2Checker int
+	{
+		snowieRows, snowieErr := d.db.Query(
+			`SELECT mv.player, p.decision_type, (`+statsErrExpr+`) as err_mp `+
+				statsBaseJoin+
+				` WHERE m.id = ? AND a.position_id IS NOT NULL AND (`+statsErrExpr+`) IS NOT NULL`,
+			matchID)
+		if snowieErr != nil {
+			return nil, fmt.Errorf("GetMatchDetailStats snowie query: %w", snowieErr)
+		}
+		func() {
+			defer snowieRows.Close()
+			for snowieRows.Next() {
+				var rawPlayer, decisionType int
+				var errMP int64
+				if err2 := snowieRows.Scan(&rawPlayer, &decisionType, &errMP); err2 != nil {
+					return
+				}
+				if rawPlayer == 1 {
+					snowieP1SumErr += errMP
+					if decisionType == 0 {
+						snowieP1Checker++
+					}
+				} else {
+					snowieP2SumErr += errMP
+					if decisionType == 0 {
+						snowieP2Checker++
+					}
+				}
+			}
+		}()
+	}
+	snowieDenom := snowieP1Checker + snowieP2Checker
+
 	buildStats := func(a *playerAcc) MatchPlayerDetailStats {
 		cubeCnt := a.doubleCnt + a.takeCnt
 		cubeSumErr := a.doubleSumErr + a.takeSumErr
@@ -1123,9 +1205,12 @@ func (d *Database) GetMatchDetailStats(matchID int64) (*MatchDetailStats, error)
 		}
 	}
 
-	return &MatchDetailStats{
+	stats := &MatchDetailStats{
 		MatchID: matchID,
 		Player1: buildStats(&p1),
 		Player2: buildStats(&p2),
-	}, nil
+	}
+	stats.Player1.SnowieER = snowieER(snowieP1SumErr, snowieDenom)
+	stats.Player2.SnowieER = snowieER(snowieP2SumErr, snowieDenom)
+	return stats, nil
 }

@@ -73,6 +73,7 @@ Derived from the `GS[M:…][C:…]` tags in the SGF using `gnubg/sgf.c:WriteStat
 | `total_mwc_loss_pct` | float\|null | checker + cube MWC loss combined × 100 |
 | `close_cube_decisions` | int\|null | `anCloseCube`: **NOT stored in SGF** — null unless obtained externally |
 | `pr_gnubg` | float\|null | gnuBG combined PR — requires `close_cube_decisions`, null when unavailable |
+| `snowie_er` | float\|null | Snowie Error Rate: `500 × total_equity_error_emg / (checker_total_P1 + checker_total_P2)`. Computed from extracted GS tag data; null when total_equity_error_emg is null (e.g. skill pass not run). Formula matches gnuBG formatgs.c:415-424 with factor 500 (XG-compatible). |
 
 ## Notes on sign convention
 
