@@ -933,3 +933,138 @@ func (d *Database) migrate_2_4_0_to_2_5_0() error {
 	slog.Info("database upgraded", "from", "2.4.0", "to", "2.5.0")
 	return nil
 }
+
+// migrate_2_5_0_to_2_6_0 adds the is_close_cube column to analysis and backfills
+// cube positions using the gnuBG isCloseCubedecision predicate (eval.c:5088):
+//
+//	rDouble = min(DoubleTakeEquity, 1.0)
+//	isClose = (OptimalEquity - rDouble) < 0.16
+//
+// Take/Pass positions always get is_close_cube = 1 (cube was already offered).
+func (d *Database) migrate_2_5_0_to_2_6_0() error {
+	if _, err := d.db.Exec(`ALTER TABLE analysis ADD COLUMN is_close_cube INTEGER NOT NULL DEFAULT 0`); err != nil {
+		if err.Error() != `duplicate column name: is_close_cube` {
+			return fmt.Errorf("migrate 2.6.0 add column: %w", err)
+		}
+	}
+
+	if _, err := d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_analysis_is_close_cube ON analysis(is_close_cube) WHERE is_close_cube = 1`); err != nil {
+		return fmt.Errorf("migrate 2.6.0 create index: %w", err)
+	}
+
+	// Backfill all cube positions (decision_type = 1).
+	var total int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis a JOIN position p ON p.id = a.position_id WHERE p.decision_type = 1`).Scan(&total)
+
+	if total > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET is_close_cube = 1 WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.6.0 prepare update: %w", err)
+		}
+		defer updateStmt.Close()
+
+		// Also look up played cube action from the move table for Take/Pass detection.
+		lookupAction, err := d.db.Prepare(`
+			SELECT COALESCE(mv.cube_action, '')
+			FROM move mv
+			JOIN analysis a ON a.position_id = mv.position_id
+			WHERE a.id = ? AND mv.cube_action IS NOT NULL AND mv.cube_action != ''
+			LIMIT 1`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.6.0 prepare action lookup: %w", err)
+		}
+		defer lookupAction.Close()
+
+		tx, err := d.db.Begin()
+		if err != nil {
+			return fmt.Errorf("migrate 2.6.0 begin tx: %w", err)
+		}
+
+		const batchSize = 1000
+		var lastID int64
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				tx.Rollback()
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(`
+				SELECT a.id, a.data
+				FROM analysis a
+				JOIN position p ON p.id = a.position_id
+				WHERE p.decision_type = 1 AND a.id > ?
+				ORDER BY a.id LIMIT ?`, lastID, batchSize)
+			if err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.6.0 query: %w", err)
+			}
+
+			type row struct {
+				id   int64
+				data []byte
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				ana, err := decodeAnalysisFromStorage(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+
+				// Determine the played cube action from the move table if not in blob.
+				playedAction := ""
+				if len(ana.PlayedCubeActions) > 0 {
+					playedAction = ana.PlayedCubeActions[0]
+				} else if ana.PlayedCubeAction != "" {
+					playedAction = ana.PlayedCubeAction
+				}
+				if playedAction == "" {
+					var ca string
+					if err := lookupAction.QueryRow(r.id).Scan(&ca); err == nil {
+						playedAction = ca
+					}
+				}
+
+				if computeIsCloseCube(ana.DoublingCubeAnalysis, playedAction) == 1 {
+					if _, err := tx.Stmt(updateStmt).Exec(r.id); err != nil {
+						tx.Rollback()
+						return fmt.Errorf("migrate 2.6.0 update: %w", err)
+					}
+				}
+				done++
+				if done%500 == 0 {
+					d.emitMigrationProgress("is_close_cube_backfill", done, total)
+				}
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return fmt.Errorf("migrate 2.6.0 commit: %w", err)
+		}
+		d.emitMigrationProgress("is_close_cube_backfill", total, total)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.6.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.5.0", "to", "2.6.0")
+	return nil
+}

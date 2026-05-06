@@ -59,7 +59,7 @@ Dépendances strictes top-down. Ne pas démarrer une fiche avant la précédente
 - [x] 00 — reference-data
 - [x] 01 — comparison-harness
 - [x] 02 — forced-moves
-- [ ] 03 — close-cube
+- [x] 03 — close-cube
 - [ ] 04 — pr-denominator
 - [ ] 05 — snowie-error-rate
 - [ ] 06 — mwc-cross-check

@@ -96,6 +96,7 @@ type analysisColumns struct {
 	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
 	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
 	IsForced            int64 // 1 if checker position with exactly 1 legal move, else 0
+	IsCloseCube         int64 // 1 if cube decision meets gnuBG isCloseCubedecision (threshold 0.16)
 	// Win/gammon/backgammon rates × 100 (hundredths of percent, on-roll perspective)
 	Player1WinRate        int64
 	Player1GammonRate     int64
@@ -103,6 +104,55 @@ type analysisColumns struct {
 	Player2WinRate        int64
 	Player2GammonRate     int64
 	Player2BackgammonRate int64
+}
+
+// closeCubeThreshold is the gnuBG isCloseCubedecision equity gap threshold (eval.c:5088).
+const closeCubeThreshold = 0.16
+
+// computeIsCloseCube returns 1 if the cube decision qualifies as "close" per the gnuBG
+// isCloseCubedecision predicate (gnubg/eval.c:5088-5100):
+//
+//	rDouble = min(DoubleTake equity, 1.0)
+//	isClose = (OptimalEquity - rDouble) < 0.16
+//
+// Take/Pass decisions always count as close (the cube has already been offered).
+// Returns 0 when DoublingCubeAnalysis is nil (no analysis available).
+func computeIsCloseCube(dca *DoublingCubeAnalysis, playedCubeAction string) int64 {
+	if playedCubeAction == "Take" || playedCubeAction == "Pass" {
+		return 1
+	}
+	if dca == nil {
+		return 0
+	}
+	// arDouble[OUTPUT_OPTIMAL]: equity of the best cube action.
+	// BestCubeAction is set by computeBestCubeAction / buildDoublingCubeAnalysis.
+	var rOptimal float64
+	switch dca.BestCubeAction {
+	case "No Double":
+		rOptimal = dca.CubefulNoDoubleEquity
+	case "Double, Take", "Double/Take":
+		rOptimal = dca.CubefulDoubleTakeEquity
+	case "Double, Pass", "Double/Pass":
+		rOptimal = dca.CubefulDoublePassEquity
+	default:
+		// Fallback: max of all three (matches FindBestCubeDecision logic).
+		rOptimal = dca.CubefulNoDoubleEquity
+		if dca.CubefulDoubleTakeEquity > rOptimal {
+			rOptimal = dca.CubefulDoubleTakeEquity
+		}
+		if dca.CubefulDoublePassEquity > rOptimal {
+			rOptimal = dca.CubefulDoublePassEquity
+		}
+	}
+	// arDouble[OUTPUT_TAKE] capped at 1.0 (max equity is +1.0 in money play).
+	rDouble := dca.CubefulDoubleTakeEquity
+	if rDouble > 1.0 {
+		rDouble = 1.0
+	}
+	if rOptimal-rDouble < closeCubeThreshold {
+		return 1
+	}
+	return 0
 }
 
 // populateAnalysisColumns computes scalar analysis columns from a PositionAnalysis.
@@ -179,6 +229,9 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 	if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) == 1 {
 		c.IsForced = 1
 	}
+
+	// is_close_cube: cube decision qualifies as "close" per gnuBG isCloseCubedecision.
+	c.IsCloseCube = computeIsCloseCube(a.DoublingCubeAnalysis, playedCubeAction)
 
 	return c
 }
@@ -291,14 +344,14 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			best_move_equity_error=?,
 			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
 			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
-			is_forced=?
+			is_forced=?, is_close_cube=?
 			WHERE id=?`,
 			analysisData,
 			aCols.BestCubeAction, aCols.CubeError,
 			aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
-			aCols.IsForced,
+			aCols.IsForced, aCols.IsCloseCube,
 			existingID)
 		if err != nil {
 			return err
@@ -357,13 +410,13 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			best_cube_action, cube_error, best_move_equity_error,
 			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
 			player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
-			is_forced
-		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?)`,
+			is_forced, is_close_cube
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?)`,
 			positionID, analysisData,
 			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
-			aCols.IsForced)
+			aCols.IsForced, aCols.IsCloseCube)
 		if err != nil {
 			return err
 		}

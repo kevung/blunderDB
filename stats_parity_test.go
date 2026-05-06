@@ -19,6 +19,7 @@ type refPlayer struct {
 	CheckerUnforced     *int     `json:"checker_unforced"`
 	DoubleDecisions     *int     `json:"double_decisions"`
 	TakeDecisions       *int     `json:"take_decisions"`
+	PassDecisions       *int     `json:"pass_decisions"`
 	TotalEquityErrorEMG *float64 `json:"total_equity_error_emg"`
 	TotalMWCLossPct     *float64 `json:"total_mwc_loss_pct"`
 	CheckerMWCLossPct   *float64 `json:"checker_mwc_loss_pct"`
@@ -60,13 +61,14 @@ func loadRefMatch(t *testing.T, path string) refMatch {
 // Phase 01 values are intentionally wide (blunderDB counts forced moves and
 // all No Double positions); they tighten after fiches 02–04.
 type parityTolerances struct {
-	TotalDecisions   int     // all decisions combined
-	CheckerDecisions int     // checker move count
-	DoubleDecisions  int     // cube doubling decisions (very wide pre-fiche 03)
-	TakeDecisions    int     // take/pass count
-	PR               float64
-	MWCPct           float64 // percentage points
-	Equity           float64 // EMG
+	TotalDecisions      int     // all decisions combined
+	CheckerDecisions    int     // checker move count
+	DoubleDecisions     int     // cube doubling decisions (very wide pre-fiche 03)
+	TakeDecisions       int     // take/pass count
+	CloseCubeDecisions  int     // is_close_cube=1 count vs XG/gnuBG close cube decisions
+	PR                  float64
+	MWCPct              float64 // percentage points
+	Equity              float64 // EMG
 }
 
 // tolPhase01 matches the current blunderDB state (pre forced-moves + pre close-cube).
@@ -80,13 +82,14 @@ type parityTolerances struct {
 //   PR=3.0: inflated denominator (all decisions vs unforced+close) depresses bDB PR
 //     by up to 2+ points vs XG/gnuBG reference.
 var tolPhase01 = parityTolerances{
-	TotalDecisions:   100, // bDB includes forced + all No Doubles
-	CheckerDecisions: 45,  // bDB includes forced moves + SGF import gaps
-	DoubleDecisions:  100, // bDB counts all No Doubles
-	TakeDecisions:    3,   // takes/passes should align closely
-	PR:               3.0, // wide until denominator fixed (fiche 04)
-	MWCPct:           3.5, // percentage points
-	Equity:           0.35, // EMG
+	TotalDecisions:     100, // bDB includes forced + all No Doubles
+	CheckerDecisions:   45,  // bDB includes forced moves + SGF import gaps
+	DoubleDecisions:    100, // bDB counts all No Doubles
+	TakeDecisions:      3,   // takes/passes should align closely
+	CloseCubeDecisions: 5,   // is_close_cube=1 vs XG/gnuBG close cube decisions; tightens in fiche 07
+	PR:                 3.0, // wide until denominator fixed (fiche 04)
+	MWCPct:             3.5, // percentage points
+	Equity:             0.35, // EMG
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
@@ -165,6 +168,21 @@ func countForcedChecker(db *Database, matchID int64, player int) int {
 		JOIN move mv ON mv.position_id = p.id
 		JOIN game g ON g.id = mv.game_id
 		WHERE g.match_id = ? AND mv.player = ? AND p.decision_type = 0 AND a.is_forced = 1`,
+		matchID, player).Scan(&n)
+	return n
+}
+
+// countCloseCube returns the number of is_close_cube=1 cube positions for
+// the given player in the given match.
+func countCloseCube(db *Database, matchID int64, player int) int {
+	var n int
+	db.db.QueryRow(`
+		SELECT COUNT(*)
+		FROM analysis a
+		JOIN position p ON p.id = a.position_id
+		JOIN move mv ON mv.position_id = p.id
+		JOIN game g ON g.id = mv.game_id
+		WHERE g.match_id = ? AND mv.player = ? AND p.decision_type = 1 AND a.is_close_cube = 1`,
 		matchID, player).Scan(&n)
 	return n
 }
@@ -249,12 +267,28 @@ func TestStatsParity(t *testing.T) {
 								gotForced := countForcedChecker(db, matchID, 1)
 								diffInt(t, "XG/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
 							}
+							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
+								wantClose := 0
+								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
+								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
+								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								gotClose := countCloseCube(db, matchID, 1)
+								diffInt(t, "XG/P1 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
+							}
 						}
 						if rp := ref.XG["player2"]; rp != nil {
 							compareXGRef(t, "XG/P2", rp, bdbStats.Player2, tol)
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, -1)
 								diffInt(t, "XG/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
+							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
+								wantClose := 0
+								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
+								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
+								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								gotClose := countCloseCube(db, matchID, -1)
+								diffInt(t, "XG/P2 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
 							}
 						}
 					}
@@ -295,12 +329,28 @@ func TestStatsParity(t *testing.T) {
 								gotForced := countForcedChecker(db, matchID, 1)
 								diffInt(t, "SGF/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
 							}
+							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
+								wantClose := 0
+								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
+								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
+								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								gotClose := countCloseCube(db, matchID, 1)
+								diffInt(t, "SGF/P1 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
+							}
 						}
 						if rp := ref.GnuBG["player2"]; rp != nil {
 							compareGnuBGRef(t, "SGF/P2", rp, bdbStats.Player2, tol)
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, -1)
 								diffInt(t, "SGF/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
+							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
+								wantClose := 0
+								if rp.DoubleDecisions != nil { wantClose += *rp.DoubleDecisions }
+								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
+								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
+								gotClose := countCloseCube(db, matchID, -1)
+								diffInt(t, "SGF/P2 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
 							}
 						}
 					}
