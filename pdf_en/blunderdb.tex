@@ -545,6 +545,22 @@ Storage optimization: zlib compression of analysis data (\textasciitilde{}80\% r
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
+0.17.1
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+07/05/2026
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Alignement des statistiques PR / Snowie ER / MWC sur eXtremeGammon et gnuBG : exclusion des coups forcés et des cubes triviaux du dénominateur PR (colonnes is\_forced et is\_close\_cube, seuil 0.16 d’équité). Correction du calcul de cube\_error pour les décisions Double/Pass. Ajout du Snowie Error Rate en sortie CLI et JSON. Documentation du modèle de statistiques (:ref:\textasciigrave{}stats\_parity\textasciigrave{}). NOTE : les valeurs PR affichées peuvent légèrement différer des versions précédentes (alignement sur XG).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
 0.18.0
 \sphinxbeforeendvarwidth
 \end{varwidth}%
@@ -3587,7 +3603,7 @@ CTRL\sphinxhyphen{}D
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Show the Stats panel.
+Afficher le panneau Stats.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -5286,6 +5302,476 @@ The MWC cost is computed using the \sphinxstylestrong{Kazaross\sphinxhyphen{}XG2
 \item {} 
 \sphinxAtStartPar
 The MWC cost is cumulative over the full filtered dataset — not a per\sphinxhyphen{}decision indicator. It measures the total impact of your errors on your winning chances.
+
+\end{itemize}
+
+\sphinxstepscope
+
+
+\section{Statistics model — XG / gnuBG / blunderDB alignment}
+\label{\detokenize{stats_parity:modele-de-statistiques-alignement-xg-gnubg-blunderdb}}\label{\detokenize{stats_parity:stats-parity}}\label{\detokenize{stats_parity::doc}}
+\sphinxAtStartPar
+This page describes how blunderDB computes \sphinxstylestrong{PR} (Performance Rate), \sphinxstylestrong{Snowie Error Rate}, and \sphinxstylestrong{MWC loss}, and how these metrics are aligned with eXtreme Gammon (XG) and gnuBG (open reference).
+
+\begin{sphinxcontents}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id1}}{\hyperref[\detokenize{stats_parity:definitions-formelles}]{\sphinxcrossref{Formal definitions}}}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id2}}{\hyperref[\detokenize{stats_parity:pr-performance-rate}]{\sphinxcrossref{PR (Performance Rate)}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id3}}{\hyperref[\detokenize{stats_parity:snowie-error-rate}]{\sphinxcrossref{Snowie Error Rate}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id4}}{\hyperref[\detokenize{stats_parity:perte-mwc-match-winning-chance}]{\sphinxcrossref{MWC loss (Match Winning Chance)}}}
+
+\end{itemize}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id5}}{\hyperref[\detokenize{stats_parity:decisions-comptees-au-denominateur-du-pr}]{\sphinxcrossref{Decisions counted in the PR denominator}}}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id6}}{\hyperref[\detokenize{stats_parity:coups-de-pions-decisions-comptees}]{\sphinxcrossref{Checker plays — counted decisions}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id7}}{\hyperref[\detokenize{stats_parity:decisions-de-cube-decisions-comptees}]{\sphinxcrossref{Cube decisions — counted decisions}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id8}}{\hyperref[\detokenize{stats_parity:resume-du-filtre}]{\sphinxcrossref{Filter summary}}}
+
+\end{itemize}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id9}}{\hyperref[\detokenize{stats_parity:correspondance-blunderdb-xg-gnubg}]{\sphinxcrossref{blunderDB ↔ XG ↔ gnuBG correspondence}}}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id10}}{\hyperref[\detokenize{stats_parity:comparaison-xg-blunderdb-meme-moteur-d-analyse}]{\sphinxcrossref{XG ↔ blunderDB comparison (same analysis engine)}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id11}}{\hyperref[\detokenize{stats_parity:comparaison-gnubg-blunderdb-import-sgf-moteurs-differents}]{\sphinxcrossref{gnuBG ↔ blunderDB comparison (SGF import — different engines)}}}
+
+\end{itemize}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id12}}{\hyperref[\detokenize{stats_parity:valider-vos-propres-chiffres}]{\sphinxcrossref{Validating your own figures}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id13}}{\hyperref[\detokenize{stats_parity:reference-gnubg}]{\sphinxcrossref{gnuBG reference}}}
+
+\end{itemize}
+\end{sphinxcontents}
+
+
+\subsection{Formal definitions}
+\label{\detokenize{stats_parity:definitions-formelles}}
+
+\subsubsection{PR (Performance Rate)}
+\label{\detokenize{stats_parity:pr-performance-rate}}
+\sphinxAtStartPar
+PR (also called “error rate per decision” in gnuBG) measures the average error in thousandths of an equity point (millipoints, mpt) per counted decision.
+\begin{equation*}
+\begin{split}\mathrm{PR} = \frac{\sum_i |\mathrm{erreur}_i|}{\mathrm{N_{compté}}} \times 500\end{split}
+\end{equation*}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+The numerator is the absolute sum of EMG errors (cubeful equity) over all decisions in the scope.
+
+\item {} 
+\sphinxAtStartPar
+The denominator \(N_\text{counted}\) is the number of \sphinxstylestrong{counted decisions} (see below).
+
+\item {} 
+\sphinxAtStartPar
+The factor 500 converts equity to millipoints (1 point = 1000 mpt, but the scale is ×500 by XG/gnuBG convention — cf. \sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}}).
+
+\end{itemize}
+
+
+\subsubsection{Snowie Error Rate}
+\label{\detokenize{stats_parity:snowie-error-rate}}
+\sphinxAtStartPar
+Snowie ER uses the \sphinxstylestrong{same numerator} as PR, but the denominator is the total number of moves of both players, forced moves included (all decisions, no filter):
+\begin{equation*}
+\begin{split}\mathrm{SnowieER} = \frac{\sum_i |\mathrm{erreur}_i|}{N_\text{P1} + N_\text{P2}} \times 500\end{split}
+\end{equation*}
+\sphinxAtStartPar
+Reference: \sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}}.
+
+\sphinxAtStartPar
+Snowie ER is more stable across tools because its denominator does not depend on the forced/trivial decision filter. It serves as a cross\sphinxhyphen{}check metric between XG, gnuBG, and blunderDB.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+A player’s Snowie ER is typically about half their PR, because the denominator includes moves from both players while PR only uses that player’s decisions.
+\end{sphinxadmonition}
+
+
+\subsubsection{MWC loss (Match Winning Chance)}
+\label{\detokenize{stats_parity:perte-mwc-match-winning-chance}}
+\sphinxAtStartPar
+MWC loss expresses in percentage points of match\sphinxhyphen{}winning probability the cumulative effect of a player’s errors. For each decision, the EMG error is converted to MWC using the MET (Match Equity Table) at the current score:
+\begin{equation*}
+\begin{split}\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\end{split}
+\end{equation*}
+\sphinxAtStartPar
+Reference: \sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}}.
+
+
+\subsection{Decisions counted in the PR denominator}
+\label{\detokenize{stats_parity:decisions-comptees-au-denominateur-du-pr}}
+\sphinxAtStartPar
+blunderDB follows the same exclusion rules as XG and gnuBG.
+
+
+\subsubsection{Checker plays — counted decisions}
+\label{\detokenize{stats_parity:coups-de-pions-decisions-comptees}}
+\sphinxAtStartPar
+Only \sphinxstylestrong{unforced moves} are counted:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+A move is \sphinxstylestrong{forced} if the dice offer only one legal play (\sphinxcode{\sphinxupquote{cMoves == 1}} in \sphinxcode{\sphinxupquote{gnubg/analysis.c:458}}).
+
+\item {} 
+\sphinxAtStartPar
+Forced moves have zero error by definition: the player had no choice. Including them in the denominator would artificially lower PR.
+
+\end{itemize}
+
+
+\subsubsection{Cube decisions — counted decisions}
+\label{\detokenize{stats_parity:decisions-de-cube-decisions-comptees}}
+\sphinxAtStartPar
+Only \sphinxstylestrong{close cube decisions} are counted:
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+A cube decision is \sphinxstylestrong{close} if it lies within the equity window \sphinxcode{\sphinxupquote{{[}\sphinxhyphen{}0.16, +0.16{]}}} around the doubling point (predicate \sphinxcode{\sphinxupquote{isCloseCubedecision}} in \sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}}).
+
+\item {} 
+\sphinxAtStartPar
+A trivial No Double (very negative or very positive equity) is not a genuine strategic decision; including it would inflate the denominator and depress PR.
+
+\end{itemize}
+
+
+\subsubsection{Filter summary}
+\label{\detokenize{stats_parity:resume-du-filtre}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabulary}{\linewidth}[t]{TT}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Decision type
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Included in \(N_\text{counted}\) (PR)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Unforced move
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Yes
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Forced move
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+No
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Close cube
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Yes
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Trivial No Double
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+No
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Take / Pass
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Always (these are responses to a double)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabulary}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{blunderDB ↔ XG ↔ gnuBG correspondence}
+\label{\detokenize{stats_parity:correspondance-blunderdb-xg-gnubg}}
+\sphinxAtStartPar
+Metrics are aligned within the following bounds (measured on 3 reference matches):
+
+
+\subsubsection{XG ↔ blunderDB comparison (same analysis engine)}
+\label{\detokenize{stats_parity:comparaison-xg-blunderdb-meme-moteur-d-analyse}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabulary}{\linewidth}[t]{TT}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Metric
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Typical gap
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Total decisions
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 5
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Unforced moves
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 7
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+PR
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 0.10
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+MWC loss
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 1.0 pp
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Total equity (EMG)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 0.05
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabulary}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsubsection{gnuBG ↔ blunderDB comparison (SGF import — different engines)}
+\label{\detokenize{stats_parity:comparaison-gnubg-blunderdb-import-sgf-moteurs-differents}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabulary}{\linewidth}[t]{TTT}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Metric
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\sphinxstartmulticolumn{2}%
+\begin{varwidth}[t]{\sphinxcolwidth{2}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Écart typique  | Cause principale
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\sphinxstopmulticolumn
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+PR (checker)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+≤ 0.20
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+cross\sphinxhyphen{}engine equity differences
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+MWC loss
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+≤ 3.5 pp
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+incomplete close\sphinxhyphen{}cube data in SGF
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Snowie ER
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+≤ 0.50
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+forced moves without analysis (SGF)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabulary}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+SGF files (gnuBG) do not include alternatives for forced moves, which means blunderDB cannot detect all forced moves when importing SGF. This creates a structural gap on Snowie ER (slightly different denominator).
+\end{sphinxadmonition}
+
+
+\subsection{Validating your own figures}
+\label{\detokenize{stats_parity:valider-vos-propres-chiffres}}
+\sphinxAtStartPar
+If your PR or MWC values diverge from XG figures, check the following points:
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Complete analyses} — PR can only be computed on positions that have an analysis. Positions without analysis count as zero error but are not included in \(N_\text{counted}\).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{XG version} — XG may change its calculations between versions. blunderDB is aligned with the behaviour observed in recent versions.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Import format} — gnuBG SGF files produce larger gaps on cube metrics (see table above) because the file does not include complete analyses for all cube decisions.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Database migration} — After updating blunderDB, existing databases are migrated automatically. Make a backup before opening a database with a new version.
+
+\end{enumerate}
+
+
+\subsection{gnuBG reference}
+\label{\detokenize{stats_parity:reference-gnubg}}
+\sphinxAtStartPar
+Formulas have been verified against the following source files (gnuBG repository):
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}} — PR (“Error rate per decision”).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}} — Snowie Error Rate.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:458\textendash{}462}} — Checker accumulation, exclusion of forced moves (\sphinxcode{\sphinxupquote{cMoves \textgreater{} 1}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:1430\textendash{}1474}} — Per\sphinxhyphen{}decision EMG \(\rightarrow\) MWC conversion.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}} — MWC loss accumulation (\sphinxcode{\sphinxupquote{eq2mwc}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}} — \sphinxcode{\sphinxupquote{isCloseCubedecision}} predicate (0.16 threshold).
 
 \end{itemize}
 

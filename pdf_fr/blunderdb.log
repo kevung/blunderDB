@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.6)  6 MAY 2026 23:24
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.6)  6 MAY 2026 23:44
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -858,29 +858,39 @@ File: ts1qtm.fd 2009/09/25 v1.2 font definition file for TS1/qtm
 ]
 Chapter 1.
 
-Underfull \hbox (badness 5288) in paragraph at lines 568--570
+Underfull \hbox (badness 10000) in paragraph at lines 568--570
+[]\T1/qtm/m/n/10 Alignement des statistiques PR / Snowie ER / MWC sur
+ []
+
+
+Underfull \hbox (badness 10000) detected at line 571
+[]\T1/qtm/m/n/10 Alignement des statistiques PR / Snowie ER / MWC sur
+ []
+
+
+Underfull \hbox (badness 5288) in paragraph at lines 584--586
 \T1/qtm/m/n/10 depuis App.svelte (4888$\OMS/cmsy/m/n/10 !$\T1/qtm/m/n/10 469 li
 gnes), consolidation des stores
  []
 
 
-Underfull \hbox (badness 7869) in paragraph at lines 568--570
+Underfull \hbox (badness 7869) in paragraph at lines 584--586
 \T1/qtm/m/n/10 modaux/panneaux. Migration compl�te vers Svelte 5 runes.
  []
 
 
-Underfull \hbox (badness 5652) in paragraph at lines 568--570
+Underfull \hbox (badness 5652) in paragraph at lines 584--586
 \T1/qtm/m/n/10 frontend) avec CI. Conformit� WCAG 2.1 AA (focus visible,
  []
 
 [3]
-Overfull \vbox (886.70886pt too high) has occurred while \output is active []
+Overfull \vbox (982.70886pt too high) has occurred while \output is active []
 
 
 [4]
 Chapter 2.
 LaTeX Font Info:    Trying to load font information for T1+txtt on input line 6
-35.
+51.
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/t1txtt.fd
 File: t1txtt.fd 2000/12/15 v3.1
 ) [5
@@ -888,58 +898,58 @@ File: t1txtt.fd 2000/12/15 v3.1
 ]
 
 LaTeX Warning: Hyper reference `annexe_windows_securite:annexe-windows-malware'
- on page 6 undefined on input line 649.
+ on page 6 undefined on input line 665.
 
 
 LaTeX Warning: Reference `annexe_windows_securite:annexe-windows-malware' on pa
-ge 6 undefined on input line 649.
+ge 6 undefined on input line 665.
 
 
 LaTeX Warning: Hyper reference `annexe_mac_securite:annexe-mac-malware' on page
- 6 undefined on input line 656.
+ 6 undefined on input line 672.
 
 
 LaTeX Warning: Reference `annexe_mac_securite:annexe-mac-malware' on page 6 und
-efined on input line 656.
+efined on input line 672.
 
 [6] [7]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 898.
+nput line 914.
 
 
 LaTeX Warning: Hyper reference `guide_utilisateur:guide-edit-position' on page 
-8 undefined on input line 909.
+8 undefined on input line 925.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 913.
+nput line 929.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 949.
+ line 965.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-949.
+965.
 
 [8]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 9 undefined on i
-nput line 993.
+nput line 1009.
 
 [9] [10] [11] [12] [13] [14] [15]
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-filter' on page 16 undefined on in
-put line 1715.
+put line 1731.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-filter' on page 16 undefined on input li
-ne 1715.
+ne 1731.
 
 [16] [17] [18] [19] [20] [21] [22] [23]
 LaTeX Font Info:    Font shape `T1/txtt/m/it' in size <10> not available
-(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4331.
+(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4347.
 
  [24]
 
@@ -950,14 +960,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.4614 (\(\checkmark\)), échoué (✗
+l.4630 (\(\checkmark\)), échoué (✗
                                       ) ou s’il s’agit d’un doublon (�...
 
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.4614 (\(\checkmark\)), échoué (✗
+l.4630 (\(\checkmark\)), échoué (✗
                                       ) ou s’il s’agit d’un doublon (�...
 
 You may provide a definition with
