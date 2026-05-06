@@ -38,6 +38,11 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 // which a decision is counted as a blunder. 100 ≈ 0.1 EMG.
 const blunderThresholdMP = 100
 
+// statsCountedExpr is the SQL predicate selecting the decisions that count
+// toward PR and decision tallies (XG + gnuBG semantics). Forced checker plays
+// and non-close cube decisions are excluded.
+const statsCountedExpr = "((p.decision_type = 0 AND a.is_forced = 0) OR (p.decision_type = 1 AND a.is_close_cube = 1))"
+
 // StatsFilter defines the filtering criteria for ComputeStats.
 type StatsFilter struct {
 	PlayerName    string
@@ -189,6 +194,10 @@ func buildStatsWhereClause(filter StatsFilter) (whereSQL string, args []any) {
 	// Exclude positions with NULL analysis (no error data).
 	clauses = append(clauses, "a.position_id IS NOT NULL")
 	clauses = append(clauses, "("+statsErrExpr+") IS NOT NULL")
+
+	// Apply XG/gnuBG counting semantics: exclude forced checker plays and
+	// non-close cube decisions from all PR and decision-count queries.
+	clauses = append(clauses, statsCountedExpr)
 
 	whereSQL = " WHERE " + strings.Join(clauses, " AND ")
 	return whereSQL, args
@@ -770,7 +779,7 @@ func populateMatchStats(db *sql.DB, matches []Match) error {
 		COALESCE(p.score_1, 0), COALESCE(p.score_2, 0), mv.player,
 		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
 		statsBaseJoin +
-		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL`
+		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + statsCountedExpr
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -849,7 +858,7 @@ func populateTournamentStats(db *sql.DB, tournaments []Tournament) error {
 		(1 << COALESCE(p.cube_value, 0)), COALESCE(p.match_length, m.match_length, 0) ` +
 		statsBaseJoin +
 		` WHERE a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL
-		AND m.tournament_id IS NOT NULL`
+		AND m.tournament_id IS NOT NULL AND ` + statsCountedExpr
 
 	rows, err := db.Query(query)
 	if err != nil {
@@ -964,7 +973,7 @@ func (d *Database) GetMatchDetailStats(matchID int64) (*MatchDetailStats, error)
 		(1 << COALESCE(p.cube_value, 0)),
 		COALESCE(p.match_length, m.match_length, 0) ` +
 		statsBaseJoin +
-		` WHERE m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL`
+		` WHERE m.id = ? AND a.position_id IS NOT NULL AND (` + statsErrExpr + `) IS NOT NULL AND ` + statsCountedExpr
 
 	rows, err := d.db.Query(query, matchID)
 	if err != nil {

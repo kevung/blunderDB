@@ -29,17 +29,20 @@ func insertStatsFixtureRow(t *testing.T, db *Database, matchID int64, gameID int
 	}
 	posID, _ := res.LastInsertId()
 
-	// Insert analysis with the error in the right column
+	// Insert analysis with the error in the right column.
+	// Mark cube fixture rows as close so they pass the statsCountedExpr filter.
 	cubeErr := 0
 	moveErr := 0
+	closeCube := 0
 	if dt == 1 {
 		cubeErr = errMP
+		closeCube = 1
 	} else {
 		moveErr = errMP
 	}
 	if _, err = db.db.Exec(
-		`INSERT INTO analysis (position_id, data, cube_error, best_move_equity_error) VALUES (?, '{}', ?, ?)`,
-		posID, cubeErr, moveErr,
+		`INSERT INTO analysis (position_id, data, cube_error, best_move_equity_error, is_close_cube) VALUES (?, '{}', ?, ?, ?)`,
+		posID, cubeErr, moveErr, closeCube,
 	); err != nil {
 		t.Fatalf("insert analysis: %v", err)
 	}

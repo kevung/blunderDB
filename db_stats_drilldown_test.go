@@ -20,7 +20,7 @@ func insertCubeFixtureRow(t *testing.T, db *Database, matchID, gameID int64,
 	posID, _ := res.LastInsertId()
 
 	if _, err = db.db.Exec(
-		`INSERT INTO analysis (position_id, data, best_cube_action, cube_error, best_move_equity_error) VALUES (?, '{}', ?, ?, 0)`,
+		`INSERT INTO analysis (position_id, data, best_cube_action, cube_error, best_move_equity_error, is_close_cube) VALUES (?, '{}', ?, ?, 0, 1)`,
 		posID, cubeAction, cubeErrMP,
 	); err != nil {
 		t.Fatalf("insert cube analysis: %v", err)

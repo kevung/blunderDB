@@ -82,14 +82,36 @@ type parityTolerances struct {
 //   PR=3.0: inflated denominator (all decisions vs unforced+close) depresses bDB PR
 //     by up to 2+ points vs XG/gnuBG reference.
 var tolPhase01 = parityTolerances{
-	TotalDecisions:     100, // bDB includes forced + all No Doubles
-	CheckerDecisions:   45,  // bDB includes forced moves + SGF import gaps
-	DoubleDecisions:    100, // bDB counts all No Doubles
-	TakeDecisions:      3,   // takes/passes should align closely
-	CloseCubeDecisions: 5,   // is_close_cube=1 vs XG/gnuBG close cube decisions; tightens in fiche 07
-	PR:                 3.0, // wide until denominator fixed (fiche 04)
-	MWCPct:             3.5, // percentage points
+	TotalDecisions:     100,  // bDB includes forced + all No Doubles
+	CheckerDecisions:   45,   // bDB includes forced moves + SGF import gaps
+	DoubleDecisions:    100,  // bDB counts all No Doubles
+	TakeDecisions:      3,    // takes/passes should align closely
+	CloseCubeDecisions: 5,    // is_close_cube=1 vs XG/gnuBG close cube decisions; tightens in fiche 07
+	PR:                 3.0,  // wide until denominator fixed (fiche 04)
+	MWCPct:             3.5,  // percentage points
 	Equity:             0.35, // EMG
+}
+
+// tolPhase04 applies after fiche 04 (PR denominator fix). Both bDB and
+// XG/gnuBG now count the same decisions: unforced checker + close cube.
+//
+//   PR=0.2  — tight for XG→XG and SGF→gnuBG (same engine). For XG-import
+//             vs gnuBG reference (different engines), call-site uses 1.0.
+//   CheckerDecisions=10 — bDB and XG may differ by ≤6 on forced-move boundary
+//             classification; 10 leaves margin.
+//   MWCPct=3.5 — can't tighten yet: cross-engine equity differences and
+//             incomplete close-cube classification on SGF files cause ≥3.2 gaps.
+//   Equity=0.5 — SGF close-cube equity is incomplete (only 2/7 classified);
+//             removing non-close cube equity increases the gap with gnuBG ref.
+var tolPhase04 = parityTolerances{
+	TotalDecisions:     5,    // aligned denominator
+	CheckerDecisions:   10,   // unforced checker; ≤6 boundary diff vs XG
+	DoubleDecisions:    5,    // close doubles only
+	TakeDecisions:      3,    // takes/passes: always counted
+	CloseCubeDecisions: 5,    // some SGF cube positions lack equity data
+	PR:                 0.2,  // aligned denominator: very close to XG/gnuBG
+	MWCPct:             3.5,  // cross-engine + SGF close-cube gaps prevent tightening
+	Equity:             0.5,  // EMG: wider for SGF incomplete close-cube equity
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
@@ -212,19 +234,16 @@ func compareXGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDe
 }
 
 // compareGnuBGRef compares blunderDB stats against a gnuBG reference player.
-// gnuBG ref uses checker_unforced (bDB will over-count by the forced-moves count).
+// After fiche 04, bdb.CheckerDecisions = unforced only, so it aligns with
+// checker_unforced. checker_total (including forced) is no longer compared here.
 func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlayerDetailStats, tol parityTolerances) {
 	t.Helper()
 	t.Logf("--- %s vs gnuBG reference ---", prefix)
-	// Compare checker count: bDB counts all checker positions (incl. forced).
-	// gnuBG ref stores both unforced and total; compare against unforced (stricter).
+	// After fiche 04: bDB.CheckerDecisions = unforced only → compare directly.
 	diffInt(t, prefix+" checker_unforced", ref.CheckerUnforced, bdb.CheckerDecisions, tol.CheckerDecisions)
-	// checker_total: bDB matches gnuBG total (incl. forced) in principle, but some
-	// SGF positions lack analysis data, so counts may fall short. Use the same
-	// CheckerDecisions tolerance; this will tighten once is_forced is tracked.
-	if ref.CheckerTotal != nil {
-		diffInt(t, prefix+" checker_total", ref.CheckerTotal, bdb.CheckerDecisions, tol.CheckerDecisions)
-	}
+	// checker_total was compared here before fiche 04. After the fix, bDB counts
+	// only unforced moves, so checker_total (incl. forced) diverges by forced_count.
+	// The forced count cross-check is done at call-site via countForcedChecker.
 	diffFloat(t, prefix+" total_equity_emg", ref.TotalEquityErrorEMG, bdb.TotalEquityError, tol.Equity)
 	if ref.TotalMWCLossPct != nil {
 		mwcRef := *ref.TotalMWCLossPct
@@ -236,7 +255,7 @@ func compareGnuBGRef(t *testing.T, prefix string, ref *refPlayer, bdb MatchPlaye
 		mwcRef := *ref.CheckerMWCLossPct
 		diffFloat(t, prefix+" checker_mwc_pct", &mwcRef, bdb.CheckerMWCLoss*100, tol.MWCPct)
 	}
-	// checker_pr_xg_500: compare against bDB PRChecker (same 500-factor formula)
+	// checker_pr_xg_500: compare against bDB PRChecker (same 500-factor formula).
 	diffFloat(t, prefix+" checker_pr_xg_500", ref.CheckerPRXG500, bdb.PRChecker, tol.PR)
 }
 
@@ -248,7 +267,7 @@ func TestStatsParity(t *testing.T) {
 		"testdata/stats_reference/test.json",
 		"testdata/stats_reference/charlot1-charlot2.json",
 	}
-	tol := tolPhase01
+	tol := tolPhase04
 
 	for _, jsonPath := range fixtures {
 		t.Run(filepath.Base(jsonPath), func(t *testing.T) {
@@ -293,18 +312,25 @@ func TestStatsParity(t *testing.T) {
 						}
 					}
 					if ref.GnuBG != nil {
+						// XG-imported data vs gnuBG reference: different analysis
+						// engines produce different equity values, so the PR tolerance
+						// must be wider than the XG→XG or SGF→gnuBG paths.
+						xgVsGnuTol := tol
+						xgVsGnuTol.PR = 1.0
 						if rp := ref.GnuBG["player1"]; rp != nil {
-							compareGnuBGRef(t, "XG→gnuBGref/P1", rp, bdbStats.Player1, tol)
+							compareGnuBGRef(t, "XG→gnuBGref/P1", rp, bdbStats.Player1, xgVsGnuTol)
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, 1)
-								diffInt(t, "XG→gnuBGref/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+								// Forced count is a "best effort" diagnostic; XG moves
+								// include all alternatives, so detection is accurate here.
+								diffInt(t, "XG→gnuBGref/P1 checker_forced_count", rp.CheckerForced, gotForced, 45)
 							}
 						}
 						if rp := ref.GnuBG["player2"]; rp != nil {
-							compareGnuBGRef(t, "XG→gnuBGref/P2", rp, bdbStats.Player2, tol)
+							compareGnuBGRef(t, "XG→gnuBGref/P2", rp, bdbStats.Player2, xgVsGnuTol)
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, -1)
-								diffInt(t, "XG→gnuBGref/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+								diffInt(t, "XG→gnuBGref/P2 checker_forced_count", rp.CheckerForced, gotForced, 45)
 							}
 						}
 					}
@@ -322,12 +348,12 @@ func TestStatsParity(t *testing.T) {
 					if ref.GnuBG != nil {
 						if rp := ref.GnuBG["player1"]; rp != nil {
 							compareGnuBGRef(t, "SGF/P1", rp, bdbStats.Player1, tol)
-							// Cross-check gnuBG forced count via is_forced column.
-							// Tolerance = CheckerDecisions: forced positions with no analysis
-							// row (gnuBG omits alternatives for forced moves) are not counted.
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, 1)
-								diffInt(t, "SGF/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+								// SGF forced count is a "best effort" diagnostic: gnuBG
+								// omits alternatives for forced moves, so some forced
+								// positions have no analysis row and are not detected.
+								diffInt(t, "SGF/P1 checker_forced_count", rp.CheckerForced, gotForced, 45)
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
@@ -342,7 +368,7 @@ func TestStatsParity(t *testing.T) {
 							compareGnuBGRef(t, "SGF/P2", rp, bdbStats.Player2, tol)
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, -1)
-								diffInt(t, "SGF/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+								diffInt(t, "SGF/P2 checker_forced_count", rp.CheckerForced, gotForced, 45)
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
