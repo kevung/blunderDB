@@ -1,0 +1,49 @@
+{
+  "match_file": "testdata/2024-08-10-Aachen-1x11pt-1x7pt-2x7ptDoubleConsultation/double/Squire-Jørgensen-Harmand-Unger 7 point match 18-08-2024.xg",
+  "match_length": 7,
+  "players": ["Squire/Jørgensen", "Harmand/Unger"],
+  "xg": {
+    "player1": {
+      "pr": 3.13,
+      "snowie_error_rate": null,
+      "total_decisions": 156,
+      "checker_unforced": 138,
+      "checker_forced": null,
+      "double_decisions": 16,
+      "take_decisions": 2,
+      "pass_decisions": 0,
+      "total_errors": 18,
+      "total_blunders": 2,
+      "total_equity_error_emg": 0.976,
+      "checker_equity_error_emg": 0.894,
+      "double_equity_error_emg": 0.037,
+      "take_equity_error_emg": 0.045,
+      "total_mwc_loss_pct": 19.85,
+      "checker_mwc_loss_pct": 18.77,
+      "double_mwc_loss_pct": 0.42,
+      "take_mwc_loss_pct": 0.66
+    },
+    "player2": {
+      "pr": 3.07,
+      "snowie_error_rate": null,
+      "total_decisions": 161,
+      "checker_unforced": 144,
+      "checker_forced": null,
+      "double_decisions": 12,
+      "take_decisions": 5,
+      "pass_decisions": 0,
+      "total_errors": 14,
+      "total_blunders": 3,
+      "total_equity_error_emg": 0.989,
+      "checker_equity_error_emg": 0.977,
+      "double_equity_error_emg": 0.011,
+      "take_equity_error_emg": 0.0,
+      "total_mwc_loss_pct": 14.39,
+      "checker_mwc_loss_pct": 14.24,
+      "double_mwc_loss_pct": 0.15,
+      "take_mwc_loss_pct": 0.0
+    }
+  },
+  "gnubg": null,
+  "notes": "XG values transcribed from xg_stats_reference_test.go comments (match report visible in XG UI). No SGF available for this match — gnuBG data not extractable. Sanity check: XG P1 PR = 500 × 0.976 / 156 = 3.128 ≈ 3.13 ✓; P2 PR = 500 × 0.989 / 161 = 3.071 ≈ 3.07 ✓. Note: XG total_decisions = checker_unforced + double_decisions + take_decisions + pass_decisions = 138+16+2+0 = 156 ✓ (P1); 144+12+5+0 = 161 ✓ (P2)."
+}

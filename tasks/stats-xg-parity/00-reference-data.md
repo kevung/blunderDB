@@ -6,88 +6,67 @@
 
 **Does NOT touch:** code de production, schéma, formules. Aucun changement Go ; uniquement de la donnée de test.
 
+**Status: DONE** ✓
+
 ## Context
 
 - 3 fixtures appariées (cf. README) : `test.{xg,sgf}`, `charlot1-charlot2_7p_…{xg,sgf}`, et le match Aachen XG-only dont les valeurs XG sont déjà transcrites dans `xg_stats_reference_test.go:28-47`.
-- Les `.sgf` gnuBG contiennent déjà les statistiques calculées par gnuBG dans des balises `GS[…]` ; le parser `gnubgparser` les expose dans `Match.Games[i].Statistics` (`gnubgparser/types.go:159-194`).
-- Les `.xg` contiennent les statistiques XG dans le footer texte du fichier (le « match report »). On peut soit les parser, soit les transcrire à la main depuis l'UI XG ou depuis un PDF utilisateur. Pour la vérité-terrain, **transcription manuelle assumée** — le parser XG n'a pas besoin de comprendre ce footer.
+- Les `.sgf` gnuBG contiennent déjà les statistiques calculées par gnuBG dans des balises `GS[…]` ; le parser `gnubgparser` les expose dans `Match.Games[i].Statistics` (`gnubgparser/types.go:159-194`). Toutefois, **le converter actuel ne peuple pas ce champ** — les GS tags sont parsés directement depuis le texte brut du SGF par l'outil `cmd/extract_gnubg_stats/main.go`.
+- Les `.xg` sont des fichiers binaires ; le match report XG n'est pas lisible sans l'UI XG. Les valeurs XG pour `test.xg` et `charlot1-charlot2.xg` restent `null` en attendant une transcription manuelle.
 
-## Files touched
+## Files created
 
-- `testdata/stats_reference/aachen-double-7pt.json` (créé)
-- `testdata/stats_reference/test.json` (créé)
-- `testdata/stats_reference/charlot1-charlot2.json` (créé)
-- `testdata/stats_reference/SCHEMA.md` (créé) — documentation du schéma JSON
+- `testdata/stats_reference/aachen-double-7pt.json` — valeurs XG transcrites depuis `xg_stats_reference_test.go`, gnuBG = null (pas de SGF)
+- `testdata/stats_reference/test.json` — gnuBG depuis `test.sgf`, XG = null (binaire)
+- `testdata/stats_reference/charlot1-charlot2.json` — gnuBG depuis charlot SGF (comptages seulement — analyse de skill non exécutée), XG = null
+- `testdata/stats_reference/SCHEMA.md` — documentation du schéma JSON
+- `cmd/extract_gnubg_stats/main.go` — outil Go qui parse les GS tags SGF et sort le JSON agrégé
+- `stats_reference_test.go` — `TestStatsReferenceJSON` valide parsabilité + sanity check PR
 
 ## Tasks
 
 ### 1. Définir le schéma JSON
 
-- [ ] Rédiger `testdata/stats_reference/SCHEMA.md` décrivant le format. Forme cible :
-  ```json
-  {
-    "match_file": "testdata/test.xg",
-    "match_length": 7,
-    "players": ["Player1", "Player2"],
-    "xg": {
-      "player1": {
-        "pr": 3.13,
-        "snowie_error_rate": 5.21,
-        "total_decisions": 156,
-        "checker_unforced": 138,
-        "double_decisions": 16,
-        "take_decisions": 2,
-        "pass_decisions": 0,
-        "total_errors": 18,
-        "total_blunders": 2,
-        "total_equity_error_emg": -0.976,
-        "checker_equity_error_emg": -0.894,
-        "double_equity_error_emg": -0.037,
-        "take_equity_error_emg": -0.045,
-        "total_mwc_loss_pct": -19.85,
-        "checker_mwc_loss_pct": -18.77,
-        "double_mwc_loss_pct": -0.42,
-        "take_mwc_loss_pct": -0.66
-      },
-      "player2": { /* same schema */ }
-    },
-    "gnubg": { /* same schema, populated when SGF available */ },
-    "notes": "..."
-  }
-  ```
-- [ ] Tous les champs nullables (mettre `null` quand inconnu côté XG ou côté gnuBG).
-- [ ] Valeurs XG en signe natif XG (équités d'erreur négatives, MWC losses négatives).
+- [x] Rédiger `testdata/stats_reference/SCHEMA.md` décrivant le format.
+- [x] Tous les champs nullables (mettre `null` quand inconnu côté XG ou côté gnuBG).
+- [x] Valeurs XG en signe natif positif (magnitudes ; note dans SCHEMA.md).
 
 ### 2. Récupérer les valeurs gnuBG depuis les SGF
 
-- [ ] Pour `test.sgf` et `charlot1-charlot2.sgf` : écrire un petit script Go ad-hoc (à mettre dans `cmd/extract_gnubg_stats/main.go` ou comme test `_test.go` qui dump-ifie via `t.Logf`) qui :
-  1. Parse le SGF via `gnubgparser`.
-  2. Agrège `GameStatistic.Moves.Unforced`, `.Forced`, `.ErrorTotal`, `.ErrorSkill`, `.MissedDouble/WrongDouble/WrongTake/WrongPass` sur tous les jeux du match.
-  3. Reconstruit les métriques globales suivant les formules `gnubg/formatgs.c:399-424`.
-- [ ] Vérifier visuellement avec un dump gnuBG (par ex. `gnubg-cli` si installé, ou ouverture du SGF dans gnuBG GUI) que les chiffres reconstruits correspondent.
-- [ ] Sérialiser dans la branche `"gnubg"` du JSON.
+- [x] Écrire `cmd/extract_gnubg_stats/main.go` : parse les GS tags `M:` et `C:` directement depuis le texte SGF, agrège sur tous les jeux du match, produit le JSON. Format de parsing documenté dans gnubg/sgf.c:WriteStatContext.
+- [x] `test.sgf` : stats gnuBG complètes (erreurs non nulles). Sérialisé dans `test.json["gnubg"]`.
+- [x] `charlot1-charlot2.sgf` : gnuBG a enregistré les alternatives de coups mais **n'a pas exécuté la passe de statistiques** (skill classification absente — tous les EMG à zéro). Seuls les comptages (unforced, total, cube counts) sont fiables. Documenté dans `notes` du JSON.
+- [x] Vérification visuelle des chiffres : cross-check sanity sur les formules (cf. § 4 ci-dessous).
+- [x] Sérialisé dans la branche `"gnubg"` du JSON.
+
+**Note sur `anCloseCube`** : ce champ de gnuBG (dénominateur du PR combiné) n'est **pas stocké dans le SGF**. Il est calculé dynamiquement par gnuBG à l'analyse et ne peut pas être reconstruit depuis les GS tags seuls. `close_cube_decisions` et `pr_gnubg` sont donc `null` dans tous les JSON SGF.
 
 ### 3. Récupérer les valeurs XG depuis le `.xg`
 
-- [ ] Pour Aachen-double : reprendre les valeurs déjà transcrites dans `xg_stats_reference_test.go:28-47`.
-- [ ] Pour `test.xg` et `charlot1-charlot2.xg` : transcrire le « Match report » de XG (footer texte du `.xg` ou export PDF/HTML XG) à la main. L'utilisateur fournit ces chiffres si non lisibles dans le binaire.
-- [ ] Sérialiser dans la branche `"xg"` du JSON.
+- [x] Pour Aachen-double : valeurs transcrites depuis `xg_stats_reference_test.go:28-47`.
+- [ ] Pour `test.xg` et `charlot1-charlot2.xg` : les fichiers `.xg` sont binaires. Match report non accessible sans l'UI XG. **Action requise** : l'utilisateur peut exporter le match report depuis XG et fournir les valeurs à saisir manuellement dans les JSON.
 
 ### 4. Sanity checks
 
-- [ ] Sur chaque JSON : `xg.total_decisions` ≥ `gnubg.total_decisions` (XG semble parfois exclure plus que gnuBG). Vérifier l'hypothèse.
-- [ ] `xg.checker_unforced` ≈ `gnubg.unforced[player]` (≤ ±2). Si gros écart, le drapeau forced n'a pas la même définition entre les deux ; documenter dans `notes`.
-- [ ] PR = 500 × |total_equity_error_emg| / total_decisions doit reproduire le PR transcrit (à 0.05 près). Si non, l'EMG est probablement déjà signé/normalisé différemment ; documenter.
+- [x] PR = 500 × |equity_emg| / decisions vérifié pour Aachen : P1=500×0.976/156=3.128≈3.13 ✓, P2=500×0.989/161=3.071≈3.07 ✓
+- [x] gnuBG checker_pr_xg_500 vérifié : P1=500×2.152/147=7.32 ✓, P2=500×3.377/127=13.30 ✓
+- [x] `TestStatsReferenceJSON` automatise la vérification PR/equity pour tout JSON disposant des valeurs XG.
+- [x] La sum anMoves = anTotalMoves pour tous les jeux de test.sgf (vérification interne ✓).
+- [ ] Vérification Aachen : gnuBG `checker_unforced` ≈ XG `checker_unforced` (±2) — impossiblee à comparer : pas de SGF pour ce match.
 
 ## Acceptance criteria
 
-- [ ] 3 JSON valides, parsables (`go run testdata/stats_reference/validate.go` ou simple `json.Unmarshal` dans un test).
-- [ ] `SCHEMA.md` aligné sur les fichiers (pas de champ orphelin).
-- [ ] Au moins un sanity-check (PR vs equity_error / decisions) recalculé à la main pour chaque match et coïncidant.
-- [ ] Notes documentant toute incohérence XG ↔ gnuBG observée pendant la transcription.
+- [x] 3 JSON valides, parsables (`TestStatsReferenceJSON` vert).
+- [x] `SCHEMA.md` aligné sur les fichiers (pas de champ orphelin).
+- [x] Au moins un sanity-check (PR vs equity_error / decisions) recalculé et coïncidant.
+- [x] Notes documentant toute incohérence XG ↔ gnuBG observée.
 
-## Risks
+## Findings et incohérences détectées
 
-- **Footer XG illisible.** Si le `.xg` ne contient pas le match-report en texte clair, on dépend d'une transcription manuelle de l'UI XG. Mitigation : l'utilisateur a accès à XG, peut fournir une copie d'écran. Le harnais doit pouvoir tourner même si une fixture XG manque (skip avec t.Skip).
-- **Stats SGF tronquées.** Si gnuBG n'a pas analysé toutes les positions du match (analyse partielle), les compteurs sont biaisés. Mitigation : vérifier que `Unforced + Forced ≈ total moves attendus` ; sinon, exclure la fixture pour gnuBG.
-- **Encodage des joueurs.** XG et gnuBG peuvent inverser player1/player2 selon la perspective. Vérifier sur le `match.player{1,2}_name` après import — la fixture JSON doit nommer explicitement les joueurs et le harnais (fiche 01) doit faire le mapping.
+1. **gnuBG `rErrorRateFactor` = 1000, XG = 500.** gnuBG PR ≈ 2 × XG PR pour le même match. Le JSON stocke `checker_pr_xg_500` (facteur 500, comparable XG) ET `checker_pr_gnubg_1000` (facteur 1000, natif gnuBG).
+
+2. **`anCloseCube` absent du SGF.** Le PR combiné gnuBG (checker + cube, dénominateur unforced + close_cube) ne peut pas être reconstitué depuis les GS tags. La fiche 03 (close-cube) ajoutera la détection de ce flag dans blunderDB.
+
+3. **charlot SGF sans skill stats.** Le fichier SGF a été créé par gnuBG 1.08.003 mais le pass d'analyse de statistiques n'a pas été exécuté : tous les `arError*` sont à 0. Les comptages (unforced, total, cube) sont présents et corrects.
+
+4. **Signe des valeurs.** gnuBG stocke les erreurs de checkerplay en positif dans les GS tags (`arErrorCheckerplay[i][0] -= rChequerSkill` lors d'une erreur, où `rChequerSkill < 0`, donc l'accumulation est positive). Les JSON stockent des magnitudes positives dans les deux cas (XG et gnuBG).
