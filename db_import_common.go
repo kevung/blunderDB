@@ -378,13 +378,15 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 			data=?, best_cube_action=?, cube_error=?,
 			best_move_equity_error=?,
 			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
-			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
+			is_forced=?
 			WHERE id=?`,
 			analysisData,
 			aCols.BestCubeAction, aCols.CubeError,
 			aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			aCols.IsForced,
 			existingID)
 		if err != nil {
 			return err
@@ -442,12 +444,14 @@ func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis Posit
 			position_id, data,
 			best_cube_action, cube_error, best_move_equity_error,
 			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
-			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
-		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
+			player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
+			is_forced
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?)`,
 			positionID, analysisData,
 			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
-			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			aCols.IsForced)
 		if err != nil {
 			return err
 		}

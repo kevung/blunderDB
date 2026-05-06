@@ -95,6 +95,7 @@ type analysisColumns struct {
 	BestCubeAction      string
 	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
 	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
+	IsForced            int64 // 1 if checker position with exactly 1 legal move, else 0
 	// Win/gammon/backgammon rates × 100 (hundredths of percent, on-roll perspective)
 	Player1WinRate        int64
 	Player1GammonRate     int64
@@ -168,6 +169,15 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 				break
 			}
 		}
+	}
+
+	// is_forced: checker position with exactly one legal move (no real choice).
+	// Note: gnuBG imports set DoublingCubeAnalysis on checker positions for cube
+	// display, so DoublingCubeAnalysis != nil does NOT imply a cube decision.
+	// CheckerAnalysis is only set by the importers for checker positions (decision_type=0),
+	// so checking CheckerAnalysis alone is sufficient.
+	if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) == 1 {
+		c.IsForced = 1
 	}
 
 	return c
@@ -280,13 +290,15 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			data=?, best_cube_action=?, cube_error=?,
 			best_move_equity_error=?,
 			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
-			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
+			is_forced=?
 			WHERE id=?`,
 			analysisData,
 			aCols.BestCubeAction, aCols.CubeError,
 			aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			aCols.IsForced,
 			existingID)
 		if err != nil {
 			return err
@@ -344,12 +356,14 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			position_id, data,
 			best_cube_action, cube_error, best_move_equity_error,
 			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
-			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
-		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
+			player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
+			is_forced
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?)`,
 			positionID, analysisData,
 			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
-			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			aCols.IsForced)
 		if err != nil {
 			return err
 		}

@@ -130,10 +130,9 @@ func diffInt(t *testing.T, label string, want *int, got, tol int) {
 
 // ── Import helpers ────────────────────────────────────────────────────────────
 
-func importAndStats(t *testing.T, file string) (player1Name, player2Name string, s *MatchDetailStats) {
+func importAndStats(t *testing.T, file string) (player1Name, player2Name string, matchID int64, db *Database, s *MatchDetailStats) {
 	t.Helper()
-	db := newTestDB(t)
-	var matchID int64
+	db = newTestDB(t)
 	var err error
 	switch filepath.Ext(file) {
 	case ".xg":
@@ -153,6 +152,21 @@ func importAndStats(t *testing.T, file string) (player1Name, player2Name string,
 		t.Fatalf("GetMatchDetailStats: %v", err)
 	}
 	return
+}
+
+// countForcedChecker returns the number of is_forced=1 checker positions for
+// the given player in the given match. player is 1 or -1 (blunderDB convention).
+func countForcedChecker(db *Database, matchID int64, player int) int {
+	var n int
+	db.db.QueryRow(`
+		SELECT COUNT(*)
+		FROM analysis a
+		JOIN position p ON p.id = a.position_id
+		JOIN move mv ON mv.position_id = p.id
+		JOIN game g ON g.id = mv.game_id
+		WHERE g.match_id = ? AND mv.player = ? AND p.decision_type = 0 AND a.is_forced = 1`,
+		matchID, player).Scan(&n)
+	return n
 }
 
 // ── Comparison logic ─────────────────────────────────────────────────────────
@@ -225,23 +239,39 @@ func TestStatsParity(t *testing.T) {
 			// ── XG import ─────────────────────────────────────────────────
 			if ref.MatchFile != "" {
 				if _, err := os.Stat(ref.MatchFile); err == nil {
-					p1n, _, bdbStats := importAndStats(t, ref.MatchFile)
+					p1n, _, matchID, db, bdbStats := importAndStats(t, ref.MatchFile)
 					t.Logf("XG import: %s  P1=%q", filepath.Base(ref.MatchFile), p1n)
 
 					if ref.XG != nil {
 						if rp := ref.XG["player1"]; rp != nil {
 							compareXGRef(t, "XG/P1", rp, bdbStats.Player1, tol)
+							if rp.CheckerForced != nil {
+								gotForced := countForcedChecker(db, matchID, 1)
+								diffInt(t, "XG/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
 						}
 						if rp := ref.XG["player2"]; rp != nil {
 							compareXGRef(t, "XG/P2", rp, bdbStats.Player2, tol)
+							if rp.CheckerForced != nil {
+								gotForced := countForcedChecker(db, matchID, -1)
+								diffInt(t, "XG/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
 						}
 					}
 					if ref.GnuBG != nil {
 						if rp := ref.GnuBG["player1"]; rp != nil {
 							compareGnuBGRef(t, "XG→gnuBGref/P1", rp, bdbStats.Player1, tol)
+							if rp.CheckerForced != nil {
+								gotForced := countForcedChecker(db, matchID, 1)
+								diffInt(t, "XG→gnuBGref/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
 						}
 						if rp := ref.GnuBG["player2"]; rp != nil {
 							compareGnuBGRef(t, "XG→gnuBGref/P2", rp, bdbStats.Player2, tol)
+							if rp.CheckerForced != nil {
+								gotForced := countForcedChecker(db, matchID, -1)
+								diffInt(t, "XG→gnuBGref/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
 						}
 					}
 				} else {
@@ -252,15 +282,26 @@ func TestStatsParity(t *testing.T) {
 			// ── SGF import ────────────────────────────────────────────────
 			if ref.SGFFile != "" {
 				if _, err := os.Stat(ref.SGFFile); err == nil {
-					p1n, _, bdbStats := importAndStats(t, ref.SGFFile)
+					p1n, _, matchID, db, bdbStats := importAndStats(t, ref.SGFFile)
 					t.Logf("SGF import: %s  P1=%q", filepath.Base(ref.SGFFile), p1n)
 
 					if ref.GnuBG != nil {
 						if rp := ref.GnuBG["player1"]; rp != nil {
 							compareGnuBGRef(t, "SGF/P1", rp, bdbStats.Player1, tol)
+							// Cross-check gnuBG forced count via is_forced column.
+							// Tolerance = CheckerDecisions: forced positions with no analysis
+							// row (gnuBG omits alternatives for forced moves) are not counted.
+							if rp.CheckerForced != nil {
+								gotForced := countForcedChecker(db, matchID, 1)
+								diffInt(t, "SGF/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
 						}
 						if rp := ref.GnuBG["player2"]; rp != nil {
 							compareGnuBGRef(t, "SGF/P2", rp, bdbStats.Player2, tol)
+							if rp.CheckerForced != nil {
+								gotForced := countForcedChecker(db, matchID, -1)
+								diffInt(t, "SGF/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+							}
 						}
 					}
 				} else {

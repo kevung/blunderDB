@@ -822,3 +822,114 @@ func (d *Database) migrate_2_3_0_to_2_4_0() error {
 	slog.Info("database upgraded", "from", "2.3.0", "to", "2.4.0")
 	return nil
 }
+
+// migrate_2_4_0_to_2_5_0 adds the is_forced column to analysis and backfills
+// checker positions where exactly one legal move was stored (len(Moves) == 1).
+//
+// A position is "forced" in the gnuBG sense when there is only one legal checker
+// play (pmr->ml.cMoves == 1 in gnubg/analysis.c:458). blunderDB detects this by
+// checking that CheckerAnalysis.Moves has exactly one entry.
+func (d *Database) migrate_2_4_0_to_2_5_0() error {
+	// Add the column (idempotent: no-op if it already exists after a partial run).
+	if _, err := d.db.Exec(`ALTER TABLE analysis ADD COLUMN is_forced INTEGER NOT NULL DEFAULT 0`); err != nil {
+		// SQLite returns "duplicate column name" on repeat; ignore that specific error.
+		if err.Error() != `duplicate column name: is_forced` {
+			return fmt.Errorf("migrate 2.5.0 add column: %w", err)
+		}
+	}
+
+	// Partial index: accelerates queries that filter on is_forced = 1.
+	if _, err := d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_analysis_is_forced ON analysis(is_forced) WHERE is_forced = 1`); err != nil {
+		return fmt.Errorf("migrate 2.5.0 create index: %w", err)
+	}
+
+	// Backfill: find all checker analysis rows (position.decision_type = 0) and
+	// set is_forced = 1 for those with exactly one candidate move.
+	var total int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis a JOIN position p ON p.id = a.position_id WHERE p.decision_type = 0`).Scan(&total)
+
+	if total > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET is_forced = 1 WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.5.0 prepare update: %w", err)
+		}
+		defer updateStmt.Close()
+
+		tx, err := d.db.Begin()
+		if err != nil {
+			return fmt.Errorf("migrate 2.5.0 begin tx: %w", err)
+		}
+
+		const batchSize = 1000
+		var lastID int64
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				tx.Rollback()
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(`
+				SELECT a.id, a.data
+				FROM analysis a
+				JOIN position p ON p.id = a.position_id
+				WHERE p.decision_type = 0 AND a.id > ?
+				ORDER BY a.id LIMIT ?`, lastID, batchSize)
+			if err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.5.0 query: %w", err)
+			}
+
+			type row struct {
+				id   int64
+				data []byte
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				ana, err := decodeAnalysisFromStorage(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+				if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) == 1 {
+					if _, err := tx.Stmt(updateStmt).Exec(r.id); err != nil {
+						tx.Rollback()
+						return fmt.Errorf("migrate 2.5.0 update: %w", err)
+					}
+				}
+				done++
+				if done%500 == 0 {
+					d.emitMigrationProgress("is_forced_backfill", done, total)
+				}
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return fmt.Errorf("migrate 2.5.0 commit: %w", err)
+		}
+		d.emitMigrationProgress("is_forced_backfill", total, total)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.5.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.4.0", "to", "2.5.0")
+	return nil
+}

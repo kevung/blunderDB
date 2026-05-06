@@ -125,6 +125,7 @@ func (d *Database) SetupDatabase(path string) error {
             player2_win_rate            INTEGER,
             player2_gammon_rate         INTEGER,
             player2_backgammon_rate     INTEGER,
+            is_forced                   INTEGER NOT NULL DEFAULT 0,
             FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
         )
     `)
@@ -416,6 +417,7 @@ func (d *Database) SetupDatabase(path string) error {
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_win1           ON analysis(player1_win_rate)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_cube_error     ON analysis(cube_error)`,
 		`CREATE        INDEX IF NOT EXISTS idx_analysis_move_error     ON analysis(best_move_equity_error)`,
+		`CREATE        INDEX IF NOT EXISTS idx_analysis_is_forced      ON analysis(is_forced) WHERE is_forced = 1`,
 		`CREATE UNIQUE INDEX IF NOT EXISTS idx_match_canonical         ON match(canonical_hash)`,
 		`CREATE        INDEX IF NOT EXISTS idx_move_position           ON move(position_id)`,
 		`CREATE        INDEX IF NOT EXISTS idx_move_game               ON move(game_id)`,
@@ -850,6 +852,16 @@ func (d *Database) OpenDatabase(path string) error {
 			return fmt.Errorf("migration 2.3.0→2.4.0 failed: %w", err)
 		}
 		dbVersion = "2.4.0"
+	}
+
+	// Auto-migrate from 2.4.0 to 2.5.0
+	// Adds is_forced column to analysis; backfills checker positions with exactly
+	// one legal move (len(CheckerAnalysis.Moves) == 1).
+	if dbVersion == "2.4.0" {
+		if err := d.migrate_2_4_0_to_2_5_0(); err != nil {
+			return fmt.Errorf("migration 2.4.0→2.5.0 failed: %w", err)
+		}
+		dbVersion = "2.5.0"
 	}
 
 	// Ensure all required tables and columns exist.
