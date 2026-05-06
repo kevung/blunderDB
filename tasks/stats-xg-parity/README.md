@@ -62,7 +62,7 @@ Dépendances strictes top-down. Ne pas démarrer une fiche avant la précédente
 - [x] 03 — close-cube
 - [x] 04 — pr-denominator
 - [x] 05 — snowie-error-rate
-- [ ] 06 — mwc-cross-check
+- [x] 06 — mwc-cross-check
 - [ ] 07 — validation-rollout
 
 ## Fixtures appariées disponibles

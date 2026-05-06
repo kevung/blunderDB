@@ -182,10 +182,13 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 			switch playedCubeAction {
 			case "NoDouble", "No Double":
 				raw = dca.CubefulNoDoubleError
-			case "Double", "Double/Take":
-				raw = dca.CubefulDoubleTakeError
-			case "Double/Pass":
-				raw = dca.CubefulDoublePassError
+			case "Double", "Double/Take", "Double/Pass":
+				// Doubler's error = min(DT, DP) - bestEquity (gnuBG rSkill formula).
+				// Using min(DT,DP) ensures we measure what the doubler CONTROLS: the
+				// opponent will respond optimally (take if DT<DP, pass if DP<DT).
+				// This avoids falsely charging the doubler when the opponent errs
+				// (e.g. wrongly passes when DT<DP, or wrongly takes when DT>DP).
+				raw = math.Min(dca.CubefulDoubleTakeError, dca.CubefulDoublePassError)
 			case "Take":
 				// Taker's error: DT equity vs DP equity (from doubler's perspective).
 				// Error is negative when it was wrong to take (DT < DP).

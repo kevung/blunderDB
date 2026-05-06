@@ -101,8 +101,9 @@ var tolPhase01 = parityTolerances{
 //             vs gnuBG reference (different engines), call-site uses 1.0.
 //   CheckerDecisions=10 — bDB and XG may differ by ≤6 on forced-move boundary
 //             classification; 10 leaves margin.
-//   MWCPct=3.5 — can't tighten yet: cross-engine equity differences and
-//             incomplete close-cube classification on SGF files cause ≥3.2 gaps.
+//   MWCPct=3.5 — SGF incomplete close-cube classification (only 2–3/7 cubes
+//             classified) and cross-engine equity differences cause ≥3.2 gaps.
+//             XG-vs-XG comparisons use tolPhase04XG (tighter, 1.0 pp).
 //   Equity=0.5 — SGF close-cube equity is incomplete (only 2/7 classified);
 //             removing non-close cube equity increases the gap with gnuBG ref.
 var tolPhase04 = parityTolerances{
@@ -114,6 +115,20 @@ var tolPhase04 = parityTolerances{
 	PR:                 0.2,  // aligned denominator: very close to XG/gnuBG
 	MWCPct:             3.5,  // cross-engine + SGF close-cube gaps prevent tightening
 	Equity:             0.5,  // EMG: wider for SGF incomplete close-cube equity
+}
+
+// tolPhase04XG is like tolPhase04 but with a tighter MWC tolerance for
+// XG-vs-XG comparisons (same analysis engine, cube error formula fixed in fiche 06).
+// Max observed gap after fiche 06 fix: 0.99 pp (Aachen P1).
+var tolPhase04XG = parityTolerances{
+	TotalDecisions:     5,
+	CheckerDecisions:   10,
+	DoubleDecisions:    5,
+	TakeDecisions:      3,
+	CloseCubeDecisions: 5,
+	PR:                 0.2,
+	MWCPct:             1.0, // fiche 06: XG-vs-XG MWC gap ≤ 1 pp after cube error fix
+	Equity:             0.5,
 }
 
 // ── Diff helpers ─────────────────────────────────────────────────────────────
@@ -289,11 +304,13 @@ func TestStatsParity(t *testing.T) {
 					t.Logf("XG import: %s  P1=%q", filepath.Base(ref.MatchFile), p1n)
 
 					if ref.XG != nil {
+						// XG-vs-XG: same engine, cube error fix in fiche 06 → tight 1.0 pp tolerance.
+						xgTol := tolPhase04XG
 						if rp := ref.XG["player1"]; rp != nil {
-							compareXGRef(t, "XG/P1", rp, bdbStats.Player1, tol)
+							compareXGRef(t, "XG/P1", rp, bdbStats.Player1, xgTol)
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, 1)
-								diffInt(t, "XG/P1 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+								diffInt(t, "XG/P1 checker_forced_count", rp.CheckerForced, gotForced, xgTol.CheckerDecisions)
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
@@ -301,14 +318,14 @@ func TestStatsParity(t *testing.T) {
 								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
 								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
 								gotClose := countCloseCube(db, matchID, 1)
-								diffInt(t, "XG/P1 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
+								diffInt(t, "XG/P1 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
 							}
 						}
 						if rp := ref.XG["player2"]; rp != nil {
-							compareXGRef(t, "XG/P2", rp, bdbStats.Player2, tol)
+							compareXGRef(t, "XG/P2", rp, bdbStats.Player2, xgTol)
 							if rp.CheckerForced != nil {
 								gotForced := countForcedChecker(db, matchID, -1)
-								diffInt(t, "XG/P2 checker_forced_count", rp.CheckerForced, gotForced, tol.CheckerDecisions)
+								diffInt(t, "XG/P2 checker_forced_count", rp.CheckerForced, gotForced, xgTol.CheckerDecisions)
 							}
 							if rp.DoubleDecisions != nil || rp.TakeDecisions != nil || rp.PassDecisions != nil {
 								wantClose := 0
@@ -316,7 +333,7 @@ func TestStatsParity(t *testing.T) {
 								if rp.TakeDecisions != nil { wantClose += *rp.TakeDecisions }
 								if rp.PassDecisions != nil { wantClose += *rp.PassDecisions }
 								gotClose := countCloseCube(db, matchID, -1)
-								diffInt(t, "XG/P2 cube_close_count", &wantClose, gotClose, tol.CloseCubeDecisions)
+								diffInt(t, "XG/P2 cube_close_count", &wantClose, gotClose, xgTol.CloseCubeDecisions)
 							}
 						}
 					}

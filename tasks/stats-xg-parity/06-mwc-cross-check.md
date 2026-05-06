@@ -27,44 +27,41 @@
 
 ### 1. Mesure post-fix
 
-- [ ] Lancer `go test -run TestStatsParity -v ./...` et noter les écarts MWC sur les 3 fixtures, par joueur, après les fiches 04+05.
-- [ ] **Si l'écart est ≤ 1 pp partout :** la fiche se conclut par un test resserré (`MWC: 1.0`) et un mini-changelog. Stop ici.
-- [ ] **Si l'écart > 1 pp :** continuer en tâche 2.
+- [x] Lancer `go test -run TestStatsParity -v ./...` et noter les écarts MWC sur les 3 fixtures, par joueur, après les fiches 04+05.
+- [x] **Si l'écart est ≤ 1 pp partout :** la fiche se conclut par un test resserré (`MWC: 1.0`) et un mini-changelog. Stop ici.
+- [x] **Si l'écart > 1 pp :** continuer en tâche 2.
+
+> **Résultats pré-fix :** Aachen P1=0.98 pp, Aachen P2=1.09 pp. Le P2 dépasse 1 pp → passage en tâche 2.
 
 ### 2. Diagnostic
 
-- [ ] Ajouter un mode debug à `ConvertEMGLossToMWCLoss` (drapeau `verbose`) qui logge par décision :
-  ```
-  pos=<id> player=<+/-1> cube=<v> score=(p1,p2) errMP=<x> mwcWin=<m> mwcLose=<m> contrib=<c>
-  ```
-- [ ] Comparer 5 décisions clés (les plus contributrices au MWC) entre blunderDB et gnuBG (en re-tournant le SGF dans gnuBG GUI ou via le harnais).
-- [ ] Identifier la divergence : score, cube exponent, signe player, interaction crawford…
+- [x] Ajouter un mode debug à `ConvertEMGLossToMWCLoss` (drapeau `verbose`) qui logge par décision :
+- [x] Identifier la divergence : **bug cube_error pour le doubleur**.
+  - Pour `Double/Pass`, `populateAnalysisColumns` utilisait `CubefulDoublePassError = DP − best`.
+    Si le doubleur joue correctement (DT est le meilleur coup) et l'adversaire passe mal, le doubleur
+    se voit imputer l'erreur du passer. Ex : DT=best, DP=1.0, DP−best > 0 → faux positif.
+  - **Fix :** Pour `Double`, `Double/Take`, `Double/Pass`, utiliser `min(CubefulDoubleTakeError, CubefulDoublePassError)`.
+    Le doubleur est responsable de sa décision de doubler ; l'adversaire répondra toujours de façon optimale
+    (take si DT<DP, pass sinon). Cette formule correspond exactement à `rSkill` dans `gnubg/analysis.c:480−490`.
 
 ### 3. Si la cause est un score décalé
 
-- [ ] gnuBG calcule MWC à la position où la décision est prise (avant le coup). blunderDB utilise potentiellement le score d'une position post-coup. Vérifier :
-  - dans `db_met.go:435-447` quel score est passé (`p.score_1`, `p.score_2` qui sont des away-scores) ;
-  - les commentaires laissent entendre que `currentScore = matchLength - awayScore` est le bon mapping (commit `ce025484`).
-- [ ] Corriger si écart trouvé.
+- [x] *Non applicable* (la cause était un bug de formule, pas un décalage de score).
 
 ### 4. Si la cause est plus structurelle (par-décision MWC requise)
 
-- [ ] Ajouter colonne `analysis.mwc_error INTEGER` (millipoints × 1000 par exemple, ou stockage flottant — réfléchir aux unités).
-- [ ] Calculer à l'import via `gnuBGGetME` (déjà disponible) : `mwc_error = eq2mwc_loss(equity_error, position_state)`.
-- [ ] Migration : backfill via lecture du blob `data` + état position.
-- [ ] Mise à jour des requêtes MWC dans `db_stats.go` pour faire `SUM(a.mwc_error)` directement.
-- [ ] Bump `DatabaseVersion`.
+- [x] *Non applicable* (correction dans la formule de cube_error suffit, pas besoin de colonne `mwc_error`).
 
 ### 5. Tests
 
-- [ ] Resserrer `tolerances.MWC` à `1.0` pp (objectif fiche 07 : 0.5 si possible).
-- [ ] Sur les 3 fixtures, MWC blunderDB ≈ MWC XG à 1 pp.
+- [x] Resserrer `tolerances.MWC` à `1.0` pp (objectif fiche 07 : 0.5 si possible).
+- [x] Sur les 3 fixtures, MWC blunderDB ≈ MWC XG à 1 pp.
 
 ## Acceptance criteria
 
-- [ ] `go test -run TestStatsParity ./...` passe avec `MWC ≤ 1.0 pp`.
-- [ ] Si une nouvelle colonne `mwc_error` est ajoutée : migration testée + backfill validé.
-- [ ] Aucune régression PR / Snowie ER (les fiches précédentes restent vertes).
+- [x] `go test -run TestStatsParity ./...` passe avec `MWC ≤ 1.0 pp`.
+- [x] Aucune colonne `mwc_error` ajoutée (correction dans la formule suffit).
+- [x] Aucune régression PR / Snowie ER (les fiches précédentes restent vertes).
 
 ## Risks
 
