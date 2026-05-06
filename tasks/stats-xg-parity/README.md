@@ -57,7 +57,7 @@ Dépendances strictes top-down. Ne pas démarrer une fiche avant la précédente
 ## Statut courant
 
 - [x] 00 — reference-data
-- [ ] 01 — comparison-harness
+- [x] 01 — comparison-harness
 - [ ] 02 — forced-moves
 - [ ] 03 — close-cube
 - [ ] 04 — pr-denominator
