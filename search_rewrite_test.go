@@ -373,7 +373,7 @@ func TestSearch_Equivalence_NoContact(t *testing.T) {
 
 func TestSearch_Equivalence_IncludeCube(t *testing.T) {
 	db := setupSearchTestDB(t)
-	filter := Position{Cube: Cube{Value: 2, Owner: 0}}
+	filter := Position{Cube: Cube{Value: 1, Owner: 0}} // exponent 1 = cube at 2
 	assertEquivalent(t, db, "cube=2 owner=0",
 		filter, true, false,
 		"", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", false, false,

@@ -499,7 +499,7 @@ func TestAnalysisCompressionSavings(t *testing.T) {
 		pos := initialPosition()
 		pos.Dice = [2]int{(i % 6) + 1, (i%5+i%3)%6 + 1}
 		pos.Score = [2]int{i % 9, (i + 3) % 9}
-		pos.Cube.Value = i + 1 // ensure unique zobrist hash
+		pos.Cube.Value = i % 11 // exponent 0..10 (valid range); LCM(11,9)=99>50 ensures unique (cube,score)
 		posID, err := d.SavePosition(&pos)
 		if err != nil {
 			t.Fatalf("SavePosition %d: %v", i, err)

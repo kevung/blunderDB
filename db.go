@@ -876,6 +876,17 @@ func (d *Database) OpenDatabase(path string) error {
 		dbVersion = "2.6.0"
 	}
 
+	// Auto-migrate from 2.6.0 to 2.7.0
+	// Recomputes zobrist_hash for positions with cube_value >= 1 to fix a bug
+	// where cubeValueIndex() was called with an exponent instead of actual cube
+	// value, causing cube=0 (initial) and cube=1 (2-cube) to hash identically.
+	if dbVersion == "2.6.0" {
+		if err := d.migrate_2_6_0_to_2_7_0(); err != nil {
+			return fmt.Errorf("migration 2.6.0→2.7.0 failed: %w", err)
+		}
+		dbVersion = "2.7.0"
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).

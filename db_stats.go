@@ -39,9 +39,25 @@ const statsErrExpr = "CASE WHEN p.decision_type = 1 THEN a.cube_error ELSE a.bes
 const blunderThresholdMP = 100
 
 // statsCountedExpr is the SQL predicate selecting the decisions that count
-// toward PR and decision tallies (XG + gnuBG semantics). Forced checker plays
-// and non-close cube decisions are excluded.
-const statsCountedExpr = "((p.decision_type = 0 AND a.is_forced = 0) OR (p.decision_type = 1 AND a.is_close_cube = 1))"
+// toward PR and decision tallies (XG semantics):
+//   - Checker: unforced positions only (a.is_forced = 0).
+//   - Cube: a position is counted when either (a) it is a "close" decision per
+//     gnuBG isCloseCubedecision (a.is_close_cube = 1) with the exclusion below,
+//     OR (b) the player took an active cube action other than NoDouble (Double,
+//     Take, Pass). The OR ensures premature doublings — wrong doubles with a
+//     large equity gap that are technically "not close" — are still counted.
+//
+// Exclusion for close NoDoubles: XG's stored EMG equities at extreme match
+// scores (mover's away ≤ 2 with centered cube) are amplified by a factor of
+// ~3–4× beyond the normal [-1, 1] range, so gnuBG's 0.16 threshold falsely
+// marks these positions as "close". We exclude correctly-played (cube_error=0)
+// NoDouble positions where the cube is still centered (cube_value=0) and the
+// mover needs ≤ 2 points to win, mirroring XG's actual decision counting.
+// Active cube actions (Double, Take, Pass) and missed doubles (cube_error > 0)
+// at this score are always counted regardless.
+//
+// Note: mv is accessible because statsBaseJoin includes JOIN move mv.
+const statsCountedExpr = "((p.decision_type = 0 AND a.is_forced = 0) OR (p.decision_type = 1 AND (COALESCE(mv.cube_action, '') NOT IN ('', 'No Double', 'NoDouble') OR (a.is_close_cube = 1 AND NOT (COALESCE(a.cube_error, 0) = 0 AND COALESCE(p.cube_value, 0) = 0 AND CASE WHEN mv.player = 1 THEN COALESCE(p.score_1, 99) ELSE COALESCE(p.score_2, 99) END <= 2)))))"
 
 // StatsFilter defines the filtering criteria for ComputeStats.
 type StatsFilter struct {

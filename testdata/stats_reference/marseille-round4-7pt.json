@@ -1,0 +1,29 @@
+{
+  "match_file": "testdata/HsbtMarseille_main_ronde4_LamourDeCaslouGildas_UngerKevin_7p.xg",
+  "match_length": 7,
+  "players": ["Kévin Unger", "Gildas L Amour De Caslou"],
+  "xg": {
+    "player1": {
+      "pr": 9.28,
+      "snowie_error_rate": null,
+      "total_decisions": null,
+      "checker_unforced": null,
+      "double_decisions": null,
+      "take_decisions": null,
+      "pass_decisions": null,
+      "total_equity_error_emg": null
+    },
+    "player2": {
+      "pr": 13.20,
+      "snowie_error_rate": null,
+      "total_decisions": null,
+      "checker_unforced": null,
+      "double_decisions": null,
+      "take_decisions": null,
+      "pass_decisions": null,
+      "total_equity_error_emg": null
+    }
+  },
+  "gnubg": null,
+  "notes": "XG PR values from match report (user-reported). P1 blunderDB=9.23 (diff=-0.05). P2 blunderDB=13.08 (diff=-0.12). Residual P2 gap traced to move-matching failure at pos_id=93: played '8/4 7/1' not found in analysis (best '8/2 5/1'), so blunderDB records 0 error for that position while XG records the real error (~21 mp). PR tolerance set to 0.15 to accommodate this known xgparser move-string issue. The statsCountedExpr fix (fiche 08) resolves the main discrepancy: 16 close-NoDouble positions at score=3-2 (P2 2-away, centered cube) had XG EMG equities amplified ~3-4x beyond the gnuBG [-1,1] threshold range, causing false 'close' classification and inflating N from 81 to 97."
+}

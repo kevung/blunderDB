@@ -10,8 +10,8 @@ import (
 
 func initialPosition() Position {
 	return Position{
-		Board:        initialBoard(), // reuses helper from bitboards_test.go
-		Cube:         Cube{Owner: None, Value: 1},
+		Board:        initialBoard(),              // reuses helper from bitboards_test.go
+		Cube:         Cube{Owner: None, Value: 0}, // 0 = exponent for cube-at-1
 		PlayerOnRoll: 0,
 		DecisionType: CheckerAction,
 	}
@@ -33,7 +33,7 @@ func bearoffPosition() Position {
 	b.Points[22] = Point{Checkers: 3, Color: White}
 	b.Points[23] = Point{Checkers: 3, Color: White}
 	b.Points[24] = Point{Checkers: 3, Color: White}
-	return Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0, DecisionType: CheckerAction}
+	return Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0, DecisionType: CheckerAction}
 }
 
 func barCheckerPosition() Position {
@@ -44,10 +44,12 @@ func barCheckerPosition() Position {
 	return p
 }
 
-func cubePosition(cubeVal int, cubeOwner int) Position {
+// cubePosition creates a cube-decision position. cubeExp is the cube exponent:
+// 0 = cube at 1 (initial), 1 = cube at 2, 2 = cube at 4, …
+func cubePosition(cubeExp int, cubeOwner int) Position {
 	return Position{
 		Board:        initialBoard(),
-		Cube:         Cube{Owner: cubeOwner, Value: cubeVal},
+		Cube:         Cube{Owner: cubeOwner, Value: cubeExp},
 		PlayerOnRoll: 0,
 		DecisionType: CubeAction,
 	}
@@ -63,7 +65,7 @@ func moneyPosition() Position {
 func scorePosition(s1, s2 int) Position {
 	return Position{
 		Board:        initialBoard(),
-		Cube:         Cube{Owner: None, Value: 1},
+		Cube:         Cube{Owner: None, Value: 0}, // 0 = exponent for cube-at-1
 		Score:        [2]int{s1, s2},
 		PlayerOnRoll: 0,
 		DecisionType: CheckerAction,
@@ -85,16 +87,17 @@ var stabilityPositions = []struct {
 	{"initial_mirror", func() Position { p := initialPosition(); p.PlayerOnRoll = 1; return p }(), 0x5aab493a553eacc1},
 	{"bearoff", bearoffPosition(), 0x1380c7a0f973daaf},
 	{"bar_checker", barCheckerPosition(), 0xcea6fe9267ccb020},
-	{"cube2_black", cubePosition(2, Black), 0x3c2ae046ad036490},
-	{"cube4_white", cubePosition(4, White), 0x6e44c1f090bc085d},
-	{"cube8_none", cubePosition(8, None), 0xc4e19b22960ad3fc},
-	{"cube16_black", cubePosition(16, Black), 0xfb6e47ea5935c927},
-	{"cube32_white", cubePosition(32, White), 0x4ab19b26eafcc585},
-	{"cube64_none", cubePosition(64, None), 0xf7e53720e65c7c9f},
-	{"cube128_black", cubePosition(128, Black), 0x88dbaaf79eb2e077},
-	{"cube256_white", cubePosition(256, White), 0x8f32f1f41e49851f},
-	{"cube512_none", cubePosition(512, None), 0x7ab8e476a429c748},
-	{"cube1024_black", cubePosition(1024, Black), 0x40bac1cafb12aefe},
+	// cubePosition args are exponents: 1=cube@2, 2=cube@4, …
+	{"cube2_black", cubePosition(1, Black), 0x3c2ae046ad036490},
+	{"cube4_white", cubePosition(2, White), 0x6e44c1f090bc085d},
+	{"cube8_none", cubePosition(3, None), 0xc4e19b22960ad3fc},
+	{"cube16_black", cubePosition(4, Black), 0xfb6e47ea5935c927},
+	{"cube32_white", cubePosition(5, White), 0x4ab19b26eafcc585},
+	{"cube64_none", cubePosition(6, None), 0xf7e53720e65c7c9f},
+	{"cube128_black", cubePosition(7, Black), 0x88dbaaf79eb2e077},
+	{"cube256_white", cubePosition(8, White), 0x8f32f1f41e49851f},
+	{"cube512_none", cubePosition(9, None), 0x7ab8e476a429c748},
+	{"cube1024_black", cubePosition(10, Black), 0x40bac1cafb12aefe},
 	{"money_jacoby_beaver", moneyPosition(), 0x1128e30862a692b9},
 	{"score_6_4", scorePosition(6, 4), 0x2b51a32d7e178238},
 	{"score_0_1", scorePosition(0, 1), 0x4572d8103da80e14},
@@ -147,7 +150,7 @@ var stabilityPositions = []struct {
 			}
 			b.Points[19] = Point{Checkers: 2, Color: White}
 			b.Points[1] = Point{Checkers: 2, Color: White}
-			return Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0}
+			return Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0}
 		}(), 0x57364c3be19652a5,
 	},
 	{
@@ -162,7 +165,7 @@ var stabilityPositions = []struct {
 			b.Points[24] = Point{Checkers: 2, Color: Black}
 			b.Points[20] = Point{Checkers: 2, Color: White}
 			b.Points[19] = Point{Checkers: 3, Color: White}
-			return Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0}
+			return Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0}
 		}(), 0x89acd726a1f6448e,
 	},
 	{
@@ -182,7 +185,7 @@ var stabilityPositions = []struct {
 			b.Points[24] = Point{Checkers: 2, Color: White}
 			b.Points[19] = Point{Checkers: 3, Color: White}
 			b.Points[18] = Point{Checkers: 2, Color: White}
-			return Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0}
+			return Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0}
 		}(), 0x8ca933385dc6165b,
 	},
 	{
@@ -198,7 +201,7 @@ var stabilityPositions = []struct {
 			}
 			b.Points[24] = Point{Checkers: 1, Color: Black}
 			b.Points[1] = Point{Checkers: 1, Color: White}
-			return Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0}
+			return Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0}
 		}(), 0xeb90bef76e9152b6,
 	},
 	{
@@ -209,7 +212,7 @@ var stabilityPositions = []struct {
 				b.Points[i+19] = Point{Checkers: 2, Color: White}
 			}
 			b.Points[6].Checkers = 3
-			return Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0}
+			return Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0}
 		}(), 0x41afee4068bfd2b9,
 	},
 }
@@ -244,7 +247,7 @@ func TestZobristEquivalence(t *testing.T) {
 	}{
 		{"initial", initialPosition()},
 		{"bearoff", bearoffPosition()},
-		{"cube2_black", cubePosition(2, Black)},
+		{"cube2_black", cubePosition(1, Black)}, // exponent 1 = cube at 2
 		{"score_6_4", scorePosition(6, 4)},
 	}
 

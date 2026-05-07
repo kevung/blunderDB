@@ -1068,3 +1068,109 @@ func (d *Database) migrate_2_5_0_to_2_6_0() error {
 	slog.Info("database upgraded", "from", "2.5.0", "to", "2.6.0")
 	return nil
 }
+
+// migrate_2_6_0_to_2_7_0 fixes Zobrist hashes that were computed with the wrong
+// cube-value convention. The ZobristHash function received Cube.Value as an EXPONENT
+// (0=cube@1, 1=cube@2, 2=cube@4, …) but passed it to cubeValueIndex() which expects
+// the ACTUAL cube value (1, 2, 4, 8, …). For exponent=0 both functions return index 0,
+// so those hashes are correct. For exponent >= 1 the old index was floor(log2(exp))
+// instead of exp, producing wrong (and sometimes colliding) hashes.
+//
+// Fix: recompute the ZobristHash from the stored position state for every position
+// with cube_value >= 1. This is idempotent: already-correct hashes are unchanged
+// (recomputing with the fixed function returns the same correct value).
+func (d *Database) migrate_2_6_0_to_2_7_0() error {
+	// If the position table doesn't yet have a zobrist_hash column (possible when
+	// migrating from a very old schema that was never at 2.0.0), skip the
+	// hash-patching step — the hashes will be computed correctly on first use.
+	var colCount int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('position') WHERE name='zobrist_hash'`).Scan(&colCount)
+	if colCount == 0 {
+		if _, err := d.db.Exec(`UPDATE metadata SET value='2.7.0' WHERE key='database_version'`); err != nil {
+			return fmt.Errorf("migrate 2.7.0 version bump: %w", err)
+		}
+		slog.Info("database upgraded", "from", "2.6.0", "to", "2.7.0", "positions_rehashed", 0)
+		return nil
+	}
+
+	rows, err := d.db.Query(`SELECT id, state, decision_type, player_on_roll, dice_1, dice_2, cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver FROM position WHERE cube_value >= 1`)
+	if err != nil {
+		return fmt.Errorf("migrate 2.7.0 query positions: %w", err)
+	}
+
+	type fix struct {
+		id      int64
+		newHash int64
+	}
+	var fixes []fix
+	for rows.Next() {
+		var id int64
+		var state string
+		var decisionType, playerOnRoll, dice1, dice2, cubeValue, cubeOwner, score1, score2, hasJacoby, hasBeaver int
+		if err := rows.Scan(&id, &state, &decisionType, &playerOnRoll, &dice1, &dice2, &cubeValue, &cubeOwner, &score1, &score2, &hasJacoby, &hasBeaver); err != nil {
+			rows.Close()
+			return fmt.Errorf("migrate 2.7.0 scan: %w", err)
+		}
+		pos := reconstructPosition(id, state, decisionType, playerOnRoll, dice1, dice2, cubeValue, cubeOwner, score1, score2, hasJacoby, hasBeaver)
+		newHash := ZobristHash(&pos)
+		fixes = append(fixes, fix{id: id, newHash: int64(newHash)})
+	}
+	rows.Close()
+
+	if len(fixes) == 0 {
+		if _, err := d.db.Exec(`UPDATE metadata SET value='2.7.0' WHERE key='database_version'`); err != nil {
+			return fmt.Errorf("migrate 2.7.0 version bump: %w", err)
+		}
+		slog.Info("database upgraded", "from", "2.6.0", "to", "2.7.0", "positions_rehashed", 0)
+		return nil
+	}
+
+	// Drop the unique index before bulk-updating hashes to avoid transient
+	// uniqueness violations (two rows may temporarily have the same hash during
+	// the update pass).
+	if _, err := d.db.Exec(`DROP INDEX IF EXISTS idx_position_zobrist`); err != nil {
+		return fmt.Errorf("migrate 2.7.0 drop index: %w", err)
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("migrate 2.7.0 begin tx: %w", err)
+	}
+
+	stmt, err := tx.Prepare(`UPDATE position SET zobrist_hash = ? WHERE id = ?`)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("migrate 2.7.0 prepare update: %w", err)
+	}
+	defer stmt.Close()
+
+	for _, f := range fixes {
+		if atomic.LoadInt32(&d.importCancelled) != 0 {
+			tx.Rollback()
+			return fmt.Errorf("migration cancelled")
+		}
+		if _, err := stmt.Exec(f.newHash, f.id); err != nil {
+			tx.Rollback()
+			return fmt.Errorf("migrate 2.7.0 update id %d: %w", f.id, err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("migrate 2.7.0 commit: %w", err)
+	}
+
+	// Recreate the unique index. If there are genuine hash collisions after the
+	// fix (astronomically unlikely), this will fail — treat as a hard error.
+	if _, err := d.db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist ON position(zobrist_hash)`); err != nil {
+		return fmt.Errorf("migrate 2.7.0 recreate unique index: %w", err)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.7.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.7.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.6.0", "to", "2.7.0", "positions_rehashed", len(fixes))
+	return nil
+}
