@@ -157,11 +157,11 @@ describe('StatsDashboardTab — display logic', () => {
     });
 
     test('MWC Global card shows MWCGlobal formatted when metric=mwc', () => {
-        expect(cardValue(SAMPLE_RESULT, 'mwc', 'all')).toBe('0.0512');
+        expect(cardValue(SAMPLE_RESULT, 'mwc', 'all')).toBe('5.12%');
     });
 
     test('MWC Checker card shows MWCChecker formatted when metric=mwc', () => {
-        expect(cardValue(SAMPLE_RESULT, 'mwc', 'checker')).toBe('0.0310');
+        expect(cardValue(SAMPLE_RESULT, 'mwc', 'checker')).toBe('3.10%');
     });
 
     test('null result returns — for all cards', () => {
@@ -211,7 +211,7 @@ describe('StatsDashboardTab — blunder formatting', () => {
 
     test('blunder shows MWC when MWCLoss is populated', () => {
         const entry = { ...SAMPLE_RESULT.TopBlunders[0], MWCLoss: 0.0123 };
-        expect(fmtBlunderError(entry, 'mwc')).toBe('0.0123');
+        expect(fmtBlunderError(entry, 'mwc')).toBe('1.23%');
     });
 
     test('DecisionType=0 → Checker label', () => {
