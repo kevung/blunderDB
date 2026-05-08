@@ -195,7 +195,7 @@ func TestCLI_ShowStats(t *testing.T) {
 	}
 
 	out := captureStdout(t, func() {
-		if err := cli.showStats(); err != nil {
+		if err := cli.showStats(StatsFilter{DecisionType: -1}, "pr", "text", 10); err != nil {
 			t.Fatalf("showStats: %v", err)
 		}
 	})

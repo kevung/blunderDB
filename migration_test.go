@@ -914,10 +914,10 @@ func TestMigrate_1_9_0_to_2_0_0(t *testing.T) {
 		t.Fatalf("OpenDatabase failed: %v", err)
 	}
 
-	// Version must be 2.3.0 (auto-migrated through 2.0.0 → 2.1.0 → 2.2.0 → 2.3.0)
+	// Version must be current (auto-migrated through all steps).
 	ver, _ := d.CheckDatabaseVersion()
-	if ver != "2.3.0" {
-		t.Fatalf("expected version 2.3.0, got %s", ver)
+	if ver != DatabaseVersion {
+		t.Fatalf("expected version %s, got %s", DatabaseVersion, ver)
 	}
 
 	// Every position row must have non-NULL zobrist_hash and pip_1
@@ -1086,13 +1086,471 @@ func TestMigrate_Idempotent(t *testing.T) {
 	}
 
 	ver, _ := d2.CheckDatabaseVersion()
-	if ver != "2.3.0" {
-		t.Errorf("expected version 2.3.0, got %s", ver)
+	if ver != DatabaseVersion {
+		t.Errorf("expected version %s, got %s", DatabaseVersion, ver)
 	}
 
 	var posCount2 int
 	d2.db.QueryRow(`SELECT COUNT(*) FROM position`).Scan(&posCount2)
 	if posCount2 != posCount1 {
 		t.Errorf("position count changed on second open: %d → %d", posCount1, posCount2)
+	}
+}
+
+// TestMigrate_2_3_0_to_2_4_0_RepairsMoveError verifies that the 2.3.0→2.4.0
+// migration correctly backfills best_move_equity_error for positions where
+// PlayedMoves was missing from the analysis JSON blob.
+func TestMigrate_2_3_0_to_2_4_0_RepairsMoveError(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "v230_repair.db")
+
+	rawDB, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open: %v", err)
+	}
+
+	// Build a minimal v2.3.0 schema.
+	_, err = rawDB.Exec(`
+		CREATE TABLE position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			state TEXT,
+			decision_type INTEGER DEFAULT 0
+		);
+		CREATE TABLE analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER,
+			data BLOB,
+			best_cube_action TEXT,
+			cube_error REAL DEFAULT 0,
+			best_move_equity_error REAL DEFAULT 0,
+			player1_win_rate REAL DEFAULT 0,
+			player1_gammon_rate REAL DEFAULT 0,
+			player1_backgammon_rate REAL DEFAULT 0,
+			player2_win_rate REAL DEFAULT 0,
+			player2_gammon_rate REAL DEFAULT 0,
+			player2_backgammon_rate REAL DEFAULT 0,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		);
+		CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT);
+		CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT);
+		CREATE TABLE command_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE filter_library (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, command TEXT, edit_position TEXT);
+		CREATE TABLE search_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, position TEXT, timestamp INTEGER);
+		CREATE TABLE match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT, player2_name TEXT,
+			match_length INTEGER, match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT, game_count INTEGER DEFAULT 0,
+			match_hash TEXT, tournament_id INTEGER,
+			last_visited_position INTEGER DEFAULT -1
+		);
+		CREATE TABLE game (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			match_id INTEGER, game_number INTEGER,
+			initial_score_1 INTEGER, initial_score_2 INTEGER,
+			winner INTEGER, points_won INTEGER,
+			move_count INTEGER DEFAULT 0,
+			FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+		);
+		CREATE TABLE move (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			game_id INTEGER, move_number INTEGER,
+			move_type TEXT, position_id INTEGER,
+			player INTEGER, dice_1 INTEGER, dice_2 INTEGER,
+			checker_move TEXT, cube_action TEXT,
+			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+		);
+		CREATE TABLE move_analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			move_id INTEGER, analysis_type TEXT,
+			depth TEXT, equity REAL, equity_error REAL,
+			win_rate REAL, gammon_rate REAL, backgammon_rate REAL,
+			opponent_win_rate REAL, opponent_gammon_rate REAL, opponent_backgammon_rate REAL,
+			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+		);
+		CREATE TABLE collection (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE collection_position (id INTEGER PRIMARY KEY AUTOINCREMENT, collection_id INTEGER NOT NULL, position_id INTEGER NOT NULL, sort_order INTEGER DEFAULT 0, added_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE, UNIQUE(collection_id, position_id));
+		CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT, location TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		INSERT INTO metadata (key, value) VALUES ('database_version', '2.3.0');
+	`)
+	if err != nil {
+		t.Fatalf("setup schema: %v", err)
+	}
+
+	// Build analysis blob with 2 checker moves — played move is NOT the best.
+	// best move equity = 0.200, played move equity = 0.100 → error = 0.100 → 100 millipoints.
+	errVal := 0.100
+	ana := PositionAnalysis{
+		PositionID:   1,
+		AnalysisType: "CheckerMove",
+		CheckerAnalysis: &CheckerAnalysis{
+			Moves: []CheckerMove{
+				{Index: 0, Move: "13/7 8/5", Equity: 0.200, EquityError: nil},
+				{Index: 1, Move: "24/18 13/11", Equity: 0.100, EquityError: &errVal},
+			},
+		},
+		// PlayedMoves intentionally empty — simulates the bug.
+	}
+	anaData, err := encodeAnalysisForStorage(&ana)
+	if err != nil {
+		t.Fatalf("encode analysis: %v", err)
+	}
+
+	// Insert position, move (checker_move = the non-best move), and analysis.
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1, '{}', 0)`)
+	rawDB.Exec(`INSERT INTO match (id, player1_name, player2_name, match_length) VALUES (1,'A','B',7)`)
+	rawDB.Exec(`INSERT INTO game (id, match_id, game_number, initial_score_1, initial_score_2, winner, points_won) VALUES (1,1,1,0,0,0,1)`)
+	rawDB.Exec(`INSERT INTO move (id, game_id, move_number, move_type, position_id, player, checker_move) VALUES (1,1,1,'checker',1,1,'24/18 13/11')`)
+	_, err = rawDB.Exec(`INSERT INTO analysis (id, position_id, data, best_move_equity_error) VALUES (1, 1, ?, 0)`, anaData)
+	if err != nil {
+		t.Fatalf("insert analysis: %v", err)
+	}
+	rawDB.Close()
+
+	// Open database — triggers migration 2.3.0→2.4.0.
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+
+	ver, _ := d.CheckDatabaseVersion()
+	if ver != DatabaseVersion {
+		t.Errorf("expected version %s, got %s", DatabaseVersion, ver)
+	}
+
+	var moveErr float64
+	d.db.QueryRow(`SELECT best_move_equity_error FROM analysis WHERE id = 1`).Scan(&moveErr)
+	// Expected: 100 millipoints (0.100 EMG × 1000)
+	if moveErr != 100 {
+		t.Errorf("expected best_move_equity_error = 100 millipoints after repair, got %g", moveErr)
+	}
+}
+
+// TestMigrate_2_4_0_to_2_5_0_IsForced verifies that the 2.4.0→2.5.0 migration:
+//   - adds the is_forced column
+//   - sets is_forced=1 for checker positions with exactly one legal move
+//   - leaves is_forced=0 for positions with multiple legal moves
+//   - leaves is_forced=0 for cube positions
+func TestMigrate_2_4_0_to_2_5_0_IsForced(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "v240_is_forced.db")
+
+	rawDB, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open: %v", err)
+	}
+
+	// Build a minimal v2.4.0 schema (no is_forced column).
+	_, err = rawDB.Exec(`
+		CREATE TABLE position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			state TEXT,
+			decision_type INTEGER DEFAULT 0
+		);
+		CREATE TABLE analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER,
+			data BLOB,
+			best_cube_action TEXT,
+			cube_error INTEGER DEFAULT 0,
+			best_move_equity_error INTEGER DEFAULT 0,
+			player1_win_rate INTEGER DEFAULT 0,
+			player1_gammon_rate INTEGER DEFAULT 0,
+			player1_backgammon_rate INTEGER DEFAULT 0,
+			player2_win_rate INTEGER DEFAULT 0,
+			player2_gammon_rate INTEGER DEFAULT 0,
+			player2_backgammon_rate INTEGER DEFAULT 0,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		);
+		CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT);
+		CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT);
+		CREATE TABLE command_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE filter_library (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, command TEXT, edit_position TEXT);
+		CREATE TABLE search_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, position TEXT, timestamp INTEGER);
+		CREATE TABLE match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT, player2_name TEXT,
+			match_length INTEGER, match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT, game_count INTEGER DEFAULT 0,
+			match_hash TEXT, tournament_id INTEGER,
+			last_visited_position INTEGER DEFAULT -1
+		);
+		CREATE TABLE game (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			match_id INTEGER, game_number INTEGER,
+			initial_score_1 INTEGER, initial_score_2 INTEGER,
+			winner INTEGER, points_won INTEGER,
+			move_count INTEGER DEFAULT 0,
+			FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+		);
+		CREATE TABLE move (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			game_id INTEGER, move_number INTEGER,
+			move_type TEXT, position_id INTEGER,
+			player INTEGER, dice_1 INTEGER, dice_2 INTEGER,
+			checker_move TEXT, cube_action TEXT,
+			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+		);
+		CREATE TABLE move_analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			move_id INTEGER, analysis_type TEXT,
+			depth TEXT, equity REAL, equity_error REAL,
+			win_rate REAL, gammon_rate REAL, backgammon_rate REAL,
+			opponent_win_rate REAL, opponent_gammon_rate REAL, opponent_backgammon_rate REAL,
+			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+		);
+		CREATE TABLE collection (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE collection_position (id INTEGER PRIMARY KEY AUTOINCREMENT, collection_id INTEGER NOT NULL, position_id INTEGER NOT NULL, sort_order INTEGER DEFAULT 0, added_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE, UNIQUE(collection_id, position_id));
+		CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT, location TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		INSERT INTO metadata (key, value) VALUES ('database_version', '2.4.0');
+	`)
+	if err != nil {
+		t.Fatalf("setup schema: %v", err)
+	}
+
+	// Three analysis rows:
+	//   id=1: checker, 1 move → should become is_forced=1
+	//   id=2: checker, 2 moves → should stay is_forced=0
+	//   id=3: cube (decision_type=1) → should stay is_forced=0
+
+	encodeAna := func(a PositionAnalysis) []byte {
+		data, err := encodeAnalysisForStorage(&a)
+		if err != nil {
+			t.Fatalf("encode: %v", err)
+		}
+		return data
+	}
+
+	// id=1: forced checker (1 move)
+	forced := encodeAna(PositionAnalysis{
+		PositionID: 1,
+		CheckerAnalysis: &CheckerAnalysis{
+			Moves: []CheckerMove{{Index: 0, Move: "bar/20", Equity: 0.5}},
+		},
+	})
+	// id=2: unforced checker (2 moves)
+	unforced := encodeAna(PositionAnalysis{
+		PositionID: 2,
+		CheckerAnalysis: &CheckerAnalysis{
+			Moves: []CheckerMove{
+				{Index: 0, Move: "13/7 8/5", Equity: 0.300},
+				{Index: 1, Move: "24/18 13/11", Equity: 0.200},
+			},
+		},
+	})
+	// id=3: cube decision (decision_type=1)
+	cube := encodeAna(PositionAnalysis{
+		PositionID: 3,
+		DoublingCubeAnalysis: &DoublingCubeAnalysis{
+			BestCubeAction: "NoDouble",
+		},
+	})
+
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',0)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',0)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`)
+	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (1, 1, ?)`, forced)
+	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (2, 2, ?)`, unforced)
+	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (3, 3, ?)`, cube)
+	rawDB.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+
+	ver, _ := d.CheckDatabaseVersion()
+	if ver != DatabaseVersion {
+		t.Errorf("expected version %s, got %s", DatabaseVersion, ver)
+	}
+
+	// is_forced column must exist
+	var colExists int
+	d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('analysis') WHERE name='is_forced'`).Scan(&colExists)
+	if colExists != 1 {
+		t.Fatalf("is_forced column not found in analysis table after migration")
+	}
+
+	cases := []struct {
+		id       int
+		wantForced int
+		label    string
+	}{
+		{1, 1, "forced checker (1 move)"},
+		{2, 0, "unforced checker (2 moves)"},
+		{3, 0, "cube decision"},
+	}
+	for _, tc := range cases {
+		var got int
+		d.db.QueryRow(`SELECT is_forced FROM analysis WHERE id = ?`, tc.id).Scan(&got)
+		if got != tc.wantForced {
+			t.Errorf("analysis id=%d (%s): is_forced=%d, want %d", tc.id, tc.label, got, tc.wantForced)
+		}
+	}
+}
+
+// TestMigrate_2_5_0_to_2_6_0_IsCloseCube verifies that the 2.5.0→2.6.0 migration:
+//   - adds the is_close_cube column
+//   - sets is_close_cube=1 for cube positions that meet the 0.16-threshold predicate
+//   - sets is_close_cube=1 for Take/Pass positions
+//   - leaves is_close_cube=0 for clearly-not-close cube decisions
+//   - leaves is_close_cube=0 for checker positions
+func TestMigrate_2_5_0_to_2_6_0_IsCloseCube(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "v250_is_close_cube.db")
+
+	rawDB, err := sql.Open("sqlite", dbPath)
+	if err != nil {
+		t.Fatalf("open: %v", err)
+	}
+
+	_, err = rawDB.Exec(`
+		CREATE TABLE position (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			state TEXT,
+			decision_type INTEGER DEFAULT 0
+		);
+		CREATE TABLE analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			position_id INTEGER,
+			data BLOB,
+			best_cube_action TEXT,
+			cube_error INTEGER DEFAULT 0,
+			best_move_equity_error INTEGER DEFAULT 0,
+			player1_win_rate INTEGER DEFAULT 0,
+			player1_gammon_rate INTEGER DEFAULT 0,
+			player1_backgammon_rate INTEGER DEFAULT 0,
+			player2_win_rate INTEGER DEFAULT 0,
+			player2_gammon_rate INTEGER DEFAULT 0,
+			player2_backgammon_rate INTEGER DEFAULT 0,
+			is_forced INTEGER NOT NULL DEFAULT 0,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE
+		);
+		CREATE TABLE comment (id INTEGER PRIMARY KEY, position_id INTEGER, text TEXT);
+		CREATE TABLE metadata (key TEXT PRIMARY KEY, value TEXT);
+		CREATE TABLE command_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, timestamp DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE filter_library (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT, command TEXT, edit_position TEXT);
+		CREATE TABLE search_history (id INTEGER PRIMARY KEY AUTOINCREMENT, command TEXT, position TEXT, timestamp INTEGER);
+		CREATE TABLE match (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			player1_name TEXT, player2_name TEXT,
+			match_length INTEGER, match_date DATETIME,
+			import_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+			file_path TEXT, game_count INTEGER DEFAULT 0,
+			match_hash TEXT, tournament_id INTEGER,
+			last_visited_position INTEGER DEFAULT -1
+		);
+		CREATE TABLE game (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			match_id INTEGER, game_number INTEGER,
+			initial_score_1 INTEGER, initial_score_2 INTEGER,
+			winner INTEGER, points_won INTEGER,
+			move_count INTEGER DEFAULT 0,
+			FOREIGN KEY(match_id) REFERENCES match(id) ON DELETE CASCADE
+		);
+		CREATE TABLE move (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			game_id INTEGER, move_number INTEGER,
+			move_type TEXT, position_id INTEGER,
+			player INTEGER, dice_1 INTEGER, dice_2 INTEGER,
+			checker_move TEXT, cube_action TEXT,
+			FOREIGN KEY(game_id) REFERENCES game(id) ON DELETE CASCADE,
+			FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE SET NULL
+		);
+		CREATE TABLE move_analysis (
+			id INTEGER PRIMARY KEY AUTOINCREMENT,
+			move_id INTEGER, analysis_type TEXT,
+			depth TEXT, equity REAL, equity_error REAL,
+			win_rate REAL, gammon_rate REAL, backgammon_rate REAL,
+			opponent_win_rate REAL, opponent_gammon_rate REAL, opponent_backgammon_rate REAL,
+			FOREIGN KEY(move_id) REFERENCES move(id) ON DELETE CASCADE
+		);
+		CREATE TABLE collection (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, description TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		CREATE TABLE collection_position (id INTEGER PRIMARY KEY AUTOINCREMENT, collection_id INTEGER NOT NULL, position_id INTEGER NOT NULL, sort_order INTEGER DEFAULT 0, added_at DATETIME DEFAULT CURRENT_TIMESTAMP, FOREIGN KEY(collection_id) REFERENCES collection(id) ON DELETE CASCADE, FOREIGN KEY(position_id) REFERENCES position(id) ON DELETE CASCADE, UNIQUE(collection_id, position_id));
+		CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT, name TEXT NOT NULL, date TEXT, location TEXT, sort_order INTEGER DEFAULT 0, created_at DATETIME DEFAULT CURRENT_TIMESTAMP, updated_at DATETIME DEFAULT CURRENT_TIMESTAMP);
+		INSERT INTO metadata (key, value) VALUES ('database_version', '2.5.0');
+	`)
+	if err != nil {
+		t.Fatalf("setup schema: %v", err)
+	}
+
+	enc := func(a PositionAnalysis) []byte {
+		data, err := encodeAnalysisForStorage(&a)
+		if err != nil {
+			t.Fatalf("encode: %v", err)
+		}
+		return data
+	}
+
+	// id=1: cube, close (noDouble=0.52, DT=0.50 → diff=0.02 < 0.16)
+	close1 := enc(PositionAnalysis{
+		PositionID:           1,
+		PlayedCubeActions:    []string{"No Double"},
+		DoublingCubeAnalysis: &DoublingCubeAnalysis{BestCubeAction: "No Double", CubefulNoDoubleEquity: 0.52, CubefulDoubleTakeEquity: 0.50, CubefulDoublePassEquity: 1.0},
+	})
+	// id=2: cube, NOT close (noDouble=0.80, DT=0.40 → diff=0.40 >= 0.16)
+	notClose := enc(PositionAnalysis{
+		PositionID:           2,
+		PlayedCubeActions:    []string{"No Double"},
+		DoublingCubeAnalysis: &DoublingCubeAnalysis{BestCubeAction: "No Double", CubefulNoDoubleEquity: 0.80, CubefulDoubleTakeEquity: 0.40, CubefulDoublePassEquity: 1.0},
+	})
+	// id=3: Take decision — always close
+	takeDec := enc(PositionAnalysis{
+		PositionID:           3,
+		PlayedCubeActions:    []string{"Take"},
+		DoublingCubeAnalysis: &DoublingCubeAnalysis{BestCubeAction: "Double, Take", CubefulNoDoubleEquity: 0.40, CubefulDoubleTakeEquity: 0.60, CubefulDoublePassEquity: 1.0},
+	})
+	// id=4: checker position — is_close_cube must stay 0
+	checker := enc(PositionAnalysis{
+		PositionID:      4,
+		CheckerAnalysis: &CheckerAnalysis{Moves: []CheckerMove{{Index: 0, Move: "13/7", Equity: 0.3}}},
+	})
+
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (1,'{}',1)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (2,'{}',1)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (3,'{}',1)`)
+	rawDB.Exec(`INSERT INTO position (id, state, decision_type) VALUES (4,'{}',0)`)
+	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (1, 1, ?)`, close1)
+	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (2, 2, ?)`, notClose)
+	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (3, 3, ?)`, takeDec)
+	rawDB.Exec(`INSERT INTO analysis (id, position_id, data) VALUES (4, 4, ?)`, checker)
+	rawDB.Close()
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("OpenDatabase: %v", err)
+	}
+
+	ver, _ := d.CheckDatabaseVersion()
+	if ver != DatabaseVersion {
+		t.Errorf("expected version %s, got %s", DatabaseVersion, ver)
+	}
+
+	var colExists int
+	d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('analysis') WHERE name='is_close_cube'`).Scan(&colExists)
+	if colExists != 1 {
+		t.Fatalf("is_close_cube column not found after migration")
+	}
+
+	cases := []struct {
+		id        int
+		wantClose int
+		label     string
+	}{
+		{1, 1, "close cube (diff 0.02 < 0.16)"},
+		{2, 0, "not close (diff 0.40 >= 0.16)"},
+		{3, 1, "Take — always close"},
+		{4, 0, "checker position"},
+	}
+	for _, tc := range cases {
+		var got int
+		d.db.QueryRow(`SELECT is_close_cube FROM analysis WHERE id = ?`, tc.id).Scan(&got)
+		if got != tc.wantClose {
+			t.Errorf("analysis id=%d (%s): is_close_cube=%d, want %d", tc.id, tc.label, got, tc.wantClose)
+		}
 	}
 }

@@ -45,8 +45,8 @@ func TestPopulatePositionColumns_Initial(t *testing.T) {
 	}
 
 	// Cube mirrors
-	if c.CubeValue != 1 {
-		t.Errorf("CubeValue: got %d, want 1", c.CubeValue)
+	if c.CubeValue != 0 {
+		t.Errorf("CubeValue: got %d, want 0", c.CubeValue)
 	}
 	if c.CubeOwner != None {
 		t.Errorf("CubeOwner: got %d, want None (%d)", c.CubeOwner, None)
@@ -60,7 +60,7 @@ func TestPopulatePositionColumns_BackCheckers(t *testing.T) {
 	b.Points[6] = Point{Checkers: 13, Color: Black}
 	b.Points[1] = Point{Checkers: 2, Color: White}
 	b.Points[18] = Point{Checkers: 13, Color: White}
-	pos := Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0}
+	pos := Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0}
 
 	c := populatePositionColumns(&pos)
 	if c.BackCheckers1 != 2 {
@@ -80,7 +80,7 @@ func TestPopulatePositionColumns_NoContact(t *testing.T) {
 	b.Points[20] = Point{Checkers: 5, Color: White}
 	b.Points[21] = Point{Checkers: 5, Color: White}
 	b.Points[22] = Point{Checkers: 5, Color: White}
-	pos := Position{Board: b, Cube: Cube{Owner: None, Value: 1}, PlayerOnRoll: 0}
+	pos := Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0}
 
 	c := populatePositionColumns(&pos)
 	if !c.NoContact {

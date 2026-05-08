@@ -357,6 +357,14 @@ msgid "Afficher/cacher le panneau des tournois."
 msgstr "Show/hide the tournaments panel."
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-D"
+msgstr "CTRL-D"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher le panneau Stats."
+msgstr "Show the Stats panel."
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-E"
 msgstr "CTRL-E"
 

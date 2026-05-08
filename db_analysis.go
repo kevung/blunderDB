@@ -95,6 +95,8 @@ type analysisColumns struct {
 	BestCubeAction      string
 	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
 	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
+	IsForced            int64 // 1 if checker position with exactly 1 legal move, else 0
+	IsCloseCube         int64 // 1 if cube decision meets gnuBG isCloseCubedecision (threshold 0.16)
 	// Win/gammon/backgammon rates × 100 (hundredths of percent, on-roll perspective)
 	Player1WinRate        int64
 	Player1GammonRate     int64
@@ -102,6 +104,55 @@ type analysisColumns struct {
 	Player2WinRate        int64
 	Player2GammonRate     int64
 	Player2BackgammonRate int64
+}
+
+// closeCubeThreshold is the gnuBG isCloseCubedecision equity gap threshold (eval.c:5088).
+const closeCubeThreshold = 0.16
+
+// computeIsCloseCube returns 1 if the cube decision qualifies as "close" per the gnuBG
+// isCloseCubedecision predicate (gnubg/eval.c:5088-5100):
+//
+//	rDouble = min(DoubleTake equity, 1.0)
+//	isClose = (OptimalEquity - rDouble) < 0.16
+//
+// Take/Pass decisions always count as close (the cube has already been offered).
+// Returns 0 when DoublingCubeAnalysis is nil (no analysis available).
+func computeIsCloseCube(dca *DoublingCubeAnalysis, playedCubeAction string) int64 {
+	if playedCubeAction == "Take" || playedCubeAction == "Pass" {
+		return 1
+	}
+	if dca == nil {
+		return 0
+	}
+	// arDouble[OUTPUT_OPTIMAL]: equity of the best cube action.
+	// BestCubeAction is set by computeBestCubeAction / buildDoublingCubeAnalysis.
+	var rOptimal float64
+	switch dca.BestCubeAction {
+	case "No Double":
+		rOptimal = dca.CubefulNoDoubleEquity
+	case "Double, Take", "Double/Take":
+		rOptimal = dca.CubefulDoubleTakeEquity
+	case "Double, Pass", "Double/Pass":
+		rOptimal = dca.CubefulDoublePassEquity
+	default:
+		// Fallback: max of all three (matches FindBestCubeDecision logic).
+		rOptimal = dca.CubefulNoDoubleEquity
+		if dca.CubefulDoubleTakeEquity > rOptimal {
+			rOptimal = dca.CubefulDoubleTakeEquity
+		}
+		if dca.CubefulDoublePassEquity > rOptimal {
+			rOptimal = dca.CubefulDoublePassEquity
+		}
+	}
+	// arDouble[OUTPUT_TAKE] capped at 1.0 (max equity is +1.0 in money play).
+	rDouble := dca.CubefulDoubleTakeEquity
+	if rDouble > 1.0 {
+		rDouble = 1.0
+	}
+	if rOptimal-rDouble < closeCubeThreshold {
+		return 1
+	}
+	return 0
 }
 
 // populateAnalysisColumns computes scalar analysis columns from a PositionAnalysis.
@@ -131,10 +182,21 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 			switch playedCubeAction {
 			case "NoDouble", "No Double":
 				raw = dca.CubefulNoDoubleError
-			case "Double", "Double/Take":
-				raw = dca.CubefulDoubleTakeError
-			case "Double/Pass":
-				raw = dca.CubefulDoublePassError
+			case "Double", "Double/Take", "Double/Pass":
+				// Doubler's error = min(DT, DP) - bestEquity (gnuBG rSkill formula).
+				// Using min(DT,DP) ensures we measure what the doubler CONTROLS: the
+				// opponent will respond optimally (take if DT<DP, pass if DP<DT).
+				// This avoids falsely charging the doubler when the opponent errs
+				// (e.g. wrongly passes when DT<DP, or wrongly takes when DT>DP).
+				raw = math.Min(dca.CubefulDoubleTakeError, dca.CubefulDoublePassError)
+			case "Take":
+				// Taker's error: DT equity vs DP equity (from doubler's perspective).
+				// Error is negative when it was wrong to take (DT < DP).
+				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoubleTakeEquity
+			case "Pass":
+				// Passer's error: DP equity vs DT equity (from doubler's perspective).
+				// Error is negative when it was wrong to pass (DP < DT).
+				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoublePassEquity
 			}
 			c.CubeError = int64(math.Round(math.Abs(raw) * 1000))
 		}
@@ -150,14 +212,29 @@ func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction s
 	}
 
 	// Best-move equity error: the equity error of the played checker move vs Moves[0], scaled × 1000.
+	// Normalize both sides before comparing: mergePlayedMoves stores normalized move strings
+	// (e.g. "13/8 24/23") while analysis moves may retain the original order ("24/23 13/8").
 	if playedMove != "" && a.CheckerAnalysis != nil {
+		normPlayed := normalizeMove(playedMove)
 		for _, m := range a.CheckerAnalysis.Moves {
-			if m.Move == playedMove && m.EquityError != nil {
+			if normalizeMove(m.Move) == normPlayed && m.EquityError != nil {
 				c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
 				break
 			}
 		}
 	}
+
+	// is_forced: checker position with exactly one legal move (no real choice).
+	// Note: gnuBG imports set DoublingCubeAnalysis on checker positions for cube
+	// display, so DoublingCubeAnalysis != nil does NOT imply a cube decision.
+	// CheckerAnalysis is only set by the importers for checker positions (decision_type=0),
+	// so checking CheckerAnalysis alone is sufficient.
+	if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) == 1 {
+		c.IsForced = 1
+	}
+
+	// is_close_cube: cube decision qualifies as "close" per gnuBG isCloseCubedecision.
+	c.IsCloseCube = computeIsCloseCube(a.DoublingCubeAnalysis, playedCubeAction)
 
 	return c
 }
@@ -269,13 +346,15 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			data=?, best_cube_action=?, cube_error=?,
 			best_move_equity_error=?,
 			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
-			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?
+			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
+			is_forced=?, is_close_cube=?
 			WHERE id=?`,
 			analysisData,
 			aCols.BestCubeAction, aCols.CubeError,
 			aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
 			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			aCols.IsForced, aCols.IsCloseCube,
 			existingID)
 		if err != nil {
 			return err
@@ -333,12 +412,14 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			position_id, data,
 			best_cube_action, cube_error, best_move_equity_error,
 			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
-			player2_win_rate, player2_gammon_rate, player2_backgammon_rate
-		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?)`,
+			player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
+			is_forced, is_close_cube
+		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?)`,
 			positionID, analysisData,
 			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
 			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
-			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate)
+			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
+			aCols.IsForced, aCols.IsCloseCube)
 		if err != nil {
 			return err
 		}

@@ -336,23 +336,63 @@ Shows position details:
 ./blunderdb list --db database.db --type stats
 ```
 
-Displays comprehensive database statistics:
-- Number of positions
-- Number of analyses
-- Number of matches
-- Number of games
-- Number of moves
+Displays comprehensive performance statistics: PR/MWC metrics, Snowie Error Rate, rolling performance, top blunders, cube-action breakdown, and an error histogram.
 
-**Example output:**
-```
-Database Statistics:
+**Options (stats-specific):**
+- `--metric pr|mwc` — Metric displayed in the text report (default: `pr`). `mwc` shows WC-loss values; money-game positions show `—`.
+- `--player <name>` — Restrict to decisions where the named player is on move.
+- `--tournament <id[,id,…]>` — Restrict to one or more tournament IDs (comma-separated).
+- `--from <YYYY-MM-DD>` — Include only matches on or after this date.
+- `--to <YYYY-MM-DD>` — Include only matches on or before this date.
+- `--decision-type all|checker|cube` — Restrict to a decision kind (default: `all`).
+- `--top-blunders N` — Number of top blunders listed (default: 10).
+- `--format text|json` — Output format (default: `text`). `json` marshals the full `StatsResult` struct.
 
-  Positions: 1523
-  Analyses: 847
-  Matches: 12
-  Games: 156
-  Moves: 3421
+**Examples:**
+
+```bash
+# Basic text report
+./blunderdb list --db database.db --type stats
+
+# MWC metric with player filter
+./blunderdb list --db database.db --type stats --metric mwc --player "Alice"
+
+# Checker-play only, last 6 months
+./blunderdb list --db database.db --type stats \
+  --decision-type checker --from 2025-01-01
+
+# Machine-readable JSON for scripting
+./blunderdb list --db database.db --type stats --format json
 ```
+
+**Text output sections:**
+
+1. **Header** — DB path, active filters, chosen metric.
+2. **Totals** — positions, matches, tournaments, decisions.
+3. **PR / Snowie ER / MWC** — global, checker, and cube values. PR counts only unforced checker plays and close cube decisions (seuil 0.16 d'équité), aligned with eXtreme Gammon. Snowie ER uses the same error numerator but divides by the total moves of both players (forced included).
+4. **Rolling PR / MWC** — values for N = 5, 10, 50, 100, 250, 500, 1000 most-recent decisions.
+5. **Top N Blunders** — position ID, type, error in EMG, MWC loss, date, players.
+6. **Cube Action Breakdown** — per action: decisions, blunders, blunder %, PR, MWC.
+7. **Error Histogram** — decision counts by error-magnitude bucket (0–0.005 … ≥0.1 EMG).
+
+**JSON output fields** (top-level):
+
+| Field | Type | Description |
+|---|---|---|
+| `totals` | object | `num_positions`, `num_matches`, `num_tournaments`, `num_decisions` |
+| `pr_global` | float | Global PR (unforced checker + close cube decisions) |
+| `pr_checker` | float | Checker-play PR (unforced moves only) |
+| `pr_cube` | float | Cube-action PR (close cube decisions only) |
+| `snowie_global` | float | Snowie Error Rate (same error sum, denominator = total moves of both players) |
+| `pr_rolling` | object | Rolling PR keyed by N (5 … 1000) |
+| `mwc_global` | float | Total MWC loss (match-play decisions) |
+| `mwc_available` | bool | `false` for money-game-only data sets |
+| `per_tournament` | array | Per-tournament PR and MWC |
+| `per_match` | array | Per-match PR and MWC |
+| `cube_action_breakdown` | array | Per cube action stats |
+| `error_histogram` | array | Bucket counts |
+| `top_blunders` | array | Top blunder entries |
+
 
 ## Delete Command
 

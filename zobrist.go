@@ -67,20 +67,6 @@ func init() {
 	}
 }
 
-// cubeValueIndex maps a cube value (1,2,4,…,1024) to an index 0..10.
-func cubeValueIndex(v int) int {
-	idx := 0
-	n := v
-	for n > 1 {
-		n >>= 1
-		idx++
-	}
-	if idx > 10 {
-		idx = 10
-	}
-	return idx
-}
-
 // cubeOwnerIndex maps cube owner (None=-1, Black=0, White=1) to index 0..2.
 func cubeOwnerIndex(owner int) int {
 	if owner < 0 {
@@ -140,8 +126,9 @@ func ZobristHash(p *Position) uint64 {
 		h ^= zobristDice[0][0]
 	}
 
-	// Cube
-	h ^= zobristCubeValue[cubeValueIndex(norm.Cube.Value)]
+	// Cube — Cube.Value is the exponent (0 = cube at 1, 1 = cube at 2, …).
+	// Use cubeExponentIndex directly (it expects the exponent form).
+	h ^= zobristCubeValue[cubeExponentIndex(norm.Cube.Value)]
 	h ^= zobristCubeOwner[cubeOwnerIndex(norm.Cube.Owner)]
 
 	// Score (clamped to [0, 63])
@@ -176,4 +163,17 @@ func ZobristHash(p *Position) uint64 {
 	h ^= zobristDecisionType[dt]
 
 	return h
+}
+
+// cubeExponentIndex returns the Zobrist array index for a Position.Cube.Value.
+// Position.Cube.Value is the cube exponent (0 = cube at 1, 1 = cube at 2,
+// 2 = cube at 4, …, 10 = cube at 1024). This is a direct bounds clamp.
+func cubeExponentIndex(exp int) int {
+	if exp < 0 {
+		return 0
+	}
+	if exp > 10 {
+		return 10
+	}
+	return exp
 }

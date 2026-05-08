@@ -262,7 +262,10 @@
         if (s === 'double/pass' || s === 'doublepass') return ['double', 'pass'];
         if (s === 'nodouble' || s === 'nodoubleorredouble' || s === 'noredouble') return ['nodouble'];
         if (s === 'redouble') return ['double'];
-        return [s]; // "double", "take", "pass", etc.
+        // Standalone take/pass (opponent's response): map to the combined row
+        if (s === 'take') return ['double', 'take'];
+        if (s === 'pass' || s === 'drop') return ['double', 'pass'];
+        return [s]; // "double", etc.
     }
 
     function isPlayedCubeAction(action) {
@@ -629,7 +632,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {#each sortedMoves as move (move.move)}
+                    {#each sortedMoves as move (move.index ?? move.move)}
                         <tr class:selected={$selectedMoveStore === move.move} class:played={isPlayedMove(move)} onclick={() => handleMoveRowClick(move)}>
                             <td>{move.move}</td>
                             <td>{formatEquity(move.equity || 0)}</td>

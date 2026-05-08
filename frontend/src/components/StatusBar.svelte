@@ -19,18 +19,15 @@
     let { onCommand = (_cmd) => {} } = $props();
 
     let inputEl = $state();
-    let showInput = $state(false);
-    let commandHistory = [];
+    let showInput = $derived($showCommandInputStore);
+    let commandHistory = $derived($commandHistoryStore);
     let historyIndex = -1;
 
-    commandHistoryStore.subscribe((value) => (commandHistory = value));
-
-    showCommandInputStore.subscribe(async (value) => {
-        showInput = value;
-        if (value) {
-            await loadHistory();
-            await tick();
-            inputEl?.focus();
+    $effect(() => {
+        if ($showCommandInputStore) {
+            loadHistory()
+                .then(() => tick())
+                .then(() => inputEl?.focus());
         }
     });
 
@@ -184,14 +181,14 @@
     });
 </script>
 
-<div class="status-bar" role="status" aria-live="polite">
+<div class="status-bar" role="status" aria-live="polite" data-testid="status-bar">
     {#if showInput}
         <div class="command-input-row">
             <span class="prompt-char">&gt;</span>
             <input type="text" bind:this={inputEl} bind:value={$commandTextStore} class="command-input" placeholder="Type command..." onkeydown={handleKeyDown} onblur={hideInput} />
         </div>
     {:else}
-        <span class="info-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
+        <span class="info-message" data-testid="status-bar-message" title={$statusBarTextStore}>{$statusBarTextStore}</span>
     {/if}
     {#if $matchContextStore.isMatchMode && $matchContextStore.movePositions.length > 0}
         {@const checkerMoves = $matchContextStore.movePositions.filter((p) => p.move_type === 'checker')}

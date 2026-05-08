@@ -221,15 +221,15 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 
 			var batch []struct {
 				id   int64
-				data string
+				data []byte
 			}
 			for rows.Next() {
 				var id int64
-				var data string
+				var data []byte
 				if err := rows.Scan(&id, &data); err == nil {
 					batch = append(batch, struct {
 						id   int64
-						data string
+						data []byte
 					}{id, data})
 				}
 			}
@@ -241,8 +241,8 @@ func (d *Database) migrate_1_9_0_to_2_0_0() error {
 
 			for _, row := range batch {
 				lastID = row.id
-				var ana PositionAnalysis
-				if err := json.Unmarshal([]byte(row.data), &ana); err != nil {
+				ana, err := decodeAnalysisFromStorage(row.data)
+				if err != nil {
 					continue
 				}
 				playedMove := ""
@@ -690,5 +690,487 @@ func (d *Database) migrate_2_2_0_to_2_3_0() error {
 	}
 
 	slog.Info("database upgraded", "from", "2.2.0", "to", "2.3.0")
+	return nil
+}
+
+// migrate_2_3_0_to_2_4_0 repairs the best_move_equity_error scalar column for
+// checker positions where it was stored as 0 because PlayedMoves was missing from
+// the analysis JSON blob at the time of earlier migrations.
+//
+// Root cause: older import code did not always set PositionAnalysis.PlayedMoves in
+// the JSON blob. All migration passes that recomputed best_move_equity_error relied
+// solely on the JSON's PlayedMoves/PlayedMove fields; they never fell back to
+// move.checker_move. As a result, best_move_equity_error stayed 0 even for
+// positions where the player made a sub-optimal checker move.
+//
+// This migration:
+//  1. Queries all analysis rows where best_move_equity_error = 0.
+//  2. For each, looks up the played checker move from move.checker_move.
+//  3. Decodes the analysis blob, matches the played move against CheckerAnalysis.Moves.
+//  4. If the played move is found at index > 0, updates best_move_equity_error.
+//
+// The caller must hold d.mu.
+func (d *Database) migrate_2_3_0_to_2_4_0() error {
+	var anaTotal int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis WHERE best_move_equity_error = 0`).Scan(&anaTotal)
+
+	if anaTotal > 0 {
+		// Prepare lookup: given an analysis id, find the played checker move
+		// for the corresponding position.
+		lookupCheckerMove, err := d.db.Prepare(`
+                        SELECT mv.checker_move
+                        FROM move mv
+                        JOIN analysis a ON a.position_id = mv.position_id
+                        WHERE a.id = ?
+                          AND mv.checker_move IS NOT NULL AND mv.checker_move != ''
+                          AND mv.move_type = 'checker'
+                        LIMIT 1`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.4.0 prepare checker move lookup: %w", err)
+		}
+		defer lookupCheckerMove.Close()
+
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET best_move_equity_error=? WHERE id=?`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.4.0 prepare update: %w", err)
+		}
+		defer updateStmt.Close()
+
+		const batchSize = 1000
+		var lastID int64 = 0
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(
+				`SELECT id, data FROM analysis WHERE best_move_equity_error = 0 AND id > ? ORDER BY id LIMIT ?`,
+				lastID, batchSize)
+			if err != nil {
+				return fmt.Errorf("migrate 2.4.0 query: %w", err)
+			}
+
+			type anaRow struct {
+				id   int64
+				data []byte
+			}
+			var batch []anaRow
+			for rows.Next() {
+				var r anaRow
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+
+				ana, err := decodeAnalysisFromStorage(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+
+				// Skip if analysis already has a played move (shouldn't happen here,
+				// but be safe — re-derive the error from the existing PlayedMoves).
+				playedMove := ""
+				if len(ana.PlayedMoves) > 0 {
+					playedMove = ana.PlayedMoves[0]
+				} else if ana.PlayedMove != "" {
+					playedMove = ana.PlayedMove
+				}
+
+				// If no played move in JSON, fall back to move.checker_move.
+				if playedMove == "" && ana.CheckerAnalysis != nil {
+					var cm sql.NullString
+					if err := lookupCheckerMove.QueryRow(r.id).Scan(&cm); err == nil && cm.Valid {
+						playedMove = cm.String
+					}
+				}
+
+				if playedMove == "" {
+					done++
+					continue
+				}
+
+				ac := populateAnalysisColumns(&ana, playedMove, "")
+				if ac.BestMoveEquityError != 0 {
+					_, _ = updateStmt.Exec(ac.BestMoveEquityError, r.id)
+				}
+				done++
+				if done%200 == 0 {
+					d.emitMigrationProgress("repair_move_error", done, anaTotal)
+				}
+			}
+		}
+		d.emitMigrationProgress("repair_move_error", anaTotal, anaTotal)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.4.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.3.0", "to", "2.4.0")
+	return nil
+}
+
+// migrate_2_4_0_to_2_5_0 adds the is_forced column to analysis and backfills
+// checker positions where exactly one legal move was stored (len(Moves) == 1).
+//
+// A position is "forced" in the gnuBG sense when there is only one legal checker
+// play (pmr->ml.cMoves == 1 in gnubg/analysis.c:458). blunderDB detects this by
+// checking that CheckerAnalysis.Moves has exactly one entry.
+func (d *Database) migrate_2_4_0_to_2_5_0() error {
+	// Add the column (idempotent: no-op if it already exists after a partial run).
+	if _, err := d.db.Exec(`ALTER TABLE analysis ADD COLUMN is_forced INTEGER NOT NULL DEFAULT 0`); err != nil {
+		// SQLite returns "duplicate column name" on repeat; ignore that specific error.
+		if err.Error() != `duplicate column name: is_forced` {
+			return fmt.Errorf("migrate 2.5.0 add column: %w", err)
+		}
+	}
+
+	// Partial index: accelerates queries that filter on is_forced = 1.
+	if _, err := d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_analysis_is_forced ON analysis(is_forced) WHERE is_forced = 1`); err != nil {
+		return fmt.Errorf("migrate 2.5.0 create index: %w", err)
+	}
+
+	// Backfill: find all checker analysis rows (position.decision_type = 0) and
+	// set is_forced = 1 for those with exactly one candidate move.
+	var total int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis a JOIN position p ON p.id = a.position_id WHERE p.decision_type = 0`).Scan(&total)
+
+	if total > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET is_forced = 1 WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.5.0 prepare update: %w", err)
+		}
+		defer updateStmt.Close()
+
+		tx, err := d.db.Begin()
+		if err != nil {
+			return fmt.Errorf("migrate 2.5.0 begin tx: %w", err)
+		}
+
+		const batchSize = 1000
+		var lastID int64
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				tx.Rollback()
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(`
+				SELECT a.id, a.data
+				FROM analysis a
+				JOIN position p ON p.id = a.position_id
+				WHERE p.decision_type = 0 AND a.id > ?
+				ORDER BY a.id LIMIT ?`, lastID, batchSize)
+			if err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.5.0 query: %w", err)
+			}
+
+			type row struct {
+				id   int64
+				data []byte
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				ana, err := decodeAnalysisFromStorage(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+				if ana.CheckerAnalysis != nil && len(ana.CheckerAnalysis.Moves) == 1 {
+					if _, err := tx.Stmt(updateStmt).Exec(r.id); err != nil {
+						tx.Rollback()
+						return fmt.Errorf("migrate 2.5.0 update: %w", err)
+					}
+				}
+				done++
+				if done%500 == 0 {
+					d.emitMigrationProgress("is_forced_backfill", done, total)
+				}
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return fmt.Errorf("migrate 2.5.0 commit: %w", err)
+		}
+		d.emitMigrationProgress("is_forced_backfill", total, total)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.5.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.4.0", "to", "2.5.0")
+	return nil
+}
+
+// migrate_2_5_0_to_2_6_0 adds the is_close_cube column to analysis and backfills
+// cube positions using the gnuBG isCloseCubedecision predicate (eval.c:5088):
+//
+//	rDouble = min(DoubleTakeEquity, 1.0)
+//	isClose = (OptimalEquity - rDouble) < 0.16
+//
+// Take/Pass positions always get is_close_cube = 1 (cube was already offered).
+func (d *Database) migrate_2_5_0_to_2_6_0() error {
+	if _, err := d.db.Exec(`ALTER TABLE analysis ADD COLUMN is_close_cube INTEGER NOT NULL DEFAULT 0`); err != nil {
+		if err.Error() != `duplicate column name: is_close_cube` {
+			return fmt.Errorf("migrate 2.6.0 add column: %w", err)
+		}
+	}
+
+	if _, err := d.db.Exec(`CREATE INDEX IF NOT EXISTS idx_analysis_is_close_cube ON analysis(is_close_cube) WHERE is_close_cube = 1`); err != nil {
+		return fmt.Errorf("migrate 2.6.0 create index: %w", err)
+	}
+
+	// Backfill all cube positions (decision_type = 1).
+	var total int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM analysis a JOIN position p ON p.id = a.position_id WHERE p.decision_type = 1`).Scan(&total)
+
+	if total > 0 {
+		updateStmt, err := d.db.Prepare(`UPDATE analysis SET is_close_cube = 1 WHERE id = ?`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.6.0 prepare update: %w", err)
+		}
+		defer updateStmt.Close()
+
+		// Also look up played cube action from the move table for Take/Pass detection.
+		lookupAction, err := d.db.Prepare(`
+			SELECT COALESCE(mv.cube_action, '')
+			FROM move mv
+			JOIN analysis a ON a.position_id = mv.position_id
+			WHERE a.id = ? AND mv.cube_action IS NOT NULL AND mv.cube_action != ''
+			LIMIT 1`)
+		if err != nil {
+			return fmt.Errorf("migrate 2.6.0 prepare action lookup: %w", err)
+		}
+		defer lookupAction.Close()
+
+		tx, err := d.db.Begin()
+		if err != nil {
+			return fmt.Errorf("migrate 2.6.0 begin tx: %w", err)
+		}
+
+		const batchSize = 1000
+		var lastID int64
+		done := 0
+
+		for {
+			if atomic.LoadInt32(&d.importCancelled) != 0 {
+				tx.Rollback()
+				return fmt.Errorf("migration cancelled")
+			}
+
+			rows, err := d.db.Query(`
+				SELECT a.id, a.data
+				FROM analysis a
+				JOIN position p ON p.id = a.position_id
+				WHERE p.decision_type = 1 AND a.id > ?
+				ORDER BY a.id LIMIT ?`, lastID, batchSize)
+			if err != nil {
+				tx.Rollback()
+				return fmt.Errorf("migrate 2.6.0 query: %w", err)
+			}
+
+			type row struct {
+				id   int64
+				data []byte
+			}
+			var batch []row
+			for rows.Next() {
+				var r row
+				if err := rows.Scan(&r.id, &r.data); err == nil {
+					batch = append(batch, r)
+				}
+			}
+			rows.Close()
+
+			if len(batch) == 0 {
+				break
+			}
+
+			for _, r := range batch {
+				lastID = r.id
+				ana, err := decodeAnalysisFromStorage(r.data)
+				if err != nil {
+					done++
+					continue
+				}
+
+				// Determine the played cube action from the move table if not in blob.
+				playedAction := ""
+				if len(ana.PlayedCubeActions) > 0 {
+					playedAction = ana.PlayedCubeActions[0]
+				} else if ana.PlayedCubeAction != "" {
+					playedAction = ana.PlayedCubeAction
+				}
+				if playedAction == "" {
+					var ca string
+					if err := lookupAction.QueryRow(r.id).Scan(&ca); err == nil {
+						playedAction = ca
+					}
+				}
+
+				if computeIsCloseCube(ana.DoublingCubeAnalysis, playedAction) == 1 {
+					if _, err := tx.Stmt(updateStmt).Exec(r.id); err != nil {
+						tx.Rollback()
+						return fmt.Errorf("migrate 2.6.0 update: %w", err)
+					}
+				}
+				done++
+				if done%500 == 0 {
+					d.emitMigrationProgress("is_close_cube_backfill", done, total)
+				}
+			}
+		}
+
+		if err := tx.Commit(); err != nil {
+			return fmt.Errorf("migrate 2.6.0 commit: %w", err)
+		}
+		d.emitMigrationProgress("is_close_cube_backfill", total, total)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.6.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.5.0", "to", "2.6.0")
+	return nil
+}
+
+// migrate_2_6_0_to_2_7_0 fixes Zobrist hashes that were computed with the wrong
+// cube-value convention. The ZobristHash function received Cube.Value as an EXPONENT
+// (0=cube@1, 1=cube@2, 2=cube@4, …) but passed it to cubeValueIndex() which expects
+// the ACTUAL cube value (1, 2, 4, 8, …). For exponent=0 both functions return index 0,
+// so those hashes are correct. For exponent >= 1 the old index was floor(log2(exp))
+// instead of exp, producing wrong (and sometimes colliding) hashes.
+//
+// Fix: recompute the ZobristHash from the stored position state for every position
+// with cube_value >= 1. This is idempotent: already-correct hashes are unchanged
+// (recomputing with the fixed function returns the same correct value).
+func (d *Database) migrate_2_6_0_to_2_7_0() error {
+	// If the position table doesn't yet have a zobrist_hash column (possible when
+	// migrating from a very old schema that was never at 2.0.0), skip the
+	// hash-patching step — the hashes will be computed correctly on first use.
+	var colCount int
+	_ = d.db.QueryRow(`SELECT COUNT(*) FROM pragma_table_info('position') WHERE name='zobrist_hash'`).Scan(&colCount)
+	if colCount == 0 {
+		if _, err := d.db.Exec(`UPDATE metadata SET value='2.7.0' WHERE key='database_version'`); err != nil {
+			return fmt.Errorf("migrate 2.7.0 version bump: %w", err)
+		}
+		slog.Info("database upgraded", "from", "2.6.0", "to", "2.7.0", "positions_rehashed", 0)
+		return nil
+	}
+
+	rows, err := d.db.Query(`SELECT id, state, decision_type, player_on_roll, dice_1, dice_2, cube_value, cube_owner, score_1, score_2, has_jacoby, has_beaver FROM position WHERE cube_value >= 1`)
+	if err != nil {
+		return fmt.Errorf("migrate 2.7.0 query positions: %w", err)
+	}
+
+	type fix struct {
+		id      int64
+		newHash int64
+	}
+	var fixes []fix
+	for rows.Next() {
+		var id int64
+		var state string
+		var decisionType, playerOnRoll, dice1, dice2, cubeValue, cubeOwner, score1, score2, hasJacoby, hasBeaver int
+		if err := rows.Scan(&id, &state, &decisionType, &playerOnRoll, &dice1, &dice2, &cubeValue, &cubeOwner, &score1, &score2, &hasJacoby, &hasBeaver); err != nil {
+			rows.Close()
+			return fmt.Errorf("migrate 2.7.0 scan: %w", err)
+		}
+		pos := reconstructPosition(id, state, decisionType, playerOnRoll, dice1, dice2, cubeValue, cubeOwner, score1, score2, hasJacoby, hasBeaver)
+		newHash := ZobristHash(&pos)
+		fixes = append(fixes, fix{id: id, newHash: int64(newHash)})
+	}
+	rows.Close()
+
+	if len(fixes) == 0 {
+		if _, err := d.db.Exec(`UPDATE metadata SET value='2.7.0' WHERE key='database_version'`); err != nil {
+			return fmt.Errorf("migrate 2.7.0 version bump: %w", err)
+		}
+		slog.Info("database upgraded", "from", "2.6.0", "to", "2.7.0", "positions_rehashed", 0)
+		return nil
+	}
+
+	// Drop the unique index before bulk-updating hashes to avoid transient
+	// uniqueness violations (two rows may temporarily have the same hash during
+	// the update pass).
+	if _, err := d.db.Exec(`DROP INDEX IF EXISTS idx_position_zobrist`); err != nil {
+		return fmt.Errorf("migrate 2.7.0 drop index: %w", err)
+	}
+
+	tx, err := d.db.Begin()
+	if err != nil {
+		return fmt.Errorf("migrate 2.7.0 begin tx: %w", err)
+	}
+
+	stmt, err := tx.Prepare(`UPDATE position SET zobrist_hash = ? WHERE id = ?`)
+	if err != nil {
+		tx.Rollback()
+		return fmt.Errorf("migrate 2.7.0 prepare update: %w", err)
+	}
+	defer stmt.Close()
+
+	for _, f := range fixes {
+		if atomic.LoadInt32(&d.importCancelled) != 0 {
+			tx.Rollback()
+			return fmt.Errorf("migration cancelled")
+		}
+		if _, err := stmt.Exec(f.newHash, f.id); err != nil {
+			tx.Rollback()
+			return fmt.Errorf("migrate 2.7.0 update id %d: %w", f.id, err)
+		}
+	}
+
+	if err := tx.Commit(); err != nil {
+		return fmt.Errorf("migrate 2.7.0 commit: %w", err)
+	}
+
+	// Recreate the unique index. If there are genuine hash collisions after the
+	// fix (astronomically unlikely), this will fail — treat as a hard error.
+	if _, err := d.db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_position_zobrist ON position(zobrist_hash)`); err != nil {
+		return fmt.Errorf("migrate 2.7.0 recreate unique index: %w", err)
+	}
+
+	_, _ = d.db.Exec(`ANALYZE`)
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.7.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.7.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.6.0", "to", "2.7.0", "positions_rehashed", len(fixes))
 	return nil
 }

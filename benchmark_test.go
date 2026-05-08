@@ -351,7 +351,7 @@ func BenchmarkZobristHash(b *testing.B) {
 				pts[24] = Point{Checkers: 6, Color: White}
 				return pts
 			}()},
-			Cube:         Cube{Value: 2, Owner: 0},
+			Cube:         Cube{Value: 1, Owner: 0}, // exponent 1 = cube at 2
 			DecisionType: CubeAction,
 		},
 	}

@@ -1,6 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
+    import { get } from 'svelte/store';
     import {
         GetAllMatches,
         DeleteMatch,
@@ -12,26 +13,40 @@
         GetAllTournaments,
         SetMatchTournamentByName,
         SwapMatchPlayers,
-        SaveLastVisitedPosition
+        SaveLastVisitedPosition,
+        GetMatchDetailStats
     } from '../../wailsjs/go/main/Database.js';
+    import MergePlayersModal from './MergePlayersModal.svelte';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
-    import { statusBarModeStore, openPanels, PANEL, closePanel, matchPanelRefreshTriggerStore, positionReloadTriggerStore, statusBarTextStore, activeTabStore } from '../stores/uiStore';
+    import {
+        statusBarModeStore,
+        openPanels,
+        PANEL,
+        closePanel,
+        matchPanelRefreshTriggerStore,
+        dbMutationCounterStore,
+        positionReloadTriggerStore,
+        statusBarTextStore,
+        activeTabStore
+    } from '../stores/uiStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
     import { tournamentsStore } from '../stores/tournamentStore';
 
     let matches = $state([]);
     let selectedMatch = $state(null);
-    let visible = $state(false);
-    let lastVisitedMatch = null;
-    let tournaments = $state([]);
+    const visible = $derived($openPanels.has(PANEL.MATCH));
+    let lastVisitedMatch = $derived($lastVisitedMatchStore);
+    let tournaments = $derived($tournamentsStore || []);
 
     // Detail pane state
     let detailMatch = $state(null); // Match currently shown in detail pane
     let detailMovePositions = $state([]); // MatchMovePosition[] for the detail match
     let detailGames = $state([]); // Game[] for the detail match
-    let detailView = $state('transcript'); // 'transcript' | 'metadata'
+    let detailView = $state('transcript'); // 'transcript' | 'metadata' | 'stats'
     let loadingDetail = $state(false);
+    let detailStats = $state(null); // MatchDetailStats for the detail match
+    let loadingStats = $state(false);
 
     // Sorting state
     let sortColumn = $state(null); // null | 'player1' | 'player2' | 'date' | 'length' | 'tournament'
@@ -50,58 +65,72 @@
     let editPlayer2Value = $state('');
     let editDateValue = $state('');
 
+    // Merge players modal
+    let showMergePlayersModal = $state(false);
+
     // Inline match comment editing
     let editingDetailComment = $state(false);
     let editDetailCommentText = $state('');
 
-    lastVisitedMatchStore.subscribe((value) => {
-        lastVisitedMatch = value;
-    });
-
-    tournamentsStore.subscribe((value) => {
-        tournaments = value || [];
-    });
-
-    // Subscribe to refresh trigger to reload matches when a new match is imported
-    matchPanelRefreshTriggerStore.subscribe(async () => {
-        if (visible) {
-            await loadMatches();
-            // If we have a last visited match, try to re-select it
-            if (lastVisitedMatch && lastVisitedMatch.matchID) {
-                selectedMatch = matches.find((m) => m.id === lastVisitedMatch.matchID);
-                if (selectedMatch) await loadMatchDetail(selectedMatch);
+    // Reload matches when a new match is imported (trigger increments from 0)
+    $effect(() => {
+        const trigger = $matchPanelRefreshTriggerStore;
+        if (trigger === 0) return; // skip initial run
+        if (untrack(() => !visible)) return;
+        loadMatches().then(() => {
+            const lvm = lastVisitedMatch;
+            if (lvm && lvm.matchID) {
+                const m = matches.find((mm) => mm.id === lvm.matchID);
+                if (m) {
+                    selectedMatch = m;
+                    loadMatchDetail(m);
+                }
             }
-        }
+        });
     });
 
-    openPanels.subscribe(async (value) => {
-        const wasVisible = visible;
-        visible = value.has(PANEL.MATCH);
-        if (visible && !wasVisible) {
-            await loadMatches();
-            if (lastVisitedMatch && lastVisitedMatch.matchID) {
-                selectedMatch = matches.find((m) => m.id === lastVisitedMatch.matchID);
-                if (selectedMatch) await loadMatchDetail(selectedMatch);
-            } else {
-                selectedMatch = null;
-                detailMatch = null;
-            }
-        } else if (!visible && wasVisible) {
+    // Track panel open/close transitions and load data on open
+    let _prevVisible = false;
+    $effect(() => {
+        const opened = visible; // $derived — tracked
+        const wasVisible = _prevVisible;
+        _prevVisible = opened;
+        if (opened && !wasVisible) {
+            loadMatches().then(() => {
+                const lvm = lastVisitedMatch;
+                if (lvm && lvm.matchID) {
+                    const m = matches.find((mm) => mm.id === lvm.matchID);
+                    if (m) {
+                        selectedMatch = m;
+                        loadMatchDetail(m);
+                    } else {
+                        selectedMatch = null;
+                        detailMatch = null;
+                    }
+                } else {
+                    selectedMatch = null;
+                    detailMatch = null;
+                }
+            });
+        } else if (!opened && wasVisible) {
             selectedMatch = null;
             detailMatch = null;
+            detailStats = null;
             editingTournamentMatchId = null;
         }
     });
 
     async function loadMatches() {
-        try {
-            const loadedMatches = await GetAllMatches();
-            matches = loadedMatches || [];
-            await loadTournaments();
-        } catch (error) {
-            logger.error('Error loading matches:', error);
-            matches = [];
-        }
+        return logger.perf('MatchPanel:loadMatches', async () => {
+            try {
+                const loadedMatches = await GetAllMatches();
+                matches = loadedMatches || [];
+                await loadTournaments();
+            } catch (error) {
+                logger.error('Error loading matches:', error);
+                matches = [];
+            }
+        });
     }
 
     async function loadTournaments() {
@@ -317,6 +346,10 @@
                 return match.match_length || 0;
             case 'tournament':
                 return match.tournament_name || match.event || '';
+            case 'pr':
+                return match.pr || 0;
+            case 'mwc':
+                return match.mwc_loss || 0;
             default:
                 return '';
         }
@@ -339,6 +372,7 @@
             detailMatch = null;
             detailMovePositions = [];
             detailGames = [];
+            detailStats = null;
         } else {
             selectedMatch = match;
             loadMatchDetail(match);
@@ -349,6 +383,7 @@
         if (!match) return;
         loadingDetail = true;
         detailMatch = match;
+        detailStats = null; // reset stats when switching match
         try {
             const [movePositions, games] = await Promise.all([GetMatchMovePositions(match.id), GetGamesByMatch(match.id)]);
             detailMovePositions = movePositions || [];
@@ -359,6 +394,25 @@
             detailGames = [];
         }
         loadingDetail = false;
+    }
+
+    async function loadMatchStats(match) {
+        if (!match || loadingStats) return;
+        loadingStats = true;
+        try {
+            detailStats = await GetMatchDetailStats(match.id);
+        } catch (error) {
+            logger.error('Error loading match stats:', error);
+            detailStats = null;
+        }
+        loadingStats = false;
+    }
+
+    function switchDetailView(view) {
+        detailView = view;
+        if (view === 'stats' && detailMatch && !detailStats && !loadingStats) {
+            loadMatchStats(detailMatch);
+        }
     }
 
     // Group move positions by game number for transcript display
@@ -501,9 +555,11 @@
                 detailMatch = null;
                 detailMovePositions = [];
                 detailGames = [];
+                detailStats = null;
             }
             // Trigger match panel refresh to update all dependent components
             matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
             // Trigger position reload to reflect deleted positions
             positionReloadTriggerStore.update((n) => n + 1);
             statusBarTextStore.set('Match deleted');
@@ -520,9 +576,7 @@
             await loadMatches();
 
             // If we are currently viewing this match in match mode, update context
-            let currentContext = null;
-            const unsub = matchContextStore.subscribe((v) => (currentContext = v));
-            unsub();
+            const currentContext = get(matchContextStore);
             if (currentContext && currentContext.isMatchMode && currentContext.matchID === match.id) {
                 // Reload match positions to reflect swapped players
                 const movePositions = await GetMatchMovePositions(match.id);
@@ -587,6 +641,8 @@
 
     function handleKeyDown(event) {
         if (!visible) return;
+        // Don't intercept keys while the merge players modal is open
+        if (showMergePlayersModal) return;
 
         // Let Ctrl+key combos pass through to global handler (e.g. Ctrl+Tab to toggle panel)
         if (event.ctrlKey) return;
@@ -613,6 +669,7 @@
                 detailMatch = null;
                 detailMovePositions = [];
                 detailGames = [];
+                detailStats = null;
                 event.preventDefault();
             } else {
                 closeMatchPanel();
@@ -665,6 +722,8 @@
     }
 
     function handleClickOutside(event) {
+        // Don't interfere while the merge players modal is open
+        if (showMergePlayersModal) return;
         // Close tournament dropdown if clicking outside
         if (editingTournamentMatchId !== null && !event.target.closest('.tournament-cell-edit')) {
             cancelTournamentEdit();
@@ -681,7 +740,7 @@
 
     $effect(() => {
         if (visible) {
-            setTimeout(() => {
+            const id = setTimeout(() => {
                 const panel = document.getElementById('matchPanel');
                 if (panel) panel.focus();
                 if (selectedMatch) {
@@ -689,6 +748,7 @@
                     if (selectedRow) selectedRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
             }, 100);
+            return () => clearTimeout(id);
         }
     });
 
@@ -708,6 +768,9 @@
     <div class="match-panel-content">
         <!-- Match list (left pane) -->
         <div class="match-list-pane" class:has-detail={detailMatch !== null}>
+            <div class="match-list-toolbar">
+                <button class="toolbar-btn" onclick={() => (showMergePlayersModal = true)} title="Find and merge duplicate player names" disabled={matches.length === 0}>⇢ Merge players</button>
+            </div>
             <div class="match-table-container">
                 <table class="match-table">
                     <thead>
@@ -728,6 +791,12 @@
                             <th class="no-select sortable tournament-col" onclick={() => handleSort('tournament')}
                                 >Tournament {#if sortColumn === 'tournament'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
                             >
+                            <th class="no-select sortable narrow-col" onclick={() => handleSort('pr')}
+                                >PR {#if sortColumn === 'pr'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
+                            <th class="no-select sortable narrow-col" onclick={() => handleSort('mwc')}
+                                >MWC {#if sortColumn === 'mwc'}<span class="sort-arrow">{sortDirection === 'asc' ? '▲' : '▼'}</span>{/if}</th
+                            >
                             <th class="no-select actions-col"></th>
                         </tr>
                     </thead>
@@ -747,6 +816,8 @@
                                     </td>
                                     <td class="narrow-col no-select">{match.match_length}</td>
                                     <td class="tournament-col no-select">{match.tournament_name || ''}</td>
+                                    <td class="narrow-col no-select">{match.pr > 0 ? match.pr.toFixed(2) : ''}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                                    <td class="narrow-col no-select">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : ''}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions editing-actions">
                                             <button
@@ -813,6 +884,8 @@
                                             <span class="tournament-display" title="Click to assign tournament">{match.tournament_name || ''}</span>
                                         {/if}
                                     </td>
+                                    <td class="narrow-col no-select stat-col">{match.pr > 0 ? match.pr.toFixed(2) : '—'}{match.pr2 > 0 ? ' / ' + match.pr2.toFixed(2) : ''}</td>
+                                    <td class="narrow-col no-select stat-col">{match.mwc_loss > 0 ? (match.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
                                     <td class="actions-col no-select">
                                         <span class="item-actions">
                                             <button
@@ -878,8 +951,9 @@
                         {/if}
                     </div>
                     <div class="detail-tabs">
-                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => (detailView = 'transcript')}>Transcript</button>
-                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => (detailView = 'metadata')}>Info</button>
+                        <button class="detail-tab" class:active={detailView === 'transcript'} onclick={() => switchDetailView('transcript')}>Transcript</button>
+                        <button class="detail-tab" class:active={detailView === 'metadata'} onclick={() => switchDetailView('metadata')}>Info</button>
+                        <button class="detail-tab" class:active={detailView === 'stats'} onclick={() => switchDetailView('stats')}>Stats</button>
                         <button class="detail-tab enter-match-btn" onclick={() => enterMatchMode(detailMatch)} title="Enter match mode (↵)">▶ Review</button>
                     </div>
                 </div>
@@ -1022,10 +1096,157 @@
                         </table>
                     </div>
                 {/if}
+
+                <!-- Stats view -->
+                {#if detailView === 'stats'}
+                    <div class="stats-container">
+                        {#if loadingStats}
+                            <div class="loading-state">Loading stats…</div>
+                        {:else if !detailStats}
+                            <div class="empty-state">No analysed positions found for this match.</div>
+                        {:else}
+                            {@const p1 = detailStats.player1}
+                            {@const p2 = detailStats.player2}
+                            {@const p1Name = detailMatch.player1_name || 'Player 1'}
+                            {@const p2Name = detailMatch.player2_name || 'Player 2'}
+                            <table class="stats-table">
+                                <thead>
+                                    <tr>
+                                        <th class="stats-label"></th>
+                                        <th class="stats-player">{p1Name}</th>
+                                        <th class="stats-player">{p2Name}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Performance Rating</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Overall PR</td>
+                                        <td class="stats-val pr-val">{p1.total_decisions > 0 ? p1.pr.toFixed(2) : '—'}</td>
+                                        <td class="stats-val pr-val">{p2.total_decisions > 0 ? p2.pr.toFixed(2) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Checker Play PR</td>
+                                        <td class="stats-val">{p1.checker_decisions > 0 ? p1.pr_checker.toFixed(2) : '—'}</td>
+                                        <td class="stats-val">{p2.checker_decisions > 0 ? p2.pr_checker.toFixed(2) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Cube Play PR</td>
+                                        <td class="stats-val">{p1.double_decisions + p1.take_decisions > 0 ? p1.pr_cube.toFixed(2) : '—'}</td>
+                                        <td class="stats-val">{p2.double_decisions + p2.take_decisions > 0 ? p2.pr_cube.toFixed(2) : '—'}</td>
+                                    </tr>
+
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Total Errors</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Errors (Blunders)</td>
+                                        <td class="stats-val">{p1.total_errors} ({p1.total_blunders})</td>
+                                        <td class="stats-val">{p2.total_errors} ({p2.total_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.total_equity_error > 0 ? '-' + p1.total_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.total_equity_error > 0 ? '-' + p2.total_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.mwc_loss > 0 ? '-' + (p1.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.mwc_loss > 0 ? '-' + (p2.mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Decisions</td>
+                                        <td class="stats-val sub-val">{p1.total_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.total_decisions}</td>
+                                    </tr>
+
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Checker Play</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Checker Errors (Blunders)</td>
+                                        <td class="stats-val">{p1.checker_errors} ({p1.checker_blunders})</td>
+                                        <td class="stats-val">{p2.checker_errors} ({p2.checker_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.checker_equity_error > 0 ? '-' + p1.checker_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.checker_equity_error > 0 ? '-' + p2.checker_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.checker_mwc_loss > 0 ? '-' + (p1.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.checker_mwc_loss > 0 ? '-' + (p2.checker_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Unforced Moves</td>
+                                        <td class="stats-val sub-val">{p1.checker_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.checker_decisions}</td>
+                                    </tr>
+
+                                    <tr class="stats-section-header">
+                                        <td colspan="3">Cube Play</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Doubles (Blunders)</td>
+                                        <td class="stats-val">{p1.double_errors} ({p1.double_blunders})</td>
+                                        <td class="stats-val">{p2.double_errors} ({p2.double_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.double_equity_error > 0 ? '-' + p1.double_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.double_equity_error > 0 ? '-' + p2.double_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.double_mwc_loss > 0 ? '-' + (p1.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.double_mwc_loss > 0 ? '-' + (p2.double_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Cube Decisions</td>
+                                        <td class="stats-val sub-val">{p1.double_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.double_decisions}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label">• Takes (Blunders)</td>
+                                        <td class="stats-val">{p1.take_errors} ({p1.take_blunders})</td>
+                                        <td class="stats-val">{p2.take_errors} ({p2.take_blunders})</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Equity Error (EMG)</td>
+                                        <td class="stats-val sub-val">{p1.take_equity_error > 0 ? '-' + p1.take_equity_error.toFixed(3) : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.take_equity_error > 0 ? '-' + p2.take_equity_error.toFixed(3) : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">MWC Loss</td>
+                                        <td class="stats-val sub-val">{p1.take_mwc_loss > 0 ? '-' + (p1.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                        <td class="stats-val sub-val">{p2.take_mwc_loss > 0 ? '-' + (p2.take_mwc_loss * 100).toFixed(2) + '%' : '—'}</td>
+                                    </tr>
+                                    <tr>
+                                        <td class="stats-label sub-label">Take Decisions</td>
+                                        <td class="stats-val sub-val">{p1.take_decisions}</td>
+                                        <td class="stats-val sub-val">{p2.take_decisions}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        {/if}
+                    </div>
+                {/if}
             </div>
         {/if}
     </div>
 </section>
+
+{#if showMergePlayersModal}
+    <MergePlayersModal
+        onClose={() => (showMergePlayersModal = false)}
+        onMerged={async () => {
+            await loadMatches();
+            dbMutationCounterStore.update((n) => n + 1);
+        }}
+    />
+{/if}
 
 <style>
     .match-panel {
@@ -1053,6 +1274,38 @@
         display: flex;
         flex-direction: column;
         transition: flex 0.15s;
+    }
+
+    .match-list-toolbar {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-bottom: 1px solid #e0e0e0;
+        background: #fafafa;
+    }
+
+    .toolbar-btn {
+        background: none;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        font-size: 11px;
+        color: #555;
+        cursor: pointer;
+        padding: 2px 8px;
+        line-height: 1.6;
+    }
+
+    .toolbar-btn:hover:not(:disabled) {
+        background: #e3f2fd;
+        border-color: #1976d2;
+        color: #1565c0;
+    }
+
+    .toolbar-btn:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
     }
 
     .match-list-pane.has-detail {
@@ -1150,6 +1403,11 @@
         white-space: nowrap;
         font-size: 11px;
         color: #666;
+    }
+
+    .stat-col {
+        color: #666;
+        font-variant-numeric: tabular-nums;
     }
 
     .item-actions {
@@ -1537,5 +1795,72 @@
         border-radius: 3px;
         outline: none;
         box-sizing: border-box;
+    }
+
+    .stats-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 8px 12px;
+    }
+
+    .stats-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+    }
+
+    .stats-table th {
+        text-align: left;
+        padding: 4px 8px;
+        font-size: 11px;
+        color: #555;
+        border-bottom: 2px solid #ddd;
+        font-weight: 600;
+    }
+
+    .stats-table th.stats-player {
+        text-align: right;
+        min-width: 80px;
+    }
+
+    .stats-section-header td {
+        background: #f0f4f8;
+        padding: 5px 8px;
+        font-size: 11px;
+        font-weight: 600;
+        color: #444;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        border-top: 1px solid #ddd;
+    }
+
+    .stats-label {
+        padding: 3px 8px;
+        color: #555;
+        font-size: 12px;
+    }
+
+    .sub-label {
+        padding-left: 20px;
+        color: #888;
+        font-size: 11px;
+    }
+
+    .stats-val {
+        text-align: right;
+        padding: 3px 8px;
+        font-variant-numeric: tabular-nums;
+        color: #222;
+        min-width: 80px;
+    }
+
+    .sub-val {
+        color: #666;
+        font-size: 11px;
+    }
+
+    .pr-val {
+        font-weight: 600;
+        color: #1565c0;
     }
 </style>

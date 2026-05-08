@@ -57,7 +57,8 @@ export const PANEL = {
     SEARCH_HISTORY: 'searchHistory',
     MATCH: 'match',
     COLLECTION: 'collection',
-    TOURNAMENT: 'tournament'
+    TOURNAMENT: 'tournament',
+    STATS: 'stats'
 };
 
 // ── Single modal store (only one modal at a time) ──
@@ -107,6 +108,11 @@ export const isAnyPanelOpen = derived(openPanels, ($p) => $p.size > 0);
 export const isAnyModalOrPanelOpen = derived([activeModal, openPanels], ([$m, $p]) => $m !== null || $p.size > 0);
 
 export const matchPanelRefreshTriggerStore = writable(0);
+
+// Incremented after any DB mutation that can affect stats (import, delete match,
+// delete position, save analysis). Reset automatically when a new database is opened
+// via databasePathStore (see statsStore.js statsInvalidationKeyStore).
+export const dbMutationCounterStore = writable(0);
 
 export const positionReloadTriggerStore = writable(0);
 

@@ -1,0 +1,521 @@
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+#
+# SPDX-FileCopyrightText: 2026 Kévin Unger <blunderdb@proton.me>
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-04-21 00:00+0200\n"
+"PO-Revision-Date: 2026-04-21 00:00+0200\n"
+"Last-Translator: unger <blunderdb@proton.me>\n"
+"Language: en\n"
+"Language-Team: English <kde-i18n-doc@kde.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/stats.rst:4
+msgid "Panneau Stats"
+msgstr "Stats Panel"
+
+#: ../../source/stats.rst:8
+msgid "Introduction"
+msgstr "Introduction"
+
+#: ../../source/stats.rst:10
+msgid ""
+"Le panneau **Stats** permet d'analyser son niveau de jeu et de suivre sa "
+"progression dans le temps à partir des positions importées dans la base de "
+"données. Il calcule et affiche les indicateurs **PR** (Performance Rate) et "
+"**MWC cost** (Match Winning Chance cost) pour l'ensemble des positions ou un "
+"sous-ensemble filtré."
+msgstr ""
+"The **Stats** panel lets you analyse your play level and track your progress "
+"over time using the positions imported in the database. It computes and "
+"displays **PR** (Performance Rate) and **MWC cost** (Match Winning Chance "
+"cost) for all positions or a filtered subset."
+
+#: ../../source/stats.rst:15
+msgid "Le panneau Stats est particulièrement utile pour :"
+msgstr "The Stats panel is especially useful for:"
+
+#: ../../source/stats.rst:17
+msgid ""
+"**situer son niveau** par rapport aux seuils de référence (world-class, "
+"expert, avancé…) grâce au PR global ;"
+msgstr ""
+"**gauging your level** against reference thresholds (world-class, expert, "
+"advanced…) using the global PR;"
+
+#: ../../source/stats.rst:20
+msgid ""
+"**suivre sa progression** tournoi après tournoi ou match après match grâce "
+"aux graphiques de l'onglet Progression ;"
+msgstr ""
+"**tracking your progress** tournament by tournament or match by match using "
+"the Progression tab charts;"
+
+#: ../../source/stats.rst:23
+msgid ""
+"**identifier ses points faibles** : onglet Erreurs pour voir la répartition "
+"entre coups joués et décisions de videau, et la distribution des magnitudes "
+"d'erreur ;"
+msgstr ""
+"**identifying your weak spots**: the Errors tab shows the breakdown between "
+"checker plays and cube decisions, and the distribution of error magnitudes;"
+
+#: ../../source/stats.rst:27
+msgid ""
+"**accéder directement aux positions concernées** en cliquant sur n'importe "
+"quel indicateur (drill-down)."
+msgstr ""
+"**navigating directly to the relevant positions** by clicking any indicator "
+"(drill-down)."
+
+#: ../../source/stats.rst:31
+msgid "Ouverture du panneau"
+msgstr "Opening the panel"
+
+#: ../../source/stats.rst:33
+msgid "Pour ouvrir le panneau Stats :"
+msgstr "To open the Stats panel:"
+
+#: ../../source/stats.rst:35
+msgid "Appuyer sur *CTRL-D*."
+msgstr "Press *CTRL-D*."
+
+#: ../../source/stats.rst:36
+msgid "Saisir la commande ``:stats`` ou ``:st`` dans la ligne de commande."
+msgstr "Type the command ``:stats`` or ``:st`` in the command line."
+
+#: ../../source/stats.rst:38
+msgid ""
+"Le panneau se rafraîchit automatiquement à chaque modification du filtre. "
+"Il ne recalcule pas les statistiques lors d'un simple basculement PR ↔ MWC : "
+"les deux métriques sont calculées simultanément par le backend."
+msgstr ""
+"The panel refreshes automatically whenever the filter is changed. It does "
+"not recalculate statistics on a simple PR ↔ MWC toggle: both metrics are "
+"computed simultaneously by the backend."
+
+#: ../../source/stats.rst:44
+msgid "Barre de filtre"
+msgstr "Filter bar"
+
+#: ../../source/stats.rst:46
+msgid ""
+"La barre de filtre, en haut du panneau, permet de restreindre le calcul à un "
+"sous-ensemble de positions."
+msgstr ""
+"The filter bar at the top of the panel restricts the computation to a subset "
+"of positions."
+
+#: ../../source/stats.rst:50
+msgid "Perspective joueur"
+msgstr "Player perspective"
+
+#: ../../source/stats.rst:52
+msgid ""
+"La liste déroulante **Joueur** permet de filtrer les statistiques selon le "
+"joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom "
+"apparaît le plus souvent dans la base de données — modifiable à tout moment."
+msgstr ""
+"The **Player** drop-down filters statistics to the analysed player. blunderDB "
+"automatically selects the player whose name appears most often in the "
+"database — changeable at any time."
+
+#: ../../source/stats.rst:57
+msgid ""
+"Changer de joueur ne provoque pas de perte de données ; il suffit de "
+"re-sélectionner le joueur précédent dans la liste."
+msgstr ""
+"Changing the player does not cause any data loss; simply re-select the "
+"previous player in the list."
+
+#: ../../source/stats.rst:61
+msgid "Filtres disponibles"
+msgstr "Available filters"
+
+#: ../../source/stats.rst:63
+msgid ""
+"**Tournoi(s)** — restriction à un ou plusieurs tournois. Plusieurs tournois "
+"peuvent être sélectionnés simultanément."
+msgstr ""
+"**Tournament(s)** — restrict to one or more tournaments. Multiple tournaments "
+"can be selected simultaneously."
+
+#: ../../source/stats.rst:66
+msgid ""
+"**Dates** — plage temporelle (*De* … *À*). Si seule la date de début est "
+"renseignée, les positions plus récentes sont incluses."
+msgstr ""
+"**Dates** — time range (*From* … *To*). If only the start date is set, more "
+"recent positions are included."
+
+#: ../../source/stats.rst:69
+msgid "**Type de décision** — Tous / Coups joués / Décisions de videau."
+msgstr "**Decision type** — All / Checker plays / Cube decisions."
+
+#: ../../source/stats.rst:71
+msgid ""
+"**Longueur de match** — restriction à des longueurs de match précises (1, 3, "
+"5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées."
+msgstr ""
+"**Match length** — restrict to specific match lengths (1, 3, 5, 7, 9, 11, "
+"13, 15, 21 points). Multiple lengths can be combined."
+
+#: ../../source/stats.rst:74
+msgid ""
+"Un bouton **Reset** remet tous les filtres à zéro (sauf le joueur "
+"auto-détecté)."
+msgstr ""
+"A **Reset** button clears all filters (except the auto-detected player)."
+
+#: ../../source/stats.rst:77
+msgid ""
+"Les filtres sont persistés dans la configuration de blunderDB "
+"(``config.yaml``) et sont restaurés à la prochaine ouverture."
+msgstr ""
+"Filters are saved in the blunderDB configuration (``config.yaml``) and "
+"restored on the next launch."
+
+#: ../../source/stats.rst:81
+msgid "Toggle PR / MWC"
+msgstr "PR / MWC toggle"
+
+#: ../../source/stats.rst:83
+msgid ""
+"Le bouton **PR / MWC** en haut du panneau bascule la métrique affichée dans "
+"tous les onglets."
+msgstr ""
+"The **PR / MWC** button at the top of the panel toggles the metric displayed "
+"across all tabs."
+
+#: ../../source/stats.rst:87
+msgid "**PR (Performance Rate)**"
+msgstr "**PR (Performance Rate)**"
+
+#: ../../source/stats.rst:89
+msgid ""
+"Mesure la qualité de jeu *money-game* : somme des erreurs en millièmes de "
+"point de backgammon, divisée par le nombre de décisions. Indépendant du "
+"score de match."
+msgstr ""
+"Measures *money-game* play quality: sum of errors in milli-points, divided "
+"by the number of decisions. Independent of match score."
+
+#: ../../source/stats.rst:93
+msgid "Seuils de référence approximatifs :"
+msgstr "Approximate reference thresholds:"
+
+#: ../../source/stats.rst:109
+msgid "**MWC cost (Match Winning Chance cost)**"
+msgstr "**MWC cost (Match Winning Chance cost)**"
+
+#: ../../source/stats.rst:111
+msgid ""
+"Probabilité cumulée de victoire de match perdue à cause des erreurs, sur "
+"l'ensemble du jeu de données filtré. Calculé à partir de la MET "
+"Kazaross-XG2 embarquée dans blunderDB."
+msgstr ""
+"Cumulative match winning probability lost due to errors, over the full "
+"filtered dataset. Computed using the Kazaross-XG2 MET embedded in blunderDB."
+
+#: ../../source/stats.rst:115
+msgid ""
+"Le MWC cost **n'est pas applicable** aux positions *money-game* (sans "
+"enjeu de match). Ces positions sont exclues du calcul MWC. "
+"Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas "
+"directement comparables entre logiciels utilisant des METs différentes."
+msgstr ""
+"MWC cost **does not apply** to *money-game* positions (with no match stake). "
+"Those positions are excluded from the MWC computation. "
+"MWC values depend on the MET used; they are not directly comparable across "
+"software using different METs."
+
+#: ../../source/stats.rst:121
+msgid ""
+"Le basculement PR ↔ MWC est instantané : aucun recalcul backend n'est "
+"effectué."
+msgstr ""
+"The PR ↔ MWC toggle is instant: no backend recalculation is performed."
+
+#: ../../source/stats.rst:124
+msgid "Onglet Dashboard"
+msgstr "Dashboard tab"
+
+#: ../../source/stats.rst:126
+msgid ""
+"L'onglet **Dashboard** donne une vue synthétique des indicateurs clés."
+msgstr "The **Dashboard** tab gives a summary view of key indicators."
+
+#: ../../source/stats.rst:129
+msgid "Cartes de niveau"
+msgstr "Level cards"
+
+#: ../../source/stats.rst:131
+msgid "Trois cartes affichent le PR (ou MWC) pour :"
+msgstr "Three cards display the PR (or MWC) for:"
+
+#: ../../source/stats.rst:133
+msgid "**All** — toutes les décisions (coups + videau) ;"
+msgstr "**All** — all decisions (checker + cube);"
+
+#: ../../source/stats.rst:134
+msgid "**Checker** — coups joués seulement ;"
+msgstr "**Checker** — checker plays only;"
+
+#: ../../source/stats.rst:135
+msgid "**Cube** — décisions de videau seulement."
+msgstr "**Cube** — cube decisions only."
+
+#: ../../source/stats.rst:137
+msgid ""
+"Cliquer sur une carte charge dans le panneau d'analyse les positions du "
+"sous-ensemble correspondant (drill-down)."
+msgstr ""
+"Clicking a card loads the positions in the corresponding subset into the "
+"analysis panel (drill-down)."
+
+#: ../../source/stats.rst:141
+msgid ""
+"Le nombre total de décisions est affiché en bas de chaque carte au survol."
+msgstr "The total number of decisions is shown at the bottom of each card on hover."
+
+#: ../../source/stats.rst:144
+msgid "PR glissant sur N dernières décisions"
+msgstr "Rolling PR over last N decisions"
+
+#: ../../source/stats.rst:146
+msgid ""
+"Une ligne de valeurs PR (ou MWC) calculées sur les *N* dernières décisions "
+"(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente. "
+"Les valeurs grisées correspondent à un N supérieur au nombre de décisions "
+"disponibles."
+msgstr ""
+"A row of PR (or MWC) values computed over the last *N* decisions "
+"(N = 5, 10, 50, 100, 250, 500, 1000) lets you measure the recent trend. "
+"Greyed values correspond to an N larger than the number of available decisions."
+
+#: ../../source/stats.rst:150
+msgid ""
+"Cliquer sur une valeur charge les *N* dernières positions correspondantes."
+msgstr "Clicking a value loads the corresponding last *N* positions."
+
+#: ../../source/stats.rst:153
+msgid "Top blunders"
+msgstr "Top blunders"
+
+#: ../../source/stats.rst:155
+msgid ""
+"La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante. "
+"Cliquer sur une ligne charge la position concernée dans le panneau d'analyse."
+msgstr ""
+"The list of the 10 worst errors (or MWC cost), sorted by descending magnitude. "
+"Clicking a row loads the relevant position in the analysis panel."
+
+#: ../../source/stats.rst:160
+msgid "Onglet Progression"
+msgstr "Progression tab"
+
+#: ../../source/stats.rst:162
+msgid ""
+"L'onglet **Progression** présente l'évolution du niveau dans le temps."
+msgstr "The **Progression** tab shows how your level evolves over time."
+
+#: ../../source/stats.rst:165
+msgid "Courbe par tournoi"
+msgstr "Tournament line chart"
+
+#: ../../source/stats.rst:167
+msgid ""
+"Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X : "
+"ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur "
+"matérialisent les seuils de niveau."
+msgstr ""
+"A line chart displays the PR (or MWC) for each tournament (X axis: tournament "
+"order, Y axis: metric value). Colour bands materialise the level thresholds."
+
+#: ../../source/stats.rst:172
+msgid ""
+"Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :"
+msgstr "Clicking a point on the chart opens a context menu with two options:"
+
+#: ../../source/stats.rst:174
+msgid "**Open tournament** — ouvre le tournoi dans le panneau Tournois."
+msgstr "**Open tournament** — opens the tournament in the Tournaments panel."
+
+#: ../../source/stats.rst:175
+msgid ""
+"**Open positions** — charge toutes les positions du tournoi dans le panneau "
+"d'analyse."
+msgstr ""
+"**Open positions** — loads all positions from the tournament into the analysis "
+"panel."
+
+#: ../../source/stats.rst:178
+msgid "Scatter plot par match"
+msgstr "Match scatter plot"
+
+#: ../../source/stats.rst:180
+msgid ""
+"Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC). "
+"La taille du point est proportionnelle au nombre de décisions dans le match."
+msgstr ""
+"A scatter plot represents each match (X axis: date, Y axis: PR or MWC). "
+"Point size is proportional to the number of decisions in the match."
+
+#: ../../source/stats.rst:184
+msgid "Cliquer sur un point ouvre un menu contextuel :"
+msgstr "Clicking a point opens a context menu:"
+
+#: ../../source/stats.rst:186
+msgid "**Open match** — ouvre le match dans le panneau des matchs."
+msgstr "**Open match** — opens the match in the Matches panel."
+
+#: ../../source/stats.rst:187
+msgid ""
+"**Open positions** — charge toutes les positions du match dans le panneau "
+"d'analyse."
+msgstr ""
+"**Open positions** — loads all positions from the match into the analysis panel."
+
+#: ../../source/stats.rst:191
+msgid "Onglet Erreurs"
+msgstr "Errors tab"
+
+#: ../../source/stats.rst:193
+msgid "L'onglet **Erreurs** décompose les sources d'erreurs."
+msgstr "The **Errors** tab breaks down error sources."
+
+#: ../../source/stats.rst:196
+msgid "Répartition par action de videau"
+msgstr "Breakdown by cube action"
+
+#: ../../source/stats.rst:198
+msgid ""
+"Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision "
+"de videau : *NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Chaque barre "
+"indique également le nombre de décisions et le taux de blunders en infobulle."
+msgstr ""
+"A bar chart displays the PR (or MWC) for each type of cube decision: "
+"*NoDouble*, *DoubleTake*, *DoublePass*, *TooGood*. Each bar also shows the "
+"number of decisions and the blunder rate in a tooltip."
+
+#: ../../source/stats.rst:204
+msgid ""
+"Cliquer sur une barre charge les positions correspondant à cette action de "
+"videau, **uniquement celles avec une erreur** (drill-down)."
+msgstr ""
+"Clicking a bar loads the positions matching that cube action, **only those "
+"with an error** (drill-down)."
+
+#: ../../source/stats.rst:208
+msgid "Répartition Checker / Cube"
+msgstr "Checker / Cube comparison"
+
+#: ../../source/stats.rst:210
+msgid ""
+"Un diagramme comparatif place côte à côte le PR des coups joués et des "
+"décisions de videau. Cliquer sur une barre charge les positions du "
+"sous-ensemble avec erreur."
+msgstr ""
+"A comparison chart places checker plays and cube decisions side by side. "
+"Clicking a bar loads the positions in the subset with an error."
+
+#: ../../source/stats.rst:215
+msgid "Histogramme des magnitudes d'erreur"
+msgstr "Error magnitude histogram"
+
+#: ../../source/stats.rst:217
+msgid ""
+"Un histogramme distribue les erreurs selon leur magnitude en millièmes de "
+"point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur "
+"une barre charge les positions de la tranche."
+msgstr ""
+"A histogram distributes errors by magnitude in milli-points (buckets: 0–5, "
+"5–10, 10–25, 25–50, 50–100, ≥ 100). Clicking a bar loads the positions in "
+"the bucket."
+
+#: ../../source/stats.rst:222
+msgid "Règle d'agrégation"
+msgstr "Aggregation rule"
+
+#: ../../source/stats.rst:224
+msgid ""
+"Le PR d'un tournoi (ou d'un sous-ensemble quelconque) est calculé par "
+"la règle **somme/somme** — jamais comme moyenne des PR individuels des "
+"matchs."
+msgstr ""
+"The PR of a tournament (or any subset) is computed using the **sum/sum** "
+"rule — never as an average of individual match PRs."
+
+#: ../../source/stats.rst:228
+msgid "Formule :"
+msgstr "Formula:"
+
+#: ../../source/stats.rst:235
+msgid "**Exemple :** un joueur dispute deux matchs dans un tournoi —"
+msgstr "**Example:** a player plays two matches in a tournament —"
+
+#: ../../source/stats.rst:237
+msgid "Match A : 10 décisions, erreur totale 50 mp → PR = 5,0"
+msgstr "Match A: 10 decisions, total error 50 mp → PR = 5.0"
+
+#: ../../source/stats.rst:238
+msgid "Match B : 90 décisions, erreur totale 270 mp → PR = 3,0"
+msgstr "Match B: 90 decisions, total error 270 mp → PR = 3.0"
+
+#: ../../source/stats.rst:240
+msgid "Moyenne naïve des PR : (5,0 + 3,0) / 2 = **4,0** *(incorrect)*"
+msgstr "Naive average of PRs: (5.0 + 3.0) / 2 = **4.0** *(incorrect)*"
+
+#: ../../source/stats.rst:242
+msgid ""
+"Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = **3,2** *(correct)*"
+msgstr ""
+"Sum/sum rule: (50 + 270) / (10 + 90) = 320 / 100 = **3.2** *(correct)*"
+
+#: ../../source/stats.rst:244
+msgid ""
+"La règle somme/somme est la seule qui résiste à la variation de longueur "
+"des matchs (un match en 21 points pèse plus qu'un match en 1 point)."
+msgstr ""
+"The sum/sum rule is the only one that handles varying match lengths correctly "
+"(a 21-point match carries more weight than a 1-point match)."
+
+#: ../../source/stats.rst:248
+msgid "MWC : limitations"
+msgstr "MWC: limitations"
+
+#: ../../source/stats.rst:250
+msgid ""
+"Le MWC cost est calculé à partir de la **MET Kazaross-XG2**, table de "
+"référence de facto dans le backgammon compétitif. Les résultats ne sont "
+"pas directement comparables avec des logiciels utilisant d'autres METs."
+msgstr ""
+"The MWC cost is computed using the **Kazaross-XG2 MET**, the de facto "
+"reference table in competitive backgammon. Results are not directly comparable "
+"with software using other METs."
+
+#: ../../source/stats.rst:254
+msgid ""
+"Les positions *money-game* (sans score de match) sont **exclues** du "
+"calcul MWC. Si votre base de données contient beaucoup de positions "
+"money-game, le MWC cost peut être sous-estimé ou indisponible."
+msgstr ""
+"*Money-game* positions (with no match score) are **excluded** from the MWC "
+"computation. If your database contains many money-game positions, the MWC "
+"cost may be underestimated or unavailable."
+
+#: ../../source/stats.rst:259
+msgid ""
+"Le MWC cost est cumulatif sur l'ensemble du jeu de données filtré — pas "
+"un indicateur par décision. Il mesure l'impact total de vos erreurs sur "
+"vos chances de victoire."
+msgstr ""
+"The MWC cost is cumulative over the full filtered dataset — not a per-decision "
+"indicator. It measures the total impact of your errors on your winning chances."

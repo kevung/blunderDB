@@ -278,7 +278,7 @@ func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
 	}
 	db.Close()
 
-	// Open database — triggers migration to 2.3.0
+	// Open database — triggers migration to 2.4.0
 	d := NewDatabase()
 	if err := d.OpenDatabase(dbPath); err != nil {
 		t.Fatalf("OpenDatabase: %v", err)
@@ -286,8 +286,8 @@ func TestMigrate_2_2_0_to_2_3_0(t *testing.T) {
 
 	// Verify version bumped
 	ver, _ := d.CheckDatabaseVersion()
-	if ver != "2.3.0" {
-		t.Fatalf("expected version 2.3.0, got %s", ver)
+	if ver != DatabaseVersion {
+		t.Fatalf("expected version %s, got %s", DatabaseVersion, ver)
 	}
 
 	// Verify analysis data is now compressed (raw bytes should not start with '{')
@@ -499,7 +499,7 @@ func TestAnalysisCompressionSavings(t *testing.T) {
 		pos := initialPosition()
 		pos.Dice = [2]int{(i % 6) + 1, (i%5+i%3)%6 + 1}
 		pos.Score = [2]int{i % 9, (i + 3) % 9}
-		pos.Cube.Value = i + 1 // ensure unique zobrist hash
+		pos.Cube.Value = i % 11 // exponent 0..10 (valid range); LCM(11,9)=99>50 ensures unique (cube,score)
 		posID, err := d.SavePosition(&pos)
 		if err != nil {
 			t.Fatalf("SavePosition %d: %v", i, err)

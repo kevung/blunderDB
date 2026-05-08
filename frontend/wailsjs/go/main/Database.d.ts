@@ -28,6 +28,8 @@ export function CommitImportDatabase(arg1:string):Promise<Record<string, any>>;
 
 export function ComputeEPCFromPosition(arg1:main.Position):Promise<Record<string, any>>;
 
+export function ComputeStats(arg1:main.StatsFilter):Promise<main.StatsResult>;
+
 export function CopyPositionToCollection(arg1:number,arg2:number):Promise<void>;
 
 export function CreateAnkiDeck(arg1:string,arg2:string,arg3:string,arg4:number,arg5:string):Promise<number>;
@@ -70,6 +72,8 @@ export function GetAllComments():Promise<Array<main.CommentEntry>>;
 
 export function GetAllMatches():Promise<Array<main.Match>>;
 
+export function GetAllPlayerNames():Promise<Array<main.PlayerFrequency>>;
+
 export function GetAllTournaments():Promise<Array<main.Tournament>>;
 
 export function GetAnkiDeckPositions(arg1:number):Promise<Array<main.Position>>;
@@ -92,6 +96,8 @@ export function GetLastVisitedMatch():Promise<main.Match>;
 
 export function GetMatchByID(arg1:number):Promise<main.Match>;
 
+export function GetMatchDetailStats(arg1:number):Promise<main.MatchDetailStats>;
+
 export function GetMatchMovePositions(arg1:number):Promise<Array<main.MatchMovePosition>>;
 
 export function GetMatchTournament(arg1:number):Promise<main.Tournament>;
@@ -102,7 +108,15 @@ export function GetNextAnkiCard(arg1:number):Promise<main.AnkiReviewCard>;
 
 export function GetPositionCollections(arg1:number):Promise<Array<main.Collection>>;
 
+export function GetPositionIDsByMatch(arg1:number):Promise<Array<number>>;
+
+export function GetPositionIDsByStatsSelection(arg1:main.StatsFilter,arg2:main.SelectionSpec):Promise<Array<number>>;
+
+export function GetPositionIDsByTournament(arg1:number):Promise<Array<number>>;
+
 export function GetPositionIndexMap():Promise<Record<number, number>>;
+
+export function GetStatsDateRange():Promise<main.StatsDateRange>;
 
 export function GetTournamentMatches(arg1:number):Promise<Array<main.Match>>;
 
@@ -143,6 +157,8 @@ export function LoadPositionsByFilters(arg1:main.SearchFilters):Promise<Array<ma
 export function LoadSearchHistory():Promise<Array<main.SearchHistory>>;
 
 export function LoadSessionState():Promise<main.SessionState>;
+
+export function MergePlayers(arg1:Array<string>,arg2:string):Promise<void>;
 
 export function Migrate_1_0_0_to_1_1_0():Promise<void>;
 

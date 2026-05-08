@@ -204,6 +204,7 @@
                         <li>manage collections of positions (Collection panel),</li>
                         <li>study positions with spaced repetition (Anki panel),</li>
                         <li>manage tournaments (Tournament panel),</li>
+                        <li>display performance statistics (Stats panel),</li>
                         <li>compute EPC values for bearoff positions (EPC panel),</li>
                         <li>browse saved search filters (Filter Library panel),</li>
                         <li>browse search history (Search History panel),</li>
@@ -320,6 +321,12 @@
 
                     <h3>Tournaments</h3>
                     <p>Tournaments allow grouping matches by event. Open the Tournament panel with <strong>Ctrl+Y</strong> to manage tournaments and assign matches to them.</p>
+
+                    <h3>Stats</h3>
+                    <p>
+                        The Stats panel (<strong>Ctrl+D</strong>) displays performance statistics (PR and MWC cost) computed from all imported positions. Use the filter bar to restrict the analysis by
+                        player, tournament, date range, decision type, or match length. Click any indicator to drill down into the corresponding positions.
+                    </p>
                 {/if}
 
                 {#if activeTab === 'shortcuts'}
@@ -566,6 +573,11 @@
                             <tr>
                                 <td>Ctrl + Y</td>
                                 <td>Tournaments Panel</td>
+                            </tr>
+
+                            <tr>
+                                <td>Ctrl + D</td>
+                                <td>Stats Panel</td>
                             </tr>
 
                             <tr>

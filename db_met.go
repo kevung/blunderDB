@@ -1,6 +1,10 @@
 package main
 
-import "github.com/kevung/gnubgparser"
+import (
+	"math"
+
+	"github.com/kevung/gnubgparser"
+)
 
 // ============================================================================
 // GNUbg Match Equity Table (MET) — Kazaross-XG2 (GNUbg default) with Zadeh fallback
@@ -412,4 +416,32 @@ func convertGnuBGCubeMWCToEMG(analysis *gnubgparser.CubeAnalysis, score0, score1
 	} else {
 		analysis.BestAction = "No Double"
 	}
+}
+
+// ConvertEMGLossToMWCLoss converts a loss expressed in EMG millipoints (the
+// unit used internally by blunderDB: 1000 millipoints = 1 EMG) into a MWC
+// loss (fraction; e.g. 0.015 = 1.5 % MWC).
+//
+// This is the inverse of the linear NEMG transformation used in
+// convertGnuBGCubeMWCToEMG:
+//
+//	ΔMWC = ΔEMG × (mwcWin − mwcLose) / 2
+//
+// The conversion applies identically to checker and cube errors because the
+// NEMG mapping is simply a change of unit.
+//
+// Returns math.NaN() for money-game positions (matchLength ≤ 0) or when the
+// cube/score makes the denominator degenerate (e.g. dead cube).
+func ConvertEMGLossToMWCLoss(emgMillipoints, score0, score1, fMove, cubeValue, matchLength int) float64 {
+	if matchLength <= 0 {
+		return math.NaN()
+	}
+	// Use float32 to match GNUbg's internal MET arithmetic precision.
+	mwcWin := float32(gnuBGGetME(score0, score1, matchLength, fMove, cubeValue, fMove, false))
+	mwcLose := float32(gnuBGGetME(score0, score1, matchLength, fMove, cubeValue, 1-fMove, false))
+	denom := mwcWin - mwcLose
+	if denom < 1e-7 && denom > -1e-7 {
+		return math.NaN()
+	}
+	return (float64(emgMillipoints) / 1000.0) * float64(denom) / 2.0
 }

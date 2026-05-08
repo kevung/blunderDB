@@ -1,6 +1,6 @@
 <script>
     import { logger } from './utils/logger.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, untrack } from 'svelte';
     import { fade } from 'svelte/transition';
 
     // Wails runtime
@@ -19,10 +19,7 @@
         activeTabStore,
         activeModal,
         MODAL,
-        PANEL,
         closeModal,
-        openPanel,
-        closePanel,
         isAnyModalOpen
     } from './stores/uiStore.js';
     import {
@@ -60,6 +57,7 @@
         toggleCollectionPanelAction,
         toggleEPCMode,
         toggleMatchMode,
+        toggleStatsPanel,
         enterEditMode,
         exitEditMode,
         enterEPCMode,
@@ -86,6 +84,7 @@
     import { copyPosition, copyBoardImage } from './services/clipboardService.js';
     import { saveSessionState } from './services/sessionService.js';
     import { handleKeyDown, toggleHelpModal, toggleSearchHistoryPanel } from './services/keyboardService.js';
+    import { applyTabPanels } from './services/tabHandler.js';
 
     // Components
     import Toolbar from './components/Toolbar.svelte';
@@ -117,21 +116,29 @@
     let showDropOverlay = $state(false);
     let dragCounter = 0;
     let positions = [];
-    let currentPositionIndex = 0;
     let saveSessionTimeout = null;
     let tabInitialized = false;
     let previousTab = '';
 
-    // ── Store subscriptions with side effects ──────────────────────
+    // ── Reactive effects (Svelte 5) ────────────────────────────────
 
-    positionStore.subscribe((value) => {
-        if ($statusBarModeStore === 'EPC' && value) updateEPC(value);
+    // EPC sync: re-runs when position OR mode changes (both are tracked deps)
+    $effect(() => {
+        if ($statusBarModeStore === 'EPC' && $positionStore) updateEPC($positionStore);
     });
 
-    positionReloadTriggerStore.subscribe(async () => {
-        if ($databasePathStore) await loadAllPositions();
+    // Reload positions when trigger increments (positionReloadTriggerStore is
+    // the only tracked dep; $databasePathStore is read at call time via $)
+    $effect(() => {
+        $positionReloadTriggerStore; // tracked — fires each time MatchPanel triggers a reload
+        untrack(() => {
+            if ($databasePathStore) loadAllPositions();
+        });
     });
 
+    // Keep `positions` array in sync with positionsStore.
+    // Plain .subscribe() is intentional: `positions` is never read in the
+    // template directly, so $state reactivity is not needed here.
     positionsStore.subscribe((value) => {
         positions = Array.isArray(value) ? value : [];
         if (positions.length === 0) {
@@ -185,29 +192,50 @@
         }
     });
 
-    currentPositionIndexStore.subscribe(async (value) => {
-        currentPositionIndex = value;
-        if (positions.length > 0 && currentPositionIndex >= 0 && currentPositionIndex < positions.length) {
-            await showPosition(positions[currentPositionIndex]);
-            if (saveSessionTimeout) clearTimeout(saveSessionTimeout);
-            saveSessionTimeout = setTimeout(() => saveSessionState(), 500);
+    // Navigate to the current position when index changes. The cancelled flag
+    // guards against stale async callbacks when the index changes rapidly.
+    $effect(() => {
+        const value = $currentPositionIndexStore;
+        let cancelled = false;
+        if (positions.length > 0 && value >= 0 && value < positions.length) {
+            showPosition(positions[value]).then(() => {
+                if (cancelled) return;
+                if (saveSessionTimeout) clearTimeout(saveSessionTimeout);
+                saveSessionTimeout = setTimeout(() => saveSessionState(), 500);
+            });
         }
+        return () => {
+            cancelled = true;
+        };
     });
 
-    activeTabStore.subscribe((tab) => {
+    // Tab handler: open/close panels and manage mode transitions.
+    // Only $activeTabStore is a tracked dependency; everything else is read
+    // inside untrack() so that mode/db-path changes alone don't re-run this.
+    //
+    // On the first run we must NOT return early: session restore may have
+    // already set activeTabStore to 'epc' or 'search', and we need to call
+    // enterEPCMode / enterEditMode immediately. We use `isFirstRun` to skip
+    // the exit paths (which depend on prevTab, unknown on the first call).
+    $effect(() => {
+        const tab = $activeTabStore;
+        const isFirstRun = !tabInitialized;
         if (!tabInitialized) {
             tabInitialized = true;
-            previousTab = tab;
-            return;
         }
-        const prevTab = previousTab;
-        previousTab = tab;
-        if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
-        else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
-        if (tab === 'epc' && $statusBarModeStore !== 'EPC') enterEPCMode();
-        else if (prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
-        if (tab === 'matches') openPanel(PANEL.MATCH);
-        else closePanel(PANEL.MATCH);
+        untrack(() => {
+            logger.perf('App:activeTabHandler', () => {
+                const prevTab = previousTab;
+                previousTab = tab;
+                if (!isFirstRun) {
+                    if (tab === 'search' && $databasePathStore && $statusBarModeStore !== 'EDIT') enterEditMode();
+                    else if (prevTab === 'search' && tab !== 'search' && $statusBarModeStore === 'EDIT') exitEditMode();
+                }
+                if (tab === 'epc' && $statusBarModeStore !== 'EPC') logger.perf('App:epcSync', () => enterEPCMode());
+                else if (!isFirstRun && prevTab === 'epc' && tab !== 'epc' && $statusBarModeStore === 'EPC') exitEPCMode();
+                applyTabPanels(tab);
+            });
+        });
     });
 
     // ── UI event handlers ──────────────────────────────────────────
@@ -296,7 +324,8 @@
             toggleMatchPanel,
             toggleCollectionPanel: toggleCollectionPanelAction,
             toggleEPCMode,
-            toggleMatchMode
+            toggleMatchMode,
+            onToggleStats: () => toggleStatsPanel()
         });
         window.addEventListener('keydown', handleKeyDown);
         mainArea.addEventListener('wheel', handleWheel);

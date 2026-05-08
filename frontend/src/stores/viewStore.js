@@ -93,9 +93,13 @@ function createViewStore() {
         positionStore.set(view.position);
         analysisStore.set(view.analysis);
         selectedMoveStore.set(view.selectedMove ?? null);
+        // EPC and EDIT are transient modes driven by the active tab: always
+        // restore as NORMAL so the tab handler re-enters them cleanly via
+        // enterEPCMode() / enterEditMode() once the DB is fully open.
+        const mode = view.mode || 'NORMAL';
+        statusBarModeStore.set(mode === 'EPC' || mode === 'EDIT' ? 'NORMAL' : mode);
         activeTabStore.set(view.activeTab || 'analysis');
         commentTextStore.set(view.commentText || '');
-        statusBarModeStore.set(view.mode || 'NORMAL');
         matchContextStore.set(view.matchContext || createDefaultMatchContext());
         currentPositionIndexStore.set(-1);
         currentPositionIndexStore.set(view.positionIndex || 0);

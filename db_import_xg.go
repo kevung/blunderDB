@@ -401,7 +401,68 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 		}
 
 		if !isExplicitCubeAction {
-			// Skip implicit "No Double" decisions - don't create position
+			// Create a No Double cube decision position when cube analysis is available.
+			// XG counts these in its "Cube Decisions" total, so we must too for accurate PR/MWC.
+			// Positions with no analysis are still skipped (nothing to compute).
+			hasRawAnalysis := rawCube != nil && rawCube.Doubled != nil
+			hasTextAnalysis := move.CubeMove.Analysis != nil
+			if !hasRawAnalysis && !hasTextAnalysis {
+				return nil // no analysis available — skip
+			}
+
+			// Only count as a cube decision if the player actually holds the cube.
+			// CubeB == 0 means centered (either player may double).
+			// CubeB > 0 means player 1 owns the cube (value = CubeB).
+			// CubeB < 0 means player 2 owns the cube (value = -CubeB).
+			// If the opponent owns the cube the active player has no cube decision.
+			if rawCube != nil {
+				canDouble := rawCube.CubeB == 0 ||
+					(rawCube.ActiveP > 0 && rawCube.CubeB > 0) ||
+					(rawCube.ActiveP < 0 && rawCube.CubeB < 0)
+				if !canDouble {
+					return nil
+				}
+			} else if move.CubeMove != nil {
+				// Fallback: use Position.Cube from the lightweight struct (same encoding)
+				cube := move.CubeMove.Position.Cube
+				ap := move.CubeMove.ActivePlayer
+				canDouble := cube == 0 || (ap > 0 && cube > 0) || (ap < 0 && cube < 0)
+				if !canDouble {
+					return nil
+				}
+			}
+
+			pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
+			if err != nil {
+				return nil // skip on position creation error
+			}
+			pos.PlayerOnRoll = convertXGPlayerToBlunderDB(move.CubeMove.ActivePlayer)
+			pos.DecisionType = CubeAction
+			pos.Dice = [2]int{0, 0}
+
+			posID, err := d.savePositionInTxWithCache(tx, pos, cache)
+			if err != nil {
+				return fmt.Errorf("failed to save no-double position: %w", err)
+			}
+
+			_, err = tx.Exec(`
+				INSERT INTO move (game_id, move_number, move_type, position_id, player,
+				                  dice_1, dice_2, cube_action)
+				VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+			`, gameID, moveNumber, "cube", posID, move.CubeMove.ActivePlayer, 0, 0, "No Double")
+			if err != nil {
+				return err
+			}
+
+			if hasRawAnalysis {
+				if err = d.saveRawCubeAnalysisForNoDoubleInTx(tx, posID, rawCube); err != nil {
+					slog.Warn("failed to save no-double raw analysis", "err", err)
+				}
+			} else {
+				if err = d.saveCubeAnalysisToPositionInTx(tx, posID, move.CubeMove.Analysis, "No Double"); err != nil {
+					slog.Warn("failed to save no-double text analysis", "err", err)
+				}
+			}
 			return nil
 		}
 
@@ -488,6 +549,15 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 				return err
 			}
 
+			// Save analysis to posID2 (take/pass decision) using the same cube analysis.
+			// The opponent decided to Take, so playedCubeAction = "Take".
+			if move.CubeMove.Analysis != nil {
+				err = d.saveCubeAnalysisToPositionInTx(tx, posID2, move.CubeMove.Analysis, "Take")
+				if err != nil {
+					slog.Warn("failed to save cube analysis for take position", "err", err)
+				}
+			}
+
 		} else {
 			// Single cube action (Double without Take, or other actions)
 			pos, err := d.createPositionFromXG(move.CubeMove.Position, game, matchLength, moveNumber, move.CubeMove.ActivePlayer)
@@ -541,6 +611,44 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 					slog.Warn("failed to save position cube analysis", "err", err)
 				}
 			}
+
+			// For Double/Pass, also create the passer's take/pass decision position.
+			// In XG rawCube encoding, Take == 0 means the opponent passed the double.
+			// This mirrors what we do for Double/Take above so that the passer's
+			// decision is counted in per-player statistics.
+			if rawCube != nil && rawCube.Take == 0 {
+				pos2 := *pos
+				pos2.Cube.Value++                      // cube value doubles
+				opponentPlayer := 1 - pos.PlayerOnRoll // opponent (passer) in blunderDB encoding
+				pos2.PlayerOnRoll = opponentPlayer
+				pos2.Cube.Owner = -1 // cube still in centre during the take/pass decision
+
+				posID2, err2 := d.savePositionInTxWithCache(tx, &pos2, cache)
+				if err2 != nil {
+					slog.Warn("failed to save pass position", "err", err2)
+				} else {
+					var oppPlayerXG int32
+					if opponentPlayer == 0 {
+						oppPlayerXG = 1
+					} else {
+						oppPlayerXG = -1
+					}
+					_, err2 = tx.Exec(`
+						INSERT INTO move (game_id, move_number, move_type, position_id, player,
+						                  dice_1, dice_2, cube_action)
+						VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+					`, gameID, moveNumber, "cube", posID2, oppPlayerXG, 0, 0, "Pass")
+					if err2 != nil {
+						slog.Warn("failed to insert pass move", "err", err2)
+					}
+					if move.CubeMove.Analysis != nil {
+						err2 = d.saveCubeAnalysisToPositionInTx(tx, posID2, move.CubeMove.Analysis, "Pass")
+						if err2 != nil {
+							slog.Warn("failed to save pass cube analysis", "err", err2)
+						}
+					}
+				}
+			}
 		}
 	}
 
@@ -555,12 +663,52 @@ func (d *Database) importMoveWithCacheAndRawCube(tx *sql.Tx, gameID int64, moveN
 	return nil
 }
 
+// saveRawCubeAnalysisForNoDoubleInTx saves cube analysis from binary (rawCube) data
+// to a standalone No Double cube decision position. Unlike
+// saveCubeAnalysisForCheckerPositionInTx (which merges onto a checker position),
+// this creates a "DoublingCube" analysis with playedCubeAction = "No Double" so
+// that populateAnalysisColumns computes the correct cube_error (missed-double error).
+func (d *Database) saveRawCubeAnalysisForNoDoubleInTx(tx *sql.Tx, positionID int64, rawCube *RawCubeAction) error {
+	if rawCube == nil || rawCube.Doubled == nil {
+		return nil
+	}
+	doubled := rawCube.Doubled
+
+	posAnalysis := PositionAnalysis{
+		PositionID:            int(positionID),
+		AnalysisType:          "DoublingCube",
+		AnalysisEngineVersion: "XG",
+		PlayedCubeActions:     []string{"No Double"},
+		CreationDate:          time.Now(),
+		LastModifiedDate:      time.Now(),
+	}
+
+	cubeAnalysis := buildDoublingCubeAnalysis(cubeAnalysisParams{
+		Depth:                     translateAnalysisDepth(int(doubled.Level)),
+		Engine:                    "XG",
+		PlayerWinChances:          (1.0 - float64(doubled.Eval[2])) * 100.0,
+		PlayerGammonChances:       float64(doubled.Eval[4]) * 100.0,
+		PlayerBackgammonChances:   float64(doubled.Eval[5]) * 100.0,
+		OpponentWinChances:        float64(doubled.Eval[2]) * 100.0,
+		OpponentGammonChances:     float64(doubled.Eval[1]) * 100.0,
+		OpponentBackgammonChances: float64(doubled.Eval[0]) * 100.0,
+		CubelessNoDoubleEquity:    float64(doubled.Eval[6]),
+		CubelessDoubleEquity:      float64(doubled.Eval[6]),
+		CubefulNoDoubleEquity:     float64(doubled.EquB),
+		CubefulDoubleTakeEquity:   float64(doubled.EquDouble),
+		CubefulDoublePassEquity:   float64(doubled.EquDrop),
+	})
+
+	posAnalysis.DoublingCubeAnalysis = &cubeAnalysis
+	return d.saveAnalysisInTx(tx, positionID, posAnalysis)
+}
+
 // convertRawCubeAction converts raw Double/Take values to action string
 func (d *Database) convertRawCubeAction(double, take int32) string {
 	// XG cube action encoding:
 	// Double=0, Take=-1: No Double
-	// Double=1, Take=1: Double, Take
-	// Double=1, Take=-1: Double/Pass (opponent passed the double)
+	// Double=1, Take=1:  Double/Take (opponent took)
+	// Double=1, Take=0:  Double/Pass (opponent passed)
 	// Double=-2: Initial position (should be filtered before)
 
 	if double == 0 {

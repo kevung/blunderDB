@@ -31,7 +31,7 @@ import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, pastePositionTextStore, matchContextStore, clipboardPositionStore } from '../stores/positionStore.js';
 import { analysisStore } from '../stores/analysisStore.js';
-import { currentPositionIndexStore, statusBarModeStore, commentTextStore, openPanel, PANEL, matchPanelRefreshTriggerStore } from '../stores/uiStore.js';
+import { currentPositionIndexStore, statusBarModeStore, commentTextStore, openPanel, PANEL, matchPanelRefreshTriggerStore, dbMutationCounterStore } from '../stores/uiStore.js';
 import {
     showImportProgressModalStore,
     importModalModeStore,
@@ -354,6 +354,7 @@ export async function importSingleFile(filePath) {
             const matchID = await ImportXGMatch(filePath);
             setStatusBarMessage(`XG match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
             logger.error('Error importing XG match:', error);
@@ -371,6 +372,7 @@ export async function importSingleFile(filePath) {
             const matchID = await ImportBGFMatch(filePath);
             setStatusBarMessage(`BGBlitz match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
             logger.error('Error importing BGF match:', error);
@@ -389,6 +391,7 @@ export async function importSingleFile(filePath) {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`${formatName} match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
             logger.error(`Error importing ${formatName} match:`, error);
@@ -423,6 +426,7 @@ async function importTxtFile(filePath) {
             const matchID = await ImportGnuBGMatch(filePath);
             setStatusBarMessage(`Jellyfish TXT match imported successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
             logger.error('Error importing Jellyfish TXT match:', error);
@@ -583,6 +587,7 @@ export async function importMultipleFiles(files) {
 
     if (hadMatches) {
         matchPanelRefreshTriggerStore.update((n) => n + 1);
+        dbMutationCounterStore.update((n) => n + 1);
     }
     const { loadAllPositions } = await import('./positionService.js');
     await loadAllPositions();
@@ -634,6 +639,7 @@ export async function pastePosition() {
             const matchID = await ImportGnuBGMatchFromText(result);
             setStatusBarMessage(`Match imported from clipboard successfully (ID: ${matchID})`);
             matchPanelRefreshTriggerStore.update((n) => n + 1);
+            dbMutationCounterStore.update((n) => n + 1);
             openPanel(PANEL.MATCH);
         } catch (error) {
             logger.error('Error pasting GnuBG match:', error);

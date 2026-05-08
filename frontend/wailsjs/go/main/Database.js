@@ -54,6 +54,10 @@ export function ComputeEPCFromPosition(arg1) {
   return window['go']['main']['Database']['ComputeEPCFromPosition'](arg1);
 }
 
+export function ComputeStats(arg1) {
+  return window['go']['main']['Database']['ComputeStats'](arg1);
+}
+
 export function CopyPositionToCollection(arg1, arg2) {
   return window['go']['main']['Database']['CopyPositionToCollection'](arg1, arg2);
 }
@@ -138,6 +142,10 @@ export function GetAllMatches() {
   return window['go']['main']['Database']['GetAllMatches']();
 }
 
+export function GetAllPlayerNames() {
+  return window['go']['main']['Database']['GetAllPlayerNames']();
+}
+
 export function GetAllTournaments() {
   return window['go']['main']['Database']['GetAllTournaments']();
 }
@@ -182,6 +190,10 @@ export function GetMatchByID(arg1) {
   return window['go']['main']['Database']['GetMatchByID'](arg1);
 }
 
+export function GetMatchDetailStats(arg1) {
+  return window['go']['main']['Database']['GetMatchDetailStats'](arg1);
+}
+
 export function GetMatchMovePositions(arg1) {
   return window['go']['main']['Database']['GetMatchMovePositions'](arg1);
 }
@@ -202,8 +214,24 @@ export function GetPositionCollections(arg1) {
   return window['go']['main']['Database']['GetPositionCollections'](arg1);
 }
 
+export function GetPositionIDsByMatch(arg1) {
+  return window['go']['main']['Database']['GetPositionIDsByMatch'](arg1);
+}
+
+export function GetPositionIDsByStatsSelection(arg1, arg2) {
+  return window['go']['main']['Database']['GetPositionIDsByStatsSelection'](arg1, arg2);
+}
+
+export function GetPositionIDsByTournament(arg1) {
+  return window['go']['main']['Database']['GetPositionIDsByTournament'](arg1);
+}
+
 export function GetPositionIndexMap() {
   return window['go']['main']['Database']['GetPositionIndexMap']();
+}
+
+export function GetStatsDateRange() {
+  return window['go']['main']['Database']['GetStatsDateRange']();
 }
 
 export function GetTournamentMatches(arg1) {
@@ -284,6 +312,10 @@ export function LoadSearchHistory() {
 
 export function LoadSessionState() {
   return window['go']['main']['Database']['LoadSessionState']();
+}
+
+export function MergePlayers(arg1, arg2) {
+  return window['go']['main']['Database']['MergePlayers'](arg1, arg2);
 }
 
 export function Migrate_1_0_0_to_1_1_0() {
