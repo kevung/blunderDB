@@ -74,29 +74,6 @@ type parityTolerances struct {
 	SnowieER           float64 // Snowie Error Rate; 0 means use hardcoded default
 }
 
-// tolPhase01 documents the blunderDB state before fiches 02–04 (pre forced-moves + pre close-cube).
-// Kept for historical reference; not used in production tests.
-//
-// Explanations for wide values:
-//
-//	CheckerDecisions=45: bDB counts all checker positions (incl. forced). gnuBG
-//	  ref stores unforced only; observed deltas up to 40 (38 forced + import gaps).
-//	DoubleDecisions=100: bDB counts all No Doubles; XG/gnuBG only close ones
-//	  (factor 2–6× overcounting pre-fiche 03).
-//	PR=3.0: inflated denominator (all decisions vs unforced+close) depresses bDB PR
-//	  by up to 2+ points vs XG/gnuBG reference.
-var tolPhase01 = parityTolerances{
-	TotalDecisions:     100,  // bDB includes forced + all No Doubles
-	CheckerDecisions:   45,   // bDB includes forced moves + SGF import gaps
-	DoubleDecisions:    100,  // bDB counts all No Doubles
-	TakeDecisions:      3,    // takes/passes should align closely
-	CloseCubeDecisions: 5,    // is_close_cube=1 vs XG/gnuBG close cube decisions
-	PR:                 3.0,  // wide until denominator fixed (fiche 04)
-	MWCPct:             3.5,  // percentage points
-	Equity:             0.35, // EMG
-	SnowieER:           2.0,  // very wide pre-fix
-}
-
 // tolPhase04 applies after fiche 04 (PR denominator fix). Both bDB and
 // XG/gnuBG now count the same decisions: unforced checker + close cube.
 //
