@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; blunderDB 0.18.0 documentation</title>
+  <title>blunderDB &mdash; blunderDB 0.19.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=ba2e7b09"></script>
+      <script src="_static/documentation_options.js?v=cbfb3150"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="_static/js/theme.js"></script>
@@ -232,17 +232,13 @@
 <td><p>April 20, 2026</p></td>
 <td><p>Storage optimization: zlib compression of analysis data (~80% reduction), compact board encoding (~90% position state size reduction). Added 5 missing indexes for search performance. Fixed cube error search returning wrong results. Fixed EDIT mode after search returns no results. Restored search panel state when switching tabs. Removed 62 debug print statements from hot search/filter paths.</p></td>
 </tr>
-<tr class="row-odd"><td><p>0.17.1</p></td>
-<td><p>07/05/2026</p></td>
-<td><p>Alignement des statistiques PR / Snowie ER / MWC sur eXtremeGammon et gnuBG : exclusion des coups forcés et des cubes triviaux du dénominateur PR (colonnes is_forced et is_close_cube, seuil 0.16 d’équité). Correction du calcul de cube_error pour les décisions Double/Pass. Ajout du Snowie Error Rate en sortie CLI et JSON. Documentation du modèle de statistiques (:ref:`stats_parity`). NOTE : les valeurs PR affichées peuvent légèrement différer des versions précédentes (alignement sur XG).</p></td>
-</tr>
-<tr class="row-even"><td><p>0.18.0</p></td>
+<tr class="row-odd"><td><p>0.18.0</p></td>
 <td><p>April 20, 2026</p></td>
 <td><p>Major codebase refactoring: split db.go (10k lines) into 19 domain-focused files, extracted 7 service modules from App.svelte (4,888→469 lines), consolidated modal/panel stores. Full migration to Svelte 5 runes. Replaced 9 table modals with a generic DataTableModal component. Added ESLint + Prettier + vitest (125 frontend tests) with CI enforcement. WCAG 2.1 AA accessibility baseline (visible focus, ARIA roles, keyboard navigation). Upgraded Database mutex to RWMutex for better read concurrency. Complete CLI documentation (CLI_USAGE.md + Sphinx FR/EN). Rewrote README. Resolved all ESLint warnings (46→0) and Vite build warnings (6→0).</p></td>
 </tr>
-<tr class="row-odd"><td><p>0.19.0</p></td>
-<td><p>21/04/2026</p></td>
-<td><p>Ajout du panneau Stats : indicateurs PR (Performance Rate) et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Voir :ref:`stats`.</p></td>
+<tr class="row-even"><td><p>0.19.0</p></td>
+<td><p>May 7, 2026</p></td>
+<td><p>Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube_error pour les décisions Double/Pass. Documentation du modèle de statistiques (:ref:`stats_parity`). Voir :ref:`stats`.</p></td>
 </tr>
 </tbody>
 </table>
