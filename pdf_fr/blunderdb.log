@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 21:15
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 21:55
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -937,23 +937,23 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1149 ...es lors d’un simple basculement PR ↔
+l.1098 ...es lors d’un simple basculement PR ↔
                                                    MWC :
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.1149 ...es lors d’un simple basculement PR ↔
+l.1098 ...es lors d’un simple basculement PR ↔
                                                    MWC :
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
  
 Here is how much of TeX's memory you used:
- 16756 strings out of 476182
- 284218 string characters out of 5795596
+ 16755 strings out of 476182
+ 284200 string characters out of 5795596
  1968975 words of memory out of 5000000
- 38373 multiletter control sequences out of 15000+600000
+ 38371 multiletter control sequences out of 15000+600000
  611301 words of font info for 75 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
  72i,13n,83p,1198b,562s stack positions out of 10000i,1000n,20000p,200000b,200000s

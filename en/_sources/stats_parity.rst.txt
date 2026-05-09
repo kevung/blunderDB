@@ -1,7 +1,7 @@
 .. _stats_parity:
 
-Modèle de statistiques — alignement XG / gnuBG / blunderDB
-===========================================================
+Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB
+=====================================================================
 
 Cette page décrit comment blunderDB calcule le **PR** (Performance Rate),
 le **Snowie Error Rate** et la **perte MWC**, et comment ces métriques sont
