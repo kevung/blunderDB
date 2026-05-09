@@ -529,9 +529,8 @@ msgid "Désélectionner/fermer le panneau."
 msgstr "Deselect/close the panel."
 
 #: ../../source/raccourcis.rst:193
-#, fuzzy
 msgid "Panneau Anki (répétition espacée)"
-msgstr "Show/hide the Anki panel (spaced repetition)."
+msgstr "Anki panel (spaced repetition)"
 
 #: ../../source/raccourcis.rst:1
 msgid "1"

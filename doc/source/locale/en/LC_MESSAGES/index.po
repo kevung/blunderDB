@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-20 00:25+0200\n"
+"POT-Creation-Date: 2026-05-09 22:05+0200\n"
 "PO-Revision-Date: 2025-05-03 22:33+0200\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -86,7 +86,7 @@ msgid ""
 "fréquentes."
 msgstr "The **FAQ** provides answers to the most frequently asked questions."
 
-#: ../../source/index.rst:29
+#: ../../source/index.rst:32
 msgid "Historique des versions"
 msgstr "Version history"
 
@@ -494,11 +494,11 @@ msgid ""
 "les anciennes DB sont migrées automatiquement sur place (faire une "
 "sauvegarde d'abord)."
 msgstr ""
-"Database schema v2.0.0: Zobrist-hashed position deduplication, denormalized "
-"filter columns, bitboard pattern pre-filter, WAL journaling. Batch import "
-">=3x faster, filtered search <=100 ms on 10k+ positions. NOTE: DB files "
-"created with v0.16.0 cannot be opened by older versions; old DBs are auto-"
-"migrated in place (back up first)."
+"Database schema v2.0.0: Zobrist-hashed position deduplication, "
+"denormalized filter columns, bitboard pattern pre-filter, WAL journaling."
+" Batch import >=3x faster, filtered search <=100 ms on 10k+ positions. "
+"NOTE: DB files created with v0.16.0 cannot be opened by older versions; "
+"old DBs are auto-migrated in place (back up first)."
 
 #: ../../source/index.rst:1
 msgid "0.17.0"
@@ -509,6 +509,7 @@ msgid "20/04/2026"
 msgstr "April 20, 2026"
 
 #: ../../source/index.rst:1
+#, python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
 "de réduction), encodage compact des positions (~90% de réduction de la "
@@ -518,12 +519,12 @@ msgid ""
 "panneau de recherche lors du changement d'onglets. Suppression de 62 "
 "instructions de débogage des chemins critiques."
 msgstr ""
-"Storage optimization: zlib compression of analysis data (~80% reduction), "
-"compact board encoding (~90% position state size reduction). Added 5 missing "
-"indexes for search performance. Fixed cube error search returning wrong "
-"results. Fixed EDIT mode after search returns no results. Restored search "
-"panel state when switching tabs. Removed 62 debug print statements from hot "
-"search/filter paths."
+"Storage optimization: zlib compression of analysis data (~80% reduction),"
+" compact board encoding (~90% position state size reduction). Added 5 "
+"missing indexes for search performance. Fixed cube error search returning"
+" wrong results. Fixed EDIT mode after search returns no results. Restored"
+" search panel state when switching tabs. Removed 62 debug print "
+"statements from hot search/filter paths."
 
 #: ../../source/index.rst:1
 msgid "0.18.0"
@@ -540,17 +541,19 @@ msgid ""
 "(focus visible, rôles ARIA, navigation clavier). Passage du mutex "
 "Database en RWMutex pour un meilleur parallélisme en lecture. "
 "Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN). Réécriture du "
-"README. Correction de tous les avertissements ESLint (46→0) et Vite (6→0)."
+"README. Correction de tous les avertissements ESLint (46→0) et Vite "
+"(6→0)."
 msgstr ""
-"Major codebase refactoring: split db.go (10k lines) into 19 domain-focused "
-"files, extracted 7 service modules from App.svelte (4,888→469 lines), "
-"consolidated modal/panel stores. Full migration to Svelte 5 runes. Replaced "
-"9 table modals with a generic DataTableModal component. Added ESLint + "
-"Prettier + vitest (125 frontend tests) with CI enforcement. WCAG 2.1 AA "
-"accessibility baseline (visible focus, ARIA roles, keyboard navigation). "
-"Upgraded Database mutex to RWMutex for better read concurrency. Complete CLI "
-"documentation (CLI_USAGE.md + Sphinx FR/EN). Rewrote README. Resolved all "
-"ESLint warnings (46→0) and Vite build warnings (6→0)."
+"Major codebase refactoring: split db.go (10k lines) into 19 domain-"
+"focused files, extracted 7 service modules from App.svelte (4,888→469 "
+"lines), consolidated modal/panel stores. Full migration to Svelte 5 "
+"runes. Replaced 9 table modals with a generic DataTableModal component. "
+"Added ESLint + Prettier + vitest (125 frontend tests) with CI "
+"enforcement. WCAG 2.1 AA accessibility baseline (visible focus, ARIA "
+"roles, keyboard navigation). Upgraded Database mutex to RWMutex for "
+"better read concurrency. Complete CLI documentation (CLI_USAGE.md + "
+"Sphinx FR/EN). Rewrote README. Resolved all ESLint warnings (46→0) and "
+"Vite build warnings (6→0)."
 
 #: ../../source/index.rst:1
 msgid "0.19.0"
@@ -564,42 +567,38 @@ msgstr "May 7, 2026"
 msgid ""
 "Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
 "Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
-"tournoi, dates, type de décision, longueur de match), onglet Dashboard avec "
-"cartes de niveau / PR glissant / top blunders, onglet Progression avec "
-"courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition "
-"par action de videau et histogramme des magnitudes. Drill-down interactif "
-"vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR "
-"/ MWC instantané. Commande CLI list --type stats. Alignement des indicateurs "
-"PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d'équité pour "
-"les cubes proches). Correction du calcul de cube_error pour les décisions "
-"Double/Pass. Documentation du modèle de statistiques (:ref:`stats_parity`). "
-"Voir :ref:`stats`."
+"tournoi, dates, type de décision, longueur de match), onglet Dashboard "
+"avec cartes de niveau / PR glissant / top blunders, onglet Progression "
+"avec courbe par tournoi et scatter plot par match, onglet Erreurs avec "
+"répartition par action de videau et histogramme des magnitudes. Drill-"
+"down interactif vers les positions / matchs / tournois depuis tous les "
+"indicateurs. Toggle PR / MWC instantané. Commande CLI list --type stats. "
+"Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
+"gnuBG (seuil 0.16 d'équité pour les cubes proches). Correction du calcul "
+"de cube_error pour les décisions Double/Pass. Documentation du modèle de "
+"statistiques (:ref:\\`stats_parity\\`). Voir :ref:\\`stats\\`."
 msgstr ""
 "Added Stats panel: PR (Performance Rate), Snowie Error Rate and MWC cost "
 "(Match Winning Chance cost) indicators, filter bar (player, tournament, "
-"dates, decision type, match length), Dashboard tab with level cards / rolling "
-"PR / top blunders, Progression tab with per-tournament curve and per-match "
-"scatter plot, Errors tab with cube-action breakdown and error magnitude "
-"histogram. Interactive drill-down to positions / matches / tournaments from "
-"all indicators. Instant PR / MWC toggle. CLI command list --type stats. "
-"Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG "
-"(0.16 equity threshold for close cubes). Fixed cube_error calculation for "
-"Double/Pass decisions. Statistics model documentation (:ref:`stats_parity`). "
-"See :ref:`stats`."
+"dates, decision type, match length), Dashboard tab with level cards / "
+"rolling PR / top blunders, Progression tab with per-tournament curve and "
+"per-match scatter plot, Errors tab with cube-action breakdown and error "
+"magnitude histogram. Interactive drill-down to positions / matches / "
+"tournaments from all indicators. Instant PR / MWC toggle. CLI command "
+"list --type stats. Alignment of PR / Snowie ER / MWC indicators with "
+"eXtremeGammon and gnuBG (0.16 equity threshold for close cubes). Fixed "
+"cube_error calculation for Double/Pass decisions. Statistics model "
+"documentation (:ref:`stats_parity`). See :ref:`stats`."
 
-#: ../../source/index.rst:1
-msgid "Modèle de statistiques — alignement XG / gnuBG / blunderDB"
-msgstr "Statistics model — XG / gnuBG / blunderDB alignment"
-
-#: ../../source/index.rst:140
+#: ../../source/index.rst:145
 msgid "Sommaire"
 msgstr "Table of contents"
 
-#: ../../source/index.rst:169
+#: ../../source/index.rst:178
 msgid "Contacts"
 msgstr "Contact"
 
-#: ../../source/index.rst:171
+#: ../../source/index.rst:180
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
@@ -607,7 +606,7 @@ msgstr ""
 "Author: Kévin Unger <blunderdb@proton.me>. You can also find me on Heroes"
 " under the username postmanpat."
 
-#: ../../source/index.rst:174
+#: ../../source/index.rst:183
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -622,41 +621,41 @@ msgstr ""
 "debugging. So feel free to reach out to share your experiences. All "
 "(constructive) feedback is welcome."
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:190
 msgid "Voici plusieurs manières de discuter:"
 msgstr "Here are several ways to discuss:"
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:192
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr "Join the Discord server of blunderDB: https://discord.gg/DA5PpzM9En"
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:194
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr "Email me at blunderdb@proton.me."
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:196
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr "Discuss with me if we meet in a tournament."
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:198
 msgid "sur Github,"
 msgstr "On GitHub."
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:200
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr "Open an issue: https://github.com/kevung/blunderDB/issues"
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:202
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr "For bug fixes or improvement suggestions, create a pull request."
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:206
 msgid "Faire un don"
 msgstr "Donate"
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:208
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
@@ -664,19 +663,19 @@ msgstr ""
 "If you appreciate blunderDB and want to support its past and future "
 "developments, you can"
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:210
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr "buy me a drink if we have the pleasure of meeting!"
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:212
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr "make a small donation via PayPal to the address blunderdb@proton.me"
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:215
 msgid "Remerciements"
 msgstr "Acknowledgments"
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:217
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
@@ -684,7 +683,7 @@ msgstr ""
 "I dedicate this little software to my wife Anne-Claire and our dear "
 "daughter Perrine. I would especially like to thank a few friends:"
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:220
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -695,7 +694,7 @@ msgstr ""
 "kindness; for showing the way in understanding this wonderful game; and "
 "for continuing to support me despite my poor attempts to improve my play."
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:225
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
@@ -710,4 +709,7 @@ msgstr ""
 
 #~ msgid "01/03/2025"
 #~ msgstr "February 13, 2025"
+
+#~ msgid "Modèle de statistiques — alignement XG / gnuBG / blunderDB"
+#~ msgstr "Statistics model — XG / gnuBG / blunderDB alignment"
 

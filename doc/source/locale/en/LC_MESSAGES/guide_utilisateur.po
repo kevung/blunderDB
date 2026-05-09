@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-29 10:21+0200\n"
+"POT-Creation-Date: 2026-05-09 22:05+0200\n"
 "PO-Revision-Date: 2024-12-31 00:25+0100\n"
 "Last-Translator: unger <kevin.unger@proton.me>\n"
 "Language: en\n"
@@ -424,8 +424,8 @@ msgid "Pour naviguer dans un match importé:"
 msgstr "To navigate through an imported match:"
 
 #: ../../source/guide_utilisateur.rst:196
-msgid "Ouvrir le panneau des matchs avec *CTRL-T*."
-msgstr "Open the match panel with *CTRL-T*."
+msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
+msgstr "Open the match panel with *CTRL-Tab*."
 
 #: ../../source/guide_utilisateur.rst:198
 msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
@@ -450,8 +450,8 @@ msgid ""
 msgstr "Press *d* to toggle between checker move analysis and cube analysis."
 
 #: ../../source/guide_utilisateur.rst:209
-msgid "Raccourci: *CTRL-T* pour ouvrir le panneau des matchs. Commande: ``m``"
-msgstr "Shortcut: *CTRL-T* to open the match panel. Command: ``m``"
+msgid "Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
+msgstr "Shortcut: *CTRL-Tab* to open the match panel. Command: ``m``"
 
 #: ../../source/guide_utilisateur.rst:213
 msgid ""
@@ -468,8 +468,8 @@ msgid "Gérer le panneau des matchs"
 msgstr "Manage the match panel"
 
 #: ../../source/guide_utilisateur.rst:220
-msgid "Le panneau des matchs (*CTRL-T*) permet de:"
-msgstr "The match panel (*CTRL-T*) allows you to:"
+msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
+msgstr "The match panel (*CTRL-Tab*) allows you to:"
 
 #: ../../source/guide_utilisateur.rst:222
 msgid ""
@@ -586,10 +586,10 @@ msgstr "**Assign a match to a tournament:**"
 
 #: ../../source/guide_utilisateur.rst:276
 msgid ""
-"Depuis le panneau des matchs (*CTRL-T*), utiliser le menu déroulant de la"
-" colonne tournoi pour assigner un match."
+"Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de "
+"la colonne tournoi pour assigner un match."
 msgstr ""
-"From the match panel (*CTRL-T*), use the dropdown menu in the tournament "
+"From the match panel (*CTRL-Tab*), use the dropdown menu in the tournament "
 "column to assign a match."
 
 #: ../../source/guide_utilisateur.rst:280
@@ -598,17 +598,17 @@ msgstr "Display performance statistics"
 
 #: ../../source/guide_utilisateur.rst:282
 msgid ""
-"Le panneau Stats permet de visualiser ses indicateurs de performance (PR et coût MWC) "
-"à partir des positions importées."
+"Le panneau Stats permet de visualiser ses indicateurs de performance (PR "
+"et coût MWC) à partir des positions importées."
 msgstr ""
-"The Stats panel lets you view your performance indicators (PR and MWC cost) "
-"from imported positions."
+"The Stats panel lets you view your performance indicators (PR and MWC "
+"cost) from imported positions."
 
-#: ../../source/guide_utilisateur.rst:284
+#: ../../source/guide_utilisateur.rst:285
 msgid "Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
 msgstr "Press *CTRL-D* or click the Stats tab in the bottom panel."
 
-#: ../../source/guide_utilisateur.rst:286
+#: ../../source/guide_utilisateur.rst:287
 msgid ""
 "Utiliser la barre de filtre pour restreindre l'analyse par joueur, "
 "tournoi, plage de dates, type de décision ou longueur de match."
@@ -616,16 +616,17 @@ msgstr ""
 "Use the filter bar to restrict the analysis by player, tournament, date "
 "range, decision type, or match length."
 
-#: ../../source/guide_utilisateur.rst:288
+#: ../../source/guide_utilisateur.rst:290
 msgid ""
-"Cliquer sur un indicateur pour accéder directement aux positions correspondantes."
+"Cliquer sur un indicateur pour accéder directement aux positions "
+"correspondantes."
 msgstr "Click an indicator to jump directly to the corresponding positions."
 
-#: ../../source/guide_utilisateur.rst:292
+#: ../../source/guide_utilisateur.rst:293
 msgid "Calculer l'EPC"
 msgstr "Calculate the EPC"
 
-#: ../../source/guide_utilisateur.rst:282
+#: ../../source/guide_utilisateur.rst:295
 msgid ""
 "Le calculateur EPC (Effective Pip Count) permet de calculer les "
 "statistiques de bearoff d'une position."
@@ -633,7 +634,7 @@ msgstr ""
 "The EPC (Effective Pip Count) calculator allows you to compute the "
 "bearoff statistics of a position."
 
-#: ../../source/guide_utilisateur.rst:285
+#: ../../source/guide_utilisateur.rst:298
 msgid ""
 "Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, ou "
 "exécuter la commande ``epc``."
@@ -641,11 +642,11 @@ msgstr ""
 "Press *CTRL-E*, click the EPC tab in the bottom panel, or execute the "
 "``epc`` command."
 
-#: ../../source/guide_utilisateur.rst:288
+#: ../../source/guide_utilisateur.rst:301
 msgid "Éditer la position des pions dans le jan (6 derniers points)."
 msgstr "Edit the checker positions in the home board (last 6 points)."
 
-#: ../../source/guide_utilisateur.rst:290
+#: ../../source/guide_utilisateur.rst:303
 msgid ""
 "Les résultats sont affichés en temps réel dans le panneau EPC dédié: EPC,"
 " nombre moyen de lancers, écart type, pip count et wastage."
@@ -653,15 +654,15 @@ msgstr ""
 "Results are displayed in real time in the dedicated EPC panel: EPC, "
 "average number of rolls, standard deviation, pip count, and wastage."
 
-#: ../../source/guide_utilisateur.rst:294
+#: ../../source/guide_utilisateur.rst:307
 msgid "Le calculateur fonctionne pour les deux joueurs simultanément."
 msgstr "The calculator works for both players simultaneously."
 
-#: ../../source/guide_utilisateur.rst:297
+#: ../../source/guide_utilisateur.rst:310
 msgid "Afficher l'analyse d'une position importée depuis XG"
 msgstr "Display the analysis of a position imported from XG"
 
-#: ../../source/guide_utilisateur.rst:299
+#: ../../source/guide_utilisateur.rst:312
 msgid ""
 "Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
 "blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
@@ -669,7 +670,7 @@ msgstr ""
 "If a position analyzed by XG, GNUbg, or BGBlitz has been imported into "
 "blunderDB, the analysis can be displayed by pressing *CTRL-L*."
 
-#: ../../source/guide_utilisateur.rst:302
+#: ../../source/guide_utilisateur.rst:315
 msgid ""
 "Si la position correspond à une décision de pions, les cinq meilleurs "
 "coups sont affichés sur des lignes distinctes. Pour chaque ligne, les "
@@ -685,7 +686,7 @@ msgstr ""
 " for the player, and the winning chances, gammon, and backgammon for the "
 "opponent, along with the level of analysis."
 
-#: ../../source/guide_utilisateur.rst:309
+#: ../../source/guide_utilisateur.rst:322
 msgid ""
 "Si la position correspond à une décision de cube, le coût de chaque "
 "décision est affiché ainsi que les chances de gain de la position."
@@ -693,7 +694,7 @@ msgstr ""
 "If the position corresponds to a cube decision, the cost of each decision"
 " is displayed along with the winning chances of the position."
 
-#: ../../source/guide_utilisateur.rst:312
+#: ../../source/guide_utilisateur.rst:325
 msgid ""
 "Lorsque plusieurs moteurs d'analyse sont présents pour la même position "
 "(par exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
@@ -703,7 +704,7 @@ msgstr ""
 "example XG and GNUbg), an additional column indicates the source engine "
 "of each analysis."
 
-#: ../../source/guide_utilisateur.rst:316
+#: ../../source/guide_utilisateur.rst:329
 msgid ""
 "Lors de la navigation dans un match, le coup effectivement joué est mis "
 "en évidence dans la liste des coups. Si la position a été rencontrée dans"
@@ -713,7 +714,7 @@ msgstr ""
 "move list. If the position was encountered in multiple matches, all "
 "played moves are indicated."
 
-#: ../../source/guide_utilisateur.rst:321
+#: ../../source/guide_utilisateur.rst:334
 msgid ""
 "En cliquant sur un coup dans le panneau d'analyse, les flèches "
 "correspondantes sont affichées sur le board."
@@ -721,27 +722,27 @@ msgstr ""
 "By clicking on a move in the analysis panel, the corresponding arrows are"
 " displayed on the board."
 
-#: ../../source/guide_utilisateur.rst:325
+#: ../../source/guide_utilisateur.rst:338
 msgid "Exporter une position vers XG"
 msgstr "Export a position to XG"
 
-#: ../../source/guide_utilisateur.rst:327
+#: ../../source/guide_utilisateur.rst:340
 msgid "Pour exporter une position de blunderDB vers XG,"
 msgstr "To export a position from blunderDB to XG,"
 
-#: ../../source/guide_utilisateur.rst:329
+#: ../../source/guide_utilisateur.rst:342
 msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
 msgstr "display the position to export in blunderDB and press *CTRL-C*,"
 
-#: ../../source/guide_utilisateur.rst:331
+#: ../../source/guide_utilisateur.rst:344
 msgid "afficher XG et appuyer *CTRL-V*."
 msgstr "open XG and press *CTRL-V*."
 
-#: ../../source/guide_utilisateur.rst:334
+#: ../../source/guide_utilisateur.rst:347
 msgid "Visualiser les différentes positions"
 msgstr "View the different positions"
 
-#: ../../source/guide_utilisateur.rst:336
+#: ../../source/guide_utilisateur.rst:349
 msgid ""
 "Pour visualiser les différentes positions de la bibliothèque courante, "
 "utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet "
@@ -752,7 +753,7 @@ msgstr ""
 "and *RIGHT* keys. The *HOME* key allows you to go to the first position, "
 "and the *END* key lets you go to the last position."
 
-#: ../../source/guide_utilisateur.rst:340
+#: ../../source/guide_utilisateur.rst:353
 msgid ""
 "Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher "
 "le bearoff à droite, appuyer *CTRL-DROITE*."
@@ -760,19 +761,19 @@ msgstr ""
 "To display the bearoff on the left, press *CTRL-LEFT*. To display the "
 "bearoff on the right, press *CTRL-RIGHT*."
 
-#: ../../source/guide_utilisateur.rst:344
+#: ../../source/guide_utilisateur.rst:357
 msgid "Rechercher des positions selon des critères"
 msgstr "Search for positions based on criteria"
 
-#: ../../source/guide_utilisateur.rst:346
+#: ../../source/guide_utilisateur.rst:359
 msgid "Pour rechercher des types de positions,"
 msgstr "To search for types of positions,"
 
-#: ../../source/guide_utilisateur.rst:348
+#: ../../source/guide_utilisateur.rst:361
 msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
 msgstr "press *TAB* to open the search panel,"
 
-#: ../../source/guide_utilisateur.rst:350
+#: ../../source/guide_utilisateur.rst:363
 msgid ""
 "éditer la structure de position à rechercher. blunderDB va filtrer les "
 "positions ayant *a minima* la structure de pions saisie. Dans le doute, "
@@ -785,31 +786,31 @@ msgstr ""
 " maximize results, clear the position by pressing the *BACKSPACE* key. "
 "Edit the cube position and the score if necessary."
 
-#: ../../source/guide_utilisateur.rst:356
+#: ../../source/guide_utilisateur.rst:369
 msgid "Méthode 1 (simple):"
 msgstr "Method 1 (simple):"
 
-#: ../../source/guide_utilisateur.rst:358
+#: ../../source/guide_utilisateur.rst:371
 msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
 msgstr "Open the search window (*CTRL-F*)"
 
-#: ../../source/guide_utilisateur.rst:360
+#: ../../source/guide_utilisateur.rst:373
 msgid "Ajouter et paramétrer les filtres de recherche"
 msgstr "Add and set the search filters"
 
-#: ../../source/guide_utilisateur.rst:362
+#: ../../source/guide_utilisateur.rst:375
 msgid "Valider en cliquant sur \"Search\"."
 msgstr "Confirm by clicking on \"Search\"."
 
-#: ../../source/guide_utilisateur.rst:364
+#: ../../source/guide_utilisateur.rst:377
 msgid "Méthode 2 (avancée):"
 msgstr "Method 2 (advanced):"
 
-#: ../../source/guide_utilisateur.rst:367
+#: ../../source/guide_utilisateur.rst:380
 msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
 msgstr "open the command line by pressing *SPACE*,"
 
-#: ../../source/guide_utilisateur.rst:369
+#: ../../source/guide_utilisateur.rst:382
 msgid ""
 "écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple "
 "*cube* ou *score* pour prendre respectivement en compte le cube et le "
@@ -820,11 +821,11 @@ msgstr ""
 "to consider the cube and score, respectively. See :numref:`cmd_filter` "
 "for a comprehensive list of available filters)."
 
-#: ../../source/guide_utilisateur.rst:374
+#: ../../source/guide_utilisateur.rst:387
 msgid "valider la requête en appuyant sur *ENTREE*."
 msgstr "confirm the request by pressing *ENTER*."
 
-#: ../../source/guide_utilisateur.rst:376
+#: ../../source/guide_utilisateur.rst:389
 msgid ""
 "Les positions affichées sont celles de la base de données ayant vérifié "
 "les critères de recherche entrés par l'utilisateur."

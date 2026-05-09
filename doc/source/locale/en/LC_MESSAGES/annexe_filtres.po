@@ -213,9 +213,8 @@ msgid "Courses petites"
 msgstr "Short race"
 
 #: ../../source/annexe_filtres.rst:1
-#, fuzzy
 msgid "s nc P<70"
-msgstr "ss P<70"
+msgstr "s nc P<70"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Frapper au point 1"
@@ -246,9 +245,8 @@ msgid "dés vides côté joueur du haut, score -2/-4"
 msgstr "empty dice on upper player's side, score -2/-4"
 
 #: ../../source/annexe_filtres.rst:1
-#, fuzzy
 msgid "s s d"
-msgstr "ss d"
+msgstr "s s d"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Envoi de too good"
@@ -272,18 +270,16 @@ msgid "portes dans le jan, hommes à la barre"
 msgstr "made points in home board, men on the bar"
 
 #: ../../source/annexe_filtres.rst:1
-#, fuzzy
 msgid "s g>20"
-msgstr "ss E>40"
+msgstr "s g>20"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Erreurs du joueur 1 de plus de 40 millipoints"
 msgstr "Player 1 errors greater than 40 millipoints"
 
 #: ../../source/annexe_filtres.rst:1
-#, fuzzy
 msgid "s E>40"
-msgstr "ss E>40"
+msgstr "s E>40"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Position du tournoi Aachen2024"
@@ -334,18 +330,16 @@ msgid "point 1 pour l'adversaire"
 msgstr "opponent's ace point made"
 
 #: ../../source/annexe_filtres.rst:1
-#, fuzzy
 msgid "s P<60"
-msgstr "ss P<70"
+msgstr "s P<60"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Double avec au moins 20pip d'avance"
 msgstr "Double with at least 20 pip lead"
 
 #: ../../source/annexe_filtres.rst:1
-#, fuzzy
 msgid "s d p<-20"
-msgstr "ss P<70"
+msgstr "s d p<-20"
 
 #: ../../source/annexe_filtres.rst:1
 msgid "Positions du match 5"
@@ -384,9 +378,8 @@ msgid "Erreurs dans le tournoi 2"
 msgstr "Errors in tournament 2"
 
 #: ../../source/annexe_filtres.rst:1
-#, fuzzy
 msgid "s tn2 E>40"
-msgstr "ss E>40"
+msgstr "s tn2 E>40"
 
 #: ../../source/annexe_filtres.rst:105
 msgid "Exemples de recherche dans les résultats courants:"
