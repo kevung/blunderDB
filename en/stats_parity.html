@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>8. Statistics model — XG / gnuBG / blunderDB alignment &mdash; blunderDB 0.19.0 documentation</title>
+  <title>12. Statistics model — XG / gnuBG / blunderDB alignment &mdash; blunderDB 0.19.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -23,8 +23,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="9. Frequently Asked Questions (FAQ)" href="faq.html" />
-    <link rel="prev" title="7. Stats Panel" href="stats.html" /> 
+    <link rel="prev" title="11. Annex: Database Schema" href="annexe_db_scheme.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -54,34 +53,33 @@
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stats.html">7. Stats Panel</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Statistics model — XG / gnuBG / blunderDB alignment</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">8.1. Formal definitions</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rate">8.1.1. PR (Performance Rate)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">8.1.2. Snowie Error Rate</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">8.1.3. MWC loss (Match Winning Chance)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Annex: Database Schema</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Statistics model — XG / gnuBG / blunderDB alignment</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">12.1. Formal definitions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rate">12.1.1. PR (Performance Rate)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">12.1.2. Snowie Error Rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">12.1.3. MWC loss (Match Winning Chance)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">8.2. Decisions counted in the PR denominator</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">8.2.1. Checker plays — counted decisions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">8.2.2. Cube decisions — counted decisions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">8.2.3. Filter summary</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">12.2. Decisions counted in the PR denominator</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">12.2.1. Checker plays — counted decisions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">12.2.2. Cube decisions — counted decisions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">12.2.3. Filter summary</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">8.3. blunderDB ↔ XG ↔ gnuBG correspondence</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">8.3.1. XG ↔ blunderDB comparison (same analysis engine)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">8.3.2. gnuBG ↔ blunderDB comparison (SGF import — different engines)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">12.3. blunderDB ↔ XG ↔ gnuBG correspondence</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">12.3.1. XG ↔ blunderDB comparison (same analysis engine)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">12.3.2. gnuBG ↔ blunderDB comparison (SGF import — different engines)</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">8.4. Validating your own figures</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">8.5. gnuBG reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">12.4. Validating your own figures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">12.5. gnuBG reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">9. Frequently Asked Questions (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">10. Annex: Advanced Filter Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">11. Windows Annex: False Detection of blunderDB as Malware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">12. Mac Annex: Possible Blocking of blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">13. Annex: Database Schema</a></li>
 </ul>
 
         </div>
@@ -98,7 +96,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">8. </span>Statistics model — XG / gnuBG / blunderDB alignment</li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Statistics model — XG / gnuBG / blunderDB alignment</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -108,7 +106,7 @@
            <div itemprop="articleBody">
              
   <section id="modele-de-statistiques-alignement-xg-gnubg-blunderdb">
-<span id="stats-parity"></span><h1><span class="section-number">8. </span>Statistics model — XG / gnuBG / blunderDB alignment<a class="headerlink" href="#modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
+<span id="stats-parity"></span><h1><span class="section-number">12. </span>Statistics model — XG / gnuBG / blunderDB alignment<a class="headerlink" href="#modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
 <p>This page describes how blunderDB computes <strong>PR</strong> (Performance Rate), <strong>Snowie Error Rate</strong>, and <strong>MWC loss</strong>, and how these metrics are aligned with eXtreme Gammon (XG) and gnuBG (open reference).</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
@@ -137,9 +135,9 @@
 </ul>
 </nav>
 <section id="definitions-formelles">
-<h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">8.1. </span>Formal definitions</a><a class="headerlink" href="#definitions-formelles" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">12.1. </span>Formal definitions</a><a class="headerlink" href="#definitions-formelles" title="Link to this heading"></a></h2>
 <section id="pr-performance-rate">
-<h3><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">8.1.1. </span>PR (Performance Rate)</a><a class="headerlink" href="#pr-performance-rate" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">12.1.1. </span>PR (Performance Rate)</a><a class="headerlink" href="#pr-performance-rate" title="Link to this heading"></a></h3>
 <p>PR (also called “error rate per decision” in gnuBG) measures the average error in thousandths of an equity point (millipoints, mpt) per counted decision.</p>
 <div class="math notranslate nohighlight">
 \[\mathrm{PR} = \frac{\sum_i |\mathrm{error}_i|}{\mathrm{N_{counted}}} \times 500\]</div>
@@ -150,7 +148,7 @@
 </ul>
 </section>
 <section id="snowie-error-rate">
-<h3><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">8.1.2. </span>Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">12.1.2. </span>Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Link to this heading"></a></h3>
 <p>Snowie ER uses the <strong>same numerator</strong> as PR, but the denominator is the total number of moves of both players, forced moves included (all decisions, no filter):</p>
 <div class="math notranslate nohighlight">
 \[\mathrm{SnowieER} = \frac{\sum_i |\mathrm{error}_i|}{N_\text{P1} + N_\text{P2}} \times 500\]</div>
@@ -162,7 +160,7 @@
 </div>
 </section>
 <section id="perte-mwc-match-winning-chance">
-<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="section-number">8.1.3. </span>MWC loss (Match Winning Chance)</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="section-number">12.1.3. </span>MWC loss (Match Winning Chance)</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Link to this heading"></a></h3>
 <p>MWC loss expresses in percentage points of match-winning probability the cumulative effect of a player’s errors. For each decision, the EMG error is converted to MWC using the MET (Match Equity Table) at the current score:</p>
 <div class="math notranslate nohighlight">
 \[\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{error}_i, \mathrm{score}_i)\]</div>
@@ -170,10 +168,10 @@
 </section>
 </section>
 <section id="decisions-comptees-au-denominateur-du-pr">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink"><span class="section-number">8.2. </span>Decisions counted in the PR denominator</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id5" role="doc-backlink"><span class="section-number">12.2. </span>Decisions counted in the PR denominator</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Link to this heading"></a></h2>
 <p>blunderDB follows the same exclusion rules as XG and gnuBG.</p>
 <section id="coups-de-pions-decisions-comptees">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink"><span class="section-number">8.2.1. </span>Checker plays — counted decisions</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id6" role="doc-backlink"><span class="section-number">12.2.1. </span>Checker plays — counted decisions</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Link to this heading"></a></h3>
 <p>Only <strong>unforced moves</strong> are counted:</p>
 <ul class="simple">
 <li><p>A move is <strong>forced</strong> if the dice offer only one legal play (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">==</span> <span class="pre">1</span></code> in <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458</span></code>).</p></li>
@@ -181,7 +179,7 @@
 </ul>
 </section>
 <section id="decisions-de-cube-decisions-comptees">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink"><span class="section-number">8.2.2. </span>Cube decisions — counted decisions</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink"><span class="section-number">12.2.2. </span>Cube decisions — counted decisions</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Link to this heading"></a></h3>
 <p>Only <strong>close cube decisions</strong> are counted:</p>
 <ul class="simple">
 <li><p>A cube decision is <strong>close</strong> if it lies within the equity window <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> around the doubling point (predicate <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> in <code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code>).</p></li>
@@ -189,7 +187,7 @@
 </ul>
 </section>
 <section id="resume-du-filtre">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink"><span class="section-number">8.2.3. </span>Filter summary</a><a class="headerlink" href="#resume-du-filtre" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink"><span class="section-number">12.2.3. </span>Filter summary</a><a class="headerlink" href="#resume-du-filtre" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Decision type</p></th>
@@ -217,10 +215,10 @@
 </section>
 </section>
 <section id="correspondance-blunderdb-xg-gnubg">
-<h2><a class="toc-backref" href="#id9" role="doc-backlink"><span class="section-number">8.3. </span>blunderDB ↔ XG ↔ gnuBG correspondence</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink"><span class="section-number">12.3. </span>blunderDB ↔ XG ↔ gnuBG correspondence</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Link to this heading"></a></h2>
 <p>Metrics are aligned within the following bounds (measured on 3 reference matches):</p>
 <section id="comparaison-xg-blunderdb-meme-moteur-d-analyse">
-<h3><a class="toc-backref" href="#id10" role="doc-backlink"><span class="section-number">8.3.1. </span>XG ↔ blunderDB comparison (same analysis engine)</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id10" role="doc-backlink"><span class="section-number">12.3.1. </span>XG ↔ blunderDB comparison (same analysis engine)</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Metric</p></th>
@@ -247,7 +245,7 @@
 </table>
 </section>
 <section id="comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink"><span class="section-number">8.3.2. </span>gnuBG ↔ blunderDB comparison (SGF import — different engines)</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Link to this heading"></a></h3>
+<h3><a class="toc-backref" href="#id11" role="doc-backlink"><span class="section-number">12.3.2. </span>gnuBG ↔ blunderDB comparison (SGF import — different engines)</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Link to this heading"></a></h3>
 <table class="docutils align-default">
 <thead>
 <tr class="row-odd"><th class="head"><p>Metric</p></th>
@@ -276,7 +274,7 @@
 </section>
 </section>
 <section id="valider-vos-propres-chiffres">
-<h2><a class="toc-backref" href="#id12" role="doc-backlink"><span class="section-number">8.4. </span>Validating your own figures</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id12" role="doc-backlink"><span class="section-number">12.4. </span>Validating your own figures</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Link to this heading"></a></h2>
 <p>If your PR or MWC values diverge from XG figures, check the following points:</p>
 <ol class="arabic simple">
 <li><p><strong>Complete analyses</strong> — PR can only be computed on positions that have an analysis. Positions without analysis count as zero error but are not included in <span class="math notranslate nohighlight">\(N_\text{counted}\)</span>.</p></li>
@@ -286,7 +284,7 @@
 </ol>
 </section>
 <section id="reference-gnubg">
-<h2><a class="toc-backref" href="#id13" role="doc-backlink"><span class="section-number">8.5. </span>gnuBG reference</a><a class="headerlink" href="#reference-gnubg" title="Link to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id13" role="doc-backlink"><span class="section-number">12.5. </span>gnuBG reference</a><a class="headerlink" href="#reference-gnubg" title="Link to this heading"></a></h2>
 <p>Formulas have been verified against the following source files (gnuBG repository):</p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code> — PR (“Error rate per decision”).</p></li>
@@ -303,8 +301,7 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="stats.html" class="btn btn-neutral float-left" title="7. Stats Panel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="faq.html" class="btn btn-neutral float-right" title="9. Frequently Asked Questions (FAQ)" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-left" title="11. Annex: Database Schema" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

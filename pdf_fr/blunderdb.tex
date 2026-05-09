@@ -1089,6 +1089,443 @@ paquet dans les Paramètres (icône engrenage).
 \sphinxstepscope
 
 
+\subsubsection{Panneau Stats}
+\label{\detokenize{stats:panneau-stats}}\label{\detokenize{stats:stats}}\label{\detokenize{stats::doc}}
+
+\paragraph{Introduction}
+\label{\detokenize{stats:introduction}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Stats} permet d’analyser son niveau de jeu et de suivre sa
+progression dans le temps à partir des positions importées dans la base de
+données. Il calcule et affiche les indicateurs \sphinxstylestrong{PR} (Performance Rate) et
+\sphinxstylestrong{MWC cost} (Match Winning Chance cost) pour l’ensemble des positions ou un
+sous\sphinxhyphen{}ensemble filtré.
+
+\sphinxAtStartPar
+Le panneau Stats est particulièrement utile pour :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{situer son niveau} par rapport aux seuils de référence (world\sphinxhyphen{}class,
+expert, avancé…) grâce au PR global ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{suivre sa progression} tournoi après tournoi ou match après match grâce
+aux graphiques de l’onglet Progression ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{identifier ses points faibles} : onglet Erreurs pour voir la répartition
+entre coups joués et décisions de videau, et la distribution des magnitudes
+d’erreur ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{accéder directement aux positions concernées} en cliquant sur n’importe
+quel indicateur (drill\sphinxhyphen{}down).
+
+\end{itemize}
+
+
+\paragraph{Ouverture du panneau}
+\label{\detokenize{stats:ouverture-du-panneau}}
+\sphinxAtStartPar
+Pour ouvrir le panneau Stats :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}D}.
+
+\item {} 
+\sphinxAtStartPar
+Saisir la commande \sphinxcode{\sphinxupquote{:stats}} ou \sphinxcode{\sphinxupquote{:st}} dans la ligne de commande.
+
+\end{itemize}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Le panneau se rafraîchit automatiquement à chaque modification du filtre.
+Il ne recalcule pas les statistiques lors d’un simple basculement PR ↔ MWC :
+les deux métriques sont calculées simultanément par le backend.
+\end{sphinxadmonition}
+
+
+\paragraph{Barre de filtre}
+\label{\detokenize{stats:barre-de-filtre}}
+\sphinxAtStartPar
+La barre de filtre, en haut du panneau, permet de restreindre le calcul à un
+sous\sphinxhyphen{}ensemble de positions.
+
+
+\subparagraph{Perspective joueur}
+\label{\detokenize{stats:perspective-joueur}}
+\sphinxAtStartPar
+La liste déroulante \sphinxstylestrong{Joueur} permet de filtrer les statistiques selon le
+joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom
+apparaît le plus souvent dans la base de données — modifiable à tout moment.
+
+\begin{sphinxadmonition}{tip}{Astuce:}
+\sphinxAtStartPar
+Changer de joueur ne provoque pas de perte de données ; il suffit de
+re\sphinxhyphen{}sélectionner le joueur précédent dans la liste.
+\end{sphinxadmonition}
+
+
+\subparagraph{Filtres disponibles}
+\label{\detokenize{stats:filtres-disponibles}}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Tournoi(s)} — restriction à un ou plusieurs tournois. Plusieurs tournois
+peuvent être sélectionnés simultanément.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Dates} — plage temporelle (\sphinxstyleemphasis{De} … \sphinxstyleemphasis{À}). Si seule la date de début est
+renseignée, les positions plus récentes sont incluses.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Type de décision} — Tous / Coups joués / Décisions de videau.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Longueur de match} — restriction à des longueurs de match précises (1, 3,
+5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Un bouton \sphinxstylestrong{Reset} remet tous les filtres à zéro (sauf le joueur
+auto\sphinxhyphen{}détecté).
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Les filtres sont persistés dans la configuration de blunderDB
+(\sphinxcode{\sphinxupquote{config.yaml}}) et sont restaurés à la prochaine ouverture.
+\end{sphinxadmonition}
+
+
+\paragraph{Toggle PR / MWC}
+\label{\detokenize{stats:toggle-pr-mwc}}
+\sphinxAtStartPar
+Le bouton \sphinxstylestrong{PR / MWC} en haut du panneau bascule la métrique affichée dans
+tous les onglets.
+
+\sphinxAtStartPar
+\sphinxstylestrong{PR (Performance Rate)}
+\begin{quote}
+
+\sphinxAtStartPar
+Mesure la qualité de jeu \sphinxstyleemphasis{money\sphinxhyphen{}game} : somme des erreurs en millièmes de
+point de backgammon, divisée par le nombre de décisions. Indépendant du
+score de match.
+
+\sphinxAtStartPar
+Seuils de référence approximatifs :
+
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabular}[t]{\X{20}{30}\X{10}{30}}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Niveau
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+PR
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+World\sphinxhyphen{}class
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+\textless{} 3
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Expert
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+3 \textendash{} 5
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Avancé
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+5 \textendash{} 8
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Intermédiaire
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+8 \textendash{} 12
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Débutant
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+\textgreater{} 12
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabular}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+\end{quote}
+
+\sphinxAtStartPar
+\sphinxstylestrong{MWC cost (Match Winning Chance cost)}
+\begin{quote}
+
+\sphinxAtStartPar
+Probabilité cumulée de victoire de match perdue à cause des erreurs, sur
+l’ensemble du jeu de données filtré. Calculé à partir de la MET
+Kazaross\sphinxhyphen{}XG2 embarquée dans blunderDB.
+
+\begin{sphinxadmonition}{caution}{Prudence:}
+\sphinxAtStartPar
+Le MWC cost \sphinxstylestrong{n’est pas applicable} aux positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans
+enjeu de match). Ces positions sont exclues du calcul MWC.
+Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas
+directement comparables entre logiciels utilisant des METs différentes.
+\end{sphinxadmonition}
+\end{quote}
+
+\sphinxAtStartPar
+Le basculement PR ↔ MWC est instantané : aucun recalcul backend n’est
+effectué.
+
+
+\paragraph{Onglet Dashboard}
+\label{\detokenize{stats:onglet-dashboard}}
+\sphinxAtStartPar
+L’onglet \sphinxstylestrong{Dashboard} donne une vue synthétique des indicateurs clés.
+
+
+\subparagraph{Cartes de niveau}
+\label{\detokenize{stats:cartes-de-niveau}}
+\sphinxAtStartPar
+Trois cartes affichent le PR (ou MWC) pour :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{All} — toutes les décisions (coups + videau) ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Checker} — coups joués seulement ;
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Cube} — décisions de videau seulement.
+
+\end{itemize}
+
+\sphinxAtStartPar
+Cliquer sur une carte charge dans le panneau d’analyse les positions du
+sous\sphinxhyphen{}ensemble correspondant (drill\sphinxhyphen{}down).
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Le nombre total de décisions est affiché en bas de chaque carte au survol.
+\end{sphinxadmonition}
+
+
+\subparagraph{PR glissant sur N dernières décisions}
+\label{\detokenize{stats:pr-glissant-sur-n-dernieres-decisions}}
+\sphinxAtStartPar
+Une ligne de valeurs PR (ou MWC) calculées sur les \sphinxstyleemphasis{N} dernières décisions
+(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente.
+Les valeurs grisées correspondent à un N supérieur au nombre de décisions
+disponibles.
+
+\sphinxAtStartPar
+Cliquer sur une valeur charge les \sphinxstyleemphasis{N} dernières positions correspondantes.
+
+
+\subparagraph{Top blunders}
+\label{\detokenize{stats:top-blunders}}
+\sphinxAtStartPar
+La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante.
+Cliquer sur une ligne charge la position concernée dans le panneau d’analyse.
+
+
+\paragraph{Onglet Progression}
+\label{\detokenize{stats:onglet-progression}}
+\sphinxAtStartPar
+L’onglet \sphinxstylestrong{Progression} présente l’évolution du niveau dans le temps.
+
+
+\subparagraph{Courbe par tournoi}
+\label{\detokenize{stats:courbe-par-tournoi}}
+\sphinxAtStartPar
+Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :
+ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur
+matérialisent les seuils de niveau.
+
+\sphinxAtStartPar
+Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open tournament} — ouvre le tournoi dans le panneau Tournois.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open positions} — charge toutes les positions du tournoi dans le panneau
+d’analyse.
+
+\end{itemize}
+
+
+\subparagraph{Scatter plot par match}
+\label{\detokenize{stats:scatter-plot-par-match}}
+\sphinxAtStartPar
+Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
+La taille du point est proportionnelle au nombre de décisions dans le match.
+
+\sphinxAtStartPar
+Cliquer sur un point ouvre un menu contextuel :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open match} — ouvre le match dans le panneau des matchs.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Open positions} — charge toutes les positions du match dans le panneau
+d’analyse.
+
+\end{itemize}
+
+
+\paragraph{Onglet Erreurs}
+\label{\detokenize{stats:onglet-erreurs}}
+\sphinxAtStartPar
+L’onglet \sphinxstylestrong{Erreurs} décompose les sources d’erreurs.
+
+
+\subparagraph{Répartition par action de videau}
+\label{\detokenize{stats:repartition-par-action-de-videau}}
+\sphinxAtStartPar
+Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision
+de videau : \sphinxstyleemphasis{NoDouble}, \sphinxstyleemphasis{DoubleTake}, \sphinxstyleemphasis{DoublePass}, \sphinxstyleemphasis{TooGood}. Chaque barre
+indique également le nombre de décisions et le taux de blunders en infobulle.
+
+\sphinxAtStartPar
+Cliquer sur une barre charge les positions correspondant à cette action de
+videau, \sphinxstylestrong{uniquement celles avec une erreur} (drill\sphinxhyphen{}down).
+
+
+\subparagraph{Répartition Checker / Cube}
+\label{\detokenize{stats:repartition-checker-cube}}
+\sphinxAtStartPar
+Un diagramme comparatif place côte à côte le PR des coups joués et des
+décisions de videau. Cliquer sur une barre charge les positions du
+sous\sphinxhyphen{}ensemble avec erreur.
+
+
+\subparagraph{Histogramme des magnitudes d’erreur}
+\label{\detokenize{stats:histogramme-des-magnitudes-d-erreur}}
+\sphinxAtStartPar
+Un histogramme distribue les erreurs selon leur magnitude en millièmes de
+point (tranches : 0\textendash{}5, 5\textendash{}10, 10\textendash{}25, 25\textendash{}50, 50\textendash{}100, ≥ 100). Cliquer sur
+une barre charge les positions de la tranche.
+
+
+\paragraph{Règle d’agrégation}
+\label{\detokenize{stats:regle-d-agregation}}
+\begin{sphinxadmonition}{important}{Important:}
+\sphinxAtStartPar
+Le PR d’un tournoi (ou d’un sous\sphinxhyphen{}ensemble quelconque) est calculé par
+la règle \sphinxstylestrong{somme/somme} — jamais comme moyenne des PR individuels des
+matchs.
+
+\sphinxAtStartPar
+Formule :
+\begin{equation*}
+\begin{split}PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\end{split}
+\end{equation*}
+\sphinxAtStartPar
+\sphinxstylestrong{Exemple :} un joueur dispute deux matchs dans un tournoi —
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Match A : 10 décisions, erreur totale 50 mp \(\rightarrow\) PR = 5,0
+
+\item {} 
+\sphinxAtStartPar
+Match B : 90 décisions, erreur totale 270 mp \(\rightarrow\) PR = 3,0
+
+\end{itemize}
+
+\sphinxAtStartPar
+Moyenne naïve des PR : (5,0 + 3,0) / 2 = \sphinxstylestrong{4,0} \sphinxstyleemphasis{(incorrect)}
+
+\sphinxAtStartPar
+Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = \sphinxstylestrong{3,2} \sphinxstyleemphasis{(correct)}
+
+\sphinxAtStartPar
+La règle somme/somme est la seule qui résiste à la variation de longueur
+des matchs (un match en 21 points pèse plus qu’un match en 1 point).
+\end{sphinxadmonition}
+
+
+\paragraph{MWC : limitations}
+\label{\detokenize{stats:mwc-limitations}}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Le MWC cost est calculé à partir de la \sphinxstylestrong{MET Kazaross\sphinxhyphen{}XG2}, table de
+référence de facto dans le backgammon compétitif. Les résultats ne sont
+pas directement comparables avec des logiciels utilisant d’autres METs.
+
+\item {} 
+\sphinxAtStartPar
+Les positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans score de match) sont \sphinxstylestrong{exclues} du
+calcul MWC. Si votre base de données contient beaucoup de positions
+money\sphinxhyphen{}game, le MWC cost peut être sous\sphinxhyphen{}estimé ou indisponible.
+
+\item {} 
+\sphinxAtStartPar
+Le MWC cost est cumulatif sur l’ensemble du jeu de données filtré — pas
+un indicateur par décision. Il mesure l’impact total de vos erreurs sur
+vos chances de victoire.
+
+\end{itemize}
+
+\sphinxstepscope
+
+
 \section{Guide utilisateur}
 \label{\detokenize{guide_utilisateur:guide-utilisateur}}\label{\detokenize{guide_utilisateur:id1}}\label{\detokenize{guide_utilisateur::doc}}
 \sphinxAtStartPar
@@ -5113,945 +5550,6 @@ Cela permet d’utiliser la CLI dans des scripts avec gestion d’erreurs:
 \sphinxstepscope
 
 
-\section{Panneau Stats}
-\label{\detokenize{stats:panneau-stats}}\label{\detokenize{stats:stats}}\label{\detokenize{stats::doc}}
-
-\subsection{Introduction}
-\label{\detokenize{stats:introduction}}
-\sphinxAtStartPar
-Le panneau \sphinxstylestrong{Stats} permet d’analyser son niveau de jeu et de suivre sa
-progression dans le temps à partir des positions importées dans la base de
-données. Il calcule et affiche les indicateurs \sphinxstylestrong{PR} (Performance Rate) et
-\sphinxstylestrong{MWC cost} (Match Winning Chance cost) pour l’ensemble des positions ou un
-sous\sphinxhyphen{}ensemble filtré.
-
-\sphinxAtStartPar
-Le panneau Stats est particulièrement utile pour :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{situer son niveau} par rapport aux seuils de référence (world\sphinxhyphen{}class,
-expert, avancé…) grâce au PR global ;
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{suivre sa progression} tournoi après tournoi ou match après match grâce
-aux graphiques de l’onglet Progression ;
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{identifier ses points faibles} : onglet Erreurs pour voir la répartition
-entre coups joués et décisions de videau, et la distribution des magnitudes
-d’erreur ;
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{accéder directement aux positions concernées} en cliquant sur n’importe
-quel indicateur (drill\sphinxhyphen{}down).
-
-\end{itemize}
-
-
-\subsection{Ouverture du panneau}
-\label{\detokenize{stats:ouverture-du-panneau}}
-\sphinxAtStartPar
-Pour ouvrir le panneau Stats :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}D}.
-
-\item {} 
-\sphinxAtStartPar
-Saisir la commande \sphinxcode{\sphinxupquote{:stats}} ou \sphinxcode{\sphinxupquote{:st}} dans la ligne de commande.
-
-\end{itemize}
-
-\begin{sphinxadmonition}{note}{Note:}
-\sphinxAtStartPar
-Le panneau se rafraîchit automatiquement à chaque modification du filtre.
-Il ne recalcule pas les statistiques lors d’un simple basculement PR ↔ MWC :
-les deux métriques sont calculées simultanément par le backend.
-\end{sphinxadmonition}
-
-
-\subsection{Barre de filtre}
-\label{\detokenize{stats:barre-de-filtre}}
-\sphinxAtStartPar
-La barre de filtre, en haut du panneau, permet de restreindre le calcul à un
-sous\sphinxhyphen{}ensemble de positions.
-
-
-\subsubsection{Perspective joueur}
-\label{\detokenize{stats:perspective-joueur}}
-\sphinxAtStartPar
-La liste déroulante \sphinxstylestrong{Joueur} permet de filtrer les statistiques selon le
-joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom
-apparaît le plus souvent dans la base de données — modifiable à tout moment.
-
-\begin{sphinxadmonition}{tip}{Astuce:}
-\sphinxAtStartPar
-Changer de joueur ne provoque pas de perte de données ; il suffit de
-re\sphinxhyphen{}sélectionner le joueur précédent dans la liste.
-\end{sphinxadmonition}
-
-
-\subsubsection{Filtres disponibles}
-\label{\detokenize{stats:filtres-disponibles}}\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Tournoi(s)} — restriction à un ou plusieurs tournois. Plusieurs tournois
-peuvent être sélectionnés simultanément.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Dates} — plage temporelle (\sphinxstyleemphasis{De} … \sphinxstyleemphasis{À}). Si seule la date de début est
-renseignée, les positions plus récentes sont incluses.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Type de décision} — Tous / Coups joués / Décisions de videau.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Longueur de match} — restriction à des longueurs de match précises (1, 3,
-5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Un bouton \sphinxstylestrong{Reset} remet tous les filtres à zéro (sauf le joueur
-auto\sphinxhyphen{}détecté).
-
-\begin{sphinxadmonition}{note}{Note:}
-\sphinxAtStartPar
-Les filtres sont persistés dans la configuration de blunderDB
-(\sphinxcode{\sphinxupquote{config.yaml}}) et sont restaurés à la prochaine ouverture.
-\end{sphinxadmonition}
-
-
-\subsection{Toggle PR / MWC}
-\label{\detokenize{stats:toggle-pr-mwc}}
-\sphinxAtStartPar
-Le bouton \sphinxstylestrong{PR / MWC} en haut du panneau bascule la métrique affichée dans
-tous les onglets.
-
-\sphinxAtStartPar
-\sphinxstylestrong{PR (Performance Rate)}
-\begin{quote}
-
-\sphinxAtStartPar
-Mesure la qualité de jeu \sphinxstyleemphasis{money\sphinxhyphen{}game} : somme des erreurs en millièmes de
-point de backgammon, divisée par le nombre de décisions. Indépendant du
-score de match.
-
-\sphinxAtStartPar
-Seuils de référence approximatifs :
-
-
-\begin{savenotes}\sphinxattablestart
-\sphinxthistablewithglobalstyle
-\centering
-\begin{tabular}[t]{\X{20}{30}\X{10}{30}}
-\sphinxtoprule
-\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Niveau
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-PR
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-World\sphinxhyphen{}class
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-\textless{} 3
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Expert
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-3 \textendash{} 5
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Avancé
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-5 \textendash{} 8
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Intermédiaire
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-8 \textendash{} 12
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Débutant
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-\textgreater{} 12
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxbottomrule
-\end{tabular}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
-\end{quote}
-
-\sphinxAtStartPar
-\sphinxstylestrong{MWC cost (Match Winning Chance cost)}
-\begin{quote}
-
-\sphinxAtStartPar
-Probabilité cumulée de victoire de match perdue à cause des erreurs, sur
-l’ensemble du jeu de données filtré. Calculé à partir de la MET
-Kazaross\sphinxhyphen{}XG2 embarquée dans blunderDB.
-
-\begin{sphinxadmonition}{caution}{Prudence:}
-\sphinxAtStartPar
-Le MWC cost \sphinxstylestrong{n’est pas applicable} aux positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans
-enjeu de match). Ces positions sont exclues du calcul MWC.
-Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas
-directement comparables entre logiciels utilisant des METs différentes.
-\end{sphinxadmonition}
-\end{quote}
-
-\sphinxAtStartPar
-Le basculement PR ↔ MWC est instantané : aucun recalcul backend n’est
-effectué.
-
-
-\subsection{Onglet Dashboard}
-\label{\detokenize{stats:onglet-dashboard}}
-\sphinxAtStartPar
-L’onglet \sphinxstylestrong{Dashboard} donne une vue synthétique des indicateurs clés.
-
-
-\subsubsection{Cartes de niveau}
-\label{\detokenize{stats:cartes-de-niveau}}
-\sphinxAtStartPar
-Trois cartes affichent le PR (ou MWC) pour :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{All} — toutes les décisions (coups + videau) ;
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Checker} — coups joués seulement ;
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Cube} — décisions de videau seulement.
-
-\end{itemize}
-
-\sphinxAtStartPar
-Cliquer sur une carte charge dans le panneau d’analyse les positions du
-sous\sphinxhyphen{}ensemble correspondant (drill\sphinxhyphen{}down).
-
-\begin{sphinxadmonition}{note}{Note:}
-\sphinxAtStartPar
-Le nombre total de décisions est affiché en bas de chaque carte au survol.
-\end{sphinxadmonition}
-
-
-\subsubsection{PR glissant sur N dernières décisions}
-\label{\detokenize{stats:pr-glissant-sur-n-dernieres-decisions}}
-\sphinxAtStartPar
-Une ligne de valeurs PR (ou MWC) calculées sur les \sphinxstyleemphasis{N} dernières décisions
-(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente.
-Les valeurs grisées correspondent à un N supérieur au nombre de décisions
-disponibles.
-
-\sphinxAtStartPar
-Cliquer sur une valeur charge les \sphinxstyleemphasis{N} dernières positions correspondantes.
-
-
-\subsubsection{Top blunders}
-\label{\detokenize{stats:top-blunders}}
-\sphinxAtStartPar
-La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante.
-Cliquer sur une ligne charge la position concernée dans le panneau d’analyse.
-
-
-\subsection{Onglet Progression}
-\label{\detokenize{stats:onglet-progression}}
-\sphinxAtStartPar
-L’onglet \sphinxstylestrong{Progression} présente l’évolution du niveau dans le temps.
-
-
-\subsubsection{Courbe par tournoi}
-\label{\detokenize{stats:courbe-par-tournoi}}
-\sphinxAtStartPar
-Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :
-ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur
-matérialisent les seuils de niveau.
-
-\sphinxAtStartPar
-Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Open tournament} — ouvre le tournoi dans le panneau Tournois.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Open positions} — charge toutes les positions du tournoi dans le panneau
-d’analyse.
-
-\end{itemize}
-
-
-\subsubsection{Scatter plot par match}
-\label{\detokenize{stats:scatter-plot-par-match}}
-\sphinxAtStartPar
-Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
-La taille du point est proportionnelle au nombre de décisions dans le match.
-
-\sphinxAtStartPar
-Cliquer sur un point ouvre un menu contextuel :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Open match} — ouvre le match dans le panneau des matchs.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Open positions} — charge toutes les positions du match dans le panneau
-d’analyse.
-
-\end{itemize}
-
-
-\subsection{Onglet Erreurs}
-\label{\detokenize{stats:onglet-erreurs}}
-\sphinxAtStartPar
-L’onglet \sphinxstylestrong{Erreurs} décompose les sources d’erreurs.
-
-
-\subsubsection{Répartition par action de videau}
-\label{\detokenize{stats:repartition-par-action-de-videau}}
-\sphinxAtStartPar
-Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision
-de videau : \sphinxstyleemphasis{NoDouble}, \sphinxstyleemphasis{DoubleTake}, \sphinxstyleemphasis{DoublePass}, \sphinxstyleemphasis{TooGood}. Chaque barre
-indique également le nombre de décisions et le taux de blunders en infobulle.
-
-\sphinxAtStartPar
-Cliquer sur une barre charge les positions correspondant à cette action de
-videau, \sphinxstylestrong{uniquement celles avec une erreur} (drill\sphinxhyphen{}down).
-
-
-\subsubsection{Répartition Checker / Cube}
-\label{\detokenize{stats:repartition-checker-cube}}
-\sphinxAtStartPar
-Un diagramme comparatif place côte à côte le PR des coups joués et des
-décisions de videau. Cliquer sur une barre charge les positions du
-sous\sphinxhyphen{}ensemble avec erreur.
-
-
-\subsubsection{Histogramme des magnitudes d’erreur}
-\label{\detokenize{stats:histogramme-des-magnitudes-d-erreur}}
-\sphinxAtStartPar
-Un histogramme distribue les erreurs selon leur magnitude en millièmes de
-point (tranches : 0\textendash{}5, 5\textendash{}10, 10\textendash{}25, 25\textendash{}50, 50\textendash{}100, ≥ 100). Cliquer sur
-une barre charge les positions de la tranche.
-
-
-\subsection{Règle d’agrégation}
-\label{\detokenize{stats:regle-d-agregation}}
-\begin{sphinxadmonition}{important}{Important:}
-\sphinxAtStartPar
-Le PR d’un tournoi (ou d’un sous\sphinxhyphen{}ensemble quelconque) est calculé par
-la règle \sphinxstylestrong{somme/somme} — jamais comme moyenne des PR individuels des
-matchs.
-
-\sphinxAtStartPar
-Formule :
-\begin{equation*}
-\begin{split}PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\end{split}
-\end{equation*}
-\sphinxAtStartPar
-\sphinxstylestrong{Exemple :} un joueur dispute deux matchs dans un tournoi —
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Match A : 10 décisions, erreur totale 50 mp \(\rightarrow\) PR = 5,0
-
-\item {} 
-\sphinxAtStartPar
-Match B : 90 décisions, erreur totale 270 mp \(\rightarrow\) PR = 3,0
-
-\end{itemize}
-
-\sphinxAtStartPar
-Moyenne naïve des PR : (5,0 + 3,0) / 2 = \sphinxstylestrong{4,0} \sphinxstyleemphasis{(incorrect)}
-
-\sphinxAtStartPar
-Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = \sphinxstylestrong{3,2} \sphinxstyleemphasis{(correct)}
-
-\sphinxAtStartPar
-La règle somme/somme est la seule qui résiste à la variation de longueur
-des matchs (un match en 21 points pèse plus qu’un match en 1 point).
-\end{sphinxadmonition}
-
-
-\subsection{MWC : limitations}
-\label{\detokenize{stats:mwc-limitations}}\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Le MWC cost est calculé à partir de la \sphinxstylestrong{MET Kazaross\sphinxhyphen{}XG2}, table de
-référence de facto dans le backgammon compétitif. Les résultats ne sont
-pas directement comparables avec des logiciels utilisant d’autres METs.
-
-\item {} 
-\sphinxAtStartPar
-Les positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans score de match) sont \sphinxstylestrong{exclues} du
-calcul MWC. Si votre base de données contient beaucoup de positions
-money\sphinxhyphen{}game, le MWC cost peut être sous\sphinxhyphen{}estimé ou indisponible.
-
-\item {} 
-\sphinxAtStartPar
-Le MWC cost est cumulatif sur l’ensemble du jeu de données filtré — pas
-un indicateur par décision. Il mesure l’impact total de vos erreurs sur
-vos chances de victoire.
-
-\end{itemize}
-
-\sphinxstepscope
-
-
-\section{Modèle de statistiques — alignement XG / gnuBG / blunderDB}
-\label{\detokenize{stats_parity:modele-de-statistiques-alignement-xg-gnubg-blunderdb}}\label{\detokenize{stats_parity:stats-parity}}\label{\detokenize{stats_parity::doc}}
-\sphinxAtStartPar
-Cette page décrit comment blunderDB calcule le \sphinxstylestrong{PR} (Performance Rate),
-le \sphinxstylestrong{Snowie Error Rate} et la \sphinxstylestrong{perte MWC}, et comment ces métriques sont
-alignées sur eXtreme Gammon (XG) et gnuBG (référence ouverte).
-
-\begin{sphinxcontents}
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id1}}{\hyperref[\detokenize{stats_parity:definitions-formelles}]{\sphinxcrossref{Définitions formelles}}}
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id2}}{\hyperref[\detokenize{stats_parity:pr-performance-rate}]{\sphinxcrossref{PR (Performance Rate)}}}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id3}}{\hyperref[\detokenize{stats_parity:snowie-error-rate}]{\sphinxcrossref{Snowie Error Rate}}}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id4}}{\hyperref[\detokenize{stats_parity:perte-mwc-match-winning-chance}]{\sphinxcrossref{Perte MWC (Match Winning Chance)}}}
-
-\end{itemize}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id5}}{\hyperref[\detokenize{stats_parity:decisions-comptees-au-denominateur-du-pr}]{\sphinxcrossref{Décisions comptées au dénominateur du PR}}}
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id6}}{\hyperref[\detokenize{stats_parity:coups-de-pions-decisions-comptees}]{\sphinxcrossref{Coups de pions — décisions comptées}}}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id7}}{\hyperref[\detokenize{stats_parity:decisions-de-cube-decisions-comptees}]{\sphinxcrossref{Décisions de cube — décisions comptées}}}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id8}}{\hyperref[\detokenize{stats_parity:resume-du-filtre}]{\sphinxcrossref{Résumé du filtre}}}
-
-\end{itemize}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id9}}{\hyperref[\detokenize{stats_parity:correspondance-blunderdb-xg-gnubg}]{\sphinxcrossref{Correspondance blunderDB ↔ XG ↔ gnuBG}}}
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id10}}{\hyperref[\detokenize{stats_parity:comparaison-xg-blunderdb-meme-moteur-d-analyse}]{\sphinxcrossref{Comparaison XG ↔ blunderDB (même moteur d’analyse)}}}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id11}}{\hyperref[\detokenize{stats_parity:comparaison-gnubg-blunderdb-import-sgf-moteurs-differents}]{\sphinxcrossref{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}}}
-
-\end{itemize}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id12}}{\hyperref[\detokenize{stats_parity:valider-vos-propres-chiffres}]{\sphinxcrossref{Valider vos propres chiffres}}}
-
-\item {} 
-\sphinxAtStartPar
-\phantomsection\label{\detokenize{stats_parity:id13}}{\hyperref[\detokenize{stats_parity:reference-gnubg}]{\sphinxcrossref{Référence gnuBG}}}
-
-\end{itemize}
-\end{sphinxcontents}
-
-
-\subsection{Définitions formelles}
-\label{\detokenize{stats_parity:definitions-formelles}}
-
-\subsubsection{PR (Performance Rate)}
-\label{\detokenize{stats_parity:pr-performance-rate}}
-\sphinxAtStartPar
-Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure l’erreur
-moyenne en millièmes de point de jetons (millipoints, mpt) par décision
-comptée.
-\begin{equation*}
-\begin{split}\mathrm{PR} = \frac{\sum_i |\mathrm{erreur}_i|}{\mathrm{N_{compté}}} \times 500\end{split}
-\end{equation*}\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Le numérateur est la somme absolue des erreurs EMG (en equity cubeful) sur
-toutes les décisions du périmètre.
-
-\item {} 
-\sphinxAtStartPar
-Le dénominateur \(N_\text{compté}\) est le nombre de \sphinxstylestrong{décisions comptées}
-(voir ci\sphinxhyphen{}dessous).
-
-\item {} 
-\sphinxAtStartPar
-Le facteur 500 convertit l’equity en millipoints (1 point = 1000 mpt, mais
-l’échelle est ×500 par convention XG/gnuBG — cf. \sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}}).
-
-\end{itemize}
-
-
-\subsubsection{Snowie Error Rate}
-\label{\detokenize{stats_parity:snowie-error-rate}}
-\sphinxAtStartPar
-Le Snowie ER utilise le \sphinxstylestrong{même numérateur} que le PR, mais le dénominateur est
-le nombre total de coups des deux joueurs, coups forcés inclus (toutes décisions,
-sans filtre) :
-\begin{equation*}
-\begin{split}\mathrm{SnowieER} = \frac{\sum_i |\mathrm{erreur}_i|}{N_\text{P1} + N_\text{P2}} \times 500\end{split}
-\end{equation*}
-\sphinxAtStartPar
-Référence : \sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}}.
-
-\sphinxAtStartPar
-Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend pas
-du filtre des décisions forcées/triviales. Il sert de métrique de recoupement
-XG ↔ gnuBG ↔ blunderDB.
-
-\begin{sphinxadmonition}{note}{Note:}
-\sphinxAtStartPar
-Le Snowie ER d’un joueur est typiquement environ la moitié de son PR, car le
-dénominateur inclut les coups des deux joueurs alors que le PR n’utilise que
-les décisions de ce joueur.
-\end{sphinxadmonition}
-
-
-\subsubsection{Perte MWC (Match Winning Chance)}
-\label{\detokenize{stats_parity:perte-mwc-match-winning-chance}}
-\sphinxAtStartPar
-La perte MWC exprime en points de pourcentage de probabilité de gagner le match
-l’effet cumulé des erreurs d’un joueur. Pour chaque décision, l’erreur EMG est
-convertie en MWC via la table MET (Match Equity Table) au score courant :
-\begin{equation*}
-\begin{split}\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\end{split}
-\end{equation*}
-\sphinxAtStartPar
-Référence : \sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}}.
-
-
-\subsection{Décisions comptées au dénominateur du PR}
-\label{\detokenize{stats_parity:decisions-comptees-au-denominateur-du-pr}}
-\sphinxAtStartPar
-blunderDB suit les mêmes règles d’exclusion qu’XG et gnuBG.
-
-
-\subsubsection{Coups de pions — décisions comptées}
-\label{\detokenize{stats_parity:coups-de-pions-decisions-comptees}}
-\sphinxAtStartPar
-Seuls les \sphinxstylestrong{coups non\sphinxhyphen{}forcés} sont comptés :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Un coup est \sphinxstylestrong{forcé} si le dé n’offre qu’un seul coup légal (\sphinxcode{\sphinxupquote{cMoves == 1}}
-dans \sphinxcode{\sphinxupquote{gnubg/analysis.c:458}}).
-
-\item {} 
-\sphinxAtStartPar
-Les coups forcés ont une erreur nulle par définition : le joueur n’avait pas
-le choix. Les inclure dans le dénominateur abaisserait artificiellement le PR.
-
-\end{itemize}
-
-
-\subsubsection{Décisions de cube — décisions comptées}
-\label{\detokenize{stats_parity:decisions-de-cube-decisions-comptees}}
-\sphinxAtStartPar
-Seules les \sphinxstylestrong{décisions de cube proches} sont comptées :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-Une décision cube est \sphinxstylestrong{proche} si elle se situe dans la fenêtre d’équité
-\sphinxcode{\sphinxupquote{{[}\sphinxhyphen{}0.16, +0.16{]}}} autour du point de redoublement (prédicat
-\sphinxcode{\sphinxupquote{isCloseCubedecision}} dans \sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}}).
-
-\item {} 
-\sphinxAtStartPar
-Un « No Double » trivial (équité très négative ou très positive) n’est pas
-une vraie décision stratégique ; l’inclure gonflerait le dénominateur et
-dépresserait le PR.
-
-\end{itemize}
-
-
-\subsubsection{Résumé du filtre}
-\label{\detokenize{stats_parity:resume-du-filtre}}
-
-\begin{savenotes}\sphinxattablestart
-\sphinxthistablewithglobalstyle
-\centering
-\begin{tabulary}{\linewidth}[t]{TT}
-\sphinxtoprule
-\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Type de décision
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Inclus dans \(N_\text{compté}\) (PR)
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Coup non\sphinxhyphen{}forcé
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Oui
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Coup forcé
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Non
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Cube proche
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Oui
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-No Double trivial
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Non
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Take / Pass
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Toujours (ce sont des réponses au double)
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxbottomrule
-\end{tabulary}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
-
-
-\subsection{Correspondance blunderDB ↔ XG ↔ gnuBG}
-\label{\detokenize{stats_parity:correspondance-blunderdb-xg-gnubg}}
-\sphinxAtStartPar
-Les métriques sont alignées dans les limites suivantes (mesurées sur 3 matchs de référence) :
-
-
-\subsubsection{Comparaison XG ↔ blunderDB (même moteur d’analyse)}
-\label{\detokenize{stats_parity:comparaison-xg-blunderdb-meme-moteur-d-analyse}}
-
-\begin{savenotes}\sphinxattablestart
-\sphinxthistablewithglobalstyle
-\centering
-\begin{tabulary}{\linewidth}[t]{TT}
-\sphinxtoprule
-\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Métrique
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Écart typique
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Décisions totales
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-≤ 5
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Coups non\sphinxhyphen{}forcés
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-≤ 7
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-PR
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-≤ 0.10
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Perte MWC
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-≤ 1.0 pp
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-Equity total (EMG)
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
-\sphinxAtStartPar
-≤ 0.05
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxbottomrule
-\end{tabulary}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
-
-
-\subsubsection{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}
-\label{\detokenize{stats_parity:comparaison-gnubg-blunderdb-import-sgf-moteurs-differents}}
-
-\begin{savenotes}\sphinxattablestart
-\sphinxthistablewithglobalstyle
-\centering
-\begin{tabulary}{\linewidth}[t]{TTT}
-\sphinxtoprule
-\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Métrique
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\sphinxstartmulticolumn{2}%
-\begin{varwidth}[t]{\sphinxcolwidth{2}{3}}
-\sphinxstyletheadfamily \sphinxAtStartPar
-Écart typique  | Cause principale
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\sphinxstopmulticolumn
-\\
-\sphinxmidrule
-\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-PR (checker)
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-≤ 0.20
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-equity cross\sphinxhyphen{}engine
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Perte MWC
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-≤ 3.5 pp
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-close\sphinxhyphen{}cube SGF incomplet
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-Snowie ER
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-≤ 0.50
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
-\sphinxAtStartPar
-forcés sans analyse (SGF)
-\sphinxbeforeendvarwidth
-\end{varwidth}%
-\\
-\sphinxbottomrule
-\end{tabulary}
-\sphinxtableafterendhook\par
-\sphinxattableend\end{savenotes}
-
-\begin{sphinxadmonition}{note}{Note:}
-\sphinxAtStartPar
-Les fichiers SGF (gnuBG) n’incluent pas les alternatives pour les coups
-forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups
-forcés à l’import SGF. Cela crée un écart structurel sur le Snowie ER
-(dénominateur légèrement différent).
-\end{sphinxadmonition}
-
-
-\subsection{Valider vos propres chiffres}
-\label{\detokenize{stats_parity:valider-vos-propres-chiffres}}
-\sphinxAtStartPar
-Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points
-suivants :
-\begin{enumerate}
-\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Analyses complètes} — Le PR ne peut être calculé que sur les positions
-disposant d’une analyse. Des positions sans analyse sont comptées comme
-erreur zéro mais n’entrent pas dans \(N_\text{compté}\).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Version XG} — XG peut changer ses calculs entre versions. blunderDB
-s’aligne sur le comportement observé des versions récentes.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Format d’import} — Les fichiers SGF gnuBG produisent des écarts plus
-importants sur le cube (voir tableau ci\sphinxhyphen{}dessus) car le fichier n’inclut
-pas les analyses complètes pour tous les cubes.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxstylestrong{Migration de base} — Après mise à jour de blunderDB, les bases existantes
-sont migrées automatiquement. Faire une sauvegarde avant d’ouvrir une base
-avec une nouvelle version.
-
-\end{enumerate}
-
-
-\subsection{Référence gnuBG}
-\label{\detokenize{stats_parity:reference-gnubg}}
-\sphinxAtStartPar
-Les formules ont été vérifiées dans les fichiers source suivants (dépôt gnuBG) :
-\begin{itemize}
-\item {} 
-\sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}} — PR (« Error rate per decision »).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}} — Snowie Error Rate.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/analysis.c:458\textendash{}462}} — Accumulation checker, exclusion des forcés (\sphinxcode{\sphinxupquote{cMoves \textgreater{} 1}}).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/analysis.c:1430\textendash{}1474}} — Conversion EMG \(\rightarrow\) MWC par décision.
-
-\item {} 
-\sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}} — Accumulation de la perte MWC (\sphinxcode{\sphinxupquote{eq2mwc}}).
-
-\item {} 
-\sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}} — Prédicat \sphinxcode{\sphinxupquote{isCloseCubedecision}} (seuil 0.16).
-
-\end{itemize}
-
-\sphinxstepscope
-
-
 \section{Foire aux questions}
 \label{\detokenize{faq:foire-aux-questions}}\label{\detokenize{faq:faq}}\label{\detokenize{faq::doc}}
 
@@ -7263,6 +6761,508 @@ Depuis la version 0.10.0, toutes les migrations de bases de données
 sont effectuées automatiquement lors de l’ouverture d’un fichier de base de
 données.
 \end{sphinxadmonition}
+
+\sphinxstepscope
+
+
+\section{Modèle de statistiques — alignement XG / gnuBG / blunderDB}
+\label{\detokenize{stats_parity:modele-de-statistiques-alignement-xg-gnubg-blunderdb}}\label{\detokenize{stats_parity:stats-parity}}\label{\detokenize{stats_parity::doc}}
+\sphinxAtStartPar
+Cette page décrit comment blunderDB calcule le \sphinxstylestrong{PR} (Performance Rate),
+le \sphinxstylestrong{Snowie Error Rate} et la \sphinxstylestrong{perte MWC}, et comment ces métriques sont
+alignées sur eXtreme Gammon (XG) et gnuBG (référence ouverte).
+
+\begin{sphinxcontents}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id1}}{\hyperref[\detokenize{stats_parity:definitions-formelles}]{\sphinxcrossref{Définitions formelles}}}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id2}}{\hyperref[\detokenize{stats_parity:pr-performance-rate}]{\sphinxcrossref{PR (Performance Rate)}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id3}}{\hyperref[\detokenize{stats_parity:snowie-error-rate}]{\sphinxcrossref{Snowie Error Rate}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id4}}{\hyperref[\detokenize{stats_parity:perte-mwc-match-winning-chance}]{\sphinxcrossref{Perte MWC (Match Winning Chance)}}}
+
+\end{itemize}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id5}}{\hyperref[\detokenize{stats_parity:decisions-comptees-au-denominateur-du-pr}]{\sphinxcrossref{Décisions comptées au dénominateur du PR}}}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id6}}{\hyperref[\detokenize{stats_parity:coups-de-pions-decisions-comptees}]{\sphinxcrossref{Coups de pions — décisions comptées}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id7}}{\hyperref[\detokenize{stats_parity:decisions-de-cube-decisions-comptees}]{\sphinxcrossref{Décisions de cube — décisions comptées}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id8}}{\hyperref[\detokenize{stats_parity:resume-du-filtre}]{\sphinxcrossref{Résumé du filtre}}}
+
+\end{itemize}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id9}}{\hyperref[\detokenize{stats_parity:correspondance-blunderdb-xg-gnubg}]{\sphinxcrossref{Correspondance blunderDB ↔ XG ↔ gnuBG}}}
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id10}}{\hyperref[\detokenize{stats_parity:comparaison-xg-blunderdb-meme-moteur-d-analyse}]{\sphinxcrossref{Comparaison XG ↔ blunderDB (même moteur d’analyse)}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id11}}{\hyperref[\detokenize{stats_parity:comparaison-gnubg-blunderdb-import-sgf-moteurs-differents}]{\sphinxcrossref{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}}}
+
+\end{itemize}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id12}}{\hyperref[\detokenize{stats_parity:valider-vos-propres-chiffres}]{\sphinxcrossref{Valider vos propres chiffres}}}
+
+\item {} 
+\sphinxAtStartPar
+\phantomsection\label{\detokenize{stats_parity:id13}}{\hyperref[\detokenize{stats_parity:reference-gnubg}]{\sphinxcrossref{Référence gnuBG}}}
+
+\end{itemize}
+\end{sphinxcontents}
+
+
+\subsection{Définitions formelles}
+\label{\detokenize{stats_parity:definitions-formelles}}
+
+\subsubsection{PR (Performance Rate)}
+\label{\detokenize{stats_parity:pr-performance-rate}}
+\sphinxAtStartPar
+Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure l’erreur
+moyenne en millièmes de point de jetons (millipoints, mpt) par décision
+comptée.
+\begin{equation*}
+\begin{split}\mathrm{PR} = \frac{\sum_i |\mathrm{erreur}_i|}{\mathrm{N_{compté}}} \times 500\end{split}
+\end{equation*}\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Le numérateur est la somme absolue des erreurs EMG (en equity cubeful) sur
+toutes les décisions du périmètre.
+
+\item {} 
+\sphinxAtStartPar
+Le dénominateur \(N_\text{compté}\) est le nombre de \sphinxstylestrong{décisions comptées}
+(voir ci\sphinxhyphen{}dessous).
+
+\item {} 
+\sphinxAtStartPar
+Le facteur 500 convertit l’equity en millipoints (1 point = 1000 mpt, mais
+l’échelle est ×500 par convention XG/gnuBG — cf. \sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}}).
+
+\end{itemize}
+
+
+\subsubsection{Snowie Error Rate}
+\label{\detokenize{stats_parity:snowie-error-rate}}
+\sphinxAtStartPar
+Le Snowie ER utilise le \sphinxstylestrong{même numérateur} que le PR, mais le dénominateur est
+le nombre total de coups des deux joueurs, coups forcés inclus (toutes décisions,
+sans filtre) :
+\begin{equation*}
+\begin{split}\mathrm{SnowieER} = \frac{\sum_i |\mathrm{erreur}_i|}{N_\text{P1} + N_\text{P2}} \times 500\end{split}
+\end{equation*}
+\sphinxAtStartPar
+Référence : \sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}}.
+
+\sphinxAtStartPar
+Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend pas
+du filtre des décisions forcées/triviales. Il sert de métrique de recoupement
+XG ↔ gnuBG ↔ blunderDB.
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Le Snowie ER d’un joueur est typiquement environ la moitié de son PR, car le
+dénominateur inclut les coups des deux joueurs alors que le PR n’utilise que
+les décisions de ce joueur.
+\end{sphinxadmonition}
+
+
+\subsubsection{Perte MWC (Match Winning Chance)}
+\label{\detokenize{stats_parity:perte-mwc-match-winning-chance}}
+\sphinxAtStartPar
+La perte MWC exprime en points de pourcentage de probabilité de gagner le match
+l’effet cumulé des erreurs d’un joueur. Pour chaque décision, l’erreur EMG est
+convertie en MWC via la table MET (Match Equity Table) au score courant :
+\begin{equation*}
+\begin{split}\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\end{split}
+\end{equation*}
+\sphinxAtStartPar
+Référence : \sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}}.
+
+
+\subsection{Décisions comptées au dénominateur du PR}
+\label{\detokenize{stats_parity:decisions-comptees-au-denominateur-du-pr}}
+\sphinxAtStartPar
+blunderDB suit les mêmes règles d’exclusion qu’XG et gnuBG.
+
+
+\subsubsection{Coups de pions — décisions comptées}
+\label{\detokenize{stats_parity:coups-de-pions-decisions-comptees}}
+\sphinxAtStartPar
+Seuls les \sphinxstylestrong{coups non\sphinxhyphen{}forcés} sont comptés :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Un coup est \sphinxstylestrong{forcé} si le dé n’offre qu’un seul coup légal (\sphinxcode{\sphinxupquote{cMoves == 1}}
+dans \sphinxcode{\sphinxupquote{gnubg/analysis.c:458}}).
+
+\item {} 
+\sphinxAtStartPar
+Les coups forcés ont une erreur nulle par définition : le joueur n’avait pas
+le choix. Les inclure dans le dénominateur abaisserait artificiellement le PR.
+
+\end{itemize}
+
+
+\subsubsection{Décisions de cube — décisions comptées}
+\label{\detokenize{stats_parity:decisions-de-cube-decisions-comptees}}
+\sphinxAtStartPar
+Seules les \sphinxstylestrong{décisions de cube proches} sont comptées :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+Une décision cube est \sphinxstylestrong{proche} si elle se situe dans la fenêtre d’équité
+\sphinxcode{\sphinxupquote{{[}\sphinxhyphen{}0.16, +0.16{]}}} autour du point de redoublement (prédicat
+\sphinxcode{\sphinxupquote{isCloseCubedecision}} dans \sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}}).
+
+\item {} 
+\sphinxAtStartPar
+Un « No Double » trivial (équité très négative ou très positive) n’est pas
+une vraie décision stratégique ; l’inclure gonflerait le dénominateur et
+dépresserait le PR.
+
+\end{itemize}
+
+
+\subsubsection{Résumé du filtre}
+\label{\detokenize{stats_parity:resume-du-filtre}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabulary}{\linewidth}[t]{TT}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Type de décision
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Inclus dans \(N_\text{compté}\) (PR)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Coup non\sphinxhyphen{}forcé
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Oui
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Coup forcé
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Non
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Cube proche
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Oui
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+No Double trivial
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Non
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Take / Pass
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Toujours (ce sont des réponses au double)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabulary}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsection{Correspondance blunderDB ↔ XG ↔ gnuBG}
+\label{\detokenize{stats_parity:correspondance-blunderdb-xg-gnubg}}
+\sphinxAtStartPar
+Les métriques sont alignées dans les limites suivantes (mesurées sur 3 matchs de référence) :
+
+
+\subsubsection{Comparaison XG ↔ blunderDB (même moteur d’analyse)}
+\label{\detokenize{stats_parity:comparaison-xg-blunderdb-meme-moteur-d-analyse}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabulary}{\linewidth}[t]{TT}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Métrique
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Écart typique
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Décisions totales
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 5
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Coups non\sphinxhyphen{}forcés
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 7
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+PR
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 0.10
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Perte MWC
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 1.0 pp
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+Equity total (EMG)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+≤ 0.05
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabulary}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+
+\subsubsection{Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)}
+\label{\detokenize{stats_parity:comparaison-gnubg-blunderdb-import-sgf-moteurs-differents}}
+
+\begin{savenotes}\sphinxattablestart
+\sphinxthistablewithglobalstyle
+\centering
+\begin{tabulary}{\linewidth}[t]{TTT}
+\sphinxtoprule
+\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Métrique
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\sphinxstartmulticolumn{2}%
+\begin{varwidth}[t]{\sphinxcolwidth{2}{3}}
+\sphinxstyletheadfamily \sphinxAtStartPar
+Écart typique  | Cause principale
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\sphinxstopmulticolumn
+\\
+\sphinxmidrule
+\sphinxtableatstartofbodyhook\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+PR (checker)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+≤ 0.20
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+equity cross\sphinxhyphen{}engine
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Perte MWC
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+≤ 3.5 pp
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+close\sphinxhyphen{}cube SGF incomplet
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+Snowie ER
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+≤ 0.50
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
+\sphinxAtStartPar
+forcés sans analyse (SGF)
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxbottomrule
+\end{tabulary}
+\sphinxtableafterendhook\par
+\sphinxattableend\end{savenotes}
+
+\begin{sphinxadmonition}{note}{Note:}
+\sphinxAtStartPar
+Les fichiers SGF (gnuBG) n’incluent pas les alternatives pour les coups
+forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups
+forcés à l’import SGF. Cela crée un écart structurel sur le Snowie ER
+(dénominateur légèrement différent).
+\end{sphinxadmonition}
+
+
+\subsection{Valider vos propres chiffres}
+\label{\detokenize{stats_parity:valider-vos-propres-chiffres}}
+\sphinxAtStartPar
+Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points
+suivants :
+\begin{enumerate}
+\sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Analyses complètes} — Le PR ne peut être calculé que sur les positions
+disposant d’une analyse. Des positions sans analyse sont comptées comme
+erreur zéro mais n’entrent pas dans \(N_\text{compté}\).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Version XG} — XG peut changer ses calculs entre versions. blunderDB
+s’aligne sur le comportement observé des versions récentes.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Format d’import} — Les fichiers SGF gnuBG produisent des écarts plus
+importants sur le cube (voir tableau ci\sphinxhyphen{}dessus) car le fichier n’inclut
+pas les analyses complètes pour tous les cubes.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxstylestrong{Migration de base} — Après mise à jour de blunderDB, les bases existantes
+sont migrées automatiquement. Faire une sauvegarde avant d’ouvrir une base
+avec une nouvelle version.
+
+\end{enumerate}
+
+
+\subsection{Référence gnuBG}
+\label{\detokenize{stats_parity:reference-gnubg}}
+\sphinxAtStartPar
+Les formules ont été vérifiées dans les fichiers source suivants (dépôt gnuBG) :
+\begin{itemize}
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}} — PR (« Error rate per decision »).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}} — Snowie Error Rate.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:458\textendash{}462}} — Accumulation checker, exclusion des forcés (\sphinxcode{\sphinxupquote{cMoves \textgreater{} 1}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:1430\textendash{}1474}} — Conversion EMG \(\rightarrow\) MWC par décision.
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}} — Accumulation de la perte MWC (\sphinxcode{\sphinxupquote{eq2mwc}}).
+
+\item {} 
+\sphinxAtStartPar
+\sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}} — Prédicat \sphinxcode{\sphinxupquote{isCloseCubedecision}} (seuil 0.16).
+
+\end{itemize}
 \sphinxcontribyoutube{https://youtu.be/}{Ln7XKVFqfUk}{}
 \sphinxcontribyoutube{https://youtu.be/}{HkY4iXjxMeI}{}
 

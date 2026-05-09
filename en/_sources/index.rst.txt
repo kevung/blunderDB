@@ -154,13 +154,12 @@ Sommaire
    cmd_mode
    raccourcis
    cli
-   stats
-   stats_parity
    faq
    annexe_filtres
    annexe_windows_securite
    annexe_mac_securite
    annexe_db_scheme
+   stats_parity
 
 .. youtube:: Ln7XKVFqfUk
    :width: 100%

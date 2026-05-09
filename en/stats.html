@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>7. Stats Panel &mdash; blunderDB 0.19.0 documentation</title>
+  <title>2.10.1. Stats Panel &mdash; blunderDB 0.19.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -23,8 +23,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="8. Statistics model — XG / gnuBG / blunderDB alignment" href="stats_parity.html" />
-    <link rel="prev" title="6. Command Line Interface (CLI)" href="cli.html" /> 
+    <link rel="next" title="3. User Guide" href="guide_utilisateur.html" />
+    <link rel="prev" title="2. Manual" href="manuel.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -49,47 +49,43 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download and Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manual</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="manuel.html">2. Manual</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Main Interactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Description of the interface</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.4. Browsing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.5. Editing positions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.6. The command line</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-matchs">2.7. Match navigation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#calculateur-epc">2.8. EPC Calculator</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-collections">2.9. Collection navigation</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="manuel.html#repetition-espacee-anki">2.10. Spaced Repetition (Anki)</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">2.10.1. Stats Panel</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#introduction">2.10.1.1. Introduction</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#ouverture-du-panneau">2.10.1.2. Opening the panel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#barre-de-filtre">2.10.1.3. Filter bar</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#toggle-pr-mwc">2.10.1.4. PR / MWC toggle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-dashboard">2.10.1.5. Dashboard tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-progression">2.10.1.6. Progression tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#onglet-erreurs">2.10.1.7. Errors tab</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regle-d-agregation">2.10.1.8. Aggregation rule</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#mwc-limitations">2.10.1.9. MWC: limitations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. User Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. List of commands</a></li>
 <li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Keyboard shortcuts</a></li>
 <li class="toctree-l1"><a class="reference internal" href="cli.html">6. Command Line Interface (CLI)</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Stats Panel</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#introduction">7.1. Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#ouverture-du-panneau">7.2. Opening the panel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#barre-de-filtre">7.3. Filter bar</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#perspective-joueur">7.3.1. Player perspective</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#filtres-disponibles">7.3.2. Available filters</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#toggle-pr-mwc">7.4. PR / MWC toggle</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#onglet-dashboard">7.5. Dashboard tab</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#cartes-de-niveau">7.5.1. Level cards</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">7.5.2. Rolling PR over last N decisions</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#top-blunders">7.5.3. Top blunders</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#onglet-progression">7.6. Progression tab</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#courbe-par-tournoi">7.6.1. Tournament line chart</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#scatter-plot-par-match">7.6.2. Match scatter plot</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#onglet-erreurs">7.7. Errors tab</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#repartition-par-action-de-videau">7.7.1. Breakdown by cube action</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#repartition-checker-cube">7.7.2. Checker / Cube comparison</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">7.7.3. Error magnitude histogram</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#regle-d-agregation">7.8. Aggregation rule</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#mwc-limitations">7.9. MWC: limitations</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">8. Statistics model — XG / gnuBG / blunderDB alignment</a></li>
-<li class="toctree-l1"><a class="reference internal" href="faq.html">9. Frequently Asked Questions (FAQ)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">10. Annex: Advanced Filter Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">11. Windows Annex: False Detection of blunderDB as Malware</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">12. Mac Annex: Possible Blocking of blunderDB</a></li>
-<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">13. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Frequently Asked Questions (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Annex: Advanced Filter Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows Annex: False Detection of blunderDB as Malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac Annex: Possible Blocking of blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Annex: Database Schema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Statistics model — XG / gnuBG / blunderDB alignment</a></li>
 </ul>
 
         </div>
@@ -106,7 +102,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active"><span class="section-number">7. </span>Stats Panel</li>
+          <li class="breadcrumb-item"><a href="manuel.html"><span class="section-number">2. </span>Manual</a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2.10.1. </span>Stats Panel</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -116,9 +113,9 @@
            <div itemprop="articleBody">
              
   <section id="panneau-stats">
-<span id="stats"></span><h1><span class="section-number">7. </span>Stats Panel<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h1>
+<span id="stats"></span><h1><span class="section-number">2.10.1. </span>Stats Panel<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h1>
 <section id="introduction">
-<h2><span class="section-number">7.1. </span>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.1. </span>Introduction<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
 <p>The <strong>Stats</strong> panel lets you analyse your play level and track your progress over time using the positions imported in the database. It computes and displays <strong>PR</strong> (Performance Rate) and <strong>MWC cost</strong> (Match Winning Chance cost) for all positions or a filtered subset.</p>
 <p>The Stats panel is especially useful for:</p>
 <ul class="simple">
@@ -129,7 +126,7 @@
 </ul>
 </section>
 <section id="ouverture-du-panneau">
-<h2><span class="section-number">7.2. </span>Opening the panel<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.2. </span>Opening the panel<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h2>
 <p>To open the Stats panel:</p>
 <ul class="simple">
 <li><p>Press <em>CTRL-D</em>.</p></li>
@@ -141,10 +138,10 @@
 </div>
 </section>
 <section id="barre-de-filtre">
-<h2><span class="section-number">7.3. </span>Filter bar<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.3. </span>Filter bar<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h2>
 <p>The filter bar at the top of the panel restricts the computation to a subset of positions.</p>
 <section id="perspective-joueur">
-<h3><span class="section-number">7.3.1. </span>Player perspective<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.3.1. </span>Player perspective<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h3>
 <p>The <strong>Player</strong> drop-down filters statistics to the analysed player. blunderDB automatically selects the player whose name appears most often in the database — changeable at any time.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
@@ -152,7 +149,7 @@
 </div>
 </section>
 <section id="filtres-disponibles">
-<h3><span class="section-number">7.3.2. </span>Available filters<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.3.2. </span>Available filters<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h3>
 <ul class="simple">
 <li><p><strong>Tournament(s)</strong> — restrict to one or more tournaments. Multiple tournaments can be selected simultaneously.</p></li>
 <li><p><strong>Dates</strong> — time range (<em>From</em> … <em>To</em>). If only the start date is set, more recent positions are included.</p></li>
@@ -167,7 +164,7 @@
 </section>
 </section>
 <section id="toggle-pr-mwc">
-<h2><span class="section-number">7.4. </span>PR / MWC toggle<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.4. </span>PR / MWC toggle<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h2>
 <p>The <strong>PR / MWC</strong> button at the top of the panel toggles the metric displayed across all tabs.</p>
 <p><strong>PR (Performance Rate)</strong></p>
 <blockquote>
@@ -213,10 +210,10 @@
 <p>The PR ↔ MWC toggle is instant: no backend recalculation is performed.</p>
 </section>
 <section id="onglet-dashboard">
-<h2><span class="section-number">7.5. </span>Dashboard tab<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.5. </span>Dashboard tab<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h2>
 <p>The <strong>Dashboard</strong> tab gives a summary view of key indicators.</p>
 <section id="cartes-de-niveau">
-<h3><span class="section-number">7.5.1. </span>Level cards<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.5.1. </span>Level cards<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h3>
 <p>Three cards display the PR (or MWC) for:</p>
 <ul class="simple">
 <li><p><strong>All</strong> — all decisions (checker + cube);</p></li>
@@ -230,20 +227,20 @@
 </div>
 </section>
 <section id="pr-glissant-sur-n-dernieres-decisions">
-<h3><span class="section-number">7.5.2. </span>Rolling PR over last N decisions<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.5.2. </span>Rolling PR over last N decisions<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h3>
 <p>A row of PR (or MWC) values computed over the last <em>N</em> decisions (N = 5, 10, 50, 100, 250, 500, 1000) lets you measure the recent trend. Greyed values correspond to an N larger than the number of available decisions.</p>
 <p>Clicking a value loads the corresponding last <em>N</em> positions.</p>
 </section>
 <section id="top-blunders">
-<h3><span class="section-number">7.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h3>
 <p>The list of the 10 worst errors (or MWC cost), sorted by descending magnitude. Clicking a row loads the relevant position in the analysis panel.</p>
 </section>
 </section>
 <section id="onglet-progression">
-<h2><span class="section-number">7.6. </span>Progression tab<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.6. </span>Progression tab<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h2>
 <p>The <strong>Progression</strong> tab shows how your level evolves over time.</p>
 <section id="courbe-par-tournoi">
-<h3><span class="section-number">7.6.1. </span>Tournament line chart<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.6.1. </span>Tournament line chart<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h3>
 <p>A line chart displays the PR (or MWC) for each tournament (X axis: tournament order, Y axis: metric value). Colour bands materialise the level thresholds.</p>
 <p>Clicking a point on the chart opens a context menu with two options:</p>
 <ul class="simple">
@@ -252,7 +249,7 @@
 </ul>
 </section>
 <section id="scatter-plot-par-match">
-<h3><span class="section-number">7.6.2. </span>Match scatter plot<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.6.2. </span>Match scatter plot<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h3>
 <p>A scatter plot represents each match (X axis: date, Y axis: PR or MWC). Point size is proportional to the number of decisions in the match.</p>
 <p>Clicking a point opens a context menu:</p>
 <ul class="simple">
@@ -262,24 +259,24 @@
 </section>
 </section>
 <section id="onglet-erreurs">
-<h2><span class="section-number">7.7. </span>Errors tab<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.7. </span>Errors tab<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h2>
 <p>The <strong>Errors</strong> tab breaks down error sources.</p>
 <section id="repartition-par-action-de-videau">
-<h3><span class="section-number">7.7.1. </span>Breakdown by cube action<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.7.1. </span>Breakdown by cube action<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h3>
 <p>A bar chart displays the PR (or MWC) for each type of cube decision: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Each bar also shows the number of decisions and the blunder rate in a tooltip.</p>
 <p>Clicking a bar loads the positions matching that cube action, <strong>only those with an error</strong> (drill-down).</p>
 </section>
 <section id="repartition-checker-cube">
-<h3><span class="section-number">7.7.2. </span>Checker / Cube comparison<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.7.2. </span>Checker / Cube comparison<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h3>
 <p>A comparison chart places checker plays and cube decisions side by side. Clicking a bar loads the positions in the subset with an error.</p>
 </section>
 <section id="histogramme-des-magnitudes-d-erreur">
-<h3><span class="section-number">7.7.3. </span>Error magnitude histogram<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h3>
+<h3><span class="section-number">2.10.1.7.3. </span>Error magnitude histogram<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h3>
 <p>A histogram distributes errors by magnitude in milli-points (buckets: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Clicking a bar loads the positions in the bucket.</p>
 </section>
 </section>
 <section id="regle-d-agregation">
-<h2><span class="section-number">7.8. </span>Aggregation rule<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.8. </span>Aggregation rule<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h2>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>The PR of a tournament (or any subset) is computed using the <strong>sum/sum</strong> rule — never as an average of individual match PRs.</p>
@@ -297,7 +294,7 @@
 </div>
 </section>
 <section id="mwc-limitations">
-<h2><span class="section-number">7.9. </span>MWC: limitations<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h2>
+<h2><span class="section-number">2.10.1.9. </span>MWC: limitations<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h2>
 <ul class="simple">
 <li><p>The MWC cost is computed using the <strong>Kazaross-XG2 MET</strong>, the de facto reference table in competitive backgammon. Results are not directly comparable with software using other METs.</p></li>
 <li><p><em>Money-game</em> positions (with no match score) are <strong>excluded</strong> from the MWC computation. If your database contains many money-game positions, the MWC cost may be underestimated or unavailable.</p></li>
@@ -310,8 +307,8 @@
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="cli.html" class="btn btn-neutral float-left" title="6. Command Line Interface (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="stats_parity.html" class="btn btn-neutral float-right" title="8. Statistics model — XG / gnuBG / blunderDB alignment" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="manuel.html" class="btn btn-neutral float-left" title="2. Manual" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="3. User Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

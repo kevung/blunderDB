@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 21:07
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 21:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -939,46 +939,35 @@ LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
 nput line 926.
 
-[8] [9] [10] [11] [12] [13] [14]
+[8] [9]
 
-LaTeX Warning: Hyper reference `cmd_mode:cmd-filter' on page 15 undefined on in
-put line 1551.
-
-
-LaTeX Warning: Reference `cmd_mode:cmd-filter' on page 15 undefined on input li
-ne 1551.
-
-[15] [16] [17] [18] [19] [20] [21] [22]
-LaTeX Font Info:    Font shape `T1/txtt/m/it' in size <10> not available
-(Font)              Font shape `T1/txtt/m/sl' tried instead on input line 4133.
-
- [23]
-
-! LaTeX Error: Unicode character ✗ (U+2717)
+! LaTeX Error: Unicode character ↔ (U+2194)
                not set up for use with LaTeX.
 
 See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.4412 ... succeeded (\(\checkmark\)), failed (✗
-                                                  ) or was a duplicate (⊘).
+l.1048 ...ecalculate statistics on a simple PR ↔
+                                                   MWC toggle: both metrics ...
+
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.4412 ... succeeded (\(\checkmark\)), failed (✗
-                                                  ) or was a duplicate (⊘).
+l.1048 ...ecalculate statistics on a simple PR ↔
+                                                   MWC toggle: both metrics ...
+
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
  
 Here is how much of TeX's memory you used:
- 16917 strings out of 476182
- 287211 string characters out of 5795596
- 2008975 words of memory out of 5000000
- 38433 multiletter control sequences out of 15000+600000
- 614712 words of font info for 78 fonts, out of 8000000 for 9000
+ 16801 strings out of 476182
+ 285639 string characters out of 5795596
+ 1969975 words of memory out of 5000000
+ 38411 multiletter control sequences out of 15000+600000
+ 608304 words of font info for 74 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
- 72i,13n,83p,1198b,679s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,13n,83p,1198b,558s stack positions out of 10000i,1000n,20000p,200000b,200000s
 !  ==> Fatal error occurred, no output PDF file produced!

@@ -280,3 +280,8 @@ synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
 (rétention cible, intervalle maximum, aléa) peuvent être configurés par
 paquet dans les Paramètres (icône engrenage).
 
+.. toctree::
+   :hidden:
+
+   stats
+
