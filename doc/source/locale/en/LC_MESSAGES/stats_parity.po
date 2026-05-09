@@ -18,8 +18,8 @@ msgstr ""
 "Generated-By: Babel 2.18.0\n"
 
 #: ../../source/stats_parity.rst:4
-msgid "Modèle de statistiques — alignement XG / gnuBG / blunderDB"
-msgstr "Statistics model — XG / gnuBG / blunderDB alignment"
+msgid "Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB"
+msgstr "Annex: Statistics model — XG / gnuBG / blunderDB alignment"
 
 #: ../../source/stats_parity.rst:6
 msgid ""
