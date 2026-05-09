@@ -571,7 +571,7 @@ May 7, 2026
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Added Stats panel: PR (Performance Rate), Snowie Error Rate and MWC cost (Match Winning Chance cost) indicators, filter bar (player, tournament, dates, decision type, match length), Dashboard tab with level cards / rolling PR / top blunders, Progression tab with per\sphinxhyphen{}tournament curve and per\sphinxhyphen{}match scatter plot, Errors tab with cube\sphinxhyphen{}action breakdown and error magnitude histogram. Interactive drill\sphinxhyphen{}down to positions / matches / tournaments from all indicators. Instant PR / MWC toggle. CLI command list \textendash{}type stats. Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG (0.16 equity threshold for close cubes). Fixed cube\_error calculation for Double/Pass decisions. Statistics model documentation ({\hyperref[\detokenize{stats_parity:stats-parity}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Annex: Statistics model — XG / gnuBG / blunderDB alignment}}}}}). See {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Panneau Stats}}}}}.
+Added Stats panel: PR (Performance Rate), Snowie Error Rate and MWC cost (Match Winning Chance cost) indicators, filter bar (player, tournament, dates, decision type, match length), Dashboard tab with level cards / rolling PR / top blunders, Progression tab with per\sphinxhyphen{}tournament curve and per\sphinxhyphen{}match scatter plot, Errors tab with cube\sphinxhyphen{}action breakdown and error magnitude histogram. Interactive drill\sphinxhyphen{}down to positions / matches / tournaments from all indicators. Instant PR / MWC toggle. CLI command list \textendash{}type stats. Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG (0.16 equity threshold for close cubes). Fixed cube\_error calculation for Double/Pass decisions. Statistics model documentation ({\hyperref[\detokenize{stats_parity:stats-parity}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Annex: Statistics model — XG / gnuBG / blunderDB alignment}}}}}). See {\hyperref[\detokenize{manuel:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Stats Panel}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -727,7 +727,7 @@ display, add, or modify comments,
 
 \item {} 
 \sphinxAtStartPar
-display the list of imported matches and navigate through the moves of a match (match panel),
+search and filter positions using combinable criteria,
 
 \item {} 
 \sphinxAtStartPar
@@ -735,7 +735,7 @@ display and manage position collections (collections panel),
 
 \item {} 
 \sphinxAtStartPar
-study positions with spaced repetition (Anki panel),
+display the list of imported matches and navigate through the moves of a match (match panel),
 
 \item {} 
 \sphinxAtStartPar
@@ -751,15 +751,11 @@ compute the EPC (Effective Pip Count) of a bearoff position (EPC panel),
 
 \item {} 
 \sphinxAtStartPar
+study positions with spaced repetition (Anki panel),
+
+\item {} 
+\sphinxAtStartPar
 display the database metadata (metadata panel),
-
-\item {} 
-\sphinxAtStartPar
-display the filter library,
-
-\item {} 
-\sphinxAtStartPar
-display the search history,
 
 \item {} 
 \sphinxAtStartPar
@@ -776,11 +772,7 @@ display the blunderDB help,
 
 \item {} 
 \sphinxAtStartPar
-configure database export settings,
-
-\item {} 
-\sphinxAtStartPar
-display the database metadata.
+configure database export settings.
 
 \end{itemize}
 
@@ -879,19 +871,48 @@ To open the command line, press the \sphinxstyleemphasis{SPACE} key. To submit a
 \sphinxAtStartPar
 blunderDB executes the queries sent by the user as long as they are valid and immediately modifies the state of the database if necessary. There are no explicit save actions required from the user.
 
-\sphinxAtStartPar
-To refine a search among the currently filtered positions, use the \sphinxcode{\sphinxupquote{ss}} command followed by filters (e.g.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). The \sphinxcode{\sphinxupquote{ss}} command works after a prior search. The search window (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) also offers a “Search in current results” checkbox for the same functionality.
-
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
 Refer to \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} for the list of available commands in the command line.
 \end{sphinxadmonition}
 
 
-\subsection{Match navigation}
-\label{\detokenize{manuel:navigation-dans-les-matchs}}\label{\detokenize{manuel:mode-match}}
+\subsection{Analysis Panel}
+\label{\detokenize{manuel:panneau-analyse}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-Match navigation allows you to browse through the moves of an imported match. It is activated from the match panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) by double\sphinxhyphen{}clicking on a match or pressing \sphinxstyleemphasis{ENTER}. The \sphinxcode{\sphinxupquote{m}} command also allows resuming navigation in the last visited match.
+The \sphinxstylestrong{Analysis} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}L}) displays the analysis data for the current position, imported from eXtreme Gammon (XG), GNUbg, or BGBlitz. It shows the best alternatives (checker moves or cube decisions) with their equity values and corresponding errors. The \sphinxstyleemphasis{d} key toggles between checker and cube analysis. During match navigation, the actually played move is highlighted in the list of alternatives. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}L} or run the \sphinxcode{\sphinxupquote{list}} command to show or hide the panel.
+
+
+\subsection{Comments Panel}
+\label{\detokenize{manuel:panneau-commentaires}}\label{\detokenize{manuel:id3}}
+\sphinxAtStartPar
+The \sphinxstylestrong{Comments} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}P}) displays, adds, and edits comments associated with the current position. Comments imported from XG files are automatically associated with the corresponding positions. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}P} or run the \sphinxcode{\sphinxupquote{comment}} command to show or hide the panel.
+
+
+\subsection{Search Panel}
+\label{\detokenize{manuel:panneau-recherche}}\label{\detokenize{manuel:id4}}
+\sphinxAtStartPar
+The \sphinxstylestrong{Search} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} or \sphinxstyleemphasis{TAB}) filters positions using freely combinable criteria: checker structure, cube decision type, error magnitude, dates, tags, etc. The \sphinxstyleemphasis{TAB} key simultaneously opens the search panel and the position editor, allowing a checker structure to be defined directly on the board.
+
+\sphinxAtStartPar
+To refine a search among the currently filtered positions, use the \sphinxcode{\sphinxupquote{ss}} command followed by filters (e.g.: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). The search panel also offers a \sphinxstyleemphasis{Search in current results} checkbox for the same functionality.
+
+\begin{sphinxadmonition}{tip}{Tip:}
+\sphinxAtStartPar
+Refer to \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} for the list of available filters.
+\end{sphinxadmonition}
+
+
+\subsection{Collections Panel}
+\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:mode-collection}}
+\sphinxAtStartPar
+The \sphinxstylestrong{Collections} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) manages collections of positions. Collections can be created, renamed, and deleted. Positions can be added to or removed from them. Double\sphinxhyphen{}click a collection to browse its positions using the \sphinxstyleemphasis{LEFT} and \sphinxstyleemphasis{RIGHT} keys. The order of collections and positions within them can be changed by drag and drop. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} or run the \sphinxcode{\sphinxupquote{collection}} command to show or hide the panel.
+
+
+\subsection{Matches Panel}
+\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:mode-match}}
+\sphinxAtStartPar
+The \sphinxstylestrong{Matches} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) lists imported matches. Double\sphinxhyphen{}click a match (or press \sphinxstyleemphasis{ENTER}) to navigate through its moves. The \sphinxcode{\sphinxupquote{m}} command resumes navigation in the last visited match.
 
 \sphinxAtStartPar
 The user can:
@@ -919,7 +940,7 @@ see the actually played move highlighted in the analysis.
 \end{itemize}
 
 \sphinxAtStartPar
-The last visited position in each match is saved and restored automatically.
+The last visited position in each match is saved and restored automatically. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} or run the \sphinxcode{\sphinxupquote{match}} command to show or hide the panel.
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
@@ -927,167 +948,123 @@ Refer to {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\DUrole{
 \end{sphinxadmonition}
 
 
-\subsection{Collection navigation}
-\label{\detokenize{manuel:navigation-dans-les-collections}}\label{\detokenize{manuel:mode-collection}}
+\subsection{Tournaments Panel}
+\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id5}}
 \sphinxAtStartPar
-Collection navigation allows you to browse the positions of a collection. It is activated by double\sphinxhyphen{}clicking on a collection in the collections panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}).
-
-\sphinxAtStartPar
-The user can navigate through the positions of the collection using the \sphinxstyleemphasis{LEFT} and \sphinxstyleemphasis{RIGHT} keys. The order of collections and positions within collections can be changed by drag and drop.
+The \sphinxstylestrong{Tournaments} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) groups matches into tournaments for organised tracking and per\sphinxhyphen{}event statistical analysis. Tournaments can be created, renamed, and deleted; matches can be assigned to them. Stats panel statistics can be filtered by tournament. Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} to show or hide the panel.
 
 
-\subsection{Spaced Repetition (Anki)}
-\label{\detokenize{manuel:repetition-espacee-anki}}\label{\detokenize{manuel:mode-anki}}
-\sphinxAtStartPar
-The Anki panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Creating decks:} Click \sphinxstyleemphasis{New Deck} to create a deck from a collection or the current search results. Search\sphinxhyphen{}based decks sync automatically when the Anki tab is opened.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Reviewing:} Select a deck then click \sphinxstyleemphasis{Study} (or double\sphinxhyphen{}click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys \sphinxstyleemphasis{1} (Again), \sphinxstyleemphasis{2} (Hard), \sphinxstyleemphasis{3} (Good), or \sphinxstyleemphasis{4} (Easy). Press \sphinxstyleemphasis{Esc} to stop and return to the deck list.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Pause/Resume:} You can interrupt a review session at any time with \sphinxstyleemphasis{Esc}. The button changes to \sphinxstyleemphasis{Resume} and shows your progress. Click it to pick up where you left off.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Deck management:} Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (target retention, maximum interval, fuzz factor) can be configured per deck in the Settings (gear icon).
-
-
-\subsection{Panneau Stats}
+\subsection{Stats Panel}
 \label{\detokenize{manuel:panneau-stats}}\label{\detokenize{manuel:stats}}
 
 \subsubsection{Introduction}
-\label{\detokenize{manuel:id2}}
+\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
-Le panneau \sphinxstylestrong{Stats} permet d’analyser son niveau de jeu et de suivre sa
-progression dans le temps à partir des positions importées dans la base de
-données. Il calcule et affiche les indicateurs \sphinxstylestrong{PR} (Performance Rate) et
-\sphinxstylestrong{MWC cost} (Match Winning Chance cost) pour l’ensemble des positions ou un
-sous\sphinxhyphen{}ensemble filtré.
+The \sphinxstylestrong{Stats} panel lets you analyse your play level and track your progress over time using the positions imported in the database. It computes and displays \sphinxstylestrong{PR} (Performance Rate) and \sphinxstylestrong{MWC cost} (Match Winning Chance cost) for all positions or a filtered subset.
 
 \sphinxAtStartPar
-Le panneau Stats est particulièrement utile pour :
+The Stats panel is especially useful for:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{situer son niveau} par rapport aux seuils de référence (world\sphinxhyphen{}class,
-expert, avancé…) grâce au PR global ;
+\sphinxstylestrong{gauging your level} against reference thresholds (world\sphinxhyphen{}class, expert, advanced…) using the global PR;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{suivre sa progression} tournoi après tournoi ou match après match grâce
-aux graphiques de l’onglet Progression ;
+\sphinxstylestrong{tracking your progress} tournament by tournament or match by match using the Progression tab charts;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{identifier ses points faibles} : onglet Erreurs pour voir la répartition
-entre coups joués et décisions de videau, et la distribution des magnitudes
-d’erreur ;
+\sphinxstylestrong{identifying your weak spots}: the Errors tab shows the breakdown between checker plays and cube decisions, and the distribution of error magnitudes;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{accéder directement aux positions concernées} en cliquant sur n’importe
-quel indicateur (drill\sphinxhyphen{}down).
+\sphinxstylestrong{navigating directly to the relevant positions} by clicking any indicator (drill\sphinxhyphen{}down).
 
 \end{itemize}
 
 
-\subsubsection{Ouverture du panneau}
+\subsubsection{Opening the panel}
 \label{\detokenize{manuel:ouverture-du-panneau}}
 \sphinxAtStartPar
-Pour ouvrir le panneau Stats :
+To open the Stats panel:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}D}.
+Press \sphinxstyleemphasis{CTRL\sphinxhyphen{}D}.
 
 \item {} 
 \sphinxAtStartPar
-Saisir la commande \sphinxcode{\sphinxupquote{:stats}} ou \sphinxcode{\sphinxupquote{:st}} dans la ligne de commande.
+Type the command \sphinxcode{\sphinxupquote{:stats}} or \sphinxcode{\sphinxupquote{:st}} in the command line.
 
 \end{itemize}
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Le panneau se rafraîchit automatiquement à chaque modification du filtre.
-Il ne recalcule pas les statistiques lors d’un simple basculement PR ↔ MWC :
-les deux métriques sont calculées simultanément par le backend.
+The panel refreshes automatically whenever the filter is changed. It does not recalculate statistics on a simple PR ↔ MWC toggle: both metrics are computed simultaneously by the backend.
 \end{sphinxadmonition}
 
 
-\subsubsection{Barre de filtre}
+\subsubsection{Filter bar}
 \label{\detokenize{manuel:barre-de-filtre}}
 \sphinxAtStartPar
-La barre de filtre, en haut du panneau, permet de restreindre le calcul à un
-sous\sphinxhyphen{}ensemble de positions.
+The filter bar at the top of the panel restricts the computation to a subset of positions.
 
 
-\paragraph{Perspective joueur}
+\paragraph{Player perspective}
 \label{\detokenize{manuel:perspective-joueur}}
 \sphinxAtStartPar
-La liste déroulante \sphinxstylestrong{Joueur} permet de filtrer les statistiques selon le
-joueur analysé. blunderDB sélectionne automatiquement le joueur dont le nom
-apparaît le plus souvent dans la base de données — modifiable à tout moment.
+The \sphinxstylestrong{Player} drop\sphinxhyphen{}down filters statistics to the analysed player. blunderDB automatically selects the player whose name appears most often in the database — changeable at any time.
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
-Changer de joueur ne provoque pas de perte de données ; il suffit de
-re\sphinxhyphen{}sélectionner le joueur précédent dans la liste.
+Changing the player does not cause any data loss; simply re\sphinxhyphen{}select the previous player in the list.
 \end{sphinxadmonition}
 
 
-\paragraph{Filtres disponibles}
+\paragraph{Available filters}
 \label{\detokenize{manuel:filtres-disponibles}}\begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Tournoi(s)} — restriction à un ou plusieurs tournois. Plusieurs tournois
-peuvent être sélectionnés simultanément.
+\sphinxstylestrong{Tournament(s)} — restrict to one or more tournaments. Multiple tournaments can be selected simultaneously.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Dates} — plage temporelle (\sphinxstyleemphasis{De} … \sphinxstyleemphasis{À}). Si seule la date de début est
-renseignée, les positions plus récentes sont incluses.
+\sphinxstylestrong{Dates} — time range (\sphinxstyleemphasis{From} … \sphinxstyleemphasis{To}). If only the start date is set, more recent positions are included.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Type de décision} — Tous / Coups joués / Décisions de videau.
+\sphinxstylestrong{Decision type} — All / Checker plays / Cube decisions.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Longueur de match} — restriction à des longueurs de match précises (1, 3,
-5, 7, 9, 11, 13, 15, 21 points). Plusieurs longueurs peuvent être combinées.
+\sphinxstylestrong{Match length} — restrict to specific match lengths (1, 3, 5, 7, 9, 11, 13, 15, 21 points). Multiple lengths can be combined.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Un bouton \sphinxstylestrong{Reset} remet tous les filtres à zéro (sauf le joueur
-auto\sphinxhyphen{}détecté).
+A \sphinxstylestrong{Reset} button clears all filters (except the auto\sphinxhyphen{}detected player).
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Les filtres sont persistés dans la configuration de blunderDB
-(\sphinxcode{\sphinxupquote{config.yaml}}) et sont restaurés à la prochaine ouverture.
+Filters are saved in the blunderDB configuration (\sphinxcode{\sphinxupquote{config.yaml}}) and restored on the next launch.
 \end{sphinxadmonition}
 
 
-\subsubsection{Toggle PR / MWC}
+\subsubsection{PR / MWC toggle}
 \label{\detokenize{manuel:toggle-pr-mwc}}
 \sphinxAtStartPar
-Le bouton \sphinxstylestrong{PR / MWC} en haut du panneau bascule la métrique affichée dans
-tous les onglets.
+The \sphinxstylestrong{PR / MWC} button at the top of the panel toggles the metric displayed across all tabs.
 
 \sphinxAtStartPar
 \sphinxstylestrong{PR (Performance Rate)}
 \begin{quote}
 
 \sphinxAtStartPar
-Mesure la qualité de jeu \sphinxstyleemphasis{money\sphinxhyphen{}game} : somme des erreurs en millièmes de
-point de backgammon, divisée par le nombre de décisions. Indépendant du
-score de match.
+Measures \sphinxstyleemphasis{money\sphinxhyphen{}game} play quality: sum of errors in milli\sphinxhyphen{}points, divided by the number of decisions. Independent of match score.
 
 \sphinxAtStartPar
-Seuils de référence approximatifs :
+Approximate reference thresholds:
 
 
 \begin{savenotes}\sphinxattablestart
@@ -1097,7 +1074,7 @@ Seuils de référence approximatifs :
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxstyletheadfamily \sphinxAtStartPar
-Niveau
+Level
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -1131,7 +1108,7 @@ Expert
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Avancé
+Advanced
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -1142,7 +1119,7 @@ Avancé
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Intermédiaire
+Intermediate
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -1153,7 +1130,7 @@ Intermédiaire
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Débutant
+Beginner
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -1173,229 +1150,197 @@ Débutant
 \begin{quote}
 
 \sphinxAtStartPar
-Probabilité cumulée de victoire de match perdue à cause des erreurs, sur
-l’ensemble du jeu de données filtré. Calculé à partir de la MET
-Kazaross\sphinxhyphen{}XG2 embarquée dans blunderDB.
+Cumulative match winning probability lost due to errors, over the full filtered dataset. Computed using the Kazaross\sphinxhyphen{}XG2 MET embedded in blunderDB.
 
 \begin{sphinxadmonition}{caution}{Caution:}
 \sphinxAtStartPar
-Le MWC cost \sphinxstylestrong{n’est pas applicable} aux positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans
-enjeu de match). Ces positions sont exclues du calcul MWC.
-Les valeurs MWC dépendent de la MET utilisée ; elles ne sont pas
-directement comparables entre logiciels utilisant des METs différentes.
+MWC cost \sphinxstylestrong{does not apply} to \sphinxstyleemphasis{money\sphinxhyphen{}game} positions (with no match stake). Those positions are excluded from the MWC computation. MWC values depend on the MET used; they are not directly comparable across software using different METs.
 \end{sphinxadmonition}
 \end{quote}
 
 \sphinxAtStartPar
-Le basculement PR ↔ MWC est instantané : aucun recalcul backend n’est
-effectué.
+The PR ↔ MWC toggle is instant: no backend recalculation is performed.
 
 
-\subsubsection{Onglet Dashboard}
+\subsubsection{Dashboard tab}
 \label{\detokenize{manuel:onglet-dashboard}}
 \sphinxAtStartPar
-L’onglet \sphinxstylestrong{Dashboard} donne une vue synthétique des indicateurs clés.
+The \sphinxstylestrong{Dashboard} tab gives a summary view of key indicators.
 
 
-\paragraph{Cartes de niveau}
+\paragraph{Level cards}
 \label{\detokenize{manuel:cartes-de-niveau}}
 \sphinxAtStartPar
-Trois cartes affichent le PR (ou MWC) pour :
+Three cards display the PR (or MWC) for:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{All} — toutes les décisions (coups + videau) ;
+\sphinxstylestrong{All} — all decisions (checker + cube);
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Checker} — coups joués seulement ;
+\sphinxstylestrong{Checker} — checker plays only;
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Cube} — décisions de videau seulement.
+\sphinxstylestrong{Cube} — cube decisions only.
 
 \end{itemize}
 
 \sphinxAtStartPar
-Cliquer sur une carte charge dans le panneau d’analyse les positions du
-sous\sphinxhyphen{}ensemble correspondant (drill\sphinxhyphen{}down).
+Clicking a card loads the positions in the corresponding subset into the analysis panel (drill\sphinxhyphen{}down).
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Le nombre total de décisions est affiché en bas de chaque carte au survol.
+The total number of decisions is shown at the bottom of each card on hover.
 \end{sphinxadmonition}
 
 
-\paragraph{PR glissant sur N dernières décisions}
+\paragraph{Rolling PR over last N decisions}
 \label{\detokenize{manuel:pr-glissant-sur-n-dernieres-decisions}}
 \sphinxAtStartPar
-Une ligne de valeurs PR (ou MWC) calculées sur les \sphinxstyleemphasis{N} dernières décisions
-(N = 5, 10, 50, 100, 250, 500, 1000) permet de mesurer la tendance récente.
-Les valeurs grisées correspondent à un N supérieur au nombre de décisions
-disponibles.
+A row of PR (or MWC) values computed over the last \sphinxstyleemphasis{N} decisions (N = 5, 10, 50, 100, 250, 500, 1000) lets you measure the recent trend. Greyed values correspond to an N larger than the number of available decisions.
 
 \sphinxAtStartPar
-Cliquer sur une valeur charge les \sphinxstyleemphasis{N} dernières positions correspondantes.
+Clicking a value loads the corresponding last \sphinxstyleemphasis{N} positions.
 
 
 \paragraph{Top blunders}
 \label{\detokenize{manuel:top-blunders}}
 \sphinxAtStartPar
-La liste des 10 pires erreurs (ou MWC cost), triées par magnitude décroissante.
-Cliquer sur une ligne charge la position concernée dans le panneau d’analyse.
+The list of the 10 worst errors (or MWC cost), sorted by descending magnitude. Clicking a row loads the relevant position in the analysis panel.
 
 
-\subsubsection{Onglet Progression}
+\subsubsection{Progression tab}
 \label{\detokenize{manuel:onglet-progression}}
 \sphinxAtStartPar
-L’onglet \sphinxstylestrong{Progression} présente l’évolution du niveau dans le temps.
+The \sphinxstylestrong{Progression} tab shows how your level evolves over time.
 
 
-\paragraph{Courbe par tournoi}
+\paragraph{Tournament line chart}
 \label{\detokenize{manuel:courbe-par-tournoi}}
 \sphinxAtStartPar
-Un graphique en ligne affiche le PR (ou MWC) pour chaque tournoi (axe X :
-ordre des tournois, axe Y : valeur de la métrique). Des bandes de couleur
-matérialisent les seuils de niveau.
+A line chart displays the PR (or MWC) for each tournament (X axis: tournament order, Y axis: metric value). Colour bands materialise the level thresholds.
 
 \sphinxAtStartPar
-Cliquer sur un point du graphique ouvre un menu contextuel avec deux options :
+Clicking a point on the chart opens a context menu with two options:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Open tournament} — ouvre le tournoi dans le panneau Tournois.
+\sphinxstylestrong{Open tournament} — opens the tournament in the Tournaments panel.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Open positions} — charge toutes les positions du tournoi dans le panneau
-d’analyse.
+\sphinxstylestrong{Open positions} — loads all positions from the tournament into the analysis panel.
 
 \end{itemize}
 
 
-\paragraph{Scatter plot par match}
+\paragraph{Match scatter plot}
 \label{\detokenize{manuel:scatter-plot-par-match}}
 \sphinxAtStartPar
-Un nuage de points représente chaque match (axe X : date, axe Y : PR ou MWC).
-La taille du point est proportionnelle au nombre de décisions dans le match.
+A scatter plot represents each match (X axis: date, Y axis: PR or MWC). Point size is proportional to the number of decisions in the match.
 
 \sphinxAtStartPar
-Cliquer sur un point ouvre un menu contextuel :
+Clicking a point opens a context menu:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Open match} — ouvre le match dans le panneau des matchs.
+\sphinxstylestrong{Open match} — opens the match in the Matches panel.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxstylestrong{Open positions} — charge toutes les positions du match dans le panneau
-d’analyse.
+\sphinxstylestrong{Open positions} — loads all positions from the match into the analysis panel.
 
 \end{itemize}
 
 
-\subsubsection{Onglet Erreurs}
+\subsubsection{Errors tab}
 \label{\detokenize{manuel:onglet-erreurs}}
 \sphinxAtStartPar
-L’onglet \sphinxstylestrong{Erreurs} décompose les sources d’erreurs.
+The \sphinxstylestrong{Errors} tab breaks down error sources.
 
 
-\paragraph{Répartition par action de videau}
+\paragraph{Breakdown by cube action}
 \label{\detokenize{manuel:repartition-par-action-de-videau}}
 \sphinxAtStartPar
-Un diagramme en barres affiche le PR (ou MWC) pour chaque type de décision
-de videau : \sphinxstyleemphasis{NoDouble}, \sphinxstyleemphasis{DoubleTake}, \sphinxstyleemphasis{DoublePass}, \sphinxstyleemphasis{TooGood}. Chaque barre
-indique également le nombre de décisions et le taux de blunders en infobulle.
+A bar chart displays the PR (or MWC) for each type of cube decision: \sphinxstyleemphasis{NoDouble}, \sphinxstyleemphasis{DoubleTake}, \sphinxstyleemphasis{DoublePass}, \sphinxstyleemphasis{TooGood}. Each bar also shows the number of decisions and the blunder rate in a tooltip.
 
 \sphinxAtStartPar
-Cliquer sur une barre charge les positions correspondant à cette action de
-videau, \sphinxstylestrong{uniquement celles avec une erreur} (drill\sphinxhyphen{}down).
+Clicking a bar loads the positions matching that cube action, \sphinxstylestrong{only those with an error} (drill\sphinxhyphen{}down).
 
 
-\paragraph{Répartition Checker / Cube}
+\paragraph{Checker / Cube comparison}
 \label{\detokenize{manuel:repartition-checker-cube}}
 \sphinxAtStartPar
-Un diagramme comparatif place côte à côte le PR des coups joués et des
-décisions de videau. Cliquer sur une barre charge les positions du
-sous\sphinxhyphen{}ensemble avec erreur.
+A comparison chart places checker plays and cube decisions side by side. Clicking a bar loads the positions in the subset with an error.
 
 
-\paragraph{Histogramme des magnitudes d’erreur}
+\paragraph{Error magnitude histogram}
 \label{\detokenize{manuel:histogramme-des-magnitudes-d-erreur}}
 \sphinxAtStartPar
-Un histogramme distribue les erreurs selon leur magnitude en millièmes de
-point (tranches : 0\textendash{}5, 5\textendash{}10, 10\textendash{}25, 25\textendash{}50, 50\textendash{}100, ≥ 100). Cliquer sur
-une barre charge les positions de la tranche.
+A histogram distributes errors by magnitude in milli\sphinxhyphen{}points (buckets: 0\textendash{}5, 5\textendash{}10, 10\textendash{}25, 25\textendash{}50, 50\textendash{}100, ≥ 100). Clicking a bar loads the positions in the bucket.
 
 
-\subsubsection{Règle d’agrégation}
+\subsubsection{Aggregation rule}
 \label{\detokenize{manuel:regle-d-agregation}}
 \begin{sphinxadmonition}{important}{Important:}
 \sphinxAtStartPar
-Le PR d’un tournoi (ou d’un sous\sphinxhyphen{}ensemble quelconque) est calculé par
-la règle \sphinxstylestrong{somme/somme} — jamais comme moyenne des PR individuels des
-matchs.
+The PR of a tournament (or any subset) is computed using the \sphinxstylestrong{sum/sum} rule — never as an average of individual match PRs.
 
 \sphinxAtStartPar
-Formule :
+Formula:
 \begin{equation*}
-\begin{split}PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\end{split}
+\begin{split}PR_{tournament} = \frac{\sum_{i} \text{error}_i}{\text{total number of decisions}}\end{split}
 \end{equation*}
 \sphinxAtStartPar
-\sphinxstylestrong{Exemple :} un joueur dispute deux matchs dans un tournoi —
+\sphinxstylestrong{Example:} a player plays two matches in a tournament —
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Match A : 10 décisions, erreur totale 50 mp \(\rightarrow\) PR = 5,0
+Match A: 10 decisions, total error 50 mp \(\rightarrow\) PR = 5.0
 
 \item {} 
 \sphinxAtStartPar
-Match B : 90 décisions, erreur totale 270 mp \(\rightarrow\) PR = 3,0
+Match B: 90 decisions, total error 270 mp \(\rightarrow\) PR = 3.0
 
 \end{itemize}
 
 \sphinxAtStartPar
-Moyenne naïve des PR : (5,0 + 3,0) / 2 = \sphinxstylestrong{4,0} \sphinxstyleemphasis{(incorrect)}
+Naive average of PRs: (5.0 + 3.0) / 2 = \sphinxstylestrong{4.0} \sphinxstyleemphasis{(incorrect)}
 
 \sphinxAtStartPar
-Règle somme/somme : (50 + 270) / (10 + 90) = 320 / 100 = \sphinxstylestrong{3,2} \sphinxstyleemphasis{(correct)}
+Sum/sum rule: (50 + 270) / (10 + 90) = 320 / 100 = \sphinxstylestrong{3.2} \sphinxstyleemphasis{(correct)}
 
 \sphinxAtStartPar
-La règle somme/somme est la seule qui résiste à la variation de longueur
-des matchs (un match en 21 points pèse plus qu’un match en 1 point).
+The sum/sum rule is the only one that handles varying match lengths correctly (a 21\sphinxhyphen{}point match carries more weight than a 1\sphinxhyphen{}point match).
 \end{sphinxadmonition}
 
 
-\subsubsection{MWC : limitations}
+\subsubsection{MWC: limitations}
 \label{\detokenize{manuel:mwc-limitations}}\begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Le MWC cost est calculé à partir de la \sphinxstylestrong{MET Kazaross\sphinxhyphen{}XG2}, table de
-référence de facto dans le backgammon compétitif. Les résultats ne sont
-pas directement comparables avec des logiciels utilisant d’autres METs.
+The MWC cost is computed using the \sphinxstylestrong{Kazaross\sphinxhyphen{}XG2 MET}, the de facto reference table in competitive backgammon. Results are not directly comparable with software using other METs.
 
 \item {} 
 \sphinxAtStartPar
-Les positions \sphinxstyleemphasis{money\sphinxhyphen{}game} (sans score de match) sont \sphinxstylestrong{exclues} du
-calcul MWC. Si votre base de données contient beaucoup de positions
-money\sphinxhyphen{}game, le MWC cost peut être sous\sphinxhyphen{}estimé ou indisponible.
+\sphinxstyleemphasis{Money\sphinxhyphen{}game} positions (with no match score) are \sphinxstylestrong{excluded} from the MWC computation. If your database contains many money\sphinxhyphen{}game positions, the MWC cost may be underestimated or unavailable.
 
 \item {} 
 \sphinxAtStartPar
-Le MWC cost est cumulatif sur l’ensemble du jeu de données filtré — pas
-un indicateur par décision. Il mesure l’impact total de vos erreurs sur
-vos chances de victoire.
+The MWC cost is cumulative over the full filtered dataset — not a per\sphinxhyphen{}decision indicator. It measures the total impact of your errors on your winning chances.
 
 \end{itemize}
 
 
-\subsection{EPC Calculator}
-\label{\detokenize{manuel:calculateur-epc}}\label{\detokenize{manuel:mode-epc}}
+\subsection{EPC Panel}
+\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:mode-epc}}
 \sphinxAtStartPar
-The EPC panel allows computing the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, clicking the EPC tab in the bottom panel, or executing the \sphinxcode{\sphinxupquote{epc}} command.
+The \sphinxstylestrong{EPC} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) computes the EPC (Effective Pip Count) of a bearoff position. It is activated by pressing \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, clicking the EPC tab in the bottom panel, or running the \sphinxcode{\sphinxupquote{epc}} command.
 
 \sphinxAtStartPar
-In this panel, the user edits the checker positions in the home board (last 6 points) and the following information is displayed in real time in the dedicated EPC panel for each player:
+In this panel, the user edits the checker positions in the home board (last 6 points) and the following information is displayed in real time for each player:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -1429,6 +1374,36 @@ To close the EPC panel, press \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} or swit
 \sphinxAtStartPar
 The computation relies on the built\sphinxhyphen{}in 6\sphinxhyphen{}point bearoff database from GNUbg.
 \end{sphinxadmonition}
+
+
+\subsection{Anki Panel}
+\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:mode-anki}}
+\sphinxAtStartPar
+The \sphinxstylestrong{Anki} panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) allows studying positions with spaced repetition using the FSRS algorithm. Users can create decks from collections or search results.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Creating decks:} Click \sphinxstyleemphasis{New Deck} to create a deck from a collection or the current search results. Search\sphinxhyphen{}based decks sync automatically when the Anki tab is opened.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Reviewing:} Select a deck then click \sphinxstyleemphasis{Study} (or double\sphinxhyphen{}click a deck) to start reviewing due cards. Each card shows the corresponding position on the board. Rate your recall with keys \sphinxstyleemphasis{1} (Again), \sphinxstyleemphasis{2} (Hard), \sphinxstyleemphasis{3} (Good), or \sphinxstyleemphasis{4} (Easy). Press \sphinxstyleemphasis{Esc} to stop and return to the deck list.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Pause/Resume:} You can interrupt a review session at any time with \sphinxstyleemphasis{Esc}. The button changes to \sphinxstyleemphasis{Resume} and shows your progress. Click it to pick up where you left off.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Deck management:} Use the action buttons to rename, sync, reset, or delete decks. FSRS parameters (target retention, maximum interval, fuzz factor) can be configured per deck in the Settings (gear icon).
+
+
+\subsection{Metadata Panel}
+\label{\detokenize{manuel:panneau-metadonnees}}\label{\detokenize{manuel:panneau-metadata}}
+\sphinxAtStartPar
+The \sphinxstylestrong{Metadata} panel displays general information about the current database: name, description, number of positions, matches and games, schema version. Accessible via the \sphinxcode{\sphinxupquote{meta}} command.
+
+
+\subsection{Log Panel}
+\label{\detokenize{manuel:panneau-journal}}\label{\detokenize{manuel:panneau-log}}
+\sphinxAtStartPar
+The \sphinxstylestrong{Log} panel displays the log of recent operations: imports, exports and database operations, with their results and timestamps. It is useful for diagnosing import errors.
 
 \sphinxstepscope
 

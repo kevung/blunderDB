@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 21:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 22:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -905,28 +905,36 @@ efined on input line 656.
 [6] [7]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 898.
+nput line 890.
 
 
 LaTeX Warning: Hyper reference `guide_utilisateur:guide-edit-position' on page 
-8 undefined on input line 909.
+8 undefined on input line 901.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 913.
+nput line 905.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 949.
+ line 934.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-949.
+934.
 
 [8]
 
+LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 9 undefined on input
+ line 979.
+
+
+LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 9 undefined on input line 
+979.
+
+
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 9 undefined on i
-nput line 993.
+nput line 1035.
 
 [9]
 
@@ -937,24 +945,24 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1098 ...es lors d’un simple basculement PR ↔
+l.1106 ...es lors d’un simple basculement PR ↔
                                                    MWC :
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.1098 ...es lors d’un simple basculement PR ↔
+l.1106 ...es lors d’un simple basculement PR ↔
                                                    MWC :
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
  
 Here is how much of TeX's memory you used:
- 16755 strings out of 476182
- 284200 string characters out of 5795596
+ 16758 strings out of 476182
+ 284251 string characters out of 5795596
  1968975 words of memory out of 5000000
  38371 multiletter control sequences out of 15000+600000
  611301 words of font info for 75 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191
- 72i,13n,83p,1198b,562s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 72i,13n,83p,1198b,558s stack positions out of 10000i,1000n,20000p,200000b,200000s
 !  ==> Fatal error occurred, no output PDF file produced!

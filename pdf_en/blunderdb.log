@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 21:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.9)  9 MAY 2026 22:26
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -916,30 +916,39 @@ efined on input line 633.
 [6]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 7 undefined on i
-nput line 856.
+nput line 848.
 
 [7]
 
 LaTeX Warning: Hyper reference `guide_utilisateur:guide-edit-position' on page 
-8 undefined on input line 863.
+8 undefined on input line 855.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 867.
+nput line 859.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 887.
+ line 876.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-887.
+876.
 
 
-LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 926.
+LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
+ line 902.
+
+
+LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
+902.
 
 [8]
+
+LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 9 undefined on i
+nput line 947.
+
+[9]
 
 ! LaTeX Error: Unicode character ↔ (U+2194)
                not set up for use with LaTeX.
@@ -948,21 +957,23 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1014 ...es lors d’un simple basculement PR ↔
-                                                   MWC :
+l.1004 ...ecalculate statistics on a simple PR ↔
+                                                   MWC toggle: both metrics ...
+
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.1014 ...es lors d’un simple basculement PR ↔
-                                                   MWC :
+l.1004 ...ecalculate statistics on a simple PR ↔
+                                                   MWC toggle: both metrics ...
+
 You may provide a definition with
 \DeclareUnicodeCharacter 
 
  
 Here is how much of TeX's memory you used:
- 16793 strings out of 476182
- 285523 string characters out of 5795596
+ 16801 strings out of 476182
+ 285645 string characters out of 5795596
  1969975 words of memory out of 5000000
  38409 multiletter control sequences out of 15000+600000
  608304 words of font info for 74 fonts, out of 8000000 for 9000

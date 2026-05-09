@@ -762,7 +762,7 @@ afficher, ajouter ou modifier des commentaires,
 
 \item {} 
 \sphinxAtStartPar
-afficher la liste des matchs importés et naviguer dans les coups d’un match (panneau matchs),
+rechercher et filtrer des positions selon des critères combinables,
 
 \item {} 
 \sphinxAtStartPar
@@ -770,7 +770,7 @@ afficher et gérer les collections de positions (panneau collections),
 
 \item {} 
 \sphinxAtStartPar
-étudier les positions par répétition espacée (panneau Anki),
+afficher la liste des matchs importés et naviguer dans les coups d’un match (panneau matchs),
 
 \item {} 
 \sphinxAtStartPar
@@ -786,19 +786,15 @@ calculer l’EPC (Effective Pip Count) d’une position de bearoff (panneau EPC)
 
 \item {} 
 \sphinxAtStartPar
+étudier les positions par répétition espacée (panneau Anki),
+
+\item {} 
+\sphinxAtStartPar
 afficher les métadonnées de la base de données (panneau métadonnées),
 
 \item {} 
 \sphinxAtStartPar
-afficher la bibliothèque de filtres,
-
-\item {} 
-\sphinxAtStartPar
-afficher l’historique des recherches,
-
-\item {} 
-\sphinxAtStartPar
-afficher le journal des opérations (panneau log).
+afficher le journal des opérations (panneau journal).
 
 \end{itemize}
 
@@ -811,11 +807,7 @@ afficher l’aide de blunderDB,
 
 \item {} 
 \sphinxAtStartPar
-paramétrer l’export de la base de données,
-
-\item {} 
-\sphinxAtStartPar
-afficher les métadonnées de la base de données.
+paramétrer l’export de la base de données.
 
 \end{itemize}
 
@@ -937,13 +929,6 @@ qu’elles soient valides et modifie immédiatement l’état de la base de donn
 le cas échéant. Il n’y a pas d’actions de sauvegarde explicite de la part
 de l’utilisateur.
 
-\sphinxAtStartPar
-Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
-la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). La commande
-\sphinxcode{\sphinxupquote{ss}} fonctionne après une recherche préalable. La fenêtre de recherche
-(\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher « Search in current results »
-pour la même fonctionnalité.
-
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
 Se référer à la \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} pour la liste de commandes
@@ -951,13 +936,69 @@ disponible en ligne de commande.
 \end{sphinxadmonition}
 
 
-\subsection{Navigation dans les matchs}
-\label{\detokenize{manuel:navigation-dans-les-matchs}}\label{\detokenize{manuel:mode-match}}
+\subsection{Panneau Analyse}
+\label{\detokenize{manuel:panneau-analyse}}\label{\detokenize{manuel:id2}}
 \sphinxAtStartPar
-La navigation dans les matchs permet de parcourir les coups d’un match importé.
-Elle est activée depuis le panneau des matchs (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) en double\sphinxhyphen{}cliquant
-sur un match ou en appuyant sur \sphinxstyleemphasis{ENTREE}. La commande \sphinxcode{\sphinxupquote{m}} permet également
-de reprendre la navigation dans le dernier match visité.
+Le panneau \sphinxstylestrong{Analyse} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}L}) affiche les données d’analyse de la position
+courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente
+les meilleures alternatives (coups de pions ou décisions de videau) avec leurs
+valeurs d’équité et les erreurs correspondantes. La touche \sphinxstyleemphasis{d} bascule entre
+l’analyse des coups de pions et l’analyse du cube. Lors de la navigation dans
+un match, le coup effectivement joué est mis en évidence dans la liste des
+alternatives. Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}L} ou exécuter la commande \sphinxcode{\sphinxupquote{list}} pour
+afficher ou masquer le panneau.
+
+
+\subsection{Panneau Commentaires}
+\label{\detokenize{manuel:panneau-commentaires}}\label{\detokenize{manuel:id3}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Commentaires} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}P}) affiche, ajoute et modifie les
+commentaires associés à la position courante. Les commentaires importés depuis
+les fichiers XG sont automatiquement associés aux positions correspondantes.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}P} ou exécuter la commande \sphinxcode{\sphinxupquote{comment}} pour afficher ou
+masquer le panneau.
+
+
+\subsection{Panneau Recherche}
+\label{\detokenize{manuel:panneau-recherche}}\label{\detokenize{manuel:id4}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Recherche} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}F} ou \sphinxstyleemphasis{TAB}) permet de filtrer les positions
+selon des critères combinables librement : structure de pions, type de décision
+de videau, magnitude d’erreur, dates, tags, etc. La touche \sphinxstyleemphasis{TAB} ouvre
+simultanément le panneau de recherche et l’éditeur de position, permettant de
+définir une structure de pions à rechercher sur le plateau.
+
+\sphinxAtStartPar
+Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
+la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). Le panneau
+de recherche propose également une case à cocher \sphinxstyleemphasis{Search in current results}
+pour la même fonctionnalité.
+
+\begin{sphinxadmonition}{tip}{Astuce:}
+\sphinxAtStartPar
+Se référer à la \hyperref[\detokenize{cmd_mode:cmd-mode}]{Section \ref{\detokenize{cmd_mode:cmd-mode}}} pour la liste des filtres
+disponibles.
+\end{sphinxadmonition}
+
+
+\subsection{Panneau Collections}
+\label{\detokenize{manuel:panneau-collections}}\label{\detokenize{manuel:mode-collection}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Collections} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées. Double\sphinxhyphen{}cliquer sur une
+collection pour parcourir ses positions avec les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}.
+L’ordre des collections et des positions au sein des collections peut être
+modifié par glisser\sphinxhyphen{}déposer. Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}B} ou exécuter la commande
+\sphinxcode{\sphinxupquote{collection}} pour afficher ou masquer le panneau.
+
+
+\subsection{Panneau Matchs}
+\label{\detokenize{manuel:panneau-matchs}}\label{\detokenize{manuel:mode-match}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Matchs} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) liste les matchs importés. Double\sphinxhyphen{}cliquer
+sur un match (ou appuyer sur \sphinxstyleemphasis{ENTREE}) pour naviguer dans ses coups. La
+commande \sphinxcode{\sphinxupquote{m}} reprend la navigation dans le dernier match visité.
 
 \sphinxAtStartPar
 L’utilisateur peut:
@@ -986,7 +1027,8 @@ voir le coup effectivement joué mis en évidence dans l’analyse.
 
 \sphinxAtStartPar
 La dernière position visitée dans chaque match est mémorisée et restaurée
-automatiquement.
+automatiquement. Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} ou exécuter la commande \sphinxcode{\sphinxupquote{match}}
+pour afficher ou masquer le panneau.
 
 \begin{sphinxadmonition}{tip}{Astuce:}
 \sphinxAtStartPar
@@ -994,55 +1036,21 @@ Se référer à {\hyperref[\detokenize{raccourcis:raccourcis}]{\sphinxcrossref{\
 \end{sphinxadmonition}
 
 
-\subsection{Navigation dans les collections}
-\label{\detokenize{manuel:navigation-dans-les-collections}}\label{\detokenize{manuel:mode-collection}}
+\subsection{Panneau Tournois}
+\label{\detokenize{manuel:panneau-tournois}}\label{\detokenize{manuel:id5}}
 \sphinxAtStartPar
-La navigation dans les collections permet de parcourir les positions d’une collection.
-Elle est activée en double\sphinxhyphen{}cliquant sur une collection dans le panneau
-des collections (\sphinxstyleemphasis{CTRL\sphinxhyphen{}B}).
-
-\sphinxAtStartPar
-L’utilisateur peut naviguer parmi les positions de la collection
-en utilisant les touches \sphinxstyleemphasis{GAUCHE} et \sphinxstyleemphasis{DROITE}. L’ordre des collections
-et des positions dans les collections peut être modifié par glisser\sphinxhyphen{}déposer.
-
-
-\subsection{Répétition espacée (Anki)}
-\label{\detokenize{manuel:repetition-espacee-anki}}\label{\detokenize{manuel:mode-anki}}
-\sphinxAtStartPar
-Le panneau Anki (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) permet d’étudier des positions par répétition espacée
-en utilisant l’algorithme FSRS. L’utilisateur peut créer des paquets à partir
-de collections ou de résultats de recherche.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Création de paquets :} Cliquez sur \sphinxstyleemphasis{New Deck} pour créer un paquet à partir
-d’une collection ou des résultats de recherche courants. Les paquets basés sur
-une recherche se synchronisent automatiquement à l’activation de l’onglet Anki.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Révision :} Sélectionnez un paquet puis cliquez sur \sphinxstyleemphasis{Study} (ou double\sphinxhyphen{}cliquez
-sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
-la position correspondante sur le plateau. Évaluez votre rappel avec les touches
-\sphinxstyleemphasis{1} (À revoir), \sphinxstyleemphasis{2} (Difficile), \sphinxstyleemphasis{3} (Bien), ou \sphinxstyleemphasis{4} (Facile). Appuyez sur \sphinxstyleemphasis{Esc}
-pour arrêter et revenir à la liste des paquets.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Arrêt/Reprise :} Vous pouvez interrompre une session de révision à tout moment
-avec \sphinxstyleemphasis{Esc}. Le bouton change en \sphinxstyleemphasis{Resume} et affiche votre progression.
-Cliquez dessus pour reprendre là où vous vous êtes arrêté.
-
-\sphinxAtStartPar
-\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
-synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
-(rétention cible, intervalle maximum, aléa) peuvent être configurés par
-paquet dans les Paramètres (icône engrenage).
+Le panneau \sphinxstylestrong{Tournois} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Y}) permet de regrouper des matchs en tournois
+pour un suivi organisé et une analyse statistique par événement. Les tournois
+peuvent être créés, renommés et supprimés ; les matchs peuvent leur être
+assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi.
+Appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}Y} pour afficher ou masquer le panneau.
 
 
 \subsection{Panneau Stats}
 \label{\detokenize{manuel:panneau-stats}}\label{\detokenize{manuel:stats}}
 
 \subsubsection{Introduction}
-\label{\detokenize{manuel:id2}}
+\label{\detokenize{manuel:id6}}
 \sphinxAtStartPar
 Le panneau \sphinxstylestrong{Stats} permet d’analyser son niveau de jeu et de suivre sa
 progression dans le temps à partir des positions importées dans la base de
@@ -1473,17 +1481,17 @@ vos chances de victoire.
 \end{itemize}
 
 
-\subsection{Calculateur EPC}
-\label{\detokenize{manuel:calculateur-epc}}\label{\detokenize{manuel:mode-epc}}
+\subsection{Panneau EPC}
+\label{\detokenize{manuel:panneau-epc}}\label{\detokenize{manuel:mode-epc}}
 \sphinxAtStartPar
-Le panneau EPC permet de calculer l’EPC (Effective Pip Count) d’une position
-de bearoff. Il est activé en appuyant \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, en cliquant sur l’onglet
+Le panneau \sphinxstylestrong{EPC} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}E}) calcule l’EPC (Effective Pip Count) d’une position
+de bearoff. Il est activé en appuyant sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E}, en cliquant sur l’onglet
 EPC dans le panneau inférieur, ou en exécutant la commande \sphinxcode{\sphinxupquote{epc}}.
 
 \sphinxAtStartPar
 Dans ce panneau, l’utilisateur édite la position des pions dans le jan
 (6 derniers points) et les informations suivantes sont affichées
-en temps réel dans le panneau EPC dédié pour chaque joueur:
+en temps réel pour chaque joueur :
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -1512,14 +1520,60 @@ Lorsque les deux joueurs ont des pions dans leur jan, une section
 de comparaison affiche les différences d’EPC et de pip count.
 
 \sphinxAtStartPar
-Pour quitter le panneau EPC, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur
-un autre onglet.
+Pour fermer le panneau EPC, appuyer sur \sphinxstyleemphasis{CTRL\sphinxhyphen{}E} ou basculer sur un autre onglet.
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
 Le calcul repose sur la base de données interne de bearoff
 à 6 points de GNUbg.
 \end{sphinxadmonition}
+
+
+\subsection{Panneau Anki}
+\label{\detokenize{manuel:panneau-anki}}\label{\detokenize{manuel:mode-anki}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Anki} (\sphinxstyleemphasis{CTRL\sphinxhyphen{}K}) permet d’étudier des positions par répétition
+espacée en utilisant l’algorithme FSRS. L’utilisateur peut créer des paquets
+à partir de collections ou de résultats de recherche.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Création de paquets :} Cliquez sur \sphinxstyleemphasis{New Deck} pour créer un paquet à partir
+d’une collection ou des résultats de recherche courants. Les paquets basés sur
+une recherche se synchronisent automatiquement à l’activation de l’onglet Anki.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Révision :} Sélectionnez un paquet puis cliquez sur \sphinxstyleemphasis{Study} (ou double\sphinxhyphen{}cliquez
+sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
+la position correspondante sur le plateau. Évaluez votre rappel avec les touches
+\sphinxstyleemphasis{1} (À revoir), \sphinxstyleemphasis{2} (Difficile), \sphinxstyleemphasis{3} (Bien), ou \sphinxstyleemphasis{4} (Facile). Appuyez sur \sphinxstyleemphasis{Esc}
+pour arrêter et revenir à la liste des paquets.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Arrêt/Reprise :} Vous pouvez interrompre une session de révision à tout moment
+avec \sphinxstyleemphasis{Esc}. Le bouton change en \sphinxstyleemphasis{Resume} et affiche votre progression.
+Cliquez dessus pour reprendre là où vous vous êtes arrêté.
+
+\sphinxAtStartPar
+\sphinxstylestrong{Gestion des paquets :} Utilisez les boutons d’action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
+(rétention cible, intervalle maximum, aléa) peuvent être configurés par
+paquet dans les Paramètres (icône engrenage).
+
+
+\subsection{Panneau Métadonnées}
+\label{\detokenize{manuel:panneau-metadonnees}}\label{\detokenize{manuel:panneau-metadata}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Métadonnées} affiche les informations générales de la base de
+données courante : nom, description, nombre de positions, nombre de matchs et
+de parties, version du schéma. Accessible via la commande \sphinxcode{\sphinxupquote{meta}}.
+
+
+\subsection{Panneau Journal}
+\label{\detokenize{manuel:panneau-journal}}\label{\detokenize{manuel:panneau-log}}
+\sphinxAtStartPar
+Le panneau \sphinxstylestrong{Journal} affiche le journal des opérations récentes : imports,
+exports et opérations sur la base de données, avec leurs résultats et
+horodatages. Il est utile pour diagnostiquer les erreurs d’import.
 
 \sphinxstepscope
 
