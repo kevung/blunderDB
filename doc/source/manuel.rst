@@ -63,11 +63,11 @@ Des panneaux peuvent être affichés pour:
 
 * afficher, ajouter ou modifier des commentaires,
 
-* afficher la liste des matchs importés et naviguer dans les coups d'un match (panneau matchs),
+* rechercher et filtrer des positions selon des critères combinables,
 
 * afficher et gérer les collections de positions (panneau collections),
 
-* étudier les positions par répétition espacée (panneau Anki),
+* afficher la liste des matchs importés et naviguer dans les coups d'un match (panneau matchs),
 
 * afficher et gérer les tournois (panneau tournois),
 
@@ -75,21 +75,17 @@ Des panneaux peuvent être affichés pour:
 
 * calculer l'EPC (Effective Pip Count) d'une position de bearoff (panneau EPC),
 
+* étudier les positions par répétition espacée (panneau Anki),
+
 * afficher les métadonnées de la base de données (panneau métadonnées),
 
-* afficher la bibliothèque de filtres,
-
-* afficher l'historique des recherches,
-
-* afficher le journal des opérations (panneau log).
+* afficher le journal des opérations (panneau journal).
 
 Des fenêtres modales peuvent s'afficher pour:
 
 * afficher l'aide de blunderDB,
 
-* paramétrer l'export de la base de données,
-
-* afficher les métadonnées de la base de données.
+* paramétrer l'export de la base de données.
 
 La zone d'affichage principale met à disposition à l'utilisateur:
 
@@ -171,24 +167,74 @@ qu'elles soient valides et modifie immédiatement l'état de la base de données
 le cas échéant. Il n'y a pas d'actions de sauvegarde explicite de la part
 de l'utilisateur.
 
-Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
-la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). La commande
-``ss`` fonctionne après une recherche préalable. La fenêtre de recherche
-(``CTRL-F``) propose également une case à cocher "Search in current results"
-pour la même fonctionnalité.
-
 .. tip:: Se référer à la :numref:`cmd_mode` pour la liste de commandes
    disponible en ligne de commande.
 
+.. _panneau_analyse:
+
+Panneau Analyse
+---------------
+
+Le panneau **Analyse** (*CTRL-L*) affiche les données d'analyse de la position
+courante importées depuis eXtreme Gammon (XG), GNUbg ou BGBlitz. Il présente
+les meilleures alternatives (coups de pions ou décisions de videau) avec leurs
+valeurs d'équité et les erreurs correspondantes. La touche *d* bascule entre
+l'analyse des coups de pions et l'analyse du cube. Lors de la navigation dans
+un match, le coup effectivement joué est mis en évidence dans la liste des
+alternatives. Appuyer sur *CTRL-L* ou exécuter la commande ``list`` pour
+afficher ou masquer le panneau.
+
+.. _panneau_commentaires:
+
+Panneau Commentaires
+--------------------
+
+Le panneau **Commentaires** (*CTRL-P*) affiche, ajoute et modifie les
+commentaires associés à la position courante. Les commentaires importés depuis
+les fichiers XG sont automatiquement associés aux positions correspondantes.
+Appuyer sur *CTRL-P* ou exécuter la commande ``comment`` pour afficher ou
+masquer le panneau.
+
+.. _panneau_recherche:
+
+Panneau Recherche
+-----------------
+
+Le panneau **Recherche** (*CTRL-F* ou *TAB*) permet de filtrer les positions
+selon des critères combinables librement : structure de pions, type de décision
+de videau, magnitude d'erreur, dates, tags, etc. La touche *TAB* ouvre
+simultanément le panneau de recherche et l'éditeur de position, permettant de
+définir une structure de pions à rechercher sur le plateau.
+
+Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
+la commande ``ss`` suivie de filtres (ex: ``ss nc``, ``ss E>40``). Le panneau
+de recherche propose également une case à cocher *Search in current results*
+pour la même fonctionnalité.
+
+.. tip:: Se référer à la :numref:`cmd_mode` pour la liste des filtres
+   disponibles.
+
+.. _mode_collection:
+
+Panneau Collections
+-------------------
+
+Le panneau **Collections** (*CTRL-B*) permet de gérer des collections de
+positions. Les collections peuvent être créées, renommées et supprimées. Des
+positions peuvent y être ajoutées ou retirées. Double-cliquer sur une
+collection pour parcourir ses positions avec les touches *GAUCHE* et *DROITE*.
+L'ordre des collections et des positions au sein des collections peut être
+modifié par glisser-déposer. Appuyer sur *CTRL-B* ou exécuter la commande
+``collection`` pour afficher ou masquer le panneau.
+
 .. _mode_match:
 
-Navigation dans les matchs
---------------------------
+Panneau Matchs
+--------------
 
-La navigation dans les matchs permet de parcourir les coups d'un match importé.
-Elle est activée depuis le panneau des matchs (*CTRL-Tab*) en double-cliquant
-sur un match ou en appuyant sur *ENTREE*. La commande ``m`` permet également
-de reprendre la navigation dans le dernier match visité.
+Le panneau **Matchs** (*CTRL-Tab*) liste les matchs importés. Double-cliquer
+sur un match (ou appuyer sur *ENTREE*) pour naviguer dans ses coups. La
+commande ``m`` reprend la navigation dans le dernier match visité.
 
 L'utilisateur peut:
 
@@ -203,50 +249,21 @@ L'utilisateur peut:
 * voir le coup effectivement joué mis en évidence dans l'analyse.
 
 La dernière position visitée dans chaque match est mémorisée et restaurée
-automatiquement.
+automatiquement. Appuyer sur *CTRL-Tab* ou exécuter la commande ``match``
+pour afficher ou masquer le panneau.
 
 .. tip:: Se référer à :ref:`raccourcis` pour les raccourcis disponibles.
 
-.. _mode_collection:
+.. _panneau_tournois:
 
-Navigation dans les collections
--------------------------------
+Panneau Tournois
+----------------
 
-La navigation dans les collections permet de parcourir les positions d'une collection.
-Elle est activée en double-cliquant sur une collection dans le panneau
-des collections (*CTRL-B*).
-
-L'utilisateur peut naviguer parmi les positions de la collection
-en utilisant les touches *GAUCHE* et *DROITE*. L'ordre des collections
-et des positions dans les collections peut être modifié par glisser-déposer.
-
-.. _mode_anki:
-
-Répétition espacée (Anki)
--------------------------
-
-Le panneau Anki (*CTRL-K*) permet d'étudier des positions par répétition espacée
-en utilisant l'algorithme FSRS. L'utilisateur peut créer des paquets à partir
-de collections ou de résultats de recherche.
-
-**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à partir
-d'une collection ou des résultats de recherche courants. Les paquets basés sur
-une recherche se synchronisent automatiquement à l'activation de l'onglet Anki.
-
-**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou double-cliquez
-sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
-la position correspondante sur le plateau. Évaluez votre rappel avec les touches
-*1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
-pour arrêter et revenir à la liste des paquets.
-
-**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à tout moment
-avec *Esc*. Le bouton change en *Resume* et affiche votre progression.
-Cliquez dessus pour reprendre là où vous vous êtes arrêté.
-
-**Gestion des paquets :** Utilisez les boutons d'action pour renommer,
-synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
-(rétention cible, intervalle maximum, aléa) peuvent être configurés par
-paquet dans les Paramètres (icône engrenage).
+Le panneau **Tournois** (*CTRL-Y*) permet de regrouper des matchs en tournois
+pour un suivi organisé et une analyse statistique par événement. Les tournois
+peuvent être créés, renommés et supprimés ; les matchs peuvent leur être
+assignés. Les statistiques du panneau Stats peuvent être filtrées par tournoi.
+Appuyer sur *CTRL-Y* pour afficher ou masquer le panneau.
 
 .. _stats:
 
@@ -506,16 +523,16 @@ MWC : limitations
 
 .. _mode_epc:
 
-Calculateur EPC
----------------
+Panneau EPC
+-----------
 
-Le panneau EPC permet de calculer l'EPC (Effective Pip Count) d'une position
-de bearoff. Il est activé en appuyant *CTRL-E*, en cliquant sur l'onglet
+Le panneau **EPC** (*CTRL-E*) calcule l'EPC (Effective Pip Count) d'une position
+de bearoff. Il est activé en appuyant sur *CTRL-E*, en cliquant sur l'onglet
 EPC dans le panneau inférieur, ou en exécutant la commande ``epc``.
 
 Dans ce panneau, l'utilisateur édite la position des pions dans le jan
 (6 derniers points) et les informations suivantes sont affichées
-en temps réel dans le panneau EPC dédié pour chaque joueur:
+en temps réel pour chaque joueur :
 
 * l'EPC (Effective Pip Count),
 
@@ -530,9 +547,54 @@ en temps réel dans le panneau EPC dédié pour chaque joueur:
 Lorsque les deux joueurs ont des pions dans leur jan, une section
 de comparaison affiche les différences d'EPC et de pip count.
 
-Pour quitter le panneau EPC, appuyer sur *CTRL-E* ou basculer sur
-un autre onglet.
+Pour fermer le panneau EPC, appuyer sur *CTRL-E* ou basculer sur un autre onglet.
 
 .. note:: Le calcul repose sur la base de données interne de bearoff
    à 6 points de GNUbg.
+
+.. _mode_anki:
+
+Panneau Anki
+------------
+
+Le panneau **Anki** (*CTRL-K*) permet d'étudier des positions par répétition
+espacée en utilisant l'algorithme FSRS. L'utilisateur peut créer des paquets
+à partir de collections ou de résultats de recherche.
+
+**Création de paquets :** Cliquez sur *New Deck* pour créer un paquet à partir
+d'une collection ou des résultats de recherche courants. Les paquets basés sur
+une recherche se synchronisent automatiquement à l'activation de l'onglet Anki.
+
+**Révision :** Sélectionnez un paquet puis cliquez sur *Study* (ou double-cliquez
+sur un paquet) pour commencer la révision des cartes dues. Chaque carte affiche
+la position correspondante sur le plateau. Évaluez votre rappel avec les touches
+*1* (À revoir), *2* (Difficile), *3* (Bien), ou *4* (Facile). Appuyez sur *Esc*
+pour arrêter et revenir à la liste des paquets.
+
+**Arrêt/Reprise :** Vous pouvez interrompre une session de révision à tout moment
+avec *Esc*. Le bouton change en *Resume* et affiche votre progression.
+Cliquez dessus pour reprendre là où vous vous êtes arrêté.
+
+**Gestion des paquets :** Utilisez les boutons d'action pour renommer,
+synchroniser, réinitialiser ou supprimer des paquets. Les paramètres FSRS
+(rétention cible, intervalle maximum, aléa) peuvent être configurés par
+paquet dans les Paramètres (icône engrenage).
+
+.. _panneau_metadata:
+
+Panneau Métadonnées
+-------------------
+
+Le panneau **Métadonnées** affiche les informations générales de la base de
+données courante : nom, description, nombre de positions, nombre de matchs et
+de parties, version du schéma. Accessible via la commande ``meta``.
+
+.. _panneau_log:
+
+Panneau Journal
+---------------
+
+Le panneau **Journal** affiche le journal des opérations récentes : imports,
+exports et opérations sur la base de données, avec leurs résultats et
+horodatages. Il est utile pour diagnostiquer les erreurs d'import.
 
