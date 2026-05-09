@@ -66,7 +66,7 @@
 
 
 \title{blunderDB}
-\date{May 08, 2026}
+\date{May 09, 2026}
 \release{0.19.0}
 \author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
 \newcommand{\sphinxlogo}{\vbox{}}
@@ -571,7 +571,7 @@ May 7, 2026
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill\sphinxhyphen{}down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list \textendash{}type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube\_error pour les décisions Double/Pass. Documentation du modèle de statistiques (:ref:\textasciigrave{}stats\_parity\textasciigrave{}). Voir :ref:\textasciigrave{}stats\textasciigrave{}.
+Added Stats panel: PR (Performance Rate), Snowie Error Rate and MWC cost (Match Winning Chance cost) indicators, filter bar (player, tournament, dates, decision type, match length), Dashboard tab with level cards / rolling PR / top blunders, Progression tab with per\sphinxhyphen{}tournament curve and per\sphinxhyphen{}match scatter plot, Errors tab with cube\sphinxhyphen{}action breakdown and error magnitude histogram. Interactive drill\sphinxhyphen{}down to positions / matches / tournaments from all indicators. Instant PR / MWC toggle. CLI command list \textendash{}type stats. Alignment of PR / Snowie ER / MWC indicators with eXtremeGammon and gnuBG (0.16 equity threshold for close cubes). Fixed cube\_error calculation for Double/Pass decisions. Statistics model documentation ({\hyperref[\detokenize{stats_parity:stats-parity}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Statistics model — XG / gnuBG / blunderDB alignment}}}}}). See {\hyperref[\detokenize{stats:stats}]{\sphinxcrossref{\DUrole{std}{\DUrole{std-ref}{Stats Panel}}}}}.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -743,7 +743,7 @@ display and manage tournaments (tournaments panel),
 
 \item {} 
 \sphinxAtStartPar
-afficher les statistiques de performance (panneau Stats),
+display performance statistics (Stats panel),
 
 \item {} 
 \sphinxAtStartPar
@@ -1267,7 +1267,7 @@ To navigate through an imported match:
 \sphinxsetlistlabels{\arabic}{enumi}{enumii}{}{.}%
 \item {} 
 \sphinxAtStartPar
-Ouvrir le panneau des matchs avec \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}.
+Open the match panel with \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}.
 
 \item {} 
 \sphinxAtStartPar
@@ -1293,8 +1293,7 @@ Press \sphinxstyleemphasis{d} to toggle between checker move analysis and cube a
 
 \begin{sphinxadmonition}{tip}{Tip:}
 \sphinxAtStartPar
-Raccourci: \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} pour ouvrir le panneau des matchs.
-Commande: \sphinxcode{\sphinxupquote{m}}
+Shortcut: \sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab} to open the match panel. Command: \sphinxcode{\sphinxupquote{m}}
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Note:}
@@ -1306,7 +1305,7 @@ blunderDB remembers the last visited position in each match. When returning to a
 \subsection{Manage the match panel}
 \label{\detokenize{guide_utilisateur:gerer-le-panneau-des-matchs}}
 \sphinxAtStartPar
-Le panneau des matchs (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) permet de:
+The match panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}) allows you to:
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -1407,8 +1406,7 @@ Click “Add” and enter the tournament name.
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Depuis le panneau des matchs (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}), utiliser le menu déroulant
-de la colonne tournoi pour assigner un match.
+From the match panel (\sphinxstyleemphasis{CTRL\sphinxhyphen{}Tab}), use the dropdown menu in the tournament column to assign a match.
 
 \end{itemize}
 
@@ -3587,7 +3585,7 @@ CTRL\sphinxhyphen{}D
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Afficher le panneau Stats.
+Show the Stats panel.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -4013,7 +4011,7 @@ Deselect/close the panel.
 \sphinxattableend\end{savenotes}
 
 
-\subsection{Panneau Anki (répétition espacée)}
+\subsection{Anki panel (spaced repetition)}
 \label{\detokenize{raccourcis:panneau-anki-repetition-espacee}}\label{\detokenize{raccourcis:raccourcis-anki-panel}}
 
 \begin{savenotes}\sphinxattablestart
@@ -5030,7 +5028,7 @@ Approximate reference thresholds:
 \sphinxtoprule
 \begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxstyletheadfamily \sphinxAtStartPar
-Niveau
+Level
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -5064,7 +5062,7 @@ Expert
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Avancé
+Advanced
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -5075,7 +5073,7 @@ Avancé
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Intermédiaire
+Intermediate
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -5086,7 +5084,7 @@ Intermédiaire
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Débutant
+Beginner
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -5247,7 +5245,7 @@ The PR of a tournament (or any subset) is computed using the \sphinxstylestrong{
 \sphinxAtStartPar
 Formula:
 \begin{equation*}
-\begin{split}PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\end{split}
+\begin{split}PR_{tournament} = \frac{\sum_{i} \text{error}_i}{\text{total number of decisions}}\end{split}
 \end{equation*}
 \sphinxAtStartPar
 \sphinxstylestrong{Example:} a player plays two matches in a tournament —
@@ -5369,7 +5367,7 @@ This page describes how blunderDB computes \sphinxstylestrong{PR} (Performance R
 \sphinxAtStartPar
 PR (also called “error rate per decision” in gnuBG) measures the average error in thousandths of an equity point (millipoints, mpt) per counted decision.
 \begin{equation*}
-\begin{split}\mathrm{PR} = \frac{\sum_i |\mathrm{erreur}_i|}{\mathrm{N_{compté}}} \times 500\end{split}
+\begin{split}\mathrm{PR} = \frac{\sum_i |\mathrm{error}_i|}{\mathrm{N_{counted}}} \times 500\end{split}
 \end{equation*}\begin{itemize}
 \item {} 
 \sphinxAtStartPar
@@ -5391,7 +5389,7 @@ The factor 500 converts equity to millipoints (1 point = 1000 mpt, but the scale
 \sphinxAtStartPar
 Snowie ER uses the \sphinxstylestrong{same numerator} as PR, but the denominator is the total number of moves of both players, forced moves included (all decisions, no filter):
 \begin{equation*}
-\begin{split}\mathrm{SnowieER} = \frac{\sum_i |\mathrm{erreur}_i|}{N_\text{P1} + N_\text{P2}} \times 500\end{split}
+\begin{split}\mathrm{SnowieER} = \frac{\sum_i |\mathrm{error}_i|}{N_\text{P1} + N_\text{P2}} \times 500\end{split}
 \end{equation*}
 \sphinxAtStartPar
 Reference: \sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}}.
@@ -5410,7 +5408,7 @@ A player’s Snowie ER is typically about half their PR, because the denominator
 \sphinxAtStartPar
 MWC loss expresses in percentage points of match\sphinxhyphen{}winning probability the cumulative effect of a player’s errors. For each decision, the EMG error is converted to MWC using the MET (Match Equity Table) at the current score:
 \begin{equation*}
-\begin{split}\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\end{split}
+\begin{split}\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{error}_i, \mathrm{score}_i)\end{split}
 \end{equation*}
 \sphinxAtStartPar
 Reference: \sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}}.
@@ -5638,7 +5636,7 @@ Metric
 &\sphinxstartmulticolumn{2}%
 \begin{varwidth}[t]{\sphinxcolwidth{2}{3}}
 \sphinxstyletheadfamily \sphinxAtStartPar
-Écart typique  | Cause principale
+Typical gap | Main cause
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \sphinxstopmulticolumn
