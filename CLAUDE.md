@@ -24,7 +24,7 @@ wails build -tags webkit2_41
 cd frontend && npm install && npm run dev     # or: npm run build
 ```
 
-CI (`.github/workflows/build.yml`) builds on ubuntu-latest (webkit2gtk-4.1), ubuntu-22.04 (webkit2gtk-4.0, no tag), windows-latest and macos-latest (`darwin/universal`). Go 1.23.1, Node v23.4.0, Wails v2.10.2.
+CI (`.github/workflows/build.yml`) builds on ubuntu-latest (webkit2gtk-4.1), ubuntu-22.04 (webkit2gtk-4.0, no tag), windows-latest and macos-latest (`darwin/universal`). Go 1.25.0, Node v23.4.0, Wails v2.10.1.
 
 ## Running the binary
 
