@@ -64,7 +64,14 @@ All backend Go files are in the repo root in a single `main` package:
 
 - `main.go` — entry point; dispatches CLI vs GUI, wires Wails `Bind` for `App`, `Database`, `Config`.
 - `app.go` — `App` struct, bound to the frontend. Exposes file/directory dialogs, drag-drop file reading, clipboard (xclip/wl-copy on Linux, osascript on macOS, PowerShell on Windows), and alerts via Wails runtime.
-- `db.go` — `Database` struct, the core of the app (~10k lines). Uses `modernc.org/sqlite` (pure-Go SQLite, no CGO). In GUI mode the DB is opened in-memory (`:memory:`) and loaded from / saved to a user-chosen `.db` file via the dialogs in `app.go`. Owns schema creation, migrations (`ensureAllTablesExist`, `CheckVersion`), position canonical-hash dedup, analysis storage, match/game/move hierarchy, comments, collections, tournaments, FSRS spaced-repetition cards, filter library, session state, search history.
+- `db.go` — `Database` struct and connection lifecycle (`NewDatabase`, `SetupDatabase`, `OpenDatabase`, `applyPragmas`). Uses `modernc.org/sqlite` (pure-Go SQLite, no CGO). In GUI mode the DB is opened in-memory (`:memory:`) and loaded from / saved to a user-chosen `.db` file via the dialogs in `app.go`. The actual domain logic is split into the sibling `db_*.go` files:
+  - `db_schema.go` — table/index DDL (`ensureAllTablesExist`).
+  - `db_migration.go` — `CheckVersion` and per-version upgrade paths.
+  - `db_position.go` — position storage, canonical-hash dedup, scalar-column denormalization.
+  - `db_analysis.go` — analysis storage and compressed equity blobs.
+  - `db_match.go`, `db_tournament.go`, `db_collection.go`, `db_comment.go`, `db_anki.go`, `db_session.go`, `db_met.go` — domain-specific persistence.
+  - `db_search.go`, `db_filter_match.go`, `db_stats.go` — query, filter, and aggregate logic.
+  - `db_import_*.go` and `db_export.go` — import/export pipelines for XG, GnuBG, BGF, native `.db`, and JSON.
 - `cli.go` — `CLI` struct implementing the subcommands (`import`, `export`, `search`, `list`, `delete`, …). Shares the `Database` implementation with the GUI.
 - `model.go` — shared domain types (`Position`, `Board`, `Cube`, `Match`, `Game`, `Move`, `PositionAnalysis`, FSRS `AnkiCard`/`AnkiDeck`, `Tournament`, …) plus constants like `DatabaseVersion`, color/bar indices, decision-type enums.
 - `epc.go` — Effective Pip Count engine; embeds `gnubg_os6.bd` (one-sided 6-point bearoff DB) via `//go:embed`.
@@ -75,11 +82,11 @@ Match/position import parsers are **external modules** (own repos under `github.
 Key backend invariants worth knowing before editing:
 - Positions are stored with a canonical SHA-256 hash (see `canonical_hash_test.go`) to dedup across imports — always go through `SavePosition`, which handles the lookup.
 - A single mutex (`Database.mu`) serializes writes; import cancellation uses an atomic flag (`importCancelled`).
-- Schema changes require incrementing `DatabaseVersion` in `model.go` **and** adding a migration path in `db.go` (`CheckVersion` / `ensureAllTablesExist`). Cover the migration with a test in `migration_test.go`.
+- Schema changes require incrementing `DatabaseVersion` in `model.go` **and** adding a migration path (`CheckVersion` in `db_migration.go`, table/index DDL in `db_schema.go`). Cover the migration with a test in `migration_test.go`.
 
 ### Frontend (Svelte 5 + Vite, in `frontend/`)
 
-- `frontend/src/App.svelte` — single massive root component (~200k) that orchestrates everything. Most features are modals/panels under `frontend/src/components/`.
+- `frontend/src/App.svelte` — root component that mounts the toolbar, board, command line, and the modals/panels under `frontend/src/components/`. Kept thin — feature logic lives in the panels and stores.
 - `frontend/src/stores/` — Svelte stores, one per feature area (positions, analysis, collection, tournament, Anki, EPC, search history, UI, gammon/takepoint tables, etc.). Cross-component state lives here, not in props.
 - `frontend/src/commandProcessor.js` — parses the in-app command line (see `CommandLine.svelte`); a large source of user-facing behavior.
 - `frontend/src/components/Board.svelte` — board rendering uses `two.js`.
