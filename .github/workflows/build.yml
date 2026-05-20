@@ -177,6 +177,26 @@ jobs:
         with:
           version: v2.11.4
 
+  govulncheck:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Create frontend dist stub
+        run: mkdir -p frontend/dist && touch frontend/dist/.gitkeep
+        shell: bash
+
+      - name: govulncheck
+        uses: golang/govulncheck-action@v1
+        with:
+          go-version-input: 1.25.0
+          check-latest: true
+          repo-checkout: false
+
   build:
     strategy:
       fail-fast: false
