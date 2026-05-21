@@ -67,7 +67,7 @@ Optional side phases:
 | A | CLI extract | [01a-cli-extract.md](01a-cli-extract.md) | 1-2 d | low | **done** (4743e21d) |
 | P1 | Library refactor | [01b-pkg-library-refactor.md](01b-pkg-library-refactor.md) | 5-7 d | high | **done** (PR1 domain+engine, PR2 database, PR3 cmd/internal) |
 | P2 | `Storage` interface | [02-storage-interface.md](02-storage-interface.md) | 8-10 d | high | PR1 done (`c8bcfc1e`); design arbitrated (D1-D10); PR2 done (SQLite positions/analyses/search + wrapper delegation + contract tests); PR3 done (SQLite matches + tournaments, D2 applied, contract Match/* enabled); PRs 4-6 pending |
-| P3 | Postgres backend | [03-postgres-backend.md](03-postgres-backend.md) | 10-15 d | high | PR1 done (skeleton: pgx/pgxpool, `001_initial_v2_7_0.sql`, bootstrap, 14 family stubs, testcontainers migration test); PR2 done (positions + analyses + search, `TestContract_Postgres` green); PR3 done (matches + games + moves, cascade delete, `matches_postgres_test.go`); PRs 4-8 pending |
+| P3 | Postgres backend | [03-postgres-backend.md](03-postgres-backend.md) | 10-15 d | high | PR1 done (skeleton: pgx/pgxpool, `001_initial_v2_7_0.sql`, bootstrap, 14 family stubs, testcontainers migration test); PR2 done (positions + analyses + search, `TestContract_Postgres` green); PR3 done (matches + games + moves, cascade delete); PR4 done (tournaments + collections, contract `Tournament/*` enabled); PRs 5-8 pending |
 | P4 | Session scope | [04-session-scope.md](04-session-scope.md) | 3-4 d | medium | pending |
 | P5 | Remove global mutex | [05-remove-global-mutex.md](05-remove-global-mutex.md) | 4-6 d | high | pending |
 | P6 | `serve` HTTP+JSON | [06-serve-http.md](06-serve-http.md) | 5-7 d | medium | pending |

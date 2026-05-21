@@ -24,7 +24,8 @@
 // relies on a stricter level.
 //
 // PR status. Open, Close, the pool, schema bootstrap and transactions work.
-// The positions, analyses, search and matches families are implemented (P3
-// PRs 1-3); the remaining families are stubbed and return storage.ErrInternal
-// wrapped with a "not implemented" message until their later P3 PR.
+// The positions, analyses, search, matches, tournaments and collections
+// families are implemented (P3 PRs 1-4); the remaining families are stubbed
+// and return storage.ErrInternal wrapped with a "not implemented" message
+// until their later P3 PR.
 package postgres

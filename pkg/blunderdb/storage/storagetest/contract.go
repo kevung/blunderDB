@@ -13,10 +13,9 @@
 // backend packages' test binaries — an exported helper in a _test.go file
 // would not be visible across packages.
 //
-// The positions, analyses, search, transaction and match cases are filled in;
-// the remaining ones are skipped until their family lands in a later PR. The
-// Tournament case stays pending until the PostgreSQL tournament store lands
-// (P3 PR4), since the suite runs against both backends.
+// The positions, analyses, search, transaction, match and tournament cases
+// are filled in; the remaining ones are skipped until their family is
+// implemented on both backends (the suite runs against each).
 package storagetest
 
 import (
@@ -43,7 +42,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
-		{"Tournament/AddRemoveMatch", nil},
+		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Collection/MoveBetweenCollections", nil},
 		{"Anki/ReviewUpdatesScheduling", nil},
 		{"Filter/SaveAndList", nil},
@@ -334,6 +333,74 @@ func testMatchDeleteCascade(t *testing.T, s storage.Storage) {
 	}
 	if _, err := s.Positions().Load(ctx, "", posID); !errors.Is(err, storage.ErrNotFound) {
 		t.Errorf("orphan position not deleted: got %v, want ErrNotFound", err)
+	}
+}
+
+func testTournamentAddRemoveMatch(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	tID, err := s.Tournaments().Create(ctx, "", "Cup", "2025-01-01", "Paris")
+	if err != nil {
+		t.Fatalf("Create tournament: %v", err)
+	}
+
+	m1 := domain.Match{Player1Name: "A", Player2Name: "B"}
+	id1, err := s.Matches().Save(ctx, "", &m1)
+	if err != nil {
+		t.Fatalf("Save match 1: %v", err)
+	}
+	m2 := domain.Match{Player1Name: "C", Player2Name: "D"}
+	id2, err := s.Matches().Save(ctx, "", &m2)
+	if err != nil {
+		t.Fatalf("Save match 2: %v", err)
+	}
+
+	if err := s.Tournaments().AddMatch(ctx, "", tID, id1); err != nil {
+		t.Fatalf("AddMatch 1: %v", err)
+	}
+	if err := s.Tournaments().AddMatch(ctx, "", tID, id2); err != nil {
+		t.Fatalf("AddMatch 2: %v", err)
+	}
+
+	got, err := s.Tournaments().Get(ctx, "", tID)
+	if err != nil {
+		t.Fatalf("Get tournament: %v", err)
+	}
+	if got.MatchCount != 2 {
+		t.Errorf("MatchCount after AddMatch: got %d, want 2", got.MatchCount)
+	}
+
+	of, err := s.Tournaments().TournamentOf(ctx, "", id1)
+	if err != nil {
+		t.Fatalf("TournamentOf: %v", err)
+	}
+	if of.ID != tID {
+		t.Errorf("TournamentOf: got %d, want %d", of.ID, tID)
+	}
+
+	var matchIDs []int64
+	for m, err := range s.Tournaments().Matches(ctx, "", tID) {
+		if err != nil {
+			t.Fatalf("Matches: %v", err)
+		}
+		matchIDs = append(matchIDs, m.ID)
+	}
+	if len(matchIDs) != 2 {
+		t.Fatalf("Matches count: got %d, want 2", len(matchIDs))
+	}
+
+	if err := s.Tournaments().RemoveMatch(ctx, "", id1); err != nil {
+		t.Fatalf("RemoveMatch: %v", err)
+	}
+	if _, err := s.Tournaments().TournamentOf(ctx, "", id1); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("TournamentOf after RemoveMatch: got %v, want ErrNotFound", err)
+	}
+	got, err = s.Tournaments().Get(ctx, "", tID)
+	if err != nil {
+		t.Fatalf("Get tournament after remove: %v", err)
+	}
+	if got.MatchCount != 1 {
+		t.Errorf("MatchCount after RemoveMatch: got %d, want 1", got.MatchCount)
 	}
 }
 
