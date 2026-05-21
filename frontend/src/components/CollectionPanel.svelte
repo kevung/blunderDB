@@ -24,13 +24,14 @@
 
     let { onOpenCollection } = $props();
 
-    let collections = $state([]);
-    let selectedCollection = $state(null);
-    let collectionPositions = $state([]);
-    let activeCollection = $state(null);
-    let visible = $state(false);
-    let databaseLoaded = $state(false);
-    let currentPosition = $state(null);
+    // Read-only mirrors of stores
+    let collections = $derived($collectionsStore || []);
+    let selectedCollection = $derived($selectedCollectionStore);
+    let collectionPositions = $derived($collectionPositionsStore || []);
+    let activeCollection = $derived($activeCollectionStore);
+    let visible = $derived($openPanels.has(PANEL.COLLECTION));
+    let currentPosition = $derived($positionStore);
+
     let mode = 'NORMAL';
 
     let positionCollectionIds = $state([]);
@@ -53,81 +54,46 @@
     // Inline new description
     let inlineNewDescription = $state('');
 
-    const unsubCollections = collectionsStore.subscribe((value) => {
-        collections = value || [];
-    });
-
-    const unsubSelected = selectedCollectionStore.subscribe((value) => {
-        selectedCollection = value;
-    });
-
-    const unsubPositions = collectionPositionsStore.subscribe((value) => {
-        collectionPositions = value || [];
-    });
-
-    const unsubActive = activeCollectionStore.subscribe((value) => {
-        activeCollection = value;
-        if (value) {
+    // Sync view with activeCollection store
+    $effect(() => {
+        if ($activeCollectionStore) {
             view = 'detail';
         } else {
             view = 'list';
         }
     });
 
-    const unsubDb = databaseLoadedStore.subscribe(async (value) => {
-        const wasLoaded = databaseLoaded;
-        databaseLoaded = value;
-        if (value && !wasLoaded) {
-            await loadCollections();
-            await loadPositionIndexMap();
-            if (currentPosition && currentPosition.id) {
-                await loadPositionCollections(currentPosition.id);
-            }
+    // Load collections when database becomes available
+    $effect(() => {
+        if ($databaseLoadedStore) {
+            loadCollections();
+            loadPositionIndexMap();
         }
     });
 
-    const unsubPosition = positionStore.subscribe((value) => {
-        const prevId = currentPosition ? currentPosition.id : null;
-        currentPosition = value;
-        const newId = value ? value.id : null;
-        if (newId && newId !== prevId) {
-            // Reset immediately so checkboxes don't show stale state
-            positionCollectionIds = [];
-            loadPositionCollections(newId);
-        } else if (!newId) {
-            positionCollectionIds = [];
-        }
+    // Reload which collections contain the current position
+    $effect(() => {
+        const pos = $positionStore;
+        positionCollectionIds = [];
+        if (pos && pos.id) loadPositionCollections(pos.id);
     });
 
-    const unsubMode = statusBarModeStore.subscribe((value) => {
-        mode = value;
-        if (value === 'COLLECTION' && activeCollection) {
+    // Sync mode; set view to detail when entering COLLECTION mode with an active collection
+    $effect(() => {
+        const v = $statusBarModeStore;
+        mode = v;
+        if (v === 'COLLECTION' && activeCollection) {
             view = 'detail';
         }
     });
 
     // Sync position selection when navigating with j/k in COLLECTION mode
-    const unsubCurrentIdx = currentPositionIndexStore.subscribe((value) => {
+    $effect(() => {
+        const value = $currentPositionIndexStore;
         if (mode === 'COLLECTION' && activeCollection && value >= 0) {
             // eslint-disable-next-line svelte/prefer-svelte-reactivity -- clone-reassign pattern
             selectedPositionIndices = new Set([value]);
         }
-    });
-
-    const unsubVisible = openPanels.subscribe(async (value) => {
-        visible = value.has(PANEL.COLLECTION);
-    });
-
-    onDestroy(() => {
-        unsubCollections();
-        unsubSelected();
-        unsubPositions();
-        unsubActive();
-        unsubDb();
-        unsubPosition();
-        unsubMode();
-        unsubCurrentIdx();
-        unsubVisible();
     });
 
     async function loadCollections() {
@@ -623,9 +589,6 @@
 
     onMount(async () => {
         document.addEventListener('keydown', handleKeyDown);
-        // Load collections when component mounts (tab activated)
-        await loadCollections();
-        await loadPositionIndexMap();
         if (mode === 'COLLECTION' && activeCollection && activeCollection.id) {
             view = 'detail';
             try {
@@ -634,9 +597,6 @@
             } catch (error) {
                 logger.error('Error reloading active collection positions:', error);
             }
-        }
-        if (currentPosition && currentPosition.id) {
-            await loadPositionCollections(currentPosition.id);
         }
     });
 
