@@ -1,243 +1,32 @@
 package database
 
 import (
-	"bytes"
-	"compress/zlib"
+	"context"
 	"database/sql"
-	"encoding/json"
-	"io"
-	"math"
+	"errors"
 	"sort"
 	"time"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
 
-// ---------------------------------------------------------------------------
-// Analysis data compression helpers
-// ---------------------------------------------------------------------------
-
-// compressAnalysisData compresses raw JSON bytes using zlib (best compression).
-func compressAnalysisData(jsonData []byte) ([]byte, error) {
-	var buf bytes.Buffer
-	w, err := zlib.NewWriterLevel(&buf, zlib.BestCompression)
-	if err != nil {
-		return nil, err
-	}
-	if _, err := w.Write(jsonData); err != nil {
-		w.Close()
-		return nil, err
-	}
-	if err := w.Close(); err != nil {
-		return nil, err
-	}
-	return buf.Bytes(), nil
-}
-
-// decompressAnalysisData auto-detects zlib-compressed data vs raw JSON.
-// If the first byte is '{' the data is returned as-is (raw JSON).
-// Otherwise it attempts zlib decompression.
-func decompressAnalysisData(data []byte) ([]byte, error) {
-	if len(data) == 0 {
-		return data, nil
-	}
-	// Raw JSON always starts with '{'; zlib starts with 0x78.
-	if data[0] == '{' {
-		return data, nil
-	}
-	r, err := zlib.NewReader(bytes.NewReader(data))
-	if err != nil {
-		// Not zlib — return as-is (might be legacy text).
-		return data, nil
-	}
-	defer r.Close()
-	return io.ReadAll(r)
-}
-
-// encodeAnalysisForStorage marshals a PositionAnalysis to JSON and compresses it.
-func encodeAnalysisForStorage(a *PositionAnalysis) ([]byte, error) {
-	jsonData, err := json.Marshal(a)
-	if err != nil {
-		return nil, err
-	}
-	return compressAnalysisData(jsonData)
-}
-
-// decodeAnalysisFromStorage decompresses (if needed) and unmarshals analysis data.
-func decodeAnalysisFromStorage(data []byte) (PositionAnalysis, error) {
-	var a PositionAnalysis
-	jsonData, err := decompressAnalysisData(data)
-	if err != nil {
-		return a, err
-	}
-	err = json.Unmarshal(jsonData, &a)
-	return a, err
-}
-
-// recompressAnalysisData ensures data is in compressed format.
-// If it's already compressed, returns as-is. If raw JSON, compresses it.
-func recompressAnalysisData(data []byte) ([]byte, error) {
-	if len(data) == 0 {
-		return data, nil
-	}
-	if data[0] != '{' {
-		// Already compressed (or at least not raw JSON)
-		return data, nil
-	}
-	return compressAnalysisData(data)
-}
-
-// analysisColumns holds the derived scalar columns computed from a PositionAnalysis.
-// These will be stored as indexed columns in the v2 schema (phase 02).
-// This helper is intentionally dead code until phase 02 adds the columns.
-//
-// Win/gammon/backgammon rates follow the on-roll convention: "player1" is always
-// the player on roll (PlayerOnRoll==0 after normalization), "player2" is the opponent.
-type analysisColumns struct {
-	BestCubeAction      string
-	CubeError           int64 // equity loss × 1000 (millipoints); 0 if no played action
-	BestMoveEquityError int64 // equity loss × 1000 (millipoints); 0 if no played move
-	IsForced            int64 // 1 if checker position with exactly 1 legal move, else 0
-	IsCloseCube         int64 // 1 if cube decision meets gnuBG isCloseCubedecision (threshold 0.16)
-	// Win/gammon/backgammon rates × 100 (hundredths of percent, on-roll perspective)
-	Player1WinRate        int64
-	Player1GammonRate     int64
-	Player1BackgammonRate int64
-	Player2WinRate        int64
-	Player2GammonRate     int64
-	Player2BackgammonRate int64
-}
-
-// closeCubeThreshold is the gnuBG isCloseCubedecision equity gap threshold (eval.c:5088).
-const closeCubeThreshold = 0.16
-
-// computeIsCloseCube returns 1 if the cube decision qualifies as "close" per the gnuBG
-// isCloseCubedecision predicate (gnubg/eval.c:5088-5100):
-//
-//	rDouble = min(DoubleTake equity, 1.0)
-//	isClose = (OptimalEquity - rDouble) < 0.16
-//
-// Take/Pass decisions always count as close (the cube has already been offered).
-// Returns 0 when DoublingCubeAnalysis is nil (no analysis available).
-func computeIsCloseCube(dca *DoublingCubeAnalysis, playedCubeAction string) int64 {
-	if playedCubeAction == "Take" || playedCubeAction == "Pass" {
-		return 1
-	}
-	if dca == nil {
-		return 0
-	}
-	// arDouble[OUTPUT_OPTIMAL]: equity of the best cube action.
-	// BestCubeAction is set by computeBestCubeAction / buildDoublingCubeAnalysis.
-	var rOptimal float64
-	switch dca.BestCubeAction {
-	case "No Double":
-		rOptimal = dca.CubefulNoDoubleEquity
-	case "Double, Take", "Double/Take":
-		rOptimal = dca.CubefulDoubleTakeEquity
-	case "Double, Pass", "Double/Pass":
-		rOptimal = dca.CubefulDoublePassEquity
-	default:
-		// Fallback: max of all three (matches FindBestCubeDecision logic).
-		rOptimal = dca.CubefulNoDoubleEquity
-		if dca.CubefulDoubleTakeEquity > rOptimal {
-			rOptimal = dca.CubefulDoubleTakeEquity
-		}
-		if dca.CubefulDoublePassEquity > rOptimal {
-			rOptimal = dca.CubefulDoublePassEquity
-		}
-	}
-	// arDouble[OUTPUT_TAKE] capped at 1.0 (max equity is +1.0 in money play).
-	rDouble := dca.CubefulDoubleTakeEquity
-	if rDouble > 1.0 {
-		rDouble = 1.0
-	}
-	if rOptimal-rDouble < closeCubeThreshold {
-		return 1
-	}
-	return 0
-}
-
-// populateAnalysisColumns computes scalar analysis columns from a PositionAnalysis.
-// playedCubeAction and playedMove are the actions taken in this position (may be empty).
-// Rates are stored as integer × 100 (hundredths of percent) and equities as × 1000 (millipoints).
-func populateAnalysisColumns(a *PositionAnalysis, playedMove, playedCubeAction string) analysisColumns {
-	var c analysisColumns
-	if a == nil {
-		return c
-	}
-
-	if dca := a.DoublingCubeAnalysis; dca != nil {
-		c.BestCubeAction = dca.BestCubeAction
-
-		// Win/gammon/backgammon rates — player1 = player on roll, scaled × 100.
-		c.Player1WinRate = int64(math.Round(dca.PlayerWinChances * 100))
-		c.Player1GammonRate = int64(math.Round(dca.PlayerGammonChances * 100))
-		c.Player1BackgammonRate = int64(math.Round(dca.PlayerBackgammonChances * 100))
-		c.Player2WinRate = int64(math.Round(dca.OpponentWinChances * 100))
-		c.Player2GammonRate = int64(math.Round(dca.OpponentGammonChances * 100))
-		c.Player2BackgammonRate = int64(math.Round(dca.OpponentBackgammonChances * 100))
-
-		// Cube error: equity loss of the played cube action vs the best action, scaled × 1000.
-		// Stored as absolute value (>= 0) so the sign convention matches best_move_equity_error.
-		if playedCubeAction != "" {
-			var raw float64
-			switch playedCubeAction {
-			case "NoDouble", "No Double":
-				raw = dca.CubefulNoDoubleError
-			case "Double", "Double/Take", "Double/Pass":
-				// Doubler's error = min(DT, DP) - bestEquity (gnuBG rSkill formula).
-				// Using min(DT,DP) ensures we measure what the doubler CONTROLS: the
-				// opponent will respond optimally (take if DT<DP, pass if DP<DT).
-				// This avoids falsely charging the doubler when the opponent errs
-				// (e.g. wrongly passes when DT<DP, or wrongly takes when DT>DP).
-				raw = math.Min(dca.CubefulDoubleTakeError, dca.CubefulDoublePassError)
-			case "Take":
-				// Taker's error: DT equity vs DP equity (from doubler's perspective).
-				// Error is negative when it was wrong to take (DT < DP).
-				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoubleTakeEquity
-			case "Pass":
-				// Passer's error: DP equity vs DT equity (from doubler's perspective).
-				// Error is negative when it was wrong to pass (DP < DT).
-				raw = math.Min(dca.CubefulDoubleTakeEquity, dca.CubefulDoublePassEquity) - dca.CubefulDoublePassEquity
-			}
-			c.CubeError = int64(math.Round(math.Abs(raw) * 1000))
-		}
-	} else if ca := a.CheckerAnalysis; ca != nil && len(ca.Moves) > 0 {
-		// Fall back to checker analysis best move for win/gammon/backgammon rates, scaled × 100.
-		best := ca.Moves[0]
-		c.Player1WinRate = int64(math.Round(best.PlayerWinChance * 100))
-		c.Player1GammonRate = int64(math.Round(best.PlayerGammonChance * 100))
-		c.Player1BackgammonRate = int64(math.Round(best.PlayerBackgammonChance * 100))
-		c.Player2WinRate = int64(math.Round(best.OpponentWinChance * 100))
-		c.Player2GammonRate = int64(math.Round(best.OpponentGammonChance * 100))
-		c.Player2BackgammonRate = int64(math.Round(best.OpponentBackgammonChance * 100))
-	}
-
-	// Best-move equity error: the equity error of the played checker move vs Moves[0], scaled × 1000.
-	// Normalize both sides before comparing: mergePlayedMoves stores normalized move strings
-	// (e.g. "13/8 24/23") while analysis moves may retain the original order ("24/23 13/8").
-	if playedMove != "" && a.CheckerAnalysis != nil {
-		normPlayed := normalizeMove(playedMove)
-		for _, m := range a.CheckerAnalysis.Moves {
-			if normalizeMove(m.Move) == normPlayed && m.EquityError != nil {
-				c.BestMoveEquityError = int64(math.Round(*m.EquityError * 1000))
-				break
-			}
-		}
-	}
-
-	// is_forced: checker position with exactly one legal move (no real choice).
-	// Note: gnuBG imports set DoublingCubeAnalysis on checker positions for cube
-	// display, so DoublingCubeAnalysis != nil does NOT imply a cube decision.
-	// CheckerAnalysis is only set by the importers for checker positions (decision_type=0),
-	// so checking CheckerAnalysis alone is sufficient.
-	if a.CheckerAnalysis != nil && len(a.CheckerAnalysis.Moves) == 1 {
-		c.IsForced = 1
-	}
-
-	// is_close_cube: cube decision qualifies as "close" per gnuBG isCloseCubedecision.
-	c.IsCloseCube = computeIsCloseCube(a.DoublingCubeAnalysis, playedCubeAction)
-
-	return c
-}
+// The analysis-encoding helpers (zlib compression, scalar-column derivation,
+// float rounding) live in package engine so the SQLite Storage backend can
+// share them. These aliases keep this package compiling against the
+// unqualified names. See pkg/blunderdb/engine/analysiscodec.go.
+var (
+	compressAnalysisData      = engine.CompressAnalysisData
+	decompressAnalysisData    = engine.DecompressAnalysisData
+	recompressAnalysisData    = engine.RecompressAnalysisData
+	encodeAnalysisForStorage  = engine.EncodeAnalysisForStorage
+	decodeAnalysisFromStorage = engine.DecodeAnalysisFromStorage
+	computeIsCloseCube        = engine.ComputeIsCloseCube
+	populateAnalysisColumns   = engine.PopulateAnalysisColumns
+	roundToMillipoint         = engine.RoundToMillipoint
+	roundToHundredthPercent   = engine.RoundToHundredthPercent
+	roundAnalysisForStorage   = engine.RoundAnalysisForStorage
+)
 
 func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) error {
 	d.mu.Lock()         // Lock the mutex
@@ -327,38 +116,6 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			}
 		}
 
-		// Update the existing analysis
-		roundAnalysisForStorage(&analysis)
-		analysisData, err := encodeAnalysisForStorage(&analysis)
-		if err != nil {
-			return err
-		}
-		playedMove := ""
-		if len(analysis.PlayedMoves) > 0 {
-			playedMove = analysis.PlayedMoves[0]
-		}
-		playedCubeAction := ""
-		if len(analysis.PlayedCubeActions) > 0 {
-			playedCubeAction = analysis.PlayedCubeActions[0]
-		}
-		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
-		_, err = d.db.Exec(`UPDATE analysis SET
-			data=?, best_cube_action=?, cube_error=?,
-			best_move_equity_error=?,
-			player1_win_rate=?, player1_gammon_rate=?, player1_backgammon_rate=?,
-			player2_win_rate=?, player2_gammon_rate=?, player2_backgammon_rate=?,
-			is_forced=?, is_close_cube=?
-			WHERE id=?`,
-			analysisData,
-			aCols.BestCubeAction, aCols.CubeError,
-			aCols.BestMoveEquityError,
-			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
-			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
-			aCols.IsForced, aCols.IsCloseCube,
-			existingID)
-		if err != nil {
-			return err
-		}
 	} else {
 		// Set creation date if not already set
 		if analysis.CreationDate.IsZero() {
@@ -393,64 +150,32 @@ func (d *Database) SaveAnalysis(positionID int64, analysis PositionAnalysis) err
 			}
 		}
 
-		// Insert a new analysis
-		roundAnalysisForStorage(&analysis)
-		analysisData, err := encodeAnalysisForStorage(&analysis)
-		if err != nil {
-			return err
-		}
-		playedMove := ""
-		if len(analysis.PlayedMoves) > 0 {
-			playedMove = analysis.PlayedMoves[0]
-		}
-		playedCubeAction := ""
-		if len(analysis.PlayedCubeActions) > 0 {
-			playedCubeAction = analysis.PlayedCubeActions[0]
-		}
-		aCols := populateAnalysisColumns(&analysis, playedMove, playedCubeAction)
-		_, err = d.db.Exec(`INSERT INTO analysis (
-			position_id, data,
-			best_cube_action, cube_error, best_move_equity_error,
-			player1_win_rate, player1_gammon_rate, player1_backgammon_rate,
-			player2_win_rate, player2_gammon_rate, player2_backgammon_rate,
-			is_forced, is_close_cube
-		) VALUES (?,?, ?,?,?, ?,?,?, ?,?,?, ?,?)`,
-			positionID, analysisData,
-			aCols.BestCubeAction, aCols.CubeError, aCols.BestMoveEquityError,
-			aCols.Player1WinRate, aCols.Player1GammonRate, aCols.Player1BackgammonRate,
-			aCols.Player2WinRate, aCols.Player2GammonRate, aCols.Player2BackgammonRate,
-			aCols.IsForced, aCols.IsCloseCube)
-		if err != nil {
-			return err
-		}
 	}
 
-	return nil
+	// The store rounds, encodes and derives the scalar columns, then
+	// inserts-or-updates the row keyed by position_id.
+	return d.store.Analyses().Save(context.Background(), "", positionID, &analysis)
 }
 
 func (d *Database) LoadAnalysis(positionID int64) (*PositionAnalysis, error) {
 	d.mu.RLock()
 	defer d.mu.RUnlock()
 
-	var analysisData []byte
-	err := d.db.QueryRow(`SELECT data from analysis WHERE position_id = ?`, positionID).Scan(&analysisData)
+	loaded, err := d.store.Analyses().Load(context.Background(), "", positionID)
 	if err != nil {
-		if err == sql.ErrNoRows {
-			return nil, err
+		if errors.Is(err, storage.ErrNotFound) {
+			// Preserve the pre-delegation contract: callers expect sql.ErrNoRows.
+			return nil, sql.ErrNoRows
 		}
 		return nil, err
 	}
-
-	analysis, err := decodeAnalysisFromStorage(analysisData)
-	if err != nil {
-		return nil, err
-	}
+	analysis := *loaded
 
 	// Load ALL played moves/cube actions from move table for this position
 	// This supplements the PlayedMoves/PlayedCubeActions arrays stored in analysis
 	rows, err := d.db.Query(`
-		SELECT checker_move, cube_action 
-		FROM move 
+		SELECT checker_move, cube_action
+		FROM move
 		WHERE position_id = ?
 	`, positionID)
 
@@ -550,63 +275,4 @@ func (d *Database) DeleteAnalysis(positionID int64) error {
 		return err
 	}
 	return nil
-}
-
-// roundToMillipoint rounds an equity value (in equity points) to the nearest millipoint (0.001).
-func roundToMillipoint(v float64) float64 {
-	return math.Round(v*1000) / 1000
-}
-
-// roundToHundredthPercent rounds a rate (in percent) to the nearest 0.01%.
-func roundToHundredthPercent(v float64) float64 {
-	return math.Round(v*100) / 100
-}
-
-// roundAnalysisForStorage rounds all float fields in a PositionAnalysis for compact JSON storage.
-// Rates (win/gammon/backgammon chances) → 2 decimal places.
-// Equities and errors → 3 decimal places (millipoint precision).
-func roundAnalysisForStorage(a *PositionAnalysis) {
-	if a == nil {
-		return
-	}
-	roundDCA := func(dca *DoublingCubeAnalysis) {
-		dca.PlayerWinChances = roundToHundredthPercent(dca.PlayerWinChances)
-		dca.PlayerGammonChances = roundToHundredthPercent(dca.PlayerGammonChances)
-		dca.PlayerBackgammonChances = roundToHundredthPercent(dca.PlayerBackgammonChances)
-		dca.OpponentWinChances = roundToHundredthPercent(dca.OpponentWinChances)
-		dca.OpponentGammonChances = roundToHundredthPercent(dca.OpponentGammonChances)
-		dca.OpponentBackgammonChances = roundToHundredthPercent(dca.OpponentBackgammonChances)
-		dca.CubelessNoDoubleEquity = roundToMillipoint(dca.CubelessNoDoubleEquity)
-		dca.CubelessDoubleEquity = roundToMillipoint(dca.CubelessDoubleEquity)
-		dca.CubefulNoDoubleEquity = roundToMillipoint(dca.CubefulNoDoubleEquity)
-		dca.CubefulNoDoubleError = roundToMillipoint(dca.CubefulNoDoubleError)
-		dca.CubefulDoubleTakeEquity = roundToMillipoint(dca.CubefulDoubleTakeEquity)
-		dca.CubefulDoubleTakeError = roundToMillipoint(dca.CubefulDoubleTakeError)
-		dca.CubefulDoublePassEquity = roundToMillipoint(dca.CubefulDoublePassEquity)
-		dca.CubefulDoublePassError = roundToMillipoint(dca.CubefulDoublePassError)
-		dca.WrongPassPercentage = roundToHundredthPercent(dca.WrongPassPercentage)
-		dca.WrongTakePercentage = roundToHundredthPercent(dca.WrongTakePercentage)
-	}
-	if a.DoublingCubeAnalysis != nil {
-		roundDCA(a.DoublingCubeAnalysis)
-	}
-	for i := range a.AllCubeAnalyses {
-		roundDCA(&a.AllCubeAnalyses[i])
-	}
-	if ca := a.CheckerAnalysis; ca != nil {
-		for i := range ca.Moves {
-			m := &ca.Moves[i]
-			m.Equity = roundToMillipoint(m.Equity)
-			if m.EquityError != nil {
-				rounded := roundToMillipoint(*m.EquityError)
-				m.EquityError = &rounded
-			}
-			m.PlayerWinChance = roundToHundredthPercent(m.PlayerWinChance)
-			m.PlayerGammonChance = roundToHundredthPercent(m.PlayerGammonChance)
-			m.PlayerBackgammonChance = roundToHundredthPercent(m.PlayerBackgammonChance)
-			m.OpponentWinChance = roundToHundredthPercent(m.OpponentWinChance)
-			m.OpponentGammonChance = roundToHundredthPercent(m.OpponentGammonChance)
-			m.OpponentBackgammonChance = roundToHundredthPercent(m.OpponentBackgammonChance)
-		}
-	}
 }

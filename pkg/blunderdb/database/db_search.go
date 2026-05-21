@@ -1,6 +1,7 @@
 package database
 
 import (
+	"context"
 	"database/sql"
 	"encoding/json"
 	"fmt"
@@ -668,10 +669,20 @@ func (d *Database) LoadPositionsByFiltersCore(
 
 // LoadPositionsByFilters returns positions matching the supplied filters.
 // This is the public Wails-bound method that accepts a single SearchFilters struct.
-// Internally it delegates to LoadPositionsByFiltersCore and discards the analysis map.
+// It delegates to the SQLite Storage backend's SearchStore.Find, which is a
+// faithful port of LoadPositionsByFiltersCore.
 func (d *Database) LoadPositionsByFilters(f SearchFilters) ([]Position, error) {
-	positions, _, err := d.LoadPositionsByFiltersCore(f)
-	return positions, err
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	var positions []Position
+	for pos, err := range d.store.Search().Find(context.Background(), "", f) {
+		if err != nil {
+			return nil, err
+		}
+		positions = append(positions, *pos)
+	}
+	return positions, nil
 }
 
 // parseFilterIDList parses a match/tournament ID filter string.

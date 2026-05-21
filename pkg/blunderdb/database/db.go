@@ -8,6 +8,8 @@ import (
 	"sync"
 
 	_ "modernc.org/sqlite"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/sqlite"
 )
 
 type Database struct {
@@ -15,6 +17,14 @@ type Database struct {
 	mu                sync.RWMutex                        // RWMutex allows concurrent reads
 	importCancelled   int32                               // Flag to cancel ongoing import (atomic)
 	migrationProgress func(phase string, done, total int) // optional progress callback (GUI only)
+	store             *sqlite.Storage                     // SQLite Storage backend, wraps db (P2)
+}
+
+// rebuildStore (re)creates the SQLite Storage that wraps the current *sql.DB.
+// It must be called after SetupDatabase/OpenDatabase replace d.db. The Storage
+// borrows the handle (sqlite.New): d.db stays owned by this Database.
+func (d *Database) rebuildStore() {
+	d.store = sqlite.New(d.db)
 }
 
 func NewDatabase() *Database {
@@ -455,6 +465,7 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	d.rebuildStore()
 	return nil
 }
 
@@ -957,5 +968,6 @@ func (d *Database) OpenDatabase(path string) error {
 		}
 	}
 
+	d.rebuildStore()
 	return nil
 }
