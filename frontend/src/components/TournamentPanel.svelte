@@ -21,16 +21,16 @@
     } from '../../wailsjs/go/main/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
-    import { databaseLoadedStore } from '../stores/databaseStore';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
     import { commentTextStore } from '../stores/uiStore';
 
-    let tournaments = $state([]);
-    let selectedTournament = $state(null);
-    let tournamentMatches = $state([]);
-    let visible = $state(false);
-    let _databaseLoaded = false;
+    // Read-only mirrors of stores
+    let tournaments = $derived($tournamentsStore || []);
+    let selectedTournament = $derived($selectedTournamentStore);
+    let tournamentMatches = $derived($tournamentMatchesStore || []);
+    let visible = $derived($openPanels.has(PANEL.TOURNAMENT));
+
     let sortBy = $state(null);
     let sortOrder = $state('asc');
 
@@ -60,46 +60,24 @@
     let editingTournamentComment = $state(false);
     let tournamentCommentText = $state('');
 
-    // Pointer-based drag reorder (no state variables needed)
-
-    const unsubTournaments = tournamentsStore.subscribe((value) => {
-        tournaments = value || [];
-    });
-
-    const unsubSelected = selectedTournamentStore.subscribe((value) => {
-        selectedTournament = value;
-    });
-
-    const unsubMatches = tournamentMatchesStore.subscribe((value) => {
-        tournamentMatches = value || [];
-    });
-
-    const unsubDb = databaseLoadedStore.subscribe((value) => {
-        _databaseLoaded = value;
-    });
-
-    const unsubVisible = openPanels.subscribe(async (value) => {
-        const wasVisible = visible;
-        visible = value.has(PANEL.TOURNAMENT);
-        if (visible && !wasVisible) {
-            await loadTournaments();
-            selectedTournamentStore.set(null);
-            tournamentMatchesStore.set([]);
-        } else if (!visible && wasVisible) {
-            selectedTournamentStore.set(null);
-            tournamentMatchesStore.set([]);
-            editingTournament = null;
-            addMatchSearch = '';
-            addMatchFocused = false;
+    // Load/unload data when the panel is shown or hidden
+    let _prevVisible = false;
+    $effect(() => {
+        const v = $openPanels.has(PANEL.TOURNAMENT);
+        if (v !== _prevVisible) {
+            if (v) {
+                loadTournaments();
+                selectedTournamentStore.set(null);
+                tournamentMatchesStore.set([]);
+            } else {
+                selectedTournamentStore.set(null);
+                tournamentMatchesStore.set([]);
+                editingTournament = null;
+                addMatchSearch = '';
+                addMatchFocused = false;
+            }
+            _prevVisible = v;
         }
-    });
-
-    onDestroy(() => {
-        unsubTournaments();
-        unsubSelected();
-        unsubMatches();
-        unsubDb();
-        unsubVisible();
     });
 
     async function loadTournaments() {
