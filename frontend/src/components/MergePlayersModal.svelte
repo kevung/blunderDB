@@ -1,5 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
+    import { SvelteSet } from 'svelte/reactivity';
     import { GetAllPlayerNames, MergePlayers } from '../../wailsjs/go/main/Database.js';
     import { statusBarTextStore } from '../stores/uiStore';
 
@@ -9,7 +10,7 @@
     // All player names with their match counts
     let allPlayers = $state([]);
     // Selected names to be merged
-    let selectedNames = $state(new Set());
+    let selectedNames = new SvelteSet();
     // Canonical name the user wants to keep
     let canonicalName = $state('');
     // Filter text for the player list
@@ -44,7 +45,7 @@
     loadPlayers();
 
     function toggleSelect(name) {
-        const next = new Set(selectedNames);
+        const next = new SvelteSet(selectedNames);
         if (next.has(name)) {
             next.delete(name);
         } else {

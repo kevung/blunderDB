@@ -184,7 +184,7 @@
             }}
         >
             <option value="">Toutes perspectives</option>
-            {#each playerList as p}
+            {#each playerList as p (p.Name)}
                 <option value={p.Name}>{p.Name} ({p.Count})</option>
             {/each}
         </select>
@@ -210,7 +210,7 @@
                             Tous
                         </label>
                         <hr class="fb-tour-sep" />
-                        {#each tournamentList as t}
+                        {#each tournamentList as t (t.id)}
                             <label class="fb-check-label">
                                 <input type="checkbox" checked={localFilter.tournamentIDs.includes(t.id)} onchange={() => toggleTournament(t.id)} />
                                 {t.name}
@@ -258,7 +258,7 @@
         <!-- Decision type -->
         <fieldset class="fb-radio-group" aria-label="Type de décision">
             <legend class="fb-label-inline">Décision</legend>
-            {#each [[-1, 'Tout'], [0, 'Coup'], [1, 'Cube']] as [val, lbl]}
+            {#each [[-1, 'Tout'], [0, 'Coup'], [1, 'Cube']] as [val, lbl] (val)}
                 <label class="fb-radio-label">
                     <input
                         type="radio"
@@ -278,7 +278,7 @@
         <!-- Match length: empty array = all; every button appears active -->
         <span class="fb-label">Longueur</span>
         <div class="fb-ml-group" role="group" aria-label="Longueur de match">
-            {#each MATCH_LENGTHS as ml}
+            {#each MATCH_LENGTHS as ml (ml)}
                 <button
                     class="fb-ml-btn"
                     class:active={mlActive(ml)}
