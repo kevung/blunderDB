@@ -1,6 +1,6 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount } from 'svelte';
     import { ankiDecksStore, selectedAnkiDeckStore, ankiReviewCardStore, ankiDeckStatsStore, ankiViewModeStore, ankiReviewActionStore, ankiPausedSessionStore } from '../stores/ankiStore';
     import { statusBarTextStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
@@ -25,14 +25,18 @@
         LoadPositionsByFilters
     } from '../../wailsjs/go/main/Database.js';
 
-    let decks = $state([]);
-    let selectedDeck = $state(null);
-    let reviewCard = $state(null);
-    let stats = $state(null);
-    let viewMode = $state('list');
-    let databaseLoaded = $state(false);
-    let collections = $state([]);
-    let positions = $state([]);
+    // Read-only mirrors of stores — declared as $derived so Svelte tracks
+    // dependencies via $store reads (the project rule, see CLAUDE.md).
+    let decks = $derived($ankiDecksStore || []);
+    let selectedDeck = $derived($selectedAnkiDeckStore);
+    let reviewCard = $derived($ankiReviewCardStore);
+    let stats = $derived($ankiDeckStatsStore);
+    let viewMode = $derived($ankiViewModeStore);
+    let databaseLoaded = $derived($databaseLoadedStore);
+    let collections = $derived($collectionsStore || []);
+    let positions = $derived($positionsStore || []);
+    let lastSearch = $derived($lastSearchStore);
+    let pausedSession = $derived($ankiPausedSessionStore);
 
     // Create deck form
     let newDeckName = $state('');
@@ -52,42 +56,10 @@
 
     // Review state
     let reviewSessionCount = $state(0);
-    let lastSearch = null;
-    let pausedSession = $state(null);
-
-    const unsubDecks = ankiDecksStore.subscribe((v) => {
-        decks = v || [];
-    });
-    const unsubSelected = selectedAnkiDeckStore.subscribe((v) => {
-        selectedDeck = v;
-    });
-    const unsubReview = ankiReviewCardStore.subscribe((v) => {
-        reviewCard = v;
-    });
-    const unsubStats = ankiDeckStatsStore.subscribe((v) => {
-        stats = v;
-    });
-    const unsubMode = ankiViewModeStore.subscribe((v) => {
-        viewMode = v;
-    });
-    const unsubDb = databaseLoadedStore.subscribe((v) => {
-        databaseLoaded = v;
-    });
-    const unsubCollections = collectionsStore.subscribe((v) => {
-        collections = v || [];
-    });
-    const unsubPositions = positionsStore.subscribe((v) => {
-        positions = v || [];
-    });
-    const unsubLastSearch = lastSearchStore.subscribe((v) => {
-        lastSearch = v;
-    });
-    const unsubPausedSession = ankiPausedSessionStore.subscribe((v) => {
-        pausedSession = v;
-    });
 
     // Listen for review key actions routed from App.svelte
-    const unsubReviewAction = ankiReviewActionStore.subscribe((v) => {
+    $effect(() => {
+        const v = $ankiReviewActionStore;
         if (v !== null) {
             ankiReviewActionStore.set(null);
             if (v === 'back') {
@@ -100,20 +72,6 @@
 
     onMount(() => {
         if (databaseLoaded) loadDecks();
-    });
-
-    onDestroy(() => {
-        unsubDecks();
-        unsubSelected();
-        unsubReview();
-        unsubStats();
-        unsubMode();
-        unsubDb();
-        unsubCollections();
-        unsubPositions();
-        unsubLastSearch();
-        unsubReviewAction();
-        unsubPausedSession();
     });
 
     async function loadDecks() {
