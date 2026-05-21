@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { CopyImageToClipboard } from '../../wailsjs/go/main/App.js';
+import { CopyImageToClipboard } from '../../wailsjs/go/gui/App.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, clipboardPositionStore } from '../stores/positionStore.js';

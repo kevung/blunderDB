@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { OpenExportDatabaseDialog, ShowAlert } from '../../wailsjs/go/main/App.js';
+import { OpenExportDatabaseDialog, ShowAlert } from '../../wailsjs/go/gui/App.js';
 import { ExportDatabase, GetAllMatches, GetAllCollections, GetAllTournaments } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';

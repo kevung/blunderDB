@@ -6,10 +6,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/wailsapp/wails/v2"
-	"github.com/wailsapp/wails/v2/pkg/options"
-	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
-	"github.com/wailsapp/wails/v2/pkg/options/linux"
+	"github.com/kevung/blunderdb/internal/cli"
+	"github.com/kevung/blunderdb/internal/gui"
+	"github.com/kevung/blunderdb/pkg/blunderdb/database"
 )
 
 //go:embed build/appicon.png
@@ -37,10 +36,10 @@ func main() {
 
 func runCLI() {
 	initLogging("cli")
-	cli := NewCLI()
+	c := cli.NewCLI()
 	args := os.Args[1:]
 
-	if err := cli.Run(args); err != nil {
+	if err := c.Run(args); err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)
 	}
@@ -48,8 +47,7 @@ func runCLI() {
 
 func runGUI() {
 	initLogging("gui")
-	app := NewApp()
-	db := NewDatabase()
+	db := database.NewDatabase()
 	cfg := NewConfig()
 
 	// Load the configuration file
@@ -60,47 +58,13 @@ func runGUI() {
 	}
 
 	// Set up the in-memory database
-	err = db.SetupDatabase(":memory:")
-	if err != nil {
+	if err := db.SetupDatabase(":memory:"); err != nil {
 		fmt.Fprintln(os.Stderr, "Error setting up in-memory database:", err)
 		os.Exit(1)
 	}
 
-	// Initialize width and height from config
-	initialWidth := config.WindowWidth
-	initialHeight := config.WindowHeight
-
-	// Create application with options
-	err = wails.Run(&options.App{
-		Title:  "blunderDB",
-		Width:  initialWidth,
-		Height: initialHeight,
-		AssetServer: &assetserver.Options{
-			Assets: assets,
-		},
-		BackgroundColour: &options.RGBA{R: 240, G: 240, B: 240, A: 1},
-		OnStartup:        app.startup,
-		DragAndDrop: &options.DragAndDrop{
-			EnableFileDrop:     true,
-			DisableWebViewDrop: false, // Must be false on Linux: gtk_drag_dest_unset() prevents GTK drag signals from firing (Wails v2 bug #4743)
-		},
-		Bind: []interface{}{
-			app,
-			db,
-			cfg,
-		},
-		Linux: &linux.Options{
-			Icon:                icon,
-			WindowIsTranslucent: false,
-			WebviewGpuPolicy:    linux.WebviewGpuPolicyNever,
-			ProgramName:         "blunderDB",
-		},
-		Debug: options.Debug{
-			OpenInspectorOnStartup: false,
-		},
-	})
-
-	if err != nil {
+	// Bind the database and config alongside the GUI App struct.
+	if err := gui.Run(assets, icon, config.WindowWidth, config.WindowHeight, []interface{}{db, cfg}); err != nil {
 		fmt.Fprintln(os.Stderr, "Error:", err)
 		os.Exit(1)
 	}

@@ -8,7 +8,7 @@ import {
     ShowAlert,
     ShowQuestionDialog,
     IsDirectory
-} from '../../wailsjs/go/main/App.js';
+} from '../../wailsjs/go/gui/App.js';
 import {
     SavePosition,
     SaveAnalysis,

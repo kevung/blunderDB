@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"fmt"
@@ -31,15 +31,13 @@ func parseIDList(s string) ([]int64, error) {
 
 // CLI represents the command-line interface
 type CLI struct {
-	db  *Database
-	cfg *Config
+	db *Database
 }
 
 // NewCLI creates a new CLI instance
 func NewCLI() *CLI {
 	return &CLI{
-		db:  NewDatabase(),
-		cfg: NewConfig(),
+		db: NewDatabase(),
 	}
 }
 

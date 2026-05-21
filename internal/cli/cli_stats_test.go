@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"bytes"
@@ -40,7 +40,7 @@ func setupCLIStats(t *testing.T) *CLI {
 	insertStatsFixtureRow(t, db, matchID, gameID, 50, 0, 0, 2)  // checker, player Alice
 	insertStatsFixtureRow(t, db, matchID, gameID, 300, 1, 0, 3) // cube, player Alice
 
-	return &CLI{db: db, cfg: NewConfig()}
+	return &CLI{db: db}
 }
 
 // ── TestCLIStats_TextFormat ──────────────────────────────────────────────────

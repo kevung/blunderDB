@@ -1,4 +1,4 @@
-package main
+package cli
 
 import (
 	"bytes"
@@ -20,7 +20,7 @@ func setupCLI(t *testing.T) *CLI {
 	t.Cleanup(func() {
 		db.Close()
 	})
-	return &CLI{db: db, cfg: NewConfig()}
+	return &CLI{db: db}
 }
 
 // setupCLIWithDB creates a CLI backed by a temp file DB and returns the path.
@@ -35,7 +35,7 @@ func setupCLIWithDB(t *testing.T) (*CLI, string) {
 	t.Cleanup(func() {
 		db.Close()
 	})
-	return &CLI{db: db, cfg: NewConfig()}, dbPath
+	return &CLI{db: db}, dbPath
 }
 
 // captureStdout captures stdout produced by fn and returns it as a string.
@@ -301,7 +301,7 @@ func TestCLI_ExportRoundTrip(t *testing.T) {
 	}
 
 	// Re-import into a fresh DB.
-	cli2 := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli2 := &CLI{db: NewDatabase()}
 	if err := cli2.db.SetupDatabase(":memory:"); err != nil {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
@@ -354,7 +354,7 @@ func TestCLI_DeleteMatchNotFound(t *testing.T) {
 
 func TestCLI_Create(t *testing.T) {
 	dbPath := filepath.Join(t.TempDir(), "created.db")
-	cli := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli := &CLI{db: NewDatabase()}
 
 	err := cli.Run([]string{"create", "--db", dbPath, "--user", "tester", "--description", "test db"})
 	if err != nil {
@@ -377,7 +377,7 @@ func TestCLI_CreateExistingNoForce(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cli := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli := &CLI{db: NewDatabase()}
 	err := cli.Run([]string{"create", "--db", dbPath})
 	if err == nil {
 		t.Fatal("expected error when creating over existing DB without --force")
@@ -390,7 +390,7 @@ func TestCLI_CreateForce(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	cli := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli := &CLI{db: NewDatabase()}
 	err := cli.Run([]string{"create", "--db", dbPath, "--force"})
 	if err != nil {
 		t.Fatalf("create --force: %v", err)
@@ -556,7 +556,7 @@ func TestCLI_ExportNoData(t *testing.T) {
 }
 
 func TestCLI_UnknownCommand(t *testing.T) {
-	cli := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli := &CLI{db: NewDatabase()}
 	err := cli.Run([]string{"bogus"})
 	if err == nil {
 		t.Fatal("expected error for unknown command")
@@ -564,7 +564,7 @@ func TestCLI_UnknownCommand(t *testing.T) {
 }
 
 func TestCLI_MissingRequiredFlags(t *testing.T) {
-	cli := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli := &CLI{db: NewDatabase()}
 
 	// import without --db
 	err := cli.Run([]string{"import", "--type", "match", "--file", "x.xg"})
@@ -580,7 +580,7 @@ func TestCLI_MissingRequiredFlags(t *testing.T) {
 }
 
 func TestCLI_Version(t *testing.T) {
-	cli := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli := &CLI{db: NewDatabase()}
 	out := captureStdout(t, func() {
 		cli.Run([]string{"version"})
 	})
@@ -590,7 +590,7 @@ func TestCLI_Version(t *testing.T) {
 }
 
 func TestCLI_Help(t *testing.T) {
-	cli := &CLI{db: NewDatabase(), cfg: NewConfig()}
+	cli := &CLI{db: NewDatabase()}
 	out := captureStdout(t, func() {
 		cli.Run([]string{"help"})
 	})
