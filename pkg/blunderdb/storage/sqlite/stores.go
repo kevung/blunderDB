@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"iter"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 )
@@ -62,9 +61,4 @@ func withTx(ctx context.Context, db execer, fn func(execer) error) error {
 		return err
 	}
 	return tx.Commit()
-}
-
-// errSeq2 returns an iterator that yields a single (nil, err) pair.
-func errSeq2[T any](err error) iter.Seq2[*T, error] {
-	return func(yield func(*T, error) bool) { yield(nil, err) }
 }

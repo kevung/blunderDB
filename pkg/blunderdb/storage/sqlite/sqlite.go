@@ -13,7 +13,6 @@ package sqlite
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 
 	_ "modernc.org/sqlite"
@@ -104,18 +103,10 @@ func (s *Storage) BeginTx(ctx context.Context) (storage.Tx, error) {
 	return &txImpl{binder: binder{db: tx}, tx: tx}, nil
 }
 
-// Version reports the schema version recorded in the metadata table.
+// Version reports the schema version recorded in the metadata table. It
+// delegates to MetadataStore.Version (D6).
 func (s *Storage) Version(ctx context.Context) (string, error) {
-	var v string
-	err := s.sqlDB.QueryRowContext(ctx,
-		`SELECT value FROM metadata WHERE key = 'database_version'`).Scan(&v)
-	if errors.Is(err, sql.ErrNoRows) {
-		return "", fmt.Errorf("sqlite: database version: %w", storage.ErrNotFound)
-	}
-	if err != nil {
-		return "", fmt.Errorf("sqlite: database version: %w", err)
-	}
-	return v, nil
+	return s.Metadata().Version(ctx, "")
 }
 
 // Migrate brings the database up to the current schema version. A fresh
