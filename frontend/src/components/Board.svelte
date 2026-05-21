@@ -7,34 +7,16 @@
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore } from '../stores/uiStore';
 
-    let mode;
-    let showSearchModal = false;
-    let showComment = false;
-    let showMetadataModal = false;
-    let showTakePoint2Modal = false;
-    let showTakePoint4Modal = false;
-    let showPipcount = true;
+    // Read-only mirrors of stores — always current when read inside drawing/handler functions
+    let mode = $derived($statusBarModeStore);
+    let showSearchModal = $derived($activeModal === MODAL.SEARCH);
+    let showMetadataModal = $derived($activeModal === MODAL.METADATA);
+    let showTakePoint2Modal = $derived($activeModal === MODAL.TAKE_POINT_2);
+    let showTakePoint4Modal = $derived($activeModal === MODAL.TAKE_POINT_4);
+    let showComment = $derived($openPanels.has(PANEL.COMMENT));
+    let showPipcount = $derived($showPipcountStore);
     let _arrowGroup = null; // Track the arrow group for cleanup
-    let _matchContext = null; // Store match context
-
-    statusBarModeStore.subscribe((value) => {
-        mode = value;
-    });
-    activeModal.subscribe((value) => {
-        showSearchModal = value === MODAL.SEARCH;
-        showMetadataModal = value === MODAL.METADATA;
-        showTakePoint2Modal = value === MODAL.TAKE_POINT_2;
-        showTakePoint4Modal = value === MODAL.TAKE_POINT_4;
-    });
-    openPanels.subscribe((value) => {
-        showComment = value.has(PANEL.COMMENT);
-    });
-    showPipcountStore.subscribe((value) => {
-        showPipcount = value;
-    });
-    matchContextStore.subscribe((value) => {
-        _matchContext = value;
-    });
+    let _matchContext = $derived($matchContextStore);
 
     let canvasCfg = {
         aspectFactor: 0.72
