@@ -192,8 +192,11 @@ settled before starting PR2-6:
   rely on the constraint error.
 - **D2 — uniform transaction model.** `MatchStore.DeleteCascade` drops its
   explicit `tx Tx` parameter (`DeleteCascade(ctx, scope, id)`); `Tx` already
-  embeds `Stores`. Applied in PR3. No cross-family operation needs a
-  caller-passed `Tx`.
+  embeds `Stores`. **Applied in PR3.** No cross-family operation needs a
+  caller-passed `Tx`. Each backend's `DeleteCascade` opens its own
+  transaction; when the store is reached through a `Tx` it joins that
+  transaction instead (SQLite runs the statements directly on the caller's
+  `*sql.Tx`; PostgreSQL opens a savepoint).
 - **D3 — schema bootstrap moves forward to PR2** (was PR6), so PR2 is testable
   against a real schema on an empty `:memory:` DB. The 1.0→2.7 migration chain
   stays in PR6.
@@ -221,7 +224,7 @@ settled before starting PR2-6:
 |---|---|
 | 1 | `storage.go` + `tx.go` + sub-interface definitions (no impl). `storage/errors.go`. `storagetest/contract.go` skeleton. **Done (`c8bcfc1e`).** |
 | 2 | Shared-helper extraction (D8). SQLite schema bootstrap (D3). SQLite impl: positions + analyses + full search (D4). `sqlite.Open`/`New` (D5), shared pragmas (D9). Wire `Database` to delegate the positions/analyses/search families. Contract tests for positions/analyses/search/tx. **Done.** |
-| 3 | SQLite impl: matches + games + moves + move_analyses (cascade behaviour). Tournaments. Apply the `DeleteCascade` amendment (D2). |
+| 3 | **Done.** SQLite impl: matches + games + moves (`matchStore`) and tournaments (`tournamentStore`). `DeleteCascade` amendment (D2) applied — the interface drops the `tx Tx` parameter and each backend runs its own cascade transaction (`withTx` for SQLite, savepoint-capable `inTx` for PostgreSQL; the PostgreSQL P3 PR3 store was updated to match). Shared contract `Match/*` cases enabled (green on both backends); the `Tournament/AddRemoveMatch` case stays pending until P3 PR4 lands the PostgreSQL tournament store. SQLite-specific tests cover the methods the contract omits (`SwapPlayers`, `MergePlayers`, `LastVisited`, tournament membership). Move analyses cascade off the match delete via `ON DELETE CASCADE` (no dedicated store). The `Database` wrapper still owns the match/tournament SQL — wrapper delegation deferred. |
 | 4 | SQLite impl: collections + comments + anki. DTO conversion helpers (D7). |
 | 5 | SQLite impl: filters + session + search-history + command-history + metadata. `Storage.Version` delegates (D6). Switch `LoadPositionsByFiltersCore` (D10). |
 | 6 | SQLite impl: stats + migrations + schema-version finalisation. `Database` wrapper fully delegating; pull out the last direct `*sql.DB` usage from `Database`. |

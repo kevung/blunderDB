@@ -355,16 +355,8 @@ func TestMatchDeleteCascade(t *testing.T) {
 		t.Fatalf("seed move_analysis: %v", err)
 	}
 
-	tx, err := s.BeginTx(ctx)
-	if err != nil {
-		t.Fatalf("BeginTx: %v", err)
-	}
-	if err := s.Matches().DeleteCascade(ctx, tx, "", matchID); err != nil {
-		tx.Rollback()
+	if err := s.Matches().DeleteCascade(ctx, "", matchID); err != nil {
 		t.Fatalf("DeleteCascade: %v", err)
-	}
-	if err := tx.Commit(); err != nil {
-		t.Fatalf("Commit: %v", err)
 	}
 
 	if count(t, conn, `SELECT count(*) FROM match WHERE id=$1`, matchID) != 0 {

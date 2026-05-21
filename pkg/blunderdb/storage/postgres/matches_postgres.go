@@ -175,65 +175,62 @@ func (s *matchStore) UpdateComment(ctx context.Context, scope string, id int64, 
 
 // DeleteCascade removes a match and all of its games, moves and move analyses
 // (via ON DELETE CASCADE), then deletes any position that is left referenced
-// by no move and no collection. It must run inside tx so the multi-table
-// cascade and the orphan cleanup commit atomically.
-func (s *matchStore) DeleteCascade(ctx context.Context, tx storage.Tx, scope string, id int64) error {
-	t, ok := tx.(*txImpl)
-	if !ok {
-		return fmt.Errorf("postgres: DeleteCascade requires a postgres transaction: %w", storage.ErrInternal)
-	}
+// by no move and no collection. The cascade and the orphan cleanup run in one
+// transaction (a savepoint when the store is already inside a caller's tx).
+func (s *matchStore) DeleteCascade(ctx context.Context, scope string, id int64) error {
 	tenant := tenantID(scope)
-
-	// Collect the positions this match's moves reference before the cascade
-	// removes those moves.
-	rows, err := t.db.Query(ctx,
-		`SELECT DISTINCT mv.position_id
-		 FROM move mv INNER JOIN game g ON mv.game_id = g.id
-		 WHERE g.match_id = $1 AND mv.tenant_id = $2 AND mv.position_id IS NOT NULL`,
-		id, tenant)
-	if err != nil {
-		return fmt.Errorf("postgres: delete match %d: collect positions: %w", id, err)
-	}
-	var positionIDs []int64
-	for rows.Next() {
-		var pid int64
-		if err := rows.Scan(&pid); err != nil {
-			rows.Close()
-			return fmt.Errorf("postgres: delete match %d: scan position id: %w", id, err)
+	return s.inTx(ctx, fmt.Sprintf("delete match %d", id), func(tx pgx.Tx) error {
+		// Collect the positions this match's moves reference before the
+		// cascade removes those moves.
+		rows, err := tx.Query(ctx,
+			`SELECT DISTINCT mv.position_id
+			 FROM move mv INNER JOIN game g ON mv.game_id = g.id
+			 WHERE g.match_id = $1 AND mv.tenant_id = $2 AND mv.position_id IS NOT NULL`,
+			id, tenant)
+		if err != nil {
+			return fmt.Errorf("collect positions: %w", err)
 		}
-		positionIDs = append(positionIDs, pid)
-	}
-	rows.Close()
-	if err := rows.Err(); err != nil {
-		return fmt.Errorf("postgres: delete match %d: collect positions: %w", id, err)
-	}
-
-	// game/move/move_analysis cascade off the match delete via ON DELETE CASCADE.
-	if _, err := t.db.Exec(ctx,
-		`DELETE FROM match WHERE id = $1 AND tenant_id = $2`, id, tenant); err != nil {
-		return fmt.Errorf("postgres: delete match %d: %w", id, err)
-	}
-
-	// Drop positions no longer referenced by any move or collection; their
-	// analyses and comments cascade off the position delete.
-	for _, pid := range positionIDs {
-		var refs int
-		if err := t.db.QueryRow(ctx,
-			`SELECT count(*) FROM (
-				SELECT position_id FROM move WHERE position_id = $1
-				UNION ALL
-				SELECT position_id FROM collection_position WHERE position_id = $1
-			 ) sub`, pid).Scan(&refs); err != nil {
-			return fmt.Errorf("postgres: delete match %d: ref check position %d: %w", id, pid, err)
+		var positionIDs []int64
+		for rows.Next() {
+			var pid int64
+			if err := rows.Scan(&pid); err != nil {
+				rows.Close()
+				return fmt.Errorf("scan position id: %w", err)
+			}
+			positionIDs = append(positionIDs, pid)
 		}
-		if refs == 0 {
-			if _, err := t.db.Exec(ctx,
-				`DELETE FROM position WHERE id = $1 AND tenant_id = $2`, pid, tenant); err != nil {
-				return fmt.Errorf("postgres: delete match %d: delete orphan position %d: %w", id, pid, err)
+		rows.Close()
+		if err := rows.Err(); err != nil {
+			return fmt.Errorf("collect positions: %w", err)
+		}
+
+		// game/move/move_analysis cascade off the match delete.
+		if _, err := tx.Exec(ctx,
+			`DELETE FROM match WHERE id = $1 AND tenant_id = $2`, id, tenant); err != nil {
+			return err
+		}
+
+		// Drop positions no longer referenced by any move or collection;
+		// their analyses and comments cascade off the position delete.
+		for _, pid := range positionIDs {
+			var refs int
+			if err := tx.QueryRow(ctx,
+				`SELECT count(*) FROM (
+					SELECT position_id FROM move WHERE position_id = $1
+					UNION ALL
+					SELECT position_id FROM collection_position WHERE position_id = $1
+				 ) sub`, pid).Scan(&refs); err != nil {
+				return fmt.Errorf("ref check position %d: %w", pid, err)
+			}
+			if refs == 0 {
+				if _, err := tx.Exec(ctx,
+					`DELETE FROM position WHERE id = $1 AND tenant_id = $2`, pid, tenant); err != nil {
+					return fmt.Errorf("delete orphan position %d: %w", pid, err)
+				}
 			}
 		}
-	}
-	return nil
+		return nil
+	})
 }
 
 // SwapPlayers swaps player 1 and player 2 for the match: it swaps the header

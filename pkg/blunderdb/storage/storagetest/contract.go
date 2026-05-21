@@ -13,9 +13,10 @@
 // backend packages' test binaries — an exported helper in a _test.go file
 // would not be visible across packages.
 //
-// The cases owned by P2 PR2 (positions, analyses, search, transactions) are
-// filled in; the remaining ones are skipped until their family lands in a
-// later PR.
+// The positions, analyses, search, transaction and match cases are filled in;
+// the remaining ones are skipped until their family lands in a later PR. The
+// Tournament case stays pending until the PostgreSQL tournament store lands
+// (P3 PR4), since the suite runs against both backends.
 package storagetest
 
 import (
@@ -40,8 +41,8 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Position/DedupByZobrist", testPositionDedup},
 		{"Position/UpdatePreservesId", testPositionUpdatePreservesId},
 		{"Analysis/SaveAndCompress", testAnalysisSaveAndCompress},
-		{"Match/CreateGameMoveCascade", nil},
-		{"Match/DeleteCascade", nil},
+		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
+		{"Match/DeleteCascade", testMatchDeleteCascade},
 		{"Tournament/AddRemoveMatch", nil},
 		{"Collection/MoveBetweenCollections", nil},
 		{"Anki/ReviewUpdatesScheduling", nil},
@@ -202,6 +203,137 @@ func testAnalysisSaveAndCompress(t *testing.T, s storage.Storage) {
 	}
 	if got.CheckerAnalysis.Moves[0].Move != "13/11 24/23" {
 		t.Errorf("move: got %q, want %q", got.CheckerAnalysis.Moves[0].Move, "13/11 24/23")
+	}
+}
+
+func testMatchCreateGameMove(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob", MatchLength: 7}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	if matchID == 0 || m.ID != matchID {
+		t.Fatalf("Save match id: id=%d m.ID=%d", matchID, m.ID)
+	}
+
+	g := domain.Game{MatchID: matchID, GameNumber: 1, Winner: 1, PointsWon: 2}
+	gameID, err := s.Matches().CreateGame(ctx, "", &g)
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	mv := domain.Move{
+		GameID: gameID, MoveNumber: 1, MoveType: "checker", PositionID: posID,
+		Player: 1, Dice: [2]int32{3, 1}, CheckerMove: "8/5 6/5",
+	}
+	moveID, err := s.Matches().CreateMove(ctx, "", &mv)
+	if err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+	if moveID == 0 {
+		t.Fatal("CreateMove returned id 0")
+	}
+
+	got, err := s.Matches().Get(ctx, "", matchID)
+	if err != nil {
+		t.Fatalf("Get match: %v", err)
+	}
+	if got.Player1Name != "Alice" || got.MatchLength != 7 {
+		t.Errorf("Get match: %+v", got)
+	}
+
+	var games []domain.Game
+	for g, err := range s.Matches().Games(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("Games: %v", err)
+		}
+		games = append(games, *g)
+	}
+	if len(games) != 1 || games[0].Winner != 1 || games[0].PointsWon != 2 {
+		t.Fatalf("Games: %+v", games)
+	}
+
+	var moves []domain.Move
+	for mv, err := range s.Matches().Moves(ctx, "", gameID) {
+		if err != nil {
+			t.Fatalf("Moves: %v", err)
+		}
+		moves = append(moves, *mv)
+	}
+	if len(moves) != 1 || moves[0].CheckerMove != "8/5 6/5" || moves[0].PositionID != posID {
+		t.Fatalf("Moves: %+v", moves)
+	}
+
+	var mps []domain.MatchMovePosition
+	for mp, err := range s.Matches().MovePositions(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("MovePositions: %v", err)
+		}
+		mps = append(mps, *mp)
+	}
+	if len(mps) != 1 {
+		t.Fatalf("MovePositions count: got %d, want 1", len(mps))
+	}
+	// Move stored with XG player 1 maps to blunderDB player 0.
+	if mps[0].PlayerOnRoll != 0 {
+		t.Errorf("MovePositions PlayerOnRoll: got %d, want 0", mps[0].PlayerOnRoll)
+	}
+	if mps[0].Player1Name != "Alice" || mps[0].CheckerMove != "8/5 6/5" {
+		t.Errorf("MovePositions context: %+v", mps[0])
+	}
+}
+
+func testMatchDeleteCascade(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	m := domain.Match{Player1Name: "Alice", Player2Name: "Bob"}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	g := domain.Game{MatchID: matchID, GameNumber: 1}
+	gameID, err := s.Matches().CreateGame(ctx, "", &g)
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	mv := domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1}
+	if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+
+	if err := s.Matches().DeleteCascade(ctx, "", matchID); err != nil {
+		t.Fatalf("DeleteCascade: %v", err)
+	}
+
+	if _, err := s.Matches().Get(ctx, "", matchID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("after delete Get match: got %v, want ErrNotFound", err)
+	}
+	for _, err := range s.Matches().Games(ctx, "", matchID) {
+		if err != nil {
+			t.Fatalf("Games: %v", err)
+		}
+		t.Error("game not cascade-deleted")
+	}
+	for _, err := range s.Matches().Moves(ctx, "", gameID) {
+		if err != nil {
+			t.Fatalf("Moves: %v", err)
+		}
+		t.Error("move not cascade-deleted")
+	}
+	if _, err := s.Positions().Load(ctx, "", posID); !errors.Is(err, storage.ErrNotFound) {
+		t.Errorf("orphan position not deleted: got %v, want ErrNotFound", err)
 	}
 }
 

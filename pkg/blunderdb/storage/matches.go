@@ -25,8 +25,9 @@ type MatchStore interface {
 	UpdateComment(ctx context.Context, scope string, id int64, comment string) error
 
 	// DeleteCascade removes a match and all of its games, moves and analyses.
-	// It must run inside tx so the multi-table cascade is atomic.
-	DeleteCascade(ctx context.Context, tx Tx, scope string, id int64) error
+	// The implementation runs the whole multi-table cascade atomically; when
+	// reached through a Tx it joins that transaction (D2).
+	DeleteCascade(ctx context.Context, scope string, id int64) error
 
 	// SwapPlayers swaps player 1 and player 2 for the match (and mirrors the
 	// stored positions accordingly).
