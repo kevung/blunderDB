@@ -3,23 +3,22 @@
     import { activeTabStore, logEntriesStore } from '../stores/uiStore';
 
     let logContainer;
-    let logEntries = $state([]);
+    let logEntries = $derived($logEntriesStore);
 
-    logEntriesStore.subscribe(async (value) => {
-        logEntries = value;
-        await tick();
-        if (logContainer) {
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
+    // Auto-scroll when new log entries arrive
+    $effect(() => {
+        logEntries;
+        tick().then(() => {
+            if (logContainer) logContainer.scrollTop = logContainer.scrollHeight;
+        });
     });
 
     // Auto-scroll when the log tab becomes active
-    activeTabStore.subscribe(async (value) => {
-        if (value === 'log') {
-            await tick();
-            if (logContainer) {
-                logContainer.scrollTop = logContainer.scrollHeight;
-            }
+    $effect(() => {
+        if ($activeTabStore === 'log') {
+            tick().then(() => {
+                if (logContainer) logContainer.scrollTop = logContainer.scrollHeight;
+            });
         }
     });
 </script>

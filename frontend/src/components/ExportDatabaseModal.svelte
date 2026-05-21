@@ -31,17 +31,8 @@
         matches = []
     } = $props();
 
-    let collections = $state([]);
-
-    collectionsStore.subscribe((value) => {
-        collections = value || [];
-    });
-
-    let tournaments = $state([]);
-
-    tournamentsStore.subscribe((value) => {
-        tournaments = value || [];
-    });
+    let collections = $derived($collectionsStore || []);
+    let tournaments = $derived($tournamentsStore || []);
 
     // Get current date in YYYY-MM-DD format
     function getCurrentDate() {

@@ -28,14 +28,8 @@
 
     import { activeTabStore } from '../stores/uiStore';
     import { databasePathStore } from '../stores/databaseStore';
-    let databasePath = $state();
-    databasePathStore.subscribe((value) => {
-        databasePath = value;
-    });
-    let isSearchTab = $state(false);
-    activeTabStore.subscribe((value) => {
-        isSearchTab = value === 'search';
-    });
+    let databasePath = $derived($databasePathStore);
+    let isSearchTab = $derived($activeTabStore === 'search');
 </script>
 
 <!--// https://heroicons.com/-->

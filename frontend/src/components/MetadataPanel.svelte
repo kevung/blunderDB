@@ -33,19 +33,20 @@
     }
 
     // Load when tab becomes active, save when leaving
-    let wasActive = $state(false);
-    const unsubscribe = activeTabStore.subscribe(async (value) => {
+    let wasActive = false;
+    $effect(() => {
+        const value = $activeTabStore;
         if (value === 'metadata') {
-            await loadMetadata();
-            wasActive = true;
+            loadMetadata().then(() => {
+                wasActive = true;
+            });
         } else if (wasActive) {
-            await saveMetadata();
+            saveMetadata();
             wasActive = false;
         }
     });
 
     onDestroy(() => {
-        unsubscribe();
         if (wasActive) saveMetadata();
     });
 </script>

@@ -3,14 +3,13 @@
     import { tick } from 'svelte';
 
     let logContainer;
-    let entries = [];
+    let entries = $derived($logEntriesStore);
 
-    logEntriesStore.subscribe(async (value) => {
-        entries = value;
-        await tick();
-        if (logContainer) {
-            logContainer.scrollTop = logContainer.scrollHeight;
-        }
+    $effect(() => {
+        entries; // auto-scroll when log entries change
+        tick().then(() => {
+            if (logContainer) logContainer.scrollTop = logContainer.scrollHeight;
+        });
     });
 </script>
 

@@ -8,48 +8,46 @@
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
-    let searchHistory = $state([]);
+    // Read-only mirror of store
+    let searchHistory = $derived($searchHistoryStore);
+
     let selectedSearch = $state(null);
     let showSaveDialog = $state(false);
     let filterName = $state('');
     let filterLibrary = []; // Store loaded filters
-    let visible = $state(false);
+    let visible = $derived($openPanels.has(PANEL.SEARCH_HISTORY));
 
-    searchHistoryStore.subscribe((value) => {
-        searchHistory = value;
-    });
-
-    openPanels.subscribe(async (value) => {
-        const wasVisible = visible;
-        visible = value.has(PANEL.SEARCH_HISTORY);
-        if (visible && !wasVisible) {
-            // Panel just opened
-            await loadHistory();
-            await loadFilterLibrary();
-        } else if (!visible && wasVisible) {
-            // Panel just closed - restore previous position if a search was selected
-            if (selectedSearch) {
-                // Restore the position and index that was displayed before selecting any search
-                if ($positionBeforeFilterLibraryStore) {
-                    positionStore.set($positionBeforeFilterLibraryStore);
+    // Load/unload data when the panel is shown or hidden
+    let _prevVisible = false;
+    $effect(() => {
+        const v = $openPanels.has(PANEL.SEARCH_HISTORY);
+        if (v !== _prevVisible) {
+            if (v) {
+                loadHistory();
+                loadFilterLibrary();
+            } else {
+                if (selectedSearch) {
+                    if ($positionBeforeFilterLibraryStore) {
+                        positionStore.set($positionBeforeFilterLibraryStore);
+                    }
+                    if ($positionIndexBeforeFilterLibraryStore >= 0) {
+                        const savedIndex = $positionIndexBeforeFilterLibraryStore;
+                        currentPositionIndexStore.set(-1);
+                        currentPositionIndexStore.set(savedIndex);
+                    }
                 }
-                if ($positionIndexBeforeFilterLibraryStore >= 0) {
-                    const savedIndex = $positionIndexBeforeFilterLibraryStore;
-                    currentPositionIndexStore.set(-1); // Force redraw
-                    currentPositionIndexStore.set(savedIndex);
-                }
+                positionBeforeFilterLibraryStore.set(null);
+                positionIndexBeforeFilterLibraryStore.set(-1);
+                selectedSearch = null;
             }
-            // Clear saved position/index and selection
-            positionBeforeFilterLibraryStore.set(null);
-            positionIndexBeforeFilterLibraryStore.set(-1);
-            selectedSearch = null;
+            _prevVisible = v;
         }
     });
 
     // Update saved position when browsing positions (only if no search is selected)
-    currentPositionIndexStore.subscribe((value) => {
+    $effect(() => {
+        const value = $currentPositionIndexStore;
         if (visible && !selectedSearch && value >= 0) {
-            // Update the saved position as user browses
             positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
             positionIndexBeforeFilterLibraryStore.set(value);
         }

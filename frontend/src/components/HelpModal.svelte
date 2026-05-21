@@ -14,12 +14,7 @@
     let contentArea = $state();
 
     let databaseVersion = $state('');
-    let applicationVersion = $state('');
-
-    // Subscribe to the metaStore
-    metaStore.subscribe((value) => {
-        applicationVersion = value.applicationVersion;
-    });
+    let applicationVersion = $derived($metaStore.applicationVersion);
 
     onMount(async () => {
         try {
