@@ -3,6 +3,8 @@ package main
 import (
 	"database/sql"
 	"encoding/json"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 func (d *Database) PositionExists(position Position) (map[string]interface{}, error) {
@@ -83,12 +85,12 @@ func populatePositionColumns(p *Position) positionColumns {
 	norm := p.NormalizeForStorage()
 	var c positionColumns
 
-	c.ZobristHash = ZobristHash(&norm)
+	c.ZobristHash = engine.ZobristHash(&norm)
 	c.DecisionType = norm.DecisionType
 	c.Dice1 = norm.Dice[0]
 	c.Dice2 = norm.Dice[1]
 
-	c.Pip1, c.Pip2 = PipCounts(norm.Board)
+	c.Pip1, c.Pip2 = engine.PipCounts(norm.Board)
 	c.PipDiff = c.Pip1 - c.Pip2
 
 	c.Off1 = norm.Board.Bearoff[0]
@@ -109,7 +111,7 @@ func populatePositionColumns(p *Position) positionColumns {
 
 	c.NoContact = norm.MatchesNoContact()
 
-	c.Occupancy1, c.Occupancy2, c.PointMask1, c.PointMask2 = OccupancyMasks(&norm.Board)
+	c.Occupancy1, c.Occupancy2, c.PointMask1, c.PointMask2 = engine.OccupancyMasks(&norm.Board)
 
 	c.CubeValue = norm.Cube.Value
 	c.CubeOwner = norm.Cube.Owner
@@ -161,9 +163,9 @@ func decodeBoardCompact(s string) Board {
 	for i := 0; i < NumPoints+2; i++ {
 		v := vals[i]
 		if v > 0 {
-			b.Points[i] = Point{v, White}
+			b.Points[i] = Point{Checkers: v, Color: White}
 		} else if v < 0 {
-			b.Points[i] = Point{-v, Black}
+			b.Points[i] = Point{Checkers: -v, Color: Black}
 		}
 	}
 	b.Bearoff[0] = vals[26]
@@ -191,7 +193,7 @@ func reconstructPosition(id int64, state string, decisionType, playerOnRoll, dic
 	pos.DecisionType = decisionType
 	pos.PlayerOnRoll = playerOnRoll
 	pos.Dice = [2]int{dice1, dice2}
-	pos.Cube = Cube{cubeOwner, cubeValue}
+	pos.Cube = Cube{Owner: cubeOwner, Value: cubeValue}
 	pos.Score = [2]int{score1, score2}
 	pos.HasJacoby = hasJacoby
 	pos.HasBeaver = hasBeaver
@@ -363,44 +365,4 @@ func (d *Database) DeletePosition(positionID int64) error {
 	}
 
 	return nil
-}
-
-func (p *Position) MatchesMirrorPosition(filter Position) bool {
-	mirroredPosition := p.Mirror()
-	return p.MatchesCheckerPosition(filter) || mirroredPosition.MatchesCheckerPosition(filter)
-}
-
-// Mirror creates a mirrored version of the current Position.
-// It reverses the board points, swaps the bearoff positions,
-// changes the player on roll, swaps the scores, and changes the cube owner.
-// Returns the mirrored Position.
-func (p *Position) Mirror() Position {
-	mirrored := *p
-	for i, point := range p.Board.Points {
-		mirrored.Board.Points[25-i] = Point{
-			Color:    point.Color,
-			Checkers: point.Checkers,
-		}
-		if point.Color != -1 {
-			mirrored.Board.Points[25-i].Color = 1 - point.Color
-		}
-	}
-	mirrored.Board.Bearoff[0], mirrored.Board.Bearoff[1] = p.Board.Bearoff[1], p.Board.Bearoff[0]
-	mirrored.PlayerOnRoll = 1 - p.PlayerOnRoll
-	mirrored.Score[0], mirrored.Score[1] = p.Score[1], p.Score[0]
-	if p.Cube.Owner != -1 {
-		mirrored.Cube.Owner = 1 - p.Cube.Owner
-	}
-	return mirrored
-}
-
-// NormalizeForStorage returns a normalized version of the position for storage.
-// Positions are always stored from the player on roll's perspective (player_on_roll = 0).
-// If player_on_roll is 1, the position is mirrored so that player_on_roll becomes 0.
-// This prevents storing duplicate positions that are just mirror images of each other.
-func (p *Position) NormalizeForStorage() Position {
-	if p.PlayerOnRoll == 1 {
-		return p.Mirror()
-	}
-	return *p
 }

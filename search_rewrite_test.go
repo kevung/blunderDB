@@ -12,6 +12,8 @@ import (
 	"sort"
 	"strings"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // ---------- legacy implementation (kept in test code only) ----------
@@ -132,33 +134,33 @@ func legacyLoadPositionsByFilters(
 				(!includeScore || pos.MatchesScorePosition(filter)) &&
 				(!decisionTypeFilter || pos.MatchesDecisionType(filter)) &&
 				(pipCountFilter == "" || pos.MatchesPipCountFilter(pipCountFilter)) &&
-				(winRateFilter == "" || pos.MatchesWinRate(winRateFilter, d)) &&
-				(gammonRateFilter == "" || pos.MatchesGammonRate(gammonRateFilter, d)) &&
-				(backgammonRateFilter == "" || pos.MatchesBackgammonRate(backgammonRateFilter, d)) &&
-				(player2WinRateFilter == "" || pos.MatchesPlayer2WinRate(player2WinRateFilter, d)) &&
-				(player2GammonRateFilter == "" || pos.MatchesPlayer2GammonRate(player2GammonRateFilter, d)) &&
-				(player2BackgammonRateFilter == "" || pos.MatchesPlayer2BackgammonRate(player2BackgammonRateFilter, d)) &&
+				(winRateFilter == "" || MatchesWinRate(&pos, winRateFilter, d)) &&
+				(gammonRateFilter == "" || MatchesGammonRate(&pos, gammonRateFilter, d)) &&
+				(backgammonRateFilter == "" || MatchesBackgammonRate(&pos, backgammonRateFilter, d)) &&
+				(player2WinRateFilter == "" || MatchesPlayer2WinRate(&pos, player2WinRateFilter, d)) &&
+				(player2GammonRateFilter == "" || MatchesPlayer2GammonRate(&pos, player2GammonRateFilter, d)) &&
+				(player2BackgammonRateFilter == "" || MatchesPlayer2BackgammonRate(&pos, player2BackgammonRateFilter, d)) &&
 				(player1CheckerOffFilter == "" || pos.MatchesPlayer1CheckerOff(player1CheckerOffFilter)) &&
 				(player2CheckerOffFilter == "" || pos.MatchesPlayer2CheckerOff(player2CheckerOffFilter)) &&
 				(player1BackCheckerFilter == "" || pos.MatchesPlayer1BackChecker(player1BackCheckerFilter)) &&
 				(player2BackCheckerFilter == "" || pos.MatchesPlayer2BackChecker(player2BackCheckerFilter)) &&
 				(player1CheckerInZoneFilter == "" || pos.MatchesPlayer1CheckerInZone(player1CheckerInZoneFilter)) &&
 				(player2CheckerInZoneFilter == "" || pos.MatchesPlayer2CheckerInZone(player2CheckerInZoneFilter)) &&
-				(searchText == "" || pos.MatchesSearchText(searchText, d)) &&
+				(searchText == "" || MatchesSearchText(&pos, searchText, d)) &&
 				(player1AbsolutePipCountFilter == "" || pos.MatchesPlayer1AbsolutePipCount(player1AbsolutePipCountFilter)) &&
-				(equityFilter == "" || pos.MatchesEquityFilter(equityFilter, d)) &&
+				(equityFilter == "" || MatchesEquityFilter(&pos, equityFilter, d)) &&
 				(!diceRollFilter || pos.MatchesDiceRoll(filter)) &&
-				(dateFilter == "" || pos.MatchesDateFilter(dateFilter, d)) &&
+				(dateFilter == "" || MatchesDateFilter(&pos, dateFilter, d)) &&
 				(player1OutfieldBlotFilter == "" || pos.MatchesPlayer1OutfieldBlot(player1OutfieldBlotFilter)) &&
 				(player2OutfieldBlotFilter == "" || pos.MatchesPlayer2OutfieldBlot(player2OutfieldBlotFilter)) &&
 				(player1JanBlotFilter == "" || pos.MatchesPlayer1JanBlot(player1JanBlotFilter)) &&
 				(player2JanBlotFilter == "" || pos.MatchesPlayer2JanBlot(player2JanBlotFilter)) &&
 				(!noContactFilter || pos.MatchesNoContact()) &&
-				(moveErrorFilter == "" || pos.MatchesMoveErrorFilter(moveErrorFilter, d))
+				(moveErrorFilter == "" || MatchesMoveErrorFilter(&pos, moveErrorFilter, d))
 		}
 
 		addPosition := func(pos Position) {
-			if moveErrorFilter != "" && pos.DecisionType == CubeAction && pos.IsPlayer1TakePassCubeAction(d) {
+			if moveErrorFilter != "" && pos.DecisionType == CubeAction && IsPlayer1TakePassCubeAction(&pos, d) {
 				pos = pos.Mirror()
 			}
 			positions = append(positions, pos)
@@ -166,7 +168,7 @@ func legacyLoadPositionsByFilters(
 
 		if matchesFilters(position) {
 			if movePatternFilter != "" {
-				if position.MatchesMovePattern(movePatternFilter, d) {
+				if MatchesMovePattern(&position, movePatternFilter, d) {
 					addPosition(position)
 				}
 			} else {
@@ -176,7 +178,7 @@ func legacyLoadPositionsByFilters(
 			mirrored := position.Mirror()
 			if matchesFilters(mirrored) {
 				if movePatternFilter != "" {
-					if mirrored.MatchesMovePattern(movePatternFilter, d) {
+					if MatchesMovePattern(&mirrored, movePatternFilter, d) {
 						addPosition(mirrored)
 					}
 				} else {
@@ -490,7 +492,7 @@ func TestSearch_PrimePattern_BitboardOnly(t *testing.T) {
 	}
 
 	// Verify CheckerStructureMasks returns tight=false for this template.
-	_, _, _, _, tight := CheckerStructureMasks(filterPos)
+	_, _, _, _, tight := engine.CheckerStructureMasks(filterPos)
 	if tight {
 		t.Fatalf("expected tight=false for 1-checker-per-point prime template; got tight=true")
 	}

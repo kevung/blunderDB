@@ -63,3 +63,60 @@ func getPositionIDs(t *testing.T, db *Database, limit int) []int64 {
 	}
 	return ids
 }
+
+// initialBoard returns the standard starting backgammon position.
+// Board indices 0=WhiteBar, 1..24=board points, 25=BlackBar.
+func initialBoard() Board {
+	var b Board
+	// Black checkers
+	b.Points[24] = Point{Checkers: 2, Color: Black}
+	b.Points[13] = Point{Checkers: 5, Color: Black}
+	b.Points[8] = Point{Checkers: 3, Color: Black}
+	b.Points[6] = Point{Checkers: 5, Color: Black}
+	// White checkers
+	b.Points[1] = Point{Checkers: 2, Color: White}
+	b.Points[12] = Point{Checkers: 5, Color: White}
+	b.Points[17] = Point{Checkers: 3, Color: White}
+	b.Points[19] = Point{Checkers: 5, Color: White}
+	return b
+}
+
+// initialPosition returns the standard starting position (checker decision).
+func initialPosition() Position {
+	return Position{
+		Board:        initialBoard(),
+		Cube:         Cube{Owner: None, Value: 0}, // 0 = exponent for cube-at-1
+		PlayerOnRoll: 0,
+		DecisionType: CheckerAction,
+	}
+}
+
+// bearoffPosition returns a pure race where both players have only their
+// home-board checkers left.
+func bearoffPosition() Position {
+	var b Board
+	// Black racing home (points 1-6)
+	b.Points[1] = Point{Checkers: 3, Color: Black}
+	b.Points[2] = Point{Checkers: 3, Color: Black}
+	b.Points[3] = Point{Checkers: 3, Color: Black}
+	b.Points[4] = Point{Checkers: 3, Color: Black}
+	b.Points[5] = Point{Checkers: 3, Color: Black}
+	// White racing home (points 19-24)
+	b.Points[20] = Point{Checkers: 3, Color: White}
+	b.Points[21] = Point{Checkers: 3, Color: White}
+	b.Points[22] = Point{Checkers: 3, Color: White}
+	b.Points[23] = Point{Checkers: 3, Color: White}
+	b.Points[24] = Point{Checkers: 3, Color: White}
+	return Position{Board: b, Cube: Cube{Owner: None, Value: 0}, PlayerOnRoll: 0, DecisionType: CheckerAction}
+}
+
+// cubePosition creates a cube-decision position. cubeExp is the cube exponent:
+// 0 = cube at 1 (initial), 1 = cube at 2, 2 = cube at 4, …
+func cubePosition(cubeExp int, cubeOwner int) Position {
+	return Position{
+		Board:        initialBoard(),
+		Cube:         Cube{Owner: cubeOwner, Value: cubeExp},
+		PlayerOnRoll: 0,
+		DecisionType: CubeAction,
+	}
+}

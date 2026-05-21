@@ -8,6 +8,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // silenceLogs redirects os.Stderr and the log package to /dev/null so that
@@ -313,7 +315,7 @@ func BenchmarkEPC(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for _, bd := range boards {
-			ComputeEPC(bd)
+			engine.ComputeEPC(bd)
 		}
 	}
 }
@@ -358,7 +360,7 @@ func BenchmarkZobristHash(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		for j := range positions {
-			ZobristHash(&positions[j])
+			engine.ZobristHash(&positions[j])
 		}
 	}
 }
@@ -379,7 +381,7 @@ func BenchmarkOccupancyMasks(b *testing.B) {
 	}()}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		OccupancyMasks(board)
+		engine.OccupancyMasks(board)
 	}
 }
 
@@ -399,7 +401,7 @@ func BenchmarkPipCounts(b *testing.B) {
 	}()}
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		PipCounts(board)
+		engine.PipCounts(board)
 	}
 }
 

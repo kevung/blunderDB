@@ -94,7 +94,7 @@ func (cli *CLI) runSearch(args []string) error {
 	// This is different from InitializePosition() which sets up starting position
 	filter := Position{
 		Board:        Board{Points: [26]Point{}}, // Empty board - matches any position
-		Cube:         Cube{None, 0},
+		Cube:         Cube{Owner: None, Value: 0},
 		Dice:         [2]int{0, 0},
 		Score:        [2]int{-1, -1}, // -1 means no score filter
 		PlayerOnRoll: 0,

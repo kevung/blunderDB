@@ -1,6 +1,10 @@
-package main
+package engine
 
-import "math/rand"
+import (
+	"math/rand"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+)
 
 // Zobrist hash tables for Position identity.
 // Populated from a fixed seed in init(). Never change the seed or the
@@ -82,7 +86,7 @@ func cubeOwnerIndex(owner int) int {
 // The position is normalized to player_on_roll=0 before hashing, so a
 // position and its PlayerOnRoll=1 mirror always produce the same hash.
 // Position.ID is excluded from the hash.
-func ZobristHash(p *Position) uint64 {
+func ZobristHash(p *domain.Position) uint64 {
 	norm := p.NormalizeForStorage()
 	norm.ID = 0
 

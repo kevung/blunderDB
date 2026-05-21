@@ -7,6 +7,8 @@ import (
 	"math"
 	"strconv"
 	"strings"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // parseIntFilterExpr parses prefixed integer filter strings (e.g. "p>5", "p<20", "p3,10").
@@ -373,7 +375,7 @@ func (d *Database) loadPositionsByFiltersCore(
 
 		// Bitboard pre-f.Filter for checker-structure patterns.
 		if hasBoardFilter(f.Filter.Board) {
-			occ1Req, pt1Req, occ2Req, pt2Req, tight := CheckerStructureMasks(f.Filter)
+			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(f.Filter)
 			bitboardTight = tight
 			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
 			where.WriteString(" AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?")
@@ -600,7 +602,7 @@ func (d *Database) loadPositionsByFiltersCore(
 					}
 				}
 				// Move-error in mirror mode: fall back to the existing method.
-				if f.MoveErrorFilter != "" && !pos.MatchesMoveErrorFilter(f.MoveErrorFilter, d) {
+				if f.MoveErrorFilter != "" && !MatchesMoveErrorFilter(&pos, f.MoveErrorFilter, d) {
 					return false
 				}
 			}
@@ -624,10 +626,10 @@ func (d *Database) loadPositionsByFiltersCore(
 			if f.Player2JanBlotFilter != "" && !pos.MatchesPlayer2JanBlot(f.Player2JanBlotFilter) {
 				return false
 			}
-			if f.SearchText != "" && !pos.MatchesSearchText(f.SearchText, d) {
+			if f.SearchText != "" && !MatchesSearchText(&pos, f.SearchText, d) {
 				return false
 			}
-			if f.DateFilter != "" && !pos.MatchesDateFilter(f.DateFilter, d) {
+			if f.DateFilter != "" && !MatchesDateFilter(&pos, f.DateFilter, d) {
 				return false
 			}
 			if f.EquityFilter != "" && !analysisMatchesEquityFilter(f.EquityFilter, ana) {
@@ -638,7 +640,7 @@ func (d *Database) loadPositionsByFiltersCore(
 
 		// addPosition mirrors take/pass cube positions so player1 appears at the bottom.
 		addPosition := func(pos Position) {
-			if f.MoveErrorFilter != "" && pos.DecisionType == CubeAction && pos.IsPlayer1TakePassCubeAction(d) {
+			if f.MoveErrorFilter != "" && pos.DecisionType == CubeAction && IsPlayer1TakePassCubeAction(&pos, d) {
 				pos = pos.Mirror()
 			}
 			positions = append(positions, pos)

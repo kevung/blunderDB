@@ -7,6 +7,8 @@ import (
 	"log/slog"
 	"strings"
 	"sync/atomic"
+
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 )
 
 // SetMigrationProgress registers a callback that is invoked during the v2.0.0
@@ -1112,7 +1114,7 @@ func (d *Database) migrate_2_6_0_to_2_7_0() error {
 			return fmt.Errorf("migrate 2.7.0 scan: %w", err)
 		}
 		pos := reconstructPosition(id, state, decisionType, playerOnRoll, dice1, dice2, cubeValue, cubeOwner, score1, score2, hasJacoby, hasBeaver)
-		newHash := ZobristHash(&pos)
+		newHash := engine.ZobristHash(&pos)
 		fixes = append(fixes, fix{id: id, newHash: int64(newHash)})
 	}
 	rows.Close()
