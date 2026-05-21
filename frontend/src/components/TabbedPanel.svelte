@@ -184,7 +184,7 @@
 
     <div class="tab-content" data-testid="tab-content">
         {#if $activeTabStore === 'analysis'}
-            <AnalysisPanel visible={true} onClose={onCloseAnalysis} />
+            <AnalysisPanel onClose={onCloseAnalysis} />
         {:else if $activeTabStore === 'comments'}
             <CommentPanel visible={true} onClose={onCloseComment} />
         {:else if $activeTabStore === 'search'}

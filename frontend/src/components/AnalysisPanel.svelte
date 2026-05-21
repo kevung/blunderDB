@@ -3,29 +3,27 @@
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore'; // Import analysisStore and selectedMoveStore
     import { positionStore, matchContextStore } from '../stores/positionStore'; // Import positionStore and matchContextStore
     import { openPanels, PANEL } from '../stores/uiStore';
-    let { visible = false, onClose } = $props();
+    let { onClose } = $props();
 
-    let analysisData = $state();
-    let cubeValue = $state();
+    // Read-only mirrors of stores
+    let analysisData = $derived($analysisStore);
+    let cubeValue = $derived($positionStore.cube.value);
+    let matchCtx = $derived($matchContextStore);
+
     let activeTab = $state('checker'); // 'checker' or 'cube'
-    let matchCtx = $state();
 
     // Sorting state for checker analysis table
     let sortColumn = $state('equity'); // default sort by equity
     let sortDirection = $state('desc'); // default highest to lowest
 
-    // Subscribe to matchContextStore
-    matchContextStore.subscribe((value) => {
-        matchCtx = value;
-        // Auto-switch tab based on current move type in match mode
-        // But only if no move is currently selected (to avoid interfering with move navigation)
-        if (matchCtx.isMatchMode && matchCtx.movePositions.length > 0 && !$selectedMoveStore) {
-            const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
+    // Auto-switch tab based on current move type in match mode
+    $effect(() => {
+        const ctx = $matchContextStore;
+        if (ctx.isMatchMode && ctx.movePositions.length > 0 && !$selectedMoveStore) {
+            const currentMovePos = ctx.movePositions[ctx.currentIndex];
             if (currentMovePos) {
-                // If it's the first position of a game (move_number 0 or 1), force checker tab and clear cube data
                 if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
                     activeTab = 'checker';
-                    // Clear any existing cube analysis data
                     analysisStore.update((current) => ({
                         ...current,
                         doublingCubeAnalysis: null,
@@ -38,54 +36,43 @@
         }
     });
 
-    // Subscribe to analysisStore to get the analysis data
-    analysisStore.subscribe((value) => {
-        analysisData = value;
-    });
-
-    // Subscribe to positionStore to get the cube value
-    positionStore.subscribe((value) => {
-        cubeValue = value.cube.value;
-    });
-
-    openPanels.subscribe(async (value) => {
-        visible = value.has(PANEL.ANALYSIS);
-        if (visible) {
-            // Pre-load cube analysis in match mode if current position is checker
-            if (matchCtx.isMatchMode) {
-                const currentMovePos = matchCtx.movePositions[matchCtx.currentIndex];
-                if (currentMovePos && currentMovePos.move_type === 'checker') {
-                    // If it's the first position of a game (move_number 0 or 1), clear cube data immediately
-                    if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
-                        analysisStore.update((current) => ({
-                            ...current,
-                            doublingCubeAnalysis: null,
-                            playedCubeAction: ''
-                        }));
-                    } else {
-                        // Load cube analysis in background (only if there's one in the same game)
-                        const hasCubeInGame = await loadCubeAnalysisForCurrentPosition();
-                        // If no cube analysis found in current game, clear any previous cube data
-                        if (!hasCubeInGame) {
+    // Side effects when analysis panel opens or closes
+    let _prevAnalysisVisible = false;
+    $effect(() => {
+        const v = $openPanels.has(PANEL.ANALYSIS);
+        if (v !== _prevAnalysisVisible) {
+            if (v) {
+                const ctx = matchCtx;
+                if (ctx.isMatchMode) {
+                    const currentMovePos = ctx.movePositions[ctx.currentIndex];
+                    if (currentMovePos && currentMovePos.move_type === 'checker') {
+                        if (currentMovePos.move_number === 0 || currentMovePos.move_number === 1) {
                             analysisStore.update((current) => ({
                                 ...current,
                                 doublingCubeAnalysis: null,
                                 playedCubeAction: ''
                             }));
+                        } else {
+                            loadCubeAnalysisForCurrentPosition().then((hasCubeInGame) => {
+                                if (!hasCubeInGame) {
+                                    analysisStore.update((current) => ({
+                                        ...current,
+                                        doublingCubeAnalysis: null,
+                                        playedCubeAction: ''
+                                    }));
+                                }
+                            });
                         }
                     }
                 }
+                setTimeout(() => {
+                    const analysisEl = document.getElementById('analysisPanel');
+                    if (analysisEl) analysisEl.focus();
+                }, 0);
+            } else {
+                selectedMoveStore.set(null);
             }
-
-            setTimeout(() => {
-                const analysisEl = document.getElementById('analysisPanel');
-                if (analysisEl) {
-                    analysisEl.focus();
-                }
-            }, 0);
-        } else {
-            // Clear selected move when panel is closed
-            selectedMoveStore.set(null);
+            _prevAnalysisVisible = v;
         }
     });
 
