@@ -129,24 +129,17 @@
     let creationDateRangeMin = $state('');
     let creationDateRangeMax = $state('');
 
-    // History state
-    let searchHistory = $state([]);
+    // History state — mirrors of stores, always current
+    let searchHistory = $derived($searchHistoryStore);
     let selectedSearch = $state(null);
     let showSaveDialog = $state(false);
     let filterName = $state('');
 
     // Saved (filter library) state
-    let savedFilters = $state([]);
+    let savedFilters = $derived($filterLibraryStore || []);
     let selectedSavedFilter = $state(null);
     let _savedFilterName = '';
     let _savedFilterCommand = '';
-
-    searchHistoryStore.subscribe((value) => {
-        searchHistory = value;
-    });
-    filterLibraryStore.subscribe((value) => {
-        savedFilters = value || [];
-    });
 
     let availableFilters = [
         'Include Cube',
@@ -211,10 +204,10 @@
             savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
         }
     });
-    activeTabStore.subscribe(async (value) => {
-        if (value === 'search') {
-            await loadHistory();
-            await loadSavedFilters();
+    $effect(() => {
+        if ($activeTabStore === 'search') {
+            loadHistory();
+            loadSavedFilters();
         }
     });
 
