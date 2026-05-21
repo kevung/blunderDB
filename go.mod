@@ -1,4 +1,4 @@
-module blunderdb
+module github.com/kevung/blunderdb
 
 go 1.25.0
 

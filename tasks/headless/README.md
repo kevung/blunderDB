@@ -63,7 +63,7 @@ Optional side phases:
 
 | # | Phase | Sheet | Estimate | Risk | Status |
 |---|---|---|---|---|---|
-| P0 | Module rename | [00-module-rename.md](00-module-rename.md) | ½ d | low | pending |
+| P0 | Module rename | [00-module-rename.md](00-module-rename.md) | ½ d | low | **done** |
 | A | CLI extract | [01a-cli-extract.md](01a-cli-extract.md) | 1-2 d | low | **done** (4743e21d) |
 | P1 | Library refactor | [01b-pkg-library-refactor.md](01b-pkg-library-refactor.md) | 5-7 d | high | pending |
 | P2 | `Storage` interface | [02-storage-interface.md](02-storage-interface.md) | 8-10 d | high | pending |

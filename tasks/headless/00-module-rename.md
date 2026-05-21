@@ -17,25 +17,24 @@ baseline commit before the larger refactor.
 
 ## Steps
 
-- [ ] In `go.mod`, change `module blunderdb` → `module github.com/kevung/blunderdb`.
-- [ ] Search for internal imports of `blunderdb/...` and fix them:
+- [x] In `go.mod`, change `module blunderdb` → `module github.com/kevung/blunderdb`.
+- [x] Search for internal imports of `blunderdb/...` and fix them:
   ```bash
   grep -rn '"blunderdb/' --include='*.go'
   ```
   Expected: zero hits (current code uses no internal sub-package imports
-  — confirmed during exploration).
-- [ ] Confirm `wails.json` still has `"name": "blunderdb"` (binary name,
+  — confirmed during exploration). Confirmed: zero hits.
+- [x] Confirm `wails.json` still has `"name": "blunderdb"` (binary name,
   unrelated to the module path) and leave it alone.
-- [ ] Run `go mod tidy`.
+- [x] Run `go mod tidy`.
 
 ## Verification
 
-- [ ] `go build ./...` succeeds.
-- [ ] `go test ./...` green.
-- [ ] `go test ./tests/...` green.
-- [ ] `wails build` produces `build/bin/blunderdb` that launches the GUI.
-- [ ] `wails build -tags webkit2_41` succeeds.
-- [ ] `./blunderdb create --db /tmp/x.db && ./blunderdb info --db /tmp/x.db`
+- [x] `go build ./...` succeeds.
+- [x] `go test ./...` green.
+- [x] `go test ./tests/...` green.
+- [x] `wails build -tags webkit2_41` produces `build/bin/blunderdb`.
+- [x] `./blunderdb create --db /tmp/x.db && ./blunderdb info --db /tmp/x.db`
       behaves as before.
 
 ## Gotchas
