@@ -179,23 +179,61 @@ invariants (audit during this phase). Detailed audit and aggressive removal
 happen in [P5](05-remove-global-mutex.md); P2 should not regress
 concurrency.
 
+## Arbitrated decisions (2026-05-21, after PR1)
+
+Open design questions between this sheet and what PR1 actually shipped were
+settled before starting PR2-6:
+
+- **D1 — `PositionStore.Save` deduplicates by Zobrist hash.** `Save` becomes
+  idempotent (`INSERT … ON CONFLICT(zobrist_hash) DO NOTHING`, then returns the
+  row id). Matches the `positions.go` doc comment and the `DedupByZobrist`
+  contract case; fixes the latent failure where a plain `INSERT` violates the
+  unique `idx_position_zobrist`. The import path must be audited so it does not
+  rely on the constraint error.
+- **D2 — uniform transaction model.** `MatchStore.DeleteCascade` drops its
+  explicit `tx Tx` parameter (`DeleteCascade(ctx, scope, id)`); `Tx` already
+  embeds `Stores`. Applied in PR3. No cross-family operation needs a
+  caller-passed `Tx`.
+- **D3 — schema bootstrap moves forward to PR2** (was PR6), so PR2 is testable
+  against a real schema on an empty `:memory:` DB. The 1.0→2.7 migration chain
+  stays in PR6.
+- **D4 — `SearchStore.Find` is ported whole in PR2.** `LoadPositionsByFiltersCore`
+  is one tightly-coupled algorithm; "search basics" means port it entire, not
+  carve a subset.
+- **D5 — shared `*sql.DB`.** `sqlite` exposes `Open(ctx,dsn,opts)` (owns the
+  handle) and `New(db)` (borrows it; `Close` is a no-op). The `Database` wrapper
+  rebuilds its `Storage` at the end of `SetupDatabase`/`OpenDatabase`.
+- **D6 — `Storage.Version()` delegates to `MetadataStore.Version()`.** Both kept.
+- **D7 — DTO policy.** Wrapper keeps its `database.*` return types (Wails-bound);
+  it converts `storage.X ↔ database.X` at the delegation boundary. No promotion
+  to `domain` in P2.
+- **D8 — shared helpers extracted.** `populatePositionColumns`, the compact-board
+  codec and the `*Database`-receiver search helpers move out of `database` (it
+  imports `storage/sqlite`, so `storage/sqlite` cannot import it back).
+- **D9 — shared pragmas.** Pragma list (incl. `foreign_keys=ON`) moves to a
+  shared `sqlite` function used by both `Open` and the wrapper.
+- **D10 — `LoadPositionsByFiltersCore` stays a private wrapper method** until
+  PR5; only the Wails-bound `LoadPositionsByFilters` delegates to `Find` in PR2.
+
 ## Splitting into 6 PRs
 
 | PR | Scope |
 |---|---|
-| 1 | `storage.go` + `tx.go` + sub-interface definitions (no impl). `storage/errors.go`. `contract_test.go` skeleton. |
-| 2 | SQLite impl: positions + analyses + search basics. Wire `Database` wrapper to delegate to `Storage` for these families. |
-| 3 | SQLite impl: matches + games + moves + move_analyses (cascade behaviour). Tournaments. |
-| 4 | SQLite impl: collections + comments + anki. |
-| 5 | SQLite impl: filters + session + search-history + command-history + metadata. |
-| 6 | SQLite impl: stats + migrations + schema bootstrap. `Database` wrapper fully delegating; pull out the last direct `*sql.DB` usage from `Database`. |
+| 1 | `storage.go` + `tx.go` + sub-interface definitions (no impl). `storage/errors.go`. `storagetest/contract.go` skeleton. **Done (`c8bcfc1e`).** |
+| 2 | Shared-helper extraction (D8). SQLite schema bootstrap (D3). SQLite impl: positions + analyses + full search (D4). `sqlite.Open`/`New` (D5), shared pragmas (D9). Wire `Database` to delegate the positions/analyses/search families. Contract tests for positions/analyses/search/tx. **Done.** |
+| 3 | SQLite impl: matches + games + moves + move_analyses (cascade behaviour). Tournaments. Apply the `DeleteCascade` amendment (D2). |
+| 4 | SQLite impl: collections + comments + anki. DTO conversion helpers (D7). |
+| 5 | SQLite impl: filters + session + search-history + command-history + metadata. `Storage.Version` delegates (D6). Switch `LoadPositionsByFiltersCore` (D10). |
+| 6 | SQLite impl: stats + migrations + schema-version finalisation. `Database` wrapper fully delegating; pull out the last direct `*sql.DB` usage from `Database`. |
 
 ## Gotchas specific to blunderDB
 
-1. **`PositionExists` (`db_position.go:8`) is currently not used inside
-   `SavePosition`** — that path does an `INSERT … ON CONFLICT DO NOTHING`
-   keyed on Zobrist. Audit who calls `PositionExists` separately and what
-   it expects.
+1. **`PositionExists` (`db_position.go:10`) is currently not used inside
+   `SavePosition`.** `SavePosition` does a plain `INSERT` (no `ON CONFLICT`),
+   so a duplicate Zobrist hash would violate the unique `idx_position_zobrist`.
+   Per D1, `PositionStore.Save` introduces the `ON CONFLICT DO NOTHING` dedup.
+   `PositionExists` itself does a full-table JSON comparison (not a Zobrist
+   lookup) — keep it on raw SQL in PR2; audit its callers separately.
 2. **`analysis.data` is zlib-compressed**. Compress/decompress lives in
    helpers, not on the interface. The interface returns
    `*domain.Analysis` already decompressed.
