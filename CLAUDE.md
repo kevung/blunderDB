@@ -72,7 +72,7 @@ All backend Go files are in the repo root in a single `main` package:
   - `db_match.go`, `db_tournament.go`, `db_collection.go`, `db_comment.go`, `db_anki.go`, `db_session.go`, `db_met.go` — domain-specific persistence.
   - `db_search.go`, `db_filter_match.go`, `db_stats.go` — query, filter, and aggregate logic.
   - `db_import_*.go` and `db_export.go` — import/export pipelines for XG, GnuBG, BGF, native `.db`, and JSON.
-- `cli.go` — `CLI` struct implementing the subcommands (`import`, `export`, `search`, `list`, `delete`, …). Shares the `Database` implementation with the GUI.
+- `cli.go` — `CLI` struct, `Run` dispatcher, shared helpers (`parseIDList`, `initDatabase`, usage/version). Each subcommand lives in its own `cli_<cmd>.go` (`cli_import.go`, `cli_export.go`, `cli_list.go`, `cli_search.go`, `cli_match.go`, `cli_verify.go`, `cli_create.go`, `cli_delete.go`, `cli_info.go`, `cli_edit.go`). Shares the `Database` implementation with the GUI.
 - `model.go` — shared domain types (`Position`, `Board`, `Cube`, `Match`, `Game`, `Move`, `PositionAnalysis`, FSRS `AnkiCard`/`AnkiDeck`, `Tournament`, …) plus constants like `DatabaseVersion`, color/bar indices, decision-type enums.
 - `epc.go` — Effective Pip Count engine; embeds `gnubg_os6.bd` (one-sided 6-point bearoff DB) via `//go:embed`.
 - `config.go` — `Config` struct persisted as JSON at XDG config path `blunderDB/config.yaml` (window size, last DB path).
