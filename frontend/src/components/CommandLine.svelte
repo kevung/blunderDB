@@ -36,30 +36,26 @@
 
     let initialized = false;
 
-    // Subscribe to the stores
-    let positions = [];
-    positionsStore.subscribe((value) => (positions = value));
+    // Read-only mirrors of stores — always current when read in handlers/commands
+    let positions = $derived($positionsStore);
+    let databaseLoaded = $derived($databaseLoadedStore);
+    let commandHistory = $derived($commandHistoryStore);
 
-    let databaseLoaded = false;
-    databaseLoadedStore.subscribe((value) => (databaseLoaded = value));
-
-    let commandHistory = [];
     let historyIndex = -1;
 
-    commandHistoryStore.subscribe((value) => (commandHistory = value));
-
-    activeModal.subscribe(async (value) => {
+    // Focus + load history when command modal opens; remove click-outside listener when closed
+    $effect(() => {
+        const value = $activeModal;
         if (value === MODAL.COMMAND) {
             commandTextStore.set('');
             setTimeout(() => {
                 inputEl?.focus();
             }, 0);
             window.addEventListener('click', handleClickOutside);
-
-            // Load command history from the database
-            const history = await LoadCommandHistory();
-            commandHistoryStore.set((history || []).reverse()); // Reverse the order of history
-            historyIndex = -1; // Start at the end of the history
+            LoadCommandHistory().then((history) => {
+                commandHistoryStore.set((history || []).reverse());
+                historyIndex = -1;
+            });
         } else {
             window.removeEventListener('click', handleClickOutside);
         }
