@@ -3,7 +3,6 @@
     import { onMount, onDestroy } from 'svelte';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { openPanels, PANEL, closePanel, statusBarTextStore, activeTabStore, currentPositionIndexStore } from '../stores/uiStore';
-    import { databaseLoadedStore } from '../stores/databaseStore';
     import { SaveFilter, UpdateFilter, DeleteFilter, LoadFilters, SaveEditPosition, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore'; // Import command history store
@@ -11,70 +10,54 @@
 
     let { onLoadPositionsByFilters } = $props();
 
-    let filters = $state([]);
+    // Read-only mirrors of stores
+    let filters = $derived($filterLibraryStore || []);
+    let visible = $derived($openPanels.has(PANEL.FILTER_LIBRARY));
+    let commandHistory = $derived($commandHistoryStore.filter((command) => command.startsWith('s ') || command === 's'));
+    let searchHistory = $derived($searchHistoryStore);
+
     let filterName = $state('');
     let filterCommand = $state('');
     let selectedFilter = $state(null);
-    let visible = $state(false);
-
-    let _databaseLoaded = false;
-    let editPosition = ''; // Add editPosition variable
-    let commandHistory = [];
-    let searchHistory = [];
+    let editPosition = '';
     let historyIndex = -1;
 
-    filterLibraryStore.subscribe((value) => {
-        filters = value || [];
-    });
-
-    databaseLoadedStore.subscribe((value) => {
-        _databaseLoaded = value;
-    });
-
-    openPanels.subscribe(async (value) => {
-        const wasVisible = visible;
-        visible = value.has(PANEL.FILTER_LIBRARY);
-        if (visible && !wasVisible) {
-            // Panel just opened
-            await loadFilters();
-        } else if (!visible && wasVisible) {
-            // Panel just closed - restore previous position if a filter was selected
-            if (selectedFilter) {
-                // Restore the position and index that was displayed before selecting any filter
-                if ($positionBeforeFilterLibraryStore) {
-                    positionStore.set($positionBeforeFilterLibraryStore);
+    // Load filters when panel opens; restore position when it closes
+    let _prevVisible = false;
+    $effect(() => {
+        const v = $openPanels.has(PANEL.FILTER_LIBRARY);
+        if (v !== _prevVisible) {
+            if (v) {
+                loadFilters();
+            } else {
+                if (selectedFilter) {
+                    if ($positionBeforeFilterLibraryStore) {
+                        positionStore.set($positionBeforeFilterLibraryStore);
+                    }
+                    if ($positionIndexBeforeFilterLibraryStore >= 0) {
+                        const savedIndex = $positionIndexBeforeFilterLibraryStore;
+                        currentPositionIndexStore.set(-1);
+                        currentPositionIndexStore.set(savedIndex);
+                    }
                 }
-                if ($positionIndexBeforeFilterLibraryStore >= 0) {
-                    const savedIndex = $positionIndexBeforeFilterLibraryStore;
-                    currentPositionIndexStore.set(-1); // Force redraw
-                    currentPositionIndexStore.set(savedIndex);
-                }
+                selectedFilter = null;
+                filterName = '';
+                filterCommand = '';
+                editPosition = '';
+                positionBeforeFilterLibraryStore.set(null);
+                positionIndexBeforeFilterLibraryStore.set(-1);
             }
-            // Clear selection and saved position/index
-            selectedFilter = null;
-            filterName = '';
-            filterCommand = '';
-            editPosition = '';
-            positionBeforeFilterLibraryStore.set(null);
-            positionIndexBeforeFilterLibraryStore.set(-1);
+            _prevVisible = v;
         }
     });
 
     // Update saved position when browsing positions (only if no filter is selected)
-    currentPositionIndexStore.subscribe((value) => {
+    $effect(() => {
+        const value = $currentPositionIndexStore;
         if (visible && !selectedFilter && value >= 0) {
-            // Update the saved position as user browses
             positionBeforeFilterLibraryStore.set(JSON.parse(JSON.stringify($positionStore)));
             positionIndexBeforeFilterLibraryStore.set(value);
         }
-    });
-
-    commandHistoryStore.subscribe((value) => {
-        commandHistory = value.filter((command) => command.startsWith('s ') || command === 's'); // Filter commands
-    });
-
-    searchHistoryStore.subscribe((value) => {
-        searchHistory = value;
     });
 
     async function loadFilters() {
