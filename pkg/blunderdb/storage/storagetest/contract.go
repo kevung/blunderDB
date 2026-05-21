@@ -43,7 +43,7 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Match/CreateGameMoveCascade", testMatchCreateGameMove},
 		{"Match/DeleteCascade", testMatchDeleteCascade},
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
-		{"Collection/MoveBetweenCollections", nil},
+		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
 		{"Anki/ReviewUpdatesScheduling", nil},
 		{"Filter/SaveAndList", nil},
 		{"Session/SaveLoadEmpty", nil},
@@ -431,6 +431,69 @@ func testSearchFilterByDecisionType(t *testing.T, s storage.Storage) {
 	}
 	if got[0].DecisionType != domain.CheckerAction {
 		t.Errorf("filtered position DecisionType: got %d, want %d", got[0].DecisionType, domain.CheckerAction)
+	}
+}
+
+func testCollectionMoveBetween(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	cp := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &cp)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+
+	src, err := s.Collections().Create(ctx, "", "src", "source")
+	if err != nil {
+		t.Fatalf("Create src: %v", err)
+	}
+	dst, err := s.Collections().Create(ctx, "", "dst", "destination")
+	if err != nil {
+		t.Fatalf("Create dst: %v", err)
+	}
+
+	if err := s.Collections().AddPosition(ctx, "", src, posID); err != nil {
+		t.Fatalf("AddPosition: %v", err)
+	}
+	// Adding the same position twice is a no-op, not an error.
+	if err := s.Collections().AddPosition(ctx, "", src, posID); err != nil {
+		t.Fatalf("AddPosition again: %v", err)
+	}
+	if c, _ := s.Collections().Get(ctx, "", src); c.PositionCount != 1 {
+		t.Errorf("src count after add: got %d, want 1", c.PositionCount)
+	}
+
+	if err := s.Collections().MovePosition(ctx, "", src, dst, posID); err != nil {
+		t.Fatalf("MovePosition: %v", err)
+	}
+	if c, _ := s.Collections().Get(ctx, "", src); c.PositionCount != 0 {
+		t.Errorf("src count after move: got %d, want 0", c.PositionCount)
+	}
+	if c, _ := s.Collections().Get(ctx, "", dst); c.PositionCount != 1 {
+		t.Errorf("dst count after move: got %d, want 1", c.PositionCount)
+	}
+
+	// The moved position is reachable through the destination collection.
+	var ids []int64
+	for p, err := range s.Collections().Positions(ctx, "", dst) {
+		if err != nil {
+			t.Fatalf("Positions: %v", err)
+		}
+		ids = append(ids, p.ID)
+	}
+	if len(ids) != 1 || ids[0] != posID {
+		t.Errorf("dst positions: got %v, want [%d]", ids, posID)
+	}
+
+	// CollectionsOf reflects the new membership only.
+	var cols []int64
+	for c, err := range s.Collections().CollectionsOf(ctx, "", posID) {
+		if err != nil {
+			t.Fatalf("CollectionsOf: %v", err)
+		}
+		cols = append(cols, c.ID)
+	}
+	if len(cols) != 1 || cols[0] != dst {
+		t.Errorf("CollectionsOf: got %v, want [%d]", cols, dst)
 	}
 }
 
