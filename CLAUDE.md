@@ -46,7 +46,7 @@ go test ./tests/...               # the secondary test package
 go test -run TestNameRegex ./...  # single test
 ```
 
-Tests live both at the repo root (same `main` package as the app — e.g. `migration_test.go`, `export_test.go`, `gnubg_import_test.go`) and in `./tests/` (separate package for integration-style tests using fixtures in `testdata/`). Many tests rely on fixture files under `testdata/`, `gnubg/`, and on the embedded `gnubg_os6.bd` bearoff database.
+Tests live in the package directories alongside the code they exercise — most are in `pkg/blunderdb/database/` (e.g. `migration_test.go`, `export_test.go`, `gnubg_import_test.go`), with others in `pkg/blunderdb/engine/`, `internal/cli/`, and `./tests/` (integration-style). Many tests rely on fixture files under `testdata/`, `gnubg/`, and on the embedded `gnubg_os6.bd` bearoff database; the `database` and `cli` test packages `chdir` to the repo root via a `TestMain` so those repo-root-relative paths resolve.
 
 ## Documentation
 
@@ -54,35 +54,63 @@ Sphinx docs live under `doc/` (French + English). Build with `cd doc && python b
 
 ## Release Process
 
-Use `scripts/release.sh <version>` — it updates the version string in three places (`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, optionally `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the tag triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. The `DatabaseVersion` constant in `model.go` is independent — bump it only when the SQLite schema changes (migrations live in `db.go`).
+Use `scripts/release.sh <version>` — it updates the version string in three places (`doc/source/conf.py`, `frontend/src/stores/metaStore.js`, optionally `doc/source/index.rst` changelog) and creates a commit + tag. Pushing the tag triggers the CI matrix build and publishes binaries/PDFs as a GitHub release. The `DatabaseVersion` constant in `pkg/blunderdb/domain/` is independent — bump it only when the SQLite schema changes (migrations live in `pkg/blunderdb/database/db_migration.go`).
 
 ## Architecture
 
-### Backend (Go, package `main`)
+### Backend (Go)
 
-All backend Go files are in the repo root in a single `main` package:
+The backend is split into importable packages under `pkg/blunderdb/` and
+`internal/`, plus a thin `package main` at the repo root. (The split is the
+result of the `tasks/headless/` P1 refactor; the `aliases.go` shims noted
+below are transitional re-exports.)
 
-- `main.go` — entry point; dispatches CLI vs GUI, wires Wails `Bind` for `App`, `Database`, `Config`.
-- `app.go` — `App` struct, bound to the frontend. Exposes file/directory dialogs, drag-drop file reading, clipboard (xclip/wl-copy on Linux, osascript on macOS, PowerShell on Windows), and alerts via Wails runtime.
-- `db.go` — `Database` struct and connection lifecycle (`NewDatabase`, `SetupDatabase`, `OpenDatabase`, `applyPragmas`). Uses `modernc.org/sqlite` (pure-Go SQLite, no CGO). In GUI mode the DB is opened in-memory (`:memory:`) and loaded from / saved to a user-chosen `.db` file via the dialogs in `app.go`. The actual domain logic is split into the sibling `db_*.go` files:
-  - `db_schema.go` — table/index DDL (`ensureAllTablesExist`).
-  - `db_migration.go` — `CheckVersion` and per-version upgrade paths.
-  - `db_position.go` — position storage, canonical-hash dedup, scalar-column denormalization.
-  - `db_analysis.go` — analysis storage and compressed equity blobs.
-  - `db_match.go`, `db_tournament.go`, `db_collection.go`, `db_comment.go`, `db_anki.go`, `db_session.go`, `db_met.go` — domain-specific persistence.
-  - `db_search.go`, `db_filter_match.go`, `db_stats.go` — query, filter, and aggregate logic.
-  - `db_import_*.go` and `db_export.go` — import/export pipelines for XG, GnuBG, BGF, native `.db`, and JSON.
-- `cli.go` — `CLI` struct, `Run` dispatcher, shared helpers (`parseIDList`, `initDatabase`, usage/version). Each subcommand lives in its own `cli_<cmd>.go` (`cli_import.go`, `cli_export.go`, `cli_list.go`, `cli_search.go`, `cli_match.go`, `cli_verify.go`, `cli_create.go`, `cli_delete.go`, `cli_info.go`, `cli_edit.go`). Shares the `Database` implementation with the GUI.
-- `model.go` — shared domain types (`Position`, `Board`, `Cube`, `Match`, `Game`, `Move`, `PositionAnalysis`, FSRS `AnkiCard`/`AnkiDeck`, `Tournament`, …) plus constants like `DatabaseVersion`, color/bar indices, decision-type enums.
-- `epc.go` — Effective Pip Count engine; embeds `gnubg_os6.bd` (one-sided 6-point bearoff DB) via `//go:embed`.
-- `config.go` — `Config` struct persisted as JSON at XDG config path `blunderDB/config.yaml` (window size, last DB path).
+- **Repo root (`package main`)** — `main.go` dispatches CLI vs GUI and holds
+  the Wails `//go:embed` directives (`frontend/dist`, app icon); `config.go`
+  is the `Config` struct (XDG-persisted JSON at `blunderDB/config.yaml`:
+  window size, last DB path); `logging.go` configures `slog`. `main.go`
+  stays at the repo root because Wails builds the `main` package from the
+  project root and `//go:embed` patterns cannot use parent paths.
+- **`pkg/blunderdb/domain/`** (`package domain`) — dependency-free domain
+  types (`Position`, `Board`, `Cube`, `Match`, `Game`, `Move`,
+  `PositionAnalysis`, FSRS `AnkiCard`/`AnkiDeck`, `Tournament`, …),
+  constants (`DatabaseVersion`, color/bar indices, decision-type enums) and
+  the pure `Position` predicate methods.
+- **`pkg/blunderdb/engine/`** (`package engine`) — `bitboards.go`,
+  `zobrist.go`, and `epc.go` (the Effective Pip Count engine, which embeds
+  `gnubg_os6.bd` via `//go:embed`). Imports only `domain`.
+- **`pkg/blunderdb/database/`** (`package database`) — the `Database` struct
+  and the whole persistence layer:
+  - `db.go` — connection lifecycle (`NewDatabase`, `SetupDatabase`,
+    `OpenDatabase`, `applyPragmas`, `Conn`, `Close`). Uses
+    `modernc.org/sqlite` (pure-Go SQLite, no CGO). In GUI mode the DB is
+    opened in-memory (`:memory:`) and loaded from / saved to a user-chosen
+    `.db` file.
+  - `db_schema.go` — table/index DDL. `db_migration.go` — `CheckVersion`
+    and per-version upgrade paths.
+  - `db_position.go`, `db_analysis.go`, `db_match.go`, `db_tournament.go`,
+    `db_collection.go`, `db_comment.go`, `db_anki.go`, `db_session.go`,
+    `db_met.go` — domain-specific persistence.
+  - `db_search.go`, `db_filter_match.go`, `db_stats.go` — query, filter and
+    aggregate logic.
+  - `db_import_*.go` and `db_export.go` — import/export pipelines for XG,
+    GnuBG, BGF, native `.db`, and JSON.
+  - `aliases.go` re-exports `domain` names into the package.
+- **`internal/gui/`** (`package gui`) — `app.go` (`App` struct, bound to the
+  frontend: file/directory dialogs, drag-drop file reading, clipboard via
+  xclip/wl-copy/osascript/PowerShell, alerts) and `run.go` (the Wails
+  bootstrap that wires `Bind`).
+- **`internal/cli/`** (`package cli`) — `cli.go` (`CLI` struct, `Run`
+  dispatcher, shared helpers) and one `cli_<cmd>.go` per subcommand
+  (`cli_import.go`, `cli_export.go`, `cli_list.go`, …); `aliases.go`
+  re-exports `domain`/`database` names.
 
 Match/position import parsers are **external modules** (own repos under `github.com/kevung/…`): `xgparser` (eXtreme Gammon `.xg`/`.xgp`), `gnubgparser` (GnuBG `.sgf`), `bgfparser` (BGBlitz `.bgf`). Jellyfish `.mat` parsing is handled in this repo. Position text files are a JSON-per-line format produced by the app itself.
 
 Key backend invariants worth knowing before editing:
-- Positions are stored with a canonical SHA-256 hash (see `canonical_hash_test.go`) to dedup across imports — always go through `SavePosition`, which handles the lookup.
+- Positions are stored with a canonical hash (Zobrist; see `pkg/blunderdb/database/canonical_hash_test.go`) to dedup across imports — always go through `SavePosition`, which handles the lookup.
 - A single mutex (`Database.mu`) serializes writes; import cancellation uses an atomic flag (`importCancelled`).
-- Schema changes require incrementing `DatabaseVersion` in `model.go` **and** adding a migration path (`CheckVersion` in `db_migration.go`, table/index DDL in `db_schema.go`). Cover the migration with a test in `migration_test.go`.
+- Schema changes require incrementing `DatabaseVersion` in `pkg/blunderdb/domain/` **and** adding a migration path (`CheckVersion` in `db_migration.go`, table/index DDL in `db_schema.go`). Cover the migration with a test in `pkg/blunderdb/database/migration_test.go`.
 
 ### Frontend (Svelte 5 + Vite, in `frontend/`)
 
@@ -90,7 +118,7 @@ Key backend invariants worth knowing before editing:
 - `frontend/src/stores/` — Svelte stores, one per feature area (positions, analysis, collection, tournament, Anki, EPC, search history, UI, gammon/takepoint tables, etc.). Cross-component state lives here, not in props.
 - `frontend/src/commandProcessor.js` — parses the in-app command line (see `CommandLine.svelte`); a large source of user-facing behavior.
 - `frontend/src/components/Board.svelte` — board rendering uses `two.js`.
-- `frontend/wailsjs/` — **auto-generated** Go↔JS bindings. Do not hand-edit. They regenerate when `wails dev`/`wails build` sees changes to exported methods on bound structs (`App`, `Database`, `Config`). After adding a backend method, restart `wails dev` so the `.js`/`.d.ts` in `wailsjs/go/main/` are refreshed.
+- `frontend/wailsjs/` — **auto-generated** Go↔JS bindings. Do not hand-edit. They regenerate when `wails dev`/`wails build` sees changes to exported methods on bound structs. The bound structs live in different packages, so the bindings are namespaced by package: `App` → `wailsjs/go/gui/`, `Database` → `wailsjs/go/database/`, `Config` → `wailsjs/go/main/`. After adding a backend method, restart `wails dev` so the `.js`/`.d.ts` are refreshed.
 
 ### Svelte 5 — store/effect rule
 
@@ -98,7 +126,7 @@ In this project, any store access inside a Svelte 5 component **must** use the a
 
 ### CLI/GUI parity
 
-The CLI reuses the same `Database` methods the GUI calls over Wails. When adding DB functionality, prefer putting the logic on `Database` in `db.go` and exposing it from both `cli.go` (as a subcommand) and the frontend (it will auto-bind). Don't fork logic between a CLI-only helper and a GUI-only method.
+The CLI reuses the same `Database` methods the GUI calls over Wails. When adding DB functionality, prefer putting the logic on `Database` in `pkg/blunderdb/database/` and exposing it from both `internal/cli/` (as a subcommand) and the frontend (it will auto-bind). Don't fork logic between a CLI-only helper and a GUI-only method.
 
 ## Notes & Gotchas
 
