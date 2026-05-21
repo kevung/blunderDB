@@ -12,6 +12,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
 	"github.com/kevung/gnubgparser"
 	"github.com/kevung/xgparser/xgparser"
 )
@@ -230,13 +231,8 @@ func mergePlayedMoves(existing, incoming []string) []string {
 	return result
 }
 
-// normalizeMove normalizes a move string for comparison
-// "5/2 5/4" and "5/4 5/2" are the same move but in different order
-func normalizeMove(move string) string {
-	parts := strings.Fields(move)
-	sort.Strings(parts)
-	return strings.Join(parts, " ")
-}
+// normalizeMove is re-exported from package engine (see analysiscodec.go).
+var normalizeMove = engine.NormalizeMove
 
 // saveAnalysisInTx saves a PositionAnalysis within a transaction, merging with existing analysis if present
 func (d *Database) saveAnalysisInTx(tx *sql.Tx, positionID int64, analysis PositionAnalysis) error {
