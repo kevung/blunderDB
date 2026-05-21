@@ -17,7 +17,9 @@ import (
 	tcpg "github.com/testcontainers/testcontainers-go/modules/postgres"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage"
 	pg "github.com/kevung/blunderdb/pkg/blunderdb/storage/postgres"
+	"github.com/kevung/blunderdb/pkg/blunderdb/storage/storagetest"
 )
 
 // startPostgres boots a throwaway PostgreSQL 16 container and returns its DSN.
@@ -141,6 +143,38 @@ func TestMigrateIdempotent(t *testing.T) {
 	}
 	if err := s.Migrate(ctx); err != nil {
 		t.Fatalf("second Migrate: %v", err)
+	}
+}
+
+// TestContract_Postgres runs the backend-agnostic storage contract suite
+// against PostgreSQL. The factory drops and recreates the public schema before
+// each case so every case starts from a freshly bootstrapped database, the
+// same isolation an in-memory SQLite database gives for free.
+func TestContract_Postgres(t *testing.T) {
+	ctx := context.Background()
+	dsn := startPostgres(t)
+	storagetest.RunContractTests(t, func() storage.Storage {
+		resetPublicSchema(t, dsn)
+		s, err := pg.Open(ctx, dsn, nil)
+		if err != nil {
+			t.Fatalf("Open: %v", err)
+		}
+		return s
+	})
+}
+
+// resetPublicSchema drops every object in the public schema, giving the next
+// pg.Open a fresh database to bootstrap.
+func resetPublicSchema(t *testing.T, dsn string) {
+	t.Helper()
+	ctx := context.Background()
+	conn, err := pgx.Connect(ctx, dsn)
+	if err != nil {
+		t.Fatalf("reset connect: %v", err)
+	}
+	defer conn.Close(ctx)
+	if _, err := conn.Exec(ctx, `DROP SCHEMA public CASCADE; CREATE SCHEMA public`); err != nil {
+		t.Fatalf("reset schema: %v", err)
 	}
 }
 

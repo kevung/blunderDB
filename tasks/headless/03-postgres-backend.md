@@ -138,7 +138,7 @@ require github.com/testcontainers/testcontainers-go/modules/postgres v0.x
 | PR | Scope |
 |---|---|
 | 1 | **Done.** Skeleton: `postgres.go` (Open, Close, `pgxpool`), `migrations/001_initial_v2_7_0.sql` + `README.md`, `schema_postgres.go` bootstrap, `tx_postgres.go`, `RLS.md`, `doc.go`, all 14 family stores stubbed (return a `not implemented` error wrapping `storage.ErrInternal`). Migration test (`postgres_test.go`, `//go:build postgres`) provisions PostgreSQL 16 via `testcontainers-go` and verifies the 16 tables, 23 indexes, `tenant_id` columns and the `database_version` row. The full contract suite is wired in PR2 once positions/analyses land. |
-| 2 | Positions + analyses. Unique index `(tenant_id, zobrist_hash)`. Denormalized columns. |
+| 2 | **Done.** Positions + analyses **+ search** (`searchStore.Find`). Unique index `(tenant_id, zobrist_hash)`, denormalized columns. Search was bundled in (the task row originally read "Positions + analyses" but omitted search — the SQLite P2 PR2 bundled the same three, and `TestContract_Postgres` needs `Search` to run green). `?`→`$N` placeholder rebinding via `rebind`; filter helpers ported into `search_helpers_postgres.go`. `TestContract_Postgres` runs the shared contract suite (positions/analyses/search/tx green; other families still skip). |
 | 3 | Matches + games + moves + move_analyses (cascade behaviour). |
 | 4 | Tournaments + collections + collection_position. |
 | 5 | Comments + anki_deck + anki_card. |
