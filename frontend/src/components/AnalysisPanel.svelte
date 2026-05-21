@@ -327,7 +327,7 @@
             if (movePositions[i].move_type === 'cube') {
                 // Load analysis for this cube position
                 try {
-                    const { LoadAnalysis } = await import('../../wailsjs/go/main/Database.js');
+                    const { LoadAnalysis } = await import('../../wailsjs/go/database/Database.js');
                     const cubeAnalysis = await LoadAnalysis(movePositions[i].position.id);
                     if (cubeAnalysis && cubeAnalysis.doublingCubeAnalysis) {
                         // Update only the cube analysis part

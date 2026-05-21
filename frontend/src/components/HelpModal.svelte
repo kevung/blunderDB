@@ -5,7 +5,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { fade } from 'svelte/transition';
     import { metaStore } from '../stores/metaStore'; // Import metaStore
-    import { GetDatabaseVersion } from '../../wailsjs/go/main/Database'; // Correct import path
+    import { GetDatabaseVersion } from '../../wailsjs/go/database/Database'; // Correct import path
 
     let { visible = false, onClose, handleGlobalKeydown } = $props();
 

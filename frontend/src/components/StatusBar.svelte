@@ -12,7 +12,7 @@
     import { takePoint4LiveTable } from '../stores/takePoint4LiveTable';
     import { takePoint4LastTable } from '../stores/takePoint4LastTable';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
-    import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/main/Database.js';
+    import { LoadCommandHistory, SaveCommand } from '../../wailsjs/go/database/Database.js';
     import { get } from 'svelte/store';
 
     /** @type {function(string): void} */

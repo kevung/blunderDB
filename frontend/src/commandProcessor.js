@@ -4,9 +4,9 @@ import { positionsStore, positionStore } from './stores/positionStore';
 import { databaseLoadedStore } from './stores/databaseStore';
 import { commandHistoryStore } from './stores/commandHistoryStore';
 import { searchHistoryStore } from './stores/searchHistoryStore';
-import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wailsjs/go/main/Database.js';
-import { SaveSearchHistory } from '../wailsjs/go/main/Database.js';
-import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/main/Database.js';
+import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wailsjs/go/database/Database.js';
+import { SaveSearchHistory } from '../wailsjs/go/database/Database.js';
+import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/database/Database.js';
 import { logger } from './utils/logger.js';
 
 let callbacks = {};

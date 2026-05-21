@@ -14,7 +14,7 @@ import { render, cleanup } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 // ── Wails mock ───────────────────────────────────────────────────────────────
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetAllMatches: vi.fn(() => Promise.resolve([])),
     GetAllTournaments: vi.fn(() => Promise.resolve([])),
     DeleteMatch: vi.fn(() => Promise.resolve()),
@@ -36,7 +36,7 @@ import { lastVisitedMatchStore } from '../stores/positionStore.js';
 import { tournamentsStore } from '../stores/tournamentStore.js';
 
 // ── DB mock ref (pour vérifier les appels) ────────────────────────────────────
-import { GetAllMatches } from '../../wailsjs/go/main/Database.js';
+import { GetAllMatches } from '../../wailsjs/go/database/Database.js';
 
 // ── Composant ────────────────────────────────────────────────────────────────
 import MatchPanel from '../components/MatchPanel.svelte';

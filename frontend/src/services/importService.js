@@ -25,7 +25,7 @@ import {
     ImportBGFPosition,
     ImportBGFPositionFromText,
     ImportXGPPosition
-} from '../../wailsjs/go/main/Database.js';
+} from '../../wailsjs/go/database/Database.js';
 import { ClipboardGetText } from '../../wailsjs/runtime/runtime.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';

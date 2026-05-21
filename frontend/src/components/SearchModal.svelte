@@ -4,7 +4,7 @@
     import { onMount, onDestroy } from 'svelte';
     import { positionStore, positionsStore } from '../stores/positionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
-    import { SaveSearchHistory } from '../../wailsjs/go/main/Database.js';
+    import { SaveSearchHistory } from '../../wailsjs/go/database/Database.js';
 
     let { visible = false, onClose, onLoadPositionsByFilters } = $props();
 

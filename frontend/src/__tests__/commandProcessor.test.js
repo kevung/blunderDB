@@ -2,7 +2,7 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
 // Mock Wails bindings before importing commandProcessor
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     SaveComment: vi.fn().mockResolvedValue(undefined),
     Migrate_1_0_0_to_1_1_0: vi.fn().mockResolvedValue(undefined),
     Migrate_1_1_0_to_1_2_0: vi.fn().mockResolvedValue(undefined),

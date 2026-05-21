@@ -180,7 +180,7 @@ func (cli *CLI) runSearch(args []string) error {
 
 	// Use the core implementation to get analysis data in the same query, avoiding
 	// per-row LoadAnalysis calls for errorMin and hasAnalysis filtering.
-	positions, analysisMap, err := cli.db.loadPositionsByFiltersCore(SearchFilters{
+	positions, analysisMap, err := cli.db.LoadPositionsByFiltersCore(SearchFilters{
 		Filter:                  filter,
 		IncludeCube:             includeCube,
 		IncludeScore:            includeScore,

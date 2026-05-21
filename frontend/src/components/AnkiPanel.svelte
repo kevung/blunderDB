@@ -23,7 +23,7 @@
         ResetAnkiDeck,
         GetAllCollections,
         LoadPositionsByFilters
-    } from '../../wailsjs/go/main/Database.js';
+    } from '../../wailsjs/go/database/Database.js';
 
     // Read-only mirrors of stores — declared as $derived so Svelte tracks
     // dependencies via $store reads (the project rule, see CLAUDE.md).

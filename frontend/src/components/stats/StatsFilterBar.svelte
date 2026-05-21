@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { statsFilterStore, statsMetricStore } from '../../stores/statsStore.js';
-    import { GetAllPlayerNames, GetAllTournaments, GetStatsDateRange } from '../../../wailsjs/go/main/Database.js';
+    import { GetAllPlayerNames, GetAllTournaments, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
     import { GetStatsFilter, SaveStatsFilter } from '../../../wailsjs/go/main/Config.js';
 
     /** @type {Array<{Name: string, Count: number}>} */

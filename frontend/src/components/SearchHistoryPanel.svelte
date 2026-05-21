@@ -4,7 +4,7 @@
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { positionStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
     import { statusBarTextStore, openPanels, PANEL, closePanel, currentPositionIndexStore } from '../stores/uiStore';
-    import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/main/Database.js';
+    import { LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters } from '../../wailsjs/go/database/Database.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 

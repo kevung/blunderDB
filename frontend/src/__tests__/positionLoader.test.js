@@ -2,7 +2,7 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
 // Mock Wails Database binding
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn(),
     GetPositionIDsByTournament: vi.fn(),
     GetPositionIDsByMatch: vi.fn(),
@@ -50,7 +50,7 @@ vi.mock('../stores/positionStore.js', () => {
     };
 });
 
-import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionsByFilters } from '../../wailsjs/go/main/Database.js';
+import { GetPositionIDsByStatsSelection, GetPositionIDsByTournament, GetPositionIDsByMatch, LoadPositionsByFilters } from '../../wailsjs/go/database/Database.js';
 
 import {
     loadPositionsFromSelection,

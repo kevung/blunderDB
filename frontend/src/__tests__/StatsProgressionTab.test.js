@@ -3,7 +3,7 @@ import { get } from 'svelte/store';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     GetPositionIDsByStatsSelection: vi.fn().mockResolvedValue([]),
     GetPositionIDsByTournament: vi.fn().mockResolvedValue([10, 11, 12]),
     GetPositionIDsByMatch: vi.fn().mockResolvedValue([20, 21]),
@@ -38,7 +38,7 @@ vi.mock('../stores/positionStore.js', () => {
 });
 
 // Import after mocks
-import { GetPositionIDsByTournament, GetPositionIDsByMatch } from '../../wailsjs/go/main/Database.js';
+import { GetPositionIDsByTournament, GetPositionIDsByMatch } from '../../wailsjs/go/database/Database.js';
 import { activeTabStore } from '../stores/uiStore.js';
 import { selectedTournamentStore } from '../stores/tournamentStore.js';
 import { loadPositionsFromTournament, loadPositionsFromMatch, openTournamentInPanel } from '../services/positionLoader.js';

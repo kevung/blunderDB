@@ -14,7 +14,7 @@ import { render, cleanup } from '@testing-library/svelte';
 import { tick } from 'svelte';
 
 // ── Wails mocks ──────────────────────────────────────────────────────────────
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: vi.fn(() =>
         Promise.resolve({
             Totals: { NumPositions: 10, NumMatches: 1, NumTournaments: 0, NumDecisions: 10 },
@@ -42,7 +42,7 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore } from '../stores/statsStore.js';
 
 // ── DB mock ref (pour compter les appels) ────────────────────────────────────
-import { ComputeStats } from '../../wailsjs/go/main/Database.js';
+import { ComputeStats } from '../../wailsjs/go/database/Database.js';
 
 // ── Composant ────────────────────────────────────────────────────────────────
 import StatsPanel from '../components/stats/StatsPanel.svelte';

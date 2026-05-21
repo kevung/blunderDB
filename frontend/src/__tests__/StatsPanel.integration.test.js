@@ -15,7 +15,7 @@ import { get } from 'svelte/store';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: vi.fn(),
     GetPositionIDsByStatsSelection: vi.fn(),
     GetPositionIDsByTournament: vi.fn(),
@@ -59,7 +59,7 @@ vi.mock('../stores/positionStore.js', () => {
 
 // ── Imports (after mocks) ─────────────────────────────────────────────────────
 
-import { ComputeStats, GetPositionIDsByStatsSelection, GetPositionIDsByTournament, LoadPositionsByFilters } from '../../wailsjs/go/main/Database.js';
+import { ComputeStats, GetPositionIDsByStatsSelection, GetPositionIDsByTournament, LoadPositionsByFilters } from '../../wailsjs/go/database/Database.js';
 
 import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 

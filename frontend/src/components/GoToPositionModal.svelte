@@ -4,7 +4,7 @@
     import { positionsStore, matchContextStore, positionStore } from '../stores/positionStore'; // Import stores
     import { currentPositionIndexStore, statusBarModeStore, statusBarTextStore, commentTextStore } from '../stores/uiStore'; // Import stores
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
-    import { LoadAnalysis } from '../../wailsjs/go/main/Database.js';
+    import { LoadAnalysis } from '../../wailsjs/go/database/Database.js';
 
     let { visible = false, onClose } = $props();
 

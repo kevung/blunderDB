@@ -1,7 +1,7 @@
 /**
  * Helper to install/uninstall a Wails window.go mock for component tests.
  *
- * Prefer `vi.mock('../../wailsjs/go/main/Database.js', ...)` directly in each
+ * Prefer `vi.mock('../../wailsjs/go/database/Database.js', ...)` directly in each
  * test file (Vitest hoists it automatically). Use this helper only when you
  * need fine-grained per-test overrides at runtime.
  */

@@ -2,11 +2,11 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
 
 // Mock Wails Database binding
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: vi.fn()
 }));
 
-import { ComputeStats } from '../../wailsjs/go/main/Database.js';
+import { ComputeStats } from '../../wailsjs/go/database/Database.js';
 import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
 describe('statsStore — initial state', () => {

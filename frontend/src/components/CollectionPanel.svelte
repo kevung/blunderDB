@@ -20,7 +20,7 @@
         GetPositionCollections,
         GetPositionIndexMap,
         LoadAnalysis
-    } from '../../wailsjs/go/main/Database.js';
+    } from '../../wailsjs/go/database/Database.js';
 
     let { onOpenCollection } = $props();
 

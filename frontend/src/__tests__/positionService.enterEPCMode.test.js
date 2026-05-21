@@ -19,7 +19,7 @@ import { describe, test, expect, vi, beforeEach, afterEach } from 'vitest';
 import { get } from 'svelte/store';
 
 // ── Mocks Wails (doivent précéder les imports des modules qui les utilisent) ──
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadAllPositions: vi.fn(() => Promise.resolve([])),
     DeletePosition: vi.fn(),
     DeleteAnalysis: vi.fn(),

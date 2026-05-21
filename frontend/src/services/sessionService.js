@@ -1,5 +1,5 @@
 import { get } from 'svelte/store';
-import { SaveSessionState, LoadSessionState, LoadAllPositions } from '../../wailsjs/go/main/Database.js';
+import { SaveSessionState, LoadSessionState, LoadAllPositions } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionsStore } from '../stores/positionStore.js';

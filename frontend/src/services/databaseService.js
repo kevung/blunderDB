@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { SaveDatabaseDialog, OpenDatabaseDialog, DeleteFile } from '../../wailsjs/go/main/App.js';
-import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion } from '../../wailsjs/go/main/Database.js';
+import { SetupDatabase, CheckDatabaseVersion, OpenDatabase, GetDatabaseVersion } from '../../wailsjs/go/database/Database.js';
 import { WindowSetTitle, Quit } from '../../wailsjs/runtime/runtime.js';
 import { SaveLastDatabasePath } from '../../wailsjs/go/main/Config.js';
 

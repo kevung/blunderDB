@@ -2,7 +2,7 @@
     import { logger } from '../utils/logger.js';
     import { trapFocus } from '../utils/focusTrap.js';
     import { onMount, onDestroy } from 'svelte';
-    import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js'; // Import functions
+    import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/database/Database.js'; // Import functions
 
     let { visible = false, onClose } = $props();
 

@@ -1,5 +1,5 @@
 import { writable, derived, get } from 'svelte/store';
-import { ComputeStats } from '../../wailsjs/go/main/Database.js';
+import { ComputeStats } from '../../wailsjs/go/database/Database.js';
 import { databasePathStore } from './databaseStore.js';
 import { dbMutationCounterStore } from './uiStore.js';
 

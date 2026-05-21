@@ -6,7 +6,7 @@
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
-    import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition } from '../../wailsjs/go/main/Database.js';
+    import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition } from '../../wailsjs/go/database/Database.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 

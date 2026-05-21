@@ -4,7 +4,7 @@
 
     import { currentPositionIndexStore } from '../stores/uiStore';
     import { positionStore } from '../stores/positionStore';
-    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/main/Database.js';
+    import { GetCommentsByPosition, SearchComments, LoadAnalysis, LoadPosition, AddComment, UpdateCommentEntry, DeleteCommentEntry } from '../../wailsjs/go/database/Database.js';
     import { analysisStore, selectedMoveStore } from '../stores/analysisStore';
 
     let allComments = $state([]);

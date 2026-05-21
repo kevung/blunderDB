@@ -24,7 +24,7 @@ src/__tests__/
 
 ```js
 // 1. Mocker les bindings Wails AVANT l'import du composant
-vi.mock('../../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../../wailsjs/go/database/Database.js', () => ({
     LoadCommandHistory: vi.fn(() => Promise.resolve([]))
 }));
 
@@ -54,7 +54,7 @@ Deux approches selon le besoin :
 ### `vi.mock` (recommandé, par fichier de test)
 
 ```js
-vi.mock('../../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../../wailsjs/go/database/Database.js', () => ({
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
     SaveCommand: vi.fn()
 }));

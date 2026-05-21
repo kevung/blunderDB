@@ -15,7 +15,7 @@
         SwapMatchPlayers,
         SaveLastVisitedPosition,
         GetMatchDetailStats
-    } from '../../wailsjs/go/main/Database.js';
+    } from '../../wailsjs/go/database/Database.js';
     import MergePlayersModal from './MergePlayersModal.svelte';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';
     import {

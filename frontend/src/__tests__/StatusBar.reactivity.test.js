@@ -13,7 +13,7 @@ import { tick } from 'svelte';
 import { get } from 'svelte/store';
 
 // ── Wails mock (doit être déclaré avant l'import du composant) ──────────────
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     LoadCommandHistory: vi.fn(() => Promise.resolve([])),
     SaveCommand: vi.fn(() => Promise.resolve(undefined))
 }));
@@ -24,7 +24,7 @@ import { positionsStore, matchContextStore } from '../stores/positionStore.js';
 import { commandHistoryStore } from '../stores/commandHistoryStore.js';
 
 // ── Wails mock functions (accessibles après le mock hoisted) ─────────────────
-import { LoadCommandHistory } from '../../wailsjs/go/main/Database.js';
+import { LoadCommandHistory } from '../../wailsjs/go/database/Database.js';
 
 // ── Composant ────────────────────────────────────────────────────────────────
 import StatusBar from '../components/StatusBar.svelte';

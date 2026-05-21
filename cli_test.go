@@ -18,9 +18,7 @@ func setupCLI(t *testing.T) *CLI {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
 	t.Cleanup(func() {
-		if db.db != nil {
-			db.db.Close()
-		}
+		db.Close()
 	})
 	return &CLI{db: db, cfg: NewConfig()}
 }
@@ -35,9 +33,7 @@ func setupCLIWithDB(t *testing.T) (*CLI, string) {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
 	t.Cleanup(func() {
-		if db.db != nil {
-			db.db.Close()
-		}
+		db.Close()
 	})
 	return &CLI{db: db, cfg: NewConfig()}, dbPath
 }
@@ -310,9 +306,7 @@ func TestCLI_ExportRoundTrip(t *testing.T) {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
 	t.Cleanup(func() {
-		if cli2.db.db != nil {
-			cli2.db.db.Close()
-		}
+		cli2.db.Close()
 	})
 	if _, err := cli2.db.ImportDatabase(exportPath); err != nil {
 		t.Fatalf("ImportDatabase: %v", err)

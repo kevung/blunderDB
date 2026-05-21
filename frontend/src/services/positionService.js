@@ -14,7 +14,7 @@ import {
     SaveEditPosition,
     SaveFilter,
     LoadComment
-} from '../../wailsjs/go/main/Database.js';
+} from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';

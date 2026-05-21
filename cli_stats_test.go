@@ -31,9 +31,7 @@ func setupCLIStats(t *testing.T) *CLI {
 		t.Fatalf("SetupDatabase: %v", err)
 	}
 	t.Cleanup(func() {
-		if db.db != nil {
-			db.db.Close()
-		}
+		db.Close()
 	})
 
 	matchID := createMatch(t, db, "Alice", "Bob", "2025-01-01", 5, 0)
@@ -181,8 +179,7 @@ func TestCLIStats_BackwardCompat(t *testing.T) {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
 	// Close the DB so cli.Run can reopen it from the file
-	cli.db.db.Close()
-	cli.db.db = nil
+	cli.db.Close()
 
 	out := captureStdout(t, func() {
 		err := cli.Run([]string{"list", "--db", dbPath, "--type", "stats"})
@@ -205,8 +202,7 @@ func TestCLIStats_FormatJSONViaCLIRun(t *testing.T) {
 	if _, err := cli.db.ImportXGMatch(testdataPath("test.xg")); err != nil {
 		t.Fatalf("ImportXGMatch: %v", err)
 	}
-	cli.db.db.Close()
-	cli.db.db = nil
+	cli.db.Close()
 
 	out := captureStdout(t, func() {
 		err := cli.Run([]string{"list", "--db", dbPath, "--type", "stats", "--format", "json"})

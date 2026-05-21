@@ -1,7 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { onDestroy } from 'svelte';
-    import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/main/Database.js';
+    import { LoadMetadata, SaveMetadata } from '../../wailsjs/go/database/Database.js';
     import { activeTabStore } from '../stores/uiStore';
 
     let user = $state('');

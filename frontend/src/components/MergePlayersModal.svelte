@@ -1,7 +1,7 @@
 <script>
     import { logger } from '../utils/logger.js';
     import { SvelteSet } from 'svelte/reactivity';
-    import { GetAllPlayerNames, MergePlayers } from '../../wailsjs/go/main/Database.js';
+    import { GetAllPlayerNames, MergePlayers } from '../../wailsjs/go/database/Database.js';
     import { statusBarTextStore } from '../stores/uiStore';
 
     // Props

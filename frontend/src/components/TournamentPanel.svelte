@@ -18,7 +18,7 @@
         UpdateMatchComment,
         UpdateTournamentComment,
         ReorderTournamentMatches
-    } from '../../wailsjs/go/main/Database.js';
+    } from '../../wailsjs/go/database/Database.js';
     import { openPanels, PANEL, closePanel, statusBarTextStore, statusBarModeStore } from '../stores/uiStore';
     import { tournamentsStore, selectedTournamentStore, tournamentMatchesStore } from '../stores/tournamentStore';
     import { positionStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore';

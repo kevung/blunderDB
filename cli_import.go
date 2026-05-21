@@ -364,12 +364,12 @@ func (cli *CLI) importBatch(dirPath string, recursive bool) error {
 
 		// After each successful match import, checkpoint the WAL to keep file size bounded.
 		if result.Success && result.MatchID > 0 {
-			_, _ = cli.db.db.Exec("PRAGMA wal_checkpoint(TRUNCATE)")
+			_, _ = cli.db.Conn().Exec("PRAGMA wal_checkpoint(TRUNCATE)")
 		}
 	}
 
 	// After all imports, update query planner statistics.
-	_, _ = cli.db.db.Exec("ANALYZE")
+	_, _ = cli.db.Conn().Exec("ANALYZE")
 
 	// Print summary table
 	fmt.Println("\n" + strings.Repeat("=", 100))

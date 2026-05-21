@@ -3,11 +3,11 @@ import { get } from 'svelte/store';
 
 // ── Mocks ────────────────────────────────────────────────────────────────────
 
-vi.mock('../../wailsjs/go/main/Database.js', () => ({
+vi.mock('../../wailsjs/go/database/Database.js', () => ({
     ComputeStats: vi.fn().mockResolvedValue({ prGlobal: 4.0, totals: { numDecisions: 10 } })
 }));
 
-import { ComputeStats } from '../../wailsjs/go/main/Database.js';
+import { ComputeStats } from '../../wailsjs/go/database/Database.js';
 
 import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore, refreshStats } from '../stores/statsStore.js';
 
