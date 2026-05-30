@@ -333,21 +333,23 @@
     .msg-action {
         border: none;
         background: none;
-        color: transparent;
+        color: #888;
         cursor: pointer;
-        font-size: 13px;
-        padding: 0 2px;
+        font-size: 15px;
+        padding: 2px 6px;
         line-height: 1;
-        transition: color 0.1s;
-    }
-    .msg:hover .msg-action {
-        color: #bbb;
+        border-radius: 4px;
+        transition:
+            background 0.1s,
+            color 0.1s;
     }
     .msg-edit:hover {
-        color: #4a90d9 !important;
+        color: #4a90d9;
+        background: rgba(74, 144, 217, 0.12);
     }
     .msg-delete:hover {
-        color: #c55 !important;
+        color: #c55;
+        background: rgba(204, 85, 85, 0.12);
     }
 
     .msg-edit-input {
