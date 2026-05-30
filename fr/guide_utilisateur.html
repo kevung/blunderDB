@@ -438,6 +438,23 @@ doute, afin d’obtenir le maximum de résultats, effacer la position
 en appuyant sur la touche <em>RETOUR ARRIERE</em>. Editer si besoin la
 position du cube et le score.</p></li>
 </ul>
+<p>Le panneau de recherche propose deux structures de pions, sélectionnables par
+les onglets <em>At least</em> et <em>Except</em> situés en haut du panneau :</p>
+<ul class="simple">
+<li><p><em>At least</em> (par défaut) : blunderDB filtre les positions ayant <em>a minima</em> la
+structure de pions saisie ;</p></li>
+<li><p><em>Except</em> : blunderDB exclut les positions contenant l’un des pions saisis. Le
+plateau est bordé de rouge lors de l’édition de cette structure. Une position
+est rejetée si elle contient <em>au moins un</em> des éléments dessinés (par exemple,
+dessiner un pion sur les points 1, 3 et 5 ne conserve que les positions n’ayant
+aucun pion sur ces points). Le nombre de pions par point n’est pas limité :
+indiquer 3 pions sur un point exclut les positions ayant 3 pions ou plus à cet
+endroit (utile pour rechercher une porte sans spare). Deux clics rapides sur un
+point le marquent comme devant être vide (cellule rouge hachurée, aucun pion
+quelle que soit la couleur) ; un simple clic sur ce point le débloque.</p></li>
+</ul>
+<p>Lorsqu’un point appartient aux deux structures, le critère <em>Except</em> l’emporte
+s’il contredit le critère <em>At least</em>.</p>
 <p>Méthode 1 (simple):</p>
 <ul class="simple">
 <li><p>Ouvrir la fenêtre de recherche (<em>CTRL-F</em>)</p></li>

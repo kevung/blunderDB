@@ -123,6 +123,7 @@ c'est-à-dire après le début de commande ``s``.
    "D1", "La position vérifie le lancer de dés sur le premier dé uniquement (la valeur du premier dé apparaît sur l'un des deux dés de la position)."
    "nc", "La position est sans contact."
    "M", "La position ou celle miroir vérifie les filtres."
+   "x", "La position ne contient aucun pion de la structure d'exclusion (onglet « Except » du panneau de recherche)."
    "p>x", "Le joueur a au moins x pips de retard à la course."
    "p<x", "Le joueur a au plus x pips de retard à la course."
    "px,y", "Le joueur a entre x et y pips de retard à la course."

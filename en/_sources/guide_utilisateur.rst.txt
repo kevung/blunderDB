@@ -366,7 +366,26 @@ Pour rechercher des types de positions,
   en appuyant sur la touche *RETOUR ARRIERE*. Editer si besoin la
   position du cube et le score.
 
-Méthode 1 (simple): 
+Le panneau de recherche propose deux structures de pions, sélectionnables par
+les onglets *At least* et *Except* situés en haut du panneau :
+
+* *At least* (par défaut) : blunderDB filtre les positions ayant *a minima* la
+  structure de pions saisie ;
+
+* *Except* : blunderDB exclut les positions contenant l'un des pions saisis. Le
+  plateau est bordé de rouge lors de l'édition de cette structure. Une position
+  est rejetée si elle contient *au moins un* des éléments dessinés (par exemple,
+  dessiner un pion sur les points 1, 3 et 5 ne conserve que les positions n'ayant
+  aucun pion sur ces points). Le nombre de pions par point n'est pas limité :
+  indiquer 3 pions sur un point exclut les positions ayant 3 pions ou plus à cet
+  endroit (utile pour rechercher une porte sans spare). Deux clics rapides sur un
+  point le marquent comme devant être vide (cellule rouge hachurée, aucun pion
+  quelle que soit la couleur) ; un simple clic sur ce point le débloque.
+
+Lorsqu'un point appartient aux deux structures, le critère *Except* l'emporte
+s'il contredit le critère *At least*.
+
+Méthode 1 (simple):
 
 * Ouvrir la fenêtre de recherche (*CTRL-F*)
 
