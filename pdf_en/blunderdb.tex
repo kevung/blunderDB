@@ -2558,7 +2558,18 @@ D
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-The position checks the dice roll.
+The position matches the dice roll (both dice, any order).
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+\\
+\sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+D1
+\sphinxbeforeendvarwidth
+\end{varwidth}%
+&\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
+\sphinxAtStartPar
+The position matches the dice roll on the first die only (the first die’s value appears on either die of the position).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -3362,7 +3373,7 @@ Search in tournaments with IDs from x to y (e.g. tn1,3).
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Filtering positions based on the dice roll (\sphinxtitleref{D}) necessarily implies filtering positions based on the type of decision (\sphinxtitleref{d}).
+Filtering positions based on the dice roll (\sphinxtitleref{D} or \sphinxtitleref{D1}) necessarily implies filtering positions based on the type of decision (\sphinxtitleref{d}). The \sphinxtitleref{D1} filter ignores the second die: only the first die’s value is used to match positions (against either die of the roll).
 \end{sphinxadmonition}
 
 \begin{sphinxadmonition}{note}{Note:}
@@ -4938,6 +4949,14 @@ Search positions in the database using combinable criteria.
 
 \item {} 
 \sphinxAtStartPar
+\sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}dice}} — Lancer de dés. \sphinxcode{\sphinxupquote{5,3}} cherche les positions où les deux dés
+correspondent (peu importe l’ordre). \sphinxcode{\sphinxupquote{5}} cherche les positions où un 5
+apparaît sur l’un des deux dés (la valeur du deuxième dé est ignorée).
+Implique \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision checker}} si aucune valeur de \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}decision}} n’est
+donnée.
+
+\item {} 
+\sphinxAtStartPar
 \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}pip\sphinxhyphen{}min}} / \sphinxcode{\sphinxupquote{\sphinxhyphen{}\sphinxhyphen{}pip\sphinxhyphen{}max}} — Pip count difference range.
 
 \item {} 
@@ -4994,6 +5013,12 @@ Search positions in the database using combinable criteria.
 
 \PYG{c+c1}{\PYGZsh{} Rechercher dans un tournoi et exporter}
 ./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}tournament\PYGZhy{}ids\PYG{+w}{ }\PYG{l+m}{1}\PYG{+w}{ }\PYGZhy{}\PYGZhy{}export\PYG{+w}{ }cubes.db
+
+\PYG{c+c1}{\PYGZsh{} Rechercher les positions avec un lancer de dés 6\PYGZhy{}5 (peu importe l\PYGZsq{}ordre)}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dice\PYG{+w}{ }\PYG{l+m}{6},5
+
+\PYG{c+c1}{\PYGZsh{} Rechercher les positions où un 6 a été obtenu sur l\PYGZsq{}un des deux dés}
+./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}dice\PYG{+w}{ }\PYG{l+m}{6}
 
 \PYG{c+c1}{\PYGZsh{} Sortie JSON limitée à 10 résultats}
 ./blunderdb\PYG{+w}{ }search\PYG{+w}{ }\PYGZhy{}\PYGZhy{}db\PYG{+w}{ }base.db\PYG{+w}{ }\PYGZhy{}\PYGZhy{}format\PYG{+w}{ }json\PYG{+w}{ }\PYGZhy{}\PYGZhy{}limit\PYG{+w}{ }\PYG{l+m}{10}

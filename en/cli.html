@@ -297,6 +297,11 @@
 <p><strong>Available filters:</strong></p>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">--decision</span></code> — Decision type: <code class="docutils literal notranslate"><span class="pre">checker</span></code> or <code class="docutils literal notranslate"><span class="pre">cube</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">--dice</span></code> — Lancer de dés. <code class="docutils literal notranslate"><span class="pre">5,3</span></code> cherche les positions où les deux dés
+correspondent (peu importe l’ordre). <code class="docutils literal notranslate"><span class="pre">5</span></code> cherche les positions où un 5
+apparaît sur l’un des deux dés (la valeur du deuxième dé est ignorée).
+Implique <code class="docutils literal notranslate"><span class="pre">--decision</span> <span class="pre">checker</span></code> si aucune valeur de <code class="docutils literal notranslate"><span class="pre">--decision</span></code> n’est
+donnée.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--pip-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--pip-max</span></code> — Pip count difference range.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--winrate-min</span></code> / <code class="docutils literal notranslate"><span class="pre">--winrate-max</span></code> — Win rate range (%).</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">--cube</span></code> — Cube value.</p></li>
@@ -318,6 +323,12 @@
 
 <span class="c1"># Rechercher dans un tournoi et exporter</span>
 ./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--tournament-ids<span class="w"> </span><span class="m">1</span><span class="w"> </span>--export<span class="w"> </span>cubes.db
+
+<span class="c1"># Rechercher les positions avec un lancer de dés 6-5 (peu importe l&#39;ordre)</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>,5
+
+<span class="c1"># Rechercher les positions où un 6 a été obtenu sur l&#39;un des deux dés</span>
+./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--dice<span class="w"> </span><span class="m">6</span>
 
 <span class="c1"># Sortie JSON limitée à 10 résultats</span>
 ./blunderdb<span class="w"> </span>search<span class="w"> </span>--db<span class="w"> </span>base.db<span class="w"> </span>--format<span class="w"> </span>json<span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>

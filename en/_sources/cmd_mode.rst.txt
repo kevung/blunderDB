@@ -119,7 +119,8 @@ c'est-à-dire après le début de commande ``s``.
    "cube, cub, cu, c", "La position vérifie la configuration du cube."
    "score, sco, sc, s", "La position vérifie le score."
    "d", "La position vérifie le type de décision (pion ou cube)."
-   "D", "La position vérifie le lancer de dés."
+   "D", "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+   "D1", "La position vérifie le lancer de dés sur le premier dé uniquement (la valeur du premier dé apparaît sur l'un des deux dés de la position)."
    "nc", "La position est sans contact."
    "M", "La position ou celle miroir vérifie les filtres."
    "p>x", "Le joueur a au moins x pips de retard à la course."
@@ -194,8 +195,11 @@ c'est-à-dire après le début de commande ``s``.
    "tnx,y", "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
 
 
-.. note:: Filtrer les positions en fonction du lancer de dés (`D`) implique *a
-   fortiori* de filtrer les positions en fonction du type de décision (`d`).
+.. note:: Filtrer les positions en fonction du lancer de dés (`D` ou `D1`)
+   implique *a fortiori* de filtrer les positions en fonction du type de
+   décision (`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la
+   valeur du premier dé est utilisée pour matcher les positions (sur l'un ou
+   l'autre des deux dés du lancer).
 
 .. note:: Pour le filtre de différence relative à la course (`p>x`, `p<x`,
    `px,y`), le joueur est en retard à la course par rapport à l'adversaire si

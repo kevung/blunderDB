@@ -197,6 +197,11 @@ Recherche des positions dans la base selon des critères combinables.
 **Filtres disponibles:**
 
 * ``--decision`` — Type de décision: ``checker`` ou ``cube``.
+* ``--dice`` — Lancer de dés. ``5,3`` cherche les positions où les deux dés
+  correspondent (peu importe l'ordre). ``5`` cherche les positions où un 5
+  apparaît sur l'un des deux dés (la valeur du deuxième dé est ignorée).
+  Implique ``--decision checker`` si aucune valeur de ``--decision`` n'est
+  donnée.
 * ``--pip-min`` / ``--pip-max`` — Intervalle de différence de pip count.
 * ``--winrate-min`` / ``--winrate-max`` — Intervalle de taux de victoire (%).
 * ``--cube`` — Valeur du videau.
@@ -221,6 +226,12 @@ Recherche des positions dans la base selon des critères combinables.
 
    # Rechercher dans un tournoi et exporter
    ./blunderdb search --db base.db --tournament-ids 1 --export cubes.db
+
+   # Rechercher les positions avec un lancer de dés 6-5 (peu importe l'ordre)
+   ./blunderdb search --db base.db --dice 6,5
+
+   # Rechercher les positions où un 6 a été obtenu sur l'un des deux dés
+   ./blunderdb search --db base.db --dice 6
 
    # Sortie JSON limitée à 10 résultats
    ./blunderdb search --db base.db --format json --limit 10
