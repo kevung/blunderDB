@@ -123,6 +123,7 @@
     let player2JanBlotMax = $state(15);
     let player2JanBlotRangeMin = $state(0);
     let player2JanBlotRangeMax = $state(15);
+    let diceRollOption = $state('both'); // 'both' | 'first'
     let creationDateOption = $state('min');
     let creationDateMin = $state('');
     let creationDateMax = $state('');
@@ -244,7 +245,7 @@
                 case 'Include Decision Type':
                     return 'd';
                 case 'Include Dice Roll':
-                    return 'D';
+                    return diceRollOption === 'first' ? 'D1' : 'D';
                 case 'No Contact':
                     return 'nc';
                 case 'Mirror Position':
@@ -399,7 +400,8 @@
         const tournamentIDToken = transformedFilters.find((f) => f.startsWith('tn'));
         const tournamentIDs = tournamentIDToken ? tournamentIDToken.slice(2) : '';
         const dtFilter = transformedFilters.includes('d');
-        const drFilter = transformedFilters.includes('D');
+        const drFilter = transformedFilters.includes('D') || transformedFilters.includes('D1');
+        const drMode = transformedFilters.includes('D1') ? 'first' : 'both';
         const cdFilter = transformedFilters.find((f) => f.startsWith('T'));
 
         const commandParts = ['s'];
@@ -456,7 +458,8 @@
             matchIDs,
             tournamentIDs,
             restrictToPositionIDs,
-            openInNewTab
+            openInNewTab,
+            drMode
         );
 
         saveSearchState();
@@ -567,6 +570,7 @@
         player2JanBlotMax = 15;
         player2JanBlotRangeMin = 0;
         player2JanBlotRangeMax = 15;
+        diceRollOption = 'both';
         matchIDsInput = '';
         tournamentIDsInput = '';
         creationDateOption = 'min';
@@ -620,7 +624,8 @@
             const is = cmdFilters.includes('score') || cmdFilters.includes('sco') || cmdFilters.includes('sc') || cmdFilters.includes('s');
             const nc = cmdFilters.includes('nc');
             const dt = cmdFilters.includes('d');
-            const dr = cmdFilters.includes('D');
+            const dr = cmdFilters.includes('D') || cmdFilters.includes('D1');
+            const drMode = cmdFilters.includes('D1') ? 'first' : 'both';
             const mp = cmdFilters.includes('M');
             const pc = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
             const wr = cmdFilters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
@@ -690,7 +695,10 @@
                 me,
                 command,
                 matchIDs,
-                tournamentIDs
+                tournamentIDs,
+                '',
+                false,
+                drMode
             );
         }
     }
@@ -908,6 +916,7 @@
             player2JanBlotMax,
             player2JanBlotRangeMin,
             player2JanBlotRangeMax,
+            diceRollOption,
             creationDateOption,
             creationDateMin,
             creationDateMax,
@@ -1028,6 +1037,7 @@
         player2JanBlotMax = saved.player2JanBlotMax;
         player2JanBlotRangeMin = saved.player2JanBlotRangeMin;
         player2JanBlotRangeMax = saved.player2JanBlotRangeMax;
+        if (saved.diceRollOption) diceRollOption = saved.diceRollOption;
         creationDateOption = saved.creationDateOption;
         creationDateMin = saved.creationDateMin;
         creationDateMax = saved.creationDateMax;
@@ -1077,7 +1087,12 @@
                                     </label>
                                     {#if filterEnabled[filter]}
                                         <div class="filter-params">
-                                            {#if filter === 'Pipcount Difference'}
+                                            {#if filter === 'Include Dice Roll'}
+                                                <div class="minmax-controls">
+                                                    <label><input type="radio" bind:group={diceRollOption} value="both" /> Both dice</label>
+                                                    <label><input type="radio" bind:group={diceRollOption} value="first" /> First die only</label>
+                                                </div>
+                                            {:else if filter === 'Pipcount Difference'}
                                                 <div class="minmax-controls">
                                                     <label
                                                         ><input type="radio" bind:group={pipCountOption} value="min" /> Min

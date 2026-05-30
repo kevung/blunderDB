@@ -105,13 +105,18 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 			args = append(args, f.Filter.DecisionType, f.Filter.PlayerOnRoll)
 		}
 		if f.DiceRollFilter {
-			d1, d2 := f.Filter.Dice[0], f.Filter.Dice[1]
-			if d1 == d2 {
-				where.WriteString(" AND p.dice_1 = ? AND p.dice_2 = ? AND p.player_on_roll = ? AND p.decision_type = ?")
-				args = append(args, d1, d2, f.Filter.PlayerOnRoll, f.Filter.DecisionType)
+			if f.DiceRollMode == "first" {
+				where.WriteString(" AND (p.dice_1 = ? OR p.dice_2 = ?) AND p.player_on_roll = ? AND p.decision_type = ?")
+				args = append(args, f.Filter.Dice[0], f.Filter.Dice[0], f.Filter.PlayerOnRoll, f.Filter.DecisionType)
 			} else {
-				where.WriteString(" AND ((p.dice_1 = ? AND p.dice_2 = ?) OR (p.dice_1 = ? AND p.dice_2 = ?)) AND p.player_on_roll = ? AND p.decision_type = ?")
-				args = append(args, d1, d2, d2, d1, f.Filter.PlayerOnRoll, f.Filter.DecisionType)
+				d1, d2 := f.Filter.Dice[0], f.Filter.Dice[1]
+				if d1 == d2 {
+					where.WriteString(" AND p.dice_1 = ? AND p.dice_2 = ? AND p.player_on_roll = ? AND p.decision_type = ?")
+					args = append(args, d1, d2, f.Filter.PlayerOnRoll, f.Filter.DecisionType)
+				} else {
+					where.WriteString(" AND ((p.dice_1 = ? AND p.dice_2 = ?) OR (p.dice_1 = ? AND p.dice_2 = ?)) AND p.player_on_roll = ? AND p.decision_type = ?")
+					args = append(args, d1, d2, d2, d1, f.Filter.PlayerOnRoll, f.Filter.DecisionType)
+				}
 			}
 		}
 		if f.IncludeCube {
@@ -251,7 +256,7 @@ func (s *searchStore) find(ctx context.Context, tenant int64, f domain.SearchFil
 				if f.DecisionTypeFilter && !pos.MatchesDecisionType(f.Filter) {
 					return false
 				}
-				if f.DiceRollFilter && !pos.MatchesDiceRoll(f.Filter) {
+				if f.DiceRollFilter && !pos.MatchesDiceRollMode(f.Filter, f.DiceRollMode) {
 					return false
 				}
 				if f.NoContactFilter && !pos.MatchesNoContact() {

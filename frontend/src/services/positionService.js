@@ -347,7 +347,8 @@ export async function loadPositionsByFilters(
     matchIDsFilter = '',
     tournamentIDsFilter = '',
     restrictToPositionIDs = '',
-    openInNewTab = false
+    openInNewTab = false,
+    diceRollMode = 'both'
 ) {
     if (!get(databasePathStore)) {
         setStatusBarMessage('No database opened');
@@ -391,6 +392,7 @@ export async function loadPositionsByFilters(
             equityFilter,
             decisionTypeFilter,
             diceRollFilter,
+            diceRollMode,
             movePatternFilter,
             dateFilter,
             player1OutfieldBlotFilter,

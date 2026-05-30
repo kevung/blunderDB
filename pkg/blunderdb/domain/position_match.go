@@ -452,10 +452,20 @@ func (p *Position) MatchesPlayer1AbsolutePipCount(filter string) bool {
 }
 
 func (p *Position) MatchesDiceRoll(filter Position) bool {
+	return p.MatchesDiceRollMode(filter, "both")
+}
+
+func (p *Position) MatchesDiceRollMode(filter Position, mode string) bool {
+	if p.PlayerOnRoll != filter.PlayerOnRoll || p.DecisionType != filter.DecisionType {
+		return false
+	}
+	if mode == "first" {
+		return p.Dice[0] == filter.Dice[0] || p.Dice[1] == filter.Dice[0]
+	}
 	dice := fmt.Sprintf("%d%d", p.Dice[0], p.Dice[1])
 	reverseDice := fmt.Sprintf("%d%d", p.Dice[1], p.Dice[0])
 	filterDice := fmt.Sprintf("%d%d", filter.Dice[0], filter.Dice[1])
-	return (dice == filterDice || reverseDice == filterDice) && p.PlayerOnRoll == filter.PlayerOnRoll && p.DecisionType == filter.DecisionType
+	return dice == filterDice || reverseDice == filterDice
 }
 
 func (p *Position) MatchesPlayer1OutfieldBlot(filter string) bool {

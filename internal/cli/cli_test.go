@@ -227,6 +227,41 @@ func TestCLI_Search(t *testing.T) {
 	}
 }
 
+func TestCLI_SearchDice(t *testing.T) {
+	cli, dbPath := setupCLIWithDB(t)
+	if err := cli.Run([]string{"import", "--db", dbPath, "--type", "match", "--file", testdataPath("test.xg")}); err != nil {
+		t.Fatalf("import: %v", err)
+	}
+
+	// Both dice (any order)
+	out := captureStdout(t, func() {
+		if err := cli.Run([]string{"search", "--db", dbPath, "--dice", "6,5", "--format", "table"}); err != nil {
+			t.Fatalf("search --dice 6,5: %v", err)
+		}
+	})
+	if !bytes.Contains([]byte(out), []byte("position(s)")) {
+		t.Errorf("search --dice 6,5 missing position count:\n%s", out)
+	}
+
+	// First die only
+	out = captureStdout(t, func() {
+		if err := cli.Run([]string{"search", "--db", dbPath, "--dice", "6", "--format", "table"}); err != nil {
+			t.Fatalf("search --dice 6: %v", err)
+		}
+	})
+	if !bytes.Contains([]byte(out), []byte("position(s)")) {
+		t.Errorf("search --dice 6 missing position count:\n%s", out)
+	}
+
+	// Invalid value
+	if err := cli.Run([]string{"search", "--db", dbPath, "--dice", "7"}); err == nil {
+		t.Errorf("expected error for --dice 7, got nil")
+	}
+	if err := cli.Run([]string{"search", "--db", dbPath, "--dice", "1,2,3"}); err == nil {
+		t.Errorf("expected error for --dice 1,2,3, got nil")
+	}
+}
+
 func TestCLI_SearchNoResults(t *testing.T) {
 	cli, dbPath := setupCLIWithDB(t)
 	// Empty DB — search should return 0 positions.

@@ -140,6 +140,8 @@
     let player2JanBlotRangeMin = $state(0); // Min value for player 2 jan blot range
     let player2JanBlotRangeMax = $state(15); // Max value for player 2 jan blot range
 
+    let diceRollOption = $state('both'); // 'both', 'first'
+
     let availableFilters = [
         'Include Cube',
         'Include Score',
@@ -195,7 +197,7 @@
                 case 'Include Decision Type':
                     return 'd';
                 case 'Include Dice Roll':
-                    return 'D';
+                    return diceRollOption === 'first' ? 'D1' : 'D';
                 case 'No Contact':
                     return 'nc';
                 case 'Mirror Position':
@@ -353,7 +355,8 @@
         const tournamentIDsFilter = tournamentIDToken ? tournamentIDToken.slice(2) : '';
 
         const decisionTypeFilter = transformedFilters.includes('d');
-        const diceRollFilter = transformedFilters.includes('D');
+        const diceRollFilter = transformedFilters.includes('D') || transformedFilters.includes('D1');
+        const diceRollMode = transformedFilters.includes('D1') ? 'first' : 'both';
         const creationDateFilter = transformedFilters.find((filter) => filter.startsWith('T'));
         const searchTextFilter = searchText ? `t"${searchText}"` : '';
         const movePatternFilter = movePattern ? `m"${movePattern}"` : '';
@@ -464,7 +467,9 @@
             '', // searchCommand
             matchIDsFilter,
             tournamentIDsFilter,
-            restrictToPositionIDs
+            restrictToPositionIDs,
+            false, // openInNewTab
+            diceRollMode
         );
         onClose();
     }
@@ -582,6 +587,7 @@
         player2JanBlotMax = 15;
         player2JanBlotRangeMin = 0;
         player2JanBlotRangeMax = 15;
+        diceRollOption = 'both';
         matchIDsInput = '';
         tournamentIDsInput = '';
         searchInCurrentResults = false;
@@ -615,8 +621,20 @@
                         <label class="filter-label">{filter}</label>
                     </div>
                     <div class="filter-options-wrapper">
-                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Include Decision Type' || filter === 'Include Dice Roll'}
+                        {#if filter === 'Include Cube' || filter === 'Include Score' || filter === 'Include Decision Type'}
                             <!-- No input needed for these filters -->
+                        {/if}
+                        {#if filter === 'Include Dice Roll'}
+                            <div class="filter-options-container expanded">
+                                <div class="filter-options expanded">
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={diceRollOption} value="both" /> Both dice
+                                    </label>
+                                    <label class="filter-option">
+                                        <input type="radio" bind:group={diceRollOption} value="first" /> First die only
+                                    </label>
+                                </div>
+                            </div>
                         {/if}
                         {#if filter === 'Pipcount Difference'}
                             <div class="filter-options-container expanded">

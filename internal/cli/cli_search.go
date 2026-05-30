@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
@@ -39,6 +40,7 @@ func (cli *CLI) runSearch(args []string) error {
 	checkerOff2Min := searchCmd.Int("off2-min", 0, "Minimum checkers off for player 2")
 	matchIDsFlag := searchCmd.String("match-ids", "", "Filter by match IDs (comma-separated, e.g. '1,3,5' or range '2,7')")
 	tournamentIDsFlag := searchCmd.String("tournament-ids", "", "Filter by tournament IDs (comma-separated, e.g. '1,3' or range '1,5')")
+	diceFlag := searchCmd.String("dice", "", "Filter by dice roll: '5,3' matches both dice (any order); '5' matches positions where 5 was rolled on either die")
 
 	searchCmd.Usage = func() {
 		fmt.Println("Usage: blunderdb search [options]")
@@ -72,6 +74,12 @@ func (cli *CLI) runSearch(args []string) error {
 		fmt.Println()
 		fmt.Println("  # Search in a tournament")
 		fmt.Println("  blunderdb search --db database.db --tournament-ids 1")
+		fmt.Println()
+		fmt.Println("  # Search positions where dice were 6-5")
+		fmt.Println("  blunderdb search --db database.db --dice 6,5")
+		fmt.Println()
+		fmt.Println("  # Search positions where a 6 was rolled on either die")
+		fmt.Println("  blunderdb search --db database.db --dice 6")
 	}
 
 	if err := searchCmd.Parse(args); err != nil {
@@ -112,6 +120,40 @@ func (cli *CLI) runSearch(args []string) error {
 			filter.DecisionType = CubeAction
 		default:
 			return fmt.Errorf("invalid decision type: %s (must be 'checker' or 'cube')", *decisionType)
+		}
+	}
+
+	// Set dice roll filter
+	diceRollFilter := false
+	diceRollMode := ""
+	if *diceFlag != "" {
+		diceRollFilter = true
+		parts := strings.Split(*diceFlag, ",")
+		switch len(parts) {
+		case 1:
+			d1, err := strconv.Atoi(strings.TrimSpace(parts[0]))
+			if err != nil || d1 < 1 || d1 > 6 {
+				return fmt.Errorf("invalid --dice value %q: die must be 1-6", *diceFlag)
+			}
+			diceRollMode = "first"
+			filter.Dice[0] = d1
+		case 2:
+			d1, err1 := strconv.Atoi(strings.TrimSpace(parts[0]))
+			d2, err2 := strconv.Atoi(strings.TrimSpace(parts[1]))
+			if err1 != nil || err2 != nil || d1 < 1 || d1 > 6 || d2 < 1 || d2 > 6 {
+				return fmt.Errorf("invalid --dice value %q: each die must be 1-6", *diceFlag)
+			}
+			diceRollMode = "both"
+			filter.Dice[0] = d1
+			filter.Dice[1] = d2
+		default:
+			return fmt.Errorf("invalid --dice value %q: expected '5' or '5,3'", *diceFlag)
+		}
+		// The dice filter also constrains decision_type; default to CheckerAction
+		// when --decision was not given (cube actions do not have a roll).
+		if !decisionTypeFilter {
+			decisionTypeFilter = true
+			filter.DecisionType = CheckerAction
 		}
 	}
 
@@ -190,6 +232,8 @@ func (cli *CLI) runSearch(args []string) error {
 		Player1CheckerOffFilter: player1CheckerOffFilter,
 		Player2CheckerOffFilter: player2CheckerOffFilter,
 		DecisionTypeFilter:      decisionTypeFilter,
+		DiceRollFilter:          diceRollFilter,
+		DiceRollMode:            diceRollMode,
 		MatchIDsFilter:          *matchIDsFlag,
 		TournamentIDsFilter:     *tournamentIDsFlag,
 	})

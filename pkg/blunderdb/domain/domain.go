@@ -168,6 +168,7 @@ type SearchFilters struct {
 	EquityFilter                  string   `json:"equityFilter"`
 	DecisionTypeFilter            bool     `json:"decisionTypeFilter"`
 	DiceRollFilter                bool     `json:"diceRollFilter"`
+	DiceRollMode                  string   `json:"diceRollMode"`
 	MovePatternFilter             string   `json:"movePatternFilter"`
 	DateFilter                    string   `json:"dateFilter"`
 	Player1OutfieldBlotFilter     string   `json:"player1OutfieldBlotFilter"`

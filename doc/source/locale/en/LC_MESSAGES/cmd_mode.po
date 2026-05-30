@@ -416,8 +416,22 @@ msgid "D"
 msgstr "D"
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie le lancer de dés."
-msgstr "The position checks the dice roll."
+msgid ""
+"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgstr ""
+"The position matches the dice roll (both dice, any order)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "D1"
+msgstr "D1"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position vérifie le lancer de dés sur le premier dé uniquement (la "
+"valeur du premier dé apparaît sur l'un des deux dés de la position)."
+msgstr ""
+"The position matches the dice roll on the first die only (the first die's "
+"value appears on either die of the position)."
 
 #: ../../source/cmd_mode.rst:1
 msgid "nc"
@@ -1011,11 +1025,16 @@ msgstr "Search in tournaments with IDs from x to y (e.g. tn1,3)."
 
 #: ../../source/cmd_mode.rst:197
 msgid ""
-"Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
-"fortiori* de filtrer les positions en fonction du type de décision (`d`)."
+"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique "
+"*a fortiori* de filtrer les positions en fonction du type de décision "
+"(`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur "
+"du premier dé est utilisée pour matcher les positions (sur l'un ou "
+"l'autre des deux dés du lancer)."
 msgstr ""
-"Filtering positions based on the dice roll (`D`) necessarily implies "
-"filtering positions based on the type of decision (`d`)."
+"Filtering positions based on the dice roll (`D` or `D1`) necessarily "
+"implies filtering positions based on the type of decision (`d`). The "
+"`D1` filter ignores the second die: only the first die's value is used "
+"to match positions (against either die of the roll)."
 
 #: ../../source/cmd_mode.rst:200
 msgid ""

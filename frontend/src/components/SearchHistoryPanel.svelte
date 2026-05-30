@@ -127,7 +127,8 @@
             const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
             const noContactFilter = filters.includes('nc');
             const decisionTypeFilter = filters.includes('d');
-            const diceRollFilter = filters.includes('D');
+            const diceRollFilter = filters.includes('D') || filters.includes('D1');
+            const diceRollMode = filters.includes('D1') ? 'first' : 'both';
             const mirrorPositionFilter = filters.includes('M');
             const pipCountFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('p>') || filter.startsWith('p<') || filter.startsWith('p')));
             const winRateFilter = filters.find((filter) => typeof filter === 'string' && (filter.startsWith('w>') || filter.startsWith('w<') || filter.startsWith('w')));
@@ -215,7 +216,12 @@
                 noContactFilter,
                 mirrorPositionFilter,
                 moveErrorFilter,
-                command // Pass the original search command for session tracking
+                command, // Pass the original search command for session tracking
+                '',
+                '',
+                '',
+                false,
+                diceRollMode
             );
         }
     }

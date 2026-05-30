@@ -240,6 +240,7 @@ Search for positions in the database using filters.
 - `--limit` - Maximum number of results (0 = no limit)
 - `--format` - Output format: `table`, `json`, `xgid` (default: table)
 - `--decision` - Filter by decision type: `checker`, `cube`
+- `--dice` - Filter by dice roll. Use `5,3` to match positions where both dice were rolled (any order); use `5` to match positions where a 5 appeared on either die. Implies `--decision checker` when no decision flag is set.
 - `--pip-min` / `--pip-max` - Pip count difference range
 - `--winrate-min` / `--winrate-max` - Win rate range (%)
 - `--cube` - Filter by cube value
@@ -266,6 +267,12 @@ Search for positions in the database using filters.
 
 # Search in a tournament
 ./blunderdb search --db database.db --tournament-ids 1
+
+# Search positions where dice were 6-5 (either order)
+./blunderdb search --db database.db --dice 6,5
+
+# Search positions where a 6 was rolled on either die
+./blunderdb search --db database.db --dice 6
 
 # Search and export to new database
 ./blunderdb search --db database.db --decision cube --export cubes.db

@@ -1102,6 +1102,7 @@ export namespace domain {
 	    equityFilter: string;
 	    decisionTypeFilter: boolean;
 	    diceRollFilter: boolean;
+	    diceRollMode: string;
 	    movePatternFilter: string;
 	    dateFilter: string;
 	    player1OutfieldBlotFilter: string;
@@ -1142,6 +1143,7 @@ export namespace domain {
 	        this.equityFilter = source["equityFilter"];
 	        this.decisionTypeFilter = source["decisionTypeFilter"];
 	        this.diceRollFilter = source["diceRollFilter"];
+	        this.diceRollMode = source["diceRollMode"];
 	        this.movePatternFilter = source["movePatternFilter"];
 	        this.dateFilter = source["dateFilter"];
 	        this.player1OutfieldBlotFilter = source["player1OutfieldBlotFilter"];

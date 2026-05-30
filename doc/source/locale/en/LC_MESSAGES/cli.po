@@ -438,6 +438,19 @@ msgid "``--decision`` — Type de décision: ``checker`` ou ``cube``."
 msgstr "``--decision`` — Decision type: ``checker`` or ``cube``."
 
 #: ../../source/cli.rst:200
+msgid ""
+"``--dice`` — Lancer de dés. ``5,3`` cherche les positions où les deux dés "
+"correspondent (peu importe l'ordre). ``5`` cherche les positions où un 5 "
+"apparaît sur l'un des deux dés (la valeur du deuxième dé est ignorée). "
+"Implique ``--decision checker`` si aucune valeur de ``--decision`` n'est "
+"donnée."
+msgstr ""
+"``--dice`` — Dice roll. ``5,3`` matches positions where both dice match "
+"(any order). ``5`` matches positions where a 5 appears on either die "
+"(the second die value is ignored). Implies ``--decision checker`` when no "
+"``--decision`` value is given."
+
+#: ../../source/cli.rst:200
 msgid "``--pip-min`` / ``--pip-max`` — Intervalle de différence de pip count."
 msgstr "``--pip-min`` / ``--pip-max`` — Pip count difference range."
 

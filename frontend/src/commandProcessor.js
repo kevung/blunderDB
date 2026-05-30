@@ -249,7 +249,9 @@ function handleSubSearch(command, positions) {
                 command,
                 parsedFilters.matchIDsFilter,
                 parsedFilters.tournamentIDsFilter,
-                currentIDs
+                currentIDs,
+                false,
+                parsedFilters.diceRollMode
             );
         }
     } else {
@@ -349,7 +351,10 @@ function handleSearch(command) {
                 parsedFilters.moveErrorFilter,
                 command,
                 parsedFilters.matchIDsFilter,
-                parsedFilters.tournamentIDsFilter
+                parsedFilters.tournamentIDsFilter,
+                '',
+                false,
+                parsedFilters.diceRollMode
             );
         }
     } else {
@@ -362,7 +367,8 @@ export function parseFilters(filters, command) {
     const includeScore = filters.includes('score') || filters.includes('sco') || filters.includes('sc') || filters.includes('s');
     const noContactFilter = filters.includes('nc');
     const decisionTypeFilter = filters.includes('d');
-    const diceRollFilter = filters.includes('D');
+    const diceRollFilter = filters.includes('D') || filters.includes('D1');
+    const diceRollMode = filters.includes('D1') ? 'first' : 'both';
     const mirrorPositionFilter = filters.includes('M');
     const pipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
@@ -428,6 +434,7 @@ export function parseFilters(filters, command) {
         noContactFilter,
         decisionTypeFilter,
         diceRollFilter,
+        diceRollMode,
         mirrorPositionFilter,
         pipCountFilter,
         winRateFilter,

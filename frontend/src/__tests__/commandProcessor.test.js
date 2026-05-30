@@ -66,7 +66,15 @@ describe('parseFilters', () => {
     });
 
     test('diceRollFilter with "D"', () => {
-        expect(parseFilters(['D'], 's D').diceRollFilter).toBe(true);
+        const r = parseFilters(['D'], 's D');
+        expect(r.diceRollFilter).toBe(true);
+        expect(r.diceRollMode).toBe('both');
+    });
+
+    test('diceRollFilter with "D1" (first die only)', () => {
+        const r = parseFilters(['D1'], 's D1');
+        expect(r.diceRollFilter).toBe(true);
+        expect(r.diceRollMode).toBe('first');
     });
 
     test('mirrorPositionFilter with "M"', () => {
