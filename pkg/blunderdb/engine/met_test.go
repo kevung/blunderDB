@@ -1,4 +1,4 @@
-package database
+package engine
 
 import (
 	"math"
@@ -75,8 +75,8 @@ func TestConvertEMGLossToMWCLoss_RoundTrip(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			mwcWin := float32(gnuBGGetME(tc.score0, tc.score1, tc.matchLength, tc.fMove, tc.cubeValue, tc.fMove, false))
-			mwcLose := float32(gnuBGGetME(tc.score0, tc.score1, tc.matchLength, tc.fMove, tc.cubeValue, 1-tc.fMove, false))
+			mwcWin := float32(GnuBGGetME(tc.score0, tc.score1, tc.matchLength, tc.fMove, tc.cubeValue, tc.fMove, false))
+			mwcLose := float32(GnuBGGetME(tc.score0, tc.score1, tc.matchLength, tc.fMove, tc.cubeValue, 1-tc.fMove, false))
 			denom := mwcWin - mwcLose
 			if denom < 1e-7 && denom > -1e-7 {
 				t.Skipf("degenerate denom (%.6f) for %s — skipping", denom, tc.name)
