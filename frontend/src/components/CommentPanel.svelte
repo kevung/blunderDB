@@ -11,6 +11,7 @@
     let searchQuery = $state('');
     let displayedComments = $state([]);
     let feedEl;
+    let promptEl;
     let editingCommentId = $state(null);
     let editingText = $state('');
     let promptText = $state('');
@@ -18,6 +19,7 @@
     $effect(() => {
         if (visible) {
             loadComments();
+            if (promptEl) promptEl.focus();
         }
     });
     // Reload comments when displayed position changes
@@ -230,7 +232,7 @@
 
     <!-- Prompt -->
     <div class="prompt">
-        <textarea id="commentTextArea" bind:value={promptText} placeholder="Comment on current position…" onkeydown={handlePromptKeyDown} rows="2"></textarea>
+        <textarea id="commentTextArea" bind:this={promptEl} bind:value={promptText} placeholder="Comment on current position…" onkeydown={handlePromptKeyDown} rows="2"></textarea>
     </div>
 </div>
 
