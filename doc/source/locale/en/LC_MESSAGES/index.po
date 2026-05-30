@@ -590,6 +590,33 @@ msgstr ""
 "cube_error calculation for Double/Pass decisions. Statistics model "
 "documentation (:ref:`stats_parity`). See :ref:`stats`."
 
+#: ../../source/index.rst:1
+msgid "0.20.0"
+msgstr "0.20.0"
+
+#: ../../source/index.rst:1
+msgid "31/05/2026"
+msgstr "May 31, 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de la structure d'exclusion *Except* au panneau de recherche : "
+"exclut les positions contenant l'un des pions dessinés, avec marqueur « "
+"doit être vide » (double-clic) et nombre de pions par point non limité "
+"(commande x). Ajout de l'option « premier dé uniquement » au filtre de "
+"lancer de dés (variante D1, option CLI --dice). Panneau Commentaires : "
+"focus automatique du champ de saisie à l'ouverture et boutons éditer / "
+"supprimer toujours visibles. Correction du filtre « Search Text » qui ne "
+"trouvait pas tous les tags de commentaires."
+msgstr ""
+"Added the *Except* exclusion structure to the search panel: excludes "
+"positions that contain any of the drawn checkers, with a « must be empty » "
+"marker (double-click) and no limit on the number of checkers per point "
+"(command x). Added a « first die only » option to the dice roll filter (D1 "
+"variant, --dice CLI option). Comments panel: the input field is focused "
+"automatically on open and the edit / delete buttons are always visible. "
+"Fixed the « Search Text » filter that failed to match all comment tags."
+
 #: ../../source/index.rst:145
 msgid "Sommaire"
 msgstr "Table of contents"
