@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.30)  30 MAY 2026 23:09
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023/Debian) (preloaded format=pdflatex 2026.5.30)  30 MAY 2026 23:38
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -879,74 +879,74 @@ LaTeX Warning: Hyper reference `manuel:stats' on page 3 undefined on input line
  574.
 
 [3]
-Overfull \vbox (708.70886pt too high) has occurred while \output is active []
+Overfull \vbox (792.70886pt too high) has occurred while \output is active []
 
 
 [4]
 Chapter 2.
 LaTeX Font Info:    Trying to load font information for T1+txtt on input line 6
-18.
+34.
 (/usr/share/texlive/texmf-dist/tex/latex/txfonts/t1txtt.fd
 File: t1txtt.fd 2000/12/15 v3.1
 )
-Underfull \hbox (badness 10000) in paragraph at lines 617--619
+Underfull \hbox (badness 10000) in paragraph at lines 633--635
 []\T1/qtm/m/n/10 On Linux, if blun-derDB is not ex-e-cutable af-ter down-load-i
 ng, run the com-mand \T1/txtt/m/n/10 chmod +x ./
  []
 
 
 LaTeX Warning: Hyper reference `annexe_windows_securite:annexe-windows-malware'
- on page 5 undefined on input line 628.
+ on page 5 undefined on input line 644.
 
 
 LaTeX Warning: Reference `annexe_windows_securite:annexe-windows-malware' on pa
-ge 5 undefined on input line 628.
+ge 5 undefined on input line 644.
 
 [5
 
 ]
 
 LaTeX Warning: Hyper reference `annexe_mac_securite:annexe-mac-malware' on page
- 6 undefined on input line 633.
+ 6 undefined on input line 649.
 
 
 LaTeX Warning: Reference `annexe_mac_securite:annexe-mac-malware' on page 6 und
-efined on input line 633.
+efined on input line 649.
 
 [6]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 7 undefined on i
-nput line 848.
+nput line 864.
 
 [7]
 
 LaTeX Warning: Hyper reference `guide_utilisateur:guide-edit-position' on page 
-8 undefined on input line 855.
+8 undefined on input line 871.
 
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 8 undefined on i
-nput line 859.
+nput line 875.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 876.
+ line 892.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-876.
+892.
 
 
 LaTeX Warning: Hyper reference `cmd_mode:cmd-mode' on page 8 undefined on input
- line 902.
+ line 918.
 
 
 LaTeX Warning: Reference `cmd_mode:cmd-mode' on page 8 undefined on input line 
-902.
+918.
 
 [8]
 
 LaTeX Warning: Hyper reference `raccourcis:raccourcis' on page 9 undefined on i
-nput line 947.
+nput line 963.
 
 [9]
 
@@ -957,14 +957,14 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.1004 ...ecalculate statistics on a simple PR ↔
+l.1020 ...ecalculate statistics on a simple PR ↔
                                                    MWC toggle: both metrics ...
 
 ? 
 ! Emergency stop.
  ...                                              
                                                   
-l.1004 ...ecalculate statistics on a simple PR ↔
+l.1020 ...ecalculate statistics on a simple PR ↔
                                                    MWC toggle: both metrics ...
 
 You may provide a definition with
@@ -974,7 +974,7 @@ You may provide a definition with
 Here is how much of TeX's memory you used:
  16801 strings out of 476182
  285645 string characters out of 5795595
- 1969975 words of memory out of 5000000
+ 1972975 words of memory out of 5000000
  38409 multiletter control sequences out of 15000+600000
  608304 words of font info for 74 fonts, out of 8000000 for 9000
  15 hyphenation exceptions out of 8191

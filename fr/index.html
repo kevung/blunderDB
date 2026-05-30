@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>blunderDB &mdash; Documentation blunderDB 0.19.0</title>
+  <title>blunderDB &mdash; Documentation blunderDB 0.20.0</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
       <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
@@ -16,7 +16,7 @@
     <link rel="shortcut icon" href="_static/favicon.ico"/>
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=4377dd52"></script>
+      <script src="_static/documentation_options.js?v=3da08d6f"></script>
       <script src="_static/doctools.js?v=fd6eb6e6"></script>
       <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
       <script src="_static/translations.js?v=e6b791cb"></script>
@@ -248,6 +248,10 @@ disponibles pour l’import en masse, l’automatisation et le scripting.</p></l
 <tr class="row-even"><td><p>0.19.0</p></td>
 <td><p>07/05/2026</p></td>
 <td><p>Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill-down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube_error pour les décisions Double/Pass. Documentation du modèle de statistiques (:ref:`stats_parity`). Voir :ref:`stats`.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.20.0</p></td>
+<td><p>31/05/2026</p></td>
+<td><p>Ajout de la structure d’exclusion <em>Except</em> au panneau de recherche : exclut les positions contenant l’un des pions dessinés, avec marqueur « doit être vide » (double-clic) et nombre de pions par point non limité (commande x). Ajout de l’option « premier dé uniquement » au filtre de lancer de dés (variante D1, option CLI –dice). Panneau Commentaires : focus automatique du champ de saisie à l’ouverture et boutons éditer / supprimer toujours visibles. Correction du filtre « Search Text » qui ne trouvait pas tous les tags de commentaires.</p></td>
 </tr>
 </tbody>
 </table>
