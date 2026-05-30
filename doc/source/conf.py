@@ -68,3 +68,10 @@ rst_prolog = f"""
 .. |latest_mac_exe| replace:: `{latest_mac_exe_url} <{latest_mac_exe_url}>`__
 """
 
+# -- Options for LaTeX / PDF output ------------------------------------------
+# Build PDFs with XeLaTeX. The default engine (pdflatex) aborts with a fatal
+# "Unicode character not set up for use with LaTeX" error on the symbols used
+# in the French docs (↔ → ≤ ×, …); XeLaTeX handles arbitrary Unicode natively.
+# The CI already installs texlive-xetex for this.
+latex_engine = 'xelatex'
+

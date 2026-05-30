@@ -82,15 +82,17 @@ def create_archive(root_dir, build_folders):
 def build_sphinx_docs(path, language):
     os.chdir(path)
     subprocess.run(["sphinx-build", "-b", "html", "-D",
-        "language=" + language, "source", "build/" + language])
+        "language=" + language, "source", "build/" + language], check=True)
     print(f"Documentation built for {language} language in {path}")
 
 def build_latex_docs(path, language):
     os.chdir(path)
     build_path = os.path.join("build", f"pdf_{language}")
-    subprocess.run(["sphinx-build", "-b", "latex", "-D", f"language={language}", "source", build_path])
+    subprocess.run(["sphinx-build", "-b", "latex", "-D", f"language={language}", "source", build_path], check=True)
     os.chdir(build_path)
-    subprocess.run(["make"])
+    # check=True so a LaTeX failure aborts the build instead of silently
+    # producing no PDF (the CI docs job used to stay green with no PDF).
+    subprocess.run(["make"], check=True)
     print(f"LaTeX documentation built for {language} language in {path}")
 
 def rename_pdf(root_dir, language, latest_commit):
