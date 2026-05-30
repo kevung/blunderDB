@@ -91,6 +91,13 @@ export function handleKeyDown(event) {
         return;
     }
 
+    // Comment panel: while focus is anywhere inside the panel, suppress single-key
+    // shortcuts (navigation h/j/k/l, p, space, …) so they never conflict with
+    // typing or editing comments. Ctrl-combos, Escape (blur) and Tab still pass.
+    if (document.activeElement.closest('.comment-panel') && !event.ctrlKey && event.key !== 'Escape' && event.key !== 'Tab') {
+        return;
+    }
+
     // Analysis panel focus handling
     if (document.activeElement.closest('.analysis-panel')) {
         if (event.ctrlKey || event.key === 'Escape' || event.key === 'Tab') {

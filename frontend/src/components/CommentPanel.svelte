@@ -1,4 +1,5 @@
 <script>
+    import { tick } from 'svelte';
     import { logger } from '../utils/logger.js';
     let { visible = false, onClose: _onClose } = $props();
 
@@ -108,9 +109,17 @@
         }
     }
 
-    function startEditComment(comment) {
+    async function startEditComment(comment) {
         editingCommentId = comment.id;
         editingText = comment.text;
+        // Move focus into the edit textarea so keystrokes go to the field and
+        // don't leak to global keyboard shortcuts (board navigation, etc.).
+        await tick();
+        const el = document.querySelector('.msg-edit-input');
+        if (el) {
+            el.focus();
+            el.setSelectionRange(el.value.length, el.value.length);
+        }
     }
 
     async function saveEditedComment(comment) {
