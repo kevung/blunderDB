@@ -45,16 +45,12 @@ test.beforeEach(async ({ page }) => {
         window.__epcFixtureA = result;
     }, epcResultA);
     await page.addInitScript(() => {
-        // Attendre que window.go soit installé (ce script s'exécute après
-        // le script de base dans wailsMock, mais avant le code applicatif)
-        const orig = window.go?.main?.Database?.ComputeEPCFromPosition;
-        Object.defineProperty(window.go.main.Database, 'ComputeEPCFromPosition', {
+        Object.defineProperty(window.go.database.Database, 'ComputeEPCFromPosition', {
             get() {
                 return () => Promise.resolve(window.__epcFixture ?? window.__epcFixtureA ?? null);
             },
             configurable: true,
         });
-        void orig; // suppress linter
     });
 
     await page.goto('http://localhost:5173/');

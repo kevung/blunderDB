@@ -360,23 +360,23 @@ func (d *Database) SetupDatabase(path string) error {
 	}
 
 	// Add tournament_id column to match table if it doesn't exist
-	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
 
 	// Add last_visited_position column to match table if it doesn't exist (v1.7.0)
-	d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
 
 	// Add canonical_hash column to match table if it doesn't exist
 	// canonical_hash is format-independent (same match imported from XG and SGF will have the same canonical_hash)
-	d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN canonical_hash TEXT`)
 
 	// Add comment column to match table
-	d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN comment TEXT DEFAULT ''`)
 
 	// Add tournament_sort_order column to match table (ordering within a tournament)
-	d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
+	_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_sort_order INTEGER DEFAULT 0`)
 
 	// Add comment column to tournament table
-	d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
+	_, _ = d.db.Exec(`ALTER TABLE tournament ADD COLUMN comment TEXT DEFAULT ''`)
 
 	// Create Anki spaced repetition tables (v1.8.0)
 	_, err = d.db.Exec(`
@@ -784,7 +784,7 @@ func (d *Database) OpenDatabase(path string) error {
 			}
 
 			// Add tournament_id column to match table
-			d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
+			_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN tournament_id INTEGER REFERENCES tournament(id) ON DELETE SET NULL`)
 
 			_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.6.0")
 			if err != nil {
@@ -798,7 +798,7 @@ func (d *Database) OpenDatabase(path string) error {
 	// Auto-migrate from 1.6.0 to 1.7.0
 	if dbVersion == "1.6.0" {
 		// Add last_visited_position column to match table
-		d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
+		_, _ = d.db.Exec(`ALTER TABLE match ADD COLUMN last_visited_position INTEGER DEFAULT -1`)
 
 		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.7.0")
 		if err != nil {
@@ -811,9 +811,9 @@ func (d *Database) OpenDatabase(path string) error {
 	// Auto-migrate from 1.7.0 to 1.8.0
 	if dbVersion == "1.7.0" {
 		// Add created_at column to comment table
-		d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
+		_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN created_at DATETIME DEFAULT CURRENT_TIMESTAMP`)
 		// Backfill existing rows that have NULL created_at
-		d.db.Exec(`UPDATE comment SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL`)
+		_, _ = d.db.Exec(`UPDATE comment SET created_at = CURRENT_TIMESTAMP WHERE created_at IS NULL`)
 
 		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.8.0")
 		if err != nil {

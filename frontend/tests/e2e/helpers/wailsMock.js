@@ -97,9 +97,12 @@ export async function installWailsMock(page, opts = {}) {
             { get: (t, p) => (p in t ? t[p] : noop) },
         );
 
-        // ── window.go.main.Database ──────────────────────────────────────────
+        // ── window.go (Wails bindings, namespaced by Go package) ────────────
+        // Database → window.go.database.Database
+        // App      → window.go.gui.App
+        // Config   → window.go.main.Config
         window.go = {
-            main: {
+            database: {
                 Database: makeProxy({
                     LoadCommandHistory: asyncArr,
                     SaveCommand: asyncVoid,
@@ -112,6 +115,14 @@ export async function installWailsMock(page, opts = {}) {
                     LoadSessionState: asyncNull,
                     ClearSessionState: asyncVoid,
                 }),
+            },
+            gui: {
+                App: makeProxy({
+                    ShowAlert: asyncVoid,
+                    ShowQuestionDialog: () => Promise.resolve(false),
+                }),
+            },
+            main: {
                 Config: makeProxy({
                     GetLastDatabasePath: () => Promise.resolve(''), // pas d'auto-open
                     SaveLastDatabasePath: asyncVoid,
@@ -121,17 +132,13 @@ export async function installWailsMock(page, opts = {}) {
                     SaveStatsFilter: asyncVoid,
                     SaveConfig: asyncVoid,
                 }),
-                App: makeProxy({
-                    ShowAlert: asyncVoid,
-                    ShowQuestionDialog: () => Promise.resolve(false),
-                }),
             },
         };
     });
 }
 
 /**
- * Override dynamiquement une méthode de window.go.main.Database après le chargement
+ * Override dynamiquement une méthode de window.go.database.Database après le chargement
  * de la page. Utile pour modifier les fixtures mid-test.
  *
  * @param {import('@playwright/test').Page} page
@@ -141,7 +148,7 @@ export async function installWailsMock(page, opts = {}) {
 export async function overrideDbMethod(page, methodName, returnValue) {
     await page.evaluate(
         ({ method, value }) => {
-            window.go.main.Database[method] = () => Promise.resolve(value);
+            window.go.database.Database[method] = () => Promise.resolve(value);
         },
         { method: methodName, value: returnValue },
     );
