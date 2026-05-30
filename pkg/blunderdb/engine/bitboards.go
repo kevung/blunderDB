@@ -89,14 +89,19 @@ func ExclusionMasks(filter domain.Position) (single1, made1, single2, made2 uint
 			continue
 		}
 		bit := uint32(1) << i
-		if p.Color == domain.Black {
+		switch p.Color {
+		case domain.ExcludeEmpty:
+			// "Must be empty": reject if either colour occupies the point.
+			single1 |= bit
+			single2 |= bit
+		case domain.Black:
 			switch p.Checkers {
 			case 1:
 				single1 |= bit
 			case 2:
 				made1 |= bit
 			}
-		} else { // White
+		default: // White
 			switch p.Checkers {
 			case 1:
 				single2 |= bit

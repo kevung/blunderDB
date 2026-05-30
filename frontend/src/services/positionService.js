@@ -132,8 +132,10 @@ export function mirrorPositionForSearch(pos) {
 
     const tempPoints = [...mirrored.board.points];
     for (let i = 0; i < 26; i++) {
+        // color 2 = "must be empty" exclusion marker: keep it through the mirror.
+        const c = tempPoints[i].color;
         mirrored.board.points[25 - i] = {
-            color: tempPoints[i].color === -1 ? -1 : 1 - tempPoints[i].color,
+            color: c === -1 || c === 2 ? c : 1 - c,
             checkers: tempPoints[i].checkers
         };
     }

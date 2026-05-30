@@ -450,6 +450,18 @@ msgid "La position ou celle miroir vérifie les filtres."
 msgstr "The position or the mirror one meets the filters."
 
 #: ../../source/cmd_mode.rst:1
+msgid "x"
+msgstr "x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position ne contient aucun pion de la structure d'exclusion (onglet « "
+"Except » du panneau de recherche)."
+msgstr ""
+"The position contains none of the checkers of the exclusion structure (the "
+"\"Except\" tab of the search panel)."
+
+#: ../../source/cmd_mode.rst:1
 msgid "p>x"
 msgstr "p>x"
 

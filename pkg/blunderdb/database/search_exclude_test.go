@@ -269,6 +269,43 @@ func TestSearch_Exclude_NoSpare(t *testing.T) {
 	}
 }
 
+// TestSearch_Exclude_EmptyMarker verifies the "must be empty" marker: a point
+// flagged empty in Except drops positions with ANY checker (either colour) there.
+func TestSearch_Exclude_EmptyMarker(t *testing.T) {
+	db := newTestDB(t)
+
+	idBlackOn8 := savePos(t, db, initialBoard())          // Black on point 8 → excluded
+	idEmptyOn8 := savePos(t, db, boardWithoutBlackOn8())   // point 8 empty → kept
+
+	// A position with White on point 8 must also be excluded by an empty marker.
+	bWhite := boardWithoutBlackOn8()
+	bWhite.Points[19] = Point{Checkers: 4, Color: White}
+	bWhite.Points[8] = Point{Checkers: 1, Color: White}
+	idWhiteOn8 := savePos(t, db, bWhite) // White on 8 → excluded
+
+	include := Position{}
+	include.Board.Points[6] = Point{Color: Black, Checkers: 1}
+
+	exclude := Position{}
+	exclude.Board.Points[8] = Point{Color: ExcludeEmpty, Checkers: 1} // point 8 must be empty
+
+	got, err := db.LoadPositionsByFilters(SearchFilters{Filter: include, ExcludeFilter: exclude})
+	if err != nil {
+		t.Fatalf("LoadPositionsByFilters: %v", err)
+	}
+	ids := sortedIDs(got)
+
+	if !slices.Contains(ids, idEmptyOn8) {
+		t.Errorf("position with point 8 empty should be kept (id=%d)", idEmptyOn8)
+	}
+	if slices.Contains(ids, idBlackOn8) {
+		t.Errorf("position with Black on point 8 should be excluded by the empty marker (id=%d)", idBlackOn8)
+	}
+	if slices.Contains(ids, idWhiteOn8) {
+		t.Errorf("position with White on point 8 should be excluded by the empty marker (id=%d)", idWhiteOn8)
+	}
+}
+
 // TestSearch_Exclude_Tight verifies the Go-side exact check for an exclude
 // structure with >2 checkers on a point (Black ≥3 on point 8): a position with
 // exactly 2 Black checkers on point 8 must be kept (it does not contain the

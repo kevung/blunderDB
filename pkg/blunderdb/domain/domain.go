@@ -12,6 +12,9 @@ const (
 	None      = -1
 	Black     = 0
 	White     = 1
+	// ExcludeEmpty marks, in an exclusion ("Sauf") structure only, a point that must
+	// contain NO checker of any colour. Stored as a board Point{Checkers:1, Color:ExcludeEmpty}.
+	ExcludeEmpty = 2
 )
 
 const (
@@ -313,7 +316,12 @@ func EffectiveIncludeFilter(include, exclude Position) Position {
 	for i := range result.Board.Points {
 		ep := exclude.Board.Points[i]
 		ip := include.Board.Points[i]
-		if ep.Checkers > 0 && ep.Color >= 0 && ip.Checkers > 0 && ip.Color == ep.Color && ip.Checkers >= ep.Checkers {
+		if ep.Checkers <= 0 || ep.Color < 0 || ip.Checkers <= 0 {
+			continue
+		}
+		// A "must be empty" marker always wins; otherwise the exclude wins only when
+		// its count is ≤ the include count (same colour) — a genuine contradiction.
+		if ep.Color == ExcludeEmpty || (ip.Color == ep.Color && ip.Checkers >= ep.Checkers) {
 			result.Board.Points[i] = Point{}
 		}
 	}
@@ -328,11 +336,19 @@ func EffectiveIncludeFilter(include, exclude Position) Position {
 func (p *Position) ContainsAnyCheckerOf(filter Position) bool {
 	for i := 0; i < len(p.Board.Points); i++ {
 		fp := filter.Board.Points[i]
-		if fp.Checkers > 0 && fp.Color >= 0 {
-			pp := p.Board.Points[i]
-			if pp.Color == fp.Color && pp.Checkers >= fp.Checkers {
+		if fp.Checkers <= 0 || fp.Color < 0 {
+			continue
+		}
+		pp := p.Board.Points[i]
+		if fp.Color == ExcludeEmpty {
+			// "Must be empty" marker: reject if the point holds any checker.
+			if pp.Checkers > 0 {
 				return true
 			}
+			continue
+		}
+		if pp.Color == fp.Color && pp.Checkers >= fp.Checkers {
+			return true
 		}
 	}
 	return false

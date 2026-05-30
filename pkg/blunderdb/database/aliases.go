@@ -15,6 +15,8 @@ const (
 	Black     = domain.Black
 	White     = domain.White
 
+	ExcludeEmpty = domain.ExcludeEmpty
+
 	Unlimited    = domain.Unlimited
 	PostCrawford = domain.PostCrawford
 	Crawford     = domain.Crawford

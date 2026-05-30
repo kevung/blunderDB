@@ -6,6 +6,10 @@
     import Two from 'two.js';
     import { get } from 'svelte/store';
     import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore, activeTabStore } from '../stores/uiStore';
+    import { searchStructureModeStore } from '../stores/searchExcludePositionStore';
+
+    // Sentinel colour stored on an exclude-structure point that must hold no checker.
+    const EXCLUDE_EMPTY = 2;
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
     let mode = $derived($statusBarModeStore);
@@ -275,6 +279,15 @@
         });
     }
 
+    // setEmptyExcludeMarker flags a point of the "Except" structure as must-be-empty
+    // (sentinel colour EXCLUDE_EMPTY). Used by the double-click handler.
+    function setEmptyExcludeMarker(checkerPoint) {
+        positionStore.update((pos) => {
+            pos.board.points = pos.board.points.map((point, index) => (index === checkerPoint ? { checkers: 1, color: EXCLUDE_EMPTY } : point));
+            return pos;
+        });
+    }
+
     // Parse move notation like "24/23 13/11" or "8/5 6/5(2)" into array of moves with counts
     function parseMoveNotation(moveString) {
         if (!moveString || moveString === 'bar' || moveString.toLowerCase().includes('cannot move')) {
@@ -517,6 +530,17 @@
         const rect = canvas.getBoundingClientRect();
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
+
+        // In the Search "Except" structure, double-clicking a point flags it as
+        // "must be empty" (no checker of any colour). A normal single click puts a
+        // checker back. Marker is restricted to the 24 inner points.
+        if (get(activeTabStore) === 'search' && get(searchStructureModeStore) === 'exclude') {
+            const { checkerPoint } = getCheckerPointAndCount(mouseX, mouseY, 0);
+            if (checkerPoint >= 1 && checkerPoint <= 24) {
+                setEmptyExcludeMarker(checkerPoint);
+                return;
+            }
+        }
 
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
@@ -1125,6 +1149,21 @@
                         yBase = boardOrigYpos - 0.5 * boardHeight;
                     }
                 }
+                // "Must be empty" exclusion marker: a red crossed-out ring.
+                if (point.color === EXCLUDE_EMPTY) {
+                    const dir = (index !== 0 && index <= 12) || index === 25 ? -1 : 1;
+                    const y = yBase + dir * 0.5 * boardCfg.checker.sizeFactor * boardCheckerSize;
+                    const r = (boardCfg.checker.sizeFactor * boardCheckerSize) / 2;
+                    const ring = two.makeCircle(x, y, r);
+                    ring.fill = 'rgba(192,57,43,0.12)';
+                    ring.stroke = '#c0392b';
+                    ring.linewidth = 2;
+                    const off = r * 0.6;
+                    const slash = two.makeLine(x - off, y + off, x + off, y - off);
+                    slash.stroke = '#c0392b';
+                    slash.linewidth = 2;
+                    return;
+                }
                 const checkersToDraw = Math.min(point.checkers, 5);
                 for (let i = 0; i < checkersToDraw; i++) {
                     const y = yBase + ((index !== 0 && index <= 12) || index === 25 ? -1 : 1) * (i + 0.5) * boardCfg.checker.sizeFactor * boardCheckerSize;
@@ -1149,6 +1188,7 @@
 
             // Draw checkers on the bar above the bar
             position.board.points.forEach((point, index) => {
+                if (point.color === EXCLUDE_EMPTY) return; // markers live on inner points only
                 if (index === 0 || index === 25) {
                     let x = boardOrigXpos;
                     let yBase = index === 0 ? boardOrigYpos + 0.5 * boardCheckerSize : boardOrigYpos - 0.5 * boardCheckerSize;
