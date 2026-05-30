@@ -2,13 +2,10 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"math"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/jackc/pgx/v5"
 
 	"github.com/kevung/blunderdb/pkg/blunderdb/domain"
 	"github.com/kevung/blunderdb/pkg/blunderdb/engine"
@@ -304,17 +301,29 @@ func loadAnalysisJSON(ctx context.Context, db execer, positionID int64) *domain.
 	return &a
 }
 
-// loadCommentText returns the concatenated comment text of a position.
+// loadCommentText returns the concatenated comment text of a position. A
+// position may have several comment entries (see AddComment); all of them are
+// joined so the "Search Text" filter can match against any one of them.
 func loadCommentText(ctx context.Context, db execer, positionID int64) (string, error) {
-	var text string
-	err := db.QueryRow(ctx, `SELECT text FROM comment WHERE position_id = $1`, positionID).Scan(&text)
-	if errors.Is(err, pgx.ErrNoRows) {
-		return "", nil
-	}
+	rows, err := db.Query(ctx,
+		`SELECT text FROM comment WHERE position_id = $1 AND text != '' ORDER BY id ASC`,
+		positionID)
 	if err != nil {
 		return "", err
 	}
-	return text, nil
+	defer rows.Close()
+	var parts []string
+	for rows.Next() {
+		var text string
+		if err := rows.Scan(&text); err != nil {
+			return "", err
+		}
+		parts = append(parts, text)
+	}
+	if err := rows.Err(); err != nil {
+		return "", err
+	}
+	return strings.Join(parts, "\n\n"), nil
 }
 
 // getPlayer1MovesForPosition returns player-1's checker moves and cube actions
@@ -355,19 +364,43 @@ func getPlayer1MovesForPosition(ctx context.Context, db execer, positionID int64
 
 // matchesSearchText reports whether a position's comment matches a "t"-filter.
 func matchesSearchText(ctx context.Context, db execer, p *domain.Position, searchText string) bool {
+	keywords := parseSearchTextKeywords(searchText)
+	if len(keywords) == 0 {
+		return false
+	}
 	comment, err := loadCommentText(ctx, db, p.ID)
 	if err != nil {
 		return false
 	}
-	searchTextMatch := strings.Trim(searchText, ` t"'`)
-	searchTextArray := strings.Split(strings.ToLower(searchTextMatch), ";")
 	comment = strings.ToLower(comment)
-	for _, text := range searchTextArray {
-		if strings.Contains(comment, text) {
+	for _, kw := range keywords {
+		if strings.Contains(comment, kw) {
 			return true
 		}
 	}
 	return false
+}
+
+// parseSearchTextKeywords extracts the lowercased, trimmed, non-empty keywords
+// from a t"tag1;tag2;..." search filter. It strips the frontend's t"..."
+// wrapper, splits on ';', trims whitespace around each tag, and drops empty
+// tags (so a stray trailing ';' or surrounding spaces no longer match every
+// comment or fail to match a valid tag).
+func parseSearchTextKeywords(searchText string) []string {
+	s := strings.TrimSpace(searchText)
+	// Strip the t"..." wrapper: a leading 't' immediately followed by a
+	// quote, then the surrounding quotes.
+	if len(s) >= 2 && s[0] == 't' && (s[1] == '"' || s[1] == '\'') {
+		s = s[1:]
+	}
+	s = strings.ToLower(strings.Trim(s, `"'`))
+	var keywords []string
+	for _, kw := range strings.Split(s, ";") {
+		if kw = strings.TrimSpace(kw); kw != "" {
+			keywords = append(keywords, kw)
+		}
+	}
+	return keywords
 }
 
 // isPlayer1TakePassCubeAction reports whether player-1's recorded cube action

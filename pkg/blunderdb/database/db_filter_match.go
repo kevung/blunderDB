@@ -14,22 +14,44 @@ import (
 // methods on domain.Position in the domain package.
 
 func MatchesSearchText(p *Position, searchText string, d *Database) bool {
+	keywords := parseSearchTextKeywords(searchText)
+	if len(keywords) == 0 {
+		return false
+	}
 	comment, err := d.LoadComment(p.ID)
 	if err != nil {
 		slog.Warn("loading comment for position", "positionID", p.ID, "err", err)
 		return false
 	}
-
-	// Extract the keyword from the raw search text filter
-	searchTextMatch := strings.Trim(searchText, ` t"'`)
-	searchTextArray := strings.Split(strings.ToLower(searchTextMatch), ";")
 	comment = strings.ToLower(comment)
-	for _, text := range searchTextArray {
-		if strings.Contains(comment, text) {
+	for _, kw := range keywords {
+		if strings.Contains(comment, kw) {
 			return true
 		}
 	}
 	return false
+}
+
+// parseSearchTextKeywords extracts the lowercased, trimmed, non-empty keywords
+// from a t"tag1;tag2;..." search filter. It strips the frontend's t"..."
+// wrapper, splits on ';', trims whitespace around each tag, and drops empty
+// tags (so a stray trailing ';' or surrounding spaces no longer match every
+// comment or fail to match a valid tag).
+func parseSearchTextKeywords(searchText string) []string {
+	s := strings.TrimSpace(searchText)
+	// Strip the t"..." wrapper: a leading 't' immediately followed by a
+	// quote, then the surrounding quotes.
+	if len(s) >= 2 && s[0] == 't' && (s[1] == '"' || s[1] == '\'') {
+		s = s[1:]
+	}
+	s = strings.ToLower(strings.Trim(s, `"'`))
+	var keywords []string
+	for _, kw := range strings.Split(s, ";") {
+		if kw = strings.TrimSpace(kw); kw != "" {
+			keywords = append(keywords, kw)
+		}
+	}
+	return keywords
 }
 
 func MatchesPlayer2BackgammonRate(p *Position, filter string, d *Database) bool {
