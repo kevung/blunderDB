@@ -57,6 +57,10 @@
     let unsubscribeSelectedMove;
     let _isMouseDown = false;
     let startMousePos = null;
+    // Manual double-click tracking for the Except "must be empty" marker. Native
+    // 'dblclick' is unreliable here because each click redraws (recreates) the
+    // two.js shapes, so the two clicks land on different DOM nodes.
+    let lastExceptClick = null;
     let cubePosition = { x: 0, y: 0 };
     let previousDice = get(positionStore).dice; // Save previous dice values
 
@@ -116,6 +120,27 @@
             y: event.clientY - rect.top,
             button: event.button
         };
+
+        // In the Except structure, a quick second click on the same point blocks it
+        // (must be empty). Detected manually because native 'dblclick' is unreliable
+        // when redraws recreate the shapes between the two clicks.
+        if (mode === 'EDIT' && get(searchStructureModeStore) === 'exclude') {
+            const { checkerPoint } = getCheckerPointAndCount(endMousePos.x, endMousePos.y, 0);
+            if (checkerPoint >= 1 && checkerPoint <= 24) {
+                const isMarker = get(positionStore).board.points[checkerPoint]?.color === EXCLUDE_EMPTY;
+                const now = Date.now();
+                if (!isMarker && lastExceptClick && lastExceptClick.point === checkerPoint && now - lastExceptClick.time < 450) {
+                    lastExceptClick = null;
+                    setEmptyExcludeMarker(checkerPoint);
+                    return;
+                }
+                // A click on a blocked point unblocks it (see updateCheckerPositionByPoint);
+                // don't let it seed a double-click that would immediately re-block.
+                lastExceptClick = isMarker ? null : { point: checkerPoint, time: now };
+            } else {
+                lastExceptClick = null;
+            }
+        }
 
         fillCheckersBetween(startMousePos, endMousePos);
     }
@@ -541,16 +566,9 @@
         const mouseX = event.clientX - rect.left;
         const mouseY = event.clientY - rect.top;
 
-        // In the Search "Except" structure, double-clicking a point flags it as
-        // "must be empty" (no checker of any colour). A single click on it unblocks
-        // it. Marker is restricted to the 24 inner points.
-        if (get(searchStructureModeStore) === 'exclude') {
-            const { checkerPoint } = getCheckerPointAndCount(mouseX, mouseY, 0);
-            if (checkerPoint >= 1 && checkerPoint <= 24) {
-                setEmptyExcludeMarker(checkerPoint);
-                return;
-            }
-        }
+        // Note: the Except "must be empty" marker is handled by manual double-click
+        // detection in handleMouseUp (native 'dblclick' is unreliable here because
+        // redraws recreate the shapes between the two clicks).
 
         const boardOrigXpos = width / 2;
         const boardOrigYpos = height / 2;
