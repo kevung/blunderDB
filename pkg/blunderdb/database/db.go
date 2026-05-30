@@ -826,7 +826,7 @@ func (d *Database) OpenDatabase(path string) error {
 	// Auto-migrate from 1.8.0 to 1.9.0
 	if dbVersion == "1.8.0" {
 		// Add modified_at column to comment table
-		d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
+		_, _ = d.db.Exec(`ALTER TABLE comment ADD COLUMN modified_at DATETIME`)
 
 		_, err = d.db.Exec(`UPDATE metadata SET value = ? WHERE key = 'database_version'`, "1.9.0")
 		if err != nil {

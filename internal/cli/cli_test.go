@@ -343,8 +343,8 @@ func TestCLI_ExportRoundTrip(t *testing.T) {
 	t.Cleanup(func() {
 		cli2.db.Close()
 	})
-	if _, err := cli2.db.ImportDatabase(exportPath); err != nil {
-		t.Fatalf("ImportDatabase: %v", err)
+	if _, err := cli2.db.CommitImportDatabase(exportPath); err != nil {
+		t.Fatalf("CommitImportDatabase: %v", err)
 	}
 
 	reimportedPositions, _ := cli2.db.LoadAllPositions()

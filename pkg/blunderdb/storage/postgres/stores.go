@@ -58,7 +58,7 @@ func withTx(ctx context.Context, db execer, fn func(execer) error) error {
 	if err != nil {
 		return fmt.Errorf("postgres: begin tx: %w", err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() { _ = tx.Rollback(ctx) }()
 	if err := fn(tx); err != nil {
 		return err
 	}

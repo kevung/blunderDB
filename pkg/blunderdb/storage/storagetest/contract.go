@@ -564,7 +564,7 @@ func testTxRollbackUndoes(t *testing.T, s storage.Storage) {
 	p := checkerPos()
 	id, err := tx.Positions().Save(ctx, "", &p)
 	if err != nil {
-		tx.Rollback()
+		_ = tx.Rollback()
 		t.Fatalf("tx Save: %v", err)
 	}
 	if err := tx.Rollback(); err != nil {
@@ -585,7 +585,7 @@ func testTxCommitPersists(t *testing.T, s storage.Storage) {
 	p := checkerPos()
 	id, err := tx.Positions().Save(ctx, "", &p)
 	if err != nil {
-		tx.Rollback()
+		_ = tx.Rollback()
 		t.Fatalf("tx Save: %v", err)
 	}
 	if err := tx.Commit(); err != nil {

@@ -313,7 +313,7 @@ func (s *matchStore) inTx(ctx context.Context, what string, fn func(pgx.Tx) erro
 	if err != nil {
 		return fmt.Errorf("postgres: %s: begin: %w", what, err)
 	}
-	defer tx.Rollback(ctx)
+	defer func() { _ = tx.Rollback(ctx) }()
 	if err := fn(tx); err != nil {
 		return fmt.Errorf("postgres: %s: %w", what, err)
 	}
