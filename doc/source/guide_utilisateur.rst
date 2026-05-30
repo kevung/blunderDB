@@ -378,9 +378,9 @@ les onglets *At least* et *Except* situés en haut du panneau :
   dessiner un pion sur les points 1, 3 et 5 ne conserve que les positions n'ayant
   aucun pion sur ces points). Le nombre de pions par point n'est pas limité :
   indiquer 3 pions sur un point exclut les positions ayant 3 pions ou plus à cet
-  endroit (utile pour rechercher une porte sans spare). Un *double-clic* sur un
-  point le marque comme devant être vide (aucun pion, quelle que soit la
-  couleur) ; un simple clic y replace un pion normal.
+  endroit (utile pour rechercher une porte sans spare). Deux clics rapides sur un
+  point le marquent comme devant être vide (cellule rouge hachurée, aucun pion
+  quelle que soit la couleur) ; un simple clic sur ce point le débloque.
 
 Lorsqu'un point appartient aux deux structures, le critère *Except* l'emporte
 s'il contredit le critère *At least*.

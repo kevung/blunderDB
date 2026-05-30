@@ -1017,10 +1017,10 @@
                             <tr>
                                 <td>x</td>
                                 <td
-                                    >Exclude positions that contain <em>any</em> checker of the structure drawn in the "Except" tab (e.g. drawing checkers on 1, 3 and 5 keeps only positions with none
-                                    of them). Toggle "At least" / "Except" above the filters to draw the excluded checkers on the board (shown with a red cue). The per-point count is not limited (3 on
-                                    a point excludes 3+ there — a made point with no spare), and a <em>double-click</em> on a point marks it as required to be empty (any colour); a single click puts a checker
-                                    back. On a shared point, "Except" overrides "At least" when the two contradict.</td
+                                    >Exclude positions that contain <em>any</em> checker of the structure drawn in the "Except" tab (e.g. drawing checkers on 1, 3 and 5 keeps only positions with none of
+                                    them). Toggle "At least" / "Except" above the filters to draw the excluded checkers on the board (shown with a red cue). The per-point count is not limited (3 on a point
+                                    excludes 3+ there — a made point with no spare), and two quick clicks on a point mark it as required to be empty (a red hatched cell, any colour); a single click on that
+                                    point unblocks it. On a shared point, "Except" overrides "At least" when the two contradict.</td
                                 >
                             </tr>
                             <tr>
