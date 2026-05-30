@@ -207,6 +207,16 @@
             if (checkerPoint < 1 || checkerPoint > 6) return;
             button = 0; // Force Black checkers only
         }
+
+        // A single click on a blocked ("must be empty") Except point unblocks it
+        // (back to empty) so checkers can be edited again.
+        if (get(positionStore).board.points[checkerPoint]?.color === EXCLUDE_EMPTY) {
+            positionStore.update((pos) => {
+                pos.board.points = pos.board.points.map((p, i) => (i === checkerPoint ? { checkers: 0, color: -1 } : p));
+                return pos;
+            });
+            return;
+        }
         const color = checkerPoint === 0 || checkerPoint === 25 ? (checkerPoint === 0 ? 1 : 0) : button === 2 ? 1 : 0;
 
         // When editing a search structure (Search tab), a point may carry up to 15
@@ -532,9 +542,9 @@
         const mouseY = event.clientY - rect.top;
 
         // In the Search "Except" structure, double-clicking a point flags it as
-        // "must be empty" (no checker of any colour). A normal single click puts a
-        // checker back. Marker is restricted to the 24 inner points.
-        if (get(activeTabStore) === 'search' && get(searchStructureModeStore) === 'exclude') {
+        // "must be empty" (no checker of any colour). A single click on it unblocks
+        // it. Marker is restricted to the 24 inner points.
+        if (get(searchStructureModeStore) === 'exclude') {
             const { checkerPoint } = getCheckerPointAndCount(mouseX, mouseY, 0);
             if (checkerPoint >= 1 && checkerPoint <= 24) {
                 setEmptyExcludeMarker(checkerPoint);
@@ -1149,19 +1159,40 @@
                         yBase = boardOrigYpos - 0.5 * boardHeight;
                     }
                 }
-                // "Must be empty" exclusion marker: a red crossed-out ring.
+                // "Must be empty" exclusion marker: a red hatched, crossed-out cell
+                // spanning the point's checker column to make the block obvious.
                 if (point.color === EXCLUDE_EMPTY) {
                     const dir = (index !== 0 && index <= 12) || index === 25 ? -1 : 1;
-                    const y = yBase + dir * 0.5 * boardCfg.checker.sizeFactor * boardCheckerSize;
-                    const r = (boardCfg.checker.sizeFactor * boardCheckerSize) / 2;
-                    const ring = two.makeCircle(x, y, r);
-                    ring.fill = 'rgba(192,57,43,0.12)';
-                    ring.stroke = '#c0392b';
-                    ring.linewidth = 2;
-                    const off = r * 0.6;
-                    const slash = two.makeLine(x - off, y + off, x + off, y - off);
-                    slash.stroke = '#c0392b';
-                    slash.linewidth = 2;
+                    const cs = boardCfg.checker.sizeFactor * boardCheckerSize;
+                    const spanSlots = 3; // cover ~3 checker slots
+                    const cy = yBase + dir * (spanSlots / 2) * cs;
+                    const w = cs;
+                    const h = spanSlots * cs;
+                    const cell = two.makeRectangle(x, cy, w, h);
+                    cell.fill = 'rgba(192,57,43,0.18)';
+                    cell.stroke = '#c0392b';
+                    cell.linewidth = 2;
+                    // Diagonal hatching across the cell.
+                    const top = cy - h / 2;
+                    const left = x - w / 2;
+                    const step = cs / 2;
+                    for (let d = step; d < w + h; d += step) {
+                        let ax = left + d,
+                            ay = top;
+                        let bx = left,
+                            by = top + d;
+                        if (ax > left + w) {
+                            ay = top + (ax - (left + w));
+                            ax = left + w;
+                        }
+                        if (by > top + h) {
+                            bx = left + (by - (top + h));
+                            by = top + h;
+                        }
+                        const hatch = two.makeLine(ax, ay, bx, by);
+                        hatch.stroke = '#c0392b';
+                        hatch.linewidth = 1;
+                    }
                     return;
                 }
                 const checkersToDraw = Math.min(point.checkers, 5);
