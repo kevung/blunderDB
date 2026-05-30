@@ -152,6 +152,8 @@ export function LoadComment(arg1:number):Promise<string>;
 
 export function LoadEditPosition(arg1:string):Promise<string>;
 
+export function LoadExcludePosition(arg1:string):Promise<string>;
+
 export function LoadFilters():Promise<Array<Record<string, any>>>;
 
 export function LoadMetadata():Promise<Record<string, string>>;
@@ -204,6 +206,8 @@ export function SaveComment(arg1:number,arg2:string):Promise<void>;
 
 export function SaveEditPosition(arg1:string,arg2:string):Promise<void>;
 
+export function SaveExcludePosition(arg1:string,arg2:string):Promise<void>;
+
 export function SaveFilter(arg1:string,arg2:string):Promise<void>;
 
 export function SaveLastVisitedPosition(arg1:number,arg2:number):Promise<void>;
@@ -212,7 +216,7 @@ export function SaveMetadata(arg1:Record<string, string>):Promise<void>;
 
 export function SavePosition(arg1:domain.Position):Promise<number>;
 
-export function SaveSearchHistory(arg1:string,arg2:string):Promise<void>;
+export function SaveSearchHistory(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function SaveSessionState(arg1:database.SessionState):Promise<void>;
 

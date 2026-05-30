@@ -69,6 +69,45 @@ func CheckerStructureMasks(filter domain.Position) (occ1Req, pt1Req, occ2Req, pt
 	return
 }
 
+// ExclusionMasks compiles an exclusion template Position ("Sauf") into bitmasks
+// for the OR-semantics pre-filter: a position is rejected if it contains ANY of
+// the excluded elements. Each excluded point contributes to exactly one mask:
+//
+//	single1/single2: points where the color must have ≥1 checker (template count 1)
+//	                 → tested against occupancy_1/2.
+//	made1/made2:     points where the color must have ≥2 checkers (template count 2)
+//	                 → tested against point_mask_1/2.
+//
+// Points with a template count >2 are NOT represented (a 26-bit mask cannot
+// express an exact ≥3 threshold); those are left to the authoritative Go-side
+// check (Position.ContainsAnyCheckerOf). The SQL pre-filter keeps a position when
+// (occupancy_1 & single1)=0 AND (point_mask_1 & made1)=0 AND (…color 2…), which is
+// a valid over-approximation of "kept".
+func ExclusionMasks(filter domain.Position) (single1, made1, single2, made2 uint32) {
+	for i, p := range filter.Board.Points {
+		if p.Checkers <= 0 || p.Color < 0 {
+			continue
+		}
+		bit := uint32(1) << i
+		if p.Color == domain.Black {
+			switch p.Checkers {
+			case 1:
+				single1 |= bit
+			case 2:
+				made1 |= bit
+			}
+		} else { // White
+			switch p.Checkers {
+			case 1:
+				single2 |= bit
+			case 2:
+				made2 |= bit
+			}
+		}
+	}
+	return
+}
+
 // MatchesCheckerStructure reports whether board b satisfies the four mask
 // requirements produced by CheckerStructureMasks. Call this for the fast
 // bitmask screen; the caller is responsible for exact-count checks when tight=true.

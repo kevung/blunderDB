@@ -4,6 +4,7 @@ import { positionsStore, positionStore } from './stores/positionStore';
 import { databaseLoadedStore } from './stores/databaseStore';
 import { commandHistoryStore } from './stores/commandHistoryStore';
 import { searchHistoryStore } from './stores/searchHistoryStore';
+import { excludePositionHistoryJSON } from './stores/searchExcludePositionStore';
 import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../wailsjs/go/database/Database.js';
 import { SaveSearchHistory } from '../wailsjs/go/database/Database.js';
 import { Migrate_1_1_0_to_1_2_0, Migrate_1_2_0_to_1_3_0 } from '../wailsjs/go/database/Database.js';
@@ -167,7 +168,7 @@ function handleSubSearch(command, positions) {
             const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
             return newHistory;
         });
-        SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch((err) => {
+        SaveSearchHistory(command, JSON.stringify(get(positionStore)), excludePositionHistoryJSON()).catch((err) => {
             logger.error('Error saving search history:', err);
         });
 
@@ -271,7 +272,7 @@ function handleSearch(command) {
             const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
             return newHistory;
         });
-        SaveSearchHistory(command, JSON.stringify(get(positionStore))).catch((err) => {
+        SaveSearchHistory(command, JSON.stringify(get(positionStore)), excludePositionHistoryJSON()).catch((err) => {
             logger.error('Error saving search history:', err);
         });
 
@@ -370,6 +371,9 @@ export function parseFilters(filters, command) {
     const diceRollFilter = filters.includes('D') || filters.includes('D1');
     const diceRollMode = filters.includes('D1') ? 'first' : 'both';
     const mirrorPositionFilter = filters.includes('M');
+    // 'x' marks that an exclusion ("Sauf") structure is active. The structure
+    // itself is carried by the exclude board (store), like the include structure.
+    const excludeStructure = filters.includes('x');
     const pipCountFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('p>') || f.startsWith('p<') || f.startsWith('p')));
     const winRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('w>') || f.startsWith('w<') || f.startsWith('w')));
     const gammonRateFilter = filters.find((f) => typeof f === 'string' && (f.startsWith('g>') || f.startsWith('g<') || f.startsWith('g')));
@@ -436,6 +440,7 @@ export function parseFilters(filters, command) {
         diceRollFilter,
         diceRollMode,
         mirrorPositionFilter,
+        excludeStructure,
         pipCountFilter,
         winRateFilter,
         gammonRateFilter,

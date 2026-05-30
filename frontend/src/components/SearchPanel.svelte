@@ -1,12 +1,13 @@
 <script>
     import { logger } from '../utils/logger.js';
-    import { onMount, onDestroy } from 'svelte';
+    import { onMount, onDestroy, tick } from 'svelte';
     import { statusBarTextStore, currentPositionIndexStore, activeTabStore } from '../stores/uiStore';
     import { positionStore, positionsStore, positionBeforeFilterLibraryStore, positionIndexBeforeFilterLibraryStore } from '../stores/positionStore';
+    import { searchExcludePositionStore, searchStructureModeStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { filterLibraryStore } from '../stores/filterLibraryStore';
     import { searchParamsStore } from '../stores/searchParamsStore';
-    import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition } from '../../wailsjs/go/database/Database.js';
+    import { SaveSearchHistory, LoadSearchHistory, DeleteSearchHistoryEntry, LoadFilters, DeleteFilter, LoadEditPosition, LoadExcludePosition } from '../../wailsjs/go/database/Database.js';
 
     let { onLoadPositionsByFilters, onAddToFilterLibrary } = $props();
 
@@ -189,6 +190,12 @@
         { name: 'Other', filters: ['Creation Date', 'Match IDs', 'Tournament IDs'] }
     ];
 
+    // Which structure the main board is currently editing: 'include' (au moins)
+    // or 'exclude' (sauf). While in 'exclude' mode the include board is stashed.
+    // Declared before restoreSearchState() below, which assigns structureMode.
+    let structureMode = $state('include');
+    let includeBoardStash = $state(null);
+
     // Initialize all filters as disabled, then restore previous search state if available
     availableFilters.forEach((f) => (filterEnabled[f] = false));
     restoreSearchState();
@@ -201,10 +208,47 @@
     // so savedSearchPosition always holds the last board the user saw on this panel.
     let savedSearchPosition = $state(null);
     $effect(() => {
-        if ($activeTabStore === 'search') {
+        // Only the include structure is tracked here; while editing the exclude
+        // structure the main board holds the "Sauf" pattern, not the include one.
+        if ($activeTabStore === 'search' && structureMode === 'include') {
             savedSearchPosition = JSON.parse(JSON.stringify($positionStore));
         }
     });
+
+    // restoreExcludeStructure resets the structure editing state to 'include' and
+    // loads the exclude ("Sauf") board from a replayed history/saved entry (or an
+    // empty board when the entry has none).
+    function restoreExcludeStructure(excludePositionJSON) {
+        structureMode = 'include';
+        searchStructureModeStore.set('include');
+        includeBoardStash = null;
+        if (excludePositionJSON) {
+            try {
+                searchExcludePositionStore.set(JSON.parse(excludePositionJSON));
+                return;
+            } catch (_e) {
+                /* fall through to empty */
+            }
+        }
+        searchExcludePositionStore.set(emptySearchBoardPosition());
+    }
+
+    // switchStructureMode swaps which checker structure the main board edits.
+    function switchStructureMode(mode) {
+        if (mode === structureMode) return;
+        if (mode === 'exclude') {
+            includeBoardStash = JSON.parse(JSON.stringify($positionStore));
+            structureMode = 'exclude';
+            searchStructureModeStore.set('exclude');
+            positionStore.set(JSON.parse(JSON.stringify($searchExcludePositionStore)));
+        } else {
+            searchExcludePositionStore.set(JSON.parse(JSON.stringify($positionStore)));
+            positionStore.set(includeBoardStash ? JSON.parse(JSON.stringify(includeBoardStash)) : emptySearchBoardPosition());
+            includeBoardStash = null;
+            structureMode = 'include';
+            searchStructureModeStore.set('include');
+        }
+    }
     $effect(() => {
         if ($activeTabStore === 'search') {
             loadHistory();
@@ -235,6 +279,12 @@
     }
 
     function handleSearch() {
+        // The backend reads the include structure from positionStore, so make sure
+        // the main board holds the include board (syncing the exclude board to its
+        // store) before searching.
+        if (structureMode === 'exclude') switchStructureMode('include');
+        const excludeActive = boardHasCheckers($searchExcludePositionStore);
+
         const activeFilters = availableFilters.filter((f) => filterEnabled[f]);
         const transformedFilters = activeFilters.map((filter) => {
             switch (filter) {
@@ -408,11 +458,13 @@
         transformedFilters.forEach((f) => {
             if (f !== 't""' && f !== 'm""') commandParts.push(f);
         });
+        if (excludeActive) commandParts.push('x');
         const searchCommand = commandParts.join(' ');
 
-        const entry = { command: searchCommand, position: JSON.stringify($positionStore), timestamp: Date.now() };
+        const excludePositionJSON = excludeActive ? JSON.stringify($searchExcludePositionStore) : '';
+        const entry = { command: searchCommand, position: JSON.stringify($positionStore), excludePosition: excludePositionJSON, timestamp: Date.now() };
         searchHistoryStore.update((h) => [entry, ...h].slice(0, 100));
-        SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch((err) => logger.error('Error saving search history:', err));
+        SaveSearchHistory(searchCommand, JSON.stringify($positionStore), excludePositionJSON).catch((err) => logger.error('Error saving search history:', err));
 
         let restrictToPositionIDs = '';
         if (searchInCurrentResults) {
@@ -579,6 +631,11 @@
         creationDateRangeMin = '';
         creationDateRangeMax = '';
         searchInCurrentResults = false;
+        // Reset the (hidden) exclude structure and return to include editing mode.
+        structureMode = 'include';
+        searchStructureModeStore.set('include');
+        includeBoardStash = null;
+        searchExcludePositionStore.set(emptySearchBoardPosition());
     }
 
     // History functions
@@ -602,6 +659,7 @@
             if (search.position) {
                 positionStore.set(JSON.parse(search.position));
             }
+            restoreExcludeStructure(search.excludePosition);
             currentPositionIndexStore.set(-1);
         }
     }
@@ -610,6 +668,7 @@
         if (search.position) {
             positionStore.set(JSON.parse(search.position));
         }
+        restoreExcludeStructure(search.excludePosition);
         const command = search.command;
         if (command.startsWith('s ') || command === 's') {
             const cmdFilters =
@@ -724,7 +783,7 @@
             return;
         }
         if (onAddToFilterLibrary) {
-            await onAddToFilterLibrary(filterName, selectedSearch.command, selectedSearch.position);
+            await onAddToFilterLibrary(filterName, selectedSearch.command, selectedSearch.position, selectedSearch.excludePosition);
             await loadSavedFilters();
             statusBarTextStore.set('Filter saved to library');
         }
@@ -774,6 +833,8 @@
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition));
         }
+        const excludePosition = await LoadExcludePosition(filter.name);
+        restoreExcludeStructure(excludePosition);
         currentPositionIndexStore.set(-1);
     }
 
@@ -782,7 +843,8 @@
         if (editPosition) {
             positionStore.set(JSON.parse(editPosition));
         }
-        executeSearch({ command: filter.command, position: editPosition });
+        const excludePosition = await LoadExcludePosition(filter.name);
+        executeSearch({ command: filter.command, position: editPosition, excludePosition });
     }
 
     async function deleteSavedFilter() {
@@ -808,8 +870,12 @@
     }
 
     function saveSearchState() {
+        // Sync the exclude board from the live board when it is the one being edited.
+        const excludePosition = structureMode === 'exclude' ? JSON.parse(JSON.stringify($positionStore)) : JSON.parse(JSON.stringify($searchExcludePositionStore));
         searchParamsStore.set({
             position: savedSearchPosition,
+            excludePosition,
+            structureMode,
             filterEnabled: { ...filterEnabled },
             searchInCurrentResults,
             searchText,
@@ -925,12 +991,28 @@
         });
     }
 
-    function restoreSearchState() {
+    // restoreSearchBoard restores the include board + exclude structure from the
+    // saved search params. It is invoked from onMount after tick() so it runs after
+    // App.svelte's enterEditMode() (which clears the board on entering the search
+    // tab) — otherwise enterEditMode would clobber the restored board.
+    function restoreSearchBoard() {
         const saved = $searchParamsStore;
-        if (!saved) return;
+        structureMode = 'include';
+        searchStructureModeStore.set('include');
+        includeBoardStash = null;
+        if (!saved) {
+            searchExcludePositionStore.set(emptySearchBoardPosition());
+            return;
+        }
         if (saved.position) {
             positionStore.set(JSON.parse(JSON.stringify(saved.position)));
         }
+        searchExcludePositionStore.set(saved.excludePosition ? JSON.parse(JSON.stringify(saved.excludePosition)) : emptySearchBoardPosition());
+    }
+
+    function restoreSearchState() {
+        const saved = $searchParamsStore;
+        if (!saved) return;
         filterEnabled = { ...saved.filterEnabled };
         searchInCurrentResults = saved.searchInCurrentResults;
         searchText = saved.searchText;
@@ -1045,8 +1127,12 @@
         creationDateRangeMax = saved.creationDateRangeMax;
     }
 
-    onMount(() => {
+    onMount(async () => {
         document.addEventListener('keydown', handleKeyDown);
+        // Restore the board after the initial flush so App.svelte's enterEditMode()
+        // (which clears the board on tab entry) has already run.
+        await tick();
+        restoreSearchBoard();
     });
 
     onDestroy(() => {
@@ -1068,6 +1154,23 @@
         {#if activeSubTab === 'search'}
             <!-- Filter Builder with checkboxes -->
             <div class="filter-section">
+                <div class="structure-toggle" class:exclude-active={structureMode === 'exclude'}>
+                    <button
+                        class="structure-btn"
+                        class:active={structureMode === 'include'}
+                        onclick={() => switchStructureMode('include')}
+                        title="Search positions that contain at least this checker structure">At least</button
+                    >
+                    <button
+                        class="structure-btn exclude"
+                        class:active={structureMode === 'exclude'}
+                        onclick={() => switchStructureMode('exclude')}
+                        title="Exclude positions containing any checker of this structure">Except</button
+                    >
+                    {#if boardHasCheckers($searchExcludePositionStore) || structureMode === 'exclude'}
+                        <span class="structure-hint">{structureMode === 'exclude' ? 'Editing the EXCLUDED structure' : 'An exclusion structure is set'}</span>
+                    {/if}
+                </div>
                 <div class="action-bar top-action-bar">
                     <label class="search-in-results"><input type="checkbox" bind:checked={searchInCurrentResults} /> In results</label>
                     <label class="search-in-results"><input type="checkbox" bind:checked={openInNewTab} /> New tab</label>
@@ -1893,6 +1996,50 @@
         display: flex;
         flex-direction: column;
         height: 100%;
+    }
+    .structure-toggle {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 8px;
+        border-bottom: 1px solid #ddd;
+        background: #fafafa;
+        position: sticky;
+        top: 0;
+        z-index: 3;
+    }
+    .structure-toggle.exclude-active {
+        background: #fdecea;
+        border-bottom-color: #e0b4b0;
+    }
+    .structure-btn {
+        font-size: 11px;
+        padding: 3px 10px;
+        border: 1px solid #ccc;
+        background: #fff;
+        color: #555;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    .structure-btn:hover {
+        background: #f0f0f0;
+    }
+    .structure-btn.active {
+        color: #333;
+        font-weight: 600;
+        border-color: #555;
+        background: #fff;
+    }
+    .structure-btn.exclude.active {
+        color: #fff;
+        background: #c0392b;
+        border-color: #c0392b;
+    }
+    .structure-hint {
+        margin-left: auto;
+        font-size: 10px;
+        color: #c0392b;
+        font-style: italic;
     }
     .top-action-bar {
         position: sticky;

@@ -1176,3 +1176,31 @@ func (d *Database) migrate_2_6_0_to_2_7_0() error {
 	slog.Info("database upgraded", "from", "2.6.0", "to", "2.7.0", "positions_rehashed", len(fixes))
 	return nil
 }
+
+// migrate_2_7_0_to_2_8_0 adds an exclude_position column to search_history and
+// filter_library so the "Sauf" (exclusion structure) of a search can be persisted
+// and restored on replay. The column is nullable; existing rows keep NULL (no
+// exclusion structure).
+func (d *Database) migrate_2_7_0_to_2_8_0() error {
+	for _, stmt := range []struct{ table, col string }{
+		{"search_history", "exclude_position"},
+		{"filter_library", "exclude_position"},
+	} {
+		if _, err := d.db.Exec(fmt.Sprintf(`ALTER TABLE %s ADD COLUMN %s TEXT`, stmt.table, stmt.col)); err != nil {
+			// Tolerate a duplicate column (idempotent retry) and a missing table:
+			// ensureAllTablesExist runs after migrations and (re)creates absent
+			// tables with the exclude_position column already present.
+			msg := err.Error()
+			if !strings.Contains(msg, `duplicate column name: `+stmt.col) && !strings.Contains(msg, `no such table: `+stmt.table) {
+				return fmt.Errorf("migrate 2.8.0 add column: %w", err)
+			}
+		}
+	}
+
+	if _, err := d.db.Exec(`UPDATE metadata SET value='2.8.0' WHERE key='database_version'`); err != nil {
+		return fmt.Errorf("migrate 2.8.0 version bump: %w", err)
+	}
+
+	slog.Info("database upgraded", "from", "2.7.0", "to", "2.8.0")
+	return nil
+}

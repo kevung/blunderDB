@@ -5,7 +5,7 @@
     import { onMount, onDestroy } from 'svelte';
     import Two from 'two.js';
     import { get } from 'svelte/store';
-    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore } from '../stores/uiStore';
+    import { statusBarModeStore, isAnyModalOpen, activeModal, MODAL, openPanels, PANEL, showPipcountStore, activeTabStore } from '../stores/uiStore';
 
     // Read-only mirrors of stores — always current when read inside drawing/handler functions
     let mode = $derived($statusBarModeStore);
@@ -205,13 +205,19 @@
         }
         const color = checkerPoint === 0 || checkerPoint === 25 ? (checkerPoint === 0 ? 1 : 0) : button === 2 ? 1 : 0;
 
+        // When editing a search structure (Search tab), a point may carry up to 15
+        // checkers and the per-colour total is NOT capped at 15 — a pattern can ask
+        // for e.g. 3 checkers on each of 1-6 ("closed board without a spare"). For a
+        // real position being edited, keep the 15-per-colour cap.
+        const isSearchStructure = get(activeTabStore) === 'search';
+
         positionStore.update((pos) => {
-            // Cap total checkers of this color at 15
+            // Cap total checkers of this color at 15 (only for real positions).
             const totalOtherPoints = pos.board.points.reduce((acc, point, idx) => {
                 if (idx !== checkerPoint && point.color === color) return acc + point.checkers;
                 return acc;
             }, 0);
-            const effectiveMaxPerPoint = 15 - totalOtherPoints;
+            const effectiveMaxPerPoint = isSearchStructure ? 15 : 15 - totalOtherPoints;
             if (effectiveMaxPerPoint <= 0) return pos;
 
             pos.board.points = pos.board.points.map((point, index) => {
@@ -258,8 +264,10 @@
         const position = get(positionStore);
         const player1Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 0 ? point.checkers : 0), 0);
         const player2Checkers = position.board.points.reduce((acc, point) => acc + (point.color === 1 ? point.checkers : 0), 0);
-        position.board.bearoff[0] = 15 - player1Checkers;
-        position.board.bearoff[1] = 15 - player2Checkers;
+        // A search structure can exceed 15 checkers per colour; clamp bearoff at 0
+        // (it is irrelevant to structure search anyway).
+        position.board.bearoff[0] = Math.max(0, 15 - player1Checkers);
+        position.board.bearoff[1] = Math.max(0, 15 - player2Checkers);
 
         positionStore.update((pos) => {
             pos.board.bearoff = [position.board.bearoff[0], position.board.bearoff[1]];

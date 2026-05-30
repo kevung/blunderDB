@@ -298,6 +298,10 @@ export function LoadEditPosition(arg1) {
   return window['go']['database']['Database']['LoadEditPosition'](arg1);
 }
 
+export function LoadExcludePosition(arg1) {
+  return window['go']['database']['Database']['LoadExcludePosition'](arg1);
+}
+
 export function LoadFilters() {
   return window['go']['database']['Database']['LoadFilters']();
 }
@@ -402,6 +406,10 @@ export function SaveEditPosition(arg1, arg2) {
   return window['go']['database']['Database']['SaveEditPosition'](arg1, arg2);
 }
 
+export function SaveExcludePosition(arg1, arg2) {
+  return window['go']['database']['Database']['SaveExcludePosition'](arg1, arg2);
+}
+
 export function SaveFilter(arg1, arg2) {
   return window['go']['database']['Database']['SaveFilter'](arg1, arg2);
 }
@@ -418,8 +426,8 @@ export function SavePosition(arg1) {
   return window['go']['database']['Database']['SavePosition'](arg1);
 }
 
-export function SaveSearchHistory(arg1, arg2) {
-  return window['go']['database']['Database']['SaveSearchHistory'](arg1, arg2);
+export function SaveSearchHistory(arg1, arg2, arg3) {
+  return window['go']['database']['Database']['SaveSearchHistory'](arg1, arg2, arg3);
 }
 
 export function SaveSessionState(arg1) {

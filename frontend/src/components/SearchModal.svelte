@@ -3,6 +3,7 @@
     import { trapFocus } from '../utils/focusTrap.js';
     import { onMount, onDestroy } from 'svelte';
     import { positionStore, positionsStore } from '../stores/positionStore';
+    import { excludePositionHistoryJSON } from '../stores/searchExcludePositionStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
     import { SaveSearchHistory } from '../../wailsjs/go/database/Database.js';
 
@@ -419,7 +420,7 @@
         });
 
         // Save to database
-        SaveSearchHistory(searchCommand, JSON.stringify($positionStore)).catch((err) => {
+        SaveSearchHistory(searchCommand, JSON.stringify($positionStore), excludePositionHistoryJSON()).catch((err) => {
             logger.error('Error saving search history:', err);
         });
 

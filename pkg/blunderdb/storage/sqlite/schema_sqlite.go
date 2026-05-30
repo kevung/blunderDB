@@ -78,12 +78,14 @@ var schemaStatements = []string{
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		name TEXT,
 		command TEXT,
-		edit_position TEXT
+		edit_position TEXT,
+		exclude_position TEXT
 	)`,
 	`CREATE TABLE IF NOT EXISTS search_history (
 		id INTEGER PRIMARY KEY AUTOINCREMENT,
 		command TEXT,
 		position TEXT,
+		exclude_position TEXT,
 		timestamp INTEGER
 	)`,
 	`CREATE TABLE IF NOT EXISTS match (

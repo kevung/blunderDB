@@ -4,6 +4,7 @@
     import { commentTextStore, currentPositionIndexStore, commandTextStore, statusBarModeStore, statusBarTextStore, activeModal, MODAL, openModal, closeModal } from '../stores/uiStore';
     import { SaveComment, Migrate_1_0_0_to_1_1_0, ClearCommandHistory } from '../../wailsjs/go/database/Database.js';
     import { positionsStore, positionStore } from '../stores/positionStore';
+    import { excludePositionHistoryJSON } from '../stores/searchExcludePositionStore';
     import { databaseLoadedStore } from '../stores/databaseStore';
     import { commandHistoryStore } from '../stores/commandHistoryStore';
     import { searchHistoryStore } from '../stores/searchHistoryStore';
@@ -166,7 +167,7 @@
                                 const newHistory = [searchHistoryEntry, ...history].slice(0, 100);
                                 return newHistory;
                             });
-                            SaveSearchHistory(command, JSON.stringify($positionStore)).catch((err) => {
+                            SaveSearchHistory(command, JSON.stringify($positionStore), excludePositionHistoryJSON()).catch((err) => {
                                 logger.error('Error saving search history:', err);
                             });
 
@@ -370,7 +371,7 @@
                         });
 
                         // Save to database
-                        SaveSearchHistory(command, JSON.stringify($positionStore)).catch((err) => {
+                        SaveSearchHistory(command, JSON.stringify($positionStore), excludePositionHistoryJSON()).catch((err) => {
                             logger.error('Error saving search history:', err);
                         });
 

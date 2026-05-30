@@ -251,7 +251,7 @@
 
         // Call the parent function to add to filter library
         if (onAddToFilterLibrary) {
-            await onAddToFilterLibrary(filterName, selectedSearch.command, selectedSearch.position);
+            await onAddToFilterLibrary(filterName, selectedSearch.command, selectedSearch.position, selectedSearch.excludePosition);
             await loadFilterLibrary(); // Reload filter library to update icon colors
             statusBarTextStore.set('Filter saved to library');
         }

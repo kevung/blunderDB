@@ -103,14 +103,16 @@ func (d *Database) ClearCommandHistory() error {
 
 // SearchHistory represents a search history entry
 type SearchHistory struct {
-	ID        int    `json:"id"`
-	Command   string `json:"command"`
-	Position  string `json:"position"`
-	Timestamp int64  `json:"timestamp"`
+	ID              int    `json:"id"`
+	Command         string `json:"command"`
+	Position        string `json:"position"`
+	ExcludePosition string `json:"excludePosition"`
+	Timestamp       int64  `json:"timestamp"`
 }
 
-// SaveSearchHistory saves a search command and position to the search_history table
-func (d *Database) SaveSearchHistory(command string, position string) error {
+// SaveSearchHistory saves a search command, its include position and its optional
+// exclude ("Sauf") position to the search_history table.
+func (d *Database) SaveSearchHistory(command string, position string, excludePosition string) error {
 	d.mu.Lock()
 	defer d.mu.Unlock()
 
@@ -119,8 +121,8 @@ func (d *Database) SaveSearchHistory(command string, position string) error {
 	}
 
 	// Insert the search history entry
-	_, err := d.db.Exec(`INSERT INTO search_history (command, position, timestamp) VALUES (?, ?, ?)`,
-		command, position, time.Now().UnixMilli())
+	_, err := d.db.Exec(`INSERT INTO search_history (command, position, exclude_position, timestamp) VALUES (?, ?, ?, ?)`,
+		command, position, excludePosition, time.Now().UnixMilli())
 	if err != nil {
 		return err
 	}
@@ -150,7 +152,7 @@ func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
 		return nil, fmt.Errorf("database is not opened")
 	}
 
-	rows, err := d.db.Query(`SELECT id, command, position, timestamp FROM search_history ORDER BY timestamp DESC LIMIT 100`)
+	rows, err := d.db.Query(`SELECT id, command, position, exclude_position, timestamp FROM search_history ORDER BY timestamp DESC LIMIT 100`)
 	if err != nil {
 		return nil, err
 	}
@@ -159,10 +161,12 @@ func (d *Database) LoadSearchHistory() ([]SearchHistory, error) {
 	var history []SearchHistory
 	for rows.Next() {
 		var entry SearchHistory
-		err := rows.Scan(&entry.ID, &entry.Command, &entry.Position, &entry.Timestamp)
+		var excludePosition sql.NullString
+		err := rows.Scan(&entry.ID, &entry.Command, &entry.Position, &excludePosition, &entry.Timestamp)
 		if err != nil {
 			return nil, err
 		}
+		entry.ExcludePosition = excludePosition.String
 		history = append(history, entry)
 	}
 	if err := rows.Err(); err != nil {
@@ -672,4 +676,42 @@ func (d *Database) LoadEditPosition(filterName string) (string, error) {
 		return "", err
 	}
 	return editPosition, nil
+}
+
+// SaveExcludePosition stores the "Sauf" (exclusion) structure of a saved filter.
+// Mirrors SaveEditPosition but targets the exclude_position column.
+func (d *Database) SaveExcludePosition(filterName, excludePosition string) error {
+	d.mu.Lock()
+	defer d.mu.Unlock()
+
+	var existingID int64
+	err := d.db.QueryRow(`SELECT id FROM filter_library WHERE name = ?`, filterName).Scan(&existingID)
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+	if existingID > 0 {
+		if _, err = d.db.Exec(`UPDATE filter_library SET exclude_position = ? WHERE id = ?`, excludePosition, existingID); err != nil {
+			return err
+		}
+	} else {
+		return fmt.Errorf("filter name does not exist")
+	}
+	return nil
+}
+
+// LoadExcludePosition returns the "Sauf" (exclusion) structure of a saved filter,
+// or "" when the filter has none.
+func (d *Database) LoadExcludePosition(filterName string) (string, error) {
+	d.mu.RLock()
+	defer d.mu.RUnlock()
+
+	var excludePosition sql.NullString
+	err := d.db.QueryRow(`SELECT exclude_position FROM filter_library WHERE name = ?`, filterName).Scan(&excludePosition)
+	if err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
+		return "", err
+	}
+	return excludePosition.String, nil
 }

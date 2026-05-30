@@ -1015,6 +1015,13 @@
                                 <td>Include mirrored positions</td>
                             </tr>
                             <tr>
+                                <td>x</td>
+                                <td
+                                    >Exclude positions that contain <em>any</em> checker of the structure drawn in the "Except" tab (e.g. drawing checkers on 1, 3 and 5 keeps only positions with none of
+                                    them). Toggle "At least" / "Except" above the filters to draw the excluded checkers on the board (shown with a red cue).</td
+                                >
+                            </tr>
+                            <tr>
                                 <td>p>x</td>
                                 <td>Pip count &gt; x</td>
                             </tr>

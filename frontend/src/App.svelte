@@ -93,6 +93,7 @@
     import TabbedPanel from './components/TabbedPanel.svelte';
     import StatusBar from './components/StatusBar.svelte';
     import { initCommandProcessor, processCommand } from './commandProcessor.js';
+    import { searchStructureModeStore } from './stores/searchExcludePositionStore.js';
     import HelpModal from './components/HelpModal.svelte';
     import GoToPositionModal from './components/GoToPositionModal.svelte';
     import MetModal from './components/MetModal.svelte';
@@ -403,7 +404,10 @@
 
     <ViewTabs />
 
-    <div class="scrollable-content">
+    <div class="scrollable-content" class:exclude-structure-editing={$activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}>
+        {#if $activeTabStore === 'search' && $searchStructureModeStore === 'exclude'}
+            <div class="exclude-structure-badge">EXCLUDE</div>
+        {/if}
         <Board />
     </div>
 
@@ -510,6 +514,27 @@
         display: flex;
         justify-content: center;
         align-items: center;
+        position: relative;
+    }
+
+    /* Visual cue while editing the "Except" (exclusion) checker structure. */
+    .scrollable-content.exclude-structure-editing {
+        outline: 3px solid #c0392b;
+        outline-offset: -3px;
+    }
+    .exclude-structure-badge {
+        position: absolute;
+        top: 6px;
+        right: 10px;
+        z-index: 5;
+        background: #c0392b;
+        color: #fff;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        padding: 2px 8px;
+        border-radius: 3px;
+        pointer-events: none;
     }
 
     .resize-handle {

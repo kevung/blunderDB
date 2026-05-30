@@ -12,12 +12,14 @@ import {
     GetLastVisitedMatch,
     GetMatchMovePositions,
     SaveEditPosition,
+    SaveExcludePosition,
     SaveFilter,
     LoadComment
 } from '../../wailsjs/go/database/Database.js';
 
 import { databasePathStore } from '../stores/databaseStore.js';
 import { positionStore, positionsStore, matchContextStore, lastVisitedMatchStore } from '../stores/positionStore.js';
+import { searchExcludePositionStore, emptySearchBoardPosition, boardHasCheckers } from '../stores/searchExcludePositionStore.js';
 import { analysisStore, selectedMoveStore } from '../stores/analysisStore.js';
 import { epcDataStore } from '../stores/epcStore.js';
 import { lastSearchStore } from '../stores/searchHistoryStore.js';
@@ -357,7 +359,12 @@ export async function loadPositionsByFilters(
     try {
         let currentPosition = get(positionStore);
 
-        if (currentPosition.player_on_roll === 1) {
+        // The exclude ("Sauf") structure must use the same mirror orientation as
+        // the include structure so its points/colors stay aligned with stored
+        // positions. The mirror decision is driven by the include board.
+        const applyMirror = currentPosition.player_on_roll === 1;
+
+        if (applyMirror) {
             currentPosition = mirrorPositionForSearch(currentPosition);
         }
 
@@ -368,10 +375,28 @@ export async function loadPositionsByFilters(
             decision_type: typeof currentPosition.decision_type === 'string' ? (currentPosition.decision_type ? 1 : 0) : currentPosition.decision_type || 0
         };
 
+        let excludePosition = get(searchExcludePositionStore);
+        if (boardHasCheckers(excludePosition)) {
+            if (applyMirror) {
+                excludePosition = mirrorPositionForSearch(excludePosition);
+            }
+            excludePosition = {
+                ...excludePosition,
+                has_jacoby: excludePosition.has_jacoby ? 1 : 0,
+                has_beaver: excludePosition.has_beaver ? 1 : 0,
+                decision_type: typeof excludePosition.decision_type === 'string' ? (excludePosition.decision_type ? 1 : 0) : excludePosition.decision_type || 0
+            };
+        } else {
+            // Empty board → ignored by the backend (hasBoardFilter); send a clean
+            // empty position rather than undefined.
+            excludePosition = emptySearchBoardPosition();
+        }
+
         const searchFilterPositionJSON = JSON.stringify(currentPosition);
 
         const loadedPositions = await LoadPositionsByFilters({
             filter: currentPosition,
+            excludeFilter: excludePosition,
             includeCube,
             includeScore,
             pipCountFilter,
@@ -1279,11 +1304,14 @@ export function loadRandomPosition() {
     }
 }
 
-export async function addSearchToFilterLibrary(filterName, filterCommand, positionJson) {
+export async function addSearchToFilterLibrary(filterName, filterCommand, positionJson, excludePositionJson = '') {
     try {
         await SaveFilter(filterName, filterCommand);
         if (positionJson) {
             await SaveEditPosition(filterName, positionJson);
+        }
+        if (excludePositionJson) {
+            await SaveExcludePosition(filterName, excludePositionJson);
         }
         statusBarTextStore.set('Filter saved successfully');
     } catch (error) {

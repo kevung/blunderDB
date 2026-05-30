@@ -27,7 +27,8 @@ func (d *Database) ensureAllTablesExist() error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			name TEXT,
 			command TEXT,
-			edit_position TEXT
+			edit_position TEXT,
+			exclude_position TEXT
 		)
 	`)
 	if err != nil {
@@ -40,6 +41,7 @@ func (d *Database) ensureAllTablesExist() error {
 			id INTEGER PRIMARY KEY AUTOINCREMENT,
 			command TEXT,
 			position TEXT,
+			exclude_position TEXT,
 			timestamp INTEGER
 		)
 	`)

@@ -223,6 +223,7 @@ export namespace database {
 	    id: number;
 	    command: string;
 	    position: string;
+	    excludePosition: string;
 	    timestamp: number;
 	
 	    static createFrom(source: any = {}) {
@@ -234,6 +235,7 @@ export namespace database {
 	        this.id = source["id"];
 	        this.command = source["command"];
 	        this.position = source["position"];
+	        this.excludePosition = source["excludePosition"];
 	        this.timestamp = source["timestamp"];
 	    }
 	}
@@ -1082,6 +1084,7 @@ export namespace domain {
 	}
 	export class SearchFilters {
 	    filter: Position;
+	    excludeFilter: Position;
 	    includeCube: boolean;
 	    includeScore: boolean;
 	    pipCountFilter: string;
@@ -1123,6 +1126,7 @@ export namespace domain {
 	    constructor(source: any = {}) {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.filter = this.convertValues(source["filter"], Position);
+	        this.excludeFilter = this.convertValues(source["excludeFilter"], Position);
 	        this.includeCube = source["includeCube"];
 	        this.includeScore = source["includeScore"];
 	        this.pipCountFilter = source["pipCountFilter"];

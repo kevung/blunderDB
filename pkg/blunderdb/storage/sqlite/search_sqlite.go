@@ -44,6 +44,10 @@ func (s *searchStore) Find(ctx context.Context, scope string, f domain.SearchFil
 func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domain.Position, error) {
 	useSQLFilters := !f.MirrorFilter
 
+	// On points shared with the exclusion structure, "Except" wins over "At least":
+	// clear those points from the include filter so the two are not contradictory.
+	effInclude := domain.EffectiveIncludeFilter(f.Filter, f.ExcludeFilter)
+
 	var where strings.Builder
 	var args []any
 	where.WriteString("1=1")
@@ -177,14 +181,27 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 			}
 		}
 
-		if hasBoardFilter(f.Filter.Board) {
-			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(f.Filter)
+		if hasBoardFilter(effInclude.Board) {
+			occ1Req, pt1Req, occ2Req, pt2Req, tight := engine.CheckerStructureMasks(effInclude)
 			bitboardTight = tight
 			where.WriteString(" AND (p.occupancy_1 & ?) = ? AND (p.point_mask_1 & ?) = ?")
 			where.WriteString(" AND (p.occupancy_2 & ?) = ? AND (p.point_mask_2 & ?) = ?")
 			args = append(args,
 				int64(occ1Req), int64(occ1Req), int64(pt1Req), int64(pt1Req),
 				int64(occ2Req), int64(occ2Req), int64(pt2Req), int64(pt2Req))
+		}
+
+		// Exclusion structure ("Sauf"): drop positions that contain ANY of the
+		// excluded elements (OR semantics across points). Keep a position only when
+		// none of its points match an excluded element. Template points with >2
+		// checkers are not representable as bitmasks and are left to the Go-side
+		// check (Position.ContainsAnyCheckerOf) below.
+		if hasBoardFilter(f.ExcludeFilter.Board) {
+			eSingle1, eMade1, eSingle2, eMade2 := engine.ExclusionMasks(f.ExcludeFilter)
+			where.WriteString(" AND (p.occupancy_1 & ?) = 0 AND (p.point_mask_1 & ?) = 0")
+			where.WriteString(" AND (p.occupancy_2 & ?) = 0 AND (p.point_mask_2 & ?) = 0")
+			args = append(args,
+				int64(eSingle1), int64(eMade1), int64(eSingle2), int64(eMade2))
 		}
 	}
 
@@ -245,16 +262,24 @@ func (s *searchStore) find(ctx context.Context, f domain.SearchFilters) ([]domai
 		}
 
 		matchesGoFilters := func(pos domain.Position) bool {
-			if hasBoardFilter(f.Filter.Board) {
+			if hasBoardFilter(effInclude.Board) {
 				if !useSQLFilters || bitboardTight {
-					if !pos.MatchesCheckerPosition(f.Filter) {
+					if !pos.MatchesCheckerPosition(effInclude) {
 						return false
 					}
 				}
 			}
 
+			// Exclusion structure: reject positions that contain ANY excluded element
+			// (authoritative; also covers template counts >2 the SQL mask skips).
+			if hasBoardFilter(f.ExcludeFilter.Board) {
+				if pos.ContainsAnyCheckerOf(f.ExcludeFilter) {
+					return false
+				}
+			}
+
 			if !useSQLFilters {
-				if !pos.MatchesCheckerPosition(f.Filter) {
+				if !pos.MatchesCheckerPosition(effInclude) {
 					return false
 				}
 				if f.IncludeCube && !pos.MatchesCubePosition(f.Filter) {

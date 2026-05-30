@@ -916,6 +916,16 @@ func (d *Database) OpenDatabase(path string) error {
 		dbVersion = "2.7.0"
 	}
 
+	// Auto-migrate from 2.7.0 to 2.8.0
+	// Adds exclude_position column to search_history and filter_library to persist
+	// the "Sauf" (exclusion structure) of a search.
+	if dbVersion == "2.7.0" {
+		if err := d.migrate_2_7_0_to_2_8_0(); err != nil {
+			return fmt.Errorf("migration 2.7.0→2.8.0 failed: %w", err)
+		}
+		dbVersion = "2.8.0"
+	}
+
 	// Ensure all required tables and columns exist.
 	// This repairs databases that were migrated through versions that skipped
 	// creating some tables (e.g. filter_library was missing from some migration paths).

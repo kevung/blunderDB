@@ -36,7 +36,7 @@ const (
 )
 
 const (
-	DatabaseVersion = "2.7.0"
+	DatabaseVersion = "2.8.0"
 )
 
 // Anki deck source types
@@ -148,6 +148,7 @@ type Position struct {
 // SearchFilters bundles all filter parameters for LoadPositionsByFilters.
 type SearchFilters struct {
 	Filter                        Position `json:"filter"`
+	ExcludeFilter                 Position `json:"excludeFilter"`
 	IncludeCube                   bool     `json:"includeCube"`
 	IncludeScore                  bool     `json:"includeScore"`
 	PipCountFilter                string   `json:"pipCountFilter"`
@@ -295,6 +296,46 @@ func (p *Position) MatchesCheckerPosition(filter Position) bool {
 		}
 	}
 	return true
+}
+
+// EffectiveIncludeFilter returns a copy of the include ("At least") filter with
+// board points cleared where the exclude ("Sauf") filter contradicts the include.
+//
+// On a shared point with the same color, the include requires ≥I checkers and the
+// exclude rejects ≥E checkers (i.e. keeps ≤E-1). These are compatible when I < E
+// (the result is the range [I, E-1] — e.g. include 2, exclude 3 ⇒ exactly 2, a
+// made point with no spare) and the include is kept. They contradict when I ≥ E
+// (e.g. include 2, exclude 1 ⇒ no position has ≥2 and ≤0); there the exclusion
+// wins and the include constraint on that point is dropped, so a closed board on
+// 1-6 with a checker excepted on 1 searches 2-6 with point 1 free.
+func EffectiveIncludeFilter(include, exclude Position) Position {
+	result := include // [26]Point array → value copy, safe to mutate
+	for i := range result.Board.Points {
+		ep := exclude.Board.Points[i]
+		ip := include.Board.Points[i]
+		if ep.Checkers > 0 && ep.Color >= 0 && ip.Checkers > 0 && ip.Color == ep.Color && ip.Checkers >= ep.Checkers {
+			result.Board.Points[i] = Point{}
+		}
+	}
+	return result
+}
+
+// ContainsAnyCheckerOf reports whether the position contains ANY of the checker
+// elements described by filter — i.e. for at least one occupied filter point, the
+// position has the same color and at least as many checkers. This is the
+// "Sauf"/exclusion predicate: a position is rejected from search results when it
+// contains any one of the excluded elements (OR semantics across points).
+func (p *Position) ContainsAnyCheckerOf(filter Position) bool {
+	for i := 0; i < len(p.Board.Points); i++ {
+		fp := filter.Board.Points[i]
+		if fp.Checkers > 0 && fp.Color >= 0 {
+			pp := p.Board.Points[i]
+			if pp.Color == fp.Color && pp.Checkers >= fp.Checkers {
+				return true
+			}
+		}
+	}
+	return false
 }
 
 // Match-related structures for XG import

@@ -228,6 +228,83 @@ func createOldDatabase(t *testing.T, path string, version string) {
 	}
 }
 
+// columnExists checks if a column exists on a table.
+func columnExists(db *sql.DB, table, column string) bool {
+	rows, err := db.Query(fmt.Sprintf("PRAGMA table_info(%s)", table))
+	if err != nil {
+		return false
+	}
+	defer rows.Close()
+	for rows.Next() {
+		var cid int
+		var name, ctype string
+		var notnull, pk int
+		var dflt sql.NullString
+		if err := rows.Scan(&cid, &name, &ctype, &notnull, &dflt, &pk); err != nil {
+			return false
+		}
+		if name == column {
+			return true
+		}
+	}
+	return false
+}
+
+// TestMigrate_2_7_0_to_2_8_0 verifies the exclude_position column is added to
+// search_history and filter_library and that the "Sauf" structure round-trips.
+func TestMigrate_2_7_0_to_2_8_0(t *testing.T) {
+	tmpDir := t.TempDir()
+	dbPath := filepath.Join(tmpDir, "test_v270.db")
+	createOldDatabase(t, dbPath, "2.7.0")
+
+	d := NewDatabase()
+	if err := d.OpenDatabase(dbPath); err != nil {
+		t.Fatalf("Failed to open v2.7.0 database: %v", err)
+	}
+
+	version, err := d.CheckDatabaseVersion()
+	if err != nil {
+		t.Fatalf("Failed to get database version: %v", err)
+	}
+	if version != DatabaseVersion {
+		t.Errorf("Expected version %s after migration, got %s", DatabaseVersion, version)
+	}
+
+	if !columnExists(d.db, "search_history", "exclude_position") {
+		t.Errorf("search_history.exclude_position should exist after migration")
+	}
+	if !columnExists(d.db, "filter_library", "exclude_position") {
+		t.Errorf("filter_library.exclude_position should exist after migration")
+	}
+
+	// search_history round-trip
+	if err := d.SaveSearchHistory("s x", `{"include":1}`, `{"exclude":1}`); err != nil {
+		t.Fatalf("SaveSearchHistory: %v", err)
+	}
+	hist, err := d.LoadSearchHistory()
+	if err != nil {
+		t.Fatalf("LoadSearchHistory: %v", err)
+	}
+	if len(hist) == 0 || hist[0].ExcludePosition != `{"exclude":1}` {
+		t.Errorf("exclude position not persisted in search_history, got %+v", hist)
+	}
+
+	// filter_library round-trip
+	if err := d.SaveFilter("f1", "s x"); err != nil {
+		t.Fatalf("SaveFilter: %v", err)
+	}
+	if err := d.SaveExcludePosition("f1", `{"exclude":2}`); err != nil {
+		t.Fatalf("SaveExcludePosition: %v", err)
+	}
+	got, err := d.LoadExcludePosition("f1")
+	if err != nil {
+		t.Fatalf("LoadExcludePosition: %v", err)
+	}
+	if got != `{"exclude":2}` {
+		t.Errorf("exclude position not persisted in filter_library, got %q", got)
+	}
+}
+
 // tableExists checks if a table exists in the database
 func tableExists(db *sql.DB, tableName string) bool {
 	var name string
