@@ -10,36 +10,48 @@
 \newdimen\sphinxremdimen\sphinxremdimen = 10pt
 %% let collapsible pdf bookmarks panel have high depth per default
 \PassOptionsToPackage{bookmarksdepth=5}{hyperref}
+%% turn off hyperref patch of \index as sphinx.xdy xindy module takes care of
+%% suitable \hyperpage mark-up, working around hyperref-xindy incompatibility
+\PassOptionsToPackage{hyperindex=false}{hyperref}
+%% memoir class requires extra handling
+\makeatletter\@ifclassloaded{memoir}
+{\ifdefined\memhyperindexfalse\memhyperindexfalse\fi}{}\makeatother
 
 \PassOptionsToPackage{booktabs}{sphinx}
 \PassOptionsToPackage{colorrows}{sphinx}
 
 \PassOptionsToPackage{warn}{textcomp}
-\usepackage[utf8]{inputenc}
-\ifdefined\DeclareUnicodeCharacter
-% support both utf8 and utf8x syntaxes
-  \ifdefined\DeclareUnicodeCharacterAsOptional
-    \def\sphinxDUC#1{\DeclareUnicodeCharacter{"#1}}
-  \else
-    \let\sphinxDUC\DeclareUnicodeCharacter
-  \fi
-  \sphinxDUC{00A0}{\nobreakspace}
-  \sphinxDUC{2500}{\sphinxunichar{2500}}
-  \sphinxDUC{2502}{\sphinxunichar{2502}}
-  \sphinxDUC{2514}{\sphinxunichar{2514}}
-  \sphinxDUC{251C}{\sphinxunichar{251C}}
-  \sphinxDUC{2572}{\textbackslash}
-\fi
+
+\catcode`^^^^00a0\active\protected\def^^^^00a0{\leavevmode\nobreak\ }
 \usepackage{cmap}
-\usepackage[T1]{fontenc}
+\usepackage{fontspec}
+\defaultfontfeatures[\rmfamily,\sffamily,\ttfamily]{}
 \usepackage{amsmath,amssymb,amstext}
 \usepackage{babel}
 
 
 
-\usepackage{tgtermes}
-\usepackage{tgheros}
-\renewcommand{\ttdefault}{txtt}
+\setmainfont{FreeSerif}[
+  Extension      = .otf,
+  UprightFont    = *,
+  ItalicFont     = *Italic,
+  BoldFont       = *Bold,
+  BoldItalicFont = *BoldItalic
+]
+\setsansfont{FreeSans}[
+  Extension      = .otf,
+  UprightFont    = *,
+  ItalicFont     = *Oblique,
+  BoldFont       = *Bold,
+  BoldItalicFont = *BoldOblique,
+]
+\setmonofont{FreeMono}[Scale=0.9,
+  Extension      = .otf,
+  UprightFont    = *,
+  ItalicFont     = *Oblique,
+  BoldFont       = *Bold,
+  BoldItalicFont = *BoldOblique,
+]
 
 
 
@@ -68,9 +80,9 @@
 
 
 \title{blunderDB}
-\date{30 mai 2026}
+\date{31 mai 2026}
 \release{0.20.0}
-\author{Kevin UNGER \textless{}blunderdb@proton.me\textgreater{}}
+\author{Kevin UNGER <blunderdb@proton.me>}
 \newcommand{\sphinxlogo}{\vbox{}}
 \renewcommand{\releasename}{Version}
 \makeindex
@@ -534,7 +546,7 @@ Export de la position en image PNG dans le presse\sphinxhyphen{}papier (board se
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL. Import par lot \textgreater{}=3x plus rapide, recherche filtrée \textless{}=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d’abord).
+Schéma de base de données v2.0.0 : déduplication des positions via hash Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, journalisation WAL. Import par lot >=3x plus rapide, recherche filtrée <=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB sont migrées automatiquement sur place (faire une sauvegarde d’abord).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -566,7 +578,7 @@ Optimisation du stockage : compression zlib des données d’analyse (\textascii
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers spécialisés, extraction de 7 modules de service depuis App.svelte (4888\(\rightarrow\)469 lignes), consolidation des stores modaux/panneaux. Migration complète vers Svelte 5 runes. Remplacement de 9 modales de tableau par un composant générique DataTableModal. Ajout d’ESLint + Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier). Passage du mutex Database en RWMutex pour un meilleur parallélisme en lecture. Documentation CLI complète (CLI\_USAGE.md + Sphinx FR/EN). Réécriture du README. Correction de tous les avertissements ESLint (46\(\rightarrow\)0) et Vite (6\(\rightarrow\)0).
+Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers spécialisés, extraction de 7 modules de service depuis App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux. Migration complète vers Svelte 5 runes. Remplacement de 9 modales de tableau par un composant générique DataTableModal. Ajout d’ESLint + Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA (focus visible, rôles ARIA, navigation clavier). Passage du mutex Database en RWMutex pour un meilleur parallélisme en lecture. Documentation CLI complète (CLI\_USAGE.md + Sphinx FR/EN). Réécriture du README. Correction de tous les avertissements ESLint (46→0) et Vite (6→0).
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -582,7 +594,7 @@ Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers sp�
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill\sphinxhyphen{}down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list \textendash{}type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube\_error pour les décisions Double/Pass. Documentation du modèle de statistiques (:ref:\textasciigrave{}stats\_parity\textasciigrave{}). Voir :ref:\textasciigrave{}stats\textasciigrave{}.
+Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, tournoi, dates, type de décision, longueur de match), onglet Dashboard avec cartes de niveau / PR glissant / top blunders, onglet Progression avec courbe par tournoi et scatter plot par match, onglet Erreurs avec répartition par action de videau et histogramme des magnitudes. Drill\sphinxhyphen{}down interactif vers les positions / matchs / tournois depuis tous les indicateurs. Toggle PR / MWC instantané. Commande CLI list –type stats. Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG (seuil 0.16 d’équité pour les cubes proches). Correction du calcul de cube\_error pour les décisions Double/Pass. Documentation du modèle de statistiques (:ref:`stats\_parity`). Voir :ref:`stats`.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -598,7 +610,7 @@ Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error Rate et
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-Ajout de la structure d’exclusion \sphinxstyleemphasis{Except} au panneau de recherche : exclut les positions contenant l’un des pions dessinés, avec marqueur « doit être vide » (double\sphinxhyphen{}clic) et nombre de pions par point non limité (commande x). Ajout de l’option « premier dé uniquement » au filtre de lancer de dés (variante D1, option CLI \textendash{}dice). Panneau Commentaires : focus automatique du champ de saisie à l’ouverture et boutons éditer / supprimer toujours visibles. Correction du filtre « Search Text » qui ne trouvait pas tous les tags de commentaires.
+Ajout de la structure d’exclusion \sphinxstyleemphasis{Except} au panneau de recherche : exclut les positions contenant l’un des pions dessinés, avec marqueur « doit être vide » (double\sphinxhyphen{}clic) et nombre de pions par point non limité (commande x). Ajout de l’option « premier dé uniquement » au filtre de lancer de dés (variante D1, option CLI –dice). Panneau Commentaires : focus automatique du champ de saisie à l’ouverture et boutons éditer / supprimer toujours visibles. Correction du filtre « Search Text » qui ne trouvait pas tous les tags de commentaires.
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -986,7 +998,7 @@ définir une structure de pions à rechercher sur le plateau.
 
 \sphinxAtStartPar
 Pour affiner une recherche parmi les positions actuellement filtrées, utiliser
-la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). Le panneau
+la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}}, \sphinxcode{\sphinxupquote{ss E>40}}). Le panneau
 de recherche propose également une case à cocher \sphinxstyleemphasis{Search in current results}
 pour la même fonctionnalité.
 
@@ -1222,7 +1234,7 @@ World\sphinxhyphen{}class
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-\textless{} 3
+< 3
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1233,7 +1245,7 @@ Expert
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-3 \textendash{} 5
+3 – 5
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1244,7 +1256,7 @@ Avancé
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-5 \textendash{} 8
+5 – 8
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1255,7 +1267,7 @@ Intermédiaire
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-8 \textendash{} 12
+8 – 12
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1266,7 +1278,7 @@ Débutant
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-\textgreater{} 12
+> 12
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -1432,7 +1444,7 @@ sous\sphinxhyphen{}ensemble avec erreur.
 \label{\detokenize{manuel:histogramme-des-magnitudes-d-erreur}}
 \sphinxAtStartPar
 Un histogramme distribue les erreurs selon leur magnitude en millièmes de
-point (tranches : 0\textendash{}5, 5\textendash{}10, 10\textendash{}25, 25\textendash{}50, 50\textendash{}100, ≥ 100). Cliquer sur
+point (tranches : 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Cliquer sur
 une barre charge les positions de la tranche.
 
 
@@ -1454,11 +1466,11 @@ Formule :
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-Match A : 10 décisions, erreur totale 50 mp \(\rightarrow\) PR = 5,0
+Match A : 10 décisions, erreur totale 50 mp → PR = 5,0
 
 \item {} 
 \sphinxAtStartPar
-Match B : 90 décisions, erreur totale 270 mp \(\rightarrow\) PR = 3,0
+Match B : 90 décisions, erreur totale 270 mp → PR = 3,0
 
 \end{itemize}
 
@@ -2905,7 +2917,7 @@ La position ne contient aucun pion de la structure d’exclusion (onglet « Exce
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-p\textgreater{}x
+p>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -2916,7 +2928,7 @@ Le joueur a au moins x pips de retard à la course.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-p\textless{}x
+p<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -2938,7 +2950,7 @@ Le joueur a entre x et y pips de retard à la course.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-P\textgreater{}x
+P>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -2949,7 +2961,7 @@ Le joueur a une course au moins de x pips.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-P\textless{}x
+P<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -2971,7 +2983,7 @@ Le joueur a une course entre x et y pips.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-e\textgreater{}x
+e>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -2982,7 +2994,7 @@ L’équité (en millipoints) de la position est supérieure à x.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-e\textless{}x
+e<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3004,7 +3016,7 @@ L’équité (en millipoints) de la position est comprise entre x et y.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-E\textgreater{}x
+E>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3015,7 +3027,7 @@ L’erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-E\textless{}x
+E<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3037,7 +3049,7 @@ L’erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x e
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-w\textgreater{}x
+w>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3048,7 +3060,7 @@ Le joueur a des chances de gain supérieures à x \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-w\textless{}x
+w<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3070,7 +3082,7 @@ Le joueur a des chances de gain comprises à x \% et y \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-g\textgreater{}x
+g>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3081,7 +3093,7 @@ Le joueur a des chances de gammon supérieures à x \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-g\textless{}x
+g<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3103,7 +3115,7 @@ Le joueur a des chances de gammon comprises à x \% et y \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-b\textgreater{}x
+b>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3114,7 +3126,7 @@ Le joueur a des chances de backgammon supérieures à x \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-b\textless{}x
+b<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3136,7 +3148,7 @@ Le joueur a des chances de backgammon comprises à x \% et y \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-W\textgreater{}x
+W>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3147,7 +3159,7 @@ L’adversaire a des chances de gain supérieures à x \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-W\textless{}x
+W<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3169,7 +3181,7 @@ L’adversaire a des chances de gain comprises à x \% et y \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-G\textgreater{}x
+G>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3180,7 +3192,7 @@ L’adversaire a des chances de gammon supérieures à x \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-G\textless{}x
+G<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3202,7 +3214,7 @@ L’adversaire a des chances de gammon comprises à x \% et y \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-B\textgreater{}x
+B>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3213,7 +3225,7 @@ L’adversaire a des chances de backgammon supérieures à x \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-B\textless{}x
+B<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3235,7 +3247,7 @@ L’adversaire a des chances de backgammon comprises à x \% et y \%.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-o\textgreater{}x
+o>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3246,7 +3258,7 @@ Le joueur a au moins x pions sortis.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-o\textless{}x
+o<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3268,7 +3280,7 @@ Le joueur a entre x et y pions sortis.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-O\textgreater{}x
+O>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3279,7 +3291,7 @@ L’adversaire a au moins x pions sortis.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-O\textless{}x
+O<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3301,7 +3313,7 @@ L’adversaire a entre x et y pions sortis.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-k\textgreater{}x
+k>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3312,7 +3324,7 @@ Le joueur a au moins x pions arriérés.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-k\textless{}x
+k<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3334,7 +3346,7 @@ Le joueur a entre x et y pions arriérés.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-K\textgreater{}x
+K>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3345,7 +3357,7 @@ L’adversaire a au moins x pions arriérés.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-K\textless{}x
+K<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3367,7 +3379,7 @@ L’adversaire a entre x et y pions arriérés.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-z\textgreater{}x
+z>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3378,7 +3390,7 @@ Le joueur a au moins x pions dans la zone.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-z\textless{}x
+z<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3400,7 +3412,7 @@ Le joueur a entre x et y pions dans la zone.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Z\textgreater{}x
+Z>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3411,7 +3423,7 @@ L’adversaire a au moins x pions dans la zone.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Z\textless{}x
+Z<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3433,7 +3445,7 @@ L’adversaire a entre x et y pions dans la zone.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-bo\textgreater{}x
+bo>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3444,7 +3456,7 @@ Le joueur a au moins x blots dans l’outfield.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-bo\textless{}x
+bo<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3466,7 +3478,7 @@ Le joueur a entre x et y blots dans l’outfield.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-BO\textgreater{}x
+BO>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3477,7 +3489,7 @@ L’adversaire a au moins x blots dans l’outfield.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-BO\textless{}x
+BO<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3499,7 +3511,7 @@ L’adversaire a entre x et y blots dans l’outfield.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-bj\textgreater{}x
+bj>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3510,7 +3522,7 @@ Le joueur a au moins x blots dans le jan.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-bj\textless{}x
+bj<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3532,7 +3544,7 @@ Le joueur a entre x et y blots dans le jan.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-BJ\textgreater{}x
+BJ>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3543,7 +3555,7 @@ L’adversaire a au moins x blots dans le jan.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-BJ\textless{}x
+BJ<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3576,7 +3588,7 @@ Les commentaires de la position contiennent au moins un des mots.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-m’motif1,motif2,…\textquotesingle{}
+m’motif1,motif2,…'
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3587,7 +3599,7 @@ Les meilleurs coups de pions contenant au moins un des motifs.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-m’ND,DT,DP,…\textquotesingle{}
+m’ND,DT,DP,…'
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3598,7 +3610,7 @@ Les meilleurs décisions de videau de No Double/Take, Double Take, Double Pass.
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-T\textgreater{}x
+T>x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3609,7 +3621,7 @@ Date d’ajout de la position après x (AAAA/MM/JJ).
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-T\textless{}x
+T<x
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
@@ -3690,9 +3702,9 @@ l’autre des deux dés du lancer).
 
 \begin{sphinxadmonition}{note}{Note:}
 \sphinxAtStartPar
-Pour le filtre de différence relative à la course (\sphinxtitleref{p\textgreater{}x}, \sphinxtitleref{p\textless{}x},
+Pour le filtre de différence relative à la course (\sphinxtitleref{p>x}, \sphinxtitleref{p<x},
 \sphinxtitleref{px,y}), le joueur est en retard à la course par rapport à l’adversaire si
-\sphinxtitleref{x\textgreater{}0} et en avance si \sphinxtitleref{x\textless{}0}. Exemple: \sphinxtitleref{p\textless{}\sphinxhyphen{}10} : le joueur a au moins 10 pips
+\sphinxtitleref{x>0} et en avance si \sphinxtitleref{x<0}. Exemple: \sphinxtitleref{p<\sphinxhyphen{}10} : le joueur a au moins 10 pips
 d’avance à la course. \sphinxtitleref{p50,70} : le joueur a entre 50 et 70 pips de retard à
 la course.
 \end{sphinxadmonition}
@@ -3712,7 +3724,7 @@ tournois sont visibles dans les colonnes ID des panneaux correspondants.
 \end{sphinxadmonition}
 
 \sphinxAtStartPar
-Par exemple, la commande \sphinxcode{\sphinxupquote{s s c p\sphinxhyphen{}20,\sphinxhyphen{}5 w\textgreater{}60 z\textgreater{}10 K2,3}} filtre toutes les
+Par exemple, la commande \sphinxcode{\sphinxupquote{s s c p\sphinxhyphen{}20,\sphinxhyphen{}5 w>60 z>10 K2,3}} filtre toutes les
 positions en prenant en compte la structure des pions, le score et le cube
 de la position éditée où le joueur a entre 20 et 5 pips d’avance à la
 course, avec au moins 60\% de chances de gain, au moins 10 pions dans la
@@ -5992,7 +6004,7 @@ actuellement filtrées. Cela permet de restreindre progressivement les résultat
 
 \sphinxAtStartPar
 En ligne de commande, utiliser la commande \sphinxcode{\sphinxupquote{ss}} suivie de filtres (ex: \sphinxcode{\sphinxupquote{ss nc}},
-\sphinxcode{\sphinxupquote{ss E\textgreater{}40}}). La commande \sphinxcode{\sphinxupquote{ss}} fonctionne après une recherche préalable.
+\sphinxcode{\sphinxupquote{ss E>40}}). La commande \sphinxcode{\sphinxupquote{ss}} fonctionne après une recherche préalable.
 
 \sphinxAtStartPar
 La fenêtre de recherche (\sphinxcode{\sphinxupquote{CTRL\sphinxhyphen{}F}}) propose également une case à cocher
@@ -6112,7 +6124,7 @@ Courses petites
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s nc P\textless{}70
+s nc P<70
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6142,7 +6154,7 @@ portes 24, 21
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s p\textgreater{}35
+s p>35
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6174,7 +6186,7 @@ dés vides côté joueur du bas
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s d e\textgreater{}1000
+s d e>1000
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6190,7 +6202,7 @@ portes dans le jan, hommes à la barre
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s g\textgreater{}20
+s g>20
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6204,7 +6216,7 @@ Erreurs du joueur 1 de plus de 40 millipoints
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s E\textgreater{}40
+s E>40
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6280,7 +6292,7 @@ point 1 pour l’adversaire
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s P\textless{}60
+s P<60
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6296,7 +6308,7 @@ dés vides côté joueur du bas
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s d p\textless{}\sphinxhyphen{}20
+s d p<\sphinxhyphen{}20
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6366,7 +6378,7 @@ Erreurs dans le tournoi 2
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{3}}
 \sphinxAtStartPar
-s tn2 E\textgreater{}40
+s tn2 E>40
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6403,18 +6415,18 @@ Après \sphinxcode{\sphinxupquote{s nc}}, chercher les petites courses
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-ss P\textless{}70
+ss P<70
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
 \sphinxhline\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-Après \sphinxcode{\sphinxupquote{s g\textgreater{}20}}, ne garder que les erreurs
+Après \sphinxcode{\sphinxupquote{s g>20}}, ne garder que les erreurs
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 &\begin{varwidth}[t]{\sphinxcolwidth{1}{2}}
 \sphinxAtStartPar
-ss E\textgreater{}40
+ss E>40
 \sphinxbeforeendvarwidth
 \end{varwidth}%
 \\
@@ -6995,7 +7007,7 @@ Le dénominateur \(N_\text{compté}\) est le nombre de \sphinxstylestrong{décis
 \item {} 
 \sphinxAtStartPar
 Le facteur 500 convertit l’equity en millipoints (1 point = 1000 mpt, mais
-l’échelle est ×500 par convention XG/gnuBG — cf. \sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}}).
+l’échelle est ×500 par convention XG/gnuBG — cf. \sphinxcode{\sphinxupquote{gnubg/formatgs.c:399–409}}).
 
 \end{itemize}
 
@@ -7010,7 +7022,7 @@ sans filtre) :
 \begin{split}\mathrm{SnowieER} = \frac{\sum_i |\mathrm{erreur}_i|}{N_\text{P1} + N_\text{P2}} \times 500\end{split}
 \end{equation*}
 \sphinxAtStartPar
-Référence : \sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}}.
+Référence : \sphinxcode{\sphinxupquote{gnubg/formatgs.c:415–424}}.
 
 \sphinxAtStartPar
 Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend pas
@@ -7035,7 +7047,7 @@ convertie en MWC via la table MET (Match Equity Table) au score courant :
 \begin{split}\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\end{split}
 \end{equation*}
 \sphinxAtStartPar
-Référence : \sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}}.
+Référence : \sphinxcode{\sphinxupquote{gnubg/analysis.c:1449–1464}}.
 
 
 \subsection{Décisions comptées au dénominateur du PR}
@@ -7071,7 +7083,7 @@ Seules les \sphinxstylestrong{décisions de cube proches} sont comptées :
 \sphinxAtStartPar
 Une décision cube est \sphinxstylestrong{proche} si elle se situe dans la fenêtre d’équité
 \sphinxcode{\sphinxupquote{{[}\sphinxhyphen{}0.16, +0.16{]}}} autour du point de redoublement (prédicat
-\sphinxcode{\sphinxupquote{isCloseCubedecision}} dans \sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}}).
+\sphinxcode{\sphinxupquote{isCloseCubedecision}} dans \sphinxcode{\sphinxupquote{gnubg/eval.c:5088–5100}}).
 
 \item {} 
 \sphinxAtStartPar
@@ -7374,27 +7386,27 @@ Les formules ont été vérifiées dans les fichiers source suivants (dépôt gn
 \begin{itemize}
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/formatgs.c:399\textendash{}409}} — PR (« Error rate per decision »).
+\sphinxcode{\sphinxupquote{gnubg/formatgs.c:399–409}} — PR (« Error rate per decision »).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/formatgs.c:415\textendash{}424}} — Snowie Error Rate.
+\sphinxcode{\sphinxupquote{gnubg/formatgs.c:415–424}} — Snowie Error Rate.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/analysis.c:458\textendash{}462}} — Accumulation checker, exclusion des forcés (\sphinxcode{\sphinxupquote{cMoves \textgreater{} 1}}).
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:458–462}} — Accumulation checker, exclusion des forcés (\sphinxcode{\sphinxupquote{cMoves > 1}}).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/analysis.c:1430\textendash{}1474}} — Conversion EMG \(\rightarrow\) MWC par décision.
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:1430–1474}} — Conversion EMG → MWC par décision.
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/analysis.c:1449\textendash{}1464}} — Accumulation de la perte MWC (\sphinxcode{\sphinxupquote{eq2mwc}}).
+\sphinxcode{\sphinxupquote{gnubg/analysis.c:1449–1464}} — Accumulation de la perte MWC (\sphinxcode{\sphinxupquote{eq2mwc}}).
 
 \item {} 
 \sphinxAtStartPar
-\sphinxcode{\sphinxupquote{gnubg/eval.c:5088\textendash{}5100}} — Prédicat \sphinxcode{\sphinxupquote{isCloseCubedecision}} (seuil 0.16).
+\sphinxcode{\sphinxupquote{gnubg/eval.c:5088–5100}} — Prédicat \sphinxcode{\sphinxupquote{isCloseCubedecision}} (seuil 0.16).
 
 \end{itemize}
 \sphinxcontribyoutube{https://youtu.be/}{Ln7XKVFqfUk}{}
@@ -7406,7 +7418,7 @@ Les formules ont été vérifiées dans les fichiers source suivants (dépôt gn
 \chapter{Contacts}
 \label{\detokenize{index:contacts}}\label{\detokenize{index:id1}}
 \sphinxAtStartPar
-Auteur: Kévin Unger \textless{}\sphinxhref{mailto:blunderdb@proton.me}{blunderdb@proton.me}\textgreater{}.
+Auteur: Kévin Unger <\sphinxhref{mailto:blunderdb@proton.me}{blunderdb@proton.me}>.
 Vous pouvez aussi me trouver sur Heroes sous le pseudo postmanpat.
 
 \sphinxAtStartPar

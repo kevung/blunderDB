@@ -1,0 +1,159 @@
+\xpginauxfiletrue 
+\selectlanguage *{english}
+\contentsline {chapter}{\numberline {1}Version history}{3}{chapter.1}%
+\contentsline {chapter}{\numberline {2}Table of contents}{5}{chapter.2}%
+\contentsline {section}{\numberline {2.1}Download and Installation}{5}{section.2.1}%
+\contentsline {section}{\numberline {2.2}Manual}{6}{section.2.2}%
+\contentsline {subsection}{\numberline {2.2.1}Introduction}{6}{subsection.2.2.1}%
+\contentsline {subsection}{\numberline {2.2.2}Main Interactions}{6}{subsection.2.2.2}%
+\contentsline {subsection}{\numberline {2.2.3}Description of the interface}{6}{subsection.2.2.3}%
+\contentsline {subsection}{\numberline {2.2.4}Browsing positions}{7}{subsection.2.2.4}%
+\contentsline {subsection}{\numberline {2.2.5}Editing positions}{8}{subsection.2.2.5}%
+\contentsline {subsection}{\numberline {2.2.6}The command line}{8}{subsection.2.2.6}%
+\contentsline {subsection}{\numberline {2.2.7}Analysis Panel}{8}{subsection.2.2.7}%
+\contentsline {subsection}{\numberline {2.2.8}Comments Panel}{8}{subsection.2.2.8}%
+\contentsline {subsection}{\numberline {2.2.9}Search Panel}{8}{subsection.2.2.9}%
+\contentsline {subsection}{\numberline {2.2.10}Collections Panel}{9}{subsection.2.2.10}%
+\contentsline {subsection}{\numberline {2.2.11}Matches Panel}{9}{subsection.2.2.11}%
+\contentsline {subsection}{\numberline {2.2.12}Tournaments Panel}{9}{subsection.2.2.12}%
+\contentsline {subsection}{\numberline {2.2.13}Stats Panel}{9}{subsection.2.2.13}%
+\contentsline {subsubsection}{Introduction}{9}{subsubsection*.3}%
+\contentsline {subsubsection}{Opening the panel}{10}{subsubsection*.4}%
+\contentsline {subsubsection}{Filter bar}{10}{subsubsection*.5}%
+\contentsline {paragraph}{Player perspective}{10}{paragraph*.6}%
+\contentsline {paragraph}{Available filters}{10}{paragraph*.7}%
+\contentsline {subsubsection}{PR / MWC toggle}{10}{subsubsection*.8}%
+\contentsline {subsubsection}{Dashboard tab}{11}{subsubsection*.9}%
+\contentsline {paragraph}{Level cards}{11}{paragraph*.10}%
+\contentsline {paragraph}{Rolling PR over last N decisions}{11}{paragraph*.11}%
+\contentsline {paragraph}{Top blunders}{11}{paragraph*.12}%
+\contentsline {subsubsection}{Progression tab}{12}{subsubsection*.13}%
+\contentsline {paragraph}{Tournament line chart}{12}{paragraph*.14}%
+\contentsline {paragraph}{Match scatter plot}{12}{paragraph*.15}%
+\contentsline {subsubsection}{Errors tab}{12}{subsubsection*.16}%
+\contentsline {paragraph}{Breakdown by cube action}{12}{paragraph*.17}%
+\contentsline {paragraph}{Checker / Cube comparison}{12}{paragraph*.18}%
+\contentsline {paragraph}{Error magnitude histogram}{12}{paragraph*.19}%
+\contentsline {subsubsection}{Aggregation rule}{12}{subsubsection*.20}%
+\contentsline {subsubsection}{MWC: limitations}{13}{subsubsection*.21}%
+\contentsline {subsection}{\numberline {2.2.14}EPC Panel}{13}{subsection.2.2.14}%
+\contentsline {subsection}{\numberline {2.2.15}Anki Panel}{13}{subsection.2.2.15}%
+\contentsline {subsection}{\numberline {2.2.16}Metadata Panel}{14}{subsection.2.2.16}%
+\contentsline {subsection}{\numberline {2.2.17}Log Panel}{14}{subsection.2.2.17}%
+\contentsline {section}{\numberline {2.3}User Guide}{14}{section.2.3}%
+\contentsline {subsection}{\numberline {2.3.1}Create a new database}{14}{subsection.2.3.1}%
+\contentsline {subsection}{\numberline {2.3.2}Open an existing database}{14}{subsection.2.3.2}%
+\contentsline {subsection}{\numberline {2.3.3}Import and merge a database}{14}{subsection.2.3.3}%
+\contentsline {subsection}{\numberline {2.3.4}Edit a position}{15}{subsection.2.3.4}%
+\contentsline {subsection}{\numberline {2.3.5}Add a position to the database}{15}{subsection.2.3.5}%
+\contentsline {subsection}{\numberline {2.3.6}Tag a position}{15}{subsection.2.3.6}%
+\contentsline {subsection}{\numberline {2.3.7}Delete a position}{16}{subsection.2.3.7}%
+\contentsline {subsection}{\numberline {2.3.8}Import a position from XG}{16}{subsection.2.3.8}%
+\contentsline {subsection}{\numberline {2.3.9}Import a match}{16}{subsection.2.3.9}%
+\contentsline {subsection}{\numberline {2.3.10}Import a folder of matches}{17}{subsection.2.3.10}%
+\contentsline {subsection}{\numberline {2.3.11}Drag and drop}{17}{subsection.2.3.11}%
+\contentsline {subsection}{\numberline {2.3.12}Navigate through a match}{17}{subsection.2.3.12}%
+\contentsline {subsection}{\numberline {2.3.13}Manage the match panel}{17}{subsection.2.3.13}%
+\contentsline {subsection}{\numberline {2.3.14}Manage collections}{18}{subsection.2.3.14}%
+\contentsline {subsection}{\numberline {2.3.15}Manage tournaments}{18}{subsection.2.3.15}%
+\contentsline {subsection}{\numberline {2.3.16}Display performance statistics}{18}{subsection.2.3.16}%
+\contentsline {subsection}{\numberline {2.3.17}Calculate the EPC}{18}{subsection.2.3.17}%
+\contentsline {subsection}{\numberline {2.3.18}Display the analysis of a position imported from XG}{19}{subsection.2.3.18}%
+\contentsline {subsection}{\numberline {2.3.19}Export a position to XG}{19}{subsection.2.3.19}%
+\contentsline {subsection}{\numberline {2.3.20}View the different positions}{19}{subsection.2.3.20}%
+\contentsline {subsection}{\numberline {2.3.21}Search for positions based on criteria}{19}{subsection.2.3.21}%
+\contentsline {section}{\numberline {2.4}List of commands}{20}{section.2.4}%
+\contentsline {subsection}{\numberline {2.4.1}Global operations}{20}{subsection.2.4.1}%
+\contentsline {subsection}{\numberline {2.4.2}Positions and navigation}{21}{subsection.2.4.2}%
+\contentsline {subsection}{\numberline {2.4.3}Editing and search}{21}{subsection.2.4.3}%
+\contentsline {subsection}{\numberline {2.4.4}Search Filters}{21}{subsection.2.4.4}%
+\contentsline {subsection}{\numberline {2.4.5}Various commands}{24}{subsection.2.4.5}%
+\contentsline {section}{\numberline {2.5}Keyboard shortcuts}{25}{section.2.5}%
+\contentsline {subsection}{\numberline {2.5.1}Database}{25}{subsection.2.5.1}%
+\contentsline {subsection}{\numberline {2.5.2}Position}{25}{subsection.2.5.2}%
+\contentsline {subsection}{\numberline {2.5.3}Navigation}{25}{subsection.2.5.3}%
+\contentsline {subsection}{\numberline {2.5.4}Display}{26}{subsection.2.5.4}%
+\contentsline {subsection}{\numberline {2.5.5}Actions}{26}{subsection.2.5.5}%
+\contentsline {subsection}{\numberline {2.5.6}Tools}{26}{subsection.2.5.6}%
+\contentsline {subsection}{\numberline {2.5.7}Command Line}{26}{subsection.2.5.7}%
+\contentsline {subsection}{\numberline {2.5.8}Search History Panel}{26}{subsection.2.5.8}%
+\contentsline {subsection}{\numberline {2.5.9}Filter Library Panel}{27}{subsection.2.5.9}%
+\contentsline {subsection}{\numberline {2.5.10}Analysis Panel}{27}{subsection.2.5.10}%
+\contentsline {subsection}{\numberline {2.5.11}Match Panel}{27}{subsection.2.5.11}%
+\contentsline {subsection}{\numberline {2.5.12}Anki panel (spaced repetition)}{27}{subsection.2.5.12}%
+\contentsline {section}{\numberline {2.6}Command Line Interface (CLI)}{27}{section.2.6}%
+\contentsline {subsection}{\numberline {2.6.1}Introduction}{27}{subsection.2.6.1}%
+\contentsline {subsection}{\numberline {2.6.2}General syntax}{28}{subsection.2.6.2}%
+\contentsline {subsection}{\numberline {2.6.3}Available commands}{28}{subsection.2.6.3}%
+\contentsline {subsection}{\numberline {2.6.4}create — Create a database}{28}{subsection.2.6.4}%
+\contentsline {subsection}{\numberline {2.6.5}import — Import data}{29}{subsection.2.6.5}%
+\contentsline {subsubsection}{Import a match}{29}{subsubsection*.23}%
+\contentsline {subsubsection}{Import positions}{29}{subsubsection*.24}%
+\contentsline {subsubsection}{Batch import}{29}{subsubsection*.25}%
+\contentsline {subsection}{\numberline {2.6.6}export — Export data}{29}{subsection.2.6.6}%
+\contentsline {subsection}{\numberline {2.6.7}search — Search positions}{30}{subsection.2.6.7}%
+\contentsline {subsection}{\numberline {2.6.8}list — List contents}{31}{subsection.2.6.8}%
+\contentsline {subsection}{\numberline {2.6.9}match — Display a match}{32}{subsection.2.6.9}%
+\contentsline {subsection}{\numberline {2.6.10}info — Database metadata}{32}{subsection.2.6.10}%
+\contentsline {subsection}{\numberline {2.6.11}edit — Edit metadata}{32}{subsection.2.6.11}%
+\contentsline {subsection}{\numberline {2.6.12}verify — Verify integrity}{33}{subsection.2.6.12}%
+\contentsline {subsection}{\numberline {2.6.13}delete — Delete data}{33}{subsection.2.6.13}%
+\contentsline {subsection}{\numberline {2.6.14}Workflow examples}{34}{subsection.2.6.14}%
+\contentsline {subsubsection}{Import a tournament directory}{34}{subsubsection*.26}%
+\contentsline {subsubsection}{Regular backup}{34}{subsubsection*.27}%
+\contentsline {subsubsection}{Error analysis}{34}{subsubsection*.28}%
+\contentsline {subsection}{\numberline {2.6.15}Exit codes}{34}{subsection.2.6.15}%
+\contentsline {section}{\numberline {2.7}Frequently Asked Questions (FAQ)}{35}{section.2.7}%
+\contentsline {subsection}{\numberline {2.7.1}What is the purpose of blunderDB?}{35}{subsection.2.7.1}%
+\contentsline {subsection}{\numberline {2.7.2}What motivated the creation of blunderDB?}{35}{subsection.2.7.2}%
+\contentsline {subsection}{\numberline {2.7.3}How to save the state of the current database?}{35}{subsection.2.7.3}%
+\contentsline {subsection}{\numberline {2.7.4}Should I create different databases for different categories of positions?}{35}{subsection.2.7.4}%
+\contentsline {subsection}{\numberline {2.7.5}How to merge multiple databases?}{35}{subsection.2.7.5}%
+\contentsline {subsection}{\numberline {2.7.6}Which match file formats are supported?}{36}{subsection.2.7.6}%
+\contentsline {subsection}{\numberline {2.7.7}What is a collection?}{36}{subsection.2.7.7}%
+\contentsline {subsection}{\numberline {2.7.8}What is EPC?}{36}{subsection.2.7.8}%
+\contentsline {subsection}{\numberline {2.7.9}Does blunderDB have a command\sphinxhyphen {}line interface?}{36}{subsection.2.7.9}%
+\contentsline {subsection}{\numberline {2.7.10}Can I modify, copy, share blunderDB?}{36}{subsection.2.7.10}%
+\contentsline {subsection}{\numberline {2.7.11}What data format does blunderDB use?}{36}{subsection.2.7.11}%
+\contentsline {subsection}{\numberline {2.7.12}What were the design principles of blunderDB?}{36}{subsection.2.7.12}%
+\contentsline {subsection}{\numberline {2.7.13}What is the software architecture of blunderDB?}{36}{subsection.2.7.13}%
+\contentsline {subsection}{\numberline {2.7.14}On which platforms does blunderDB run?}{37}{subsection.2.7.14}%
+\contentsline {subsection}{\numberline {2.7.15}Where does the blunderDB icon come from?}{37}{subsection.2.7.15}%
+\contentsline {section}{\numberline {2.8}Annex: Advanced Filter Usage}{37}{section.2.8}%
+\contentsline {subsection}{\numberline {2.8.1}Command\sphinxhyphen {}line search for positions}{37}{subsection.2.8.1}%
+\contentsline {subsection}{\numberline {2.8.2}Search in Current Results}{37}{subsection.2.8.2}%
+\contentsline {subsection}{\numberline {2.8.3}Filter Library}{38}{subsection.2.8.3}%
+\contentsline {subsection}{\numberline {2.8.4}Examples}{38}{subsection.2.8.4}%
+\contentsline {section}{\numberline {2.9}Windows Annex: False Detection of blunderDB as Malware}{39}{section.2.9}%
+\contentsline {subsection}{\numberline {2.9.1}Windows SmartScreen Warning}{40}{subsection.2.9.1}%
+\contentsline {subsection}{\numberline {2.9.2}Windows Defender Blocking}{40}{subsection.2.9.2}%
+\contentsline {section}{\numberline {2.10}Mac Annex: Possible Blocking of blunderDB}{41}{section.2.10}%
+\contentsline {subsection}{\numberline {2.10.1}Installation of blunderDB}{49}{subsection.2.10.1}%
+\contentsline {subsection}{\numberline {2.10.2}Authorization to Run blunderDB}{49}{subsection.2.10.2}%
+\contentsline {section}{\numberline {2.11}Annex: Database Schema}{49}{section.2.11}%
+\contentsline {subsection}{\numberline {2.11.1}Version 1.0.0}{49}{subsection.2.11.1}%
+\contentsline {subsection}{\numberline {2.11.2}Version 1.1.0}{49}{subsection.2.11.2}%
+\contentsline {subsection}{\numberline {2.11.3}Version 1.2.0}{50}{subsection.2.11.3}%
+\contentsline {subsection}{\numberline {2.11.4}Version 1.3.0}{50}{subsection.2.11.4}%
+\contentsline {subsection}{\numberline {2.11.5}Version 1.4.0}{50}{subsection.2.11.5}%
+\contentsline {subsection}{\numberline {2.11.6}Version 1.5.0}{50}{subsection.2.11.6}%
+\contentsline {subsection}{\numberline {2.11.7}Version 1.6.0}{51}{subsection.2.11.7}%
+\contentsline {subsection}{\numberline {2.11.8}Version 1.7.0}{51}{subsection.2.11.8}%
+\contentsline {section}{\numberline {2.12}Annex: Statistics model — XG / gnuBG / blunderDB alignment}{51}{section.2.12}%
+\contentsline {subsection}{\numberline {2.12.1}Formal definitions}{52}{subsection.2.12.1}%
+\contentsline {subsubsection}{PR (Performance Rate)}{52}{subsubsection*.42}%
+\contentsline {subsubsection}{Snowie Error Rate}{52}{subsubsection*.43}%
+\contentsline {subsubsection}{MWC loss (Match Winning Chance)}{52}{subsubsection*.44}%
+\contentsline {subsection}{\numberline {2.12.2}Decisions counted in the PR denominator}{52}{subsection.2.12.2}%
+\contentsline {subsubsection}{Checker plays — counted decisions}{52}{subsubsection*.45}%
+\contentsline {subsubsection}{Cube decisions — counted decisions}{53}{subsubsection*.46}%
+\contentsline {subsubsection}{Filter summary}{53}{subsubsection*.47}%
+\contentsline {subsection}{\numberline {2.12.3}blunderDB ↔ XG ↔ gnuBG correspondence}{53}{subsection.2.12.3}%
+\contentsline {subsubsection}{XG ↔ blunderDB comparison (same analysis engine)}{53}{subsubsection*.48}%
+\contentsline {subsubsection}{gnuBG ↔ blunderDB comparison (SGF import — different engines)}{53}{subsubsection*.49}%
+\contentsline {subsection}{\numberline {2.12.4}Validating your own figures}{54}{subsection.2.12.4}%
+\contentsline {subsection}{\numberline {2.12.5}gnuBG reference}{54}{subsection.2.12.5}%
+\contentsline {chapter}{\numberline {3}Contact}{55}{chapter.3}%
+\contentsline {chapter}{\numberline {4}Donate}{57}{chapter.4}%
+\contentsline {chapter}{\numberline {5}Acknowledgments}{59}{chapter.5}%
+\xpginauxfilefalse 
