@@ -1,6 +1,8 @@
 <script>
     import { onMount } from 'svelte';
+    import { get } from 'svelte/store';
     import { statsFilterStore, statsMetricStore } from '../../stores/statsStore.js';
+    import { databaseLoadedStore } from '../../stores/databaseStore.js';
     import { GetAllPlayerNames, GetAllTournaments, GetStatsDateRange } from '../../../wailsjs/go/database/Database.js';
     import { GetStatsFilter, SaveStatsFilter } from '../../../wailsjs/go/main/Config.js';
 
@@ -132,7 +134,11 @@
 
     onMount(async () => {
         try {
-            const [players, tournaments, persisted, dateRange] = await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsFilter(), GetStatsDateRange()]);
+            // Skip the DB-backed lookups when no database is open (they would
+            // otherwise error); the persisted filter still comes from Config.
+            const dbLoaded = get(databaseLoadedStore);
+            const [players, tournaments, dateRange] = dbLoaded ? await Promise.all([GetAllPlayerNames(), GetAllTournaments(), GetStatsDateRange()]) : [[], [], null];
+            const persisted = await GetStatsFilter();
 
             playerList = players ?? [];
             tournamentList = (tournaments ?? []).map((t) => ({ id: t.id, name: t.name }));

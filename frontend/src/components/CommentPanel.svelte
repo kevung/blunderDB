@@ -39,6 +39,11 @@
     });
 
     async function loadComments() {
+        // Only update allComments here; the search $effect below owns
+        // displayedComments. Reading allComments in the same synchronous effect
+        // pass that writes it (the no-DB / position-id-0 case takes no await,
+        // so it stays synchronous) made the effect read-and-write the same
+        // state, triggering an infinite update loop (effect_update_depth_exceeded).
         try {
             const pos = $positionStore;
             if (pos && pos.id) {
@@ -46,11 +51,9 @@
             } else {
                 allComments = [];
             }
-            if (!searchQuery.trim()) displayedComments = allComments;
         } catch (error) {
             logger.error('Error loading comments:', error);
             allComments = [];
-            displayedComments = [];
         }
     }
 

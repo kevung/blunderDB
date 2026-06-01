@@ -40,6 +40,7 @@ vi.mock('../../wailsjs/go/main/Config.js', () => ({
 
 // ── Stores ───────────────────────────────────────────────────────────────────
 import { statsFilterStore, statsResultStore, statsLoadingStore, statsErrorStore, statsMetricStore } from '../stores/statsStore.js';
+import { databasePathStore } from '../stores/databaseStore.js';
 
 // ── DB mock ref (pour compter les appels) ────────────────────────────────────
 import { ComputeStats } from '../../wailsjs/go/database/Database.js';
@@ -59,6 +60,9 @@ const DEFAULT_FILTER = {
 };
 
 function resetStores() {
+    // StatsPanel only refreshes stats when a database is open
+    // (databaseLoadedStore derives from a non-empty databasePathStore).
+    databasePathStore.set('/tmp/test.db');
     statsFilterStore.set({ ...DEFAULT_FILTER });
     statsResultStore.set(null);
     statsLoadingStore.set(false);

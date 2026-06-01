@@ -68,6 +68,13 @@ func (d *Database) SetupDatabase(path string) error {
 		return err
 	}
 
+	// Size the connection pool. Critical for ":memory:": each pooled
+	// connection is a SEPARATE empty in-memory database, so concurrent reads
+	// (RWMutex allows multiple readers) would otherwise hit a fresh connection
+	// with no schema -> "no such table". ConfigurePool pins ":memory:" to a
+	// single connection; file-backed DBs are allowed to grow.
+	sqlite.ConfigurePool(d.db, path)
+
 	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
 	if err = d.applyPragmas(path); err != nil {
 		return err
@@ -468,6 +475,13 @@ func (d *Database) OpenDatabase(path string) error {
 	if err != nil {
 		return err
 	}
+
+	// Size the connection pool. Critical for ":memory:": each pooled
+	// connection is a SEPARATE empty in-memory database, so concurrent reads
+	// (RWMutex allows multiple readers) would otherwise hit a fresh connection
+	// with no schema -> "no such table". ConfigurePool pins ":memory:" to a
+	// single connection; file-backed DBs are allowed to grow.
+	sqlite.ConfigurePool(d.db, path)
 
 	// Apply performance and safety PRAGMAs (includes foreign_keys=ON)
 	if err = d.applyPragmas(path); err != nil {
