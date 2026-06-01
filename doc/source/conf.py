@@ -55,10 +55,12 @@ html_show_sourcelink = False
 html_favicon = '_static/favicon.ico'
 html_logo = '_static/logo.png'
 # The language switcher (see _templates/versions.html) renders one link per
-# entry as <a href="{url}/index.html">{label}</a>. Labels are the native
-# language names; each url is a sibling directory produced by doc/build.py.
+# entry. Each entry is [code, name, url]: the short code (e.g. "fr") is the
+# visible label so the switcher stays compact and never overlaps the nav, the
+# native name (e.g. "Français") is the hover tooltip, and url is a sibling
+# directory produced by doc/build.py.
 html_context = {
-        'languages': [[name, "../" + code] for code, name in LANGUAGES]
+        'languages': [[code, name, "../" + code] for code, name in LANGUAGES]
         }
 
 # Construct the latest Windows executable URL
