@@ -46,7 +46,10 @@ func RunContractTests(t *testing.T, factory func() storage.Storage) {
 		{"Tournament/AddRemoveMatch", testTournamentAddRemoveMatch},
 		{"Collection/MoveBetweenCollections", testCollectionMoveBetween},
 		{"Anki/ReviewUpdatesScheduling", testAnkiReviewUpdatesScheduling},
-		{"Filter/SaveAndList", nil},
+		{"Filter/SaveAndList", testFilterSaveAndList},
+		{"History/SaveLoadClear", testCommandHistory},
+		{"SearchHistory/SaveListDelete", testSearchHistory},
+		{"Metadata/Counts", testMetadataCounts},
 		{"Session/SaveLoadEmpty", nil},
 		{"Search/FilterByDecisionType", testSearchFilterByDecisionType},
 		{"Stats/AggregateCounts", nil},
@@ -584,6 +587,177 @@ func testAnkiReviewUpdatesScheduling(t *testing.T, s storage.Storage) {
 	stats, _ = s.Anki().DeckStats(ctx, "", deckID)
 	if stats.NewCount != 1 || stats.DueCount != 1 {
 		t.Errorf("DeckStats after reset: %+v", stats)
+	}
+}
+
+func testFilterSaveAndList(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	fs := s.Filters()
+
+	id1, err := fs.Save(ctx, "", "f1", "cmd1")
+	if err != nil {
+		t.Fatalf("Save f1: %v", err)
+	}
+	if _, err := fs.Save(ctx, "", "f1", "dup"); !errors.Is(err, storage.ErrConflict) {
+		t.Fatalf("duplicate name: got %v, want ErrConflict", err)
+	}
+	id2, err := fs.Save(ctx, "", "f2", "cmd2")
+	if err != nil {
+		t.Fatalf("Save f2: %v", err)
+	}
+
+	var names []string
+	for f, err := range fs.List(ctx, "") {
+		if err != nil {
+			t.Fatalf("List: %v", err)
+		}
+		names = append(names, f.Name)
+	}
+	if len(names) != 2 || names[0] != "f1" || names[1] != "f2" {
+		t.Fatalf("List order: %v, want [f1 f2]", names)
+	}
+
+	if err := fs.Update(ctx, "", id1, "f1b", "cmd1b"); err != nil {
+		t.Fatalf("Update: %v", err)
+	}
+	if err := fs.SaveEditPosition(ctx, "", "f1b", "editX"); err != nil {
+		t.Fatalf("SaveEditPosition: %v", err)
+	}
+	if got, err := fs.LoadEditPosition(ctx, "", "f1b"); err != nil || got != "editX" {
+		t.Fatalf("LoadEditPosition: got %q err %v, want editX", got, err)
+	}
+	if got, err := fs.LoadEditPosition(ctx, "", "unknown"); err != nil || got != "" {
+		t.Fatalf("LoadEditPosition(unknown): got %q err %v, want empty", got, err)
+	}
+
+	if err := fs.Delete(ctx, "", id2); err != nil {
+		t.Fatalf("Delete: %v", err)
+	}
+	if err := fs.Delete(ctx, "", id2); !errors.Is(err, storage.ErrNotFound) {
+		t.Fatalf("Delete absent: got %v, want ErrNotFound", err)
+	}
+	n := 0
+	for _, err := range fs.List(ctx, "") {
+		if err != nil {
+			t.Fatalf("List after delete: %v", err)
+		}
+		n++
+	}
+	if n != 1 {
+		t.Fatalf("filters after delete: got %d, want 1", n)
+	}
+}
+
+func testCommandHistory(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	h := s.History()
+
+	if err := h.Save(ctx, "", "first"); err != nil {
+		t.Fatalf("Save first: %v", err)
+	}
+	if err := h.Save(ctx, "", "second"); err != nil {
+		t.Fatalf("Save second: %v", err)
+	}
+	got, err := h.Load(ctx, "")
+	if err != nil {
+		t.Fatalf("Load: %v", err)
+	}
+	if len(got) != 2 || got[0] != "first" || got[1] != "second" {
+		t.Fatalf("Load order: %v, want [first second]", got)
+	}
+
+	if err := h.Clear(ctx, ""); err != nil {
+		t.Fatalf("Clear: %v", err)
+	}
+	got, err = h.Load(ctx, "")
+	if err != nil {
+		t.Fatalf("Load after clear: %v", err)
+	}
+	if len(got) != 0 {
+		t.Fatalf("after clear: %v, want empty", got)
+	}
+}
+
+func testSearchHistory(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+	sh := s.SearchHistory()
+
+	if err := sh.Save(ctx, "", "cmd1", "pos1"); err != nil {
+		t.Fatalf("Save 1: %v", err)
+	}
+	if err := sh.Save(ctx, "", "cmd2", "pos2"); err != nil {
+		t.Fatalf("Save 2: %v", err)
+	}
+
+	var entries []storage.SearchHistory
+	for e, err := range sh.List(ctx, "") {
+		if err != nil {
+			t.Fatalf("List: %v", err)
+		}
+		entries = append(entries, *e)
+	}
+	if len(entries) != 2 {
+		t.Fatalf("List count: got %d, want 2", len(entries))
+	}
+	// Most recent first; the id-DESC tiebreak makes this deterministic even
+	// when both rows share a millisecond timestamp.
+	if entries[0].Command != "cmd2" {
+		t.Fatalf("List order: first = %q, want cmd2", entries[0].Command)
+	}
+
+	// Delete by timestamp (covers the same-millisecond case: deleting a
+	// timestamp removes every entry that carries it).
+	for _, e := range entries {
+		if err := sh.DeleteEntry(ctx, "", e.Timestamp); err != nil {
+			t.Fatalf("DeleteEntry: %v", err)
+		}
+	}
+	n := 0
+	for _, err := range sh.List(ctx, "") {
+		if err != nil {
+			t.Fatalf("List after delete: %v", err)
+		}
+		n++
+	}
+	if n != 0 {
+		t.Fatalf("search history after delete: got %d, want 0", n)
+	}
+}
+
+func testMetadataCounts(t *testing.T, s storage.Storage) {
+	ctx := context.Background()
+
+	p := checkerPos()
+	posID, err := s.Positions().Save(ctx, "", &p)
+	if err != nil {
+		t.Fatalf("Save position: %v", err)
+	}
+	a := domain.PositionAnalysis{AnalysisType: "CheckerMove"}
+	if err := s.Analyses().Save(ctx, "", posID, &a); err != nil {
+		t.Fatalf("Save analysis: %v", err)
+	}
+	m := domain.Match{Player1Name: "A", Player2Name: "B"}
+	matchID, err := s.Matches().Save(ctx, "", &m)
+	if err != nil {
+		t.Fatalf("Save match: %v", err)
+	}
+	g := domain.Game{MatchID: matchID, GameNumber: 1}
+	gameID, err := s.Matches().CreateGame(ctx, "", &g)
+	if err != nil {
+		t.Fatalf("CreateGame: %v", err)
+	}
+	mv := domain.Move{GameID: gameID, MoveNumber: 1, MoveType: "checker", PositionID: posID, Player: 1}
+	if _, err := s.Matches().CreateMove(ctx, "", &mv); err != nil {
+		t.Fatalf("CreateMove: %v", err)
+	}
+
+	c, err := s.Metadata().Counts(ctx, "")
+	if err != nil {
+		t.Fatalf("Counts: %v", err)
+	}
+	want := storage.Counts{Positions: 1, Analyses: 1, Matches: 1, Games: 1, Moves: 1}
+	if c != want {
+		t.Fatalf("Counts = %+v, want %+v", c, want)
 	}
 }
 
