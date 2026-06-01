@@ -72,6 +72,8 @@ func (s *Server) importerFor(f ingest.Format) ingest.Importer {
 		return ingest.BGFImporter{S: s.opts.Storage}
 	case ingest.FormatNativeDB:
 		return ingest.DBImporter{S: s.opts.Storage}
+	case ingest.FormatPosition:
+		return ingest.PositionImporter{S: s.opts.Storage}
 	default:
 		return nil
 	}
@@ -94,6 +96,7 @@ func (s *Server) ingestRoutes() []route {
 		{http.MethodPost, "/v1/imports.gnubg", s.handleImport(ingest.FormatGnuBG)},
 		{http.MethodPost, "/v1/imports.bgf", s.handleImport(ingest.FormatBGF)},
 		{http.MethodPost, "/v1/imports.db", s.handleImport(ingest.FormatNativeDB)},
+		{http.MethodPost, "/v1/imports.position", s.handleImport(ingest.FormatPosition)},
 		{http.MethodPost, "/v1/imports.cancel", s.handleImportCancel},
 		{http.MethodPost, "/v1/exports.json", s.handleExport(ingest.FormatJSON)},
 	}

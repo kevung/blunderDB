@@ -241,10 +241,28 @@ func TestImportNativeDBEndToEnd(t *testing.T) {
 	}
 }
 
+func TestImportXGPPositionEndToEnd(t *testing.T) {
+	ts := newTestServer(t)
+
+	fixture, err := os.ReadFile(filepath.Join("..", "..", "testdata", "xgp", "Position 10.xgp"))
+	if err != nil {
+		t.Fatalf("read fixture: %v", err)
+	}
+
+	events := uploadImportNamed(t, ts, "/v1/imports.position", "pos.xgp", fixture)
+	done := events[len(events)-1]
+	if done["event"] != "done" {
+		t.Fatalf("last event = %v, want done", done["event"])
+	}
+	if done["saved_positions"].(float64) == 0 {
+		t.Fatal("saved_positions = 0, want > 0")
+	}
+}
+
 func TestImportUnsupportedFormat(t *testing.T) {
 	ts := newTestServer(t)
-	// imports.position is not wired yet → catch-all 404 (unknown route).
-	resp := post(t, ts, "/v1/imports.position", nil)
+	// An unknown imports.* verb hits the catch-all 404 (unknown route).
+	resp := post(t, ts, "/v1/imports.bogus", nil)
 	defer resp.Body.Close()
 	if resp.StatusCode != http.StatusNotFound {
 		t.Fatalf("status = %d, want 404", resp.StatusCode)

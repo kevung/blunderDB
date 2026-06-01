@@ -133,7 +133,11 @@ Server bits:
 |----|-------|-------------------|
 | **3a** ✅ | `ingest` interfaces; HTTP transport (multipart, NDJSON progress, cancellation map); **JSON interchange** export+import implemented over `Storage` (no parser needed) as the first working, fully backend-agnostic path; routes wired; fake-importer httptest. | yes |
 | **3b** ✅ | `MatchStore` dedup extensions (both backends + contract); `matchWriter`; **XG** mapping lifted into `ingest/xgmap.go`+`ingest/xg.go`; `imports.xg` end-to-end; fixture+parity tests. | yes |
-| **3c** 🚧 | **GnuBG** ✅ (SGF+MAT — MAT *is* the Jellyfish path), **BGF** ✅, native **.db** ✅, position **text/XGP** ⬜ migrated onto `matchWriter`; remaining routes; per-format fixture tests. | yes |
+| **3c** ✅* | **GnuBG** ✅ (SGF+MAT — MAT *is* the Jellyfish path), **BGF** ✅, native **.db** ✅, **XGP** position ✅; BGF-text position deferred (no fixture). | yes |
+
+\* All parser-backed match formats + native .db + XGP positions are done with
+parity gates. The only deferred item is BGF *text* single-position import,
+which has no test fixture to gate it (see below).
 
 ### PR3c — GnuBG done
 
@@ -180,13 +184,28 @@ Server bits:
   copied field-for-field into a fresh Storage) + `TestDBImportDedup`; server
   `TestImportNativeDBEndToEnd`.
 
-### PR3c — remaining (mechanically distinct from the parser mappers)
+### PR3c — XGP single-position done
 
-- **Single-position text/XGP** (`ImportBGFPosition` via `bgfparser.ParseTXT`,
-  `ImportXGPPosition`): import one position (+ analysis) rather than a match.
-  Wire `imports.position`. Build a `createPositionFromBGFText`/XGP pure mapper
-  and write via `Positions().Save` + `Analyses().Save`.
-- Each still needs a field-by-field parity test vs its legacy `Database` method.
+- `ingest/position.go` — `PositionGraph` (one position + analysis fragments),
+  `MapXGPPosition` (reuses the XG mappers; handles the optional following
+  checker position), and `PositionImporter` (dispatches on extension; `.xgp`
+  wired into `imports.position`). The per-position write logic was extracted
+  from `WriteMatch` into the shared `savePositionWithAnalyses` helper.
+- Tests: `ingest/position_test.go` `TestXGPImportParity` (3 fixtures incl. a
+  two-position file) vs `database.ImportXGPPosition`; server
+  `TestImportXGPPositionEndToEnd`.
+
+### PR3c — deferred
+
+- **BGF *text* single-position** (`database.ImportBGFPosition` via
+  `bgfparser.ParseTXT`): mapper would port `convertBGFTextPosition` +
+  evaluation/cube-decision builders + `classifyBGFCubeAction`. **Not shipped:
+  there is no `.txt` BGBlitz-position fixture in `testdata/` to gate it**, and
+  the project's rule is no mapper without a parity test. Add a fixture, then
+  dispatch `.txt` in `PositionImporter` alongside `.xgp`.
+- **Canonical-duplicate enrichment** for all match mappers (MapXG/GnuBG/BGF emit
+  the full graph; `WriteMatch` skips a whole match on a hash hit instead of
+  importing analysis onto positions already stored from another format).
 
 ### PR3b — done (what landed)
 

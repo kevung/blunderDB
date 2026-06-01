@@ -85,41 +85,13 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		for mi := range gg.Moves {
 			mg := &gg.Moves[mi]
 			if mg.Position != nil {
-				posID, err := tx.Positions().Save(ctx, scope, mg.Position)
+				posID, err := savePositionWithAnalyses(ctx, tx, scope, mg.Position, mg.Analyses, mg.Comments)
 				if err != nil {
 					return res, err
 				}
 				mg.Move.PositionID = posID
 				res.SavedPositions++
 				counter.Positions++
-				// AnalysisStore.Save replaces, so each fragment is merged into
-				// whatever is already stored for this (deduplicated) position
-				// before saving — reproducing the legacy sequence of
-				// saveAnalysisInTx calls, including its round-then-recompute
-				// behaviour across successive merges.
-				for _, frag := range mg.Analyses {
-					if frag == nil {
-						continue
-					}
-					var existing *domain.PositionAnalysis
-					switch cur, err := tx.Analyses().Load(ctx, scope, posID); {
-					case err == nil:
-						existing = cur
-					case errors.Is(err, storage.ErrNotFound):
-						// no analysis yet
-					default:
-						return res, err
-					}
-					merged := mergeAnalysis(existing, *frag)
-					if err := tx.Analyses().Save(ctx, scope, posID, &merged); err != nil {
-						return res, err
-					}
-				}
-				for _, c := range mg.Comments {
-					if _, err := tx.Comments().Add(ctx, scope, posID, c); err != nil {
-						return res, err
-					}
-				}
 			}
 			mg.Move.GameID = gameID
 			if _, err := tx.Matches().CreateMove(ctx, scope, &mg.Move); err != nil {
@@ -131,4 +103,43 @@ func WriteMatch(ctx context.Context, tx storage.Tx, scope string, g *MatchGraph,
 		}
 	}
 	return res, nil
+}
+
+// savePositionWithAnalyses saves pos (deduplicated by Zobrist) and applies each
+// analysis fragment in order via load-merge-save, then adds the comments. It is
+// shared by WriteMatch (per move) and the single-position importers.
+//
+// AnalysisStore.Save replaces, so each fragment is merged into whatever is
+// already stored for the position before saving — reproducing the legacy
+// sequence of saveAnalysisInTx calls, including its round-then-recompute of
+// equity errors across successive merges onto one position.
+func savePositionWithAnalyses(ctx context.Context, tx storage.Tx, scope string, pos *domain.Position, analyses []*domain.PositionAnalysis, comments []string) (int64, error) {
+	posID, err := tx.Positions().Save(ctx, scope, pos)
+	if err != nil {
+		return 0, err
+	}
+	for _, frag := range analyses {
+		if frag == nil {
+			continue
+		}
+		var existing *domain.PositionAnalysis
+		switch cur, err := tx.Analyses().Load(ctx, scope, posID); {
+		case err == nil:
+			existing = cur
+		case errors.Is(err, storage.ErrNotFound):
+			// no analysis yet
+		default:
+			return posID, err
+		}
+		merged := mergeAnalysis(existing, *frag)
+		if err := tx.Analyses().Save(ctx, scope, posID, &merged); err != nil {
+			return posID, err
+		}
+	}
+	for _, c := range comments {
+		if _, err := tx.Comments().Add(ctx, scope, posID, c); err != nil {
+			return posID, err
+		}
+	}
+	return posID, nil
 }
