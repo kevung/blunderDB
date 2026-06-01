@@ -895,6 +895,8 @@ export namespace domain {
 	    mwc_loss: number;
 	    pr2: number;
 	    mwc_loss2: number;
+	    match_hash?: string;
+	    canonical_hash?: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new Match(source);
@@ -922,6 +924,8 @@ export namespace domain {
 	        this.mwc_loss = source["mwc_loss"];
 	        this.pr2 = source["pr2"];
 	        this.mwc_loss2 = source["mwc_loss2"];
+	        this.match_hash = source["match_hash"];
+	        this.canonical_hash = source["canonical_hash"];
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {
