@@ -10,3 +10,22 @@
    text-align: left;
 }
 
+/* Compact language switcher (see _templates/versions.html): short codes laid
+   out in a 3-column grid so the box stays short and never hides nav sections. */
+table.lang-switcher {
+   margin: 0;
+   border: none;
+   width: auto;
+}
+table.lang-switcher tr,
+table.lang-switcher td {
+   border: none;
+   background: none !important;
+   padding: 2px 6px;
+}
+table.lang-switcher td a {
+   text-transform: uppercase;
+   display: block;
+   text-align: center;
+}
+
