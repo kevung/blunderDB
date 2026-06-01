@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. Komentoluettelo &mdash; blunderDB 0.21.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d5cc5d32"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="5. Näppäimistöoikotiet" href="raccourcis.html" />
+    <link rel="prev" title="3. Käyttöopas" href="guide_utilisateur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Komentoluettelo</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Yleiset toiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">4.2. Asemat ja navigointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">4.3. Muokkaus ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Hakusuodattimet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Sekalaisia komentoja</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Komentoluettelo</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="liste-des-commandes">
+<span id="cmd-mode"></span><h1><span class="section-number">4. </span>Komentoluettelo<a class="headerlink" href="#liste-des-commandes" title="Link to this heading"></a></h1>
+<section id="operations-globales">
+<span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Yleiset toiminnot<a class="headerlink" href="#operations-globales" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Komento</p></th>
+<th class="head"><p>Toiminto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>new, ne, n</p></td>
+<td><p>Luo uuden tietokannan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>open, op, o</p></td>
+<td><p>Avaa olemassa olevan tietokannan.</p></td>
+</tr>
+<tr class="row-even"><td><p>import_db, idb</p></td>
+<td><p>Tuo ja yhdistää toisen tietokannan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>export_db, edb</p></td>
+<td><p>Vie nykyisen valinnan uuteen tietokantaan.</p></td>
+</tr>
+<tr class="row-even"><td><p>quit, q</p></td>
+<td><p>Sulkee blunderDB:n.</p></td>
+</tr>
+<tr class="row-odd"><td><p>help, he, h</p></td>
+<td><p>Avaa blunderDB:n ohjeen.</p></td>
+</tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>Näyttää tietokannan metatiedot.</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Avaa EPC-paneelin (Effective Pip Count).</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
+<td><p>Avaa Kazaross-XG2-ottelutaulukon (match equity table).</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2</p></td>
+<td><p>Avaa take-pisteiden taulukon kuution arvolla 2.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_live</p></td>
+<td><p>Avaa take-pisteiden taulukon kuution arvolla 2 pitkille kilpajuoksuille.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_last</p></td>
+<td><p>Avaa take-pisteiden taulukon kuution arvolla 2 viimeiselle heitolle.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4</p></td>
+<td><p>Avaa take-pisteiden taulukon kuution arvolla 4.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_live</p></td>
+<td><p>Avaa take-pisteiden taulukon kuution arvolla 4 pitkille kilpajuoksuille.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_last</p></td>
+<td><p>Avaa take-pisteiden taulukon kuution arvolla 4 viimeiselle heitolle.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv1</p></td>
+<td><p>Avaa gammon-arvojen taulukon kuution arvolla 1.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv2</p></td>
+<td><p>Avaa gammon-arvojen taulukon kuution arvolla 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv4</p></td>
+<td><p>Avaa gammon-arvojen taulukon kuution arvolla 4.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="positions-et-navigation">
+<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Asemat ja navigointi<a class="headerlink" href="#positions-et-navigation" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Komento</p></th>
+<th class="head"><p>Toiminto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>import, i</p></td>
+<td><p>Tuo yhden tai useamman aseman/ottelun tiedostosta (xg, xgp, sgf, mat, txt, bgf).</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete, del, d</p></td>
+<td><p>Poistaa nykyisen aseman.</p></td>
+</tr>
+<tr class="row-even"><td><p>[number]</p></td>
+<td><p>Siirry annetun indeksin asemaan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>list, l</p></td>
+<td><p>Näytä nykyisen aseman analyysi.</p></td>
+</tr>
+<tr class="row-even"><td><p>comment, co</p></td>
+<td><p>Näytä/kirjoita kommentteja.</p></td>
+</tr>
+<tr class="row-odd"><td><p>filter, fl</p></td>
+<td><p>Näytä/piilota suodatinkirjasto.</p></td>
+</tr>
+<tr class="row-even"><td><p>history, hi</p></td>
+<td><p>Näytä/piilota hakuhistoria.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match, ma</p></td>
+<td><p>Näytä/piilota otteluiden paneeli.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection, coll</p></td>
+<td><p>Näytä/piilota kokoelmien paneeli.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
+<td><p>Merkitse nykyinen asema tunnisteilla.</p></td>
+</tr>
+<tr class="row-even"><td><p>e</p></td>
+<td><p>Lataa kaikki tietokannan asemat.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>Navigoi viimeksi käytyyn otteluun.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="edition-et-recherche">
+<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Muokkaus ja haku<a class="headerlink" href="#edition-et-recherche" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Komento</p></th>
+<th class="head"><p>Toiminto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>write, wr, w</p></td>
+<td><p>Tallentaa nykyisen aseman.</p></td>
+</tr>
+<tr class="row-odd"><td><p>write!, wr!, w!</p></td>
+<td><p>Päivittää nykyisen aseman.</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Etsi asemia suodattimilla.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ss</p></td>
+<td><p>Etsi tällä hetkellä suodatettujen asemien joukosta.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="filtres-de-recherche">
+<span id="cmd-filter"></span><h2><span class="section-number">4.4. </span>Hakusuodattimet<a class="headerlink" href="#filtres-de-recherche" title="Link to this heading"></a></h2>
+<p>Alla olevat suodattimet on asetettava peräkkäin haun aikana, eli komennon <code class="docutils literal notranslate"><span class="pre">s</span></code> aloituksen jälkeen.</p>
+<div class="admonition warning" id="cmd-filter-pos">
+<p class="admonition-title">Varoitus</p>
+<p>Asemien haussa blunderDB ottaa oletuksena huomioon nykyisen nappularakenteen ja jättää huomiotta kuution aseman, pistetilanteen ja nopat. Jotta kuution asema, pistetilanne ja nopat otetaan huomioon, ne on mainittava nimenomaisesti haussa.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Hakukomento <code class="docutils literal notranslate"><span class="pre">s</span></code> on käytettävissä hakupaneelissa (<code class="docutils literal notranslate"><span class="pre">TAB</span></code>-näppäin). Komennon <code class="docutils literal notranslate"><span class="pre">ss</span></code> avulla voi etsiä tällä hetkellä suodatettujen tulosten joukosta.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB pitää takanappulana (backchecker) nappulaa, joka sijaitsee pisteiden 24 ja 19 välissä.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB pitää vyöhykkeen (zone) nappuloiden määränä niiden nappuloiden määrää, jotka sijaitsevat pisteiden 12 ja 1 välissä.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB pitää ulkokentän (outfield) ulottuvan pisteiden 18 ja 7 välillä.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>blunderDB pitää kotialueen (jan) ulottuvan pisteiden 1 ja 6 välillä.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Asemien suodatuksen parametreja voi yhdistellä mielivaltaisesti.</p>
+</div>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Kysely</p></th>
+<th class="head"><p>Toiminto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cube, cub, cu, c</p></td>
+<td><p>Asema vastaa kuution kokoonpanoa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>score, sco, sc, s</p></td>
+<td><p>Asema vastaa pistetilannetta.</p></td>
+</tr>
+<tr class="row-even"><td><p>d</p></td>
+<td><p>Asema vastaa päätöstyyppiä (nappula- tai kuutiopäätös).</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>Asema vastaa nopanheittoa (molemmat nopat, järjestyksestä riippumatta).</p></td>
+</tr>
+<tr class="row-even"><td><p>D1</p></td>
+<td><p>Asema vastaa nopanheittoa vain ensimmäisen nopan osalta (ensimmäisen nopan arvo esiintyy jommassakummassa aseman nopassa).</p></td>
+</tr>
+<tr class="row-odd"><td><p>nc</p></td>
+<td><p>Asema on ilman kontaktia.</p></td>
+</tr>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>Asema tai sen peilikuva vastaa suodattimia.</p></td>
+</tr>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p>Asema ei sisällä yhtäkään poissulkurakenteen nappulaa (hakupaneelin ”Except”-välilehti).</p></td>
+</tr>
+<tr class="row-even"><td><p>p&gt;x</p></td>
+<td><p>Pelaaja on kilpajuoksussa vähintään x pippiä jäljessä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>p&lt;x</p></td>
+<td><p>Pelaaja on kilpajuoksussa enintään x pippiä jäljessä.</p></td>
+</tr>
+<tr class="row-even"><td><p>px,y</p></td>
+<td><p>Pelaaja on kilpajuoksussa x–y pippiä jäljessä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>P&gt;x</p></td>
+<td><p>Pelaajalla on kilpajuoksu vähintään x pippiä.</p></td>
+</tr>
+<tr class="row-even"><td><p>P&lt;x</p></td>
+<td><p>Pelaajalla on kilpajuoksu enintään x pippiä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Px,y</p></td>
+<td><p>Pelaajalla on kilpajuoksu x–y pippiä.</p></td>
+</tr>
+<tr class="row-even"><td><p>e&gt;x</p></td>
+<td><p>Aseman ekviteetti (millipisteinä) on suurempi kuin x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>e&lt;x</p></td>
+<td><p>Aseman ekviteetti (millipisteinä) on pienempi kuin x.</p></td>
+</tr>
+<tr class="row-even"><td><p>ex,y</p></td>
+<td><p>Aseman ekviteetti (millipisteinä) on välillä x–y.</p></td>
+</tr>
+<tr class="row-odd"><td><p>E&gt;x</p></td>
+<td><p>Pelaajan 1 tekemän siirron virhe (millipisteinä) on suurempi kuin x.</p></td>
+</tr>
+<tr class="row-even"><td><p>E&lt;x</p></td>
+<td><p>Pelaajan 1 tekemän siirron virhe (millipisteinä) on pienempi kuin x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ex,y</p></td>
+<td><p>Pelaajan 1 tekemän siirron virhe (millipisteinä) on välillä x–y.</p></td>
+</tr>
+<tr class="row-even"><td><p>w&gt;x</p></td>
+<td><p>Pelaajan voittomahdollisuudet ovat suuremmat kuin x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>w&lt;x</p></td>
+<td><p>Pelaajan voittomahdollisuudet ovat pienemmät kuin x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>wx,y</p></td>
+<td><p>Pelaajan voittomahdollisuudet ovat välillä x % – y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>g&gt;x</p></td>
+<td><p>Pelaajan gammon-mahdollisuudet ovat suuremmat kuin x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>g&lt;x</p></td>
+<td><p>Pelaajan gammon-mahdollisuudet ovat pienemmät kuin x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gx,y</p></td>
+<td><p>Pelaajan gammon-mahdollisuudet ovat välillä x % – y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>b&gt;x</p></td>
+<td><p>Pelaajan backgammon-mahdollisuudet ovat suuremmat kuin x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>b&lt;x</p></td>
+<td><p>Pelaajan backgammon-mahdollisuudet ovat pienemmät kuin x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>bx,y</p></td>
+<td><p>Pelaajan backgammon-mahdollisuudet ovat välillä x % – y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>W&gt;x</p></td>
+<td><p>Vastustajan voittomahdollisuudet ovat suuremmat kuin x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>W&lt;x</p></td>
+<td><p>Vastustajan voittomahdollisuudet ovat pienemmät kuin x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wx,y</p></td>
+<td><p>Vastustajan voittomahdollisuudet ovat välillä x % – y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>G&gt;x</p></td>
+<td><p>Vastustajan gammon-mahdollisuudet ovat suuremmat kuin x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>G&lt;x</p></td>
+<td><p>Vastustajan gammon-mahdollisuudet ovat pienemmät kuin x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>Gx,y</p></td>
+<td><p>Vastustajan gammon-mahdollisuudet ovat välillä x % – y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>B&gt;x</p></td>
+<td><p>Vastustajan backgammon-mahdollisuudet ovat suuremmat kuin x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>B&lt;x</p></td>
+<td><p>Vastustajan backgammon-mahdollisuudet ovat pienemmät kuin x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bx,y</p></td>
+<td><p>Vastustajan backgammon-mahdollisuudet ovat välillä x % – y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>o&gt;x</p></td>
+<td><p>Pelaajalla on vähintään x ulos kannettua nappulaa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>o&lt;x</p></td>
+<td><p>Pelaajalla on enintään x ulos kannettua nappulaa.</p></td>
+</tr>
+<tr class="row-even"><td><p>ox,y</p></td>
+<td><p>Pelaajalla on x–y ulos kannettua nappulaa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>O&gt;x</p></td>
+<td><p>Vastustajalla on vähintään x ulos kannettua nappulaa.</p></td>
+</tr>
+<tr class="row-even"><td><p>O&lt;x</p></td>
+<td><p>Vastustajalla on enintään x ulos kannettua nappulaa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ox,y</p></td>
+<td><p>Vastustajalla on x–y ulos kannettua nappulaa.</p></td>
+</tr>
+<tr class="row-even"><td><p>k&gt;x</p></td>
+<td><p>Pelaajalla on vähintään x takanappulaa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>k&lt;x</p></td>
+<td><p>Pelaajalla on enintään x takanappulaa.</p></td>
+</tr>
+<tr class="row-even"><td><p>kx,y</p></td>
+<td><p>Pelaajalla on x–y takanappulaa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>K&gt;x</p></td>
+<td><p>Vastustajalla on vähintään x takanappulaa.</p></td>
+</tr>
+<tr class="row-even"><td><p>K&lt;x</p></td>
+<td><p>Vastustajalla on enintään x takanappulaa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Kx,y</p></td>
+<td><p>Vastustajalla on x–y takanappulaa.</p></td>
+</tr>
+<tr class="row-even"><td><p>z&gt;x</p></td>
+<td><p>Pelaajalla on vähintään x nappulaa vyöhykkeellä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>z&lt;x</p></td>
+<td><p>Pelaajalla on enintään x nappulaa vyöhykkeellä.</p></td>
+</tr>
+<tr class="row-even"><td><p>zx,y</p></td>
+<td><p>Pelaajalla on x–y nappulaa vyöhykkeellä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Z&gt;x</p></td>
+<td><p>Vastustajalla on vähintään x nappulaa vyöhykkeellä.</p></td>
+</tr>
+<tr class="row-even"><td><p>Z&lt;x</p></td>
+<td><p>Vastustajalla on enintään x nappulaa vyöhykkeellä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Zx,y</p></td>
+<td><p>Vastustajalla on x–y nappulaa vyöhykkeellä.</p></td>
+</tr>
+<tr class="row-even"><td><p>bo&gt;x</p></td>
+<td><p>Pelaajalla on vähintään x blotia ulkokentällä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bo&lt;x</p></td>
+<td><p>Pelaajalla on enintään x blotia ulkokentällä.</p></td>
+</tr>
+<tr class="row-even"><td><p>box,y</p></td>
+<td><p>Pelaajalla on x–y blotia ulkokentällä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BO&gt;x</p></td>
+<td><p>Vastustajalla on vähintään x blotia ulkokentällä.</p></td>
+</tr>
+<tr class="row-even"><td><p>BO&lt;x</p></td>
+<td><p>Vastustajalla on enintään x blotia ulkokentällä.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BOx,y</p></td>
+<td><p>Vastustajalla on x–y blotia ulkokentällä.</p></td>
+</tr>
+<tr class="row-even"><td><p>bj&gt;x</p></td>
+<td><p>Pelaajalla on vähintään x blotia kotialueella.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bj&lt;x</p></td>
+<td><p>Pelaajalla on enintään x blotia kotialueella.</p></td>
+</tr>
+<tr class="row-even"><td><p>bjx,y</p></td>
+<td><p>Pelaajalla on x–y blotia kotialueella.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJ&gt;x</p></td>
+<td><p>Vastustajalla on vähintään x blotia kotialueella.</p></td>
+</tr>
+<tr class="row-even"><td><p>BJ&lt;x</p></td>
+<td><p>Vastustajalla on enintään x blotia kotialueella.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJx,y</p></td>
+<td><p>Vastustajalla on x–y blotia kotialueella.</p></td>
+</tr>
+<tr class="row-even"><td><p>t’sana1;sana2;…’</p></td>
+<td><p>Aseman kommentit sisältävät vähintään yhden sanoista.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m’kuvio1,kuvio2,…'</p></td>
+<td><p>Parhaat nappulasiirrot, jotka sisältävät vähintään yhden kuvioista.</p></td>
+</tr>
+<tr class="row-even"><td><p>m’ND,DT,DP,…'</p></td>
+<td><p>Parhaat kuutiopäätökset No Double/Take, Double Take, Double Pass.</p></td>
+</tr>
+<tr class="row-odd"><td><p>T&gt;x</p></td>
+<td><p>Aseman lisäyspäivä x:n jälkeen (VVVV/KK/PP).</p></td>
+</tr>
+<tr class="row-even"><td><p>T&lt;x</p></td>
+<td><p>Aseman lisäyspäivä ennen x:ää (VVVV/KK/PP).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tx,y</p></td>
+<td><p>Aseman lisäyspäivä välillä x–y (VVVV/KK/PP).</p></td>
+</tr>
+<tr class="row-even"><td><p>max</p></td>
+<td><p>Etsi ottelusta, jonka tunnus on x (esim. ma3).</p></td>
+</tr>
+<tr class="row-odd"><td><p>max,y</p></td>
+<td><p>Etsi otteluista, joiden tunnukset ovat x–y (esim. ma2,5).</p></td>
+</tr>
+<tr class="row-even"><td><p>tnx</p></td>
+<td><p>Etsi turnauksesta, jonka tunnus on x (esim. tn1).</p></td>
+</tr>
+<tr class="row-odd"><td><p>tnx,y</p></td>
+<td><p>Etsi turnauksista, joiden tunnukset ovat x–y (esim. tn1,3).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Asemien suodattaminen nopanheiton perusteella (<cite>D</cite> tai <cite>D1</cite>) merkitsee <em>sitäkin suuremmalla syyllä</em> asemien suodattamista päätöstyypin (<cite>d</cite>) perusteella. Suodatin <cite>D1</cite> jättää huomiotta toisen nopan arvon: vain ensimmäisen nopan arvoa käytetään asemien täsmäykseen (jommankumman heiton nopan kanssa).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Kilpajuoksun suhteellisen eron suodattimessa (<cite>p&gt;x</cite>, <cite>p&lt;x</cite>, <cite>px,y</cite>) pelaaja on kilpajuoksussa vastustajaan nähden jäljessä, jos <cite>x&gt;0</cite>, ja edellä, jos <cite>x&lt;0</cite>. Esimerkki: <cite>p&lt;-10</cite> : pelaaja on kilpajuoksussa vähintään 10 pippiä edellä. <cite>p50,70</cite> : pelaaja on kilpajuoksussa 50–70 pippiä jäljessä.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Useista ei-peräkkäisistä otteluista etsittäessä toista <code class="docutils literal notranslate"><span class="pre">ma</span></code>-suodatin useaan kertaan (esim. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> otteluille 23 ja 43). Sama periaate pätee turnauksiin <code class="docutils literal notranslate"><span class="pre">tn</span></code>-suodattimella.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Turnauksesta etsiminen (<code class="docutils literal notranslate"><span class="pre">tn</span></code>) tarkoittaa etsimistä kyseisen turnauksen kaikista otteluista. Otteluiden ja turnausten tunnukset näkyvät vastaavien paneelien ID-sarakkeissa.</p>
+</div>
+<p>Esimerkiksi komento <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">s</span> <span class="pre">c</span> <span class="pre">p-20,-5</span> <span class="pre">w&gt;60</span> <span class="pre">z&gt;10</span> <span class="pre">K2,3</span></code> suodattaa kaikki asemat ottaen huomioon muokatun aseman nappularakenteen, pistetilanteen ja kuution, joissa pelaaja on kilpajuoksussa 20–5 pippiä edellä, vyöhykkeellä on vähintään 10 nappulaa, vastustajalla on 2–3 takanappulaa ja voittomahdollisuudet ovat vähintään 60%.</p>
+</section>
+<section id="commandes-diverses">
+<span id="cmd-misc"></span><h2><span class="section-number">4.5. </span>Sekalaisia komentoja<a class="headerlink" href="#commandes-diverses" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Komento</p></th>
+<th class="head"><p>Toiminto</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clear, cl</p></td>
+<td><p>Tyhjentää komentohistorian.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Tietokantojen migraatiot suoritetaan nyt automaattisesti tietokantaa avattaessa.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="3. Käyttöopas" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="raccourcis.html" class="btn btn-neutral float-right" title="5. Näppäimistöoikotiet" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

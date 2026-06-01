@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="11. Παράρτημα: Σχήμα της βάσης δεδομένων" href="annexe_db_scheme.html" />
+    <link rel="prev" title="9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού" href="annexe_windows_securite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-de-blunderdb">10.1. Εγκατάσταση του blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autorisation-de-l-execution-de-blunderdb">10.2. Εξουσιοδότηση εκτέλεσης του blunderDB</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">10. </span>Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-mac-blocage-eventuel-de-blunderdb">
+<span id="annexe-mac-malware"></span><h1><span class="section-number">10. </span>Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB<a class="headerlink" href="#annexe-mac-blocage-eventuel-de-blunderdb" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα παρακάτω αφορούν το λειτουργικό σύστημα macOS.</p>
+</div>
+<p>Το Mac απαιτεί από τις εταιρείες έκδοσης λογισμικού ή τους ανεξάρτητους προγραμματιστές λογισμικού να πιστοποιούν ψηφιακά τις εφαρμογές τους. Ο προγραμματιστής πρέπει να εγγραφεί στο Apple Developer Program καταβάλλοντας ετήσια συνδρομή (<a class="reference external" href="https://developer.apple.com/support/compare-memberships/">https://developer.apple.com/support/compare-memberships/</a>).</p>
+<p>Καθώς διαθέτω το blunderDB δωρεάν, δεν επιθυμώ να στραφώ σε αυτές τις δαπανηρές επιλογές. Κατά συνέπεια, είναι πολύ πιθανό το Mac να σας προειδοποιήσει για πιθανό κίνδυνο ή ακόμη και να αποκλείσει εντελώς την εκτέλεση του blunderDB. Οι ακόλουθες ενότητες εξηγούν τις ενέργειες που πρέπει να κάνετε για να παρακάμψετε τις επιφυλάξεις του Mac.</p>
+<section id="installation-de-blunderdb">
+<h2><span class="section-number">10.1. </span>Εγκατάσταση του blunderDB<a class="headerlink" href="#installation-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Αφού κατεβάσετε το blunderDB, σύρετε το ληφθέν αρχείο στην ενότητα Εφαρμογές (Applications) του Finder σας. Εάν έχετε ήδη προσπαθήσει να εκτελέσετε το blunderDB και το Mac σας προειδοποιεί για πιθανό κίνδυνο, ακολουθήστε τα παρακάτω βήματα.</p>
+</section>
+<section id="autorisation-de-l-execution-de-blunderdb">
+<h2><span class="section-number">10.2. </span>Εξουσιοδότηση εκτέλεσης του blunderDB<a class="headerlink" href="#autorisation-de-l-execution-de-blunderdb" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Ανοίξτε το Finder και μεταβείτε στην ενότητα Εφαρμογές (Applications).</p></li>
+<li><p>Βρείτε το blunderDB και κάντε δεξί κλικ πάνω του.</p></li>
+<li><p>Επιλέξτε Άνοιγμα (Open).</p></li>
+<li><p>Θα εμφανιστεί ένα παράθυρο προειδοποίησης. Κάντε κλικ στο Άνοιγμα (Open).</p></li>
+<li><p>Το blunderDB θα ανοίξει και μπορείτε να αρχίσετε να το χρησιμοποιείτε.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Χρειάζεται να κάνετε αυτή την ενέργεια μόνο μία φορά. Στη συνέχεια, θα μπορείτε να ανοίγετε το blunderDB χωρίς να χρειάζεται να περνάτε από αυτά τα βήματα.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-left" title="9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-right" title="11. Παράρτημα: Σχήμα της βάσης δεδομένων" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

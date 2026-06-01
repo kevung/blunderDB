@@ -1,0 +1,177 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>10. Mac 付録：blunderDB の起動ブロックについて &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="11. 付録: データベーススキーマ" href="annexe_db_scheme.html" />
+    <link rel="prev" title="9. Windows 付録：blunderDB のマルウェアとしての誤検知" href="annexe_windows_securite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">10. Mac 付録：blunderDB の起動ブロックについて</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation-de-blunderdb">10.1. blunderDB のインストール</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#autorisation-de-l-execution-de-blunderdb">10.2. blunderDB の実行を許可する</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">10. </span>Mac 付録：blunderDB の起動ブロックについて</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-mac-blocage-eventuel-de-blunderdb">
+<span id="annexe-mac-malware"></span><h1><span class="section-number">10. </span>Mac 付録：blunderDB の起動ブロックについて<a class="headerlink" href="#annexe-mac-blocage-eventuel-de-blunderdb" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>以下は macOS オペレーティングシステムに関するものです。</p>
+</div>
+<p>Mac はソフトウェア出版会社や独立したソフトウェア開発者がアプリケーションをデジタル認証することを要求しています。開発者は年会費を支払って Apple Developer Program に登録する必要があります（<a class="reference external" href="https://developer.apple.com/support/compare-memberships/">https://developer.apple.com/support/compare-memberships/</a>）。</p>
+<p>blunderDB を無料で公開しているため、これらの費用のかかる選択肢を追求するつもりはありません。そのため、Mac が潜在的なリスクについて警告したり、blunderDB の実行を完全にブロックする可能性が高いです。以下のセクションでは、Mac の制限を回避するために行う操作を説明します。</p>
+<section id="installation-de-blunderdb">
+<h2><span class="section-number">10.1. </span>blunderDB のインストール<a class="headerlink" href="#installation-de-blunderdb" title="Link to this heading"></a></h2>
+<p>blunderDB をダウンロードしたら、ダウンロードしたファイルを Finder のアプリケーションセクションにドラッグします。すでに blunderDB を実行しようとして Mac が潜在的なリスクについて警告した場合は、以下の手順に従ってください。</p>
+</section>
+<section id="autorisation-de-l-execution-de-blunderdb">
+<h2><span class="section-number">10.2. </span>blunderDB の実行を許可する<a class="headerlink" href="#autorisation-de-l-execution-de-blunderdb" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Finder を開き、アプリケーションセクションに移動します。</p></li>
+<li><p>blunderDB を見つけて右クリックします。</p></li>
+<li><p>「開く」を選択します。</p></li>
+<li><p>警告ウィンドウが表示されます。「開く」をクリックします。</p></li>
+<li><p>blunderDB が開き、使用できるようになります。</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>この操作は一度だけ行う必要があります。以降は、これらの手順を経ずに blunderDB を開くことができます。</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-left" title="9. Windows 付録：blunderDB のマルウェアとしての誤検知" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-right" title="11. 付録: データベーススキーマ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

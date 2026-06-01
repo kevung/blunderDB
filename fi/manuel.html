@@ -1,0 +1,569 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Käyttöopas &mdash; blunderDB 0.21.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d5cc5d32"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="3. Käyttöopas" href="guide_utilisateur.html" />
+    <link rel="prev" title="1. Lataaminen ja asentaminen" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Käyttöopas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Päätoiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Käyttöliittymän kuvaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">2.4. Asetukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.5. Asemien selaaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.6. Asemien muokkaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.7. Komentorivi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">2.8. Analyysipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">2.9. Kommenttipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">2.10. Hakupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">2.11. Kokoelmapaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.12. Ottelupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.13. Turnauspaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.14. Stats-paneeli</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.14.1. Johdanto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.14.2. Paneelin avaaminen</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.14.3. Suodatinpalkki</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.14.3.1. Pelaajanäkökulma</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">2.14.3.2. Saatavilla olevat suodattimet</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">2.14.4. PR / MWC -vaihto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">2.14.5. Dashboard-välilehti</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">2.14.5.1. Tasokortit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">2.14.5.2. Liukuva PR viimeisten N päätöksen perusteella</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">2.14.5.3. Top blunders</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">2.14.6. Progression-välilehti</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">2.14.6.1. Turnauskohtainen viivakaavio</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">2.14.6.2. Ottelukohtainen hajontakaavio</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.14.7. Erreurs-välilehti</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.14.7.1. Jakauma kuutiotoimen mukaan</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.14.7.2. Checker / Cube -vertailu</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.14.7.3. Virheiden suuruusjakauman histogrammi</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.14.8. Yhdistämissääntö</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.14.9. MWC: rajoitukset</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.15. EPC-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.16. Anki-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.17. Metatietopaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-journal">2.18. Lokipaneeli</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Käyttöopas</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="manuel">
+<span id="id1"></span><h1><span class="section-number">2. </span>Käyttöopas<a class="headerlink" href="#manuel" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">2.1. </span>Johdanto<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>blunderDB on ohjelmisto backgammon-asemien tietokantojen luomiseen. Sen tärkein vahvuus on tarjota yksi paikka koota asemat, joita pelaaja on kohdannut (verkossa, turnauksissa), ja mahdollisuus tutkia näitä asemia uudelleen suodattamalla niitä erilaisilla mielivaltaisesti yhdisteltävillä suodattimilla. blunderDB:tä voi käyttää myös viiteasemien luettelojen luomiseen.</p>
+<p>Asemat tallennetaan tietokantaan, jota edustaa <em>.db</em>-tiedosto.</p>
+</section>
+<section id="interactions-principales">
+<h2><span class="section-number">2.2. </span>Päätoiminnot<a class="headerlink" href="#interactions-principales" title="Link to this heading"></a></h2>
+<p>blunderDB:n keskeiset mahdolliset toiminnot ovat:</p>
+<ul class="simple">
+<li><p>lisätä uusi asema,</p></li>
+<li><p>muokata olemassa olevaa asemaa,</p></li>
+<li><p>kopioida laudan kuva leikepöydälle (PNG) näppäimillä <strong>Ctrl+X</strong>, tai täydellisen analyysin kanssa näppäimillä <strong>Ctrl+X Ctrl+X</strong>,</p></li>
+<li><p>poistaa olemassa oleva asema,</p></li>
+<li><p>hakea yksi tai useampi asema,</p></li>
+<li><p>tuoda otteluita eri lähteistä (XG, GNUbg, BGBlitz, Jellyfish), mukaan lukien kommentit XG-tiedostoista,</p></li>
+<li><p>navigoida tuodun ottelun siirroissa,</p></li>
+<li><p>järjestää asemat kokoelmiin,</p></li>
+<li><p>järjestää ottelut turnauksiin.</p></li>
+</ul>
+<p>Käyttäjä voi vapaasti merkitä asemat tunnisteilla ja varustaa ne kommenteilla.</p>
+</section>
+<section id="description-de-l-interface">
+<h2><span class="section-number">2.3. </span>Käyttöliittymän kuvaus<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
+<p>blunderDB:n käyttöliittymä koostuu ylhäältä alas seuraavista:</p>
+<ul class="simple">
+<li><p>[ylhäällä] työkalupalkki, joka kokoaa kaikki tietokantaan kohdistuvat keskeiset toiminnot,</p></li>
+<li><p>[keskellä] pääesitysalue, joka mahdollistaa backgammon-asemien näyttämisen tai muokkaamisen,</p></li>
+<li><p>[alhaalla] tilarivi, joka esittää erilaisia tietoja tietokannasta tai nykyisestä asemasta ja sisältää komentorivin.</p></li>
+</ul>
+<p>Paneeleita voidaan näyttää seuraaviin tarkoituksiin:</p>
+<ul class="simple">
+<li><p>näyttää nykyiseen asemaan liittyvät analyysitiedot lähteistä eXtreme Gammon (XG), GNUbg tai BGBlitz,</p></li>
+<li><p>näyttää, lisätä tai muokata kommentteja,</p></li>
+<li><p>hakea ja suodattaa asemia yhdisteltävillä kriteereillä,</p></li>
+<li><p>näyttää ja hallita asemakokoelmia (kokoelmapaneeli),</p></li>
+<li><p>näyttää tuotujen otteluiden luettelo ja navigoida ottelun siirroissa (ottelupaneeli),</p></li>
+<li><p>näyttää ja hallita turnauksia (turnauspaneeli),</p></li>
+<li><p>näyttää suoritustilastot (Stats-paneeli),</p></li>
+<li><p>laskea bearoff-aseman EPC (Effective Pip Count) (EPC-paneeli),</p></li>
+<li><p>opiskella asemia välitoistolla (Anki-paneeli),</p></li>
+<li><p>näyttää tietokannan metatiedot (metatietopaneeli),</p></li>
+<li><p>näyttää toimintaloki (lokipaneeli).</p></li>
+</ul>
+<p>Modaali-ikkunoita voidaan näyttää seuraaviin tarkoituksiin:</p>
+<ul class="simple">
+<li><p>näyttää blunderDB:n ohje,</p></li>
+<li><p>määrittää tietokannan viennin asetukset,</p></li>
+<li><p>määrittää blunderDB:n asetuksia, erityisesti käyttöliittymän kielen (katso <a class="reference internal" href="#configuration"><span class="std std-ref">Asetukset</span></a>).</p></li>
+</ul>
+<p>Pääesitysalue tarjoaa käyttäjälle:</p>
+<ul class="simple">
+<li><p>laudan backgammon-aseman näyttämiseen tai muokkaamiseen,</p></li>
+<li><p>kuution tason ja omistajan,</p></li>
+<li><p>kunkin pelaajan pip-luvun,</p></li>
+<li><p>kunkin pelaajan pistetilanteen,</p></li>
+<li><p>pelattavat nopat. Jos nopilla ei näy arvoja, noppien sijainti osoittaa, kummalla pelaajalla on vuoro ja että asema on kuutiopäätös.</p></li>
+</ul>
+<p>Tilarivi on jäsennelty vasemmalta oikealle seuraavin tiedoin:</p>
+<ul class="simple">
+<li><p>komentorivi, joka avataan painamalla <em>VÄLILYÖNTI</em>-näppäintä,</p></li>
+<li><p>käyttäjän suorittamaan toimintoon liittyvä tiedotusviesti,</p></li>
+<li><p>nykyisen aseman indeksi, jota seuraa nykyisen kirjaston asemien määrä (tai siirto-/pelitiedot ottelussa navigoitaessa).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Käyttäjän haun tuloksena saaduissa asemissa tilarivillä näkyvä asemien määrä vastaa suodatettujen asemien määrää.</p>
+</div>
+</section>
+<section id="configuration">
+<span id="id2"></span><h2><span class="section-number">2.4. </span>Asetukset<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>Asetuspainike (hammasrattaan muotoinen kuvake), joka sijaitsee työkalupalkissa ohjepainikkeen vasemmalla puolella, avaa blunderDB:n asetusikkunan.</p>
+<p>Sen avulla voit valita käyttöliittymän kielen seuraavista: englanti, ranska, saksa, italia, espanja, suomi, japani, kreikka ja venäjä. Koko käyttöliittymä (työkalupalkki, paneelit, viestit, ohje) käännetään valitulle kielelle. Kielivalinta tallennetaan ja säilytetään istunnosta toiseen.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="mode-normal"></span><h2><span class="section-number">2.5. </span>Asemien selaaminen<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<p>Oletuksena blunderDB mahdollistaa seuraavat:</p>
+<ul class="simple">
+<li><p>selata nykyisen kirjaston eri asemia,</p></li>
+<li><p>näyttää asemaan liittyvät analyysitiedot,</p></li>
+<li><p>näyttää, lisätä ja muokata aseman kommentteja.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso saatavilla olevat pikanäppäimet kohdasta <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Näppäimistöoikotiet</span></a>.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="mode-edit"></span><h2><span class="section-number">2.6. </span>Asemien muokkaus<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<p><em>TAB</em>-näppäimen painaminen avaa hakupaneelin ja mahdollistaa aseman muokkaamisen laudalla sen lisäämiseksi tietokantaan tai haettavan asemarakenteen määrittämiseksi. Pelinappuloiden, kuution, pistetilanteen ja vuoron jakaumaa voi muokata hiirellä (katso <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Muokkaa asemaa</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso saatavilla olevat pikanäppäimet kohdasta <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Näppäimistöoikotiet</span></a>.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="mode-command"></span><h2><span class="section-number">2.7. </span>Komentorivi<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>Tilariviin upotettu komentorivi mahdollistaa kaikkien graafisessa käyttöliittymässä saatavilla olevien blunderDB:n toimintojen suorittamisen: yleiset tietokantatoiminnot, asemissa navigointi, analyysin ja/tai kommenttien näyttäminen, asemien haku suodattimilla… Kun käyttöliittymä on tullut tutuksi, suositellaan vähitellen siirtymistä komentorivin käyttöön, joka mahdollistaa blunderDB:n tehokkaan ja sujuvan käytön, erityisesti asemahakutoiminnoissa.</p>
+<p>Avaa komentorivi painamalla <em>VÄLILYÖNTI</em>-näppäintä. Lähetä kysely ja sulje komentorivi painamalla <em>ENTER</em>-näppäintä.</p>
+<p>blunderDB suorittaa käyttäjän lähettämät kyselyt edellyttäen, että ne ovat kelvollisia, ja muuttaa tarvittaessa tietokannan tilaa välittömästi. Käyttäjältä ei vaadita erillisiä tallennustoimia.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso komentorivillä käytettävissä olevien komentojen luettelo kohdasta <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a>.</p>
+</div>
+</section>
+<section id="panneau-analyse">
+<span id="id3"></span><h2><span class="section-number">2.8. </span>Analyysipaneeli<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<p><strong>Analyysipaneeli</strong> (<em>CTRL-L</em>) näyttää nykyisen aseman analyysitiedot, jotka on tuotu lähteistä eXtreme Gammon (XG), GNUbg tai BGBlitz. Se esittää parhaat vaihtoehdot (pelinappulasiirrot tai kuutiopäätökset) niiden ekviteettiarvoineen ja vastaavine virheineen. <em>d</em>-näppäin vaihtaa pelinappulasiirtojen analyysin ja kuutioanalyysin välillä. Ottelussa navigoitaessa todella pelattu siirto korostetaan vaihtoehtojen luettelossa. Näytä tai piilota paneeli painamalla <em>CTRL-L</em> tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">list</span></code>.</p>
+</section>
+<section id="panneau-commentaires">
+<span id="id4"></span><h2><span class="section-number">2.9. </span>Kommenttipaneeli<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<p><strong>Kommenttipaneeli</strong> (<em>CTRL-P</em>) näyttää, lisää ja muokkaa nykyiseen asemaan liittyviä kommentteja. XG-tiedostoista tuodut kommentit liitetään automaattisesti vastaaviin asemiin. Näytä tai piilota paneeli painamalla <em>CTRL-P</em> tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">comment</span></code>.</p>
+</section>
+<section id="panneau-recherche">
+<span id="id5"></span><h2><span class="section-number">2.10. </span>Hakupaneeli<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<p><strong>Hakupaneeli</strong> (<em>CTRL-F</em> tai <em>TAB</em>) suodattaa asemia vapaasti yhdisteltävien kriteerien mukaan: pelinappularakenne, kuutiopäätöksen tyyppi, virheen suuruus, päivämäärät, tunnisteet jne. <em>TAB</em>-näppäin avaa samanaikaisesti hakupaneelin ja asemaeditorin, jolloin haettava pelinappularakenne voidaan määrittää suoraan laudalla.</p>
+<p>Tarkenna hakua tällä hetkellä suodatettujen asemien joukossa käyttämällä komentoa <code class="docutils literal notranslate"><span class="pre">ss</span></code>, jota seuraavat suodattimet (esim. <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Hakupaneeli tarjoaa samaa toimintoa varten myös valintaruudun <em>Search in current results</em>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso saatavilla olevien suodattimien luettelo kohdasta <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Section 4</span></a>.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="mode-collection"></span><h2><span class="section-number">2.11. </span>Kokoelmapaneeli<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<p><strong>Kokoelmapaneeli</strong> (<em>CTRL-B</em>) mahdollistaa asemakokoelmien hallinnan. Kokoelmia voi luoda, nimetä uudelleen ja poistaa. Asemia voi lisätä niihin tai poistaa niistä. Kaksoisnapsauta kokoelmaa selataksesi sen asemia näppäimillä <em>VASEN</em> ja <em>OIKEA</em>. Kokoelmien ja niiden sisältämien asemien järjestystä voi muuttaa vetämällä ja pudottamalla. Näytä tai piilota paneeli painamalla <em>CTRL-B</em> tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">collection</span></code>.</p>
+</section>
+<section id="panneau-matchs">
+<span id="mode-match"></span><h2><span class="section-number">2.12. </span>Ottelupaneeli<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<p><strong>Ottelupaneeli</strong> (<em>CTRL-Tab</em>) luettelee tuodut ottelut. Kaksoisnapsauta ottelua (tai paina <em>ENTER</em>) navigoidaksesi sen siirroissa. Komento <code class="docutils literal notranslate"><span class="pre">m</span></code> jatkaa navigointia viimeksi katsotussa ottelussa.</p>
+<p>Käyttäjä voi:</p>
+<ul class="simple">
+<li><p>selata ottelun siirtoja näppäimillä <em>VASEN</em> ja <em>OIKEA</em>,</p></li>
+<li><p>vaihtaa pelistä toiseen näppäimillä <em>PageUp</em> ja <em>PageDown</em>,</p></li>
+<li><p>näyttää siirtojen analyysin (pelinappulat ja kuutio) painamalla <em>CTRL-L</em>,</p></li>
+<li><p>vaihtaa pelinappulasiirtojen ja kuution analyysin välillä <em>d</em>-näppäimellä,</p></li>
+<li><p>nähdä todella pelatun siirron korostettuna analyysissä.</p></li>
+</ul>
+<p>Kunkin ottelun viimeksi katsottu asema tallennetaan ja palautetaan automaattisesti. Näytä tai piilota paneeli painamalla <em>CTRL-Tab</em> tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">match</span></code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Katso saatavilla olevat pikanäppäimet kohdasta <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Näppäimistöoikotiet</span></a>.</p>
+</div>
+</section>
+<section id="panneau-tournois">
+<span id="id6"></span><h2><span class="section-number">2.13. </span>Turnauspaneeli<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<p><strong>Turnauspaneeli</strong> (<em>CTRL-Y</em>) mahdollistaa otteluiden ryhmittelyn turnauksiin järjestelmällistä seurantaa ja tapahtumakohtaista tilastollista analyysiä varten. Turnauksia voi luoda, nimetä uudelleen ja poistaa; otteluita voi liittää niihin. Stats-paneelin tilastoja voi suodattaa turnauksen mukaan. Näytä tai piilota paneeli painamalla <em>CTRL-Y</em>.</p>
+</section>
+<section id="panneau-stats">
+<span id="stats"></span><h2><span class="section-number">2.14. </span>Stats-paneeli<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<section id="id7">
+<h3><span class="section-number">2.14.1. </span>Johdanto<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p><strong>Stats-paneeli</strong> mahdollistaa oman pelitason analysoinnin ja kehityksen seuraamisen ajan myötä tietokantaan tuotujen asemien perusteella. Se laskee ja näyttää tunnusluvut <strong>PR</strong> (Performance Rate) ja <strong>MWC cost</strong> (Match Winning Chance cost) kaikille asemille tai suodatetulle osajoukolle.</p>
+<p>Stats-paneeli on erityisen hyödyllinen seuraaviin tarkoituksiin:</p>
+<ul class="simple">
+<li><p><strong>oman tason arviointi</strong> viiterajoihin nähden (world-class, expert, advanced…) kokonais-PR:n avulla;</p></li>
+<li><p><strong>oman kehityksen seuranta</strong> turnaus turnaukselta tai ottelu ottelulta Progression-välilehden kaavioiden avulla;</p></li>
+<li><p><strong>omien heikkouksien tunnistaminen</strong>: Erreurs-välilehti näyttää jakauman pelinappulasiirtojen ja kuutiopäätösten välillä sekä virheiden suuruusjakauman;</p></li>
+<li><p><strong>siirtyminen suoraan asiaankuuluviin asemiin</strong> napsauttamalla mitä tahansa tunnuslukua (drill-down).</p></li>
+</ul>
+</section>
+<section id="ouverture-du-panneau">
+<h3><span class="section-number">2.14.2. </span>Paneelin avaaminen<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<p>Avaa Stats-paneeli näin:</p>
+<ul class="simple">
+<li><p>Paina <em>CTRL-D</em>.</p></li>
+<li><p>Kirjoita komento <code class="docutils literal notranslate"><span class="pre">:stats</span></code> tai <code class="docutils literal notranslate"><span class="pre">:st</span></code> komentoriville.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Paneeli päivittyy automaattisesti aina, kun suodatinta muutetaan. Se ei laske tilastoja uudelleen pelkän PR ↔ MWC -vaihdon yhteydessä: backend laskee molemmat mittarit samanaikaisesti.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3><span class="section-number">2.14.3. </span>Suodatinpalkki<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<p>Paneelin yläosassa oleva suodatinpalkki mahdollistaa laskennan rajaamisen asemien osajoukkoon.</p>
+<section id="perspective-joueur">
+<h4><span class="section-number">2.14.3.1. </span>Pelaajanäkökulma<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<p>Pudotusvalikko <strong>Joueur</strong> suodattaa tilastot analysoitavan pelaajan mukaan. blunderDB valitsee automaattisesti pelaajan, jonka nimi esiintyy tietokannassa useimmin — vaihdettavissa milloin tahansa.</p>
+<div class="admonition tip">
+<p class="admonition-title">Vihje</p>
+<p>Pelaajan vaihtaminen ei aiheuta tietojen menetystä; valitse vain aiempi pelaaja uudelleen luettelosta.</p>
+</div>
+</section>
+<section id="filtres-disponibles">
+<h4><span class="section-number">2.14.3.2. </span>Saatavilla olevat suodattimet<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Tournament(s)</strong> — rajaus yhteen tai useampaan turnaukseen. Useita turnauksia voi valita samanaikaisesti.</p></li>
+<li><p><strong>Dates</strong> — aikaväli (<em>From</em> … <em>To</em>). Jos vain alkupäivä on asetettu, uudemmat asemat sisällytetään.</p></li>
+<li><p><strong>Decision type</strong> — Kaikki / Pelinappulasiirrot / Kuutiopäätökset.</p></li>
+<li><p><strong>Match length</strong> — rajaus tiettyihin ottelupituuksiin (1, 3, 5, 7, 9, 11, 13, 15, 21 pistettä). Useita pituuksia voi yhdistää.</p></li>
+</ul>
+<p><strong>Reset</strong>-painike tyhjentää kaikki suodattimet (paitsi automaattisesti tunnistetun pelaajan).</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Suodattimet tallennetaan blunderDB:n asetuksiin (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) ja palautetaan seuraavalla käynnistyskerralla.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3><span class="section-number">2.14.4. </span>PR / MWC -vaihto<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<p>Paneelin yläosassa oleva <strong>PR / MWC</strong> -painike vaihtaa kaikissa välilehdissä näytettävän mittarin.</p>
+<p><strong>PR (Performance Rate)</strong></p>
+<blockquote>
+<div><p>Mittaa <em>money-game</em> -pelin laatua: virheiden summa pisteen tuhannesosina, jaettuna päätösten määrällä. Riippumaton ottelun pistetilanteesta.</p>
+<p>Likimääräiset viiterajat:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Taso</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>World-class</p></td>
+<td><p>&lt; 3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>3 – 5</p></td>
+</tr>
+<tr class="row-even"><td><p>Edistynyt</p></td>
+<td><p>5 – 8</p></td>
+</tr>
+<tr class="row-odd"><td><p>Keskitaso</p></td>
+<td><p>8 – 12</p></td>
+</tr>
+<tr class="row-even"><td><p>Aloittelija</p></td>
+<td><p>&gt; 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Virheiden vuoksi menetetty kumulatiivinen ottelun voittotodennäköisyys koko suodatetussa aineistossa. Laskettu blunderDB:hen sisältyvällä Kazaross-XG2-MET:llä.</p>
+<div class="admonition caution">
+<p class="admonition-title">Varoitus</p>
+<p>MWC cost <strong>ei sovellu</strong> <em>money-game</em> -asemiin (joissa ei ole ottelupanosta). Nämä asemat jätetään pois MWC-laskennasta. MWC-arvot riippuvat käytetystä MET:stä; ne eivät ole suoraan vertailukelpoisia eri MET:ejä käyttävien ohjelmistojen välillä.</p>
+</div>
+</div></blockquote>
+<p>PR ↔ MWC -vaihto on välitön: backend ei suorita uudelleenlaskentaa.</p>
+</section>
+<section id="onglet-dashboard">
+<h3><span class="section-number">2.14.5. </span>Dashboard-välilehti<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
+<p><strong>Dashboard</strong>-välilehti antaa yhteenvetonäkymän keskeisistä tunnusluvuista.</p>
+<section id="cartes-de-niveau">
+<h4><span class="section-number">2.14.5.1. </span>Tasokortit<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<p>Kolme korttia näyttää PR:n (tai MWC:n) seuraaville:</p>
+<ul class="simple">
+<li><p><strong>All</strong> — kaikki päätökset (pelinappulat + kuutio);</p></li>
+<li><p><strong>Checker</strong> — vain pelinappulasiirrot;</p></li>
+<li><p><strong>Cube</strong> — vain kuutiopäätökset.</p></li>
+</ul>
+<p>Kortin napsauttaminen lataa analyysipaneeliin vastaavan osajoukon asemat (drill-down).</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Päätösten kokonaismäärä näytetään kunkin kortin alaosassa, kun osoitin on sen päällä.</p>
+</div>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4><span class="section-number">2.14.5.2. </span>Liukuva PR viimeisten N päätöksen perusteella<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<p>Rivi PR- (tai MWC-) arvoja, jotka on laskettu viimeisten <em>N</em> päätöksen perusteella (N = 5, 10, 50, 100, 250, 500, 1000), mahdollistaa viimeaikaisen kehityssuunnan mittaamisen. Harmaannetut arvot vastaavat N:ää, joka on suurempi kuin käytettävissä olevien päätösten määrä.</p>
+<p>Arvon napsauttaminen lataa vastaavat viimeiset <em>N</em> asemaa.</p>
+</section>
+<section id="top-blunders">
+<h4><span class="section-number">2.14.5.3. </span>Top blunders<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<p>Luettelo 10 pahimmasta virheestä (tai MWC cost), lajiteltuna suuruuden mukaan laskevasti. Rivin napsauttaminen lataa kyseisen aseman analyysipaneeliin.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3><span class="section-number">2.14.6. </span>Progression-välilehti<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<p><strong>Progression</strong>-välilehti esittää tason kehityksen ajan myötä.</p>
+<section id="courbe-par-tournoi">
+<h4><span class="section-number">2.14.6.1. </span>Turnauskohtainen viivakaavio<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<p>Viivakaavio näyttää PR:n (tai MWC:n) jokaiselle turnaukselle (X-akseli: turnausten järjestys, Y-akseli: mittarin arvo). Värivyöhykkeet havainnollistavat tasorajat.</p>
+<p>Kaavion pisteen napsauttaminen avaa pikavalikon, jossa on kaksi vaihtoehtoa:</p>
+<ul class="simple">
+<li><p><strong>Open tournament</strong> — avaa turnauksen Turnauspaneelissa.</p></li>
+<li><p><strong>Open positions</strong> — lataa turnauksen kaikki asemat analyysipaneeliin.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4><span class="section-number">2.14.6.2. </span>Ottelukohtainen hajontakaavio<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<p>Hajontakaavio esittää jokaisen ottelun (X-akseli: päivämäärä, Y-akseli: PR tai MWC). Pisteen koko on verrannollinen ottelun päätösten määrään.</p>
+<p>Pisteen napsauttaminen avaa pikavalikon:</p>
+<ul class="simple">
+<li><p><strong>Open match</strong> — avaa ottelun Ottelupaneelissa.</p></li>
+<li><p><strong>Open positions</strong> — lataa ottelun kaikki asemat analyysipaneeliin.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3><span class="section-number">2.14.7. </span>Erreurs-välilehti<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<p><strong>Erreurs</strong>-välilehti erittelee virheiden lähteet.</p>
+<section id="repartition-par-action-de-videau">
+<h4><span class="section-number">2.14.7.1. </span>Jakauma kuutiotoimen mukaan<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<p>Pylväskaavio näyttää PR:n (tai MWC:n) jokaiselle kuutiopäätöksen tyypille: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Jokainen pylväs näyttää myös päätösten määrän ja blunder-osuuden työkaluvihjeessä.</p>
+<p>Pylvään napsauttaminen lataa kyseistä kuutiotoimea vastaavat asemat, <strong>vain ne, joissa on virhe</strong> (drill-down).</p>
+</section>
+<section id="repartition-checker-cube">
+<h4><span class="section-number">2.14.7.2. </span>Checker / Cube -vertailu<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<p>Vertailukaavio asettaa rinnakkain pelinappulasiirtojen ja kuutiopäätösten PR:n. Pylvään napsauttaminen lataa osajoukon asemat, joissa on virhe.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4><span class="section-number">2.14.7.3. </span>Virheiden suuruusjakauman histogrammi<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<p>Histogrammi jakaa virheet niiden suuruuden mukaan pisteen tuhannesosina (luokat: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Pylvään napsauttaminen lataa luokan asemat.</p>
+</section>
+</section>
+<section id="regle-d-agregation">
+<h3><span class="section-number">2.14.8. </span>Yhdistämissääntö<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Tärkeä</p>
+<p>Turnauksen (tai minkä tahansa osajoukon) PR lasketaan <strong>summa/summa</strong>-säännöllä — ei koskaan yksittäisten otteluiden PR:ien keskiarvona.</p>
+<p>Kaava:</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournaus} = \frac{\sum_{i} \text{virhe}_i}{\text{päätösten kokonaismäärä}}\]</div>
+<p><strong>Esimerkki:</strong> pelaaja pelaa kaksi ottelua turnauksessa —</p>
+<ul class="simple">
+<li><p>Ottelu A: 10 päätöstä, kokonaisvirhe 50 mp → PR = 5,0</p></li>
+<li><p>Ottelu B: 90 päätöstä, kokonaisvirhe 270 mp → PR = 3,0</p></li>
+</ul>
+<p>Naiivi PR:ien keskiarvo: (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(virheellinen)</em></p>
+<p>Summa/summa-sääntö: (50 + 270) / (10 + 90) = 320 / 100 = <strong>3,2</strong> <em>(oikein)</em></p>
+<p>Summa/summa-sääntö on ainoa, joka käsittelee oikein otteluiden vaihtelevat pituudet (21 pisteen ottelu painaa enemmän kuin 1 pisteen ottelu).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3><span class="section-number">2.14.9. </span>MWC: rajoitukset<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>MWC cost lasketaan <strong>Kazaross-XG2-MET:llä</strong>, joka on kilpailutason backgammonin de facto -viitetaulukko. Tulokset eivät ole suoraan vertailukelpoisia muita MET:ejä käyttävien ohjelmistojen kanssa.</p></li>
+<li><p><em>Money-game</em> -asemat (joissa ei ole ottelun pistetilannetta) <strong>jätetään pois</strong> MWC-laskennasta. Jos tietokantasi sisältää paljon money-game-asemia, MWC cost voi olla aliarvioitu tai ei käytettävissä.</p></li>
+<li><p>MWC cost on kumulatiivinen koko suodatetussa aineistossa — ei päätöskohtainen tunnusluku. Se mittaa virheidesi kokonaisvaikutusta voittomahdollisuuksiisi.</p></li>
+</ul>
+</section>
+</section>
+<section id="panneau-epc">
+<span id="mode-epc"></span><h2><span class="section-number">2.15. </span>EPC-paneeli<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<p><strong>EPC-paneeli</strong> (<em>CTRL-E</em>) laskee bearoff-aseman EPC:n (Effective Pip Count). Se aktivoidaan painamalla <em>CTRL-E</em>, napsauttamalla EPC-välilehteä alapaneelissa tai suorittamalla komento <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>Tässä paneelissa käyttäjä muokkaa pelinappuloiden asemia kotitaulussa (6 viimeistä pistettä), ja seuraavat tiedot näytetään reaaliajassa kullekin pelaajalle:</p>
+<ul class="simple">
+<li><p>EPC (Effective Pip Count),</p></li>
+<li><p>tarvittavien heittojen keskimäärä (Mean Rolls),</p></li>
+<li><p>keskihajonta (Standard Deviation),</p></li>
+<li><p>pip-luku,</p></li>
+<li><p>hukka (wastage) (EPC:n ja pip-luvun välinen ero).</p></li>
+</ul>
+<p>Kun molemmilla pelaajilla on pelinappuloita kotitaulussaan, vertailuosio näyttää EPC:n ja pip-luvun erot.</p>
+<p>Sulje EPC-paneeli painamalla <em>CTRL-E</em> tai vaihtamalla toiseen välilehteen.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Laskenta perustuu GNUbg:n sisäänrakennettuun 6 pisteen bearoff-tietokantaan.</p>
+</div>
+</section>
+<section id="panneau-anki">
+<span id="mode-anki"></span><h2><span class="section-number">2.16. </span>Anki-paneeli<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<p><strong>Anki-paneeli</strong> (<em>CTRL-K</em>) mahdollistaa asemien opiskelun välitoistolla FSRS-algoritmia käyttäen. Käyttäjä voi luoda pakkoja kokoelmista tai hakutuloksista.</p>
+<p><strong>Pakkojen luominen:</strong> Napsauta <em>New Deck</em> luodaksesi pakan kokoelmasta tai nykyisistä hakutuloksista. Hakuun perustuvat pakat synkronoituvat automaattisesti, kun Anki-välilehti avataan.</p>
+<p><strong>Kertaaminen:</strong> Valitse pakka ja napsauta <em>Study</em> (tai kaksoisnapsauta pakkaa) aloittaaksesi erääntyneiden korttien kertaamisen. Jokainen kortti näyttää vastaavan aseman laudalla. Arvioi muistamisesi näppäimillä <em>1</em> (Uudelleen), <em>2</em> (Vaikea), <em>3</em> (Hyvä) tai <em>4</em> (Helppo). Paina <em>Esc</em> lopettaaksesi ja palataksesi pakkaluetteloon.</p>
+<p><strong>Keskeytys/Jatkaminen:</strong> Voit keskeyttää kertausistunnon milloin tahansa näppäimellä <em>Esc</em>. Painike muuttuu muotoon <em>Resume</em> ja näyttää edistymisesi. Napsauta sitä jatkaaksesi siitä, mihin jäit.</p>
+<p><strong>Pakkojen hallinta:</strong> Käytä toimintopainikkeita pakkojen uudelleennimeämiseen, synkronointiin, nollaamiseen tai poistamiseen. FSRS-parametrit (tavoiteretentio, enimmäisväli, satunnaiskerroin) voidaan määrittää pakkakohtaisesti Asetuksissa (hammasrataskuvake).</p>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2><span class="section-number">2.17. </span>Metatietopaneeli<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<p><strong>Metatietopaneeli</strong> näyttää nykyisen tietokannan yleiset tiedot: nimi, kuvaus, asemien määrä, otteluiden ja pelien määrä, skeeman versio. Käytettävissä komennolla <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+</section>
+<section id="panneau-journal">
+<span id="panneau-log"></span><h2><span class="section-number">2.18. </span>Lokipaneeli<a class="headerlink" href="#panneau-journal" title="Link to this heading"></a></h2>
+<p><strong>Lokipaneeli</strong> näyttää viimeaikaisten toimintojen lokin: tuonnit, viennit ja tietokantatoiminnot tuloksineen ja aikaleimoineen. Se on hyödyllinen tuontivirheiden diagnosoinnissa.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Lataaminen ja asentaminen" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="3. Käyttöopas" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

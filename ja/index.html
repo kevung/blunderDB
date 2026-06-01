@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blunderDB &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="1. ダウンロードとインストール" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="blunderdb">
+<span id="index"></span><h1>blunderDB<a class="headerlink" href="#blunderdb" title="Link to this heading"></a></h1>
+<p>blunderDBは、バックギャモンのポジションのデータベースを構築するためのソフトウェアです。主な強みは、プレイヤーが（オンラインやトーナメントで）遭遇したポジションを一元的に集約し、それらのポジションを任意に組み合わせ可能なさまざまなフィルターで絞り込みながら再検討できる点にあります。blunderDBは、参照用ポジションのカタログを作成するためにも使用できます。</p>
+<p>本ドキュメントは、次のように構成されています。</p>
+<ul class="simple">
+<li><p><strong>ダウンロードとインストール</strong> のセクションでは、blunderDBの入手方法と起動方法を説明します。</p></li>
+<li><p><strong>マニュアル</strong> では、blunderDBの全般的な動作について説明します。</p></li>
+<li><p><strong>ユーザーガイド</strong> は、blunderDBを素早く使い始めるための実践的な入門です。</p></li>
+<li><p><strong>コマンド</strong> の一覧およびキーボード <strong>ショートカット</strong> の一覧により、blunderDBを効率的に使用できます。</p></li>
+<li><p><strong>コマンドラインインターフェース（CLI）</strong> のセクションでは、一括インポート、自動化、スクリプト処理に使用できるコマンドについて説明します。</p></li>
+<li><p><strong>FAQ</strong> では、よくある質問への回答をいくつか提供します。</p></li>
+</ul>
+</section>
+<section id="historique-des-versions">
+<h1>バージョン履歴<a class="headerlink" href="#historique-des-versions" title="Link to this heading"></a></h1>
+<table class="align-center-table docutils align-center">
+<colgroup>
+<col style="width: 15.6%" />
+<col style="width: 21.9%" />
+<col style="width: 62.5%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>バージョン</p></th>
+<th class="head"><p>日付</p></th>
+<th class="head"><p>変更の理由および内容</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.1.0</p></td>
+<td><p>2024/12/31</p></td>
+<td><p>ベータ版の作成。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.2.0</p></td>
+<td><p>2025/01/06</p></td>
+<td><p>各種バグの修正。</p>
+<p>マッチ／TP／GV テーブルの追加。</p>
+<p>検索フィルター（着手、キューブの決定、日付）の追加。</p>
+<p>ポジションへのメタデータの追加。</p>
+<p>blunderDBインスタンス間のインポート／エクスポート機能。</p>
+<p>データベースへのメタデータ機能の追加。</p>
+<p>バージョン番号（データベースおよびアプリケーション）の導入。</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.3.0</p></td>
+<td><p>2025/01/27</p></td>
+<td><p>各種バグの修正。</p>
+<p>ウィンドウサイズの自動保存。</p>
+<p>XGからのコメントのインポート（存在する場合）。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.4.0</p></td>
+<td><p>2025/02/03</p></td>
+<td><p>各種バグの修正。</p>
+<p>blunderDBのアイコンの追加。</p>
+<p>フィルターの修正。</p>
+<p>MacOSのサポートの追加。</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.5.0</p></td>
+<td><p>2025/02/04</p></td>
+<td><p>新しいフィルター（ミラー、ノンコンタクト、内野ブロット、外野ブロット）の追加。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.6.0</p></td>
+<td><p>2025/02/13</p></td>
+<td><p>フィルターライブラリの追加。</p>
+<p>メタデータでのデータベースバージョンの表示。</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.7.0</p></td>
+<td><p>2025/02/16</p></td>
+<td><p>XGエクスポートにおける日本語およびドイツ語のサポート。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.8.0</p></td>
+<td><p>2025/05/03</p></td>
+<td><p>ピップカウントを非表示にする機能。</p>
+<p>ランダムなポジションの読み込み。</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.9.0</p></td>
+<td><p>2025/11/02</p></td>
+<td><p>フィルターライブラリのバグ修正。</p>
+<p>データベースのインポート／エクスポート。</p>
+<p>選択した着手に対する矢印の表示。</p>
+<p>インポート／エクスポート用のキーボードショートカット。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.10.0</p></td>
+<td><p>2026/02/25</p></td>
+<td><p>eXtreme Gammon (XG/XGP)、GNUbg (SGF)、Jellyfish (MAT/TXT)、BGBlitz (BGF/TXT) からのマッチのインポート。</p>
+<p>マッチ内のナビゲーション：インポートしたマッチの着手をたどり、実際に打たれた着手を強調表示します。</p>
+<p>マッチパネル：一覧、ソート、インライン編集、プレイヤーの入れ替え、トーナメントの割り当て。</p>
+<p>フォルダーの再帰的インポートおよびドラッグアンドドロップによるインポート。</p>
+<p>EPC（実効ピップカウント）計算機。GNUbgのベアオフデータベースを内蔵しています。</p>
+<p>コレクション：ポジションのカスタムなグループ化。</p>
+<p>トーナメント：イベントごとのマッチのグループ化。</p>
+<p>セッション状態（最後の検索、現在のポジション）の保存と復元。</p>
+<p>データベーススキーマの自動マイグレーション。</p>
+<p>分析における複数エンジンの表示。</p>
+<p>検索におけるプレイヤー1のエラー／ブランダーのフィルター。</p>
+<p>きめ細かな選択によるデータベースのエクスポート（マッチ、コレクション、トーナメント、打たれた着手）。</p>
+<p>マッチ内ナビゲーション用ボタン。</p>
+<p>マッチナビゲーションにおけるピップカウントの表示。</p>
+<p>完全なコマンドラインインターフェース（CLI）。</p>
+<p>最後に開いたデータベースの自動再オープン。</p>
+<p>ツールバーとアイコンの改善。</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.11.0</p></td>
+<td><p>2026/03/06</p></td>
+<td><p>現在のポジションに対する検索フィルター。</p>
+<p>マッチごと、トーナメントごとのフィルターの追加。</p>
+<p>検索パネルを開いた際のボードの自動クリア。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.12.0</p></td>
+<td><p>2026/03/19</p></td>
+<td><p>分析付きのeXtreme Gammonポジションファイル（XGP）のインポート。</p></td>
+</tr>
+<tr class="row-even"><td><p>0.13.0</p></td>
+<td><p>2026/03/28</p></td>
+<td><p>インターフェースの簡素化：マッチおよびコレクション内のナビゲーションはパネルから直接行えるようになりました。</p>
+<p>ステータスバーに統合されたコマンドライン。</p>
+<p>コンソールパネルをログパネルに名称変更。</p>
+<p>下部パネルに専用のEPCパネル。</p>
+<p>検索パネルでのポジションのコピー／貼り付け。</p>
+<p>ドラッグアンドドロップによる、コレクション、コレクション内のポジション、トーナメント内のマッチの並べ替え。</p>
+<p>マッチパネルへのトーナメント列の追加とインライン編集。</p>
+<p>検索後の分析パネルの自動表示。</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.14.0</p></td>
+<td><p>2026/03/30</p></td>
+<td><p>間隔反復学習（FSRSアルゴリズム）のための専用Ankiパネル。</p>
+<p>XGファイルからのコメントのインポート。</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.15.0</p></td>
+<td><p>2026/03/31</p></td>
+<td><p>ポジションをPNG画像としてクリップボードにエクスポート（Ctrl+X でボードのみ、Ctrl+X Ctrl+X で分析付きのボード）。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.16.0</p></td>
+<td><p>2026/04/18</p></td>
+<td><p>データベーススキーマ v2.0.0：Zobristハッシュによるポジションの重複排除、非正規化されたフィルタリング列、ビットボードによるパターンの事前フィルター、WALジャーナリング。一括インポートが3倍以上高速化し、1万件以上のポジションに対するフィルター検索が100ミリ秒以内に。注意：v0.16.0で作成したDBファイルは古いバージョンでは開けません。古いDBはその場で自動的にマイグレーションされます（先にバックアップを取ってください）。</p></td>
+</tr>
+<tr class="row-even"><td><p>0.17.0</p></td>
+<td><p>2026/04/20</p></td>
+<td><p>ストレージの最適化：分析データのzlib圧縮（約80%削減）、ポジションのコンパクトなエンコーディング（サイズを約90%削減）。検索性能を向上させるために不足していた5つのインデックスを追加。キューブエラーによる検索の修正。結果のない検索後のEDITモードの修正。タブ切り替え時の検索パネル状態の復元。クリティカルパスから62件のデバッグ命令を削除。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.18.0</p></td>
+<td><p>2026/04/20</p></td>
+<td><p>大規模なコードのリファクタリング：db.go（1万行）を19個の専用ファイルに分割、App.svelteから7個のサービスモジュールを抽出（4888→469行）、モーダル／パネルのストアを統合。Svelte 5 runesへの完全移行。9個のテーブルモーダルを汎用コンポーネントDataTableModalに置き換え。ESLint + Prettier + vitest（フロントエンドテスト125件）とCIの追加。WCAG 2.1 AA準拠（可視フォーカス、ARIAロール、キーボードナビゲーション）。読み取りの並列性を向上させるためDatabaseのミューテックスをRWMutexに変更。完全なCLIドキュメント（CLI_USAGE.md + Sphinx FR/EN）。READMEの書き直し。ESLint（46→0）およびVite（6→0）のすべての警告を修正。</p></td>
+</tr>
+<tr class="row-even"><td><p>0.19.0</p></td>
+<td><p>2026/05/07</p></td>
+<td><p>統計パネルの追加：PR（Performance Rate）、Snowie Error Rate、MWC cost（Match Winning Chance cost）の各指標、フィルターバー（プレイヤー、トーナメント、日付、決定の種類、マッチ長）、レベルカード／移動平均PR／トップブランダーを表示するダッシュボードタブ、トーナメントごとの推移曲線とマッチごとの散布図を表示する進捗タブ、キューブアクションごとの内訳とエラーの大きさのヒストグラムを表示するエラータブ。すべての指標からポジション／マッチ／トーナメントへのインタラクティブなドリルダウン。PR／MWCの即時切り替え。CLIコマンド list --type stats。PR／Snowie ER／MWC指標をeXtremeGammonおよびgnuBGに整合（接近したキューブのエクイティしきい値0.16）。Double/Pass決定のcube_error計算の修正。統計モデルのドキュメント化（:ref:`stats_parity`）。:ref:`stats` を参照。</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.20.0</p></td>
+<td><p>2026/05/31</p></td>
+<td><p>検索パネルに除外構造 <em>Except</em> を追加：描いた駒のいずれかを含むポジションを除外します。「空でなければならない」マーカー（ダブルクリック）と、ポイントごとの駒数の上限なし（コマンド x）に対応。サイコロの目フィルターに「最初のサイコロのみ」オプションを追加（バリアント D1、CLIオプション --dice）。コメントパネル：開いたときに入力欄へ自動フォーカスし、編集／削除ボタンを常に表示。すべてのコメントタグを見つけられなかった「Search Text」フィルターの修正。</p></td>
+</tr>
+<tr class="row-even"><td><p>0.21.0</p></td>
+<td><p>2026/06/01</p></td>
+<td><p>インターフェースの国際化：blunderDB全体（ツールバー、パネル、メッセージ、ヘルプ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。言語を選択するための設定ウィンドウを追加。ツールバーの歯車型ボタンからアクセスできます。言語の選択はセッションをまたいで保持されます。:ref:`configuration` を参照。</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sommaire">
+<h1>目次<a class="headerlink" href="#sommaire" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. 主な操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. インターフェースの説明</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. 設定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. ポジションのナビゲーション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. ポジションの編集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. コマンドライン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. 分析パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. コメントパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. 検索パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. コレクションパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. マッチパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. トーナメントパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Stats パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. EPC パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Anki パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. メタデータパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. ログパネル</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">3.1. 新しいデータベースを作成する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">3.2. 既存のデータベースを開く</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-et-fusionner-une-base-de-donnees">3.3. データベースをインポートして統合する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">3.4. ポジションを編集する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">3.5. ポジションをデータベースに追加する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">3.6. ポジションにタグを付ける</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">3.7. ポジションを削除する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">3.8. XG からポジションをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-match">3.9. マッチをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-dossier-de-matchs">3.10. マッチのフォルダをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#glisser-deposer">3.11. ドラッグ＆ドロップ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#naviguer-dans-un-match">3.12. マッチ内を移動する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">3.13. マッチパネルを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">3.14. コレクションを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">3.15. トーナメントを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-les-statistiques-de-performance">3.16. パフォーマンス統計を表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#calculer-l-epc">3.17. EPCを計算する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. XGからインポートしたポジションの分析を表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.19. XGにポジションをエクスポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.20. 様々なポジションを表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.21. 条件に基づいてポジションを検索する</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. 全体操作</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. 局面とナビゲーション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. 編集と検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. 検索フィルタ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. その他のコマンド</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#base-de-donnees">5.1. データベース</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. ポジション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. ナビゲーション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. 表示</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. アクション</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. ツール</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.7. コマンドライン</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-historique-de-recherche">5.8. 検索履歴パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-bibliotheque-de-filtres">5.9. フィルターライブラリパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.10. 分析パネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.11. マッチパネル</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-anki-repetition-espacee">5.12. Ankiパネル（間隔反復）</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">6.1. はじめに</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">6.2. 一般的な構文</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#commandes-disponibles">6.3. 利用可能なコマンド</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#create-creer-une-base-de-donnees">6.4. create — データベースを作成する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#import-importer-des-donnees">6.5. import — データをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#export-exporter-des-donnees">6.6. export — データをエクスポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search-rechercher-des-positions">6.7. search — ポジションを検索する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#list-lister-le-contenu">6.8. list — 内容を一覧表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#match-afficher-un-match">6.9. match — マッチを表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#info-metadonnees-de-la-base">6.10. info — データベースのメタデータ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#edit-modifier-les-metadonnees">6.11. edit — メタデータを編集する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#verify-verifier-l-integrite">6.12. verify — 整合性を確認する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#delete-supprimer-des-donnees">6.13. delete — データを削除する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">6.14. ワークフロー例</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">6.15. 終了コード</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">7.1. blunderDB の用途は何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">7.2. blunderDB 作成の動機は何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">7.3. 現在のデータベースを保存するにはどうすればよいですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">7.4. ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">7.5. 複数のデータベースを統合するにはどうすればよいですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">7.6. どのマッチファイル形式がサポートされていますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">7.7. コレクションとは何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">7.8. EPC とは何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">7.9. blunderDB にはコマンドラインインターフェースがありますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">7.10. blunderDB を変更、コピー、共有できますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">7.11. blunderDB はどのデータ形式を使用していますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">7.12. blunderDB の設計原則は何でしたか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">7.13. blunderDB のソフトウェアアーキテクチャは何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">7.14. blunderDB はどのプラットフォームで動作しますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. blunderDB のアイコンはどこから来ていますか？</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. コマンドラインによるポジション検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. 現在の結果内での検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. フィルターライブラリ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. 例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Windows SmartScreen の警告</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Windows Defender によるブロック</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. blunderDB のインストール</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. blunderDB の実行を許可する</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. バージョン 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. バージョン 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. バージョン 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. バージョン 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. バージョン 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. バージョン 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. バージョン 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. バージョン 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">12.1. 正式な定義</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">12.2. PR の分母にカウントされる決定</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">12.3. blunderDB ↔ XG ↔ gnuBG の対応</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">12.4. 自分の数値を検証する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">12.5. gnuBG 参照</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/Ln7XKVFqfUk" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/HkY4iXjxMeI" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div style="margin-top: 20px;"></div></section>
+<section id="contacts">
+<span id="id1"></span><h1>連絡先<a class="headerlink" href="#contacts" title="Link to this heading"></a></h1>
+<p>作者：Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;。Heroes ではハンドルネーム postmanpat でも見つけられます。</p>
+<p>私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のためにblunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎します。</p>
+<p>やり取りの方法はいくつかあります。</p>
+<ul class="simple">
+<li><p>blunderDBのDiscordサーバーに参加する：<a class="reference external" href="https://discord.gg/DA5PpzM9En">https://discord.gg/DA5PpzM9En</a></p></li>
+<li><p><a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a> 宛にメールを送る、</p></li>
+<li><p>トーナメントで会うことがあれば直接話す、</p></li>
+<li><p>Githubで、</p>
+<ul>
+<li><p>チケットを作成する：<a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>バグ修正や改善の提案には、プルリクエストを作成してください。</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="faire-un-don">
+<h1>寄付する<a class="headerlink" href="#faire-un-don" title="Link to this heading"></a></h1>
+<p>blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合は、次のことができます</p>
+<ul class="simple">
+<li><p>お会いする機会があれば、一杯おごってください！</p></li>
+<li><p>PayPalで <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a> 宛にささやかな寄付をする</p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h1>謝辞<a class="headerlink" href="#remerciements" title="Link to this heading"></a></h1>
+<p>このささやかなソフトウェアを、パートナーのAnne-Claireと愛する娘のPerrineに捧げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em> には、喜びと思いやりをもってバックギャモンの世界へ導いてくれたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しようとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。</p></li>
+<li><p><em>Nicolas Harmand</em> には、もう10年以上にわたって素敵な冒険を共にしてきた陽気な仲間であり、バックギャモンに夢中になって以来、素晴らしいゲームの相棒であることに感謝します。</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-right" title="1. ダウンロードとインストール" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="1. Λήψη και εγκατάσταση" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="blunderdb">
+<span id="index"></span><h1>blunderDB<a class="headerlink" href="#blunderdb" title="Link to this heading"></a></h1>
+<p>Το blunderDB είναι ένα λογισμικό για τη δημιουργία βάσεων δεδομένων θέσεων τάβλι (backgammon). Η κύρια δύναμή του είναι να παρέχει ένα μοναδικό μέρος όπου ένας παίκτης μπορεί να συγκεντρώσει τις θέσεις που έχει συναντήσει (διαδικτυακά, σε τουρνουά) και να μπορεί να μελετήσει ξανά αυτές τις θέσεις φιλτράροντάς τες με διάφορα φίλτρα που μπορούν να συνδυαστούν αυθαίρετα. Το blunderDB μπορεί επίσης να χρησιμοποιηθεί για τη δημιουργία καταλόγων θέσεων αναφοράς.</p>
+<p>Η παρούσα τεκμηρίωση είναι δομημένη ως εξής:</p>
+<ul class="simple">
+<li><p>η ενότητα <strong>λήψη και εγκατάσταση</strong> εξηγεί πώς να αποκτήσετε και να εκτελέσετε το blunderDB.</p></li>
+<li><p>το <strong>εγχειρίδιο</strong> περιγράφει τη γενική λειτουργία του blunderDB.</p></li>
+<li><p>ο <strong>οδηγός χρήστη</strong> είναι μια πρακτική εισαγωγή για τη γρήγορη χρήση του blunderDB.</p></li>
+<li><p>η λίστα των <strong>εντολών</strong> καθώς και η λίστα των <strong>συντομεύσεων</strong> πληκτρολογίου επιτρέπουν την αποτελεσματική χρήση του blunderDB.</p></li>
+<li><p>η ενότητα <strong>διεπαφή γραμμής εντολών (CLI)</strong> περιγράφει τις διαθέσιμες εντολές για μαζική εισαγωγή, αυτοματοποίηση και scripting.</p></li>
+<li><p>η ενότητα <strong>Συχνές Ερωτήσεις (FAQ)</strong> παρέχει απαντήσεις στις πιο συχνές ερωτήσεις.</p></li>
+</ul>
+</section>
+<section id="historique-des-versions">
+<h1>Ιστορικό εκδόσεων<a class="headerlink" href="#historique-des-versions" title="Link to this heading"></a></h1>
+<table class="align-center-table docutils align-center">
+<colgroup>
+<col style="width: 15.6%" />
+<col style="width: 21.9%" />
+<col style="width: 62.5%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Έκδοση</p></th>
+<th class="head"><p>Ημερομηνία</p></th>
+<th class="head"><p>Αιτία ή/και φύση των αλλαγών</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.1.0</p></td>
+<td><p>31 Δεκεμβρίου 2024</p></td>
+<td><p>Έκδοση beta.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.2.0</p></td>
+<td><p>6 Ιανουαρίου 2025</p></td>
+<td><p>Διάφορες διορθώσεις σφαλμάτων.</p>
+<p>Προσθήκη πινάκων αγώνων/TP/GV.</p>
+<p>Προσθήκη φίλτρων αναζήτησης (κινήσεις, αποφάσεις ντουμπλέ, ημερομηνία).</p>
+<p>Προσθήκη μεταδεδομένων στις θέσεις.</p>
+<p>Λειτουργία εισαγωγής/εξαγωγής μεταξύ στιγμιότυπων του blunderDB.</p>
+<p>Προσθήκη λειτουργίας μεταδεδομένων στις βάσεις δεδομένων.</p>
+<p>Εισαγωγή αριθμών εκδόσεων (βάσης δεδομένων και εφαρμογής).</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.3.0</p></td>
+<td><p>27 Ιανουαρίου 2025</p></td>
+<td><p>Διάφορες διορθώσεις σφαλμάτων.</p>
+<p>Αυτόματη αποθήκευση του μεγέθους του παραθύρου.</p>
+<p>Εισαγωγή τυχόν σχολίων από το XG.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.4.0</p></td>
+<td><p>3 Φεβρουαρίου 2025</p></td>
+<td><p>Διάφορες διορθώσεις σφαλμάτων.</p>
+<p>Προσθήκη εικονιδίου για το blunderDB.</p>
+<p>Διορθώσεις φίλτρων.</p>
+<p>Προσθήκη υποστήριξης MacOS.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.5.0</p></td>
+<td><p>4 Φεβρουαρίου 2025</p></td>
+<td><p>Προσθήκη νέων φίλτρων (καθρέφτης, μη επαφή, jan blot, outfield blot).</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.6.0</p></td>
+<td><p>13 Φεβρουαρίου 2025</p></td>
+<td><p>Προσθήκη βιβλιοθήκης φίλτρων.</p>
+<p>Εμφάνιση της έκδοσης της βάσης δεδομένων στα μεταδεδομένα.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.7.0</p></td>
+<td><p>16 Φεβρουαρίου 2025</p></td>
+<td><p>Υποστήριξη ιαπωνικών και γερμανικών εξαγωγών XG.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.8.0</p></td>
+<td><p>3 Μαΐου 2025</p></td>
+<td><p>Δυνατότητα απόκρυψης του pip count.</p>
+<p>Φόρτωση τυχαίας θέσης.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.9.0</p></td>
+<td><p>2 Νοεμβρίου 2025</p></td>
+<td><p>Διόρθωση σφάλματος της βιβλιοθήκης φίλτρων.</p>
+<p>Εισαγωγή/εξαγωγή βάσης δεδομένων.</p>
+<p>Εμφάνιση βελών για τις επιλεγμένες κινήσεις.</p>
+<p>Συντομεύσεις πληκτρολογίου για την εισαγωγή/εξαγωγή.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.10.0</p></td>
+<td><p>25 Φεβρουαρίου 2026</p></td>
+<td><p>Εισαγωγή αγώνων από eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) και BGBlitz (BGF/TXT).</p>
+<p>Πλοήγηση στους αγώνες: περιήγηση στις κινήσεις ενός εισαγόμενου αγώνα, με επισήμανση της κίνησης που παίχτηκε.</p>
+<p>Πίνακας αγώνων: λίστα, ταξινόμηση, εσωτερική επεξεργασία, εναλλαγή παικτών, ανάθεση τουρνουά.</p>
+<p>Εισαγωγή με αναδρομικό φάκελο και εισαγωγή με μεταφορά και απόθεση.</p>
+<p>Υπολογιστής EPC (Effective Pip Count) με ενσωματωμένη βάση δεδομένων bearoff του GNUbg.</p>
+<p>Συλλογές: προσαρμοσμένη ομαδοποίηση θέσεων.</p>
+<p>Τουρνουά: ομαδοποίηση αγώνων ανά εκδήλωση.</p>
+<p>Αποθήκευση και επαναφορά της κατάστασης συνεδρίας (τελευταία αναζήτηση, τρέχουσα θέση).</p>
+<p>Αυτόματη μετάβαση του σχήματος της βάσης δεδομένων.</p>
+<p>Εμφάνιση πολλαπλών μηχανών στην ανάλυση.</p>
+<p>Φίλτρο σφαλμάτων/blunders του παίκτη 1 στις αναζητήσεις.</p>
+<p>Εξαγωγή της βάσης δεδομένων με λεπτομερή επιλογή (αγώνες, συλλογές, τουρνουά, κινήσεις που παίχτηκαν).</p>
+<p>Κουμπί πλοήγησης στους αγώνες.</p>
+<p>Εμφάνιση pip count στην πλοήγηση των αγώνων.</p>
+<p>Πλήρης διεπαφή γραμμής εντολών (CLI).</p>
+<p>Αυτόματο άνοιγμα ξανά της τελευταίας βάσης δεδομένων.</p>
+<p>Βελτίωση της γραμμής εργαλείων και των εικονιδίων.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.11.0</p></td>
+<td><p>6 Μαρτίου 2026</p></td>
+<td><p>Φίλτρο αναζήτησης μέσα στις τρέχουσες φιλτραρισμένες θέσεις.</p>
+<p>Προσθήκη φίλτρων ανά αγώνα και ανά τουρνουά.</p>
+<p>Αυτόματος καθαρισμός του ταμπλό κατά το άνοιγμα του πίνακα αναζήτησης.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.12.0</p></td>
+<td><p>19 Μαρτίου 2026</p></td>
+<td><p>Εισαγωγή αρχείων θέσεων eXtreme Gammon (XGP) με ανάλυση.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.13.0</p></td>
+<td><p>28 Μαρτίου 2026</p></td>
+<td><p>Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται πλέον απευθείας μέσω των πινάκων.</p>
+<p>Γραμμή εντολών ενσωματωμένη στη γραμμή κατάστασης.</p>
+<p>Ο πίνακας Κονσόλα μετονομάστηκε σε πίνακα Log.</p>
+<p>Αποκλειστικός πίνακας EPC στον κάτω πίνακα.</p>
+<p>Αντιγραφή/επικόλληση θέσης στον πίνακα αναζήτησης.</p>
+<p>Μεταφορά και απόθεση για την αναδιάταξη συλλογών, θέσεων μέσα στις συλλογές, και αγώνων μέσα στα τουρνουά.</p>
+<p>Στήλη τουρνουά στον πίνακα αγώνων με εσωτερική επεξεργασία.</p>
+<p>Αυτόματη εμφάνιση του πίνακα ανάλυσης μετά από μια αναζήτηση.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.14.0</p></td>
+<td><p>30 Μαρτίου 2026</p></td>
+<td><p>Αποκλειστικός πίνακας Anki για μελέτη με επαναλαμβανόμενα διαστήματα (αλγόριθμος FSRS).</p>
+<p>Εισαγωγή σχολίων από τα αρχεία XG.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.15.0</p></td>
+<td><p>31 Μαρτίου 2026</p></td>
+<td><p>Εξαγωγή της θέσης ως εικόνα PNG στο πρόχειρο (μόνο το ταμπλό με Ctrl+X, ή το ταμπλό με ανάλυση με Ctrl+X Ctrl+X).</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.16.0</p></td>
+<td><p>18 Απριλίου 2026</p></td>
+<td><p>Σχήμα βάσης δεδομένων v2.0.0: αφαίρεση διπλότυπων θέσεων μέσω hash Zobrist, αποκανονικοποιημένες στήλες φιλτραρίσματος, προ-φίλτρο μοτίβων bitboard, καταγραφή WAL. Μαζική εισαγωγή &gt;=3x ταχύτερη, φιλτραρισμένη αναζήτηση &lt;=100 ms σε 10k+ θέσεις. ΣΗΜΕΙΩΣΗ: τα αρχεία DB που δημιουργήθηκαν με την v0.16.0 δεν μπορούν να ανοιχτούν από παλαιότερες εκδόσεις· οι παλιές DB μεταβαίνουν αυτόματα επιτόπου (κάντε πρώτα ένα αντίγραφο ασφαλείας).</p></td>
+</tr>
+<tr class="row-even"><td><p>0.17.0</p></td>
+<td><p>20 Απριλίου 2026</p></td>
+<td><p>Βελτιστοποίηση αποθήκευσης: συμπίεση zlib των δεδομένων ανάλυσης (~80% μείωση), συμπαγής κωδικοποίηση των θέσεων (~90% μείωση του μεγέθους). Προσθήκη 5 ευρετηρίων που έλειπαν για τη βελτίωση της απόδοσης αναζήτησης. Διόρθωση της αναζήτησης κατά σφάλμα ντουμπλέ. Διόρθωση της λειτουργίας EDIT μετά από αναζήτηση χωρίς αποτελέσματα. Επαναφορά της κατάστασης του πίνακα αναζήτησης κατά την εναλλαγή καρτελών. Αφαίρεση 62 εντολών εντοπισμού σφαλμάτων από τις κρίσιμες διαδρομές.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.18.0</p></td>
+<td><p>20 Απριλίου 2026</p></td>
+<td><p>Σημαντική αναδιάρθρωση του κώδικα: διαχωρισμός του db.go (10k γραμμές) σε 19 εξειδικευμένα αρχεία, εξαγωγή 7 ενοτήτων υπηρεσιών από το App.svelte (4888→469 γραμμές), ενοποίηση των stores των modal/πινάκων. Πλήρης μετάβαση στα Svelte 5 runes. Αντικατάσταση 9 modal πινάκων με ένα γενικό στοιχείο DataTableModal. Προσθήκη ESLint + Prettier + vitest (125 tests frontend) με CI. Συμμόρφωση WCAG 2.1 AA (ορατή εστίαση, ρόλοι ARIA, πλοήγηση με πληκτρολόγιο). Αναβάθμιση του mutex της Database σε RWMutex για καλύτερη παραλληλία ανάγνωσης. Πλήρης τεκμηρίωση CLI (CLI_USAGE.md + Sphinx FR/EN). Επανεγγραφή του README. Διόρθωση όλων των προειδοποιήσεων ESLint (46→0) και Vite (6→0).</p></td>
+</tr>
+<tr class="row-even"><td><p>0.19.0</p></td>
+<td><p>7 Μαΐου 2026</p></td>
+<td><p>Προσθήκη του πίνακα Stats: δείκτες PR (Performance Rate), Snowie Error Rate και MWC cost (Match Winning Chance cost), γραμμή φίλτρου (παίκτης, τουρνουά, ημερομηνίες, τύπος απόφασης, μήκος αγώνα), καρτέλα Dashboard με κάρτες επιπέδου / κυλιόμενο PR / κορυφαία blunders, καρτέλα Progression με καμπύλη ανά τουρνουά και scatter plot ανά αγώνα, καρτέλα Σφάλματα με κατανομή ανά ενέργεια ντουμπλέ και ιστόγραμμα των μεγεθών. Διαδραστική εμβάθυνση προς τις θέσεις / αγώνες / τουρνουά από όλους τους δείκτες. Στιγμιαία εναλλαγή PR / MWC. Εντολή CLI list –type stats. Ευθυγράμμιση των δεικτών PR / Snowie ER / MWC με τα eXtremeGammon και gnuBG (όριο 0.16 equity για τα κοντινά ντουμπλέ). Διόρθωση του υπολογισμού του cube_error για τις αποφάσεις Double/Pass. Τεκμηρίωση του στατιστικού μοντέλου (:ref:`stats_parity`). Δείτε :ref:`stats`.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.20.0</p></td>
+<td><p>31 Μαΐου 2026</p></td>
+<td><p>Προσθήκη της δομής αποκλεισμού <em>Except</em> στον πίνακα αναζήτησης: αποκλείει τις θέσεις που περιέχουν οποιοδήποτε από τα σχεδιασμένα πούλια, με σήμανση « πρέπει να είναι κενό » (διπλό κλικ) και χωρίς όριο στον αριθμό πουλιών ανά σημείο (εντολή x). Προσθήκη της επιλογής « μόνο το πρώτο ζάρι » στο φίλτρο ζαριάς (παραλλαγή D1, επιλογή CLI –dice). Πίνακας Σχόλια: το πεδίο εισαγωγής εστιάζεται αυτόματα κατά το άνοιγμα και τα κουμπιά επεξεργασία / διαγραφή είναι πάντα ορατά. Διόρθωση του φίλτρου « Search Text » που δεν έβρισκε όλες τις ετικέτες σχολίων.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.21.0</p></td>
+<td><p>1 Ιουνίου 2026</p></td>
+<td><p>Διεθνοποίηση της διεπαφής: το σύνολο του blunderDB (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μπορεί πλέον να εμφανιστεί κατ” επιλογήν στα αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, ελληνικά ή ρωσικά. Προσθήκη ενός παραθύρου ρυθμίσεων, προσβάσιμου μέσω ενός κουμπιού σε σχήμα γραναζιού στη γραμμή εργαλείων, που επιτρέπει την επιλογή της γλώσσας. Η επιλογή της γλώσσας διατηρείται από τη μία συνεδρία στην άλλη. Δείτε :ref:`configuration`.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sommaire">
+<h1>Πίνακας περιεχομένων<a class="headerlink" href="#sommaire" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Κύριες αλληλεπιδράσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Περιγραφή της διεπαφής</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Ρυθμίσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Πλοήγηση στις θέσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Επεξεργασία θέσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. Η γραμμή εντολών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Πίνακας Ανάλυσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Πίνακας Σχολίων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Πίνακας Αναζήτησης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Πίνακας Συλλογών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Πίνακας Αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Πίνακας Τουρνουά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Πίνακας Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. Πίνακας EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Πίνακας Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Πίνακας Μεταδεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Πίνακας Καταγραφής</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">3.1. Δημιουργία νέας βάσης δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">3.2. Άνοιγμα υπάρχουσας βάσης δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-et-fusionner-une-base-de-donnees">3.3. Εισαγωγή και συγχώνευση βάσης δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">3.4. Επεξεργασία θέσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">3.5. Προσθήκη θέσης στη βάση δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">3.6. Προσθήκη ετικέτας σε μια θέση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">3.7. Διαγραφή θέσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">3.8. Εισαγωγή θέσης από το XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-match">3.9. Εισαγωγή αγώνα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-dossier-de-matchs">3.10. Εισαγωγή φακέλου αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#glisser-deposer">3.11. Μεταφορά και απόθεση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#naviguer-dans-un-match">3.12. Πλοήγηση σε έναν αγώνα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">3.13. Διαχείριση του πλαισίου αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">3.14. Διαχείριση συλλογών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">3.15. Διαχείριση τουρνουά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-les-statistiques-de-performance">3.16. Εμφάνιση στατιστικών επιδόσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#calculer-l-epc">3.17. Υπολογισμός του EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. Εμφάνιση της ανάλυσης μιας θέσης που εισήχθη από το XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.19. Εξαγωγή θέσης στο XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.20. Προβολή των διαφόρων θέσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.21. Αναζήτηση θέσεων με βάση κριτήρια</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Καθολικές λειτουργίες</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. Θέσεις και πλοήγηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. Επεξεργασία και αναζήτηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Φίλτρα αναζήτησης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. Διάφορες εντολές</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#base-de-donnees">5.1. Βάση δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. Θέση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. Πλοήγηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. Εμφάνιση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. Ενέργειες</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. Εργαλεία</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.7. Γραμμή εντολών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-historique-de-recherche">5.8. Πίνακας ιστορικού αναζήτησης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-bibliotheque-de-filtres">5.9. Πίνακας βιβλιοθήκης φίλτρων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.10. Πίνακας ανάλυσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.11. Πίνακας αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-anki-repetition-espacee">5.12. Πίνακας Anki (επαναληπτική μελέτη με χρονικά διαστήματα)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">6.1. Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">6.2. Γενική σύνταξη</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#commandes-disponibles">6.3. Διαθέσιμες εντολές</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#create-creer-une-base-de-donnees">6.4. create — Δημιουργία βάσης δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#import-importer-des-donnees">6.5. import — Εισαγωγή δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#export-exporter-des-donnees">6.6. export — Εξαγωγή δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search-rechercher-des-positions">6.7. search — Αναζήτηση θέσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#list-lister-le-contenu">6.8. list — Εμφάνιση περιεχομένου</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#match-afficher-un-match">6.9. match — Εμφάνιση αγώνα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#info-metadonnees-de-la-base">6.10. info — Μεταδεδομένα της βάσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#edit-modifier-les-metadonnees">6.11. edit — Τροποποίηση μεταδεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#verify-verifier-l-integrite">6.12. verify — Έλεγχος ακεραιότητας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#delete-supprimer-des-donnees">6.13. delete — Διαγραφή δεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">6.14. Παραδείγματα ροών εργασίας</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">6.15. Κωδικοί εξόδου</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">7.1. Ποιος είναι ο σκοπός του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">7.2. Τι ώθησε στη δημιουργία του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">7.3. Πώς να αποθηκεύσετε την κατάσταση της τρέχουσας βάσης δεδομένων;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">7.4. Πρέπει να δημιουργώ διαφορετικές βάσεις δεδομένων για διαφορετικές κατηγορίες θέσεων;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">7.5. Πώς να συγχωνεύσετε πολλαπλές βάσεις δεδομένων;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">7.6. Ποιες μορφές αρχείων αγώνων υποστηρίζονται;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">7.7. Τι είναι μια συλλογή;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">7.8. Τι είναι το EPC;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">7.9. Διαθέτει το blunderDB διεπαφή γραμμής εντολών;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">7.10. Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">7.11. Ποια μορφή δεδομένων χρησιμοποιεί το blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">7.12. Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">7.13. Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">7.14. Σε ποιες πλατφόρμες λειτουργεί το blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. Από πού προέρχεται το εικονίδιο του blunderDB;</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. Αναζήτηση θέσεων από τη γραμμή εντολών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. Αναζήτηση μέσα στα τρέχοντα αποτελέσματα</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. Βιβλιοθήκη φίλτρων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. Παραδείγματα</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Προειδοποίηση Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Μπλοκάρισμα από το Windows Defender</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. Εγκατάσταση του blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. Εξουσιοδότηση εκτέλεσης του blunderDB</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. Έκδοση 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. Έκδοση 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. Έκδοση 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. Έκδοση 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. Έκδοση 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. Έκδοση 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. Έκδοση 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. Έκδοση 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">12.1. Τυπικοί ορισμοί</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">12.2. Μετρούμενες αποφάσεις στον παρονομαστή του PR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">12.3. Αντιστοιχία blunderDB ↔ XG ↔ gnuBG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">12.4. Επαλήθευση των δικών σας αριθμών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">12.5. Αναφορά gnuBG</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/Ln7XKVFqfUk" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/HkY4iXjxMeI" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div style="margin-top: 20px;"></div></section>
+<section id="contacts">
+<span id="id1"></span><h1>Επικοινωνία<a class="headerlink" href="#contacts" title="Link to this heading"></a></h1>
+<p>Συγγραφέας: Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;. Μπορείτε επίσης να με βρείτε στο Heroes με το ψευδώνυμο postmanpat.</p>
+<p>Ανέπτυξα αρχικά το blunderDB για προσωπική μου χρήση, ώστε να μπορώ να εντοπίζω μοτίβα στα λάθη μου. Ωστόσο, είναι πολύ ευχάριστο να λαμβάνεις σχόλια, ειδικά όταν έχεις ξοδέψει πολλές ώρες σε σχεδιασμό, προγραμματισμό, αποσφαλμάτωση… Γι” αυτό μη διστάσετε να μου γράψετε για να μοιραστείτε την εμπειρία σας. Όλα τα (εποικοδομητικά) σχόλια είναι ευπρόσδεκτα.</p>
+<p>Ακολουθούν διάφοροι τρόποι για να επικοινωνήσετε:</p>
+<ul class="simple">
+<li><p>συμμετάσχετε στον διακομιστή Discord του blunderDB: <a class="reference external" href="https://discord.gg/DA5PpzM9En">https://discord.gg/DA5PpzM9En</a></p></li>
+<li><p>στείλτε μου email στο <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>,</p></li>
+<li><p>μιλήστε μαζί μου, αν συναντηθούμε σε κάποιο τουρνουά,</p></li>
+<li><p>στο Github,</p>
+<ul>
+<li><p>ανοίξτε ένα ζήτημα: <a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>για διορθώσεις σφαλμάτων ή προτάσεις βελτίωσης, δημιουργήστε ένα pull request.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="faire-un-don">
+<h1>Κάντε μια δωρεά<a class="headerlink" href="#faire-un-don" title="Link to this heading"></a></h1>
+<p>Αν εκτιμάτε το blunderDB και θέλετε να στηρίξετε την παρελθούσα και μελλοντική ανάπτυξή του, μπορείτε</p>
+<ul class="simple">
+<li><p>να με κεράσετε ένα ποτό αν έχουμε τη χαρά να συναντηθούμε!</p></li>
+<li><p>να κάνετε μια μικρή δωρεά μέσω PayPal στη διεύθυνση <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a></p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h1>Ευχαριστίες<a class="headerlink" href="#remerciements" title="Link to this heading"></a></h1>
+<p>Αφιερώνω αυτό το μικρό λογισμικό στη σύντροφό μου Anne-Claire και στη γλυκιά μας κόρη Perrine. Θέλω να ευχαριστήσω ιδιαίτερα μερικούς φίλους:</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em>, για τη μύησή μου στο τάβλι με χαρά και καλοσύνη· για το ότι μου δείχνει τον Δρόμο στην κατανόηση αυτού του υπέροχου παιχνιδιού· για το ότι συνεχίζει να με ενθαρρύνει παρά τις φτωχές μου προσπάθειες να παίξω καλύτερα.</p></li>
+<li><p><em>Nicolas Harmand</em>, χαρούμενος σύντροφος εδώ και πάνω από μια δεκαετία σε υπέροχες περιπέτειες, και φανταστικός συμπαίκτης από τότε που κόλλησε τον ιό του τάβλι.</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-right" title="1. Λήψη και εγκατάσταση" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

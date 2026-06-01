@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. Elenco dei comandi &mdash; Documentazione blunderDB 0.21.0 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a207f564"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="5. Scorciatoie da tastiera" href="raccourcis.html" />
+    <link rel="prev" title="3. Guida utente" href="guide_utilisateur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guida utente</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Elenco dei comandi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Operazioni globali</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">4.2. Posizioni e navigazione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">4.3. Modifica e ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Filtri di ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Comandi vari</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Scorciatoie da tastiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Appendice Windows: rilevamento errato di blunderDB come malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Elenco dei comandi</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="liste-des-commandes">
+<span id="cmd-mode"></span><h1><span class="section-number">4. </span>Elenco dei comandi<a class="headerlink" href="#liste-des-commandes" title="Link to this heading"></a></h1>
+<section id="operations-globales">
+<span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Operazioni globali<a class="headerlink" href="#operations-globales" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Comando</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>new, ne, n</p></td>
+<td><p>Crea un nuovo database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>open, op, o</p></td>
+<td><p>Apre un database esistente.</p></td>
+</tr>
+<tr class="row-even"><td><p>import_db, idb</p></td>
+<td><p>Importa e unisce un altro database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>export_db, edb</p></td>
+<td><p>Esporta la selezione corrente in un nuovo database.</p></td>
+</tr>
+<tr class="row-even"><td><p>quit, q</p></td>
+<td><p>Chiude blunderDB.</p></td>
+</tr>
+<tr class="row-odd"><td><p>help, he, h</p></td>
+<td><p>Apre la guida di blunderDB.</p></td>
+</tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>Mostra i metadati del database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Apre il pannello EPC (Effective Pip Count).</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
+<td><p>Apre la tabella di match equity Kazaross-XG2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2</p></td>
+<td><p>Apre la tabella dei takepoint con cubo a 2.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_live</p></td>
+<td><p>Apre la tabella dei takepoint con cubo a 2 per le corse lunghe.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_last</p></td>
+<td><p>Apre la tabella dei takepoint con cubo a 2 morto.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4</p></td>
+<td><p>Apre la tabella dei takepoint con cubo a 4.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_live</p></td>
+<td><p>Apre la tabella dei takepoint con cubo a 4 per le corse lunghe.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_last</p></td>
+<td><p>Apre la tabella dei takepoint con cubo a 4 morto.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv1</p></td>
+<td><p>Apre la tabella dei valori di gammon con cubo a 1.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv2</p></td>
+<td><p>Apre la tabella dei valori di gammon con cubo a 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv4</p></td>
+<td><p>Apre la tabella dei valori di gammon con cubo a 4.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="positions-et-navigation">
+<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Posizioni e navigazione<a class="headerlink" href="#positions-et-navigation" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Comando</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>import, i</p></td>
+<td><p>Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf).</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete, del, d</p></td>
+<td><p>Elimina la posizione corrente.</p></td>
+</tr>
+<tr class="row-even"><td><p>[number]</p></td>
+<td><p>Vai alla posizione con l’indice indicato.</p></td>
+</tr>
+<tr class="row-odd"><td><p>list, l</p></td>
+<td><p>Mostra l’analisi della posizione corrente.</p></td>
+</tr>
+<tr class="row-even"><td><p>comment, co</p></td>
+<td><p>Mostra/scrivi commenti.</p></td>
+</tr>
+<tr class="row-odd"><td><p>filter, fl</p></td>
+<td><p>Mostra/nascondi la libreria dei filtri.</p></td>
+</tr>
+<tr class="row-even"><td><p>history, hi</p></td>
+<td><p>Mostra/nascondi la cronologia di ricerca.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match, ma</p></td>
+<td><p>Mostra/nascondi il pannello delle partite.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection, coll</p></td>
+<td><p>Mostra/nascondi il pannello delle collezioni.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
+<td><p>Etichetta la posizione corrente.</p></td>
+</tr>
+<tr class="row-even"><td><p>e</p></td>
+<td><p>Carica tutte le posizioni del database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>Naviga nell’ultima partita visitata.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="edition-et-recherche">
+<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Modifica e ricerca<a class="headerlink" href="#edition-et-recherche" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Comando</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>write, wr, w</p></td>
+<td><p>Salva la posizione corrente.</p></td>
+</tr>
+<tr class="row-odd"><td><p>write!, wr!, w!</p></td>
+<td><p>Aggiorna la posizione corrente.</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Cerca posizioni con i filtri.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ss</p></td>
+<td><p>Cerca tra le posizioni attualmente filtrate.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="filtres-de-recherche">
+<span id="cmd-filter"></span><h2><span class="section-number">4.4. </span>Filtri di ricerca<a class="headerlink" href="#filtres-de-recherche" title="Link to this heading"></a></h2>
+<p>I filtri sottostanti devono essere giustapposti durante una ricerca, ovvero dopo l’inizio del comando <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p>
+<div class="admonition warning" id="cmd-filter-pos">
+<p class="admonition-title">Avvertimento</p>
+<p>Nella ricerca di posizioni, per impostazione predefinita, blunderDB tiene conto della struttura di pedine corrente e ignora la posizione del cubo, il punteggio e i dadi. Per tenere conto della posizione del cubo, del punteggio e dei dadi, occorre indicarlo esplicitamente nella ricerca.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Il comando di ricerca <code class="docutils literal notranslate"><span class="pre">s</span></code> è disponibile nel pannello di ricerca (tasto <code class="docutils literal notranslate"><span class="pre">TAB</span></code>). Il comando <code class="docutils literal notranslate"><span class="pre">ss</span></code> permette di cercare tra i risultati attualmente filtrati.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>blunderDB considera che una pedina arretrata (backchecker) sia una pedina situata tra il punto 24 e il punto 19.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>blunderDB considera che il numero di pedine nella zona sia il numero di pedine situate tra il punto 12 e il punto 1.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>blunderDB considera che l’outfield si estenda tra il punto 18 e il punto 7.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>blunderDB considera che il jan si estenda tra il punto 1 e il punto 6.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Suggerimento</p>
+<p>I parametri per filtrare le posizioni possono essere combinati a piacere.</p>
+</div>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Query</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cube, cub, cu, c</p></td>
+<td><p>La posizione verifica la configurazione del cubo.</p></td>
+</tr>
+<tr class="row-odd"><td><p>score, sco, sc, s</p></td>
+<td><p>La posizione verifica il punteggio.</p></td>
+</tr>
+<tr class="row-even"><td><p>d</p></td>
+<td><p>La posizione verifica il tipo di decisione (pedina o cubo).</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>La posizione verifica il lancio dei dadi (entrambi i dadi, in qualsiasi ordine).</p></td>
+</tr>
+<tr class="row-even"><td><p>D1</p></td>
+<td><p>La posizione verifica il lancio dei dadi solo sul primo dado (il valore del primo dado compare su uno dei due dadi della posizione).</p></td>
+</tr>
+<tr class="row-odd"><td><p>nc</p></td>
+<td><p>La posizione è senza contatto.</p></td>
+</tr>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>La posizione o quella speculare verifica i filtri.</p></td>
+</tr>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p>La posizione non contiene alcuna pedina della struttura di esclusione (scheda « Except » del pannello di ricerca).</p></td>
+</tr>
+<tr class="row-even"><td><p>p&gt;x</p></td>
+<td><p>Il giocatore ha almeno x pip di svantaggio nella corsa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>p&lt;x</p></td>
+<td><p>Il giocatore ha al massimo x pip di svantaggio nella corsa.</p></td>
+</tr>
+<tr class="row-even"><td><p>px,y</p></td>
+<td><p>Il giocatore ha tra x e y pip di svantaggio nella corsa.</p></td>
+</tr>
+<tr class="row-odd"><td><p>P&gt;x</p></td>
+<td><p>Il giocatore ha una corsa di almeno x pip.</p></td>
+</tr>
+<tr class="row-even"><td><p>P&lt;x</p></td>
+<td><p>Il giocatore ha una corsa di al massimo x pip.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Px,y</p></td>
+<td><p>Il giocatore ha una corsa tra x e y pip.</p></td>
+</tr>
+<tr class="row-even"><td><p>e&gt;x</p></td>
+<td><p>L’equity (in millipunti) della posizione è maggiore di x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>e&lt;x</p></td>
+<td><p>L’equity (in millipunti) della posizione è minore di x.</p></td>
+</tr>
+<tr class="row-even"><td><p>ex,y</p></td>
+<td><p>L’equity (in millipunti) della posizione è compresa tra x e y.</p></td>
+</tr>
+<tr class="row-odd"><td><p>E&gt;x</p></td>
+<td><p>L’errore della mossa giocata dal giocatore 1 (in millipunti) è maggiore di x.</p></td>
+</tr>
+<tr class="row-even"><td><p>E&lt;x</p></td>
+<td><p>L’errore della mossa giocata dal giocatore 1 (in millipunti) è minore di x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ex,y</p></td>
+<td><p>L’errore della mossa giocata dal giocatore 1 (in millipunti) è compreso tra x e y.</p></td>
+</tr>
+<tr class="row-even"><td><p>w&gt;x</p></td>
+<td><p>Il giocatore ha probabilità di vittoria superiori a x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>w&lt;x</p></td>
+<td><p>Il giocatore ha probabilità di vittoria inferiori a x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>wx,y</p></td>
+<td><p>Il giocatore ha probabilità di vittoria comprese tra x % e y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>g&gt;x</p></td>
+<td><p>Il giocatore ha probabilità di gammon superiori a x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>g&lt;x</p></td>
+<td><p>Il giocatore ha probabilità di gammon inferiori a x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gx,y</p></td>
+<td><p>Il giocatore ha probabilità di gammon comprese tra x % e y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>b&gt;x</p></td>
+<td><p>Il giocatore ha probabilità di backgammon superiori a x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>b&lt;x</p></td>
+<td><p>Il giocatore ha probabilità di backgammon inferiori a x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>bx,y</p></td>
+<td><p>Il giocatore ha probabilità di backgammon comprese tra x % e y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>W&gt;x</p></td>
+<td><p>L’avversario ha probabilità di vittoria superiori a x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>W&lt;x</p></td>
+<td><p>L’avversario ha probabilità di vittoria inferiori a x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wx,y</p></td>
+<td><p>L’avversario ha probabilità di vittoria comprese tra x % e y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>G&gt;x</p></td>
+<td><p>L’avversario ha probabilità di gammon superiori a x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>G&lt;x</p></td>
+<td><p>L’avversario ha probabilità di gammon inferiori a x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>Gx,y</p></td>
+<td><p>L’avversario ha probabilità di gammon comprese tra x % e y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>B&gt;x</p></td>
+<td><p>L’avversario ha probabilità di backgammon superiori a x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>B&lt;x</p></td>
+<td><p>L’avversario ha probabilità di backgammon inferiori a x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bx,y</p></td>
+<td><p>L’avversario ha probabilità di backgammon comprese tra x % e y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>o&gt;x</p></td>
+<td><p>Il giocatore ha almeno x pedine fuori.</p></td>
+</tr>
+<tr class="row-odd"><td><p>o&lt;x</p></td>
+<td><p>Il giocatore ha al massimo x pedine fuori.</p></td>
+</tr>
+<tr class="row-even"><td><p>ox,y</p></td>
+<td><p>Il giocatore ha tra x e y pedine fuori.</p></td>
+</tr>
+<tr class="row-odd"><td><p>O&gt;x</p></td>
+<td><p>L’avversario ha almeno x pedine fuori.</p></td>
+</tr>
+<tr class="row-even"><td><p>O&lt;x</p></td>
+<td><p>L’avversario ha al massimo x pedine fuori.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ox,y</p></td>
+<td><p>L’avversario ha tra x e y pedine fuori.</p></td>
+</tr>
+<tr class="row-even"><td><p>k&gt;x</p></td>
+<td><p>Il giocatore ha almeno x pedine arretrate.</p></td>
+</tr>
+<tr class="row-odd"><td><p>k&lt;x</p></td>
+<td><p>Il giocatore ha al massimo x pedine arretrate.</p></td>
+</tr>
+<tr class="row-even"><td><p>kx,y</p></td>
+<td><p>Il giocatore ha tra x e y pedine arretrate.</p></td>
+</tr>
+<tr class="row-odd"><td><p>K&gt;x</p></td>
+<td><p>L’avversario ha almeno x pedine arretrate.</p></td>
+</tr>
+<tr class="row-even"><td><p>K&lt;x</p></td>
+<td><p>L’avversario ha al massimo x pedine arretrate.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Kx,y</p></td>
+<td><p>L’avversario ha tra x e y pedine arretrate.</p></td>
+</tr>
+<tr class="row-even"><td><p>z&gt;x</p></td>
+<td><p>Il giocatore ha almeno x pedine nella zona.</p></td>
+</tr>
+<tr class="row-odd"><td><p>z&lt;x</p></td>
+<td><p>Il giocatore ha al massimo x pedine nella zona.</p></td>
+</tr>
+<tr class="row-even"><td><p>zx,y</p></td>
+<td><p>Il giocatore ha tra x e y pedine nella zona.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Z&gt;x</p></td>
+<td><p>L’avversario ha almeno x pedine nella zona.</p></td>
+</tr>
+<tr class="row-even"><td><p>Z&lt;x</p></td>
+<td><p>L’avversario ha al massimo x pedine nella zona.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Zx,y</p></td>
+<td><p>L’avversario ha tra x e y pedine nella zona.</p></td>
+</tr>
+<tr class="row-even"><td><p>bo&gt;x</p></td>
+<td><p>Il giocatore ha almeno x blot nell’outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bo&lt;x</p></td>
+<td><p>Il giocatore ha al massimo x blot nell’outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>box,y</p></td>
+<td><p>Il giocatore ha tra x e y blot nell’outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BO&gt;x</p></td>
+<td><p>L’avversario ha almeno x blot nell’outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>BO&lt;x</p></td>
+<td><p>L’avversario ha al massimo x blot nell’outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BOx,y</p></td>
+<td><p>L’avversario ha tra x e y blot nell’outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>bj&gt;x</p></td>
+<td><p>Il giocatore ha almeno x blot nel jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bj&lt;x</p></td>
+<td><p>Il giocatore ha al massimo x blot nel jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>bjx,y</p></td>
+<td><p>Il giocatore ha tra x e y blot nel jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJ&gt;x</p></td>
+<td><p>L’avversario ha almeno x blot nel jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>BJ&lt;x</p></td>
+<td><p>L’avversario ha al massimo x blot nel jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJx,y</p></td>
+<td><p>L’avversario ha tra x e y blot nel jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>t’parola1;parola2;…”</p></td>
+<td><p>I commenti della posizione contengono almeno una delle parole.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m’schema1,schema2,…'</p></td>
+<td><p>Le migliori mosse di pedine contenenti almeno uno degli schemi.</p></td>
+</tr>
+<tr class="row-even"><td><p>m’ND,DT,DP,…'</p></td>
+<td><p>Le migliori decisioni di cubo di No Double/Take, Double Take, Double Pass.</p></td>
+</tr>
+<tr class="row-odd"><td><p>T&gt;x</p></td>
+<td><p>Data di aggiunta della posizione dopo x (AAAA/MM/GG).</p></td>
+</tr>
+<tr class="row-even"><td><p>T&lt;x</p></td>
+<td><p>Data di aggiunta della posizione prima di x (AAAA/MM/GG).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tx,y</p></td>
+<td><p>Data di aggiunta della posizione tra x e y (AAAA/MM/GG).</p></td>
+</tr>
+<tr class="row-even"><td><p>max</p></td>
+<td><p>Cerca nella partita con identificatore x (es: ma3).</p></td>
+</tr>
+<tr class="row-odd"><td><p>max,y</p></td>
+<td><p>Cerca nelle partite con identificatori da x a y (es: ma2,5).</p></td>
+</tr>
+<tr class="row-even"><td><p>tnx</p></td>
+<td><p>Cerca nel torneo con identificatore x (es: tn1).</p></td>
+</tr>
+<tr class="row-odd"><td><p>tnx,y</p></td>
+<td><p>Cerca nei tornei con identificatori da x a y (es: tn1,3).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Filtrare le posizioni in base al lancio dei dadi (<cite>D</cite> o <cite>D1</cite>) implica <em>a fortiori</em> filtrare le posizioni in base al tipo di decisione (<cite>d</cite>). Il filtro <cite>D1</cite> ignora il valore del secondo dado: solo il valore del primo dado viene usato per far corrispondere le posizioni (su uno qualsiasi dei due dadi del lancio).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Per il filtro di differenza relativa nella corsa (<cite>p&gt;x</cite>, <cite>p&lt;x</cite>, <cite>px,y</cite>), il giocatore è in svantaggio nella corsa rispetto all’avversario se <cite>x&gt;0</cite> e in vantaggio se <cite>x&lt;0</cite>. Esempio: <cite>p&lt;-10</cite> : il giocatore ha almeno 10 pip di vantaggio nella corsa. <cite>p50,70</cite> : il giocatore ha tra 50 e 70 pip di svantaggio nella corsa.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Per cercare in più partite non contigue, giustapporre il filtro <code class="docutils literal notranslate"><span class="pre">ma</span></code> più volte (es: <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> per le partite 23 e 43). Lo stesso principio si applica ai tornei con <code class="docutils literal notranslate"><span class="pre">tn</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Cercare in un torneo (<code class="docutils literal notranslate"><span class="pre">tn</span></code>) equivale a cercare in tutte le partite del torneo interessato. Gli identificatori delle partite e dei tornei sono visibili nelle colonne ID dei pannelli corrispondenti.</p>
+</div>
+<p>Ad esempio, il comando <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">s</span> <span class="pre">c</span> <span class="pre">p-20,-5</span> <span class="pre">w&gt;60</span> <span class="pre">z&gt;10</span> <span class="pre">K2,3</span></code> filtra tutte le posizioni tenendo conto della struttura delle pedine, del punteggio e del cubo della posizione modificata in cui il giocatore ha tra 20 e 5 pip di vantaggio nella corsa, con almeno il 60% di probabilità di vittoria, almeno 10 pedine nella zona, e l’avversario ha tra 2 e 3 pedine arretrate.</p>
+</section>
+<section id="commandes-diverses">
+<span id="cmd-misc"></span><h2><span class="section-number">4.5. </span>Comandi vari<a class="headerlink" href="#commandes-diverses" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Comando</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clear, cl</p></td>
+<td><p>Cancella la cronologia dei comandi.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Le migrazioni del database vengono ora eseguite automaticamente all’apertura di un database.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="3. Guida utente" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="raccourcis.html" class="btn btn-neutral float-right" title="5. Scorciatoie da tastiera" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Lingue</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

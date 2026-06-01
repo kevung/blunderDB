@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. よくある質問（FAQ） &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="8. 付録: フィルターの高度な使い方" href="annexe_filtres.html" />
+    <link rel="prev" title="6. コマンドラインインターフェース（CLI）" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. よくある質問（FAQ）</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-utilite-de-blunderdb">7.1. blunderDB の用途は何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">7.2. blunderDB 作成の動機は何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">7.3. 現在のデータベースを保存するにはどうすればよいですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">7.4. ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-fusionner-plusieurs-bases-de-donnees">7.5. 複数のデータベースを統合するにはどうすればよいですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-formats-de-fichiers-de-match-sont-supportes">7.6. どのマッチファイル形式がサポートされていますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qu-une-collection">7.7. コレクションとは何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-que-l-epc">7.8. EPC とは何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">7.9. blunderDB にはコマンドラインインターフェースがありますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">7.10. blunderDB を変更、コピー、共有できますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">7.11. blunderDB はどのデータ形式を使用していますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb">7.12. blunderDB の設計原則は何でしたか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">7.13. blunderDB のソフトウェアアーキテクチャは何ですか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">7.14. blunderDB はどのプラットフォームで動作しますか？</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">7.15. blunderDB のアイコンはどこから来ていますか？</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">7. </span>よくある質問（FAQ）</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="foire-aux-questions">
+<span id="faq"></span><h1><span class="section-number">7. </span>よくある質問（FAQ）<a class="headerlink" href="#foire-aux-questions" title="Link to this heading"></a></h1>
+<section id="quel-est-l-utilite-de-blunderdb">
+<h2><span class="section-number">7.1. </span>blunderDB の用途は何ですか？<a class="headerlink" href="#quel-est-l-utilite-de-blunderdb" title="Link to this heading"></a></h2>
+<p>blunderDB はポジションのパーソナライズされたデータベースを構築することを可能にします。その強みは、<em>アプリオリ</em> な分類を前提としないことです。これによりユーザーは、さまざまな条件（レース、構造、キューブ、スコア、バックチェッカー、ゾーン内のチェッカー、勝利/ギャモン/バックギャモンの可能性など）を自由に組み合わせて柔軟にポジションを照会できます。</p>
+<p>blunderDB のもう一つの便利な使い方は、参照ポジションのカタログを作成することです。ポジションにタグを付ける機能により、ユーザーは単一のファイルを使用してすべての参照ポジションを構造化された方法でまとめることができます。blunderDB がプレイヤー間でのポジション共有を促進することを願っています。</p>
+</section>
+<section id="qu-est-ce-qui-a-motive-la-creation-de-blunderdb">
+<h2><span class="section-number">7.2. </span>blunderDB 作成の動機は何ですか？<a class="headerlink" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb" title="Link to this heading"></a></h2>
+<p>以前は、興味深いポジションやブランダーを異なるフォルダーに保存していました。しかし、テーマカテゴリの選択で最初から想定していなかった条件でポジションを検索するのが難しくなりました。例えば、ポジションをゲームタイプ（レース、ホールディングゲーム、ブリッツ、バックゲームなど）で分類している場合、特定のスコアやキューブレベルのすべてのポジションをどのように取得すればよいでしょうか？また、古いポジションは忘れられがちでした。すべてのポジションを集約し、テーマカテゴリを*アプリオリ*に前提とせず、データベースに問い合わせができるツールが欲しかったのです。この柔軟なアプローチにより、ポジションの整理を崩すことなく新しいフィルターを追加できます。このタイプのソフトウェアはチェスでは ChessBase のように非常に一般的です。</p>
+</section>
+<section id="comment-sauvegarder-la-base-de-donnees-courante">
+<h2><span class="section-number">7.3. </span>現在のデータベースを保存するにはどうすればよいですか？<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Link to this heading"></a></h2>
+<p>データベースはリクエスト実行直後に更新されます。明示的な保存操作は不要です。</p>
+</section>
+<section id="dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">
+<h2><span class="section-number">7.4. </span>ポジションのカテゴリごとに異なるデータベースを作成する必要がありますか？<a class="headerlink" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions" title="Link to this heading"></a></h2>
+<p>明確な理由がない限り、ポジションを別々のデータベースに分割しないことが重要です。将来の検索でそれらを関連付けることができなくなるリスクがあります。blunderDB の哲学は、ポジションカテゴリを*アプリオリ*に前提とせず、ユーザーが柔軟に照会できるようにすることです。ポジションが特定の条件下や特定の理由で遭遇した場合は、別々のデータベースに保存することが賢明かもしれません。例えば、以下のような別々のポジションデータベースを作成できます：</p>
+<ul class="simple">
+<li><p>参照ポジション、</p></li>
+<li><p>リアルトーナメントでのブランダー、</p></li>
+<li><p>オンラインプレイでのブランダー。</p></li>
+</ul>
+</section>
+<section id="comment-fusionner-plusieurs-bases-de-donnees">
+<h2><span class="section-number">7.5. </span>複数のデータベースを統合するにはどうすればよいですか？<a class="headerlink" href="#comment-fusionner-plusieurs-bases-de-donnees" title="Link to this heading"></a></h2>
+<p>複数の blunderDB データベースを統合したい場合は、&quot;Import Database&quot; 機能を使用してください：</p>
+<ol class="arabic simple">
+<li><p>メインデータベース（インポートされたポジションを受け取るもの）を開く</p></li>
+<li><p>ツールバーの &quot;Import Database&quot; ボタンをクリックする</p></li>
+<li><p>インポートするデータベースを選択する</p></li>
+<li><p>blunderDB が自動的にポジションを統合する</p></li>
+</ol>
+<p>統合時、blunderDB は重複を避け、解析とコメントをインテリジェントに統合します。同一のポジションは重複しませんが、それらの解析とコメントは結合されます。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>別のデータベースをインポートする前に、メインデータベースのバックアップコピーを作成することをお勧めします。</p>
+</div>
+</section>
+<section id="quels-formats-de-fichiers-de-match-sont-supportes">
+<h2><span class="section-number">7.6. </span>どのマッチファイル形式がサポートされていますか？<a class="headerlink" href="#quels-formats-de-fichiers-de-match-sont-supportes" title="Link to this heading"></a></h2>
+<p>blunderDB は以下のマッチ形式をサポートしています：</p>
+<ul class="simple">
+<li><p><strong>eXtreme Gammon (XG)</strong>：<em>.xg</em> ファイル。完全な手の解析、キューブ決定、プレイした手、マルチエンジンサポートを含みます。解析付きの個別ポジションのインポートには <em>.xgp</em> ファイル。</p></li>
+<li><p><strong>GNUbg</strong>：解析付きの <em>.sgf</em> ファイル（Smart Game Format）。</p></li>
+<li><p><strong>Jellyfish</strong>：<em>.mat</em> および <em>.txt</em> ファイル。</p></li>
+<li><p><strong>BGBlitz</strong>：<em>.bgf</em> ファイルおよびテキストポジション。</p></li>
+</ul>
+<p>インポートは、単一ファイル、複数選択、再帰的なフォルダー、クリップボードからの貼り付け、またはドラッグアンドドロップで行えます。</p>
+<p>blunderDB は自動的に重複を検出し、データベースにすでに存在するマッチのインポートを防ぎます。</p>
+</section>
+<section id="qu-est-ce-qu-une-collection">
+<h2><span class="section-number">7.7. </span>コレクションとは何ですか？<a class="headerlink" href="#qu-est-ce-qu-une-collection" title="Link to this heading"></a></h2>
+<p>コレクションはポジションのカスタムグループです。動的なフィルター検索とは異なり、コレクションはユーザーが手動で選択した固定のポジションセットです。コレクションは、例えば特定のテーマの参照ポジションをまとめるために使用できます。</p>
+</section>
+<section id="qu-est-ce-que-l-epc">
+<h2><span class="section-number">7.8. </span>EPC とは何ですか？<a class="headerlink" href="#qu-est-ce-que-l-epc" title="Link to this heading"></a></h2>
+<p>EPC（Effective Pip Count）は、ベアオフポジションを評価するための単純なピップカウントよりも正確な測定値です。blunderDB の EPC 計算機は GNUbg の 6 ポイントベアオフデータベースを使用し、EPC、平均ロール数、標準偏差、ピップカウント、ウェイステージをリアルタイムで計算します。</p>
+</section>
+<section id="blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">
+<h2><span class="section-number">7.9. </span>blunderDB にはコマンドラインインターフェースがありますか？<a class="headerlink" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>はい、blunderDB にはコマンドラインインターフェース（CLI）があり、グラフィカルインターフェースなしでデータベースの作成、マッチのインポート、エクスポート、ポジションの検索、統計の表示などの操作を実行できます。詳細については CLI ドキュメントを参照してください。</p>
+</section>
+<section id="puis-je-modifier-copier-partager-blunderdb">
+<h2><span class="section-number">7.10. </span>blunderDB を変更、コピー、共有できますか？<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Link to this heading"></a></h2>
+<p>はい、もちろんです（むしろ推奨されています）。blunderDB は MIT ライセンスの下にあります。</p>
+</section>
+<section id="quel-format-de-donnees-utilise-blunderdb">
+<h2><span class="section-number">7.11. </span>blunderDB はどのデータ形式を使用していますか？<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Link to this heading"></a></h2>
+<p>データベースは単純な SQLite ファイルです。blunderDB がない場合でも、任意の SQLite ファイルエディターで開くことができます。</p>
+</section>
+<section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
+<h2><span class="section-number">7.12. </span>blunderDB の設計原則は何でしたか？<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
+<p>blunderDB のモーダル操作（NORMAL、EDIT）は、非常に強力なテキストエディター <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a> から着想を得ています。blunderDB を軽量で、スタンドアロンで、インストール不要で、複数のプラットフォームで利用可能にしたかったため、Go プログラミング言語と Svelte ライブラリを選択しました。データベースのシリアライズには、ファイル形式がクロスプラットフォームでデータベースを保持するのに適している必要がありました。SQLite ファイル形式が最適だと思われました。</p>
+</section>
+<section id="quel-est-l-architecture-logicielle-de-blunderdb">
+<h2><span class="section-number">7.13. </span>blunderDB のソフトウェアアーキテクチャは何ですか？<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>バックエンドは <a class="reference external" href="https://go.dev/">Go</a> でコーディングされています。ポジションを保存する SQLite データベースのすべての操作を担当します。</p></li>
+<li><p>フロントエンドは <a class="reference external" href="https://svelte.dev/">Svelte</a> でコーディングされています。グラフィカルインターフェースとバックギャモンボードのレンダリングを担当します。</p></li>
+<li><p>アプリケーションは <a class="reference external" href="https://wails.io/">Wails</a> でカプセル化されており、Windows および Linux 上で動作するネイティブデスクトップアプリケーションを製造できます。</p></li>
+<li><p>データベースは <a class="reference external" href="https://www.sqlite.org/">SQLite</a> で管理されています。</p></li>
+</ul>
+<p>詳細については、<a class="reference external" href="https://github.com/kevung/blunderDB">blunderDB GitHub リポジトリ</a> を参照してください。</p>
+</section>
+<section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
+<h2><span class="section-number">7.14. </span>blunderDB はどのプラットフォームで動作しますか？<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
+<p>blunderDB は Windows、Linux、Mac で動作します。</p>
+</section>
+<section id="d-ou-vient-l-icone-de-blunderdb">
+<h2><span class="section-number">7.15. </span>blunderDB のアイコンはどこから来ていますか？<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Link to this heading"></a></h2>
+<p>blunderDB のアイコンは <a class="reference external" href="https://commons.wikimedia.org/wiki/SMirC">SMirC シリーズ</a> の &quot;goggling&quot; 絵文字です。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli.html" class="btn btn-neutral float-left" title="6. コマンドラインインターフェース（CLI）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="8. 付録: フィルターの高度な使い方" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

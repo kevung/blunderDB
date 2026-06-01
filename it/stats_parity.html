@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB &mdash; Documentazione blunderDB 0.21.0 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a207f564"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="prev" title="11. Appendice: Schema del database" href="annexe_db_scheme.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guida utente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Scorciatoie da tastiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Appendice Windows: rilevamento errato di blunderDB come malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Appendice: Schema del database</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">12.1. Definizioni formali</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rate">12.1.1. PR (Performance Rate)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">12.1.2. Snowie Error Rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">12.1.3. Perdita di MWC (Match Winning Chance)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">12.2. Decisioni conteggiate nel denominatore del PR</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">12.2.1. Mosse di pedine — decisioni conteggiate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">12.2.2. Decisioni di cubo — decisioni conteggiate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">12.2.3. Riepilogo del filtro</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">12.3. Corrispondenza blunderDB ↔ XG ↔ gnuBG</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">12.3.1. Confronto XG ↔ blunderDB (stesso motore di analisi)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">12.3.2. Confronto gnuBG ↔ blunderDB (import SGF — motori diversi)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">12.4. Convalidare i propri valori</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">12.5. Riferimento gnuBG</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb">
+<span id="stats-parity"></span><h1><span class="section-number">12. </span>Appendice: modello statistico — allineamento XG / gnuBG / blunderDB<a class="headerlink" href="#annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
+<p>Questa pagina descrive come blunderDB calcola il <strong>PR</strong> (Performance Rate), lo <strong>Snowie Error Rate</strong> e la <strong>perdita di MWC</strong>, e come queste metriche sono allineate a eXtreme Gammon (XG) e gnuBG (riferimento aperto).</p>
+<nav class="contents local" id="indice">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definitions-formelles" id="id1">Definizioni formali</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pr-performance-rate" id="id2">PR (Performance Rate)</a></p></li>
+<li><p><a class="reference internal" href="#snowie-error-rate" id="id3">Snowie Error Rate</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-match-winning-chance" id="id4">Perdita di MWC (Match Winning Chance)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr" id="id5">Decisioni conteggiate nel denominatore del PR</a></p>
+<ul>
+<li><p><a class="reference internal" href="#coups-de-pions-decisions-comptees" id="id6">Mosse di pedine — decisioni conteggiate</a></p></li>
+<li><p><a class="reference internal" href="#decisions-de-cube-decisions-comptees" id="id7">Decisioni di cubo — decisioni conteggiate</a></p></li>
+<li><p><a class="reference internal" href="#resume-du-filtre" id="id8">Riepilogo del filtro</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg" id="id9">Corrispondenza blunderDB ↔ XG ↔ gnuBG</a></p>
+<ul>
+<li><p><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" id="id10">Confronto XG ↔ blunderDB (stesso motore di analisi)</a></p></li>
+<li><p><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" id="id11">Confronto gnuBG ↔ blunderDB (import SGF — motori diversi)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#valider-vos-propres-chiffres" id="id12">Convalidare i propri valori</a></p></li>
+<li><p><a class="reference internal" href="#reference-gnubg" id="id13">Riferimento gnuBG</a></p></li>
+</ul>
+</nav>
+<section id="definitions-formelles">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">12.1. </span>Definizioni formali</a><a class="headerlink" href="#definitions-formelles" title="Link to this heading"></a></h2>
+<section id="pr-performance-rate">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">12.1.1. </span>PR (Performance Rate)</a><a class="headerlink" href="#pr-performance-rate" title="Link to this heading"></a></h3>
+<p>Il PR (chiamato anche «error rate per decision» in gnuBG) misura l’errore medio in millesimi di punto di equity (millipunti, mpt) per decisione conteggiata.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = \frac{\sum_i |\mathrm{errore}_i|}{\mathrm{N_{conteggiate}}} \times 500\]</div>
+<ul class="simple">
+<li><p>Il numeratore è la somma assoluta degli errori EMG (in equity cubeful) su tutte le decisioni considerate.</p></li>
+<li><p>Il denominatore <span class="math notranslate nohighlight">\(N_\text{conteggiate}\)</span> è il numero di <strong>decisioni conteggiate</strong> (vedi sotto).</p></li>
+<li><p>Il fattore 500 converte l’equity in millipunti (1 punto = 1000 mpt, ma la scala è ×500 per convenzione XG/gnuBG — cfr. <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code>).</p></li>
+</ul>
+</section>
+<section id="snowie-error-rate">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">12.1.2. </span>Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Link to this heading"></a></h3>
+<p>Lo Snowie ER usa lo <strong>stesso numeratore</strong> del PR, ma il denominatore è il numero totale di mosse di entrambi i giocatori, mosse forzate incluse (tutte le decisioni, senza filtro):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{SnowieER} = \frac{\sum_i |\mathrm{errore}_i|}{N_\text{P1} + N_\text{P2}} \times 500\]</div>
+<p>Riferimento: <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code>.</p>
+<p>Lo Snowie ER è più stabile tra gli strumenti perché il suo denominatore non dipende dal filtro delle decisioni forzate/banali. Serve come metrica di confronto incrociato tra XG, gnuBG e blunderDB.</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Lo Snowie ER di un giocatore è tipicamente circa la metà del suo PR, perché il denominatore include le mosse di entrambi i giocatori mentre il PR usa solo le decisioni di quel giocatore.</p>
+</div>
+</section>
+<section id="perte-mwc-match-winning-chance">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="section-number">12.1.3. </span>Perdita di MWC (Match Winning Chance)</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Link to this heading"></a></h3>
+<p>La perdita di MWC esprime in punti percentuali di probabilità di vincere il match l’effetto cumulato degli errori di un giocatore. Per ogni decisione, l’errore EMG è convertito in MWC tramite la tabella MET (Match Equity Table) al punteggio corrente:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\]</div>
+<p>Riferimento: <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code>.</p>
+</section>
+</section>
+<section id="decisions-comptees-au-denominateur-du-pr">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink"><span class="section-number">12.2. </span>Decisioni conteggiate nel denominatore del PR</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Link to this heading"></a></h2>
+<p>blunderDB segue le stesse regole di esclusione di XG e gnuBG.</p>
+<section id="coups-de-pions-decisions-comptees">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink"><span class="section-number">12.2.1. </span>Mosse di pedine — decisioni conteggiate</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Vengono conteggiate solo le <strong>mosse non forzate</strong>:</p>
+<ul class="simple">
+<li><p>Una mossa è <strong>forzata</strong> se i dadi offrono una sola mossa legale (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">==</span> <span class="pre">1</span></code> in <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458</span></code>).</p></li>
+<li><p>Le mosse forzate hanno errore nullo per definizione: il giocatore non aveva scelta. Includerle nel denominatore abbasserebbe artificialmente il PR.</p></li>
+</ul>
+</section>
+<section id="decisions-de-cube-decisions-comptees">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink"><span class="section-number">12.2.2. </span>Decisioni di cubo — decisioni conteggiate</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Vengono conteggiate solo le <strong>decisioni di cubo vicine</strong>:</p>
+<ul class="simple">
+<li><p>Una decisione di cubo è <strong>vicina</strong> se rientra nella finestra di equity <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> attorno al punto di raddoppio (predicato <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> in <code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code>).</p></li>
+<li><p>Un «No Double» banale (equity molto negativa o molto positiva) non è una vera decisione strategica; includerlo gonfierebbe il denominatore e abbasserebbe il PR.</p></li>
+</ul>
+</section>
+<section id="resume-du-filtre">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink"><span class="section-number">12.2.3. </span>Riepilogo del filtro</a><a class="headerlink" href="#resume-du-filtre" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Tipo di decisione</p></th>
+<th class="head"><p>Incluso in <span class="math notranslate nohighlight">\(N_\text{conteggiate}\)</span> (PR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Mossa non forzata</p></td>
+<td><p>Sì</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mossa forzata</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>Cubo vicino</p></td>
+<td><p>Sì</p></td>
+</tr>
+<tr class="row-odd"><td><p>No Double banale</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-even"><td><p>Take / Pass</p></td>
+<td><p>Sempre (sono risposte al raddoppio)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="correspondance-blunderdb-xg-gnubg">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink"><span class="section-number">12.3. </span>Corrispondenza blunderDB ↔ XG ↔ gnuBG</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Link to this heading"></a></h2>
+<p>Le metriche sono allineate entro i seguenti limiti (misurati su 3 match di riferimento):</p>
+<section id="comparaison-xg-blunderdb-meme-moteur-d-analyse">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink"><span class="section-number">12.3.1. </span>Confronto XG ↔ blunderDB (stesso motore di analisi)</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metrica</p></th>
+<th class="head"><p>Scarto tipico</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Decisioni totali</p></td>
+<td><p>≤ 5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mosse non forzate</p></td>
+<td><p>≤ 7</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>≤ 0.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>Perdita di MWC</p></td>
+<td><p>≤ 1.0 pp</p></td>
+</tr>
+<tr class="row-even"><td><p>Equity totale (EMG)</p></td>
+<td><p>≤ 0.05</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink"><span class="section-number">12.3.2. </span>Confronto gnuBG ↔ blunderDB (import SGF — motori diversi)</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Metrica</p></th>
+<th class="head" colspan="2"><p>Scarto tipico | Causa principale</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PR (checker)</p></td>
+<td><p>≤ 0.20</p></td>
+<td><p>differenze di equity tra motori diversi</p></td>
+</tr>
+<tr class="row-odd"><td><p>Perdita di MWC</p></td>
+<td><p>≤ 3.5 pp</p></td>
+<td><p>dati close-cube incompleti nel SGF</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie ER</p></td>
+<td><p>≤ 0.50</p></td>
+<td><p>mosse forzate senza analisi (SGF)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>I file SGF (gnuBG) non includono le alternative per le mosse forzate, il che significa che blunderDB non può rilevare tutte le mosse forzate all’import SGF. Questo crea uno scarto strutturale sullo Snowie ER (denominatore leggermente diverso).</p>
+</div>
+</section>
+</section>
+<section id="valider-vos-propres-chiffres">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink"><span class="section-number">12.4. </span>Convalidare i propri valori</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Link to this heading"></a></h2>
+<p>Se i tuoi valori di PR o MWC divergono dai valori XG, verifica i seguenti punti:</p>
+<ol class="arabic simple">
+<li><p><strong>Analisi complete</strong> — Il PR può essere calcolato solo sulle posizioni che dispongono di un’analisi. Le posizioni senza analisi vengono conteggiate come errore zero ma non rientrano in <span class="math notranslate nohighlight">\(N_\text{conteggiate}\)</span>.</p></li>
+<li><p><strong>Versione XG</strong> — XG può modificare i suoi calcoli tra una versione e l’altra. blunderDB si allinea al comportamento osservato nelle versioni recenti.</p></li>
+<li><p><strong>Formato di import</strong> — I file SGF gnuBG producono scarti più importanti sulle metriche del cubo (vedi tabella sopra) perché il file non include le analisi complete per tutte le decisioni di cubo.</p></li>
+<li><p><strong>Migrazione del database</strong> — Dopo l’aggiornamento di blunderDB, i database esistenti vengono migrati automaticamente. Effettua un backup prima di aprire un database con una nuova versione.</p></li>
+</ol>
+</section>
+<section id="reference-gnubg">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink"><span class="section-number">12.5. </span>Riferimento gnuBG</a><a class="headerlink" href="#reference-gnubg" title="Link to this heading"></a></h2>
+<p>Le formule sono state verificate nei seguenti file sorgente (repository gnuBG):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code> — PR («Error rate per decision»).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code> — Snowie Error Rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458–462</span></code> — Accumulo checker, esclusione delle mosse forzate (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1430–1474</span></code> — Conversione EMG → MWC per decisione.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code> — Accumulo della perdita di MWC (<code class="docutils literal notranslate"><span class="pre">eq2mwc</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> — Predicato <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> (soglia 0.16).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-left" title="11. Appendice: Schema del database" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Lingue</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

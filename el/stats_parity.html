@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="prev" title="11. Παράρτημα: Σχήμα της βάσης δεδομένων" href="annexe_db_scheme.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">12.1. Τυπικοί ορισμοί</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rate">12.1.1. PR (Performance Rate)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">12.1.2. Snowie Error Rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">12.1.3. Απώλεια MWC (Match Winning Chance)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">12.2. Μετρούμενες αποφάσεις στον παρονομαστή του PR</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">12.2.1. Κινήσεις πουλιών — μετρούμενες αποφάσεις</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">12.2.2. Αποφάσεις κύβου — μετρούμενες αποφάσεις</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">12.2.3. Σύνοψη φίλτρου</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">12.3. Αντιστοιχία blunderDB ↔ XG ↔ gnuBG</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">12.3.1. Σύγκριση XG ↔ blunderDB (ίδια μηχανή ανάλυσης)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">12.3.2. Σύγκριση gnuBG ↔ blunderDB (εισαγωγή SGF — διαφορετικές μηχανές)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">12.4. Επαλήθευση των δικών σας αριθμών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">12.5. Αναφορά gnuBG</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb">
+<span id="stats-parity"></span><h1><span class="section-number">12. </span>Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB<a class="headerlink" href="#annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
+<p>Αυτή η σελίδα περιγράφει πώς το blunderDB υπολογίζει το <strong>PR</strong> (Performance Rate), το <strong>Snowie Error Rate</strong> και την <strong>απώλεια MWC</strong>, και πώς αυτές οι μετρικές είναι ευθυγραμμισμένες με το eXtreme Gammon (XG) και το gnuBG (ανοιχτή αναφορά).</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definitions-formelles" id="id1">Τυπικοί ορισμοί</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pr-performance-rate" id="id2">PR (Performance Rate)</a></p></li>
+<li><p><a class="reference internal" href="#snowie-error-rate" id="id3">Snowie Error Rate</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-match-winning-chance" id="id4">Απώλεια MWC (Match Winning Chance)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr" id="id5">Μετρούμενες αποφάσεις στον παρονομαστή του PR</a></p>
+<ul>
+<li><p><a class="reference internal" href="#coups-de-pions-decisions-comptees" id="id6">Κινήσεις πουλιών — μετρούμενες αποφάσεις</a></p></li>
+<li><p><a class="reference internal" href="#decisions-de-cube-decisions-comptees" id="id7">Αποφάσεις κύβου — μετρούμενες αποφάσεις</a></p></li>
+<li><p><a class="reference internal" href="#resume-du-filtre" id="id8">Σύνοψη φίλτρου</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg" id="id9">Αντιστοιχία blunderDB ↔ XG ↔ gnuBG</a></p>
+<ul>
+<li><p><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" id="id10">Σύγκριση XG ↔ blunderDB (ίδια μηχανή ανάλυσης)</a></p></li>
+<li><p><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" id="id11">Σύγκριση gnuBG ↔ blunderDB (εισαγωγή SGF — διαφορετικές μηχανές)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#valider-vos-propres-chiffres" id="id12">Επαλήθευση των δικών σας αριθμών</a></p></li>
+<li><p><a class="reference internal" href="#reference-gnubg" id="id13">Αναφορά gnuBG</a></p></li>
+</ul>
+</nav>
+<section id="definitions-formelles">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">12.1. </span>Τυπικοί ορισμοί</a><a class="headerlink" href="#definitions-formelles" title="Link to this heading"></a></h2>
+<section id="pr-performance-rate">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">12.1.1. </span>PR (Performance Rate)</a><a class="headerlink" href="#pr-performance-rate" title="Link to this heading"></a></h3>
+<p>Το PR (που ονομάζεται επίσης «error rate per decision» στο gnuBG) μετρά το μέσο σφάλμα σε χιλιοστά του πόντου equity (millipoints, mpt) ανά μετρούμενη απόφαση.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = \frac{\sum_i |\mathrm{erreur}_i|}{\mathrm{N_{compté}}} \times 500\]</div>
+<ul class="simple">
+<li><p>Ο αριθμητής είναι το απόλυτο άθροισμα των σφαλμάτων EMG (σε equity cubeful) επί όλων των αποφάσεων του πεδίου.</p></li>
+<li><p>Ο παρονομαστής <span class="math notranslate nohighlight">\(N_\text{compté}\)</span> είναι ο αριθμός των <strong>μετρούμενων αποφάσεων</strong> (βλ. παρακάτω).</p></li>
+<li><p>Ο συντελεστής 500 μετατρέπει το equity σε millipoints (1 πόντος = 1000 mpt, αλλά η κλίμακα είναι ×500 κατά σύμβαση XG/gnuBG — βλ. <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code>).</p></li>
+</ul>
+</section>
+<section id="snowie-error-rate">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">12.1.2. </span>Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Link to this heading"></a></h3>
+<p>Το Snowie ER χρησιμοποιεί τον <strong>ίδιο αριθμητή</strong> με το PR, αλλά ο παρονομαστής είναι ο συνολικός αριθμός κινήσεων και των δύο παικτών, συμπεριλαμβανομένων των αναγκαστικών κινήσεων (όλες οι αποφάσεις, χωρίς φίλτρο):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{SnowieER} = \frac{\sum_i |\mathrm{erreur}_i|}{N_\text{P1} + N_\text{P2}} \times 500\]</div>
+<p>Αναφορά: <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code>.</p>
+<p>Το Snowie ER είναι πιο σταθερό μεταξύ των εργαλείων επειδή ο παρονομαστής του δεν εξαρτάται από το φίλτρο των αναγκαστικών/τετριμμένων αποφάσεων. Χρησιμεύει ως μετρική διασταύρωσης XG ↔ gnuBG ↔ blunderDB.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το Snowie ER ενός παίκτη είναι τυπικά περίπου το μισό του PR του, επειδή ο παρονομαστής περιλαμβάνει τις κινήσεις και των δύο παικτών, ενώ το PR χρησιμοποιεί μόνο τις αποφάσεις αυτού του παίκτη.</p>
+</div>
+</section>
+<section id="perte-mwc-match-winning-chance">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="section-number">12.1.3. </span>Απώλεια MWC (Match Winning Chance)</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Link to this heading"></a></h3>
+<p>Η απώλεια MWC εκφράζει σε ποσοστιαίες μονάδες πιθανότητας νίκης του αγώνα το σωρευτικό αποτέλεσμα των σφαλμάτων ενός παίκτη. Για κάθε απόφαση, το σφάλμα EMG μετατρέπεται σε MWC μέσω του πίνακα MET (Match Equity Table) στο τρέχον σκορ:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\]</div>
+<p>Αναφορά: <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code>.</p>
+</section>
+</section>
+<section id="decisions-comptees-au-denominateur-du-pr">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink"><span class="section-number">12.2. </span>Μετρούμενες αποφάσεις στον παρονομαστή του PR</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Link to this heading"></a></h2>
+<p>Το blunderDB ακολουθεί τους ίδιους κανόνες αποκλεισμού με το XG και το gnuBG.</p>
+<section id="coups-de-pions-decisions-comptees">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink"><span class="section-number">12.2.1. </span>Κινήσεις πουλιών — μετρούμενες αποφάσεις</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Μετρώνται μόνο οι <strong>μη αναγκαστικές κινήσεις</strong>:</p>
+<ul class="simple">
+<li><p>Μια κίνηση είναι <strong>αναγκαστική</strong> αν τα ζάρια προσφέρουν μόνο μία νόμιμη κίνηση (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">==</span> <span class="pre">1</span></code> στο <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458</span></code>).</p></li>
+<li><p>Οι αναγκαστικές κινήσεις έχουν μηδενικό σφάλμα εξ ορισμού: ο παίκτης δεν είχε επιλογή. Η συμπερίληψή τους στον παρονομαστή θα μείωνε τεχνητά το PR.</p></li>
+</ul>
+</section>
+<section id="decisions-de-cube-decisions-comptees">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink"><span class="section-number">12.2.2. </span>Αποφάσεις κύβου — μετρούμενες αποφάσεις</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Μετρώνται μόνο οι <strong>οριακές αποφάσεις κύβου</strong>:</p>
+<ul class="simple">
+<li><p>Μια απόφαση κύβου είναι <strong>οριακή</strong> αν βρίσκεται εντός του παραθύρου equity <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> γύρω από το σημείο διπλασιασμού (κατηγόρημα <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> στο <code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code>).</p></li>
+<li><p>Ένα τετριμμένο «No Double» (πολύ αρνητικό ή πολύ θετικό equity) δεν είναι μια πραγματική στρατηγική απόφαση· η συμπερίληψή του θα διόγκωνε τον παρονομαστή και θα μείωνε το PR.</p></li>
+</ul>
+</section>
+<section id="resume-du-filtre">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink"><span class="section-number">12.2.3. </span>Σύνοψη φίλτρου</a><a class="headerlink" href="#resume-du-filtre" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Τύπος απόφασης</p></th>
+<th class="head"><p>Συμπεριλαμβάνεται στο <span class="math notranslate nohighlight">\(N_\text{compté}\)</span> (PR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Μη αναγκαστική κίνηση</p></td>
+<td><p>Ναι</p></td>
+</tr>
+<tr class="row-odd"><td><p>Αναγκαστική κίνηση</p></td>
+<td><p>Όχι</p></td>
+</tr>
+<tr class="row-even"><td><p>Οριακός κύβος</p></td>
+<td><p>Ναι</p></td>
+</tr>
+<tr class="row-odd"><td><p>Τετριμμένο No Double</p></td>
+<td><p>Όχι</p></td>
+</tr>
+<tr class="row-even"><td><p>Take / Pass</p></td>
+<td><p>Πάντα (είναι απαντήσεις σε διπλασιασμό)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="correspondance-blunderdb-xg-gnubg">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink"><span class="section-number">12.3. </span>Αντιστοιχία blunderDB ↔ XG ↔ gnuBG</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Link to this heading"></a></h2>
+<p>Οι μετρικές είναι ευθυγραμμισμένες εντός των ακόλουθων ορίων (μετρημένες σε 3 αγώνες αναφοράς):</p>
+<section id="comparaison-xg-blunderdb-meme-moteur-d-analyse">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink"><span class="section-number">12.3.1. </span>Σύγκριση XG ↔ blunderDB (ίδια μηχανή ανάλυσης)</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Μετρική</p></th>
+<th class="head"><p>Τυπική απόκλιση</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Συνολικές αποφάσεις</p></td>
+<td><p>≤ 5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Μη αναγκαστικές κινήσεις</p></td>
+<td><p>≤ 7</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>≤ 0.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>Απώλεια MWC</p></td>
+<td><p>≤ 1.0 pp</p></td>
+</tr>
+<tr class="row-even"><td><p>Συνολικό equity (EMG)</p></td>
+<td><p>≤ 0.05</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink"><span class="section-number">12.3.2. </span>Σύγκριση gnuBG ↔ blunderDB (εισαγωγή SGF — διαφορετικές μηχανές)</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Μετρική</p></th>
+<th class="head" colspan="2"><p>Τυπική απόκλιση | Κύρια αιτία</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PR (checker)</p></td>
+<td><p>≤ 0.20</p></td>
+<td><p>διαφορές equity μεταξύ μηχανών</p></td>
+</tr>
+<tr class="row-odd"><td><p>Απώλεια MWC</p></td>
+<td><p>≤ 3.5 pp</p></td>
+<td><p>ελλιπή δεδομένα οριακού κύβου στο SGF</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie ER</p></td>
+<td><p>≤ 0.50</p></td>
+<td><p>αναγκαστικές κινήσεις χωρίς ανάλυση (SGF)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα αρχεία SGF (gnuBG) δεν περιλαμβάνουν τις εναλλακτικές για τις αναγκαστικές κινήσεις, πράγμα που σημαίνει ότι το blunderDB δεν μπορεί να εντοπίσει όλες τις αναγκαστικές κινήσεις κατά την εισαγωγή SGF. Αυτό δημιουργεί μια δομική απόκλιση στο Snowie ER (ελαφρώς διαφορετικός παρονομαστής).</p>
+</div>
+</section>
+</section>
+<section id="valider-vos-propres-chiffres">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink"><span class="section-number">12.4. </span>Επαλήθευση των δικών σας αριθμών</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Link to this heading"></a></h2>
+<p>Αν οι τιμές σας PR ή MWC αποκλίνουν από τους αριθμούς του XG, ελέγξτε τα ακόλουθα σημεία:</p>
+<ol class="arabic simple">
+<li><p><strong>Πλήρεις αναλύσεις</strong> — Το PR μπορεί να υπολογιστεί μόνο σε θέσεις που διαθέτουν ανάλυση. Οι θέσεις χωρίς ανάλυση μετρώνται ως μηδενικό σφάλμα αλλά δεν συμπεριλαμβάνονται στο <span class="math notranslate nohighlight">\(N_\text{compté}\)</span>.</p></li>
+<li><p><strong>Έκδοση XG</strong> — Το XG μπορεί να αλλάξει τους υπολογισμούς του μεταξύ εκδόσεων. Το blunderDB ευθυγραμμίζεται με τη συμπεριφορά που παρατηρείται στις πρόσφατες εκδόσεις.</p></li>
+<li><p><strong>Μορφή εισαγωγής</strong> — Τα αρχεία SGF του gnuBG παράγουν μεγαλύτερες αποκλίσεις στις μετρικές κύβου (βλ. πίνακα παραπάνω) επειδή το αρχείο δεν περιλαμβάνει πλήρεις αναλύσεις για όλες τις αποφάσεις κύβου.</p></li>
+<li><p><strong>Μετάβαση βάσης</strong> — Μετά την ενημέρωση του blunderDB, οι υπάρχουσες βάσεις μεταφέρονται αυτόματα. Δημιουργήστε αντίγραφο ασφαλείας πριν ανοίξετε μια βάση με νέα έκδοση.</p></li>
+</ol>
+</section>
+<section id="reference-gnubg">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink"><span class="section-number">12.5. </span>Αναφορά gnuBG</a><a class="headerlink" href="#reference-gnubg" title="Link to this heading"></a></h2>
+<p>Οι τύποι έχουν επαληθευτεί στα ακόλουθα αρχεία πηγαίου κώδικα (αποθετήριο gnuBG):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code> — PR («Error rate per decision»).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code> — Snowie Error Rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458–462</span></code> — Συσσώρευση checker, αποκλεισμός αναγκαστικών κινήσεων (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1430–1474</span></code> — Μετατροπή EMG → MWC ανά απόφαση.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code> — Συσσώρευση της απώλειας MWC (<code class="docutils literal notranslate"><span class="pre">eq2mwc</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> — Κατηγόρημα <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> (κατώφλι 0.16).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-left" title="11. Παράρτημα: Σχήμα της βάσης δεδομένων" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

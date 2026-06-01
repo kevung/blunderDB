@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. Приложение: Расширенное использование фильтров &mdash; документация blunderDB 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" href="annexe_windows_securite.html" />
+    <link rel="prev" title="7. Часто задаваемые вопросы" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. Приложение: Расширенное использование фильтров</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">8.1. Поиск позиций в командной строке</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-dans-les-resultats-courants">8.2. Поиск в текущих результатах</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">8.3. Библиотека фильтров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples">8.4. Примеры</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>Приложение: Расширенное использование фильтров</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-utilisation-avancee-des-filtres">
+<span id="annexe-filtres"></span><h1><span class="section-number">8. </span>Приложение: Расширенное использование фильтров<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Ссылка на этот заголовок"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p>Этот раздел предназначен для опытных пользователей blunderDB, желающих в полной мере использовать возможности поиска позиций.</p>
+</div>
+<p>Фильтры лежат в основе анализа позиций в blunderDB. Их использование позволяет с достаточной точностью находить конкретные позиции. В этом разделе подробно описывается использование фильтров через командную строку. Командная строка доступна по нажатию клавиши <code class="docutils literal notranslate"><span class="pre">ПРОБЕЛ</span></code>. С практикой она позволяет очень быстро комбинировать фильтры и использовать библиотеку фильтров.</p>
+<section id="recherche-de-positions-en-ligne-de-commande">
+<h2><span class="section-number">8.1. </span>Поиск позиций в командной строке<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
+<p>Для выполнения поиска с помощью фильтров,</p>
+<ol class="arabic simple">
+<li><p>Нажмите клавишу <code class="docutils literal notranslate"><span class="pre">TAB</span></code>, чтобы открыть панель поиска.</p></li>
+<li><p>Отредактируйте текущую позицию.</p></li>
+<li><p>Откройте командную строку клавишей <code class="docutils literal notranslate"><span class="pre">ПРОБЕЛ</span></code>.</p></li>
+<li><p>Используйте команду <code class="docutils literal notranslate"><span class="pre">s</span></code>, при необходимости с фильтрами.</p></li>
+<li><p>Запустите поиск клавишей <code class="docutils literal notranslate"><span class="pre">ВВОД</span></code>.</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Предупреждение</p>
+<p>Не забывайте очищать текущую позицию перед запуском поиска (клавиша <code class="docutils literal notranslate"><span class="pre">BACKSPACE</span></code>), если она не является нужной, иначе структуры шашек будут фильтроваться некорректно.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Список доступных фильтров командной строки приведён в <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Раздел 4.4</span></a>.</p>
+</div>
+</section>
+<section id="recherche-dans-les-resultats-courants">
+<h2><span class="section-number">8.2. </span>Поиск в текущих результатах<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Ссылка на этот заголовок"></a></h2>
+<p>Можно уточнить поиск, выполняя его среди текущих отфильтрованных позиций. Это позволяет постепенно сужать результаты.</p>
+<p>В командной строке используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Команда <code class="docutils literal notranslate"><span class="pre">ss</span></code> работает после предварительного поиска.</p>
+<p>Окно поиска (<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>) также предлагает флажок «Search in current results» для той же функции.</p>
+</section>
+<section id="bibliotheque-de-filtres">
+<h2><span class="section-number">8.3. </span>Библиотека фильтров<a class="headerlink" href="#bibliotheque-de-filtres" title="Ссылка на этот заголовок"></a></h2>
+<p>Библиотека фильтров позволяет пользователю сохранять поисковые команды для удобства тематических исследований.</p>
+<p>Чтобы добавить фильтр в библиотеку,</p>
+<ol class="arabic simple">
+<li><p>Нажмите <code class="docutils literal notranslate"><span class="pre">TAB</span></code>, чтобы открыть панель поиска.</p></li>
+<li><p>Откройте библиотеку фильтров, нажав <code class="docutils literal notranslate"><span class="pre">CTRL-K</span></code>.</p></li>
+<li><p>Отредактируйте текущую позицию.</p></li>
+<li><p>Дайте фильтру имя.</p></li>
+<li><p>Отредактируйте поисковую команду.</p></li>
+<li><p>Сохраните поисковую команду с помощью кнопки «Add».</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>При редактировании команды можно использовать клавиши <code class="docutils literal notranslate"><span class="pre">ВВЕРХ</span></code> и <code class="docutils literal notranslate"><span class="pre">ВНИЗ</span></code> для навигации по истории команд.</p>
+</div>
+<p>Чтобы использовать сохранённый в библиотеке фильтр,</p>
+<ol class="arabic simple">
+<li><p>Откройте библиотеку фильтров, нажав <code class="docutils literal notranslate"><span class="pre">CTRL-K</span></code>.</p></li>
+<li><p>Найдите нужный фильтр.</p></li>
+<li><p>Дважды щёлкните на фильтре, чтобы запустить поиск.</p></li>
+</ol>
+</section>
+<section id="exemples">
+<h2><span class="section-number">8.4. </span>Примеры<a class="headerlink" href="#exemples" title="Ссылка на этот заголовок"></a></h2>
+<p>Ниже приведены примеры использования фильтров в командной строке:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Тип позиции</p></th>
+<th class="head"><p>Структура шашек</p></th>
+<th class="head"><p>Команда</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Гонка</p></td>
+<td></td>
+<td><p>s nc</p></td>
+</tr>
+<tr class="row-odd"><td><p>Гонка</p></td>
+<td></td>
+<td><p>s nc</p></td>
+</tr>
+<tr class="row-even"><td><p>Сбить на пункте 1</p></td>
+<td></td>
+<td><p>s m&quot;6/1*&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Backgame 1-4</p></td>
+<td><p>закрытые пункты 24, 21</p></td>
+<td><p>s p&gt;35</p></td>
+</tr>
+<tr class="row-even"><td><p>Решение Take/Pass при счёте -2 -4</p></td>
+<td><p>пустые кости со стороны верхнего игрока, счёт -2/-4</p></td>
+<td><p>s s d</p></td>
+</tr>
+<tr class="row-odd"><td><p>Too good — не удваивать</p></td>
+<td><p>пустые кости со стороны нижнего игрока</p></td>
+<td><p>s d e&gt;1000</p></td>
+</tr>
+<tr class="row-even"><td><p>Блиц с долей гэммона не менее 20%</p></td>
+<td><p>закрытые пункты в доме, шашки на баре</p></td>
+<td><p>s g&gt;20</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ошибки игрока 1 более 40 миллипоинтов</p></td>
+<td></td>
+<td><p>s E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>Позиция турнира Aachen2024</p></td>
+<td></td>
+<td><p>s t&quot;Aachen2024&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Одна отстающая шашка для возврата</p></td>
+<td></td>
+<td><p>s k1,1</p></td>
+</tr>
+<tr class="row-even"><td><p>Уйти с пункта 20</p></td>
+<td><p>пункт 20</p></td>
+<td><p>s m&quot;20/&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>Прайм против прайма</p></td>
+<td><p>указать прайм-позиции</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>Ace-point bear-off</p></td>
+<td><p>s</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>s</p></td>
+<td><p>пустые кости со стороны нижнего игрока</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>s</p></td>
+<td></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>s</p></td>
+<td></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td></td>
+<td><p>s</p></td>
+</tr>
+</tbody>
+</table>
+<p>Примеры</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 42.9%" />
+<col style="width: 57.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Сценарий</p></th>
+<th class="head"><p>Команда</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>s nc</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-odd"><td><p>s g&gt;20</p></td>
+<td><p>s E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>s</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="faq.html" class="btn btn-neutral float-left" title="7. Часто задаваемые вопросы" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

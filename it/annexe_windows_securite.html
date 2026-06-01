@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. Appendice Windows: rilevamento errato di blunderDB come malware &mdash; Documentazione blunderDB 0.21.0 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a207f564"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="10. Appendice Mac: possibile blocco di blunderDB" href="annexe_mac_securite.html" />
+    <link rel="prev" title="8. Appendice: Utilizzo avanzato dei filtri" href="annexe_filtres.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guida utente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Elenco dei comandi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Scorciatoie da tastiera</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Appendice Windows: rilevamento errato di blunderDB come malware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">9.1. Avviso Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">9.2. Blocco di Windows Defender</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Appendice Windows: rilevamento errato di blunderDB come malware</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
+<span id="annexe-windows-malware"></span><h1><span class="section-number">9. </span>Appendice Windows: rilevamento errato di blunderDB come malware<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>Quanto segue riguarda i sistemi operativi Windows 10 e 11.</p>
+</div>
+<p>Oggi Windows richiede alle società di editoria software o agli sviluppatori software indipendenti di certificare digitalmente le proprie applicazioni o addirittura di distribuirle tramite il Windows Store. È quindi consigliato rivolgersi a società esterne per ottenere un certificato digitale al costo di diverse centinaia di euro (vedere ad esempio <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> ).</p>
+<p>Offrendo blunderDB gratuitamente, non desidero orientarmi verso queste opzioni onerose. Di conseguenza, è molto probabile che Windows vi avvisi di un potenziale pericolo o addirittura blocchi completamente l’esecuzione di blunderDB. Le sezioni seguenti spiegano le operazioni da eseguire per superare le riserve di Windows.</p>
+<section id="avertissement-windows-smartscreen">
+<h2><span class="section-number">9.1. </span>Avviso Windows SmartScreen<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<p>Dopo aver scaricato blunderDB, durante la sua esecuzione è possibile che Windows mostri un avviso del tipo</p>
+<figure class="align-default">
+<img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
+</figure>
+<p>Se desiderate autorizzare un eseguibile specifico bloccato da SmartScreen:</p>
+<ol class="arabic simple">
+<li><p><strong>Provare a eseguire l’eseguibile</strong>:</p>
+<ul class="simple">
+<li><p>Quando provate ad avviare l’eseguibile, SmartScreen può bloccarlo e mostrare un avviso.</p></li>
+</ul>
+</li>
+<li><p><strong>Fare clic su «Ulteriori informazioni»</strong>:</p>
+<ul class="simple">
+<li><p>Nella finestra di avviso di SmartScreen, fate clic su <strong>Ulteriori informazioni</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>Selezionare «Esegui comunque»</strong>:</p>
+<ul class="simple">
+<li><p>Se vi fidate dell’eseguibile, fate clic su <strong>Esegui comunque</strong> per aggirare l’avviso di SmartScreen per questa istanza.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="blocage-windows-defender">
+<h2><span class="section-number">9.2. </span>Blocco di Windows Defender<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<p>Per alcune impostazioni di sicurezza di Windows, può capitare che nonostante lo sblocco di SmartScreen (vedere la sezione precedente), Windows Defender impedisca l’esecuzione di blunderDB con messaggi del tipo</p>
+<figure class="align-center">
+<img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
+</figure>
+<p>oppure</p>
+<figure class="align-center">
+<img alt="_images/threat_found_action_needed.png" src="_images/threat_found_action_needed.png" />
+</figure>
+<p>o addirittura metterlo in quarantena.</p>
+<p>Windows Defender è noto per generare falsi positivi. Questo problema è esplicitamente menzionato nelle FAQ del sito ufficiale di Golang ( <a class="reference external" href="https://go.dev/doc/faq#virus">https://go.dev/doc/faq#virus</a> ) o in ticket Github di alcuni progetti programmati in Go ( <a class="reference external" href="https://github.com/golang/vscode-go/issues/3182">https://github.com/golang/vscode-go/issues/3182</a> ).</p>
+<p>Se desiderate impedire alla Sicurezza di Windows di analizzare blunderDB:</p>
+<ol class="arabic simple">
+<li><p><strong>Aprire la Sicurezza di Windows</strong>:</p>
+<ul class="simple">
+<li><p>Andate su <strong>Start</strong> e digitate <strong>Sicurezza di Windows</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win1.png" src="_images/win1.png" />
+</figure>
+<ol class="arabic simple" start="2">
+<li><p><strong>Andare su «Protezione da virus e minacce»</strong>:</p>
+<ul class="simple">
+<li><p>Fate clic su <strong>Protezione da virus e minacce</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win2.png" src="_images/win2.png" />
+</figure>
+<ol class="arabic simple" start="3">
+<li><p><strong>Gestire le impostazioni</strong>:</p>
+<ul class="simple">
+<li><p>Scorrete verso il basso e fate clic su <strong>Gestisci impostazioni</strong> sotto Impostazioni di protezione da virus e minacce.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win3.png" src="_images/win3.png" />
+</figure>
+<ol class="arabic simple" start="4">
+<li><p><strong>Aggiungere o rimuovere esclusioni</strong>:</p>
+<ul class="simple">
+<li><p>Scorrete fino alla sezione <strong>Esclusioni</strong> e fate clic su <strong>Aggiungi o rimuovi esclusioni</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win4.png" src="_images/win4.png" />
+</figure>
+<ol class="arabic simple" start="5">
+<li><p><strong>Aggiungere un’esclusione</strong>:</p>
+<ul class="simple">
+<li><p>Fate clic su <strong>Aggiungi un’esclusione</strong> e selezionate <strong>File</strong>. Navigate quindi fino all’eseguibile che desiderate escludere e selezionatelo.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win5.png" src="_images/win5.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win6.png" src="_images/win6.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win7.png" src="_images/win7.png" />
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="8. Appendice: Utilizzo avanzato dei filtri" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="10. Appendice Mac: possibile blocco di blunderDB" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Lingue</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

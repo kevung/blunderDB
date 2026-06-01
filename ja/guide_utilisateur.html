@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. ユーザーガイド &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="4. コマンド一覧" href="cmd_mode.html" />
+    <link rel="prev" title="2. マニュアル" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. ユーザーガイド</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">3.1. 新しいデータベースを作成する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">3.2. 既存のデータベースを開く</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-et-fusionner-une-base-de-donnees">3.3. データベースをインポートして統合する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">3.4. ポジションを編集する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">3.5. ポジションをデータベースに追加する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">3.6. ポジションにタグを付ける</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">3.7. ポジションを削除する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">3.8. XG からポジションをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">3.9. マッチをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">3.10. マッチのフォルダをインポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">3.11. ドラッグ＆ドロップ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">3.12. マッチ内を移動する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">3.13. マッチパネルを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">3.14. コレクションを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">3.15. トーナメントを管理する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">3.16. パフォーマンス統計を表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculer-l-epc">3.17. EPCを計算する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. XGからインポートしたポジションの分析を表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">3.19. XGにポジションをエクスポートする</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">3.20. 様々なポジションを表示する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">3.21. 条件に基づいてポジションを検索する</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>ユーザーガイド</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1><span class="section-number">3. </span>ユーザーガイド<a class="headerlink" href="#guide-utilisateur" title="Link to this heading"></a></h1>
+<p>このガイドは、blunderDB をすばやく使いこなすための実践的な入門書です。</p>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2><span class="section-number">3.1. </span>新しいデータベースを作成する<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Link to this heading"></a></h2>
+<p>新しいデータベースを作成するには、ツールバーの「New Database」ボタンをクリックします。データベースを保存するパスとファイル名を選択し、「Save」をクリックします。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>blunderDB のデータベースファイルの拡張子は <em>.db</em> です。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>キーボードショートカット: <em>CTRL-N</em>。コマンド: <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2><span class="section-number">3.2. </span>既存のデータベースを開く<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Link to this heading"></a></h2>
+<p>既存のデータベースを読み込むには、ツールバーの「Open Database」ボタンをクリックします。データベースのあるパスに移動し、<em>.db</em> ファイルを選択して「Open」をクリックします。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>キーボードショートカット: <em>CTRL-O</em>。コマンド: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
+</div>
+</section>
+<section id="importer-et-fusionner-une-base-de-donnees">
+<h2><span class="section-number">3.3. </span>データベースをインポートして統合する<a class="headerlink" href="#importer-et-fusionner-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>現在開いているデータベースに別の blunderDB データベースをインポートして統合するには、ツールバーの「Import Database」ボタンをクリックします。インポートする <em>.db</em> ファイルを選択し、「Open」をクリックします。</p>
+<p>blunderDB は 2 つのデータベースをインテリジェントに統合します：</p>
+<ul class="simple">
+<li><p>現在のデータベースに存在しないポジションは、分析とコメントとともに追加されます。</p></li>
+<li><p>すでに存在するポジションは更新されます：分析が不足している場合は補完され、コメントは統合されます（既存のコメントを重複させずに新しいコメントが追加されます）。</p></li>
+<li><p>追加、統合、および無視されたポジションの数を示すメッセージが表示されます。</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>インポートには、両方のデータベースのスキーマバージョンが互換性を持つことが必要です。低いバージョンまたは同等のバージョンのデータベースを、より高いバージョンのデータベースにインポートすることができます。</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">注意</p>
+<p>インポート操作は現在開いているデータベースを直ちに変更します。別のデータベースをインポートする前にバックアップコピーを作成することをお勧めします。</p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2><span class="section-number">3.4. </span>ポジションを編集する<a class="headerlink" href="#editer-une-position" title="Link to this heading"></a></h2>
+<p>ポジションを編集するには、<em>TAB</em> キーを押して検索パネルとポジションエディターを開きます。マウスでポジションを編集します：</p>
+<ul class="simple">
+<li><p>ポイントをクリックしてチェッカーを追加します。左クリックはチェッカーをプレイヤー1に割り当てます。右クリックはチェッカーをプレイヤー2に割り当てます。プライムを挿入するには、開始ポイントをクリックし、ボタンを押したままにして終点で離します。バーをクリックしてチェッカーをバーに置きます。</p></li>
+<li><p>ポジションをクリアするには、ボード外の空きエリアをダブルクリックするか、<em>バックスペース</em> キーを押します。</p></li>
+<li><p>キューブをプレイヤー1に送るには、キューブを左クリックします。キューブをプレイヤー2に送るには、キューブを右クリックします。</p></li>
+<li><p>手番のプレイヤーを指定するには、ダイスの指定エリアをクリックします。</p></li>
+<li><p>ダイスを編集するには、左クリックでダイスの値を増やし、右クリックでダイスの値を減らします。ダイスの面が空の場合、そのポジションはキューブ決定であることを意味します。</p></li>
+<li><p>プレイヤーのスコアを編集するには、左クリックでスコアを増やし、右クリックでスコアを減らします。</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>チェッカーのポジションをマウスで入力する方法は、XG と同じです。</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2><span class="section-number">3.5. </span>ポジションをデータベースに追加する<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Link to this heading"></a></h2>
+<p>ポジションの編集後、検索パネルが開きます。</p>
+<p>取得したポジションを保存するには、<em>CTRL-S</em> を押すか、ツールバーの「Save Position」ボタンをクリックします。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>コマンドラインを開き、<code class="docutils literal notranslate"><span class="pre">w</span></code> を実行します。</p>
+</div>
+</section>
+<section id="etiqueter-une-position">
+<h2><span class="section-number">3.6. </span>ポジションにタグを付ける<a class="headerlink" href="#etiqueter-une-position" title="Link to this heading"></a></h2>
+<p>現在のポジションにタグ <em>toto</em> を追加するには、<em>スペース</em> キーを押してコマンドラインを開き、<code class="docutils literal notranslate"><span class="pre">#toto</span></code> と入力し、<em>ENTER</em> キーを押してコマンドを確定します。</p>
+</section>
+<section id="supprimer-une-position">
+<h2><span class="section-number">3.7. </span>ポジションを削除する<a class="headerlink" href="#supprimer-une-position" title="Link to this heading"></a></h2>
+<p>現在のポジションをデータベースから削除するには、<em>Del</em> キーを押すか、ツールバーの「Delete Position」ボタンをクリックします。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>コマンドラインで <code class="docutils literal notranslate"><span class="pre">d</span></code> を実行します。</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">注意</p>
+<p>ポジションの削除は恒久的であり、ユーザーの確認は必要ありません。</p>
+</div>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2><span class="section-number">3.8. </span>XG からポジションをインポートする<a class="headerlink" href="#import-une-position-depuis-xg" title="Link to this heading"></a></h2>
+<p>XG からポジションを直接インポートするには、</p>
+<ol class="arabic simple">
+<li><p>XG でインポートするポジションを表示し、<em>CTRL-C</em> を押します。</p></li>
+<li><p>blunderDB を開き、<em>CTRL-V</em> を押します。</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>自動貼り付けはソースのフォーマット（XG、GNUbg、BGBlitz）を自動検出します。</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2><span class="section-number">3.9. </span>マッチをインポートする<a class="headerlink" href="#importer-un-match" title="Link to this heading"></a></h2>
+<p>blunderDB はさまざまなソースからマッチをインポートできます。</p>
+<p><strong>対応フォーマット：</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): <em>.xg</em> および <em>.xgp</em> ファイル（ポジション）</p></li>
+<li><p>GNUbg: <em>.sgf</em> ファイル</p></li>
+<li><p>Jellyfish: <em>.mat</em> および <em>.txt</em> ファイル</p></li>
+<li><p>BGBlitz: <em>.bgf</em> および <em>.txt</em> ファイル</p></li>
+</ul>
+<p><strong>1つ以上のマッチファイルをインポートするには：</strong></p>
+<ol class="arabic simple">
+<li><p><em>CTRL-I</em> を押すか、ツールバーの「Import」ボタンをクリックします。</p></li>
+<li><p>インポートするファイルを1つ以上選択します。</p></li>
+<li><p>blunderDB はフォーマットを自動検出してマッチをインポートします。</p></li>
+<li><p>進行状況ウィンドウに、インポート済み、失敗、およびスキップ（重複）したファイルの数が表示されます。</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>コマンド: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>blunderDB は重複を自動検出し、すでにデータベースに存在するマッチのインポートを防止します。</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2><span class="section-number">3.10. </span>マッチのフォルダをインポートする<a class="headerlink" href="#importer-un-dossier-de-matchs" title="Link to this heading"></a></h2>
+<p>フォルダとそのサブフォルダに含まれるすべてのマッチファイルを再帰的にインポートするには：</p>
+<ol class="arabic simple">
+<li><p><em>CTRL-SHIFT-F</em> を押すか、ツールバーの対応するボタンをクリックします。</p></li>
+<li><p>マッチファイルが含まれているフォルダを選択します。</p></li>
+<li><p>blunderDB は認識されたすべてのファイル（<em>.xg</em>、<em>.xgp</em>、<em>.sgf</em>、<em>.mat</em>、<em>.txt</em>、<em>.bgf</em>）を自動的に収集してインポートします。</p></li>
+</ol>
+</section>
+<section id="glisser-deposer">
+<h2><span class="section-number">3.11. </span>ドラッグ＆ドロップ<a class="headerlink" href="#glisser-deposer" title="Link to this heading"></a></h2>
+<p>blunderDB はドラッグ＆ドロップをサポートしています。blunderDB のウィンドウにドラッグ＆ドロップできるもの：</p>
+<ul class="simple">
+<li><p>マッチまたはポジションファイル（<em>.xg</em>、<em>.xgp</em>、<em>.sgf</em>、<em>.mat</em>、<em>.txt</em>、<em>.bgf</em>）をインポートする場合、</p></li>
+<li><p>データベースファイル（<em>.db</em>）を開くか、現在のデータベースと統合する場合、</p></li>
+<li><p>フォルダ内のすべてのファイルを再帰的にインポートする場合。</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2><span class="section-number">3.12. </span>マッチ内を移動する<a class="headerlink" href="#naviguer-dans-un-match" title="Link to this heading"></a></h2>
+<p>インポートしたマッチ内を移動するには：</p>
+<ol class="arabic simple">
+<li><p><em>CTRL-Tab</em> でマッチパネルを開きます。</p></li>
+<li><p>マッチをダブルクリックするか、<em>ENTER</em> キーを押します。</p></li>
+<li><p><em>左矢印</em> / <em>右矢印</em> キーを使用してムーブを移動します。</p></li>
+<li><p><em>PageUp</em> / <em>PageDown</em> を使用してゲーム間を移動します。</p></li>
+<li><p><em>CTRL-L</em> を押して分析を表示します。</p></li>
+<li><p><em>d</em> を押してチェッカームーブ分析とキューブ分析を切り替えます。</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>ショートカット: <em>CTRL-Tab</em> でマッチパネルを開きます。コマンド: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>blunderDB は各マッチで最後に訪問したポジションを記憶します。マッチに戻ると、最後に参照したポジションが自動的に復元されます。</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2><span class="section-number">3.13. </span>マッチパネルを管理する<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="Link to this heading"></a></h2>
+<p>マッチパネル（<em>CTRL-Tab</em>）では以下のことができます：</p>
+<ul class="simple">
+<li><p>インポートしたすべてのマッチを一覧表示します（新しい順に並べ替え）。</p></li>
+<li><p>マッチを列でソートします（プレイヤー1、プレイヤー2、日付、マッチの長さ、トーナメント）。</p></li>
+<li><p>フィールドをダブルクリックしてプレイヤー名や日付を編集します。</p></li>
+<li><p>入れ替えボタンを使用してプレイヤー1とプレイヤー2を入れ替えます。</p></li>
+<li><p>マッチをトーナメントに割り当てます。</p></li>
+<li><p><em>Del</em> キーを使用してマッチを削除します。</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<h2><span class="section-number">3.14. </span>コレクションを管理する<a class="headerlink" href="#gerer-les-collections" title="Link to this heading"></a></h2>
+<p>コレクションはポジションをカスタムグループに整理する機能です。コレクションパネルにアクセスするには、<em>CTRL-B</em> を押します。</p>
+<p><strong>コレクションを作成する：</strong></p>
+<ol class="arabic simple">
+<li><p>コレクションパネルを開きます（<em>CTRL-B</em>）。</p></li>
+<li><p>新しいコレクションの名前を入力し、「Add」をクリックします。</p></li>
+</ol>
+<p><strong>コレクションにポジションを追加する：</strong></p>
+<ol class="arabic simple">
+<li><p>目的のポジションを選択します。</p></li>
+<li><p>コレクションパネルからコレクションに追加します。</p></li>
+</ol>
+<p><strong>コレクションを閲覧する：</strong></p>
+<ul class="simple">
+<li><p>コレクションをダブルクリックしてポジションを閲覧します。コレクションとポジションの順序はドラッグ＆ドロップで変更できます。</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>コマンド: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2><span class="section-number">3.15. </span>トーナメントを管理する<a class="headerlink" href="#gerer-les-tournois" title="Link to this heading"></a></h2>
+<p>トーナメントはインポートしたマッチをイベント別に整理する機能です。トーナメントパネルにアクセスするには、<em>CTRL-Y</em> を押します。</p>
+<p><strong>トーナメントを作成する：</strong></p>
+<ol class="arabic simple">
+<li><p>トーナメントパネルを開きます（<em>CTRL-Y</em>）。</p></li>
+<li><p>「Add」をクリックし、トーナメント名を入力します。</p></li>
+</ol>
+<p><strong>マッチをトーナメントに割り当てる：</strong></p>
+<ul class="simple">
+<li><p>マッチパネル（<em>CTRL-Tab</em>）から、トーナメント列のドロップダウンメニューを使用してマッチを割り当てます。</p></li>
+</ul>
+</section>
+<section id="afficher-les-statistiques-de-performance">
+<h2><span class="section-number">3.16. </span>パフォーマンス統計を表示する<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="Link to this heading"></a></h2>
+<p>Statsパネルでは、インポートしたポジションからパフォーマンス指標（PRおよびMWCコスト）を確認できます。</p>
+<ol class="arabic simple">
+<li><p><em>CTRL-D</em> を押すか、下部パネルのStatsタブをクリックします。</p></li>
+<li><p>フィルターバーを使用して、プレイヤー、トーナメント、日付範囲、決定タイプ、またはマッチの長さで分析を絞り込みます。</p></li>
+<li><p>指標をクリックすると、対応するポジションに直接ジャンプします。</p></li>
+</ol>
+</section>
+<section id="calculer-l-epc">
+<h2><span class="section-number">3.17. </span>EPCを計算する<a class="headerlink" href="#calculer-l-epc" title="Link to this heading"></a></h2>
+<p>EPCカルキュレーター（Effective Pip Count）は、ポジションのベアオフ統計を計算します。</p>
+<ol class="arabic simple">
+<li><p><em>CTRL-E</em> を押すか、下部パネルのEPCタブをクリックするか、<code class="docutils literal notranslate"><span class="pre">epc</span></code> コマンドを実行します。</p></li>
+<li><p>ホームボード（最後の6ポイント）のチェッカーのポジションを編集します。</p></li>
+<li><p>結果は専用のEPCパネルにリアルタイムで表示されます：EPC、平均ロール数、標準偏差、ピップカウント、ウェイステージ。</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>カルキュレーターは両プレイヤーを同時に処理します。</p>
+</div>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2><span class="section-number">3.18. </span>XGからインポートしたポジションの分析を表示する<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Link to this heading"></a></h2>
+<p>XG、GNUbg、またはBGBlitzによって分析されたポジションがblunderDBにインポートされている場合、<em>CTRL-L</em> を押すことで分析を表示できます。</p>
+<p>ポジションがチェッカー決定に対応する場合、上位5つのムーブが別々の行に表示されます。各行には、この順序で情報が提供されます：関連するチェッカームーブ、正規化されたエクイティ、ムーブのエクイティエラー、プレイヤーの勝率・ギャモン・バックギャモン、相手の勝率・ギャモン・バックギャモン、および分析レベル。</p>
+<p>ポジションがキューブ決定に対応する場合、各決定のコストとポジションの勝率が表示されます。</p>
+<p>同じポジションに複数の分析エンジンが存在する場合（例：XGとGNUbg）、追加の列に各分析の元のエンジンが表示されます。</p>
+<p>マッチ内を移動する際、実際にプレイされたムーブがムーブリストでハイライト表示されます。ポジションが複数のマッチで登場した場合、プレイされたすべてのムーブが表示されます。</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>分析パネルでムーブをクリックすると、ボード上に対応する矢印が表示されます。</p>
+</div>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2><span class="section-number">3.19. </span>XGにポジションをエクスポートする<a class="headerlink" href="#exporter-une-position-vers-xg" title="Link to this heading"></a></h2>
+<p>blunderDBからXGにポジションをエクスポートするには、</p>
+<ol class="arabic simple">
+<li><p>blunderDBでエクスポートするポジションを表示し、<em>CTRL-C</em> を押します。</p></li>
+<li><p>XGを開き、<em>CTRL-V</em> を押します。</p></li>
+</ol>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2><span class="section-number">3.20. </span>様々なポジションを表示する<a class="headerlink" href="#visualiser-les-differentes-positions" title="Link to this heading"></a></h2>
+<p>現在のライブラリのさまざまなポジションを表示するには、<em>左矢印</em> キーと <em>右矢印</em> キーを使用します。<em>HOME</em> キーで最初のポジション、<em>END</em> キーで最後のポジションに移動できます。</p>
+<p>左のベアオフを表示するには <em>CTRL-LEFT</em> を押します。右のベアオフを表示するには <em>CTRL-RIGHT</em> を押します。</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2><span class="section-number">3.21. </span>条件に基づいてポジションを検索する<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Link to this heading"></a></h2>
+<p>ポジションの種類を検索するには、</p>
+<ul class="simple">
+<li><p><em>TAB</em> を押して検索パネルを開きます。</p></li>
+<li><p>検索するポジション構造を編集します。blunderDB は入力されたチェッカー構造を*少なくとも*持つポジションをフィルタリングします。不明な場合は最大限の結果を得るため、<em>バックスペース</em> キーを押してポジションをクリアしてください。必要に応じてキューブのポジションとスコアを編集します。</p></li>
+</ul>
+<p>検索パネルでは2つのチェッカー構造が提供されており、パネル上部の <em>At least</em> タブと <em>Except</em> タブで選択できます：</p>
+<ul class="simple">
+<li><p><a href="#id1"><span class="problematic" id="id2">*</span></a>At least*（デフォルト）：blunderDB は入力されたチェッカー構造を*少なくとも*持つポジションをフィルタリングします；</p></li>
+<li><p><em>Except</em>：blunderDB は入力されたチェッカーのいずれかを含むポジションを除外します。この構造の編集中はボードが赤くふちどられます。描画された要素を*少なくとも1つ*含むポジションは除外されます（例えば、ポイント1、3、5にチェッカーを描くと、これらのポイントにチェッカーのないポジションのみが保持されます）。ポイントあたりのチェッカー数に制限はありません：ポイントに3つのチェッカーを指定すると、そこに3つ以上のチェッカーがあるポジションが除外されます（スペアのないメイドポイントを検索するのに便利です）。ポイントをすばやく2回クリックすると、空であることが必須とマークされます（赤いハッチングのセル、どの色のチェッカーも不可）；そのポイントをシングルクリックするとロックが解除されます。</p></li>
+</ul>
+<p>ポイントが両方の構造に属する場合、<em>Except</em> 基準が <em>At least</em> 基準と矛盾する場合に優先されます。</p>
+<p>方法1（シンプル）：</p>
+<ul class="simple">
+<li><p>検索ウィンドウを開きます（<em>CTRL-F</em>）。</p></li>
+<li><p>検索フィルターを追加して設定します。</p></li>
+<li><p>「Search」をクリックして確定します。</p></li>
+</ul>
+<p>方法2（上級）：</p>
+<ul class="simple">
+<li><p><em>スペース</em> キーを押してコマンドラインを開きます。</p></li>
+<li><p><em>s</em> と入力し、必要に応じて追加のフィルターを追加します（例えば、キューブとスコアをそれぞれ考慮するには <em>cube</em> または <em>score</em>。利用可能なフィルターの一覧は <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">4.4 章</span></a> を参照してください）。</p></li>
+<li><p><em>ENTER</em> キーを押してクエリを確定します。</p></li>
+</ul>
+<p>表示されるポジションは、ユーザーが入力した検索条件を満たすデータベース内のポジションです。</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="2. マニュアル" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="4. コマンド一覧" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

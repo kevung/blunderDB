@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blunderDB &mdash; документация blunderDB 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="1. Загрузка и установка" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="blunderdb">
+<span id="index"></span><h1>blunderDB<a class="headerlink" href="#blunderdb" title="Ссылка на этот заголовок"></a></h1>
+<p>blunderDB — программа для создания баз данных позиций нард. Её главное достоинство — единое место для накопления позиций, встреченных игроком (в интернете, на турнирах), с возможностью повторного изучения этих позиций при помощи произвольно комбинируемых фильтров. blunderDB также можно использовать для создания каталогов эталонных позиций.</p>
+<p>Данная документация структурирована следующим образом:</p>
+<ul class="simple">
+<li><p>раздел <strong>загрузка и установка</strong> объясняет, как получить и запустить blunderDB.</p></li>
+<li><p><strong>руководство</strong> описывает общее функционирование blunderDB и принципы его использования.</p></li>
+<li><p><strong>руководство пользователя</strong> — практическое введение для быстрого освоения blunderDB.</p></li>
+<li><p>список <strong>команд</strong> и список <strong>горячих клавиш</strong> обеспечивают эффективное использование blunderDB.</p></li>
+<li><p>раздел <strong>интерфейс командной строки (CLI)</strong> описывает доступные команды для массового импорта, автоматизации и написания скриптов.</p></li>
+<li><p><strong>FAQ</strong> содержит ответы на наиболее часто задаваемые вопросы.</p></li>
+</ul>
+</section>
+<section id="historique-des-versions">
+<h1>История версий<a class="headerlink" href="#historique-des-versions" title="Ссылка на этот заголовок"></a></h1>
+<table class="align-center-table docutils align-center">
+<colgroup>
+<col style="width: 15.6%" />
+<col style="width: 21.9%" />
+<col style="width: 62.5%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Версия</p></th>
+<th class="head"><p>Дата</p></th>
+<th class="head"><p>Причина и/или характер изменений</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.1.0</p></td>
+<td><p>31/12/2024</p></td>
+<td><p>Создание бета-версии.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.2.0</p></td>
+<td><p>06/01/2025</p></td>
+<td><p>Исправление различных ошибок.</p>
+<p>Добавление таблиц матчей/TP/GV.</p>
+<p>Добавление фильтров поиска (ходы, решение видо, дата).</p>
+<p>Добавление метаданных для позиций.</p>
+<p>Функция импорта/экспорта между экземплярами blunderDB.</p>
+<p>Добавление функции метаданных для баз данных.</p>
+<p>Введение номеров версий (база данных и приложение).</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.3.0</p></td>
+<td><p>27/01/2025</p></td>
+<td><p>Исправление различных ошибок.</p>
+<p>Автоматическое сохранение размера окна.</p>
+<p>Импорт комментариев из XG.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.4.0</p></td>
+<td><p>03/02/2025</p></td>
+<td><p>Исправление различных ошибок.</p>
+<p>Добавление иконки для blunderDB.</p>
+<p>Исправление фильтров.</p>
+<p>Добавление поддержки macOS.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.5.0</p></td>
+<td><p>04/02/2025</p></td>
+<td><p>Добавление новых фильтров (зеркало, нет контакта, блот в яне, блот в аутфилде).</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.6.0</p></td>
+<td><p>13/02/2025</p></td>
+<td><p>Добавление библиотеки фильтров.</p>
+<p>Отображение версии базы данных в метаданных.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.7.0</p></td>
+<td><p>16/02/2025</p></td>
+<td><p>Поддержка японского и немецкого языков в экспорте XG.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.8.0</p></td>
+<td><p>03/05/2025</p></td>
+<td><p>Новая кнопка для скрытия подсчёта шашек.</p>
+<p>Кнопка загрузки случайной позиции.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.9.0</p></td>
+<td><p>02/11/2025</p></td>
+<td><p>Исправление ошибки в библиотеке фильтров.</p>
+<p>Импорт/экспорт базы данных.</p>
+<p>Отображение стрелок для выбранных ходов.</p>
+<p>Горячие клавиши для импорта/экспорта.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.10.0</p></td>
+<td><p>25/02/2026</p></td>
+<td><p>Импорт матчей из eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish (MAT/TXT) и BGBlitz (BGF/TXT).</p>
+<p>Навигация по матчам: просмотр ходов импортированного матча с подсветкой сыгранного хода.</p>
+<p>Панель матчей: список, сортировка, встроенное редактирование, смена игроков, назначение турнира.</p>
+<p>Рекурсивный импорт из папки и импорт перетаскиванием.</p>
+<p>Калькулятор EPC (эффективный подсчёт шашек) со встроенной базой данных bearoff GNUbg.</p>
+<p>Коллекции: пользовательская группировка позиций.</p>
+<p>Турниры: группировка матчей по событию.</p>
+<p>Сохранение и восстановление состояния сессии (последний поиск, текущая позиция).</p>
+<p>Автоматическая миграция схемы базы данных.</p>
+<p>Отображение нескольких движков в анализе.</p>
+<p>Фильтр ошибок/бландеров игрока 1 при поиске.</p>
+<p>Экспорт базы данных с детальным выбором (матчи, коллекции, турниры, сыгранные ходы).</p>
+<p>Кнопка навигации по матчам.</p>
+<p>Отображение подсчёта шашек (pipcount) в навигации по матчам.</p>
+<p>Полный интерфейс командной строки (CLI).</p>
+<p>Автоматическое открытие последней базы данных.</p>
+<p>Улучшение панели инструментов и иконок.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.11.0</p></td>
+<td><p>06/03/2026</p></td>
+<td><p>Фильтр для поиска среди текущих позиций.</p>
+<p>Добавление фильтров по матчу и по турниру.</p>
+<p>Автоматическая очистка доски при открытии панели поиска.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.12.0</p></td>
+<td><p>19/03/2026</p></td>
+<td><p>Импорт файлов позиций eXtreme Gammon (XGP) с анализом.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.13.0</p></td>
+<td><p>28/03/2026</p></td>
+<td><p>Упрощение интерфейса: навигация по матчам и коллекциям теперь выполняется непосредственно через панели.</p>
+<p>Командная строка, интегрированная в строку состояния.</p>
+<p>Панель Консоль переименована в панель Log.</p>
+<p>Выделенная панель EPC в нижней панели.</p>
+<p>Копирование/вставка позиции в панели поиска.</p>
+<p>Перетаскивание для изменения порядка коллекций, позиций в коллекциях и матчей в турнирах.</p>
+<p>Столбец турнира в панели матчей со встроенным редактированием.</p>
+<p>Автоматическое отображение панели анализа после поиска.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.14.0</p></td>
+<td><p>30/03/2026</p></td>
+<td><p>Выделенная панель Anki для изучения методом интервального повторения (алгоритм FSRS).</p>
+<p>Импорт комментариев из файлов XG.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.15.0</p></td>
+<td><p>31/03/2026</p></td>
+<td><p>Экспорт позиции в PNG-изображение в буфер обмена (только доска через Ctrl+X, или доска с анализом через Ctrl+X Ctrl+X).</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.16.0</p></td>
+<td><p>18/04/2026</p></td>
+<td><p>Схема базы данных v2.0.0: дедупликация позиций через хеш Zobrist, денормализованные столбцы фильтрации, предфильтр шаблонов на битбордах, журналирование WAL. Пакетный импорт &gt;=3x быстрее, фильтрованный поиск &lt;=100 мс на 10k+ позициях. ПРИМЕЧАНИЕ: файлы DB, созданные с v0.16.0, не могут быть открыты более старыми версиями; старые DB автоматически мигрируются на месте (сначала сделайте резервную копию).</p></td>
+</tr>
+<tr class="row-even"><td><p>0.17.0</p></td>
+<td><p>20/04/2026</p></td>
+<td><p>Оптимизация хранения: zlib-сжатие данных анализа (~80% сокращение), компактное кодирование позиций (~90% сокращение размера). Добавлено 5 недостающих индексов для ускорения поиска. Исправлен поиск по ошибке куба. Исправлен режим EDIT после поиска без результатов. Восстановление состояния панели поиска при переключении вкладок. Удалено 62 отладочных вывода из критических путей.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.18.0</p></td>
+<td><p>20/04/2026</p></td>
+<td><p>Масштабный рефакторинг кода: разбивка db.go (10k строк) на 19 специализированных файлов, извлечение 7 модулей сервисов из App.svelte (4888→469 строк), консолидация хранилищ модальных окон/панелей. Полная миграция на Svelte 5 runes. Замена 9 табличных модальных окон универсальным компонентом DataTableModal. Добавление ESLint + Prettier + vitest (125 фронтенд-тестов) с CI. Соответствие WCAG 2.1 AA (видимый фокус, ARIA-роли, клавиатурная навигация). Переход мьютекса Database на RWMutex для лучшего параллелизма при чтении. Полная документация CLI (CLI_USAGE.md + Sphinx FR/EN). Переписан README. Устранены все предупреждения ESLint (46→0) и Vite (6→0).</p></td>
+</tr>
+<tr class="row-even"><td><p>0.19.0</p></td>
+<td><p>07/05/2026</p></td>
+<td><p>Добавление панели Статистика: показатели PR (Performance Rate), Snowie Error Rate и MWC cost (стоимость шанса выиграть матч), панель фильтров (игрок, турнир, даты, тип решения, длина матча), вкладка Dashboard с карточками уровня / скользящий PR / топ бландеров, вкладка Прогресс с кривой по турнирам и диаграммой рассеяния по матчам, вкладка Ошибки с распределением по действиям видо и гистограммой величин. Интерактивный drill-down к позициям / матчам / турнирам из всех показателей. Мгновенное переключение PR / MWC. Команда CLI list –type stats. Согласование показателей PR / Snowie ER / MWC с eXtremeGammon и gnuBG (порог 0.16 эквити для близких кубов). Исправление вычисления cube_error для решений Double/Pass. Документация модели статистики (<a class="reference internal" href="stats_parity.html#stats-parity"><span class="std std-ref">Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</span></a>). См. <a class="reference internal" href="manuel.html#stats"><span class="std std-ref">Панель Stats</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.20.0</p></td>
+<td><p>31/05/2026</p></td>
+<td><p>Добавление структуры исключения <em>Except</em> в панель поиска: исключает позиции, содержащие любую из нарисованных шашек, с маркером «должно быть пусто» (двойной клик) и неограниченным количеством шашек на точку (команда x). Добавление опции «только первый кубик» к фильтру бросков кубиков (вариант D1, параметр CLI –dice). Панель Комментарии: автоматический фокус поля ввода при открытии и всегда видимые кнопки редактировать / удалить. Исправление фильтра «Search Text», который не находил все теги комментариев.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.21.0</p></td>
+<td><p>01/06/2026</p></td>
+<td><p>Интернационализация интерфейса: весь интерфейс blunderDB (панель инструментов, панели, сообщения, справка) теперь может отображаться по выбору на английском, французском, немецком, итальянском, испанском, финском, японском, греческом или русском языке. Добавлено окно настроек, доступное через кнопку в виде шестерёнки на панели инструментов, для выбора языка. Выбор языка сохраняется между сессиями. См. <a class="reference internal" href="manuel.html#configuration"><span class="std std-ref">Конфигурация</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sommaire">
+<h1>Содержание<a class="headerlink" href="#sommaire" title="Ссылка на этот заголовок"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Руководство</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Основные взаимодействия</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Описание интерфейса</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Конфигурация</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Навигация по позициям</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Редактирование позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. Командная строка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Панель анализа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Панель комментариев</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Панель поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Панель коллекций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Панель матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Панель турниров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Панель Stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. Панель EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Панель Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Панель метаданных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Панель журнала</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">3.1. Создание новой базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">3.2. Открытие существующей базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-et-fusionner-une-base-de-donnees">3.3. Импорт и слияние базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">3.4. Редактирование позиции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">3.5. Добавление позиции в базу данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">3.6. Добавление тега к позиции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">3.7. Удаление позиции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">3.8. Импорт позиции из XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-match">3.9. Импорт матча</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-dossier-de-matchs">3.10. Импорт папки с матчами</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#glisser-deposer">3.11. Перетаскивание</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#naviguer-dans-un-match">3.12. Навигация по матчу</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">3.13. Управление панелью матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">3.14. Управление коллекциями</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">3.15. Управление турнирами</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-les-statistiques-de-performance">3.16. Просмотр статистики производительности</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#calculer-l-epc">3.17. Вычисление EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. Просмотр анализа позиции, импортированной из XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.19. Экспорт позиции в XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.20. Просмотр различных позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.21. Поиск позиций по критериям</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Глобальные операции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. Позиции и навигация</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. Редактирование и поиск</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Фильтры поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. Прочие команды</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#base-de-donnees">5.1. База данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. Позиция</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. Навигация</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. Отображение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. Действия</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. Инструменты</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.7. Командная строка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-historique-de-recherche">5.8. Панель истории поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-bibliotheque-de-filtres">5.9. Панель библиотеки фильтров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.10. Панель анализа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.11. Панель матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-anki-repetition-espacee">5.12. Панель Anki (интервальное повторение)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">6.1. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">6.2. Общий синтаксис</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#commandes-disponibles">6.3. Доступные команды</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#create-creer-une-base-de-donnees">6.4. create — Создать базу данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#import-importer-des-donnees">6.5. import — Импорт данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#export-exporter-des-donnees">6.6. export — Экспорт данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search-rechercher-des-positions">6.7. search — Поиск позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#list-lister-le-contenu">6.8. list — Список содержимого</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#match-afficher-un-match">6.9. match — Отобразить матч</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#info-metadonnees-de-la-base">6.10. info — Метаданные базы данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#edit-modifier-les-metadonnees">6.11. edit — Изменить метаданные</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#verify-verifier-l-integrite">6.12. verify — Проверка целостности</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#delete-supprimer-des-donnees">6.13. delete — Удалить данные</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">6.14. Примеры рабочих процессов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">6.15. Коды возврата</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">7.1. Для чего нужен blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">7.2. Что побудило создать blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">7.3. Как сохранить текущую базу данных?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">7.4. Нужно ли создавать разные базы данных для разных категорий позиций?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">7.5. Как объединить несколько баз данных?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">7.6. Какие форматы файлов матчей поддерживаются?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">7.7. Что такое коллекция?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">7.8. Что такое EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">7.9. Есть ли у blunderDB интерфейс командной строки?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">7.10. Можно ли изменять, копировать, распространять blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">7.11. Какой формат данных использует blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">7.12. Каковы были принципы проектирования blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">7.13. Какова программная архитектура blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">7.14. На каких платформах работает blunderDB?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. Откуда взята иконка blunderDB?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Приложение: Расширенное использование фильтров</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. Поиск позиций в командной строке</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. Поиск в текущих результатах</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. Библиотека фильтров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. Примеры</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Предупреждение Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Блокировка Windows Defender</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. Установка blunderDB</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. Разрешение на запуск blunderDB</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. Version 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. Version 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. Version 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. Version 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. Version 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. Version 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. Version 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. Version 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">12.1. Формальные определения</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">12.2. Засчитанные решения в знаменателе PR</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">12.3. Соответствие blunderDB ↔ XG ↔ gnuBG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">12.4. Проверка собственных данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">12.5. Ссылки gnuBG</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/Ln7XKVFqfUk" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/HkY4iXjxMeI" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div style="margin-top: 20px;"></div></section>
+<section id="contacts">
+<span id="id1"></span><h1>Контакты<a class="headerlink" href="#contacts" title="Ссылка на этот заголовок"></a></h1>
+<p>Автор: Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;. Вы также можете найти меня на Heroes под ником postmanpat.</p>
+<p>Я разработал blunderDB изначально для личного использования, чтобы обнаруживать закономерности в своих ошибках. Но получать обратную связь очень приятно, особенно когда потрачено немало часов на проектирование, программирование и отладку… Поэтому не стесняйтесь писать мне, чтобы поделиться своими впечатлениями. Любые (конструктивные) отзывы приветствуются.</p>
+<p>Вот несколько способов связи:</p>
+<ul class="simple">
+<li><p>Присоединиться к серверу Discord blunderDB: <a class="reference external" href="https://discord.gg/DA5PpzM9En">https://discord.gg/DA5PpzM9En</a></p></li>
+<li><p>Написать мне по адресу <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>.</p></li>
+<li><p>Поговорить со мной, если мы встретимся на турнире.</p></li>
+<li><p>На GitHub.</p>
+<ul>
+<li><p>Открыть задачу: <a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>Для исправления ошибок или предложений по улучшению создать pull request.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="faire-un-don">
+<h1>Сделать пожертвование<a class="headerlink" href="#faire-un-don" title="Ссылка на этот заголовок"></a></h1>
+<p>Если вам нравится blunderDB и вы хотите поддержать прошлые и будущие разработки, вы можете</p>
+<ul class="simple">
+<li><p>угостить меня напитком, если мы имеем удовольствие встретиться!</p></li>
+<li><p>сделать небольшое пожертвование через PayPal на адрес <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a></p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h1>Благодарности<a class="headerlink" href="#remerciements" title="Ссылка на этот заголовок"></a></h1>
+<p>Я посвящаю эту небольшую программу моей супруге Анн-Клер и нашей дорогой дочери Перрин. Я хотел бы особо поблагодарить нескольких друзей:</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em> — за то, что познакомил меня с нардами с радостью и добротой; за то, что указывает Путь к пониманию этой замечательной игры; за то, что продолжает поддерживать меня, несмотря на мои скромные попытки играть лучше.</p></li>
+<li><p><em>Nicolas Harmand</em> — весёлый товарищ уже более десяти лет в замечательных приключениях, и фантастический партнёр по игре с тех пор, как он заразился вирусом нард.</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="telecharge_install.html" class="btn btn-neutral float-right" title="1. Загрузка и установка" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

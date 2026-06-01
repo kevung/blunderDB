@@ -1,0 +1,496 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>blunderDB &mdash; blunderDB 0.21.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d5cc5d32"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="1. Lataaminen ja asentaminen" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="blunderdb">
+<span id="index"></span><h1>blunderDB<a class="headerlink" href="#blunderdb" title="Link to this heading"></a></h1>
+<p>blunderDB on ohjelma backgammon-positioiden tietokantojen luomiseen. Sen tärkein vahvuus on tarjota yksi paikka, johon pelaaja voi koota kohtaamiaan positioita (verkossa, turnauksissa) ja tutkia näitä positioita uudelleen suodattamalla niitä erilaisilla suodattimilla, joita voi yhdistellä vapaasti. blunderDB:tä voi käyttää myös referenssipositioiden luetteloiden kokoamiseen.</p>
+<p>Tämä dokumentaatio on rakennettu seuraavasti:</p>
+<ul class="simple">
+<li><p><strong>lataus ja asennus</strong> -osio selittää, miten blunderDB hankitaan ja käynnistetään.</p></li>
+<li><p><strong>käyttöopas</strong> kuvaa blunderDB:n yleisen toiminnan.</p></li>
+<li><p><strong>käyttäjän opas</strong> on käytännönläheinen johdanto blunderDB:n nopeaan käyttöön.</p></li>
+<li><p><strong>komentojen</strong> luettelo sekä näppäimistön <strong>pikanäppäinten</strong> luettelo mahdollistavat blunderDB:n tehokkaan käytön.</p></li>
+<li><p><strong>komentorivikäyttöliittymä (CLI)</strong> -osio kuvaa käytettävissä olevat komennot massatuontiin, automatisointiin ja skriptaukseen.</p></li>
+<li><p><strong>UKK</strong> tarjoaa vastauksia yleisimmin esitettyihin kysymyksiin.</p></li>
+</ul>
+</section>
+<section id="historique-des-versions">
+<h1>Versiohistoria<a class="headerlink" href="#historique-des-versions" title="Link to this heading"></a></h1>
+<table class="align-center-table docutils align-center">
+<colgroup>
+<col style="width: 15.6%" />
+<col style="width: 21.9%" />
+<col style="width: 62.5%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Versio</p></th>
+<th class="head"><p>Päivämäärä</p></th>
+<th class="head"><p>Muutosten syy ja/tai luonne</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>0.1.0</p></td>
+<td><p>31.12.2024</p></td>
+<td><p>Beta-versio.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.2.0</p></td>
+<td><p>6.1.2025</p></td>
+<td><p>Erinäisiä virhekorjauksia.</p>
+<p>Lisätty ottelu-/TP/GV-taulukot.</p>
+<p>Lisätty hakusuodattimet (siirrot, tuplauspäätös, päivämäärä).</p>
+<p>Lisätty positioiden metatiedot.</p>
+<p>Tuonti-/vientitoiminto blunderDB-instanssien välillä.</p>
+<p>Lisätty tietokantojen metatietotoiminto.</p>
+<p>Versionumeroiden käyttöönotto (tietokanta ja sovellus).</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.3.0</p></td>
+<td><p>27.1.2025</p></td>
+<td><p>Erinäisiä virhekorjauksia.</p>
+<p>Tallentaa ikkunan koon automaattisesti.</p>
+<p>Tuo mahdolliset kommentit XG:stä.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.4.0</p></td>
+<td><p>3.2.2025</p></td>
+<td><p>Erinäisiä virhekorjauksia.</p>
+<p>Lisätty kuvake blunderDB:lle.</p>
+<p>Suodattimien korjauksia.</p>
+<p>Lisätty macOS-tuki.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.5.0</p></td>
+<td><p>4.2.2025</p></td>
+<td><p>Lisätty uusia suodattimia (peilikuva, ei kosketusta, jan blot, outfield blot).</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.6.0</p></td>
+<td><p>13.2.2025</p></td>
+<td><p>Lisätty suodatinkirjasto.</p>
+<p>Tietokannan version näyttäminen metatiedoissa.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.7.0</p></td>
+<td><p>16.2.2025</p></td>
+<td><p>Japanin- ja saksankielisten XG-vientien tuki.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.8.0</p></td>
+<td><p>3.5.2025</p></td>
+<td><p>Mahdollisuus piilottaa pip-laskuri.</p>
+<p>Satunnaisen position lataaminen.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.9.0</p></td>
+<td><p>2.11.2025</p></td>
+<td><p>Suodatinkirjaston virhekorjaus.</p>
+<p>Tietokannan tuonti/vienti.</p>
+<p>Nuolien näyttäminen valituille siirroille.</p>
+<p>Pikanäppäimet tuontiin/vientiin.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.10.0</p></td>
+<td><p>25.2.2026</p></td>
+<td><p>Otteluiden tuonti eXtreme Gammonista (XG/XGP), GNUbg:stä (SGF), Jellyfishistä (MAT/TXT) ja BGBlitzistä (BGF/TXT).</p>
+<p>Otteluiden selaaminen: tuodun ottelun siirtojen läpikäynti, pelatun siirron korostuksella.</p>
+<p>Ottelupaneeli: luettelo, lajittelu, suora muokkaus, pelaajien vaihto, turnauksen määritys.</p>
+<p>Rekursiivinen kansiotuonti ja vedä-ja-pudota-tuonti.</p>
+<p>EPC-laskuri (Effective Pip Count) sisäänrakennetulla GNUbg:n bearoff-tietokannalla.</p>
+<p>Kokoelmat: positioiden mukautettu ryhmittely.</p>
+<p>Turnaukset: otteluiden ryhmittely tapahtuman mukaan.</p>
+<p>Istunnon tilan tallennus ja palautus (viimeisin haku, nykyinen positio).</p>
+<p>Tietokantaskeeman automaattinen migraatio.</p>
+<p>Useiden moottoreiden näyttö analyysissä.</p>
+<p>Pelaajan 1 virheiden/blundereiden suodatin hauissa.</p>
+<p>Tietokannan vienti tarkalla valinnalla (ottelut, kokoelmat, turnaukset, pelatut siirrot).</p>
+<p>Otteluiden selauspainike.</p>
+<p>Pip-laskuri otteluiden selauksessa.</p>
+<p>Täydellinen komentorivikäyttöliittymä (CLI).</p>
+<p>Viimeisimmän tietokannan automaattinen uudelleenavaus.</p>
+<p>Parannettu työkalupalkki ja kuvakkeet.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.11.0</p></td>
+<td><p>6.3.2026</p></td>
+<td><p>Hakusuodatin nykyisissä positioissa.</p>
+<p>Lisätty ottelu- ja turnaussuodattimet.</p>
+<p>Laudan automaattinen tyhjennys hakupaneelia avattaessa.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.12.0</p></td>
+<td><p>19.3.2026</p></td>
+<td><p>eXtreme Gammon -positiotiedostojen (XGP) tuonti analyysin kanssa.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.13.0</p></td>
+<td><p>28.3.2026</p></td>
+<td><p>Käyttöliittymän yksinkertaistaminen: otteluiden ja kokoelmien selaus tapahtuu nyt suoraan paneeleiden kautta.</p>
+<p>Tilariviin integroitu komentorivi.</p>
+<p>Console-paneeli nimetty uudelleen Log-paneeliksi.</p>
+<p>Oma EPC-paneeli alapaneelissa.</p>
+<p>Position kopiointi/liittäminen hakupaneelissa.</p>
+<p>Vedä-ja-pudota kokoelmien, kokoelmien sisäisten positioiden sekä turnausten sisäisten otteluiden uudelleenjärjestämiseen.</p>
+<p>Turnaussarake ottelupaneelissa suoralla muokkauksella.</p>
+<p>Analyysipaneelin automaattinen näyttö haun jälkeen.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>0.14.0</p></td>
+<td><p>30.3.2026</p></td>
+<td><p>Oma Anki-paneeli kertausvälioppimiseen (FSRS-algoritmi).</p>
+<p>Kommenttien tuonti XG-tiedostoista.</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>0.15.0</p></td>
+<td><p>31.3.2026</p></td>
+<td><p>Position vienti PNG-kuvana leikepöydälle (pelkkä lauta painikkeella Ctrl+X, tai lauta analyysin kanssa painikkeella Ctrl+X Ctrl+X).</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.16.0</p></td>
+<td><p>18.4.2026</p></td>
+<td><p>Tietokantaskeema v2.0.0: positioiden deduplikointi Zobrist-hashilla, denormalisoidut suodatussarakkeet, bittilautakuvioiden esisuodatus, WAL-journalointi. Erätuonti &gt;=3x nopeampi, suodatettu haku &lt;=100 ms yli 10k positiolla. HUOM: v0.16.0:lla luotuja DB-tiedostoja ei voi avata vanhemmilla versioilla; vanhat DB:t migratoidaan automaattisesti paikallaan (ota ensin varmuuskopio).</p></td>
+</tr>
+<tr class="row-even"><td><p>0.17.0</p></td>
+<td><p>20.4.2026</p></td>
+<td><p>Tallennuksen optimointi: analyysitietojen zlib-pakkaus (~80 %:n pienennys), positioiden kompakti koodaus (~90 %:n koon pienennys). Lisätty 5 puuttuvaa indeksiä hakusuorituskyvyn parantamiseksi. Korjattu tuplausvirheen mukaan tehtävä haku. Korjattu EDIT-tila haun jälkeen, kun tuloksia ei ole. Hakupaneelin tilan palautus välilehtiä vaihdettaessa. Poistettu 62 virheenkorjaustulostetta kriittisiltä poluilta.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.18.0</p></td>
+<td><p>20.4.2026</p></td>
+<td><p>Koodin laaja refaktorointi: db.go (10k riviä) jaettu 19 erikoistuneeseen tiedostoon, 7 palvelumoduulia eriytetty App.sveltesta (4888→469 riviä), modaali-/paneelivarastot konsolidoitu. Täydellinen migraatio Svelte 5 -runeihin. 9 taulukkomodaalia korvattu yleisellä DataTableModal-komponentilla. Lisätty ESLint + Prettier + vitest (125 frontend-testiä) CI:n kanssa. WCAG 2.1 AA -saavutettavuus (näkyvä fokus, ARIA-roolit, näppäimistönavigointi). Database-mutex päivitetty RWMutexiksi paremman lukurinnakkaisuuden vuoksi. Täydellinen CLI-dokumentaatio (CLI_USAGE.md + Sphinx FR/EN). README kirjoitettu uudelleen. Korjattu kaikki ESLint-varoitukset (46→0) ja Vite-varoitukset (6→0).</p></td>
+</tr>
+<tr class="row-even"><td><p>0.19.0</p></td>
+<td><p>7.5.2026</p></td>
+<td><p>Lisätty Stats-paneeli: PR (Performance Rate)-, Snowie Error Rate- ja MWC cost (Match Winning Chance cost) -indikaattorit, suodatinpalkki (pelaaja, turnaus, päivämäärät, päätöstyyppi, ottelun pituus), Dashboard-välilehti tasokorteilla / liukuvalla PR:llä / pahimmilla blundereilla, Progression-välilehti turnauskohtaisella käyrällä ja ottelukohtaisella hajontakaaviolla, Errors-välilehti tuplaustoimintojen erittelyllä ja virheiden suuruuksien histogrammilla. Interaktiivinen porautuminen positioihin / otteluihin / turnauksiin kaikista indikaattoreista. Välitön PR / MWC -vaihto. CLI-komento list –type stats. PR / Snowie ER / MWC -indikaattoreiden yhtenäistäminen eXtremeGammonin ja gnuBG:n kanssa (0.16 equity-kynnys läheisille tuplauksille). Korjattu cube_error-laskenta Double/Pass-päätöksille. Tilastomallin dokumentaatio (:ref:`stats_parity`). Katso :ref:`stats`.</p></td>
+</tr>
+<tr class="row-odd"><td><p>0.20.0</p></td>
+<td><p>31.5.2026</p></td>
+<td><p>Lisätty <em>Except</em>-poissulkurakenne hakupaneeliin: poissulkee positiot, jotka sisältävät jonkin piirretyistä nappuloista, merkillä « täytyy olla tyhjä » (kaksoisnapsautus) ja rajoittamattomalla nappulamäärällä pistettä kohti (komento x). Lisätty « vain ensimmäinen noppa » -vaihtoehto noppasuodattimeen (D1-variantti, CLI-vaihtoehto –dice). Comments-paneeli: syöttökenttä fokusoidaan automaattisesti avattaessa ja muokkaa / poista -painikkeet ovat aina näkyvissä. Korjattu « Search Text » -suodatin, joka ei löytänyt kaikkia kommenttitageja.</p></td>
+</tr>
+<tr class="row-even"><td><p>0.21.0</p></td>
+<td><p>1.6.2026</p></td>
+<td><p>Käyttöliittymän kansainvälistäminen: koko blunderDB (työkalupalkki, paneelit, viestit, ohje) voidaan nyt näyttää valinnan mukaan englanniksi, ranskaksi, saksaksi, italiaksi, espanjaksi, suomeksi, japaniksi, kreikaksi tai venäjäksi. Lisätty asetusikkuna, joka avataan työkalupalkin hammasrataspainikkeesta ja josta voi valita kielen. Kielivalinta säilytetään istunnosta toiseen. Katso :ref:`configuration`.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="sommaire">
+<h1>Sisällysluettelo<a class="headerlink" href="#sommaire" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Käyttöopas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#introduction">2.1. Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#interactions-principales">2.2. Päätoiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#description-de-l-interface">2.3. Käyttöliittymän kuvaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#configuration">2.4. Asetukset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#navigation-dans-les-positions">2.5. Asemien selaaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#edition-de-positions">2.6. Asemien muokkaus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#la-ligne-de-commande">2.7. Komentorivi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-analyse">2.8. Analyysipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-commentaires">2.9. Kommenttipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-recherche">2.10. Hakupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-collections">2.11. Kokoelmapaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-matchs">2.12. Ottelupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-tournois">2.13. Turnauspaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-stats">2.14. Stats-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-epc">2.15. EPC-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-anki">2.16. Anki-paneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-metadonnees">2.17. Metatietopaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="manuel.html#panneau-journal">2.18. Lokipaneeli</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#creer-une-nouvelle-base-de-donnees">3.1. Luo uusi tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ouvrir-une-base-de-donnee-existante">3.2. Avaa olemassa oleva tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-et-fusionner-une-base-de-donnees">3.3. Tuo ja yhdistä tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#editer-une-position">3.4. Muokkaa asemaa</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#ajouter-une-position-a-la-base-de-donnees">3.5. Lisää asema tietokantaan</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#etiqueter-une-position">3.6. Merkitse asema tunnisteella</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#supprimer-une-position">3.7. Poista asema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#import-une-position-depuis-xg">3.8. Tuo asema XG:stä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-match">3.9. Tuo ottelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#importer-un-dossier-de-matchs">3.10. Tuo ottelukansio</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#glisser-deposer">3.11. Vedä ja pudota</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#naviguer-dans-un-match">3.12. Selaa ottelua</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-le-panneau-des-matchs">3.13. Hallitse ottelupaneelia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-collections">3.14. Hallitse kokoelmia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#gerer-les-tournois">3.15. Hallitse turnauksia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-les-statistiques-de-performance">3.16. Näytä suoritustilastot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#calculer-l-epc">3.17. Laske EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. Näytä XG:stä tuodun aseman analyysi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#exporter-une-position-vers-xg">3.19. Vie asema XG:hen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#visualiser-les-differentes-positions">3.20. Tarkastele eri asemia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="guide_utilisateur.html#rechercher-des-positions-selon-des-criteres">3.21. Hae asemia kriteerien perusteella</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#operations-globales">4.1. Yleiset toiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#positions-et-navigation">4.2. Asemat ja navigointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#edition-et-recherche">4.3. Muokkaus ja haku</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#filtres-de-recherche">4.4. Hakusuodattimet</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cmd_mode.html#commandes-diverses">4.5. Sekalaisia komentoja</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#base-de-donnees">5.1. Tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#position">5.2. Asema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#navigation">5.3. Navigointi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#affichage">5.4. Näyttö</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#actions">5.5. Toiminnot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#outils">5.6. Työkalut</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#ligne-de-commande">5.7. Komentorivi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-historique-de-recherche">5.8. Hakuhistoriapaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-bibliotheque-de-filtres">5.9. Suodatinkirjastopaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-d-analyse">5.10. Analyysipaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-des-matchs">5.11. Ottelupaneeli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="raccourcis.html#panneau-anki-repetition-espacee">5.12. Anki-paneeli (välitoistoharjoittelu)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#introduction">6.1. Johdanto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#syntaxe-generale">6.2. Yleinen syntaksi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#commandes-disponibles">6.3. Käytettävissä olevat komennot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#create-creer-une-base-de-donnees">6.4. create — Luo tietokanta</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#import-importer-des-donnees">6.5. import — Tuo tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#export-exporter-des-donnees">6.6. export — Vie tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#search-rechercher-des-positions">6.7. search — Hae asemia</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#list-lister-le-contenu">6.8. list — Luettele sisältö</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#match-afficher-un-match">6.9. match — Näytä ottelu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#info-metadonnees-de-la-base">6.10. info — Tietokannan metatiedot</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#edit-modifier-les-metadonnees">6.11. edit — Muokkaa metatietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#verify-verifier-l-integrite">6.12. verify — Tarkista eheys</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#delete-supprimer-des-donnees">6.13. delete — Poista tietoja</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#exemples-de-flux-de-travail">6.14. Työnkulkuesimerkkejä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cli.html#codes-de-retour">6.15. Paluukoodit</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-utilite-de-blunderdb">7.1. Mihin blunderDB:tä käytetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">7.2. Mikä motivoi blunderDB:n luomiseen?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-sauvegarder-la-base-de-donnees-courante">7.3. Miten nykyisen tietokannan tila tallennetaan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">7.4. Pitäisikö minun luoda eri tietokantoja eri asemaluokille?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#comment-fusionner-plusieurs-bases-de-donnees">7.5. Miten useita tietokantoja yhdistetään?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quels-formats-de-fichiers-de-match-sont-supportes">7.6. Mitä ottelutiedostomuotoja tuetaan?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-qu-une-collection">7.7. Mikä on kokoelma?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#qu-est-ce-que-l-epc">7.8. Mikä on EPC?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">7.9. Onko blunderDB:ssä komentorivikäyttöliittymä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#puis-je-modifier-copier-partager-blunderdb">7.10. Voinko muokata, kopioida ja jakaa blunderDB:tä?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-format-de-donnees-utilise-blunderdb">7.11. Mitä tietomuotoa blunderDB käyttää?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quelles-ont-ete-les-principes-de-conception-de-blunderdb">7.12. Mitkä olivat blunderDB:n suunnitteluperiaatteet?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#quel-est-l-architecture-logicielle-de-blunderdb">7.13. Mikä on blunderDB:n ohjelmistoarkkitehtuuri?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#sur-quelles-plateformes-blunderdb-fonctionne-t-il">7.14. Millä alustoilla blunderDB toimii?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#d-ou-vient-l-icone-de-blunderdb">7.15. Mistä blunderDB:n kuvake on peräisin?</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-de-positions-en-ligne-de-commande">8.1. Asemien haku komentorivillä</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#recherche-dans-les-resultats-courants">8.2. Haku nykyisistä tuloksista</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#bibliotheque-de-filtres">8.3. Suodatinkirjasto</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_filtres.html#exemples">8.4. Esimerkkejä</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#avertissement-windows-smartscreen">9.1. Windows SmartScreen -varoitus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_windows_securite.html#blocage-windows-defender">9.2. Windows Defenderin esto</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#installation-de-blunderdb">10.1. blunderDB:n asennus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_mac_securite.html#autorisation-de-l-execution-de-blunderdb">10.2. Luvan antaminen blunderDB:n suorittamiseen</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-0-0">11.1. Versio 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-1-0">11.2. Versio 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-2-0">11.3. Versio 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-3-0">11.4. Versio 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-4-0">11.5. Versio 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-5-0">11.6. Versio 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-6-0">11.7. Versio 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="annexe_db_scheme.html#version-1-7-0">11.8. Versio 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#definitions-formelles">12.1. Muodolliset määritelmät</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#decisions-comptees-au-denominateur-du-pr">12.2. PR:n nimittäjässä lasketut päätökset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#correspondance-blunderdb-xg-gnubg">12.3. Vastaavuus blunderDB ↔ XG ↔ gnuBG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#valider-vos-propres-chiffres">12.4. Omien lukujen tarkistaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats_parity.html#reference-gnubg">12.5. gnuBG-viite</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/Ln7XKVFqfUk" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div class="video_wrapper" style="padding-bottom: 56.250000%; padding-top: 30px; position: relative; width: 100%">
+<iframe allowfullscreen="true" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/HkY4iXjxMeI" style="border: 0; height: 100%; left: 0; position: absolute; top: 0; width: 100%">
+</iframe></div><div style="margin-top: 20px;"></div></section>
+<section id="contacts">
+<span id="id1"></span><h1>Yhteystiedot<a class="headerlink" href="#contacts" title="Link to this heading"></a></h1>
+<p>Tekijä: Kévin Unger &lt;<a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>&gt;. Minut tavoittaa myös Heroes-palvelusta käyttäjänimellä postmanpat.</p>
+<p>Kehitin blunderDB:n alun perin omaan käyttööni voidakseni havaita toistuvia kaavoja virheissäni. On kuitenkin hyvin palkitsevaa saada palautetta, etenkin kun on käyttänyt paljon tunteja suunnitteluun, koodaukseen ja virheenkorjaukseen… Älä siis epäröi ottaa yhteyttä ja jakaa kokemuksiasi. Kaikki (rakentava) palaute on tervetullutta.</p>
+<p>Tässä useita tapoja keskustella:</p>
+<ul class="simple">
+<li><p>liity blunderDB:n Discord-palvelimelle: https://discord.gg/DA5PpzM9En</p></li>
+<li><p>lähetä minulle sähköpostia osoitteeseen <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a>,</p></li>
+<li><p>keskustele kanssani, jos tapaamme turnauksessa,</p></li>
+<li><p>GitHubissa,</p>
+<ul>
+<li><p>avaa tiketti: <a class="reference external" href="https://github.com/kevung/blunderDB/issues">https://github.com/kevung/blunderDB/issues</a></p></li>
+<li><p>virhekorjauksia tai parannusehdotuksia varten luo pull request.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="faire-un-don">
+<h1>Lahjoita<a class="headerlink" href="#faire-un-don" title="Link to this heading"></a></h1>
+<p>Jos pidät blunderDB:stä ja haluat tukea sen mennyttä ja tulevaa kehitystä, voit</p>
+<ul class="simple">
+<li><p>tarjota minulle juoman, jos meillä on ilo tavata!</p></li>
+<li><p>tehdä pienen lahjoituksen PayPalilla osoitteeseen <a class="reference external" href="mailto:blunderdb&#37;&#52;&#48;proton&#46;me">blunderdb<span>&#64;</span>proton<span>&#46;</span>me</a></p></li>
+</ul>
+</section>
+<section id="remerciements">
+<h1>Kiitokset<a class="headerlink" href="#remerciements" title="Link to this heading"></a></h1>
+<p>Omistan tämän pienen ohjelman kumppanilleni Anne-Clairelle ja rakkaalle tyttärellemme Perrinelle. Haluan kiittää aivan erityisesti muutamia ystäviä:</p>
+<ul class="simple">
+<li><p><em>Tristan Remille</em>, joka johdatti minut backgammonin pariin ilolla ja ystävällisyydellä; joka näyttää tien tämän upean pelin ymmärtämiseen; ja joka jatkaa minun kannustamistani vaatimattomista yrityksistäni pelata paremmin huolimatta.</p></li>
+<li><p><em>Nicolas Harmand</em>, iloinen kumppani jo yli kymmenen vuoden ajan hienoissa seikkailuissa, ja loistava pelikaveri siitä lähtien, kun hän sai backgammon-tartunnan.</p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-right" title="1. Lataaminen ja asentaminen" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

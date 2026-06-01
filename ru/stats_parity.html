@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB &mdash; документация blunderDB 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="prev" title="11. Приложение: Схема базы данных" href="annexe_db_scheme.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">12.1. Формальные определения</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rate">12.1.1. PR (Performance Rate)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">12.1.2. Snowie Error Rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">12.1.3. Потеря MWC (Match Winning Chance)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">12.2. Засчитанные решения в знаменателе PR</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">12.2.1. Ходы шашками — засчитанные решения</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">12.2.2. Решения по кубу — засчитанные решения</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">12.2.3. Сводка фильтра</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">12.3. Соответствие blunderDB ↔ XG ↔ gnuBG</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">12.3.1. Сравнение XG ↔ blunderDB (один движок анализа)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">12.3.2. Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">12.4. Проверка собственных данных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">12.5. Ссылки gnuBG</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb">
+<span id="stats-parity"></span><h1><span class="section-number">12. </span>Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB<a class="headerlink" href="#annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Ссылка на этот заголовок"></a></h1>
+<p>Эта страница описывает, как blunderDB вычисляет <strong>PR</strong> (Performance Rate), <strong>Snowie Error Rate</strong> и <strong>потерю MWC</strong>, и как эти метрики выровнены с eXtreme Gammon (XG) и gnuBG (открытый эталон).</p>
+<nav class="contents local" id="id1">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definitions-formelles" id="id2">Формальные определения</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pr-performance-rate" id="id3">PR (Performance Rate)</a></p></li>
+<li><p><a class="reference internal" href="#snowie-error-rate" id="id4">Snowie Error Rate</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-match-winning-chance" id="id5">Потеря MWC (Match Winning Chance)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr" id="id6">Засчитанные решения в знаменателе PR</a></p>
+<ul>
+<li><p><a class="reference internal" href="#coups-de-pions-decisions-comptees" id="id7">Ходы шашками — засчитанные решения</a></p></li>
+<li><p><a class="reference internal" href="#decisions-de-cube-decisions-comptees" id="id8">Решения по кубу — засчитанные решения</a></p></li>
+<li><p><a class="reference internal" href="#resume-du-filtre" id="id9">Сводка фильтра</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg" id="id10">Соответствие blunderDB ↔ XG ↔ gnuBG</a></p>
+<ul>
+<li><p><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" id="id11">Сравнение XG ↔ blunderDB (один движок анализа)</a></p></li>
+<li><p><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" id="id12">Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#valider-vos-propres-chiffres" id="id13">Проверка собственных данных</a></p></li>
+<li><p><a class="reference internal" href="#reference-gnubg" id="id14">Ссылки gnuBG</a></p></li>
+</ul>
+</nav>
+<section id="definitions-formelles">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">12.1. </span>Формальные определения</a><a class="headerlink" href="#definitions-formelles" title="Ссылка на этот заголовок"></a></h2>
+<section id="pr-performance-rate">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">12.1.1. </span>PR (Performance Rate)</a><a class="headerlink" href="#pr-performance-rate" title="Ссылка на этот заголовок"></a></h3>
+<p>PR (также называемый «error rate per decision» в gnuBG) измеряет среднюю ошибку в тысячных долях очка эквити (миллипоинты, mpt) на одно засчитанное решение.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = \frac{\sum_i |\mathrm{error}_i|}{\mathrm{N_{counted}}} \times 500\]</div>
+<ul class="simple">
+<li><p>Числитель — это сумма абсолютных значений ошибок EMG (cubeful equity) по всем решениям в периметре.</p></li>
+<li><p>Знаменатель <span class="math notranslate nohighlight">\(N_\text{compté}\)</span> — количество <strong>засчитанных решений</strong> (см. ниже).</p></li>
+<li><p>Множитель 500 переводит эквити в миллипоинты (1 очко = 1000 mpt, но шкала умножается на ×500 по соглашению XG/gnuBG — ср. <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code>).</p></li>
+</ul>
+</section>
+<section id="snowie-error-rate">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="section-number">12.1.2. </span>Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Ссылка на этот заголовок"></a></h3>
+<p>Snowie ER использует <strong>тот же числитель</strong>, что и PR, но знаменатель — это общее количество ходов обоих игроков, включая вынужденные ходы (все решения, без фильтрации):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{SnowieER} = \frac{\sum_i |\mathrm{error}_i|}{N_\text{P1} + N_\text{P2}} \times 500\]</div>
+<p>Источник: <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code>.</p>
+<p>Snowie ER более стабилен между инструментами, поскольку его знаменатель не зависит от фильтрации вынужденных/тривиальных решений. Он служит перекрёстной метрикой между XG, gnuBG и blunderDB.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Snowie ER игрока обычно составляет около половины его PR, так как знаменатель включает ходы обоих игроков, тогда как PR использует только решения данного игрока.</p>
+</div>
+</section>
+<section id="perte-mwc-match-winning-chance">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink"><span class="section-number">12.1.3. </span>Потеря MWC (Match Winning Chance)</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Ссылка на этот заголовок"></a></h3>
+<p>Потеря MWC выражает в процентных пунктах вероятности выигрыша матча суммарный эффект ошибок игрока. Для каждого решения ошибка EMG преобразуется в MWC через таблицу MET (Match Equity Table) при текущем счёте:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\]</div>
+<p>Источник: <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code>.</p>
+</section>
+</section>
+<section id="decisions-comptees-au-denominateur-du-pr">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink"><span class="section-number">12.2. </span>Засчитанные решения в знаменателе PR</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB следует тем же правилам исключения, что XG и gnuBG.</p>
+<section id="coups-de-pions-decisions-comptees">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink"><span class="section-number">12.2.1. </span>Ходы шашками — засчитанные решения</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Ссылка на этот заголовок"></a></h3>
+<p>Учитываются только <strong>невынужденные ходы</strong>:</p>
+<ul class="simple">
+<li><p>Ход является <strong>вынужденным</strong>, если кости предлагают только один легальный ход (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">==</span> <span class="pre">1</span></code> в <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458</span></code>).</p></li>
+<li><p>Вынужденные ходы по определению имеют нулевую ошибку: у игрока не было выбора. Включение их в знаменатель искусственно занижало бы PR.</p></li>
+</ul>
+</section>
+<section id="decisions-de-cube-decisions-comptees">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink"><span class="section-number">12.2.2. </span>Решения по кубу — засчитанные решения</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Ссылка на этот заголовок"></a></h3>
+<p>Учитываются только <strong>близкие решения по кубу</strong>:</p>
+<ul class="simple">
+<li><p>Решение по кубу является <strong>близким</strong>, если оно находится в окне эквити <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> вокруг точки удвоения (предикат <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> в <code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code>).</p></li>
+<li><p>Тривиальный «No Double» (очень отрицательное или очень положительное эквити) не является настоящим стратегическим решением; его включение раздуло бы знаменатель и занизило бы PR.</p></li>
+</ul>
+</section>
+<section id="resume-du-filtre">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink"><span class="section-number">12.2.3. </span>Сводка фильтра</a><a class="headerlink" href="#resume-du-filtre" title="Ссылка на этот заголовок"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Тип решения</p></th>
+<th class="head"><p>Включён в <span class="math notranslate nohighlight">\(N_\text{compté}\)</span> (PR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Невынужденный ход</p></td>
+<td><p>Да</p></td>
+</tr>
+<tr class="row-odd"><td><p>Вынужденный ход</p></td>
+<td><p>Нет</p></td>
+</tr>
+<tr class="row-even"><td><p>Близкое решение по кубу</p></td>
+<td><p>Да</p></td>
+</tr>
+<tr class="row-odd"><td><p>Тривиальный No Double</p></td>
+<td><p>Нет</p></td>
+</tr>
+<tr class="row-even"><td><p>Take / Pass</p></td>
+<td><p>Всегда (это ответы на удвоение)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="correspondance-blunderdb-xg-gnubg">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink"><span class="section-number">12.3. </span>Соответствие blunderDB ↔ XG ↔ gnuBG</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Ссылка на этот заголовок"></a></h2>
+<p>Метрики выровнены в следующих пределах (измерено на 3 эталонных матчах):</p>
+<section id="comparaison-xg-blunderdb-meme-moteur-d-analyse">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink"><span class="section-number">12.3.1. </span>Сравнение XG ↔ blunderDB (один движок анализа)</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Ссылка на этот заголовок"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Метрика</p></th>
+<th class="head"><p>Типичное отклонение</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Общее количество решений</p></td>
+<td><p>≤ 5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Невынужденные ходы</p></td>
+<td><p>≤ 7</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>≤ 0.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>Потеря MWC</p></td>
+<td><p>≤ 1.0 pp</p></td>
+</tr>
+<tr class="row-even"><td><p>Суммарное эквити (EMG)</p></td>
+<td><p>≤ 0.05</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink"><span class="section-number">12.3.2. </span>Сравнение gnuBG ↔ blunderDB (импорт SGF — разные движки)</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Ссылка на этот заголовок"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Метрика</p></th>
+<th class="head" colspan="2"><p>Типичное отклонение</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>≤ 0.20</p></td>
+<td><p>расхождение эквити между движками</p></td>
+</tr>
+<tr class="row-odd"><td><p>Потеря MWC</p></td>
+<td><p>≤ 3.5 pp</p></td>
+<td><p>неполные данные close-cube в SGF</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie ER</p></td>
+<td><p>≤ 0.50</p></td>
+<td><p>вынужденные ходы без анализа (SGF)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Snowie ER</p>
+</div>
+</section>
+</section>
+<section id="valider-vos-propres-chiffres">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink"><span class="section-number">12.4. </span>Проверка собственных данных</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Ссылка на этот заголовок"></a></h2>
+<p>PR</p>
+<ol class="arabic simple">
+<li><p>PR</p></li>
+<li><p><strong>Версия XG</strong> — XG может менять расчёты между версиями. blunderDB выровнен с поведением, наблюдаемым в последних версиях.</p></li>
+<li><p><strong>Формат импорта</strong> — файлы SGF gnuBG дают более значительные расхождения по кубу (см. таблицу выше), поскольку файл не включает полные анализы для всех решений по кубу.</p></li>
+<li><p><strong>Миграция базы данных</strong> — После обновления blunderDB существующие базы данных мигрируются автоматически. Сделайте резервную копию перед открытием базы данных с новой версией.</p></li>
+</ol>
+</section>
+<section id="reference-gnubg">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink"><span class="section-number">12.5. </span>Ссылки gnuBG</a><a class="headerlink" href="#reference-gnubg" title="Ссылка на этот заголовок"></a></h2>
+<p>Формулы проверены в следующих исходных файлах (репозиторий gnuBG):</p>
+<ul class="simple">
+<li><p>PR</p></li>
+<li><p>Snowie Error Rate</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458–462</span></code> — Накопление ходов шашками, исключение вынужденных (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1430–1474</span></code> — Преобразование EMG → MWC по каждому решению.</p></li>
+<li><p>Источник: <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code>.</p></li>
+<li><p>Решение по кубу является <strong>близким</strong>, если оно находится в окне эквити <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> вокруг точки удвоения (предикат <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> в <code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code>).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-left" title="11. Приложение: Схема базы данных" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

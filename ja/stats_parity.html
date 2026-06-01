@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12. 付録：統計モデル — XG / gnuBG / blunderDB の整合 &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="prev" title="11. 付録: データベーススキーマ" href="annexe_db_scheme.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">12.1. 正式な定義</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rate">12.1.1. PR (Performance Rate)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">12.1.2. Snowie Error Rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">12.1.3. MWC 損失（Match Winning Chance）</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">12.2. PR の分母にカウントされる決定</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">12.2.1. チェッカープレイ — カウントされる決定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">12.2.2. キューブ決定 — カウントされる決定</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">12.2.3. フィルターの概要</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">12.3. blunderDB ↔ XG ↔ gnuBG の対応</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">12.3.1. XG ↔ blunderDB の比較（同じ解析エンジン）</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">12.3.2. gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">12.4. 自分の数値を検証する</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">12.5. gnuBG 参照</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>付録：統計モデル — XG / gnuBG / blunderDB の整合</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb">
+<span id="stats-parity"></span><h1><span class="section-number">12. </span>付録：統計モデル — XG / gnuBG / blunderDB の整合<a class="headerlink" href="#annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
+<p>このページでは、blunderDB が <strong>PR**（Performance Rate）、**Snowie Error Rate</strong>、<strong>MWC</strong> 損失をどのように計算し、これらの指標が eXtreme Gammon (XG) および gnuBG（オープンリファレンス）とどのように整合しているかを説明します。</p>
+<nav class="contents local" id="id1">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definitions-formelles" id="id2">正式な定義</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pr-performance-rate" id="id3">PR (Performance Rate)</a></p></li>
+<li><p><a class="reference internal" href="#snowie-error-rate" id="id4">Snowie Error Rate</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-match-winning-chance" id="id5">MWC 損失（Match Winning Chance）</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr" id="id6">PR の分母にカウントされる決定</a></p>
+<ul>
+<li><p><a class="reference internal" href="#coups-de-pions-decisions-comptees" id="id7">チェッカープレイ — カウントされる決定</a></p></li>
+<li><p><a class="reference internal" href="#decisions-de-cube-decisions-comptees" id="id8">キューブ決定 — カウントされる決定</a></p></li>
+<li><p><a class="reference internal" href="#resume-du-filtre" id="id9">フィルターの概要</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg" id="id10">blunderDB ↔ XG ↔ gnuBG の対応</a></p>
+<ul>
+<li><p><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" id="id11">XG ↔ blunderDB の比較（同じ解析エンジン）</a></p></li>
+<li><p><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" id="id12">gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#valider-vos-propres-chiffres" id="id13">自分の数値を検証する</a></p></li>
+<li><p><a class="reference internal" href="#reference-gnubg" id="id14">gnuBG 参照</a></p></li>
+</ul>
+</nav>
+<section id="definitions-formelles">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">12.1. </span>正式な定義</a><a class="headerlink" href="#definitions-formelles" title="Link to this heading"></a></h2>
+<section id="pr-performance-rate">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">12.1.1. </span>PR (Performance Rate)</a><a class="headerlink" href="#pr-performance-rate" title="Link to this heading"></a></h3>
+<p>PR（gnuBG では「error rate per decision」とも呼ばれる）は、カウントされた決定ごとのエクイティポイントの千分の一（ミリポイント、mpt）単位の平均エラーを測定します。</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = \frac{\sum_i |\mathrm{error}_i|}{\mathrm{N_{counted}}} \times 500\]</div>
+<ul class="simple">
+<li><p>分子は、スコープ内のすべての決定における EMG エラー（キューブフルエクイティ）の絶対和です。</p></li>
+<li><p>分母 <span class="math notranslate nohighlight">\(N_\text{counted}\)</span> は <strong>カウントされた決定</strong> の数です（以下を参照）。</p></li>
+<li><p>係数 500 はエクイティをミリポイントに変換します（1 ポイント = 1000 mpt ですが、XG/gnuBG の慣例により倍率は ×500 です — <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code> 参照）。</p></li>
+</ul>
+</section>
+<section id="snowie-error-rate">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="section-number">12.1.2. </span>Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Link to this heading"></a></h3>
+<p>Snowie ER は PR と <strong>同じ分子</strong> を使用しますが、分母は強制手を含む両プレイヤーの総手数です（すべての決定、フィルターなし）：</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{SnowieER} = \frac{\sum_i |\mathrm{error}_i|}{N_\text{P1} + N_\text{P2}} \times 500\]</div>
+<p>参照：<code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code>。</p>
+<p>Snowie ER は、分母が強制/自明な決定フィルターに依存しないため、ツール間でより安定しています。XG ↔ gnuBG ↔ blunderDB 間のクロスチェック指標として機能します。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>プレイヤーの Snowie ER は通常 PR の約半分です。分母には両プレイヤーの手が含まれるのに対し、PR はそのプレイヤーの決定のみを使用するためです。</p>
+</div>
+</section>
+<section id="perte-mwc-match-winning-chance">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink"><span class="section-number">12.1.3. </span>MWC 損失（Match Winning Chance）</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Link to this heading"></a></h3>
+<p>MWC 損失は、プレイヤーのエラーの累積効果を、マッチに勝つ確率のパーセンテージポイントで表します。各決定について、EMG エラーは現在のスコアにおける MET（Match Equity Table）を使用して MWC に変換されます：</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\]</div>
+<p>参照：<code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code>。</p>
+</section>
+</section>
+<section id="decisions-comptees-au-denominateur-du-pr">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink"><span class="section-number">12.2. </span>PR の分母にカウントされる決定</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Link to this heading"></a></h2>
+<p>blunderDB は XG および gnuBG と同じ除外ルールに従います。</p>
+<section id="coups-de-pions-decisions-comptees">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink"><span class="section-number">12.2.1. </span>チェッカープレイ — カウントされる決定</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Link to this heading"></a></h3>
+<p><strong>強制されていない手</strong> のみがカウントされます：</p>
+<ul class="simple">
+<li><p>手が <strong>強制</strong> であるのは、サイコロが 1 つの合法的なプレイしか提供しない場合です（<code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458</span></code> の <code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">==</span> <span class="pre">1</span></code>）。</p></li>
+<li><p>強制手は定義上エラーがゼロです：プレイヤーに選択肢がありませんでした。それらを分母に含めると PR が人為的に低下します。</p></li>
+</ul>
+</section>
+<section id="decisions-de-cube-decisions-comptees">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink"><span class="section-number">12.2.2. </span>キューブ決定 — カウントされる決定</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Link to this heading"></a></h3>
+<p><strong>接戦のキューブ決定</strong> のみがカウントされます：</p>
+<ul class="simple">
+<li><p>キューブ決定が <strong>接戦</strong> であるのは、ダブリングポイントの周囲のエクイティウィンドウ <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> 内にある場合です（<code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> の述語 <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code>）。</p></li>
+<li><p>自明な「No Double」（非常に負または非常に正のエクイティ）は真の戦略的決定ではありません。それを含めると分母が膨らみ PR が低下します。</p></li>
+</ul>
+</section>
+<section id="resume-du-filtre">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink"><span class="section-number">12.2.3. </span>フィルターの概要</a><a class="headerlink" href="#resume-du-filtre" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>決定タイプ</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(N_\text{counted}\)</span> (PR) に含まれる</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>強制されていない手</p></td>
+<td><p>はい</p></td>
+</tr>
+<tr class="row-odd"><td><p>強制手</p></td>
+<td><p>いいえ</p></td>
+</tr>
+<tr class="row-even"><td><p>接戦キューブ</p></td>
+<td><p>はい</p></td>
+</tr>
+<tr class="row-odd"><td><p>自明な No Double</p></td>
+<td><p>いいえ</p></td>
+</tr>
+<tr class="row-even"><td><p>Take / Pass</p></td>
+<td><p>常に（これらはダブルへの応答です）</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="correspondance-blunderdb-xg-gnubg">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink"><span class="section-number">12.3. </span>blunderDB ↔ XG ↔ gnuBG の対応</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Link to this heading"></a></h2>
+<p>指標は以下の範囲内で整合しています（3 つの参照マッチで測定）：</p>
+<section id="comparaison-xg-blunderdb-meme-moteur-d-analyse">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink"><span class="section-number">12.3.1. </span>XG ↔ blunderDB の比較（同じ解析エンジン）</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>指標</p></th>
+<th class="head"><p>典型的な差</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>総決定数</p></td>
+<td><p>≤ 5</p></td>
+</tr>
+<tr class="row-odd"><td><p>強制されていない手</p></td>
+<td><p>≤ 7</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>≤ 0.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>MWC 損失</p></td>
+<td><p>≤ 1.0 pp</p></td>
+</tr>
+<tr class="row-even"><td><p>総エクイティ (EMG)</p></td>
+<td><p>≤ 0.05</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink"><span class="section-number">12.3.2. </span>gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>指標</p></th>
+<th class="head" colspan="2"><p>典型的な差 | 主な原因</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PR (チェッカー)</p></td>
+<td><p>≤ 0.20</p></td>
+<td><p>クロスエンジンのエクイティ差</p></td>
+</tr>
+<tr class="row-odd"><td><p>MWC 損失</p></td>
+<td><p>≤ 3.5 pp</p></td>
+<td><p>SGF の不完全な接戦キューブデータ</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie ER</p></td>
+<td><p>≤ 0.50</p></td>
+<td><p>解析なしの強制手（SGF）</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>SGF ファイル（gnuBG）は強制手の代替手を含まないため、blunderDB は SGF インポート時にすべての強制手を検出できません。これにより Snowie ER に構造的な差が生じます（分母がわずかに異なる）。</p>
+</div>
+</section>
+</section>
+<section id="valider-vos-propres-chiffres">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink"><span class="section-number">12.4. </span>自分の数値を検証する</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Link to this heading"></a></h2>
+<p>PR または MWC の値が XG の数値と乖離する場合は、以下の点を確認してください：</p>
+<ol class="arabic simple">
+<li><p><strong>完全な解析</strong> — PR は解析のあるポジションのみで計算できます。解析のないポジションはエラーゼロとしてカウントされますが、<span class="math notranslate nohighlight">\(N_\text{counted}\)</span> には含まれません。</p></li>
+<li><p><strong>XG バージョン</strong> — XG はバージョン間で計算を変更する場合があります。blunderDB は最近のバージョンで観察された動作に合わせています。</p></li>
+<li><p><strong>インポート形式</strong> — gnuBG の SGF ファイルは、ファイルにすべてのキューブ決定の完全な解析が含まれていないため、キューブ指標でより大きな差が生じます（上記の表を参照）。</p></li>
+<li><p><strong>データベースの移行</strong> — blunderDB の更新後、既存のデータベースは自動的に移行されます。新しいバージョンでデータベースを開く前にバックアップを作成してください。</p></li>
+</ol>
+</section>
+<section id="reference-gnubg">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink"><span class="section-number">12.5. </span>gnuBG 参照</a><a class="headerlink" href="#reference-gnubg" title="Link to this heading"></a></h2>
+<p>数式は、以下のソースファイル（gnuBG リポジトリ）で検証されています：</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code> — PR（&quot;Error rate per decision&quot;）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code> — Snowie Error Rate。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458–462</span></code> — チェッカー累積、強制手の除外（<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1430–1474</span></code> — 決定ごとの EMG → MWC 変換。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code> — MWC 損失の累積（<code class="docutils literal notranslate"><span class="pre">eq2mwc</span></code>）。</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> — 述語 <a href="#id1"><span class="problematic" id="id2">``</span></a>isCloseCubedecision``（閾値 0.16）。</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-left" title="11. 付録: データベーススキーマ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

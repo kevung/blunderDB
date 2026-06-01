@@ -1,0 +1,326 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>8. 付録: フィルターの高度な使い方 &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="9. Windows 付録：blunderDB のマルウェアとしての誤検知" href="annexe_windows_securite.html" />
+    <link rel="prev" title="7. よくある質問（FAQ）" href="faq.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">8. 付録: フィルターの高度な使い方</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-de-positions-en-ligne-de-commande">8.1. コマンドラインによるポジション検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#recherche-dans-les-resultats-courants">8.2. 現在の結果内での検索</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bibliotheque-de-filtres">8.3. フィルターライブラリ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exemples">8.4. 例</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">8. </span>付録: フィルターの高度な使い方</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-utilisation-avancee-des-filtres">
+<span id="annexe-filtres"></span><h1><span class="section-number">8. </span>付録: フィルターの高度な使い方<a class="headerlink" href="#annexe-utilisation-avancee-des-filtres" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>このセクションは、ポジション検索機能を最大限に活用したいblunderDBの上級ユーザーを対象としています。</p>
+</div>
+<p>フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは``SPACE``キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。</p>
+<section id="recherche-de-positions-en-ligne-de-commande">
+<h2><span class="section-number">8.1. </span>コマンドラインによるポジション検索<a class="headerlink" href="#recherche-de-positions-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>フィルターを使って検索するには、</p>
+<ol class="arabic simple">
+<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>TAB``キーを押して検索パネルを開きます。</p></li>
+<li><p>現在のポジションを編集します。</p></li>
+<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>SPACE``キーでコマンドラインを開きます。</p></li>
+<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s``コマンドに続けて、必要に応じてフィルターを入力します。</p></li>
+<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>ENTER``キーで検索を開始します。</p></li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">警告</p>
+<p>検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（<a href="#id1"><span class="problematic" id="id2">``</span></a>BACKSPACE``キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>コマンドラインで利用可能なフィルターの一覧は <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">4.4 章</span></a> に記載されています。</p>
+</div>
+</section>
+<section id="recherche-dans-les-resultats-courants">
+<h2><span class="section-number">8.2. </span>現在の結果内での検索<a class="headerlink" href="#recherche-dans-les-resultats-courants" title="Link to this heading"></a></h2>
+<p>現在フィルタリングされているポジションの中から検索することで、検索を絞り込むことができます。これにより、結果を段階的に狭めていくことができます。</p>
+<p>コマンドラインでは、<code class="docutils literal notranslate"><span class="pre">ss``コマンドに続けてフィルターを入力します（例:</span> <span class="pre">``ss</span> <span class="pre">nc</span></code>、<code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>）。<a href="#id1"><span class="problematic" id="id2">``</span></a>ss``コマンドは、事前に検索を行った後に機能します。</p>
+<p>検索ウィンドウ（<code class="docutils literal notranslate"><span class="pre">CTRL-F</span></code>）にも、同じ機能のための&quot;Search in current results&quot;チェックボックスがあります。</p>
+</section>
+<section id="bibliotheque-de-filtres">
+<h2><span class="section-number">8.3. </span>フィルターライブラリ<a class="headerlink" href="#bibliotheque-de-filtres" title="Link to this heading"></a></h2>
+<p>フィルターライブラリを使うと、ユーザーは検索コマンドを保存して、テーマ別の学習を容易にできます。</p>
+<p>ライブラリにフィルターを追加するには、</p>
+<ol class="arabic simple">
+<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>TAB``を押して検索パネルを開きます。</p></li>
+<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>CTRL-K``を押してフィルターライブラリを開きます。</p></li>
+<li><p>現在のポジションを編集します。</p></li>
+<li><p>フィルターに名前を付けます。</p></li>
+<li><p>検索コマンドを編集します。</p></li>
+<li><p>&quot;Add&quot;ボタンを使って検索コマンドを保存します。</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>コマンドの編集中は、<a href="#id1"><span class="problematic" id="id2">``</span></a>UP``キーと``DOWN``キーを使ってコマンド履歴をナビゲートできます。</p>
+</div>
+<p>ライブラリに保存したフィルターを使用するには、</p>
+<ol class="arabic simple">
+<li><p><a href="#id1"><span class="problematic" id="id2">``</span></a>CTRL-K``を押してフィルターライブラリを開きます。</p></li>
+<li><p>目的のフィルターを検索します。</p></li>
+<li><p>フィルターをダブルクリックして検索を開始します。</p></li>
+</ol>
+</section>
+<section id="exemples">
+<h2><span class="section-number">8.4. </span>例<a class="headerlink" href="#exemples" title="Link to this heading"></a></h2>
+<p>コマンドラインでのフィルターの使用例をいくつか紹介します:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ポジションの種類</p></th>
+<th class="head"><p>チェッカー構造</p></th>
+<th class="head"><p>コマンド</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>純粋なレース</p></td>
+<td></td>
+<td><p>s nc</p></td>
+</tr>
+<tr class="row-odd"><td><p>短いレース</p></td>
+<td></td>
+<td><p>s nc P&lt;70</p></td>
+</tr>
+<tr class="row-even"><td><p>エースポイントでのヒット</p></td>
+<td></td>
+<td><p>s m&quot;6/1*&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>バックゲーム 1-4</p></td>
+<td><p>24、21ポイントを確保</p></td>
+<td><p>s p&gt;35</p></td>
+</tr>
+<tr class="row-even"><td><p>-2 -4でのテイク/パスの判断</p></td>
+<td><p>上側プレイヤーのダイスが空、スコア -2/-4</p></td>
+<td><p>s s d</p></td>
+</tr>
+<tr class="row-odd"><td><p>トゥーグッド・トゥ・ダブル</p></td>
+<td><p>下側プレイヤーのダイスが空</p></td>
+<td><p>s d e&gt;1000</p></td>
+</tr>
+<tr class="row-even"><td><p>ギャモン率20%以上のブリッツ</p></td>
+<td><p>インナーボードでのポイント確保、バー上のチェッカー</p></td>
+<td><p>s g&gt;20</p></td>
+</tr>
+<tr class="row-odd"><td><p>40ミリポイントを超えるプレイヤー1のエラー</p></td>
+<td></td>
+<td><p>s E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p>Aachen2024トーナメントのポジション</p></td>
+<td></td>
+<td><p>s t&quot;Aachen2024&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>1つのバックチェッカーを戻す</p></td>
+<td></td>
+<td><p>s k1,1</p></td>
+</tr>
+<tr class="row-even"><td><p>20ポイントからの脱出</p></td>
+<td><p>20ポイント</p></td>
+<td><p>s m&quot;20/&quot;</p></td>
+</tr>
+<tr class="row-odd"><td><p>プライム対プライム</p></td>
+<td><p>プライムを指定する</p></td>
+<td><p>s</p></td>
+</tr>
+<tr class="row-even"><td><p>エースポイントでのベアオフ</p></td>
+<td><p>相手のエースポイント確保</p></td>
+<td><p>s P&lt;60</p></td>
+</tr>
+<tr class="row-odd"><td><p>20ピップ以上リードした状態でのダブル</p></td>
+<td><p>下側プレイヤーのダイスが空</p></td>
+<td><p>s d p&lt;-20</p></td>
+</tr>
+<tr class="row-even"><td><p>マッチ5のポジション</p></td>
+<td></td>
+<td><p>s ma5</p></td>
+</tr>
+<tr class="row-odd"><td><p>マッチ2から4のポジション</p></td>
+<td></td>
+<td><p>s ma2,4</p></td>
+</tr>
+<tr class="row-even"><td><p>マッチ23と43のポジション</p></td>
+<td></td>
+<td><p>s ma23 ma43</p></td>
+</tr>
+<tr class="row-odd"><td><p>トーナメント1のポジション</p></td>
+<td></td>
+<td><p>s tn1</p></td>
+</tr>
+<tr class="row-even"><td><p>トーナメント2でのエラー</p></td>
+<td></td>
+<td><p>s tn2 E&gt;40</p></td>
+</tr>
+</tbody>
+</table>
+<p>現在の結果内での検索例:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 42.9%" />
+<col style="width: 57.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>シナリオ</p></th>
+<th class="head"><p>コマンド</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s nc``の後、短いレースを検索する</p></td>
+<td><p>ss P&lt;70</p></td>
+</tr>
+<tr class="row-odd"><td><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s g&gt;20``の後、エラーのみを残す</p></td>
+<td><p>ss E&gt;40</p></td>
+</tr>
+<tr class="row-even"><td><p><a href="#id1"><span class="problematic" id="id2">``</span></a>s tn1``の後、キューブの判断を検索する</p></td>
+<td><p>ss d</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="faq.html" class="btn btn-neutral float-left" title="7. よくある質問（FAQ）" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_windows_securite.html" class="btn btn-neutral float-right" title="9. Windows 付録：blunderDB のマルウェアとしての誤検知" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

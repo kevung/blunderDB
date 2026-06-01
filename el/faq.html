@@ -1,0 +1,257 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. Συχνές ερωτήσεις (FAQ) &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="8. Παράρτημα: Προχωρημένη χρήση των φίλτρων" href="annexe_filtres.html" />
+    <link rel="prev" title="6. Διεπαφή γραμμής εντολών (CLI)" href="cli.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Συχνές ερωτήσεις (FAQ)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-utilite-de-blunderdb">7.1. Ποιος είναι ο σκοπός του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb">7.2. Τι ώθησε στη δημιουργία του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-sauvegarder-la-base-de-donnees-courante">7.3. Πώς να αποθηκεύσετε την κατάσταση της τρέχουσας βάσης δεδομένων;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">7.4. Πρέπει να δημιουργώ διαφορετικές βάσεις δεδομένων για διαφορετικές κατηγορίες θέσεων;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#comment-fusionner-plusieurs-bases-de-donnees">7.5. Πώς να συγχωνεύσετε πολλαπλές βάσεις δεδομένων;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quels-formats-de-fichiers-de-match-sont-supportes">7.6. Ποιες μορφές αρχείων αγώνων υποστηρίζονται;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-qu-une-collection">7.7. Τι είναι μια συλλογή;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qu-est-ce-que-l-epc">7.8. Τι είναι το EPC;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">7.9. Διαθέτει το blunderDB διεπαφή γραμμής εντολών;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puis-je-modifier-copier-partager-blunderdb">7.10. Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-format-de-donnees-utilise-blunderdb">7.11. Ποια μορφή δεδομένων χρησιμοποιεί το blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb">7.12. Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#quel-est-l-architecture-logicielle-de-blunderdb">7.13. Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il">7.14. Σε ποιες πλατφόρμες λειτουργεί το blunderDB;</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#d-ou-vient-l-icone-de-blunderdb">7.15. Από πού προέρχεται το εικονίδιο του blunderDB;</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">7. </span>Συχνές ερωτήσεις (FAQ)</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="foire-aux-questions">
+<span id="faq"></span><h1><span class="section-number">7. </span>Συχνές ερωτήσεις (FAQ)<a class="headerlink" href="#foire-aux-questions" title="Link to this heading"></a></h1>
+<section id="quel-est-l-utilite-de-blunderdb">
+<h2><span class="section-number">7.1. </span>Ποιος είναι ο σκοπός του blunderDB;<a class="headerlink" href="#quel-est-l-utilite-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Το blunderDB επιτρέπει στους χρήστες να δημιουργήσουν μια εξατομικευμένη βάση δεδομένων θέσεων. Η δύναμή του έγκειται στο ότι δεν προϋποθέτει καμία κατηγοριοποίηση <em>a priori</em>. Έτσι δίνεται στους χρήστες η ελευθερία να αναζητούν θέσεις με μεγάλη ευελιξία, συνδυάζοντας κατά βούληση διάφορα κριτήρια (κούρσα, δομή, κύβος, σκορ, καθυστερημένα πούλια, πούλια στη ζώνη, πιθανότητες νίκης/γκάμον/μπακ-γκάμον, …).</p>
+<p>Μια άλλη βολική χρήση του blunderDB είναι η δημιουργία καταλόγων θέσεων αναφοράς. Με τη δυνατότητα προσθήκης ετικετών στις θέσεις, ο χρήστης μπορεί να συγκεντρώσει το σύνολο των θέσεων αναφοράς του με δομημένο τρόπο μέσα σε ένα μοναδικό αρχείο. Ελπίζω το blunderDB να διευκολύνει τον διαμοιρασμό θέσεων μεταξύ των παικτών.</p>
+</section>
+<section id="qu-est-ce-qui-a-motive-la-creation-de-blunderdb">
+<h2><span class="section-number">7.2. </span>Τι ώθησε στη δημιουργία του blunderDB;<a class="headerlink" href="#qu-est-ce-qui-a-motive-la-creation-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Συνήθιζα να αποθηκεύω σε διάφορους φακέλους ενδιαφέρουσες θέσεις ή blunders. Ωστόσο, αντιμετώπιζα δυσκολίες στην ανάκτηση θέσεων με βάση κριτήρια που δεν είχα προβλέψει αρχικά στην επιλογή των θεματικών μου κατηγοριών. Για παράδειγμα, αν οι θέσεις είχαν ταξινομηθεί ανά τύπο παιχνιδιού (κούρσα, holding game, blitz, backgame, …), πώς θα μπορούσα να ανακτήσω όλες τις θέσεις σε ένα συγκεκριμένο σκορ; ή σε ένα δεδομένο επίπεδο κύβου; Τέλος, ορισμένες παλιές θέσεις είχαν την τάση να ξεχνιούνται. Ήθελα ένα εργαλείο που να συγκεντρώνει όλες τις θέσεις μου χωρίς να προϋποθέτει <em>a priori</em> θεματικές κατηγορίες, και στη συνέχεια να μπορώ να θέτω ερωτήματα στη βάση δεδομένων. Με αυτή την ευέλικτη προσέγγιση, νέα φίλτρα μπορούν να προστεθούν χωρίς να διαταράσσεται η οργάνωση των θέσεων. Αυτός ο τύπος λογισμικού είναι αρκετά συνηθισμένος στο σκάκι, όπως το ChessBase.</p>
+</section>
+<section id="comment-sauvegarder-la-base-de-donnees-courante">
+<h2><span class="section-number">7.3. </span>Πώς να αποθηκεύσετε την κατάσταση της τρέχουσας βάσης δεδομένων;<a class="headerlink" href="#comment-sauvegarder-la-base-de-donnees-courante" title="Link to this heading"></a></h2>
+<p>Η βάση δεδομένων ενημερώνεται αμέσως μετά την εκτέλεση των ερωτημάτων. Δεν απαιτείται καμία ρητή ενέργεια αποθήκευσης.</p>
+</section>
+<section id="dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions">
+<h2><span class="section-number">7.4. </span>Πρέπει να δημιουργώ διαφορετικές βάσεις δεδομένων για διαφορετικές κατηγορίες θέσεων;<a class="headerlink" href="#dois-je-creer-differentes-bases-de-donnees-pour-differentes-categories-de-positions" title="Link to this heading"></a></h2>
+<p>Εκτός αν υπάρχουν σαφώς προσδιορισμένοι λόγοι, είναι ουσιώδες να μην διαχωρίζετε τις θέσεις σε ξεχωριστές βάσεις δεδομένων, καθώς αυτό θα μπορούσε να σας εμποδίσει να τις συσχετίσετε σε μελλοντικές αναζητήσεις. Η φιλοσοφία του blunderDB είναι να μην προϋποθέτει κατηγορίες θέσεων <em>a priori</em>, αλλά να επιτρέπει στον χρήστη να τις αναζητά με ευέλικτο τρόπο. Όταν οι θέσεις έχουν συναντηθεί υπό ιδιαίτερες συνθήκες ή για συγκεκριμένους λόγους, μπορεί να είναι συνετό να τις αποθηκεύετε σε ξεχωριστές βάσεις δεδομένων. Για παράδειγμα, μπορείτε να δημιουργήσετε διακριτές βάσεις δεδομένων θέσεων για:</p>
+<ul class="simple">
+<li><p>θέσεις αναφοράς,</p></li>
+<li><p>blunders από ζωντανά τουρνουά,</p></li>
+<li><p>blunders από διαδικτυακό παιχνίδι.</p></li>
+</ul>
+</section>
+<section id="comment-fusionner-plusieurs-bases-de-donnees">
+<h2><span class="section-number">7.5. </span>Πώς να συγχωνεύσετε πολλαπλές βάσεις δεδομένων;<a class="headerlink" href="#comment-fusionner-plusieurs-bases-de-donnees" title="Link to this heading"></a></h2>
+<p>Αν έχετε πολλαπλές βάσεις δεδομένων blunderDB που θέλετε να συγχωνεύσετε, χρησιμοποιήστε τη λειτουργία «Import Database»:</p>
+<ol class="arabic simple">
+<li><p>Ανοίξτε την κύρια βάση δεδομένων (εκείνη που θα λάβει τις εισαγόμενες θέσεις)</p></li>
+<li><p>Κάντε κλικ στο κουμπί «Import Database» στη γραμμή εργαλείων</p></li>
+<li><p>Επιλέξτε τη βάση δεδομένων προς εισαγωγή</p></li>
+<li><p>Το blunderDB θα συγχωνεύσει αυτόματα τις θέσεις</p></li>
+</ol>
+<p>Κατά τη συγχώνευση, το blunderDB αποφεύγει τα διπλότυπα και συγχωνεύει έξυπνα τις αναλύσεις και τα σχόλια. Οι πανομοιότυπες θέσεις δεν θα αναπαραχθούν, αλλά οι αναλύσεις και τα σχόλιά τους θα συνδυαστούν.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Συνιστάται να δημιουργήσετε ένα αντίγραφο ασφαλείας της κύριας βάσης δεδομένων σας πριν εισαγάγετε μια άλλη βάση δεδομένων.</p>
+</div>
+</section>
+<section id="quels-formats-de-fichiers-de-match-sont-supportes">
+<h2><span class="section-number">7.6. </span>Ποιες μορφές αρχείων αγώνων υποστηρίζονται;<a class="headerlink" href="#quels-formats-de-fichiers-de-match-sont-supportes" title="Link to this heading"></a></h2>
+<p>Το blunderDB υποστηρίζει τις ακόλουθες μορφές αγώνων:</p>
+<ul class="simple">
+<li><p><strong>eXtreme Gammon (XG)</strong>: αρχεία <em>.xg</em>, με πλήρη ανάλυση κινήσεων, αποφάσεων κύβου, κινήσεων που παίχτηκαν και υποστήριξη πολλαπλών μηχανών. Αρχεία <em>.xgp</em> για την εισαγωγή μεμονωμένων θέσεων με ανάλυση.</p></li>
+<li><p><strong>GNUbg</strong>: αρχεία <em>.sgf</em> (Smart Game Format), με ανάλυση.</p></li>
+<li><p><strong>Jellyfish</strong>: αρχεία <em>.mat</em> και <em>.txt</em>.</p></li>
+<li><p><strong>BGBlitz</strong>: αρχεία <em>.bgf</em> και θέσεις σε μορφή κειμένου.</p></li>
+</ul>
+<p>Η εισαγωγή μπορεί να γίνει μέσω μεμονωμένου αρχείου, πολλαπλής επιλογής, αναδρομικού φακέλου, επικόλλησης από το πρόχειρο ή μεταφοράς και απόθεσης.</p>
+<p>Το blunderDB εντοπίζει αυτόματα τα διπλότυπα και αποτρέπει την εισαγωγή ενός αγώνα που υπάρχει ήδη στη βάση δεδομένων.</p>
+</section>
+<section id="qu-est-ce-qu-une-collection">
+<h2><span class="section-number">7.7. </span>Τι είναι μια συλλογή;<a class="headerlink" href="#qu-est-ce-qu-une-collection" title="Link to this heading"></a></h2>
+<p>Μια συλλογή είναι μια προσαρμοσμένη ομαδοποίηση θέσεων. Σε αντίθεση με μια αναζήτηση με φίλτρα που είναι δυναμική, μια συλλογή είναι ένα σταθερό σύνολο θέσεων που επιλέγονται χειροκίνητα από τον χρήστη. Οι συλλογές επιτρέπουν, για παράδειγμα, την ομαδοποίηση θέσεων αναφοράς για ένα συγκεκριμένο θέμα.</p>
+</section>
+<section id="qu-est-ce-que-l-epc">
+<h2><span class="section-number">7.8. </span>Τι είναι το EPC;<a class="headerlink" href="#qu-est-ce-que-l-epc" title="Link to this heading"></a></h2>
+<p>Το EPC (Effective Pip Count) είναι ένα πιο ακριβές μέτρο από το απλό pip count για την αξιολόγηση θέσεων bearoff. Ο υπολογιστής EPC του blunderDB χρησιμοποιεί τη βάση δεδομένων bearoff 6 σημείων του GNUbg και υπολογίζει σε πραγματικό χρόνο το EPC, τον μέσο αριθμό ζαριών, την τυπική απόκλιση, το pip count και το wastage.</p>
+</section>
+<section id="blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande">
+<h2><span class="section-number">7.9. </span>Διαθέτει το blunderDB διεπαφή γραμμής εντολών;<a class="headerlink" href="#blunderdb-dispose-t-il-d-une-interface-en-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>Ναι, το blunderDB διαθέτει διεπαφή γραμμής εντολών (CLI) που επιτρέπει την εκτέλεση χωρίς γραφική διεπαφή λειτουργιών όπως η δημιουργία βάσεων δεδομένων, η εισαγωγή αγώνων, η εξαγωγή, η αναζήτηση θέσεων, η εμφάνιση στατιστικών, κ.λπ. Συμβουλευτείτε την τεκμηρίωση CLI για περισσότερες λεπτομέρειες.</p>
+</section>
+<section id="puis-je-modifier-copier-partager-blunderdb">
+<h2><span class="section-number">7.10. </span>Μπορώ να τροποποιήσω, να αντιγράψω, να μοιραστώ το blunderDB;<a class="headerlink" href="#puis-je-modifier-copier-partager-blunderdb" title="Link to this heading"></a></h2>
+<p>Ναι, απολύτως (και μάλιστα ενθαρρύνεται!). Το blunderDB διανέμεται υπό την άδεια MIT.</p>
+</section>
+<section id="quel-format-de-donnees-utilise-blunderdb">
+<h2><span class="section-number">7.11. </span>Ποια μορφή δεδομένων χρησιμοποιεί το blunderDB;<a class="headerlink" href="#quel-format-de-donnees-utilise-blunderdb" title="Link to this heading"></a></h2>
+<p>Η βάση δεδομένων είναι ένα απλό αρχείο SQLite. Έτσι, ελλείψει του blunderDB, μπορεί να ανοιχτεί με οποιονδήποτε επεξεργαστή αρχείων SQLite.</p>
+</section>
+<section id="quelles-ont-ete-les-principes-de-conception-de-blunderdb">
+<h2><span class="section-number">7.12. </span>Ποιες ήταν οι αρχές σχεδιασμού του blunderDB;<a class="headerlink" href="#quelles-ont-ete-les-principes-de-conception-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Η modal λειτουργία του blunderDB (NORMAL, EDIT) εμπνέεται από τον πολύ ισχυρό επεξεργαστή κειμένου <a class="reference external" href="https://en.wikipedia.org/wiki/Vim_(text_editor)">Vim</a>. Ήθελα το blunderDB να είναι ελαφρύ, αυτόνομο, χωρίς εγκατάσταση και διαθέσιμο για διάφορες πλατφόρμες, εξ ου και η επιλογή μου της γλώσσας Go και της βιβλιοθήκης Svelte. Για τη σειριοποίηση της βάσης δεδομένων, η μορφή αρχείου έπρεπε να είναι πολυπλατφορμική και κατάλληλη για να περιέχει μια βάση δεδομένων. Η μορφή αρχείου SQLite φαινόταν η ιδανική επιλογή.</p>
+</section>
+<section id="quel-est-l-architecture-logicielle-de-blunderdb">
+<h2><span class="section-number">7.13. </span>Ποια είναι η αρχιτεκτονική λογισμικού του blunderDB;<a class="headerlink" href="#quel-est-l-architecture-logicielle-de-blunderdb" title="Link to this heading"></a></h2>
+<ul class="simple">
+<li><p>Το backend είναι γραμμένο σε <a class="reference external" href="https://go.dev/">Go</a>. Είναι υπεύθυνο για το σύνολο των λειτουργιών στη βάση δεδομένων SQLite που αποθηκεύει τις θέσεις.</p></li>
+<li><p>Το frontend είναι γραμμένο σε <a class="reference external" href="https://svelte.dev/">Svelte</a>. Είναι υπεύθυνο για την απόδοση της γραφικής διεπαφής και του ταμπλό του Backgammon.</p></li>
+<li><p>Η εφαρμογή είναι ενσωματωμένη με το <a class="reference external" href="https://wails.io/">Wails</a>, επιτρέποντας την παραγωγή εγγενών εφαρμογών Desktop, που μπορούν να εκτελεστούν σε Windows και Linux.</p></li>
+<li><p>Η βάση δεδομένων διαχειρίζεται από το <a class="reference external" href="https://www.sqlite.org/">SQLite</a>.</p></li>
+</ul>
+<p>Για περισσότερες πληροφορίες, δείτε το <a class="reference external" href="https://github.com/kevung/blunderDB">αποθετήριο GitHub του blunderDB</a>.</p>
+</section>
+<section id="sur-quelles-plateformes-blunderdb-fonctionne-t-il">
+<h2><span class="section-number">7.14. </span>Σε ποιες πλατφόρμες λειτουργεί το blunderDB;<a class="headerlink" href="#sur-quelles-plateformes-blunderdb-fonctionne-t-il" title="Link to this heading"></a></h2>
+<p>Το blunderDB λειτουργεί σε Windows, Linux και Mac.</p>
+</section>
+<section id="d-ou-vient-l-icone-de-blunderdb">
+<h2><span class="section-number">7.15. </span>Από πού προέρχεται το εικονίδιο του blunderDB;<a class="headerlink" href="#d-ou-vient-l-icone-de-blunderdb" title="Link to this heading"></a></h2>
+<p>Το εικονίδιο του blunderDB είναι το emoticon «goggling» από τη σειρά <a class="reference external" href="https://commons.wikimedia.org/wiki/SMirC">SMirC</a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cli.html" class="btn btn-neutral float-left" title="6. Διεπαφή γραμμής εντολών (CLI)" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_filtres.html" class="btn btn-neutral float-right" title="8. Παράρτημα: Προχωρημένη χρήση των φίλτρων" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

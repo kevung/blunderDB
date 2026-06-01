@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" href="annexe_mac_securite.html" />
+    <link rel="prev" title="8. Παράρτημα: Προχωρημένη χρήση των φίλτρων" href="annexe_filtres.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">9.1. Προειδοποίηση Windows SmartScreen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">9.2. Μπλοκάρισμα από το Windows Defender</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
+<span id="annexe-windows-malware"></span><h1><span class="section-number">9. </span>Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα παρακάτω ισχύουν για τα λειτουργικά συστήματα Windows 10 και 11.</p>
+</div>
+<p>Τα Windows απαιτούν πλέον από τις εταιρείες έκδοσης λογισμικού ή από ανεξάρτητους προγραμματιστές να πιστοποιούν ψηφιακά τις εφαρμογές τους ή ακόμη και να τις διανέμουν μέσω του Windows Store. Συνιστάται επομένως να απευθύνεστε σε εξωτερικές εταιρείες για την απόκτηση ψηφιακού πιστοποιητικού, με κόστος αρκετών εκατοντάδων ευρώ (βλέπε για παράδειγμα <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> ).</p>
+<p>Καθώς προσφέρω το blunderDB δωρεάν, δεν επιθυμώ να στραφώ σε αυτές τις δαπανηρές επιλογές. Κατά συνέπεια, είναι πολύ πιθανό τα Windows να σας προειδοποιήσουν για πιθανό κίνδυνο ή ακόμη και να μπλοκάρουν εντελώς την εκτέλεση του blunderDB. Οι παρακάτω ενότητες εξηγούν τις ενέργειες που πρέπει να κάνετε για να παρακάμψετε τις επιφυλάξεις των Windows.</p>
+<section id="avertissement-windows-smartscreen">
+<h2><span class="section-number">9.1. </span>Προειδοποίηση Windows SmartScreen<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<p>Μετά τη λήψη του blunderDB, κατά την εκτέλεσή του, ενδέχεται τα Windows να εμφανίσουν μια προειδοποίηση όπως:</p>
+<figure class="align-default">
+<img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
+</figure>
+<p>Αν θέλετε να επιτρέψετε ένα συγκεκριμένο εκτελέσιμο που έχει μπλοκαριστεί από το SmartScreen:</p>
+<ol class="arabic simple">
+<li><p><strong>Δοκιμάστε να εκτελέσετε το εκτελέσιμο</strong>:</p>
+<ul class="simple">
+<li><p>Όταν προσπαθείτε να εκκινήσετε το εκτελέσιμο, το SmartScreen ενδέχεται να το μπλοκάρει και να εμφανίσει μια προειδοποίηση.</p></li>
+</ul>
+</li>
+<li><p><strong>Κάντε κλικ στο «Περισσότερες πληροφορίες»</strong>:</p>
+<ul class="simple">
+<li><p>Στο παράθυρο προειδοποίησης του SmartScreen, κάντε κλικ στο <strong>Περισσότερες πληροφορίες</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>Επιλέξτε «Εκτέλεση ούτως ή άλλως»</strong>:</p>
+<ul class="simple">
+<li><p>Αν εμπιστεύεστε το εκτελέσιμο, κάντε κλικ στο <strong>Εκτέλεση ούτως ή άλλως</strong> για να παρακάμψετε την προειδοποίηση του SmartScreen για αυτή τη φορά.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="blocage-windows-defender">
+<h2><span class="section-number">9.2. </span>Μπλοκάρισμα από το Windows Defender<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<p>Για ορισμένες ρυθμίσεις ασφαλείας των Windows, ακόμη και μετά την παράκαμψη του SmartScreen (βλέπε προηγούμενη ενότητα), το Windows Defender ενδέχεται να εμποδίσει την εκτέλεση του blunderDB με μηνύματα όπως:</p>
+<figure class="align-center">
+<img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
+</figure>
+<p>ή ακόμη:</p>
+<figure class="align-center">
+<img alt="_images/threat_found_action_needed.png" src="_images/threat_found_action_needed.png" />
+</figure>
+<p>ή ακόμη και να το θέσει σε καραντίνα.</p>
+<p>Το Windows Defender είναι γνωστό ότι προκαλεί ψευδώς θετικά αποτελέσματα. Αυτό το πρόβλημα αναφέρεται ρητά στις Συχνές Ερωτήσεις του επίσημου ιστότοπου της Golang ( <a class="reference external" href="https://go.dev/doc/faq#virus">https://go.dev/doc/faq#virus</a> ) ή σε δελτία Github ορισμένων έργων που έχουν προγραμματιστεί σε Go ( <a class="reference external" href="https://github.com/golang/vscode-go/issues/3182">https://github.com/golang/vscode-go/issues/3182</a> ).</p>
+<p>Αν θέλετε να εμποδίσετε την Ασφάλεια των Windows να σαρώσει το blunderDB:</p>
+<ol class="arabic simple">
+<li><p><strong>Ανοίξτε την Ασφάλεια των Windows</strong>:</p>
+<ul class="simple">
+<li><p>Πηγαίνετε στο <strong>Έναρξη</strong> και πληκτρολογήστε <strong>Ασφάλεια των Windows</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win1.png" src="_images/win1.png" />
+</figure>
+<ol class="arabic simple" start="2">
+<li><p><strong>Μεταβείτε στην «Προστασία από ιούς και απειλές»</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κλικ στο <strong>Προστασία από ιούς και απειλές</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win2.png" src="_images/win2.png" />
+</figure>
+<ol class="arabic simple" start="3">
+<li><p><strong>Διαχείριση ρυθμίσεων</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κύλιση προς τα κάτω και κάντε κλικ στο <strong>Διαχείριση ρυθμίσεων</strong> στην ενότητα Ρυθμίσεις προστασίας από ιούς και απειλές.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win3.png" src="_images/win3.png" />
+</figure>
+<ol class="arabic simple" start="4">
+<li><p><strong>Προσθήκη ή κατάργηση εξαιρέσεων</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κύλιση μέχρι την ενότητα <strong>Εξαιρέσεις</strong> και κάντε κλικ στο <strong>Προσθήκη ή κατάργηση εξαιρέσεων</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win4.png" src="_images/win4.png" />
+</figure>
+<ol class="arabic simple" start="5">
+<li><p><strong>Προσθήκη εξαίρεσης</strong>:</p>
+<ul class="simple">
+<li><p>Κάντε κλικ στο <strong>Προσθήκη εξαίρεσης</strong> και επιλέξτε <strong>Αρχείο</strong>. Στη συνέχεια, μεταβείτε στο εκτελέσιμο που θέλετε να εξαιρέσετε και επιλέξτε το.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win5.png" src="_images/win5.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win6.png" src="_images/win6.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win7.png" src="_images/win7.png" />
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="8. Παράρτημα: Προχωρημένη χρήση των φίλτρων" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

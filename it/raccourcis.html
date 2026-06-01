@@ -1,0 +1,562 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="it" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>5. Scorciatoie da tastiera &mdash; Documentazione blunderDB 0.21.0 </title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=a207f564"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=45930005"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Indice" href="genindex.html" />
+    <link rel="search" title="Cerca" href="search.html" />
+    <link rel="next" title="6. Interfaccia a riga di comando (CLI)" href="cli.html" />
+    <link rel="prev" title="4. Elenco dei comandi" href="cmd_mode.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Cerca documenti" aria-label="Cerca documenti" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Menu di navigazione">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Download e installazione</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manuale</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Guida utente</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Elenco dei comandi</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. Scorciatoie da tastiera</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#base-de-donnees">5.1. Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#position">5.2. Posizione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation">5.3. Navigazione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#affichage">5.4. Visualizzazione</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#actions">5.5. Azioni</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outils">5.6. Strumenti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ligne-de-commande">5.7. Riga di comando</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-historique-de-recherche">5.8. Pannello cronologia di ricerca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-bibliotheque-de-filtres">5.9. Pannello libreria di filtri</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-d-analyse">5.10. Pannello di analisi</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-des-matchs">5.11. Pannello dei match</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki-repetition-espacee">5.12. Pannello Anki (ripetizione dilazionata)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaccia a riga di comando (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Domande frequenti (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Appendice: Utilizzo avanzato dei filtri</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Appendice Windows: rilevamento errato di blunderDB come malware</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Appendice Mac: possibile blocco di blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Appendice: Schema del database</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Appendice: modello statistico — allineamento XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Menu navigazione dispositivi mobili" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Naviga tra le pagine">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">5. </span>Scorciatoie da tastiera</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="raccourcis-clavier">
+<span id="raccourcis"></span><h1><span class="section-number">5. </span>Scorciatoie da tastiera<a class="headerlink" href="#raccourcis-clavier" title="Link to this heading"></a></h1>
+<section id="base-de-donnees">
+<span id="raccourcis-generaux"></span><h2><span class="section-number">5.1. </span>Database<a class="headerlink" href="#base-de-donnees" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-N</p></td>
+<td><p>Crea un nuovo database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-O</p></td>
+<td><p>Apri un database esistente.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-SHIFT-I</p></td>
+<td><p>Importa un database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-SHIFT-S</p></td>
+<td><p>Esporta il database.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-Q</p></td>
+<td><p>Chiudi blunderDB.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-M</p></td>
+<td><p>Modifica i metadati del database.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="position">
+<span id="raccourcis-position"></span><h2><span class="section-number">5.2. </span>Posizione<a class="headerlink" href="#position" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-I</p></td>
+<td><p>Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf).</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-SHIFT-F</p></td>
+<td><p>Importa ricorsivamente una cartella di file di partite/posizioni.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-C</p></td>
+<td><p>Copia una posizione negli appunti.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-X</p></td>
+<td><p>Copia l’immagine del board negli appunti (PNG).</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-X CTRL-X</p></td>
+<td><p>Copia l’immagine del board con l’analisi negli appunti (PNG).</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-V</p></td>
+<td><p>Incolla una posizione dagli appunti (rilevamento automatico del formato).</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-S</p></td>
+<td><p>Salva una posizione.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-U</p></td>
+<td><p>Aggiorna una posizione.</p></td>
+</tr>
+<tr class="row-even"><td><p>Canc</p></td>
+<td><p>Elimina la posizione corrente.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BACKSPACE</p></td>
+<td><p>Reimposta board, cubo, punteggio e dadi.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-G</p></td>
+<td><p>Mostra i metadati della posizione.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="navigation">
+<span id="raccourcis-navigation"></span><h2><span class="section-number">5.3. </span>Navigazione<a class="headerlink" href="#navigation" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-R</p></td>
+<td><p>Ricarica tutte le posizioni dal database.</p></td>
+</tr>
+<tr class="row-odd"><td><p>PageUp, h</p></td>
+<td><p>Prima posizione / Partita precedente (navigazione match).</p></td>
+</tr>
+<tr class="row-even"><td><p>SINISTRA, k</p></td>
+<td><p>Posizione precedente.</p></td>
+</tr>
+<tr class="row-odd"><td><p>DESTRA, j</p></td>
+<td><p>Posizione successiva.</p></td>
+</tr>
+<tr class="row-even"><td><p>SU, k</p></td>
+<td><p>Mossa precedente (quando una mossa è selezionata nell’analisi).</p></td>
+</tr>
+<tr class="row-odd"><td><p>GIÙ, j</p></td>
+<td><p>Mossa successiva (quando una mossa è selezionata nell’analisi).</p></td>
+</tr>
+<tr class="row-even"><td><p>PageDown, l</p></td>
+<td><p>Ultima posizione / Partita successiva (navigazione match).</p></td>
+</tr>
+<tr class="row-odd"><td><p>r</p></td>
+<td><p>Carica una posizione casuale.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="affichage">
+<span id="raccourcis-affichage"></span><h2><span class="section-number">5.4. </span>Visualizzazione<a class="headerlink" href="#affichage" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-SINISTRA</p></td>
+<td><p>Orientamento del board a sinistra.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-DESTRA</p></td>
+<td><p>Orientamento del board a destra.</p></td>
+</tr>
+<tr class="row-even"><td><p>p</p></td>
+<td><p>Mostra/nascondi il conteggio dei pip.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="actions">
+<span id="raccourcis-modes"></span><h2><span class="section-number">5.5. </span>Azioni<a class="headerlink" href="#actions" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>TAB</p></td>
+<td><p>Apri il pannello di ricerca (editor di posizione).</p></td>
+</tr>
+<tr class="row-odd"><td><p>SPAZIO</p></td>
+<td><p>Apri la riga di comando.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="outils">
+<span id="raccourcis-outils"></span><h2><span class="section-number">5.6. </span>Strumenti<a class="headerlink" href="#outils" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CTRL-L</p></td>
+<td><p>Mostra/nascondi l’analisi.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-P</p></td>
+<td><p>Mostra/nascondi i commenti.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-K</p></td>
+<td><p>Mostra/nascondi il pannello Anki (ripetizione dilazionata).</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-F</p></td>
+<td><p>Mostra/nascondi il pannello di ricerca.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-Tab</p></td>
+<td><p>Mostra/nascondi il pannello dei match.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-B</p></td>
+<td><p>Mostra/nascondi il pannello delle collezioni.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-Y</p></td>
+<td><p>Mostra/nascondi il pannello dei tornei.</p></td>
+</tr>
+<tr class="row-odd"><td><p>CTRL-D</p></td>
+<td><p>Mostra il pannello Statistiche.</p></td>
+</tr>
+<tr class="row-even"><td><p>CTRL-E</p></td>
+<td><p>Mostra/nascondi il pannello EPC.</p></td>
+</tr>
+<tr class="row-odd"><td><p>?</p></td>
+<td><p>Mostra/nascondi l’aiuto.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="ligne-de-commande">
+<span id="raccourcis-command"></span><h2><span class="section-number">5.7. </span>Riga di comando<a class="headerlink" href="#ligne-de-commande" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SU</p></td>
+<td><p>Scorri la cronologia dei comandi verso l’alto.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GIÙ</p></td>
+<td><p>Scorri la cronologia dei comandi verso il basso.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-historique-de-recherche">
+<span id="raccourcis-search-history"></span><h2><span class="section-number">5.8. </span>Pannello cronologia di ricerca<a class="headerlink" href="#panneau-historique-de-recherche" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Clic</p></td>
+<td><p>Seleziona/deseleziona una ricerca (mostra la posizione).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Doppio clic</p></td>
+<td><p>Esegui la ricerca e chiudi il pannello.</p></td>
+</tr>
+<tr class="row-even"><td><p>SU, k</p></td>
+<td><p>Seleziona la ricerca precedente (più recente, sopra).</p></td>
+</tr>
+<tr class="row-odd"><td><p>GIÙ, j</p></td>
+<td><p>Seleziona la ricerca successiva (più vecchia, sotto).</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Deseleziona la ricerca. Se nessuna ricerca è selezionata, chiudi il pannello.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-bibliotheque-de-filtres">
+<span id="raccourcis-filter-library"></span><h2><span class="section-number">5.9. </span>Pannello libreria di filtri<a class="headerlink" href="#panneau-bibliotheque-de-filtres" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Clic</p></td>
+<td><p>Seleziona/deseleziona un filtro (mostra la posizione).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Doppio clic</p></td>
+<td><p>Esegui la ricerca del filtro.</p></td>
+</tr>
+<tr class="row-even"><td><p>SU, k</p></td>
+<td><p>Seleziona il filtro precedente (quando un filtro è selezionato).</p></td>
+</tr>
+<tr class="row-odd"><td><p>GIÙ, j</p></td>
+<td><p>Seleziona il filtro successivo (quando un filtro è selezionato).</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Deseleziona il filtro. Se nessun filtro è selezionato, chiudi il pannello.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-d-analyse">
+<span id="raccourcis-analysis"></span><h2><span class="section-number">5.10. </span>Pannello di analisi<a class="headerlink" href="#panneau-d-analyse" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Clic</p></td>
+<td><p>Seleziona/deseleziona una mossa (mostra/nascondi le frecce).</p></td>
+</tr>
+<tr class="row-odd"><td><p>SU, k</p></td>
+<td><p>Seleziona la mossa precedente (quando una mossa è selezionata).</p></td>
+</tr>
+<tr class="row-even"><td><p>GIÙ, j</p></td>
+<td><p>Seleziona la mossa successiva (quando una mossa è selezionata).</p></td>
+</tr>
+<tr class="row-odd"><td><p>d</p></td>
+<td><p>Alterna tra l’analisi delle mosse e del cubo (solo navigazione match).</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-des-matchs">
+<span id="raccourcis-match-panel"></span><h2><span class="section-number">5.11. </span>Pannello dei match<a class="headerlink" href="#panneau-des-matchs" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Clic</p></td>
+<td><p>Seleziona un match.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Doppio clic</p></td>
+<td><p>Naviga nel match.</p></td>
+</tr>
+<tr class="row-even"><td><p>SU, k</p></td>
+<td><p>Seleziona il match precedente.</p></td>
+</tr>
+<tr class="row-odd"><td><p>GIÙ, j</p></td>
+<td><p>Seleziona il match successivo.</p></td>
+</tr>
+<tr class="row-even"><td><p>INVIO</p></td>
+<td><p>Carica il match selezionato.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Canc</p></td>
+<td><p>Elimina il match selezionato.</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Deseleziona/chiudi il pannello.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="panneau-anki-repetition-espacee">
+<span id="raccourcis-anki-panel"></span><h2><span class="section-number">5.12. </span>Pannello Anki (ripetizione dilazionata)<a class="headerlink" href="#panneau-anki-repetition-espacee" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 25.9%" />
+<col style="width: 74.1%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scorciatoia</p></th>
+<th class="head"><p>Azione</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Valuta: Da rivedere (fallita, rivedere presto).</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Valuta: Difficile.</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Valuta: Bene.</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Valuta: Facile.</p></td>
+</tr>
+<tr class="row-even"><td><p>Esc</p></td>
+<td><p>Interrompi la revisione e torna all’elenco dei mazzi (ripresa possibile).</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Piè di pagina">
+        <a href="cmd_mode.html" class="btn btn-neutral float-left" title="4. Elenco dei comandi" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Precedente</a>
+        <a href="cli.html" class="btn btn-neutral float-right" title="6. Interfaccia a riga di comando (CLI)" accesskey="n" rel="next">Prossimo <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Lingue</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

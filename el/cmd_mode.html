@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. Λίστα εντολών &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="5. Συντομεύσεις πληκτρολογίου" href="raccourcis.html" />
+    <link rel="prev" title="3. Οδηγός χρήσης" href="guide_utilisateur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Εγχειρίδιο</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Λίστα εντολών</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Καθολικές λειτουργίες</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">4.2. Θέσεις και πλοήγηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">4.3. Επεξεργασία και αναζήτηση</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Φίλτρα αναζήτησης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Διάφορες εντολές</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Λίστα εντολών</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="liste-des-commandes">
+<span id="cmd-mode"></span><h1><span class="section-number">4. </span>Λίστα εντολών<a class="headerlink" href="#liste-des-commandes" title="Link to this heading"></a></h1>
+<section id="operations-globales">
+<span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Καθολικές λειτουργίες<a class="headerlink" href="#operations-globales" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Εντολή</p></th>
+<th class="head"><p>Ενέργεια</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>new, ne, n</p></td>
+<td><p>Δημιουργεί μια νέα βάση δεδομένων.</p></td>
+</tr>
+<tr class="row-odd"><td><p>open, op, o</p></td>
+<td><p>Ανοίγει μια υπάρχουσα βάση δεδομένων.</p></td>
+</tr>
+<tr class="row-even"><td><p>import_db, idb</p></td>
+<td><p>Εισάγει και συγχωνεύει μια άλλη βάση δεδομένων.</p></td>
+</tr>
+<tr class="row-odd"><td><p>export_db, edb</p></td>
+<td><p>Εξάγει την τρέχουσα επιλογή σε μια νέα βάση δεδομένων.</p></td>
+</tr>
+<tr class="row-even"><td><p>quit, q</p></td>
+<td><p>Κλείνει το blunderDB.</p></td>
+</tr>
+<tr class="row-odd"><td><p>help, he, h</p></td>
+<td><p>Ανοίγει τη βοήθεια του blunderDB.</p></td>
+</tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>Εμφανίζει τα μεταδεδομένα της βάσης δεδομένων.</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Ανοίγει το πάνελ EPC (Effective Pip Count).</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
+<td><p>Ανοίγει τον πίνακα ισοδυναμίας αγώνα Kazaross-XG2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2</p></td>
+<td><p>Ανοίγει τον πίνακα takepoint με κύβο στο 2.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_live</p></td>
+<td><p>Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις μακράς κούρσας.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_last</p></td>
+<td><p>Ανοίγει τον πίνακα takepoint με κύβο στο 2 για θέσεις τελευταίας ζαριάς.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4</p></td>
+<td><p>Ανοίγει τον πίνακα takepoint με κύβο στο 4.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_live</p></td>
+<td><p>Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις μακράς κούρσας.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_last</p></td>
+<td><p>Ανοίγει τον πίνακα takepoint με κύβο στο 4 για θέσεις τελευταίας ζαριάς.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv1</p></td>
+<td><p>Ανοίγει τον πίνακα τιμών gammon με κύβο στο 1.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv2</p></td>
+<td><p>Ανοίγει τον πίνακα τιμών gammon με κύβο στο 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv4</p></td>
+<td><p>Ανοίγει τον πίνακα τιμών gammon με κύβο στο 4.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="positions-et-navigation">
+<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Θέσεις και πλοήγηση<a class="headerlink" href="#positions-et-navigation" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Εντολή</p></th>
+<th class="head"><p>Ενέργεια</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>import, i</p></td>
+<td><p>Εισάγει μία ή περισσότερες θέσεις/αγώνες από αρχείο (xg, xgp, sgf, mat, txt, bgf).</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete, del, d</p></td>
+<td><p>Διαγράφει την τρέχουσα θέση.</p></td>
+</tr>
+<tr class="row-even"><td><p>[number]</p></td>
+<td><p>Μετάβαση στη θέση με τον υποδεικνυόμενο δείκτη.</p></td>
+</tr>
+<tr class="row-odd"><td><p>list, l</p></td>
+<td><p>Εμφανίζει την ανάλυση της τρέχουσας θέσης.</p></td>
+</tr>
+<tr class="row-even"><td><p>comment, co</p></td>
+<td><p>Εμφάνιση/εγγραφή σχολίων.</p></td>
+</tr>
+<tr class="row-odd"><td><p>filter, fl</p></td>
+<td><p>Εμφάνιση/απόκρυψη της βιβλιοθήκης φίλτρων.</p></td>
+</tr>
+<tr class="row-even"><td><p>history, hi</p></td>
+<td><p>Εμφάνιση/απόκρυψη του ιστορικού αναζήτησης.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match, ma</p></td>
+<td><p>Εμφάνιση/απόκρυψη του πάνελ αγώνων.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection, coll</p></td>
+<td><p>Εμφάνιση/απόκρυψη του πάνελ συλλογών.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
+<td><p>Προσθέτει ετικέτες στην τρέχουσα θέση.</p></td>
+</tr>
+<tr class="row-even"><td><p>e</p></td>
+<td><p>Φορτώνει όλες τις θέσεις από τη βάση δεδομένων.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>Πλοήγηση στον τελευταίο αγώνα που επισκεφθήκατε.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="edition-et-recherche">
+<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Επεξεργασία και αναζήτηση<a class="headerlink" href="#edition-et-recherche" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Εντολή</p></th>
+<th class="head"><p>Ενέργεια</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>write, wr, w</p></td>
+<td><p>Αποθηκεύει την τρέχουσα θέση.</p></td>
+</tr>
+<tr class="row-odd"><td><p>write!, wr!, w!</p></td>
+<td><p>Ενημερώνει την τρέχουσα θέση.</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Αναζήτηση θέσεων με φίλτρα.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ss</p></td>
+<td><p>Αναζήτηση μεταξύ των θέσεων που είναι ήδη φιλτραρισμένες.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="filtres-de-recherche">
+<span id="cmd-filter"></span><h2><span class="section-number">4.4. </span>Φίλτρα αναζήτησης<a class="headerlink" href="#filtres-de-recherche" title="Link to this heading"></a></h2>
+<p>Τα παρακάτω φίλτρα πρέπει να τοποθετούνται διαδοχικά κατά τη διάρκεια μιας αναζήτησης, δηλαδή μετά την αρχή της εντολής <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p>
+<div class="admonition warning" id="cmd-filter-pos">
+<p class="admonition-title">Προειδοποίηση</p>
+<p>Στην αναζήτηση θέσεων, από προεπιλογή, το blunderDB λαμβάνει υπόψη την τρέχουσα δομή των πουλιών, αγνοώντας τη θέση του κύβου, το σκορ και τα ζάρια. Για να ληφθούν υπόψη η θέση του κύβου, το σκορ και τα ζάρια, πρέπει να αναφερθούν ρητά στην αναζήτηση.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Η εντολή αναζήτησης <code class="docutils literal notranslate"><span class="pre">s</span></code> είναι διαθέσιμη στο πάνελ αναζήτησης (πλήκτρο <code class="docutils literal notranslate"><span class="pre">TAB</span></code>). Η εντολή <code class="docutils literal notranslate"><span class="pre">ss</span></code> επιτρέπει την αναζήτηση μεταξύ των αποτελεσμάτων που είναι ήδη φιλτραρισμένα.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το blunderDB θεωρεί ότι ένα οπίσθιο πούλι (backchecker) είναι ένα πούλι που βρίσκεται μεταξύ του σημείου 24 και του σημείου 19.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το blunderDB θεωρεί ότι ο αριθμός των πουλιών στη ζώνη είναι ο αριθμός των πουλιών που βρίσκονται μεταξύ του σημείου 12 και του σημείου 1.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το blunderDB θεωρεί ότι το outfield εκτείνεται μεταξύ του σημείου 18 και του σημείου 7.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το blunderDB θεωρεί ότι το jan εκτείνεται μεταξύ του σημείου 1 και του σημείου 6.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Οι παράμετροι για το φιλτράρισμα των θέσεων μπορούν να συνδυαστούν αυθαίρετα.</p>
+</div>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Ερώτημα</p></th>
+<th class="head"><p>Ενέργεια</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cube, cub, cu, c</p></td>
+<td><p>Η θέση επαληθεύει τη διαμόρφωση του κύβου.</p></td>
+</tr>
+<tr class="row-odd"><td><p>score, sco, sc, s</p></td>
+<td><p>Η θέση επαληθεύει το σκορ.</p></td>
+</tr>
+<tr class="row-even"><td><p>d</p></td>
+<td><p>Η θέση επαληθεύει τον τύπο απόφασης (πουλιού ή κύβου).</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>Η θέση επαληθεύει τη ζαριά (και τα δύο ζάρια, ανεξαρτήτως σειράς).</p></td>
+</tr>
+<tr class="row-even"><td><p>D1</p></td>
+<td><p>Η θέση επαληθεύει τη ζαριά μόνο για το πρώτο ζάρι (η τιμή του πρώτου ζαριού εμφανίζεται σε ένα από τα δύο ζάρια της θέσης).</p></td>
+</tr>
+<tr class="row-odd"><td><p>nc</p></td>
+<td><p>Η θέση είναι χωρίς επαφή.</p></td>
+</tr>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>Η θέση ή η κατοπτρική της επαληθεύει τα φίλτρα.</p></td>
+</tr>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p>Η θέση δεν περιέχει κανένα πούλι της δομής εξαίρεσης (καρτέλα « Except » του πάνελ αναζήτησης).</p></td>
+</tr>
+<tr class="row-even"><td><p>p&gt;x</p></td>
+<td><p>Ο παίκτης είναι πίσω στην κούρσα κατά τουλάχιστον x pips.</p></td>
+</tr>
+<tr class="row-odd"><td><p>p&lt;x</p></td>
+<td><p>Ο παίκτης είναι πίσω στην κούρσα κατά το πολύ x pips.</p></td>
+</tr>
+<tr class="row-even"><td><p>px,y</p></td>
+<td><p>Ο παίκτης είναι πίσω στην κούρσα κατά x έως y pips.</p></td>
+</tr>
+<tr class="row-odd"><td><p>P&gt;x</p></td>
+<td><p>Ο παίκτης έχει κούρσα τουλάχιστον x pips.</p></td>
+</tr>
+<tr class="row-even"><td><p>P&lt;x</p></td>
+<td><p>Ο παίκτης έχει κούρσα το πολύ x pips.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Px,y</p></td>
+<td><p>Ο παίκτης έχει κούρσα μεταξύ x και y pips.</p></td>
+</tr>
+<tr class="row-even"><td><p>e&gt;x</p></td>
+<td><p>Η ισοδυναμία (σε millipoints) της θέσης είναι μεγαλύτερη από x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>e&lt;x</p></td>
+<td><p>Η ισοδυναμία (σε millipoints) της θέσης είναι μικρότερη από x.</p></td>
+</tr>
+<tr class="row-even"><td><p>ex,y</p></td>
+<td><p>Η ισοδυναμία (σε millipoints) της θέσης βρίσκεται μεταξύ x και y.</p></td>
+</tr>
+<tr class="row-odd"><td><p>E&gt;x</p></td>
+<td><p>Το σφάλμα της κίνησης που έπαιξε ο παίκτης 1 (σε millipoints) είναι μεγαλύτερο από x.</p></td>
+</tr>
+<tr class="row-even"><td><p>E&lt;x</p></td>
+<td><p>Το σφάλμα της κίνησης που έπαιξε ο παίκτης 1 (σε millipoints) είναι μικρότερο από x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ex,y</p></td>
+<td><p>Το σφάλμα της κίνησης που έπαιξε ο παίκτης 1 (σε millipoints) βρίσκεται μεταξύ x και y.</p></td>
+</tr>
+<tr class="row-even"><td><p>w&gt;x</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες νίκης μεγαλύτερες από x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>w&lt;x</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες νίκης μικρότερες από x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>wx,y</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες νίκης μεταξύ x % και y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>g&gt;x</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες gammon μεγαλύτερες από x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>g&lt;x</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες gammon μικρότερες από x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gx,y</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες gammon μεταξύ x % και y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>b&gt;x</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες backgammon μεγαλύτερες από x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>b&lt;x</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες backgammon μικρότερες από x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>bx,y</p></td>
+<td><p>Ο παίκτης έχει πιθανότητες backgammon μεταξύ x % και y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>W&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες νίκης μεγαλύτερες από x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>W&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες νίκης μικρότερες από x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wx,y</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες νίκης μεταξύ x % και y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>G&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες gammon μεγαλύτερες από x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>G&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες gammon μικρότερες από x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>Gx,y</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες gammon μεταξύ x % και y %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>B&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες backgammon μεγαλύτερες από x %.</p></td>
+</tr>
+<tr class="row-even"><td><p>B&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες backgammon μικρότερες από x %.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bx,y</p></td>
+<td><p>Ο αντίπαλος έχει πιθανότητες backgammon μεταξύ x % και y %.</p></td>
+</tr>
+<tr class="row-even"><td><p>o&gt;x</p></td>
+<td><p>Ο παίκτης έχει τουλάχιστον x πούλια έξω.</p></td>
+</tr>
+<tr class="row-odd"><td><p>o&lt;x</p></td>
+<td><p>Ο παίκτης έχει το πολύ x πούλια έξω.</p></td>
+</tr>
+<tr class="row-even"><td><p>ox,y</p></td>
+<td><p>Ο παίκτης έχει μεταξύ x και y πούλια έξω.</p></td>
+</tr>
+<tr class="row-odd"><td><p>O&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει τουλάχιστον x πούλια έξω.</p></td>
+</tr>
+<tr class="row-even"><td><p>O&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει το πολύ x πούλια έξω.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ox,y</p></td>
+<td><p>Ο αντίπαλος έχει μεταξύ x και y πούλια έξω.</p></td>
+</tr>
+<tr class="row-even"><td><p>k&gt;x</p></td>
+<td><p>Ο παίκτης έχει τουλάχιστον x οπίσθια πούλια.</p></td>
+</tr>
+<tr class="row-odd"><td><p>k&lt;x</p></td>
+<td><p>Ο παίκτης έχει το πολύ x οπίσθια πούλια.</p></td>
+</tr>
+<tr class="row-even"><td><p>kx,y</p></td>
+<td><p>Ο παίκτης έχει μεταξύ x και y οπίσθια πούλια.</p></td>
+</tr>
+<tr class="row-odd"><td><p>K&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει τουλάχιστον x οπίσθια πούλια.</p></td>
+</tr>
+<tr class="row-even"><td><p>K&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει το πολύ x οπίσθια πούλια.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Kx,y</p></td>
+<td><p>Ο αντίπαλος έχει μεταξύ x και y οπίσθια πούλια.</p></td>
+</tr>
+<tr class="row-even"><td><p>z&gt;x</p></td>
+<td><p>Ο παίκτης έχει τουλάχιστον x πούλια στη ζώνη.</p></td>
+</tr>
+<tr class="row-odd"><td><p>z&lt;x</p></td>
+<td><p>Ο παίκτης έχει το πολύ x πούλια στη ζώνη.</p></td>
+</tr>
+<tr class="row-even"><td><p>zx,y</p></td>
+<td><p>Ο παίκτης έχει μεταξύ x και y πούλια στη ζώνη.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Z&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει τουλάχιστον x πούλια στη ζώνη.</p></td>
+</tr>
+<tr class="row-even"><td><p>Z&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει το πολύ x πούλια στη ζώνη.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Zx,y</p></td>
+<td><p>Ο αντίπαλος έχει μεταξύ x και y πούλια στη ζώνη.</p></td>
+</tr>
+<tr class="row-even"><td><p>bo&gt;x</p></td>
+<td><p>Ο παίκτης έχει τουλάχιστον x blots στο outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bo&lt;x</p></td>
+<td><p>Ο παίκτης έχει το πολύ x blots στο outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>box,y</p></td>
+<td><p>Ο παίκτης έχει μεταξύ x και y blots στο outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BO&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει τουλάχιστον x blots στο outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>BO&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει το πολύ x blots στο outfield.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BOx,y</p></td>
+<td><p>Ο αντίπαλος έχει μεταξύ x και y blots στο outfield.</p></td>
+</tr>
+<tr class="row-even"><td><p>bj&gt;x</p></td>
+<td><p>Ο παίκτης έχει τουλάχιστον x blots στο jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bj&lt;x</p></td>
+<td><p>Ο παίκτης έχει το πολύ x blots στο jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>bjx,y</p></td>
+<td><p>Ο παίκτης έχει μεταξύ x και y blots στο jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJ&gt;x</p></td>
+<td><p>Ο αντίπαλος έχει τουλάχιστον x blots στο jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>BJ&lt;x</p></td>
+<td><p>Ο αντίπαλος έχει το πολύ x blots στο jan.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJx,y</p></td>
+<td><p>Ο αντίπαλος έχει μεταξύ x και y blots στο jan.</p></td>
+</tr>
+<tr class="row-even"><td><p>t’word1;word2;…”</p></td>
+<td><p>Τα σχόλια της θέσης περιέχουν τουλάχιστον μία από τις λέξεις.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m’pattern1,pattern2,…'</p></td>
+<td><p>Οι καλύτερες κινήσεις πουλιών που περιέχουν τουλάχιστον ένα από τα μοτίβα.</p></td>
+</tr>
+<tr class="row-even"><td><p>m’ND,DT,DP,…'</p></td>
+<td><p>Οι καλύτερες αποφάσεις κύβου No Double/Take, Double Take, Double Pass.</p></td>
+</tr>
+<tr class="row-odd"><td><p>T&gt;x</p></td>
+<td><p>Ημερομηνία προσθήκης της θέσης μετά το x (ΕΕΕΕ/ΜΜ/ΗΗ).</p></td>
+</tr>
+<tr class="row-even"><td><p>T&lt;x</p></td>
+<td><p>Ημερομηνία προσθήκης της θέσης πριν το x (ΕΕΕΕ/ΜΜ/ΗΗ).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tx,y</p></td>
+<td><p>Ημερομηνία προσθήκης της θέσης μεταξύ x και y (ΕΕΕΕ/ΜΜ/ΗΗ).</p></td>
+</tr>
+<tr class="row-even"><td><p>max</p></td>
+<td><p>Αναζήτηση στον αγώνα με αναγνωριστικό x (π.χ. ma3).</p></td>
+</tr>
+<tr class="row-odd"><td><p>max,y</p></td>
+<td><p>Αναζήτηση στους αγώνες με αναγνωριστικά από x έως y (π.χ. ma2,5).</p></td>
+</tr>
+<tr class="row-even"><td><p>tnx</p></td>
+<td><p>Αναζήτηση στο τουρνουά με αναγνωριστικό x (π.χ. tn1).</p></td>
+</tr>
+<tr class="row-odd"><td><p>tnx,y</p></td>
+<td><p>Αναζήτηση στα τουρνουά με αναγνωριστικά από x έως y (π.χ. tn1,3).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Το φιλτράρισμα των θέσεων βάσει της ζαριάς (<cite>D</cite> ή <cite>D1</cite>) συνεπάγεται <em>a fortiori</em> το φιλτράρισμα των θέσεων βάσει του τύπου απόφασης (<cite>d</cite>). Το φίλτρο <cite>D1</cite> αγνοεί την τιμή του δεύτερου ζαριού: μόνο η τιμή του πρώτου ζαριού χρησιμοποιείται για την αντιστοίχιση των θέσεων (σε οποιοδήποτε από τα δύο ζάρια της ζαριάς).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Για το φίλτρο σχετικής διαφοράς στην κούρσα (<cite>p&gt;x</cite>, <cite>p&lt;x</cite>, <cite>px,y</cite>), ο παίκτης είναι πίσω στην κούρσα σε σχέση με τον αντίπαλο αν <cite>x&gt;0</cite> και μπροστά αν <cite>x&lt;0</cite>. Παράδειγμα: <cite>p&lt;-10</cite> : ο παίκτης είναι τουλάχιστον 10 pips μπροστά στην κούρσα. <cite>p50,70</cite> : ο παίκτης είναι μεταξύ 50 και 70 pips πίσω στην κούρσα.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Για να αναζητήσετε σε πολλούς μη συνεχόμενους αγώνες, τοποθετήστε διαδοχικά το φίλτρο <code class="docutils literal notranslate"><span class="pre">ma</span></code> πολλές φορές (π.χ. <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> για τους αγώνες 23 και 43). Η ίδια αρχή ισχύει για τα τουρνουά με <code class="docutils literal notranslate"><span class="pre">tn</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Η αναζήτηση σε ένα τουρνουά (<code class="docutils literal notranslate"><span class="pre">tn</span></code>) ισοδυναμεί με αναζήτηση σε όλους τους αγώνες του εν λόγω τουρνουά. Τα αναγνωριστικά των αγώνων και των τουρνουά είναι ορατά στις στήλες ID των αντίστοιχων πάνελ.</p>
+</div>
+<p>Για παράδειγμα, η εντολή <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">s</span> <span class="pre">c</span> <span class="pre">p-20,-5</span> <span class="pre">w&gt;60</span> <span class="pre">z&gt;10</span> <span class="pre">K2,3</span></code> φιλτράρει όλες τις θέσεις λαμβάνοντας υπόψη τη δομή των πουλιών, το σκορ και τον κύβο της επεξεργασμένης θέσης όπου ο παίκτης είναι μεταξύ 20 και 5 pips μπροστά στην κούρσα, με πιθανότητες νίκης τουλάχιστον 60%d, με τουλάχιστον 10 πούλια στη ζώνη, και ο αντίπαλος έχει μεταξύ 2 και 3 οπίσθια πούλια.</p>
+</section>
+<section id="commandes-diverses">
+<span id="cmd-misc"></span><h2><span class="section-number">4.5. </span>Διάφορες εντολές<a class="headerlink" href="#commandes-diverses" title="Link to this heading"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Εντολή</p></th>
+<th class="head"><p>Ενέργεια</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clear, cl</p></td>
+<td><p>Διαγράφει το ιστορικό εντολών.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Οι μεταβάσεις της βάσης δεδομένων πραγματοποιούνται πλέον αυτόματα κατά το άνοιγμα μιας βάσης δεδομένων.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="3. Οδηγός χρήσης" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="raccourcis.html" class="btn btn-neutral float-right" title="5. Συντομεύσεις πληκτρολογίου" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

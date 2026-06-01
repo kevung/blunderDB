@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.1)  1 JUN 2026 02:43
+This is XeTeX, Version 3.141592653-2.6-0.999995 (TeX Live 2023/Debian) (preloaded format=xelatex 2026.6.1)  1 JUN 2026 09:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1127,12 +1127,12 @@ Package rerunfilecheck Info: File `blunderdb.out' has not changed.
 (rerunfilecheck)             Checksum: 90D53DF0033E49FE3D25E5693F2E4B09;27989.
  ) 
 Here is how much of TeX's memory you used:
- 19286 strings out of 476878
- 393877 string characters out of 5805250
+ 19286 strings out of 476443
+ 393877 string characters out of 5793963
  1997627 words of memory out of 5000000
- 40815 multiletter control sequences out of 15000+600000
+ 40849 multiletter control sequences out of 15000+600000
  564996 words of font info for 101 fonts, out of 8000000 for 9000
- 15 hyphenation exceptions out of 8191
+ 265 hyphenation exceptions out of 8191
  79i,19n,93p,1198b,556s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
 Output written on blunderdb.pdf (63 pages).

@@ -1,0 +1,569 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="el" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Εγχειρίδιο &mdash; Τεκμηρίωση του blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=dae0290c"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=e109e2be"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Ευρετήριο" href="genindex.html" />
+    <link rel="search" title="Αναζήτηση" href="search.html" />
+    <link rel="next" title="3. Οδηγός χρήσης" href="guide_utilisateur.html" />
+    <link rel="prev" title="1. Λήψη και εγκατάσταση" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Λήψη και εγκατάσταση</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Εγχειρίδιο</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Εισαγωγή</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Κύριες αλληλεπιδράσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Περιγραφή της διεπαφής</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">2.4. Ρυθμίσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.5. Πλοήγηση στις θέσεις</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.6. Επεξεργασία θέσεων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.7. Η γραμμή εντολών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">2.8. Πίνακας Ανάλυσης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">2.9. Πίνακας Σχολίων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">2.10. Πίνακας Αναζήτησης</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">2.11. Πίνακας Συλλογών</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.12. Πίνακας Αγώνων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.13. Πίνακας Τουρνουά</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.14. Πίνακας Stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.14.1. Εισαγωγή</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.14.2. Άνοιγμα του πίνακα</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.14.3. Γραμμή φίλτρου</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.14.3.1. Οπτική γωνία παίκτη</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">2.14.3.2. Διαθέσιμα φίλτρα</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">2.14.4. Εναλλαγή PR / MWC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">2.14.5. Καρτέλα Dashboard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">2.14.5.1. Κάρτες επιπέδου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">2.14.5.2. Κυλιόμενο PR στις τελευταίες N αποφάσεις</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">2.14.5.3. Κορυφαία σφάλματα (Top blunders)</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">2.14.6. Καρτέλα Progression</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">2.14.6.1. Γραμμικό γράφημα ανά τουρνουά</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">2.14.6.2. Διάγραμμα διασποράς ανά αγώνα</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.14.7. Καρτέλα Erreurs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.14.7.1. Κατανομή ανά ενέργεια κύβου</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.14.7.2. Σύγκριση Checker / Cube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.14.7.3. Ιστόγραμμα των μεγεθών σφάλματος</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.14.8. Κανόνας συνάθροισης</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.14.9. MWC: περιορισμοί</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.15. Πίνακας EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.16. Πίνακας Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.17. Πίνακας Μεταδεδομένων</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-journal">2.18. Πίνακας Καταγραφής</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Οδηγός χρήσης</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Λίστα εντολών</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Συντομεύσεις πληκτρολογίου</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Διεπαφή γραμμής εντολών (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Συχνές ερωτήσεις (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Παράρτημα: Προχωρημένη χρήση των φίλτρων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Παράρτημα Mac: Πιθανός αποκλεισμός του blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Παράρτημα: Σχήμα της βάσης δεδομένων</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Παράρτημα: Μοντέλο στατιστικών — ευθυγράμμιση XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Εγχειρίδιο</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="manuel">
+<span id="id1"></span><h1><span class="section-number">2. </span>Εγχειρίδιο<a class="headerlink" href="#manuel" title="Link to this heading"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">2.1. </span>Εισαγωγή<a class="headerlink" href="#introduction" title="Link to this heading"></a></h2>
+<p>Το blunderDB είναι ένα λογισμικό για τη δημιουργία βάσεων δεδομένων με θέσεις τάβλι (backgammon). Η κύρια δύναμή του είναι να παρέχει έναν ενιαίο χώρο για τη συγκέντρωση των θέσεων που έχει συναντήσει ένας παίκτης (στο διαδίκτυο, σε τουρνουά) και τη δυνατότητα να τις μελετήσει ξανά φιλτράροντάς τις σύμφωνα με διάφορα φίλτρα που μπορούν να συνδυαστούν αυθαίρετα. Το blunderDB μπορεί επίσης να χρησιμοποιηθεί για τη δημιουργία καταλόγων θέσεων αναφοράς.</p>
+<p>Οι θέσεις αποθηκεύονται σε μια βάση δεδομένων που αναπαρίσταται από ένα αρχείο <em>.db</em>.</p>
+</section>
+<section id="interactions-principales">
+<h2><span class="section-number">2.2. </span>Κύριες αλληλεπιδράσεις<a class="headerlink" href="#interactions-principales" title="Link to this heading"></a></h2>
+<p>Οι κύριες δυνατές αλληλεπιδράσεις με το blunderDB είναι:</p>
+<ul class="simple">
+<li><p>προσθήκη μιας νέας θέσης,</p></li>
+<li><p>τροποποίηση μιας υπάρχουσας θέσης,</p></li>
+<li><p>αντιγραφή της εικόνας του ταμπλό στο πρόχειρο (PNG) μέσω <strong>Ctrl+X</strong>, ή μαζί με την πλήρη ανάλυση μέσω <strong>Ctrl+X Ctrl+X</strong>,</p></li>
+<li><p>διαγραφή μιας υπάρχουσας θέσης,</p></li>
+<li><p>αναζήτηση μίας ή περισσότερων θέσεων,</p></li>
+<li><p>εισαγωγή αγώνων από διάφορες πηγές (XG, GNUbg, BGBlitz, Jellyfish), συμπεριλαμβανομένων των σχολίων από τα αρχεία XG,</p></li>
+<li><p>πλοήγηση στις κινήσεις ενός εισηγμένου αγώνα,</p></li>
+<li><p>οργάνωση των θέσεων σε συλλογές,</p></li>
+<li><p>οργάνωση των αγώνων σε τουρνουά.</p></li>
+</ul>
+<p>Ο χρήστης μπορεί να επισημάνει ελεύθερα τις θέσεις με ετικέτες (tags) και να τις σχολιάσει μέσω σχολίων.</p>
+</section>
+<section id="description-de-l-interface">
+<h2><span class="section-number">2.3. </span>Περιγραφή της διεπαφής<a class="headerlink" href="#description-de-l-interface" title="Link to this heading"></a></h2>
+<p>Η διεπαφή του blunderDB αποτελείται, από πάνω προς τα κάτω, από:</p>
+<ul class="simple">
+<li><p>[επάνω] τη γραμμή εργαλείων, η οποία συγκεντρώνει το σύνολο των κύριων λειτουργιών που μπορούν να εκτελεστούν στη βάση δεδομένων,</p></li>
+<li><p>[στη μέση] την κύρια περιοχή προβολής, η οποία επιτρέπει την εμφάνιση ή την επεξεργασία θέσεων τάβλι,</p></li>
+<li><p>[κάτω] τη γραμμή κατάστασης, η οποία παρουσιάζει διάφορες πληροφορίες σχετικά με τη βάση δεδομένων ή την τρέχουσα θέση και ενσωματώνει τη γραμμή εντολών.</p></li>
+</ul>
+<p>Μπορούν να εμφανιστούν πίνακες για:</p>
+<ul class="simple">
+<li><p>εμφάνιση των δεδομένων ανάλυσης που σχετίζονται με την τρέχουσα θέση, προερχόμενων από το eXtreme Gammon (XG), το GNUbg ή το BGBlitz,</p></li>
+<li><p>εμφάνιση, προσθήκη ή τροποποίηση σχολίων,</p></li>
+<li><p>αναζήτηση και φιλτράρισμα θέσεων με βάση συνδυάσιμα κριτήρια,</p></li>
+<li><p>εμφάνιση και διαχείριση των συλλογών θέσεων (πίνακας συλλογών),</p></li>
+<li><p>εμφάνιση της λίστας των εισηγμένων αγώνων και πλοήγηση στις κινήσεις ενός αγώνα (πίνακας αγώνων),</p></li>
+<li><p>εμφάνιση και διαχείριση των τουρνουά (πίνακας τουρνουά),</p></li>
+<li><p>εμφάνιση των στατιστικών απόδοσης (πίνακας Stats),</p></li>
+<li><p>υπολογισμός του EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff) (πίνακας EPC),</p></li>
+<li><p>μελέτη των θέσεων με διαστήματα επανάληψης (πίνακας Anki),</p></li>
+<li><p>εμφάνιση των μεταδεδομένων της βάσης δεδομένων (πίνακας μεταδεδομένων),</p></li>
+<li><p>εμφάνιση του αρχείου καταγραφής λειτουργιών (πίνακας καταγραφής).</p></li>
+</ul>
+<p>Μπορούν να εμφανιστούν παράθυρα διαλόγου για:</p>
+<ul class="simple">
+<li><p>εμφάνιση της βοήθειας του blunderDB,</p></li>
+<li><p>ρύθμιση της εξαγωγής της βάσης δεδομένων,</p></li>
+<li><p>ρύθμιση του blunderDB, και ιδίως της γλώσσας της διεπαφής (βλ. <a class="reference internal" href="#configuration"><span class="std std-ref">Ρυθμίσεις</span></a>).</p></li>
+</ul>
+<p>Η κύρια περιοχή προβολής παρέχει στον χρήστη:</p>
+<ul class="simple">
+<li><p>ένα ταμπλό για την εμφάνιση ή την επεξεργασία μιας θέσης τάβλι,</p></li>
+<li><p>το επίπεδο και τον κάτοχο του ζαριού (cube),</p></li>
+<li><p>το pip count κάθε παίκτη,</p></li>
+<li><p>το σκορ κάθε παίκτη,</p></li>
+<li><p>τα ζάρια προς παίξιμο. Αν δεν εμφανίζεται καμία τιμή στα ζάρια, η θέση των ζαριών υποδεικνύει ποιος παίκτης έχει τη σειρά και ότι η θέση είναι μια απόφαση κύβου (cube).</p></li>
+</ul>
+<p>Η γραμμή κατάστασης είναι δομημένη από αριστερά προς τα δεξιά με τις ακόλουθες πληροφορίες:</p>
+<ul class="simple">
+<li><p>τη γραμμή εντολών, προσβάσιμη πατώντας το πλήκτρο <em>SPACE</em>,</p></li>
+<li><p>ένα ενημερωτικό μήνυμα σχετικό με μια λειτουργία που εκτελέστηκε από τον χρήστη,</p></li>
+<li><p>τον δείκτη της τρέχουσας θέσης, ακολουθούμενο από τον αριθμό των θέσεων στην τρέχουσα βιβλιοθήκη (ή τις πληροφορίες κίνησης/παρτίδας κατά την πλοήγηση σε έναν αγώνα).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Στην περίπτωση θέσεων που προκύπτουν από μια αναζήτηση του χρήστη, ο αριθμός των θέσεων που υποδεικνύεται στη γραμμή κατάστασης αντιστοιχεί στον αριθμό των φιλτραρισμένων θέσεων.</p>
+</div>
+</section>
+<section id="configuration">
+<span id="id2"></span><h2><span class="section-number">2.4. </span>Ρυθμίσεις<a class="headerlink" href="#configuration" title="Link to this heading"></a></h2>
+<p>Το κουμπί ρυθμίσεων (εικονίδιο σε σχήμα γραναζιού) που βρίσκεται στη γραμμή εργαλείων, αριστερά από το κουμπί βοήθειας, ανοίγει το παράθυρο ρυθμίσεων του blunderDB.</p>
+<p>Αυτό επιτρέπει την επιλογή της γλώσσας της διεπαφής μεταξύ Αγγλικών, Γαλλικών, Γερμανικών, Ιταλικών, Ισπανικών, Φινλανδικών, Ιαπωνικών, Ελληνικών και Ρωσικών. Το σύνολο της διεπαφής (γραμμή εργαλείων, πίνακες, μηνύματα, βοήθεια) μεταφράζεται στην επιλεγμένη γλώσσα. Η επιλογή της γλώσσας αποθηκεύεται και διατηρείται από τη μία περίοδο λειτουργίας στην άλλη.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="mode-normal"></span><h2><span class="section-number">2.5. </span>Πλοήγηση στις θέσεις<a class="headerlink" href="#navigation-dans-les-positions" title="Link to this heading"></a></h2>
+<p>Εξ ορισμού, το blunderDB επιτρέπει:</p>
+<ul class="simple">
+<li><p>την κύλιση μεταξύ των διαφόρων θέσεων της τρέχουσας βιβλιοθήκης,</p></li>
+<li><p>την εμφάνιση των πληροφοριών ανάλυσης που σχετίζονται με μια θέση,</p></li>
+<li><p>την εμφάνιση, προσθήκη και τροποποίηση των σχολίων μιας θέσης.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="mode-edit"></span><h2><span class="section-number">2.6. </span>Επεξεργασία θέσεων<a class="headerlink" href="#edition-de-positions" title="Link to this heading"></a></h2>
+<p>Το πάτημα του πλήκτρου <em>TAB</em> ανοίγει τον πίνακα αναζήτησης και επιτρέπει την επεξεργασία μιας θέσης στο ταμπλό για την προσθήκή της στη βάση δεδομένων ή τον ορισμό μιας δομής θέσης προς αναζήτηση. Η κατανομή των πουλιών, ο κύβος (cube), το σκορ και η σειρά μπορούν να τροποποιηθούν με τη βοήθεια του ποντικιού (βλ. <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Επεξεργασία θέσης</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="mode-command"></span><h2><span class="section-number">2.7. </span>Η γραμμή εντολών<a class="headerlink" href="#la-ligne-de-commande" title="Link to this heading"></a></h2>
+<p>Η γραμμή εντολών, ενσωματωμένη στη γραμμή κατάστασης, επιτρέπει την εκτέλεση του συνόλου των λειτουργιών του blunderDB που είναι διαθέσιμες στη γραφική διεπαφή: γενικές λειτουργίες στη βάση δεδομένων, πλοήγηση θέσεων, εμφάνιση της ανάλυσης ή/και των σχολίων, αναζήτηση θέσεων με βάση φίλτρα… Μετά την πρώτη εξοικείωση με τη διεπαφή, συνιστάται η σταδιακή χρήση της γραμμής εντολών, η οποία επιτρέπει μια ισχυρή και ομαλή χρήση του blunderDB, ιδίως για τις λειτουργίες αναζήτησης θέσεων.</p>
+<p>Για να ανοίξετε τη γραμμή εντολών, πατήστε το πλήκτρο <em>SPACE</em>. Για να υποβάλετε ένα ερώτημα και να κλείσετε τη γραμμή εντολών, πατήστε το πλήκτρο <em>ENTER</em>.</p>
+<p>Το blunderDB εκτελεί τα ερωτήματα που αποστέλλονται από τον χρήστη υπό την προϋπόθεση ότι είναι έγκυρα και τροποποιεί αμέσως την κατάσταση της βάσης δεδομένων εφόσον χρειάζεται. Δεν απαιτούνται ρητές ενέργειες αποθήκευσης από την πλευρά του χρήστη.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Τομέας 4</span></a> για τη λίστα των διαθέσιμων εντολών στη γραμμή εντολών.</p>
+</div>
+</section>
+<section id="panneau-analyse">
+<span id="id3"></span><h2><span class="section-number">2.8. </span>Πίνακας Ανάλυσης<a class="headerlink" href="#panneau-analyse" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Ανάλυσης</strong> (<em>CTRL-L</em>) εμφανίζει τα δεδομένα ανάλυσης της τρέχουσας θέσης, εισηγμένα από το eXtreme Gammon (XG), το GNUbg ή το BGBlitz. Παρουσιάζει τις καλύτερες εναλλακτικές (κινήσεις πουλιών ή αποφάσεις κύβου) μαζί με τις τιμές equity τους και τα αντίστοιχα σφάλματα. Το πλήκτρο <em>d</em> εναλλάσσεται μεταξύ της ανάλυσης κινήσεων πουλιών και της ανάλυσης κύβου. Κατά την πλοήγηση σε έναν αγώνα, η κίνηση που παίχτηκε πραγματικά επισημαίνεται στη λίστα των εναλλακτικών. Πατήστε <em>CTRL-L</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">list</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+</section>
+<section id="panneau-commentaires">
+<span id="id4"></span><h2><span class="section-number">2.9. </span>Πίνακας Σχολίων<a class="headerlink" href="#panneau-commentaires" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Σχολίων</strong> (<em>CTRL-P</em>) εμφανίζει, προσθέτει και τροποποιεί τα σχόλια που σχετίζονται με την τρέχουσα θέση. Τα σχόλια που εισάγονται από τα αρχεία XG συσχετίζονται αυτόματα με τις αντίστοιχες θέσεις. Πατήστε <em>CTRL-P</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">comment</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+</section>
+<section id="panneau-recherche">
+<span id="id5"></span><h2><span class="section-number">2.10. </span>Πίνακας Αναζήτησης<a class="headerlink" href="#panneau-recherche" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Αναζήτησης</strong> (<em>CTRL-F</em> ή <em>TAB</em>) επιτρέπει το φιλτράρισμα των θέσεων σύμφωνα με κριτήρια που συνδυάζονται ελεύθερα: δομή πουλιών, τύπος απόφασης κύβου, μέγεθος σφάλματος, ημερομηνίες, ετικέτες κ.λπ. Το πλήκτρο <em>TAB</em> ανοίγει ταυτόχρονα τον πίνακα αναζήτησης και τον επεξεργαστή θέσης, επιτρέποντας τον ορισμό μιας δομής πουλιών προς αναζήτηση πάνω στο ταμπλό.</p>
+<p>Για να βελτιώσετε μια αναζήτηση μεταξύ των τρεχουσών φιλτραρισμένων θέσεων, χρησιμοποιήστε την εντολή <code class="docutils literal notranslate"><span class="pre">ss</span></code> ακολουθούμενη από φίλτρα (π.χ.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Ο πίνακας αναζήτησης προσφέρει επίσης ένα πλαίσιο ελέγχου <em>Search in current results</em> για την ίδια λειτουργία.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Τομέας 4</span></a> για τη λίστα των διαθέσιμων φίλτρων.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="mode-collection"></span><h2><span class="section-number">2.11. </span>Πίνακας Συλλογών<a class="headerlink" href="#panneau-collections" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Συλλογών</strong> (<em>CTRL-B</em>) επιτρέπει τη διαχείριση συλλογών θέσεων. Οι συλλογές μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν. Μπορούν να προστεθούν ή να αφαιρεθούν θέσεις σε αυτές. Κάντε διπλό κλικ σε μια συλλογή για να περιηγηθείτε στις θέσεις της με τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> και <em>ΔΕΞΙΑ</em>. Η σειρά των συλλογών και των θέσεων εντός των συλλογών μπορεί να τροποποιηθεί με μεταφορά και απόθεση. Πατήστε <em>CTRL-B</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">collection</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+</section>
+<section id="panneau-matchs">
+<span id="mode-match"></span><h2><span class="section-number">2.12. </span>Πίνακας Αγώνων<a class="headerlink" href="#panneau-matchs" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Αγώνων</strong> (<em>CTRL-Tab</em>) παραθέτει τους εισηγμένους αγώνες. Κάντε διπλό κλικ σε έναν αγώνα (ή πατήστε <em>ENTER</em>) για να πλοηγηθείτε στις κινήσεις του. Η εντολή <code class="docutils literal notranslate"><span class="pre">m</span></code> συνεχίζει την πλοήγηση στον τελευταίο αγώνα που επισκεφτήκατε.</p>
+<p>Ο χρήστης μπορεί:</p>
+<ul class="simple">
+<li><p>να περιηγηθεί στις κινήσεις ενός αγώνα χρησιμοποιώντας τα πλήκτρα <em>ΑΡΙΣΤΕΡΑ</em> και <em>ΔΕΞΙΑ</em>,</p></li>
+<li><p>να μεταβεί από τη μία παρτίδα στην άλλη με τη βοήθεια των πλήκτρων <em>PageUp</em> και <em>PageDown</em>,</p></li>
+<li><p>να εμφανίσει την ανάλυση των κινήσεων (πουλιά και κύβος) πατώντας <em>CTRL-L</em>,</p></li>
+<li><p>να εναλλάσσεται μεταξύ της ανάλυσης κινήσεων πουλιών και κύβου με το πλήκτρο <em>d</em>,</p></li>
+<li><p>να δει την κίνηση που παίχτηκε πραγματικά επισημασμένη στην ανάλυση.</p></li>
+</ul>
+<p>Η τελευταία θέση που επισκεφτήκατε σε κάθε αγώνα αποθηκεύεται και επαναφέρεται αυτόματα. Πατήστε <em>CTRL-Tab</em> ή εκτελέστε την εντολή <code class="docutils literal notranslate"><span class="pre">match</span></code> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Ανατρέξτε στο <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Συντομεύσεις πληκτρολογίου</span></a> για τις διαθέσιμες συντομεύσεις.</p>
+</div>
+</section>
+<section id="panneau-tournois">
+<span id="id6"></span><h2><span class="section-number">2.13. </span>Πίνακας Τουρνουά<a class="headerlink" href="#panneau-tournois" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Τουρνουά</strong> (<em>CTRL-Y</em>) επιτρέπει την ομαδοποίηση αγώνων σε τουρνουά για οργανωμένη παρακολούθηση και στατιστική ανάλυση ανά διοργάνωση. Τα τουρνουά μπορούν να δημιουργηθούν, να μετονομαστούν και να διαγραφούν· οι αγώνες μπορούν να ανατεθούν σε αυτά. Τα στατιστικά του πίνακα Stats μπορούν να φιλτραριστούν ανά τουρνουά. Πατήστε <em>CTRL-Y</em> για να εμφανίσετε ή να αποκρύψετε τον πίνακα.</p>
+</section>
+<section id="panneau-stats">
+<span id="stats"></span><h2><span class="section-number">2.14. </span>Πίνακας Stats<a class="headerlink" href="#panneau-stats" title="Link to this heading"></a></h2>
+<section id="id7">
+<h3><span class="section-number">2.14.1. </span>Εισαγωγή<a class="headerlink" href="#id7" title="Link to this heading"></a></h3>
+<p>Ο πίνακας <strong>Stats</strong> επιτρέπει την ανάλυση του επιπέδου παιχνιδιού και την παρακολούθηση της προόδου στο χρόνο με βάση τις θέσεις που έχουν εισαχθεί στη βάση δεδομένων. Υπολογίζει και εμφανίζει τους δείκτες <strong>PR</strong> (Performance Rate) και <strong>MWC cost</strong> (Match Winning Chance cost) για το σύνολο των θέσεων ή για ένα φιλτραρισμένο υποσύνολο.</p>
+<p>Ο πίνακας Stats είναι ιδιαίτερα χρήσιμος για:</p>
+<ul class="simple">
+<li><p><strong>τον προσδιορισμό του επιπέδου σας</strong> σε σχέση με τα κατώφλια αναφοράς (world-class, expert, advanced…) χάρη στο συνολικό PR·</p></li>
+<li><p><strong>την παρακολούθηση της προόδου σας</strong> τουρνουά προς τουρνουά ή αγώνα προς αγώνα χάρη στα γραφήματα της καρτέλας Progression·</p></li>
+<li><p><strong>τον εντοπισμό των αδυναμιών σας</strong>: η καρτέλα Erreurs εμφανίζει την κατανομή μεταξύ κινήσεων πουλιών και αποφάσεων κύβου, καθώς και την κατανομή των μεγεθών σφάλματος·</p></li>
+<li><p><strong>την άμεση πρόσβαση στις σχετικές θέσεις</strong> κάνοντας κλικ σε οποιονδήποτε δείκτη (drill-down).</p></li>
+</ul>
+</section>
+<section id="ouverture-du-panneau">
+<h3><span class="section-number">2.14.2. </span>Άνοιγμα του πίνακα<a class="headerlink" href="#ouverture-du-panneau" title="Link to this heading"></a></h3>
+<p>Για να ανοίξετε τον πίνακα Stats:</p>
+<ul class="simple">
+<li><p>Πατήστε <em>CTRL-D</em>.</p></li>
+<li><p>Πληκτρολογήστε την εντολή <code class="docutils literal notranslate"><span class="pre">:stats</span></code> ή <code class="docutils literal notranslate"><span class="pre">:st</span></code> στη γραμμή εντολών.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο πίνακας ανανεώνεται αυτόματα σε κάθε τροποποίηση του φίλτρου. Δεν επανυπολογίζει τα στατιστικά κατά την απλή εναλλαγή PR ↔ MWC: και οι δύο μετρικές υπολογίζονται ταυτόχρονα από το backend.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3><span class="section-number">2.14.3. </span>Γραμμή φίλτρου<a class="headerlink" href="#barre-de-filtre" title="Link to this heading"></a></h3>
+<p>Η γραμμή φίλτρου, στο επάνω μέρος του πίνακα, επιτρέπει τον περιορισμό του υπολογισμού σε ένα υποσύνολο θέσεων.</p>
+<section id="perspective-joueur">
+<h4><span class="section-number">2.14.3.1. </span>Οπτική γωνία παίκτη<a class="headerlink" href="#perspective-joueur" title="Link to this heading"></a></h4>
+<p>Η αναπτυσσόμενη λίστα <strong>Joueur</strong> επιτρέπει το φιλτράρισμα των στατιστικών σύμφωνα με τον αναλυόμενο παίκτη. Το blunderDB επιλέγει αυτόματα τον παίκτη του οποίου το όνομα εμφανίζεται πιο συχνά στη βάση δεδομένων — τροποποιήσιμο ανά πάσα στιγμή.</p>
+<div class="admonition tip">
+<p class="admonition-title">Πρακτική συμβουλή</p>
+<p>Η αλλαγή παίκτη δεν προκαλεί απώλεια δεδομένων· αρκεί να επιλέξετε ξανά τον προηγούμενο παίκτη από τη λίστα.</p>
+</div>
+</section>
+<section id="filtres-disponibles">
+<h4><span class="section-number">2.14.3.2. </span>Διαθέσιμα φίλτρα<a class="headerlink" href="#filtres-disponibles" title="Link to this heading"></a></h4>
+<ul class="simple">
+<li><p><strong>Tournoi(s)</strong> — περιορισμός σε ένα ή περισσότερα τουρνουά. Μπορούν να επιλεγούν πολλά τουρνουά ταυτόχρονα.</p></li>
+<li><p><strong>Dates</strong> — χρονικό εύρος (<em>De</em> … <em>À</em>). Αν συμπληρωθεί μόνο η ημερομηνία έναρξης, περιλαμβάνονται οι πιο πρόσφατες θέσεις.</p></li>
+<li><p><strong>Type de décision</strong> — Όλα / Κινήσεις πουλιών / Αποφάσεις κύβου.</p></li>
+<li><p><strong>Longueur de match</strong> — περιορισμός σε συγκεκριμένα μήκη αγώνα (1, 3, 5, 7, 9, 11, 13, 15, 21 πόντοι). Μπορούν να συνδυαστούν πολλά μήκη.</p></li>
+</ul>
+<p>Ένα κουμπί <strong>Reset</strong> μηδενίζει όλα τα φίλτρα (εκτός από τον αυτόματα εντοπισμένο παίκτη).</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Τα φίλτρα αποθηκεύονται στις ρυθμίσεις του blunderDB (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) και επαναφέρονται κατά το επόμενο άνοιγμα.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3><span class="section-number">2.14.4. </span>Εναλλαγή PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Link to this heading"></a></h3>
+<p>Το κουμπί <strong>PR / MWC</strong> στο επάνω μέρος του πίνακα εναλλάσσει την εμφανιζόμενη μετρική σε όλες τις καρτέλες.</p>
+<p><strong>PR (Performance Rate)</strong></p>
+<blockquote>
+<div><p>Μετρά την ποιότητα παιχνιδιού <em>money-game</em>: άθροισμα των σφαλμάτων σε χιλιοστά του πόντου, διαιρεμένο με τον αριθμό των αποφάσεων. Ανεξάρτητο από το σκορ του αγώνα.</p>
+<p>Κατά προσέγγιση κατώφλια αναφοράς:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Επίπεδο</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>World-class</p></td>
+<td><p>&lt; 3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>3 – 5</p></td>
+</tr>
+<tr class="row-even"><td><p>Προχωρημένος</p></td>
+<td><p>5 – 8</p></td>
+</tr>
+<tr class="row-odd"><td><p>Μέσος</p></td>
+<td><p>8 – 12</p></td>
+</tr>
+<tr class="row-even"><td><p>Αρχάριος</p></td>
+<td><p>&gt; 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Σωρευτική πιθανότητα νίκης αγώνα που χάνεται εξαιτίας των σφαλμάτων, σε ολόκληρο το φιλτραρισμένο σύνολο δεδομένων. Υπολογίζεται με βάση τη MET Kazaross-XG2 που είναι ενσωματωμένη στο blunderDB.</p>
+<div class="admonition caution">
+<p class="admonition-title">Προσοχή</p>
+<p>Το MWC cost <strong>δεν εφαρμόζεται</strong> στις θέσεις <em>money-game</em> (χωρίς διακύβευμα αγώνα). Αυτές οι θέσεις εξαιρούνται από τον υπολογισμό MWC. Οι τιμές MWC εξαρτώνται από τη MET που χρησιμοποιείται· δεν είναι άμεσα συγκρίσιμες μεταξύ λογισμικών που χρησιμοποιούν διαφορετικές METs.</p>
+</div>
+</div></blockquote>
+<p>Η εναλλαγή PR ↔ MWC είναι ακαριαία: δεν πραγματοποιείται κανένας επανυπολογισμός στο backend.</p>
+</section>
+<section id="onglet-dashboard">
+<h3><span class="section-number">2.14.5. </span>Καρτέλα Dashboard<a class="headerlink" href="#onglet-dashboard" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Dashboard</strong> παρέχει μια συνοπτική εικόνα των βασικών δεικτών.</p>
+<section id="cartes-de-niveau">
+<h4><span class="section-number">2.14.5.1. </span>Κάρτες επιπέδου<a class="headerlink" href="#cartes-de-niveau" title="Link to this heading"></a></h4>
+<p>Τρεις κάρτες εμφανίζουν το PR (ή το MWC) για:</p>
+<ul class="simple">
+<li><p><strong>All</strong> — όλες τις αποφάσεις (πουλιά + κύβος)·</p></li>
+<li><p><strong>Checker</strong> — μόνο τις κινήσεις πουλιών·</p></li>
+<li><p><strong>Cube</strong> — μόνο τις αποφάσεις κύβου.</p></li>
+</ul>
+<p>Κάνοντας κλικ σε μια κάρτα φορτώνονται στον πίνακα ανάλυσης οι θέσεις του αντίστοιχου υποσυνόλου (drill-down).</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο συνολικός αριθμός των αποφάσεων εμφανίζεται στο κάτω μέρος κάθε κάρτας κατά την αιώρηση του δείκτη.</p>
+</div>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4><span class="section-number">2.14.5.2. </span>Κυλιόμενο PR στις τελευταίες N αποφάσεις<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Link to this heading"></a></h4>
+<p>Μια γραμμή τιμών PR (ή MWC) που υπολογίζονται στις τελευταίες <em>N</em> αποφάσεις (N = 5, 10, 50, 100, 250, 500, 1000) επιτρέπει τη μέτρηση της πρόσφατης τάσης. Οι αχνές τιμές αντιστοιχούν σε N μεγαλύτερο από τον αριθμό των διαθέσιμων αποφάσεων.</p>
+<p>Κάνοντας κλικ σε μια τιμή φορτώνονται οι τελευταίες <em>N</em> αντίστοιχες θέσεις.</p>
+</section>
+<section id="top-blunders">
+<h4><span class="section-number">2.14.5.3. </span>Κορυφαία σφάλματα (Top blunders)<a class="headerlink" href="#top-blunders" title="Link to this heading"></a></h4>
+<p>Η λίστα των 10 χειρότερων σφαλμάτων (ή MWC cost), ταξινομημένων κατά φθίνον μέγεθος. Κάνοντας κλικ σε μια γραμμή φορτώνεται η σχετική θέση στον πίνακα ανάλυσης.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3><span class="section-number">2.14.6. </span>Καρτέλα Progression<a class="headerlink" href="#onglet-progression" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Progression</strong> παρουσιάζει την εξέλιξη του επιπέδου στο χρόνο.</p>
+<section id="courbe-par-tournoi">
+<h4><span class="section-number">2.14.6.1. </span>Γραμμικό γράφημα ανά τουρνουά<a class="headerlink" href="#courbe-par-tournoi" title="Link to this heading"></a></h4>
+<p>Ένα γραμμικό γράφημα εμφανίζει το PR (ή το MWC) για κάθε τουρνουά (άξονας X: σειρά των τουρνουά, άξονας Y: τιμή της μετρικής). Έγχρωμες ζώνες αποτυπώνουν τα κατώφλια επιπέδου.</p>
+<p>Κάνοντας κλικ σε ένα σημείο του γραφήματος ανοίγει ένα μενού περιβάλλοντος με δύο επιλογές:</p>
+<ul class="simple">
+<li><p><strong>Open tournament</strong> — ανοίγει το τουρνουά στον πίνακα Τουρνουά.</p></li>
+<li><p><strong>Open positions</strong> — φορτώνει όλες τις θέσεις του τουρνουά στον πίνακα ανάλυσης.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4><span class="section-number">2.14.6.2. </span>Διάγραμμα διασποράς ανά αγώνα<a class="headerlink" href="#scatter-plot-par-match" title="Link to this heading"></a></h4>
+<p>Ένα διάγραμμα διασποράς αναπαριστά κάθε αγώνα (άξονας X: ημερομηνία, άξονας Y: PR ή MWC). Το μέγεθος του σημείου είναι ανάλογο του αριθμού των αποφάσεων στον αγώνα.</p>
+<p>Κάνοντας κλικ σε ένα σημείο ανοίγει ένα μενού περιβάλλοντος:</p>
+<ul class="simple">
+<li><p><strong>Open match</strong> — ανοίγει τον αγώνα στον πίνακα αγώνων.</p></li>
+<li><p><strong>Open positions</strong> — φορτώνει όλες τις θέσεις του αγώνα στον πίνακα ανάλυσης.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3><span class="section-number">2.14.7. </span>Καρτέλα Erreurs<a class="headerlink" href="#onglet-erreurs" title="Link to this heading"></a></h3>
+<p>Η καρτέλα <strong>Erreurs</strong> αναλύει τις πηγές των σφαλμάτων.</p>
+<section id="repartition-par-action-de-videau">
+<h4><span class="section-number">2.14.7.1. </span>Κατανομή ανά ενέργεια κύβου<a class="headerlink" href="#repartition-par-action-de-videau" title="Link to this heading"></a></h4>
+<p>Ένα ραβδόγραμμα εμφανίζει το PR (ή το MWC) για κάθε τύπο απόφασης κύβου: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Κάθε ράβδος υποδεικνύει επίσης τον αριθμό των αποφάσεων και το ποσοστό σφαλμάτων σε επεξηγηματική ετικέτα.</p>
+<p>Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις που αντιστοιχούν σε αυτή την ενέργεια κύβου, <strong>μόνο εκείνες με σφάλμα</strong> (drill-down).</p>
+</section>
+<section id="repartition-checker-cube">
+<h4><span class="section-number">2.14.7.2. </span>Σύγκριση Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Link to this heading"></a></h4>
+<p>Ένα συγκριτικό διάγραμμα τοποθετεί δίπλα-δίπλα το PR των κινήσεων πουλιών και των αποφάσεων κύβου. Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του υποσυνόλου με σφάλμα.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4><span class="section-number">2.14.7.3. </span>Ιστόγραμμα των μεγεθών σφάλματος<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Link to this heading"></a></h4>
+<p>Ένα ιστόγραμμα κατανέμει τα σφάλματα σύμφωνα με το μέγεθός τους σε χιλιοστά του πόντου (διαστήματα: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Κάνοντας κλικ σε μια ράβδο φορτώνονται οι θέσεις του διαστήματος.</p>
+</section>
+</section>
+<section id="regle-d-agregation">
+<h3><span class="section-number">2.14.8. </span>Κανόνας συνάθροισης<a class="headerlink" href="#regle-d-agregation" title="Link to this heading"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Σημαντικό</p>
+<p>Το PR ενός τουρνουά (ή οποιουδήποτε υποσυνόλου) υπολογίζεται με τον κανόνα <strong>άθροισμα/άθροισμα</strong> — ποτέ ως μέσος όρος των επιμέρους PR των αγώνων.</p>
+<p>Τύπος:</p>
+<div class="math notranslate nohighlight">
+\[PR_{tournoi} = \frac{\sum_{i} \text{erreur}_i}{\text{nombre total de décisions}}\]</div>
+<p><strong>Παράδειγμα:</strong> ένας παίκτης παίζει δύο αγώνες σε ένα τουρνουά —</p>
+<ul class="simple">
+<li><p>Αγώνας A: 10 αποφάσεις, συνολικό σφάλμα 50 mp → PR = 5,0</p></li>
+<li><p>Αγώνας B: 90 αποφάσεις, συνολικό σφάλμα 270 mp → PR = 3,0</p></li>
+</ul>
+<p>Αφελής μέσος όρος των PR: (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(λανθασμένο)</em></p>
+<p>Κανόνας άθροισμα/άθροισμα: (50 + 270) / (10 + 90) = 320 / 100 = <strong>3,2</strong> <em>(σωστό)</em></p>
+<p>Ο κανόνας άθροισμα/άθροισμα είναι ο μόνος που χειρίζεται σωστά τη διακύμανση του μήκους των αγώνων (ένας αγώνας 21 πόντων ζυγίζει περισσότερο από έναν αγώνα 1 πόντου).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3><span class="section-number">2.14.9. </span>MWC: περιορισμοί<a class="headerlink" href="#mwc-limitations" title="Link to this heading"></a></h3>
+<ul class="simple">
+<li><p>Το MWC cost υπολογίζεται με βάση τη <strong>MET Kazaross-XG2</strong>, τον de facto πίνακα αναφοράς στο αγωνιστικό τάβλι. Τα αποτελέσματα δεν είναι άμεσα συγκρίσιμα με λογισμικά που χρησιμοποιούν άλλες METs.</p></li>
+<li><p>Οι θέσεις <em>money-game</em> (χωρίς σκορ αγώνα) <strong>εξαιρούνται</strong> από τον υπολογισμό MWC. Αν η βάση δεδομένων σας περιέχει πολλές θέσεις money-game, το MWC cost μπορεί να υποεκτιμηθεί ή να μην είναι διαθέσιμο.</p></li>
+<li><p>Το MWC cost είναι σωρευτικό σε ολόκληρο το φιλτραρισμένο σύνολο δεδομένων — όχι δείκτης ανά απόφαση. Μετρά τη συνολική επίδραση των σφαλμάτων σας στις πιθανότητες νίκης σας.</p></li>
+</ul>
+</section>
+</section>
+<section id="panneau-epc">
+<span id="mode-epc"></span><h2><span class="section-number">2.15. </span>Πίνακας EPC<a class="headerlink" href="#panneau-epc" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>EPC</strong> (<em>CTRL-E</em>) υπολογίζει το EPC (Effective Pip Count) μιας θέσης μαζέματος (bearoff). Ενεργοποιείται πατώντας <em>CTRL-E</em>, κάνοντας κλικ στην καρτέλα EPC στον κάτω πίνακα, ή εκτελώντας την εντολή <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>Σε αυτόν τον πίνακα, ο χρήστης επεξεργάζεται τη θέση των πουλιών στο εσωτερικό τάβλι (τους 6 τελευταίους πόντους) και οι ακόλουθες πληροφορίες εμφανίζονται σε πραγματικό χρόνο για κάθε παίκτη:</p>
+<ul class="simple">
+<li><p>το EPC (Effective Pip Count),</p></li>
+<li><p>τον μέσο αριθμό ζαριών που απαιτούνται (Mean Rolls),</p></li>
+<li><p>την τυπική απόκλιση (Standard Deviation),</p></li>
+<li><p>το pip count,</p></li>
+<li><p>το wastage (διαφορά μεταξύ του EPC και του pip count).</p></li>
+</ul>
+<p>Όταν και οι δύο παίκτες έχουν πούλια στο εσωτερικό τους τάβλι, μια ενότητα σύγκρισης εμφανίζει τις διαφορές EPC και pip count.</p>
+<p>Για να κλείσετε τον πίνακα EPC, πατήστε <em>CTRL-E</em> ή μεταβείτε σε άλλη καρτέλα.</p>
+<div class="admonition note">
+<p class="admonition-title">Σημείωση</p>
+<p>Ο υπολογισμός βασίζεται στην εσωτερική βάση δεδομένων μαζέματος 6 πόντων του GNUbg.</p>
+</div>
+</section>
+<section id="panneau-anki">
+<span id="mode-anki"></span><h2><span class="section-number">2.16. </span>Πίνακας Anki<a class="headerlink" href="#panneau-anki" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Anki</strong> (<em>CTRL-K</em>) επιτρέπει τη μελέτη θέσεων με διαστήματα επανάληψης χρησιμοποιώντας τον αλγόριθμο FSRS. Ο χρήστης μπορεί να δημιουργήσει πακέτα (decks) από συλλογές ή από αποτελέσματα αναζήτησης.</p>
+<p><strong>Δημιουργία πακέτων:</strong> Κάντε κλικ στο <em>New Deck</em> για να δημιουργήσετε ένα πακέτο από μια συλλογή ή από τα τρέχοντα αποτελέσματα αναζήτησης. Τα πακέτα που βασίζονται σε αναζήτηση συγχρονίζονται αυτόματα κατά την ενεργοποίηση της καρτέλας Anki.</p>
+<p><strong>Επανάληψη:</strong> Επιλέξτε ένα πακέτο και έπειτα κάντε κλικ στο <em>Study</em> (ή κάντε διπλό κλικ σε ένα πακέτο) για να ξεκινήσετε την επανάληψη των καρτών που οφείλονται. Κάθε κάρτα εμφανίζει την αντίστοιχη θέση στο ταμπλό. Αξιολογήστε την ανάκλησή σας με τα πλήκτρα <em>1</em> (Ξανά), <em>2</em> (Δύσκολο), <em>3</em> (Καλό), ή <em>4</em> (Εύκολο). Πατήστε <em>Esc</em> για να σταματήσετε και να επιστρέψετε στη λίστα των πακέτων.</p>
+<p><strong>Διακοπή/Συνέχιση:</strong> Μπορείτε να διακόψετε μια συνεδρία επανάληψης ανά πάσα στιγμή με το <em>Esc</em>. Το κουμπί αλλάζει σε <em>Resume</em> και εμφανίζει την πρόοδό σας. Κάντε κλικ σε αυτό για να συνεχίσετε από εκεί που σταματήσατε.</p>
+<p><strong>Διαχείριση πακέτων:</strong> Χρησιμοποιήστε τα κουμπιά ενεργειών για να μετονομάσετε, να συγχρονίσετε, να επαναφέρετε ή να διαγράψετε πακέτα. Οι παράμετροι FSRS (στόχος διατήρησης, μέγιστο διάστημα, παράγοντας τυχαιότητας) μπορούν να ρυθμιστούν ανά πακέτο στις Ρυθμίσεις (εικονίδιο γραναζιού).</p>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2><span class="section-number">2.17. </span>Πίνακας Μεταδεδομένων<a class="headerlink" href="#panneau-metadonnees" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Μεταδεδομένων</strong> εμφανίζει τις γενικές πληροφορίες της τρέχουσας βάσης δεδομένων: όνομα, περιγραφή, αριθμό θέσεων, αριθμό αγώνων και παρτίδων, έκδοση του σχήματος. Προσβάσιμος μέσω της εντολής <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+</section>
+<section id="panneau-journal">
+<span id="panneau-log"></span><h2><span class="section-number">2.18. </span>Πίνακας Καταγραφής<a class="headerlink" href="#panneau-journal" title="Link to this heading"></a></h2>
+<p>Ο πίνακας <strong>Καταγραφής</strong> εμφανίζει το αρχείο καταγραφής των πρόσφατων λειτουργιών: εισαγωγές, εξαγωγές και λειτουργίες στη βάση δεδομένων, μαζί με τα αποτελέσματα και τις χρονικές σημάνσεις τους. Είναι χρήσιμος για τη διάγνωση των σφαλμάτων εισαγωγής.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Λήψη και εγκατάσταση" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="3. Οδηγός χρήσης" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Γλώσσες</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

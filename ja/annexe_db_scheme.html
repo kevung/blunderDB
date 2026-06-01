@@ -1,0 +1,241 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>11. 付録: データベーススキーマ &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="12. 付録：統計モデル — XG / gnuBG / blunderDB の整合" href="stats_parity.html" />
+    <link rel="prev" title="10. Mac 付録：blunderDB の起動ブロックについて" href="annexe_mac_securite.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11. 付録: データベーススキーマ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-0-0">11.1. バージョン 1.0.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-1-0">11.2. バージョン 1.1.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-2-0">11.3. バージョン 1.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-3-0">11.4. バージョン 1.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-4-0">11.5. バージョン 1.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-5-0">11.6. バージョン 1.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-6-0">11.7. バージョン 1.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#version-1-7-0">11.8. バージョン 1.7.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">11. </span>付録: データベーススキーマ</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-schema-de-la-base-de-donnees">
+<span id="annexe-db-migration"></span><h1><span class="section-number">11. </span>付録: データベーススキーマ<a class="headerlink" href="#annexe-schema-de-la-base-de-donnees" title="Link to this heading"></a></h1>
+<div class="admonition important">
+<p class="admonition-title">重要</p>
+<p>データベースの移行を行う前に、必ず .db ファイルをバックアップしてください。</p>
+</div>
+<section id="version-1-0-0">
+<h2><span class="section-number">11.1. </span>バージョン 1.0.0<a class="headerlink" href="#version-1-0-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.0.0 には次のテーブルが含まれます:</p>
+<ul class="simple">
+<li><p><strong>position</strong>: ポジションを格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）と <a href="#id3"><span class="problematic" id="id4">`</span></a>state`（JSON 形式のポジションの状態）を持ちます。</p></li>
+<li><p><strong>analysis</strong>: ポジションの分析を格納します。列 <cite>id`（主キー）、`position_id`（`position</cite> を参照する外部キー）、および <a href="#id1"><span class="problematic" id="id2">`</span></a>data`（JSON 形式の分析データ）を持ちます。</p></li>
+<li><p><strong>comment</strong>: ポジションに関連付けられたコメントを格納します。列 <cite>id`（主キー）、`position_id`（`position</cite> を参照する外部キー）、および <a href="#id1"><span class="problematic" id="id2">`</span></a>text`（コメントのテキスト）を持ちます。</p></li>
+<li><p><strong>metadata</strong>: データベースのメタデータを格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>key`（主キー）と <a href="#id3"><span class="problematic" id="id4">`</span></a>value`（キーに関連付けられた値）を持ちます。</p></li>
+</ul>
+</section>
+<section id="version-1-1-0">
+<h2><span class="section-number">11.2. </span>バージョン 1.1.0<a class="headerlink" href="#version-1-1-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.1.0 では次のテーブルが追加されます:</p>
+<ul class="simple">
+<li><p><strong>command_history</strong>: コマンド履歴を格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）、<a href="#id3"><span class="problematic" id="id4">`</span></a>command`（コマンドのテキスト）、および <a href="#id5"><span class="problematic" id="id6">`</span></a>timestamp`（コマンド実行の日時）を持ちます。</p></li>
+</ul>
+<p>その他のテーブルはバージョン 1.0.0 から変更されていません。</p>
+<p>データベースをバージョン 1.0.0 からバージョン 1.1.0 に移行するには、blunderDB で <code class="docutils literal notranslate"><span class="pre">migrate_from_1_0_to_1_1</span></code> コマンドを実行してください。</p>
+</section>
+<section id="version-1-2-0">
+<h2><span class="section-number">11.3. </span>バージョン 1.2.0<a class="headerlink" href="#version-1-2-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.2.0 では次のテーブルが追加されます:</p>
+<ul class="simple">
+<li><p><strong>filter_library</strong>: 検索フィルターを格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）、<a href="#id3"><span class="problematic" id="id4">`</span></a>name`（フィルター名）、<a href="#id5"><span class="problematic" id="id6">`</span></a>command`（フィルターに関連付けられたコマンド）、および <a href="#id7"><span class="problematic" id="id8">`</span></a>edit_position`（フィルター保存時に編集されたポジション）を持ちます。</p></li>
+</ul>
+<p>その他のテーブルはバージョン 1.1.0 から変更されていません。</p>
+<p>データベースをバージョン 1.1.0 からバージョン 1.2.0 に移行するには、blunderDB で <code class="docutils literal notranslate"><span class="pre">migrate_from_1_1_to_1_2</span></code> コマンドを実行してください。</p>
+</section>
+<section id="version-1-3-0">
+<h2><span class="section-number">11.4. </span>バージョン 1.3.0<a class="headerlink" href="#version-1-3-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.3.0 では次のテーブルが追加されます:</p>
+<ul class="simple">
+<li><p><strong>search_history</strong>: ポジション検索の履歴を格納します。列 <a href="#id1"><span class="problematic" id="id2">`</span></a>id`（主キー）、<a href="#id3"><span class="problematic" id="id4">`</span></a>command`（検索コマンドのテキスト）、<a href="#id5"><span class="problematic" id="id6">`</span></a>position`（検索時のポジションの状態）、および <a href="#id7"><span class="problematic" id="id8">`</span></a>timestamp`（検索の日時）を持ちます。</p></li>
+</ul>
+<p>その他のテーブルはバージョン 1.2.0 から変更されていません。</p>
+<p>データベースをバージョン 1.2.0 からバージョン 1.3.0 に移行するには、blunderDB で <code class="docutils literal notranslate"><span class="pre">migrate_from_1_2_to_1_3</span></code> コマンドを実行してください。</p>
+</section>
+<section id="version-1-4-0">
+<h2><span class="section-number">11.5. </span>バージョン 1.4.0<a class="headerlink" href="#version-1-4-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.4.0 では、マッチ管理のための次のテーブルが追加されます:</p>
+<ul class="simple">
+<li><p><strong>match</strong>: インポートされたマッチを格納します。列 <cite>id`（主キー）、`player1_name</cite>、<cite>player2_name</cite>、<cite>event</cite>、<cite>location</cite>、<cite>round</cite>、<cite>match_length</cite>、<cite>match_date</cite>、<cite>import_date</cite>、<cite>file_path</cite>、<cite>game_count</cite>、および <a href="#id1"><span class="problematic" id="id2">`</span></a>match_hash`（重複検出用のハッシュ）を持ちます。</p></li>
+<li><p><strong>game</strong>: マッチのゲームを格納します。列 <cite>id`（主キー）、`match_id`（`match</cite> を参照する外部キー）、<cite>game_number</cite>、<cite>initial_score_1</cite>、<cite>initial_score_2</cite>、<cite>winner</cite>、<cite>points_won</cite>、および <cite>move_count</cite> を持ちます。</p></li>
+<li><p><strong>move</strong>: ゲームの手を格納します。列 <cite>id`（主キー）、`game_id`（`game</cite> を参照する外部キー）、<cite>move_number</cite>、<cite>move_type</cite>、<cite>position_id`（`position</cite> を参照する外部キー）、<cite>player</cite>、<cite>dice_1</cite>、<cite>dice_2</cite>、<cite>checker_move</cite>、および <cite>cube_action</cite> を持ちます。</p></li>
+<li><p><strong>move_analysis</strong>: 各手の分析を格納します。列 <cite>id`（主キー）、`move_id`（`move</cite> を参照する外部キー）、<cite>analysis_type</cite>、<cite>depth</cite>、<cite>equity</cite>、<cite>equity_error</cite>、<cite>win_rate</cite>、<cite>gammon_rate</cite>、<cite>backgammon_rate</cite>、<cite>opponent_win_rate</cite>、<cite>opponent_gammon_rate</cite>、および <cite>opponent_backgammon_rate</cite> を持ちます。</p></li>
+</ul>
+<p>1.3.0 から 1.4.0 への移行は、データベースを開く際に自動的に行われます。</p>
+</section>
+<section id="version-1-5-0">
+<h2><span class="section-number">11.6. </span>バージョン 1.5.0<a class="headerlink" href="#version-1-5-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.5.0 では、コレクション管理のための次のテーブルが追加されます:</p>
+<ul class="simple">
+<li><p><strong>collection</strong>: ポジションのコレクションを格納します。列 <cite>id`（主キー）、`name</cite>、<cite>description</cite>、<cite>sort_order</cite>、<cite>created_at</cite>、および <cite>updated_at</cite> を持ちます。</p></li>
+<li><p><strong>collection_position</strong>: ポジションをコレクションに関連付ける連結テーブルです。列 <cite>id`（主キー）、`collection_id`（`collection</cite> を参照する外部キー）、<cite>position_id`（`position</cite> を参照する外部キー）、<cite>sort_order</cite>、および <cite>added_at</cite> を持ちます。ペア (<cite>collection_id</cite>, <cite>position_id</cite>) は一意です。</p></li>
+</ul>
+<p>1.4.0 から 1.5.0 への移行は、データベースを開く際に自動的に行われます。</p>
+</section>
+<section id="version-1-6-0">
+<h2><span class="section-number">11.7. </span>バージョン 1.6.0<a class="headerlink" href="#version-1-6-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.6.0 では、トーナメント管理のための次のテーブルが追加されます:</p>
+<ul class="simple">
+<li><p><strong>tournament</strong>: トーナメントを格納します。列 <cite>id`（主キー）、`name</cite>、<cite>date</cite>、<cite>location</cite>、<cite>sort_order</cite>、<cite>created_at</cite>、および <cite>updated_at</cite> を持ちます。</p></li>
+<li><p>マッチをトーナメントに割り当てるため、<cite>match</cite> テーブルに <cite>tournament_id</cite> 列（<cite>tournament</cite> を参照する外部キー）を追加しました。</p></li>
+</ul>
+<p>1.5.0 から 1.6.0 への移行は、データベースを開く際に自動的に行われます。</p>
+</section>
+<section id="version-1-7-0">
+<h2><span class="section-number">11.8. </span>バージョン 1.7.0<a class="headerlink" href="#version-1-7-0" title="Link to this heading"></a></h2>
+<p>データベースのバージョン 1.7.0 では次の列が追加されます:</p>
+<ul class="simple">
+<li><p>各マッチで最後に閲覧したポジションを記憶するため、<cite>match</cite> テーブルに <cite>last_visited_position</cite> 列を追加しました。</p></li>
+</ul>
+<p>1.6.0 から 1.7.0 への移行は、データベースを開く際に自動的に行われます。</p>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>バージョン 0.10.0 以降、すべてのデータベース移行はデータベースファイルを開く際に自動的に行われます。</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-left" title="10. Mac 付録：blunderDB の起動ブロックについて" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="stats_parity.html" class="btn btn-neutral float-right" title="12. 付録：統計モデル — XG / gnuBG / blunderDB の整合" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

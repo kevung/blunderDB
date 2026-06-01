@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ja" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. Windows 付録：blunderDB のマルウェアとしての誤検知 &mdash; blunderDB 0.21.0 ドキュメント</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5de3909a"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=4755f45a"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="10. Mac 付録：blunderDB の起動ブロックについて" href="annexe_mac_securite.html" />
+    <link rel="prev" title="8. 付録: フィルターの高度な使い方" href="annexe_filtres.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. ダウンロードとインストール</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. マニュアル</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. ユーザーガイド</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. コマンド一覧</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. キーボードショートカット</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. コマンドラインインターフェース（CLI）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. よくある質問（FAQ）</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. 付録: フィルターの高度な使い方</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Windows 付録：blunderDB のマルウェアとしての誤検知</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">9.1. Windows SmartScreen の警告</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">9.2. Windows Defender によるブロック</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac 付録：blunderDB の起動ブロックについて</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. 付録: データベーススキーマ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. 付録：統計モデル — XG / gnuBG / blunderDB の整合</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Windows 付録：blunderDB のマルウェアとしての誤検知</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
+<span id="annexe-windows-malware"></span><h1><span class="section-number">9. </span>Windows 付録：blunderDB のマルウェアとしての誤検知<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">注釈</p>
+<p>以下は Windows 10 および 11 オペレーティングシステムに関するものです。</p>
+</div>
+<p>Windows は現在、ソフトウェア出版会社や独立したソフトウェア開発者がアプリケーションをデジタル認証すること、または Windows Store 経由で配布することを要求しています。そのため、外部企業を通じてデジタル証明書を取得することが推奨されており、その費用は数百ユーロにのぼります（例：<a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> を参照）。</p>
+<p>blunderDB を無料で提供しているため、これらの費用のかかる選択肢を追求するつもりはありません。そのため、Windows が潜在的な脅威について警告したり、blunderDB の実行を完全にブロックする可能性が高いです。以下のセクションでは、Windows の警告を回避するために行う操作を説明します。</p>
+<section id="avertissement-windows-smartscreen">
+<h2><span class="section-number">9.1. </span>Windows SmartScreen の警告<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<p>blunderDB をダウンロードして実行すると、Windows が次のような警告を表示する場合があります</p>
+<figure class="align-default">
+<img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
+</figure>
+<p>SmartScreen にブロックされた特定の実行ファイルを許可したい場合：</p>
+<ol class="arabic simple">
+<li><p><strong>実行ファイルを実行しようとする</strong>：</p>
+<ul class="simple">
+<li><p>実行ファイルを起動しようとすると、SmartScreen がブロックして警告を表示する場合があります。</p></li>
+</ul>
+</li>
+<li><p><strong>「詳細情報」をクリックする</strong>：</p>
+<ul class="simple">
+<li><p>SmartScreen の警告ウィンドウで、<strong>詳細情報</strong> をクリックしてください。</p></li>
+</ul>
+</li>
+<li><p><strong>「実行する」を選択する</strong>：</p>
+<ul class="simple">
+<li><p>実行ファイルを信頼する場合は、<strong>実行する</strong> をクリックして、このインスタンスの SmartScreen 警告を回避してください。</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="blocage-windows-defender">
+<h2><span class="section-number">9.2. </span>Windows Defender によるブロック<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<p>Windows の一部のセキュリティ設定では、SmartScreen のブロックを解除しても（前のセクションを参照）、Windows Defender が次のようなメッセージで blunderDB の実行を妨げる場合があります</p>
+<figure class="align-center">
+<img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
+</figure>
+<p>または</p>
+<figure class="align-center">
+<img alt="_images/threat_found_action_needed.png" src="_images/threat_found_action_needed.png" />
+</figure>
+<p>または隔離する場合もあります。</p>
+<p>Windows Defender は誤検知を引き起こすことが知られています。この問題は、Golang の公式サイト FAQ（<a class="reference external" href="https://go.dev/doc/faq#virus">https://go.dev/doc/faq#virus</a>）や、Go でプログラムされた一部のプロジェクトの GitHub チケット（<a class="reference external" href="https://github.com/golang/vscode-go/issues/3182">https://github.com/golang/vscode-go/issues/3182</a>）で明示的に言及されています。</p>
+<p>Windows セキュリティによる blunderDB のスキャンを防ぎたい場合：</p>
+<ol class="arabic simple">
+<li><p><strong>Windows セキュリティを開く</strong>：</p>
+<ul class="simple">
+<li><p><strong>スタート</strong> に移動し、<strong>Windows セキュリティ</strong> と入力します。</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win1.png" src="_images/win1.png" />
+</figure>
+<ol class="arabic simple" start="2">
+<li><p><strong>「ウイルスと脅威からの保護」に移動する</strong>：</p>
+<ul class="simple">
+<li><p><strong>ウイルスと脅威からの保護</strong> をクリックします。</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win2.png" src="_images/win2.png" />
+</figure>
+<ol class="arabic simple" start="3">
+<li><p><strong>設定の管理</strong>：</p>
+<ul class="simple">
+<li><p>下にスクロールして、ウイルスと脅威からの保護の設定の下にある <strong>設定の管理</strong> をクリックします。</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win3.png" src="_images/win3.png" />
+</figure>
+<ol class="arabic simple" start="4">
+<li><p><strong>除外の追加または削除</strong>：</p>
+<ul class="simple">
+<li><p><strong>除外</strong> セクションまでスクロールし、<strong>除外の追加または削除</strong> をクリックします。</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win4.png" src="_images/win4.png" />
+</figure>
+<ol class="arabic simple" start="5">
+<li><p><strong>除外の追加</strong>：</p>
+<ul class="simple">
+<li><p><strong>除外の追加</strong> をクリックして <strong>ファイル</strong> を選択します。次に、除外したい実行ファイルに移動して選択します。</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win5.png" src="_images/win5.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win6.png" src="_images/win6.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win7.png" src="_images/win7.png" />
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="8. 付録: フィルターの高度な使い方" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="10. Mac 付録：blunderDB の起動ブロックについて" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>言語</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

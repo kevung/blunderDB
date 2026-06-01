@@ -1,0 +1,569 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2. Руководство &mdash; документация blunderDB 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="3. Руководство пользователя" href="guide_utilisateur.html" />
+    <link rel="prev" title="1. Загрузка и установка" href="telecharge_install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">2. Руководство</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction">2.1. Введение</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interactions-principales">2.2. Основные взаимодействия</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#description-de-l-interface">2.3. Описание интерфейса</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#configuration">2.4. Конфигурация</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-dans-les-positions">2.5. Навигация по позициям</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-de-positions">2.6. Редактирование позиций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#la-ligne-de-commande">2.7. Командная строка</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-analyse">2.8. Панель анализа</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-commentaires">2.9. Панель комментариев</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-recherche">2.10. Панель поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-collections">2.11. Панель коллекций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-matchs">2.12. Панель матчей</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-tournois">2.13. Панель турниров</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-stats">2.14. Панель Stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#id7">2.14.1. Введение</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#ouverture-du-panneau">2.14.2. Открытие панели</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#barre-de-filtre">2.14.3. Панель фильтров</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#perspective-joueur">2.14.3.1. Перспектива игрока</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#filtres-disponibles">2.14.3.2. Доступные фильтры</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#toggle-pr-mwc">2.14.4. Переключение PR / MWC</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-dashboard">2.14.5. Вкладка Dashboard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#cartes-de-niveau">2.14.5.1. Карточки уровня</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pr-glissant-sur-n-dernieres-decisions">2.14.5.2. Скользящий PR за последние N решений</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#top-blunders">2.14.5.3. Топ грубых ошибок</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-progression">2.14.6. Вкладка Progression</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#courbe-par-tournoi">2.14.6.1. График по турнирам</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#scatter-plot-par-match">2.14.6.2. Диаграмма рассеяния по матчам</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#onglet-erreurs">2.14.7. Вкладка Erreurs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-par-action-de-videau">2.14.7.1. Разбивка по действиям куба</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#repartition-checker-cube">2.14.7.2. Сравнение Checker / Cube</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#histogramme-des-magnitudes-d-erreur">2.14.7.3. Гистограмма величин ошибок</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#regle-d-agregation">2.14.8. Правило агрегации</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#mwc-limitations">2.14.9. MWC: ограничения</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-epc">2.15. Панель EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-anki">2.16. Панель Anki</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-metadonnees">2.17. Панель метаданных</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#panneau-journal">2.18. Панель журнала</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Список команд</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">2. </span>Руководство</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="manuel">
+<span id="id1"></span><h1><span class="section-number">2. </span>Руководство<a class="headerlink" href="#manuel" title="Ссылка на этот заголовок"></a></h1>
+<section id="introduction">
+<h2><span class="section-number">2.1. </span>Введение<a class="headerlink" href="#introduction" title="Ссылка на этот заголовок"></a></h2>
+<p>blunderDB — программа для создания баз данных позиций нардов. Её главное преимущество — единое место для накопления позиций, с которыми игрок сталкивался (онлайн, на турнирах), и возможность их повторного изучения с фильтрацией по произвольно комбинируемым критериям. blunderDB также можно использовать для создания каталогов эталонных позиций.</p>
+<p>Позиции хранятся в базе данных, представленной файлом <em>.db</em>.</p>
+</section>
+<section id="interactions-principales">
+<h2><span class="section-number">2.2. </span>Основные взаимодействия<a class="headerlink" href="#interactions-principales" title="Ссылка на этот заголовок"></a></h2>
+<p>Основные взаимодействия с blunderDB:</p>
+<ul class="simple">
+<li><p>добавить новую позицию,</p></li>
+<li><p>изменить существующую позицию,</p></li>
+<li><p>скопировать изображение доски в буфер обмена (PNG) с помощью <strong>Ctrl+X</strong> или с полным анализом через <strong>Ctrl+X Ctrl+X</strong>,</p></li>
+<li><p>удалить существующую позицию,</p></li>
+<li><p>искать одну или несколько позиций,</p></li>
+<li><p>импортировать матчи из различных источников (XG, GNUbg, BGBlitz, Jellyfish), включая комментарии из файлов XG,</p></li>
+<li><p>навигировать по ходам импортированного матча,</p></li>
+<li><p>организовывать позиции в коллекции,</p></li>
+<li><p>организовывать матчи в турниры.</p></li>
+</ul>
+<p>Пользователь может свободно присваивать позициям метки и аннотировать их комментариями.</p>
+</section>
+<section id="description-de-l-interface">
+<h2><span class="section-number">2.3. </span>Описание интерфейса<a class="headerlink" href="#description-de-l-interface" title="Ссылка на этот заголовок"></a></h2>
+<p>Интерфейс blunderDB состоит сверху вниз из:</p>
+<ul class="simple">
+<li><p>[вверху] панель инструментов, объединяющая все основные операции с базой данных,</p></li>
+<li><p>[по центру] основная область отображения, позволяющая отображать или редактировать позиции нардов,</p></li>
+<li><p>[внизу] строка состояния, отображающая различную информацию о базе данных или текущей позиции и содержащая командную строку.</p></li>
+</ul>
+<p>Панели могут быть отображены для:</p>
+<ul class="simple">
+<li><p>отображения данных анализа текущей позиции из eXtreme Gammon (XG), GNUbg или BGBlitz,</p></li>
+<li><p>отображения, добавления или изменения комментариев,</p></li>
+<li><p>поиска и фильтрации позиций по комбинируемым критериям,</p></li>
+<li><p>отображения и управления коллекциями позиций (панель коллекций),</p></li>
+<li><p>отображения списка импортированных матчей и навигации по ходам матча (панель матчей),</p></li>
+<li><p>отображения и управления турнирами (панель турниров),</p></li>
+<li><p>отображения статистики производительности (панель Stats),</p></li>
+<li><p>вычисления EPC (Effective Pip Count) позиции снятия шашек (панель EPC),</p></li>
+<li><p>изучения позиций методом интервального повторения (панель Anki),</p></li>
+<li><p>отображения метаданных базы данных (панель метаданных),</p></li>
+<li><p>отображения журнала операций (панель журнала).</p></li>
+</ul>
+<p>Модальные окна могут отображаться для:</p>
+<ul class="simple">
+<li><p>отображения справки blunderDB,</p></li>
+<li><p>настройки экспорта базы данных,</p></li>
+<li><p>настройки blunderDB, в том числе языка интерфейса (см. <a class="reference internal" href="#configuration"><span class="std std-ref">Конфигурация</span></a>).</p></li>
+</ul>
+<p>Основная область отображения предоставляет пользователю:</p>
+<ul class="simple">
+<li><p>доску для отображения или редактирования позиции нардов,</p></li>
+<li><p>уровень и владельца куба,</p></li>
+<li><p>пипкаунт каждого игрока,</p></li>
+<li><p>счёт каждого игрока,</p></li>
+<li><p>кубики для броска. Если значения на кубиках не отображаются, позиция кубиков указывает, у какого игрока право хода, и что позиция является решением куба.</p></li>
+</ul>
+<p>Строка состояния структурирована слева направо следующей информацией:</p>
+<ul class="simple">
+<li><p>командная строка, доступная при нажатии клавиши <em>ПРОБЕЛ</em>,</p></li>
+<li><p>информационное сообщение, связанное с выполненной пользователем операцией,</p></li>
+<li><p>индекс текущей позиции, за которым следует количество позиций в текущей библиотеке (или информация о ходе/партии при навигации по матчу).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>В случае позиций, полученных в результате поиска пользователем, количество позиций в строке состояния соответствует числу отфильтрованных позиций.</p>
+</div>
+</section>
+<section id="configuration">
+<span id="id2"></span><h2><span class="section-number">2.4. </span>Конфигурация<a class="headerlink" href="#configuration" title="Ссылка на этот заголовок"></a></h2>
+<p>Кнопка настройки (значок шестерёнки) на панели инструментов, слева от кнопки справки, открывает окно конфигурации blunderDB.</p>
+<p>Она позволяет выбрать язык интерфейса: английский, французский, немецкий, итальянский, испанский, финский, японский, греческий и русский. Весь интерфейс (панель инструментов, панели, сообщения, справка) переводится на выбранный язык. Выбор языка сохраняется между сеансами.</p>
+</section>
+<section id="navigation-dans-les-positions">
+<span id="mode-normal"></span><h2><span class="section-number">2.5. </span>Навигация по позициям<a class="headerlink" href="#navigation-dans-les-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>По умолчанию blunderDB позволяет:</p>
+<ul class="simple">
+<li><p>прокручивать различные позиции в текущей библиотеке,</p></li>
+<li><p>отображать информацию анализа, связанную с позицией,</p></li>
+<li><p>отображать, добавлять и изменять комментарии к позиции.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>
+</div>
+</section>
+<section id="edition-de-positions">
+<span id="mode-edit"></span><h2><span class="section-number">2.6. </span>Редактирование позиций<a class="headerlink" href="#edition-de-positions" title="Ссылка на этот заголовок"></a></h2>
+<p>Нажатие клавиши <em>TAB</em> открывает панель поиска и позволяет редактировать позицию на доске для добавления в базу данных или для задания структуры позиции для поиска. Распределение шашек, куб, счёт и право хода можно изменять с помощью мыши (см. <a class="reference internal" href="guide_utilisateur.html#guide-edit-position"><span class="std std-ref">Редактирование позиции</span></a>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>
+</div>
+</section>
+<section id="la-ligne-de-commande">
+<span id="mode-command"></span><h2><span class="section-number">2.7. </span>Командная строка<a class="headerlink" href="#la-ligne-de-commande" title="Ссылка на этот заголовок"></a></h2>
+<p>Командная строка, встроенная в строку состояния, позволяет выполнять все функции blunderDB, доступные в графическом интерфейсе: общие операции с базой данных, навигация по позициям, отображение анализа и/или комментариев, поиск позиций по фильтрам… После первоначального освоения интерфейса рекомендуется постепенно использовать командную строку для мощной и плавной работы с blunderDB, особенно для функций поиска позиций.</p>
+<p>Для открытия командной строки нажмите клавишу <em>ПРОБЕЛ</em>. Для отправки запроса и закрытия командной строки нажмите клавишу <em>ENTER</em>.</p>
+<p>blunderDB выполняет запросы пользователя при условии их корректности и немедленно изменяет состояние базы данных при необходимости. Явное сохранение пользователем не требуется.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Раздел 4</span></a> для списка команд, доступных в командной строке.</p>
+</div>
+</section>
+<section id="panneau-analyse">
+<span id="id3"></span><h2><span class="section-number">2.8. </span>Панель анализа<a class="headerlink" href="#panneau-analyse" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Анализ</strong> (<em>CTRL-L</em>) отображает данные анализа текущей позиции, импортированные из eXtreme Gammon (XG), GNUbg или BGBlitz. Отображаются лучшие альтернативы (ходы шашками или решения куба) с их значениями эквити и соответствующими ошибками. Клавиша <em>d</em> переключает между анализом ходов шашками и анализом куба. При навигации по матчу фактически сыгранный ход выделяется в списке альтернатив. Нажмите <em>CTRL-L</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">list</span></code> для отображения или скрытия панели.</p>
+</section>
+<section id="panneau-commentaires">
+<span id="id4"></span><h2><span class="section-number">2.9. </span>Панель комментариев<a class="headerlink" href="#panneau-commentaires" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Комментарии</strong> (<em>CTRL-P</em>) отображает, добавляет и редактирует комментарии, связанные с текущей позицией. Комментарии, импортированные из файлов XG, автоматически связываются с соответствующими позициями. Нажмите <em>CTRL-P</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">comment</span></code> для отображения или скрытия панели.</p>
+</section>
+<section id="panneau-recherche">
+<span id="id5"></span><h2><span class="section-number">2.10. </span>Панель поиска<a class="headerlink" href="#panneau-recherche" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Поиск</strong> (<em>CTRL-F</em> или <em>TAB</em>) фильтрует позиции по свободно комбинируемым критериям: структура шашек, тип решения куба, величина ошибки, даты, метки и т.д. Клавиша <em>TAB</em> одновременно открывает панель поиска и редактор позиций, позволяя задать структуру шашек непосредственно на доске.</p>
+<p>Для уточнения поиска среди текущих отфильтрованных позиций используйте команду <code class="docutils literal notranslate"><span class="pre">ss</span></code> с фильтрами (напр.: <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">nc</span></code>, <code class="docutils literal notranslate"><span class="pre">ss</span> <span class="pre">E&gt;40</span></code>). Панель поиска также предлагает флажок <em>Search in current results</em> для той же функциональности.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="cmd_mode.html#cmd-mode"><span class="std std-numref">Раздел 4</span></a> для списка доступных фильтров.</p>
+</div>
+</section>
+<section id="panneau-collections">
+<span id="mode-collection"></span><h2><span class="section-number">2.11. </span>Панель коллекций<a class="headerlink" href="#panneau-collections" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Коллекции</strong> (<em>CTRL-B</em>) управляет коллекциями позиций. Коллекции можно создавать, переименовывать и удалять. Позиции можно добавлять или удалять из них. Дважды щёлкните на коллекции для просмотра её позиций с помощью клавиш <em>ВЛЕВО</em> и <em>ВПРАВО</em>. Порядок коллекций и позиций внутри них можно изменять перетаскиванием. Нажмите <em>CTRL-B</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">collection</span></code> для отображения или скрытия панели.</p>
+</section>
+<section id="panneau-matchs">
+<span id="mode-match"></span><h2><span class="section-number">2.12. </span>Панель матчей<a class="headerlink" href="#panneau-matchs" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Матчи</strong> (<em>CTRL-Tab</em>) содержит список импортированных матчей. Дважды щёлкните на матче (или нажмите <em>ENTER</em>) для навигации по его ходам. Команда <code class="docutils literal notranslate"><span class="pre">m</span></code> возобновляет навигацию по последнему посещённому матчу.</p>
+<p>Пользователь может:</p>
+<ul class="simple">
+<li><p>просматривать ходы матча с помощью клавиш <em>ВЛЕВО</em> и <em>ВПРАВО</em>,</p></li>
+<li><p>переключаться между партиями с помощью клавиш <em>PageUp</em> и <em>PageDown</em>,</p></li>
+<li><p>отображать анализ ходов (шашки и куб) нажатием <em>CTRL-L</em>,</p></li>
+<li><p>переключаться между анализом ходов шашками и куба клавишей <em>d</em>,</p></li>
+<li><p>видеть фактически сыгранный ход, выделенный в анализе.</p></li>
+</ul>
+<p>Последняя посещённая позиция в каждом матче запоминается и восстанавливается автоматически. Нажмите <em>CTRL-Tab</em> или выполните команду <code class="docutils literal notranslate"><span class="pre">match</span></code> для отображения или скрытия панели.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смотрите <a class="reference internal" href="raccourcis.html#raccourcis"><span class="std std-ref">Горячие клавиши</span></a> для доступных горячих клавиш.</p>
+</div>
+</section>
+<section id="panneau-tournois">
+<span id="id6"></span><h2><span class="section-number">2.13. </span>Панель турниров<a class="headerlink" href="#panneau-tournois" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Турниры</strong> (<em>CTRL-Y</em>) группирует матчи в турниры для организованного отслеживания и статистического анализа по событиям. Турниры можно создавать, переименовывать и удалять; матчи можно назначать им. Статистика панели Stats может фильтроваться по турниру. Нажмите <em>CTRL-Y</em> для отображения или скрытия панели.</p>
+</section>
+<section id="panneau-stats">
+<span id="stats"></span><h2><span class="section-number">2.14. </span>Панель Stats<a class="headerlink" href="#panneau-stats" title="Ссылка на этот заголовок"></a></h2>
+<section id="id7">
+<h3><span class="section-number">2.14.1. </span>Введение<a class="headerlink" href="#id7" title="Ссылка на этот заголовок"></a></h3>
+<p>Панель <strong>Stats</strong> позволяет анализировать уровень игры и отслеживать прогресс во времени на основе позиций, импортированных в базу данных. Вычисляет и отображает <strong>PR</strong> (Performance Rate) и <strong>MWC cost</strong> (Match Winning Chance cost) для всех позиций или отфильтрованного подмножества.</p>
+<p>Панель Stats особенно полезна для:</p>
+<ul class="simple">
+<li><p><strong>определения своего уровня</strong> относительно эталонных порогов (world-class, expert, advanced…) с помощью общего PR;</p></li>
+<li><p><strong>отслеживания прогресса</strong> от турнира к турниру или от матча к матчу с помощью графиков вкладки Progression;</p></li>
+<li><p><strong>выявления слабых мест</strong>: вкладка Erreurs отображает соотношение ходов шашками и решений куба, а также распределение величин ошибок;</p></li>
+<li><p><strong>прямого перехода к соответствующим позициям</strong> щелчком по любому показателю (drill-down).</p></li>
+</ul>
+</section>
+<section id="ouverture-du-panneau">
+<h3><span class="section-number">2.14.2. </span>Открытие панели<a class="headerlink" href="#ouverture-du-panneau" title="Ссылка на этот заголовок"></a></h3>
+<p>Для открытия панели Stats:</p>
+<ul class="simple">
+<li><p>Нажмите <em>CTRL-D</em>.</p></li>
+<li><p>Введите команду <code class="docutils literal notranslate"><span class="pre">:stats</span></code> или <code class="docutils literal notranslate"><span class="pre">:st</span></code> в командной строке.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Панель автоматически обновляется при каждом изменении фильтра. При простом переключении PR ↔ MWC статистика не пересчитывается: обе метрики вычисляются одновременно на стороне сервера.</p>
+</div>
+</section>
+<section id="barre-de-filtre">
+<h3><span class="section-number">2.14.3. </span>Панель фильтров<a class="headerlink" href="#barre-de-filtre" title="Ссылка на этот заголовок"></a></h3>
+<p>Панель фильтров в верхней части панели позволяет ограничить вычисление подмножеством позиций.</p>
+<section id="perspective-joueur">
+<h4><span class="section-number">2.14.3.1. </span>Перспектива игрока<a class="headerlink" href="#perspective-joueur" title="Ссылка на этот заголовок"></a></h4>
+<p>Выпадающий список <strong>Игрок</strong> фильтрует статистику для анализируемого игрока. blunderDB автоматически выбирает игрока, имя которого наиболее часто встречается в базе данных — можно изменить в любой момент.</p>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Смена игрока не приводит к потере данных; достаточно повторно выбрать предыдущего игрока в списке.</p>
+</div>
+</section>
+<section id="filtres-disponibles">
+<h4><span class="section-number">2.14.3.2. </span>Доступные фильтры<a class="headerlink" href="#filtres-disponibles" title="Ссылка на этот заголовок"></a></h4>
+<ul class="simple">
+<li><p><strong>Турнир(ы)</strong> — ограничение одним или несколькими турнирами. Можно одновременно выбрать несколько турниров.</p></li>
+<li><p><strong>Даты</strong> — временной диапазон (<em>От</em> … <em>До</em>). Если указана только начальная дата, включаются более поздние позиции.</p></li>
+<li><p><strong>Тип решения</strong> — Все / Ходы шашками / Решения куба.</p></li>
+<li><p><strong>Длина матча</strong> — ограничение конкретными длинами матча (1, 3, 5, 7, 9, 11, 13, 15, 21 очко). Можно комбинировать несколько длин.</p></li>
+</ul>
+<p>Кнопка <strong>Reset</strong> сбрасывает все фильтры (кроме автоматически определённого игрока).</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Фильтры сохраняются в конфигурации blunderDB (<code class="docutils literal notranslate"><span class="pre">config.yaml</span></code>) и восстанавливаются при следующем запуске.</p>
+</div>
+</section>
+</section>
+<section id="toggle-pr-mwc">
+<h3><span class="section-number">2.14.4. </span>Переключение PR / MWC<a class="headerlink" href="#toggle-pr-mwc" title="Ссылка на этот заголовок"></a></h3>
+<p>Кнопка <strong>PR / MWC</strong> в верхней части панели переключает отображаемую метрику во всех вкладках.</p>
+<p><strong>PR (Performance Rate)</strong></p>
+<blockquote>
+<div><p>Измеряет качество игры <em>money-game</em>: сумма ошибок в миллипунктах нардов, делённая на количество решений. Не зависит от счёта матча.</p>
+<p>Приблизительные эталонные пороги:</p>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 66.7%" />
+<col style="width: 33.3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Уровень</p></th>
+<th class="head"><p>PR</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>World-class</p></td>
+<td><p>&lt; 3</p></td>
+</tr>
+<tr class="row-odd"><td><p>Expert</p></td>
+<td><p>3 – 5</p></td>
+</tr>
+<tr class="row-even"><td><p>Продвинутый</p></td>
+<td><p>5 – 8</p></td>
+</tr>
+<tr class="row-odd"><td><p>Средний</p></td>
+<td><p>8 – 12</p></td>
+</tr>
+<tr class="row-even"><td><p>Начинающий</p></td>
+<td><p>&gt; 12</p></td>
+</tr>
+</tbody>
+</table>
+</div></blockquote>
+<p><strong>MWC cost (Match Winning Chance cost)</strong></p>
+<blockquote>
+<div><p>Накопленная вероятность победы в матче, утраченная из-за ошибок, по всему отфильтрованному набору данных. Вычисляется с использованием MET Kazaross-XG2, встроенной в blunderDB.</p>
+<div class="admonition caution">
+<p class="admonition-title">Осторожно</p>
+<p>MWC cost <strong>не применяется</strong> к позициям <em>money-game</em> (без ставки матча). Эти позиции исключаются из вычисления MWC. Значения MWC зависят от используемой MET; они не сопоставимы напрямую между программами, использующими разные MET.</p>
+</div>
+</div></blockquote>
+<p>Переключение PR ↔ MWC мгновенное: перерасчёт на стороне сервера не выполняется.</p>
+</section>
+<section id="onglet-dashboard">
+<h3><span class="section-number">2.14.5. </span>Вкладка Dashboard<a class="headerlink" href="#onglet-dashboard" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Dashboard</strong> даёт сводный обзор ключевых показателей.</p>
+<section id="cartes-de-niveau">
+<h4><span class="section-number">2.14.5.1. </span>Карточки уровня<a class="headerlink" href="#cartes-de-niveau" title="Ссылка на этот заголовок"></a></h4>
+<p>Три карточки отображают PR (или MWC) для:</p>
+<ul class="simple">
+<li><p><strong>All</strong> — все решения (ходы + куб);</p></li>
+<li><p><strong>Checker</strong> — только ходы шашками;</p></li>
+<li><p><strong>Cube</strong> — только решения куба.</p></li>
+</ul>
+<p>Щелчок по карточке загружает в панель анализа позиции соответствующего подмножества (drill-down).</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Общее количество решений отображается внизу каждой карточки при наведении.</p>
+</div>
+</section>
+<section id="pr-glissant-sur-n-dernieres-decisions">
+<h4><span class="section-number">2.14.5.2. </span>Скользящий PR за последние N решений<a class="headerlink" href="#pr-glissant-sur-n-dernieres-decisions" title="Ссылка на этот заголовок"></a></h4>
+<p>Строка значений PR (или MWC), вычисленных по последним <em>N</em> решениям (N = 5, 10, 50, 100, 250, 500, 1000), позволяет оценить последнюю тенденцию. Серые значения соответствуют N, превышающему количество доступных решений.</p>
+<p>Щелчок по значению загружает соответствующие последние <em>N</em> позиций.</p>
+</section>
+<section id="top-blunders">
+<h4><span class="section-number">2.14.5.3. </span>Топ грубых ошибок<a class="headerlink" href="#top-blunders" title="Ссылка на этот заголовок"></a></h4>
+<p>Список 10 худших ошибок (или MWC cost), отсортированных по убыванию величины. Щелчок по строке загружает соответствующую позицию в панель анализа.</p>
+</section>
+</section>
+<section id="onglet-progression">
+<h3><span class="section-number">2.14.6. </span>Вкладка Progression<a class="headerlink" href="#onglet-progression" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Progression</strong> показывает динамику уровня игры во времени.</p>
+<section id="courbe-par-tournoi">
+<h4><span class="section-number">2.14.6.1. </span>График по турнирам<a class="headerlink" href="#courbe-par-tournoi" title="Ссылка на этот заголовок"></a></h4>
+<p>Линейный график отображает PR (или MWC) для каждого турнира (ось X: порядок турниров, ось Y: значение метрики). Цветные полосы обозначают пороги уровня.</p>
+<p>Щелчок по точке графика открывает контекстное меню с двумя вариантами:</p>
+<ul class="simple">
+<li><p><strong>Open tournament</strong> — открывает турнир в панели Tournois.</p></li>
+<li><p><strong>Open positions</strong> — загружает все позиции турнира в панель анализа.</p></li>
+</ul>
+</section>
+<section id="scatter-plot-par-match">
+<h4><span class="section-number">2.14.6.2. </span>Диаграмма рассеяния по матчам<a class="headerlink" href="#scatter-plot-par-match" title="Ссылка на этот заголовок"></a></h4>
+<p>Диаграмма рассеяния представляет каждый матч (ось X: дата, ось Y: PR или MWC). Размер точки пропорционален количеству решений в матче.</p>
+<p>Щелчок по точке открывает контекстное меню:</p>
+<ul class="simple">
+<li><p><strong>Open match</strong> — открывает матч в панели матчей.</p></li>
+<li><p><strong>Open positions</strong> — загружает все позиции матча в панель анализа.</p></li>
+</ul>
+</section>
+</section>
+<section id="onglet-erreurs">
+<h3><span class="section-number">2.14.7. </span>Вкладка Erreurs<a class="headerlink" href="#onglet-erreurs" title="Ссылка на этот заголовок"></a></h3>
+<p>Вкладка <strong>Erreurs</strong> разбивает источники ошибок.</p>
+<section id="repartition-par-action-de-videau">
+<h4><span class="section-number">2.14.7.1. </span>Разбивка по действиям куба<a class="headerlink" href="#repartition-par-action-de-videau" title="Ссылка на этот заголовок"></a></h4>
+<p>Столбчатая диаграмма отображает PR (или MWC) для каждого типа решения куба: <em>NoDouble</em>, <em>DoubleTake</em>, <em>DoublePass</em>, <em>TooGood</em>. Каждый столбец также показывает количество решений и долю грубых ошибок в подсказке.</p>
+<p>Щелчок по столбцу загружает позиции, соответствующие этому действию куба, <strong>только те, в которых была ошибка</strong> (drill-down).</p>
+</section>
+<section id="repartition-checker-cube">
+<h4><span class="section-number">2.14.7.2. </span>Сравнение Checker / Cube<a class="headerlink" href="#repartition-checker-cube" title="Ссылка на этот заголовок"></a></h4>
+<p>Сравнительная диаграмма размещает рядом PR ходов шашками и решений куба. Щелчок по столбцу загружает позиции подмножества с ошибкой.</p>
+</section>
+<section id="histogramme-des-magnitudes-d-erreur">
+<h4><span class="section-number">2.14.7.3. </span>Гистограмма величин ошибок<a class="headerlink" href="#histogramme-des-magnitudes-d-erreur" title="Ссылка на этот заголовок"></a></h4>
+<p>Гистограмма распределяет ошибки по величине в миллипунктах (диапазоны: 0–5, 5–10, 10–25, 25–50, 50–100, ≥ 100). Щелчок по столбцу загружает позиции данного диапазона.</p>
+</section>
+</section>
+<section id="regle-d-agregation">
+<h3><span class="section-number">2.14.8. </span>Правило агрегации<a class="headerlink" href="#regle-d-agregation" title="Ссылка на этот заголовок"></a></h3>
+<div class="admonition important">
+<p class="admonition-title">Важно</p>
+<p>PR турнира (или любого подмножества) вычисляется по правилу <strong>сумма/сумма</strong> — никогда как среднее PR отдельных матчей.</p>
+<p>Формула:</p>
+<div class="math notranslate nohighlight">
+\[PR_{\text{турнир}} = \frac{\sum_{i} \text{ошибка}_i}{\text{общее количество решений}}\]</div>
+<p><strong>Пример:</strong> игрок проводит два матча в турнире —</p>
+<ul class="simple">
+<li><p>Матч A: 10 решений, общая ошибка 50 mp → PR = 5,0</p></li>
+<li><p>Матч B: 90 решений, общая ошибка 270 mp → PR = 3,0</p></li>
+</ul>
+<p>Наивное среднее PR: (5,0 + 3,0) / 2 = <strong>4,0</strong> <em>(неверно)</em></p>
+<p>Правило сумма/сумма: (50 + 270) / (10 + 90) = 320 / 100 = <strong>3,2</strong> <em>(верно)</em></p>
+<p>Правило сумма/сумма — единственное, которое корректно учитывает различную длину матчей (матч до 21 очка весит больше, чем матч до 1 очка).</p>
+</div>
+</section>
+<section id="mwc-limitations">
+<h3><span class="section-number">2.14.9. </span>MWC: ограничения<a class="headerlink" href="#mwc-limitations" title="Ссылка на этот заголовок"></a></h3>
+<ul class="simple">
+<li><p>MWC cost вычисляется с использованием <strong>MET Kazaross-XG2</strong> — де-факто эталонной таблицы в соревновательных нардах. Результаты не сопоставимы напрямую с программами, использующими другие MET.</p></li>
+<li><p>Позиции <em>money-game</em> (без счёта матча) <strong>исключаются</strong> из вычисления MWC. Если ваша база данных содержит много позиций money-game, MWC cost может быть занижен или недоступен.</p></li>
+<li><p>MWC cost является накопительным по всему отфильтрованному набору данных — не показателем на решение. Он измеряет суммарное влияние ваших ошибок на шансы победы.</p></li>
+</ul>
+</section>
+</section>
+<section id="panneau-epc">
+<span id="mode-epc"></span><h2><span class="section-number">2.15. </span>Панель EPC<a class="headerlink" href="#panneau-epc" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>EPC</strong> (<em>CTRL-E</em>) вычисляет EPC (Effective Pip Count) позиции снятия шашек. Активируется нажатием <em>CTRL-E</em>, щелчком на вкладке EPC в нижней панели или выполнением команды <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p>
+<p>В этой панели пользователь редактирует позиции шашек в домашней таблице (последние 6 пунктов), и в реальном времени для каждого игрока отображается следующая информация:</p>
+<ul class="simple">
+<li><p>EPC (Effective Pip Count),</p></li>
+<li><p>среднее количество бросков (Mean Rolls),</p></li>
+<li><p>стандартное отклонение (Standard Deviation),</p></li>
+<li><p>пипкаунт,</p></li>
+<li><p>wastage (разница между EPC и пипкаунтом).</p></li>
+</ul>
+<p>Когда у обоих игроков есть шашки в домашней таблице, раздел сравнения показывает разницы EPC и пипкаунта.</p>
+<p>Для закрытия панели EPC нажмите <em>CTRL-E</em> или переключитесь на другую вкладку.</p>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Вычисление основано на встроенной базе данных снятия шашек на 6 пунктах GNUbg.</p>
+</div>
+</section>
+<section id="panneau-anki">
+<span id="mode-anki"></span><h2><span class="section-number">2.16. </span>Панель Anki<a class="headerlink" href="#panneau-anki" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Anki</strong> (<em>CTRL-K</em>) позволяет изучать позиции методом интервального повторения с использованием алгоритма FSRS. Пользователи могут создавать колоды из коллекций или результатов поиска.</p>
+<p><strong>Создание колод:</strong> Нажмите <em>New Deck</em> для создания колоды из коллекции или текущих результатов поиска. Колоды на основе поиска синхронизируются автоматически при открытии вкладки Anki.</p>
+<p><strong>Повторение:</strong> Выберите колоду и нажмите <em>Study</em> (или дважды щёлкните на колоде) для начала повторения карточек с наступившим сроком. Каждая карточка показывает соответствующую позицию на доске. Оцените своё запоминание клавишами <em>1</em> (Снова), <em>2</em> (Сложно), <em>3</em> (Хорошо) или <em>4</em> (Легко). Нажмите <em>Esc</em> для остановки и возврата к списку колод.</p>
+<p><strong>Пауза/Продолжение:</strong> Вы можете прервать сеанс повторения в любой момент с помощью <em>Esc</em>. Кнопка меняется на <em>Resume</em> и показывает ваш прогресс. Нажмите её, чтобы продолжить с того места, где остановились.</p>
+<p><strong>Управление колодами:</strong> Используйте кнопки действий для переименования, синхронизации, сброса или удаления колод. Параметры FSRS (целевое удержание, максимальный интервал, случайный фактор) можно настраивать для каждой колоды в Настройках (значок шестерёнки).</p>
+</section>
+<section id="panneau-metadonnees">
+<span id="panneau-metadata"></span><h2><span class="section-number">2.17. </span>Панель метаданных<a class="headerlink" href="#panneau-metadonnees" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Метаданные</strong> отображает общую информацию о текущей базе данных: имя, описание, количество позиций, матчей и партий, версия схемы. Доступна через команду <code class="docutils literal notranslate"><span class="pre">meta</span></code>.</p>
+</section>
+<section id="panneau-journal">
+<span id="panneau-log"></span><h2><span class="section-number">2.18. </span>Панель журнала<a class="headerlink" href="#panneau-journal" title="Ссылка на этот заголовок"></a></h2>
+<p>Панель <strong>Журнал</strong> отображает журнал последних операций: импорты, экспорты и операции с базой данных, с результатами и временными метками. Полезна для диагностики ошибок импорта.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="telecharge_install.html" class="btn btn-neutral float-left" title="1. Загрузка и установка" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-right" title="3. Руководство пользователя" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

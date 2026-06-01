@@ -1,0 +1,254 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi &mdash; blunderDB 0.21.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d5cc5d32"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="next" title="10. Mac-liite: blunderDB:n mahdollinen esto" href="annexe_mac_securite.html" />
+    <link rel="prev" title="8. Liite: Suodattimien edistynyt käyttö" href="annexe_filtres.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#avertissement-windows-smartscreen">9.1. Windows SmartScreen -varoitus</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#blocage-windows-defender">9.2. Windows Defenderin esto</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant">
+<span id="annexe-windows-malware"></span><h1><span class="section-number">9. </span>Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi<a class="headerlink" href="#annexe-windows-detection-abusive-de-blunderdb-comme-logiciel-malveillant" title="Link to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Seuraava koskee Windows 10- ja 11-käyttöjärjestelmiä.</p>
+</div>
+<p>Windows edellyttää nykyään, että ohjelmistoja julkaisevat yritykset tai itsenäiset ohjelmistokehittäjät varmentavat sovelluksensa digitaalisesti tai jopa jakelevat ne Windows Storen kautta. Tällöin suositellaan kääntymään ulkopuolisten yritysten puoleen digitaalisen varmenteen hankkimiseksi, mikä maksaa useita satoja euroja (katso esimerkiksi <a class="reference external" href="https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen">https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen</a> ).</p>
+<p>Koska tarjoan blunderDB:n ilmaiseksi, en halua suuntautua näihin kalliisiin vaihtoehtoihin. Tämän vuoksi on hyvin todennäköistä, että Windows varoittaa sinua mahdollisesta vaarasta tai jopa estää blunderDB:n suorittamisen kokonaan. Seuraavissa osioissa selitetään, mitä toimenpiteitä on tehtävä Windowsin vastustelun ohittamiseksi.</p>
+<section id="avertissement-windows-smartscreen">
+<h2><span class="section-number">9.1. </span>Windows SmartScreen -varoitus<a class="headerlink" href="#avertissement-windows-smartscreen" title="Link to this heading"></a></h2>
+<p>Kun suoritat blunderDB:n sen lataamisen jälkeen, Windows saattaa näyttää seuraavanlaisen varoituksen:</p>
+<figure class="align-default">
+<img alt="_images/smartscreen_en.png" src="_images/smartscreen_en.png" />
+</figure>
+<p>Jos haluat sallia tietyn SmartScreenin estämän suoritettavan tiedoston:</p>
+<ol class="arabic simple">
+<li><p><strong>Yritä suorittaa suoritettava tiedosto</strong>:</p>
+<ul class="simple">
+<li><p>Kun yrität käynnistää suoritettavan tiedoston, SmartScreen saattaa estää sen ja näyttää varoituksen.</p></li>
+</ul>
+</li>
+<li><p><strong>Napsauta ”Lisätietoja”</strong>:</p>
+<ul class="simple">
+<li><p>Napsauta SmartScreen-varoitusikkunassa <strong>Lisätietoja</strong>.</p></li>
+</ul>
+</li>
+<li><p><strong>Valitse ”Suorita joka tapauksessa”</strong>:</p>
+<ul class="simple">
+<li><p>Jos luotat suoritettavaan tiedostoon, napsauta <strong>Suorita joka tapauksessa</strong> ohittaaksesi SmartScreen-varoituksen tällä kerralla.</p></li>
+</ul>
+</li>
+</ol>
+</section>
+<section id="blocage-windows-defender">
+<h2><span class="section-number">9.2. </span>Windows Defenderin esto<a class="headerlink" href="#blocage-windows-defender" title="Link to this heading"></a></h2>
+<p>Joissakin Windowsin suojausasetuksissa voi käydä niin, että SmartScreenin ohittamisesta huolimatta (katso edellinen osio) Windows Defender estää blunderDB:n suorittamisen seuraavanlaisilla viesteillä:</p>
+<figure class="align-center">
+<img alt="_images/blunderdb_potential_virus.png" src="_images/blunderdb_potential_virus.png" />
+</figure>
+<p>tai vielä:</p>
+<figure class="align-center">
+<img alt="_images/threat_found_action_needed.png" src="_images/threat_found_action_needed.png" />
+</figure>
+<p>tai jopa asettaa sen karanteeniin.</p>
+<p>Windows Defenderin tiedetään aiheuttavan vääriä positiivisia tunnistuksia. Tämä ongelma mainitaan nimenomaisesti Golangin virallisen sivuston UKK:ssa ( https://go.dev/doc/faq#virus ) tai joidenkin Go-kielellä ohjelmoitujen projektien GitHub-tiketeissä ( https://github.com/golang/vscode-go/issues/3182 ).</p>
+<p>Jos haluat estää Windowsin suojausta tarkistamasta blunderDB:tä:</p>
+<ol class="arabic simple">
+<li><p><strong>Avaa Windowsin suojaus</strong>:</p>
+<ul class="simple">
+<li><p>Mene <strong>Käynnistä</strong>-valikkoon ja kirjoita <strong>Windowsin suojaus</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win1.png" src="_images/win1.png" />
+</figure>
+<ol class="arabic simple" start="2">
+<li><p><strong>Siirry kohtaan ”Virus- ja uhkien suojaus”</strong>:</p>
+<ul class="simple">
+<li><p>Napsauta <strong>Virus- ja uhkien suojaus</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win2.png" src="_images/win2.png" />
+</figure>
+<ol class="arabic simple" start="3">
+<li><p><strong>Hallinnoi asetuksia</strong>:</p>
+<ul class="simple">
+<li><p>Vieritä alaspäin ja napsauta <strong>Hallinnoi asetuksia</strong> kohdassa Virus- ja uhkien suojauksen asetukset.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win3.png" src="_images/win3.png" />
+</figure>
+<ol class="arabic simple" start="4">
+<li><p><strong>Lisää tai poista poikkeuksia</strong>:</p>
+<ul class="simple">
+<li><p>Vieritä <strong>Poikkeukset</strong>-osioon ja napsauta <strong>Lisää tai poista poikkeuksia</strong>.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win4.png" src="_images/win4.png" />
+</figure>
+<ol class="arabic simple" start="5">
+<li><p><strong>Lisää poikkeus</strong>:</p>
+<ul class="simple">
+<li><p>Napsauta <strong>Lisää poikkeus</strong> ja valitse <strong>Tiedosto</strong>. Siirry sitten suoritettavaan tiedostoon, jonka haluat sulkea pois, ja valitse se.</p></li>
+</ul>
+</li>
+</ol>
+<figure class="align-center">
+<img alt="_images/win5.png" src="_images/win5.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win6.png" src="_images/win6.png" />
+</figure>
+<figure class="align-center">
+<img alt="_images/win7.png" src="_images/win7.png" />
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_filtres.html" class="btn btn-neutral float-left" title="8. Liite: Suodattimien edistynyt käyttö" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="annexe_mac_securite.html" class="btn btn-neutral float-right" title="10. Mac-liite: blunderDB:n mahdollinen esto" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="fi" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus &mdash; blunderDB 0.21.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=d5cc5d32"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=aa74d7ce"></script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Sisällysluettelo" href="genindex.html" />
+    <link rel="search" title="Etsi" href="search.html" />
+    <link rel="prev" title="11. Liite: Tietokannan skeema" href="annexe_db_scheme.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Lataaminen ja asentaminen</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Käyttöopas</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Komentoluettelo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Näppäimistöoikotiet</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Komentoriviliittymä (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Usein kysytyt kysymykset (UKK)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Liite: Suodattimien edistynyt käyttö</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Windows-liite: blunderDB:n virheellinen tunnistus haittaohjelmaksi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Mac-liite: blunderDB:n mahdollinen esto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Liite: Tietokannan skeema</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">12. Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#definitions-formelles">12.1. Muodolliset määritelmät</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pr-performance-rate">12.1.1. PR (Performance Rate)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#snowie-error-rate">12.1.2. Snowie Error Rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#perte-mwc-match-winning-chance">12.1.3. MWC-tappio (Match Winning Chance)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr">12.2. PR:n nimittäjässä lasketut päätökset</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#coups-de-pions-decisions-comptees">12.2.1. Nappulasiirrot — lasketut päätökset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#decisions-de-cube-decisions-comptees">12.2.2. Tuplauskuution päätökset — lasketut päätökset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#resume-du-filtre">12.2.3. Suodattimen yhteenveto</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg">12.3. Vastaavuus blunderDB ↔ XG ↔ gnuBG</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse">12.3.1. Vertailu XG ↔ blunderDB (sama analyysimoottori)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">12.3.2. Vertailu gnuBG ↔ blunderDB (SGF-tuonti — eri moottorit)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#valider-vos-propres-chiffres">12.4. Omien lukujen tarkistaminen</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reference-gnubg">12.5. gnuBG-viite</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">12. </span>Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb">
+<span id="stats-parity"></span><h1><span class="section-number">12. </span>Liite: Tilastomalli — XG / gnuBG / blunderDB -yhdenmukaisuus<a class="headerlink" href="#annexe-modele-de-statistiques-alignement-xg-gnubg-blunderdb" title="Link to this heading"></a></h1>
+<p>Tällä sivulla kuvataan, kuinka blunderDB laskee <strong>PR</strong>-arvon (Performance Rate), <strong>Snowie Error Rate</strong> -arvon ja <strong>MWC-tappion</strong>, ja kuinka nämä mittarit on yhdenmukaistettu eXtreme Gammonin (XG) ja gnuBG:n (avoin viite) kanssa.</p>
+<nav class="contents local" id="sisallys">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definitions-formelles" id="id1">Muodolliset määritelmät</a></p>
+<ul>
+<li><p><a class="reference internal" href="#pr-performance-rate" id="id2">PR (Performance Rate)</a></p></li>
+<li><p><a class="reference internal" href="#snowie-error-rate" id="id3">Snowie Error Rate</a></p></li>
+<li><p><a class="reference internal" href="#perte-mwc-match-winning-chance" id="id4">MWC-tappio (Match Winning Chance)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#decisions-comptees-au-denominateur-du-pr" id="id5">PR:n nimittäjässä lasketut päätökset</a></p>
+<ul>
+<li><p><a class="reference internal" href="#coups-de-pions-decisions-comptees" id="id6">Nappulasiirrot — lasketut päätökset</a></p></li>
+<li><p><a class="reference internal" href="#decisions-de-cube-decisions-comptees" id="id7">Tuplauskuution päätökset — lasketut päätökset</a></p></li>
+<li><p><a class="reference internal" href="#resume-du-filtre" id="id8">Suodattimen yhteenveto</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#correspondance-blunderdb-xg-gnubg" id="id9">Vastaavuus blunderDB ↔ XG ↔ gnuBG</a></p>
+<ul>
+<li><p><a class="reference internal" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" id="id10">Vertailu XG ↔ blunderDB (sama analyysimoottori)</a></p></li>
+<li><p><a class="reference internal" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" id="id11">Vertailu gnuBG ↔ blunderDB (SGF-tuonti — eri moottorit)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#valider-vos-propres-chiffres" id="id12">Omien lukujen tarkistaminen</a></p></li>
+<li><p><a class="reference internal" href="#reference-gnubg" id="id13">gnuBG-viite</a></p></li>
+</ul>
+</nav>
+<section id="definitions-formelles">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink"><span class="section-number">12.1. </span>Muodolliset määritelmät</a><a class="headerlink" href="#definitions-formelles" title="Link to this heading"></a></h2>
+<section id="pr-performance-rate">
+<h3><a class="toc-backref" href="#id2" role="doc-backlink"><span class="section-number">12.1.1. </span>PR (Performance Rate)</a><a class="headerlink" href="#pr-performance-rate" title="Link to this heading"></a></h3>
+<p>PR (gnuBG:ssä myös nimellä ”error rate per decision”) mittaa keskimääräistä virhettä equity-pisteen tuhannesosina (millipisteet, mpt) laskettua päätöstä kohden.</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{PR} = \frac{\sum_i |\mathrm{erreur}_i|}{\mathrm{N_{compté}}} \times 500\]</div>
+<ul class="simple">
+<li><p>Osoittaja on EMG-virheiden (cubeful equity) itseisarvojen summa kaikkien tarkasteltavien päätösten yli.</p></li>
+<li><p>Nimittäjä <span class="math notranslate nohighlight">\(N_\text{compté}\)</span> on <strong>laskettujen päätösten</strong> määrä (katso alla).</p></li>
+<li><p>Kerroin 500 muuntaa equityn millipisteiksi (1 piste = 1000 mpt, mutta asteikko on ×500 XG/gnuBG-käytännön mukaisesti — vrt. <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code>).</p></li>
+</ul>
+</section>
+<section id="snowie-error-rate">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink"><span class="section-number">12.1.2. </span>Snowie Error Rate</a><a class="headerlink" href="#snowie-error-rate" title="Link to this heading"></a></h3>
+<p>Snowie ER käyttää <strong>samaa osoittajaa</strong> kuin PR, mutta nimittäjä on molempien pelaajien siirtojen kokonaismäärä, pakkosiirrot mukaan luettuna (kaikki päätökset, ilman suodatusta):</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{SnowieER} = \frac{\sum_i |\mathrm{erreur}_i|}{N_\text{P1} + N_\text{P2}} \times 500\]</div>
+<p>Viite: <code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code>.</p>
+<p>Snowie ER on vakaampi eri työkalujen välillä, koska sen nimittäjä ei riipu pakotettujen/triviaalien päätösten suodattimesta. Se toimii ristiintarkistusmittarina XG:n, gnuBG:n ja blunderDB:n välillä.</p>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>Pelaajan Snowie ER on tyypillisesti noin puolet hänen PR-arvostaan, koska nimittäjä sisältää molempien pelaajien siirrot, kun taas PR käyttää vain kyseisen pelaajan päätöksiä.</p>
+</div>
+</section>
+<section id="perte-mwc-match-winning-chance">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink"><span class="section-number">12.1.3. </span>MWC-tappio (Match Winning Chance)</a><a class="headerlink" href="#perte-mwc-match-winning-chance" title="Link to this heading"></a></h3>
+<p>MWC-tappio ilmaisee ottelun voittotodennäköisyyden prosenttiyksikköinä pelaajan virheiden kumulatiivisen vaikutuksen. Jokaisen päätöksen kohdalla EMG-virhe muunnetaan MWC:ksi MET-taulukon (Match Equity Table) avulla nykyisellä pistetilanteella:</p>
+<div class="math notranslate nohighlight">
+\[\mathrm{MWCLoss} = \sum_i \mathrm{eq2mwc}(\mathrm{erreur}_i, \mathrm{score}_i)\]</div>
+<p>Viite: <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code>.</p>
+</section>
+</section>
+<section id="decisions-comptees-au-denominateur-du-pr">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink"><span class="section-number">12.2. </span>PR:n nimittäjässä lasketut päätökset</a><a class="headerlink" href="#decisions-comptees-au-denominateur-du-pr" title="Link to this heading"></a></h2>
+<p>blunderDB noudattaa samoja poissulkemissääntöjä kuin XG ja gnuBG.</p>
+<section id="coups-de-pions-decisions-comptees">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink"><span class="section-number">12.2.1. </span>Nappulasiirrot — lasketut päätökset</a><a class="headerlink" href="#coups-de-pions-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Vain <strong>pakottamattomat siirrot</strong> lasketaan:</p>
+<ul class="simple">
+<li><p>Siirto on <strong>pakotettu</strong>, jos nopat tarjoavat vain yhden laillisen siirron (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">==</span> <span class="pre">1</span></code> tiedostossa <code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458</span></code>).</p></li>
+<li><p>Pakotetuilla siirroilla on määritelmän mukaan nollavirhe: pelaajalla ei ollut valinnanvaraa. Niiden sisällyttäminen nimittäjään laskisi PR-arvoa keinotekoisesti.</p></li>
+</ul>
+</section>
+<section id="decisions-de-cube-decisions-comptees">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink"><span class="section-number">12.2.2. </span>Tuplauskuution päätökset — lasketut päätökset</a><a class="headerlink" href="#decisions-de-cube-decisions-comptees" title="Link to this heading"></a></h3>
+<p>Vain <strong>läheiset kuutiopäätökset</strong> lasketaan:</p>
+<ul class="simple">
+<li><p>Kuutiopäätös on <strong>läheinen</strong>, jos se sijaitsee equity-ikkunassa <code class="docutils literal notranslate"><span class="pre">[-0.16,</span> <span class="pre">+0.16]</span></code> tuplauspisteen ympärillä (predikaatti <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code> tiedostossa <code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code>).</p></li>
+<li><p>Triviaali ”No Double” (hyvin negatiivinen tai hyvin positiivinen equity) ei ole aito strateginen päätös; sen sisällyttäminen kasvattaisi nimittäjää ja laskisi PR-arvoa.</p></li>
+</ul>
+</section>
+<section id="resume-du-filtre">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink"><span class="section-number">12.2.3. </span>Suodattimen yhteenveto</a><a class="headerlink" href="#resume-du-filtre" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Päätöksen tyyppi</p></th>
+<th class="head"><p>Sisältyy lukuun <span class="math notranslate nohighlight">\(N_\text{compté}\)</span> (PR)</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Pakottamaton siirto</p></td>
+<td><p>Kyllä</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pakotettu siirto</p></td>
+<td><p>Ei</p></td>
+</tr>
+<tr class="row-even"><td><p>Läheinen kuutio</p></td>
+<td><p>Kyllä</p></td>
+</tr>
+<tr class="row-odd"><td><p>Triviaali No Double</p></td>
+<td><p>Ei</p></td>
+</tr>
+<tr class="row-even"><td><p>Take / Pass</p></td>
+<td><p>Aina (nämä ovat vastauksia tuplaukseen)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="correspondance-blunderdb-xg-gnubg">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink"><span class="section-number">12.3. </span>Vastaavuus blunderDB ↔ XG ↔ gnuBG</a><a class="headerlink" href="#correspondance-blunderdb-xg-gnubg" title="Link to this heading"></a></h2>
+<p>Mittarit on yhdenmukaistettu seuraavien rajojen sisällä (mitattu 3 viiteottelusta):</p>
+<section id="comparaison-xg-blunderdb-meme-moteur-d-analyse">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink"><span class="section-number">12.3.1. </span>Vertailu XG ↔ blunderDB (sama analyysimoottori)</a><a class="headerlink" href="#comparaison-xg-blunderdb-meme-moteur-d-analyse" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mittari</p></th>
+<th class="head"><p>Tyypillinen ero</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Päätöksiä yhteensä</p></td>
+<td><p>≤ 5</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pakottamattomat siirrot</p></td>
+<td><p>≤ 7</p></td>
+</tr>
+<tr class="row-even"><td><p>PR</p></td>
+<td><p>≤ 0.10</p></td>
+</tr>
+<tr class="row-odd"><td><p>MWC-tappio</p></td>
+<td><p>≤ 1.0 pp</p></td>
+</tr>
+<tr class="row-even"><td><p>Kokonaisequity (EMG)</p></td>
+<td><p>≤ 0.05</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="comparaison-gnubg-blunderdb-import-sgf-moteurs-differents">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink"><span class="section-number">12.3.2. </span>Vertailu gnuBG ↔ blunderDB (SGF-tuonti — eri moottorit)</a><a class="headerlink" href="#comparaison-gnubg-blunderdb-import-sgf-moteurs-differents" title="Link to this heading"></a></h3>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Mittari</p></th>
+<th class="head" colspan="2"><p>Tyypillinen ero | Pääsyy</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>PR (nappulat)</p></td>
+<td><p>≤ 0.20</p></td>
+<td><p>equity-erot eri moottorien välillä</p></td>
+</tr>
+<tr class="row-odd"><td><p>MWC-tappio</p></td>
+<td><p>≤ 3.5 pp</p></td>
+<td><p>puutteelliset läheisten kuutioiden tiedot SGF:ssä</p></td>
+</tr>
+<tr class="row-even"><td><p>Snowie ER</p></td>
+<td><p>≤ 0.50</p></td>
+<td><p>pakotetut siirrot ilman analyysiä (SGF)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Muista</p>
+<p>SGF-tiedostot (gnuBG) eivät sisällä vaihtoehtoja pakotetuille siirroille, mikä tarkoittaa, ettei blunderDB pysty tunnistamaan kaikkia pakotettuja siirtoja SGF:ää tuotaessa. Tämä aiheuttaa rakenteellisen eron Snowie ER:ssä (hieman erilainen nimittäjä).</p>
+</div>
+</section>
+</section>
+<section id="valider-vos-propres-chiffres">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink"><span class="section-number">12.4. </span>Omien lukujen tarkistaminen</a><a class="headerlink" href="#valider-vos-propres-chiffres" title="Link to this heading"></a></h2>
+<p>Jos PR- tai MWC-arvosi poikkeavat XG:n luvuista, tarkista seuraavat seikat:</p>
+<ol class="arabic simple">
+<li><p><strong>Täydelliset analyysit</strong> — PR voidaan laskea vain asemille, joilla on analyysi. Ilman analyysiä olevat asemat lasketaan nollavirheinä, mutta ne eivät sisälly lukuun <span class="math notranslate nohighlight">\(N_\text{compté}\)</span>.</p></li>
+<li><p><strong>XG-versio</strong> — XG saattaa muuttaa laskentaansa versioiden välillä. blunderDB on yhdenmukaistettu viimeaikaisissa versioissa havaitun käyttäytymisen kanssa.</p></li>
+<li><p><strong>Tuontimuoto</strong> — gnuBG:n SGF-tiedostot tuottavat suurempia eroja kuutiomittareissa (katso yllä oleva taulukko), koska tiedosto ei sisällä täydellisiä analyysejä kaikille kuutiopäätöksille.</p></li>
+<li><p><strong>Tietokannan migraatio</strong> — blunderDB:n päivityksen jälkeen olemassa olevat tietokannat migratoidaan automaattisesti. Tee varmuuskopio ennen tietokannan avaamista uudella versiolla.</p></li>
+</ol>
+</section>
+<section id="reference-gnubg">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink"><span class="section-number">12.5. </span>gnuBG-viite</a><a class="headerlink" href="#reference-gnubg" title="Link to this heading"></a></h2>
+<p>Kaavat on todennettu seuraavista lähdetiedostoista (gnuBG-arkisto):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:399–409</span></code> — PR (”Error rate per decision”).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/formatgs.c:415–424</span></code> — Snowie Error Rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:458–462</span></code> — Nappulasiirtojen kertymä, pakotettujen siirtojen poissulkeminen (<code class="docutils literal notranslate"><span class="pre">cMoves</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1430–1474</span></code> — Päätöskohtainen EMG → MWC -muunnos.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/analysis.c:1449–1464</span></code> — MWC-tappion kertymä (<code class="docutils literal notranslate"><span class="pre">eq2mwc</span></code>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gnubg/eval.c:5088–5100</span></code> — <code class="docutils literal notranslate"><span class="pre">isCloseCubedecision</span></code>-predikaatti (kynnys 0.16).</p></li>
+</ul>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="annexe_db_scheme.html" class="btn btn-neutral float-left" title="11. Liite: Tietokannan skeema" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Kielet</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

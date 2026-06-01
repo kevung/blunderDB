@@ -1,0 +1,449 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="es" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>3. Guía del usuario &mdash; documentación de blunderDB - 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=7f6bb778"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=f85f4cfb"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Índice" href="genindex.html" />
+    <link rel="search" title="Búsqueda" href="search.html" />
+    <link rel="next" title="4. Lista de comandos" href="cmd_mode.html" />
+    <link rel="prev" title="2. Manual" href="manuel.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Logotipo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Buscar documentos" aria-label="Buscar documentos" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Descarga e instalación</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Manual</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Guía del usuario</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#creer-une-nouvelle-base-de-donnees">3.1. Crear una nueva base de datos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ouvrir-une-base-de-donnee-existante">3.2. Abrir una base de datos existente</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-et-fusionner-une-base-de-donnees">3.3. Importar y fusionar una base de datos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#editer-une-position">3.4. Editar una posición</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ajouter-une-position-a-la-base-de-donnees">3.5. Añadir una posición a la base de datos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#etiqueter-une-position">3.6. Etiquetar una posición</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#supprimer-une-position">3.7. Eliminar una posición</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#import-une-position-depuis-xg">3.8. Importar una posición desde XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-match">3.9. Importar una partida</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#importer-un-dossier-de-matchs">3.10. Importar una carpeta de partidas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glisser-deposer">3.11. Arrastrar y soltar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#naviguer-dans-un-match">3.12. Navegar por una partida</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-le-panneau-des-matchs">3.13. Gestionar el panel de partidas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-collections">3.14. Gestionar las colecciones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gerer-les-tournois">3.15. Gestionar los torneos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-les-statistiques-de-performance">3.16. Mostrar las estadísticas de rendimiento</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#calculer-l-epc">3.17. Calcular el EPC</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#afficher-l-analyse-d-une-position-importee-depuis-xg">3.18. Mostrar el análisis de una posición importada desde XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#exporter-une-position-vers-xg">3.19. Exportar una posición a XG</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#visualiser-les-differentes-positions">3.20. Visualizar las distintas posiciones</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rechercher-des-positions-selon-des-criteres">3.21. Buscar posiciones según criterios</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cmd_mode.html">4. Lista de comandos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Atajos de teclado</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Interfaz de línea de comandos (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Preguntas frecuentes (FAQ)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Anexo: Uso avanzado de los filtros</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Anexo Windows: detección errónea de blunderDB como software malicioso</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Anexo Mac: posible bloqueo de blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Anexo: Esquema de la base de datos</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Anexo: Modelo de estadísticas — alineación XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">3. </span>Guía del usuario</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="guide-utilisateur">
+<span id="id1"></span><h1><span class="section-number">3. </span>Guía del usuario<a class="headerlink" href="#guide-utilisateur" title="Link to this heading"></a></h1>
+<p>Esta guía es una introducción práctica a blunderDB para empezar a usarlo rápidamente.</p>
+<section id="creer-une-nouvelle-base-de-donnees">
+<h2><span class="section-number">3.1. </span>Crear una nueva base de datos<a class="headerlink" href="#creer-une-nouvelle-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Para crear una nueva base de datos, haga clic en el botón «New Database» de la barra de herramientas. Elija una ruta donde guardar la base de datos, así como un nombre, y haga clic en «Save».</p>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>La extensión de las bases de datos de blunderDB es <em>.db</em>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Atajos de teclado: <em>CTRL-N</em>. Comando: <code class="docutils literal notranslate"><span class="pre">n</span></code></p>
+</div>
+</section>
+<section id="ouvrir-une-base-de-donnee-existante">
+<h2><span class="section-number">3.2. </span>Abrir una base de datos existente<a class="headerlink" href="#ouvrir-une-base-de-donnee-existante" title="Link to this heading"></a></h2>
+<p>Para cargar una base de datos existente, haga clic en el botón «Open Database» de la barra de herramientas. Vaya a la ruta donde se encuentra la base de datos, seleccione el archivo <em>.db</em> y haga clic en «Open».</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Atajos de teclado: <em>CTRL-O</em>. Comando: <code class="docutils literal notranslate"><span class="pre">o</span></code></p>
+</div>
+</section>
+<section id="importer-et-fusionner-une-base-de-donnees">
+<h2><span class="section-number">3.3. </span>Importar y fusionar una base de datos<a class="headerlink" href="#importer-et-fusionner-une-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Para importar y fusionar otra base de datos de blunderDB en la base de datos actualmente abierta, haga clic en el botón «Import Database» de la barra de herramientas. Seleccione el archivo <em>.db</em> que desea importar y haga clic en «Open».</p>
+<p>blunderDB fusionará de forma inteligente las dos bases de datos:</p>
+<ul class="simple">
+<li><p>Las posiciones que no existen en la base de datos actual se añadirán con sus análisis y comentarios.</p></li>
+<li><p>Las posiciones que ya existen se actualizarán: los análisis se completarán si faltan, y los comentarios se fusionarán (se añadirán los nuevos comentarios sin duplicar los existentes).</p></li>
+<li><p>Un mensaje resumirá el número de posiciones añadidas, fusionadas e ignoradas.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>La importación requiere que ambas bases de datos tengan versiones de esquema compatibles. Es posible importar una base de datos de una versión inferior o igual en una base de datos de versión superior.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Prudencia</p>
+<p>La operación de importación modifica inmediatamente la base de datos actualmente abierta. Se recomienda hacer una copia de seguridad antes de importar otra base de datos.</p>
+</div>
+</section>
+<section id="editer-une-position">
+<span id="guide-edit-position"></span><h2><span class="section-number">3.4. </span>Editar una posición<a class="headerlink" href="#editer-une-position" title="Link to this heading"></a></h2>
+<p>Para editar una posición, pulse la tecla <em>TAB</em> para abrir el panel de búsqueda y el editor de posiciones. Edite la posición con el ratón:</p>
+<ul class="simple">
+<li><p>haga clic en los puntos para añadir fichas. El clic izquierdo asigna las fichas al jugador 1. El clic derecho asigna las fichas al jugador 2. Para insertar una prima, haga clic en el punto de inicio, mantenga pulsado el botón y suelte en el punto de destino. Haga clic en la barra para colocar fichas en la barra.</p></li>
+<li><p>para borrar la posición, haga doble clic en una zona vacía fuera del tablero o pulse la tecla <em>RETROCESO</em>.</p></li>
+<li><p>para enviar el cubo al jugador 1, haga clic izquierdo en el cubo. Para enviar el cubo al jugador 2, haga clic derecho en el cubo.</p></li>
+<li><p>para indicar el jugador que tiene el turno, haga clic en la zona reservada para los dados.</p></li>
+<li><p>para editar los dados, haga clic izquierdo para aumentar el valor de un dado, clic derecho para disminuir el valor de un dado. Si las caras de los dados están vacías, significa que la posición es una decisión de cubo.</p></li>
+<li><p>para editar el marcador de los jugadores, haga clic izquierdo para aumentar el marcador, clic derecho para reducirlo.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>La introducción de la posición con el ratón para las fichas se realiza de la misma manera que en XG.</p>
+</div>
+</section>
+<section id="ajouter-une-position-a-la-base-de-donnees">
+<h2><span class="section-number">3.5. </span>Añadir una posición a la base de datos<a class="headerlink" href="#ajouter-une-position-a-la-base-de-donnees" title="Link to this heading"></a></h2>
+<p>Tras editar la posición, el panel de búsqueda queda abierto.</p>
+<p>Para guardar la posición obtenida anteriormente, pulse <em>CTRL-S</em> o haga clic en el botón «Save Position» de la barra de herramientas.</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Abra la línea de comandos y ejecute: <code class="docutils literal notranslate"><span class="pre">w</span></code></p>
+</div>
+</section>
+<section id="etiqueter-une-position">
+<h2><span class="section-number">3.6. </span>Etiquetar una posición<a class="headerlink" href="#etiqueter-une-position" title="Link to this heading"></a></h2>
+<p>Para añadir una etiqueta <em>toto</em> a la posición actual, abra la línea de comandos pulsando <em>ESPACIO</em>, escriba <code class="docutils literal notranslate"><span class="pre">#toto</span></code> y confirme el comando pulsando <em>INTRO</em>.</p>
+</section>
+<section id="supprimer-une-position">
+<h2><span class="section-number">3.7. </span>Eliminar una posición<a class="headerlink" href="#supprimer-une-position" title="Link to this heading"></a></h2>
+<p>Para eliminar la posición actual de la base de datos, pulse <em>Del</em> o haga clic en el botón «Delete Position» de la barra de herramientas.</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>En la línea de comandos, ejecute <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Prudencia</p>
+<p>La eliminación de la posición es definitiva y no requiere ninguna confirmación por parte del usuario.</p>
+</div>
+</section>
+<section id="import-une-position-depuis-xg">
+<h2><span class="section-number">3.8. </span>Importar una posición desde XG<a class="headerlink" href="#import-une-position-depuis-xg" title="Link to this heading"></a></h2>
+<p>Para importar una posición directamente desde XG,</p>
+<ol class="arabic simple">
+<li><p>muestre en XG la posición que desea importar y pulse <em>CTRL-C</em>,</p></li>
+<li><p>abra blunderDB y pulse <em>CTRL-V</em>.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>El pegado automático detecta el formato de origen (XG, GNUbg, BGBlitz).</p>
+</div>
+</section>
+<section id="importer-un-match">
+<h2><span class="section-number">3.9. </span>Importar una partida<a class="headerlink" href="#importer-un-match" title="Link to this heading"></a></h2>
+<p>blunderDB puede importar partidas desde diversas fuentes.</p>
+<p><strong>Formatos compatibles:</strong></p>
+<ul class="simple">
+<li><p>eXtreme Gammon (XG): archivos <em>.xg</em> y <em>.xgp</em> (posiciones)</p></li>
+<li><p>GNUbg: archivos <em>.sgf</em></p></li>
+<li><p>Jellyfish: archivos <em>.mat</em> y <em>.txt</em></p></li>
+<li><p>BGBlitz: archivos <em>.bgf</em> y <em>.txt</em></p></li>
+</ul>
+<p><strong>Para importar uno o varios archivos de partida:</strong></p>
+<ol class="arabic simple">
+<li><p>Pulse <em>CTRL-I</em> o haga clic en el botón «Import» de la barra de herramientas.</p></li>
+<li><p>Seleccione uno o varios archivos para importar.</p></li>
+<li><p>blunderDB detecta automáticamente el formato e importa la partida.</p></li>
+<li><p>Una ventana de progreso muestra el número de archivos importados, fallidos e ignorados (duplicados).</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Comando: <code class="docutils literal notranslate"><span class="pre">i</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>blunderDB detecta automáticamente los duplicados e impide importar una partida que ya está presente en la base de datos.</p>
+</div>
+</section>
+<section id="importer-un-dossier-de-matchs">
+<h2><span class="section-number">3.10. </span>Importar una carpeta de partidas<a class="headerlink" href="#importer-un-dossier-de-matchs" title="Link to this heading"></a></h2>
+<p>Para importar de forma recursiva todos los archivos de partidas contenidos en una carpeta y sus subcarpetas:</p>
+<ol class="arabic simple">
+<li><p>Pulse <em>CTRL-SHIFT-F</em> o haga clic en el botón correspondiente de la barra de herramientas.</p></li>
+<li><p>Seleccione la carpeta que contiene los archivos de partidas.</p></li>
+<li><p>blunderDB recopila e importa automáticamente todos los archivos reconocidos (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>).</p></li>
+</ol>
+</section>
+<section id="glisser-deposer">
+<h2><span class="section-number">3.11. </span>Arrastrar y soltar<a class="headerlink" href="#glisser-deposer" title="Link to this heading"></a></h2>
+<p>blunderDB admite arrastrar y soltar. Es posible arrastrar y soltar sobre la ventana de blunderDB:</p>
+<ul class="simple">
+<li><p>archivos de partida o de posición (<em>.xg</em>, <em>.xgp</em>, <em>.sgf</em>, <em>.mat</em>, <em>.txt</em>, <em>.bgf</em>) para importarlos,</p></li>
+<li><p>archivos de base de datos (<em>.db</em>) para abrirlos o fusionarlos con la base de datos actual,</p></li>
+<li><p>carpetas para importar de forma recursiva todos los archivos que contienen.</p></li>
+</ul>
+</section>
+<section id="naviguer-dans-un-match">
+<h2><span class="section-number">3.12. </span>Navegar por una partida<a class="headerlink" href="#naviguer-dans-un-match" title="Link to this heading"></a></h2>
+<p>Para navegar por una partida importada:</p>
+<ol class="arabic simple">
+<li><p>Abra el panel de partidas con <em>CTRL-Tab</em>.</p></li>
+<li><p>Haga doble clic en una partida o pulse <em>INTRO</em>.</p></li>
+<li><p>Use las teclas <em>IZQUIERDA</em> / <em>DERECHA</em> para recorrer las jugadas.</p></li>
+<li><p>Use <em>PageUp</em> / <em>PageDown</em> para pasar de una partida a otra.</p></li>
+<li><p>Pulse <em>CTRL-L</em> para mostrar el análisis.</p></li>
+<li><p>Pulse <em>d</em> para alternar entre el análisis de jugadas de fichas y el análisis de cubo.</p></li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Atajo: <em>CTRL-Tab</em> para abrir el panel de partidas. Comando: <code class="docutils literal notranslate"><span class="pre">m</span></code></p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>blunderDB recuerda la última posición visitada en cada partida. Al volver a una partida, la última posición consultada se restaura automáticamente.</p>
+</div>
+</section>
+<section id="gerer-le-panneau-des-matchs">
+<h2><span class="section-number">3.13. </span>Gestionar el panel de partidas<a class="headerlink" href="#gerer-le-panneau-des-matchs" title="Link to this heading"></a></h2>
+<p>El panel de partidas (<em>CTRL-Tab</em>) permite:</p>
+<ul class="simple">
+<li><p>listar todas las partidas importadas (ordenadas de la más reciente a la más antigua),</p></li>
+<li><p>ordenar las partidas por columnas (jugador 1, jugador 2, fecha, longitud de la partida, torneo),</p></li>
+<li><p>modificar los nombres de los jugadores o la fecha haciendo doble clic en los campos,</p></li>
+<li><p>intercambiar los jugadores 1 y 2 mediante el botón de intercambio,</p></li>
+<li><p>asignar una partida a un torneo,</p></li>
+<li><p>eliminar una partida con la tecla <em>Del</em>.</p></li>
+</ul>
+</section>
+<section id="gerer-les-collections">
+<h2><span class="section-number">3.14. </span>Gestionar las colecciones<a class="headerlink" href="#gerer-les-collections" title="Link to this heading"></a></h2>
+<p>Las colecciones permiten organizar posiciones en grupos personalizados. Para acceder al panel de colecciones, pulse <em>CTRL-B</em>.</p>
+<p><strong>Crear una colección:</strong></p>
+<ol class="arabic simple">
+<li><p>Abra el panel de colecciones (<em>CTRL-B</em>).</p></li>
+<li><p>Introduzca el nombre de la nueva colección y haga clic en «Add».</p></li>
+</ol>
+<p><strong>Añadir posiciones a una colección:</strong></p>
+<ol class="arabic simple">
+<li><p>Seleccione las posiciones deseadas.</p></li>
+<li><p>Añádalas a la colección desde el panel de colecciones.</p></li>
+</ol>
+<p><strong>Recorrer una colección:</strong></p>
+<ul class="simple">
+<li><p>Haga doble clic en una colección para recorrer sus posiciones. El orden de las colecciones y de las posiciones se puede modificar arrastrando y soltando.</p></li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Comando: <code class="docutils literal notranslate"><span class="pre">coll</span></code></p>
+</div>
+</section>
+<section id="gerer-les-tournois">
+<h2><span class="section-number">3.15. </span>Gestionar los torneos<a class="headerlink" href="#gerer-les-tournois" title="Link to this heading"></a></h2>
+<p>Los torneos permiten organizar las partidas importadas por evento. Para acceder al panel de torneos, pulse <em>CTRL-Y</em>.</p>
+<p><strong>Crear un torneo:</strong></p>
+<ol class="arabic simple">
+<li><p>Abra el panel de torneos (<em>CTRL-Y</em>).</p></li>
+<li><p>Haga clic en «Add» e introduzca el nombre del torneo.</p></li>
+</ol>
+<p><strong>Asignar una partida a un torneo:</strong></p>
+<ul class="simple">
+<li><p>Desde el panel de partidas (<em>CTRL-Tab</em>), use el menú desplegable de la columna de torneo para asignar una partida.</p></li>
+</ul>
+</section>
+<section id="afficher-les-statistiques-de-performance">
+<h2><span class="section-number">3.16. </span>Mostrar las estadísticas de rendimiento<a class="headerlink" href="#afficher-les-statistiques-de-performance" title="Link to this heading"></a></h2>
+<p>El panel Stats permite visualizar los indicadores de rendimiento (PR y coste MWC) a partir de las posiciones importadas.</p>
+<ol class="arabic simple">
+<li><p>Pulse <em>CTRL-D</em> o haga clic en la pestaña Stats del panel inferior.</p></li>
+<li><p>Use la barra de filtros para restringir el análisis por jugador, torneo, rango de fechas, tipo de decisión o longitud de la partida.</p></li>
+<li><p>Haga clic en un indicador para acceder directamente a las posiciones correspondientes.</p></li>
+</ol>
+</section>
+<section id="calculer-l-epc">
+<h2><span class="section-number">3.17. </span>Calcular el EPC<a class="headerlink" href="#calculer-l-epc" title="Link to this heading"></a></h2>
+<p>La calculadora de EPC (Effective Pip Count) permite calcular las estadísticas de retirada (bearoff) de una posición.</p>
+<ol class="arabic simple">
+<li><p>Pulse <em>CTRL-E</em>, haga clic en la pestaña EPC del panel inferior o ejecute el comando <code class="docutils literal notranslate"><span class="pre">epc</span></code>.</p></li>
+<li><p>Edite la posición de las fichas en el cuadro interior (los 6 últimos puntos).</p></li>
+<li><p>Los resultados se muestran en tiempo real en el panel EPC dedicado: EPC, número medio de tiradas, desviación estándar, pip count y wastage.</p></li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Nota</p>
+<p>La calculadora funciona para ambos jugadores simultáneamente.</p>
+</div>
+</section>
+<section id="afficher-l-analyse-d-une-position-importee-depuis-xg">
+<h2><span class="section-number">3.18. </span>Mostrar el análisis de una posición importada desde XG<a class="headerlink" href="#afficher-l-analyse-d-une-position-importee-depuis-xg" title="Link to this heading"></a></h2>
+<p>Si una posición analizada por XG, GNUbg o BGBlitz se ha importado en blunderDB, el análisis se puede mostrar pulsando <em>CTRL-L</em>.</p>
+<p>Si la posición corresponde a una decisión de fichas, las cinco mejores jugadas se muestran en líneas distintas. Para cada línea, la información proporcionada es, en este orden: la jugada de fichas asociada, la equidad normalizada, el error en equidad de la jugada, las probabilidades de victoria, gammon y backgammon del jugador, las probabilidades de victoria, gammon y backgammon del adversario, y el nivel de análisis.</p>
+<p>Si la posición corresponde a una decisión de cubo, se muestra el coste de cada decisión, así como las probabilidades de victoria de la posición.</p>
+<p>Cuando hay varios motores de análisis presentes para la misma posición (por ejemplo XG y GNUbg), una columna adicional indica el motor de origen de cada análisis.</p>
+<p>Al navegar por una partida, la jugada realmente realizada se resalta en la lista de jugadas. Si la posición se ha encontrado en varias partidas, se indican todas las jugadas realizadas.</p>
+<div class="admonition tip">
+<p class="admonition-title">Truco</p>
+<p>Al hacer clic en una jugada en el panel de análisis, las flechas correspondientes se muestran en el tablero.</p>
+</div>
+</section>
+<section id="exporter-une-position-vers-xg">
+<h2><span class="section-number">3.19. </span>Exportar una posición a XG<a class="headerlink" href="#exporter-une-position-vers-xg" title="Link to this heading"></a></h2>
+<p>Para exportar una posición de blunderDB a XG,</p>
+<ol class="arabic simple">
+<li><p>muestre en blunderDB la posición que desea exportar y pulse <em>CTRL-C</em>,</p></li>
+<li><p>abra XG y pulse <em>CTRL-V</em>.</p></li>
+</ol>
+</section>
+<section id="visualiser-les-differentes-positions">
+<h2><span class="section-number">3.20. </span>Visualizar las distintas posiciones<a class="headerlink" href="#visualiser-les-differentes-positions" title="Link to this heading"></a></h2>
+<p>Para visualizar las distintas posiciones de la biblioteca actual, use las teclas <em>IZQUIERDA</em> y <em>DERECHA</em>. La tecla <em>INICIO</em> permite ir a la primera posición. La tecla <em>FIN</em> permite ir a la última posición.</p>
+<p>Para mostrar el bearoff a la izquierda, pulse <em>CTRL-IZQUIERDA</em>. Para mostrar el bearoff a la derecha, pulse <em>CTRL-DERECHA</em>.</p>
+</section>
+<section id="rechercher-des-positions-selon-des-criteres">
+<h2><span class="section-number">3.21. </span>Buscar posiciones según criterios<a class="headerlink" href="#rechercher-des-positions-selon-des-criteres" title="Link to this heading"></a></h2>
+<p>Para buscar tipos de posiciones,</p>
+<ul class="simple">
+<li><p>pulse <em>TAB</em> para abrir el panel de búsqueda,</p></li>
+<li><p>edite la estructura de posición que desea buscar. blunderDB filtrará las posiciones que tengan <em>como mínimo</em> la estructura de fichas introducida. En caso de duda, para obtener el máximo de resultados, borre la posición pulsando la tecla <em>RETROCESO</em>. Edite, si es necesario, la posición del cubo y el marcador.</p></li>
+</ul>
+<p>El panel de búsqueda ofrece dos estructuras de fichas, seleccionables mediante las pestañas <em>At least</em> y <em>Except</em> situadas en la parte superior del panel:</p>
+<ul class="simple">
+<li><p><em>At least</em> (por defecto): blunderDB filtra las posiciones que tengan <em>como mínimo</em> la estructura de fichas introducida;</p></li>
+<li><p><em>Except</em>: blunderDB excluye las posiciones que contienen una de las fichas introducidas. El tablero se muestra bordeado de rojo al editar esta estructura. Una posición se rechaza si contiene <em>al menos uno</em> de los elementos dibujados (por ejemplo, dibujar una ficha en los puntos 1, 3 y 5 conserva únicamente las posiciones que no tienen ninguna ficha en esos puntos). El número de fichas por punto no está limitado: indicar 3 fichas en un punto excluye las posiciones que tienen 3 fichas o más en ese lugar (útil para buscar un punto hecho sin spare). Dos clics rápidos en un punto lo marcan como obligatoriamente vacío (celda roja rayada, ninguna ficha sea cual sea el color); un solo clic en ese punto lo desbloquea.</p></li>
+</ul>
+<p>Cuando un punto pertenece a ambas estructuras, el criterio <em>Except</em> prevalece si contradice el criterio <em>At least</em>.</p>
+<p>Método 1 (sencillo):</p>
+<ul class="simple">
+<li><p>Abra la ventana de búsqueda (<em>CTRL-F</em>)</p></li>
+<li><p>Añada y configure los filtros de búsqueda</p></li>
+<li><p>Confirme haciendo clic en «Search».</p></li>
+</ul>
+<p>Método 2 (avanzado):</p>
+<ul class="simple">
+<li><p>abra la línea de comandos pulsando <em>ESPACIO</em>,</p></li>
+<li><p>escriba <em>s</em> y añada los filtros adicionales que desee (por ejemplo <em>cube</em> o <em>score</em> para tener en cuenta el cubo y el marcador, respectivamente. Consulte <a class="reference internal" href="cmd_mode.html#cmd-filter"><span class="std std-numref">Sección 4.4</span></a> para ver una lista exhaustiva de los filtros disponibles).</p></li>
+<li><p>confirme la consulta pulsando <em>INTRO</em>.</p></li>
+</ul>
+<p>Las posiciones mostradas son las de la base de datos que cumplen los criterios de búsqueda introducidos por el usuario.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Pie de página">
+        <a href="manuel.html" class="btn btn-neutral float-left" title="2. Manual" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Anterior</a>
+        <a href="cmd_mode.html" class="btn btn-neutral float-right" title="4. Lista de comandos" accesskey="n" rel="next">Siguiente <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Derechos de autor 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Idiomas</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

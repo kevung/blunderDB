@@ -1,0 +1,625 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="ru" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>4. Список команд &mdash; документация blunderDB 0.21.0</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="_static/theme_overrides.css?v=720b50f6" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=89a09aa3" />
+
+  
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=aaff09fb"></script>
+      <script src="_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script src="_static/translations.js?v=cd1d70c9"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+    <link rel="next" title="5. Горячие клавиши" href="raccourcis.html" />
+    <link rel="prev" title="3. Руководство пользователя" href="guide_utilisateur.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            blunderDB
+              <img src="_static/logo.png" class="logo" alt="Логотип"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Поиск в документации" aria-label="Поиск в документации" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Меню навигации">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="telecharge_install.html">1. Загрузка и установка</a></li>
+<li class="toctree-l1"><a class="reference internal" href="manuel.html">2. Руководство</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide_utilisateur.html">3. Руководство пользователя</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">4. Список команд</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operations-globales">4.1. Глобальные операции</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#positions-et-navigation">4.2. Позиции и навигация</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#edition-et-recherche">4.3. Редактирование и поиск</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtres-de-recherche">4.4. Фильтры поиска</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#commandes-diverses">4.5. Прочие команды</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="raccourcis.html">5. Горячие клавиши</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cli.html">6. Интерфейс командной строки (CLI)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">7. Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_filtres.html">8. Приложение: Расширенное использование фильтров</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_windows_securite.html">9. Приложение Windows: ложное обнаружение blunderDB как вредоносного программного обеспечения</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_mac_securite.html">10. Приложение Mac: возможная блокировка blunderDB</a></li>
+<li class="toctree-l1"><a class="reference internal" href="annexe_db_scheme.html">11. Приложение: Схема базы данных</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stats_parity.html">12. Приложение: Модель статистики — выравнивание XG / gnuBG / blunderDB</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Меню навигации для мобильных устройств" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">blunderDB</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Навигация по страницам">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">4. </span>Список команд</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="liste-des-commandes">
+<span id="cmd-mode"></span><h1><span class="section-number">4. </span>Список команд<a class="headerlink" href="#liste-des-commandes" title="Ссылка на этот заголовок"></a></h1>
+<section id="operations-globales">
+<span id="cmd-global"></span><h2><span class="section-number">4.1. </span>Глобальные операции<a class="headerlink" href="#operations-globales" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Команда</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>new, ne, n</p></td>
+<td><p>Создаёт новую базу данных.</p></td>
+</tr>
+<tr class="row-odd"><td><p>open, op, o</p></td>
+<td><p>Открывает существующую базу данных.</p></td>
+</tr>
+<tr class="row-even"><td><p>import_db, idb</p></td>
+<td><p>Импортирует и объединяет другую базу данных.</p></td>
+</tr>
+<tr class="row-odd"><td><p>export_db, edb</p></td>
+<td><p>Экспортирует текущую выборку в новую базу данных.</p></td>
+</tr>
+<tr class="row-even"><td><p>quit, q</p></td>
+<td><p>Закрывает blunderDB.</p></td>
+</tr>
+<tr class="row-odd"><td><p>help, he, h</p></td>
+<td><p>Открывает справку blunderDB.</p></td>
+</tr>
+<tr class="row-even"><td><p>meta</p></td>
+<td><p>Отображает метаданные базы данных.</p></td>
+</tr>
+<tr class="row-odd"><td><p>epc</p></td>
+<td><p>Открывает панель EPC (Effective Pip Count).</p></td>
+</tr>
+<tr class="row-even"><td><p>met</p></td>
+<td><p>Открывает таблицу матчевого эквити Kazaross-XG2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2</p></td>
+<td><p>Открывает таблицу точек взятия при кубе на 2.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp2_live</p></td>
+<td><p>Открывает таблицу точек взятия при кубе на 2 для длинных гонок.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp2_last</p></td>
+<td><p>Открывает таблицу точек взятия при мёртвом кубе на 2.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4</p></td>
+<td><p>Открывает таблицу точек взятия при кубе на 4.</p></td>
+</tr>
+<tr class="row-odd"><td><p>tp4_live</p></td>
+<td><p>Открывает таблицу точек взятия при кубе на 4 для длинных гонок.</p></td>
+</tr>
+<tr class="row-even"><td><p>tp4_last</p></td>
+<td><p>Открывает таблицу точек взятия при мёртвом кубе на 4.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv1</p></td>
+<td><p>Открывает таблицу значений гэммона при кубе на 1.</p></td>
+</tr>
+<tr class="row-even"><td><p>gv2</p></td>
+<td><p>Открывает таблицу значений гэммона при кубе на 2.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gv4</p></td>
+<td><p>Открывает таблицу значений гэммона при кубе на 4.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="positions-et-navigation">
+<span id="cmd-normal"></span><h2><span class="section-number">4.2. </span>Позиции и навигация<a class="headerlink" href="#positions-et-navigation" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Команда</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>import, i</p></td>
+<td><p>Импортирует одну или несколько позиций/матчей из файла (xg, xgp, sgf, mat, txt, bgf).</p></td>
+</tr>
+<tr class="row-odd"><td><p>delete, del, d</p></td>
+<td><p>Удаляет текущую позицию.</p></td>
+</tr>
+<tr class="row-even"><td><p>[number]</p></td>
+<td><p>Перейти к позиции с указанным индексом.</p></td>
+</tr>
+<tr class="row-odd"><td><p>list, l</p></td>
+<td><p>Отобразить анализ текущей позиции.</p></td>
+</tr>
+<tr class="row-even"><td><p>comment, co</p></td>
+<td><p>Отобразить/написать комментарии.</p></td>
+</tr>
+<tr class="row-odd"><td><p>filter, fl</p></td>
+<td><p>Показать/скрыть библиотеку фильтров.</p></td>
+</tr>
+<tr class="row-even"><td><p>history, hi</p></td>
+<td><p>Показать/скрыть историю поиска.</p></td>
+</tr>
+<tr class="row-odd"><td><p>match, ma</p></td>
+<td><p>Показать/скрыть панель матчей.</p></td>
+</tr>
+<tr class="row-even"><td><p>collection, coll</p></td>
+<td><p>Показать/скрыть панель коллекций.</p></td>
+</tr>
+<tr class="row-odd"><td><p>#tag1 tag2 …</p></td>
+<td><p>Пометить текущую позицию тегами.</p></td>
+</tr>
+<tr class="row-even"><td><p>e</p></td>
+<td><p>Загрузить все позиции базы данных.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m</p></td>
+<td><p>Навигация по последнему просмотренному матчу.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="edition-et-recherche">
+<span id="cmd-edit"></span><h2><span class="section-number">4.3. </span>Редактирование и поиск<a class="headerlink" href="#edition-et-recherche" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Команда</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>write, wr, w</p></td>
+<td><p>Сохраняет текущую позицию.</p></td>
+</tr>
+<tr class="row-odd"><td><p>write!, wr!, w!</p></td>
+<td><p>Обновить текущую позицию.</p></td>
+</tr>
+<tr class="row-even"><td><p>s</p></td>
+<td><p>Искать позиции с помощью фильтров.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ss</p></td>
+<td><p>Искать среди текущих отфильтрованных позиций.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="filtres-de-recherche">
+<span id="cmd-filter"></span><h2><span class="section-number">4.4. </span>Фильтры поиска<a class="headerlink" href="#filtres-de-recherche" title="Ссылка на этот заголовок"></a></h2>
+<p>Приведённые ниже фильтры должны указываться друг за другом при поиске, то есть после начала команды <code class="docutils literal notranslate"><span class="pre">s</span></code>.</p>
+<div class="admonition warning" id="cmd-filter-pos">
+<p class="admonition-title">Предупреждение</p>
+<p>При поиске позиций blunderDB по умолчанию учитывает текущую структуру шашек, игнорируя положение куба, счёт и кубики. Чтобы учитывать положение куба, счёт и кубики, это нужно явно указать в поиске.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Команда поиска <code class="docutils literal notranslate"><span class="pre">s</span></code> доступна на панели поиска (клавиша <code class="docutils literal notranslate"><span class="pre">TAB</span></code>). Команда <code class="docutils literal notranslate"><span class="pre">ss</span></code> позволяет искать среди текущих отфильтрованных результатов.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>blunderDB считает, что задняя шашка (backchecker) — это шашка, расположенная между пунктом 24 и пунктом 19.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>blunderDB считает, что число шашек в зоне — это число шашек, расположенных между пунктом 12 и пунктом 1.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>blunderDB считает, что аутфилд простирается между пунктом 18 и пунктом 7.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>blunderDB считает, что ян простирается между пунктом 1 и пунктом 6.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Совет</p>
+<p>Параметры фильтрации позиций можно произвольно комбинировать.</p>
+</div>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 33.3%" />
+<col style="width: 66.7%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Запрос</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>cube, cub, cu, c</p></td>
+<td><p>Позиция соответствует конфигурации куба.</p></td>
+</tr>
+<tr class="row-odd"><td><p>score, sco, sc, s</p></td>
+<td><p>Позиция соответствует счёту.</p></td>
+</tr>
+<tr class="row-even"><td><p>d</p></td>
+<td><p>Позиция соответствует типу решения (шашка или куб).</p></td>
+</tr>
+<tr class="row-odd"><td><p>D</p></td>
+<td><p>Позиция соответствует броску кубиков (оба кубика, независимо от порядка).</p></td>
+</tr>
+<tr class="row-even"><td><p>D1</p></td>
+<td><p>Позиция соответствует броску только по первому кубику (значение первого кубика присутствует на одном из двух кубиков позиции).</p></td>
+</tr>
+<tr class="row-odd"><td><p>nc</p></td>
+<td><p>Позиция без контакта.</p></td>
+</tr>
+<tr class="row-even"><td><p>M</p></td>
+<td><p>Позиция или её зеркальное отражение соответствуют фильтрам.</p></td>
+</tr>
+<tr class="row-odd"><td><p>x</p></td>
+<td><p>Позиция не содержит ни одной шашки из структуры исключения (вкладка «Except» панели поиска).</p></td>
+</tr>
+<tr class="row-even"><td><p>p&gt;x</p></td>
+<td><p>Игрок отстаёт в гонке как минимум на x пипов.</p></td>
+</tr>
+<tr class="row-odd"><td><p>p&lt;x</p></td>
+<td><p>Игрок отстаёт в гонке не более чем на x пипов.</p></td>
+</tr>
+<tr class="row-even"><td><p>px,y</p></td>
+<td><p>Игрок отстаёт в гонке на величину от x до y пипов.</p></td>
+</tr>
+<tr class="row-odd"><td><p>P&gt;x</p></td>
+<td><p>У игрока гонка не менее x пипов.</p></td>
+</tr>
+<tr class="row-even"><td><p>P&lt;x</p></td>
+<td><p>У игрока гонка не более x пипов.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Px,y</p></td>
+<td><p>У игрока гонка от x до y пипов.</p></td>
+</tr>
+<tr class="row-even"><td><p>e&gt;x</p></td>
+<td><p>Эквити позиции (в миллипунктах) больше x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>e&lt;x</p></td>
+<td><p>Эквити позиции (в миллипунктах) меньше x.</p></td>
+</tr>
+<tr class="row-even"><td><p>ex,y</p></td>
+<td><p>Эквити позиции (в миллипунктах) находится в диапазоне от x до y.</p></td>
+</tr>
+<tr class="row-odd"><td><p>E&gt;x</p></td>
+<td><p>Ошибка хода, сыгранного игроком 1 (в миллипунктах), больше x.</p></td>
+</tr>
+<tr class="row-even"><td><p>E&lt;x</p></td>
+<td><p>Ошибка хода, сыгранного игроком 1 (в миллипунктах), меньше x.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ex,y</p></td>
+<td><p>Ошибка хода, сыгранного игроком 1 (в миллипунктах), находится в диапазоне от x до y.</p></td>
+</tr>
+<tr class="row-even"><td><p>w&gt;x</p></td>
+<td><p>У игрока шансы на победу более x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>w&lt;x</p></td>
+<td><p>У игрока шансы на победу менее x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>wx,y</p></td>
+<td><p>У игрока шансы на победу составляют от x% до y%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>g&gt;x</p></td>
+<td><p>У игрока шансы гэммона более x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>g&lt;x</p></td>
+<td><p>У игрока шансы гэммона менее x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>gx,y</p></td>
+<td><p>У игрока шансы гэммона составляют от x% до y%.</p></td>
+</tr>
+<tr class="row-even"><td><p>b&gt;x</p></td>
+<td><p>У игрока шансы нард с марсом более x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>b&lt;x</p></td>
+<td><p>У игрока шансы нард с марсом менее x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>bx,y</p></td>
+<td><p>У игрока шансы нард с марсом составляют от x% до y%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>W&gt;x</p></td>
+<td><p>У противника шансы на победу более x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>W&lt;x</p></td>
+<td><p>У противника шансы на победу менее x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wx,y</p></td>
+<td><p>У противника шансы на победу составляют от x% до y%.</p></td>
+</tr>
+<tr class="row-even"><td><p>G&gt;x</p></td>
+<td><p>У противника шансы гэммона более x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>G&lt;x</p></td>
+<td><p>У противника шансы гэммона менее x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>Gx,y</p></td>
+<td><p>У противника шансы гэммона составляют от x% до y%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>B&gt;x</p></td>
+<td><p>У противника шансы нард с марсом более x%.</p></td>
+</tr>
+<tr class="row-even"><td><p>B&lt;x</p></td>
+<td><p>У противника шансы нард с марсом менее x%.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Bx,y</p></td>
+<td><p>У противника шансы нард с марсом составляют от x% до y%.</p></td>
+</tr>
+<tr class="row-even"><td><p>o&gt;x</p></td>
+<td><p>У игрока выведено как минимум x шашек.</p></td>
+</tr>
+<tr class="row-odd"><td><p>o&lt;x</p></td>
+<td><p>У игрока выведено не более x шашек.</p></td>
+</tr>
+<tr class="row-even"><td><p>ox,y</p></td>
+<td><p>У игрока выведено от x до y шашек.</p></td>
+</tr>
+<tr class="row-odd"><td><p>O&gt;x</p></td>
+<td><p>У противника выведено как минимум x шашек.</p></td>
+</tr>
+<tr class="row-even"><td><p>O&lt;x</p></td>
+<td><p>У противника выведено не более x шашек.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Ox,y</p></td>
+<td><p>У противника выведено от x до y шашек.</p></td>
+</tr>
+<tr class="row-even"><td><p>k&gt;x</p></td>
+<td><p>У игрока как минимум x задних шашек.</p></td>
+</tr>
+<tr class="row-odd"><td><p>k&lt;x</p></td>
+<td><p>У игрока не более x задних шашек.</p></td>
+</tr>
+<tr class="row-even"><td><p>kx,y</p></td>
+<td><p>У игрока от x до y задних шашек.</p></td>
+</tr>
+<tr class="row-odd"><td><p>K&gt;x</p></td>
+<td><p>У противника как минимум x задних шашек.</p></td>
+</tr>
+<tr class="row-even"><td><p>K&lt;x</p></td>
+<td><p>У противника не более x задних шашек.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Kx,y</p></td>
+<td><p>У противника от x до y задних шашек.</p></td>
+</tr>
+<tr class="row-even"><td><p>z&gt;x</p></td>
+<td><p>У игрока как минимум x шашек в зоне.</p></td>
+</tr>
+<tr class="row-odd"><td><p>z&lt;x</p></td>
+<td><p>У игрока не более x шашек в зоне.</p></td>
+</tr>
+<tr class="row-even"><td><p>zx,y</p></td>
+<td><p>У игрока от x до y шашек в зоне.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Z&gt;x</p></td>
+<td><p>У противника как минимум x шашек в зоне.</p></td>
+</tr>
+<tr class="row-even"><td><p>Z&lt;x</p></td>
+<td><p>У противника не более x шашек в зоне.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Zx,y</p></td>
+<td><p>У противника от x до y шашек в зоне.</p></td>
+</tr>
+<tr class="row-even"><td><p>bo&gt;x</p></td>
+<td><p>У игрока как минимум x блотов в аутфилде.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bo&lt;x</p></td>
+<td><p>У игрока не более x блотов в аутфилде.</p></td>
+</tr>
+<tr class="row-even"><td><p>box,y</p></td>
+<td><p>У игрока от x до y блотов в аутфилде.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BO&gt;x</p></td>
+<td><p>У противника как минимум x блотов в аутфилде.</p></td>
+</tr>
+<tr class="row-even"><td><p>BO&lt;x</p></td>
+<td><p>У противника не более x блотов в аутфилде.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BOx,y</p></td>
+<td><p>У противника от x до y блотов в аутфилде.</p></td>
+</tr>
+<tr class="row-even"><td><p>bj&gt;x</p></td>
+<td><p>У игрока как минимум x блотов в яне.</p></td>
+</tr>
+<tr class="row-odd"><td><p>bj&lt;x</p></td>
+<td><p>У игрока не более x блотов в яне.</p></td>
+</tr>
+<tr class="row-even"><td><p>bjx,y</p></td>
+<td><p>У игрока от x до y блотов в яне.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJ&gt;x</p></td>
+<td><p>У противника как минимум x блотов в яне.</p></td>
+</tr>
+<tr class="row-even"><td><p>BJ&lt;x</p></td>
+<td><p>У противника не более x блотов в яне.</p></td>
+</tr>
+<tr class="row-odd"><td><p>BJx,y</p></td>
+<td><p>У противника от x до y блотов в яне.</p></td>
+</tr>
+<tr class="row-even"><td><p>t’mot1;mot2;…“</p></td>
+<td><p>Комментарии к позиции содержат как минимум одно из слов.</p></td>
+</tr>
+<tr class="row-odd"><td><p>m’motif1,motif2,…'</p></td>
+<td><p>Лучшие ходы шашками, содержащие как минимум один из паттернов.</p></td>
+</tr>
+<tr class="row-even"><td><p>m’ND,DT,DP,…'</p></td>
+<td><p>Лучшие решения куба: No Double/Take, Double Take, Double Pass.</p></td>
+</tr>
+<tr class="row-odd"><td><p>T&gt;x</p></td>
+<td><p>Дата добавления позиции после x (ГГГГ/ММ/ДД).</p></td>
+</tr>
+<tr class="row-even"><td><p>T&lt;x</p></td>
+<td><p>Дата добавления позиции до x (ГГГГ/ММ/ДД).</p></td>
+</tr>
+<tr class="row-odd"><td><p>Tx,y</p></td>
+<td><p>Дата добавления позиции между x и y (ГГГГ/ММ/ДД).</p></td>
+</tr>
+<tr class="row-even"><td><p>max</p></td>
+<td><p>Поиск в матче с идентификатором x (пример: ma3).</p></td>
+</tr>
+<tr class="row-odd"><td><p>max,y</p></td>
+<td><p>Поиск в матчах с идентификаторами от x до y (пример: ma2,5).</p></td>
+</tr>
+<tr class="row-even"><td><p>tnx</p></td>
+<td><p>Поиск в турнире с идентификатором x (пример: tn1).</p></td>
+</tr>
+<tr class="row-odd"><td><p>tnx,y</p></td>
+<td><p>Поиск в турнирах с идентификаторами от x до y (пример: tn1,3).</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Фильтрация позиций по броску кубиков (<cite>D</cite> или <cite>D1</cite>) необходимо подразумевает фильтрацию позиций по типу решения (<cite>d</cite>). Фильтр <cite>D1</cite> игнорирует значение второго кубика: только значение первого кубика используется для сопоставления позиций (с любым из двух кубиков броска).</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Для фильтра относительной разницы в гонке (<cite>p&gt;x</cite>, <cite>p&lt;x</cite>, <cite>px,y</cite>) игрок отстаёт от противника в гонке, если <cite>x&gt;0</cite>, и опережает, если <cite>x&lt;0</cite>. Пример: <cite>p&lt;-10</cite>: игрок опережает как минимум на 10 пипов. <cite>p50,70</cite>: игрок отстаёт на 50–70 пипов в гонке.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Для поиска в нескольких несмежных матчах нужно несколько раз использовать фильтр <code class="docutils literal notranslate"><span class="pre">ma</span></code> (например, <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">ma23</span> <span class="pre">ma43</span></code> для матчей 23 и 43). Тот же принцип применяется для турниров с <code class="docutils literal notranslate"><span class="pre">tn</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Поиск в турнире (<code class="docutils literal notranslate"><span class="pre">tn</span></code>) означает поиск во всех матчах данного турнира. Идентификаторы матчей и турниров видны в столбцах ID соответствующих панелей.</p>
+</div>
+<p>Например, команда <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">s</span> <span class="pre">c</span> <span class="pre">p-20,-5</span> <span class="pre">w&gt;60</span> <span class="pre">z&gt;10</span> <span class="pre">K2,3</span></code> фильтрует все позиции с учётом структуры шашек, счёта и куба редактируемой позиции, где у игрока от 20 до 5 пипов преимущества в гонке, вероятность победы не менее 60%, не менее 10 шашек в зоне, и у противника от 2 до 3 задних шашек.</p>
+</section>
+<section id="commandes-diverses">
+<span id="cmd-misc"></span><h2><span class="section-number">4.5. </span>Прочие команды<a class="headerlink" href="#commandes-diverses" title="Ссылка на этот заголовок"></a></h2>
+<table class="docutils align-center">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 80.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Команда</p></th>
+<th class="head"><p>Действие</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>clear, cl</p></td>
+<td><p>Очищает историю команд.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Примечание</p>
+<p>Миграция базы данных теперь выполняется автоматически при открытии базы данных.</p>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Нижняя область">
+        <a href="guide_utilisateur.html" class="btn btn-neutral float-left" title="3. Руководство пользователя" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Предыдущая</a>
+        <a href="raccourcis.html" class="btn btn-neutral float-right" title="5. Горячие клавиши" accesskey="n" rel="next">Следующая <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Авторские права 2024-2026, Kevin UNGER &lt;blunderdb@proton.me&gt;. </p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <div class="rst-languages">
+        
+        <dl>
+            <dt>Языки</dt>
+            
+            <dd><a href="../fr/index.html">Français</a></dd>
+            
+            <dd><a href="../en/index.html">English</a></dd>
+            
+            <dd><a href="../de/index.html">Deutsch</a></dd>
+            
+            <dd><a href="../el/index.html">Ελληνικά</a></dd>
+            
+            <dd><a href="../es/index.html">Español</a></dd>
+            
+            <dd><a href="../fi/index.html">Suomi</a></dd>
+            
+            <dd><a href="../it/index.html">Italiano</a></dd>
+            
+            <dd><a href="../ja/index.html">日本語</a></dd>
+            
+            <dd><a href="../ru/index.html">Русский</a></dd>
+            
+        </dl>
+        
+        <br>
+        </dl>
+    </div>
+</div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
