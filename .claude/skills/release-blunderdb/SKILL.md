@@ -1,10 +1,11 @@
 ---
 name: release-blunderdb
 description: >-
-  Drive a full blunderDB release: audit the French + English Sphinx docs for
-  staleness, update the version/history changelog table (FR and EN) with the new
-  user-facing features only, cut the version with scripts/release.sh, and publish
-  a changelog-style GitHub release with gh. Use when the user asks to "release",
+  Drive a full blunderDB release: audit the Sphinx docs for staleness across all
+  9 languages (French source + 8 gettext translations), update the version/history
+  changelog table (FR source + every translation) with the new user-facing
+  features only, cut the version with scripts/release.sh, and publish a
+  changelog-style GitHub release with gh. Use when the user asks to "release",
   "faire une release", "publier une version", "cut a release", or "release
   blunderDB <version>".
 ---
@@ -22,11 +23,13 @@ that cwd.
 
 ## What a release consists of
 
-1. **Doc pass** — make sure the Sphinx docs are up to date in **both** French and
-   English (new/changed features documented in both languages).
+1. **Doc pass** — make sure the Sphinx docs are up to date in **all 9 languages**:
+   the French source plus the 8 gettext translations (en, de, el, es, fi, it, ja,
+   ru). New/changed features documented in the French source and translated in
+   every catalog.
 2. **Version history table** — add a new row mentioning **only the new
    user-facing features** (not refactors, CI fixes, internal plumbing), updated in
-   **both** French and English.
+   the **French source and every translation**.
 3. **Cut the version** via `scripts/release.sh`.
 4. **GitHub release notes** — write a changelog-style description (**in English**)
    and publish it with `gh`.
@@ -71,33 +74,53 @@ before doing anything that writes files. Use AskUserQuestion if unsure.
 
 ---
 
-## Phase 1 — Documentation audit (FR + EN)
+## Phase 1 — Documentation audit (all 9 languages)
 
 **i18n model (important — verify it still holds, but this is how the repo works):**
 
 - **French is the source language.** All human-written content lives in the
   `doc/source/*.rst` files **in French** (`conf.py`: `language = 'fr'`,
   `gettext_compact = False`).
-- **English is a gettext translation**, not a parallel `.rst` tree. Each
-  `source/<name>.rst` has a catalog at
-  `doc/source/locale/en/LC_MESSAGES/<name>.po` whose `msgstr` entries hold the
-  English text. (`locale/fr/LC_MESSAGES/*.po` also exists but is mostly empty
+- **The other 8 languages are gettext translations**, not parallel `.rst` trees.
+  The full set is defined once in `conf.py` as `LANGUAGES` and mirrored in
+  `doc/build.py` as `LANG`: **fr** (source) + **en, de, el, es, fi, it, ja, ru**
+  (translations). Each `source/<name>.rst` has a catalog at
+  `doc/source/locale/<code>/LC_MESSAGES/<name>.po` whose `msgstr` entries hold the
+  translated text. (`locale/fr/LC_MESSAGES/*.po` also exists but is mostly empty
   because French is the source.)
-- `doc/build.py` builds both languages — `sphinx-build -b html -D language=fr`
-  then `-D language=en`, plus the LaTeX/PDF for each. GitHub Pages publishes from
-  `gh-pages` on tag push, so docs must be correct *before* the tag.
+- `doc/build.py` loops `LANG`, building HTML (`sphinx-build -b html -D
+  language=<code>`) and the LaTeX/PDF for each. It exports `BLUNDERDB_DOC_LANG`
+  so `conf.py` can pick per-language PDF fonts/engine (**ja** uses upLaTeX +
+  dvipdfmx; **el/ru** pin GNU FreeFont under XeLaTeX; the Latin languages use the
+  default XeLaTeX setup). GitHub Pages publishes from `gh-pages` on tag push, so
+  docs must be correct *before* the tag. The in-page language switcher
+  (`_templates/versions.html`) is driven by `conf.py`'s `html_context['languages']`
+  — every code in `LANGUAGES` gets a link, and each `../<code>/index.html` target
+  must exist (i.e. that language must be built) or the link 404s.
 
-So **"update the docs in French and English" concretely means:** edit the French
-`.rst`, then update the matching English `.po` catalog's `msgstr` for any
-new/changed strings. Do **not** look for English `.rst` files — there aren't any.
+So **"update the docs in every language" concretely means:** edit the French
+`.rst`, then update the matching `msgstr` in **all 8** translation catalogs
+(`locale/<code>/LC_MESSAGES/<name>.po`) for any new/changed strings. Do **not**
+look for non-French `.rst` files — there aren't any. The PDF download link on the
+download page is per-language: each catalog's `msgstr` for that sentence should
+reference its own `|latest_<code>_pdf|` substitution (all 9 are defined in
+`conf.py`'s `rst_prolog`).
+
+> **Translation quality caveat.** The non-French translations were seeded by LLM
+> and the maintainer cannot proofread ja/fi/ru/el. Treat empty/`fuzzy` `msgstr`
+> as the source of truth for what still needs human attention, and surface the
+> per-language staleness report (step 3 below) so the user can decide whether to
+> ship or defer a given language.
 
 Steps:
 
-1. Confirm the layout hasn't changed:
+1. Confirm the layout hasn't changed (the language set lives in two places that
+   must agree):
 
    ```bash
-   grep -nE "language|locale|gettext" doc/source/conf.py
-   ls doc/source/locale/en/LC_MESSAGES/
+   grep -nE "LANGUAGES|language|locale|gettext" doc/source/conf.py
+   grep -n "LANG =" doc/build.py
+   ls doc/source/locale/                 # one dir per translated language
    ```
 
 2. For each user-facing change since the last tag (the `feat`/`fix` set from
@@ -107,35 +130,60 @@ Steps:
    the French prose first. Keep each file ≤500 lines (project rule); split if
    needed.
 
-3. Regenerate the translation catalogs so new/changed French strings get fresh
-   `msgid` entries, then translate them. The repo's `doc/README.txt` documents the
-   workflow:
+3. Regenerate **all** translation catalogs so new/changed French strings get
+   fresh `msgid` entries, then translate them. The repo's `doc/README.txt`
+   documents the workflow:
 
    ```bash
    cd doc
-   make gettext                          # extract msgids → build/gettext/*.pot
-   sphinx-intl update -l fr -l en        # update locale/{fr,en}/LC_MESSAGES/*.po
+   make gettext                                              # extract msgids → build/gettext/*.pot
+   sphinx-intl update -l fr -l en -l de -l el -l es -l fi -l it -l ja -l ru
    ```
 
-   Then fill in the **English `msgstr`** for every new/changed/`fuzzy` entry in the
-   affected `doc/source/locale/en/LC_MESSAGES/<name>.po` files (the README points
-   to lokalize, but editing the `.po` directly is fine). Translate accurately and
-   in the house style of the surrounding entries; clear the `#, fuzzy` flag once a
-   `msgstr` is done.
+   Then **check translation freshness per language** — this is the "verify the
+   translations are up to date" step. Empty or `#, fuzzy` `msgstr` are the strings
+   that still need work after the French source changed:
 
-4. Build to confirm nothing is broken:
+   ```bash
+   # NB: msgattrib takes ONE file at a time — loop per .po, don't glob.
+   for lang in en de el es fi it ja ru; do
+     empty=0
+     for f in doc/source/locale/$lang/LC_MESSAGES/*.po; do
+       c=$(msgattrib --untranslated "$f" 2>/dev/null | grep -c '^msgid "')
+       empty=$((empty + c - 1))   # -1 drops the header msgid "" msgattrib always emits
+     done
+     fuzzy=$(grep -rl '#, fuzzy' doc/source/locale/$lang/LC_MESSAGES/ 2>/dev/null | wc -l)
+     echo "$lang: ~$empty untranslated entries, $fuzzy file(s) with fuzzy strings"
+   done
+   ```
+
+   (`msgattrib` ships with gettext; if absent, fall back to
+   `grep -c '^msgstr ""$' …` per file.) Fill in the `msgstr` for every new/changed/`fuzzy`
+   entry in each affected `doc/source/locale/<code>/LC_MESSAGES/<name>.po`,
+   translating accurately in the house style of the surrounding entries; clear the
+   `#, fuzzy` flag once a `msgstr` is done. **Report the per-language counts to the
+   user** — if some language can't be fully translated this cycle, that's a
+   conscious call (it falls back to French for the untranslated strings), not a
+   silent gap.
+
+4. Build to confirm nothing is broken — this builds **all 9 languages** (HTML +
+   PDF):
 
    ```bash
    cd doc && python build.py    # needs doc/requirements.txt (use the doc/.venv); LaTeX only for the PDF
    ```
 
-   If only the LaTeX/PDF step fails for missing TeX deps, that's acceptable — note
-   it to the user rather than blocking; CI on the tag does the authoritative build.
-   The `doc/build/` output is git-ignored — don't commit it.
+   The Japanese PDF needs upLaTeX + `texlive-lang-cjk`/`texlive-lang-japanese`;
+   el/ru PDFs need `fonts-freefont-otf` (CI installs all of these). If only the
+   LaTeX/PDF step fails locally for missing TeX deps, that's acceptable — note it
+   to the user rather than blocking; CI on the tag does the authoritative build.
+   Known minor issue: the `✗` (U+2717) glyph in the stats-parity table is absent
+   from the Japanese CMap and renders as a warning — cosmetic, not fatal. The
+   `doc/build/` output is git-ignored — don't commit it.
 
 ---
 
-## Phase 2 — Version history / changelog table (FR + EN)
+## Phase 2 — Version history / changelog table (FR source + all translations)
 
 The version-history table is the **"Historique des versions"** `csv-table` in
 `doc/source/index.rst` (French source). Its rows look exactly like:
@@ -154,11 +202,12 @@ The version-history table is the **"Historique des versions"** `csv-table` in
 
 Each row is `   X.Y.Z, dd/mm/yyyy, "<French description>"` — 3-space indented, the
 description double-quoted and allowed to span multiple lines (blank lines inside
-the quotes separate sub-items). There is **only one table, in French**; its
-English rendering comes from the gettext catalog
-`doc/source/locale/en/LC_MESSAGES/index.po` (Sphinx extracts each table cell as a
-translatable string). So "FR + EN changelog" = **French row in `index.rst`** plus
-**English `msgstr` for that cell in `index.po`**.
+the quotes separate sub-items). There is **only one table, in French**; each
+language's rendering comes from its gettext catalog
+`doc/source/locale/<code>/LC_MESSAGES/index.po` (Sphinx extracts each table cell
+as a translatable string). So the changelog work = **French row in `index.rst`**
+plus the `msgstr` for that cell in **every** `locale/<code>/LC_MESSAGES/index.po`
+(en, de, el, es, fi, it, ja, ru).
 
 Steps:
 
@@ -178,27 +227,30 @@ Steps:
 
    Show the user the resulting row before committing.
 
-3. **Add the English translation.** After the French row exists, regenerate and
-   translate the catalog so the table's English column updates:
+3. **Add every translation.** After the French row exists, regenerate and
+   translate all catalogs so the table's other-language columns update:
 
    ```bash
    cd doc
    make gettext
-   sphinx-intl update -l fr -l en
+   sphinx-intl update -l fr -l en -l de -l el -l es -l fi -l it -l ja -l ru
    ```
 
-   Then set the English `msgstr` for the new changelog cell (and any other
-   new/`fuzzy` index entries) in `doc/source/locale/en/LC_MESSAGES/index.po`,
-   matching the English wording style of previous entries. This is the step that
-   keeps the **English** version table in sync — don't skip it.
+   Then set the `msgstr` for the new changelog cell (and any other new/`fuzzy`
+   index entries) in **each** `doc/source/locale/<code>/LC_MESSAGES/index.po`,
+   matching the wording style of previous entries in that language. This is the
+   step that keeps every version table in sync — don't skip it. Run the
+   per-language freshness scan from Phase 1 step 3 against `index.po` to confirm no
+   catalog was left with an untranslated changelog cell.
 
 4. Commit the doc + changelog work **before** cutting the release, e.g.
-   `docs(release): update FR/EN docs and changelog for <version>`. (release.sh
-   warns on a dirty tree; committing first keeps the `Release <version>` commit
-   clean.) If you let release.sh insert the French row in Phase 3, do the `.po`
-   translation + commit either right after, or fold it into the release commit —
-   just make sure the pushed tag contains both languages. Releases go out from
-   `main`; only branch first if the user isn't on the intended branch.
+   `docs(release): update docs and changelog (9 languages) for <version>`.
+   (release.sh warns on a dirty tree; committing first keeps the `Release
+   <version>` commit clean.) If you let release.sh insert the French row in Phase
+   3, do the `.po` translations + commit either right after, or fold it into the
+   release commit — just make sure the pushed tag contains every language.
+   Releases go out from `main`; only branch first if the user isn't on the
+   intended branch.
 
 ---
 
@@ -272,9 +324,9 @@ user-facing. A good shape:
 ```
 
 Derive the bullets from the same `feat(...)`/`fix(...)` set as Phase 0 — keep
-internal commits out. Note that the FR/EN changelog in Phase 2 has a French
-source row; the GitHub release notes are the **English** rendering of the same
-feature list — reuse the English wording you wrote into `index.po`. Check
+internal commits out. Note that the Phase 2 changelog has a French source row;
+the GitHub release notes are the **English** rendering of the same feature list —
+reuse the English wording you wrote into `locale/en/LC_MESSAGES/index.po`. Check
 `gh release view <prevTag>` for tone/formatting, but the **language is always
 English** even if older notes were French.
 
@@ -297,9 +349,11 @@ doesn't touch assets).
 
 ## Final report to the user
 
-Summarize: version released, the FR/EN doc files touched, the changelog rows
-added, the tag pushed, the GitHub release URL, and the CI run status/URL. Flag
-anything skipped (e.g. PDF build that needed LaTeX) so the user can follow up.
+Summarize: version released, the doc files touched (French source + which
+translation catalogs), the per-language translation-freshness counts, the
+changelog rows added, the tag pushed, the GitHub release URL, and the CI run
+status/URL. Flag anything skipped (e.g. a PDF build that needed LaTeX, or a
+language left partially untranslated) so the user can follow up.
 
 ## Guardrails
 
@@ -308,8 +362,9 @@ anything skipped (e.g. PDF build that needed LaTeX) so the user can follow up.
 - New-features-only in the history table and release notes; exclude refactors,
   CI/build/test/chore commits.
 - GitHub release notes are always written in **English**.
-- Keep French and English in lockstep — every feature documented and listed in
-  both.
+- Keep all 9 languages in lockstep — every feature documented in the French
+  source and translated in every catalog (en, de, el, es, fi, it, ja, ru), or the
+  per-language gap explicitly surfaced to the user.
 - Don't bump `DatabaseVersion` here (it's schema-coupled and independent).
 - Don't commit changes to the sample `*.db` files in the repo root.
 - Respect the ≤500-line doc rule.

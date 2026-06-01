@@ -1,0 +1,777 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/index.rst:4
+msgid "blunderDB"
+msgstr "blunderDB"
+
+#: ../../source/index.rst:6
+msgid ""
+"blunderDB est un logiciel pour constituer des bases de données de "
+"positions de backgammon. Sa force principale est de constituer un lieu "
+"unique où aggréger les positions qu'un joueur a pu rencontrer (en ligne, "
+"en tournoi) et de pouvoir réétudier ces positions en les filtrant selon "
+"différents filtres combinables arbitrairement. blunderDB peut également "
+"être utilisé pour constituer des catalogues de positions de référence."
+msgstr ""
+"Το blunderDB είναι ένα λογισμικό για τη δημιουργία βάσεων δεδομένων θέσεων "
+"τάβλι (backgammon). Η κύρια δύναμή του είναι να παρέχει ένα μοναδικό μέρος "
+"όπου ένας παίκτης μπορεί να συγκεντρώσει τις θέσεις που έχει συναντήσει "
+"(διαδικτυακά, σε τουρνουά) και να μπορεί να μελετήσει ξανά αυτές τις θέσεις "
+"φιλτράροντάς τες με διάφορα φίλτρα που μπορούν να συνδυαστούν αυθαίρετα. Το "
+"blunderDB μπορεί επίσης να χρησιμοποιηθεί για τη δημιουργία καταλόγων θέσεων "
+"αναφοράς."
+
+#: ../../source/index.rst:13
+msgid "La présente documentation est structurée de la manière suivante:"
+msgstr "Η παρούσα τεκμηρίωση είναι δομημένη ως εξής:"
+
+#: ../../source/index.rst:15
+msgid ""
+"la section **téléchargement et installation** explique comment se "
+"procurer et lancer blunderDB."
+msgstr ""
+"η ενότητα **λήψη και εγκατάσταση** εξηγεί πώς να αποκτήσετε και να "
+"εκτελέσετε το blunderDB."
+
+#: ../../source/index.rst:18
+msgid "le **manuel** décrit le fonctionnement général de blunderDB."
+msgstr "το **εγχειρίδιο** περιγράφει τη γενική λειτουργία του blunderDB."
+
+#: ../../source/index.rst:20
+msgid ""
+"le **guide utilisateur** est une introduction pratique pour utiliser "
+"rapidement blunderDB."
+msgstr ""
+"ο **οδηγός χρήστη** είναι μια πρακτική εισαγωγή για τη γρήγορη χρήση του "
+"blunderDB."
+
+#: ../../source/index.rst:23
+msgid ""
+"la liste des **commandes** ainsi que la liste des **raccourcis** clavier "
+"permettent une utilisation efficace de blunderDB."
+msgstr ""
+"η λίστα των **εντολών** καθώς και η λίστα των **συντομεύσεων** "
+"πληκτρολογίου επιτρέπουν την αποτελεσματική χρήση του blunderDB."
+
+#: ../../source/index.rst:26
+msgid ""
+"la section **interface en ligne de commande (CLI)** décrit les commandes "
+"disponibles pour l'import en masse, l'automatisation et le scripting."
+msgstr ""
+"η ενότητα **διεπαφή γραμμής εντολών (CLI)** περιγράφει τις διαθέσιμες "
+"εντολές για μαζική εισαγωγή, αυτοματοποίηση και scripting."
+
+#: ../../source/index.rst:29
+msgid ""
+"la **FAQ** fournit quelques réponses aux interrogations les plus "
+"fréquentes."
+msgstr ""
+"η ενότητα **Συχνές Ερωτήσεις (FAQ)** παρέχει απαντήσεις στις πιο συχνές "
+"ερωτήσεις."
+
+#: ../../source/index.rst:32
+msgid "Historique des versions"
+msgstr "Ιστορικό εκδόσεων"
+
+#: ../../source/index.rst:1
+msgid "Version"
+msgstr "Έκδοση"
+
+#: ../../source/index.rst:1
+msgid "Date"
+msgstr "Ημερομηνία"
+
+#: ../../source/index.rst:1
+msgid "Cause et/ou nature des évolutions"
+msgstr "Αιτία ή/και φύση των αλλαγών"
+
+#: ../../source/index.rst:1
+msgid "0.1.0"
+msgstr "0.1.0"
+
+#: ../../source/index.rst:1
+msgid "31/12/2024"
+msgstr "31 Δεκεμβρίου 2024"
+
+#: ../../source/index.rst:1
+msgid "Création version beta."
+msgstr "Έκδοση beta."
+
+#: ../../source/index.rst:1
+msgid "0.2.0"
+msgstr "0.2.0"
+
+#: ../../source/index.rst:1
+msgid "06/01/2025"
+msgstr "6 Ιανουαρίου 2025"
+
+#: ../../source/index.rst:1
+msgid "Résolutions de bugs divers."
+msgstr "Διάφορες διορθώσεις σφαλμάτων."
+
+#: ../../source/index.rst:3
+msgid "Ajout de tables de matchs/TP/GV."
+msgstr "Προσθήκη πινάκων αγώνων/TP/GV."
+
+#: ../../source/index.rst:5
+msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
+msgstr "Προσθήκη φίλτρων αναζήτησης (κινήσεις, αποφάσεις ντουμπλέ, ημερομηνία)."
+
+#: ../../source/index.rst:7
+msgid "Ajout de métadonnées sur les positions."
+msgstr "Προσθήκη μεταδεδομένων στις θέσεις."
+
+#: ../../source/index.rst:9
+msgid "Fonction d'import/export entre instances de blunderDB."
+msgstr "Λειτουργία εισαγωγής/εξαγωγής μεταξύ στιγμιότυπων του blunderDB."
+
+#: ../../source/index.rst:11
+msgid "Ajout de fonction de métadonnées sur les bases de données."
+msgstr "Προσθήκη λειτουργίας μεταδεδομένων στις βάσεις δεδομένων."
+
+#: ../../source/index.rst:13
+msgid "Introduction des numéros de versions (base de données et application)."
+msgstr "Εισαγωγή αριθμών εκδόσεων (βάσης δεδομένων και εφαρμογής)."
+
+#: ../../source/index.rst:1
+msgid "0.3.0"
+msgstr "0.3.0"
+
+#: ../../source/index.rst:1
+msgid "27/01/2025"
+msgstr "27 Ιανουαρίου 2025"
+
+#: ../../source/index.rst:3
+msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
+msgstr "Αυτόματη αποθήκευση του μεγέθους του παραθύρου."
+
+#: ../../source/index.rst:5
+msgid "Importe les éventuels commentaires depuis XG."
+msgstr "Εισαγωγή τυχόν σχολίων από το XG."
+
+#: ../../source/index.rst:1
+msgid "0.4.0"
+msgstr "0.4.0"
+
+#: ../../source/index.rst:1
+msgid "03/02/2025"
+msgstr "3 Φεβρουαρίου 2025"
+
+#: ../../source/index.rst:3
+msgid "Ajout d'une icone pour blunderDB."
+msgstr "Προσθήκη εικονιδίου για το blunderDB."
+
+#: ../../source/index.rst:5
+msgid "Corrections de filtres."
+msgstr "Διορθώσεις φίλτρων."
+
+#: ../../source/index.rst:7
+msgid "Ajout du support de MacOS."
+msgstr "Προσθήκη υποστήριξης MacOS."
+
+#: ../../source/index.rst:1
+msgid "0.5.0"
+msgstr "0.5.0"
+
+#: ../../source/index.rst:1
+msgid "04/02/2025"
+msgstr "4 Φεβρουαρίου 2025"
+
+#: ../../source/index.rst:1
+msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
+msgstr "Προσθήκη νέων φίλτρων (καθρέφτης, μη επαφή, jan blot, outfield blot)."
+
+#: ../../source/index.rst:1
+msgid "0.6.0"
+msgstr "0.6.0"
+
+#: ../../source/index.rst:1
+msgid "13/02/2025"
+msgstr "13 Φεβρουαρίου 2025"
+
+#: ../../source/index.rst:1
+msgid "Ajout de la bibliothèque de filtres."
+msgstr "Προσθήκη βιβλιοθήκης φίλτρων."
+
+#: ../../source/index.rst:3
+msgid "Affichage de la version de la base de données dans les métadonnées."
+msgstr "Εμφάνιση της έκδοσης της βάσης δεδομένων στα μεταδεδομένα."
+
+#: ../../source/index.rst:1
+msgid "0.7.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+msgid "16/02/2025"
+msgstr "16 Φεβρουαρίου 2025"
+
+#: ../../source/index.rst:1
+msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
+msgstr "Υποστήριξη ιαπωνικών και γερμανικών εξαγωγών XG."
+
+#: ../../source/index.rst:1
+msgid "0.8.0"
+msgstr "0.8.0"
+
+#: ../../source/index.rst:1
+msgid "03/05/2025"
+msgstr "3 Μαΐου 2025"
+
+#: ../../source/index.rst:1
+msgid "Possibilité de cacher le compte de course."
+msgstr "Δυνατότητα απόκρυψης του pip count."
+
+#: ../../source/index.rst:3
+msgid "Chargement d'une position aléatoire."
+msgstr "Φόρτωση τυχαίας θέσης."
+
+#: ../../source/index.rst:1
+msgid "0.9.0"
+msgstr "0.9.0"
+
+#: ../../source/index.rst:1
+msgid "02/11/2025"
+msgstr "2 Νοεμβρίου 2025"
+
+#: ../../source/index.rst:1
+msgid "Correction de bug de la bibliothèque de filtres."
+msgstr "Διόρθωση σφάλματος της βιβλιοθήκης φίλτρων."
+
+#: ../../source/index.rst:3
+msgid "Import/export de base de données."
+msgstr "Εισαγωγή/εξαγωγή βάσης δεδομένων."
+
+#: ../../source/index.rst:5
+msgid "Affichage de flèches pour les coups sélectionnés."
+msgstr "Εμφάνιση βελών για τις επιλεγμένες κινήσεις."
+
+#: ../../source/index.rst:7
+msgid "Raccourcis clavier pour l'import/export."
+msgstr "Συντομεύσεις πληκτρολογίου για την εισαγωγή/εξαγωγή."
+
+#: ../../source/index.rst:1
+msgid "0.10.0"
+msgstr "0.10.0"
+
+#: ../../source/index.rst:1
+msgid "25/02/2026"
+msgstr "25 Φεβρουαρίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
+"(MAT/TXT) et BGBlitz (BGF/TXT)."
+msgstr ""
+"Εισαγωγή αγώνων από eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
+"(MAT/TXT) και BGBlitz (BGF/TXT)."
+
+#: ../../source/index.rst:3
+msgid ""
+"Navigation dans les matchs: parcours des coups d'un match importé, avec "
+"mise en évidence du coup joué."
+msgstr ""
+"Πλοήγηση στους αγώνες: περιήγηση στις κινήσεις ενός εισαγόμενου αγώνα, με "
+"επισήμανση της κίνησης που παίχτηκε."
+
+#: ../../source/index.rst:5
+msgid ""
+"Panneau des matchs: liste, tri, édition inline, permutation des joueurs, "
+"assignation de tournoi."
+msgstr ""
+"Πίνακας αγώνων: λίστα, ταξινόμηση, εσωτερική επεξεργασία, εναλλαγή "
+"παικτών, ανάθεση τουρνουά."
+
+#: ../../source/index.rst:7
+msgid "Import par dossier récursif et import par glisser-déposer."
+msgstr "Εισαγωγή με αναδρομικό φάκελο και εισαγωγή με μεταφορά και απόθεση."
+
+#: ../../source/index.rst:9
+msgid ""
+"Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
+"GNUbg intégrée."
+msgstr ""
+"Υπολογιστής EPC (Effective Pip Count) με ενσωματωμένη βάση δεδομένων "
+"bearoff του GNUbg."
+
+#: ../../source/index.rst:11
+msgid "Collections: regroupement personnalisé de positions."
+msgstr "Συλλογές: προσαρμοσμένη ομαδοποίηση θέσεων."
+
+#: ../../source/index.rst:13
+msgid "Tournois: regroupement de matchs par événement."
+msgstr "Τουρνουά: ομαδοποίηση αγώνων ανά εκδήλωση."
+
+#: ../../source/index.rst:15
+msgid ""
+"Sauvegarde et restauration de l'état de session (dernière recherche, "
+"position courante)."
+msgstr ""
+"Αποθήκευση και επαναφορά της κατάστασης συνεδρίας (τελευταία αναζήτηση, "
+"τρέχουσα θέση)."
+
+#: ../../source/index.rst:17
+msgid "Migration automatique du schéma de base de données."
+msgstr "Αυτόματη μετάβαση του σχήματος της βάσης δεδομένων."
+
+#: ../../source/index.rst:19
+msgid "Affichage multi-moteurs dans l'analyse."
+msgstr "Εμφάνιση πολλαπλών μηχανών στην ανάλυση."
+
+#: ../../source/index.rst:21
+msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
+msgstr "Φίλτρο σφαλμάτων/blunders του παίκτη 1 στις αναζητήσεις."
+
+#: ../../source/index.rst:23
+msgid ""
+"Export de la base de données avec sélection granulaire (matchs, "
+"collections, tournois, coups joués)."
+msgstr ""
+"Εξαγωγή της βάσης δεδομένων με λεπτομερή επιλογή (αγώνες, συλλογές, "
+"τουρνουά, κινήσεις που παίχτηκαν)."
+
+#: ../../source/index.rst:25
+msgid "Bouton de navigation dans les matchs."
+msgstr "Κουμπί πλοήγησης στους αγώνες."
+
+#: ../../source/index.rst:27
+msgid "Compte de course (pipcount) dans la navigation des matchs."
+msgstr "Εμφάνιση pip count στην πλοήγηση των αγώνων."
+
+#: ../../source/index.rst:29
+msgid "Interface en ligne de commande (CLI) complète."
+msgstr "Πλήρης διεπαφή γραμμής εντολών (CLI)."
+
+#: ../../source/index.rst:31
+msgid "Réouverture automatique de la dernière base de données."
+msgstr "Αυτόματο άνοιγμα ξανά της τελευταίας βάσης δεδομένων."
+
+#: ../../source/index.rst:33
+msgid "Amélioration de la barre d'outils et des icônes."
+msgstr "Βελτίωση της γραμμής εργαλείων και των εικονιδίων."
+
+#: ../../source/index.rst:1
+msgid "0.11.0"
+msgstr "0.11.0"
+
+#: ../../source/index.rst:1
+msgid "06/03/2026"
+msgstr "6 Μαρτίου 2026"
+
+#: ../../source/index.rst:1
+msgid "Filtre de recherche dans les positions courantes."
+msgstr "Φίλτρο αναζήτησης μέσα στις τρέχουσες φιλτραρισμένες θέσεις."
+
+#: ../../source/index.rst:3
+msgid "Ajout de filtres par match et par tournoi."
+msgstr "Προσθήκη φίλτρων ανά αγώνα και ανά τουρνουά."
+
+#: ../../source/index.rst:5
+msgid ""
+"Effacement automatique du plateau lors de l'ouverture du panneau de "
+"recherche."
+msgstr ""
+"Αυτόματος καθαρισμός του ταμπλό κατά το άνοιγμα του πίνακα αναζήτησης."
+
+#: ../../source/index.rst:1
+msgid "0.12.0"
+msgstr "0.12.0"
+
+#: ../../source/index.rst:1
+msgid "19/03/2026"
+msgstr "19 Μαρτίου 2026"
+
+#: ../../source/index.rst:1
+msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
+msgstr "Εισαγωγή αρχείων θέσεων eXtreme Gammon (XGP) με ανάλυση."
+
+#: ../../source/index.rst:1
+msgid "0.13.0"
+msgstr "0.13.0"
+
+#: ../../source/index.rst:1
+msgid "28/03/2026"
+msgstr "28 Μαρτίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Simplification de l'interface: la navigation dans les matchs et les "
+"collections se fait directement via les panneaux."
+msgstr ""
+"Απλοποίηση της διεπαφής: η πλοήγηση στους αγώνες και τις συλλογές γίνεται "
+"πλέον απευθείας μέσω των πινάκων."
+
+#: ../../source/index.rst:3
+msgid "Ligne de commande intégrée dans la barre d'état."
+msgstr "Γραμμή εντολών ενσωματωμένη στη γραμμή κατάστασης."
+
+#: ../../source/index.rst:5
+msgid "Panneau Console renommé en panneau Log."
+msgstr "Ο πίνακας Κονσόλα μετονομάστηκε σε πίνακα Log."
+
+#: ../../source/index.rst:7
+msgid "Panneau EPC dédié dans le panneau inférieur."
+msgstr "Αποκλειστικός πίνακας EPC στον κάτω πίνακα."
+
+#: ../../source/index.rst:9
+msgid "Copier/coller de position dans le panneau de recherche."
+msgstr "Αντιγραφή/επικόλληση θέσης στον πίνακα αναζήτησης."
+
+#: ../../source/index.rst:11
+msgid ""
+"Glisser-déposer pour réordonner les collections, les positions dans les "
+"collections, et les matchs dans les tournois."
+msgstr ""
+"Μεταφορά και απόθεση για την αναδιάταξη συλλογών, θέσεων μέσα στις "
+"συλλογές, και αγώνων μέσα στα τουρνουά."
+
+#: ../../source/index.rst:13
+msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
+msgstr "Στήλη τουρνουά στον πίνακα αγώνων με εσωτερική επεξεργασία."
+
+#: ../../source/index.rst:15
+msgid "Affichage automatique du panneau d'analyse après une recherche."
+msgstr "Αυτόματη εμφάνιση του πίνακα ανάλυσης μετά από μια αναζήτηση."
+
+#: ../../source/index.rst:1
+msgid "0.14.0"
+msgstr "0.14.0"
+
+#: ../../source/index.rst:1
+msgid "30/03/2026"
+msgstr "30 Μαρτίου 2026"
+
+#: ../../source/index.rst:1
+msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
+msgstr ""
+"Αποκλειστικός πίνακας Anki για μελέτη με επαναλαμβανόμενα διαστήματα "
+"(αλγόριθμος FSRS)."
+
+#: ../../source/index.rst:3
+msgid "Import des commentaires depuis les fichiers XG."
+msgstr "Εισαγωγή σχολίων από τα αρχεία XG."
+
+#: ../../source/index.rst:1
+msgid "0.15.0"
+msgstr "0.15.0"
+
+#: ../../source/index.rst:1
+msgid "31/03/2026"
+msgstr "31 Μαρτίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Export de la position en image PNG dans le presse-papier (board seul via "
+"Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
+msgstr ""
+"Εξαγωγή της θέσης ως εικόνα PNG στο πρόχειρο (μόνο το ταμπλό με Ctrl+X, ή "
+"το ταμπλό με ανάλυση με Ctrl+X Ctrl+X)."
+
+#: ../../source/index.rst:1
+msgid "0.16.0"
+msgstr "0.16.0"
+
+#: ../../source/index.rst:1
+msgid "18/04/2026"
+msgstr "18 Απριλίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Schéma de base de données v2.0.0 : déduplication des positions via hash "
+"Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
+"bitboard, journalisation WAL. Import par lot >=3x plus rapide, recherche "
+"filtrée <=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la"
+" v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; "
+"les anciennes DB sont migrées automatiquement sur place (faire une "
+"sauvegarde d'abord)."
+msgstr ""
+"Σχήμα βάσης δεδομένων v2.0.0: αφαίρεση διπλότυπων θέσεων μέσω hash "
+"Zobrist, αποκανονικοποιημένες στήλες φιλτραρίσματος, προ-φίλτρο μοτίβων "
+"bitboard, καταγραφή WAL. Μαζική εισαγωγή >=3x ταχύτερη, φιλτραρισμένη "
+"αναζήτηση <=100 ms σε 10k+ θέσεις. ΣΗΜΕΙΩΣΗ: τα αρχεία DB που "
+"δημιουργήθηκαν με την v0.16.0 δεν μπορούν να ανοιχτούν από παλαιότερες "
+"εκδόσεις· οι παλιές DB μεταβαίνουν αυτόματα επιτόπου (κάντε πρώτα ένα "
+"αντίγραφο ασφαλείας)."
+
+#: ../../source/index.rst:1
+msgid "0.17.0"
+msgstr "0.17.0"
+
+#: ../../source/index.rst:1
+msgid "20/04/2026"
+msgstr "20 Απριλίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Optimisation du stockage : compression zlib des données d'analyse (~80% "
+"de réduction), encodage compact des positions (~90% de réduction de la "
+"taille). Ajout de 5 index manquants pour améliorer les performances de "
+"recherche. Correction de la recherche par erreur de cube. Correction du "
+"mode EDIT après une recherche sans résultats. Restauration de l'état du "
+"panneau de recherche lors du changement d'onglets. Suppression de 62 "
+"instructions de débogage des chemins critiques."
+msgstr ""
+"Βελτιστοποίηση αποθήκευσης: συμπίεση zlib των δεδομένων ανάλυσης (~80% "
+"μείωση), συμπαγής κωδικοποίηση των θέσεων (~90% μείωση του μεγέθους). "
+"Προσθήκη 5 ευρετηρίων που έλειπαν για τη βελτίωση της απόδοσης αναζήτησης. "
+"Διόρθωση της αναζήτησης κατά σφάλμα ντουμπλέ. Διόρθωση της λειτουργίας EDIT "
+"μετά από αναζήτηση χωρίς αποτελέσματα. Επαναφορά της κατάστασης του πίνακα "
+"αναζήτησης κατά την εναλλαγή καρτελών. Αφαίρεση 62 εντολών εντοπισμού "
+"σφαλμάτων από τις κρίσιμες διαδρομές."
+
+#: ../../source/index.rst:1
+msgid "0.18.0"
+msgstr "0.18.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
+"fichiers spécialisés, extraction de 7 modules de service depuis "
+"App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux. "
+"Migration complète vers Svelte 5 runes. Remplacement de 9 modales de "
+"tableau par un composant générique DataTableModal. Ajout d'ESLint + "
+"Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA "
+"(focus visible, rôles ARIA, navigation clavier). Passage du mutex "
+"Database en RWMutex pour un meilleur parallélisme en lecture. "
+"Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN). Réécriture du "
+"README. Correction de tous les avertissements ESLint (46→0) et Vite "
+"(6→0)."
+msgstr ""
+"Σημαντική αναδιάρθρωση του κώδικα: διαχωρισμός του db.go (10k γραμμές) σε "
+"19 εξειδικευμένα αρχεία, εξαγωγή 7 ενοτήτων υπηρεσιών από το App.svelte "
+"(4888→469 γραμμές), ενοποίηση των stores των modal/πινάκων. Πλήρης "
+"μετάβαση στα Svelte 5 runes. Αντικατάσταση 9 modal πινάκων με ένα γενικό "
+"στοιχείο DataTableModal. Προσθήκη ESLint + Prettier + vitest (125 tests "
+"frontend) με CI. Συμμόρφωση WCAG 2.1 AA (ορατή εστίαση, ρόλοι ARIA, "
+"πλοήγηση με πληκτρολόγιο). Αναβάθμιση του mutex της Database σε RWMutex "
+"για καλύτερη παραλληλία ανάγνωσης. Πλήρης τεκμηρίωση CLI (CLI_USAGE.md + "
+"Sphinx FR/EN). Επανεγγραφή του README. Διόρθωση όλων των προειδοποιήσεων "
+"ESLint (46→0) και Vite (6→0)."
+
+#: ../../source/index.rst:1
+msgid "0.19.0"
+msgstr "0.19.0"
+
+#: ../../source/index.rst:1
+msgid "07/05/2026"
+msgstr "7 Μαΐου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
+"Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
+"tournoi, dates, type de décision, longueur de match), onglet Dashboard "
+"avec cartes de niveau / PR glissant / top blunders, onglet Progression "
+"avec courbe par tournoi et scatter plot par match, onglet Erreurs avec "
+"répartition par action de videau et histogramme des magnitudes. Drill-"
+"down interactif vers les positions / matchs / tournois depuis tous les "
+"indicateurs. Toggle PR / MWC instantané. Commande CLI list --type stats. "
+"Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
+"gnuBG (seuil 0.16 d'équité pour les cubes proches). Correction du calcul "
+"de cube_error pour les décisions Double/Pass. Documentation du modèle de "
+"statistiques (:ref:\\`stats_parity\\`). Voir :ref:\\`stats\\`."
+msgstr ""
+"Προσθήκη του πίνακα Stats: δείκτες PR (Performance Rate), Snowie Error "
+"Rate και MWC cost (Match Winning Chance cost), γραμμή φίλτρου (παίκτης, "
+"τουρνουά, ημερομηνίες, τύπος απόφασης, μήκος αγώνα), καρτέλα Dashboard με "
+"κάρτες επιπέδου / κυλιόμενο PR / κορυφαία blunders, καρτέλα Progression με "
+"καμπύλη ανά τουρνουά και scatter plot ανά αγώνα, καρτέλα Σφάλματα με "
+"κατανομή ανά ενέργεια ντουμπλέ και ιστόγραμμα των μεγεθών. Διαδραστική "
+"εμβάθυνση προς τις θέσεις / αγώνες / τουρνουά από όλους τους δείκτες. "
+"Στιγμιαία εναλλαγή PR / MWC. Εντολή CLI list --type stats. Ευθυγράμμιση "
+"των δεικτών PR / Snowie ER / MWC με τα eXtremeGammon και gnuBG (όριο 0.16 "
+"equity για τα κοντινά ντουμπλέ). Διόρθωση του υπολογισμού του cube_error "
+"για τις αποφάσεις Double/Pass. Τεκμηρίωση του στατιστικού μοντέλου "
+"(:ref:\\`stats_parity\\`). Δείτε :ref:\\`stats\\`."
+
+#: ../../source/index.rst:1
+msgid "0.20.0"
+msgstr "0.20.0"
+
+#: ../../source/index.rst:1
+msgid "31/05/2026"
+msgstr "31 Μαΐου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de la structure d'exclusion *Except* au panneau de recherche : "
+"exclut les positions contenant l'un des pions dessinés, avec marqueur « "
+"doit être vide » (double-clic) et nombre de pions par point non limité "
+"(commande x). Ajout de l'option « premier dé uniquement » au filtre de "
+"lancer de dés (variante D1, option CLI --dice). Panneau Commentaires : "
+"focus automatique du champ de saisie à l'ouverture et boutons éditer / "
+"supprimer toujours visibles. Correction du filtre « Search Text » qui ne "
+"trouvait pas tous les tags de commentaires."
+msgstr ""
+"Προσθήκη της δομής αποκλεισμού *Except* στον πίνακα αναζήτησης: αποκλείει "
+"τις θέσεις που περιέχουν οποιοδήποτε από τα σχεδιασμένα πούλια, με "
+"σήμανση « πρέπει να είναι κενό » (διπλό κλικ) και χωρίς όριο στον αριθμό "
+"πουλιών ανά σημείο (εντολή x). Προσθήκη της επιλογής « μόνο το πρώτο "
+"ζάρι » στο φίλτρο ζαριάς (παραλλαγή D1, επιλογή CLI --dice). Πίνακας "
+"Σχόλια: το πεδίο εισαγωγής εστιάζεται αυτόματα κατά το άνοιγμα και τα "
+"κουμπιά επεξεργασία / διαγραφή είναι πάντα ορατά. Διόρθωση του φίλτρου "
+"« Search Text » που δεν έβρισκε όλες τις ετικέτες σχολίων."
+
+#: ../../source/index.rst:1
+msgid "0.21.0"
+msgstr "0.21.0"
+
+#: ../../source/index.rst:1
+msgid "01/06/2026"
+msgstr "1 Ιουνίου 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Internationalisation de l'interface : l'intégralité de blunderDB (barre "
+"d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
+" en anglais, français, allemand, italien, espagnol, finnois, japonais, "
+"grec ou russe. Ajout d'une fenêtre de configuration, accessible par un "
+"bouton en forme de rouage dans la barre d'outils, permettant de "
+"sélectionner la langue. Le choix de la langue est conservé d'une session "
+"à l'autre. Voir :ref:\\`configuration\\`."
+msgstr ""
+"Διεθνοποίηση της διεπαφής: το σύνολο του blunderDB (γραμμή εργαλείων, "
+"πίνακες, μηνύματα, βοήθεια) μπορεί πλέον να εμφανιστεί κατ' επιλογήν στα "
+"αγγλικά, γαλλικά, γερμανικά, ιταλικά, ισπανικά, φινλανδικά, ιαπωνικά, "
+"ελληνικά ή ρωσικά. Προσθήκη ενός παραθύρου ρυθμίσεων, προσβάσιμου μέσω "
+"ενός κουμπιού σε σχήμα γραναζιού στη γραμμή εργαλείων, που επιτρέπει την "
+"επιλογή της γλώσσας. Η επιλογή της γλώσσας διατηρείται από τη μία συνεδρία "
+"στην άλλη. Δείτε :ref:\\`configuration\\`."
+
+#: ../../source/index.rst:147
+msgid "Sommaire"
+msgstr "Πίνακας περιεχομένων"
+
+#: ../../source/index.rst:179
+msgid "Contacts"
+msgstr "Επικοινωνία"
+
+#: ../../source/index.rst:181
+msgid ""
+"Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
+"sur Heroes sous le pseudo postmanpat."
+msgstr ""
+"Συγγραφέας: Kévin Unger <blunderdb@proton.me>. Μπορείτε επίσης να με "
+"βρείτε στο Heroes με το ψευδώνυμο postmanpat."
+
+#: ../../source/index.rst:184
+msgid ""
+"J'ai développé blunderDB initialement pour mon usage personnel afin de "
+"pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
+"d'avoir un retour surtout quand on a dépensé un paquet d'heures de "
+"conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour "
+"faire part de votre retour d'expérience. Tous les retours (constructifs) "
+"sont bienvenus."
+msgstr ""
+"Ανέπτυξα αρχικά το blunderDB για προσωπική μου χρήση, ώστε να μπορώ να "
+"εντοπίζω μοτίβα στα λάθη μου. Ωστόσο, είναι πολύ ευχάριστο να λαμβάνεις "
+"σχόλια, ειδικά όταν έχεις ξοδέψει πολλές ώρες σε σχεδιασμό, "
+"προγραμματισμό, αποσφαλμάτωση... Γι' αυτό μη διστάσετε να μου γράψετε για "
+"να μοιραστείτε την εμπειρία σας. Όλα τα (εποικοδομητικά) σχόλια είναι "
+"ευπρόσδεκτα."
+
+#: ../../source/index.rst:191
+msgid "Voici plusieurs manières de discuter:"
+msgstr "Ακολουθούν διάφοροι τρόποι για να επικοινωνήσετε:"
+
+#: ../../source/index.rst:193
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr ""
+"συμμετάσχετε στον διακομιστή Discord του blunderDB: "
+"https://discord.gg/DA5PpzM9En"
+
+#: ../../source/index.rst:195
+msgid "m'écrire un mail à blunderdb@proton.me,"
+msgstr "στείλτε μου email στο blunderdb@proton.me,"
+
+#: ../../source/index.rst:197
+msgid "discuter avec moi, si on se retrouve dans un tournoi,"
+msgstr "μιλήστε μαζί μου, αν συναντηθούμε σε κάποιο τουρνουά,"
+
+#: ../../source/index.rst:199
+msgid "sur Github,"
+msgstr "στο Github,"
+
+#: ../../source/index.rst:201
+msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
+msgstr "ανοίξτε ένα ζήτημα: https://github.com/kevung/blunderDB/issues"
+
+#: ../../source/index.rst:203
+msgid ""
+"pour des corrections de bugs ou des propositions d'amélioration, créer "
+"une pull request."
+msgstr ""
+"για διορθώσεις σφαλμάτων ή προτάσεις βελτίωσης, δημιουργήστε ένα pull "
+"request."
+
+#: ../../source/index.rst:207
+msgid "Faire un don"
+msgstr "Κάντε μια δωρεά"
+
+#: ../../source/index.rst:209
+msgid ""
+"Si vous appréciez blunderDB et que vous voulez soutenir les "
+"développements passés et futurs, vous pouvez"
+msgstr ""
+"Αν εκτιμάτε το blunderDB και θέλετε να στηρίξετε την παρελθούσα και "
+"μελλοντική ανάπτυξή του, μπορείτε"
+
+#: ../../source/index.rst:211
+msgid "me payer un verre si on a le plaisir de se rencontrer!"
+msgstr "να με κεράσετε ένα ποτό αν έχουμε τη χαρά να συναντηθούμε!"
+
+#: ../../source/index.rst:213
+msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
+msgstr "να κάνετε μια μικρή δωρεά μέσω PayPal στη διεύθυνση blunderdb@proton.me"
+
+#: ../../source/index.rst:216
+msgid "Remerciements"
+msgstr "Ευχαριστίες"
+
+#: ../../source/index.rst:218
+msgid ""
+"Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
+"fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
+msgstr ""
+"Αφιερώνω αυτό το μικρό λογισμικό στη σύντροφό μου Anne-Claire και στη "
+"γλυκιά μας κόρη Perrine. Θέλω να ευχαριστήσω ιδιαίτερα μερικούς φίλους:"
+
+#: ../../source/index.rst:221
+msgid ""
+"*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
+"bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
+" jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
+"jouer."
+msgstr ""
+"*Tristan Remille*, για τη μύησή μου στο τάβλι με χαρά και καλοσύνη· για το "
+"ότι μου δείχνει τον Δρόμο στην κατανόηση αυτού του υπέροχου παιχνιδιού· "
+"για το ότι συνεχίζει να με ενθαρρύνει παρά τις φτωχές μου προσπάθειες να "
+"παίξω καλύτερα."
+
+#: ../../source/index.rst:226
+msgid ""
+"*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
+"d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
+" depuis qu'il a choppé le virus du backgammon."
+msgstr ""
+"*Nicolas Harmand*, χαρούμενος σύντροφος εδώ και πάνω από μια δεκαετία σε "
+"υπέροχες περιπέτειες, και φανταστικός συμπαίκτης από τότε που κόλλησε τον "
+"ιό του τάβλι."

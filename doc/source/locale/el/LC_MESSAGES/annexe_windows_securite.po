@@ -1,0 +1,213 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_windows_securite.rst:4
+msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
+msgstr "Παράρτημα Windows: Εσφαλμένη ανίχνευση του blunderDB ως κακόβουλου λογισμικού"
+
+#: ../../source/annexe_windows_securite.rst:6
+msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
+msgstr "Τα παρακάτω ισχύουν για τα λειτουργικά συστήματα Windows 10 και 11."
+
+#: ../../source/annexe_windows_securite.rst:8
+msgid ""
+"Windows requiert aujourd'hui de la part de sociétés d'édition logicielle "
+"ou d'éditeurs logiciel indépendants de certifier numériquement leurs "
+"applications voire de distribuer via le Windows Store. Il est alors "
+"préconisé de faire appel à des sociétés extérieures pour obtenir un "
+"certificat numérique au prix de plusieurs centaines d'euros (voir par "
+"exemple https://learn.microsoft.com/en-us/archive/blogs/ie_fr"
+"/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-"
+"smartscreen )."
+msgstr ""
+"Τα Windows απαιτούν πλέον από τις εταιρείες έκδοσης λογισμικού ή από "
+"ανεξάρτητους προγραμματιστές να πιστοποιούν ψηφιακά τις εφαρμογές τους ή "
+"ακόμη και να τις διανέμουν μέσω του Windows Store. Συνιστάται επομένως να "
+"απευθύνεστε σε εξωτερικές εταιρείες για την απόκτηση ψηφιακού "
+"πιστοποιητικού, με κόστος αρκετών εκατοντάδων ευρώ (βλέπε για παράδειγμα "
+"https://learn.microsoft.com/en-us/archive/blogs/ie_fr"
+"/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-"
+"smartscreen )."
+
+#: ../../source/annexe_windows_securite.rst:16
+msgid ""
+"Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces"
+" possibilités onéreuses. Par conséquent, il est fort probable que Windows"
+" vous avertisse d'un potentiel danger, voire bloque complètement "
+"l'exécution de blunderDB. Les sections suivantes expliquent les "
+"opérations à réaliser pour passer outre les réticences de Windows."
+msgstr ""
+"Καθώς προσφέρω το blunderDB δωρεάν, δεν επιθυμώ να στραφώ σε αυτές τις "
+"δαπανηρές επιλογές. Κατά συνέπεια, είναι πολύ πιθανό τα Windows να σας "
+"προειδοποιήσουν για πιθανό κίνδυνο ή ακόμη και να μπλοκάρουν εντελώς την "
+"εκτέλεση του blunderDB. Οι παρακάτω ενότητες εξηγούν τις ενέργειες που "
+"πρέπει να κάνετε για να παρακάμψετε τις επιφυλάξεις των Windows."
+
+#: ../../source/annexe_windows_securite.rst:23
+msgid "Avertissement Windows SmartScreen"
+msgstr "Προειδοποίηση Windows SmartScreen"
+
+#: ../../source/annexe_windows_securite.rst:25
+msgid ""
+"Après téléchargement de blunderDB, lors de son exécution, il est possible"
+" que Windows affiche un avertissement du type"
+msgstr ""
+"Μετά τη λήψη του blunderDB, κατά την εκτέλεσή του, ενδέχεται τα Windows να "
+"εμφανίσουν μια προειδοποίηση όπως:"
+
+#: ../../source/annexe_windows_securite.rst:30
+msgid ""
+"Si vous souhaitez autoriser un exécutable spécifique bloqué par "
+"SmartScreen :"
+msgstr ""
+"Αν θέλετε να επιτρέψετε ένα συγκεκριμένο εκτελέσιμο που έχει μπλοκαριστεί "
+"από το SmartScreen:"
+
+#: ../../source/annexe_windows_securite.rst:32
+msgid "**Essayer d’exécuter l'exécutable** :"
+msgstr "**Δοκιμάστε να εκτελέσετε το εκτελέσιμο**:"
+
+#: ../../source/annexe_windows_securite.rst:34
+msgid ""
+"Lorsque vous essayez de lancer l'exécutable, SmartScreen peut le bloquer "
+"et afficher un avertissement."
+msgstr ""
+"Όταν προσπαθείτε να εκκινήσετε το εκτελέσιμο, το SmartScreen ενδέχεται να "
+"το μπλοκάρει και να εμφανίσει μια προειδοποίηση."
+
+#: ../../source/annexe_windows_securite.rst:37
+msgid "**Cliquer sur \"Informations supplémentaires\"** :"
+msgstr "**Κάντε κλικ στο \"Περισσότερες πληροφορίες\"**:"
+
+#: ../../source/annexe_windows_securite.rst:39
+msgid ""
+"Dans la fenêtre d'avertissement de SmartScreen, cliquez sur "
+"**Informations supplémentaires**."
+msgstr ""
+"Στο παράθυρο προειδοποίησης του SmartScreen, κάντε κλικ στο "
+"**Περισσότερες πληροφορίες**."
+
+#: ../../source/annexe_windows_securite.rst:42
+msgid "**Sélectionner \"Exécuter quand même\"** :"
+msgstr "**Επιλέξτε \"Εκτέλεση ούτως ή άλλως\"**:"
+
+#: ../../source/annexe_windows_securite.rst:44
+msgid ""
+"Si vous faites confiance à l'exécutable, cliquez sur **Exécuter quand "
+"même** pour contourner l'avertissement SmartScreen pour cette instance."
+msgstr ""
+"Αν εμπιστεύεστε το εκτελέσιμο, κάντε κλικ στο **Εκτέλεση ούτως ή άλλως** "
+"για να παρακάμψετε την προειδοποίηση του SmartScreen για αυτή τη φορά."
+
+#: ../../source/annexe_windows_securite.rst:48
+msgid "Blocage Windows Defender"
+msgstr "Μπλοκάρισμα από το Windows Defender"
+
+#: ../../source/annexe_windows_securite.rst:50
+msgid ""
+"Pour certains paramétrages sécurité de Windows, il arrive que malgré le "
+"déblocage de SmartScreen (voir section plus précédente), Windows Defender"
+" puisse empêcher l'exécution de blunderDB avec des messages du type"
+msgstr ""
+"Για ορισμένες ρυθμίσεις ασφαλείας των Windows, ακόμη και μετά την "
+"παράκαμψη του SmartScreen (βλέπε προηγούμενη ενότητα), το Windows Defender "
+"ενδέχεται να εμποδίσει την εκτέλεση του blunderDB με μηνύματα όπως:"
+
+#: ../../source/annexe_windows_securite.rst:57
+msgid "ou encore"
+msgstr "ή ακόμη:"
+
+#: ../../source/annexe_windows_securite.rst:62
+msgid "voire le placer en quarantaine."
+msgstr "ή ακόμη και να το θέσει σε καραντίνα."
+
+#: ../../source/annexe_windows_securite.rst:64
+msgid ""
+"Windows Defender est connu pour déclencher des faux positifs. Ce problème"
+" est explicitement mentionné dans la FAQ du site officiel de Golang ( "
+"https://go.dev/doc/faq#virus ) ou dans des tickets Github de certains "
+"projets programmés en Go ( https://github.com/golang/vscode-"
+"go/issues/3182 )."
+msgstr ""
+"Το Windows Defender είναι γνωστό ότι προκαλεί ψευδώς θετικά αποτελέσματα. "
+"Αυτό το πρόβλημα αναφέρεται ρητά στις Συχνές Ερωτήσεις του επίσημου "
+"ιστότοπου της Golang ( https://go.dev/doc/faq#virus ) ή σε δελτία Github "
+"ορισμένων έργων που έχουν προγραμματιστεί σε Go ( "
+"https://github.com/golang/vscode-go/issues/3182 )."
+
+#: ../../source/annexe_windows_securite.rst:69
+msgid "Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :"
+msgstr "Αν θέλετε να εμποδίσετε την Ασφάλεια των Windows να σαρώσει το blunderDB:"
+
+#: ../../source/annexe_windows_securite.rst:71
+msgid "**Ouvrir la Sécurité Windows** :"
+msgstr "**Ανοίξτε την Ασφάλεια των Windows**:"
+
+#: ../../source/annexe_windows_securite.rst:73
+msgid "Allez dans **Démarrer** et tapez **Sécurité Windows**."
+msgstr "Πηγαίνετε στο **Έναρξη** και πληκτρολογήστε **Ασφάλεια των Windows**."
+
+#: ../../source/annexe_windows_securite.rst:78
+msgid "**Aller à \"Protection contre les virus et menaces\"** :"
+msgstr "**Μεταβείτε στην \"Προστασία από ιούς και απειλές\"**:"
+
+#: ../../source/annexe_windows_securite.rst:80
+msgid "Cliquez sur **Protection contre les virus et menaces**."
+msgstr "Κάντε κλικ στο **Προστασία από ιούς και απειλές**."
+
+#: ../../source/annexe_windows_securite.rst:85
+msgid "**Gérer les paramètres** :"
+msgstr "**Διαχείριση ρυθμίσεων**:"
+
+#: ../../source/annexe_windows_securite.rst:87
+msgid ""
+"Faites défiler vers le bas et cliquez sur **Gérer les paramètres** sous "
+"Paramètres de protection contre les virus et menaces."
+msgstr ""
+"Κάντε κύλιση προς τα κάτω και κάντε κλικ στο **Διαχείριση ρυθμίσεων** στην "
+"ενότητα Ρυθμίσεις προστασίας από ιούς και απειλές."
+
+#: ../../source/annexe_windows_securite.rst:92
+msgid "**Ajouter ou supprimer des exclusions** :"
+msgstr "**Προσθήκη ή κατάργηση εξαιρέσεων**:"
+
+#: ../../source/annexe_windows_securite.rst:94
+msgid ""
+"Faites défiler jusqu’à la section **Exclusions** et cliquez sur **Ajouter"
+" ou supprimer des exclusions**."
+msgstr ""
+"Κάντε κύλιση μέχρι την ενότητα **Εξαιρέσεις** και κάντε κλικ στο "
+"**Προσθήκη ή κατάργηση εξαιρέσεων**."
+
+#: ../../source/annexe_windows_securite.rst:99
+msgid "**Ajouter une exclusion** :"
+msgstr "**Προσθήκη εξαίρεσης**:"
+
+#: ../../source/annexe_windows_securite.rst:101
+msgid ""
+"Cliquez sur **Ajouter une exclusion** et sélectionnez **Fichier**. "
+"Naviguez ensuite jusqu’à l’exécutable que vous souhaitez exclure et "
+"sélectionnez-le."
+msgstr ""
+"Κάντε κλικ στο **Προσθήκη εξαίρεσης** και επιλέξτε **Αρχείο**. Στη "
+"συνέχεια, μεταβείτε στο εκτελέσιμο που θέλετε να εξαιρέσετε και επιλέξτε "
+"το."
+

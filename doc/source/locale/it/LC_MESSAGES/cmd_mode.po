@@ -1,0 +1,1127 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: it <LL@li.org>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/cmd_mode.rst:4
+msgid "Liste des commandes"
+msgstr "Elenco dei comandi"
+
+#: ../../source/cmd_mode.rst:9
+msgid "Opérations globales"
+msgstr "Operazioni globali"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Commande"
+msgstr "Comando"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Action"
+msgstr "Azione"
+
+#: ../../source/cmd_mode.rst:1
+msgid "new, ne, n"
+msgstr "new, ne, n"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Crée une nouvelle base de données."
+msgstr "Crea un nuovo database."
+
+#: ../../source/cmd_mode.rst:1
+msgid "open, op, o"
+msgstr "open, op, o"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre une base de données existante."
+msgstr "Apre un database esistente."
+
+#: ../../source/cmd_mode.rst:1
+msgid "import_db, idb"
+msgstr "import_db, idb"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Importe et fusionne une autre base de données."
+msgstr "Importa e unisce un altro database."
+
+#: ../../source/cmd_mode.rst:1
+msgid "export_db, edb"
+msgstr "export_db, edb"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Exporte la sélection courante vers une nouvelle base de données."
+msgstr "Esporta la selezione corrente in un nuovo database."
+
+#: ../../source/cmd_mode.rst:1
+msgid "quit, q"
+msgstr "quit, q"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ferme blunderDB."
+msgstr "Chiude blunderDB."
+
+#: ../../source/cmd_mode.rst:1
+msgid "help, he, h"
+msgstr "help, he, h"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre l'aide de blunderDB."
+msgstr "Apre la guida di blunderDB."
+
+#: ../../source/cmd_mode.rst:1
+msgid "meta"
+msgstr "meta"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Affiche les métadonnées de la base de données."
+msgstr "Mostra i metadati del database."
+
+#: ../../source/cmd_mode.rst:1
+msgid "epc"
+msgstr "epc"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre le panneau EPC (Effective Pip Count)."
+msgstr "Apre il pannello EPC (Effective Pip Count)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "met"
+msgstr "met"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table d'équité de match Kazaross-XG2."
+msgstr "Apre la tabella di match equity Kazaross-XG2."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2"
+msgstr "tp2"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2."
+msgstr "Apre la tabella dei takepoint con cubo a 2."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2_live"
+msgstr "tp2_live"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la table des takepoints avec videau à 2 pour les courses longues."
+msgstr "Apre la tabella dei takepoint con cubo a 2 per le corse lunghe."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp2_last"
+msgstr "tp2_last"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 2 mort."
+msgstr "Apre la tabella dei takepoint con cubo a 2 morto."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4"
+msgstr "tp4"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4."
+msgstr "Apre la tabella dei takepoint con cubo a 4."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4_live"
+msgstr "tp4_live"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Ouvre la table des takepoints avec videau à 4 pour les courses longues."
+msgstr "Apre la tabella dei takepoint con cubo a 4 per le corse lunghe."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tp4_last"
+msgstr "tp4_last"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des takepoints avec videau à 4 mort."
+msgstr "Apre la tabella dei takepoint con cubo a 4 morto."
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv1"
+msgstr "gv1"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 1."
+msgstr "Apre la tabella dei valori di gammon con cubo a 1."
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv2"
+msgstr "gv2"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 2."
+msgstr "Apre la tabella dei valori di gammon con cubo a 2."
+
+#: ../../source/cmd_mode.rst:1
+msgid "gv4"
+msgstr "gv4"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ouvre la table des valeurs de gammon avec videau à 4."
+msgstr "Apre la tabella dei valori di gammon con cubo a 4."
+
+#: ../../source/cmd_mode.rst:38
+msgid "Positions et navigation"
+msgstr "Posizioni e navigazione"
+
+#: ../../source/cmd_mode.rst:1
+msgid "import, i"
+msgstr "import, i"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Importe une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
+"txt, bgf)."
+msgstr ""
+"Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "delete, del, d"
+msgstr "delete, del, d"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Supprime la position courante."
+msgstr "Elimina la posizione corrente."
+
+#: ../../source/cmd_mode.rst:1
+msgid "[number]"
+msgstr "[number]"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Aller à la position d'indice indiqué."
+msgstr "Vai alla posizione con l'indice indicato."
+
+#: ../../source/cmd_mode.rst:1
+msgid "list, l"
+msgstr "list, l"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher l'analyse de la position courante."
+msgstr "Mostra l'analisi della posizione corrente."
+
+#: ../../source/cmd_mode.rst:1
+msgid "comment, co"
+msgstr "comment, co"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/écrire des commentaires."
+msgstr "Mostra/scrivi commenti."
+
+#: ../../source/cmd_mode.rst:1
+msgid "filter, fl"
+msgstr "filter, fl"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/cacher la bibliothèque de filtres."
+msgstr "Mostra/nascondi la libreria dei filtri."
+
+#: ../../source/cmd_mode.rst:1
+msgid "history, hi"
+msgstr "history, hi"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/cacher l'historique de recherche."
+msgstr "Mostra/nascondi la cronologia di ricerca."
+
+#: ../../source/cmd_mode.rst:1
+msgid "match, ma"
+msgstr "match, ma"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/cacher le panneau des matchs."
+msgstr "Mostra/nascondi il pannello delle partite."
+
+#: ../../source/cmd_mode.rst:1
+msgid "collection, coll"
+msgstr "collection, coll"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Afficher/cacher le panneau des collections."
+msgstr "Mostra/nascondi il pannello delle collezioni."
+
+#: ../../source/cmd_mode.rst:1
+msgid "#tag1 tag2 ..."
+msgstr "#tag1 tag2 ..."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Etiqueter la position courante."
+msgstr "Etichetta la posizione corrente."
+
+#: ../../source/cmd_mode.rst:1
+msgid "e"
+msgstr "e"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Charger toutes les positions de la base de données."
+msgstr "Carica tutte le posizioni del database."
+
+#: ../../source/cmd_mode.rst:1
+msgid "m"
+msgstr "m"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Naviguer dans le dernier match visité."
+msgstr "Naviga nell'ultima partita visitata."
+
+#: ../../source/cmd_mode.rst:62
+msgid "Édition et recherche"
+msgstr "Modifica e ricerca"
+
+#: ../../source/cmd_mode.rst:1
+msgid "write, wr, w"
+msgstr "write, wr, w"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Enregistre la position courante."
+msgstr "Salva la posizione corrente."
+
+#: ../../source/cmd_mode.rst:1
+msgid "write!, wr!, w!"
+msgstr "write!, wr!, w!"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Mettre à jour la position courante."
+msgstr "Aggiorna la posizione corrente."
+
+#: ../../source/cmd_mode.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Chercher des positions avec des filtres."
+msgstr "Cerca posizioni con i filtri."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ss"
+msgstr "ss"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Chercher parmi les positions actuellement filtrées."
+msgstr "Cerca tra le posizioni attualmente filtrate."
+
+#: ../../source/cmd_mode.rst:79
+msgid "Filtres de recherche"
+msgstr "Filtri di ricerca"
+
+#: ../../source/cmd_mode.rst:81
+msgid ""
+"Les filtres ci-dessous doivent être juxtaposés lors d'une recherche, c'est-"
+"à-dire après le début de commande ``s``."
+msgstr ""
+"I filtri sottostanti devono essere giustapposti durante una ricerca, ovvero "
+"dopo l'inizio del comando ``s``."
+
+#: ../../source/cmd_mode.rst:86
+msgid ""
+"Dans la recherche de positions, par défaut, blunderDB prend en compte la "
+"structure de pions courante, ignore la position du videau, du score et des "
+"dés. Pour prendre en compte la position du videau, du score, des dés, il "
+"faut le mentionner explicitement dans la recherche."
+msgstr ""
+"Nella ricerca di posizioni, per impostazione predefinita, blunderDB tiene "
+"conto della struttura di pedine corrente e ignora la posizione del cubo, il "
+"punteggio e i dadi. Per tenere conto della posizione del cubo, del punteggio"
+" e dei dadi, occorre indicarlo esplicitamente nella ricerca."
+
+#: ../../source/cmd_mode.rst:92
+msgid ""
+"La commande de recherche ``s`` est disponible dans le panneau de recherche "
+"(touche ``TAB``). La commande ``ss`` permet de chercher parmi les résultats "
+"actuellement filtrés."
+msgstr ""
+"Il comando di ricerca ``s`` è disponibile nel pannello di ricerca (tasto "
+"``TAB``). Il comando ``ss`` permette di cercare tra i risultati attualmente "
+"filtrati."
+
+#: ../../source/cmd_mode.rst:97
+msgid ""
+"blunderDB considère qu'un pion arriéré (backchecker) est un pion situé entre"
+" le point 24 et le point 19."
+msgstr ""
+"blunderDB considera che una pedina arretrata (backchecker) sia una pedina "
+"situata tra il punto 24 e il punto 19."
+
+#: ../../source/cmd_mode.rst:101
+msgid ""
+"blunderDB considère que le nombre de pions dans la zone est le nombre de "
+"pions situés entre le point 12 et le point 1."
+msgstr ""
+"blunderDB considera che il numero di pedine nella zona sia il numero di "
+"pedine situate tra il punto 12 e il punto 1."
+
+#: ../../source/cmd_mode.rst:105
+msgid ""
+"blunderDB considère que l'outfield s'étend entre le point 18 et le point 7."
+msgstr ""
+"blunderDB considera che l'outfield si estenda tra il punto 18 e il punto 7."
+
+#: ../../source/cmd_mode.rst:108
+msgid "blunderDB considère que le jan s'étend entre le point 1 et le point 6."
+msgstr ""
+"blunderDB considera che il jan si estenda tra il punto 1 e il punto 6."
+
+#: ../../source/cmd_mode.rst:111
+msgid ""
+"Les paramètres pour filtrer des positions peuvent être arbitrairement "
+"combinés."
+msgstr ""
+"I parametri per filtrare le posizioni possono essere combinati a piacere."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Requête"
+msgstr "Query"
+
+#: ../../source/cmd_mode.rst:1
+msgid "cube, cub, cu, c"
+msgstr "cube, cub, cu, c"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position vérifie la configuration du cube."
+msgstr "La posizione verifica la configurazione del cubo."
+
+#: ../../source/cmd_mode.rst:1
+msgid "score, sco, sc, s"
+msgstr "score, sco, sc, s"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position vérifie le score."
+msgstr "La posizione verifica il punteggio."
+
+#: ../../source/cmd_mode.rst:1
+msgid "d"
+msgstr "d"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position vérifie le type de décision (pion ou cube)."
+msgstr "La posizione verifica il tipo di decisione (pedina o cubo)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "D"
+msgstr "D"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgstr ""
+"La posizione verifica il lancio dei dadi (entrambi i dadi, in qualsiasi "
+"ordine)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "D1"
+msgstr "D1"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position vérifie le lancer de dés sur le premier dé uniquement (la valeur"
+" du premier dé apparaît sur l'un des deux dés de la position)."
+msgstr ""
+"La posizione verifica il lancio dei dadi solo sul primo dado (il valore del "
+"primo dado compare su uno dei due dadi della posizione)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "nc"
+msgstr "nc"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position est sans contact."
+msgstr "La posizione è senza contatto."
+
+#: ../../source/cmd_mode.rst:1
+msgid "M"
+msgstr "M"
+
+#: ../../source/cmd_mode.rst:1
+msgid "La position ou celle miroir vérifie les filtres."
+msgstr "La posizione o quella speculare verifica i filtri."
+
+#: ../../source/cmd_mode.rst:1
+msgid "x"
+msgstr "x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position ne contient aucun pion de la structure d'exclusion (onglet « "
+"Except » du panneau de recherche)."
+msgstr ""
+"La posizione non contiene alcuna pedina della struttura di esclusione "
+"(scheda « Except » del pannello di ricerca)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "p>x"
+msgstr "p>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x pips de retard à la course."
+msgstr "Il giocatore ha almeno x pip di svantaggio nella corsa."
+
+#: ../../source/cmd_mode.rst:1
+msgid "p<x"
+msgstr "p<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x pips de retard à la course."
+msgstr "Il giocatore ha al massimo x pip di svantaggio nella corsa."
+
+#: ../../source/cmd_mode.rst:1
+msgid "px,y"
+msgstr "px,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y pips de retard à la course."
+msgstr "Il giocatore ha tra x e y pip di svantaggio nella corsa."
+
+#: ../../source/cmd_mode.rst:1
+msgid "P>x"
+msgstr "P>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a une course au moins de x pips."
+msgstr "Il giocatore ha una corsa di almeno x pip."
+
+#: ../../source/cmd_mode.rst:1
+msgid "P<x"
+msgstr "P<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a une course au plus de x pips."
+msgstr "Il giocatore ha una corsa di al massimo x pip."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Px,y"
+msgstr "Px,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a une course entre x et y pips."
+msgstr "Il giocatore ha una corsa tra x e y pip."
+
+#: ../../source/cmd_mode.rst:1
+msgid "e>x"
+msgstr "e>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'équité (en millipoints) de la position est supérieure à x."
+msgstr "L'equity (in millipunti) della posizione è maggiore di x."
+
+#: ../../source/cmd_mode.rst:1
+msgid "e<x"
+msgstr "e<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'équité (en millipoints) de la position est inférieure à x."
+msgstr "L'equity (in millipunti) della posizione è minore di x."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ex,y"
+msgstr "ex,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'équité (en millipoints) de la position est comprise entre x et y."
+msgstr "L'equity (in millipunti) della posizione è compresa tra x e y."
+
+#: ../../source/cmd_mode.rst:1
+msgid "E>x"
+msgstr "E>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est supérieure à x."
+msgstr ""
+"L'errore della mossa giocata dal giocatore 1 (in millipunti) è maggiore di "
+"x."
+
+#: ../../source/cmd_mode.rst:1
+msgid "E<x"
+msgstr "E<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est inférieure à x."
+msgstr ""
+"L'errore della mossa giocata dal giocatore 1 (in millipunti) è minore di x."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ex,y"
+msgstr "Ex,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"L'erreur du coup joué par le joueur 1 (en millipoints) est comprise entre x "
+"et y."
+msgstr ""
+"L'errore della mossa giocata dal giocatore 1 (in millipunti) è compreso tra "
+"x e y."
+
+#: ../../source/cmd_mode.rst:1
+msgid "w>x"
+msgstr "w>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a des chances de gain supérieures à x %."
+msgstr "Il giocatore ha probabilità di vittoria superiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "w<x"
+msgstr "w<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a des chances de gain inférieures à x %."
+msgstr "Il giocatore ha probabilità di vittoria inferiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "wx,y"
+msgstr "wx,y"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid "Le joueur a des chances de gain comprises à x % et y %."
+msgstr "Il giocatore ha probabilità di vittoria comprese tra x % e y %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "g>x"
+msgstr "g>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a des chances de gammon supérieures à x %."
+msgstr "Il giocatore ha probabilità di gammon superiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "g<x"
+msgstr "g<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a des chances de gammon inférieures à x %."
+msgstr "Il giocatore ha probabilità di gammon inferiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "gx,y"
+msgstr "gx,y"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid "Le joueur a des chances de gammon comprises à x % et y %."
+msgstr "Il giocatore ha probabilità di gammon comprese tra x % e y %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "b>x"
+msgstr "b>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a des chances de backgammon supérieures à x %."
+msgstr "Il giocatore ha probabilità di backgammon superiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "b<x"
+msgstr "b<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a des chances de backgammon inférieures à x %."
+msgstr "Il giocatore ha probabilità di backgammon inferiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "bx,y"
+msgstr "bx,y"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid "Le joueur a des chances de backgammon comprises à x % et y %."
+msgstr "Il giocatore ha probabilità di backgammon comprese tra x % e y %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "W>x"
+msgstr "W>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a des chances de gain supérieures à x %."
+msgstr "L'avversario ha probabilità di vittoria superiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "W<x"
+msgstr "W<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a des chances de gain inférieures à x %."
+msgstr "L'avversario ha probabilità di vittoria inferiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Wx,y"
+msgstr "Wx,y"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid "L'adversaire a des chances de gain comprises à x % et y %."
+msgstr "L'avversario ha probabilità di vittoria comprese tra x % e y %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "G>x"
+msgstr "G>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a des chances de gammon supérieures à x %."
+msgstr "L'avversario ha probabilità di gammon superiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "G<x"
+msgstr "G<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a des chances de gammon inférieures à x %."
+msgstr "L'avversario ha probabilità di gammon inferiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Gx,y"
+msgstr "Gx,y"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid "L'adversaire a des chances de gammon comprises à x % et y %."
+msgstr "L'avversario ha probabilità di gammon comprese tra x % e y %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "B>x"
+msgstr "B>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a des chances de backgammon supérieures à x %."
+msgstr "L'avversario ha probabilità di backgammon superiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "B<x"
+msgstr "B<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a des chances de backgammon inférieures à x %."
+msgstr "L'avversario ha probabilità di backgammon inferiori a x %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Bx,y"
+msgstr "Bx,y"
+
+#: ../../source/cmd_mode.rst:1
+#, python-format
+msgid "L'adversaire a des chances de backgammon comprises à x % et y %."
+msgstr "L'avversario ha probabilità di backgammon comprese tra x % e y %."
+
+#: ../../source/cmd_mode.rst:1
+msgid "o>x"
+msgstr "o>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x pions sortis."
+msgstr "Il giocatore ha almeno x pedine fuori."
+
+#: ../../source/cmd_mode.rst:1
+msgid "o<x"
+msgstr "o<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x pions sortis."
+msgstr "Il giocatore ha al massimo x pedine fuori."
+
+#: ../../source/cmd_mode.rst:1
+msgid "ox,y"
+msgstr "ox,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y pions sortis."
+msgstr "Il giocatore ha tra x e y pedine fuori."
+
+#: ../../source/cmd_mode.rst:1
+msgid "O>x"
+msgstr "O>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au moins x pions sortis."
+msgstr "L'avversario ha almeno x pedine fuori."
+
+#: ../../source/cmd_mode.rst:1
+msgid "O<x"
+msgstr "O<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au plus x pions sortis."
+msgstr "L'avversario ha al massimo x pedine fuori."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Ox,y"
+msgstr "Ox,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a entre x et y pions sortis."
+msgstr "L'avversario ha tra x e y pedine fuori."
+
+#: ../../source/cmd_mode.rst:1
+msgid "k>x"
+msgstr "k>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x pions arriérés."
+msgstr "Il giocatore ha almeno x pedine arretrate."
+
+#: ../../source/cmd_mode.rst:1
+msgid "k<x"
+msgstr "k<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x pions arriérés."
+msgstr "Il giocatore ha al massimo x pedine arretrate."
+
+#: ../../source/cmd_mode.rst:1
+msgid "kx,y"
+msgstr "kx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y pions arriérés."
+msgstr "Il giocatore ha tra x e y pedine arretrate."
+
+#: ../../source/cmd_mode.rst:1
+msgid "K>x"
+msgstr "K>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au moins x pions arriérés."
+msgstr "L'avversario ha almeno x pedine arretrate."
+
+#: ../../source/cmd_mode.rst:1
+msgid "K<x"
+msgstr "K<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au plus x pions arriérés."
+msgstr "L'avversario ha al massimo x pedine arretrate."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Kx,y"
+msgstr "Kx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a entre x et y pions arriérés."
+msgstr "L'avversario ha tra x e y pedine arretrate."
+
+#: ../../source/cmd_mode.rst:1
+msgid "z>x"
+msgstr "z>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x pions dans la zone."
+msgstr "Il giocatore ha almeno x pedine nella zona."
+
+#: ../../source/cmd_mode.rst:1
+msgid "z<x"
+msgstr "z<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x pions dans la zone."
+msgstr "Il giocatore ha al massimo x pedine nella zona."
+
+#: ../../source/cmd_mode.rst:1
+msgid "zx,y"
+msgstr "zx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y pions dans la zone."
+msgstr "Il giocatore ha tra x e y pedine nella zona."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Z>x"
+msgstr "Z>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au moins x pions dans la zone."
+msgstr "L'avversario ha almeno x pedine nella zona."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Z<x"
+msgstr "Z<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au plus x pions dans la zone."
+msgstr "L'avversario ha al massimo x pedine nella zona."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Zx,y"
+msgstr "Zx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a entre x et y pions dans la zone."
+msgstr "L'avversario ha tra x e y pedine nella zona."
+
+#: ../../source/cmd_mode.rst:1
+msgid "bo>x"
+msgstr "bo>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x blots dans l'outfield."
+msgstr "Il giocatore ha almeno x blot nell'outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "bo<x"
+msgstr "bo<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x blots dans l'outfield."
+msgstr "Il giocatore ha al massimo x blot nell'outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "box,y"
+msgstr "box,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y blots dans l'outfield."
+msgstr "Il giocatore ha tra x e y blot nell'outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BO>x"
+msgstr "BO>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au moins x blots dans l'outfield."
+msgstr "L'avversario ha almeno x blot nell'outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BO<x"
+msgstr "BO<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au plus x blots dans l'outfield."
+msgstr "L'avversario ha al massimo x blot nell'outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BOx,y"
+msgstr "BOx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a entre x et y blots dans l'outfield."
+msgstr "L'avversario ha tra x e y blot nell'outfield."
+
+#: ../../source/cmd_mode.rst:1
+msgid "bj>x"
+msgstr "bj>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au moins x blots dans le jan."
+msgstr "Il giocatore ha almeno x blot nel jan."
+
+#: ../../source/cmd_mode.rst:1
+msgid "bj<x"
+msgstr "bj<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a au plus x blots dans le jan."
+msgstr "Il giocatore ha al massimo x blot nel jan."
+
+#: ../../source/cmd_mode.rst:1
+msgid "bjx,y"
+msgstr "bjx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Le joueur a entre x et y blots dans le jan."
+msgstr "Il giocatore ha tra x e y blot nel jan."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BJ>x"
+msgstr "BJ>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au moins x blots dans le jan."
+msgstr "L'avversario ha almeno x blot nel jan."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BJ<x"
+msgstr "BJ<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a au plus x blots dans le jan."
+msgstr "L'avversario ha al massimo x blot nel jan."
+
+#: ../../source/cmd_mode.rst:1
+msgid "BJx,y"
+msgstr "BJx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "L'adversaire a entre x et y blots dans le jan."
+msgstr "L'avversario ha tra x e y blot nel jan."
+
+#: ../../source/cmd_mode.rst:1
+msgid "t'mot1;mot2;...'"
+msgstr "t'parola1;parola2;...'"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Les commentaires de la position contiennent au moins un des mots."
+msgstr "I commenti della posizione contengono almeno una delle parole."
+
+#: ../../source/cmd_mode.rst:1
+msgid "m'motif1,motif2,...\\'"
+msgstr "m'schema1,schema2,...\\'"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Les meilleurs coups de pions contenant au moins un des motifs."
+msgstr "Le migliori mosse di pedine contenenti almeno uno degli schemi."
+
+#: ../../source/cmd_mode.rst:1
+msgid "m'ND,DT,DP,...\\'"
+msgstr "m'ND,DT,DP,...\\'"
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"Les meilleurs décisions de videau de No Double/Take, Double Take, Double "
+"Pass."
+msgstr ""
+"Le migliori decisioni di cubo di No Double/Take, Double Take, Double Pass."
+
+#: ../../source/cmd_mode.rst:1
+msgid "T>x"
+msgstr "T>x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position après x (AAAA/MM/JJ)."
+msgstr "Data di aggiunta della posizione dopo x (AAAA/MM/GG)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "T<x"
+msgstr "T<x"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position avant x (AAAA/MM/JJ)."
+msgstr "Data di aggiunta della posizione prima di x (AAAA/MM/GG)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "Tx,y"
+msgstr "Tx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Date d'ajout de la position entre x et y (AAAA/MM/JJ)."
+msgstr "Data di aggiunta della posizione tra x e y (AAAA/MM/GG)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "max"
+msgstr "max"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans le match d'identifiant x (ex: ma3)."
+msgstr "Cerca nella partita con identificatore x (es: ma3)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "max,y"
+msgstr "max,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans les matchs d'identifiants x à y (ex: ma2,5)."
+msgstr "Cerca nelle partite con identificatori da x a y (es: ma2,5)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tnx"
+msgstr "tnx"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans le tournoi d'identifiant x (ex: tn1)."
+msgstr "Cerca nel torneo con identificatore x (es: tn1)."
+
+#: ../../source/cmd_mode.rst:1
+msgid "tnx,y"
+msgstr "tnx,y"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
+msgstr "Cerca nei tornei con identificatori da x a y (es: tn1,3)."
+
+#: ../../source/cmd_mode.rst:199
+msgid ""
+"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique *a"
+" fortiori* de filtrer les positions en fonction du type de décision (`d`). "
+"Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur du premier "
+"dé est utilisée pour matcher les positions (sur l'un ou l'autre des deux dés"
+" du lancer)."
+msgstr ""
+"Filtrare le posizioni in base al lancio dei dadi (`D` o `D1`) implica *a "
+"fortiori* filtrare le posizioni in base al tipo di decisione (`d`). Il "
+"filtro `D1` ignora il valore del secondo dado: solo il valore del primo dado"
+" viene usato per far corrispondere le posizioni (su uno qualsiasi dei due "
+"dadi del lancio)."
+
+#: ../../source/cmd_mode.rst:205
+msgid ""
+"Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`), le"
+" joueur est en retard à la course par rapport à l'adversaire si `x>0` et en "
+"avance si `x<0`. Exemple: `p<-10` : le joueur a au moins 10 pips d'avance à "
+"la course. `p50,70` : le joueur a entre 50 et 70 pips de retard à la course."
+msgstr ""
+"Per il filtro di differenza relativa nella corsa (`p>x`, `p<x`, `px,y`), il "
+"giocatore è in svantaggio nella corsa rispetto all'avversario se `x>0` e in "
+"vantaggio se `x<0`. Esempio: `p<-10` : il giocatore ha almeno 10 pip di "
+"vantaggio nella corsa. `p50,70` : il giocatore ha tra 50 e 70 pip di "
+"svantaggio nella corsa."
+
+#: ../../source/cmd_mode.rst:211
+msgid ""
+"Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
+"``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
+"même principe s'applique pour les tournois avec ``tn``."
+msgstr ""
+"Per cercare in più partite non contigue, giustapporre il filtro ``ma`` più "
+"volte (es: ``s ma23 ma43`` per le partite 23 e 43). Lo stesso principio si "
+"applica ai tornei con ``tn``."
+
+#: ../../source/cmd_mode.rst:215
+msgid ""
+"Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble des"
+" matchs du tournoi concerné. Les identifiants des matchs et des tournois "
+"sont visibles dans les colonnes ID des panneaux correspondants."
+msgstr ""
+"Cercare in un torneo (``tn``) equivale a cercare in tutte le partite del "
+"torneo interessato. Gli identificatori delle partite e dei tornei sono "
+"visibili nelle colonne ID dei pannelli corrispondenti."
+
+#: ../../source/cmd_mode.rst:219
+msgid ""
+"Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes les "
+"positions en prenant en compte la structure des pions, le score et le cube "
+"de la position éditée où le joueur a entre 20 et 5 pips d'avance à la "
+"course, avec au moins 60% de chances de gain, au moins 10 pions dans la "
+"zone, et l'adversaire a entre 2 et 3 pions arriérés."
+msgstr ""
+"Ad esempio, il comando ``s s c p-20,-5 w>60 z>10 K2,3`` filtra tutte le "
+"posizioni tenendo conto della struttura delle pedine, del punteggio e del "
+"cubo della posizione modificata in cui il giocatore ha tra 20 e 5 pip di "
+"vantaggio nella corsa, con almeno il 60% di probabilità di vittoria, almeno "
+"10 pedine nella zona, e l'avversario ha tra 2 e 3 pedine arretrate."
+
+#: ../../source/cmd_mode.rst:229
+msgid "Commandes diverses"
+msgstr "Comandi vari"
+
+#: ../../source/cmd_mode.rst:1
+msgid "clear, cl"
+msgstr "clear, cl"
+
+#: ../../source/cmd_mode.rst:1
+msgid "Efface l'historique des commandes."
+msgstr "Cancella la cronologia dei comandi."
+
+#: ../../source/cmd_mode.rst:238
+msgid ""
+"Les migrations de base de données sont désormais effectuées automatiquement "
+"lors de l'ouverture d'une base de données."
+msgstr ""
+"Le migrazioni del database vengono ora eseguite automaticamente all'apertura"
+" di un database."

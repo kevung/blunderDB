@@ -1,0 +1,412 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ru <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_filtres.rst:4
+msgid "Annexe: Utilisation avancée des filtres"
+msgstr "Приложение: Расширенное использование фильтров"
+
+#: ../../source/annexe_filtres.rst:8
+msgid ""
+"Cette section s'adresse aux utilisateurs avancés de blunderDB qui souhaitent"
+" exploiter pleinement les fonctionnalités de recherche de positions."
+msgstr ""
+"Этот раздел предназначен для опытных пользователей blunderDB, желающих в "
+"полной мере использовать возможности поиска позиций."
+
+#: ../../source/annexe_filtres.rst:11
+msgid ""
+"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur "
+"utilisation permet de rechercher des positions spécifiques relativement "
+"précisément. Dans cette section, l'utilisation des filtres via la ligne de "
+"commande est détaillée. La ligne de commande est accessible en appuyant sur "
+"la touche ``ESPACE``. Elle permet de combiner avec l'habitude très "
+"rapidement des filtres et d'utiliser la bibliothèque de filtres."
+msgstr ""
+"Фильтры лежат в основе анализа позиций в blunderDB. Их использование "
+"позволяет с достаточной точностью находить конкретные позиции. В этом "
+"разделе подробно описывается использование фильтров через командную строку. "
+"Командная строка доступна по нажатию клавиши ``ПРОБЕЛ``. С практикой она "
+"позволяет очень быстро комбинировать фильтры и использовать библиотеку "
+"фильтров."
+
+#: ../../source/annexe_filtres.rst:19
+msgid "Recherche de positions en ligne de commande"
+msgstr "Поиск позиций в командной строке"
+
+#: ../../source/annexe_filtres.rst:21
+msgid "Pour faire une recherche à l'aide de filtres,"
+msgstr "Для выполнения поиска с помощью фильтров,"
+
+#: ../../source/annexe_filtres.rst:23
+msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "Нажмите клавишу ``TAB``, чтобы открыть панель поиска."
+
+#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
+msgid "Editer la position courante."
+msgstr "Отредактируйте текущую позицию."
+
+#: ../../source/annexe_filtres.rst:25
+msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
+msgstr "Откройте командную строку клавишей ``ПРОБЕЛ``."
+
+#: ../../source/annexe_filtres.rst:26
+msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
+msgstr "Используйте команду ``s``, при необходимости с фильтрами."
+
+#: ../../source/annexe_filtres.rst:27
+msgid "Lancer la recherche avec la touche ``ENTREE``."
+msgstr "Запустите поиск клавишей ``ВВОД``."
+
+#: ../../source/annexe_filtres.rst:30
+msgid ""
+"Ne pas oublier d'effacer la position courante avant de lancer une recherche "
+"(touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au"
+" risque de filtrer abusivement des structures de pions."
+msgstr ""
+"Не забывайте очищать текущую позицию перед запуском поиска (клавиша "
+"``BACKSPACE``), если она не является нужной, иначе структуры шашек будут "
+"фильтроваться некорректно."
+
+#: ../../source/annexe_filtres.rst:35
+msgid ""
+"La liste des filtres disponibles en ligne de commande est fournie dans la "
+":numref:`cmd_filter`."
+msgstr ""
+"Список доступных фильтров командной строки приведён в :numref:`cmd_filter`."
+
+#: ../../source/annexe_filtres.rst:39
+msgid "Recherche dans les résultats courants"
+msgstr "Поиск в текущих результатах"
+
+#: ../../source/annexe_filtres.rst:41
+msgid ""
+"Il est possible d'affiner une recherche en cherchant parmi les positions "
+"actuellement filtrées. Cela permet de restreindre progressivement les "
+"résultats."
+msgstr ""
+"Можно уточнить поиск, выполняя его среди текущих отфильтрованных позиций. "
+"Это позволяет постепенно сужать результаты."
+
+#: ../../source/annexe_filtres.rst:44
+msgid ""
+"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une recherche "
+"préalable."
+msgstr ""
+"В командной строке используйте команду ``ss`` с фильтрами (напр.: ``ss nc``,"
+" ``ss E>40``). Команда ``ss`` работает после предварительного поиска."
+
+#: ../../source/annexe_filtres.rst:47
+msgid ""
+"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
+"\"Search in current results\" pour la même fonctionnalité."
+msgstr ""
+"Окно поиска (``CTRL-F``) также предлагает флажок «Search in current results»"
+" для той же функции."
+
+#: ../../source/annexe_filtres.rst:51
+msgid "Bibliothèque de filtres"
+msgstr "Библиотека фильтров"
+
+#: ../../source/annexe_filtres.rst:53
+msgid ""
+"La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
+"commandes de recherche afin de faciliter ses études thématiques."
+msgstr ""
+"Библиотека фильтров позволяет пользователю сохранять поисковые команды для "
+"удобства тематических исследований."
+
+#: ../../source/annexe_filtres.rst:56
+msgid "Pour ajouter un filtre à la bibliothèque,"
+msgstr "Чтобы добавить фильтр в библиотеку,"
+
+#: ../../source/annexe_filtres.rst:58
+msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "Нажмите ``TAB``, чтобы открыть панель поиска."
+
+#: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
+msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+msgstr "Откройте библиотеку фильтров, нажав ``CTRL-K``."
+
+#: ../../source/annexe_filtres.rst:61
+msgid "Donner un nom au filtre."
+msgstr "Дайте фильтру имя."
+
+#: ../../source/annexe_filtres.rst:62
+msgid "Editer la commande de recherche."
+msgstr "Отредактируйте поисковую команду."
+
+#: ../../source/annexe_filtres.rst:63
+msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+msgstr "Сохраните поисковую команду с помощью кнопки «Add»."
+
+#: ../../source/annexe_filtres.rst:66
+msgid ""
+"Lors de l'édition de la commande, il est possible d'utiliser les touches "
+"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
+msgstr ""
+"При редактировании команды можно использовать клавиши ``ВВЕРХ`` и ``ВНИЗ`` "
+"для навигации по истории команд."
+
+#: ../../source/annexe_filtres.rst:69
+msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
+msgstr "Чтобы использовать сохранённый в библиотеке фильтр,"
+
+#: ../../source/annexe_filtres.rst:72
+msgid "Rechercher le filtre souhaité."
+msgstr "Найдите нужный фильтр."
+
+#: ../../source/annexe_filtres.rst:73
+msgid "Double cliquer sur le filtre pour lancer la recherche."
+msgstr "Дважды щёлкните на фильтре, чтобы запустить поиск."
+
+#: ../../source/annexe_filtres.rst:76
+msgid "Exemples"
+msgstr "Примеры"
+
+#: ../../source/annexe_filtres.rst:78
+msgid ""
+"Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+msgstr "Ниже приведены примеры использования фильтров в командной строке:"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Type de position"
+msgstr "Тип позиции"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Structure de pions"
+msgstr "Структура шашек"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Commande"
+msgstr "Команда"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Courses"
+msgstr "Гонка"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s nc"
+msgstr "s nc"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Courses petites"
+msgstr "Гонка"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s nc P<70"
+msgstr "s nc"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Frapper au point 1"
+msgstr "Сбить на пункте 1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s m\\\"6/1*\\\""
+msgstr "s m\\\"6/1*\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Backgame 1-4"
+msgstr "Backgame 1-4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "portes 24, 21"
+msgstr "закрытые пункты 24, 21"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s p>35"
+msgstr "s p>35"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Décision de Take/Pass à -2 -4"
+msgstr "Решение Take/Pass при счёте -2 -4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "dés vides côté joueur du haut, score -2/-4"
+msgstr "пустые кости со стороны верхнего игрока, счёт -2/-4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s s d"
+msgstr "s s d"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Envoi de too good"
+msgstr "Too good — не удваивать"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "dés vides côté joueur du bas"
+msgstr "пустые кости со стороны нижнего игрока"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s d e>1000"
+msgstr "s d e>1000"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Blitz avec au moins 20% de gammon"
+msgstr "Блиц с долей гэммона не менее 20%"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "portes dans le jan, hommes à la barre"
+msgstr "закрытые пункты в доме, шашки на баре"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s g>20"
+msgstr "s g>20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Erreurs du joueur 1 de plus de 40 millipoints"
+msgstr "Ошибки игрока 1 более 40 миллипоинтов"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s E>40"
+msgstr "s E>40"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Position du tournoi Aachen2024"
+msgstr "Позиция турнира Aachen2024"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s t\\\"Aachen2024\\\""
+msgstr "s t\\\"Aachen2024\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Un pion arriéré à ramener"
+msgstr "Одна отстающая шашка для возврата"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s k1,1"
+msgstr "s k1,1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Quitter le point 20"
+msgstr "Уйти с пункта 20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "point 20"
+msgstr "пункт 20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s m\\\"20/\\\""
+msgstr "s m\\\"20/\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Prime contre prime"
+msgstr "Прайм против прайма"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "indiquer les primes"
+msgstr "указать прайм-позиции"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Ace-point bear-off"
+msgstr "Ace-point bear-off"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "point 1 pour l'adversaire"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s P<60"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Double avec au moins 20pip d'avance"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s d p<-20"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions du match 5"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma5"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions des matchs 2 à 4"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma2,4"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions des matchs 23 et 43"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma23 ma43"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions du tournoi 1"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s tn1"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Erreurs dans le tournoi 2"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s tn2 E>40"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:105
+msgid "Exemples de recherche dans les résultats courants:"
+msgstr "Примеры"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Scénario"
+msgstr "Сценарий"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s nc``, chercher les petites courses"
+msgstr "s nc"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss P<70"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s g>20``, ne garder que les erreurs"
+msgstr "s g>20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss E>40"
+msgstr "s E>40"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s tn1``, chercher les décisions de cube"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss d"
+msgstr "s"

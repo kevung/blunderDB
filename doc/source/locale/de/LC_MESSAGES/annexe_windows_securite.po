@@ -1,0 +1,214 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_windows_securite.rst:4
+msgid "Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
+msgstr "Windows-Anhang: Fälschliche Erkennung von blunderDB als Schadsoftware"
+
+#: ../../source/annexe_windows_securite.rst:6
+msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
+msgstr "Das Folgende betrifft die Betriebssysteme Windows 10 und 11."
+
+#: ../../source/annexe_windows_securite.rst:8
+msgid ""
+"Windows requiert aujourd'hui de la part de sociétés d'édition logicielle "
+"ou d'éditeurs logiciel indépendants de certifier numériquement leurs "
+"applications voire de distribuer via le Windows Store. Il est alors "
+"préconisé de faire appel à des sociétés extérieures pour obtenir un "
+"certificat numérique au prix de plusieurs centaines d'euros (voir par "
+"exemple https://learn.microsoft.com/en-us/archive/blogs/ie_fr"
+"/certificats-de-signature-de-code-ev-extended-validation-et-microsoft-"
+"smartscreen )."
+msgstr ""
+"Windows verlangt heutzutage von Softwareherstellern oder unabhängigen "
+"Softwareentwicklern, ihre Anwendungen digital zu zertifizieren oder sie "
+"sogar über den Windows Store zu vertreiben. Es wird daher empfohlen, sich "
+"an externe Unternehmen zu wenden, um ein digitales Zertifikat zu erhalten, "
+"das mehrere hundert Euro kostet (siehe zum Beispiel "
+"https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-de-"
+"signature-de-code-ev-extended-validation-et-microsoft-smartscreen )."
+
+#: ../../source/annexe_windows_securite.rst:16
+msgid ""
+"Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces"
+" possibilités onéreuses. Par conséquent, il est fort probable que Windows"
+" vous avertisse d'un potentiel danger, voire bloque complètement "
+"l'exécution de blunderDB. Les sections suivantes expliquent les "
+"opérations à réaliser pour passer outre les réticences de Windows."
+msgstr ""
+"Da ich blunderDB kostenlos anbiete, möchte ich diese kostspieligen "
+"Möglichkeiten nicht in Anspruch nehmen. Folglich ist es sehr "
+"wahrscheinlich, dass Windows Sie vor einer potenziellen Gefahr warnt oder "
+"die Ausführung von blunderDB sogar vollständig blockiert. Die folgenden "
+"Abschnitte erläutern die Schritte, um die Bedenken von Windows zu umgehen."
+
+#: ../../source/annexe_windows_securite.rst:23
+msgid "Avertissement Windows SmartScreen"
+msgstr "Windows-SmartScreen-Warnung"
+
+#: ../../source/annexe_windows_securite.rst:25
+msgid ""
+"Après téléchargement de blunderDB, lors de son exécution, il est possible"
+" que Windows affiche un avertissement du type"
+msgstr ""
+"Nach dem Herunterladen von blunderDB kann Windows beim Ausführen eine "
+"Warnung der folgenden Art anzeigen:"
+
+#: ../../source/annexe_windows_securite.rst:30
+msgid ""
+"Si vous souhaitez autoriser un exécutable spécifique bloqué par "
+"SmartScreen :"
+msgstr ""
+"Wenn Sie eine bestimmte ausführbare Datei zulassen möchten, die von "
+"SmartScreen blockiert wird:"
+
+#: ../../source/annexe_windows_securite.rst:32
+msgid "**Essayer d’exécuter l'exécutable** :"
+msgstr "**Versuchen, die ausführbare Datei auszuführen**:"
+
+#: ../../source/annexe_windows_securite.rst:34
+msgid ""
+"Lorsque vous essayez de lancer l'exécutable, SmartScreen peut le bloquer "
+"et afficher un avertissement."
+msgstr ""
+"Wenn Sie versuchen, die ausführbare Datei zu starten, kann SmartScreen sie "
+"blockieren und eine Warnung anzeigen."
+
+#: ../../source/annexe_windows_securite.rst:37
+msgid "**Cliquer sur \"Informations supplémentaires\"** :"
+msgstr "**Auf \"Weitere Informationen\" klicken**:"
+
+#: ../../source/annexe_windows_securite.rst:39
+msgid ""
+"Dans la fenêtre d'avertissement de SmartScreen, cliquez sur "
+"**Informations supplémentaires**."
+msgstr ""
+"Klicken Sie im SmartScreen-Warnfenster auf **Weitere Informationen**."
+
+#: ../../source/annexe_windows_securite.rst:42
+msgid "**Sélectionner \"Exécuter quand même\"** :"
+msgstr "**\"Trotzdem ausführen\" auswählen**:"
+
+#: ../../source/annexe_windows_securite.rst:44
+msgid ""
+"Si vous faites confiance à l'exécutable, cliquez sur **Exécuter quand "
+"même** pour contourner l'avertissement SmartScreen pour cette instance."
+msgstr ""
+"Wenn Sie der ausführbaren Datei vertrauen, klicken Sie auf **Trotzdem "
+"ausführen**, um die SmartScreen-Warnung für diesen Fall zu umgehen."
+
+#: ../../source/annexe_windows_securite.rst:48
+msgid "Blocage Windows Defender"
+msgstr "Blockierung durch Windows Defender"
+
+#: ../../source/annexe_windows_securite.rst:50
+msgid ""
+"Pour certains paramétrages sécurité de Windows, il arrive que malgré le "
+"déblocage de SmartScreen (voir section plus précédente), Windows Defender"
+" puisse empêcher l'exécution de blunderDB avec des messages du type"
+msgstr ""
+"Bei bestimmten Sicherheitseinstellungen von Windows kann es vorkommen, dass "
+"Windows Defender trotz der Freigabe in SmartScreen (siehe vorheriger "
+"Abschnitt) die Ausführung von blunderDB mit Meldungen der folgenden Art "
+"verhindert:"
+
+#: ../../source/annexe_windows_securite.rst:57
+msgid "ou encore"
+msgstr "oder auch:"
+
+#: ../../source/annexe_windows_securite.rst:62
+msgid "voire le placer en quarantaine."
+msgstr "oder sie sogar in Quarantäne verschieben."
+
+#: ../../source/annexe_windows_securite.rst:64
+msgid ""
+"Windows Defender est connu pour déclencher des faux positifs. Ce problème"
+" est explicitement mentionné dans la FAQ du site officiel de Golang ( "
+"https://go.dev/doc/faq#virus ) ou dans des tickets Github de certains "
+"projets programmés en Go ( https://github.com/golang/vscode-"
+"go/issues/3182 )."
+msgstr ""
+"Windows Defender ist dafür bekannt, Fehlalarme auszulösen. Dieses Problem "
+"wird ausdrücklich in den FAQ auf der offiziellen Golang-Website ( "
+"https://go.dev/doc/faq#virus ) oder in GitHub-Tickets einiger in Go "
+"programmierter Projekte ( https://github.com/golang/vscode-go/issues/3182 ) "
+"erwähnt."
+
+#: ../../source/annexe_windows_securite.rst:69
+msgid "Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :"
+msgstr ""
+"Wenn Sie verhindern möchten, dass die Windows-Sicherheit blunderDB "
+"überprüft:"
+
+#: ../../source/annexe_windows_securite.rst:71
+msgid "**Ouvrir la Sécurité Windows** :"
+msgstr "**Windows-Sicherheit öffnen**:"
+
+#: ../../source/annexe_windows_securite.rst:73
+msgid "Allez dans **Démarrer** et tapez **Sécurité Windows**."
+msgstr "Gehen Sie zu **Start** und geben Sie **Windows-Sicherheit** ein."
+
+#: ../../source/annexe_windows_securite.rst:78
+msgid "**Aller à \"Protection contre les virus et menaces\"** :"
+msgstr "**Zu \"Viren- & Bedrohungsschutz\" gehen**:"
+
+#: ../../source/annexe_windows_securite.rst:80
+msgid "Cliquez sur **Protection contre les virus et menaces**."
+msgstr "Klicken Sie auf **Viren- & Bedrohungsschutz**."
+
+#: ../../source/annexe_windows_securite.rst:85
+msgid "**Gérer les paramètres** :"
+msgstr "**Einstellungen verwalten**:"
+
+#: ../../source/annexe_windows_securite.rst:87
+msgid ""
+"Faites défiler vers le bas et cliquez sur **Gérer les paramètres** sous "
+"Paramètres de protection contre les virus et menaces."
+msgstr ""
+"Scrollen Sie nach unten und klicken Sie unter den Einstellungen für Viren- "
+"& Bedrohungsschutz auf **Einstellungen verwalten**."
+
+#: ../../source/annexe_windows_securite.rst:92
+msgid "**Ajouter ou supprimer des exclusions** :"
+msgstr "**Ausschlüsse hinzufügen oder entfernen**:"
+
+#: ../../source/annexe_windows_securite.rst:94
+msgid ""
+"Faites défiler jusqu’à la section **Exclusions** et cliquez sur **Ajouter"
+" ou supprimer des exclusions**."
+msgstr ""
+"Scrollen Sie bis zum Abschnitt **Ausschlüsse** und klicken Sie auf "
+"**Ausschlüsse hinzufügen oder entfernen**."
+
+#: ../../source/annexe_windows_securite.rst:99
+msgid "**Ajouter une exclusion** :"
+msgstr "**Einen Ausschluss hinzufügen**:"
+
+#: ../../source/annexe_windows_securite.rst:101
+msgid ""
+"Cliquez sur **Ajouter une exclusion** et sélectionnez **Fichier**. "
+"Naviguez ensuite jusqu’à l’exécutable que vous souhaitez exclure et "
+"sélectionnez-le."
+msgstr ""
+"Klicken Sie auf **Einen Ausschluss hinzufügen** und wählen Sie **Datei**. "
+"Navigieren Sie anschließend zu der ausführbaren Datei, die Sie ausschließen "
+"möchten, und wählen Sie sie aus."
+

@@ -1,0 +1,103 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fi\n"
+"Language-Team: fi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_mac_securite.rst:4
+msgid "Annexe Mac : Blocage éventuel de blunderDB"
+msgstr "Mac-liite: blunderDB:n mahdollinen esto"
+
+#: ../../source/annexe_mac_securite.rst:6
+msgid "Ce qui suit concerne le système d'exploitation MacOS."
+msgstr "Seuraava koskee macOS-käyttöjärjestelmää."
+
+#: ../../source/annexe_mac_securite.rst:8
+msgid ""
+"Mac requiert de la part de sociétés d'édition logicielle ou d'éditeurs "
+"logiciel indépendants de certifier numériquement leurs applications. Le "
+"développeur doit souscrire au Apple Developper Program en payant une "
+"adhésion annuelle (https://developer.apple.com/support/compare-"
+"memberships/)."
+msgstr ""
+"Mac edellyttää, että ohjelmistoyritykset tai itsenäiset ohjelmistokehittäjät "
+"sertifioivat sovelluksensa digitaalisesti. Kehittäjän on liityttävä Apple "
+"Developer -ohjelmaan maksamalla vuosittainen jäsenmaksu "
+"(https://developer.apple.com/support/compare-memberships/)."
+
+#: ../../source/annexe_mac_securite.rst:12
+msgid ""
+"Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces"
+" possibilités onéreuses. Par conséquent, il est fort probable que Mac "
+"vous avertisse d'un potentiel danger, voire bloque complètement "
+"l'exécution de blunderDB. Les sections suivantes expliquent les "
+"opérations à réaliser pour passer outre les réticences de Mac."
+msgstr ""
+"Koska jaan blunderDB:tä ilmaiseksi, en halua valita näitä kalliita "
+"vaihtoehtoja. Tämän seurauksena Mac todennäköisesti varoittaa sinua "
+"mahdollisesta vaarasta tai jopa estää blunderDB:n suorittamisen kokonaan. "
+"Seuraavat osiot selittävät, mitä toimenpiteitä on tehtävä Macin "
+"vastahakoisuuden ohittamiseksi."
+
+#: ../../source/annexe_mac_securite.rst:19
+msgid "Installation de blunderDB"
+msgstr "blunderDB:n asennus"
+
+#: ../../source/annexe_mac_securite.rst:21
+msgid ""
+"Après avoir téléchargé blunderDB, glissez le fichier téléchargé dans la "
+"section Applications de votre Finder. Si vous avez déjà essayé d'exécuter"
+" blunderDB et que Mac vous avertit d'un potentiel danger, suivez les "
+"étapes suivantes."
+msgstr ""
+"Kun olet ladannut blunderDB:n, vedä ladattu tiedosto Finderin Ohjelmat-"
+"osioon. Jos olet jo yrittänyt suorittaa blunderDB:tä ja Mac varoittaa sinua "
+"mahdollisesta vaarasta, noudata alla olevia ohjeita."
+
+#: ../../source/annexe_mac_securite.rst:26
+msgid "Autorisation de l'exécution de blunderDB"
+msgstr "Luvan antaminen blunderDB:n suorittamiseen"
+
+#: ../../source/annexe_mac_securite.rst:28
+msgid "Ouvrez le Finder et allez dans la section Applications."
+msgstr "Avaa Finder ja siirry Ohjelmat-osioon."
+
+#: ../../source/annexe_mac_securite.rst:29
+msgid "Trouvez blunderDB et faites un clic droit."
+msgstr "Etsi blunderDB ja napsauta sitä hiiren oikealla painikkeella."
+
+#: ../../source/annexe_mac_securite.rst:30
+msgid "Sélectionnez Ouvrir."
+msgstr "Valitse Avaa."
+
+#: ../../source/annexe_mac_securite.rst:31
+msgid "Une fenêtre d'avertissement s'ouvre. Cliquez sur Ouvrir."
+msgstr "Varoitusikkuna avautuu. Napsauta Avaa."
+
+#: ../../source/annexe_mac_securite.rst:32
+msgid "blunderDB s'ouvre et vous pouvez l'utiliser."
+msgstr "blunderDB avautuu, ja voit alkaa käyttää sitä."
+
+#: ../../source/annexe_mac_securite.rst:34
+msgid ""
+"Vous n'avez à réaliser cette opération qu'une seule fois. Par la suite, "
+"vous pourrez ouvrir blunderDB sans avoir à passer par ces étapes."
+msgstr ""
+"Sinun tarvitsee tehdä tämä toimenpide vain kerran. Tämän jälkeen voit avata "
+"blunderDB:n ilman näiden vaiheiden läpikäymistä."
+

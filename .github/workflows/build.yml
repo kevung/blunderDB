@@ -349,7 +349,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r ./doc/requirements.txt
-          sudo apt-get update && sudo apt-get install -y latexmk texlive-xetex texlive-fonts-recommended texlive-latex-extra fonts-freefont-otf
+          sudo apt-get update && sudo apt-get install -y latexmk texlive-xetex texlive-fonts-recommended texlive-latex-extra fonts-freefont-otf fonts-noto-cjk texlive-lang-cjk
         shell: bash
 
       - name: Build documentation
@@ -359,8 +359,9 @@ jobs:
 
       - name: Rename PDF files
         run: |
-          find ./doc/build/pdf_en/ -name '*.pdf' -exec mv {} ./doc/build/pdf_en/blunderDB-${{ steps.vars.outputs.version }}-en.pdf \;
-          find ./doc/build/pdf_fr/ -name '*.pdf' -exec mv {} ./doc/build/pdf_fr/blunderDB-${{ steps.vars.outputs.version }}-fr.pdf \;
+          for lang in fr en de el es fi it ja ru; do
+            find ./doc/build/pdf_${lang}/ -name '*.pdf' -exec mv {} ./doc/build/pdf_${lang}/blunderDB-${{ steps.vars.outputs.version }}-${lang}.pdf \;
+          done
         shell: bash
 
       - name: Create index.html for redirection
@@ -380,13 +381,11 @@ jobs:
         with:
           name: blunderDB pdf docs
           path: |
-            */build/pdf_en/*.pdf
-            */build/pdf_fr/*.pdf
+            */build/pdf_*/*.pdf
 
       - name: Release
         uses: softprops/action-gh-release@v2
         if: startsWith(github.ref, 'refs/tags/')
         with:
           files: |
-            */build/pdf_en/*.pdf
-            */build/pdf_fr/*.pdf
+            */build/pdf_*/*.pdf

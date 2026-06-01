@@ -1,0 +1,113 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/telecharge_install.rst:4
+msgid "Téléchargement et installation"
+msgstr "Λήψη και εγκατάσταση"
+
+#: ../../source/telecharge_install.rst:6
+msgid ""
+"blunderDB se présente comme un unique exécutable ne nécessitant aucune "
+"installation."
+msgstr ""
+"Το blunderDB είναι ένα μοναδικό εκτελέσιμο αρχείο που δεν απαιτεί καμία "
+"εγκατάσταση."
+
+#: ../../source/telecharge_install.rst:8
+msgid "La dernière version de blunderDB est disponible en licence MIT:"
+msgstr "Η τελευταία έκδοση του blunderDB είναι διαθέσιμη με άδεια MIT:"
+
+#: ../../source/telecharge_install.rst:10
+msgid "pour Windows: |latest_windows_exe|"
+msgstr "για Windows: |latest_windows_exe|"
+
+#: ../../source/telecharge_install.rst:12
+msgid "pour Linux: |latest_linux_exe|"
+msgstr "για Linux: |latest_linux_exe|"
+
+#: ../../source/telecharge_install.rst:14
+msgid "pour Mac: |latest_mac_exe|"
+msgstr "για Mac: |latest_mac_exe|"
+
+#: ../../source/telecharge_install.rst:18
+msgid ""
+"Pour une consultation hors ligne, vous pouvez également télécharger cette"
+" documentation au format PDF  : |latest_fr_pdf|"
+msgstr ""
+"Για ανάγνωση εκτός σύνδεσης, μπορείτε επίσης να κατεβάσετε αυτή την "
+"τεκμηρίωση σε μορφή PDF: |latest_el_pdf|"
+
+#: ../../source/telecharge_install.rst:20
+msgid ""
+"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a"
+" de fortes chances que Webview2 soit déjà présent nativement sur votre "
+"système d'exploitation. Si ce n'est pas le cas, la première exécution de "
+"blunderDB proposera de le télécharger et de l'installer. Aucune "
+"manipulation de la part de l'utilisateur n'est attendue."
+msgstr ""
+"Το blunderDB χρησιμοποιεί το Webview2 για την απόδοση του γραφικού "
+"περιβάλλοντος. Είναι πολύ πιθανό το Webview2 να είναι ήδη εγκατεστημένο "
+"εγγενώς στο λειτουργικό σας σύστημα. Σε αντίθετη περίπτωση, η πρώτη "
+"εκτέλεση του blunderDB θα προτείνει τη λήψη και την εγκατάστασή του. Δεν "
+"απαιτείται καμία ενέργεια από τον χρήστη."
+
+#: ../../source/telecharge_install.rst:26
+msgid ""
+"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+"exécuter dans un terminal la commande ``chmod +x ./blunderDB-"
+"linux-x.y.z`` où x, y, z correspond à la version téléchargée."
+msgstr ""
+"Στο Linux, εάν το blunderDB δεν είναι εκτελέσιμο μετά τη λήψη, εκτελέστε "
+"σε ένα τερματικό την εντολή ``chmod +x ./blunderDB-linux-x.y.z`` όπου x, "
+"y, z αντιστοιχούν στην έκδοση που κατεβάσατε."
+
+#: ../../source/telecharge_install.rst:30
+msgid ""
+"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot "
+"open shared object file``, votre distribution utilise webkit2gtk-4.1 au "
+"lieu de webkit2gtk-4.0. Téléchargez la version dédiée : "
+"|latest_linux_webkit2gtk41_exe|"
+msgstr ""
+"Στο Linux, εάν λάβετε το σφάλμα ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, η διανομή σας χρησιμοποιεί το webkit2gtk-4.1 αντί "
+"του webkit2gtk-4.0. Κατεβάστε την ειδική έκδοση: "
+"|latest_linux_webkit2gtk41_exe|"
+
+#: ../../source/telecharge_install.rst:35
+msgid ""
+"Sous Windows, il est possible que ce dernier émette des réticences à "
+"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre"
+" pourquoi et contourner les éventuels blocages."
+msgstr ""
+"Στα Windows, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
+"blunderDB. Δείτε :numref:`annexe_windows_malware` για να κατανοήσετε γιατί"
+" και πώς να παρακάμψετε τυχόν εμπόδια."
+
+#: ../../source/telecharge_install.rst:39
+msgid ""
+"Sous Mac, il est possible que ce dernier émette des réticences à exécuter"
+" blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et"
+" contourner les éventuels blocages."
+msgstr ""
+"Στο Mac, είναι πιθανό να υπάρξει διστακτικότητα στην εκτέλεση του "
+"blunderDB. Δείτε :numref:`annexe_mac_malware` για να κατανοήσετε γιατί και"
+" πώς να παρακάμψετε τυχόν εμπόδια."
+

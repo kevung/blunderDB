@@ -1,0 +1,758 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/index.rst:4
+msgid "blunderDB"
+msgstr "blunderDB"
+
+#: ../../source/index.rst:6
+msgid ""
+"blunderDB est un logiciel pour constituer des bases de données de positions "
+"de backgammon. Sa force principale est de constituer un lieu unique où "
+"aggréger les positions qu'un joueur a pu rencontrer (en ligne, en tournoi) "
+"et de pouvoir réétudier ces positions en les filtrant selon différents "
+"filtres combinables arbitrairement. blunderDB peut également être utilisé "
+"pour constituer des catalogues de positions de référence."
+msgstr ""
+"blunderDBは、バックギャモンのポジションのデータベースを構築するためのソフト"
+"ウェアです。主な強みは、プレイヤーが（オンラインやトーナメントで）遭遇したポ"
+"ジションを一元的に集約し、それらのポジションを任意に組み合わせ可能なさまざま"
+"なフィルターで絞り込みながら再検討できる点にあります。blunderDBは、参照用ポジ"
+"ションのカタログを作成するためにも使用できます。"
+
+#: ../../source/index.rst:13
+msgid "La présente documentation est structurée de la manière suivante:"
+msgstr "本ドキュメントは、次のように構成されています。"
+
+#: ../../source/index.rst:15
+msgid ""
+"la section **téléchargement et installation** explique comment se procurer "
+"et lancer blunderDB."
+msgstr ""
+"**ダウンロードとインストール** のセクションでは、blunderDBの入手方法と起動方"
+"法を説明します。"
+
+#: ../../source/index.rst:18
+msgid "le **manuel** décrit le fonctionnement général de blunderDB."
+msgstr "**マニュアル** では、blunderDBの全般的な動作について説明します。"
+
+#: ../../source/index.rst:20
+msgid ""
+"le **guide utilisateur** est une introduction pratique pour utiliser "
+"rapidement blunderDB."
+msgstr ""
+"**ユーザーガイド** は、blunderDBを素早く使い始めるための実践的な入門です。"
+
+#: ../../source/index.rst:23
+msgid ""
+"la liste des **commandes** ainsi que la liste des **raccourcis** clavier "
+"permettent une utilisation efficace de blunderDB."
+msgstr ""
+"**コマンド** の一覧およびキーボード **ショートカット** の一覧により、"
+"blunderDBを効率的に使用できます。"
+
+#: ../../source/index.rst:26
+msgid ""
+"la section **interface en ligne de commande (CLI)** décrit les commandes "
+"disponibles pour l'import en masse, l'automatisation et le scripting."
+msgstr ""
+"**コマンドラインインターフェース（CLI）** のセクションでは、一括インポート、"
+"自動化、スクリプト処理に使用できるコマンドについて説明します。"
+
+#: ../../source/index.rst:29
+msgid ""
+"la **FAQ** fournit quelques réponses aux interrogations les plus fréquentes."
+msgstr "**FAQ** では、よくある質問への回答をいくつか提供します。"
+
+#: ../../source/index.rst:32
+msgid "Historique des versions"
+msgstr "バージョン履歴"
+
+#: ../../source/index.rst:1
+msgid "Version"
+msgstr "バージョン"
+
+#: ../../source/index.rst:1
+msgid "Date"
+msgstr "日付"
+
+#: ../../source/index.rst:1
+msgid "Cause et/ou nature des évolutions"
+msgstr "変更の理由および内容"
+
+#: ../../source/index.rst:1
+msgid "0.1.0"
+msgstr "0.1.0"
+
+#: ../../source/index.rst:1
+msgid "31/12/2024"
+msgstr "2024/12/31"
+
+#: ../../source/index.rst:1
+msgid "Création version beta."
+msgstr "ベータ版の作成。"
+
+#: ../../source/index.rst:1
+msgid "0.2.0"
+msgstr "0.2.0"
+
+#: ../../source/index.rst:1
+msgid "06/01/2025"
+msgstr "2025/01/06"
+
+#: ../../source/index.rst:1
+msgid "Résolutions de bugs divers."
+msgstr "各種バグの修正。"
+
+#: ../../source/index.rst:3
+msgid "Ajout de tables de matchs/TP/GV."
+msgstr "マッチ／TP／GV テーブルの追加。"
+
+#: ../../source/index.rst:5
+msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
+msgstr "検索フィルター（着手、キューブの決定、日付）の追加。"
+
+#: ../../source/index.rst:7
+msgid "Ajout de métadonnées sur les positions."
+msgstr "ポジションへのメタデータの追加。"
+
+#: ../../source/index.rst:9
+msgid "Fonction d'import/export entre instances de blunderDB."
+msgstr "blunderDBインスタンス間のインポート／エクスポート機能。"
+
+#: ../../source/index.rst:11
+msgid "Ajout de fonction de métadonnées sur les bases de données."
+msgstr "データベースへのメタデータ機能の追加。"
+
+#: ../../source/index.rst:13
+msgid "Introduction des numéros de versions (base de données et application)."
+msgstr "バージョン番号（データベースおよびアプリケーション）の導入。"
+
+#: ../../source/index.rst:1
+msgid "0.3.0"
+msgstr "0.3.0"
+
+#: ../../source/index.rst:1
+msgid "27/01/2025"
+msgstr "2025/01/27"
+
+#: ../../source/index.rst:3
+msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
+msgstr "ウィンドウサイズの自動保存。"
+
+#: ../../source/index.rst:5
+msgid "Importe les éventuels commentaires depuis XG."
+msgstr "XGからのコメントのインポート（存在する場合）。"
+
+#: ../../source/index.rst:1
+msgid "0.4.0"
+msgstr "0.4.0"
+
+#: ../../source/index.rst:1
+msgid "03/02/2025"
+msgstr "2025/02/03"
+
+#: ../../source/index.rst:3
+msgid "Ajout d'une icone pour blunderDB."
+msgstr "blunderDBのアイコンの追加。"
+
+#: ../../source/index.rst:5
+msgid "Corrections de filtres."
+msgstr "フィルターの修正。"
+
+#: ../../source/index.rst:7
+msgid "Ajout du support de MacOS."
+msgstr "MacOSのサポートの追加。"
+
+#: ../../source/index.rst:1
+msgid "0.5.0"
+msgstr "0.5.0"
+
+#: ../../source/index.rst:1
+msgid "04/02/2025"
+msgstr "2025/02/04"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
+msgstr ""
+"新しいフィルター（ミラー、ノンコンタクト、内野ブロット、外野ブロット）の追"
+"加。"
+
+#: ../../source/index.rst:1
+msgid "0.6.0"
+msgstr "0.6.0"
+
+#: ../../source/index.rst:1
+msgid "13/02/2025"
+msgstr "2025/02/13"
+
+#: ../../source/index.rst:1
+msgid "Ajout de la bibliothèque de filtres."
+msgstr "フィルターライブラリの追加。"
+
+#: ../../source/index.rst:3
+msgid "Affichage de la version de la base de données dans les métadonnées."
+msgstr "メタデータでのデータベースバージョンの表示。"
+
+#: ../../source/index.rst:1
+msgid "0.7.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+msgid "16/02/2025"
+msgstr "2025/02/16"
+
+#: ../../source/index.rst:1
+msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
+msgstr "XGエクスポートにおける日本語およびドイツ語のサポート。"
+
+#: ../../source/index.rst:1
+msgid "0.8.0"
+msgstr "0.8.0"
+
+#: ../../source/index.rst:1
+msgid "03/05/2025"
+msgstr "2025/05/03"
+
+#: ../../source/index.rst:1
+msgid "Possibilité de cacher le compte de course."
+msgstr "ピップカウントを非表示にする機能。"
+
+#: ../../source/index.rst:3
+msgid "Chargement d'une position aléatoire."
+msgstr "ランダムなポジションの読み込み。"
+
+#: ../../source/index.rst:1
+msgid "0.9.0"
+msgstr "0.9.0"
+
+#: ../../source/index.rst:1
+msgid "02/11/2025"
+msgstr "2025/11/02"
+
+#: ../../source/index.rst:1
+msgid "Correction de bug de la bibliothèque de filtres."
+msgstr "フィルターライブラリのバグ修正。"
+
+#: ../../source/index.rst:3
+msgid "Import/export de base de données."
+msgstr "データベースのインポート／エクスポート。"
+
+#: ../../source/index.rst:5
+msgid "Affichage de flèches pour les coups sélectionnés."
+msgstr "選択した着手に対する矢印の表示。"
+
+#: ../../source/index.rst:7
+msgid "Raccourcis clavier pour l'import/export."
+msgstr "インポート／エクスポート用のキーボードショートカット。"
+
+#: ../../source/index.rst:1
+msgid "0.10.0"
+msgstr "0.10.0"
+
+#: ../../source/index.rst:1
+msgid "25/02/2026"
+msgstr "2026/02/25"
+
+#: ../../source/index.rst:1
+msgid ""
+"Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
+"(MAT/TXT) et BGBlitz (BGF/TXT)."
+msgstr ""
+"eXtreme Gammon (XG/XGP)、GNUbg (SGF)、Jellyfish (MAT/TXT)、BGBlitz (BGF/TXT) "
+"からのマッチのインポート。"
+
+#: ../../source/index.rst:3
+msgid ""
+"Navigation dans les matchs: parcours des coups d'un match importé, avec mise"
+" en évidence du coup joué."
+msgstr ""
+"マッチ内のナビゲーション：インポートしたマッチの着手をたどり、実際に打たれた"
+"着手を強調表示します。"
+
+#: ../../source/index.rst:5
+msgid ""
+"Panneau des matchs: liste, tri, édition inline, permutation des joueurs, "
+"assignation de tournoi."
+msgstr ""
+"マッチパネル：一覧、ソート、インライン編集、プレイヤーの入れ替え、トーナメン"
+"トの割り当て。"
+
+#: ../../source/index.rst:7
+msgid "Import par dossier récursif et import par glisser-déposer."
+msgstr "フォルダーの再帰的インポートおよびドラッグアンドドロップによるインポート。"
+
+#: ../../source/index.rst:9
+msgid ""
+"Calculateur EPC (Effective Pip Count) avec base de données de bearoff GNUbg "
+"intégrée."
+msgstr ""
+"EPC（実効ピップカウント）計算機。GNUbgのベアオフデータベースを内蔵していま"
+"す。"
+
+#: ../../source/index.rst:11
+msgid "Collections: regroupement personnalisé de positions."
+msgstr "コレクション：ポジションのカスタムなグループ化。"
+
+#: ../../source/index.rst:13
+msgid "Tournois: regroupement de matchs par événement."
+msgstr "トーナメント：イベントごとのマッチのグループ化。"
+
+#: ../../source/index.rst:15
+msgid ""
+"Sauvegarde et restauration de l'état de session (dernière recherche, "
+"position courante)."
+msgstr ""
+"セッション状態（最後の検索、現在のポジション）の保存と復元。"
+
+#: ../../source/index.rst:17
+msgid "Migration automatique du schéma de base de données."
+msgstr "データベーススキーマの自動マイグレーション。"
+
+#: ../../source/index.rst:19
+msgid "Affichage multi-moteurs dans l'analyse."
+msgstr "分析における複数エンジンの表示。"
+
+#: ../../source/index.rst:21
+msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
+msgstr "検索におけるプレイヤー1のエラー／ブランダーのフィルター。"
+
+#: ../../source/index.rst:23
+msgid ""
+"Export de la base de données avec sélection granulaire (matchs, collections,"
+" tournois, coups joués)."
+msgstr ""
+"きめ細かな選択によるデータベースのエクスポート（マッチ、コレクション、トーナ"
+"メント、打たれた着手）。"
+
+#: ../../source/index.rst:25
+msgid "Bouton de navigation dans les matchs."
+msgstr "マッチ内ナビゲーション用ボタン。"
+
+#: ../../source/index.rst:27
+msgid "Compte de course (pipcount) dans la navigation des matchs."
+msgstr "マッチナビゲーションにおけるピップカウントの表示。"
+
+#: ../../source/index.rst:29
+msgid "Interface en ligne de commande (CLI) complète."
+msgstr "完全なコマンドラインインターフェース（CLI）。"
+
+#: ../../source/index.rst:31
+msgid "Réouverture automatique de la dernière base de données."
+msgstr "最後に開いたデータベースの自動再オープン。"
+
+#: ../../source/index.rst:33
+msgid "Amélioration de la barre d'outils et des icônes."
+msgstr "ツールバーとアイコンの改善。"
+
+#: ../../source/index.rst:1
+msgid "0.11.0"
+msgstr "0.11.0"
+
+#: ../../source/index.rst:1
+msgid "06/03/2026"
+msgstr "2026/03/06"
+
+#: ../../source/index.rst:1
+msgid "Filtre de recherche dans les positions courantes."
+msgstr "現在のポジションに対する検索フィルター。"
+
+#: ../../source/index.rst:3
+msgid "Ajout de filtres par match et par tournoi."
+msgstr "マッチごと、トーナメントごとのフィルターの追加。"
+
+#: ../../source/index.rst:5
+msgid ""
+"Effacement automatique du plateau lors de l'ouverture du panneau de "
+"recherche."
+msgstr ""
+"検索パネルを開いた際のボードの自動クリア。"
+
+#: ../../source/index.rst:1
+msgid "0.12.0"
+msgstr "0.12.0"
+
+#: ../../source/index.rst:1
+msgid "19/03/2026"
+msgstr "2026/03/19"
+
+#: ../../source/index.rst:1
+msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
+msgstr "分析付きのeXtreme Gammonポジションファイル（XGP）のインポート。"
+
+#: ../../source/index.rst:1
+msgid "0.13.0"
+msgstr "0.13.0"
+
+#: ../../source/index.rst:1
+msgid "28/03/2026"
+msgstr "2026/03/28"
+
+#: ../../source/index.rst:1
+msgid ""
+"Simplification de l'interface: la navigation dans les matchs et les "
+"collections se fait directement via les panneaux."
+msgstr ""
+"インターフェースの簡素化：マッチおよびコレクション内のナビゲーションはパネル"
+"から直接行えるようになりました。"
+
+#: ../../source/index.rst:3
+msgid "Ligne de commande intégrée dans la barre d'état."
+msgstr "ステータスバーに統合されたコマンドライン。"
+
+#: ../../source/index.rst:5
+msgid "Panneau Console renommé en panneau Log."
+msgstr "コンソールパネルをログパネルに名称変更。"
+
+#: ../../source/index.rst:7
+msgid "Panneau EPC dédié dans le panneau inférieur."
+msgstr "下部パネルに専用のEPCパネル。"
+
+#: ../../source/index.rst:9
+msgid "Copier/coller de position dans le panneau de recherche."
+msgstr "検索パネルでのポジションのコピー／貼り付け。"
+
+#: ../../source/index.rst:11
+msgid ""
+"Glisser-déposer pour réordonner les collections, les positions dans les "
+"collections, et les matchs dans les tournois."
+msgstr ""
+"ドラッグアンドドロップによる、コレクション、コレクション内のポジション、トー"
+"ナメント内のマッチの並べ替え。"
+
+#: ../../source/index.rst:13
+msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
+msgstr "マッチパネルへのトーナメント列の追加とインライン編集。"
+
+#: ../../source/index.rst:15
+msgid "Affichage automatique du panneau d'analyse après une recherche."
+msgstr "検索後の分析パネルの自動表示。"
+
+#: ../../source/index.rst:1
+msgid "0.14.0"
+msgstr "0.14.0"
+
+#: ../../source/index.rst:1
+msgid "30/03/2026"
+msgstr "2026/03/30"
+
+#: ../../source/index.rst:1
+msgid ""
+"Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
+msgstr ""
+"間隔反復学習（FSRSアルゴリズム）のための専用Ankiパネル。"
+
+#: ../../source/index.rst:3
+msgid "Import des commentaires depuis les fichiers XG."
+msgstr "XGファイルからのコメントのインポート。"
+
+#: ../../source/index.rst:1
+msgid "0.15.0"
+msgstr "0.15.0"
+
+#: ../../source/index.rst:1
+msgid "31/03/2026"
+msgstr "2026/03/31"
+
+#: ../../source/index.rst:1
+msgid ""
+"Export de la position en image PNG dans le presse-papier (board seul via "
+"Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
+msgstr ""
+"ポジションをPNG画像としてクリップボードにエクスポート（Ctrl+X でボードのみ、"
+"Ctrl+X Ctrl+X で分析付きのボード）。"
+
+#: ../../source/index.rst:1
+msgid "0.16.0"
+msgstr "0.16.0"
+
+#: ../../source/index.rst:1
+msgid "18/04/2026"
+msgstr "2026/04/18"
+
+#: ../../source/index.rst:1
+msgid ""
+"Schéma de base de données v2.0.0 : déduplication des positions via hash "
+"Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs bitboard, "
+"journalisation WAL. Import par lot >=3x plus rapide, recherche filtrée <=100"
+" ms sur 10k+ positions. NOTE : les fichiers DB créés avec la v0.16.0 ne "
+"peuvent pas être ouverts par les versions plus anciennes ; les anciennes DB "
+"sont migrées automatiquement sur place (faire une sauvegarde d'abord)."
+msgstr ""
+"データベーススキーマ v2.0.0：Zobristハッシュによるポジションの重複排除、非正"
+"規化されたフィルタリング列、ビットボードによるパターンの事前フィルター、WAL"
+"ジャーナリング。一括インポートが3倍以上高速化し、1万件以上のポジションに対す"
+"るフィルター検索が100ミリ秒以内に。注意：v0.16.0で作成したDBファイルは古い"
+"バージョンでは開けません。古いDBはその場で自動的にマイグレーションされます"
+"（先にバックアップを取ってください）。"
+
+#: ../../source/index.rst:1
+msgid "0.17.0"
+msgstr "0.17.0"
+
+#: ../../source/index.rst:1
+msgid "20/04/2026"
+msgstr "2026/04/20"
+
+#: ../../source/index.rst:1
+msgid ""
+"Optimisation du stockage : compression zlib des données d'analyse (~80% de "
+"réduction), encodage compact des positions (~90% de réduction de la taille)."
+" Ajout de 5 index manquants pour améliorer les performances de recherche. "
+"Correction de la recherche par erreur de cube. Correction du mode EDIT après"
+" une recherche sans résultats. Restauration de l'état du panneau de "
+"recherche lors du changement d'onglets. Suppression de 62 instructions de "
+"débogage des chemins critiques."
+msgstr ""
+"ストレージの最適化：分析データのzlib圧縮（約80%削減）、ポジションのコンパクト"
+"なエンコーディング（サイズを約90%削減）。検索性能を向上させるために不足してい"
+"た5つのインデックスを追加。キューブエラーによる検索の修正。結果のない検索後の"
+"EDITモードの修正。タブ切り替え時の検索パネル状態の復元。クリティカルパスから"
+"62件のデバッグ命令を削除。"
+
+#: ../../source/index.rst:1
+msgid "0.18.0"
+msgstr "0.18.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"Refactoring majeur du code : découpage de db.go (10k lignes) en 19 fichiers "
+"spécialisés, extraction de 7 modules de service depuis App.svelte (4888→469 "
+"lignes), consolidation des stores modaux/panneaux. Migration complète vers "
+"Svelte 5 runes. Remplacement de 9 modales de tableau par un composant "
+"générique DataTableModal. Ajout d'ESLint + Prettier + vitest (125 tests "
+"frontend) avec CI. Conformité WCAG 2.1 AA (focus visible, rôles ARIA, "
+"navigation clavier). Passage du mutex Database en RWMutex pour un meilleur "
+"parallélisme en lecture. Documentation CLI complète (CLI_USAGE.md + Sphinx "
+"FR/EN). Réécriture du README. Correction de tous les avertissements ESLint "
+"(46→0) et Vite (6→0)."
+msgstr ""
+"大規模なコードのリファクタリング：db.go（1万行）を19個の専用ファイルに分割、"
+"App.svelteから7個のサービスモジュールを抽出（4888→469行）、モーダル／パネルの"
+"ストアを統合。Svelte 5 runesへの完全移行。9個のテーブルモーダルを汎用コンポー"
+"ネントDataTableModalに置き換え。ESLint + Prettier + vitest（フロントエンドテ"
+"スト125件）とCIの追加。WCAG 2.1 AA準拠（可視フォーカス、ARIAロール、キーボー"
+"ドナビゲーション）。読み取りの並列性を向上させるためDatabaseのミューテックス"
+"をRWMutexに変更。完全なCLIドキュメント（CLI_USAGE.md + Sphinx FR/EN）。README"
+"の書き直し。ESLint（46→0）およびVite（6→0）のすべての警告を修正。"
+
+#: ../../source/index.rst:1
+msgid "0.19.0"
+msgstr "0.19.0"
+
+#: ../../source/index.rst:1
+msgid "07/05/2026"
+msgstr "2026/05/07"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
+"Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
+"tournoi, dates, type de décision, longueur de match), onglet Dashboard avec "
+"cartes de niveau / PR glissant / top blunders, onglet Progression avec "
+"courbe par tournoi et scatter plot par match, onglet Erreurs avec "
+"répartition par action de videau et histogramme des magnitudes. Drill-down "
+"interactif vers les positions / matchs / tournois depuis tous les "
+"indicateurs. Toggle PR / MWC instantané. Commande CLI list --type stats. "
+"Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et gnuBG "
+"(seuil 0.16 d'équité pour les cubes proches). Correction du calcul de "
+"cube_error pour les décisions Double/Pass. Documentation du modèle de "
+"statistiques (:ref:\\`stats_parity\\`). Voir :ref:\\`stats\\`."
+msgstr ""
+"統計パネルの追加：PR（Performance Rate）、Snowie Error Rate、MWC cost（Match "
+"Winning Chance cost）の各指標、フィルターバー（プレイヤー、トーナメント、日"
+"付、決定の種類、マッチ長）、レベルカード／移動平均PR／トップブランダーを表示"
+"するダッシュボードタブ、トーナメントごとの推移曲線とマッチごとの散布図を表示"
+"する進捗タブ、キューブアクションごとの内訳とエラーの大きさのヒストグラムを表"
+"示するエラータブ。すべての指標からポジション／マッチ／トーナメントへのインタ"
+"ラクティブなドリルダウン。PR／MWCの即時切り替え。CLIコマンド list --type "
+"stats。PR／Snowie ER／MWC指標をeXtremeGammonおよびgnuBGに整合（接近したキュー"
+"ブのエクイティしきい値0.16）。Double/Pass決定のcube_error計算の修正。統計モデ"
+"ルのドキュメント化（:ref:\\`stats_parity\\`）。:ref:\\`stats\\` を参照。"
+
+#: ../../source/index.rst:1
+msgid "0.20.0"
+msgstr "0.20.0"
+
+#: ../../source/index.rst:1
+msgid "31/05/2026"
+msgstr "2026/05/31"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de la structure d'exclusion *Except* au panneau de recherche : exclut "
+"les positions contenant l'un des pions dessinés, avec marqueur « doit être "
+"vide » (double-clic) et nombre de pions par point non limité (commande x). "
+"Ajout de l'option « premier dé uniquement » au filtre de lancer de dés "
+"(variante D1, option CLI --dice). Panneau Commentaires : focus automatique "
+"du champ de saisie à l'ouverture et boutons éditer / supprimer toujours "
+"visibles. Correction du filtre « Search Text » qui ne trouvait pas tous les "
+"tags de commentaires."
+msgstr ""
+"検索パネルに除外構造 *Except* を追加：描いた駒のいずれかを含むポジションを除"
+"外します。「空でなければならない」マーカー（ダブルクリック）と、ポイントごと"
+"の駒数の上限なし（コマンド x）に対応。サイコロの目フィルターに「最初のサイコ"
+"ロのみ」オプションを追加（バリアント D1、CLIオプション --dice）。コメントパネ"
+"ル：開いたときに入力欄へ自動フォーカスし、編集／削除ボタンを常に表示。すべて"
+"のコメントタグを見つけられなかった「Search Text」フィルターの修正。"
+
+#: ../../source/index.rst:1
+msgid "0.21.0"
+msgstr "0.21.0"
+
+#: ../../source/index.rst:1
+msgid "01/06/2026"
+msgstr "2026/06/01"
+
+#: ../../source/index.rst:1
+msgid ""
+"Internationalisation de l'interface : l'intégralité de blunderDB (barre "
+"d'outils, panneaux, messages, aide) peut désormais être affichée au choix en"
+" anglais, français, allemand, italien, espagnol, finnois, japonais, grec ou "
+"russe. Ajout d'une fenêtre de configuration, accessible par un bouton en "
+"forme de rouage dans la barre d'outils, permettant de sélectionner la "
+"langue. Le choix de la langue est conservé d'une session à l'autre. Voir "
+":ref:\\`configuration\\`."
+msgstr ""
+"インターフェースの国際化：blunderDB全体（ツールバー、パネル、メッセージ、ヘル"
+"プ）を、英語、フランス語、ドイツ語、イタリア語、スペイン語、フィンランド語、"
+"日本語、ギリシャ語、ロシア語から選んで表示できるようになりました。言語を選択"
+"するための設定ウィンドウを追加。ツールバーの歯車型ボタンからアクセスできま"
+"す。言語の選択はセッションをまたいで保持されます。:ref:\\`configuration\\` を"
+"参照。"
+
+#: ../../source/index.rst:147
+msgid "Sommaire"
+msgstr "目次"
+
+#: ../../source/index.rst:179
+msgid "Contacts"
+msgstr "連絡先"
+
+#: ../../source/index.rst:181
+msgid ""
+"Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver sur "
+"Heroes sous le pseudo postmanpat."
+msgstr ""
+"作者：Kévin Unger <blunderdb@proton.me>。Heroes ではハンドルネーム "
+"postmanpat でも見つけられます。"
+
+#: ../../source/index.rst:184
+msgid ""
+"J'ai développé blunderDB initialement pour mon usage personnel afin de "
+"pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
+"d'avoir un retour surtout quand on a dépensé un paquet d'heures de "
+"conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour faire "
+"part de votre retour d'expérience. Tous les retours (constructifs) sont "
+"bienvenus."
+msgstr ""
+"私は当初、自分のミスのパターンを見つけられるよう、個人的な利用のために"
+"blunderDBを開発しました。しかし、設計、コーディング、デバッグに多くの時間を費"
+"やした後では、フィードバックをいただけるのはとても嬉しいものです。ですから、"
+"ぜひお気軽にご感想をお寄せください。（建設的な）フィードバックはすべて歓迎し"
+"ます。"
+
+#: ../../source/index.rst:191
+msgid "Voici plusieurs manières de discuter:"
+msgstr "やり取りの方法はいくつかあります。"
+
+#: ../../source/index.rst:193
+msgid ""
+"rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr ""
+"blunderDBのDiscordサーバーに参加する：https://discord.gg/DA5PpzM9En"
+
+#: ../../source/index.rst:195
+msgid "m'écrire un mail à blunderdb@proton.me,"
+msgstr "blunderdb@proton.me 宛にメールを送る、"
+
+#: ../../source/index.rst:197
+msgid "discuter avec moi, si on se retrouve dans un tournoi,"
+msgstr "トーナメントで会うことがあれば直接話す、"
+
+#: ../../source/index.rst:199
+msgid "sur Github,"
+msgstr "Githubで、"
+
+#: ../../source/index.rst:201
+msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
+msgstr "チケットを作成する：https://github.com/kevung/blunderDB/issues"
+
+#: ../../source/index.rst:203
+msgid ""
+"pour des corrections de bugs ou des propositions d'amélioration, créer une "
+"pull request."
+msgstr ""
+"バグ修正や改善の提案には、プルリクエストを作成してください。"
+
+#: ../../source/index.rst:207
+msgid "Faire un don"
+msgstr "寄付する"
+
+#: ../../source/index.rst:209
+msgid ""
+"Si vous appréciez blunderDB et que vous voulez soutenir les développements "
+"passés et futurs, vous pouvez"
+msgstr ""
+"blunderDBを気に入っていただき、これまでと今後の開発を支援したいとお考えの場合"
+"は、次のことができます"
+
+#: ../../source/index.rst:211
+msgid "me payer un verre si on a le plaisir de se rencontrer!"
+msgstr "お会いする機会があれば、一杯おごってください！"
+
+#: ../../source/index.rst:213
+msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
+msgstr "PayPalで blunderdb@proton.me 宛にささやかな寄付をする"
+
+#: ../../source/index.rst:216
+msgid "Remerciements"
+msgstr "謝辞"
+
+#: ../../source/index.rst:218
+msgid ""
+"Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre fille "
+"Perrine. Je tiens à remercier tout particulièrement quelques amis:"
+msgstr ""
+"このささやかなソフトウェアを、パートナーのAnne-Claireと愛する娘のPerrineに捧"
+"げます。とりわけ、何人かの友人に特別な感謝を述べたいと思います。"
+
+#: ../../source/index.rst:221
+msgid ""
+"*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
+"bienveillance; de montrer la Voie dans la compréhension de ce merveilleux "
+"jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
+"jouer."
+msgstr ""
+"*Tristan Remille* には、喜びと思いやりをもってバックギャモンの世界へ導いてく"
+"れたこと、この素晴らしいゲームを理解するための道を示してくれたこと、上達しよ"
+"うとする私の拙い試みにもかかわらず励まし続けてくれたことに感謝します。"
+
+#: ../../source/index.rst:226
+msgid ""
+"*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
+"d'années dans de chouettes aventures, et un fantastique partenaire de jeu "
+"depuis qu'il a choppé le virus du backgammon."
+msgstr ""
+"*Nicolas Harmand* には、もう10年以上にわたって素敵な冒険を共にしてきた陽気な"
+"仲間であり、バックギャモンに夢中になって以来、素晴らしいゲームの相棒であるこ"
+"とに感謝します。"

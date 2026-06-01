@@ -1,0 +1,448 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/stats_parity.rst:4
+msgid "Annexe : Modèle de statistiques — alignement XG / gnuBG / blunderDB"
+msgstr "付録：統計モデル — XG / gnuBG / blunderDB の整合"
+
+#: ../../source/stats_parity.rst:6
+msgid ""
+"Cette page décrit comment blunderDB calcule le **PR** (Performance Rate), le"
+" **Snowie Error Rate** et la **perte MWC**, et comment ces métriques sont "
+"alignées sur eXtreme Gammon (XG) et gnuBG (référence ouverte)."
+msgstr ""
+"このページでは、blunderDB が **PR**（Performance Rate）、**Snowie Error Rate**、**MWC** "
+"損失をどのように計算し、これらの指標が eXtreme Gammon (XG) および "
+"gnuBG（オープンリファレンス）とどのように整合しているかを説明します。"
+
+#: ../../source/stats_parity.rst:16
+msgid "Définitions formelles"
+msgstr "正式な定義"
+
+#: ../../source/stats_parity.rst:19
+msgid "PR (Performance Rate)"
+msgstr "PR (Performance Rate)"
+
+#: ../../source/stats_parity.rst:21
+msgid ""
+"Le PR (aussi appelé « error rate per decision » dans gnuBG) mesure l'erreur "
+"moyenne en millièmes de point de jetons (millipoints, mpt) par décision "
+"comptée."
+msgstr ""
+"PR（gnuBG では「error rate per "
+"decision」とも呼ばれる）は、カウントされた決定ごとのエクイティポイントの千分の一（ミリポイント、mpt）単位の平均エラーを測定します。"
+
+#: ../../source/stats_parity.rst:25
+msgid ""
+"\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{erreur}_i|}{\\mathrm{N_{compté}}} "
+"\\times 500"
+msgstr ""
+"\\mathrm{PR} = \\frac{\\sum_i |\\mathrm{error}_i|}{\\mathrm{N_{counted}}} "
+"\\times 500"
+
+#: ../../source/stats_parity.rst:29
+msgid ""
+"Le numérateur est la somme absolue des erreurs EMG (en equity cubeful) sur "
+"toutes les décisions du périmètre."
+msgstr "分子は、スコープ内のすべての決定における EMG エラー（キューブフルエクイティ）の絶対和です。"
+
+#: ../../source/stats_parity.rst:31
+#, python-brace-format
+msgid ""
+"Le dénominateur :math:`N_\\text{compté}` est le nombre de **décisions "
+"comptées** (voir ci-dessous)."
+msgstr "分母 :math:`N_\\text{counted}` は **カウントされた決定** の数です（以下を参照）。"
+
+#: ../../source/stats_parity.rst:33
+msgid ""
+"Le facteur 500 convertit l'equity en millipoints (1 point = 1000 mpt, mais "
+"l'échelle est ×500 par convention XG/gnuBG — cf. "
+"``gnubg/formatgs.c:399–409``)."
+msgstr ""
+"係数 500 はエクイティをミリポイントに変換します（1 ポイント = 1000 mpt ですが、XG/gnuBG の慣例により倍率は ×500 です "
+"— ``gnubg/formatgs.c:399–409`` 参照）。"
+
+#: ../../source/stats_parity.rst:37
+msgid "Snowie Error Rate"
+msgstr "Snowie Error Rate"
+
+#: ../../source/stats_parity.rst:39
+msgid ""
+"Le Snowie ER utilise le **même numérateur** que le PR, mais le dénominateur "
+"est le nombre total de coups des deux joueurs, coups forcés inclus (toutes "
+"décisions, sans filtre) :"
+msgstr ""
+"Snowie ER は PR と **同じ分子** を使用しますが、分母は強制手を含む両プレイヤーの総手数です（すべての決定、フィルターなし）："
+
+#: ../../source/stats_parity.rst:43
+msgid ""
+"\\mathrm{SnowieER} = \\frac{\\sum_i |\\mathrm{erreur}_i|}{N_\\text{P1} + "
+"N_\\text{P2}} \\times 500"
+msgstr ""
+"\\mathrm{SnowieER} = \\frac{\\sum_i |\\mathrm{error}_i|}{N_\\text{P1} + "
+"N_\\text{P2}} \\times 500"
+
+#: ../../source/stats_parity.rst:47
+msgid "Référence : ``gnubg/formatgs.c:415–424``."
+msgstr "参照：``gnubg/formatgs.c:415–424``。"
+
+#: ../../source/stats_parity.rst:49
+msgid ""
+"Le Snowie ER est plus stable entre les outils car son dénominateur ne dépend"
+" pas du filtre des décisions forcées/triviales. Il sert de métrique de "
+"recoupement XG ↔ gnuBG ↔ blunderDB."
+msgstr ""
+"Snowie ER は、分母が強制/自明な決定フィルターに依存しないため、ツール間でより安定しています。XG ↔ gnuBG ↔ blunderDB "
+"間のクロスチェック指標として機能します。"
+
+#: ../../source/stats_parity.rst:55
+msgid ""
+"Le Snowie ER d'un joueur est typiquement environ la moitié de son PR, car le"
+" dénominateur inclut les coups des deux joueurs alors que le PR n'utilise "
+"que les décisions de ce joueur."
+msgstr ""
+"プレイヤーの Snowie ER は通常 PR の約半分です。分母には両プレイヤーの手が含まれるのに対し、PR "
+"はそのプレイヤーの決定のみを使用するためです。"
+
+#: ../../source/stats_parity.rst:60
+msgid "Perte MWC (Match Winning Chance)"
+msgstr "MWC 損失（Match Winning Chance）"
+
+#: ../../source/stats_parity.rst:62
+msgid ""
+"La perte MWC exprime en points de pourcentage de probabilité de gagner le "
+"match l'effet cumulé des erreurs d'un joueur. Pour chaque décision, l'erreur"
+" EMG est convertie en MWC via la table MET (Match Equity Table) au score "
+"courant :"
+msgstr ""
+"MWC 損失は、プレイヤーのエラーの累積効果を、マッチに勝つ確率のパーセンテージポイントで表します。各決定について、EMG エラーは現在のスコアにおける"
+" MET（Match Equity Table）を使用して MWC に変換されます："
+
+#: ../../source/stats_parity.rst:66
+#, python-brace-format
+msgid ""
+"\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
+"\\mathrm{score}_i)"
+msgstr ""
+"\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
+"\\mathrm{score}_i)"
+
+#: ../../source/stats_parity.rst:70
+msgid "Référence : ``gnubg/analysis.c:1449–1464``."
+msgstr "参照：``gnubg/analysis.c:1449–1464``。"
+
+#: ../../source/stats_parity.rst:74
+msgid "Décisions comptées au dénominateur du PR"
+msgstr "PR の分母にカウントされる決定"
+
+#: ../../source/stats_parity.rst:76
+msgid "blunderDB suit les mêmes règles d'exclusion qu'XG et gnuBG."
+msgstr "blunderDB は XG および gnuBG と同じ除外ルールに従います。"
+
+#: ../../source/stats_parity.rst:79
+msgid "Coups de pions — décisions comptées"
+msgstr "チェッカープレイ — カウントされる決定"
+
+#: ../../source/stats_parity.rst:81
+msgid "Seuls les **coups non-forcés** sont comptés :"
+msgstr "**強制されていない手** のみがカウントされます："
+
+#: ../../source/stats_parity.rst:83
+msgid ""
+"Un coup est **forcé** si le dé n'offre qu'un seul coup légal (``cMoves == "
+"1`` dans ``gnubg/analysis.c:458``)."
+msgstr ""
+"手が **強制** であるのは、サイコロが 1 つの合法的なプレイしか提供しない場合です（``gnubg/analysis.c:458`` の "
+"``cMoves == 1``）。"
+
+#: ../../source/stats_parity.rst:85
+msgid ""
+"Les coups forcés ont une erreur nulle par définition : le joueur n'avait pas"
+" le choix. Les inclure dans le dénominateur abaisserait artificiellement le "
+"PR."
+msgstr "強制手は定義上エラーがゼロです：プレイヤーに選択肢がありませんでした。それらを分母に含めると PR が人為的に低下します。"
+
+#: ../../source/stats_parity.rst:89
+msgid "Décisions de cube — décisions comptées"
+msgstr "キューブ決定 — カウントされる決定"
+
+#: ../../source/stats_parity.rst:91
+msgid "Seules les **décisions de cube proches** sont comptées :"
+msgstr "**接戦のキューブ決定** のみがカウントされます："
+
+#: ../../source/stats_parity.rst:93
+msgid ""
+"Une décision cube est **proche** si elle se situe dans la fenêtre d'équité "
+"``[-0.16, +0.16]`` autour du point de redoublement (prédicat "
+"``isCloseCubedecision`` dans ``gnubg/eval.c:5088–5100``)."
+msgstr ""
+"キューブ決定が **接戦** であるのは、ダブリングポイントの周囲のエクイティウィンドウ ``[-0.16, +0.16]`` "
+"内にある場合です（``gnubg/eval.c:5088–5100`` の述語 ``isCloseCubedecision``）。"
+
+#: ../../source/stats_parity.rst:96
+msgid ""
+"Un « No Double » trivial (équité très négative ou très positive) n'est pas "
+"une vraie décision stratégique ; l'inclure gonflerait le dénominateur et "
+"dépresserait le PR."
+msgstr ""
+"自明な「No Double」（非常に負または非常に正のエクイティ）は真の戦略的決定ではありません。それを含めると分母が膨らみ PR が低下します。"
+
+#: ../../source/stats_parity.rst:101
+msgid "Résumé du filtre"
+msgstr "フィルターの概要"
+
+#: ../../source/stats_parity.rst:104
+msgid "Type de décision"
+msgstr "決定タイプ"
+
+#: ../../source/stats_parity.rst:104
+#, python-brace-format
+msgid "Inclus dans :math:`N_\\text{compté}` (PR)"
+msgstr ":math:`N_\\text{counted}` (PR) に含まれる"
+
+#: ../../source/stats_parity.rst:106
+msgid "Coup non-forcé"
+msgstr "強制されていない手"
+
+#: ../../source/stats_parity.rst:106 ../../source/stats_parity.rst:110
+msgid "Oui"
+msgstr "はい"
+
+#: ../../source/stats_parity.rst:108
+msgid "Coup forcé"
+msgstr "強制手"
+
+#: ../../source/stats_parity.rst:108 ../../source/stats_parity.rst:112
+msgid "Non"
+msgstr "いいえ"
+
+#: ../../source/stats_parity.rst:110
+msgid "Cube proche"
+msgstr "接戦キューブ"
+
+#: ../../source/stats_parity.rst:112
+msgid "No Double trivial"
+msgstr "自明な No Double"
+
+#: ../../source/stats_parity.rst:114
+msgid "Take / Pass"
+msgstr "Take / Pass"
+
+#: ../../source/stats_parity.rst:114
+msgid "Toujours (ce sont des réponses au double)"
+msgstr "常に（これらはダブルへの応答です）"
+
+#: ../../source/stats_parity.rst:119
+msgid "Correspondance blunderDB ↔ XG ↔ gnuBG"
+msgstr "blunderDB ↔ XG ↔ gnuBG の対応"
+
+#: ../../source/stats_parity.rst:121
+msgid ""
+"Les métriques sont alignées dans les limites suivantes (mesurées sur 3 "
+"matchs de référence) :"
+msgstr "指標は以下の範囲内で整合しています（3 つの参照マッチで測定）："
+
+#: ../../source/stats_parity.rst:124
+msgid "Comparaison XG ↔ blunderDB (même moteur d'analyse)"
+msgstr "XG ↔ blunderDB の比較（同じ解析エンジン）"
+
+#: ../../source/stats_parity.rst:127 ../../source/stats_parity.rst:144
+msgid "Métrique"
+msgstr "指標"
+
+#: ../../source/stats_parity.rst:127
+msgid "Écart typique"
+msgstr "典型的な差"
+
+#: ../../source/stats_parity.rst:129
+msgid "Décisions totales"
+msgstr "総決定数"
+
+#: ../../source/stats_parity.rst:129
+msgid "≤ 5"
+msgstr "≤ 5"
+
+#: ../../source/stats_parity.rst:131
+msgid "Coups non-forcés"
+msgstr "強制されていない手"
+
+#: ../../source/stats_parity.rst:131
+msgid "≤ 7"
+msgstr "≤ 7"
+
+#: ../../source/stats_parity.rst:133
+msgid "PR"
+msgstr "PR"
+
+#: ../../source/stats_parity.rst:133
+msgid "≤ 0.10"
+msgstr "≤ 0.10"
+
+#: ../../source/stats_parity.rst:135 ../../source/stats_parity.rst:148
+msgid "Perte MWC"
+msgstr "MWC 損失"
+
+#: ../../source/stats_parity.rst:135
+msgid "≤ 1.0 pp"
+msgstr "≤ 1.0 pp"
+
+#: ../../source/stats_parity.rst:137
+msgid "Equity total (EMG)"
+msgstr "総エクイティ (EMG)"
+
+#: ../../source/stats_parity.rst:137
+msgid "≤ 0.05"
+msgstr "≤ 0.05"
+
+#: ../../source/stats_parity.rst:141
+msgid "Comparaison gnuBG ↔ blunderDB (import SGF — moteurs différents)"
+msgstr "gnuBG ↔ blunderDB の比較（SGF インポート — 異なるエンジン）"
+
+#: ../../source/stats_parity.rst:144
+msgid "Écart typique  | Cause principale"
+msgstr "典型的な差 | 主な原因"
+
+#: ../../source/stats_parity.rst:146
+msgid "PR (checker)"
+msgstr "PR (チェッカー)"
+
+#: ../../source/stats_parity.rst:146
+msgid "≤ 0.20"
+msgstr "≤ 0.20"
+
+#: ../../source/stats_parity.rst:146
+msgid "equity cross-engine"
+msgstr "クロスエンジンのエクイティ差"
+
+#: ../../source/stats_parity.rst:148
+msgid "≤ 3.5 pp"
+msgstr "≤ 3.5 pp"
+
+#: ../../source/stats_parity.rst:148
+msgid "close-cube SGF incomplet"
+msgstr "SGF の不完全な接戦キューブデータ"
+
+#: ../../source/stats_parity.rst:150
+msgid "Snowie ER"
+msgstr "Snowie ER"
+
+#: ../../source/stats_parity.rst:150
+msgid "≤ 0.50"
+msgstr "≤ 0.50"
+
+#: ../../source/stats_parity.rst:150
+msgid "forcés sans analyse (SGF)"
+msgstr "解析なしの強制手（SGF）"
+
+#: ../../source/stats_parity.rst:155
+msgid ""
+"Les fichiers SGF (gnuBG) n'incluent pas les alternatives pour les coups "
+"forcés, ce qui signifie que blunderDB ne peut pas détecter tous les coups "
+"forcés à l'import SGF. Cela crée un écart structurel sur le Snowie ER "
+"(dénominateur légèrement différent)."
+msgstr ""
+"SGF ファイル（gnuBG）は強制手の代替手を含まないため、blunderDB は SGF インポート時にすべての強制手を検出できません。これにより "
+"Snowie ER に構造的な差が生じます（分母がわずかに異なる）。"
+
+#: ../../source/stats_parity.rst:162
+msgid "Valider vos propres chiffres"
+msgstr "自分の数値を検証する"
+
+#: ../../source/stats_parity.rst:164
+msgid ""
+"Si vos valeurs PR ou MWC divergent des chiffres XG, vérifier les points "
+"suivants :"
+msgstr "PR または MWC の値が XG の数値と乖離する場合は、以下の点を確認してください："
+
+#: ../../source/stats_parity.rst:167
+#, python-brace-format
+msgid ""
+"**Analyses complètes** — Le PR ne peut être calculé que sur les positions "
+"disposant d'une analyse. Des positions sans analyse sont comptées comme "
+"erreur zéro mais n'entrent pas dans :math:`N_\\text{compté}`."
+msgstr ""
+"**完全な解析** — PR "
+"は解析のあるポジションのみで計算できます。解析のないポジションはエラーゼロとしてカウントされますが、:math:`N_\\text{counted}` "
+"には含まれません。"
+
+#: ../../source/stats_parity.rst:171
+msgid ""
+"**Version XG** — XG peut changer ses calculs entre versions. blunderDB "
+"s'aligne sur le comportement observé des versions récentes."
+msgstr ""
+"**XG バージョン** — XG はバージョン間で計算を変更する場合があります。blunderDB "
+"は最近のバージョンで観察された動作に合わせています。"
+
+#: ../../source/stats_parity.rst:174
+msgid ""
+"**Format d'import** — Les fichiers SGF gnuBG produisent des écarts plus "
+"importants sur le cube (voir tableau ci-dessus) car le fichier n'inclut pas "
+"les analyses complètes pour tous les cubes."
+msgstr ""
+"**インポート形式** — gnuBG の SGF "
+"ファイルは、ファイルにすべてのキューブ決定の完全な解析が含まれていないため、キューブ指標でより大きな差が生じます（上記の表を参照）。"
+
+#: ../../source/stats_parity.rst:178
+msgid ""
+"**Migration de base** — Après mise à jour de blunderDB, les bases existantes"
+" sont migrées automatiquement. Faire une sauvegarde avant d'ouvrir une base "
+"avec une nouvelle version."
+msgstr ""
+"**データベースの移行** — blunderDB "
+"の更新後、既存のデータベースは自動的に移行されます。新しいバージョンでデータベースを開く前にバックアップを作成してください。"
+
+#: ../../source/stats_parity.rst:184
+msgid "Référence gnuBG"
+msgstr "gnuBG 参照"
+
+#: ../../source/stats_parity.rst:186
+msgid ""
+"Les formules ont été vérifiées dans les fichiers source suivants (dépôt "
+"gnuBG) :"
+msgstr "数式は、以下のソースファイル（gnuBG リポジトリ）で検証されています："
+
+#: ../../source/stats_parity.rst:188
+msgid "``gnubg/formatgs.c:399–409`` — PR (« Error rate per decision »)."
+msgstr "``gnubg/formatgs.c:399–409`` — PR（\"Error rate per decision\"）。"
+
+#: ../../source/stats_parity.rst:189
+msgid "``gnubg/formatgs.c:415–424`` — Snowie Error Rate."
+msgstr "``gnubg/formatgs.c:415–424`` — Snowie Error Rate。"
+
+#: ../../source/stats_parity.rst:190
+msgid ""
+"``gnubg/analysis.c:458–462`` — Accumulation checker, exclusion des forcés "
+"(``cMoves > 1``)."
+msgstr "``gnubg/analysis.c:458–462`` — チェッカー累積、強制手の除外（``cMoves > 1``）。"
+
+#: ../../source/stats_parity.rst:191
+msgid "``gnubg/analysis.c:1430–1474`` — Conversion EMG → MWC par décision."
+msgstr "``gnubg/analysis.c:1430–1474`` — 決定ごとの EMG → MWC 変換。"
+
+#: ../../source/stats_parity.rst:192
+msgid ""
+"``gnubg/analysis.c:1449–1464`` — Accumulation de la perte MWC (``eq2mwc``)."
+msgstr "``gnubg/analysis.c:1449–1464`` — MWC 損失の累積（``eq2mwc``）。"
+
+#: ../../source/stats_parity.rst:193
+msgid ""
+"``gnubg/eval.c:5088–5100`` — Prédicat ``isCloseCubedecision`` (seuil 0.16)."
+msgstr "``gnubg/eval.c:5088–5100`` — 述語 ``isCloseCubedecision``（閾値 0.16）。"

@@ -1,0 +1,882 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ru <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/guide_utilisateur.rst:4
+msgid "Guide utilisateur"
+msgstr "Руководство пользователя"
+
+#: ../../source/guide_utilisateur.rst:6
+msgid ""
+"Ce guide est une introduction pratique à blunderDB pour une prise en main "
+"rapide."
+msgstr ""
+"Это руководство является практическим введением в blunderDB для быстрого "
+"освоения программы."
+
+#: ../../source/guide_utilisateur.rst:10
+msgid "Créer une nouvelle base de données"
+msgstr "Создание новой базы данных"
+
+#: ../../source/guide_utilisateur.rst:12
+msgid ""
+"Pour créer une nouvelle base de données, cliquer dans la barre d'outils sur "
+"le bouton \"New Database\". Choisir un chemin où enregistrer la base de "
+"données, ainsi qu'un nom et cliquer sur \"Save\"."
+msgstr ""
+"Чтобы создать новую базу данных, нажмите в панели инструментов кнопку \"New "
+"Database\". Выберите путь для сохранения базы данных, укажите имя файла и "
+"нажмите \"Save\"."
+
+#: ../../source/guide_utilisateur.rst:17
+msgid "L'extension des bases de données blunderDB est *.db*."
+msgstr "Расширение файлов баз данных blunderDB — *.db*."
+
+#: ../../source/guide_utilisateur.rst:20
+msgid "Raccourcis clavier: *CTRL-N*. Commande: ``n``"
+msgstr "Сочетания клавиш: *CTRL-N*. Команда: ``n``"
+
+#: ../../source/guide_utilisateur.rst:24
+msgid "Ouvrir une base de donnée existante"
+msgstr "Открытие существующей базы данных"
+
+#: ../../source/guide_utilisateur.rst:26
+msgid ""
+"Pour charger une base de données existante, cliquer dans la barre d'outils "
+"sur le bouton \"Open Database\". Choisir le chemin où se trouve la base de "
+"données, choisir le fichier *.db* et cliquer sur \"Open\"."
+msgstr ""
+"Чтобы загрузить существующую базу данных, нажмите в панели инструментов "
+"кнопку \"Open Database\". Перейдите к папке с базой данных, выберите файл "
+"*.db* и нажмите \"Open\"."
+
+#: ../../source/guide_utilisateur.rst:31
+msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
+msgstr "Сочетания клавиш: *CTRL-O*. Команда: ``o``"
+
+#: ../../source/guide_utilisateur.rst:34
+msgid "Importer et fusionner une base de données"
+msgstr "Импорт и слияние базы данных"
+
+#: ../../source/guide_utilisateur.rst:36
+msgid ""
+"Pour importer et fusionner une autre base de données blunderDB dans la base "
+"de données actuellement ouverte, cliquer dans la barre d'outils sur le "
+"bouton \"Import Database\". Choisir le fichier *.db* à importer et cliquer "
+"sur \"Open\"."
+msgstr ""
+"Чтобы импортировать и объединить другую базу данных blunderDB с текущей "
+"открытой базой данных, нажмите в панели инструментов кнопку \"Import "
+"Database\". Выберите файл *.db* для импорта и нажмите \"Open\"."
+
+#: ../../source/guide_utilisateur.rst:40
+msgid "blunderDB va fusionner intelligemment les deux bases de données:"
+msgstr "blunderDB выполнит интеллектуальное слияние двух баз данных:"
+
+#: ../../source/guide_utilisateur.rst:42
+msgid ""
+"Les positions qui n'existent pas dans la base de données actuelle seront "
+"ajoutées avec leurs analyses et commentaires."
+msgstr ""
+"Позиции, которых нет в текущей базе данных, будут добавлены вместе с их "
+"анализами и комментариями."
+
+#: ../../source/guide_utilisateur.rst:45
+msgid ""
+"Les positions qui existent déjà seront mises à jour: les analyses seront "
+"complétées si manquantes, et les commentaires seront fusionnés (ajout des "
+"nouveaux commentaires sans dupliquer les existants)."
+msgstr ""
+"Существующие позиции будут обновлены: анализы будут дополнены при их "
+"отсутствии, а комментарии объединены (новые комментарии добавляются без "
+"дублирования существующих)."
+
+#: ../../source/guide_utilisateur.rst:49
+msgid ""
+"Un message résumera le nombre de positions ajoutées, fusionnées et ignorées."
+msgstr ""
+"Сообщение покажет количество добавленных, объединённых и пропущенных "
+"позиций."
+
+#: ../../source/guide_utilisateur.rst:52
+msgid ""
+"L'import nécessite que les deux bases de données aient des versions de "
+"schéma compatibles. Il est possible d'importer une base de données d'une "
+"version inférieure ou égale dans une base de données de version supérieure."
+msgstr ""
+"Для импорта требуется совместимость версий схемы обеих баз данных. "
+"Допускается импорт базы данных более ранней или равной версии в базу данных "
+"более поздней версии."
+
+#: ../../source/guide_utilisateur.rst:57
+msgid ""
+"L'opération d'import modifie immédiatement la base de données actuellement "
+"ouverte. Il est recommandé de faire une copie de sauvegarde avant d'importer"
+" une autre base de données."
+msgstr ""
+"Операция импорта немедленно изменяет текущую открытую базу данных. Перед "
+"импортом другой базы данных рекомендуется создать резервную копию."
+
+#: ../../source/guide_utilisateur.rst:64
+msgid "Editer une position"
+msgstr "Редактирование позиции"
+
+#: ../../source/guide_utilisateur.rst:66
+msgid ""
+"Pour éditer une position, appuyer sur la touche *TAB* pour ouvrir le panneau"
+" de recherche et l'éditeur de position. Editer la position à la souris:"
+msgstr ""
+"Чтобы отредактировать позицию, нажмите *TAB* для открытия панели поиска и "
+"редактора позиций. Редактируйте позицию с помощью мыши:"
+
+#: ../../source/guide_utilisateur.rst:70
+msgid ""
+"cliquer sur les points pour ajouter des pions. Le clic gauche attribue les "
+"pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour "
+"insérer une prime, cliquer sur le point de départ, maintenir le bouton "
+"appuyé, relacher sur le point d'arrivée. Cliquer sur la barre pour mettre "
+"des pions à la barre."
+msgstr ""
+"нажимайте на пункты для добавления шашек. Левая кнопка мыши назначает шашки "
+"игроку 1. Правая кнопка мыши назначает шашки игроку 2. Чтобы расставить "
+"прайм, нажмите на начальный пункт, удерживайте кнопку и отпустите на "
+"конечном пункте. Нажмите на бар для постановки шашек на бар."
+
+#: ../../source/guide_utilisateur.rst:76
+msgid ""
+"pour effacer la position, double-clic sur une zone vide en dehors du board "
+"ou appuyer sur la touche *RETOUR ARRIERE*."
+msgstr ""
+"чтобы очистить позицию, дважды щёлкните на пустой области за пределами доски"
+" или нажмите клавишу *BACKSPACE*."
+
+#: ../../source/guide_utilisateur.rst:79
+msgid ""
+"pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour envoyer"
+" le cube vers le joueur 2, click droit sur le cube."
+msgstr ""
+"чтобы передать куб игроку 1, нажмите левую кнопку мыши на кубе. Чтобы "
+"передать куб игроку 2, нажмите правую кнопку мыши на кубе."
+
+#: ../../source/guide_utilisateur.rst:82
+msgid ""
+"pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des "
+"dés."
+msgstr ""
+"чтобы указать игрока, чья очередь хода, нажмите в область, предназначенную "
+"для кубиков."
+
+#: ../../source/guide_utilisateur.rst:84
+msgid ""
+"pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
+"droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela "
+"signifie que la position est une décision de cube."
+msgstr ""
+"чтобы изменить значение кубиков, нажмите левую кнопку мыши для увеличения "
+"значения кубика, правую — для уменьшения. Если грани кубиков пусты, это "
+"означает, что позиция является решением куба."
+
+#: ../../source/guide_utilisateur.rst:88
+msgid ""
+"pour éditer le score des joueurs, clic gauche pour augmenter le score, clic "
+"droit pour réduire le score."
+msgstr ""
+"чтобы изменить счёт игроков, нажмите левую кнопку мыши для увеличения счёта,"
+" правую — для уменьшения."
+
+#: ../../source/guide_utilisateur.rst:91
+msgid ""
+"La saisie de la position avec la souris pour les pions se fait de la même "
+"manière que dans XG."
+msgstr "Ввод позиции мышью для шашек выполняется так же, как в XG."
+
+#: ../../source/guide_utilisateur.rst:95
+msgid "Ajouter une position à la base de données"
+msgstr "Добавление позиции в базу данных"
+
+#: ../../source/guide_utilisateur.rst:97
+msgid "Après l'édition de la position, le panneau de recherche est ouvert."
+msgstr "После редактирования позиции открывается панель поиска."
+
+#: ../../source/guide_utilisateur.rst:99
+msgid ""
+"Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou appuyer"
+" dans la barre d'outils sur le bouton \"Save Position\"."
+msgstr ""
+"Чтобы сохранить полученную позицию, нажмите *CTRL-S* или кнопку \"Save "
+"Position\" в панели инструментов."
+
+#: ../../source/guide_utilisateur.rst:102
+msgid "Ouvrir la ligne de commande et exécuter: ``w``"
+msgstr "Откройте командную строку и выполните: ``w``"
+
+#: ../../source/guide_utilisateur.rst:105
+msgid "Etiqueter une position"
+msgstr "Добавление тега к позиции"
+
+#: ../../source/guide_utilisateur.rst:107
+msgid ""
+"Pour ajouter un tag *toto* à la position courante, ouvrir la ligne de "
+"commande en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande en"
+" appuyant sur *ENTREE*."
+msgstr ""
+"Чтобы добавить тег *toto* к текущей позиции, откройте командную строку "
+"нажатием *ПРОБЕЛ*, введите ``#toto`` и подтвердите команду клавишей *ENTER*."
+
+#: ../../source/guide_utilisateur.rst:111
+msgid "Supprimer une position"
+msgstr "Удаление позиции"
+
+#: ../../source/guide_utilisateur.rst:113
+msgid ""
+"Pour supprimer la position courante de la base de données, faire *Del* ou "
+"clicker dans la barre d'outils sur le bouton \"Delete Position\""
+msgstr ""
+"Чтобы удалить текущую позицию из базы данных, нажмите *Del* или кнопку "
+"\"Delete Position\" в панели инструментов."
+
+#: ../../source/guide_utilisateur.rst:116
+msgid "En ligne de commande, exécuter ``d``."
+msgstr "В командной строке выполните ``d``."
+
+#: ../../source/guide_utilisateur.rst:118
+msgid ""
+"La suppression de la position est définitive et ne nécessite aucune "
+"confirmation de la part de l'utilisateur."
+msgstr ""
+"Удаление позиции необратимо и не требует подтверждения со стороны "
+"пользователя."
+
+#: ../../source/guide_utilisateur.rst:122
+msgid "Import une position depuis XG"
+msgstr "Импорт позиции из XG"
+
+#: ../../source/guide_utilisateur.rst:124
+msgid "Pour importer une position directement depuis XG,"
+msgstr "Чтобы импортировать позицию непосредственно из XG,"
+
+#: ../../source/guide_utilisateur.rst:126
+msgid "afficher dans XG la position à importer et appuyer *CTRL-C*,"
+msgstr "откройте в XG позицию для импорта и нажмите *CTRL-C*,"
+
+#: ../../source/guide_utilisateur.rst:128
+msgid "afficher blunderDB et appuyer *CTRL-V*."
+msgstr "переключитесь на blunderDB и нажмите *CTRL-V*."
+
+#: ../../source/guide_utilisateur.rst:131
+msgid ""
+"Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz)."
+msgstr "Автовставка определяет формат источника (XG, GNUbg, BGBlitz)."
+
+#: ../../source/guide_utilisateur.rst:134
+msgid "Importer un match"
+msgstr "Импорт матча"
+
+#: ../../source/guide_utilisateur.rst:136
+msgid "blunderDB peut importer des matchs depuis différentes sources."
+msgstr "blunderDB может импортировать матчи из различных источников."
+
+#: ../../source/guide_utilisateur.rst:138
+msgid "**Formats supportés:**"
+msgstr "**Поддерживаемые форматы:**"
+
+#: ../../source/guide_utilisateur.rst:140
+msgid "eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)"
+msgstr "eXtreme Gammon (XG): файлы *.xg* и *.xgp* (позиции)"
+
+#: ../../source/guide_utilisateur.rst:141
+msgid "GNUbg: fichiers *.sgf*"
+msgstr "GNUbg: файлы *.sgf*"
+
+#: ../../source/guide_utilisateur.rst:142
+msgid "Jellyfish: fichiers *.mat* et *.txt*"
+msgstr "Jellyfish: файлы *.mat* и *.txt*"
+
+#: ../../source/guide_utilisateur.rst:143
+msgid "BGBlitz: fichiers *.bgf* et *.txt*"
+msgstr "BGBlitz: файлы *.bgf* и *.txt*"
+
+#: ../../source/guide_utilisateur.rst:145
+msgid "**Pour importer un ou plusieurs fichiers de match:**"
+msgstr "**Импорт одного или нескольких файлов матча:**"
+
+#: ../../source/guide_utilisateur.rst:147
+msgid ""
+"Appuyer sur *CTRL-I* ou cliquer sur le bouton \"Import\" dans la barre "
+"d'outils."
+msgstr "Нажмите *CTRL-I* или кнопку \"Import\" в панели инструментов."
+
+#: ../../source/guide_utilisateur.rst:149
+msgid "Sélectionner un ou plusieurs fichiers à importer."
+msgstr "Выберите один или несколько файлов для импорта."
+
+#: ../../source/guide_utilisateur.rst:151
+msgid "blunderDB détecte automatiquement le format et importe le match."
+msgstr "blunderDB автоматически определяет формат и импортирует матч."
+
+#: ../../source/guide_utilisateur.rst:153
+msgid ""
+"Une fenêtre de progression affiche le nombre de fichiers importés, échoués "
+"et ignorés (doublons)."
+msgstr ""
+"Окно прогресса показывает количество импортированных, неудачных и "
+"пропущенных (дубликаты) файлов."
+
+#: ../../source/guide_utilisateur.rst:157
+msgid "Commande: ``i``"
+msgstr "Команда: ``i``"
+
+#: ../../source/guide_utilisateur.rst:160
+msgid ""
+"blunderDB détecte automatiquement les doublons et empêche l'import d'un "
+"match déjà présent dans la base de données."
+msgstr ""
+"blunderDB автоматически определяет дубликаты и предотвращает повторный "
+"импорт матча, уже присутствующего в базе данных."
+
+#: ../../source/guide_utilisateur.rst:164
+msgid "Importer un dossier de matchs"
+msgstr "Импорт папки с матчами"
+
+#: ../../source/guide_utilisateur.rst:166
+msgid ""
+"Pour importer récursivement tous les fichiers de matchs contenus dans un "
+"dossier et ses sous-dossiers:"
+msgstr ""
+"Чтобы рекурсивно импортировать все файлы матчей из папки и её подпапок:"
+
+#: ../../source/guide_utilisateur.rst:169
+msgid ""
+"Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la "
+"barre d'outils."
+msgstr ""
+"Нажмите *CTRL-SHIFT-F* или соответствующую кнопку в панели инструментов."
+
+#: ../../source/guide_utilisateur.rst:172
+msgid "Sélectionner le dossier contenant les fichiers de matchs."
+msgstr "Выберите папку, содержащую файлы матчей."
+
+#: ../../source/guide_utilisateur.rst:174
+msgid ""
+"blunderDB collecte et importe automatiquement tous les fichiers reconnus "
+"(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
+msgstr ""
+"blunderDB автоматически собирает и импортирует все распознанные файлы "
+"(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
+
+#: ../../source/guide_utilisateur.rst:178
+msgid "Glisser-déposer"
+msgstr "Перетаскивание"
+
+#: ../../source/guide_utilisateur.rst:180
+msgid ""
+"blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer "
+"sur la fenêtre de blunderDB:"
+msgstr ""
+"blunderDB поддерживает перетаскивание. На окно blunderDB можно перетащить:"
+
+#: ../../source/guide_utilisateur.rst:183
+msgid ""
+"des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*,"
+" *.bgf*) pour les importer,"
+msgstr ""
+"файлы матчей или позиций (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*) для"
+" их импорта,"
+
+#: ../../source/guide_utilisateur.rst:186
+msgid ""
+"des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
+"avec la base de données courante,"
+msgstr ""
+"файлы баз данных (*.db*) для их открытия или слияния с текущей базой данных,"
+
+#: ../../source/guide_utilisateur.rst:189
+msgid ""
+"des dossiers pour importer récursivement tous les fichiers qu'ils "
+"contiennent."
+msgstr "папки для рекурсивного импорта всех содержащихся в них файлов."
+
+#: ../../source/guide_utilisateur.rst:192
+msgid "Naviguer dans un match"
+msgstr "Навигация по матчу"
+
+#: ../../source/guide_utilisateur.rst:194
+msgid "Pour naviguer dans un match importé:"
+msgstr "Для навигации по импортированному матчу:"
+
+#: ../../source/guide_utilisateur.rst:196
+msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
+msgstr "Откройте панель матчей с помощью *CTRL-Tab*."
+
+#: ../../source/guide_utilisateur.rst:198
+msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
+msgstr "Дважды щёлкните на матче или нажмите *ENTER*."
+
+#: ../../source/guide_utilisateur.rst:200
+msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
+msgstr "Используйте клавиши *LEFT* / *RIGHT* для перехода между ходами."
+
+#: ../../source/guide_utilisateur.rst:202
+msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
+msgstr "Используйте *PageUp* / *PageDown* для перехода между партиями."
+
+#: ../../source/guide_utilisateur.rst:204
+msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
+msgstr "Нажмите *CTRL-L* для отображения анализа."
+
+#: ../../source/guide_utilisateur.rst:206
+msgid ""
+"Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du cube."
+msgstr ""
+"Нажмите *d* для переключения между анализом ходов шашками и анализом куба."
+
+#: ../../source/guide_utilisateur.rst:209
+msgid ""
+"Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
+msgstr ""
+"Сочетание клавиш: *CTRL-Tab* для открытия панели матчей. Команда: ``m``"
+
+#: ../../source/guide_utilisateur.rst:213
+msgid ""
+"blunderDB mémorise la dernière position visitée dans chaque match. En "
+"revenant sur un match, la dernière position consultée est automatiquement "
+"restaurée."
+msgstr ""
+"blunderDB запоминает последнюю просмотренную позицию в каждом матче. При "
+"возврате к матчу последняя посещённая позиция восстанавливается "
+"автоматически."
+
+#: ../../source/guide_utilisateur.rst:218
+msgid "Gérer le panneau des matchs"
+msgstr "Управление панелью матчей"
+
+#: ../../source/guide_utilisateur.rst:220
+msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
+msgstr "Панель матчей (*CTRL-Tab*) позволяет:"
+
+#: ../../source/guide_utilisateur.rst:222
+msgid ""
+"lister l'ensemble des matchs importés (triés du plus récent au plus ancien),"
+msgstr ""
+"просматривать список всех импортированных матчей (отсортированных от "
+"новейших к старейшим),"
+
+#: ../../source/guide_utilisateur.rst:224
+msgid ""
+"trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du match, "
+"tournoi),"
+msgstr ""
+"сортировать матчи по столбцам (игрок 1, игрок 2, дата, длина матча, турнир),"
+
+#: ../../source/guide_utilisateur.rst:227
+msgid ""
+"modifier les noms des joueurs ou la date en double-cliquant sur les champs,"
+msgstr "редактировать имена игроков или дату двойным щелчком по полям,"
+
+#: ../../source/guide_utilisateur.rst:229
+msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
+msgstr "менять местами игрока 1 и игрока 2 с помощью кнопки перестановки,"
+
+#: ../../source/guide_utilisateur.rst:231
+msgid "assigner un match à un tournoi,"
+msgstr "назначать матч турниру,"
+
+#: ../../source/guide_utilisateur.rst:233
+msgid "supprimer un match à l'aide de la touche *Del*."
+msgstr "удалять матч с помощью клавиши *Del*."
+
+#: ../../source/guide_utilisateur.rst:236
+msgid "Gérer les collections"
+msgstr "Управление коллекциями"
+
+#: ../../source/guide_utilisateur.rst:238
+msgid ""
+"Les collections permettent d'organiser des positions en groupes "
+"personnalisés. Pour accéder au panneau des collections, appuyer sur "
+"*CTRL-B*."
+msgstr ""
+"Коллекции позволяют организовывать позиции в пользовательские группы. Для "
+"доступа к панели коллекций нажмите *CTRL-B*."
+
+#: ../../source/guide_utilisateur.rst:241
+msgid "**Créer une collection:**"
+msgstr "**Создание коллекции:**"
+
+#: ../../source/guide_utilisateur.rst:243
+msgid "Ouvrir le panneau des collections (*CTRL-B*)."
+msgstr "Откройте панель коллекций (*CTRL-B*)."
+
+#: ../../source/guide_utilisateur.rst:245
+msgid "Saisir le nom de la nouvelle collection et cliquer sur \"Add\"."
+msgstr "Введите название новой коллекции и нажмите \"Add\"."
+
+#: ../../source/guide_utilisateur.rst:247
+msgid "**Ajouter des positions à une collection:**"
+msgstr "**Добавление позиций в коллекцию:**"
+
+#: ../../source/guide_utilisateur.rst:249
+msgid "Sélectionner les positions souhaitées."
+msgstr "Выберите нужные позиции."
+
+#: ../../source/guide_utilisateur.rst:251
+msgid "Les ajouter à la collection depuis le panneau des collections."
+msgstr "Добавьте их в коллекцию из панели коллекций."
+
+#: ../../source/guide_utilisateur.rst:253
+msgid "**Parcourir une collection:**"
+msgstr "**Просмотр коллекции:**"
+
+#: ../../source/guide_utilisateur.rst:255
+msgid ""
+"Double-cliquer sur une collection pour parcourir ses positions. L'ordre des "
+"collections et des positions peut être modifié par glisser-déposer."
+msgstr ""
+"Дважды щёлкните на коллекции для просмотра её позиций. Порядок коллекций и "
+"позиций можно изменить перетаскиванием."
+
+#: ../../source/guide_utilisateur.rst:260
+msgid "Commande: ``coll``"
+msgstr "Команда: ``coll``"
+
+#: ../../source/guide_utilisateur.rst:263
+msgid "Gérer les tournois"
+msgstr "Управление турнирами"
+
+#: ../../source/guide_utilisateur.rst:265
+msgid ""
+"Les tournois permettent d'organiser les matchs importés par événement. Pour "
+"accéder au panneau des tournois, appuyer sur *CTRL-Y*."
+msgstr ""
+"Турниры позволяют организовывать импортированные матчи по событиям. Для "
+"доступа к панели турниров нажмите *CTRL-Y*."
+
+#: ../../source/guide_utilisateur.rst:268
+msgid "**Créer un tournoi:**"
+msgstr "**Создание турнира:**"
+
+#: ../../source/guide_utilisateur.rst:270
+msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
+msgstr "Откройте панель турниров (*CTRL-Y*)."
+
+#: ../../source/guide_utilisateur.rst:272
+msgid "Cliquer sur \"Add\" et saisir le nom du tournoi."
+msgstr "Нажмите \"Add\" и введите название турнира."
+
+#: ../../source/guide_utilisateur.rst:274
+msgid "**Assigner un match à un tournoi:**"
+msgstr "**Назначение матча турниру:**"
+
+#: ../../source/guide_utilisateur.rst:276
+msgid ""
+"Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de la "
+"colonne tournoi pour assigner un match."
+msgstr ""
+"В панели матчей (*CTRL-Tab*) используйте выпадающее меню в столбце турнира "
+"для назначения матча."
+
+#: ../../source/guide_utilisateur.rst:280
+msgid "Afficher les statistiques de performance"
+msgstr "Просмотр статистики производительности"
+
+#: ../../source/guide_utilisateur.rst:282
+msgid ""
+"Le panneau Stats permet de visualiser ses indicateurs de performance (PR et "
+"coût MWC) à partir des positions importées."
+msgstr ""
+"Панель Stats позволяет просматривать показатели производительности (PR и "
+"стоимость MWC) на основе импортированных позиций."
+
+#: ../../source/guide_utilisateur.rst:285
+msgid ""
+"Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
+msgstr "Нажмите *CTRL-D* или перейдите на вкладку Stats в нижней панели."
+
+#: ../../source/guide_utilisateur.rst:287
+msgid ""
+"Utiliser la barre de filtre pour restreindre l'analyse par joueur, tournoi, "
+"plage de dates, type de décision ou longueur de match."
+msgstr ""
+"Используйте панель фильтров для ограничения анализа по игроку, турниру, "
+"диапазону дат, типу решения или длине матча."
+
+#: ../../source/guide_utilisateur.rst:290
+msgid ""
+"Cliquer sur un indicateur pour accéder directement aux positions "
+"correspondantes."
+msgstr ""
+"Нажмите на показатель для перехода непосредственно к соответствующим "
+"позициям."
+
+#: ../../source/guide_utilisateur.rst:293
+msgid "Calculer l'EPC"
+msgstr "Вычисление EPC"
+
+#: ../../source/guide_utilisateur.rst:295
+msgid ""
+"Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques"
+" de bearoff d'une position."
+msgstr ""
+"Калькулятор EPC (Effective Pip Count) позволяет вычислять статистику снятия "
+"шашек для позиции."
+
+#: ../../source/guide_utilisateur.rst:298
+msgid ""
+"Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, ou "
+"exécuter la commande ``epc``."
+msgstr ""
+"Нажмите *CTRL-E*, перейдите на вкладку EPC в нижней панели или выполните "
+"команду ``epc``."
+
+#: ../../source/guide_utilisateur.rst:301
+msgid "Éditer la position des pions dans le jan (6 derniers points)."
+msgstr ""
+"Отредактируйте расположение шашек на домашнем поле (последние 6 пунктов)."
+
+#: ../../source/guide_utilisateur.rst:303
+msgid ""
+"Les résultats sont affichés en temps réel dans le panneau EPC dédié: EPC, "
+"nombre moyen de lancers, écart type, pip count et wastage."
+msgstr ""
+"Результаты отображаются в реальном времени в специальной панели EPC: EPC, "
+"среднее количество бросков, стандартное отклонение, пипкаунт и wastage."
+
+#: ../../source/guide_utilisateur.rst:307
+msgid "Le calculateur fonctionne pour les deux joueurs simultanément."
+msgstr "Калькулятор работает для обоих игроков одновременно."
+
+#: ../../source/guide_utilisateur.rst:310
+msgid "Afficher l'analyse d'une position importée depuis XG"
+msgstr "Просмотр анализа позиции, импортированной из XG"
+
+#: ../../source/guide_utilisateur.rst:312
+msgid ""
+"Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
+"blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
+msgstr ""
+"Если позиция, проанализированная XG, GNUbg или BGBlitz, была импортирована в"
+" blunderDB, анализ можно отобразить, нажав *CTRL-L*."
+
+#: ../../source/guide_utilisateur.rst:315
+msgid ""
+"Si la position correspond à une décision de pions, les cinq meilleurs coups "
+"sont affichés sur des lignes distinctes. Pour chaque ligne, les informations"
+" fournies sont dans cet ordre, le coup de pion associé, l'équité normalisée,"
+" l'erreur en équité du coup, les chances de gain, gammon et backgammon du "
+"joueur, les chances de gain, gammon et backgammon de l'adversaire, le niveau"
+" d'analyse."
+msgstr ""
+"Если позиция соответствует решению о ходе шашками, пять лучших ходов "
+"отображаются в отдельных строках. Для каждой строки информация приведена в "
+"следующем порядке: ход шашками, нормализованное эквити, ошибка эквити хода, "
+"шансы на выигрыш, гэммон и бэкгэммон игрока, шансы на выигрыш, гэммон и "
+"бэкгэммон противника, уровень анализа."
+
+#: ../../source/guide_utilisateur.rst:322
+msgid ""
+"Si la position correspond à une décision de cube, le coût de chaque décision"
+" est affiché ainsi que les chances de gain de la position."
+msgstr ""
+"Если позиция соответствует решению куба, отображается стоимость каждого "
+"решения, а также шансы на выигрыш в данной позиции."
+
+#: ../../source/guide_utilisateur.rst:325
+msgid ""
+"Lorsque plusieurs moteurs d'analyse sont présents pour la même position (par"
+" exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
+"d'origine de chaque analyse."
+msgstr ""
+"Когда для одной позиции присутствует несколько движков анализа (например, XG"
+" и GNUbg), дополнительный столбец указывает исходный движок для каждого "
+"анализа."
+
+#: ../../source/guide_utilisateur.rst:329
+msgid ""
+"Lors de la navigation dans un match, le coup effectivement joué est mis en "
+"évidence dans la liste des coups. Si la position a été rencontrée dans "
+"plusieurs matchs, tous les coups joués sont indiqués."
+msgstr ""
+"При навигации по матчу фактически сыгранный ход выделяется в списке ходов. "
+"Если позиция встречалась в нескольких матчах, указываются все сыгранные "
+"ходы."
+
+#: ../../source/guide_utilisateur.rst:334
+msgid ""
+"En cliquant sur un coup dans le panneau d'analyse, les flèches "
+"correspondantes sont affichées sur le board."
+msgstr ""
+"При нажатии на ход в панели анализа на доске отображаются соответствующие "
+"стрелки."
+
+#: ../../source/guide_utilisateur.rst:338
+msgid "Exporter une position vers XG"
+msgstr "Экспорт позиции в XG"
+
+#: ../../source/guide_utilisateur.rst:340
+msgid "Pour exporter une position de blunderDB vers XG,"
+msgstr "Чтобы экспортировать позицию из blunderDB в XG,"
+
+#: ../../source/guide_utilisateur.rst:342
+msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
+msgstr "откройте в blunderDB позицию для экспорта и нажмите *CTRL-C*,"
+
+#: ../../source/guide_utilisateur.rst:344
+msgid "afficher XG et appuyer *CTRL-V*."
+msgstr "переключитесь на XG и нажмите *CTRL-V*."
+
+#: ../../source/guide_utilisateur.rst:347
+msgid "Visualiser les différentes positions"
+msgstr "Просмотр различных позиций"
+
+#: ../../source/guide_utilisateur.rst:349
+msgid ""
+"Pour visualiser les différentes positions de la bibliothèque courante, "
+"utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet d'aller à"
+" la première position. La touche *FIN* permet d'aller à la dernière "
+"position."
+msgstr ""
+"Для просмотра различных позиций текущей библиотеки используйте клавиши "
+"*LEFT* и *RIGHT*. Клавиша *HOME* переходит к первой позиции. Клавиша *END* "
+"переходит к последней позиции."
+
+#: ../../source/guide_utilisateur.rst:353
+msgid ""
+"Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher le "
+"bearoff à droite, appuyer *CTRL-DROITE*."
+msgstr ""
+"Чтобы отобразить снятие шашек слева, нажмите *CTRL-LEFT*. Чтобы отобразить "
+"снятие шашек справа, нажмите *CTRL-RIGHT*."
+
+#: ../../source/guide_utilisateur.rst:357
+msgid "Rechercher des positions selon des critères"
+msgstr "Поиск позиций по критериям"
+
+#: ../../source/guide_utilisateur.rst:359
+msgid "Pour rechercher des types de positions,"
+msgstr "Для поиска типов позиций:"
+
+#: ../../source/guide_utilisateur.rst:361
+msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
+msgstr "нажмите *TAB* для открытия панели поиска,"
+
+#: ../../source/guide_utilisateur.rst:363
+msgid ""
+"éditer la structure de position à rechercher. blunderDB va filtrer les "
+"positions ayant *a minima* la structure de pions saisie. Dans le doute, afin"
+" d'obtenir le maximum de résultats, effacer la position en appuyant sur la "
+"touche *RETOUR ARRIERE*. Editer si besoin la position du cube et le score."
+msgstr ""
+"отредактируйте структуру позиции для поиска. blunderDB отфильтрует позиции, "
+"содержащие *как минимум* введённую структуру шашек. При неуверенности, для "
+"получения максимального количества результатов, очистите позицию клавишей "
+"*BACKSPACE*. При необходимости отредактируйте позицию куба и счёт."
+
+#: ../../source/guide_utilisateur.rst:369
+msgid ""
+"Le panneau de recherche propose deux structures de pions, sélectionnables "
+"par les onglets *At least* et *Except* situés en haut du panneau :"
+msgstr ""
+"Панель поиска предлагает две структуры шашек, выбираемые с помощью вкладок "
+"*At least* и *Except* в верхней части панели:"
+
+#: ../../source/guide_utilisateur.rst:372
+msgid ""
+"*At least* (par défaut) : blunderDB filtre les positions ayant *a minima* la"
+" structure de pions saisie ;"
+msgstr ""
+"*At least* (по умолчанию): blunderDB фильтрует позиции, содержащие *как "
+"минимум* введённую структуру шашек;"
+
+#: ../../source/guide_utilisateur.rst:375
+msgid ""
+"*Except* : blunderDB exclut les positions contenant l'un des pions saisis. "
+"Le plateau est bordé de rouge lors de l'édition de cette structure. Une "
+"position est rejetée si elle contient *au moins un* des éléments dessinés "
+"(par exemple, dessiner un pion sur les points 1, 3 et 5 ne conserve que les "
+"positions n'ayant aucun pion sur ces points). Le nombre de pions par point "
+"n'est pas limité : indiquer 3 pions sur un point exclut les positions ayant "
+"3 pions ou plus à cet endroit (utile pour rechercher une porte sans spare). "
+"Deux clics rapides sur un point le marquent comme devant être vide (cellule "
+"rouge hachurée, aucun pion quelle que soit la couleur) ; un simple clic sur "
+"ce point le débloque."
+msgstr ""
+"*Except*: blunderDB исключает позиции, содержащие одну из введённых шашек. "
+"Доска обводится красным при редактировании этой структуры. Позиция "
+"отклоняется, если она содержит *хотя бы один* из нарисованных элементов "
+"(например, нарисовав шашку на пунктах 1, 3 и 5, сохраняются только позиции "
+"без шашек на этих пунктах). Количество шашек на пункте не ограничено: "
+"указание 3 шашек на пункте исключает позиции с 3 и более шашками в этом "
+"месте (полезно для поиска закрытого пункта без запасной шашки). Два быстрых "
+"щелчка на пункте помечают его как обязательно пустой (красная штрихованная "
+"клетка, без шашек любого цвета); одиночный щелчок на этом пункте снимает "
+"отметку."
+
+#: ../../source/guide_utilisateur.rst:385
+msgid ""
+"Lorsqu'un point appartient aux deux structures, le critère *Except* "
+"l'emporte s'il contredit le critère *At least*."
+msgstr ""
+"Если пункт входит в обе структуры, критерий *Except* имеет приоритет, если "
+"он противоречит критерию *At least*."
+
+#: ../../source/guide_utilisateur.rst:388
+msgid "Méthode 1 (simple):"
+msgstr "Метод 1 (простой):"
+
+#: ../../source/guide_utilisateur.rst:390
+msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
+msgstr "Откройте окно поиска (*CTRL-F*)."
+
+#: ../../source/guide_utilisateur.rst:392
+msgid "Ajouter et paramétrer les filtres de recherche"
+msgstr "Добавьте и настройте фильтры поиска."
+
+#: ../../source/guide_utilisateur.rst:394
+msgid "Valider en cliquant sur \"Search\"."
+msgstr "Подтвердите нажатием кнопки \"Search\"."
+
+#: ../../source/guide_utilisateur.rst:396
+msgid "Méthode 2 (avancée):"
+msgstr "Метод 2 (расширенный):"
+
+#: ../../source/guide_utilisateur.rst:399
+msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
+msgstr "откройте командную строку нажатием *ПРОБЕЛ*,"
+
+#: ../../source/guide_utilisateur.rst:401
+msgid ""
+"écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple *cube* "
+"ou *score* pour prendre respectivement en compte le cube et le score. Voir "
+":numref:`cmd_filter` pour une liste exhaustive des filtres disponibles)."
+msgstr ""
+"введите *s*, добавьте дополнительные фильтры при необходимости (например, "
+"*cube* или *score* для учёта куба и счёта соответственно. Смотрите "
+":numref:`cmd_filter` для полного списка доступных фильтров)."
+
+#: ../../source/guide_utilisateur.rst:406
+msgid "valider la requête en appuyant sur *ENTREE*."
+msgstr "подтвердите запрос нажатием *ENTER*."
+
+#: ../../source/guide_utilisateur.rst:408
+msgid ""
+"Les positions affichées sont celles de la base de données ayant vérifié les "
+"critères de recherche entrés par l'utilisateur."
+msgstr ""
+"Отображаемые позиции — это позиции из базы данных, соответствующие критериям"
+" поиска, введённым пользователем."

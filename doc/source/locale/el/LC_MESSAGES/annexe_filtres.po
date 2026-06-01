@@ -1,0 +1,419 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: el\n"
+"Language-Team: el <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_filtres.rst:4
+msgid "Annexe: Utilisation avancée des filtres"
+msgstr "Παράρτημα: Προχωρημένη χρήση των φίλτρων"
+
+#: ../../source/annexe_filtres.rst:8
+msgid ""
+"Cette section s'adresse aux utilisateurs avancés de blunderDB qui "
+"souhaitent exploiter pleinement les fonctionnalités de recherche de "
+"positions."
+msgstr ""
+"Αυτή η ενότητα απευθύνεται στους προχωρημένους χρήστες του blunderDB που "
+"επιθυμούν να αξιοποιήσουν πλήρως τις δυνατότητες αναζήτησης θέσεων."
+
+#: ../../source/annexe_filtres.rst:11
+msgid ""
+"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur"
+" utilisation permet de rechercher des positions spécifiques relativement "
+"précisément. Dans cette section, l'utilisation des filtres via la ligne "
+"de commande est détaillée. La ligne de commande est accessible en "
+"appuyant sur la touche ``ESPACE``. Elle permet de combiner avec "
+"l'habitude très rapidement des filtres et d'utiliser la bibliothèque de "
+"filtres."
+msgstr ""
+"Τα φίλτρα βρίσκονται στον πυρήνα της ανάλυσης θέσεων στο blunderDB. Η "
+"χρήση τους επιτρέπει την αναζήτηση συγκεκριμένων θέσεων με σχετικά μεγάλη "
+"ακρίβεια. Σε αυτή την ενότητα περιγράφεται αναλυτικά η χρήση των φίλτρων "
+"μέσω της γραμμής εντολών. Η γραμμή εντολών είναι προσβάσιμη πατώντας το "
+"πλήκτρο ``ΚΕΝΟ``. Επιτρέπει, με τη συνήθεια, να συνδυάζονται πολύ γρήγορα "
+"φίλτρα και να χρησιμοποιείται η βιβλιοθήκη φίλτρων."
+
+#: ../../source/annexe_filtres.rst:19
+msgid "Recherche de positions en ligne de commande"
+msgstr "Αναζήτηση θέσεων από τη γραμμή εντολών"
+
+#: ../../source/annexe_filtres.rst:21
+msgid "Pour faire une recherche à l'aide de filtres,"
+msgstr "Για να πραγματοποιήσετε μια αναζήτηση με τη βοήθεια φίλτρων,"
+
+#: ../../source/annexe_filtres.rst:23
+msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "Πατήστε το πλήκτρο ``TAB`` για να ανοίξετε τον πίνακα αναζήτησης."
+
+#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
+msgid "Editer la position courante."
+msgstr "Επεξεργαστείτε την τρέχουσα θέση."
+
+#: ../../source/annexe_filtres.rst:25
+msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
+msgstr "Ανοίξτε τη γραμμή εντολών με το πλήκτρο ``ΚΕΝΟ``."
+
+#: ../../source/annexe_filtres.rst:26
+msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
+msgstr "Χρησιμοποιήστε την εντολή ``s`` ακολουθούμενη προαιρετικά από φίλτρα."
+
+#: ../../source/annexe_filtres.rst:27
+msgid "Lancer la recherche avec la touche ``ENTREE``."
+msgstr "Ξεκινήστε την αναζήτηση με το πλήκτρο ``ENTER``."
+
+#: ../../source/annexe_filtres.rst:30
+msgid ""
+"Ne pas oublier d'effacer la position courante avant de lancer une "
+"recherche (touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle "
+"souhaitée, au risque de filtrer abusivement des structures de pions."
+msgstr ""
+"Μην ξεχάσετε να καθαρίσετε την τρέχουσα θέση πριν ξεκινήσετε μια αναζήτηση "
+"(πλήκτρο ``BACKSPACE``), αν αυτή δεν είναι η επιθυμητή, ώστε να αποφύγετε "
+"το υπερβολικό φιλτράρισμα των δομών των πουλιών."
+
+#: ../../source/annexe_filtres.rst:35
+msgid ""
+"La liste des filtres disponibles en ligne de commande est fournie dans la"
+" :numref:`cmd_filter`."
+msgstr ""
+"Η λίστα των διαθέσιμων φίλτρων στη γραμμή εντολών παρέχεται στο "
+":numref:`cmd_filter`."
+
+#: ../../source/annexe_filtres.rst:39
+msgid "Recherche dans les résultats courants"
+msgstr "Αναζήτηση μέσα στα τρέχοντα αποτελέσματα"
+
+#: ../../source/annexe_filtres.rst:41
+msgid ""
+"Il est possible d'affiner une recherche en cherchant parmi les positions "
+"actuellement filtrées. Cela permet de restreindre progressivement les "
+"résultats."
+msgstr ""
+"Είναι δυνατό να βελτιώσετε μια αναζήτηση ψάχνοντας ανάμεσα στις θέσεις που "
+"είναι ήδη φιλτραρισμένες. Αυτό σας επιτρέπει να περιορίζετε σταδιακά τα "
+"αποτελέσματα."
+
+#: ../../source/annexe_filtres.rst:44
+msgid ""
+"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une "
+"recherche préalable."
+msgstr ""
+"Στη γραμμή εντολών, χρησιμοποιήστε την εντολή ``ss`` ακολουθούμενη από "
+"φίλτρα (π.χ.: ``ss nc``, ``ss E>40``). Η εντολή ``ss`` λειτουργεί μετά από "
+"μια προηγούμενη αναζήτηση."
+
+#: ../../source/annexe_filtres.rst:47
+msgid ""
+"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
+"\"Search in current results\" pour la même fonctionnalité."
+msgstr ""
+"Το παράθυρο αναζήτησης (``CTRL-F``) προσφέρει επίσης ένα πλαίσιο ελέγχου "
+"\"Search in current results\" για την ίδια λειτουργικότητα."
+
+#: ../../source/annexe_filtres.rst:51
+msgid "Bibliothèque de filtres"
+msgstr "Βιβλιοθήκη φίλτρων"
+
+#: ../../source/annexe_filtres.rst:53
+msgid ""
+"La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
+"commandes de recherche afin de faciliter ses études thématiques."
+msgstr ""
+"Η βιβλιοθήκη φίλτρων επιτρέπει στον χρήστη να αποθηκεύει εντολές αναζήτησης "
+"ώστε να διευκολύνει τις θεματικές του μελέτες."
+
+#: ../../source/annexe_filtres.rst:56
+msgid "Pour ajouter un filtre à la bibliothèque,"
+msgstr "Για να προσθέσετε ένα φίλτρο στη βιβλιοθήκη,"
+
+#: ../../source/annexe_filtres.rst:58
+msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "Πατήστε ``TAB`` για να ανοίξετε τον πίνακα αναζήτησης."
+
+#: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
+msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+msgstr "Ανοίξτε τη βιβλιοθήκη φίλτρων πατώντας ``CTRL-K``."
+
+#: ../../source/annexe_filtres.rst:61
+msgid "Donner un nom au filtre."
+msgstr "Δώστε ένα όνομα στο φίλτρο."
+
+#: ../../source/annexe_filtres.rst:62
+msgid "Editer la commande de recherche."
+msgstr "Επεξεργαστείτε την εντολή αναζήτησης."
+
+#: ../../source/annexe_filtres.rst:63
+msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+msgstr "Αποθηκεύστε την εντολή αναζήτησης με το κουμπί \"Add\"."
+
+#: ../../source/annexe_filtres.rst:66
+msgid ""
+"Lors de l'édition de la commande, il est possible d'utiliser les touches "
+"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
+msgstr ""
+"Κατά την επεξεργασία της εντολής, μπορείτε να χρησιμοποιήσετε τα πλήκτρα "
+"``ΕΠΑΝΩ`` και ``ΚΑΤΩ`` για να περιηγηθείτε στο ιστορικό των εντολών."
+
+#: ../../source/annexe_filtres.rst:69
+msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
+msgstr "Για να χρησιμοποιήσετε ένα φίλτρο αποθηκευμένο στη βιβλιοθήκη,"
+
+#: ../../source/annexe_filtres.rst:72
+msgid "Rechercher le filtre souhaité."
+msgstr "Αναζητήστε το επιθυμητό φίλτρο."
+
+#: ../../source/annexe_filtres.rst:73
+msgid "Double cliquer sur le filtre pour lancer la recherche."
+msgstr "Κάντε διπλό κλικ στο φίλτρο για να ξεκινήσετε την αναζήτηση."
+
+#: ../../source/annexe_filtres.rst:76
+msgid "Exemples"
+msgstr "Παραδείγματα"
+
+#: ../../source/annexe_filtres.rst:78
+msgid "Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+msgstr ""
+"Ακολουθούν μερικά παραδείγματα χρήσης των φίλτρων στη γραμμή εντολών:"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Type de position"
+msgstr "Τύπος θέσης"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Structure de pions"
+msgstr "Δομή πουλιών"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Commande"
+msgstr "Εντολή"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Courses"
+msgstr "Κούρσα"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s nc"
+msgstr "s nc"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Courses petites"
+msgstr "Σύντομη κούρσα"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s nc P<70"
+msgstr "s nc P<70"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Frapper au point 1"
+msgstr "Χτύπημα στο σημείο 1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s m\\\"6/1*\\\""
+msgstr "s m\\\"6/1*\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Backgame 1-4"
+msgstr "Backgame 1-4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "portes 24, 21"
+msgstr "δεμένα σημεία 24, 21"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s p>35"
+msgstr "s p>35"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Décision de Take/Pass à -2 -4"
+msgstr "Απόφαση Take/Pass στο -2 -4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "dés vides côté joueur du haut, score -2/-4"
+msgstr "άδεια ζάρια στην πλευρά του πάνω παίκτη, σκορ -2/-4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s s d"
+msgstr "s s d"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Envoi de too good"
+msgstr "Πολύ καλό για διπλασιασμό"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "dés vides côté joueur du bas"
+msgstr "άδεια ζάρια στην πλευρά του κάτω παίκτη"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s d e>1000"
+msgstr "s d e>1000"
+
+#: ../../source/annexe_filtres.rst:1
+#, no-python-format
+msgid "Blitz avec au moins 20% de gammon"
+msgstr "Blitz με τουλάχιστον 20% gammon"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "portes dans le jan, hommes à la barre"
+msgstr "δεμένα σημεία στο εσωτερικό, πούλια στην μπάρα"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s g>20"
+msgstr "s g>20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Erreurs du joueur 1 de plus de 40 millipoints"
+msgstr "Λάθη του παίκτη 1 μεγαλύτερα από 40 millipoints"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s E>40"
+msgstr "s E>40"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Position du tournoi Aachen2024"
+msgstr "Θέση από το τουρνουά Aachen2024"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s t\\\"Aachen2024\\\""
+msgstr "s t\\\"Aachen2024\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Un pion arriéré à ramener"
+msgstr "Ένα πίσω πούλι προς επιστροφή"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s k1,1"
+msgstr "s k1,1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Quitter le point 20"
+msgstr "Διαφυγή από το σημείο 20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "point 20"
+msgstr "σημείο 20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s m\\\"20/\\\""
+msgstr "s m\\\"20/\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Prime contre prime"
+msgstr "Φράγμα εναντίον φράγματος"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "indiquer les primes"
+msgstr "υποδείξτε τα φράγματα"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Ace-point bear-off"
+msgstr "Bear-off με ace point"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "point 1 pour l'adversaire"
+msgstr "σημείο 1 δεμένο για τον αντίπαλο"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s P<60"
+msgstr "s P<60"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Double avec au moins 20pip d'avance"
+msgstr "Διπλασιασμός με προβάδισμα τουλάχιστον 20 pip"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s d p<-20"
+msgstr "s d p<-20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions du match 5"
+msgstr "Θέσεις από τον αγώνα 5"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma5"
+msgstr "s ma5"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions des matchs 2 à 4"
+msgstr "Θέσεις από τους αγώνες 2 έως 4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma2,4"
+msgstr "s ma2,4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions des matchs 23 et 43"
+msgstr "Θέσεις από τους αγώνες 23 και 43"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma23 ma43"
+msgstr "s ma23 ma43"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions du tournoi 1"
+msgstr "Θέσεις από το τουρνουά 1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s tn1"
+msgstr "s tn1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Erreurs dans le tournoi 2"
+msgstr "Λάθη στο τουρνουά 2"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s tn2 E>40"
+msgstr "s tn2 E>40"
+
+#: ../../source/annexe_filtres.rst:105
+msgid "Exemples de recherche dans les résultats courants:"
+msgstr "Παραδείγματα αναζήτησης μέσα στα τρέχοντα αποτελέσματα:"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Scénario"
+msgstr "Σενάριο"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s nc``, chercher les petites courses"
+msgstr "Μετά το ``s nc``, αναζητήστε τις σύντομες κούρσες"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss P<70"
+msgstr "ss P<70"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s g>20``, ne garder que les erreurs"
+msgstr "Μετά το ``s g>20``, κρατήστε μόνο τα λάθη"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss E>40"
+msgstr "ss E>40"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s tn1``, chercher les décisions de cube"
+msgstr "Μετά το ``s tn1``, αναζητήστε τις αποφάσεις κύβου"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss d"
+msgstr "ss d"
+

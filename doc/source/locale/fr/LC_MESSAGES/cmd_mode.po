@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-29 10:21+0200\n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -403,7 +403,17 @@ msgid "D"
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
-msgid "La position vérifie le lancer de dés."
+msgid "La position vérifie le lancer de dés (les deux dés, peu importe l'ordre)."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "D1"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position vérifie le lancer de dés sur le premier dé uniquement (la "
+"valeur du premier dé apparaît sur l'un des deux dés de la position)."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -420,6 +430,16 @@ msgstr ""
 
 #: ../../source/cmd_mode.rst:1
 msgid "La position ou celle miroir vérifie les filtres."
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid "x"
+msgstr ""
+
+#: ../../source/cmd_mode.rst:1
+msgid ""
+"La position ne contient aucun pion de la structure d'exclusion (onglet « "
+"Except » du panneau de recherche)."
 msgstr ""
 
 #: ../../source/cmd_mode.rst:1
@@ -992,13 +1012,16 @@ msgstr ""
 msgid "Rechercher dans les tournois d'identifiants x à y (ex: tn1,3)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:197
+#: ../../source/cmd_mode.rst:199
 msgid ""
-"Filtrer les positions en fonction du lancer de dés (`D`) implique *a "
-"fortiori* de filtrer les positions en fonction du type de décision (`d`)."
+"Filtrer les positions en fonction du lancer de dés (`D` ou `D1`) implique"
+" *a fortiori* de filtrer les positions en fonction du type de décision "
+"(`d`). Le filtre `D1` ignore la valeur du deuxième dé : seule la valeur "
+"du premier dé est utilisée pour matcher les positions (sur l'un ou "
+"l'autre des deux dés du lancer)."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:200
+#: ../../source/cmd_mode.rst:205
 msgid ""
 "Pour le filtre de différence relative à la course (`p>x`, `p<x`, `px,y`),"
 " le joueur est en retard à la course par rapport à l'adversaire si `x>0` "
@@ -1007,21 +1030,21 @@ msgid ""
 "retard à la course."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:206
+#: ../../source/cmd_mode.rst:211
 msgid ""
 "Pour rechercher dans plusieurs matchs non contigus, juxtaposer le filtre "
 "``ma`` plusieurs fois (ex: ``s ma23 ma43`` pour les matchs 23 et 43). Le "
 "même principe s'applique pour les tournois avec ``tn``."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:210
+#: ../../source/cmd_mode.rst:215
 msgid ""
 "Rechercher dans un tournoi (``tn``) revient à rechercher dans l'ensemble "
 "des matchs du tournoi concerné. Les identifiants des matchs et des "
 "tournois sont visibles dans les colonnes ID des panneaux correspondants."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:214
+#: ../../source/cmd_mode.rst:219
 #, python-format
 msgid ""
 "Par exemple, la commande ``s s c p-20,-5 w>60 z>10 K2,3`` filtre toutes "
@@ -1031,7 +1054,7 @@ msgid ""
 "la zone, et l'adversaire a entre 2 et 3 pions arriérés."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:224
+#: ../../source/cmd_mode.rst:229
 msgid "Commandes diverses"
 msgstr ""
 
@@ -1043,7 +1066,7 @@ msgstr ""
 msgid "Efface l'historique des commandes."
 msgstr ""
 
-#: ../../source/cmd_mode.rst:233
+#: ../../source/cmd_mode.rst:238
 msgid ""
 "Les migrations de base de données sont désormais effectuées "
 "automatiquement lors de l'ouverture d'une base de données."
@@ -1522,5 +1545,15 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Mode EDIT"
+#~ msgstr ""
+
+#~ msgid "La position vérifie le lancer de dés."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Filtrer les positions en fonction du "
+#~ "lancer de dés (`D`) implique *a "
+#~ "fortiori* de filtrer les positions en"
+#~ " fonction du type de décision (`d`)."
 #~ msgstr ""
 

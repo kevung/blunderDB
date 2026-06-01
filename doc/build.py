@@ -4,7 +4,10 @@ import subprocess
 import zipfile
 
 CREATE_ARCHIVE = False
-LANG = ['fr', 'en']
+# All documentation languages. French is the source language; the others are
+# gettext translations under source/locale/<code>/. Keep this in sync with
+# LANGUAGES in source/conf.py (the switcher) — same set of codes.
+LANG = ['fr', 'en', 'de', 'el', 'es', 'fi', 'it', 'ja', 'ru']
 
 
 import os
@@ -79,16 +82,24 @@ def create_archive(root_dir, build_folders):
         shutil.rmtree(project_build_dir)
 
 
+def lang_env(language):
+    # conf.py reads BLUNDERDB_DOC_LANG to pick per-language LaTeX font setup
+    # (xeCJK for ja, FreeFont for el/ru); the -D language= override is not yet
+    # visible when conf.py executes, hence this env var.
+    return dict(os.environ, BLUNDERDB_DOC_LANG=language)
+
 def build_sphinx_docs(path, language):
     os.chdir(path)
     subprocess.run(["sphinx-build", "-b", "html", "-D",
-        "language=" + language, "source", "build/" + language], check=True)
+        "language=" + language, "source", "build/" + language],
+        check=True, env=lang_env(language))
     print(f"Documentation built for {language} language in {path}")
 
 def build_latex_docs(path, language):
     os.chdir(path)
     build_path = os.path.join("build", f"pdf_{language}")
-    subprocess.run(["sphinx-build", "-b", "latex", "-D", f"language={language}", "source", build_path], check=True)
+    subprocess.run(["sphinx-build", "-b", "latex", "-D", f"language={language}", "source", build_path],
+        check=True, env=lang_env(language))
     os.chdir(build_path)
     # check=True so a LaTeX failure aborts the build instead of silently
     # producing no PDF (the CI docs job used to stay green with no PDF).
@@ -124,16 +135,14 @@ def main():
     print("create build folder")
     create_folder(build_dir)
 
-    build_sphinx_docs(root_dir, "fr")
-    build_sphinx_docs(root_dir, "en")
+    for lang in LANG:
+        build_sphinx_docs(root_dir, lang)
 
     latest_commit = get_latest_commit()
 
-    build_latex_docs(root_dir, "fr")
-    rename_pdf(root_dir, "fr", latest_commit)
-
-    build_latex_docs(root_dir, "en")
-    rename_pdf(root_dir, "en", latest_commit)
+    for lang in LANG:
+        build_latex_docs(root_dir, lang)
+        rename_pdf(root_dir, lang, latest_commit)
 
     if CREATE_ARCHIVE:
         build_folders = find_build_folders(root_dir)

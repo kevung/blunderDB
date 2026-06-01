@@ -1,0 +1,569 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/raccourcis.rst:4
+msgid "Raccourcis clavier"
+msgstr "キーボードショートカット"
+
+#: ../../source/raccourcis.rst:9
+msgid "Base de données"
+msgstr "データベース"
+
+#: ../../source/raccourcis.rst:1
+msgid "Raccourci"
+msgstr "ショートカット"
+
+#: ../../source/raccourcis.rst:1
+msgid "Action"
+msgstr "アクション"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-N"
+msgstr "CTRL-N"
+
+#: ../../source/raccourcis.rst:1
+msgid "Créer une nouvelle base de données."
+msgstr "新しいデータベースを作成する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-O"
+msgstr "CTRL-O"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir une base de données existante."
+msgstr "既存のデータベースを開く。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-I"
+msgstr "CTRL-SHIFT-I"
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer une base de données."
+msgstr "データベースをインポートする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-S"
+msgstr "CTRL-SHIFT-S"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exporter la base de données."
+msgstr "データベースをエクスポートする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Q"
+msgstr "CTRL-Q"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer blunderDB."
+msgstr "blunderDBを閉じる。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-M"
+msgstr "CTRL-M"
+
+#: ../../source/raccourcis.rst:1
+msgid "Modifier les métadonnées de la base de données."
+msgstr "データベースのメタデータを編集する。"
+
+#: ../../source/raccourcis.rst:26
+msgid "Position"
+msgstr "ポジション"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-I"
+msgstr "CTRL-I"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, mat, "
+"txt, bgf)."
+msgstr "1つまたは複数のポジション/マッチをファイル（xg、xgp、sgf、mat、txt、bgf）からインポートする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-F"
+msgstr "CTRL-SHIFT-F"
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer récursivement un dossier de fichiers de matchs/positions."
+msgstr "マッチ/ポジションファイルのフォルダを再帰的にインポートする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-C"
+msgstr "CTRL-C"
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier une position dans le presse-papier."
+msgstr "ポジションをクリップボードにコピーする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-X"
+msgstr "CTRL-X"
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier l'image du board dans le presse-papier (PNG)."
+msgstr "ボード画像をクリップボードにコピーする（PNG）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-X CTRL-X"
+msgstr "CTRL-X CTRL-X"
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier l'image du board avec l'analyse dans le presse-papier (PNG)."
+msgstr "ボードと分析の画像をクリップボードにコピーする（PNG）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-V"
+msgstr "CTRL-V"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Coller une position depuis le presse-papier (détection automatique du "
+"format)."
+msgstr "クリップボードからポジションを貼り付ける（形式の自動検出）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-S"
+msgstr "CTRL-S"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer une position."
+msgstr "ポジションを保存する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-U"
+msgstr "CTRL-U"
+
+#: ../../source/raccourcis.rst:1
+msgid "Mettre à jour une position."
+msgstr "ポジションを更新する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Del"
+msgstr "Del"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer la position courante."
+msgstr "現在のポジションを削除する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "RETOUR ARRIERE"
+msgstr "BACKSPACE"
+
+#: ../../source/raccourcis.rst:1
+msgid "Réinitialiser le board, le cube, le score et les dés."
+msgstr "ボード、キューブ、スコア、ダイスをリセットする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-G"
+msgstr "CTRL-G"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher les métadonnées de la position."
+msgstr "ポジションのメタデータを表示する。"
+
+#: ../../source/raccourcis.rst:48
+msgid "Navigation"
+msgstr "ナビゲーション"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-R"
+msgstr "CTRL-R"
+
+#: ../../source/raccourcis.rst:1
+msgid "Recharger toutes les positions de la base de données."
+msgstr "データベースからすべてのポジションを再読み込みする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp, h"
+msgstr "PageUp, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Première position / Partie précédente (navigation match)."
+msgstr "最初のポジション / 前のゲーム（マッチナビゲーション）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, k"
+msgstr "LEFT, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Position précédente."
+msgstr "前のポジション。"
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, j"
+msgstr "RIGHT, j"
+
+#: ../../source/raccourcis.rst:1
+msgid "Position suivante."
+msgstr "次のポジション。"
+
+#: ../../source/raccourcis.rst:1
+msgid "HAUT, k"
+msgstr "UP, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
+msgstr "前の手（分析で手が選択されている場合）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j"
+msgstr "DOWN, j"
+
+#: ../../source/raccourcis.rst:1
+msgid "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
+msgstr "次の手（分析で手が選択されている場合）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown, l"
+msgstr "PageDown, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Dernière position / Partie suivante (navigation match)."
+msgstr "最後のポジション / 次のゲーム（マッチナビゲーション）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "r"
+msgstr "r"
+
+#: ../../source/raccourcis.rst:1
+msgid "Charger une position aléatoire."
+msgstr "ランダムなポジションを読み込む。"
+
+#: ../../source/raccourcis.rst:67
+msgid "Affichage"
+msgstr "表示"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-GAUCHE"
+msgstr "CTRL-LEFT"
+
+#: ../../source/raccourcis.rst:1
+msgid "Orientation du board à gauche."
+msgstr "ボードの向きを左にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-DROITE"
+msgstr "CTRL-RIGHT"
+
+#: ../../source/raccourcis.rst:1
+msgid "Orientation du board à droite."
+msgstr "ボードの向きを右にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "p"
+msgstr "p"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le compte de course."
+msgstr "ピップカウントを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:81
+msgid "Actions"
+msgstr "アクション"
+
+#: ../../source/raccourcis.rst:1
+msgid "TAB"
+msgstr "TAB"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le panneau de recherche (éditeur de position)."
+msgstr "検索パネル（ポジションエディタ）を開く。"
+
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE"
+msgstr "SPACE"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la ligne de commande."
+msgstr "コマンドラインを開く。"
+
+#: ../../source/raccourcis.rst:94
+msgid "Outils"
+msgstr "ツール"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-L"
+msgstr "CTRL-L"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher l'analyse."
+msgstr "分析を表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-P"
+msgstr "CTRL-P"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher les commentaires."
+msgstr "コメントを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-K"
+msgstr "CTRL-K"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Anki (répétition espacée)."
+msgstr "Ankiパネル（間隔反復）を表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-F"
+msgstr "CTRL-F"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau de recherche."
+msgstr "検索パネルを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Tab"
+msgstr "CTRL-Tab"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des matchs."
+msgstr "マッチパネルを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-B"
+msgstr "CTRL-B"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des collections."
+msgstr "コレクションパネルを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Y"
+msgstr "CTRL-Y"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des tournois."
+msgstr "トーナメントパネルを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-D"
+msgstr "CTRL-D"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher le panneau Stats."
+msgstr "スタッツパネルを表示する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-E"
+msgstr "CTRL-E"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau EPC."
+msgstr "EPCパネルを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "?"
+msgstr "?"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher l'aide."
+msgstr "ヘルプを表示/非表示にする。"
+
+#: ../../source/raccourcis.rst:115
+msgid "Ligne de commande"
+msgstr "コマンドライン"
+
+#: ../../source/raccourcis.rst:1
+msgid "HAUT"
+msgstr "UP"
+
+#: ../../source/raccourcis.rst:1
+msgid "Parcourir l'historique des commandes vers le haut."
+msgstr "コマンド履歴を上方向に参照する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS"
+msgstr "DOWN"
+
+#: ../../source/raccourcis.rst:1
+msgid "Parcourir l'historique des commandes vers le bas."
+msgstr "コマンド履歴を下方向に参照する。"
+
+#: ../../source/raccourcis.rst:128
+msgid "Panneau historique de recherche"
+msgstr "検索履歴パネル"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic"
+msgstr "クリック"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner une recherche (afficher la position)."
+msgstr "検索を選択/選択解除する（ポジションを表示）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic"
+msgstr "ダブルクリック"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche et fermer le panneau."
+msgstr "検索を実行してパネルを閉じる。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+msgstr "前の検索を選択する（より新しい、上）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+msgstr "次の検索を選択する（より古い、下）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
+"panneau."
+msgstr "検索の選択を解除する。検索が選択されていない場合はパネルを閉じる。"
+
+#: ../../source/raccourcis.rst:144
+msgid "Panneau bibliothèque de filtres"
+msgstr "フィルターライブラリパネル"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un filtre (afficher la position)."
+msgstr "フィルターを選択/選択解除する（ポジションを表示）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche du filtre."
+msgstr "フィルター検索を実行する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+msgstr "前のフィルターを選択する（フィルターが選択されている場合）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+msgstr "次のフィルターを選択する（フィルターが選択されている場合）。"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
+msgstr "フィルターの選択を解除する。フィルターが選択されていない場合はパネルを閉じる。"
+
+#: ../../source/raccourcis.rst:160
+msgid "Panneau d'analyse"
+msgstr "分析パネル"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
+msgstr "手を選択/選択解除する（矢印を表示/非表示）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
+msgstr "前の手を選択する（手が選択されている場合）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
+msgstr "次の手を選択する（手が選択されている場合）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "d"
+msgstr "d"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Basculer entre l'analyse des coups et du cube (navigation match uniquement)."
+msgstr "チェッカー分析とキューブ分析を切り替える（マッチナビゲーションのみ）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+msgstr "手の選択を解除する。手が選択されていない場合はパネルを閉じる。"
+
+#: ../../source/raccourcis.rst:176
+msgid "Panneau des matchs"
+msgstr "マッチパネル"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un match."
+msgstr "マッチを選択する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Naviguer dans le match."
+msgstr "マッチ内をナビゲートする。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match précédent."
+msgstr "前のマッチを選択する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match suivant."
+msgstr "次のマッチを選択する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE"
+msgstr "ENTER"
+
+#: ../../source/raccourcis.rst:1
+msgid "Charger le match sélectionné."
+msgstr "選択したマッチを読み込む。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer le match sélectionné."
+msgstr "選択したマッチを削除する。"
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner/fermer le panneau."
+msgstr "選択を解除する/パネルを閉じる。"
+
+#: ../../source/raccourcis.rst:194
+msgid "Panneau Anki (répétition espacée)"
+msgstr "Ankiパネル（間隔反復）"
+
+#: ../../source/raccourcis.rst:1
+msgid "1"
+msgstr "1"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : À revoir (échec, revoir bientôt)."
+msgstr "評価：もう一度（失敗、すぐに再確認）。"
+
+#: ../../source/raccourcis.rst:1
+msgid "2"
+msgstr "2"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Difficile."
+msgstr "評価：難しい。"
+
+#: ../../source/raccourcis.rst:1
+msgid "3"
+msgstr "3"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Bien."
+msgstr "評価：良い。"
+
+#: ../../source/raccourcis.rst:1
+msgid "4"
+msgstr "4"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Facile."
+msgstr "評価：簡単。"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Arrêter la révision et revenir à la liste des paquets (reprise possible)."
+msgstr "レビューを停止してデッキリストに戻る（後で再開可能）。"

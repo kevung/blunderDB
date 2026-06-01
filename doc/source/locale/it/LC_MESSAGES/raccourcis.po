@@ -1,0 +1,575 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: it\n"
+"Language-Team: it <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/raccourcis.rst:4
+msgid "Raccourcis clavier"
+msgstr "Scorciatoie da tastiera"
+
+#: ../../source/raccourcis.rst:9
+msgid "Base de données"
+msgstr "Database"
+
+#: ../../source/raccourcis.rst:1
+msgid "Raccourci"
+msgstr "Scorciatoia"
+
+#: ../../source/raccourcis.rst:1
+msgid "Action"
+msgstr "Azione"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-N"
+msgstr "CTRL-N"
+
+#: ../../source/raccourcis.rst:1
+msgid "Créer une nouvelle base de données."
+msgstr "Crea un nuovo database."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-O"
+msgstr "CTRL-O"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir une base de données existante."
+msgstr "Apri un database esistente."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-I"
+msgstr "CTRL-SHIFT-I"
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer une base de données."
+msgstr "Importa un database."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-S"
+msgstr "CTRL-SHIFT-S"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exporter la base de données."
+msgstr "Esporta il database."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Q"
+msgstr "CTRL-Q"
+
+#: ../../source/raccourcis.rst:1
+msgid "Fermer blunderDB."
+msgstr "Chiudi blunderDB."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-M"
+msgstr "CTRL-M"
+
+#: ../../source/raccourcis.rst:1
+msgid "Modifier les métadonnées de la base de données."
+msgstr "Modifica i metadati del database."
+
+#: ../../source/raccourcis.rst:26
+msgid "Position"
+msgstr "Posizione"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-I"
+msgstr "CTRL-I"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Importer une ou plusieurs positions/matchs par fichier (xg, xgp, sgf, "
+"mat, txt, bgf)."
+msgstr ""
+"Importa una o più posizioni/partite da file (xg, xgp, sgf, mat, txt, bgf)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-SHIFT-F"
+msgstr "CTRL-SHIFT-F"
+
+#: ../../source/raccourcis.rst:1
+msgid "Importer récursivement un dossier de fichiers de matchs/positions."
+msgstr "Importa ricorsivamente una cartella di file di partite/posizioni."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-C"
+msgstr "CTRL-C"
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier une position dans le presse-papier."
+msgstr "Copia una posizione negli appunti."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-X"
+msgstr "CTRL-X"
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier l'image du board dans le presse-papier (PNG)."
+msgstr "Copia l'immagine del board negli appunti (PNG)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-X CTRL-X"
+msgstr "CTRL-X CTRL-X"
+
+#: ../../source/raccourcis.rst:1
+msgid "Copier l'image du board avec l'analyse dans le presse-papier (PNG)."
+msgstr "Copia l'immagine del board con l'analisi negli appunti (PNG)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-V"
+msgstr "CTRL-V"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Coller une position depuis le presse-papier (détection automatique du "
+"format)."
+msgstr ""
+"Incolla una posizione dagli appunti (rilevamento automatico del formato)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-S"
+msgstr "CTRL-S"
+
+#: ../../source/raccourcis.rst:1
+msgid "Enregistrer une position."
+msgstr "Salva una posizione."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-U"
+msgstr "CTRL-U"
+
+#: ../../source/raccourcis.rst:1
+msgid "Mettre à jour une position."
+msgstr "Aggiorna una posizione."
+
+#: ../../source/raccourcis.rst:1
+msgid "Del"
+msgstr "Canc"
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer la position courante."
+msgstr "Elimina la posizione corrente."
+
+#: ../../source/raccourcis.rst:1
+msgid "RETOUR ARRIERE"
+msgstr "BACKSPACE"
+
+#: ../../source/raccourcis.rst:1
+msgid "Réinitialiser le board, le cube, le score et les dés."
+msgstr "Reimposta board, cubo, punteggio e dadi."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-G"
+msgstr "CTRL-G"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher les métadonnées de la position."
+msgstr "Mostra i metadati della posizione."
+
+#: ../../source/raccourcis.rst:48
+msgid "Navigation"
+msgstr "Navigazione"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-R"
+msgstr "CTRL-R"
+
+#: ../../source/raccourcis.rst:1
+msgid "Recharger toutes les positions de la base de données."
+msgstr "Ricarica tutte le posizioni dal database."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageUp, h"
+msgstr "PageUp, h"
+
+#: ../../source/raccourcis.rst:1
+msgid "Première position / Partie précédente (navigation match)."
+msgstr "Prima posizione / Partita precedente (navigazione match)."
+
+#: ../../source/raccourcis.rst:1
+msgid "GAUCHE, k"
+msgstr "SINISTRA, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Position précédente."
+msgstr "Posizione precedente."
+
+#: ../../source/raccourcis.rst:1
+msgid "DROITE, j"
+msgstr "DESTRA, j"
+
+#: ../../source/raccourcis.rst:1
+msgid "Position suivante."
+msgstr "Posizione successiva."
+
+#: ../../source/raccourcis.rst:1
+msgid "HAUT, k"
+msgstr "SU, k"
+
+#: ../../source/raccourcis.rst:1
+msgid "Coup précédent (lorsqu'un coup est sélectionné dans l'analyse)."
+msgstr "Mossa precedente (quando una mossa è selezionata nell'analisi)."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS, j"
+msgstr "GIÙ, j"
+
+#: ../../source/raccourcis.rst:1
+msgid "Coup suivant (lorsqu'un coup est sélectionné dans l'analyse)."
+msgstr "Mossa successiva (quando una mossa è selezionata nell'analisi)."
+
+#: ../../source/raccourcis.rst:1
+msgid "PageDown, l"
+msgstr "PageDown, l"
+
+#: ../../source/raccourcis.rst:1
+msgid "Dernière position / Partie suivante (navigation match)."
+msgstr "Ultima posizione / Partita successiva (navigazione match)."
+
+#: ../../source/raccourcis.rst:1
+msgid "r"
+msgstr "r"
+
+#: ../../source/raccourcis.rst:1
+msgid "Charger une position aléatoire."
+msgstr "Carica una posizione casuale."
+
+#: ../../source/raccourcis.rst:67
+msgid "Affichage"
+msgstr "Visualizzazione"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-GAUCHE"
+msgstr "CTRL-SINISTRA"
+
+#: ../../source/raccourcis.rst:1
+msgid "Orientation du board à gauche."
+msgstr "Orientamento del board a sinistra."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-DROITE"
+msgstr "CTRL-DESTRA"
+
+#: ../../source/raccourcis.rst:1
+msgid "Orientation du board à droite."
+msgstr "Orientamento del board a destra."
+
+#: ../../source/raccourcis.rst:1
+msgid "p"
+msgstr "p"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le compte de course."
+msgstr "Mostra/nascondi il conteggio dei pip."
+
+#: ../../source/raccourcis.rst:81
+msgid "Actions"
+msgstr "Azioni"
+
+#: ../../source/raccourcis.rst:1
+msgid "TAB"
+msgstr "TAB"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir le panneau de recherche (éditeur de position)."
+msgstr "Apri il pannello di ricerca (editor di posizione)."
+
+#: ../../source/raccourcis.rst:1
+msgid "ESPACE"
+msgstr "SPAZIO"
+
+#: ../../source/raccourcis.rst:1
+msgid "Ouvrir la ligne de commande."
+msgstr "Apri la riga di comando."
+
+#: ../../source/raccourcis.rst:94
+msgid "Outils"
+msgstr "Strumenti"
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-L"
+msgstr "CTRL-L"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher l'analyse."
+msgstr "Mostra/nascondi l'analisi."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-P"
+msgstr "CTRL-P"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher les commentaires."
+msgstr "Mostra/nascondi i commenti."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-K"
+msgstr "CTRL-K"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau Anki (répétition espacée)."
+msgstr "Mostra/nascondi il pannello Anki (ripetizione dilazionata)."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-F"
+msgstr "CTRL-F"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau de recherche."
+msgstr "Mostra/nascondi il pannello di ricerca."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Tab"
+msgstr "CTRL-Tab"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des matchs."
+msgstr "Mostra/nascondi il pannello dei match."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-B"
+msgstr "CTRL-B"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des collections."
+msgstr "Mostra/nascondi il pannello delle collezioni."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-Y"
+msgstr "CTRL-Y"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau des tournois."
+msgstr "Mostra/nascondi il pannello dei tornei."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-D"
+msgstr "CTRL-D"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher le panneau Stats."
+msgstr "Mostra il pannello Statistiche."
+
+#: ../../source/raccourcis.rst:1
+msgid "CTRL-E"
+msgstr "CTRL-E"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher le panneau EPC."
+msgstr "Mostra/nascondi il pannello EPC."
+
+#: ../../source/raccourcis.rst:1
+msgid "?"
+msgstr "?"
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher/cacher l'aide."
+msgstr "Mostra/nascondi l'aiuto."
+
+#: ../../source/raccourcis.rst:115
+msgid "Ligne de commande"
+msgstr "Riga di comando"
+
+#: ../../source/raccourcis.rst:1
+msgid "HAUT"
+msgstr "SU"
+
+#: ../../source/raccourcis.rst:1
+msgid "Parcourir l'historique des commandes vers le haut."
+msgstr "Scorri la cronologia dei comandi verso l'alto."
+
+#: ../../source/raccourcis.rst:1
+msgid "BAS"
+msgstr "GIÙ"
+
+#: ../../source/raccourcis.rst:1
+msgid "Parcourir l'historique des commandes vers le bas."
+msgstr "Scorri la cronologia dei comandi verso il basso."
+
+#: ../../source/raccourcis.rst:128
+msgid "Panneau historique de recherche"
+msgstr "Pannello cronologia di ricerca"
+
+#: ../../source/raccourcis.rst:1
+msgid "Clic"
+msgstr "Clic"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner une recherche (afficher la position)."
+msgstr "Seleziona/deseleziona una ricerca (mostra la posizione)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Double-clic"
+msgstr "Doppio clic"
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche et fermer le panneau."
+msgstr "Esegui la ricerca e chiudi il pannello."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche précédente (plus récente, au-dessus)."
+msgstr "Seleziona la ricerca precedente (più recente, sopra)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner la recherche suivante (plus ancienne, en-dessous)."
+msgstr "Seleziona la ricerca successiva (più vecchia, sotto)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Esc"
+msgstr "Esc"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Désélectionner la recherche. Si aucune recherche sélectionnée, fermer le "
+"panneau."
+msgstr ""
+"Deseleziona la ricerca. Se nessuna ricerca è selezionata, chiudi il "
+"pannello."
+
+#: ../../source/raccourcis.rst:144
+msgid "Panneau bibliothèque de filtres"
+msgstr "Pannello libreria di filtri"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un filtre (afficher la position)."
+msgstr "Seleziona/deseleziona un filtro (mostra la posizione)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Exécuter la recherche du filtre."
+msgstr "Esegui la ricerca del filtro."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre précédent (lorsqu'un filtre est sélectionné)."
+msgstr "Seleziona il filtro precedente (quando un filtro è selezionato)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le filtre suivant (lorsqu'un filtre est sélectionné)."
+msgstr "Seleziona il filtro successivo (quando un filtro è selezionato)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
+msgstr "Deseleziona il filtro. Se nessun filtro è selezionato, chiudi il pannello."
+
+#: ../../source/raccourcis.rst:160
+msgid "Panneau d'analyse"
+msgstr "Pannello di analisi"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner/désélectionner un coup (afficher/cacher les flèches)."
+msgstr "Seleziona/deseleziona una mossa (mostra/nascondi le frecce)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup précédent (lorsqu'un coup est sélectionné)."
+msgstr "Seleziona la mossa precedente (quando una mossa è selezionata)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le coup suivant (lorsqu'un coup est sélectionné)."
+msgstr "Seleziona la mossa successiva (quando una mossa è selezionata)."
+
+#: ../../source/raccourcis.rst:1
+msgid "d"
+msgstr "d"
+
+#: ../../source/raccourcis.rst:1
+msgid ""
+"Basculer entre l'analyse des coups et du cube (navigation match "
+"uniquement)."
+msgstr ""
+"Alterna tra l'analisi delle mosse e del cubo (solo navigazione match)."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
+msgstr "Deseleziona la mossa. Se nessuna mossa è selezionata, chiudi il pannello."
+
+#: ../../source/raccourcis.rst:176
+msgid "Panneau des matchs"
+msgstr "Pannello dei match"
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner un match."
+msgstr "Seleziona un match."
+
+#: ../../source/raccourcis.rst:1
+msgid "Naviguer dans le match."
+msgstr "Naviga nel match."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match précédent."
+msgstr "Seleziona il match precedente."
+
+#: ../../source/raccourcis.rst:1
+msgid "Sélectionner le match suivant."
+msgstr "Seleziona il match successivo."
+
+#: ../../source/raccourcis.rst:1
+msgid "ENTREE"
+msgstr "INVIO"
+
+#: ../../source/raccourcis.rst:1
+msgid "Charger le match sélectionné."
+msgstr "Carica il match selezionato."
+
+#: ../../source/raccourcis.rst:1
+msgid "Supprimer le match sélectionné."
+msgstr "Elimina il match selezionato."
+
+#: ../../source/raccourcis.rst:1
+msgid "Désélectionner/fermer le panneau."
+msgstr "Deseleziona/chiudi il pannello."
+
+#: ../../source/raccourcis.rst:194
+msgid "Panneau Anki (répétition espacée)"
+msgstr "Pannello Anki (ripetizione dilazionata)"
+
+#: ../../source/raccourcis.rst:1
+msgid "1"
+msgstr "1"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : À revoir (échec, revoir bientôt)."
+msgstr "Valuta: Da rivedere (fallita, rivedere presto)."
+
+#: ../../source/raccourcis.rst:1
+msgid "2"
+msgstr "2"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Difficile."
+msgstr "Valuta: Difficile."
+
+#: ../../source/raccourcis.rst:1
+msgid "3"
+msgstr "3"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Bien."
+msgstr "Valuta: Bene."
+
+#: ../../source/raccourcis.rst:1
+msgid "4"
+msgstr "4"
+
+#: ../../source/raccourcis.rst:1
+msgid "Évaluer : Facile."
+msgstr "Valuta: Facile."
+
+#: ../../source/raccourcis.rst:1
+msgid "Arrêter la révision et revenir à la liste des paquets (reprise possible)."
+msgstr ""
+"Interrompi la revisione e torna all'elenco dei mazzi (ripresa possibile)."
+

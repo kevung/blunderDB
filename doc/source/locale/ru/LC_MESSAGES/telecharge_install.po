@@ -1,0 +1,109 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ru <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/telecharge_install.rst:4
+msgid "Téléchargement et installation"
+msgstr "Загрузка и установка"
+
+#: ../../source/telecharge_install.rst:6
+msgid ""
+"blunderDB se présente comme un unique exécutable ne nécessitant aucune "
+"installation."
+msgstr ""
+"blunderDB — это единственный исполняемый файл, не требующий установки."
+
+#: ../../source/telecharge_install.rst:8
+msgid "La dernière version de blunderDB est disponible en licence MIT:"
+msgstr "Последняя версия blunderDB доступна по лицензии MIT:"
+
+#: ../../source/telecharge_install.rst:10
+msgid "pour Windows: |latest_windows_exe|"
+msgstr "для Windows: |latest_windows_exe|"
+
+#: ../../source/telecharge_install.rst:12
+msgid "pour Linux: |latest_linux_exe|"
+msgstr "для Linux: |latest_linux_exe|"
+
+#: ../../source/telecharge_install.rst:14
+msgid "pour Mac: |latest_mac_exe|"
+msgstr "для Mac: |latest_mac_exe|"
+
+#: ../../source/telecharge_install.rst:18
+msgid ""
+"Pour une consultation hors ligne, vous pouvez également télécharger cette "
+"documentation au format PDF  : |latest_fr_pdf|"
+msgstr ""
+"Для работы в режиме офлайн вы также можете скачать данную документацию в "
+"формате PDF: |latest_fr_pdf|"
+
+#: ../../source/telecharge_install.rst:20
+msgid ""
+"blunderDB utilise Webview2 pour le rendu de l'interface graphique. Il y a de"
+" fortes chances que Webview2 soit déjà présent nativement sur votre système "
+"d'exploitation. Si ce n'est pas le cas, la première exécution de blunderDB "
+"proposera de le télécharger et de l'installer. Aucune manipulation de la "
+"part de l'utilisateur n'est attendue."
+msgstr ""
+"blunderDB использует Webview2 для отображения графического интерфейса. "
+"Вполне вероятно, что Webview2 уже установлен в вашей операционной системе. "
+"Если нет, при первом запуске blunderDB предложит скачать и установить его. "
+"Никаких действий со стороны пользователя не потребуется."
+
+#: ../../source/telecharge_install.rst:26
+msgid ""
+"Sous Linux, si blunderDB n'est pas exécutable après le téléchargement, "
+"exécuter dans un terminal la commande ``chmod +x ./blunderDB-linux-x.y.z`` "
+"où x, y, z correspond à la version téléchargée."
+msgstr ""
+"В Linux, если blunderDB не является исполняемым после загрузки, выполните в "
+"терминале команду ``chmod +x ./blunderDB-linux-x.y.z``, где x, y, z "
+"соответствует загруженной версии."
+
+#: ../../source/telecharge_install.rst:30
+msgid ""
+"Sous Linux, si vous obtenez l'erreur ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, votre distribution utilise webkit2gtk-4.1 au lieu de "
+"webkit2gtk-4.0. Téléchargez la version dédiée : "
+"|latest_linux_webkit2gtk41_exe|"
+msgstr ""
+"В Linux, если вы получаете ошибку ``libwebkit2gtk-4.0.so.37: cannot open "
+"shared object file``, ваш дистрибутив использует webkit2gtk-4.1 вместо "
+"webkit2gtk-4.0. Скачайте специальную сборку: |latest_linux_webkit2gtk41_exe|"
+
+#: ../../source/telecharge_install.rst:35
+msgid ""
+"Sous Windows, il est possible que ce dernier émette des réticences à "
+"exécuter blunderDB. Voir :numref:`annexe_windows_malware` pour comprendre "
+"pourquoi et contourner les éventuels blocages."
+msgstr ""
+"В Windows система может проявлять нежелание запускать blunderDB. Смотрите "
+":numref:`annexe_windows_malware` для понимания причин и обхода возможных "
+"блокировок."
+
+#: ../../source/telecharge_install.rst:39
+msgid ""
+"Sous Mac, il est possible que ce dernier émette des réticences à exécuter "
+"blunderDB. Voir :numref:`annexe_mac_malware` pour comprendre pourquoi et "
+"contourner les éventuels blocages."
+msgstr ""
+"На Mac система может проявлять нежелание запускать blunderDB. Смотрите "
+":numref:`annexe_mac_malware` для понимания причин и обхода возможных "
+"блокировок."

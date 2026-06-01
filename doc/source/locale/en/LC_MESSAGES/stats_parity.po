@@ -152,7 +152,7 @@ msgid ""
 "\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
 "\\mathrm{score}_i)"
 msgstr ""
-"\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{error}_i, "
+"\\mathrm{MWCLoss} = \\sum_i \\mathrm{eq2mwc}(\\mathrm{erreur}_i, "
 "\\mathrm{score}_i)"
 
 #: ../../source/stats_parity.rst:70

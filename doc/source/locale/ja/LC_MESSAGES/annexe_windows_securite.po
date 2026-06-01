@@ -1,0 +1,185 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_windows_securite.rst:4
+msgid ""
+"Annexe Windows : Détection abusive de blunderDB comme logiciel malveillant"
+msgstr "Windows 付録：blunderDB のマルウェアとしての誤検知"
+
+#: ../../source/annexe_windows_securite.rst:6
+msgid "Ce qui suit concerne les systèmes d'exploitation Windows 10 et 11."
+msgstr "以下は Windows 10 および 11 オペレーティングシステムに関するものです。"
+
+#: ../../source/annexe_windows_securite.rst:8
+msgid ""
+"Windows requiert aujourd'hui de la part de sociétés d'édition logicielle ou "
+"d'éditeurs logiciel indépendants de certifier numériquement leurs "
+"applications voire de distribuer via le Windows Store. Il est alors "
+"préconisé de faire appel à des sociétés extérieures pour obtenir un "
+"certificat numérique au prix de plusieurs centaines d'euros (voir par "
+"exemple https://learn.microsoft.com/en-us/archive/blogs/ie_fr/certificats-"
+"de-signature-de-code-ev-extended-validation-et-microsoft-smartscreen )."
+msgstr ""
+"Windows は現在、ソフトウェア出版会社や独立したソフトウェア開発者がアプリケーションをデジタル認証すること、または Windows Store "
+"経由で配布することを要求しています。そのため、外部企業を通じてデジタル証明書を取得することが推奨されており、その費用は数百ユーロにのぼります（例：https://learn.microsoft.com/en-"
+"us/archive/blogs/ie_fr/certificats-de-signature-de-code-ev-extended-"
+"validation-et-microsoft-smartscreen を参照）。"
+
+#: ../../source/annexe_windows_securite.rst:16
+msgid ""
+"Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces "
+"possibilités onéreuses. Par conséquent, il est fort probable que Windows "
+"vous avertisse d'un potentiel danger, voire bloque complètement l'exécution "
+"de blunderDB. Les sections suivantes expliquent les opérations à réaliser "
+"pour passer outre les réticences de Windows."
+msgstr ""
+"blunderDB を無料で提供しているため、これらの費用のかかる選択肢を追求するつもりはありません。そのため、Windows "
+"が潜在的な脅威について警告したり、blunderDB の実行を完全にブロックする可能性が高いです。以下のセクションでは、Windows "
+"の警告を回避するために行う操作を説明します。"
+
+#: ../../source/annexe_windows_securite.rst:23
+msgid "Avertissement Windows SmartScreen"
+msgstr "Windows SmartScreen の警告"
+
+#: ../../source/annexe_windows_securite.rst:25
+msgid ""
+"Après téléchargement de blunderDB, lors de son exécution, il est possible "
+"que Windows affiche un avertissement du type"
+msgstr "blunderDB をダウンロードして実行すると、Windows が次のような警告を表示する場合があります"
+
+#: ../../source/annexe_windows_securite.rst:30
+msgid ""
+"Si vous souhaitez autoriser un exécutable spécifique bloqué par SmartScreen "
+":"
+msgstr "SmartScreen にブロックされた特定の実行ファイルを許可したい場合："
+
+#: ../../source/annexe_windows_securite.rst:32
+msgid "**Essayer d’exécuter l'exécutable** :"
+msgstr "**実行ファイルを実行しようとする**："
+
+#: ../../source/annexe_windows_securite.rst:34
+msgid ""
+"Lorsque vous essayez de lancer l'exécutable, SmartScreen peut le bloquer et "
+"afficher un avertissement."
+msgstr "実行ファイルを起動しようとすると、SmartScreen がブロックして警告を表示する場合があります。"
+
+#: ../../source/annexe_windows_securite.rst:37
+msgid "**Cliquer sur \"Informations supplémentaires\"** :"
+msgstr "**「詳細情報」をクリックする**："
+
+#: ../../source/annexe_windows_securite.rst:39
+msgid ""
+"Dans la fenêtre d'avertissement de SmartScreen, cliquez sur **Informations "
+"supplémentaires**."
+msgstr "SmartScreen の警告ウィンドウで、**詳細情報** をクリックしてください。"
+
+#: ../../source/annexe_windows_securite.rst:42
+msgid "**Sélectionner \"Exécuter quand même\"** :"
+msgstr "**「実行する」を選択する**："
+
+#: ../../source/annexe_windows_securite.rst:44
+msgid ""
+"Si vous faites confiance à l'exécutable, cliquez sur **Exécuter quand même**"
+" pour contourner l'avertissement SmartScreen pour cette instance."
+msgstr "実行ファイルを信頼する場合は、**実行する** をクリックして、このインスタンスの SmartScreen 警告を回避してください。"
+
+#: ../../source/annexe_windows_securite.rst:48
+msgid "Blocage Windows Defender"
+msgstr "Windows Defender によるブロック"
+
+#: ../../source/annexe_windows_securite.rst:50
+msgid ""
+"Pour certains paramétrages sécurité de Windows, il arrive que malgré le "
+"déblocage de SmartScreen (voir section plus précédente), Windows Defender "
+"puisse empêcher l'exécution de blunderDB avec des messages du type"
+msgstr ""
+"Windows の一部のセキュリティ設定では、SmartScreen のブロックを解除しても（前のセクションを参照）、Windows Defender "
+"が次のようなメッセージで blunderDB の実行を妨げる場合があります"
+
+#: ../../source/annexe_windows_securite.rst:57
+msgid "ou encore"
+msgstr "または"
+
+#: ../../source/annexe_windows_securite.rst:62
+msgid "voire le placer en quarantaine."
+msgstr "または隔離する場合もあります。"
+
+#: ../../source/annexe_windows_securite.rst:64
+msgid ""
+"Windows Defender est connu pour déclencher des faux positifs. Ce problème "
+"est explicitement mentionné dans la FAQ du site officiel de Golang ( "
+"https://go.dev/doc/faq#virus ) ou dans des tickets Github de certains "
+"projets programmés en Go ( https://github.com/golang/vscode-go/issues/3182 "
+")."
+msgstr ""
+"Windows Defender は誤検知を引き起こすことが知られています。この問題は、Golang の公式サイト "
+"FAQ（https://go.dev/doc/faq#virus）や、Go でプログラムされた一部のプロジェクトの GitHub "
+"チケット（https://github.com/golang/vscode-go/issues/3182）で明示的に言及されています。"
+
+#: ../../source/annexe_windows_securite.rst:69
+msgid "Si vous souhaitez empêcher la Sécurité Windows d’analyser blunderDB :"
+msgstr "Windows セキュリティによる blunderDB のスキャンを防ぎたい場合："
+
+#: ../../source/annexe_windows_securite.rst:71
+msgid "**Ouvrir la Sécurité Windows** :"
+msgstr "**Windows セキュリティを開く**："
+
+#: ../../source/annexe_windows_securite.rst:73
+msgid "Allez dans **Démarrer** et tapez **Sécurité Windows**."
+msgstr "**スタート** に移動し、**Windows セキュリティ** と入力します。"
+
+#: ../../source/annexe_windows_securite.rst:78
+msgid "**Aller à \"Protection contre les virus et menaces\"** :"
+msgstr "**「ウイルスと脅威からの保護」に移動する**："
+
+#: ../../source/annexe_windows_securite.rst:80
+msgid "Cliquez sur **Protection contre les virus et menaces**."
+msgstr "**ウイルスと脅威からの保護** をクリックします。"
+
+#: ../../source/annexe_windows_securite.rst:85
+msgid "**Gérer les paramètres** :"
+msgstr "**設定の管理**："
+
+#: ../../source/annexe_windows_securite.rst:87
+msgid ""
+"Faites défiler vers le bas et cliquez sur **Gérer les paramètres** sous "
+"Paramètres de protection contre les virus et menaces."
+msgstr "下にスクロールして、ウイルスと脅威からの保護の設定の下にある **設定の管理** をクリックします。"
+
+#: ../../source/annexe_windows_securite.rst:92
+msgid "**Ajouter ou supprimer des exclusions** :"
+msgstr "**除外の追加または削除**："
+
+#: ../../source/annexe_windows_securite.rst:94
+msgid ""
+"Faites défiler jusqu’à la section **Exclusions** et cliquez sur **Ajouter ou"
+" supprimer des exclusions**."
+msgstr "**除外** セクションまでスクロールし、**除外の追加または削除** をクリックします。"
+
+#: ../../source/annexe_windows_securite.rst:99
+msgid "**Ajouter une exclusion** :"
+msgstr "**除外の追加**："
+
+#: ../../source/annexe_windows_securite.rst:101
+msgid ""
+"Cliquez sur **Ajouter une exclusion** et sélectionnez **Fichier**. Naviguez "
+"ensuite jusqu’à l’exécutable que vous souhaitez exclure et sélectionnez-le."
+msgstr "**除外の追加** をクリックして **ファイル** を選択します。次に、除外したい実行ファイルに移動して選択します。"

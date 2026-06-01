@@ -1,0 +1,781 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: de\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/index.rst:4
+msgid "blunderDB"
+msgstr "blunderDB"
+
+#: ../../source/index.rst:6
+msgid ""
+"blunderDB est un logiciel pour constituer des bases de données de "
+"positions de backgammon. Sa force principale est de constituer un lieu "
+"unique où aggréger les positions qu'un joueur a pu rencontrer (en ligne, "
+"en tournoi) et de pouvoir réétudier ces positions en les filtrant selon "
+"différents filtres combinables arbitrairement. blunderDB peut également "
+"être utilisé pour constituer des catalogues de positions de référence."
+msgstr ""
+"blunderDB ist eine Software zum Erstellen von Datenbanken mit "
+"Backgammon-Stellungen. Ihre wichtigste Stärke besteht darin, einen "
+"einzigen Ort bereitzustellen, an dem ein Spieler die Stellungen sammeln "
+"kann, die er angetroffen hat (online, bei Turnieren), und diese "
+"Stellungen erneut studieren zu können, indem er sie mit verschiedenen, "
+"beliebig kombinierbaren Filtern filtert. blunderDB kann außerdem dazu "
+"verwendet werden, Kataloge von Referenzstellungen zu erstellen."
+
+#: ../../source/index.rst:13
+msgid "La présente documentation est structurée de la manière suivante:"
+msgstr "Die vorliegende Dokumentation ist wie folgt gegliedert:"
+
+#: ../../source/index.rst:15
+msgid ""
+"la section **téléchargement et installation** explique comment se "
+"procurer et lancer blunderDB."
+msgstr ""
+"Der Abschnitt **Download und Installation** erklärt, wie man blunderDB "
+"bezieht und startet."
+
+#: ../../source/index.rst:18
+msgid "le **manuel** décrit le fonctionnement général de blunderDB."
+msgstr "Das **Handbuch** beschreibt die allgemeine Funktionsweise von blunderDB."
+
+#: ../../source/index.rst:20
+msgid ""
+"le **guide utilisateur** est une introduction pratique pour utiliser "
+"rapidement blunderDB."
+msgstr ""
+"Der **Benutzerleitfaden** ist eine praktische Einführung, um blunderDB "
+"schnell zu nutzen."
+
+#: ../../source/index.rst:23
+msgid ""
+"la liste des **commandes** ainsi que la liste des **raccourcis** clavier "
+"permettent une utilisation efficace de blunderDB."
+msgstr ""
+"Die Liste der **Befehle** sowie die Liste der **Tastenkürzel** "
+"ermöglichen eine effiziente Nutzung von blunderDB."
+
+#: ../../source/index.rst:26
+msgid ""
+"la section **interface en ligne de commande (CLI)** décrit les commandes "
+"disponibles pour l'import en masse, l'automatisation et le scripting."
+msgstr ""
+"Der Abschnitt **Befehlszeilenschnittstelle (CLI)** beschreibt die "
+"verfügbaren Befehle für den Massenimport, die Automatisierung und das "
+"Scripting."
+
+#: ../../source/index.rst:29
+msgid ""
+"la **FAQ** fournit quelques réponses aux interrogations les plus "
+"fréquentes."
+msgstr "Die **FAQ** gibt Antworten auf die am häufigsten gestellten Fragen."
+
+#: ../../source/index.rst:32
+msgid "Historique des versions"
+msgstr "Versionsverlauf"
+
+#: ../../source/index.rst:1
+msgid "Version"
+msgstr "Version"
+
+#: ../../source/index.rst:1
+msgid "Date"
+msgstr "Datum"
+
+#: ../../source/index.rst:1
+msgid "Cause et/ou nature des évolutions"
+msgstr "Ursache und/oder Art der Änderungen"
+
+#: ../../source/index.rst:1
+msgid "0.1.0"
+msgstr "0.1.0"
+
+#: ../../source/index.rst:1
+msgid "31/12/2024"
+msgstr "31. Dezember 2024"
+
+#: ../../source/index.rst:1
+msgid "Création version beta."
+msgstr "Beta-Version"
+
+#: ../../source/index.rst:1
+msgid "0.2.0"
+msgstr "0.2.0"
+
+#: ../../source/index.rst:1
+msgid "06/01/2025"
+msgstr "6. Januar 2025"
+
+#: ../../source/index.rst:1
+msgid "Résolutions de bugs divers."
+msgstr "Diverse Fehlerbehebungen."
+
+#: ../../source/index.rst:3
+msgid "Ajout de tables de matchs/TP/GV."
+msgstr "Hinzufügen von Match-/TP-/GV-Tabellen."
+
+#: ../../source/index.rst:5
+msgid "Ajout de filtres de recherche (coups, décision de videau, date)."
+msgstr "Hinzufügen von Suchfiltern (Züge, Dopplerentscheidung, Datum)."
+
+#: ../../source/index.rst:7
+msgid "Ajout de métadonnées sur les positions."
+msgstr "Hinzufügen von Metadaten zu den Stellungen."
+
+#: ../../source/index.rst:9
+msgid "Fonction d'import/export entre instances de blunderDB."
+msgstr "Import-/Exportfunktion zwischen blunderDB-Instanzen."
+
+#: ../../source/index.rst:11
+msgid "Ajout de fonction de métadonnées sur les bases de données."
+msgstr "Hinzufügen einer Metadaten-Funktion für die Datenbanken."
+
+#: ../../source/index.rst:13
+msgid "Introduction des numéros de versions (base de données et application)."
+msgstr "Einführung von Versionsnummern (Datenbank und Anwendung)."
+
+#: ../../source/index.rst:1
+msgid "0.3.0"
+msgstr "0.3.0"
+
+#: ../../source/index.rst:1
+msgid "27/01/2025"
+msgstr "27. Januar 2025"
+
+#: ../../source/index.rst:3
+msgid "Sauvegarde automatiquement le dimensionnement de la fenêtre."
+msgstr "Speichert automatisch die Fenstergröße."
+
+#: ../../source/index.rst:5
+msgid "Importe les éventuels commentaires depuis XG."
+msgstr "Importiert eventuelle Kommentare aus XG."
+
+#: ../../source/index.rst:1
+msgid "0.4.0"
+msgstr "0.4.0"
+
+#: ../../source/index.rst:1
+msgid "03/02/2025"
+msgstr "3. Februar 2025"
+
+#: ../../source/index.rst:3
+msgid "Ajout d'une icone pour blunderDB."
+msgstr "Hinzufügen eines Symbols für blunderDB."
+
+#: ../../source/index.rst:5
+msgid "Corrections de filtres."
+msgstr "Korrekturen an Filtern."
+
+#: ../../source/index.rst:7
+msgid "Ajout du support de MacOS."
+msgstr "Hinzufügen der macOS-Unterstützung."
+
+#: ../../source/index.rst:1
+msgid "0.5.0"
+msgstr "0.5.0"
+
+#: ../../source/index.rst:1
+msgid "04/02/2025"
+msgstr "4. Februar 2025"
+
+#: ../../source/index.rst:1
+msgid "Ajout de nouveaux filtres (miroir, non contact, jan blot, outfield blot)."
+msgstr ""
+"Hinzufügen neuer Filter (Spiegelung, kein Kontakt, jan blot, outfield "
+"blot)."
+
+#: ../../source/index.rst:1
+msgid "0.6.0"
+msgstr "0.6.0"
+
+#: ../../source/index.rst:1
+msgid "13/02/2025"
+msgstr "13. Februar 2025"
+
+#: ../../source/index.rst:1
+msgid "Ajout de la bibliothèque de filtres."
+msgstr "Hinzufügen der Filterbibliothek."
+
+#: ../../source/index.rst:3
+msgid "Affichage de la version de la base de données dans les métadonnées."
+msgstr "Anzeige der Datenbankversion in den Metadaten."
+
+#: ../../source/index.rst:1
+msgid "0.7.0"
+msgstr "0.7.0"
+
+#: ../../source/index.rst:1
+msgid "16/02/2025"
+msgstr "16. Februar 2025"
+
+#: ../../source/index.rst:1
+msgid "Prise en charge du japonais et de l'allemand dans les exports de XG."
+msgstr "Unterstützung japanischer und deutscher XG-Exporte."
+
+#: ../../source/index.rst:1
+msgid "0.8.0"
+msgstr "0.8.0"
+
+#: ../../source/index.rst:1
+msgid "03/05/2025"
+msgstr "3. Mai 2025"
+
+#: ../../source/index.rst:1
+msgid "Possibilité de cacher le compte de course."
+msgstr "Möglichkeit, den Pipcount auszublenden."
+
+#: ../../source/index.rst:3
+msgid "Chargement d'une position aléatoire."
+msgstr "Laden einer zufälligen Stellung."
+
+#: ../../source/index.rst:1
+msgid "0.9.0"
+msgstr "0.9.0"
+
+#: ../../source/index.rst:1
+msgid "02/11/2025"
+msgstr "2. November 2025"
+
+#: ../../source/index.rst:1
+msgid "Correction de bug de la bibliothèque de filtres."
+msgstr "Fehlerbehebung in der Filterbibliothek."
+
+#: ../../source/index.rst:3
+msgid "Import/export de base de données."
+msgstr "Datenbankimport/-export."
+
+#: ../../source/index.rst:5
+msgid "Affichage de flèches pour les coups sélectionnés."
+msgstr "Anzeige von Pfeilen für die ausgewählten Züge."
+
+#: ../../source/index.rst:7
+msgid "Raccourcis clavier pour l'import/export."
+msgstr "Tastenkürzel für Import/Export."
+
+#: ../../source/index.rst:1
+msgid "0.10.0"
+msgstr "0.10.0"
+
+#: ../../source/index.rst:1
+msgid "25/02/2026"
+msgstr "25. Februar 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Import de matchs depuis eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
+"(MAT/TXT) et BGBlitz (BGF/TXT)."
+msgstr ""
+"Import von Matches aus eXtreme Gammon (XG/XGP), GNUbg (SGF), Jellyfish "
+"(MAT/TXT) und BGBlitz (BGF/TXT)."
+
+#: ../../source/index.rst:3
+msgid ""
+"Navigation dans les matchs: parcours des coups d'un match importé, avec "
+"mise en évidence du coup joué."
+msgstr ""
+"Navigation in den Matches: Durchlaufen der Züge eines importierten "
+"Matches, mit Hervorhebung des gespielten Zugs."
+
+#: ../../source/index.rst:5
+msgid ""
+"Panneau des matchs: liste, tri, édition inline, permutation des joueurs, "
+"assignation de tournoi."
+msgstr ""
+"Match-Panel: Liste, Sortierung, Inline-Bearbeitung, Vertauschen der "
+"Spieler, Zuordnung zu Turnieren."
+
+#: ../../source/index.rst:7
+msgid "Import par dossier récursif et import par glisser-déposer."
+msgstr "Import per rekursivem Ordner und Import per Drag & Drop."
+
+#: ../../source/index.rst:9
+msgid ""
+"Calculateur EPC (Effective Pip Count) avec base de données de bearoff "
+"GNUbg intégrée."
+msgstr ""
+"EPC-Rechner (Effective Pip Count) mit integrierter GNUbg-Bearoff-"
+"Datenbank."
+
+#: ../../source/index.rst:11
+msgid "Collections: regroupement personnalisé de positions."
+msgstr "Sammlungen: benutzerdefinierte Gruppierung von Stellungen."
+
+#: ../../source/index.rst:13
+msgid "Tournois: regroupement de matchs par événement."
+msgstr "Turniere: Gruppierung von Matches nach Veranstaltung."
+
+#: ../../source/index.rst:15
+msgid ""
+"Sauvegarde et restauration de l'état de session (dernière recherche, "
+"position courante)."
+msgstr ""
+"Speichern und Wiederherstellen des Sitzungszustands (letzte Suche, "
+"aktuelle Stellung)."
+
+#: ../../source/index.rst:17
+msgid "Migration automatique du schéma de base de données."
+msgstr "Automatische Migration des Datenbankschemas."
+
+#: ../../source/index.rst:19
+msgid "Affichage multi-moteurs dans l'analyse."
+msgstr "Mehrere-Engines-Anzeige in der Analyse."
+
+#: ../../source/index.rst:21
+msgid "Filtre d'erreurs/blunders du joueur 1 dans les recherches."
+msgstr "Filter für Fehler/Blunder von Spieler 1 in den Suchen."
+
+#: ../../source/index.rst:23
+msgid ""
+"Export de la base de données avec sélection granulaire (matchs, "
+"collections, tournois, coups joués)."
+msgstr ""
+"Export der Datenbank mit granularer Auswahl (Matches, Sammlungen, "
+"Turniere, gespielte Züge)."
+
+#: ../../source/index.rst:25
+msgid "Bouton de navigation dans les matchs."
+msgstr "Navigationsschaltfläche in den Matches."
+
+#: ../../source/index.rst:27
+msgid "Compte de course (pipcount) dans la navigation des matchs."
+msgstr "Pipcount-Anzeige in der Match-Navigation."
+
+#: ../../source/index.rst:29
+msgid "Interface en ligne de commande (CLI) complète."
+msgstr "Vollständige Befehlszeilenschnittstelle (CLI)."
+
+#: ../../source/index.rst:31
+msgid "Réouverture automatique de la dernière base de données."
+msgstr "Automatisches Wiederöffnen der letzten Datenbank."
+
+#: ../../source/index.rst:33
+msgid "Amélioration de la barre d'outils et des icônes."
+msgstr "Verbesserung der Symbolleiste und der Symbole."
+
+#: ../../source/index.rst:1
+msgid "0.11.0"
+msgstr "0.11.0"
+
+#: ../../source/index.rst:1
+msgid "06/03/2026"
+msgstr "6. März 2026"
+
+#: ../../source/index.rst:1
+msgid "Filtre de recherche dans les positions courantes."
+msgstr "Filter zur Suche innerhalb der aktuell gefilterten Stellungen."
+
+#: ../../source/index.rst:3
+msgid "Ajout de filtres par match et par tournoi."
+msgstr "Hinzufügen von Filtern nach Match und nach Turnier."
+
+#: ../../source/index.rst:5
+msgid ""
+"Effacement automatique du plateau lors de l'ouverture du panneau de "
+"recherche."
+msgstr ""
+"Automatisches Leeren des Bretts beim Öffnen des Suchpanels."
+
+#: ../../source/index.rst:1
+msgid "0.12.0"
+msgstr "0.12.0"
+
+#: ../../source/index.rst:1
+msgid "19/03/2026"
+msgstr "19. März 2026"
+
+#: ../../source/index.rst:1
+msgid "Import de fichiers de position eXtreme Gammon (XGP) avec analyse."
+msgstr "Import von eXtreme-Gammon-Stellungsdateien (XGP) mit Analyse."
+
+#: ../../source/index.rst:1
+msgid "0.13.0"
+msgstr "0.13.0"
+
+#: ../../source/index.rst:1
+msgid "28/03/2026"
+msgstr "28. März 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Simplification de l'interface: la navigation dans les matchs et les "
+"collections se fait directement via les panneaux."
+msgstr ""
+"Vereinfachung der Oberfläche: Die Navigation in Matches und Sammlungen "
+"erfolgt nun direkt über die Panels."
+
+#: ../../source/index.rst:3
+msgid "Ligne de commande intégrée dans la barre d'état."
+msgstr "In die Statusleiste integrierte Befehlszeile."
+
+#: ../../source/index.rst:5
+msgid "Panneau Console renommé en panneau Log."
+msgstr "Konsolen-Panel in Log-Panel umbenannt."
+
+#: ../../source/index.rst:7
+msgid "Panneau EPC dédié dans le panneau inférieur."
+msgstr "Eigenes EPC-Panel im unteren Panel."
+
+#: ../../source/index.rst:9
+msgid "Copier/coller de position dans le panneau de recherche."
+msgstr "Kopieren/Einfügen von Stellungen im Suchpanel."
+
+#: ../../source/index.rst:11
+msgid ""
+"Glisser-déposer pour réordonner les collections, les positions dans les "
+"collections, et les matchs dans les tournois."
+msgstr ""
+"Drag & Drop zum Umordnen der Sammlungen, der Stellungen innerhalb der "
+"Sammlungen und der Matches innerhalb der Turniere."
+
+#: ../../source/index.rst:13
+msgid "Colonne tournoi dans le panneau des matchs avec édition inline."
+msgstr "Turnierspalte im Match-Panel mit Inline-Bearbeitung."
+
+#: ../../source/index.rst:15
+msgid "Affichage automatique du panneau d'analyse après une recherche."
+msgstr "Automatische Anzeige des Analysepanels nach einer Suche."
+
+#: ../../source/index.rst:1
+msgid "0.14.0"
+msgstr "0.14.0"
+
+#: ../../source/index.rst:1
+msgid "30/03/2026"
+msgstr "30. März 2026"
+
+#: ../../source/index.rst:1
+msgid "Panneau Anki dédié pour l'étude par répétition espacée (algorithme FSRS)."
+msgstr ""
+"Eigenes Anki-Panel für das Lernen mit verteilter Wiederholung "
+"(FSRS-Algorithmus)."
+
+#: ../../source/index.rst:3
+msgid "Import des commentaires depuis les fichiers XG."
+msgstr "Import der Kommentare aus den XG-Dateien."
+
+#: ../../source/index.rst:1
+msgid "0.15.0"
+msgstr "0.15.0"
+
+#: ../../source/index.rst:1
+msgid "31/03/2026"
+msgstr "31. März 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Export de la position en image PNG dans le presse-papier (board seul via "
+"Ctrl+X, ou board avec analyse via Ctrl+X Ctrl+X)."
+msgstr ""
+"Export der Stellung als PNG-Bild in die Zwischenablage (nur Brett via "
+"Ctrl+X oder Brett mit Analyse via Ctrl+X Ctrl+X)."
+
+#: ../../source/index.rst:1
+msgid "0.16.0"
+msgstr "0.16.0"
+
+#: ../../source/index.rst:1
+msgid "18/04/2026"
+msgstr "18. April 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Schéma de base de données v2.0.0 : déduplication des positions via hash "
+"Zobrist, colonnes de filtrage dénormalisées, préfiltre de motifs "
+"bitboard, journalisation WAL. Import par lot >=3x plus rapide, recherche "
+"filtrée <=100 ms sur 10k+ positions. NOTE : les fichiers DB créés avec la"
+" v0.16.0 ne peuvent pas être ouverts par les versions plus anciennes ; "
+"les anciennes DB sont migrées automatiquement sur place (faire une "
+"sauvegarde d'abord)."
+msgstr ""
+"Datenbankschema v2.0.0: Deduplizierung der Stellungen über Zobrist-Hash, "
+"denormalisierte Filterspalten, Bitboard-Muster-Vorfilter, "
+"WAL-Journaling. Stapelimport >=3x schneller, gefilterte Suche <=100 ms "
+"bei 10k+ Stellungen. HINWEIS: DB-Dateien, die mit v0.16.0 erstellt "
+"wurden, können von älteren Versionen nicht geöffnet werden; alte DBs "
+"werden automatisch an Ort und Stelle migriert (zuerst eine Sicherung "
+"anlegen)."
+
+#: ../../source/index.rst:1
+msgid "0.17.0"
+msgstr "0.17.0"
+
+#: ../../source/index.rst:1
+msgid "20/04/2026"
+msgstr "20. April 2026"
+
+#: ../../source/index.rst:1
+#, python-format
+msgid ""
+"Optimisation du stockage : compression zlib des données d'analyse (~80% "
+"de réduction), encodage compact des positions (~90% de réduction de la "
+"taille). Ajout de 5 index manquants pour améliorer les performances de "
+"recherche. Correction de la recherche par erreur de cube. Correction du "
+"mode EDIT après une recherche sans résultats. Restauration de l'état du "
+"panneau de recherche lors du changement d'onglets. Suppression de 62 "
+"instructions de débogage des chemins critiques."
+msgstr ""
+"Speicheroptimierung: zlib-Komprimierung der Analysedaten (~80%ige "
+"Reduzierung), kompakte Kodierung der Stellungen (~90%ige Reduzierung der "
+"Größe). Hinzufügen von 5 fehlenden Indizes zur Verbesserung der "
+"Suchleistung. Korrektur der Suche nach Cube-Fehler. Korrektur des "
+"EDIT-Modus nach einer Suche ohne Ergebnisse. Wiederherstellung des "
+"Zustands des Suchpanels beim Wechsel der Reiter. Entfernung von 62 "
+"Debug-Anweisungen aus den kritischen Pfaden."
+
+#: ../../source/index.rst:1
+msgid "0.18.0"
+msgstr "0.18.0"
+
+#: ../../source/index.rst:1
+msgid ""
+"Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
+"fichiers spécialisés, extraction de 7 modules de service depuis "
+"App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux. "
+"Migration complète vers Svelte 5 runes. Remplacement de 9 modales de "
+"tableau par un composant générique DataTableModal. Ajout d'ESLint + "
+"Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA "
+"(focus visible, rôles ARIA, navigation clavier). Passage du mutex "
+"Database en RWMutex pour un meilleur parallélisme en lecture. "
+"Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN). Réécriture du "
+"README. Correction de tous les avertissements ESLint (46→0) et Vite "
+"(6→0)."
+msgstr ""
+"Größeres Code-Refactoring: Aufteilung von db.go (10k Zeilen) in 19 "
+"spezialisierte Dateien, Extraktion von 7 Service-Modulen aus App.svelte "
+"(4888→469 Zeilen), Konsolidierung der Modal-/Panel-Stores. Vollständige "
+"Migration zu Svelte 5 Runes. Ersetzung von 9 Tabellen-Modals durch eine "
+"generische DataTableModal-Komponente. Hinzufügen von ESLint + Prettier + "
+"vitest (125 Frontend-Tests) mit CI. WCAG-2.1-AA-Konformität (sichtbarer "
+"Fokus, ARIA-Rollen, Tastaturnavigation). Umstellung des Database-Mutex "
+"auf RWMutex für bessere Lese-Parallelität. Vollständige CLI-Dokumentation "
+"(CLI_USAGE.md + Sphinx FR/EN). Neuschreiben der README. Behebung aller "
+"ESLint-Warnungen (46→0) und Vite-Warnungen (6→0)."
+
+#: ../../source/index.rst:1
+msgid "0.19.0"
+msgstr "0.19.0"
+
+#: ../../source/index.rst:1
+msgid "07/05/2026"
+msgstr "7. Mai 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
+"Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
+"tournoi, dates, type de décision, longueur de match), onglet Dashboard "
+"avec cartes de niveau / PR glissant / top blunders, onglet Progression "
+"avec courbe par tournoi et scatter plot par match, onglet Erreurs avec "
+"répartition par action de videau et histogramme des magnitudes. Drill-"
+"down interactif vers les positions / matchs / tournois depuis tous les "
+"indicateurs. Toggle PR / MWC instantané. Commande CLI list --type stats. "
+"Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
+"gnuBG (seuil 0.16 d'équité pour les cubes proches). Correction du calcul "
+"de cube_error pour les décisions Double/Pass. Documentation du modèle de "
+"statistiques (:ref:\\`stats_parity\\`). Voir :ref:\\`stats\\`."
+msgstr ""
+"Hinzufügen des Stats-Panels: Indikatoren PR (Performance Rate), Snowie "
+"Error Rate und MWC cost (Match Winning Chance cost), Filterleiste "
+"(Spieler, Turnier, Datum, Entscheidungstyp, Matchlänge), Dashboard-Reiter "
+"mit Niveau-Karten / gleitendem PR / Top-Blunders, Progression-Reiter mit "
+"Kurve pro Turnier und Streudiagramm pro Match, Fehler-Reiter mit "
+"Aufschlüsselung nach Cube-Aktion und Histogramm der Fehlergrößen. "
+"Interaktives Drill-down zu den Stellungen / Matches / Turnieren von allen "
+"Indikatoren aus. Sofortiges Umschalten zwischen PR / MWC. CLI-Befehl list "
+"--type stats. Abgleich der Indikatoren PR / Snowie ER / MWC mit "
+"eXtremeGammon und gnuBG (Equity-Schwelle 0.16 für knappe Cubes). "
+"Korrektur der cube_error-Berechnung für Double/Pass-Entscheidungen. "
+"Dokumentation des Statistikmodells (:ref:\\`stats_parity\\`). Siehe "
+":ref:\\`stats\\`."
+
+#: ../../source/index.rst:1
+msgid "0.20.0"
+msgstr "0.20.0"
+
+#: ../../source/index.rst:1
+msgid "31/05/2026"
+msgstr "31. Mai 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de la structure d'exclusion *Except* au panneau de recherche : "
+"exclut les positions contenant l'un des pions dessinés, avec marqueur « "
+"doit être vide » (double-clic) et nombre de pions par point non limité "
+"(commande x). Ajout de l'option « premier dé uniquement » au filtre de "
+"lancer de dés (variante D1, option CLI --dice). Panneau Commentaires : "
+"focus automatique du champ de saisie à l'ouverture et boutons éditer / "
+"supprimer toujours visibles. Correction du filtre « Search Text » qui ne "
+"trouvait pas tous les tags de commentaires."
+msgstr ""
+"Hinzufügen der Ausschluss-Struktur *Except* zum Suchpanel: schließt "
+"Stellungen aus, die einen der gezeichneten Steine enthalten, mit einem "
+"Marker « muss leer sein » (Doppelklick) und unbegrenzter Anzahl an "
+"Steinen pro Punkt (Befehl x). Hinzufügen der Option « nur erster Würfel » "
+"zum Würfelfilter (Variante D1, CLI-Option --dice). Kommentare-Panel: das "
+"Eingabefeld wird beim Öffnen automatisch fokussiert und die "
+"Schaltflächen Bearbeiten / Löschen sind immer sichtbar. Korrektur des "
+"Filters « Search Text », der nicht alle Kommentar-Tags fand."
+
+#: ../../source/index.rst:1
+msgid "0.21.0"
+msgstr "0.21.0"
+
+#: ../../source/index.rst:1
+msgid "01/06/2026"
+msgstr "1. Juni 2026"
+
+#: ../../source/index.rst:1
+msgid ""
+"Internationalisation de l'interface : l'intégralité de blunderDB (barre "
+"d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
+" en anglais, français, allemand, italien, espagnol, finnois, japonais, "
+"grec ou russe. Ajout d'une fenêtre de configuration, accessible par un "
+"bouton en forme de rouage dans la barre d'outils, permettant de "
+"sélectionner la langue. Le choix de la langue est conservé d'une session "
+"à l'autre. Voir :ref:\\`configuration\\`."
+msgstr ""
+"Internationalisierung der Oberfläche: das gesamte blunderDB "
+"(Symbolleiste, Panels, Meldungen, Hilfe) kann nun wahlweise auf Englisch, "
+"Französisch, Deutsch, Italienisch, Spanisch, Finnisch, Japanisch, "
+"Griechisch oder Russisch angezeigt werden. Hinzufügen eines "
+"Konfigurationsfensters, das über eine zahnradförmige Schaltfläche in der "
+"Symbolleiste erreichbar ist und die Auswahl der Sprache ermöglicht. Die "
+"Sprachauswahl bleibt über Sitzungen hinweg erhalten. Siehe "
+":ref:\\`configuration\\`."
+
+#: ../../source/index.rst:147
+msgid "Sommaire"
+msgstr "Inhaltsverzeichnis"
+
+#: ../../source/index.rst:179
+msgid "Contacts"
+msgstr "Kontakt"
+
+#: ../../source/index.rst:181
+msgid ""
+"Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
+"sur Heroes sous le pseudo postmanpat."
+msgstr ""
+"Autor: Kévin Unger <blunderdb@proton.me>. Sie finden mich auch auf Heroes "
+"unter dem Benutzernamen postmanpat."
+
+#: ../../source/index.rst:184
+msgid ""
+"J'ai développé blunderDB initialement pour mon usage personnel afin de "
+"pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
+"d'avoir un retour surtout quand on a dépensé un paquet d'heures de "
+"conception, codage, débuggage... Aussi n'hésitez pas à m'écrire pour "
+"faire part de votre retour d'expérience. Tous les retours (constructifs) "
+"sont bienvenus."
+msgstr ""
+"Ich habe blunderDB ursprünglich für meinen persönlichen Gebrauch "
+"entwickelt, um Muster in meinen Fehlern erkennen zu können. Doch es ist "
+"sehr erfreulich, Rückmeldungen zu erhalten, besonders wenn man viele "
+"Stunden in Konzeption, Programmierung und Debugging gesteckt hat. Zögern "
+"Sie also nicht, mir zu schreiben, um Ihre Erfahrungen mitzuteilen. Jedes "
+"(konstruktive) Feedback ist willkommen."
+
+#: ../../source/index.rst:191
+msgid "Voici plusieurs manières de discuter:"
+msgstr "Hier sind mehrere Möglichkeiten zum Austausch:"
+
+#: ../../source/index.rst:193
+msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
+msgstr ""
+"dem Discord-Server von blunderDB beitreten: https://discord.gg/DA5PpzM9En"
+
+#: ../../source/index.rst:195
+msgid "m'écrire un mail à blunderdb@proton.me,"
+msgstr "mir eine E-Mail an blunderdb@proton.me schreiben,"
+
+#: ../../source/index.rst:197
+msgid "discuter avec moi, si on se retrouve dans un tournoi,"
+msgstr "sich mit mir unterhalten, falls wir uns bei einem Turnier treffen,"
+
+#: ../../source/index.rst:199
+msgid "sur Github,"
+msgstr "auf GitHub,"
+
+#: ../../source/index.rst:201
+msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
+msgstr "ein Ticket eröffnen: https://github.com/kevung/blunderDB/issues"
+
+#: ../../source/index.rst:203
+msgid ""
+"pour des corrections de bugs ou des propositions d'amélioration, créer "
+"une pull request."
+msgstr ""
+"für Fehlerbehebungen oder Verbesserungsvorschläge einen Pull Request "
+"erstellen."
+
+#: ../../source/index.rst:207
+msgid "Faire un don"
+msgstr "Spenden"
+
+#: ../../source/index.rst:209
+msgid ""
+"Si vous appréciez blunderDB et que vous voulez soutenir les "
+"développements passés et futurs, vous pouvez"
+msgstr ""
+"Wenn Sie blunderDB schätzen und die bisherige und zukünftige Entwicklung "
+"unterstützen möchten, können Sie"
+
+#: ../../source/index.rst:211
+msgid "me payer un verre si on a le plaisir de se rencontrer!"
+msgstr "mir ein Getränk spendieren, falls wir uns kennenlernen dürfen!"
+
+#: ../../source/index.rst:213
+msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
+msgstr "eine kleine Spende per PayPal an die Adresse blunderdb@proton.me leisten"
+
+#: ../../source/index.rst:216
+msgid "Remerciements"
+msgstr "Danksagungen"
+
+#: ../../source/index.rst:218
+msgid ""
+"Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
+"fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
+msgstr ""
+"Ich widme diese kleine Software meiner Partnerin Anne-Claire und unserer "
+"lieben Tochter Perrine. Ganz besonders möchte ich einigen Freunden "
+"danken:"
+
+#: ../../source/index.rst:221
+msgid ""
+"*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
+"bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
+" jeu; de continuer à m'encourager malgré mes piètres tentatives de mieux "
+"jouer."
+msgstr ""
+"*Tristan Remille*, dafür, dass er mich mit Freude und Wohlwollen ins "
+"Backgammon eingeführt hat; dass er den Weg zum Verständnis dieses "
+"wunderbaren Spiels weist; dass er mich trotz meiner kläglichen Versuche, "
+"besser zu spielen, weiter ermutigt."
+
+#: ../../source/index.rst:226
+msgid ""
+"*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
+"d'années dans de chouettes aventures, et un fantastique partenaire de jeu"
+" depuis qu'il a choppé le virus du backgammon."
+msgstr ""
+"*Nicolas Harmand*, fröhlicher Gefährte seit nunmehr über einem Jahrzehnt "
+"in tollen Abenteuern und ein fantastischer Spielpartner, seit er sich mit "
+"dem Backgammon-Virus angesteckt hat."

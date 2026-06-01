@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-20 00:25+0200\n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -332,7 +332,7 @@ msgid "Afficher/cacher le panneau de recherche."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
-msgid "CTRL-T"
+msgid "CTRL-Tab"
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
@@ -356,6 +356,14 @@ msgid "Afficher/cacher le panneau des tournois."
 msgstr ""
 
 #: ../../source/raccourcis.rst:1
+msgid "CTRL-D"
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
+msgid "Afficher le panneau Stats."
+msgstr ""
+
+#: ../../source/raccourcis.rst:1
 msgid "CTRL-E"
 msgstr ""
 
@@ -371,7 +379,7 @@ msgstr ""
 msgid "Afficher/cacher l'aide."
 msgstr ""
 
-#: ../../source/raccourcis.rst:114
+#: ../../source/raccourcis.rst:115
 msgid "Ligne de commande"
 msgstr ""
 
@@ -391,7 +399,7 @@ msgstr ""
 msgid "Parcourir l'historique des commandes vers le bas."
 msgstr ""
 
-#: ../../source/raccourcis.rst:127
+#: ../../source/raccourcis.rst:128
 msgid "Panneau historique de recherche"
 msgstr ""
 
@@ -429,7 +437,7 @@ msgid ""
 "panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:143
+#: ../../source/raccourcis.rst:144
 msgid "Panneau bibliothèque de filtres"
 msgstr ""
 
@@ -453,7 +461,7 @@ msgstr ""
 msgid "Désélectionner le filtre. Si aucun filtre sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:159
+#: ../../source/raccourcis.rst:160
 msgid "Panneau d'analyse"
 msgstr ""
 
@@ -483,7 +491,7 @@ msgstr ""
 msgid "Désélectionner le coup. Si aucun coup sélectionné, fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:175
+#: ../../source/raccourcis.rst:176
 msgid "Panneau des matchs"
 msgstr ""
 
@@ -519,7 +527,7 @@ msgstr ""
 msgid "Désélectionner/fermer le panneau."
 msgstr ""
 
-#: ../../source/raccourcis.rst:193
+#: ../../source/raccourcis.rst:194
 msgid "Panneau Anki (répétition espacée)"
 msgstr ""
 
@@ -791,5 +799,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Afficher/cacher la bibliothèque de filtres."
+#~ msgstr ""
+
+#~ msgid "CTRL-T"
 #~ msgstr ""
 

@@ -1,0 +1,354 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language: fi\n"
+"Language-Team: fi <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_db_scheme.rst:4
+msgid "Annexe: Schéma de la base de données"
+msgstr "Liite: Tietokannan skeema"
+
+#: ../../source/annexe_db_scheme.rst:8
+msgid ""
+"Sauvegardez toujours votre fichier .db avant d'effectuer des migrations "
+"de base de données."
+msgstr ""
+"Varmuuskopioi aina .db-tiedostosi ennen tietokannan migraatioiden "
+"suorittamista."
+
+#: ../../source/annexe_db_scheme.rst:11
+msgid "Version 1.0.0"
+msgstr "Versio 1.0.0"
+
+#: ../../source/annexe_db_scheme.rst:13
+msgid "La version 1.0.0 de la base de données contient les tables suivantes :"
+msgstr "Tietokannan versio 1.0.0 sisältää seuraavat taulut:"
+
+#: ../../source/annexe_db_scheme.rst:15
+msgid ""
+"**position** : Stocke les positions avec les colonnes `id` (clé primaire)"
+" et `state` (état de la position en format JSON)."
+msgstr ""
+"**position**: Tallentaa positiot sarakkeilla `id` (pääavain) ja `state` "
+"(position tila JSON-muodossa)."
+
+#: ../../source/annexe_db_scheme.rst:16
+msgid ""
+"**analysis** : Stocke les analyses des positions avec les colonnes `id` "
+"(clé primaire), `position_id` (clé étrangère vers `position`), et `data` "
+"(données de l'analyse en format JSON)."
+msgstr ""
+"**analysis**: Tallentaa positioiden analyysit sarakkeilla `id` "
+"(pääavain), `position_id` (viiteavain tauluun `position`) ja `data` "
+"(analyysin tiedot JSON-muodossa)."
+
+#: ../../source/annexe_db_scheme.rst:17
+msgid ""
+"**comment** : Stocke les commentaires associés aux positions avec les "
+"colonnes `id` (clé primaire), `position_id` (clé étrangère vers "
+"`position`), et `text` (texte du commentaire)."
+msgstr ""
+"**comment**: Tallentaa positioihin liittyvät kommentit sarakkeilla `id` "
+"(pääavain), `position_id` (viiteavain tauluun `position`) ja `text` "
+"(kommentin teksti)."
+
+#: ../../source/annexe_db_scheme.rst:18
+msgid ""
+"**metadata** : Stocke les métadonnées de la base de données avec les "
+"colonnes `key` (clé primaire) et `value` (valeur associée à la clé)."
+msgstr ""
+"**metadata**: Tallentaa tietokannan metatiedot sarakkeilla `key` "
+"(pääavain) ja `value` (avaimeen liittyvä arvo)."
+
+#: ../../source/annexe_db_scheme.rst:21
+msgid "Version 1.1.0"
+msgstr "Versio 1.1.0"
+
+#: ../../source/annexe_db_scheme.rst:23
+msgid "La version 1.1.0 de la base de données ajoute la table suivante :"
+msgstr "Tietokannan versio 1.1.0 lisää seuraavan taulun:"
+
+#: ../../source/annexe_db_scheme.rst:25
+msgid ""
+"**command_history** : Stocke l'historique des commandes avec les colonnes"
+" `id` (clé primaire), `command` (texte de la commande), et `timestamp` "
+"(date et heure de l'exécution de la commande)."
+msgstr ""
+"**command_history**: Tallentaa komentohistorian sarakkeilla `id` "
+"(pääavain), `command` (komennon teksti) ja `timestamp` (komennon "
+"suorituksen päivämäärä ja kellonaika)."
+
+#: ../../source/annexe_db_scheme.rst:27
+msgid "Les autres tables restent inchangées par rapport à la version 1.0.0."
+msgstr "Muut taulut pysyvät muuttumattomina versioon 1.0.0 verrattuna."
+
+#: ../../source/annexe_db_scheme.rst:29
+msgid ""
+"Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, "
+"exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB."
+msgstr ""
+"Migratoidaksesi tietokannan versiosta 1.0.0 versioon 1.1.0 suorita "
+"komento ``migrate_from_1_0_to_1_1`` blunderDB:ssä."
+
+#: ../../source/annexe_db_scheme.rst:32
+msgid "Version 1.2.0"
+msgstr "Versio 1.2.0"
+
+#: ../../source/annexe_db_scheme.rst:34
+msgid "La version 1.2.0 de la base de données ajoute la table suivante :"
+msgstr "Tietokannan versio 1.2.0 lisää seuraavan taulun:"
+
+#: ../../source/annexe_db_scheme.rst:36
+msgid ""
+"**filter_library** : Stocke les filtres de recherche avec les colonnes "
+"`id` (clé primaire), `name` (nom du filtre), `command` (commande associée"
+" au filtre), et `edit_position` (position éditée lors de l'enregistrement"
+" du filtre)."
+msgstr ""
+"**filter_library**: Tallentaa hakusuodattimet sarakkeilla `id` "
+"(pääavain), `name` (suodattimen nimi), `command` (suodattimeen liittyvä "
+"komento) ja `edit_position` (suodatinta tallennettaessa muokattu "
+"positio)."
+
+#: ../../source/annexe_db_scheme.rst:38
+msgid "Les autres tables restent inchangées par rapport à la version 1.1.0."
+msgstr "Muut taulut pysyvät muuttumattomina versioon 1.1.0 verrattuna."
+
+#: ../../source/annexe_db_scheme.rst:40
+msgid ""
+"Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, "
+"exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB."
+msgstr ""
+"Migratoidaksesi tietokannan versiosta 1.1.0 versioon 1.2.0 suorita "
+"komento ``migrate_from_1_1_to_1_2`` blunderDB:ssä."
+
+#: ../../source/annexe_db_scheme.rst:43
+msgid "Version 1.3.0"
+msgstr "Versio 1.3.0"
+
+#: ../../source/annexe_db_scheme.rst:45
+msgid "La version 1.3.0 de la base de données ajoute la table suivante :"
+msgstr "Tietokannan versio 1.3.0 lisää seuraavan taulun:"
+
+#: ../../source/annexe_db_scheme.rst:47
+msgid ""
+"**search_history** : Stocke l'historique des recherches de positions avec"
+" les colonnes `id` (clé primaire), `command` (texte de la commande de "
+"recherche), `position` (état de la position au moment de la recherche), "
+"et `timestamp` (date et heure de la recherche)."
+msgstr ""
+"**search_history**: Tallentaa positiohakujen historian sarakkeilla `id` "
+"(pääavain), `command` (hakukomennon teksti), `position` (position tila "
+"haun hetkellä) ja `timestamp` (haun päivämäärä ja kellonaika)."
+
+#: ../../source/annexe_db_scheme.rst:49
+msgid "Les autres tables restent inchangées par rapport à la version 1.2.0."
+msgstr "Muut taulut pysyvät muuttumattomina versioon 1.2.0 verrattuna."
+
+#: ../../source/annexe_db_scheme.rst:51
+msgid ""
+"Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, "
+"exécutez la commande ``migrate_from_1_2_to_1_3`` dans blunderDB."
+msgstr ""
+"Migratoidaksesi tietokannan versiosta 1.2.0 versioon 1.3.0 suorita "
+"komento ``migrate_from_1_2_to_1_3`` blunderDB:ssä."
+
+#: ../../source/annexe_db_scheme.rst:54
+msgid "Version 1.4.0"
+msgstr "Versio 1.4.0"
+
+#: ../../source/annexe_db_scheme.rst:56
+msgid ""
+"La version 1.4.0 de la base de données ajoute les tables suivantes pour "
+"la gestion des matchs :"
+msgstr ""
+"Tietokannan versio 1.4.0 lisää seuraavat taulut otteluiden hallintaa "
+"varten:"
+
+#: ../../source/annexe_db_scheme.rst:58
+msgid ""
+"**match** : Stocke les matchs importés avec les colonnes `id` (clé "
+"primaire), `player1_name`, `player2_name`, `event`, `location`, `round`, "
+"`match_length`, `match_date`, `import_date`, `file_path`, `game_count`, "
+"et `match_hash` (hash pour la détection de doublons)."
+msgstr ""
+"**match**: Tallentaa tuodut ottelut sarakkeilla `id` (pääavain), "
+"`player1_name`, `player2_name`, `event`, `location`, `round`, "
+"`match_length`, `match_date`, `import_date`, `file_path`, `game_count` ja "
+"`match_hash` (tiiviste duplikaattien tunnistamiseen)."
+
+#: ../../source/annexe_db_scheme.rst:59
+msgid ""
+"**game** : Stocke les parties d'un match avec les colonnes `id` (clé "
+"primaire), `match_id` (clé étrangère vers `match`), `game_number`, "
+"`initial_score_1`, `initial_score_2`, `winner`, `points_won`, et "
+"`move_count`."
+msgstr ""
+"**game**: Tallentaa ottelun pelit sarakkeilla `id` (pääavain), "
+"`match_id` (viiteavain tauluun `match`), `game_number`, "
+"`initial_score_1`, `initial_score_2`, `winner`, `points_won` ja "
+"`move_count`."
+
+#: ../../source/annexe_db_scheme.rst:60
+msgid ""
+"**move** : Stocke les coups d'une partie avec les colonnes `id` (clé "
+"primaire), `game_id` (clé étrangère vers `game`), `move_number`, "
+"`move_type`, `position_id` (clé étrangère vers `position`), `player`, "
+"`dice_1`, `dice_2`, `checker_move`, et `cube_action`."
+msgstr ""
+"**move**: Tallentaa pelin siirrot sarakkeilla `id` (pääavain), "
+"`game_id` (viiteavain tauluun `game`), `move_number`, "
+"`move_type`, `position_id` (viiteavain tauluun `position`), `player`, "
+"`dice_1`, `dice_2`, `checker_move` ja `cube_action`."
+
+#: ../../source/annexe_db_scheme.rst:61
+msgid ""
+"**move_analysis** : Stocke l'analyse de chaque coup avec les colonnes "
+"`id` (clé primaire), `move_id` (clé étrangère vers `move`), "
+"`analysis_type`, `depth`, `equity`, `equity_error`, `win_rate`, "
+"`gammon_rate`, `backgammon_rate`, `opponent_win_rate`, "
+"`opponent_gammon_rate`, et `opponent_backgammon_rate`."
+msgstr ""
+"**move_analysis**: Tallentaa kunkin siirron analyysin sarakkeilla "
+"`id` (pääavain), `move_id` (viiteavain tauluun `move`), "
+"`analysis_type`, `depth`, `equity`, `equity_error`, `win_rate`, "
+"`gammon_rate`, `backgammon_rate`, `opponent_win_rate`, "
+"`opponent_gammon_rate` ja `opponent_backgammon_rate`."
+
+#: ../../source/annexe_db_scheme.rst:63
+msgid ""
+"La migration de 1.3.0 à 1.4.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migraatio versiosta 1.3.0 versioon 1.4.0 tapahtuu automaattisesti "
+"tietokantaa avattaessa."
+
+#: ../../source/annexe_db_scheme.rst:66
+msgid "Version 1.5.0"
+msgstr "Versio 1.5.0"
+
+#: ../../source/annexe_db_scheme.rst:68
+msgid ""
+"La version 1.5.0 de la base de données ajoute les tables suivantes pour "
+"la gestion des collections :"
+msgstr ""
+"Tietokannan versio 1.5.0 lisää seuraavat taulut kokoelmien hallintaa "
+"varten:"
+
+#: ../../source/annexe_db_scheme.rst:70
+msgid ""
+"**collection** : Stocke les collections de positions avec les colonnes "
+"`id` (clé primaire), `name`, `description`, `sort_order`, `created_at`, "
+"et `updated_at`."
+msgstr ""
+"**collection**: Tallentaa positiokokoelmat sarakkeilla "
+"`id` (pääavain), `name`, `description`, `sort_order`, `created_at` ja "
+"`updated_at`."
+
+#: ../../source/annexe_db_scheme.rst:71
+msgid ""
+"**collection_position** : Table de liaison qui associe des positions aux "
+"collections avec les colonnes `id` (clé primaire), `collection_id` (clé "
+"étrangère vers `collection`), `position_id` (clé étrangère vers "
+"`position`), `sort_order`, et `added_at`. La paire (`collection_id`, "
+"`position_id`) est unique."
+msgstr ""
+"**collection_position**: Liitostaulu, joka yhdistää positiot kokoelmiin "
+"sarakkeilla `id` (pääavain), `collection_id` (viiteavain tauluun "
+"`collection`), `position_id` (viiteavain tauluun `position`), "
+"`sort_order` ja `added_at`. Pari (`collection_id`, `position_id`) on "
+"yksilöllinen."
+
+#: ../../source/annexe_db_scheme.rst:73
+msgid ""
+"La migration de 1.4.0 à 1.5.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migraatio versiosta 1.4.0 versioon 1.5.0 tapahtuu automaattisesti "
+"tietokantaa avattaessa."
+
+#: ../../source/annexe_db_scheme.rst:76
+msgid "Version 1.6.0"
+msgstr "Versio 1.6.0"
+
+#: ../../source/annexe_db_scheme.rst:78
+msgid ""
+"La version 1.6.0 de la base de données ajoute la table suivante pour la "
+"gestion des tournois :"
+msgstr ""
+"Tietokannan versio 1.6.0 lisää seuraavan taulun turnausten hallintaa "
+"varten:"
+
+#: ../../source/annexe_db_scheme.rst:80
+msgid ""
+"**tournament** : Stocke les tournois avec les colonnes `id` (clé "
+"primaire), `name`, `date`, `location`, `sort_order`, `created_at`, et "
+"`updated_at`."
+msgstr ""
+"**tournament**: Tallentaa turnaukset sarakkeilla `id` (pääavain), "
+"`name`, `date`, `location`, `sort_order`, `created_at` ja "
+"`updated_at`."
+
+#: ../../source/annexe_db_scheme.rst:81
+msgid ""
+"Ajout de la colonne `tournament_id` (clé étrangère vers `tournament`) "
+"dans la table `match` pour assigner un match à un tournoi."
+msgstr ""
+"Lisätty sarake `tournament_id` (viiteavain tauluun `tournament`) tauluun "
+"`match` ottelun liittämiseksi turnaukseen."
+
+#: ../../source/annexe_db_scheme.rst:83
+msgid ""
+"La migration de 1.5.0 à 1.6.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migraatio versiosta 1.5.0 versioon 1.6.0 tapahtuu automaattisesti "
+"tietokantaa avattaessa."
+
+#: ../../source/annexe_db_scheme.rst:86
+msgid "Version 1.7.0"
+msgstr "Versio 1.7.0"
+
+#: ../../source/annexe_db_scheme.rst:88
+msgid "La version 1.7.0 de la base de données ajoute la colonne suivante :"
+msgstr "Tietokannan versio 1.7.0 lisää seuraavan sarakkeen:"
+
+#: ../../source/annexe_db_scheme.rst:90
+msgid ""
+"Ajout de la colonne `last_visited_position` dans la table `match` pour "
+"mémoriser la dernière position visitée dans chaque match."
+msgstr ""
+"Lisätty sarake `last_visited_position` tauluun `match` kussakin ottelussa "
+"viimeksi vieraillun position muistamiseksi."
+
+#: ../../source/annexe_db_scheme.rst:92
+msgid ""
+"La migration de 1.6.0 à 1.7.0 est automatique à l'ouverture de la base de"
+" données."
+msgstr ""
+"Migraatio versiosta 1.6.0 versioon 1.7.0 tapahtuu automaattisesti "
+"tietokantaa avattaessa."
+
+#: ../../source/annexe_db_scheme.rst:94
+msgid ""
+"Depuis la version 0.10.0, toutes les migrations de bases de données sont "
+"effectuées automatiquement lors de l'ouverture d'un fichier de base de "
+"données."
+msgstr ""
+"Versiosta 0.10.0 lähtien kaikki tietokannan migraatiot suoritetaan "
+"automaattisesti tietokantatiedostoa avattaessa."

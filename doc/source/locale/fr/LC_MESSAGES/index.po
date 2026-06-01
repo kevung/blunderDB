@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: blunderDB \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-20 00:25+0200\n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
@@ -61,11 +61,17 @@ msgstr ""
 
 #: ../../source/index.rst:26
 msgid ""
+"la section **interface en ligne de commande (CLI)** décrit les commandes "
+"disponibles pour l'import en masse, l'automatisation et le scripting."
+msgstr ""
+
+#: ../../source/index.rst:29
+msgid ""
 "la **FAQ** fournit quelques réponses aux interrogations les plus "
 "fréquentes."
 msgstr ""
 
-#: ../../source/index.rst:29
+#: ../../source/index.rst:32
 msgid "Historique des versions"
 msgstr ""
 
@@ -469,6 +475,7 @@ msgid "20/04/2026"
 msgstr ""
 
 #: ../../source/index.rst:1
+#, python-format
 msgid ""
 "Optimisation du stockage : compression zlib des données d'analyse (~80% "
 "de réduction), encodage compact des positions (~90% de réduction de la "
@@ -479,21 +486,103 @@ msgid ""
 "instructions de débogage des chemins critiques."
 msgstr ""
 
-#: ../../source/index.rst:139
+#: ../../source/index.rst:1
+msgid "0.18.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Refactoring majeur du code : découpage de db.go (10k lignes) en 19 "
+"fichiers spécialisés, extraction de 7 modules de service depuis "
+"App.svelte (4888→469 lignes), consolidation des stores modaux/panneaux. "
+"Migration complète vers Svelte 5 runes. Remplacement de 9 modales de "
+"tableau par un composant générique DataTableModal. Ajout d'ESLint + "
+"Prettier + vitest (125 tests frontend) avec CI. Conformité WCAG 2.1 AA "
+"(focus visible, rôles ARIA, navigation clavier). Passage du mutex "
+"Database en RWMutex pour un meilleur parallélisme en lecture. "
+"Documentation CLI complète (CLI_USAGE.md + Sphinx FR/EN). Réécriture du "
+"README. Correction de tous les avertissements ESLint (46→0) et Vite "
+"(6→0)."
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "0.19.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "07/05/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout du panneau Stats : indicateurs PR (Performance Rate), Snowie Error "
+"Rate et MWC cost (Match Winning Chance cost), barre de filtre (joueur, "
+"tournoi, dates, type de décision, longueur de match), onglet Dashboard "
+"avec cartes de niveau / PR glissant / top blunders, onglet Progression "
+"avec courbe par tournoi et scatter plot par match, onglet Erreurs avec "
+"répartition par action de videau et histogramme des magnitudes. Drill-"
+"down interactif vers les positions / matchs / tournois depuis tous les "
+"indicateurs. Toggle PR / MWC instantané. Commande CLI list --type stats. "
+"Alignement des indicateurs PR / Snowie ER / MWC sur eXtremeGammon et "
+"gnuBG (seuil 0.16 d'équité pour les cubes proches). Correction du calcul "
+"de cube_error pour les décisions Double/Pass. Documentation du modèle de "
+"statistiques (:ref:\\`stats_parity\\`). Voir :ref:\\`stats\\`."
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "0.20.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "31/05/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Ajout de la structure d'exclusion *Except* au panneau de recherche : "
+"exclut les positions contenant l'un des pions dessinés, avec marqueur « "
+"doit être vide » (double-clic) et nombre de pions par point non limité "
+"(commande x). Ajout de l'option « premier dé uniquement » au filtre de "
+"lancer de dés (variante D1, option CLI --dice). Panneau Commentaires : "
+"focus automatique du champ de saisie à l'ouverture et boutons éditer / "
+"supprimer toujours visibles. Correction du filtre « Search Text » qui ne "
+"trouvait pas tous les tags de commentaires."
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "0.21.0"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid "01/06/2026"
+msgstr ""
+
+#: ../../source/index.rst:1
+msgid ""
+"Internationalisation de l'interface : l'intégralité de blunderDB (barre "
+"d'outils, panneaux, messages, aide) peut désormais être affichée au choix"
+" en anglais, français, allemand, italien, espagnol, finnois, japonais, "
+"grec ou russe. Ajout d'une fenêtre de configuration, accessible par un "
+"bouton en forme de rouage dans la barre d'outils, permettant de "
+"sélectionner la langue. Le choix de la langue est conservé d'une session "
+"à l'autre. Voir :ref:\\`configuration\\`."
+msgstr ""
+
+#: ../../source/index.rst:147
 msgid "Sommaire"
 msgstr ""
 
-#: ../../source/index.rst:169
+#: ../../source/index.rst:179
 msgid "Contacts"
 msgstr ""
 
-#: ../../source/index.rst:171
+#: ../../source/index.rst:181
 msgid ""
 "Auteur: Kévin Unger <blunderdb@proton.me>. Vous pouvez aussi me trouver "
 "sur Heroes sous le pseudo postmanpat."
 msgstr ""
 
-#: ../../source/index.rst:174
+#: ../../source/index.rst:184
 msgid ""
 "J'ai développé blunderDB initialement pour mon usage personnel afin de "
 "pouvoir détecter des motifs dans mes erreurs. Mais il est très agréable "
@@ -503,65 +592,65 @@ msgid ""
 "sont bienvenus."
 msgstr ""
 
-#: ../../source/index.rst:181
+#: ../../source/index.rst:191
 msgid "Voici plusieurs manières de discuter:"
 msgstr ""
 
-#: ../../source/index.rst:183
+#: ../../source/index.rst:193
 msgid "rejoindre le serveur Discord de blunderDB: https://discord.gg/DA5PpzM9En"
 msgstr ""
 
-#: ../../source/index.rst:185
+#: ../../source/index.rst:195
 msgid "m'écrire un mail à blunderdb@proton.me,"
 msgstr ""
 
-#: ../../source/index.rst:187
+#: ../../source/index.rst:197
 msgid "discuter avec moi, si on se retrouve dans un tournoi,"
 msgstr ""
 
-#: ../../source/index.rst:189
+#: ../../source/index.rst:199
 msgid "sur Github,"
 msgstr ""
 
-#: ../../source/index.rst:191
+#: ../../source/index.rst:201
 msgid "ouvrir un ticket: https://github.com/kevung/blunderDB/issues"
 msgstr ""
 
-#: ../../source/index.rst:193
+#: ../../source/index.rst:203
 msgid ""
 "pour des corrections de bugs ou des propositions d'amélioration, créer "
 "une pull request."
 msgstr ""
 
-#: ../../source/index.rst:197
+#: ../../source/index.rst:207
 msgid "Faire un don"
 msgstr ""
 
-#: ../../source/index.rst:199
+#: ../../source/index.rst:209
 msgid ""
 "Si vous appréciez blunderDB et que vous voulez soutenir les "
 "développements passés et futurs, vous pouvez"
 msgstr ""
 
-#: ../../source/index.rst:201
+#: ../../source/index.rst:211
 msgid "me payer un verre si on a le plaisir de se rencontrer!"
 msgstr ""
 
-#: ../../source/index.rst:203
+#: ../../source/index.rst:213
 msgid "faire un petit don par PayPal à l'adresse blunderdb@proton.me"
 msgstr ""
 
-#: ../../source/index.rst:206
+#: ../../source/index.rst:216
 msgid "Remerciements"
 msgstr ""
 
-#: ../../source/index.rst:208
+#: ../../source/index.rst:218
 msgid ""
 "Je dédie ce petit logiciel à ma compagne Anne-Claire et notre tendre "
 "fille Perrine. Je tiens à remercier tout particulièrement quelques amis:"
 msgstr ""
 
-#: ../../source/index.rst:211
+#: ../../source/index.rst:221
 msgid ""
 "*Tristan Remille*, de m'avoir initié au backgammon avec joie et "
 "bienveillance; de montrer la Voie dans la compréhension de ce merveilleux"
@@ -569,7 +658,7 @@ msgid ""
 "jouer."
 msgstr ""
 
-#: ../../source/index.rst:216
+#: ../../source/index.rst:226
 msgid ""
 "*Nicolas Harmand*, joyeux camarade depuis maintenant plus d'une dizaine "
 "d'années dans de chouettes aventures, et un fantastique partenaire de jeu"

@@ -1,0 +1,96 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_mac_securite.rst:4
+msgid "Annexe Mac : Blocage éventuel de blunderDB"
+msgstr "Mac 付録：blunderDB の起動ブロックについて"
+
+#: ../../source/annexe_mac_securite.rst:6
+msgid "Ce qui suit concerne le système d'exploitation MacOS."
+msgstr "以下は macOS オペレーティングシステムに関するものです。"
+
+#: ../../source/annexe_mac_securite.rst:8
+msgid ""
+"Mac requiert de la part de sociétés d'édition logicielle ou d'éditeurs "
+"logiciel indépendants de certifier numériquement leurs applications. Le "
+"développeur doit souscrire au Apple Developper Program en payant une "
+"adhésion annuelle (https://developer.apple.com/support/compare-"
+"memberships/)."
+msgstr ""
+"Mac はソフトウェア出版会社や独立したソフトウェア開発者がアプリケーションをデジタル認証することを要求しています。開発者は年会費を支払って Apple"
+" Developer Program に登録する必要があります（https://developer.apple.com/support/compare-"
+"memberships/）。"
+
+#: ../../source/annexe_mac_securite.rst:12
+msgid ""
+"Partageant blunderDB gratuitement, je ne souhaite pas m'orienter vers ces "
+"possibilités onéreuses. Par conséquent, il est fort probable que Mac vous "
+"avertisse d'un potentiel danger, voire bloque complètement l'exécution de "
+"blunderDB. Les sections suivantes expliquent les opérations à réaliser pour "
+"passer outre les réticences de Mac."
+msgstr ""
+"blunderDB を無料で公開しているため、これらの費用のかかる選択肢を追求するつもりはありません。そのため、Mac "
+"が潜在的なリスクについて警告したり、blunderDB の実行を完全にブロックする可能性が高いです。以下のセクションでは、Mac "
+"の制限を回避するために行う操作を説明します。"
+
+#: ../../source/annexe_mac_securite.rst:19
+msgid "Installation de blunderDB"
+msgstr "blunderDB のインストール"
+
+#: ../../source/annexe_mac_securite.rst:21
+msgid ""
+"Après avoir téléchargé blunderDB, glissez le fichier téléchargé dans la "
+"section Applications de votre Finder. Si vous avez déjà essayé d'exécuter "
+"blunderDB et que Mac vous avertit d'un potentiel danger, suivez les étapes "
+"suivantes."
+msgstr ""
+"blunderDB をダウンロードしたら、ダウンロードしたファイルを Finder のアプリケーションセクションにドラッグします。すでに "
+"blunderDB を実行しようとして Mac が潜在的なリスクについて警告した場合は、以下の手順に従ってください。"
+
+#: ../../source/annexe_mac_securite.rst:26
+msgid "Autorisation de l'exécution de blunderDB"
+msgstr "blunderDB の実行を許可する"
+
+#: ../../source/annexe_mac_securite.rst:28
+msgid "Ouvrez le Finder et allez dans la section Applications."
+msgstr "Finder を開き、アプリケーションセクションに移動します。"
+
+#: ../../source/annexe_mac_securite.rst:29
+msgid "Trouvez blunderDB et faites un clic droit."
+msgstr "blunderDB を見つけて右クリックします。"
+
+#: ../../source/annexe_mac_securite.rst:30
+msgid "Sélectionnez Ouvrir."
+msgstr "「開く」を選択します。"
+
+#: ../../source/annexe_mac_securite.rst:31
+msgid "Une fenêtre d'avertissement s'ouvre. Cliquez sur Ouvrir."
+msgstr "警告ウィンドウが表示されます。「開く」をクリックします。"
+
+#: ../../source/annexe_mac_securite.rst:32
+msgid "blunderDB s'ouvre et vous pouvez l'utiliser."
+msgstr "blunderDB が開き、使用できるようになります。"
+
+#: ../../source/annexe_mac_securite.rst:34
+msgid ""
+"Vous n'avez à réaliser cette opération qu'une seule fois. Par la suite, vous"
+" pourrez ouvrir blunderDB sans avoir à passer par ces étapes."
+msgstr "この操作は一度だけ行う必要があります。以降は、これらの手順を経ずに blunderDB を開くことができます。"

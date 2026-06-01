@@ -1,0 +1,775 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/guide_utilisateur.rst:4
+msgid "Guide utilisateur"
+msgstr "ユーザーガイド"
+
+#: ../../source/guide_utilisateur.rst:6
+msgid ""
+"Ce guide est une introduction pratique à blunderDB pour une prise en main "
+"rapide."
+msgstr "このガイドは、blunderDB をすばやく使いこなすための実践的な入門書です。"
+
+#: ../../source/guide_utilisateur.rst:10
+msgid "Créer une nouvelle base de données"
+msgstr "新しいデータベースを作成する"
+
+#: ../../source/guide_utilisateur.rst:12
+msgid ""
+"Pour créer une nouvelle base de données, cliquer dans la barre d'outils sur "
+"le bouton \"New Database\". Choisir un chemin où enregistrer la base de "
+"données, ainsi qu'un nom et cliquer sur \"Save\"."
+msgstr ""
+"新しいデータベースを作成するには、ツールバーの「New "
+"Database」ボタンをクリックします。データベースを保存するパスとファイル名を選択し、「Save」をクリックします。"
+
+#: ../../source/guide_utilisateur.rst:17
+msgid "L'extension des bases de données blunderDB est *.db*."
+msgstr "blunderDB のデータベースファイルの拡張子は *.db* です。"
+
+#: ../../source/guide_utilisateur.rst:20
+msgid "Raccourcis clavier: *CTRL-N*. Commande: ``n``"
+msgstr "キーボードショートカット: *CTRL-N*。コマンド: ``n``"
+
+#: ../../source/guide_utilisateur.rst:24
+msgid "Ouvrir une base de donnée existante"
+msgstr "既存のデータベースを開く"
+
+#: ../../source/guide_utilisateur.rst:26
+msgid ""
+"Pour charger une base de données existante, cliquer dans la barre d'outils "
+"sur le bouton \"Open Database\". Choisir le chemin où se trouve la base de "
+"données, choisir le fichier *.db* et cliquer sur \"Open\"."
+msgstr ""
+"既存のデータベースを読み込むには、ツールバーの「Open Database」ボタンをクリックします。データベースのあるパスに移動し、*.db* "
+"ファイルを選択して「Open」をクリックします。"
+
+#: ../../source/guide_utilisateur.rst:31
+msgid "Raccourcis clavier: *CTRL-O*. Commande: ``o``"
+msgstr "キーボードショートカット: *CTRL-O*。コマンド: ``o``"
+
+#: ../../source/guide_utilisateur.rst:34
+msgid "Importer et fusionner une base de données"
+msgstr "データベースをインポートして統合する"
+
+#: ../../source/guide_utilisateur.rst:36
+msgid ""
+"Pour importer et fusionner une autre base de données blunderDB dans la base "
+"de données actuellement ouverte, cliquer dans la barre d'outils sur le "
+"bouton \"Import Database\". Choisir le fichier *.db* à importer et cliquer "
+"sur \"Open\"."
+msgstr ""
+"現在開いているデータベースに別の blunderDB データベースをインポートして統合するには、ツールバーの「Import "
+"Database」ボタンをクリックします。インポートする *.db* ファイルを選択し、「Open」をクリックします。"
+
+#: ../../source/guide_utilisateur.rst:40
+msgid "blunderDB va fusionner intelligemment les deux bases de données:"
+msgstr "blunderDB は 2 つのデータベースをインテリジェントに統合します："
+
+#: ../../source/guide_utilisateur.rst:42
+msgid ""
+"Les positions qui n'existent pas dans la base de données actuelle seront "
+"ajoutées avec leurs analyses et commentaires."
+msgstr "現在のデータベースに存在しないポジションは、分析とコメントとともに追加されます。"
+
+#: ../../source/guide_utilisateur.rst:45
+msgid ""
+"Les positions qui existent déjà seront mises à jour: les analyses seront "
+"complétées si manquantes, et les commentaires seront fusionnés (ajout des "
+"nouveaux commentaires sans dupliquer les existants)."
+msgstr ""
+"すでに存在するポジションは更新されます：分析が不足している場合は補完され、コメントは統合されます（既存のコメントを重複させずに新しいコメントが追加されます）。"
+
+#: ../../source/guide_utilisateur.rst:49
+msgid ""
+"Un message résumera le nombre de positions ajoutées, fusionnées et ignorées."
+msgstr "追加、統合、および無視されたポジションの数を示すメッセージが表示されます。"
+
+#: ../../source/guide_utilisateur.rst:52
+msgid ""
+"L'import nécessite que les deux bases de données aient des versions de "
+"schéma compatibles. Il est possible d'importer une base de données d'une "
+"version inférieure ou égale dans une base de données de version supérieure."
+msgstr ""
+"インポートには、両方のデータベースのスキーマバージョンが互換性を持つことが必要です。低いバージョンまたは同等のバージョンのデータベースを、より高いバージョンのデータベースにインポートすることができます。"
+
+#: ../../source/guide_utilisateur.rst:57
+msgid ""
+"L'opération d'import modifie immédiatement la base de données actuellement "
+"ouverte. Il est recommandé de faire une copie de sauvegarde avant d'importer"
+" une autre base de données."
+msgstr ""
+"インポート操作は現在開いているデータベースを直ちに変更します。別のデータベースをインポートする前にバックアップコピーを作成することをお勧めします。"
+
+#: ../../source/guide_utilisateur.rst:64
+msgid "Editer une position"
+msgstr "ポジションを編集する"
+
+#: ../../source/guide_utilisateur.rst:66
+msgid ""
+"Pour éditer une position, appuyer sur la touche *TAB* pour ouvrir le panneau"
+" de recherche et l'éditeur de position. Editer la position à la souris:"
+msgstr "ポジションを編集するには、*TAB* キーを押して検索パネルとポジションエディターを開きます。マウスでポジションを編集します："
+
+#: ../../source/guide_utilisateur.rst:70
+msgid ""
+"cliquer sur les points pour ajouter des pions. Le clic gauche attribue les "
+"pions au joueur 1. Le clic droit attribue les pions au joueur 2. Pour "
+"insérer une prime, cliquer sur le point de départ, maintenir le bouton "
+"appuyé, relacher sur le point d'arrivée. Cliquer sur la barre pour mettre "
+"des pions à la barre."
+msgstr ""
+"ポイントをクリックしてチェッカーを追加します。左クリックはチェッカーをプレイヤー1に割り当てます。右クリックはチェッカーをプレイヤー2に割り当てます。プライムを挿入するには、開始ポイントをクリックし、ボタンを押したままにして終点で離します。バーをクリックしてチェッカーをバーに置きます。"
+
+#: ../../source/guide_utilisateur.rst:76
+msgid ""
+"pour effacer la position, double-clic sur une zone vide en dehors du board "
+"ou appuyer sur la touche *RETOUR ARRIERE*."
+msgstr "ポジションをクリアするには、ボード外の空きエリアをダブルクリックするか、*バックスペース* キーを押します。"
+
+#: ../../source/guide_utilisateur.rst:79
+msgid ""
+"pour envoyer le cube vers le joueur 1, clic gauche sur le cube. Pour envoyer"
+" le cube vers le joueur 2, click droit sur le cube."
+msgstr "キューブをプレイヤー1に送るには、キューブを左クリックします。キューブをプレイヤー2に送るには、キューブを右クリックします。"
+
+#: ../../source/guide_utilisateur.rst:82
+msgid ""
+"pour indiquer le joueur qui a le trait, cliquer à l'emplacement prévu des "
+"dés."
+msgstr "手番のプレイヤーを指定するには、ダイスの指定エリアをクリックします。"
+
+#: ../../source/guide_utilisateur.rst:84
+msgid ""
+"pour éditer les dés, clic gauche pour augmenter la valeur d'un dé, clic "
+"droit pour augmenter la valeur d'un dé. Si la face des dés est vide, cela "
+"signifie que la position est une décision de cube."
+msgstr ""
+"ダイスを編集するには、左クリックでダイスの値を増やし、右クリックでダイスの値を減らします。ダイスの面が空の場合、そのポジションはキューブ決定であることを意味します。"
+
+#: ../../source/guide_utilisateur.rst:88
+msgid ""
+"pour éditer le score des joueurs, clic gauche pour augmenter le score, clic "
+"droit pour réduire le score."
+msgstr "プレイヤーのスコアを編集するには、左クリックでスコアを増やし、右クリックでスコアを減らします。"
+
+#: ../../source/guide_utilisateur.rst:91
+msgid ""
+"La saisie de la position avec la souris pour les pions se fait de la même "
+"manière que dans XG."
+msgstr "チェッカーのポジションをマウスで入力する方法は、XG と同じです。"
+
+#: ../../source/guide_utilisateur.rst:95
+msgid "Ajouter une position à la base de données"
+msgstr "ポジションをデータベースに追加する"
+
+#: ../../source/guide_utilisateur.rst:97
+msgid "Après l'édition de la position, le panneau de recherche est ouvert."
+msgstr "ポジションの編集後、検索パネルが開きます。"
+
+#: ../../source/guide_utilisateur.rst:99
+msgid ""
+"Pour enregistrer la position obtenue précédemment, faire *CTRL-S* ou appuyer"
+" dans la barre d'outils sur le bouton \"Save Position\"."
+msgstr "取得したポジションを保存するには、*CTRL-S* を押すか、ツールバーの「Save Position」ボタンをクリックします。"
+
+#: ../../source/guide_utilisateur.rst:102
+msgid "Ouvrir la ligne de commande et exécuter: ``w``"
+msgstr "コマンドラインを開き、``w`` を実行します。"
+
+#: ../../source/guide_utilisateur.rst:105
+msgid "Etiqueter une position"
+msgstr "ポジションにタグを付ける"
+
+#: ../../source/guide_utilisateur.rst:107
+msgid ""
+"Pour ajouter un tag *toto* à la position courante, ouvrir la ligne de "
+"commande en appuyant sur *ESPACE*, taper ``#toto`` et valider la commande en"
+" appuyant sur *ENTREE*."
+msgstr ""
+"現在のポジションにタグ *toto* を追加するには、*スペース* キーを押してコマンドラインを開き、``#toto`` と入力し、*ENTER* "
+"キーを押してコマンドを確定します。"
+
+#: ../../source/guide_utilisateur.rst:111
+msgid "Supprimer une position"
+msgstr "ポジションを削除する"
+
+#: ../../source/guide_utilisateur.rst:113
+msgid ""
+"Pour supprimer la position courante de la base de données, faire *Del* ou "
+"clicker dans la barre d'outils sur le bouton \"Delete Position\""
+msgstr ""
+"現在のポジションをデータベースから削除するには、*Del* キーを押すか、ツールバーの「Delete Position」ボタンをクリックします。"
+
+#: ../../source/guide_utilisateur.rst:116
+msgid "En ligne de commande, exécuter ``d``."
+msgstr "コマンドラインで ``d`` を実行します。"
+
+#: ../../source/guide_utilisateur.rst:118
+msgid ""
+"La suppression de la position est définitive et ne nécessite aucune "
+"confirmation de la part de l'utilisateur."
+msgstr "ポジションの削除は恒久的であり、ユーザーの確認は必要ありません。"
+
+#: ../../source/guide_utilisateur.rst:122
+msgid "Import une position depuis XG"
+msgstr "XG からポジションをインポートする"
+
+#: ../../source/guide_utilisateur.rst:124
+msgid "Pour importer une position directement depuis XG,"
+msgstr "XG からポジションを直接インポートするには、"
+
+#: ../../source/guide_utilisateur.rst:126
+msgid "afficher dans XG la position à importer et appuyer *CTRL-C*,"
+msgstr "XG でインポートするポジションを表示し、*CTRL-C* を押します。"
+
+#: ../../source/guide_utilisateur.rst:128
+msgid "afficher blunderDB et appuyer *CTRL-V*."
+msgstr "blunderDB を開き、*CTRL-V* を押します。"
+
+#: ../../source/guide_utilisateur.rst:131
+msgid ""
+"Le collage automatique détecte le format de la source (XG, GNUbg, BGBlitz)."
+msgstr "自動貼り付けはソースのフォーマット（XG、GNUbg、BGBlitz）を自動検出します。"
+
+#: ../../source/guide_utilisateur.rst:134
+msgid "Importer un match"
+msgstr "マッチをインポートする"
+
+#: ../../source/guide_utilisateur.rst:136
+msgid "blunderDB peut importer des matchs depuis différentes sources."
+msgstr "blunderDB はさまざまなソースからマッチをインポートできます。"
+
+#: ../../source/guide_utilisateur.rst:138
+msgid "**Formats supportés:**"
+msgstr "**対応フォーマット：**"
+
+#: ../../source/guide_utilisateur.rst:140
+msgid "eXtreme Gammon (XG): fichiers *.xg* et *.xgp* (positions)"
+msgstr "eXtreme Gammon (XG): *.xg* および *.xgp* ファイル（ポジション）"
+
+#: ../../source/guide_utilisateur.rst:141
+msgid "GNUbg: fichiers *.sgf*"
+msgstr "GNUbg: *.sgf* ファイル"
+
+#: ../../source/guide_utilisateur.rst:142
+msgid "Jellyfish: fichiers *.mat* et *.txt*"
+msgstr "Jellyfish: *.mat* および *.txt* ファイル"
+
+#: ../../source/guide_utilisateur.rst:143
+msgid "BGBlitz: fichiers *.bgf* et *.txt*"
+msgstr "BGBlitz: *.bgf* および *.txt* ファイル"
+
+#: ../../source/guide_utilisateur.rst:145
+msgid "**Pour importer un ou plusieurs fichiers de match:**"
+msgstr "**1つ以上のマッチファイルをインポートするには：**"
+
+#: ../../source/guide_utilisateur.rst:147
+msgid ""
+"Appuyer sur *CTRL-I* ou cliquer sur le bouton \"Import\" dans la barre "
+"d'outils."
+msgstr "*CTRL-I* を押すか、ツールバーの「Import」ボタンをクリックします。"
+
+#: ../../source/guide_utilisateur.rst:149
+msgid "Sélectionner un ou plusieurs fichiers à importer."
+msgstr "インポートするファイルを1つ以上選択します。"
+
+#: ../../source/guide_utilisateur.rst:151
+msgid "blunderDB détecte automatiquement le format et importe le match."
+msgstr "blunderDB はフォーマットを自動検出してマッチをインポートします。"
+
+#: ../../source/guide_utilisateur.rst:153
+msgid ""
+"Une fenêtre de progression affiche le nombre de fichiers importés, échoués "
+"et ignorés (doublons)."
+msgstr "進行状況ウィンドウに、インポート済み、失敗、およびスキップ（重複）したファイルの数が表示されます。"
+
+#: ../../source/guide_utilisateur.rst:157
+msgid "Commande: ``i``"
+msgstr "コマンド: ``i``"
+
+#: ../../source/guide_utilisateur.rst:160
+msgid ""
+"blunderDB détecte automatiquement les doublons et empêche l'import d'un "
+"match déjà présent dans la base de données."
+msgstr "blunderDB は重複を自動検出し、すでにデータベースに存在するマッチのインポートを防止します。"
+
+#: ../../source/guide_utilisateur.rst:164
+msgid "Importer un dossier de matchs"
+msgstr "マッチのフォルダをインポートする"
+
+#: ../../source/guide_utilisateur.rst:166
+msgid ""
+"Pour importer récursivement tous les fichiers de matchs contenus dans un "
+"dossier et ses sous-dossiers:"
+msgstr "フォルダとそのサブフォルダに含まれるすべてのマッチファイルを再帰的にインポートするには："
+
+#: ../../source/guide_utilisateur.rst:169
+msgid ""
+"Appuyer sur *CTRL-SHIFT-F* ou cliquer sur le bouton correspondant dans la "
+"barre d'outils."
+msgstr "*CTRL-SHIFT-F* を押すか、ツールバーの対応するボタンをクリックします。"
+
+#: ../../source/guide_utilisateur.rst:172
+msgid "Sélectionner le dossier contenant les fichiers de matchs."
+msgstr "マッチファイルが含まれているフォルダを選択します。"
+
+#: ../../source/guide_utilisateur.rst:174
+msgid ""
+"blunderDB collecte et importe automatiquement tous les fichiers reconnus "
+"(*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*, *.bgf*)."
+msgstr ""
+"blunderDB "
+"は認識されたすべてのファイル（*.xg*、*.xgp*、*.sgf*、*.mat*、*.txt*、*.bgf*）を自動的に収集してインポートします。"
+
+#: ../../source/guide_utilisateur.rst:178
+msgid "Glisser-déposer"
+msgstr "ドラッグ＆ドロップ"
+
+#: ../../source/guide_utilisateur.rst:180
+msgid ""
+"blunderDB supporte le glisser-déposer. Il est possible de glisser-déposer "
+"sur la fenêtre de blunderDB:"
+msgstr "blunderDB はドラッグ＆ドロップをサポートしています。blunderDB のウィンドウにドラッグ＆ドロップできるもの："
+
+#: ../../source/guide_utilisateur.rst:183
+msgid ""
+"des fichiers de match ou de position (*.xg*, *.xgp*, *.sgf*, *.mat*, *.txt*,"
+" *.bgf*) pour les importer,"
+msgstr "マッチまたはポジションファイル（*.xg*、*.xgp*、*.sgf*、*.mat*、*.txt*、*.bgf*）をインポートする場合、"
+
+#: ../../source/guide_utilisateur.rst:186
+msgid ""
+"des fichiers de base de données (*.db*) pour les ouvrir ou les fusionner "
+"avec la base de données courante,"
+msgstr "データベースファイル（*.db*）を開くか、現在のデータベースと統合する場合、"
+
+#: ../../source/guide_utilisateur.rst:189
+msgid ""
+"des dossiers pour importer récursivement tous les fichiers qu'ils "
+"contiennent."
+msgstr "フォルダ内のすべてのファイルを再帰的にインポートする場合。"
+
+#: ../../source/guide_utilisateur.rst:192
+msgid "Naviguer dans un match"
+msgstr "マッチ内を移動する"
+
+#: ../../source/guide_utilisateur.rst:194
+msgid "Pour naviguer dans un match importé:"
+msgstr "インポートしたマッチ内を移動するには："
+
+#: ../../source/guide_utilisateur.rst:196
+msgid "Ouvrir le panneau des matchs avec *CTRL-Tab*."
+msgstr "*CTRL-Tab* でマッチパネルを開きます。"
+
+#: ../../source/guide_utilisateur.rst:198
+msgid "Double-cliquer sur un match ou appuyer sur *ENTREE*."
+msgstr "マッチをダブルクリックするか、*ENTER* キーを押します。"
+
+#: ../../source/guide_utilisateur.rst:200
+msgid "Utiliser les touches *GAUCHE* / *DROITE* pour parcourir les coups."
+msgstr "*左矢印* / *右矢印* キーを使用してムーブを移動します。"
+
+#: ../../source/guide_utilisateur.rst:202
+msgid "Utiliser *PageUp* / *PageDown* pour passer d'une partie à l'autre."
+msgstr "*PageUp* / *PageDown* を使用してゲーム間を移動します。"
+
+#: ../../source/guide_utilisateur.rst:204
+msgid "Appuyer sur *CTRL-L* pour afficher l'analyse."
+msgstr "*CTRL-L* を押して分析を表示します。"
+
+#: ../../source/guide_utilisateur.rst:206
+msgid ""
+"Appuyer sur *d* pour basculer entre l'analyse des coups de pions et du cube."
+msgstr "*d* を押してチェッカームーブ分析とキューブ分析を切り替えます。"
+
+#: ../../source/guide_utilisateur.rst:209
+msgid ""
+"Raccourci: *CTRL-Tab* pour ouvrir le panneau des matchs. Commande: ``m``"
+msgstr "ショートカット: *CTRL-Tab* でマッチパネルを開きます。コマンド: ``m``"
+
+#: ../../source/guide_utilisateur.rst:213
+msgid ""
+"blunderDB mémorise la dernière position visitée dans chaque match. En "
+"revenant sur un match, la dernière position consultée est automatiquement "
+"restaurée."
+msgstr "blunderDB は各マッチで最後に訪問したポジションを記憶します。マッチに戻ると、最後に参照したポジションが自動的に復元されます。"
+
+#: ../../source/guide_utilisateur.rst:218
+msgid "Gérer le panneau des matchs"
+msgstr "マッチパネルを管理する"
+
+#: ../../source/guide_utilisateur.rst:220
+msgid "Le panneau des matchs (*CTRL-Tab*) permet de:"
+msgstr "マッチパネル（*CTRL-Tab*）では以下のことができます："
+
+#: ../../source/guide_utilisateur.rst:222
+msgid ""
+"lister l'ensemble des matchs importés (triés du plus récent au plus ancien),"
+msgstr "インポートしたすべてのマッチを一覧表示します（新しい順に並べ替え）。"
+
+#: ../../source/guide_utilisateur.rst:224
+msgid ""
+"trier les matchs par colonnes (joueur 1, joueur 2, date, longueur du match, "
+"tournoi),"
+msgstr "マッチを列でソートします（プレイヤー1、プレイヤー2、日付、マッチの長さ、トーナメント）。"
+
+#: ../../source/guide_utilisateur.rst:227
+msgid ""
+"modifier les noms des joueurs ou la date en double-cliquant sur les champs,"
+msgstr "フィールドをダブルクリックしてプレイヤー名や日付を編集します。"
+
+#: ../../source/guide_utilisateur.rst:229
+msgid "permuter les joueurs 1 et 2 à l'aide du bouton de permutation,"
+msgstr "入れ替えボタンを使用してプレイヤー1とプレイヤー2を入れ替えます。"
+
+#: ../../source/guide_utilisateur.rst:231
+msgid "assigner un match à un tournoi,"
+msgstr "マッチをトーナメントに割り当てます。"
+
+#: ../../source/guide_utilisateur.rst:233
+msgid "supprimer un match à l'aide de la touche *Del*."
+msgstr "*Del* キーを使用してマッチを削除します。"
+
+#: ../../source/guide_utilisateur.rst:236
+msgid "Gérer les collections"
+msgstr "コレクションを管理する"
+
+#: ../../source/guide_utilisateur.rst:238
+msgid ""
+"Les collections permettent d'organiser des positions en groupes "
+"personnalisés. Pour accéder au panneau des collections, appuyer sur "
+"*CTRL-B*."
+msgstr "コレクションはポジションをカスタムグループに整理する機能です。コレクションパネルにアクセスするには、*CTRL-B* を押します。"
+
+#: ../../source/guide_utilisateur.rst:241
+msgid "**Créer une collection:**"
+msgstr "**コレクションを作成する：**"
+
+#: ../../source/guide_utilisateur.rst:243
+msgid "Ouvrir le panneau des collections (*CTRL-B*)."
+msgstr "コレクションパネルを開きます（*CTRL-B*）。"
+
+#: ../../source/guide_utilisateur.rst:245
+msgid "Saisir le nom de la nouvelle collection et cliquer sur \"Add\"."
+msgstr "新しいコレクションの名前を入力し、「Add」をクリックします。"
+
+#: ../../source/guide_utilisateur.rst:247
+msgid "**Ajouter des positions à une collection:**"
+msgstr "**コレクションにポジションを追加する：**"
+
+#: ../../source/guide_utilisateur.rst:249
+msgid "Sélectionner les positions souhaitées."
+msgstr "目的のポジションを選択します。"
+
+#: ../../source/guide_utilisateur.rst:251
+msgid "Les ajouter à la collection depuis le panneau des collections."
+msgstr "コレクションパネルからコレクションに追加します。"
+
+#: ../../source/guide_utilisateur.rst:253
+msgid "**Parcourir une collection:**"
+msgstr "**コレクションを閲覧する：**"
+
+#: ../../source/guide_utilisateur.rst:255
+msgid ""
+"Double-cliquer sur une collection pour parcourir ses positions. L'ordre des "
+"collections et des positions peut être modifié par glisser-déposer."
+msgstr "コレクションをダブルクリックしてポジションを閲覧します。コレクションとポジションの順序はドラッグ＆ドロップで変更できます。"
+
+#: ../../source/guide_utilisateur.rst:260
+msgid "Commande: ``coll``"
+msgstr "コマンド: ``coll``"
+
+#: ../../source/guide_utilisateur.rst:263
+msgid "Gérer les tournois"
+msgstr "トーナメントを管理する"
+
+#: ../../source/guide_utilisateur.rst:265
+msgid ""
+"Les tournois permettent d'organiser les matchs importés par événement. Pour "
+"accéder au panneau des tournois, appuyer sur *CTRL-Y*."
+msgstr "トーナメントはインポートしたマッチをイベント別に整理する機能です。トーナメントパネルにアクセスするには、*CTRL-Y* を押します。"
+
+#: ../../source/guide_utilisateur.rst:268
+msgid "**Créer un tournoi:**"
+msgstr "**トーナメントを作成する：**"
+
+#: ../../source/guide_utilisateur.rst:270
+msgid "Ouvrir le panneau des tournois (*CTRL-Y*)."
+msgstr "トーナメントパネルを開きます（*CTRL-Y*）。"
+
+#: ../../source/guide_utilisateur.rst:272
+msgid "Cliquer sur \"Add\" et saisir le nom du tournoi."
+msgstr "「Add」をクリックし、トーナメント名を入力します。"
+
+#: ../../source/guide_utilisateur.rst:274
+msgid "**Assigner un match à un tournoi:**"
+msgstr "**マッチをトーナメントに割り当てる：**"
+
+#: ../../source/guide_utilisateur.rst:276
+msgid ""
+"Depuis le panneau des matchs (*CTRL-Tab*), utiliser le menu déroulant de la "
+"colonne tournoi pour assigner un match."
+msgstr "マッチパネル（*CTRL-Tab*）から、トーナメント列のドロップダウンメニューを使用してマッチを割り当てます。"
+
+#: ../../source/guide_utilisateur.rst:280
+msgid "Afficher les statistiques de performance"
+msgstr "パフォーマンス統計を表示する"
+
+#: ../../source/guide_utilisateur.rst:282
+msgid ""
+"Le panneau Stats permet de visualiser ses indicateurs de performance (PR et "
+"coût MWC) à partir des positions importées."
+msgstr "Statsパネルでは、インポートしたポジションからパフォーマンス指標（PRおよびMWCコスト）を確認できます。"
+
+#: ../../source/guide_utilisateur.rst:285
+msgid ""
+"Appuyer *CTRL-D* ou cliquer sur l'onglet Stats dans le panneau inférieur."
+msgstr "*CTRL-D* を押すか、下部パネルのStatsタブをクリックします。"
+
+#: ../../source/guide_utilisateur.rst:287
+msgid ""
+"Utiliser la barre de filtre pour restreindre l'analyse par joueur, tournoi, "
+"plage de dates, type de décision ou longueur de match."
+msgstr "フィルターバーを使用して、プレイヤー、トーナメント、日付範囲、決定タイプ、またはマッチの長さで分析を絞り込みます。"
+
+#: ../../source/guide_utilisateur.rst:290
+msgid ""
+"Cliquer sur un indicateur pour accéder directement aux positions "
+"correspondantes."
+msgstr "指標をクリックすると、対応するポジションに直接ジャンプします。"
+
+#: ../../source/guide_utilisateur.rst:293
+msgid "Calculer l'EPC"
+msgstr "EPCを計算する"
+
+#: ../../source/guide_utilisateur.rst:295
+msgid ""
+"Le calculateur EPC (Effective Pip Count) permet de calculer les statistiques"
+" de bearoff d'une position."
+msgstr "EPCカルキュレーター（Effective Pip Count）は、ポジションのベアオフ統計を計算します。"
+
+#: ../../source/guide_utilisateur.rst:298
+msgid ""
+"Appuyer *CTRL-E*, cliquer sur l'onglet EPC dans le panneau inférieur, ou "
+"exécuter la commande ``epc``."
+msgstr "*CTRL-E* を押すか、下部パネルのEPCタブをクリックするか、``epc`` コマンドを実行します。"
+
+#: ../../source/guide_utilisateur.rst:301
+msgid "Éditer la position des pions dans le jan (6 derniers points)."
+msgstr "ホームボード（最後の6ポイント）のチェッカーのポジションを編集します。"
+
+#: ../../source/guide_utilisateur.rst:303
+msgid ""
+"Les résultats sont affichés en temps réel dans le panneau EPC dédié: EPC, "
+"nombre moyen de lancers, écart type, pip count et wastage."
+msgstr "結果は専用のEPCパネルにリアルタイムで表示されます：EPC、平均ロール数、標準偏差、ピップカウント、ウェイステージ。"
+
+#: ../../source/guide_utilisateur.rst:307
+msgid "Le calculateur fonctionne pour les deux joueurs simultanément."
+msgstr "カルキュレーターは両プレイヤーを同時に処理します。"
+
+#: ../../source/guide_utilisateur.rst:310
+msgid "Afficher l'analyse d'une position importée depuis XG"
+msgstr "XGからインポートしたポジションの分析を表示する"
+
+#: ../../source/guide_utilisateur.rst:312
+msgid ""
+"Si une position analysée par XG, GNUbg ou BGBlitz a été importée dans "
+"blunderDB, l'analyse peut être affichée en appuyant *CTRL-L*."
+msgstr ""
+"XG、GNUbg、またはBGBlitzによって分析されたポジションがblunderDBにインポートされている場合、*CTRL-L* "
+"を押すことで分析を表示できます。"
+
+#: ../../source/guide_utilisateur.rst:315
+msgid ""
+"Si la position correspond à une décision de pions, les cinq meilleurs coups "
+"sont affichés sur des lignes distinctes. Pour chaque ligne, les informations"
+" fournies sont dans cet ordre, le coup de pion associé, l'équité normalisée,"
+" l'erreur en équité du coup, les chances de gain, gammon et backgammon du "
+"joueur, les chances de gain, gammon et backgammon de l'adversaire, le niveau"
+" d'analyse."
+msgstr ""
+"ポジションがチェッカー決定に対応する場合、上位5つのムーブが別々の行に表示されます。各行には、この順序で情報が提供されます：関連するチェッカームーブ、正規化されたエクイティ、ムーブのエクイティエラー、プレイヤーの勝率・ギャモン・バックギャモン、相手の勝率・ギャモン・バックギャモン、および分析レベル。"
+
+#: ../../source/guide_utilisateur.rst:322
+msgid ""
+"Si la position correspond à une décision de cube, le coût de chaque décision"
+" est affiché ainsi que les chances de gain de la position."
+msgstr "ポジションがキューブ決定に対応する場合、各決定のコストとポジションの勝率が表示されます。"
+
+#: ../../source/guide_utilisateur.rst:325
+msgid ""
+"Lorsque plusieurs moteurs d'analyse sont présents pour la même position (par"
+" exemple XG et GNUbg), une colonne supplémentaire indique le moteur "
+"d'origine de chaque analyse."
+msgstr "同じポジションに複数の分析エンジンが存在する場合（例：XGとGNUbg）、追加の列に各分析の元のエンジンが表示されます。"
+
+#: ../../source/guide_utilisateur.rst:329
+msgid ""
+"Lors de la navigation dans un match, le coup effectivement joué est mis en "
+"évidence dans la liste des coups. Si la position a été rencontrée dans "
+"plusieurs matchs, tous les coups joués sont indiqués."
+msgstr ""
+"マッチ内を移動する際、実際にプレイされたムーブがムーブリストでハイライト表示されます。ポジションが複数のマッチで登場した場合、プレイされたすべてのムーブが表示されます。"
+
+#: ../../source/guide_utilisateur.rst:334
+msgid ""
+"En cliquant sur un coup dans le panneau d'analyse, les flèches "
+"correspondantes sont affichées sur le board."
+msgstr "分析パネルでムーブをクリックすると、ボード上に対応する矢印が表示されます。"
+
+#: ../../source/guide_utilisateur.rst:338
+msgid "Exporter une position vers XG"
+msgstr "XGにポジションをエクスポートする"
+
+#: ../../source/guide_utilisateur.rst:340
+msgid "Pour exporter une position de blunderDB vers XG,"
+msgstr "blunderDBからXGにポジションをエクスポートするには、"
+
+#: ../../source/guide_utilisateur.rst:342
+msgid "afficher dans blunderDB la position à exporter et appuyter *CTRL-C*,"
+msgstr "blunderDBでエクスポートするポジションを表示し、*CTRL-C* を押します。"
+
+#: ../../source/guide_utilisateur.rst:344
+msgid "afficher XG et appuyer *CTRL-V*."
+msgstr "XGを開き、*CTRL-V* を押します。"
+
+#: ../../source/guide_utilisateur.rst:347
+msgid "Visualiser les différentes positions"
+msgstr "様々なポジションを表示する"
+
+#: ../../source/guide_utilisateur.rst:349
+msgid ""
+"Pour visualiser les différentes positions de la bibliothèque courante, "
+"utiliser les touches *GAUCHE* et *DROITE*. La touche *HOME* permet d'aller à"
+" la première position. La touche *FIN* permet d'aller à la dernière "
+"position."
+msgstr ""
+"現在のライブラリのさまざまなポジションを表示するには、*左矢印* キーと *右矢印* キーを使用します。*HOME* キーで最初のポジション、*END*"
+" キーで最後のポジションに移動できます。"
+
+#: ../../source/guide_utilisateur.rst:353
+msgid ""
+"Pour afficher le bearoff à gauche, appuyer *CTRL-GAUCHE*. Pour afficher le "
+"bearoff à droite, appuyer *CTRL-DROITE*."
+msgstr "左のベアオフを表示するには *CTRL-LEFT* を押します。右のベアオフを表示するには *CTRL-RIGHT* を押します。"
+
+#: ../../source/guide_utilisateur.rst:357
+msgid "Rechercher des positions selon des critères"
+msgstr "条件に基づいてポジションを検索する"
+
+#: ../../source/guide_utilisateur.rst:359
+msgid "Pour rechercher des types de positions,"
+msgstr "ポジションの種類を検索するには、"
+
+#: ../../source/guide_utilisateur.rst:361
+msgid "appuyer sur *TAB* pour ouvrir le panneau de recherche,"
+msgstr "*TAB* を押して検索パネルを開きます。"
+
+#: ../../source/guide_utilisateur.rst:363
+msgid ""
+"éditer la structure de position à rechercher. blunderDB va filtrer les "
+"positions ayant *a minima* la structure de pions saisie. Dans le doute, afin"
+" d'obtenir le maximum de résultats, effacer la position en appuyant sur la "
+"touche *RETOUR ARRIERE*. Editer si besoin la position du cube et le score."
+msgstr ""
+"検索するポジション構造を編集します。blunderDB "
+"は入力されたチェッカー構造を*少なくとも*持つポジションをフィルタリングします。不明な場合は最大限の結果を得るため、*バックスペース* "
+"キーを押してポジションをクリアしてください。必要に応じてキューブのポジションとスコアを編集します。"
+
+#: ../../source/guide_utilisateur.rst:369
+msgid ""
+"Le panneau de recherche propose deux structures de pions, sélectionnables "
+"par les onglets *At least* et *Except* situés en haut du panneau :"
+msgstr "検索パネルでは2つのチェッカー構造が提供されており、パネル上部の *At least* タブと *Except* タブで選択できます："
+
+#: ../../source/guide_utilisateur.rst:372
+msgid ""
+"*At least* (par défaut) : blunderDB filtre les positions ayant *a minima* la"
+" structure de pions saisie ;"
+msgstr "*At least*（デフォルト）：blunderDB は入力されたチェッカー構造を*少なくとも*持つポジションをフィルタリングします；"
+
+#: ../../source/guide_utilisateur.rst:375
+msgid ""
+"*Except* : blunderDB exclut les positions contenant l'un des pions saisis. "
+"Le plateau est bordé de rouge lors de l'édition de cette structure. Une "
+"position est rejetée si elle contient *au moins un* des éléments dessinés "
+"(par exemple, dessiner un pion sur les points 1, 3 et 5 ne conserve que les "
+"positions n'ayant aucun pion sur ces points). Le nombre de pions par point "
+"n'est pas limité : indiquer 3 pions sur un point exclut les positions ayant "
+"3 pions ou plus à cet endroit (utile pour rechercher une porte sans spare). "
+"Deux clics rapides sur un point le marquent comme devant être vide (cellule "
+"rouge hachurée, aucun pion quelle que soit la couleur) ; un simple clic sur "
+"ce point le débloque."
+msgstr ""
+"*Except*：blunderDB "
+"は入力されたチェッカーのいずれかを含むポジションを除外します。この構造の編集中はボードが赤くふちどられます。描画された要素を*少なくとも1つ*含むポジションは除外されます（例えば、ポイント1、3、5にチェッカーを描くと、これらのポイントにチェッカーのないポジションのみが保持されます）。ポイントあたりのチェッカー数に制限はありません：ポイントに3つのチェッカーを指定すると、そこに3つ以上のチェッカーがあるポジションが除外されます（スペアのないメイドポイントを検索するのに便利です）。ポイントをすばやく2回クリックすると、空であることが必須とマークされます（赤いハッチングのセル、どの色のチェッカーも不可）；そのポイントをシングルクリックするとロックが解除されます。"
+
+#: ../../source/guide_utilisateur.rst:385
+msgid ""
+"Lorsqu'un point appartient aux deux structures, le critère *Except* "
+"l'emporte s'il contredit le critère *At least*."
+msgstr "ポイントが両方の構造に属する場合、*Except* 基準が *At least* 基準と矛盾する場合に優先されます。"
+
+#: ../../source/guide_utilisateur.rst:388
+msgid "Méthode 1 (simple):"
+msgstr "方法1（シンプル）："
+
+#: ../../source/guide_utilisateur.rst:390
+msgid "Ouvrir la fenêtre de recherche (*CTRL-F*)"
+msgstr "検索ウィンドウを開きます（*CTRL-F*）。"
+
+#: ../../source/guide_utilisateur.rst:392
+msgid "Ajouter et paramétrer les filtres de recherche"
+msgstr "検索フィルターを追加して設定します。"
+
+#: ../../source/guide_utilisateur.rst:394
+msgid "Valider en cliquant sur \"Search\"."
+msgstr "「Search」をクリックして確定します。"
+
+#: ../../source/guide_utilisateur.rst:396
+msgid "Méthode 2 (avancée):"
+msgstr "方法2（上級）："
+
+#: ../../source/guide_utilisateur.rst:399
+msgid "ouvrir la ligne de commande en appuyant sur *ESPACE*,"
+msgstr "*スペース* キーを押してコマンドラインを開きます。"
+
+#: ../../source/guide_utilisateur.rst:401
+msgid ""
+"écrire *s*, ajouter d'éventuels filtres supplémentaires (par exemple *cube* "
+"ou *score* pour prendre respectivement en compte le cube et le score. Voir "
+":numref:`cmd_filter` pour une liste exhaustive des filtres disponibles)."
+msgstr ""
+"*s* と入力し、必要に応じて追加のフィルターを追加します（例えば、キューブとスコアをそれぞれ考慮するには *cube* または "
+"*score*。利用可能なフィルターの一覧は :numref:`cmd_filter` を参照してください）。"
+
+#: ../../source/guide_utilisateur.rst:406
+msgid "valider la requête en appuyant sur *ENTREE*."
+msgstr "*ENTER* キーを押してクエリを確定します。"
+
+#: ../../source/guide_utilisateur.rst:408
+msgid ""
+"Les positions affichées sont celles de la base de données ayant vérifié les "
+"critères de recherche entrés par l'utilisateur."
+msgstr "表示されるポジションは、ユーザーが入力した検索条件を満たすデータベース内のポジションです。"

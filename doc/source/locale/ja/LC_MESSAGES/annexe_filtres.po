@@ -1,0 +1,395 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ja <LL@li.org>\n"
+"Language: ja\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_filtres.rst:4
+msgid "Annexe: Utilisation avancée des filtres"
+msgstr "付録: フィルターの高度な使い方"
+
+#: ../../source/annexe_filtres.rst:8
+msgid ""
+"Cette section s'adresse aux utilisateurs avancés de blunderDB qui souhaitent"
+" exploiter pleinement les fonctionnalités de recherche de positions."
+msgstr "このセクションは、ポジション検索機能を最大限に活用したいblunderDBの上級ユーザーを対象としています。"
+
+#: ../../source/annexe_filtres.rst:11
+msgid ""
+"Les filtres sont au coeur de l'analyse des positions dans blunderDB. Leur "
+"utilisation permet de rechercher des positions spécifiques relativement "
+"précisément. Dans cette section, l'utilisation des filtres via la ligne de "
+"commande est détaillée. La ligne de commande est accessible en appuyant sur "
+"la touche ``ESPACE``. Elle permet de combiner avec l'habitude très "
+"rapidement des filtres et d'utiliser la bibliothèque de filtres."
+msgstr ""
+"フィルターはblunderDBにおけるポジション分析の中核です。フィルターを使うことで、特定のポジションをかなり正確に検索できます。このセクションでは、コマンドラインを介したフィルターの使い方を詳しく説明します。コマンドラインは``SPACE``キーを押すことでアクセスできます。慣れれば、非常に素早くフィルターを組み合わせたり、フィルターライブラリを利用したりできます。"
+
+#: ../../source/annexe_filtres.rst:19
+msgid "Recherche de positions en ligne de commande"
+msgstr "コマンドラインによるポジション検索"
+
+#: ../../source/annexe_filtres.rst:21
+msgid "Pour faire une recherche à l'aide de filtres,"
+msgstr "フィルターを使って検索するには、"
+
+#: ../../source/annexe_filtres.rst:23
+msgid "Appuyer sur la touche ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "``TAB``キーを押して検索パネルを開きます。"
+
+#: ../../source/annexe_filtres.rst:24 ../../source/annexe_filtres.rst:60
+msgid "Editer la position courante."
+msgstr "現在のポジションを編集します。"
+
+#: ../../source/annexe_filtres.rst:25
+msgid "Ouvrir la ligne de commande avec la touche ``ESPACE``."
+msgstr "``SPACE``キーでコマンドラインを開きます。"
+
+#: ../../source/annexe_filtres.rst:26
+msgid "Utiliser la commande ``s`` suivie éventuellement de filtres."
+msgstr "``s``コマンドに続けて、必要に応じてフィルターを入力します。"
+
+#: ../../source/annexe_filtres.rst:27
+msgid "Lancer la recherche avec la touche ``ENTREE``."
+msgstr "``ENTER``キーで検索を開始します。"
+
+#: ../../source/annexe_filtres.rst:30
+msgid ""
+"Ne pas oublier d'effacer la position courante avant de lancer une recherche "
+"(touche ``RETOUR ARRIERE``), si cette dernière n'est pas celle souhaitée, au"
+" risque de filtrer abusivement des structures de pions."
+msgstr ""
+"検索を開始する前に、現在のポジションが目的のものでない場合は、必ず消去すること（``BACKSPACE``キー）を忘れないでください。さもないと、チェッカー構造が過度にフィルタリングされる恐れがあります。"
+
+#: ../../source/annexe_filtres.rst:35
+msgid ""
+"La liste des filtres disponibles en ligne de commande est fournie dans la "
+":numref:`cmd_filter`."
+msgstr "コマンドラインで利用可能なフィルターの一覧は :numref:`cmd_filter` に記載されています。"
+
+#: ../../source/annexe_filtres.rst:39
+msgid "Recherche dans les résultats courants"
+msgstr "現在の結果内での検索"
+
+#: ../../source/annexe_filtres.rst:41
+msgid ""
+"Il est possible d'affiner une recherche en cherchant parmi les positions "
+"actuellement filtrées. Cela permet de restreindre progressivement les "
+"résultats."
+msgstr ""
+"現在フィルタリングされているポジションの中から検索することで、検索を絞り込むことができます。これにより、結果を段階的に狭めていくことができます。"
+
+#: ../../source/annexe_filtres.rst:44
+msgid ""
+"En ligne de commande, utiliser la commande ``ss`` suivie de filtres (ex: "
+"``ss nc``, ``ss E>40``). La commande ``ss`` fonctionne après une recherche "
+"préalable."
+msgstr ""
+"コマンドラインでは、``ss``コマンドに続けてフィルターを入力します（例: ``ss nc``、``ss "
+"E>40``）。``ss``コマンドは、事前に検索を行った後に機能します。"
+
+#: ../../source/annexe_filtres.rst:47
+msgid ""
+"La fenêtre de recherche (``CTRL-F``) propose également une case à cocher "
+"\"Search in current results\" pour la même fonctionnalité."
+msgstr "検索ウィンドウ（``CTRL-F``）にも、同じ機能のための\"Search in current results\"チェックボックスがあります。"
+
+#: ../../source/annexe_filtres.rst:51
+msgid "Bibliothèque de filtres"
+msgstr "フィルターライブラリ"
+
+#: ../../source/annexe_filtres.rst:53
+msgid ""
+"La bibliothèque de filtres permet à l'utilisateur d'enregistrer des "
+"commandes de recherche afin de faciliter ses études thématiques."
+msgstr "フィルターライブラリを使うと、ユーザーは検索コマンドを保存して、テーマ別の学習を容易にできます。"
+
+#: ../../source/annexe_filtres.rst:56
+msgid "Pour ajouter un filtre à la bibliothèque,"
+msgstr "ライブラリにフィルターを追加するには、"
+
+#: ../../source/annexe_filtres.rst:58
+msgid "Appuyer sur ``TAB`` pour ouvrir le panneau de recherche."
+msgstr "``TAB``を押して検索パネルを開きます。"
+
+#: ../../source/annexe_filtres.rst:59 ../../source/annexe_filtres.rst:71
+msgid "Ouvrir la bibliothèque de filtres en appuyant sur ``CTRL-K``."
+msgstr "``CTRL-K``を押してフィルターライブラリを開きます。"
+
+#: ../../source/annexe_filtres.rst:61
+msgid "Donner un nom au filtre."
+msgstr "フィルターに名前を付けます。"
+
+#: ../../source/annexe_filtres.rst:62
+msgid "Editer la commande de recherche."
+msgstr "検索コマンドを編集します。"
+
+#: ../../source/annexe_filtres.rst:63
+msgid "Sauvegarder la commande de recherche à l'aide du bouton \"Add\"."
+msgstr "\"Add\"ボタンを使って検索コマンドを保存します。"
+
+#: ../../source/annexe_filtres.rst:66
+msgid ""
+"Lors de l'édition de la commande, il est possible d'utiliser les touches "
+"``HAUT`` et ``BAS`` pour naviguer dans l'historique des commandes."
+msgstr "コマンドの編集中は、``UP``キーと``DOWN``キーを使ってコマンド履歴をナビゲートできます。"
+
+#: ../../source/annexe_filtres.rst:69
+msgid "Pour utiliser un filtre enregistré dans la bibliothèque,"
+msgstr "ライブラリに保存したフィルターを使用するには、"
+
+#: ../../source/annexe_filtres.rst:72
+msgid "Rechercher le filtre souhaité."
+msgstr "目的のフィルターを検索します。"
+
+#: ../../source/annexe_filtres.rst:73
+msgid "Double cliquer sur le filtre pour lancer la recherche."
+msgstr "フィルターをダブルクリックして検索を開始します。"
+
+#: ../../source/annexe_filtres.rst:76
+msgid "Exemples"
+msgstr "例"
+
+#: ../../source/annexe_filtres.rst:78
+msgid ""
+"Voici quelques exemples d'utilisation des filtres en ligne de commande:"
+msgstr "コマンドラインでのフィルターの使用例をいくつか紹介します:"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Type de position"
+msgstr "ポジションの種類"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Structure de pions"
+msgstr "チェッカー構造"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Commande"
+msgstr "コマンド"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Courses"
+msgstr "純粋なレース"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s nc"
+msgstr "s nc"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Courses petites"
+msgstr "短いレース"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s nc P<70"
+msgstr "s nc P<70"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Frapper au point 1"
+msgstr "エースポイントでのヒット"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s m\\\"6/1*\\\""
+msgstr "s m\\\"6/1*\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Backgame 1-4"
+msgstr "バックゲーム 1-4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "portes 24, 21"
+msgstr "24、21ポイントを確保"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s p>35"
+msgstr "s p>35"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Décision de Take/Pass à -2 -4"
+msgstr "-2 -4でのテイク/パスの判断"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "dés vides côté joueur du haut, score -2/-4"
+msgstr "上側プレイヤーのダイスが空、スコア -2/-4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s s d"
+msgstr "s s d"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Envoi de too good"
+msgstr "トゥーグッド・トゥ・ダブル"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "dés vides côté joueur du bas"
+msgstr "下側プレイヤーのダイスが空"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s d e>1000"
+msgstr "s d e>1000"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Blitz avec au moins 20% de gammon"
+msgstr "ギャモン率20%以上のブリッツ"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "portes dans le jan, hommes à la barre"
+msgstr "インナーボードでのポイント確保、バー上のチェッカー"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s g>20"
+msgstr "s g>20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Erreurs du joueur 1 de plus de 40 millipoints"
+msgstr "40ミリポイントを超えるプレイヤー1のエラー"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s E>40"
+msgstr "s E>40"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Position du tournoi Aachen2024"
+msgstr "Aachen2024トーナメントのポジション"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s t\\\"Aachen2024\\\""
+msgstr "s t\\\"Aachen2024\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Un pion arriéré à ramener"
+msgstr "1つのバックチェッカーを戻す"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s k1,1"
+msgstr "s k1,1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Quitter le point 20"
+msgstr "20ポイントからの脱出"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "point 20"
+msgstr "20ポイント"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s m\\\"20/\\\""
+msgstr "s m\\\"20/\\\""
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Prime contre prime"
+msgstr "プライム対プライム"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "indiquer les primes"
+msgstr "プライムを指定する"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s"
+msgstr "s"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Ace-point bear-off"
+msgstr "エースポイントでのベアオフ"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "point 1 pour l'adversaire"
+msgstr "相手のエースポイント確保"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s P<60"
+msgstr "s P<60"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Double avec au moins 20pip d'avance"
+msgstr "20ピップ以上リードした状態でのダブル"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s d p<-20"
+msgstr "s d p<-20"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions du match 5"
+msgstr "マッチ5のポジション"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma5"
+msgstr "s ma5"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions des matchs 2 à 4"
+msgstr "マッチ2から4のポジション"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma2,4"
+msgstr "s ma2,4"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions des matchs 23 et 43"
+msgstr "マッチ23と43のポジション"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s ma23 ma43"
+msgstr "s ma23 ma43"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Positions du tournoi 1"
+msgstr "トーナメント1のポジション"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s tn1"
+msgstr "s tn1"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Erreurs dans le tournoi 2"
+msgstr "トーナメント2でのエラー"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "s tn2 E>40"
+msgstr "s tn2 E>40"
+
+#: ../../source/annexe_filtres.rst:105
+msgid "Exemples de recherche dans les résultats courants:"
+msgstr "現在の結果内での検索例:"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Scénario"
+msgstr "シナリオ"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s nc``, chercher les petites courses"
+msgstr "``s nc``の後、短いレースを検索する"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss P<70"
+msgstr "ss P<70"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s g>20``, ne garder que les erreurs"
+msgstr "``s g>20``の後、エラーのみを残す"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss E>40"
+msgstr "ss E>40"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "Après ``s tn1``, chercher les décisions de cube"
+msgstr "``s tn1``の後、キューブの判断を検索する"
+
+#: ../../source/annexe_filtres.rst:1
+msgid "ss d"
+msgstr "ss d"

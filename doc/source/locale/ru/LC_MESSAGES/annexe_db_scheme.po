@@ -1,0 +1,350 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2024-2026, Kevin UNGER <blunderdb@proton.me>
+# This file is distributed under the same license as the blunderDB package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: blunderDB\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-06-01 05:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: ru <LL@li.org>\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Generated-By: Babel 2.18.0\n"
+
+#: ../../source/annexe_db_scheme.rst:4
+msgid "Annexe: Schéma de la base de données"
+msgstr "Приложение: Схема базы данных"
+
+#: ../../source/annexe_db_scheme.rst:8
+msgid ""
+"Sauvegardez toujours votre fichier .db avant d'effectuer des migrations de "
+"base de données."
+msgstr ""
+"Всегда создавайте резервную копию файла .db перед выполнением миграций базы "
+"данных."
+
+#: ../../source/annexe_db_scheme.rst:11
+msgid "Version 1.0.0"
+msgstr "Version 1.0.0"
+
+#: ../../source/annexe_db_scheme.rst:13
+msgid "La version 1.0.0 de la base de données contient les tables suivantes :"
+msgstr "Версия 1.0.0 базы данных содержит следующие таблицы:"
+
+#: ../../source/annexe_db_scheme.rst:15
+msgid ""
+"**position** : Stocke les positions avec les colonnes `id` (clé primaire) et"
+" `state` (état de la position en format JSON)."
+msgstr ""
+"**position**: хранит позиции со столбцами `id` (первичный ключ) и `state` "
+"(состояние позиции в формате JSON)."
+
+#: ../../source/annexe_db_scheme.rst:16
+msgid ""
+"**analysis** : Stocke les analyses des positions avec les colonnes `id` (clé"
+" primaire), `position_id` (clé étrangère vers `position`), et `data` "
+"(données de l'analyse en format JSON)."
+msgstr ""
+"**analysis**: хранит анализы позиций со столбцами `id` (первичный ключ), "
+"`position_id` (внешний ключ к `position`) и `data` (данные анализа в формате"
+" JSON)."
+
+#: ../../source/annexe_db_scheme.rst:17
+msgid ""
+"**comment** : Stocke les commentaires associés aux positions avec les "
+"colonnes `id` (clé primaire), `position_id` (clé étrangère vers `position`),"
+" et `text` (texte du commentaire)."
+msgstr ""
+"**comment**: хранит комментарии, связанные с позициями, со столбцами `id` "
+"(первичный ключ), `position_id` (внешний ключ к `position`) и `text` (текст "
+"комментария)."
+
+#: ../../source/annexe_db_scheme.rst:18
+msgid ""
+"**metadata** : Stocke les métadonnées de la base de données avec les "
+"colonnes `key` (clé primaire) et `value` (valeur associée à la clé)."
+msgstr ""
+"**metadata**: хранит метаданные базы данных со столбцами `key` (первичный "
+"ключ) и `value` (значение, связанное с ключом)."
+
+#: ../../source/annexe_db_scheme.rst:21
+msgid "Version 1.1.0"
+msgstr "Version 1.1.0"
+
+#: ../../source/annexe_db_scheme.rst:23
+msgid "La version 1.1.0 de la base de données ajoute la table suivante :"
+msgstr "Версия 1.1.0 базы данных добавляет следующую таблицу:"
+
+#: ../../source/annexe_db_scheme.rst:25
+msgid ""
+"**command_history** : Stocke l'historique des commandes avec les colonnes "
+"`id` (clé primaire), `command` (texte de la commande), et `timestamp` (date "
+"et heure de l'exécution de la commande)."
+msgstr ""
+"**command_history**: хранит историю команд со столбцами `id` (первичный "
+"ключ), `command` (текст команды) и `timestamp` (дата и время выполнения "
+"команды)."
+
+#: ../../source/annexe_db_scheme.rst:27
+msgid "Les autres tables restent inchangées par rapport à la version 1.0.0."
+msgstr ""
+"Остальные таблицы остаются без изменений по сравнению с версией 1.0.0."
+
+#: ../../source/annexe_db_scheme.rst:29
+msgid ""
+"Pour migrer la base de données de la version 1.0.0 à la version 1.1.0, "
+"exécutez la commande ``migrate_from_1_0_to_1_1`` dans blunderDB."
+msgstr ""
+"Для миграции базы данных с версии 1.0.0 до версии 1.1.0 выполните команду "
+"``migrate_from_1_0_to_1_1`` в blunderDB."
+
+#: ../../source/annexe_db_scheme.rst:32
+msgid "Version 1.2.0"
+msgstr "Version 1.2.0"
+
+#: ../../source/annexe_db_scheme.rst:34
+msgid "La version 1.2.0 de la base de données ajoute la table suivante :"
+msgstr "Версия 1.2.0 базы данных добавляет следующую таблицу:"
+
+#: ../../source/annexe_db_scheme.rst:36
+msgid ""
+"**filter_library** : Stocke les filtres de recherche avec les colonnes `id` "
+"(clé primaire), `name` (nom du filtre), `command` (commande associée au "
+"filtre), et `edit_position` (position éditée lors de l'enregistrement du "
+"filtre)."
+msgstr ""
+"**filter_library**: хранит поисковые фильтры со столбцами `id` (первичный "
+"ключ), `name` (название фильтра), `command` (команда, связанная с фильтром) "
+"и `edit_position` (редактируемая позиция при сохранении фильтра)."
+
+#: ../../source/annexe_db_scheme.rst:38
+msgid "Les autres tables restent inchangées par rapport à la version 1.1.0."
+msgstr ""
+"Остальные таблицы остаются без изменений по сравнению с версией 1.1.0."
+
+#: ../../source/annexe_db_scheme.rst:40
+msgid ""
+"Pour migrer la base de données de la version 1.1.0 à la version 1.2.0, "
+"exécutez la commande ``migrate_from_1_1_to_1_2`` dans blunderDB."
+msgstr ""
+"Для миграции базы данных с версии 1.1.0 до версии 1.2.0 выполните команду "
+"``migrate_from_1_1_to_1_2`` в blunderDB."
+
+#: ../../source/annexe_db_scheme.rst:43
+msgid "Version 1.3.0"
+msgstr "Version 1.3.0"
+
+#: ../../source/annexe_db_scheme.rst:45
+msgid "La version 1.3.0 de la base de données ajoute la table suivante :"
+msgstr "Версия 1.3.0 базы данных добавляет следующую таблицу:"
+
+#: ../../source/annexe_db_scheme.rst:47
+msgid ""
+"**search_history** : Stocke l'historique des recherches de positions avec "
+"les colonnes `id` (clé primaire), `command` (texte de la commande de "
+"recherche), `position` (état de la position au moment de la recherche), et "
+"`timestamp` (date et heure de la recherche)."
+msgstr ""
+"**search_history**: хранит историю поиска позиций со столбцами `id` "
+"(первичный ключ), `command` (текст поисковой команды), `position` (состояние"
+" позиции в момент поиска) и `timestamp` (дата и время поиска)."
+
+#: ../../source/annexe_db_scheme.rst:49
+msgid "Les autres tables restent inchangées par rapport à la version 1.2.0."
+msgstr ""
+"Остальные таблицы остаются без изменений по сравнению с версией 1.2.0."
+
+#: ../../source/annexe_db_scheme.rst:51
+msgid ""
+"Pour migrer la base de données de la version 1.2.0 à la version 1.3.0, "
+"exécutez la commande ``migrate_from_1_2_to_1_3`` dans blunderDB."
+msgstr ""
+"Для миграции базы данных с версии 1.2.0 до версии 1.3.0 выполните команду "
+"``migrate_from_1_2_to_1_3`` в blunderDB."
+
+#: ../../source/annexe_db_scheme.rst:54
+msgid "Version 1.4.0"
+msgstr "Version 1.4.0"
+
+#: ../../source/annexe_db_scheme.rst:56
+msgid ""
+"La version 1.4.0 de la base de données ajoute les tables suivantes pour la "
+"gestion des matchs :"
+msgstr ""
+"Версия 1.4.0 базы данных добавляет следующие таблицы для управления матчами:"
+
+#: ../../source/annexe_db_scheme.rst:58
+msgid ""
+"**match** : Stocke les matchs importés avec les colonnes `id` (clé "
+"primaire), `player1_name`, `player2_name`, `event`, `location`, `round`, "
+"`match_length`, `match_date`, `import_date`, `file_path`, `game_count`, et "
+"`match_hash` (hash pour la détection de doublons)."
+msgstr ""
+"**match**: хранит импортированные матчи со столбцами `id` (первичный ключ), "
+"`player1_name`, `player2_name`, `event`, `location`, `round`, "
+"`match_length`, `match_date`, `import_date`, `file_path`, `game_count` и "
+"`match_hash` (хеш для обнаружения дубликатов)."
+
+#: ../../source/annexe_db_scheme.rst:59
+msgid ""
+"**game** : Stocke les parties d'un match avec les colonnes `id` (clé "
+"primaire), `match_id` (clé étrangère vers `match`), `game_number`, "
+"`initial_score_1`, `initial_score_2`, `winner`, `points_won`, et "
+"`move_count`."
+msgstr ""
+"**game**: хранит партии матча со столбцами `id` (первичный ключ), `match_id`"
+" (внешний ключ к `match`), `game_number`, `initial_score_1`, "
+"`initial_score_2`, `winner`, `points_won` и `move_count`."
+
+#: ../../source/annexe_db_scheme.rst:60
+msgid ""
+"**move** : Stocke les coups d'une partie avec les colonnes `id` (clé "
+"primaire), `game_id` (clé étrangère vers `game`), `move_number`, "
+"`move_type`, `position_id` (clé étrangère vers `position`), `player`, "
+"`dice_1`, `dice_2`, `checker_move`, et `cube_action`."
+msgstr ""
+"**move**: хранит ходы партии со столбцами `id` (первичный ключ), `game_id` "
+"(внешний ключ к `game`), `move_number`, `move_type`, `position_id` (внешний "
+"ключ к `position`), `player`, `dice_1`, `dice_2`, `checker_move` и "
+"`cube_action`."
+
+#: ../../source/annexe_db_scheme.rst:61
+msgid ""
+"**move_analysis** : Stocke l'analyse de chaque coup avec les colonnes `id` "
+"(clé primaire), `move_id` (clé étrangère vers `move`), `analysis_type`, "
+"`depth`, `equity`, `equity_error`, `win_rate`, `gammon_rate`, "
+"`backgammon_rate`, `opponent_win_rate`, `opponent_gammon_rate`, et "
+"`opponent_backgammon_rate`."
+msgstr ""
+"**move_analysis**: хранит анализ каждого хода со столбцами `id` (первичный "
+"ключ), `move_id` (внешний ключ к `move`), `analysis_type`, `depth`, "
+"`equity`, `equity_error`, `win_rate`, `gammon_rate`, `backgammon_rate`, "
+"`opponent_win_rate`, `opponent_gammon_rate` и `opponent_backgammon_rate`."
+
+#: ../../source/annexe_db_scheme.rst:63
+msgid ""
+"La migration de 1.3.0 à 1.4.0 est automatique à l'ouverture de la base de "
+"données."
+msgstr ""
+"Миграция с 1.3.0 до 1.4.0 выполняется автоматически при открытии базы "
+"данных."
+
+#: ../../source/annexe_db_scheme.rst:66
+msgid "Version 1.5.0"
+msgstr "Version 1.5.0"
+
+#: ../../source/annexe_db_scheme.rst:68
+msgid ""
+"La version 1.5.0 de la base de données ajoute les tables suivantes pour la "
+"gestion des collections :"
+msgstr ""
+"Версия 1.5.0 базы данных добавляет следующие таблицы для управления "
+"коллекциями:"
+
+#: ../../source/annexe_db_scheme.rst:70
+msgid ""
+"**collection** : Stocke les collections de positions avec les colonnes `id` "
+"(clé primaire), `name`, `description`, `sort_order`, `created_at`, et "
+"`updated_at`."
+msgstr ""
+"**collection**: хранит коллекции позиций со столбцами `id` (первичный ключ),"
+" `name`, `description`, `sort_order`, `created_at` и `updated_at`."
+
+#: ../../source/annexe_db_scheme.rst:71
+msgid ""
+"**collection_position** : Table de liaison qui associe des positions aux "
+"collections avec les colonnes `id` (clé primaire), `collection_id` (clé "
+"étrangère vers `collection`), `position_id` (clé étrangère vers `position`),"
+" `sort_order`, et `added_at`. La paire (`collection_id`, `position_id`) est "
+"unique."
+msgstr ""
+"**collection_position**: связующая таблица, которая связывает позиции с "
+"коллекциями, со столбцами `id` (первичный ключ), `collection_id` (внешний "
+"ключ к `collection`), `position_id` (внешний ключ к `position`), "
+"`sort_order` и `added_at`. Пара (`collection_id`, `position_id`) является "
+"уникальной."
+
+#: ../../source/annexe_db_scheme.rst:73
+msgid ""
+"La migration de 1.4.0 à 1.5.0 est automatique à l'ouverture de la base de "
+"données."
+msgstr ""
+"Миграция с 1.4.0 до 1.5.0 выполняется автоматически при открытии базы "
+"данных."
+
+#: ../../source/annexe_db_scheme.rst:76
+msgid "Version 1.6.0"
+msgstr "Version 1.6.0"
+
+#: ../../source/annexe_db_scheme.rst:78
+msgid ""
+"La version 1.6.0 de la base de données ajoute la table suivante pour la "
+"gestion des tournois :"
+msgstr ""
+"Версия 1.6.0 базы данных добавляет следующую таблицу для управления "
+"турнирами:"
+
+#: ../../source/annexe_db_scheme.rst:80
+msgid ""
+"**tournament** : Stocke les tournois avec les colonnes `id` (clé primaire), "
+"`name`, `date`, `location`, `sort_order`, `created_at`, et `updated_at`."
+msgstr ""
+"**tournament**: хранит турниры со столбцами `id` (первичный ключ), `name`, "
+"`date`, `location`, `sort_order`, `created_at` и `updated_at`."
+
+#: ../../source/annexe_db_scheme.rst:81
+msgid ""
+"Ajout de la colonne `tournament_id` (clé étrangère vers `tournament`) dans "
+"la table `match` pour assigner un match à un tournoi."
+msgstr ""
+"Добавление столбца `tournament_id` (внешний ключ к `tournament`) в таблицу "
+"`match` для назначения матча турниру."
+
+#: ../../source/annexe_db_scheme.rst:83
+msgid ""
+"La migration de 1.5.0 à 1.6.0 est automatique à l'ouverture de la base de "
+"données."
+msgstr ""
+"Миграция с 1.5.0 до 1.6.0 выполняется автоматически при открытии базы "
+"данных."
+
+#: ../../source/annexe_db_scheme.rst:86
+msgid "Version 1.7.0"
+msgstr "Version 1.7.0"
+
+#: ../../source/annexe_db_scheme.rst:88
+msgid "La version 1.7.0 de la base de données ajoute la colonne suivante :"
+msgstr "Версия 1.7.0 базы данных добавляет следующий столбец:"
+
+#: ../../source/annexe_db_scheme.rst:90
+msgid ""
+"Ajout de la colonne `last_visited_position` dans la table `match` pour "
+"mémoriser la dernière position visitée dans chaque match."
+msgstr ""
+"Добавление столбца `last_visited_position` в таблицу `match` для запоминания"
+" последней посещённой позиции в каждом матче."
+
+#: ../../source/annexe_db_scheme.rst:92
+msgid ""
+"La migration de 1.6.0 à 1.7.0 est automatique à l'ouverture de la base de "
+"données."
+msgstr ""
+"Миграция с 1.6.0 до 1.7.0 выполняется автоматически при открытии базы "
+"данных."
+
+#: ../../source/annexe_db_scheme.rst:94
+msgid ""
+"Depuis la version 0.10.0, toutes les migrations de bases de données sont "
+"effectuées automatiquement lors de l'ouverture d'un fichier de base de "
+"données."
+msgstr ""
+"Начиная с версии 0.10.0, все миграции баз данных выполняются автоматически "
+"при открытии файла базы данных."
